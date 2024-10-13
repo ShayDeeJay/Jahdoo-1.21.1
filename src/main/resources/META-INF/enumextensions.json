@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+
+      "name": "JAHDOO_STAFF_ARM_POSE",
+
+      "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+
+      "parameters": {
+        "class": "org/jahdoo/client/StaffArmPose",
+        "field": "STAFF_ARM_POSE"
+      }
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+[13Oct2024 17:00:31.526] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeclientuserdev, --version, 21.1.68, --assetIndex, 17, --assetsDir, C:\\Users\\JayDeeHome\\.gradle\\caches\\neoformruntime\\assets, --gameDir, ., --fml.neoForgeVersion, 21.1.68, --fml.fmlVersion, 4.0.24, --fml.mcVersion, 1.21.1, --fml.neoFormVersion, 20240808.144430]
+[13Oct2024 17:00:31.530] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Amazon.com Inc. OpenJDK 64-Bit Server VM 21.0.4+7-LTS
+[13Oct2024 17:00:31.531] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 11.0.4+main.d2e20e43 starting: java version 21.0.4 by Amazon.com Inc.; OS Windows 11 arch amd64 version 10.0
+[13Oct2024 17:00:31.655] [main/WARN] [net.neoforged.fml.loading.FMLConfig/CORE]: Configuration file C:\Users\JayDeeHome\Documents\Development\Jahdoo Neoforge\run\config\fml.toml is not correct. Correcting
+[13Oct2024 17:00:31.656] [main/INFO] [net.neoforged.fml.loading.FMLConfig/CORE]: Incorrect key [disableConfigWatcher] was corrected from null to false
+[13Oct2024 17:00:31.657] [main/INFO] [net.neoforged.fml.loading.FMLConfig/CORE]: Incorrect key [earlyWindowSkipGLVersions] was corrected from null to []
+[13Oct2024 17:00:31.657] [main/INFO] [net.neoforged.fml.loading.FMLConfig/CORE]: Incorrect key [earlyWindowSquir] was corrected from null to false
+[13Oct2024 17:00:31.685] [main/INFO] [net.neoforged.fml.loading.ImmediateWindowHandler/]: Loading ImmediateWindowProvider fmlearlywindow
+[13Oct2024 17:00:31.803] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.6
+[13Oct2024 17:00:31.940] [main/INFO] [EARLYDISPLAY/]: Requested GL version 4.6 got version 4.6
+[13Oct2024 17:00:32.067] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/C:/Users/JayDeeHome/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/2af2f021d8e02a0220dc27a7a72b4666d66d44ca/sponge-mixin-0.15.2+mixin.0.8.7.jar%23131!/ Service=ModLauncher Env=CLIENT
+[13Oct2024 17:00:32.245] [pool-2-thread-1/INFO] [EARLYDISPLAY/]: GL info: NVIDIA GeForce RTX 2070 SUPER/PCIe/SSE2 GL version 4.6.0 NVIDIA 561.09, NVIDIA Corporation
+[13Oct2024 17:00:32.401] [main/INFO] [net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
+[13Oct2024 17:00:33.188] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[13Oct2024 17:00:33.198] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeclientuserdev' with arguments [--version, 21.1.68, --gameDir, ., --assetsDir, C:\Users\JayDeeHome\.gradle\caches\neoformruntime\assets, --assetIndex, 17]
+[13Oct2024 17:00:33.244] [main/WARN] [mixin/]: Reference map 'geckolib.refmap.json' for geckolib.mixins.json could not be read. If this is a development environment you can ignore this message
+[13Oct2024 17:00:33.427] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.4.1).
+[13Oct2024 17:00:34.164] [main/INFO] [DevAuth/]: Successfully logged in as Shaydeejay
+[13Oct2024 17:00:35.259] [Datafixer Bootstrap/INFO] [com.mojang.datafixers.DataFixerBuilder/]: 229 Datafixer optimizations took 358 milliseconds
+[13Oct2024 17:00:39.581] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[13Oct2024 17:00:39.583] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[13Oct2024 17:00:39.585] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[13Oct2024 17:00:39.586] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[13Oct2024 17:00:39.587] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[13Oct2024 17:00:39.685] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/JayDeeHome/Documents/Development/Jahdoo%20Neoforge/build/moddev/artifacts/neoforge-21.1.68-minecraft-merged.jar%23183!/assets/.mcassetsroot' uses unexpected schema
+[13Oct2024 17:00:39.685] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/JayDeeHome/Documents/Development/Jahdoo%20Neoforge/build/moddev/artifacts/neoforge-21.1.68-minecraft-merged.jar%23183!/data/.mcassetsroot' uses unexpected schema
+[13Oct2024 17:00:39.711] [Render thread/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[13Oct2024 17:00:39.720] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Setting user: Shaydeejay
+[13Oct2024 17:00:39.775] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Backend library: LWJGL version 3.3.3+5
+[13Oct2024 17:00:39.975] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.68, for MC 1.21.1
+[13Oct2024 17:00:40.712] [Render thread/INFO] [net.neoforged.neoforge.gametest.GameTestHooks/]: Enabled Gametest Namespaces: [jahdoo]
+[13Oct2024 17:00:40.972] [Render thread/INFO] [net.minecraft.server.packs.resources.ReloadableResourceManager/]: Reloading ResourceManager: vanilla, mod_resources, mod/devauth, mod/geckolib, mod/jahdoo, mod/neoforge
+[13Oct2024 17:00:41.122] [Worker-Main-1/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_all_no_pua-15.1.05.hex, loading
+[13Oct2024 17:00:41.317] [Worker-Main-5/WARN] [net.minecraft.client.renderer.texture.SpriteLoader/]: Texture jahdoo:item/health_container with size 46x46 limits mip level from 4 to 1
+[13Oct2024 17:00:41.333] [Worker-Main-4/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_jp_patch-15.1.05.hex, loading
+[13Oct2024 17:00:41.796] [Worker-Main-3/WARN] [net.minecraft.client.resources.model.BlockStateModelLoader/]: Exception loading blockstate definition: 'jahdoo:blockstates/infusion_table.json' missing model for variant: 'jahdoo:infusion_table#facing=down'
+[13Oct2024 17:00:41.797] [Worker-Main-3/WARN] [net.minecraft.client.resources.model.BlockStateModelLoader/]: Exception loading blockstate definition: 'jahdoo:blockstates/infusion_table.json' missing model for variant: 'jahdoo:infusion_table#facing=up'
+[13Oct2024 17:00:41.797] [Worker-Main-3/WARN] [net.minecraft.client.resources.model.ModelBakery/]: Unable to load model: 'jahdoo:block/wand' referenced from: jahdoo:block/wand: java.io.FileNotFoundException: jahdoo:models/block/wand.json
+[13Oct2024 17:00:42.399] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:item.goat_horn.play
+[13Oct2024 17:00:42.399] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:entity.goat.screaming.horn_break
+[13Oct2024 17:00:42.513] [Render thread/INFO] [com.mojang.blaze3d.audio.Library/]: OpenAL initialized on device OpenAL Soft on Headphones (LE_WH-1000XM3)
+[13Oct2024 17:00:42.513] [Render thread/INFO] [net.minecraft.client.sounds.SoundEngine/SOUNDS]: Sound engine started
+[13Oct2024 17:00:42.629] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x1024x4 minecraft:textures/atlas/blocks.png-atlas
+[13Oct2024 17:00:42.636] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[13Oct2024 17:00:42.636] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[13Oct2024 17:00:42.636] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[13Oct2024 17:00:42.637] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[13Oct2024 17:00:42.638] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
+[13Oct2024 17:00:42.639] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[13Oct2024 17:00:42.639] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[13Oct2024 17:00:42.639] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[13Oct2024 17:00:42.706] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[13Oct2024 17:00:42.707] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[13Oct2024 17:00:42.707] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[13Oct2024 17:00:42.708] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 64x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[13Oct2024 17:00:42.708] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x512x0 minecraft:textures/atlas/gui.png-atlas
+[13Oct2024 17:00:42.730] [Render thread/WARN] [net.minecraft.client.renderer.ShaderInstance/]: Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
+[13Oct2024 17:00:42.875] [Render thread/INFO] [net.neoforged.neoforge.client.entity.animation.json.AnimationLoader/]: Loaded 0 entity animations
+[13Oct2024 17:00:56.355] [Render thread/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 1296 recipes
+[13Oct2024 17:00:56.507] [Render thread/INFO] [net.minecraft.advancements.AdvancementTree/]: Loaded 1399 advancements
+[13Oct2024 17:01:06.386] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Starting integrated minecraft server version 1.21.1
+[13Oct2024 17:01:06.386] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Generating keypair
+[13Oct2024 17:01:06.834] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[13Oct2024 17:01:06.858] [progressListener/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 2%
+[13Oct2024 17:01:06.963] [Server thread/INFO] [net.neoforged.neoforge.server.permission.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[13Oct2024 17:01:06.970] [progressListener/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 131 ms
+[13Oct2024 17:01:06.988] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Changing view distance to 12, from 10
+[13Oct2024 17:01:06.988] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Changing simulation distance to 12, from 0
+[13Oct2024 17:01:07.612] [Server thread/INFO] [net.minecraft.server.players.PlayerList/]: Shaydeejay[local:E:54e4caa6] logged in with entity id 1 at (-0.5, -60.0, -0.5)
+[13Oct2024 17:01:07.667] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Shaydeejay joined the game
+[13Oct2024 17:01:08.487] [Render thread/WARN] [net.minecraft.client.ClientRecipeBook/]: Unknown recipe category: jahdoo:creator_block/jahdoo:augment
+[13Oct2024 17:01:08.488] [Render thread/WARN] [net.minecraft.client.ClientRecipeBook/]: Unknown recipe category: jahdoo:creator_block/jahdoo:wand_vitality
+[13Oct2024 17:01:08.488] [Render thread/WARN] [net.minecraft.client.ClientRecipeBook/]: Unknown recipe category: jahdoo:creator_block/jahdoo:wand_mystic
+[13Oct2024 17:01:08.488] [Render thread/WARN] [net.minecraft.client.ClientRecipeBook/]: Unknown recipe category: jahdoo:creator_block/jahdoo:wand_inferno
+[13Oct2024 17:01:08.488] [Render thread/WARN] [net.minecraft.client.ClientRecipeBook/]: Unknown recipe category: jahdoo:creator_block/jahdoo:wand_frost
+[13Oct2024 17:01:08.488] [Render thread/WARN] [net.minecraft.client.ClientRecipeBook/]: Unknown recipe category: jahdoo:creator_block/jahdoo:wand_lightning
+[13Oct2024 17:01:08.499] [Render thread/INFO] [net.minecraft.advancements.AdvancementTree/]: Loaded 2 advancements
+[13Oct2024 17:01:28.115] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
+[13Oct2024 17:01:28.128] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[13Oct2024 17:01:28.140] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[13Oct2024 17:01:28.148] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[13Oct2024 17:01:43.065] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
+[13Oct2024 17:01:43.089] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[13Oct2024 17:01:43.095] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[13Oct2024 17:01:43.098] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end

@@ -1,0 +1,63 @@
+{
+  "dash_effect": {
+    "subtitles": "sounds.jahdoo.dash_effect",
+    "sounds": [
+      "jahdoo:dash_effect"
+    ]
+  },
+  "orb_create": {
+    "subtitles": "sounds.jahdoo.orb_create",
+    "sounds": [
+      "jahdoo:orb_create"
+    ]
+  },
+  "orb_fire": {
+    "subtitles": "sounds.jahdoo.orb_fire",
+    "sounds": [
+      "jahdoo:orb_fire"
+    ]
+  },
+  "ice_attach": {
+    "subtitles": "sounds.jahdoo.ice_attach",
+    "sounds": [
+      "jahdoo:ice_attach"
+    ]
+  },
+  "ice_explosion": {
+    "subtitles": "sounds.jahdoo.ice_explosion",
+    "sounds": [
+      "jahdoo:ice_explosion"
+    ]
+  },
+  "empower_ice_armour": {
+    "subtitles": "sounds.jahdoo.empower_ice_armour",
+    "sounds": [
+      "jahdoo:empower_ice_armour"
+    ]
+  },
+  "bolt": {
+    "subtitles": "sounds.jahdoo.bolt",
+    "sounds": [
+      "jahdoo:bolt"
+    ]
+  },
+  "timer": {
+    "subtitles": "sounds.jahdoo.timer",
+    "sounds": [
+      "jahdoo:timer"
+    ]
+  },
+  "explosion": {
+    "subtitles": "sounds.jahdoo.explosion",
+    "sounds": [
+      "jahdoo:explosion"
+    ]
+  },
+
+  "magic_explosion": {
+    "subtitles": "sounds.jahdoo.magic_explosion",
+    "sounds": [
+      "jahdoo:magic_explosion"
+    ]
+  }
+}

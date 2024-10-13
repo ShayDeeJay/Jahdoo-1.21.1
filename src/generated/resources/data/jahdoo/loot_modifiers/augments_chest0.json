@@ -1,0 +1,14 @@
+{
+  "type": "jahdoo:append_loot",
+  "conditions": [
+    {
+      "chance": 0.5,
+      "condition": "minecraft:random_chance"
+    },
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:chests/ancient_city"
+    }
+  ],
+  "item": "jahdoo:unidentified_augment"
+}

@@ -1,0 +1,27 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"up_swipe_cast": {
+			"animation_length": 0.5417,
+			"bones": {
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						},
+						"0.0833": {
+							"vector": [-10, -10, 0],
+							"easing": "linear"
+						},
+						"0.25": {
+							"vector": [-120.87337, 0.52535, 14.52358],
+							"easing": "easeInElastic",
+							"easingArgs": []
+						}
+					}
+				}
+			}
+		}
+	}
+}

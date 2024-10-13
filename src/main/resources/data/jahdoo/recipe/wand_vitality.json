@@ -1,0 +1,21 @@
+{
+  "type": "jahdoo:creator_block",
+  "ingredients": [
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:spruce_log"
+    },
+    {
+      "item": "minecraft:red_dye"
+    },
+    {
+      "item": "jahdoo:augment_core"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "jahdoo:wand_vitality"
+  }
+}
