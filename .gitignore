@@ -2,3 +2,589 @@
 /.gradle/
 /build/
 /build/classes/java/main/
+/src/generated/resources/.cache/1ecbfd7c533253636df67bf75807d7e837a0a311
+/src/generated/resources/.cache/9fb1092f32d4fcbf9e061ffd718d4ec689c6c95e
+/src/generated/resources/.cache/59eb3dbb5f86130e09b3c62d89b9525ee01cf52d
+/run/saves/New World/playerdata/68b9e652-b082-4453-ab8b-e5cc5c777109.dat
+/run/saves/New World (1)/playerdata/68b9e652-b082-4453-ab8b-e5cc5c777109.dat
+/run/saves/New World (2)/playerdata/68b9e652-b082-4453-ab8b-e5cc5c777109.dat
+/run/saves/New World (1)/playerdata/68b9e652-b082-4453-ab8b-e5cc5c777109.dat_old
+/run/saves/New World (2)/playerdata/68b9e652-b082-4453-ab8b-e5cc5c777109.dat_old
+/run/profilekeys/68b9e652-b082-4453-ab8b-e5cc5c777109.json
+/run/saves/New World (1)/advancements/68b9e652-b082-4453-ab8b-e5cc5c777109.json
+/run/saves/New World (1)/stats/68b9e652-b082-4453-ab8b-e5cc5c777109.json
+/run/saves/New World (2)/advancements/68b9e652-b082-4453-ab8b-e5cc5c777109.json
+/run/saves/New World (2)/stats/68b9e652-b082-4453-ab8b-e5cc5c777109.json
+/src/generated/resources/.cache/103d9f3f36b01595f1aa5172191e60eff02e6924
+/src/generated/resources/.cache/216d467ebc688a89aa1c26c1ee9cd72f4255c963
+/run/saves/New World/playerdata/380df991-f603-344c-a090-369bad2a924a.dat
+/run/saves/New World/advancements/380df991-f603-344c-a090-369bad2a924a.json
+/run/saves/New World/stats/380df991-f603-344c-a090-369bad2a924a.json
+/run/logs/2024-10-13-1.log.gz
+/run/logs/2024-10-13-2.log.gz
+/run/logs/2024-10-13-3.log.gz
+/run/logs/2024-10-13-4.log.gz
+/run/logs/2024-10-13-5.log.gz
+/run/logs/2024-10-13-6.log.gz
+/run/logs/2024-10-13-7.log.gz
+/run/logs/2024-10-13-8.log.gz
+/run/logs/2024-10-13-9.log.gz
+/run/logs/2024-10-13-10.log.gz
+/run/logs/2024-10-13-11.log.gz
+/run/logs/2024-10-13-12.log.gz
+/run/logs/2024-10-13-13.log.gz
+/run/logs/2024-10-13-14.log.gz
+/run/logs/2024-10-13-15.log.gz
+/run/logs/2024-10-13-16.log.gz
+/run/logs/2024-10-13-17.log.gz
+/run/logs/2024-10-13-18.log.gz
+/run/logs/2024-10-13-19.log.gz
+/run/logs/2024-10-13-20.log.gz
+/run/logs/2024-10-13-21.log.gz
+/run/logs/2024-10-13-22.log.gz
+/run/logs/2024-10-13-23.log.gz
+/run/logs/2024-10-13-24.log.gz
+/run/logs/2024-10-13-25.log.gz
+/run/logs/2024-10-13-26.log.gz
+/run/logs/2024-10-13-27.log.gz
+/run/logs/2024-10-13-28.log.gz
+/run/logs/2024-10-13-29.log.gz
+/run/logs/2024-10-13-30.log.gz
+/run/logs/2024-10-13-31.log.gz
+/run/logs/2024-10-13-32.log.gz
+/run/logs/2024-10-13-33.log.gz
+/run/logs/2024-10-13-34.log.gz
+/run/logs/2024-10-13-35.log.gz
+/run/logs/2024-10-13-36.log.gz
+/run/logs/2024-10-13-37.log.gz
+/run/logs/2024-10-13-38.log.gz
+/run/logs/2024-10-13-39.log.gz
+/run/logs/2024-10-13-40.log.gz
+/run/logs/2024-10-13-41.log.gz
+/run/screenshots/2024-10-13_20.49.54.png
+/run/logs/2024-10-14-2.log.gz
+/run/logs/2024-10-14-3.log.gz
+/run/logs/2024-10-14-4.log.gz
+/run/logs/2024-10-14-5.log.gz
+/run/logs/2024-10-14-6.log.gz
+/run/logs/2024-10-14-7.log.gz
+/run/logs/2024-10-14-8.log.gz
+/run/logs/2024-10-14-9.log.gz
+/run/logs/2024-10-14-10.log.gz
+/run/logs/2024-10-14-11.log.gz
+/run/logs/2024-10-14-12.log.gz
+/run/logs/2024-10-14-13.log.gz
+/run/logs/2024-10-14-14.log.gz
+/run/logs/2024-10-14-15.log.gz
+/run/logs/2024-10-14-16.log.gz
+/run/logs/2024-10-14-17.log.gz
+/run/logs/2024-10-14-18.log.gz
+/run/logs/2024-10-14-19.log.gz
+/run/logs/2024-10-14-20.log.gz
+/run/logs/2024-10-14-21.log.gz
+/run/logs/2024-10-14-22.log.gz
+/run/logs/2024-10-14-23.log.gz
+/run/logs/2024-10-14-24.log.gz
+/run/logs/2024-10-14-25.log.gz
+/run/logs/2024-10-14-26.log.gz
+/run/logs/2024-10-14-27.log.gz
+/run/logs/2024-10-14-28.log.gz
+/run/logs/2024-10-14-29.log.gz
+/run/logs/2024-10-14-30.log.gz
+/run/logs/2024-10-14-31.log.gz
+/run/logs/2024-10-14-32.log.gz
+/run/logs/2024-10-14-33.log.gz
+/run/logs/2024-10-14-34.log.gz
+/run/logs/2024-10-14-35.log.gz
+/run/logs/2024-10-14-36.log.gz
+/run/logs/2024-10-14-37.log.gz
+/run/logs/2024-10-14-38.log.gz
+/run/logs/2024-10-14-39.log.gz
+/run/logs/2024-10-14-40.log.gz
+/run/logs/2024-10-14-41.log.gz
+/run/logs/2024-10-14-42.log.gz
+/run/logs/2024-10-14-43.log.gz
+/run/logs/2024-10-14-44.log.gz
+/run/logs/2024-10-14-45.log.gz
+/run/logs/2024-10-14-46.log.gz
+/run/logs/2024-10-14-47.log.gz
+/run/logs/2024-10-14-48.log.gz
+/run/logs/2024-10-14-49.log.gz
+/run/logs/2024-10-14-50.log.gz
+/run/logs/2024-10-14-51.log.gz
+/run/screenshots/2024-10-14_23.53.31.png
+/run/screenshots/2024-10-14_23.53.36.png
+/run/logs/2024-10-15-2.log.gz
+/run/logs/2024-10-15-3.log.gz
+/run/logs/2024-10-15-4.log.gz
+/run/logs/2024-10-15-5.log.gz
+/run/logs/2024-10-15-6.log.gz
+/run/logs/2024-10-15-7.log.gz
+/run/logs/2024-10-15-8.log.gz
+/run/logs/2024-10-15-9.log.gz
+/run/logs/2024-10-15-10.log.gz
+/run/logs/2024-10-15-11.log.gz
+/run/logs/2024-10-15-12.log.gz
+/run/logs/2024-10-15-13.log.gz
+/run/logs/2024-10-15-14.log.gz
+/run/logs/2024-10-15-15.log.gz
+/run/logs/2024-10-15-16.log.gz
+/run/logs/2024-10-15-17.log.gz
+/run/logs/2024-10-15-18.log.gz
+/run/logs/2024-10-15-19.log.gz
+/run/logs/2024-10-15-20.log.gz
+/run/logs/2024-10-15-21.log.gz
+/run/screenshots/2024-10-15_00.52.02.png
+/run/screenshots/2024-10-15_17.48.39.png
+/run/logs/2024-10-16-2.log.gz
+/run/logs/2024-10-16-3.log.gz
+/run/logs/2024-10-16-4.log.gz
+/run/logs/2024-10-16-5.log.gz
+/run/logs/2024-10-16-6.log.gz
+/run/logs/2024-10-16-7.log.gz
+/run/logs/2024-10-16-8.log.gz
+/run/logs/2024-10-16-9.log.gz
+/run/logs/2024-10-16-10.log.gz
+/run/logs/2024-10-16-11.log.gz
+/run/logs/2024-10-16-12.log.gz
+/run/logs/2024-10-16-13.log.gz
+/run/logs/2024-10-16-14.log.gz
+/run/logs/2024-10-16-15.log.gz
+/run/logs/2024-10-16-16.log.gz
+/run/logs/2024-10-16-17.log.gz
+/run/logs/2024-10-17-1.log.gz
+/run/logs/2024-10-17-2.log.gz
+/run/logs/2024-10-17-3.log.gz
+/run/logs/2024-10-17-4.log.gz
+/run/logs/2024-10-17-5.log.gz
+/run/logs/2024-10-17-6.log.gz
+/run/logs/2024-10-17-7.log.gz
+/run/logs/2024-10-17-8.log.gz
+/run/logs/2024-10-17-9.log.gz
+/run/logs/2024-10-17-10.log.gz
+/run/logs/2024-10-17-11.log.gz
+/run/logs/2024-10-17-12.log.gz
+/run/logs/2024-10-17-13.log.gz
+/run/logs/2024-10-17-14.log.gz
+/run/logs/2024-10-17-15.log.gz
+/run/logs/2024-10-17-16.log.gz
+/run/logs/2024-10-17-17.log.gz
+/run/logs/2024-10-17-18.log.gz
+/run/logs/2024-10-17-19.log.gz
+/run/logs/2024-10-17-20.log.gz
+/run/logs/2024-10-17-21.log.gz
+/run/logs/2024-10-17-22.log.gz
+/run/logs/2024-10-17-23.log.gz
+/run/logs/2024-10-17-24.log.gz
+/run/logs/2024-10-17-25.log.gz
+/run/logs/2024-10-17-26.log.gz
+/run/logs/2024-10-17-27.log.gz
+/run/logs/2024-10-17-28.log.gz
+/run/logs/2024-10-17-29.log.gz
+/run/logs/2024-10-17-30.log.gz
+/run/logs/2024-10-17-31.log.gz
+/run/logs/2024-10-17-32.log.gz
+/run/logs/2024-10-17-33.log.gz
+/run/logs/2024-10-17-34.log.gz
+/run/logs/2024-10-17-35.log.gz
+/run/logs/2024-10-17-36.log.gz
+/run/logs/2024-10-17-37.log.gz
+/run/logs/2024-10-17-38.log.gz
+/run/logs/2024-10-17-39.log.gz
+/run/logs/2024-10-17-40.log.gz
+/run/logs/2024-10-17-41.log.gz
+/run/logs/2024-10-17-42.log.gz
+/run/logs/2024-10-17-43.log.gz
+/run/logs/2024-10-17-44.log.gz
+/run/logs/2024-10-17-45.log.gz
+/run/logs/2024-10-17-46.log.gz
+/run/logs/2024-10-17-47.log.gz
+/run/logs/2024-10-17-48.log.gz
+/run/logs/2024-10-17-49.log.gz
+/run/logs/2024-10-17-50.log.gz
+/run/logs/2024-10-17-51.log.gz
+/run/logs/2024-10-17-52.log.gz
+/run/logs/2024-10-17-53.log.gz
+/run/logs/2024-10-17-54.log.gz
+/run/screenshots/2024-10-17_01.04.46.png
+/run/screenshots/2024-10-17_16.43.43.png
+/run/screenshots/2024-10-17_21.44.55.png
+/run/screenshots/2024-10-17_21.47.51.png
+/run/screenshots/2024-10-17_21.50.14.png
+/run/screenshots/2024-10-17_21.50.44.png
+/src/generated/resources/.cache/09330168fccc0630dfd60cd3182cd23439cb3b38
+/src/main/resources/assets/jahdoo/textures/gui/ability_wheel_background.png
+/src/main/java/org/jahdoo/components/AbilityHolder.java
+/src/main/java/org/jahdoo/registers/AbilityRegister.java
+/src/main/java/org/jahdoo/client/entity_renderer/decoy/AbstractDecoyModel.java
+/src/main/java/org/jahdoo/all_magic/AbstractElement.java
+/src/main/java/org/jahdoo/all_magic/AbstractUtilityProjectile.java
+/src/generated/resources/data/jahdoo/neoforge/biome_modifier/add_crystal_ore.json
+/src/main/resources/assets/jahdoo/textures/ability_icons/arcane_shift.png
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/ArcaneShift.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/ArmageddonModule.java
+/src/main/java/org/jahdoo/registers/AttachmentRegister.java
+/src/main/java/org/jahdoo/registers/AttributesRegister.java
+/src/main/java/org/jahdoo/items/augments/Augment.java
+/src/main/resources/assets/jahdoo/textures/item/crystals/augment_fragment.png
+/src/main/java/org/jahdoo/items/augments/AugmentRatingSystem.java
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest2.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest3.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest6.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest8.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest9.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest10.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest14.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest21.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest22.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest23.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest24.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest26.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest27.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest28.json
+/src/generated/resources/data/jahdoo/loot_modifiers/augments_chest29.json
+/src/main/resources/assets/jahdoo/particles/baked_frost.json
+/src/main/resources/assets/jahdoo/particles/baked_lightning.json
+/src/main/resources/assets/jahdoo/particles/baked_mystic.json
+/run/banned-ips.json
+/run/banned-players.json
+/src/main/java/org/jahdoo/all_magic/all_abilities/utility/raw_utilities/BlockBreaker.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/utility/BlockBreakerAbility.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/utility/raw_utilities/BlockPlacer.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/utility/BlockPlacerAbility.java
+/src/main/java/org/jahdoo/registers/BlocksRegister.java
+/src/main/resources/assets/minecraft/shaders/program/blur.vsh
+/src/main/resources/assets/jahdoo/sounds/bolt.ogg
+/src/main/java/org/jahdoo/all_magic/all_abilities/utility/raw_utilities/BoneMeal.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/utility/BoneMealAbility.java
+/src/main/java/org/jahdoo/event/CapabilityEvents.java
+/src/main/java/org/jahdoo/items/wand/CastHelper.java
+/run/command_history.txt
+/.idea/compiler.xml
+/src/main/java/org/jahdoo/networking/packet/CooldownsDataSyncS2CPacket.java
+/run/crash-reports/crash-2024-10-13_18.39.08-server.txt
+/run/crash-reports/crash-2024-10-14_00.19.11-server.txt
+/run/crash-reports/crash-2024-10-14_00.21.13-server.txt
+/run/crash-reports/crash-2024-10-14_01.04.46-server.txt
+/run/crash-reports/crash-2024-10-14_02.48.49-server.txt
+/run/crash-reports/crash-2024-10-14_02.52.38-server.txt
+/run/crash-reports/crash-2024-10-14_22.07.32-client.txt
+/run/crash-reports/crash-2024-10-16_20.42.17-client.txt
+/run/crash-reports/crash-2024-10-17_01.08.57-server.txt
+/run/crash-reports/crash-2024-10-17_01.11.24-server.txt
+/run/crash-reports/crash-2024-10-17_16.12.50-client.txt
+/run/crash-reports/crash-2024-10-17_16.14.18-client.txt
+/run/crash-reports/crash-2024-10-17_17.22.36-server.txt
+/src/generated/resources/data/jahdoo/advancement/recipes/misc/creator.json
+/src/generated/resources/data/jahdoo/loot_table/blocks/creator.json
+/src/generated/resources/data/jahdoo/recipe/creator.json
+/src/main/java/org/jahdoo/block/crafter/CreatorBlock.java
+/src/main/java/org/jahdoo/block/crafter/CreatorEntity.java
+/src/main/java/org/jahdoo/recipe/CreatorRecipe.java
+/src/main/resources/assets/jahdoo/textures/entity/cryo_projectile.png
+/src/main/resources/assets/jahdoo/textures/entity/cryo_projectile_glowmask.png
+/src/generated/resources/assets/jahdoo/blockstates/crystal_deepslate_ore.json
+/src/generated/resources/assets/jahdoo/models/block/crystal_deepslate_ore.json
+/src/generated/resources/assets/jahdoo/models/item/crystal_deepslate_ore.json
+/src/generated/resources/data/jahdoo/loot_table/blocks/crystal_deepslate_ore.json
+/src/generated/resources/data/jahdoo/worldgen/configured_feature/crystal_deepslate_ore.json
+/src/generated/resources/assets/jahdoo/models/item/crystal_ore.json
+/src/main/resources/assets/jahdoo/textures/block/crystal_ore.png
+/src/generated/resources/data/jahdoo/worldgen/placed_feature/crystal_ore_placed.json
+/src/main/java/org/jahdoo/utils/DataComponentHelper.java
+/src/main/java/org/jahdoo/registers/DataComponentRegistry.java
+/src/main/java/org/jahdoo/datagen/DataGenerators.java
+/run/world/playerdata/db910d76-949b-30a7-ab25-278b8fc81ec0.dat
+/run/world/playerdata/db910d76-949b-30a7-ab25-278b8fc81ec0.dat_old
+/run/world/advancements/db910d76-949b-30a7-ab25-278b8fc81ec0.json
+/run/world/stats/db910d76-949b-30a7-ab25-278b8fc81ec0.json
+/src/generated/resources/.cache/dd2cd3fc2d84b963b00b2f5ba165c3a13e3f6473
+/run/logs/debug-1.log.gz
+/run/logs/debug-2.log.gz
+/run/logs/debug-3.log.gz
+/run/logs/debug-4.log.gz
+/run/logs/debug-5.log.gz
+/src/main/java/org/jahdoo/entities/Decoy.java
+/src/main/java/org/jahdoo/client/entity_renderer/decoy/DecoyModel.java
+/src/main/java/org/jahdoo/all_magic/DefaultEntityBehaviour.java
+/run/debug/disconnect-2024-10-13_20.19.39-client.txt
+/run/debug/disconnect-2024-10-13_20.48.53-client.txt
+/src/main/resources/assets/jahdoo/textures/item/crystals/edible_crystal_cooked_cod.png
+/src/main/resources/assets/jahdoo/textures/item/crystals/edible_crystal_cooked_porkchop.png
+/src/main/resources/assets/jahdoo/textures/item/crystals/edible_crystal_cookie.png
+/src/main/resources/assets/jahdoo/textures/item/crystals/edible_crystal_dried_kelp.png
+/src/main/resources/assets/jahdoo/textures/item/crystals/edible_crystal_golden_apple.png
+/src/main/resources/assets/jahdoo/particles/electric.json
+/src/main/java/org/jahdoo/registers/ElementRegistry.java
+/src/main/resources/assets/jahdoo/sounds/empower_ice_armour.ogg
+/src/main/resources/assets/jahdoo/lang/en_us.json
+/src/main/java/org/jahdoo/registers/EntitiesRegister.java
+/src/main/java/org/jahdoo/datagen/loot/EntityTagGenerator.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/EscapeDecoyAbility.java
+/src/main/resources/assets/jahdoo/textures/entity/eternal_wizard/eternal_wizard.png
+/src/main/resources/assets/jahdoo/textures/entity/eternal_wizard/eternal_wizard_outer_top_1.png
+/src/main/java/org/jahdoo/all_magic/all_abilities/ability_components/EtherealArrow.java
+/src/main/resources/assets/jahdoo/sounds/explosion.ogg
+/src/main/resources/assets/jahdoo/textures/item/augments/old_augments/fire_augment.png.mcmeta
+/src/main/resources/assets/jahdoo/textures/entity/fire_projectile.png
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/FireBall.java
+/src/main/resources/assets/jahdoo/textures/ability_icons/fireball.png
+/src/main/resources/assets/jahdoo/player_animation/floating.json
+/run/config/fml.toml
+/src/main/java/org/jahdoo/entities/goals/FollowGoal.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/FrostboltsAbility.java
+/run/saves/New World/data/geckolib_id_cache.dat
+/src/main/resources/assets/jahdoo/particles/generic.json
+/src/main/java/org/jahdoo/entities/goals/GenericHurtByTargetGoal.java
+/src/main/java/org/jahdoo/entities/GenericProjectile.java
+/src/main/java/org/jahdoo/client/entity_renderer/GenericProjectileRenderer.java
+/gradle.properties
+/gradle/wrapper/gradle-wrapper.properties
+/src/main/java/org/jahdoo/all_magic/all_abilities/utility/raw_utilities/Hammer.java
+/src/main/resources/assets/jahdoo/textures/particle/heal_particle/health_container_1.png
+/src/main/java/org/jahdoo/items/heart_container/HealthContainer.java
+/src/main/resources/assets/jahdoo/textures/item/augments/ice_augment.png
+/src/main/resources/assets/jahdoo/sounds/ice_explosion.ogg
+/src/main/java/org/jahdoo/all_magic/effects/custom_effects/type_effects/IceEffect.java
+/run/saves/New World (1)/icon.png
+/run/saves/New World (2)/icon.png
+/src/main/resources/assets/jahdoo/player_animation/idle_wand.json
+/src/main/resources/assets/jahdoo/textures/gui/in_inventory.png
+/src/main/java/org/jahdoo/all_magic/elements/Inferno.java
+/src/generated/resources/data/jahdoo/tags/item/infuse.json
+/src/generated/resources/assets/jahdoo/blockstates/infuser.json
+/src/generated/resources/data/jahdoo/advancement/recipes/misc/infuser.json
+/src/generated/resources/data/jahdoo/loot_table/blocks/infuser.json
+/src/generated/resources/data/jahdoo/recipe/infuser.json
+/src/main/resources/assets/jahdoo/models/block/infuser.json
+/src/main/java/org/jahdoo/block/infuser/InfuserBlockEntity.java
+/src/main/java/org/jahdoo/client/block_models/InfuserModel.java
+/src/main/java/org/jahdoo/client/block_renderer/InfuserRenderer.java
+/src/generated/resources/data/jahdoo/loot_table/blocks/infusion_table.json
+/src/main/resources/assets/jahdoo/models/block/infusion_table.json
+/src/main/java/org/jahdoo/client/gui/infusion_table/InfusionTableScreen.java
+/src/main/java/org/jahdoo/utils/ItemEntityBehaviour.java
+/src/main/java/org/jahdoo/mixin/ItemEntityMixin.java
+/src/main/java/org/jahdoo/all_magic/effects/custom_effects/ItemMagnetEffect.java
+/src/main/resources/jahdoo.mixins.json
+/.idea/modules/Jahdoo Neoforge.Jahdoo_Neoforge.main.iml
+/src/generated/resources/assets/jahdoo/models/item/jide_powder.json
+/src/generated/resources/assets/jahdoo/models/item/jide_powder_block.json
+/src/generated/resources/data/jahdoo/loot_table/blocks/jide_powder_block.json
+/run/saves/New World (1)/level.dat
+/run/saves/New World (2)/level.dat
+/run/world/level.dat
+/run/saves/New World/level.dat_old
+/run/saves/New World (1)/level.dat_old
+/run/saves/New World (2)/level.dat_old
+/run/world/level.dat_old
+/src/generated/resources/assets/jahdoo/models/item/lighting.json
+/src/generated/resources/data/jahdoo/loot_table/blocks/lighting.json
+/src/main/resources/assets/jahdoo/models/block/lighting.json
+/src/main/resources/assets/jahdoo/textures/block/lighting.png
+/src/main/java/org/jahdoo/all_magic/elements/Lightning.java
+/src/main/resources/assets/jahdoo/textures/entity/lightning_projectile.png
+/src/main/resources/assets/jahdoo/textures/entity/lightning_projectile_glowmask.png
+/src/main/java/org/jahdoo/all_magic/all_abilities/utility/raw_utilities/LightPlacer.java
+/src/main/resources/assets/jahdoo/textures/particle/magic_mystical/magic2_1.png
+/src/main/resources/assets/jahdoo/textures/particle/magic_utility/magic2_1.png
+/src/main/resources/assets/jahdoo/textures/particle/magic_vitality/magic2_1.png
+/src/main/resources/assets/jahdoo/textures/particle/magic_basic/magic_3.png
+/src/main/resources/assets/jahdoo/sounds/magic_explosion.ogg
+/src/main/resources/assets/jahdoo/textures/particle/magic_generic/magic_generic_1.png
+/src/main/resources/assets/jahdoo/textures/gui/man_type_overlay.png
+/src/main/java/org/jahdoo/worldgen/ModBiomeModifiers.java
+/src/main/java/org/jahdoo/event/ModEventHandler.java
+/src/main/java/org/jahdoo/datagen/ModItemModelProvider.java
+/src/main/java/org/jahdoo/datagen/ModItemTagGenerator.java
+/src/main/java/org/jahdoo/loot/ModLootModifiers.java
+/src/main/java/org/jahdoo/worldgen/ModOrePlacement.java
+/.idea/modules.xml
+/src/main/java/org/jahdoo/datagen/ModWorldGenProvider.java
+/src/main/java/org/jahdoo/all_magic/elements/Mystic.java
+/src/generated/resources/assets/jahdoo/models/item/mystic_augment.json
+/src/main/resources/assets/jahdoo/textures/item/augments/mystic_augment.png
+/src/main/resources/assets/jahdoo/textures/item/augments/old_augments/mystic_augment.png.mcmeta
+/src/main/resources/assets/jahdoo/textures/particle/mystic_projectile/mystic_projectile_2.png
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/MysticalSemtex.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/MysticalSemtexAbility.java
+/src/main/resources/META-INF/neoforge.mods.toml
+/run/config/neoforge-client.toml
+/run/config/neoforge-server.toml
+/run/saves/New World/DIM1/data/neoforge_data_attachments.dat
+/run/saves/New World (1)/data/neoforge_data_attachments.dat
+/run/saves/New World (1)/DIM1/data/neoforge_data_attachments.dat
+/run/saves/New World (1)/DIM-1/data/neoforge_data_attachments.dat
+/run/saves/New World (2)/data/neoforge_data_attachments.dat
+/run/saves/New World (2)/DIM1/data/neoforge_data_attachments.dat
+/run/saves/New World (2)/DIM-1/data/neoforge_data_attachments.dat
+/run/world/data/neoforge_data_attachments.dat
+/run/world/DIM1/data/neoforge_data_attachments.dat
+/run/world/DIM-1/data/neoforge_data_attachments.dat
+/src/main/resources/assets/jahdoo/textures/ability_icons/ominous_protector.png
+/run/ops.json
+/run/options.txt
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/Overcharge.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/OverchargedAbility.java
+/src/main/java/org/jahdoo/registers/OverlayRegistry.java
+/src/main/java/org/jahdoo/particle/ParticleStore.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/Permafrost.java
+/src/main/java/org/jahdoo/all_magic/ProjectileProperties.java
+/src/main/java/org/jahdoo/registers/ProjectilePropertyRegister.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/QuantumDestroyer.java
+/run/saves/New World/DIM-1/entities/r.0.0.mca
+/run/saves/New World/DIM-1/poi/r.0.0.mca
+/run/saves/New World/DIM-1/region/r.0.0.mca
+/run/saves/New World/poi/r.0.0.mca
+/run/saves/New World (2)/poi/r.0.0.mca
+/run/saves/New World (2)/region/r.0.0.mca
+/run/world/entities/r.0.0.mca
+/run/world/poi/r.0.0.mca
+/run/world/region/r.0.0.mca
+/run/saves/New World/DIM-1/entities/r.0.-1.mca
+/run/saves/New World/DIM-1/poi/r.0.-1.mca
+/run/saves/New World/DIM-1/region/r.0.-1.mca
+/run/saves/New World/poi/r.0.-1.mca
+/run/saves/New World (2)/entities/r.0.-1.mca
+/run/saves/New World (2)/poi/r.0.-1.mca
+/run/saves/New World (2)/region/r.0.-1.mca
+/run/world/entities/r.0.-1.mca
+/run/world/poi/r.0.-1.mca
+/run/world/region/r.0.-1.mca
+/run/saves/New World (2)/entities/r.0.-2.mca
+/run/saves/New World (2)/poi/r.0.-2.mca
+/run/saves/New World (2)/region/r.0.-2.mca
+/run/saves/New World (2)/region/r.1.0.mca
+/run/saves/New World (2)/region/r.1.-1.mca
+/run/saves/New World (2)/poi/r.1.-2.mca
+/run/saves/New World (2)/region/r.1.-2.mca
+/run/saves/New World/DIM-1/entities/r.-1.0.mca
+/run/saves/New World/DIM-1/poi/r.-1.0.mca
+/run/saves/New World/DIM-1/region/r.-1.0.mca
+/run/saves/New World/entities/r.-1.0.mca
+/run/saves/New World/poi/r.-1.0.mca
+/run/saves/New World/region/r.-1.0.mca
+/run/saves/New World (1)/poi/r.-1.0.mca
+/run/saves/New World (1)/region/r.-1.0.mca
+/run/saves/New World (2)/poi/r.-1.0.mca
+/run/saves/New World (2)/region/r.-1.0.mca
+/run/world/entities/r.-1.0.mca
+/run/world/poi/r.-1.0.mca
+/run/world/region/r.-1.0.mca
+/run/saves/New World (1)/entities/r.-1.1.mca
+/run/saves/New World (1)/poi/r.-1.1.mca
+/run/saves/New World (1)/region/r.-1.1.mca
+/run/saves/New World (1)/entities/r.-1.2.mca
+/run/saves/New World (1)/poi/r.-1.2.mca
+/run/saves/New World (1)/region/r.-1.2.mca
+/run/saves/New World/DIM-1/entities/r.-1.-1.mca
+/run/saves/New World/DIM-1/poi/r.-1.-1.mca
+/run/saves/New World/DIM-1/region/r.-1.-1.mca
+/run/saves/New World/poi/r.-1.-1.mca
+/run/saves/New World/region/r.-1.-1.mca
+/run/saves/New World (2)/entities/r.-1.-1.mca
+/run/saves/New World (2)/poi/r.-1.-1.mca
+/run/saves/New World (2)/region/r.-1.-1.mca
+/run/world/entities/r.-1.-1.mca
+/run/world/poi/r.-1.-1.mca
+/run/world/region/r.-1.-1.mca
+/run/saves/New World (2)/entities/r.-1.-2.mca
+/run/saves/New World (2)/poi/r.-1.-2.mca
+/run/saves/New World (2)/region/r.-1.-2.mca
+/run/saves/New World (1)/entities/r.-2.0.mca
+/run/saves/New World (1)/poi/r.-2.0.mca
+/run/saves/New World (1)/region/r.-2.0.mca
+/run/saves/New World (1)/entities/r.-2.1.mca
+/run/saves/New World (1)/poi/r.-2.1.mca
+/run/saves/New World (1)/region/r.-2.1.mca
+/run/saves/New World (1)/entities/r.-2.2.mca
+/run/saves/New World (1)/region/r.-2.2.mca
+/run/saves/New World (1)/entities/r.-3.0.mca
+/run/saves/New World (1)/poi/r.-3.0.mca
+/run/saves/New World (1)/region/r.-3.0.mca
+/run/saves/New World (1)/entities/r.-3.1.mca
+/run/saves/New World (1)/poi/r.-3.1.mca
+/run/saves/New World (1)/region/r.-3.1.mca
+/run/saves/New World (1)/poi/r.-3.2.mca
+/run/saves/New World (1)/region/r.-3.2.mca
+/run/saves/New World/data/raids.dat
+/run/saves/New World (1)/data/raids.dat
+/run/saves/New World (1)/DIM-1/data/raids.dat
+/run/saves/New World (2)/data/raids.dat
+/run/saves/New World (2)/DIM-1/data/raids.dat
+/run/world/data/raids.dat
+/run/world/DIM-1/data/raids.dat
+/run/saves/New World/DIM1/data/raids_end.dat
+/run/saves/New World (1)/DIM1/data/raids_end.dat
+/run/saves/New World (2)/DIM1/data/raids_end.dat
+/run/world/DIM1/data/raids_end.dat
+/run/saves/New World/data/random_sequences.dat
+/run/saves/New World (1)/data/random_sequences.dat
+/run/saves/New World (2)/data/random_sequences.dat
+/run/world/data/random_sequences.dat
+/src/main/java/org/jahdoo/entities/goals/RangedCustomAttackGoal.java
+/run/saves/New World (1)/serverconfig/readme.txt
+/run/saves/New World (2)/serverconfig/readme.txt
+/run/world/serverconfig/readme.txt
+/run/realms_persistence.json
+/src/main/java/org/jahdoo/client/gui/ability_and_utility_menus/ScreenButton.java
+/src/main/java/org/jahdoo/networking/packet/SelectedAbilityC2SPacket.java
+/run/server.properties
+/run/servers.dat
+/run/servers.dat_old
+/run/saves/New World/session.lock
+/run/saves/New World (1)/session.lock
+/run/saves/New World (2)/session.lock
+/run/world/session.lock
+/settings.gradle
+/src/main/java/org/jahdoo/all_magic/SharedFireProperties.java
+/src/main/resources/assets/jahdoo/textures/gui/slot.png
+/src/main/resources/assets/jahdoo/textures/gui/slot_selected_frost.png
+/src/main/resources/assets/jahdoo/textures/gui/slot_selected_inferno.png
+/src/main/resources/assets/jahdoo/textures/gui/slot_selected_lightning.png
+/src/main/resources/assets/jahdoo/textures/gui/slot_selected_mystic.png
+/src/main/resources/assets/jahdoo/textures/gui/slot_selected_utility.png
+/src/main/resources/assets/jahdoo/textures/gui/slot_selected_vitality.png
+/src/main/java/org/jahdoo/client/StaffArmPose.java
+/src/main/java/org/jahdoo/items/wand/StaffArmPose.java
+/src/main/resources/assets/jahdoo/textures/mob_effect/step_boost.png
+/src/main/java/org/jahdoo/networking/packet/StopUsingC2SPacket.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/StormRush.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/StormRushAbility.java
+/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/SummonEternalWizardAbility.java
+/src/main/resources/assets/jahdoo/player_animation/swipe_cast.json
+/src/generated/resources/assets/jahdoo/models/item/tank.json
+/src/generated/resources/data/jahdoo/advancement/recipes/misc/tank.json
+/src/generated/resources/data/jahdoo/loot_table/blocks/tank.json
+/src/generated/resources/data/jahdoo/recipe/tank.json
+/src/main/resources/assets/jahdoo/textures/block/tank.png
+/src/main/resources/assets/jahdoo/textures/gui/title_bar.png
+/.idea/uiDesigner.xml
+/src/generated/resources/assets/jahdoo/models/item/unidentified_augment.json
+/run/usernamecache.json
+/src/main/resources/assets/jahdoo/textures/item/augments/old_augments/utility_augment.png.mcmeta
+/.idea/vcs.xml
+/src/generated/resources/assets/jahdoo/models/item/vitalis_augment.json
+/src/main/resources/assets/jahdoo/textures/item/augments/old_augments/vitalis_augment.png.mcmeta
+/src/main/resources/assets/jahdoo/animations/block/wand.animation.json
+/src/main/resources/assets/jahdoo/geo/block/wand.geo.json
+/src/main/resources/assets/jahdoo/geo/item/wand.geo.json
+/src/main/resources/assets/jahdoo/textures/block/wand_frost.png
+/src/main/resources/assets/jahdoo/textures/item/wand_frost.png
+/src/main/resources/assets/jahdoo/textures/gui/wand_gui.png
+/src/main/resources/assets/jahdoo/textures/item/wand_inferno.png
+/src/main/resources/assets/jahdoo/textures/item/wand_lightning.png
+/src/generated/resources/data/jahdoo/loot_table/blocks/wand_mystic.json
+/src/main/resources/data/jahdoo/recipe/wand_mystic.json
+/src/main/resources/assets/jahdoo/textures/block/wand_mystic.png
+/src/main/resources/assets/jahdoo/textures/item/wand_mystic.png
+/src/main/resources/assets/jahdoo/textures/item/wand_vitality.png
+/src/main/java/org/jahdoo/block/wand/WandBlockEntity.java
+/src/main/java/org/jahdoo/client/gui/wand_block/WandBlockScreen.java
+/src/main/java/org/jahdoo/items/wand/WandItemHelper.java
+/src/main/java/org/jahdoo/block/wandBlockManager/WandManagerTableBlock.java
+/src/main/java/org/jahdoo/block/wandBlockManager/WandManagerTableEntity.java
+/src/main/java/org/jahdoo/client/block_renderer/WandManagerTableRenderer.java
+/src/main/java/org/jahdoo/items/wand/WandSlotManager.java
+/run/whitelist.json
+/src/main/java/org/jahdoo/client/entity_renderer/etneral_wizzard/WizardClothingLayerRenderer.java
