@@ -17,6 +17,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         blockWithItem(BlocksRegister.CRYSTAL_ORE);
+        blockWithItem(BlocksRegister.CRYSTAL_DEEPSLATE_ORE);
         simpleBlockWithItem(BlocksRegister.WAND_MANAGER_TABLE.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/infusion_table")));
         simpleBlockWithItem(BlocksRegister.TANK.get(),

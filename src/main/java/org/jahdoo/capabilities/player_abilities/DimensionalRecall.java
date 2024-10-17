@@ -10,6 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.items.wand.CastHelper;
+import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
@@ -22,6 +23,8 @@ import java.util.List;
 import static org.jahdoo.all_magic.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.all_magic.AbilityBuilder.MANA_COST;
 import static org.jahdoo.all_magic.all_abilities.abilities.DimensionalRecallAbility.abilityId;
+import static org.jahdoo.items.wand.WandAnimations.HOLD_CAST_ID;
+import static org.jahdoo.items.wand.WandAnimations.triggerAnimWithController;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.registers.AttachmentRegister.*;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
@@ -45,6 +48,7 @@ public class DimensionalRecall {
 
     public void onTickMethod(Player player){
         var getValue = player.getMainHandItem().get(WAND_DATA);
+
         if(!player.isUsingItem() || getValue == null) {
             startedUsing = false;
             return;
@@ -52,10 +56,13 @@ public class DimensionalRecall {
 
         var getHolder = player.getMainHandItem().get(WAND_ABILITY_HOLDER);
         var hasAbility = GeneralHelpers.getModifierValue(getHolder, abilityId.getPath().intern()) != null;
+        if (!(player instanceof ServerPlayer serverPlayer)) return;
+        var pos = serverPlayer.getRespawnPosition();
 
-        if (startedUsing && hasAbility) {
+
+
+        if (pos != null && startedUsing && hasAbility) {
             pullParticlesToCenter(player);
-            if (!(player instanceof ServerPlayer serverPlayer)) return;
 
             if (player.getTicksUsingItem() % 3 == 0) {
                 var setVolume = Math.min(2, player.getTicksUsingItem() / 5);
@@ -68,6 +75,9 @@ public class DimensionalRecall {
 
             this.onSuccessfulCast(serverPlayer, getHolder);
         }
+
+        //Needs to send message if no home is set
+//        throw new RuntimeException();
     }
 
     private void onSuccessfulCast(ServerPlayer serverPlayer, WandAbilityHolder wandAbilityHolder){
@@ -80,18 +90,16 @@ public class DimensionalRecall {
         var getManaCost = DataComponentHelper.getSpecificValue(abilityName, wandAbilityHolder, MANA_COST);
         var getCooldownCost = DataComponentHelper.getSpecificValue(abilityName, wandAbilityHolder, COOLDOWN);
 
-        if (serverPlayer.getTicksUsingItem() >= 200 && getCasterData.getManaPool() >= getManaCost) {
-            if (pos != null) {
-                var getLevelDimension = serverPlayer.getServer().getLevel(dimension);
-                if(getLevelDimension != null){
-                    this.startedUsing = false;
-                    serverPlayer.stopUsingItem();
-                    serverPlayer.teleportTo(getLevelDimension, pos.getX(), pos.getY(), pos.getZ(), serverPlayer.yya, serverPlayer.rotA);
-                    CastHelper.chargeMana(abilityName, getManaCost, serverPlayer);
-                    CastHelper.chargeCooldown(abilityName, getCooldownCost, serverPlayer);
-                    GeneralHelpers.getSoundWithPosition(serverPlayer.level(), serverPlayer.blockPosition(), getTeleportSound, 0.8f);
-                    GeneralHelpers.getSoundWithPosition(serverPlayer.level(), serverPlayer.blockPosition(), getSuccessSound, 1, 1.2f);
-                }
+        var getLevelDimension = serverPlayer.getServer().getLevel(dimension);
+        if(getLevelDimension != null){
+            if (serverPlayer.getTicksUsingItem() >= 200 && getCasterData.getManaPool() >= getManaCost) {
+                this.startedUsing = false;
+                serverPlayer.stopUsingItem();
+                serverPlayer.teleportTo(getLevelDimension, pos.getX(), pos.getY(), pos.getZ(), serverPlayer.yya, serverPlayer.rotA);
+                CastHelper.chargeMana(abilityName, getManaCost, serverPlayer);
+                CastHelper.chargeCooldown(abilityName, getCooldownCost, serverPlayer);
+                GeneralHelpers.getSoundWithPosition(serverPlayer.level(), serverPlayer.blockPosition(), getTeleportSound, 0.8f);
+                GeneralHelpers.getSoundWithPosition(serverPlayer.level(), serverPlayer.blockPosition(), getSuccessSound, 1, 1.2f);
             }
         }
     }

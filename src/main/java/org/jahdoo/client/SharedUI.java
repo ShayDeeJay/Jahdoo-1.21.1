@@ -37,7 +37,6 @@ public class SharedUI {
         }
     }
 
-
     public static int getElementColour(
         AbstractAbility abstractAbility,
         ItemStack itemStack

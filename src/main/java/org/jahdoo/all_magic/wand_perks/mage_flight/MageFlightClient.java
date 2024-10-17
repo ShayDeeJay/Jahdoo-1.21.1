@@ -44,7 +44,6 @@ public class MageFlightClient {
                 if (manaSystem.getManaPool() > manaCost) {
 
                     localPlayer.setDeltaMovement(localPlayer.getDeltaMovement().add(0, 0.1, 0));
-                    GeneralHelpers.playDebugMessage(player, manaSystem.getManaPool());
 
                     AbstractElement element = getElementByWandType(wandItem.getItem()).getFirst();
                     boolean getMovement = localPlayer.getDeltaMovement().y > -0.5;

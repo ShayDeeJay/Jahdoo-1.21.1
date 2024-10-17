@@ -20,6 +20,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
+import org.jahdoo.registers.ElementRegistry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -30,10 +31,11 @@ import static org.jahdoo.particle.ParticleStore.rgbToInt;
 public abstract class AbstractBEInventory extends BlockEntity {
 
     public static GenericParticleOptions processingParticle(int lifetime, float size, boolean staticSize, double speed){
+        var element = ElementRegistry.UTILITY.get();
         return new GenericParticleOptions(
             ParticleStore.SOFT_PARTICLE_SELECTION,
-            rgbToInt(40, 134, 110),
-            rgbToInt(171, 219, 207),
+            element.particleColourPrimary(),
+            element.particleColourFaded(),
             lifetime, size, staticSize, speed
         );
     }
@@ -65,33 +67,39 @@ public abstract class AbstractBEInventory extends BlockEntity {
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider pRegistries) {
         handleUpdateTag(pkt.getTag(), pRegistries);
+        if(level == null) return;
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
 
-    public final ItemStackHandler inputItemHandler = new ItemStackHandler(setInputSlots()) {
-        protected void onContentsChanged(int slot) {
-            sendBlockUpdate(level, () -> setChanged(), getBlockPos(), getBlockState());
-        }
-    };
+    public ItemStackHandler setStackHandler(int slots, int slotStackLimit){
+        return new ItemStackHandler(slots) {
+            protected void onContentsChanged(int slot) {
+                sendBlockUpdate(level, () -> setChanged(), getBlockPos(), getBlockState());
+            }
 
-    public final ItemStackHandler outputItemHandler = new ItemStackHandler(setOutputSlots()){
-        protected void onContentsChanged(int slot) {
-            sendBlockUpdate(level, () -> setChanged(), getBlockPos(), getBlockState());
-        }
-    };
+            @Override
+            public int getSlotLimit(int slot) {
+                return getMaxSlotSize();
+            }
+        };
+    }
+
+    public final ItemStackHandler inputItemHandler = this.setStackHandler(this.setInputSlots(), this.getMaxSlotSize());
+    public final ItemStackHandler outputItemHandler = this.setStackHandler(this.setOutputSlots(), this.getMaxSlotSize());
 
     public abstract int setInputSlots();
+
     public abstract int setOutputSlots();
+
     public abstract int getMaxSlotSize();
 
     public ContainerData getData() {
         return data;
     }
 
-
     public void dropsAllInventory(Level level) {
         SimpleContainer inputInventory = new SimpleContainer(setInputSlots());
-        SimpleContainer outputInventory = new SimpleContainer(setInputSlots());
+        SimpleContainer outputInventory = new SimpleContainer(setOutputSlots());
 
         for(int i = 0; i < this.inputItemHandler.getSlots(); i++) {
             inputInventory.setItem(i, inputItemHandler.getStackInSlot(i));

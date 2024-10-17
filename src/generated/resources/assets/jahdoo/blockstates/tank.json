@@ -1,6 +1,9 @@
 {
   "variants": {
-    "": {
+    "lit=false": {
+      "model": "jahdoo:block/tank"
+    },
+    "lit=true": {
       "model": "jahdoo:block/tank"
     }
   }

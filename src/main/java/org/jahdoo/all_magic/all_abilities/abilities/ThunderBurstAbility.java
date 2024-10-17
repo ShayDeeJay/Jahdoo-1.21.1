@@ -52,11 +52,9 @@ public class ThunderBurstAbility extends AbstractAbility {
 
         for(int i = 0; i < numberOfBolts; i++){
             GenericProjectile genericProjectile = new GenericProjectile(
-                player,
-                0,
+                player, 0,
                 ProjectilePropertyRegister.LIGHTNING_TRAIL.get().setAbilityId(),
-                lightningTrailModifiers,
-                -2,
+                lightningTrailModifiers, -2,
                 abilityId.getPath().intern()
             );
             genericProjectile.shoot(direction.x(), direction.y(), direction.z(), 1f, 0);

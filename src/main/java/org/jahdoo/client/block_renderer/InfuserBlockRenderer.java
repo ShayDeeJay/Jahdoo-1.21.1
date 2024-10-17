@@ -9,4 +9,7 @@ public class InfuserBlockRenderer extends GeoItemRenderer<InfuserBlockItem> {
     public InfuserBlockRenderer() {
         super(new InfuserBlockModel());
     }
+
+
+
 }

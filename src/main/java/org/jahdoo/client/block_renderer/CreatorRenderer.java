@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -42,8 +41,7 @@ public class CreatorRenderer implements BlockEntityRenderer<CreatorEntity> {
         int pPackedLight,
         int pPackedOverlay
     ){
-//        this.renderNameTag(wandManagerTable, Component.literal("Requires 20XP levels to craft"), pPoseStack, pBuffer, pPackedLight);
-        creatorEntity.setAnimator(creatorEntity.getAnimationTickerIncrement());
+        creatorEntity.setAnimator();
         creatorEntity.setAnimatedDistance();
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         AtomicInteger atomicInteger = new AtomicInteger();
@@ -63,22 +61,22 @@ public class CreatorRenderer implements BlockEntityRenderer<CreatorEntity> {
     private void rotateAllItems(PoseStack pPoseStack, CreatorEntity pBlockEntity, Runnable stuff, int index, int totalItems) {
         pPoseStack.pushPose();
 
-        if (pBlockEntity.canCraftWand()) {
+        if (pBlockEntity.canCraft()) {
             float angleOffset = 360.0f / totalItems;
             float itemAngle = angleOffset * index;
             pPoseStack.translate(0.5, -0.1, 0.5);
-            pPoseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (float) pBlockEntity.animationTicker));
+            pPoseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (float) pBlockEntity.getAnimationTicker()));
         } else {
 
             float[][] positions = {
-                {0.5f, 0.1f},  // Middle top (center of first row)
-                {0.22f, 0.38f}, // Middle row left
-                {0.78f, 0.38f}, // Middle row right
-                {0.5f, 0.66f}, // Middle bottom (center of last row)
-                {0.22f, 0.1f},  // Top-left corner
-                {0.78f, 0.1f},  // Top-right corner
-                {0.22f, 0.66f}, // Bottom-left corner
-                {0.78f, 0.66f}  // Bottom-right corner
+                {0.5f, 0.12f},  // Middle top (center of first row)
+                {0.22f, 0.40f}, // Middle row left
+                {0.78f, 0.40f}, // Middle row right
+                {0.5f, 0.68f}, // Middle bottom (center of last row)
+                {0.22f, 0.12f},  // Top-left corner
+                {0.78f, 0.12f},  // Top-right corner
+                {0.22f, 0.68f}, // Bottom-left corner
+                {0.78f, 0.68f}  // Bottom-right corner
             };
 
             if (index < positions.length) {
@@ -94,7 +92,7 @@ public class CreatorRenderer implements BlockEntityRenderer<CreatorEntity> {
 
     private void focusedItem(PoseStack pPoseStack, CreatorEntity pBlockEntity, ItemRenderer itemRenderer, MultiBufferSource pBuffer){
         pPoseStack.pushPose();
-        float getCurrentTime = (float) pBlockEntity.animationTicker;
+        float getCurrentTime = (float) pBlockEntity.getAnimationTicker();
         float scaleItem = 0.7f;
 
         pPoseStack.translate(0.5f, 1.55f, 0.5f);
@@ -121,14 +119,11 @@ public class CreatorRenderer implements BlockEntityRenderer<CreatorEntity> {
 
     private void rotateItem(PoseStack pPoseStack, CreatorEntity pBlockEntity, ItemRenderer itemRenderer, ItemStack itemStack, MultiBufferSource pBuffer){
         pPoseStack.pushPose();
-        float getCurrentTime = (float) pBlockEntity.animationTicker;
+        float getCurrentTime = (float) pBlockEntity.getAnimationTicker();
         float scaleItem = 0.3f;
-
         pPoseStack.translate(0, 1.25f, pBlockEntity.animateDistanceIncrement/5);
-
         pPoseStack.scale(scaleItem, scaleItem, scaleItem);
-
-        if(!pBlockEntity.canCraftWand()) pPoseStack.mulPose(Axis.YP.rotationDegrees(getCurrentTime));
+        if(!pBlockEntity.canCraft()) pPoseStack.mulPose(Axis.YP.rotationDegrees(getCurrentTime));
 
         itemRenderer.renderStatic(
             itemStack, ItemDisplayContext.FIXED,

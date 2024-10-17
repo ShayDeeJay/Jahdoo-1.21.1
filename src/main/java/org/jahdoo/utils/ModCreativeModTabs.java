@@ -27,19 +27,20 @@ public class ModCreativeModTabs {
             .title(Component.translatable("creativetab.jahdoo_tab"))
             .displayItems((pParameters, pOutput) -> {
                 pOutput.accept(BlocksRegister.CRYSTAL_ORE.get());
+                pOutput.accept(BlocksRegister.CRYSTAL_DEEPSLATE_ORE.get());
                 pOutput.accept(ItemsRegister.JIDE_POWDER.get());
                 pOutput.accept(ItemsRegister.AUGMENT_CORE.get());
                 pOutput.accept(ItemsRegister.AUGMENT_FRAGMENT.get());
 
                 pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
-                for(int i = 1; i < 7; i++) {
-                    ItemStack baseAugment = new ItemStack(ItemsRegister.AUGMENT_ITEM.get());
-                    CustomModelData customModelData = new CustomModelData(i);
-                    baseAugment.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
-                    pOutput.accept(baseAugment);
-                }
+//                for(int i = 1; i < 7; i++) {
+//                    ItemStack baseAugment = new ItemStack(ItemsRegister.AUGMENT_ITEM.get());
+//                    CustomModelData customModelData = new CustomModelData(i);
+//                    baseAugment.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
+//                    pOutput.accept(baseAugment);
+//                }
 
-                pOutput.accept(BlocksRegister.WAND_MANAGER_TABLE.get());
+//                pOutput.accept(BlocksRegister.WAND_MANAGER_TABLE.get());
                 pOutput.accept(BlocksRegister.TANK.get());
                 pOutput.accept(BlocksRegister.CREATOR.get());
                 pOutput.accept(ItemsRegister.INFUSER_ITEM.get());

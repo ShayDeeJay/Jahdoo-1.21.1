@@ -4,10 +4,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.client.block_renderer.*;
 import org.jahdoo.client.entity_renderer.CustomAoeRenderer;
@@ -15,13 +13,11 @@ import org.jahdoo.client.entity_renderer.ElementProjectileRenderer;
 import org.jahdoo.client.entity_renderer.GenericProjectileRenderer;
 import org.jahdoo.client.entity_renderer.decoy.DecoyRenderer;
 import org.jahdoo.client.entity_renderer.etneral_wizzard.EternalWizardRenderer;
-import org.jahdoo.client.gui.mana_ability_overlay.ManaBarOverlay;
 import org.jahdoo.particle.GenericParticle;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
 import org.jahdoo.registers.ParticlesRegister;
-import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.KeyBinding;
 
 

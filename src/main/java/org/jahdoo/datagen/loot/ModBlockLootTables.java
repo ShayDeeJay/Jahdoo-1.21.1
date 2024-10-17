@@ -21,7 +21,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ModBlockLootTables extends BlockLootSubProvider {
-
     @Override
     protected Iterable<Block> getKnownBlocks() {
         return BlocksRegister.BLOCKS.getEntries().stream().map(DeferredHolder::get).collect(Collectors.toList());
@@ -44,8 +43,11 @@ public class ModBlockLootTables extends BlockLootSubProvider {
             block -> createCopperLikeOreDrops(BlocksRegister.CRYSTAL_ORE.get(), ItemsRegister.JIDE_POWDER.get())
                 .withPool(LootPool.lootPool().setRolls(UniformGenerator.between(0f, 1.0F)))
         );
+        this.add(BlocksRegister.CRYSTAL_DEEPSLATE_ORE.get(),
+            block -> createCopperLikeOreDrops(BlocksRegister.CRYSTAL_ORE.get(), ItemsRegister.JIDE_POWDER.get())
+                .withPool(LootPool.lootPool().setRolls(UniformGenerator.between(0f, 1.0F)))
+        );
     }
-
 
     protected LootTable.Builder createCopperLikeOreDrops(Block pBlock, Item item) {
         return createSilkTouchDispatchTable(pBlock,
@@ -54,5 +56,4 @@ public class ModBlockLootTables extends BlockLootSubProvider {
             )
         );
     }
-
 }

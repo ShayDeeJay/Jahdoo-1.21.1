@@ -97,7 +97,7 @@ public class BlockInteractionHandler {
         ItemStack mainHandItems = player.getMainHandItem();
         if(mainHandItems.isEmpty()) return false;
         itemStackHandler.setStackInSlot(outputSlot, mainHandItems.copyWithCount(itemCount));
-        if(!player.isCreative()) mainHandItems.shrink(itemCount);
+        /*if(!player.isCreative())*/ mainHandItems.shrink(itemCount);
         return true;
     }
 

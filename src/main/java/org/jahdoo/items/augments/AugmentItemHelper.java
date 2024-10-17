@@ -244,13 +244,14 @@ public class AugmentItemHelper {
     ){
         var toolTips = new ArrayList<Component>();
         if(itemStack.getComponents().isEmpty()) return toolTips;
-        List<String> exceptions = List.of(COOLDOWN, MANA_COST, SET_ELEMENT_TYPE, "index");
-        WandAbilityHolder wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
-        AbilityHolder abilityHolder = wandAbilityHolder.abilityProperties().get(abilityLocation);
+        var exceptions = List.of(COOLDOWN, MANA_COST, SET_ELEMENT_TYPE, "index");
+        var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityLocation);
         var ability = AbilityRegister.getSpellsByTypeId(abilityLocation);
         var rarity = ability.getFirst().rarity();
 
         toolTips.add(withStyleComponent("Rarity: ", -9013642).copy().append(withStyleComponent(rarity.getSerializedName(), rarity.getColour())));
+        toolTips.add(Component.empty());
 
         int subHeaderColour = -2434342;
         var curlyStart = (char) 171;
@@ -277,11 +278,11 @@ public class AugmentItemHelper {
 
     public static void shiftForDetails(List<Component> toolTips){
         if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
-            Component componentI = Component.literal("[i]").withStyle(style -> style.withColor( -2631721));
+            var componentI = Component.literal("[i]").withStyle(style -> style.withColor( -2631721));
             toolTips.add(Component.literal(" "));
 
-            String prefix = "Hold ";
-            String suffix = " for details";
+            var prefix = "Hold ";
+            var suffix = " for details";
 
             MutableComponent message = Component.literal(prefix)
                 .withStyle(ChatFormatting.GRAY)
@@ -294,10 +295,8 @@ public class AugmentItemHelper {
 
     public static void getHoverText(ItemStack itemStack, List<Component> toolTips){
         if(itemStack.getComponents().has(DataComponentRegistry.WAND_ABILITY_HOLDER.get())){
-            WandAbilityHolder wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
-            String abilityLocation = wandAbilityHolder.abilityProperties().keySet().stream().findAny().get();
-
-//            toolTips.add(Component.empty());
+            var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            var abilityLocation = wandAbilityHolder.abilityProperties().keySet().stream().findAny().get();
             toolTips.addAll(getAllAbilityModifiers(itemStack, null, abilityLocation));
             shiftForDetails(toolTips);
         } else {
@@ -308,18 +307,19 @@ public class AugmentItemHelper {
     }
 
     public static Component getAbilityName(ItemStack itemStack, AbstractElement info){
-        WandAbilityHolder wandAbilityHolder = itemStack.get(WAND_ABILITY_HOLDER.get());
-        AtomicReference<Component> component = new AtomicReference<>(Component.empty());
+        var wandAbilityHolder = itemStack.get(WAND_ABILITY_HOLDER.get());
+        var component = new AtomicReference<>(Component.empty());
 
         if(wandAbilityHolder != null){
             wandAbilityHolder.abilityProperties().keySet().stream().findFirst().ifPresent(
                 s -> {
-                    AbstractAbility abstractAbility = AbilityRegister.REGISTRY.get(GeneralHelpers.modResourceLocation(s));
-//                    component.set(Component.literal("Ability: ")
-//                        .withStyle(style -> style.withColor(-9013642))
-//                        .append(Component.literal(abstractAbility.getAbilityName()).withStyle((style) -> style.withColor(info.textColourPrimary()))));
-
-                    component.set(Component.literal(abstractAbility.getAbilityName()).withStyle((style) -> style.withColor(info.textColourPrimary())));
+                    var abstractAbility = AbilityRegister.REGISTRY.get(GeneralHelpers.modResourceLocation(s));
+                    if(abstractAbility != null){
+                        component.set(
+                            Component.literal(abstractAbility.getAbilityName())
+                                .withStyle((style) -> style.withColor(info.textColourPrimary()))
+                        );
+                    }
                 }
             );
         }
@@ -328,9 +328,9 @@ public class AugmentItemHelper {
     }
 
     public static Component getHoverName(ItemStack itemStack){
-        CustomModelData modelData = itemStack.getComponents().get(CUSTOM_MODEL_DATA);
+        var modelData = itemStack.getComponents().get(CUSTOM_MODEL_DATA);
         if(modelData != null){
-            List<AbstractElement> abstractElement = ElementRegistry.REGISTRY
+            var abstractElement = ElementRegistry.REGISTRY
                 .stream()
                 .filter(ability -> ability.getTypeId() == modelData.value())
                 .toList();
@@ -339,8 +339,8 @@ public class AugmentItemHelper {
                 if (itemStack.getComponents().has(WAND_ABILITY_HOLDER.get())) {
                     return AugmentItemHelper.getAbilityName(itemStack, abstractElement.getFirst());
                 }
-                String elementName = abstractElement.getFirst().getElementName() + " Augment";
-                int elementColour = abstractElement.getFirst().textColourPrimary();
+                var elementName = abstractElement.getFirst().getElementName() + " Augment";
+                var elementColour = abstractElement.getFirst().textColourPrimary();
                 return Component.literal(elementName).withStyle(style -> style.withColor(elementColour));
             }
         }

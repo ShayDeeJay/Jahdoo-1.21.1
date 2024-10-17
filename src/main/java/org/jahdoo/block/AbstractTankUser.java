@@ -13,17 +13,17 @@ import org.jahdoo.utils.GeneralHelpers;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public abstract class AbstractTankUser extends AbstractBEInventory {
 
     protected BlockPos tankPosition;
     protected int progress;
-    protected int craftingFuelCost;
 
     public AbstractTankUser(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState, int stackSize) {
         super(pType, pPos, pBlockState, stackSize);
     }
 
-    protected void assignTankBlockInRange(Level level, BlockPos pPos){
+    protected void assignTankBlockInRange(Level level, BlockPos pPos, int craftingFuelCost){
         if(this.tankPosition == null || !(level.getBlockEntity(tankPosition) instanceof TankBlockEntity)){
             var blockPos = this.getTankBlockInRange(level, pPos.above())
                 .stream()
@@ -33,7 +33,17 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
                         tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() >= craftingFuelCost
                 ).toList();
 
-            if(!blockPos.isEmpty()) this.tankPosition = blockPos.get(0); else this.progress = 0;
+            if(!blockPos.isEmpty()) this.tankPosition = blockPos.getFirst(); else this.progress = 0;
+        }
+
+        if(tankPosition != null){
+            if (level.getBlockEntity(tankPosition) instanceof TankBlockEntity tankBlockEntity) {
+                if (progress > 0) {
+                    if(!tankBlockEntity.usingThisTank.contains(this)) tankBlockEntity.usingThisTank.add(this);
+                } else {
+                    tankBlockEntity.usingThisTank.remove(this);
+                };
+            }
         }
     }
 
@@ -48,7 +58,7 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
         return this.progress;
     }
 
-    protected void chargeTankFuel(){
+    protected void chargeTankFuel(int craftingFuelCost){
         this.getTankEntity().inputItemHandler.getStackInSlot(0).shrink(craftingFuelCost);
     }
 
@@ -57,12 +67,12 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
         Vec3 direction = this.getBlockPos().getCenter().add(0, toHeight, 0).subtract(this.tankPosition.getCenter()).normalize();
         GeneralHelpers.generalHelpers.sendParticles(
             serverLevel,
-            processingParticle(lifetime, size, true,  speed),
+            processingParticle(lifetime, size, false,  speed),
             this.tankPosition.getCenter().subtract(0,fromHeight,0), 0, direction.x, direction.y, direction.z, speed
         );
     }
 
-    protected boolean hasTankAndFuel(){
+    protected boolean hasTankAndFuel(int craftingFuelCost){
         if(this.level == null || this.tankPosition == null) return false;
         if (!(this.level.getBlockEntity(this.tankPosition) instanceof TankBlockEntity tankBlockEntity)) return false;
         return this.tankPosition != null && tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() > craftingFuelCost;

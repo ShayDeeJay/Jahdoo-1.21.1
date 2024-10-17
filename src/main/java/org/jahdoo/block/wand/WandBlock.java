@@ -166,7 +166,6 @@ public class WandBlock extends BaseEntityBlock {
         if(pLevel.isClientSide()) {
             return null;
         }
-
         return createTickerHelper(
             pBlockEntityType,
             BlockEntitiesRegister.WAND_BE.get(),

@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.DisplayRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -21,10 +22,13 @@ public class TankRenderer implements BlockEntityRenderer<TankBlockEntity>{
     @Override
     public void render(TankBlockEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+
         ItemStack itemStack1 = new ItemStack(BlocksRegister.JIDE_POWDER_BLOCk.get());
         ItemStack itemStack = pBlockEntity.getRenderer();
         float number = 0.63f;
         int rotation = 0;
+
+        setGlow(pBlockEntity);
 
         for (int i = 0; i < itemStack.getCount(); i+=pBlockEntity.getMaxSlotSize()/10) {
             pPoseStack.pushPose();
@@ -34,7 +38,7 @@ public class TankRenderer implements BlockEntityRenderer<TankBlockEntity>{
             itemRenderer.renderStatic(
                 itemStack1,
                 ItemDisplayContext.FIXED,
-                150,
+                pBlockEntity.glowStrength,
                 OverlayTexture.NO_OVERLAY,
                 pPoseStack,
                 pBuffer,
@@ -44,6 +48,14 @@ public class TankRenderer implements BlockEntityRenderer<TankBlockEntity>{
             pPoseStack.popPose();
             number += 0.056f;
             rotation += 90;
+        }
+    }
+
+    public void setGlow(TankBlockEntity tank){
+        if(tank.usingThisTank.isEmpty()){
+            if(tank.glowStrength > 150) tank.glowStrength -= 5;
+        } else {
+            if(tank.glowStrength < 255) tank.glowStrength += 5;
         }
     }
 

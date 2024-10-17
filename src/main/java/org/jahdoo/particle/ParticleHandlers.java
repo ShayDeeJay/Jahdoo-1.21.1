@@ -2,14 +2,21 @@ package org.jahdoo.particle;
 
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
+import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.GeneralHelpers;
+
+import java.util.List;
+
+import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 
 public class ParticleHandlers {
 
@@ -45,6 +52,44 @@ public class ParticleHandlers {
             double d1 = pos.y;
             double d2 = pos.z;
             (world).sendParticles(particleOptions, d0, d1, d2, particleCount, x , y, z, speed);
+        }
+    }
+
+    public void pullParticlesToCenter(Player player){
+        var casterData = player.getData(CASTER_DATA);
+        var manaReduction = casterData.getMaxMana(player) / 60;
+        BakedParticleOptions bakedParticleOptions = new BakedParticleOptions(
+            ElementRegistry.VITALITY.get().getTypeId(),
+            6, 2f, false
+        );
+        GenericParticleOptions genericParticleOptions = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, ElementRegistry.VITALITY.get(), 6, 2f);
+
+        List<ParticleOptions> particleOptionsList = List.of(
+            bakedParticleOptions,
+            genericParticleOptions
+        );
+
+        if(casterData.getManaPool() >= manaReduction){
+            GeneralHelpers.getInnerRingOfRadiusRandom(
+                player.position()
+                    .add(0, player.getBbHeight() / 2, 0)
+                    .offsetRandom(RandomSource.create(), 1.5f), 3, (double) player.getTicksUsingItem()/10,
+                positions -> {
+                    if (player.level() instanceof ServerLevel serverLevel) {
+                        Vec3 directions = player.position().subtract(positions).normalize().add(0, player.getBbHeight() / 2, 0);
+                        GeneralHelpers.generalHelpers.sendParticles(
+                            serverLevel,
+                            particleOptionsList.get(RandomSource.create().nextInt(0, 2)),
+                            positions,
+                            0,
+                            directions.x,
+                            GeneralHelpers.Random.nextDouble(-0.3, 0.3),
+                            directions.z,
+                            (double) player.getTicksUsingItem()/500
+                        );
+                    }
+                }
+            );
         }
     }
 

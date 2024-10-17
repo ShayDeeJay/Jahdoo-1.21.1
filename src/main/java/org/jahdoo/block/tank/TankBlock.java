@@ -2,8 +2,10 @@ package org.jahdoo.block.tank;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -13,11 +15,14 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RedstoneTorchBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -29,15 +34,17 @@ import org.jahdoo.registers.ItemsRegister;
 import org.jetbrains.annotations.Nullable;
 
 public class TankBlock extends BaseEntityBlock {
-
     public static final VoxelShape SHAPE_BASE = Block.box(1.95, 0, 1.95, 14.05, 2.75, 14.05);
     public static final VoxelShape JAR = Block.box(3, 2.75, 3, 13, 12.75, 13);
     public static final VoxelShape TOP = Block.box(3, 13.25, 3, 13, 16, 13);
     public static final VoxelShape SHAPE_COMMON = Shapes.or(SHAPE_BASE, JAR, TOP);
+    public static final BooleanProperty LIT;
 
     public TankBlock(Properties pProperties) {
         super(pProperties);
-        this.registerDefaultState(this.stateDefinition.any() );
+        this.registerDefaultState(
+            this.defaultBlockState().setValue(LIT, false)
+        );
     }
 
     @Override
@@ -48,6 +55,11 @@ public class TankBlock extends BaseEntityBlock {
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE_COMMON;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(LIT);
     }
 
     @Override
@@ -64,11 +76,8 @@ public class TankBlock extends BaseEntityBlock {
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
     }
 
-
-
     @Override
     protected ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
-//        if(pLevel.isClientSide) return ItemInteractionResult.FAIL;
         ItemStack stack = pPlayer.getItemInHand(pHand);
         BlockEntity entity = pLevel.getBlockEntity(pPos);
 
@@ -83,7 +92,6 @@ public class TankBlock extends BaseEntityBlock {
         return ItemInteractionResult.SUCCESS;
     }
 
-
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
@@ -93,8 +101,6 @@ public class TankBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        if(pLevel.isClientSide()) return null;
-
         return createTickerHelper(
             pBlockEntityType,
             BlockEntitiesRegister.TANK_BE.get(),
@@ -102,5 +108,8 @@ public class TankBlock extends BaseEntityBlock {
         );
     }
 
+    static {
+        LIT = RedstoneTorchBlock.LIT;
+    }
 }
 

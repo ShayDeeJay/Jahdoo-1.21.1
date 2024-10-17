@@ -112,7 +112,6 @@ public class InfuserBlock extends BaseEntityBlock {
     protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
         if (!(pLevel.getBlockEntity(pPos) instanceof InfuserBlockEntity tableEntity)) return InteractionResult.FAIL;
 
-
         ItemStack itemInPlayerHand = pPlayer.getItemInHand(pPlayer.getUsedItemHand());
         ItemStack getInputSlot = tableEntity.inputItemHandler.getStackInSlot(0);
         ItemStack getOutputSlot = tableEntity.outputItemHandler.getStackInSlot(0);
@@ -165,9 +164,6 @@ public class InfuserBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        if(pLevel.isClientSide()) {
-            return null;
-        }
 
         return createTickerHelper(
             pBlockEntityType,

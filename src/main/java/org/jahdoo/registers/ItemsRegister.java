@@ -13,6 +13,7 @@ import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.heart_container.HealthContainer;
 import org.jahdoo.items.infuser_block_item.InfuserBlockItem;
 import org.jahdoo.items.wand.WandItem;
+import org.jahdoo.items.wand.subWands.*;
 
 public class ItemsRegister {
 
@@ -32,20 +33,21 @@ public class ItemsRegister {
     public static final DeferredHolder<Item, Item> INFUSER_ITEM =
         ITEMS.register("infuser", () -> new InfuserBlockItem(BlocksRegister.INFUSER.get(), new Item.Properties()));
 
+    //Wands needed their own subclass as animations do not fire for all wand instances otherwise.
     public static final DeferredHolder<Item, Item> WAND_ITEM_MYSTIC =
-        ITEMS.register("wand_mystic", () -> new WandItem("wand_mystic"));
+        ITEMS.register("wand_mystic", MysticWand::new);
 
     public static final DeferredHolder<Item, Item> WAND_ITEM_FROST =
-        ITEMS.register("wand_frost", () -> new WandItem("wand_frost"));
+        ITEMS.register("wand_frost", FrostWand::new);
 
     public static final DeferredHolder<Item, Item> WAND_ITEM_INFERNO =
-        ITEMS.register("wand_inferno", () -> new WandItem("wand_inferno"));
+        ITEMS.register("wand_inferno", InfernoWand::new);
 
     public static final DeferredHolder<Item, Item> WAND_ITEM_LIGHTNING =
-        ITEMS.register("wand_lightning", () -> new WandItem("wand_lightning"));
+        ITEMS.register("wand_lightning", LightningWand::new);
 
     public static final DeferredHolder<Item, Item> WAND_ITEM_VITALITY =
-        ITEMS.register("wand_vitality", () -> new WandItem("wand_vitality"));
+        ITEMS.register("wand_vitality", VitalityWand::new);
 
     public static final DeferredHolder<Item, Item> HEALTH_CONTAINER =
         ITEMS.register("health_container", () -> new HealthContainer(new Item.Properties()));

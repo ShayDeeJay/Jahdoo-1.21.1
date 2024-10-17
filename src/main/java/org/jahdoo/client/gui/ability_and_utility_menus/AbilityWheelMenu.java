@@ -45,12 +45,13 @@ public class AbilityWheelMenu extends Screen  {
     @Override
     protected void init() {
         var player = this.getMinecraft().player;
+        if(player == null) return;
         var wand = player.getMainHandItem();
         var abilityHolder = getAllAbilities(wand); // Define the number of positions around the circle
         var totalSlots = abilityHolder.size();
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-        int radius = (int) (9 * (RADIAL_SIZE / 20) - 3.5); // Adjust the radius as needed
+        int radius = (int) (9 * ((double) RADIAL_SIZE / 20) - 3.5); // Adjust the radius as needed
         double angleOffset = -Math.PI / 2.0; // Start from the top
 
         for (int i = 0; i < totalSlots; i++) {
@@ -60,7 +61,7 @@ public class AbilityWheelMenu extends Screen  {
 
             List<AbstractAbility> getCurrentAbility = AbilityRegister.getSpellsByTypeId(abilityHolder.get(i));
             if (!getCurrentAbility.isEmpty()) {
-                ResourceLocation iconResource = getCurrentAbility.get(0).getAbilityIconLocation();
+                ResourceLocation iconResource = getCurrentAbility.getFirst().getAbilityIconLocation();
                 WidgetSprites BUTTON = new WidgetSprites(iconResource, iconResource);
                 int finalI = i;
                 this.addRenderableWidget(
@@ -77,6 +78,7 @@ public class AbilityWheelMenu extends Screen  {
                 );
             }
         }
+
     }
 
     //Yoinked from Ars Nouveau
@@ -120,7 +122,7 @@ public class AbilityWheelMenu extends Screen  {
             ResourceLocation getAbilityId = DataComponentHelper.getAbilityTypeWand(getMinecraft().player);
             List<AbstractAbility> getAbility = AbilityRegister.getSpellsByTypeId(getAbilityId.getPath().intern());
            if(!getAbility.isEmpty()){
-                SharedUI.getAbilityNameWithColour(getAbility.get(0), guiGraphics, x, y - 90, true);
+                SharedUI.getAbilityNameWithColour(getAbility.getFirst(), guiGraphics, x, y - 90, true);
             }
         }
     }

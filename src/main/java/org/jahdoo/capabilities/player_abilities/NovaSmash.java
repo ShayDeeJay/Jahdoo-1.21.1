@@ -80,6 +80,7 @@ public class NovaSmash {
             AttributesRegister.MAGIC_DAMAGE_MULTIPLIER,
             false
         );
+
         if (this.canSmash){
             player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
             player.resetFallDistance();

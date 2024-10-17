@@ -20,7 +20,7 @@ import java.util.function.UnaryOperator;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.particle.ParticleStore.rgbToInt;
 
-@NetworkedEnum(NetworkedEnum.NetworkCheck.BIDIRECTIONAL)
+//@NetworkedEnum(NetworkedEnum.NetworkCheck.BIDIRECTIONAL)
 @IndexedEnum
 public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     COMMON(0, "Common", color(255,11,176,16), 1),

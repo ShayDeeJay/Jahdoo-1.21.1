@@ -21,14 +21,12 @@ public class ModPlacedFeatures {
 
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
-
         register(
             context, CRYSTAL_ORE_PLACED_KEY,
             configuredFeatures.getOrThrow(ModConfiguredFeatures.OVERWORLD_CRYSTAL_ORE_KEY),
-            ModOrePlacement.commonOrePlacement(20, HeightRangePlacement.uniform(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(100)))
+            ModOrePlacement.commonOrePlacement(5, HeightRangePlacement.uniform(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(0)))
         );
     }
-
 
     private static ResourceKey<PlacedFeature> registerKey(String name) {
         return ResourceKey.create(Registries.PLACED_FEATURE, GeneralHelpers.modResourceLocation(name));
@@ -42,5 +40,4 @@ public class ModPlacedFeatures {
     ) {
         context.register(key, new PlacedFeature(configuration, List.copyOf(modifiers)));
     }
-
 }
