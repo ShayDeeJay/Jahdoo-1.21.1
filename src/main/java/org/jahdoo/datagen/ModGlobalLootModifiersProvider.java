@@ -68,5 +68,15 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
                 ItemsRegister.AUGMENT_ITEM.get()
             )
         );
+
+        add("augments_core_chest" + additional,
+            new AddItemModifier(
+                new LootItemCondition[] {
+                    LootItemRandomChanceCondition.randomChance(0.5f).build(),
+                    new LootTableIdCondition.Builder(ResourceLocation.parse("chests/"+location)).build(),
+                },
+                ItemsRegister.AUGMENT_CORE.get()
+            )
+        );
     }
 }

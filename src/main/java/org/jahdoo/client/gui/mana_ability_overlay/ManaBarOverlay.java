@@ -67,6 +67,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer{
         var colourBack = -13816531;
         var colourText = ElementRegistry.getElementByTypeId(types);
         if(!colourText.isEmpty()){
+
             drawStringWithBackground(pGuiGraphics, minecraft.font, manaPoolCount, 58, height - 25, colourBack, colourText.getFirst().textColourSecondary(), true);
         }
     }

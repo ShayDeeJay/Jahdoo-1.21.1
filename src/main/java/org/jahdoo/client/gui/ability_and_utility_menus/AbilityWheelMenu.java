@@ -5,7 +5,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.renderer.GameRenderer;
@@ -25,11 +27,13 @@ import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.DataComponentHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class AbilityWheelMenu extends Screen  {
+
     public AbilityWheelMenu() {
         super(Component.literal("Ability Menu"));
     }
@@ -39,19 +43,24 @@ public class AbilityWheelMenu extends Screen  {
     int buttonSize = RADIAL_SIZE / 7 + 3;
 
     public static List<String> getAllAbilities(ItemStack wand){
+        var wandData = DataComponentRegistry.WAND_DATA.get();
+        if(wand.has(wandData)){
+            return wand.get(wandData).abilitySet();
+        }
         return wand.get(DataComponentRegistry.WAND_DATA.get()).abilitySet();
     }
 
     @Override
     protected void init() {
+
         var player = this.getMinecraft().player;
         if(player == null) return;
         var wand = player.getMainHandItem();
         var abilityHolder = getAllAbilities(wand); // Define the number of positions around the circle
-        var totalSlots = abilityHolder.size();
+        var totalSlots = wand.get(DataComponentRegistry.WAND_DATA.get()).abilitySlots();
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-        int radius = (int) (9 * ((double) RADIAL_SIZE / 20) - 3.5); // Adjust the radius as needed
+        int radius = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 3.5); // Adjust the radius as needed
         double angleOffset = -Math.PI / 2.0; // Start from the top
 
         for (int i = 0; i < totalSlots; i++) {
@@ -59,13 +68,12 @@ public class AbilityWheelMenu extends Screen  {
             int buttonX = (int) (centerX + radius * Math.cos(angle)) - buttonSize / 2;
             int buttonY = (int) (centerY + radius * Math.sin(angle)) - buttonSize / 2;
 
-            List<AbstractAbility> getCurrentAbility = AbilityRegister.getSpellsByTypeId(abilityHolder.get(i));
-            if (!getCurrentAbility.isEmpty()) {
-                ResourceLocation iconResource = getCurrentAbility.getFirst().getAbilityIconLocation();
+            int finalI = i;
+            if (!abilityHolder.isEmpty() && !AbilityRegister.getSpellsByTypeId(abilityHolder.get(i)).isEmpty()) {
+                ResourceLocation iconResource = AbilityRegister.getSpellsByTypeId(abilityHolder.get(i)).getFirst().getAbilityIconLocation();
                 WidgetSprites BUTTON = new WidgetSprites(iconResource, iconResource);
-                int finalI = i;
                 this.addRenderableWidget(
-                    new ScreenButton(
+                    new AbilityIconButton(
                         buttonX, buttonY,
                         BUTTON,
                         buttonSize,
@@ -76,9 +84,24 @@ public class AbilityWheelMenu extends Screen  {
                         i
                     )
                 );
+            } else {
+                this.addRenderableOnly(
+                    new Overlay() {
+                        @Override
+                        public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
+                            SharedUI.drawStringWithBackground(
+                                guiGraphics,
+                                Minecraft.getInstance().font,
+                                Component.literal(String.valueOf(finalI + 1)),
+                                buttonX + 13,
+                                buttonY + 9,
+                                1, -1, true
+                            );
+                        }
+                    }
+                );
             }
         }
-
     }
 
     //Yoinked from Ars Nouveau
@@ -137,13 +160,11 @@ public class AbilityWheelMenu extends Screen  {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.9F);
         guiGraphics.blit(GeneralHelpers.modResourceLocation("textures/gui/ability_wheel_background.png"), xRadial, yRadial, 0, 0, easedValue, easedValue, easedValue, easedValue);
         RenderSystem.disableBlend();
-        guiGraphics.pose().popPose();
     }
 
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-
         float normalizedTick = localTick / RADIAL_SIZE;
         float easedTick = easeInOutCubic(normalizedTick);
         int easedValue = (int) (easedTick * RADIAL_SIZE);

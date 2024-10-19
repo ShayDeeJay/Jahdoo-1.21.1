@@ -20,7 +20,6 @@ public class ModEvents {
     @EventBusSubscriber(modid = JahdooMod.MOD_ID, value = Dist.CLIENT)
     public static class ClientEvents {
 
-
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event) {
             Player player = Minecraft.getInstance().player;

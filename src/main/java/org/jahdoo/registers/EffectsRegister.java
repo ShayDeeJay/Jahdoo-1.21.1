@@ -24,6 +24,10 @@ public class EffectsRegister {
 
     public static final DeferredHolder<MobEffect, MobEffect> AMPLIFY_BLOCK_REACH = MOB_EFFECTS.register("amplify_block_reach",
         () -> new GenericEffect(MobEffectCategory.BENEFICIAL, 3436524).addAttributeModifier(Attributes.BLOCK_INTERACTION_RANGE, ResourceLocation.withDefaultNamespace("player_reach"),1.0D, AttributeModifier.Operation.ADD_VALUE));
+
+    public static final DeferredHolder<MobEffect, MobEffect> MANA_REGENERATION = MOB_EFFECTS.register("mana_regeneration",
+        () -> new GenericEffect(MobEffectCategory.BENEFICIAL, 3436524).addAttributeModifier(AttributesRegister.MANA_REGEN, ResourceLocation.withDefaultNamespace("man_regen"),1.0D, AttributeModifier.Operation.ADD_VALUE));
+
 //
 //    public static final RegistryObject<MobEffect> AMPLIFY_ENTITY_REACH = MOB_EFFECTS.register("amplify_entity_reach",
 //        () -> new GenericEffect(MobEffectCategory.BENEFICIAL, 3436524).addAttributeModifier(ForgeMod.AND_HOLDER_SET.get(), "2e121062-10de-4f66-ba73-91a43f4325cb",1.0D, AttributeModifier.Operation.ADDITION ));

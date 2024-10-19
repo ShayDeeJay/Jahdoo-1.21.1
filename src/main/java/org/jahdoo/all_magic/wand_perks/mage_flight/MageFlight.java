@@ -3,6 +3,7 @@ package org.jahdoo.all_magic.wand_perks.mage_flight;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.network.PacketDistributor;
 //import org.assets.jahdoo.capabilities.AbstractCapability;
 import org.jahdoo.items.wand.CastHelper;
@@ -33,7 +34,8 @@ public class MageFlight {
     }
 
     public static void mageFlightTickEvent(ServerPlayer serverPlayer){
-        serverPlayer.getData(MAGE_FLIGHT).serverFlight(serverPlayer);
+        var mageFlight = serverPlayer.getData(MAGE_FLIGHT);
+        mageFlight.serverFlight(serverPlayer);
     }
 
     public void serverFlight(ServerPlayer serverPlayer){
@@ -44,7 +46,6 @@ public class MageFlight {
             var manaSystem = serverPlayer.getData(CASTER_DATA);
             manaSystem.subtractMana(manaCost);
         }
-
     }
 
     public int getJumpTickCounter(){

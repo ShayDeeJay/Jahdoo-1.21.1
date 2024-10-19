@@ -1,0 +1,25 @@
+{
+    "display": {
+        "icon": {
+            "id": "jahdoo:unidentified_augment"
+        },
+        "title": "Discover The Power",
+        "description": "Find or craft and augment.",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "parent": "jahdoo/root",
+    "criteria": {
+        "requirement": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": "jahdoo:unidentified_augment"
+                    }
+                ]
+            }
+        }
+    }
+}

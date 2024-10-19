@@ -107,7 +107,7 @@ public class HellFire extends DefaultEntityBehaviour {
     private void novaBehaviour(ServerLevel serverLevel){
         double radius =  aoeCloud.getRadius() * 3;
         if(countdownTimer > 0) return;
-        List<Vec3> positions = GeneralHelpers.getSemicircle(aoeCloud.position(), radius, radius / 2.5  > 5 ? radius / 2.5 : 10, yaw, 30);
+        List<Vec3> positions = GeneralHelpers.getSemicircle(aoeCloud.position(), radius, Math.max(radius / 2.5 , 5), yaw, 30);
         this.novaSoundManager(positions);
 
         positions.forEach(
@@ -122,9 +122,9 @@ public class HellFire extends DefaultEntityBehaviour {
     }
 
     private void novaSoundManager(List<Vec3> positions){
-        if(aoeCloud.tickCount == 1) GeneralHelpers.getSoundWithPosition(aoeCloud.level(), BlockPos.containing(positions.get(0)), SoundRegister.DASH_EFFECT.get(), 0.6f,1.4f);
+        if(aoeCloud.tickCount == 1) GeneralHelpers.getSoundWithPosition(aoeCloud.level(), BlockPos.containing(positions.getFirst()), SoundRegister.DASH_EFFECT.get(), 0.6f,1.4f);
 
-        if (aoeCloud.tickCount % 3 == 0) GeneralHelpers.getSoundWithPosition(aoeCloud.level(), BlockPos.containing(positions.get(0)), SoundEvents.FIRECHARGE_USE,0.4f,0.8f);
+        if (aoeCloud.tickCount % 3 == 0) GeneralHelpers.getSoundWithPosition(aoeCloud.level(), BlockPos.containing(positions.getFirst()), SoundEvents.FIRECHARGE_USE,0.4f,0.8f);
     }
 
     private void novaParticles(ServerLevel serverLevel, Vec3 positionsA){
@@ -135,19 +135,21 @@ public class HellFire extends DefaultEntityBehaviour {
         boolean range = aoeCloud.getRadius() > this.range;
 
         double particle1 = range ? 0.2 : 0.1  ;
-        double particle2 = range ? 0.2  : Math.max(((10 - this.aoeCloud.getRadius()) / 40), 0.01);
+        double particle2 = range ? 0.2  : Math.max(((10 - this.aoeCloud.getRadius()) / 50), 0.01);
+
+        System.out.println(this.aoeCloud.getRadius());
 
         GeneralHelpers.generalHelpers.sendParticles(
             serverLevel,
             new BakedParticleOptions(this.getElementType().getTypeId(), 6, 3f, false),
-            positionsA.add(0,0.3, 0).offsetRandom(RandomSource.create(), 2f),
+            positionsA.add(0,0.6, 0).offsetRandom(RandomSource.create(), this.aoeCloud.getRadius()),
             1, vy1, vy1, vy1, particle1
         );
 
         GeneralHelpers.generalHelpers.sendParticles(
             serverLevel,
             genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 10, 1.5f),
-            positionsA.add(0, 0.3, 0).offsetRandom(RandomSource.create(), 2f),
+            positionsA.add(0, 0.6, 0).offsetRandom(RandomSource.create(), this.aoeCloud.getRadius()),
             1, vx1, vy1, vx1, particle2
         );
     }

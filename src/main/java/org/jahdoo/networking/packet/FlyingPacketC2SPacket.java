@@ -7,6 +7,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.utils.GeneralHelpers;
 
@@ -41,8 +42,11 @@ public class FlyingPacketC2SPacket implements CustomPacketPayload{
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
                     var mageFlight = serverPlayer.getData(MAGE_FLIGHT);
                     if(!serverPlayer.isCreative()){
-                        serverPlayer.getAbilities().mayfly = true;
-                        if (serverPlayer.onGround()) serverPlayer.getAbilities().mayfly = false;
+                        var flyingAttribute = serverPlayer.getAttribute(NeoForgeMod.CREATIVE_FLIGHT);
+                        if(flyingAttribute != null){
+                            flyingAttribute.setBaseValue(1);
+                            if (serverPlayer.onGround()) flyingAttribute.setBaseValue(0);
+                        }
                         mageFlight.setChargeMana(this.chargeMana);
                         mageFlight.setLastJumped(this.lastJumped);
                         mageFlight.setFlying(this.isFlying);

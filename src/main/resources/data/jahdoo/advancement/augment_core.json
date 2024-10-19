@@ -1,0 +1,25 @@
+{
+    "display": {
+        "icon": {
+            "id": "jahdoo:augment_core"
+        },
+        "title": "Core Values",
+        "description": "Obtain your first Augment Core.",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "parent": "jahdoo/augment",
+    "criteria": {
+        "requirement": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": "jahdoo:augment_core"
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -437,5 +437,65 @@
     },
     "done": true
   },
+  "minecraft:recipes/decorations/ladder": {
+    "criteria": {
+      "has_stick": "2024-10-18 18:42:55 +0100"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/campfire": {
+    "criteria": {
+      "has_stick": "2024-10-18 18:42:55 +0100"
+    },
+    "done": true
+  },
+  "minecraft:recipes/tools/wooden_hoe": {
+    "criteria": {
+      "has_stick": "2024-10-18 18:42:55 +0100"
+    },
+    "done": true
+  },
+  "minecraft:recipes/tools/wooden_pickaxe": {
+    "criteria": {
+      "has_stick": "2024-10-18 18:42:55 +0100"
+    },
+    "done": true
+  },
+  "minecraft:recipes/tools/wooden_axe": {
+    "criteria": {
+      "has_stick": "2024-10-18 18:42:55 +0100"
+    },
+    "done": true
+  },
+  "minecraft:recipes/tools/wooden_shovel": {
+    "criteria": {
+      "has_stick": "2024-10-18 18:42:55 +0100"
+    },
+    "done": true
+  },
+  "minecraft:recipes/combat/wooden_sword": {
+    "criteria": {
+      "has_stick": "2024-10-18 18:42:55 +0100"
+    },
+    "done": true
+  },
+  "jahdoo:root": {
+    "criteria": {
+      "requirement": "2024-10-18 18:56:46 +0100"
+    },
+    "done": true
+  },
+  "jahdoo:augment_core": {
+    "criteria": {
+      "requirement": "2024-10-19 01:13:55 +0100"
+    },
+    "done": true
+  },
+  "jahdoo:augment": {
+    "criteria": {
+      "requirement": "2024-10-19 01:41:28 +0100"
+    },
+    "done": true
+  },
   "DataVersion": 3955
 }

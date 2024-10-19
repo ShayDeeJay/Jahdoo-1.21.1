@@ -224,7 +224,16 @@ public class IceBomb extends DefaultEntityBehaviour {
     }
 
     private void playPeriodicIdleSound(){
-        if (this.elementProjectile.tickCount % 30 == 0) {
+        if(this.elementProjectile.tickCount == 1){
+            GeneralHelpers.getSoundWithPosition(
+                this.elementProjectile.level(),
+                this.elementProjectile.blockPosition(),
+                SoundRegister.TIMER.get(),
+                0.8f, 0.1f
+            );
+        }
+
+        if (this.elementProjectile.tickCount % 21 == 0) {
             GeneralHelpers.getSoundWithPosition(
                 this.elementProjectile.level(),
                 this.elementProjectile.blockPosition(),

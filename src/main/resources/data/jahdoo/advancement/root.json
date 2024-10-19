@@ -1,0 +1,32 @@
+{
+    "display": {
+        "icon": {
+            "id": "jahdoo:wand_mystic"
+        },
+        "title": "Baby's first wand",
+        "description": "Obtain your first wand!",
+        "frame": "task",
+        "background": "jahdoo:textures/block/crystal_ore.png",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "requirement": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "jahdoo:wand_mystic",
+                            "jahdoo:wand_frost",
+                            "jahdoo:wand_inferno",
+                            "jahdoo:wand_lightning",
+                            "jahdoo:wand_vitality"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}
