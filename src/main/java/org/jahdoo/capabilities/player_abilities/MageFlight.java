@@ -1,19 +1,17 @@
-package org.jahdoo.all_magic.wand_perks.mage_flight;
+package org.jahdoo.capabilities.player_abilities;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.network.PacketDistributor;
 //import org.assets.jahdoo.capabilities.AbstractCapability;
-import org.jahdoo.items.wand.CastHelper;
+import org.jahdoo.capabilities.AbstractAttachment;
 import org.jahdoo.networking.packet.MageFlightPacketS2CPacket;
 import org.jahdoo.utils.GeneralHelpers;
 
-import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
-import static org.jahdoo.registers.AttachmentRegister.MAGE_FLIGHT;
+import static org.jahdoo.registers.AttachmentRegister.*;
 
-public class MageFlight {
+public class MageFlight implements AbstractAttachment {
 
     public int jumpTickCounter;
     public boolean lastJumped;
@@ -42,6 +40,7 @@ public class MageFlight {
         PacketDistributor.sendToPlayer(serverPlayer, new MageFlightPacketS2CPacket(this.jumpTickCounter, this.isFlying, this.lastJumped));
 
         if(this.chargeMana) {
+            serverPlayer.getData(BOUNCY_FOOT).setEffectTimer(160);
             this.playMageFlightSound(serverPlayer);
             var manaSystem = serverPlayer.getData(CASTER_DATA);
             manaSystem.subtractMana(manaCost);

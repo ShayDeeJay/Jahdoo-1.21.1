@@ -8,6 +8,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.all_magic.AbstractElement;
+import org.jahdoo.capabilities.AbstractAttachment;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.items.wand.CastHelper;
 import org.jahdoo.items.wand.WandItem;
@@ -30,7 +31,7 @@ import static org.jahdoo.registers.AttachmentRegister.*;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
-public class DimensionalRecall {
+public class DimensionalRecall implements AbstractAttachment {
 
     private boolean startedUsing;
 

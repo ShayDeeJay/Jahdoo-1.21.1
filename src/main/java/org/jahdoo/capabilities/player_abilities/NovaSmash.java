@@ -19,6 +19,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.all_magic.AbstractElement;
+import org.jahdoo.capabilities.AbstractAttachment;
 import org.jahdoo.networking.packet.NovaSmashS2CPacket;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.AttributesRegister;
@@ -34,7 +35,7 @@ import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
 import static org.jahdoo.particle.ParticleStore.rgbToInt;
 import static org.jahdoo.registers.AttachmentRegister.NOVA_SMASH;
 
-public class NovaSmash {
+public class NovaSmash implements AbstractAttachment {
 
     private int highestDelta;
     private boolean canSmash;
@@ -67,10 +68,10 @@ public class NovaSmash {
     }
 
     public static void novaSmashTickEvent(Player player){
-        player.getData(NOVA_SMASH).setPlayerSmash(player);
+        player.getData(NOVA_SMASH).onTick(player);
     }
 
-    public void setPlayerSmash(Player player){
+    public void onTick(Player player){
         int getCurrentDelta = (int) Math.abs(Math.round(player.getDeltaMovement().y));
         this.highestDelta = Math.max(this.highestDelta, getCurrentDelta);
         this.getDamage = GeneralHelpers.attributeModifierCalculator(
@@ -83,7 +84,8 @@ public class NovaSmash {
 
         if (this.canSmash){
             player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
-            player.resetFallDistance();
+            BouncyFoot.setBouncyFoot(player, 300);
+//            player.resetFallDistance();
             this.clientDataSync(player);
             if(player.onGround()){
                 this.setAbilityEffects(player, this.highestDelta);

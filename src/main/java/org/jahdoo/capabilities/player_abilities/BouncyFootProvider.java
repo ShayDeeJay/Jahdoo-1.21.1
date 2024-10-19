@@ -6,19 +6,19 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.jetbrains.annotations.Nullable;
 
-public class MageFlightProvider implements IAttachmentSerializer<CompoundTag, MageFlight> {
+public class BouncyFootProvider implements IAttachmentSerializer<CompoundTag, BouncyFoot> {
 
     @Override
-    public MageFlight read(IAttachmentHolder iAttachmentHolder, CompoundTag compoundTag, HolderLookup.Provider provider) {
-        var playerMagicData = new MageFlight();
+    public BouncyFoot read(IAttachmentHolder iAttachmentHolder, CompoundTag compoundTag, HolderLookup.Provider provider) {
+        var playerMagicData = new BouncyFoot();
         playerMagicData.loadNBTData(compoundTag);
         return playerMagicData;
     }
 
     @Override
-    public @Nullable CompoundTag write(MageFlight mageFlight, HolderLookup.Provider provider) {
+    public @Nullable CompoundTag write(BouncyFoot bouncyFoot, HolderLookup.Provider provider) {
         var tag = new CompoundTag();
-        mageFlight.saveNBTData(tag);
+        bouncyFoot.saveNBTData(tag);
         return tag;
     }
 }

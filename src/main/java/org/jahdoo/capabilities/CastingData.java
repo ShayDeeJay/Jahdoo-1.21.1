@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 
-public class CastingData {
+public class CastingData implements AbstractAttachment{
 
     private static final String mana = "jahdoo_magic_data_mana";
     private static final String regenSpeed = "jahdoo_magic_data_mana_regen";
@@ -60,25 +60,6 @@ public class CastingData {
 
     public void setLocalMana(double manaPool){
         this.manaPool = manaPool;
-    }
-
-    public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
-        CompoundTag cooldowns = new CompoundTag();
-        CompoundTag cooldownsStatic = new CompoundTag();
-        this.abilityCooldowns.forEach(cooldowns::putInt);
-        this.abilityCooldownsStatic.forEach(cooldownsStatic::putInt);
-        nbt.put(CastingData.cooldowns, cooldowns);
-        nbt.putDouble(mana, manaPool);
-    }
-
-    public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
-        manaPool = nbt.getDouble(mana);
-        nbt.getCompound(cooldowns).getAllKeys().forEach(
-            keys -> abilityCooldowns.put(keys, nbt.getCompound(cooldowns).getInt(keys))
-        );
-        nbt.getCompound(cooldownsStatic).getAllKeys().forEach(
-            keys -> abilityCooldownsStatic.put(keys, nbt.getCompound(cooldownsStatic).getInt(keys))
-        );
     }
 
     public static void manaTickEvent(ServerPlayer serverPlayer) {
@@ -148,4 +129,24 @@ public class CastingData {
         this.abilityCooldowns.remove(ability);
     }
 
+    @Override
+    public void saveNBTData(CompoundTag nbt) {
+        CompoundTag cooldowns = new CompoundTag();
+        CompoundTag cooldownsStatic = new CompoundTag();
+        this.abilityCooldowns.forEach(cooldowns::putInt);
+        this.abilityCooldownsStatic.forEach(cooldownsStatic::putInt);
+        nbt.put(CastingData.cooldowns, cooldowns);
+        nbt.putDouble(mana, manaPool);
+    }
+
+    @Override
+    public void loadNBTData(CompoundTag nbt) {
+        manaPool = nbt.getDouble(mana);
+        nbt.getCompound(cooldowns).getAllKeys().forEach(
+            keys -> abilityCooldowns.put(keys, nbt.getCompound(cooldowns).getInt(keys))
+        );
+        nbt.getCompound(cooldownsStatic).getAllKeys().forEach(
+            keys -> abilityCooldownsStatic.put(keys, nbt.getCompound(cooldownsStatic).getInt(keys))
+        );
+    }
 }

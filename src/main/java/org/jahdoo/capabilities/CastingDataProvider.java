@@ -12,14 +12,14 @@ public class CastingDataProvider implements IAttachmentSerializer<CompoundTag, C
     @Override
     public CastingData read(IAttachmentHolder iAttachmentHolder, CompoundTag compoundTag, HolderLookup.Provider provider) {
         var playerMagicData = new CastingData();
-        playerMagicData.loadNBTData(compoundTag, provider);
+        playerMagicData.loadNBTData(compoundTag);
         return playerMagicData;
     }
 
     @Override
     public @Nullable CompoundTag write(CastingData playerMagicSystem, HolderLookup.Provider provider) {
         var tag = new CompoundTag();
-        playerMagicSystem.saveNBTData(tag, provider);
+        playerMagicSystem.saveNBTData(tag);
         return tag;
     }
 }

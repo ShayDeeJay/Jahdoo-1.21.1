@@ -142,10 +142,6 @@ public class WandItem extends BlockItem implements GeoItem {
     public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int slotId, boolean isSoltSelected) {
         if(!(entity instanceof Player player)) return;
 
-        if(player instanceof ServerPlayer serverPlayer){
-            CriteriaTriggers.USING_ITEM.trigger(serverPlayer, itemStack);
-        }
-
         if (player.getItemInHand(player.getUsedItemHand()) == itemStack) {}
     }
 

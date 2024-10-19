@@ -1,12 +1,12 @@
 package org.jahdoo.all_magic.wand_perks.mage_flight;
 
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.all_magic.AbstractElement;
+import org.jahdoo.capabilities.player_abilities.MageFlight;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.networking.packet.FlyingPacketC2SPacket;
 import org.jahdoo.particle.ParticleStore;
@@ -14,7 +14,7 @@ import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.utils.GeneralHelpers;
 
-import static org.jahdoo.all_magic.wand_perks.mage_flight.MageFlight.manaCost;
+import static org.jahdoo.capabilities.player_abilities.MageFlight.manaCost;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 import static org.jahdoo.registers.AttachmentRegister.MAGE_FLIGHT;

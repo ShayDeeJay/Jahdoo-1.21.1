@@ -97,7 +97,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 
     private AbstractElement getElement(){
         var elementRegistry = ElementRegistry.getElementByTypeId((int) getTag(SET_ELEMENT_TYPE));
-        return elementRegistry.isEmpty() ? ElementRegistry.MYSTIC.get() : elementRegistry.get(0);
+        return elementRegistry.isEmpty() ? ElementRegistry.MYSTIC.get() : elementRegistry.getFirst();
     }
 
     @Override

@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.capabilities.AbstractAttachment;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.all_abilities.abilities.StaticAbility;
@@ -25,7 +26,7 @@ import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 import static org.jahdoo.registers.AttachmentRegister.STATIC;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
 
-public class Static {
+public class Static implements AbstractAttachment {
 
     private boolean isActive;
     double damageA;
