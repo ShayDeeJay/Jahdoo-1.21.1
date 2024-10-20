@@ -16,24 +16,18 @@ import static org.jahdoo.registers.AttachmentRegister.MAGE_FLIGHT;
 public class FlyingPacketC2SPacket implements CustomPacketPayload{
     public static final Type<FlyingPacketC2SPacket> TYPE = new Type<>(GeneralHelpers.modResourceLocation("send_flying_update"));
     public static final StreamCodec<RegistryFriendlyByteBuf, FlyingPacketC2SPacket> STREAM_CODEC = CustomPacketPayload.codec(FlyingPacketC2SPacket::toBytes, FlyingPacketC2SPacket::new);
-    private final boolean chargeMana;
-    private boolean lastJumped;
-    private boolean isFlying;
-    private int jumpTickCounter;
+    private boolean isJumpKeyDown;
 
-    public FlyingPacketC2SPacket(boolean chargeMana, boolean lastJumped, boolean isFlying, int jumpTickCounter) {
-        this.chargeMana = chargeMana;
-        this.lastJumped = lastJumped;
-        this.isFlying = isFlying;
-        this.jumpTickCounter = jumpTickCounter;
+    public FlyingPacketC2SPacket(boolean isJumpKeyDown) {
+        this.isJumpKeyDown = isJumpKeyDown;
     }
 
     public FlyingPacketC2SPacket(FriendlyByteBuf buf) {
-        this.chargeMana = buf.readBoolean();
+        this.isJumpKeyDown = buf.readBoolean();
     }
 
     public void toBytes(FriendlyByteBuf bug) {
-        bug.writeBoolean(this.chargeMana);
+        bug.writeBoolean(this.isJumpKeyDown);
     }
 
     public boolean handle(IPayloadContext ctx) {
@@ -41,21 +35,7 @@ public class FlyingPacketC2SPacket implements CustomPacketPayload{
             () -> {
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
                     var mageFlight = serverPlayer.getData(MAGE_FLIGHT);
-                    if(!serverPlayer.isCreative()){
-                        var flyingAttribute = serverPlayer.getAttribute(NeoForgeMod.CREATIVE_FLIGHT);
-                        if(flyingAttribute != null){
-                            flyingAttribute.setBaseValue(1);
-                            if (serverPlayer.onGround()) flyingAttribute.setBaseValue(0);
-                        }
-                        mageFlight.setChargeMana(this.chargeMana);
-                        mageFlight.setLastJumped(this.lastJumped);
-                        mageFlight.setFlying(this.isFlying);
-                        mageFlight.setJumpTickCounter(this.jumpTickCounter);
-                    }
-
-                    if(serverPlayer.isCreative() && this.isFlying){
-                        mageFlight.setFlying(false);
-                    }
+                    mageFlight.setJumpKeyDown(isJumpKeyDown);
                 }
             }
         );

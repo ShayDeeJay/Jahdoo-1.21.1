@@ -22,7 +22,7 @@ public class Network {
         payloadRegistrar.playToClient(ManaDataSyncS2CPacket.TYPE, ManaDataSyncS2CPacket.STREAM_CODEC, ManaDataSyncS2CPacket::handle);
         payloadRegistrar.playToClient(CooldownsDataSyncS2CPacket.TYPE, CooldownsDataSyncS2CPacket.STREAM_CODEC, CooldownsDataSyncS2CPacket::handle);
         payloadRegistrar.playToClient(MageFlightPacketS2CPacket.TYPE, MageFlightPacketS2CPacket.STREAM_CODEC, MageFlightPacketS2CPacket::handle);
-        payloadRegistrar.playToClient(NovaSmashS2CPacket.TYPE, NovaSmashS2CPacket.STREAM_CODEC, NovaSmashS2CPacket::handle);
+//        payloadRegistrar.playToClient(NovaSmashS2CPacket.TYPE, NovaSmashS2CPacket.STREAM_CODEC, NovaSmashS2CPacket::handle);
     }
 
 }

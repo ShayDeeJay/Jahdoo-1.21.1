@@ -11,14 +11,14 @@ public class BouncyFootProvider implements IAttachmentSerializer<CompoundTag, Bo
     @Override
     public BouncyFoot read(IAttachmentHolder iAttachmentHolder, CompoundTag compoundTag, HolderLookup.Provider provider) {
         var playerMagicData = new BouncyFoot();
-        playerMagicData.loadNBTData(compoundTag);
+        playerMagicData.loadNBTData(compoundTag, provider);
         return playerMagicData;
     }
 
     @Override
     public @Nullable CompoundTag write(BouncyFoot bouncyFoot, HolderLookup.Provider provider) {
         var tag = new CompoundTag();
-        bouncyFoot.saveNBTData(tag);
+        bouncyFoot.saveNBTData(tag, provider);
         return tag;
     }
 }

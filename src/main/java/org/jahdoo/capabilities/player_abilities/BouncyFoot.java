@@ -1,33 +1,14 @@
 package org.jahdoo.capabilities.player_abilities;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.capabilities.AbstractAttachment;
-import org.jahdoo.components.WandAbilityHolder;
-import org.jahdoo.items.wand.CastHelper;
-import org.jahdoo.particle.ParticleStore;
-import org.jahdoo.particle.particle_options.BakedParticleOptions;
-import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.DataComponentHelper;
 import org.jahdoo.utils.GeneralHelpers;
 
-import java.util.List;
-
-import static org.jahdoo.all_magic.AbilityBuilder.COOLDOWN;
-import static org.jahdoo.all_magic.AbilityBuilder.MANA_COST;
-import static org.jahdoo.all_magic.all_abilities.abilities.DimensionalRecallAbility.abilityId;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.registers.AttachmentRegister.*;
-import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
-import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class BouncyFoot implements AbstractAttachment {
 
@@ -35,10 +16,16 @@ public class BouncyFoot implements AbstractAttachment {
     private double previousDelta;
     private int effectTimer;
 
-    public void saveNBTData(CompoundTag nbt) {
+    public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
+        nbt.putDouble("current_delta", this.currentDelta);
+        nbt.putDouble("previous_data", this.previousDelta);
+        nbt.putInt("effect_timer", this.effectTimer);
     }
 
-    public void loadNBTData(CompoundTag nbt) {
+    public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
+        this.currentDelta = nbt.getDouble("current_delta");
+        this.previousDelta = nbt.getDouble("previous_data");
+        this.effectTimer = nbt.getInt("effect_timer");
     }
 
     public static void setBouncyFoot(Player player, int effectTimer){
@@ -53,7 +40,7 @@ public class BouncyFoot implements AbstractAttachment {
         this.previousDelta = this.currentDelta;
         this.currentDelta = player.getDeltaMovement().y;
 
-        System.out.println(effectTimer);
+        if(this.currentDelta == this.previousDelta) this.effectTimer = 0;
 
         if(effectTimer > 0){
             effectTimer--;
@@ -61,8 +48,9 @@ public class BouncyFoot implements AbstractAttachment {
             else player.resetFallDistance();
 
             if (player.verticalCollisionBelow && previousDelta != currentDelta) {
-                player.makeSound(SoundEvents.SLIME_SQUISH);
-                player.setDeltaMovement(player.getDeltaMovement().add(0, Math.abs(previousDelta / 1.5), 0));
+                var reducedDelta = Math.abs(previousDelta / 1.5);
+                player.playSound(SoundEvents.HONEY_BLOCK_HIT, (float) reducedDelta, 2f);
+                player.setDeltaMovement(player.getDeltaMovement().add(0, Math.min(reducedDelta, 3), 0));
             }
         }
     }

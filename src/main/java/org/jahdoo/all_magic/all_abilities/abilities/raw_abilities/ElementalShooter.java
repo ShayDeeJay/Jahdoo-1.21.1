@@ -111,9 +111,10 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 
     @Override
     public void onTickMethod() {
-        ParticleHandlers.GenericProjectile(this.genericProjectile,
+        ParticleHandlers.GenericProjectile(
+            this.genericProjectile,
             new BakedParticleOptions(getElement().getTypeId(), 2, 0.25f, true),
-            genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, getElement(), 5, 1f),
+            genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, getElement(), 5, 1.2f),
             0.015
         );
     }

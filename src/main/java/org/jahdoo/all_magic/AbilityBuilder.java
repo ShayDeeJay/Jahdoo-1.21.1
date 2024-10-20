@@ -26,6 +26,7 @@ public class AbilityBuilder {
     public static final String CASTING_DISTANCE = "Cast Distance";
     public static final String SET_ELEMENT_TYPE = "Element Type";
     public static final String LIFETIME = "Life Time";
+    public static final String AOE = "Area of Effect";
 
 
     private final ItemStack item;
@@ -33,6 +34,9 @@ public class AbilityBuilder {
     private final WandAbilityHolder wandAbilityHolder = new WandAbilityHolder(new LinkedHashMap<>());
     private final AbilityHolder abilityHolder = new AbilityHolder(new LinkedHashMap<>());
 
+    /**
+     * If you null ItemStack then you should only buildAndReturn()
+     * **/
     public AbilityBuilder(@Nullable ItemStack itemStack, String abilityId) {
         this.item = itemStack;
         this.abilityId = abilityId;
@@ -149,12 +153,16 @@ public class AbilityBuilder {
         return this;
     }
 
+    public AbilityBuilder setAoe(double high, double low, double step){
+        this.setAbilityTagModifiersRandom(AOE, high, low, true, step);
+        return this;
+    }
+
     public AbilityBuilder setLifetime(double high, double low, double step){
         this.setAbilityTagModifiersRandom(LIFETIME, high, low, true, step);
         return this;
     }
 
-    // Method to construct the final Person object
     public void build() {
         this.wandAbilityHolder.abilityProperties().put(abilityId, this.abilityHolder);
         if(this.item != null){

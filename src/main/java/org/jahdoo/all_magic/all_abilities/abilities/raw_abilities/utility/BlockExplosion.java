@@ -1,19 +1,13 @@
-package org.jahdoo.all_magic.all_abilities.utility.raw_utilities;
+package org.jahdoo.all_magic.all_abilities.abilities.raw_abilities.utility;
 
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -22,6 +16,7 @@ import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.UtilityHelpers;
+import org.jahdoo.all_magic.all_abilities.abilities.ArcaneShiftAbility;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
@@ -34,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.minecraft.world.level.block.Blocks.AIR;
-import static net.minecraft.world.level.block.Blocks.WATER;
 
 public class BlockExplosion extends AbstractUtilityProjectile {
     ResourceLocation abilityId = GeneralHelpers.modResourceLocation("block_bomb_property");
@@ -56,6 +50,12 @@ public class BlockExplosion extends AbstractUtilityProjectile {
     @Override
     public DefaultEntityBehaviour getEntityProperty() {
         return new BlockExplosion();
+    }
+
+    @Override
+    public double getTag(String name) {
+        var wandAbilityHolder = this.genericProjectile.wandAbilityHolder();
+        return GeneralHelpers.getModifierValue(wandAbilityHolder, ArcaneShiftAbility.abilityId.getPath().intern()).get(name).actualValue();
     }
 
     @Override

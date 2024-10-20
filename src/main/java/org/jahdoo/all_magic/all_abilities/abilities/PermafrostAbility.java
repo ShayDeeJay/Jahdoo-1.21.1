@@ -27,9 +27,9 @@ public class PermafrostAbility extends AbstractAbility {
         Vec3 location = player.pick(40, 0,false).getLocation();
         AoeCloud aoeCloud = new AoeCloud(player.level(), player, 0f, ProjectilePropertyRegister.ARCTIC_STORM.get().setAbilityId(), abilityId.getPath().intern());
         aoeCloud.setPos(location.x, location.y, location.z);
+        player.level().playSound(null, BlockPos.containing(location), SoundRegister.ICE_ATTACH.get(), SoundSource.NEUTRAL, 1.2f, 0.6f);
+        player.level().playSound(null, BlockPos.containing(location), SoundRegister.MAGIC_EXPLOSION.get(), SoundSource.NEUTRAL, 0.8f, 0.8f);
         player.level().addFreshEntity(aoeCloud);
-        player.level().playSound(null, BlockPos.containing(location), SoundRegister.ICE_ATTACH.get(), SoundSource.BLOCKS, 1.2f, 0.6f);
-        player.level().playSound(null, BlockPos.containing(location), SoundRegister.ORB_FIRE.get(), SoundSource.BLOCKS, 0.4f, 2f);
     }
 
     @Override
@@ -52,6 +52,7 @@ public class PermafrostAbility extends AbstractAbility {
             .setEffectStrength(10, 4,1)
             .setCastingDistance(30, 10, 5)
             .setLifetime(600, 300, 50)
+            .setAoe(5, 2, 1)
             .build();
     }
 

@@ -1,73 +1,43 @@
 package org.jahdoo.items.wand;
 
-import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.KeyframeAnimations;
-import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.portal.DimensionTransition;
-import net.minecraft.world.phys.Vec3;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.WandData;
-import org.jahdoo.particle.ParticleStore;
-import org.jahdoo.particle.particle_options.BakedParticleOptions;
-import org.jahdoo.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import software.bernie.geckolib.util.RenderUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 
 public class WandItem extends BlockItem implements GeoItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -78,6 +48,7 @@ public class WandItem extends BlockItem implements GeoItem {
         properties.stacksTo(1);
         properties.component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(),WandAbilityHolder.DEFAULT);
         properties.component(DataComponentRegistry.WAND_DATA.get(), WandData.DEFAULT);
+
         properties.fireResistant();
         return properties;
     }
@@ -162,8 +133,12 @@ public class WandItem extends BlockItem implements GeoItem {
 //            triggerAnimWithController(this,  player.getMainHandItem(), serverLevel, player, SINGLE_CAST_ID);
 //        }
 
+        player.openItemGui(player.getMainHandItem(), interactionHand);
+//        player.openItemGui(new BookEditScreen(this, stack, hand));
+
+
         if (interactionHand == InteractionHand.MAIN_HAND) {
-            if (player instanceof ServerPlayer serverPlayer) return CastHelper.use(serverPlayer);
+            CastHelper.use(player);
         }
 
         return super.use(level, player, interactionHand);

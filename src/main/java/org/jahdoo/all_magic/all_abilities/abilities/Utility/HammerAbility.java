@@ -1,4 +1,4 @@
-package org.jahdoo.all_magic.all_abilities.utility;
+package org.jahdoo.all_magic.all_abilities.abilities.Utility;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -24,7 +24,7 @@ public class HammerAbility extends AbstractAbility {
             ProjectilePropertyRegister.HAMMER.get().setAbilityId(),
             abilityId.getPath().intern()
         );
-        fireGenericProjectile(genericProjectile, player);
+        fireUtilityProjectile(genericProjectile, player);
     }
 
     @Override

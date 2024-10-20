@@ -1,6 +1,9 @@
 package org.jahdoo.all_magic.all_abilities.abilities;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -10,20 +13,22 @@ import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class ArmageddonAbility extends AbstractAbility {
     public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("armageddon");
-    public static final String aoe = "Area of Effect";
-    public static final String speed = "Spawning Speed";
+    public static final String SPAWNING_SPEED = "Spawning Speed";
 
     @Override
     public void invokeAbility(Player player) {
         Vec3 location = player.pick(40, 0,false).getLocation();
         AoeCloud aoeCloud = new AoeCloud(player.level(), player, 3f, ProjectilePropertyRegister.ARMAGEDDON.get().setAbilityId(), abilityId.getPath().intern());
         aoeCloud.setPos(location.x, location.y, location.z);
+        player.level().playSound(null, BlockPos.containing(location), SoundEvents.FIRECHARGE_USE, SoundSource.NEUTRAL, 1.4f, 0.3f);
+        player.level().playSound(null, BlockPos.containing(location), SoundRegister.ORB_FIRE.get(), SoundSource.NEUTRAL, 0.8f, 0.6f);
         player.level().addFreshEntity(aoeCloud);
     }
 
@@ -45,8 +50,8 @@ public class ArmageddonAbility extends AbstractAbility {
             .setDamage(25, 10, 1)
             .setCastingDistance(30, 10, 5)
             .setLifetime(500, 300, 10)
-            .setAbilityTagModifiersRandom(aoe, 6,1, true, 1)
-            .setAbilityTagModifiersRandom(speed, 30,5, false, 5)
+            .setAoe(6,1,1)
+            .setAbilityTagModifiersRandom(SPAWNING_SPEED, 30,5, false, 5)
             .build();
     }
 

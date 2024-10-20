@@ -6,19 +6,19 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.jetbrains.annotations.Nullable;
 
-public class StaticProvider implements IAttachmentSerializer<CompoundTag, Static> {
+public class SaveDataProvider implements IAttachmentSerializer<CompoundTag, SaveData> {
 
     @Override
-    public Static read(IAttachmentHolder iAttachmentHolder, CompoundTag compoundTag, HolderLookup.Provider provider) {
-        var playerMagicData = new Static();
+    public SaveData read(IAttachmentHolder iAttachmentHolder, CompoundTag compoundTag, HolderLookup.Provider provider) {
+        var playerMagicData = new SaveData();
         playerMagicData.loadNBTData(compoundTag, provider);
         return playerMagicData;
     }
 
     @Override
-    public @Nullable CompoundTag write(Static Static, HolderLookup.Provider provider) {
+    public @Nullable CompoundTag write(SaveData NovaSmash, HolderLookup.Provider provider) {
         var tag = new CompoundTag();
-        Static.saveNBTData(tag, provider);
+        NovaSmash.saveNBTData(tag, provider);
         return tag;
     }
 }

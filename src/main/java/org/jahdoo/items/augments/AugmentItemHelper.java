@@ -278,7 +278,7 @@ public class AugmentItemHelper {
 
     public static void shiftForDetails(List<Component> toolTips){
         if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
-            var componentI = Component.literal("[i]").withStyle(style -> style.withColor( -2631721));
+            var componentI = Component.literal("[i]").withStyle(style -> style.withColor(-2631721));
             toolTips.add(Component.literal(" "));
 
             var prefix = "Hold ";
@@ -299,6 +299,7 @@ public class AugmentItemHelper {
             var abilityLocation = wandAbilityHolder.abilityProperties().keySet().stream().findAny().get();
             toolTips.addAll(getAllAbilityModifiers(itemStack, null, abilityLocation));
             shiftForDetails(toolTips);
+            toolTips.add(GeneralHelpers.withStyleComponent("Placeable in wands", -12368570));
         } else {
             toolTips.add(Component.literal("Right-click to discover").withStyle(ChatFormatting.GRAY));
 

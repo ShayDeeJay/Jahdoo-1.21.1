@@ -11,14 +11,14 @@ public class DimensionalRecallProvider implements IAttachmentSerializer<Compound
     @Override
     public DimensionalRecall read(IAttachmentHolder iAttachmentHolder, CompoundTag compoundTag, HolderLookup.Provider provider) {
         var playerMagicData = new DimensionalRecall();
-        playerMagicData.loadNBTData(compoundTag);
+        playerMagicData.loadNBTData(compoundTag,provider );
         return playerMagicData;
     }
 
     @Override
     public @Nullable CompoundTag write(DimensionalRecall dimensionalRecall, HolderLookup.Provider provider) {
         var tag = new CompoundTag();
-        dimensionalRecall.saveNBTData(tag);
+        dimensionalRecall.saveNBTData(tag, provider);
         return tag;
     }
 }

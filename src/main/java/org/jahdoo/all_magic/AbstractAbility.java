@@ -2,6 +2,7 @@ package org.jahdoo.all_magic;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -72,19 +73,19 @@ public abstract class AbstractAbility {
                 projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, 0);
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
-                GeneralHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundRegister.ORB_CREATE.get(), 0.3f);
+                GeneralHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundRegister.ORB_FIRE.get(), 0.4f, 1f);
             }
         }
     }
 
-    public void fireGenericProjectile(Projectile projectile, LivingEntity player){
+    public void fireUtilityProjectile(Projectile projectile, LivingEntity player){
         if(player != null){
             if(player.level() instanceof ServerLevel serverLevel){
                 Vec3 direction = player.getLookAngle();
                 projectile.shoot(direction.x(), direction.y(), direction.z(), 1.2f, 0);
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
-                GeneralHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundRegister.ORB_CREATE.get(), 0.3f);
+                GeneralHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundEvents.BONE_MEAL_USE , 0.4f, 0.1f);
             }
         }
     }

@@ -1,4 +1,4 @@
-package org.jahdoo.all_magic.all_abilities.utility;
+package org.jahdoo.all_magic.all_abilities.abilities.Utility;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -13,30 +13,30 @@ import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
-public class BlockBombAbility extends AbstractAbility {
-    private final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("block_bomb");
+
+public class VeinMinerAbility extends AbstractAbility {
+    private final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("vein_miner");
 
     @Override
     public void invokeAbility(Player player) {
         GenericProjectile genericProjectile = new GenericProjectile(
             player,
             0.06,
-            ProjectilePropertyRegister.BLOCK_EXPLODER.get().setAbilityId(),
+            ProjectilePropertyRegister.VEIN_MINER.get().setAbilityId(),
             abilityId.getPath().intern()
         );
-        fireGenericProjectile(genericProjectile, player);
+        fireUtilityProjectile(genericProjectile, player);
     }
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.ETERNAL;
+        return JahdooRarity.EPIC;
     }
 
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
     }
-
 
     @Override
     public void setModifiers(ItemStack itemStack) {

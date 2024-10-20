@@ -2,7 +2,6 @@ package org.jahdoo.capabilities.player_abilities;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.jetbrains.annotations.Nullable;
@@ -12,14 +11,14 @@ public class NovaSmashProvider implements IAttachmentSerializer<CompoundTag, Nov
     @Override
     public NovaSmash read(IAttachmentHolder iAttachmentHolder, CompoundTag compoundTag, HolderLookup.Provider provider) {
         var playerMagicData = new NovaSmash();
-        playerMagicData.loadNBTData(compoundTag);
+        playerMagicData.loadNBTData(compoundTag, provider);
         return playerMagicData;
     }
 
     @Override
     public @Nullable CompoundTag write(NovaSmash NovaSmash, HolderLookup.Provider provider) {
         var tag = new CompoundTag();
-        NovaSmash.saveNBTData(tag);
+        NovaSmash.saveNBTData(tag, provider);
         return tag;
     }
 }

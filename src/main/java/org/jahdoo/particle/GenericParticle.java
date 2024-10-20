@@ -8,7 +8,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.utils.GeneralHelpers;
-import org.jetbrains.annotations.NotNull;
 
 public class GenericParticle extends SimpleAnimatedParticle {
 
@@ -35,8 +34,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        return ParticleRenderTypes.ABILITY_RENDERER;
     }
 
     @OnlyIn(Dist.CLIENT)

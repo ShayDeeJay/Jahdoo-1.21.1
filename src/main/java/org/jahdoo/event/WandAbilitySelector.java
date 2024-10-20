@@ -32,7 +32,7 @@ public class WandAbilitySelector {
         if(condition1 || condition2){
             List<AbstractAbility> getAbility = AbilityRegister.getSpellsByTypeId(arrangedAbilities.get(keyNum - 1));
             if(!getAbility.isEmpty()){
-                var a1 = getAbility.get(0);
+                var a1 = getAbility.getFirst();
                 var a = Component.literal(a1.getAbilityName()).withStyle(style -> style.withColor(SharedUI.getElementColour(a1, playerHandItem)));
                 player.displayClientMessage(a, true);
                 PacketDistributor.sendToServer(new StopUsingC2SPacket());

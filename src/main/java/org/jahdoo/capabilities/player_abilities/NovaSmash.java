@@ -1,11 +1,11 @@
 package org.jahdoo.capabilities.player_abilities;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -17,18 +17,14 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.capabilities.AbstractAttachment;
-import org.jahdoo.networking.packet.NovaSmashS2CPacket;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.GeneralHelpers;
-
 import java.util.List;
-
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
@@ -41,12 +37,12 @@ public class NovaSmash implements AbstractAttachment {
     private boolean canSmash;
     private float getDamage;
 
-    public void saveNBTData(CompoundTag nbt) {
+    public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putInt("highestDelta", highestDelta);
         nbt.putBoolean("canSmash", canSmash);
     }
 
-    public void loadNBTData(CompoundTag nbt) {
+    public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         this.highestDelta = nbt.getInt("highestDelta");
         this.canSmash = nbt.getBoolean("canSmash");
     }
@@ -59,19 +55,11 @@ public class NovaSmash implements AbstractAttachment {
         this.highestDelta = highestDelta;
     }
 
-    public boolean getCanSmash(){
-        return this.canSmash;
-    }
-
-    public int getSetHighestDelta(){
-        return this.highestDelta;
-    }
-
     public static void novaSmashTickEvent(Player player){
         player.getData(NOVA_SMASH).onTick(player);
     }
 
-    public void onTick(Player player){
+    private void onTick(Player player){
         int getCurrentDelta = (int) Math.abs(Math.round(player.getDeltaMovement().y));
         this.highestDelta = Math.max(this.highestDelta, getCurrentDelta);
         this.getDamage = GeneralHelpers.attributeModifierCalculator(
@@ -84,22 +72,20 @@ public class NovaSmash implements AbstractAttachment {
 
         if (this.canSmash){
             player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
-            BouncyFoot.setBouncyFoot(player, 300);
-//            player.resetFallDistance();
-            this.clientDataSync(player);
             if(player.onGround()){
+                GeneralHelpers.getOuterRingOfRadiusRandom(player.position(), 2, 100,(pos) -> setParticleNova(pos, player));
                 this.setAbilityEffects(player, this.highestDelta);
                 this.setKnockbackAndDamage(player, this.highestDelta);
-                player.setDeltaMovement(player.getDeltaMovement().add(0, Math.max(Math.min(5, (double) this.highestDelta / 4), 2.2), 0));
                 this.highestDelta = 0;
                 this.canSmash = false;
+                BouncyFoot.setBouncyFoot(player, 160);
             }
         }
     }
 
     private void setAbilityEffects(Player player, int getMaxDeltaMovement){
         GeneralHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.PLAYER_BIG_FALL);
-        GeneralHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.EXPLOSION.get(), 0.5f,1.5f);
+        GeneralHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.EXPLOSION.get(), getMaxDeltaMovement,0.6f);
 
         if(player.level() instanceof ServerLevel serverLevel){
             this.clientDiggingParticles(player, serverLevel);
@@ -109,10 +95,22 @@ public class NovaSmash implements AbstractAttachment {
         }
     }
 
+    private void setParticleNova(Vec3 worldPosition, Player player){
+        if(player.level() instanceof ServerLevel serverLevel){
+            var directions = worldPosition.subtract(player.position());
+            var getMysticElement = ElementRegistry.MYSTIC.get();
 
-    public void clientDataSync(Player player){
-        if(player instanceof ServerPlayer serverPlayer){
-            PacketDistributor.sendToPlayer(serverPlayer, new NovaSmashS2CPacket(this.highestDelta, this.canSmash));
+            var genericParticle = genericParticleOptions(
+                GENERIC_PARTICLE_SELECTION, 20,
+                6f,
+                getMysticElement.particleColourPrimary(),
+                getMysticElement.particleColourSecondary(),
+                false
+            );
+
+            GeneralHelpers.generalHelpers.sendParticles(
+                serverLevel, genericParticle, worldPosition, 0, directions.x, directions.y + 0.1, directions.z, (double) this.highestDelta /10
+            );
         }
     }
 
@@ -128,8 +126,7 @@ public class NovaSmash implements AbstractAttachment {
                 double length = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
                 if(livingEntity != player){
                     this.knockback(livingEntity, Math.max((double) getMaxDeltaMovement / 2, 0.3), -deltaX / length, -deltaZ / length);
-
-                    livingEntity.hurt(player.damageSources().playerAttack(player), this.getDamage);
+                    GeneralHelpers.damageEntityWithModifiers(livingEntity, player, this.getDamage, this.getElement());
                 }
             }
         );

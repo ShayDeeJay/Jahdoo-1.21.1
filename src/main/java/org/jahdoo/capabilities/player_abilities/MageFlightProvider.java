@@ -11,14 +11,14 @@ public class MageFlightProvider implements IAttachmentSerializer<CompoundTag, Ma
     @Override
     public MageFlight read(IAttachmentHolder iAttachmentHolder, CompoundTag compoundTag, HolderLookup.Provider provider) {
         var playerMagicData = new MageFlight();
-        playerMagicData.loadNBTData(compoundTag);
+        playerMagicData.loadNBTData(compoundTag, provider);
         return playerMagicData;
     }
 
     @Override
     public @Nullable CompoundTag write(MageFlight mageFlight, HolderLookup.Provider provider) {
         var tag = new CompoundTag();
-        mageFlight.saveNBTData(tag);
+        mageFlight.saveNBTData(tag, provider);
         return tag;
     }
 }

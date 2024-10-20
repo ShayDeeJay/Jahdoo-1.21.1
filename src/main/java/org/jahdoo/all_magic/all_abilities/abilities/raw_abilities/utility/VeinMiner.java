@@ -1,4 +1,4 @@
-package org.jahdoo.all_magic.all_abilities.utility.raw_utilities;
+package org.jahdoo.all_magic.all_abilities.abilities.raw_abilities.utility;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

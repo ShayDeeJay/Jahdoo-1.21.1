@@ -22,6 +22,7 @@ public class MenusRegister {
     public static final Supplier<MenuType<WandBlockMenu>> WAND_BLOCK_MENU =
         registerMenuType(WandBlockMenu::new, "wand_block_menu");
 
+
     private static <T extends AbstractContainerMenu> Supplier<MenuType<T>> registerMenuType(IContainerFactory<T> factory, String name) {
         return MENUS.register(name, () -> IMenuTypeExtension.create(factory));
     }

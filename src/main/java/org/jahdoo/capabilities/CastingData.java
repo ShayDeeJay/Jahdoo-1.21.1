@@ -130,7 +130,7 @@ public class CastingData implements AbstractAttachment{
     }
 
     @Override
-    public void saveNBTData(CompoundTag nbt) {
+    public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         CompoundTag cooldowns = new CompoundTag();
         CompoundTag cooldownsStatic = new CompoundTag();
         this.abilityCooldowns.forEach(cooldowns::putInt);
@@ -140,7 +140,7 @@ public class CastingData implements AbstractAttachment{
     }
 
     @Override
-    public void loadNBTData(CompoundTag nbt) {
+    public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         manaPool = nbt.getDouble(mana);
         nbt.getCompound(cooldowns).getAllKeys().forEach(
             keys -> abilityCooldowns.put(keys, nbt.getCompound(cooldowns).getInt(keys))

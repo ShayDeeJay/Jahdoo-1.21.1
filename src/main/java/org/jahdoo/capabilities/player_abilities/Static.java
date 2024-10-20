@@ -1,5 +1,6 @@
 package org.jahdoo.capabilities.player_abilities;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,7 +39,7 @@ public class Static implements AbstractAttachment {
     double manaCost;
     double cooldownCost;
 
-    public void saveNBTData(CompoundTag nbt) {
+    public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putBoolean("lastJumped", this.isActive);
         nbt.putDouble(DAMAGE, this.damageA);
         nbt.putDouble(StaticAbility.mana_per_damage, this.manaPerHitA);
@@ -51,7 +52,7 @@ public class Static implements AbstractAttachment {
 
     }
 
-    public void loadNBTData(CompoundTag nbt) {
+    public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         this.isActive = nbt.getBoolean("lastJumped");
         this.damageA = nbt.getDouble(DAMAGE);
         this.manaPerHitA = nbt.getDouble(StaticAbility.mana_per_damage);
@@ -156,6 +157,8 @@ public class Static implements AbstractAttachment {
 
                     setEffectParticle(entities, serverLevel);
                     manaSystem.subtractMana(manaPerHitA);
+
+
 
                     entities.hurt(
                         player.damageSources().magic(),

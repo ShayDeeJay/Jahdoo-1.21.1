@@ -3,14 +3,13 @@ package org.jahdoo.all_magic.all_abilities.abilities.raw_abilities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.all_magic.all_abilities.abilities.ArcaneShiftAbility;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.all_abilities.abilities.ArmageddonAbility;
 import org.jahdoo.entities.AoeCloud;
-import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ProjectilePropertyRegister;
 import org.jahdoo.utils.GeneralHelpers;
@@ -36,8 +35,8 @@ public class Armageddon extends DefaultEntityBehaviour {
     @Override
     public void getAoeCloud(AoeCloud aoeCloud) {
         super.getAoeCloud(aoeCloud);
-        this.aoe = this.getTag(ArmageddonAbility.aoe);
-        this.spawnSpeed = this.getTag(ArmageddonAbility.speed);
+        this.aoe = this.getTag(AOE);
+        this.spawnSpeed = this.getTag(ArmageddonAbility.SPAWNING_SPEED);
         if(this.aoeCloud.getOwner() != null){
             var player = this.aoeCloud.getOwner();
             var damage = this.getTag(DAMAGE);
@@ -62,14 +61,20 @@ public class Armageddon extends DefaultEntityBehaviour {
     @Override
     public void onTickMethod() {
         if(aoeCloud.tickCount == 1) {
-            GeneralHelpers.getOuterRingOfRadius(this.aoeCloud.position().add(0,0.5,0), this.aoe, 200, this::setParticleNova);
+            GeneralHelpers.getOuterRingOfRadiusRandom(this.aoeCloud.position(), this.aoe, 200, this::setParticleNova);
+            this.createModules();
         }
+
         aoeCloud.setRadius((float) aoe / 2);
 
         if(aoeCloud.tickCount % spawnSpeed == 0 || aoeCloud.tickCount == 0){
-            List<Vec3> getPositionInRadius = GeneralHelpers.getInnerRingOfRadiusRandom(aoeCloud.position(), aoe + 2, 100);
-            this.createModule(getPositionInRadius.get(GeneralHelpers.Random.nextInt(0, getPositionInRadius.size()-1)));
+            this.createModules();
         }
+    }
+
+    private void createModules(){
+        List<Vec3> getPositionInRadius = GeneralHelpers.getInnerRingOfRadiusRandom(aoeCloud.position(), aoe + 2, 100);
+        this.createModule(getPositionInRadius.get(GeneralHelpers.Random.nextInt(0, getPositionInRadius.size()-1)));
     }
 
     @Override
@@ -104,17 +109,41 @@ public class Armageddon extends DefaultEntityBehaviour {
     @Override
     public void addAdditionalDetails(CompoundTag compoundTag) {
         compoundTag.putDouble(DAMAGE, this.damage);
-        compoundTag.putDouble(ArmageddonAbility.aoe, this.aoe);
-        compoundTag.putDouble(ArmageddonAbility.speed, this.spawnSpeed);
+        compoundTag.putDouble(AOE, this.aoe);
+        compoundTag.putDouble(ArmageddonAbility.SPAWNING_SPEED, this.spawnSpeed);
         compoundTag.putDouble(LIFETIME, this.lifetime);
     }
 
     @Override
     public void readCompoundTag(CompoundTag compoundTag) {
         this.damage = compoundTag.getDouble(DAMAGE);
-        this.aoe = compoundTag.getDouble(ArmageddonAbility.aoe);
-        this.spawnSpeed = compoundTag.getDouble(ArmageddonAbility.speed);
+        this.aoe = compoundTag.getDouble(AOE);
+        this.spawnSpeed = compoundTag.getDouble(ArmageddonAbility.SPAWNING_SPEED);
         this.lifetime = compoundTag.getDouble(LIFETIME);
+    }
+
+    public static void particleNova(
+        Level level,
+        Vec3 worldPosition,
+        Vec3 ownerPosition,
+        double speed,
+        int colourMain,
+        int colourFade,
+        int lifetime,
+        float size
+    ){
+        if(level instanceof ServerLevel serverLevel){
+            var directions = worldPosition.subtract(ownerPosition);
+
+            var genericParticle = genericParticleOptions(
+                GENERIC_PARTICLE_SELECTION, lifetime, size,
+                colourMain, colourFade, false
+            );
+
+            GeneralHelpers.generalHelpers.sendParticles(
+                serverLevel, genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, speed
+            );
+        }
     }
 
     private void setParticleNova(Vec3 worldPosition){
@@ -123,24 +152,15 @@ public class Armageddon extends DefaultEntityBehaviour {
             var getMysticElement = ElementRegistry.MYSTIC.get();
 
             var genericParticle = genericParticleOptions(
-                GENERIC_PARTICLE_SELECTION, 30,
-                GeneralHelpers.Random.nextFloat(0.4f, 0.6f),
+                GENERIC_PARTICLE_SELECTION, 20,
+                6f,
                 getMysticElement.particleColourPrimary(),
                 getMysticElement.particleColourSecondary(),
-                true
+                false
             );
-
-            var bakedParticle = new BakedParticleOptions(
-                getMysticElement.getTypeId(),
-                30,
-                GeneralHelpers.Random.nextFloat(0.4f, 0.6f),
-                true
-            );
-
-            var getRandomParticle = List.of(bakedParticle, genericParticle);
 
             GeneralHelpers.generalHelpers.sendParticles(
-                serverLevel, getRandomParticle.get(GeneralHelpers.Random.nextInt(2)), worldPosition, 0, directions.x, directions.y, directions.z, 0.2
+                serverLevel, genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.2
             );
         }
     }
