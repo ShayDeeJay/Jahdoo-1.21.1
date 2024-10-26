@@ -52,9 +52,6 @@ public class JahdooMod {
 
     private void commonSetup(final FMLCommonSetupEvent event) {}
 
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {}
-
     @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent

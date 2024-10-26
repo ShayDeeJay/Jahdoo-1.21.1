@@ -1,26 +1,41 @@
 package org.jahdoo.items.wand;
 
+import com.google.common.collect.HashMultimap;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.enchantment.EnchantedItemInUse;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.WandData;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.registers.EffectsRegister;
+import org.jahdoo.utils.CustomMobEffect;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -32,12 +47,14 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class WandItem extends BlockItem implements GeoItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -47,8 +64,7 @@ public class WandItem extends BlockItem implements GeoItem {
         Properties properties = new Properties();
         properties.stacksTo(1);
         properties.component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(),WandAbilityHolder.DEFAULT);
-        properties.component(DataComponentRegistry.WAND_DATA.get(), WandData.DEFAULT);
-
+        properties.component(WAND_DATA.get(), WandData.DEFAULT);
         properties.fireResistant();
         return properties;
     }
@@ -113,6 +129,7 @@ public class WandItem extends BlockItem implements GeoItem {
     public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int slotId, boolean isSoltSelected) {
         if(!(entity instanceof Player player)) return;
 
+
         if (player.getItemInHand(player.getUsedItemHand()) == itemStack) {}
     }
 
@@ -120,6 +137,7 @@ public class WandItem extends BlockItem implements GeoItem {
     public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
         pTooltipComponents.addAll(WandItemHelper.getItemModifiers(pStack));
     }
+
 
     @Override
     public @NotNull Component getName(@NotNull ItemStack pStack) {
@@ -129,17 +147,13 @@ public class WandItem extends BlockItem implements GeoItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         player.startUsingItem(interactionHand);
+        if (interactionHand == InteractionHand.MAIN_HAND) CastHelper.use(player);
+
+
 //        if (level instanceof ServerLevel serverLevel) {
 //            triggerAnimWithController(this,  player.getMainHandItem(), serverLevel, player, SINGLE_CAST_ID);
 //        }
 
-        player.openItemGui(player.getMainHandItem(), interactionHand);
-//        player.openItemGui(new BookEditScreen(this, stack, hand));
-
-
-        if (interactionHand == InteractionHand.MAIN_HAND) {
-            CastHelper.use(player);
-        }
 
         return super.use(level, player, interactionHand);
     }

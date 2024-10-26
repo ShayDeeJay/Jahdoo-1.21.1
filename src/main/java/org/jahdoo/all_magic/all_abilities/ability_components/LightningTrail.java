@@ -46,7 +46,8 @@ public class LightningTrail extends DefaultEntityBehaviour {
     public double getTag(String name) {
         var wandAbilityHolder = this.genericProjectile.wandAbilityHolder();
         var ability = abilityId.getPath().intern();
-        return GeneralHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
+        var modifier = GeneralHelpers.getModifierValue(wandAbilityHolder, ability).get(name);
+        return modifier != null ? modifier.actualValue() : 0;
     }
 
     @Override

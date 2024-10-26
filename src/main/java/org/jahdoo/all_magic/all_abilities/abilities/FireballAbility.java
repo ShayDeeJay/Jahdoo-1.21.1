@@ -24,7 +24,7 @@ public class FireballAbility extends AbstractAbility {
             EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(),
             player,
             ProjectilePropertyRegister.FIRE_BALL.get().setAbilityId(),
-            0,
+            -0.5,
             abilityId.getPath().intern()
         );
         this.fireProjectile(elementProjectile, player, 0.5f);

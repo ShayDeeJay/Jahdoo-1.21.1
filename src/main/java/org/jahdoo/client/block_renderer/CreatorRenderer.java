@@ -54,7 +54,7 @@ public class CreatorRenderer implements BlockEntityRenderer<CreatorEntity> {
 
         for(int i = 0; i < creatorEntity.inputItemHandler.getSlots(); i++){
             ItemStack itemStack = creatorEntity.inputItemHandler.getStackInSlot(i);
-            rotateAllItems(pPoseStack, creatorEntity, () -> rotateItem(pPoseStack, creatorEntity, itemRenderer, itemStack, pBuffer), i, atomicInteger.get());
+            rotateAllItems(pPoseStack, creatorEntity, () -> rotateItem(pPoseStack, creatorEntity, itemRenderer, itemStack, pBuffer, pPartialTick), i, atomicInteger.get());
         }
     }
 
@@ -117,7 +117,7 @@ public class CreatorRenderer implements BlockEntityRenderer<CreatorEntity> {
         pPoseStack.popPose();
     }
 
-    private void rotateItem(PoseStack pPoseStack, CreatorEntity pBlockEntity, ItemRenderer itemRenderer, ItemStack itemStack, MultiBufferSource pBuffer){
+    private void rotateItem(PoseStack pPoseStack, CreatorEntity pBlockEntity, ItemRenderer itemRenderer, ItemStack itemStack, MultiBufferSource pBuffer, float partialTicks){
         pPoseStack.pushPose();
         float getCurrentTime = (float) pBlockEntity.getAnimationTicker();
         float scaleItem = 0.3f;

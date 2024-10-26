@@ -13,105 +13,166 @@ import net.minecraft.client.player.Input;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.antlr.v4.runtime.atn.SemanticContext;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.client.SharedUI;
+import org.jahdoo.client.gui.augment_menu.AugmentMenu;
+import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.components.WandData;
 import org.jahdoo.networking.packet.SelectedAbilityC2SPacket;
 import org.jahdoo.networking.packet.StopUsingC2SPacket;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.DataComponentHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import javax.swing.*;
+import java.util.*;
+
+import static org.jahdoo.all_magic.AbilityBuilder.COOLDOWN;
+import static org.jahdoo.all_magic.AbilityBuilder.MANA_COST;
+import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class AbilityWheelMenu extends Screen  {
+    private final int buttonSize = RADIAL_SIZE / 7 + 3;
+    private static final int RADIAL_SIZE = 150;
+    private float localTick = 50;
 
     public AbilityWheelMenu() {
         super(Component.literal("Ability Menu"));
     }
 
-    private float localTick = 50;
-    public static final int RADIAL_SIZE = 150;
-    int buttonSize = RADIAL_SIZE / 7 + 3;
-
     public static List<String> getAllAbilities(ItemStack wand){
         var wandData = DataComponentRegistry.WAND_DATA.get();
-        if(wand.has(wandData)){
-            return wand.get(wandData).abilitySet();
-        }
-        return wand.get(DataComponentRegistry.WAND_DATA.get()).abilitySet();
+        if(wand.has(wandData)) return wand.get(wandData).abilitySet();
+        return new ArrayList<>();
     }
 
     @Override
     protected void init() {
-
         var player = this.getMinecraft().player;
         if(player == null) return;
         var wand = player.getMainHandItem();
-        var abilityHolder = getAllAbilities(wand); // Define the number of positions around the circle
-        var totalSlots = wand.get(DataComponentRegistry.WAND_DATA.get()).abilitySlots();
+        var wandData = wand.get(DataComponentRegistry.WAND_DATA.get());
+        var abilityHolder = getAllAbilities(wand); //number of positions
+        var totalSlots = abilityHolder.size();
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-        int radius = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 3.5); // Adjust the radius as needed
-        double angleOffset = -Math.PI / 2.0; // Start from the top
+        int radius = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 3.5); // Adjust radius
+        double angleOffset = -Math.PI / 2.0; // Start position
 
         for (int i = 0; i < totalSlots; i++) {
             double angle = angleOffset + 2 * Math.PI * i / totalSlots; // Calculate angle for each position
             int buttonX = (int) (centerX + radius * Math.cos(angle)) - buttonSize / 2;
             int buttonY = (int) (centerY + radius * Math.sin(angle)) - buttonSize / 2;
 
-            int finalI = i;
             if (!abilityHolder.isEmpty() && !AbilityRegister.getSpellsByTypeId(abilityHolder.get(i)).isEmpty()) {
-                ResourceLocation iconResource = AbilityRegister.getSpellsByTypeId(abilityHolder.get(i)).getFirst().getAbilityIconLocation();
-                WidgetSprites BUTTON = new WidgetSprites(iconResource, iconResource);
+                AbilityButton(abilityHolder, i, buttonX, buttonY, i, wandData, player);
+            } else {
+                showSlotIndex(i, buttonX, buttonY);
+            }
+            try{
+            } catch (IndexOutOfBoundsException ignored){
+
+            }
+        }
+    }
+
+    private void AbilityButton(
+        List<String> abilityHolder,
+        int i,
+        int buttonX,
+        int buttonY,
+        int finalI,
+        WandData wandData,
+        Player player
+    ) {
+        var selectedAbility = AbilityRegister.getFirstSpellByTypeId(wandData.selectedAbility());
+        var ability = AbilityRegister.getSpellsByTypeId(abilityHolder.get(i)).getFirst();
+        var iconResource = ability.getAbilityIconLocation();
+        var abilityButton = new WidgetSprites(iconResource, iconResource);
+        var isSelected = Objects.equals(selectedAbility.isPresent() ? selectedAbility.get().getAbilityName() : "", ability.getAbilityName());
+
+        this.addRenderableWidget(
+            new AbilityIconButton(
+                buttonX, buttonY, abilityButton, buttonSize,
+                pButton -> {
+                    var updateAbility = abilityHolder.get(finalI);
+                    DataComponentHelper.setAbilityTypeWand(player, updateAbility);
+                    PacketDistributor.sendToServer(new StopUsingC2SPacket());
+                    PacketDistributor.sendToServer(new SelectedAbilityC2SPacket(updateAbility));
+                    this.rebuildWidgets();
+                },
+                isSelected
+            )
+        );
+
+        if(isSelected){
+            selectedAbility.ifPresent(abstractAbility -> showConfig(wandData, player, abstractAbility, buttonX + 10, buttonY - 10));
+        }
+    }
+
+    private void showConfig(WandData wandData, Player player, AbstractAbility selectedAbility, int posX, int posY) {
+        var configResource = GeneralHelpers.modResourceLocation("textures/gui/gui_button_cog_dark.png");
+        var configButton = new WidgetSprites(configResource, configResource);
+        var configButtonSize = 20;
+        if (selectedAbility.getElemenType() == ElementRegistry.UTILITY.get()) {
+            var wandAbilityHolder = player.getMainHandItem().get(WAND_ABILITY_HOLDER);
+            var abilityHolder = wandAbilityHolder.abilityProperties().get(wandData.selectedAbility());
+            var filterOutBase = abilityHolder.abilityProperties()
+                .keySet()
+                .stream()
+                .filter(name -> !name.equals(MANA_COST) && !name.equals(COOLDOWN));
+            if(!filterOutBase.toList().isEmpty()){
                 this.addRenderableWidget(
                     new AbilityIconButton(
-                        buttonX, buttonY,
-                        BUTTON,
-                        buttonSize,
-                        pButton -> {
-                            PacketDistributor.sendToServer(new StopUsingC2SPacket());
-                            PacketDistributor.sendToServer(new SelectedAbilityC2SPacket(abilityHolder.get(finalI)));
-                        },
-                        i
+                        posX, posY,
+                        configButton,
+                        configButtonSize,
+                        pButton -> this.getMinecraft().setScreen(new AugmentMenu(player.getMainHandItem(), wandData.selectedAbility(), this)),
+                        false
                     )
-                );
-            } else {
-                this.addRenderableOnly(
-                    new Overlay() {
-                        @Override
-                        public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
-                            SharedUI.drawStringWithBackground(
-                                guiGraphics,
-                                Minecraft.getInstance().font,
-                                Component.literal(String.valueOf(finalI + 1)),
-                                buttonX + 13,
-                                buttonY + 9,
-                                1, -1, true
-                            );
-                        }
-                    }
                 );
             }
         }
     }
 
-    //Yoinked from Ars Nouveau
+    private void showSlotIndex(int finalI, int buttonX, int buttonY) {
+        this.addRenderableOnly(
+            new Overlay() {
+                @Override
+                public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
+                    SharedUI.drawStringWithBackground(
+                        guiGraphics,
+                        Minecraft.getInstance().font,
+                        Component.literal(String.valueOf(finalI + 1)),
+                        buttonX + 13,
+                        buttonY + 9,
+                        1, -1, true
+                    );
+                }
+            }
+        );
+    }
+
+//    Yoinked from Ars Nouveau
     @SubscribeEvent
     public static void updateInputEvent(MovementInputUpdateEvent event) {
         if (Minecraft.getInstance().screen instanceof AbilityWheelMenu) {
-
             Options settings = Minecraft.getInstance().options;
             Input eInput = event.getInput();
             long window = Minecraft.getInstance().getWindow().getWindow();
+
             eInput.up = InputConstants.isKeyDown(window, settings.keyUp.getKey().getValue());
             eInput.down = InputConstants.isKeyDown(window, settings.keyDown.getKey().getValue());
             eInput.left = InputConstants.isKeyDown(window, settings.keyLeft.getKey().getValue());
@@ -128,6 +189,7 @@ public class AbilityWheelMenu extends Screen  {
             }
         }
     }
+
 
     public float easeInOutCubic(float t) {
         return t < 0.2f ? 4 * t * t * t : 1 - (float) Math.pow(-2 * t + 2, 3) / 2;
@@ -158,10 +220,10 @@ public class AbilityWheelMenu extends Screen  {
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.9F);
-        guiGraphics.blit(GeneralHelpers.modResourceLocation("textures/gui/ability_wheel_background.png"), xRadial, yRadial, 0, 0, easedValue, easedValue, easedValue, easedValue);
+        var atlasLocation = GeneralHelpers.modResourceLocation("textures/gui/ability_wheel_background.png");
+        guiGraphics.blit(atlasLocation, xRadial, yRadial, 0, 0, easedValue, easedValue, easedValue, easedValue);
         RenderSystem.disableBlend();
     }
-
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {

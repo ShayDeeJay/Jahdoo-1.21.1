@@ -20,6 +20,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
         this.lifetime = 10 + this.random.nextInt(10);
         this.pickSprite(pSprites);
         this.hasPhysics = false;
+        this.alpha = 0.8f;
     }
 
     @Override
@@ -54,11 +55,13 @@ public class GenericParticle extends SimpleAnimatedParticle {
                 }
 
             };
+
             if(pType.setStaticSize()){
                 genericParticle.quadSize = pType.size();
             } else {
                 genericParticle.quadSize *= pType.size();
             }
+
             genericParticle.lifetime = pType.lifetime() + GeneralHelpers.Random.nextInt(pType.lifetime());
             return genericParticle;
         }
@@ -89,7 +92,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
                 }
             };
 
-            genericParticle.setAlpha(1f);
+            genericParticle.setAlpha(0.8f);
             if(pType.setStaticSize()){
                 genericParticle.quadSize = pType.size();
             } else {

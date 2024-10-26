@@ -3,35 +3,33 @@ package org.jahdoo.all_magic.all_abilities.abilities.Utility;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.all_magic.AbilityBuilder;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
+import org.jahdoo.capabilities.player_abilities.PlayerScale;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.utils.DataComponentHelper;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
-import org.jahdoo.all_magic.AbilityBuilder;
 
+import static org.jahdoo.all_magic.AbilityBuilder.COOLDOWN;
 
-public class VeinMinerAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("vein_miner");
-    public static final String VEIN_MINE_SIZE = "Total Vein Size";
+public class PlayerScaleAbility extends AbstractAbility {
+    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("size_shifter");
+    public static final String SCALE_VALUE = "Player Scale Value";
 
     @Override
     public void invokeAbility(Player player) {
-        GenericProjectile genericProjectile = new GenericProjectile(
-            player,
-            0.06,
-            ProjectilePropertyRegister.VEIN_MINER.get().setAbilityId(),
-            abilityId.getPath().intern()
-        );
-        fireUtilityProjectile(genericProjectile, player);
+        var value = DataComponentHelper.getSpecificValue(player).get(SCALE_VALUE).setValue();
+        PlayerScale.setToggleEffect(player, (float) value);
     }
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.EPIC;
+        return JahdooRarity.COMMON;
     }
 
     @Override
@@ -43,8 +41,8 @@ public class VeinMinerAbility extends AbstractAbility {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(10, 5, 1)
-            .setCooldown(40, 10, 5)
-            .setAbilityTagModifiersRandom(VEIN_MINE_SIZE, 128,16, true, 16)
+            .setModifier(COOLDOWN, 10, 10, true, 10)
+            .setModifierWithStep(SCALE_VALUE, 2,-1, true, 2, 0.5)
             .build();
     }
 

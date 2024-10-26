@@ -28,21 +28,11 @@ public class EffectsRegister {
     public static final DeferredHolder<MobEffect, MobEffect> MANA_REGENERATION = MOB_EFFECTS.register("mana_regeneration",
         () -> new GenericEffect(MobEffectCategory.BENEFICIAL, 3436524).addAttributeModifier(AttributesRegister.MANA_REGEN, ResourceLocation.withDefaultNamespace("man_regen"),1.0D, AttributeModifier.Operation.ADD_VALUE));
 
-//
-//    public static final RegistryObject<MobEffect> AMPLIFY_ENTITY_REACH = MOB_EFFECTS.register("amplify_entity_reach",
-//        () -> new GenericEffect(MobEffectCategory.BENEFICIAL, 3436524).addAttributeModifier(ForgeMod.AND_HOLDER_SET.get(), "2e121062-10de-4f66-ba73-91a43f4325cb",1.0D, AttributeModifier.Operation.ADDITION ));
-
-    public static final DeferredHolder<MobEffect, MobEffect> NO_FALL_DAMAGE= MOB_EFFECTS.register("no_fall_damage", () -> new FallDamageEffect(MobEffectCategory.BENEFICIAL, 3436524));
 
     public static final DeferredHolder<MobEffect, MobEffect> ITEM_MAGNET = MOB_EFFECTS.register("item_magnet",
         () -> new ItemMagnetEffect(MobEffectCategory.BENEFICIAL, 3436524)
     );
-    public static final DeferredHolder<MobEffect, MobEffect> MAGIC_AMPLIFIER = MOB_EFFECTS.register("magic_amplifier",
-        () -> new GenericEffect(MobEffectCategory.BENEFICIAL, 3436524)
-    );
-    public static final DeferredHolder<MobEffect, MobEffect> LUCKY_ROLLER = MOB_EFFECTS.register("lucky_roller",
-        () -> new GenericEffect(MobEffectCategory.BENEFICIAL, 3436524)
-    );
+
     public static final DeferredHolder<MobEffect, MobEffect> STUN_EFFECT = MOB_EFFECTS.register("stun_effect",
         () -> new StunEffect(MobEffectCategory.HARMFUL, 3436524)
     );

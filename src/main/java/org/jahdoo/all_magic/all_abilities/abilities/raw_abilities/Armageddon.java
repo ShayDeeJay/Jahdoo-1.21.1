@@ -83,7 +83,7 @@ public class Armageddon extends DefaultEntityBehaviour {
     }
 
     public AbilityHolder setAbilityModifiers(String name, double value){
-        AbilityHolder.AbilityModifiers abilityModifiers = new AbilityHolder.AbilityModifiers(value, 0,0,true);
+        AbilityHolder.AbilityModifiers abilityModifiers = new AbilityHolder.AbilityModifiers(value, 0,0,0,value,true);
         return new AbilityHolder(Map.of(name, abilityModifiers));
     }
 

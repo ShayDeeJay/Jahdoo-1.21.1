@@ -1,14 +1,15 @@
-package org.jahdoo.client.gui.mana_ability_overlay;
+package org.jahdoo.client.gui.overlays;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.capabilities.CastingData;
 import org.jahdoo.items.wand.WandItem;
@@ -32,7 +33,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer{
     public void render(GuiGraphics pGuiGraphics, DeltaTracker pDeltaTracker) {
         var minecraft = Minecraft.getInstance();
         var player = minecraft.player;
-        if(player == null) return;
+        if(player == null || minecraft.options.hideGui) return;
         var manaBarWidth = 57;
         var abstractAbility = AbilityRegister.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
         var casterData = player.getData(CASTER_DATA);

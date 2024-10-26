@@ -13,6 +13,9 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.UtilityHelpers;
+import org.jahdoo.all_magic.all_abilities.abilities.Utility.HammerAbility;
+import org.jahdoo.all_magic.all_abilities.abilities.Utility.VeinMinerAbility;
+import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.particle.ParticleHandlers;
@@ -23,10 +26,19 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import static org.jahdoo.all_magic.all_abilities.abilities.Utility.VeinMinerAbility.VEIN_MINE_SIZE;
+
 public class VeinMiner extends AbstractUtilityProjectile {
     private static final Direction[] ALL_DIRECTIONS = Direction.values();
     private static final Direction[] HORIZONTAL_DIRECTIONS = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
     ResourceLocation abilityId = GeneralHelpers.modResourceLocation("vein_miner_property");
+    private int veinSize;
+
+    @Override
+    public void getGenericProjectile(GenericProjectile genericProjectile) {
+        super.getGenericProjectile(genericProjectile);
+        this.veinSize = (int) this.getTag(VEIN_MINE_SIZE);
+    }
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -36,6 +48,12 @@ public class VeinMiner extends AbstractUtilityProjectile {
     @Override
     public DefaultEntityBehaviour getEntityProperty() {
         return new VeinMiner();
+    }
+
+    @Override
+    public double getTag(String name) {
+        var wandAbilityHolder = this.genericProjectile.wandAbilityHolder();
+        return GeneralHelpers.getModifierValue(wandAbilityHolder, VeinMinerAbility.abilityId.getPath().intern()).get(name).setValue();
     }
 
     @Override
@@ -52,7 +70,7 @@ public class VeinMiner extends AbstractUtilityProjectile {
             double z = genericProjectile.getZ();
             genericProjectile.level().playSound(null, x, y, z, genericProjectile.level().getBlockState(start).getSoundType().getBreakSound(), SoundSource.BLOCKS, 1, 1);
 
-            this.forAllBlocksAroundOf(start, genericProjectile.level(), target.getBlock(), 128,
+            this.forAllBlocksAroundOf(start, genericProjectile.level(), target.getBlock(), veinSize,
                 (pos, state) -> {
                     UtilityHelpers.dropItemsOrBlock(genericProjectile, pos, true, true);
                     ParticleHandlers.spawnPoof(serverLevel, pos.getCenter(), 1, ElementRegistry.UTILITY.get().getParticleGroup().genericSlow(), 0, 0, 0, 0.005f, 1);

@@ -70,7 +70,7 @@ public class WandBlock extends BaseEntityBlock {
         if(wandBlock.getWandItemFromSlot().isEmpty()) return;
         List<AbstractElement> getType = getElementByWandType(wandBlock.getWandItemFromSlot().getItem());
         if(!level.isClientSide() && !getType.isEmpty()) return;
-        AbstractElement element = getType.get(0);
+        AbstractElement element = getType.getFirst();
 
         BakedParticleOptions par1 = new BakedParticleOptions(element.getTypeId(), 20, 1.5f, false);
         GenericParticleOptions par2 = new GenericParticleOptions(
@@ -116,20 +116,21 @@ public class WandBlock extends BaseEntityBlock {
             return ItemInteractionResult.SUCCESS;
         }
 
-        if (pLevel.getBlockEntity(pPos) instanceof WandBlockEntity wandBlock) {
-            if (heldItem.getItem() == ItemsRegister.AUGMENT_CORE.get()) {
-                ItemStack internalWand = wandBlock.getWandItemFromSlot();
-                var wandData = internalWand.get(WAND_DATA);
+;
 
+        if (pLevel.getBlockEntity(pPos) instanceof WandBlockEntity wandBlock) {
+            ItemStack internalWand = wandBlock.getWandItemFromSlot();
+            var wandData = internalWand.get(WAND_DATA);
+            System.out.println(wandData);
+            if (heldItem.getItem() == ItemsRegister.AUGMENT_CORE.get()) {
                 if(wandData != null && wandData.abilitySlots() < 10){
                     heldItem.shrink(1);
-                    int addSlotOrMax = Math.min(wandData.abilitySlots() + 1, 10);
-                    internalWand.update(WAND_DATA, WandData.DEFAULT, data -> data.setAbilitySlots(addSlotOrMax));
+                    var index = wandData.abilitySlots() + 1;
+                    int addSlotOrMax = Math.min(index, 10);
+                    internalWand.update(WAND_DATA, WandData.DEFAULT, data -> data.insertNewSlot(addSlotOrMax));
                 } else {
                     return ItemInteractionResult.FAIL;
                 }
-
-//            this.setRightClickedAugmentToWand(wandBlock, heldItem, blockPos, level, player);
             } else {
                 openWandGUI(pPlayer, pPos, pLevel);
             }

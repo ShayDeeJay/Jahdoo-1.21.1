@@ -14,7 +14,8 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class BlockBombAbility extends AbstractAbility {
-    private final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("block_bomb");
+    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("block_bomb");
+    public static final String EXPLOSION_RANGE = "Explosion Radius";
 
     @Override
     public void invokeAbility(Player player) {
@@ -42,6 +43,7 @@ public class BlockBombAbility extends AbstractAbility {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(10, 5, 1)
             .setCooldown(40, 10, 5)
+            .setAbilityTagModifiersRandom(EXPLOSION_RANGE, 30,5, true, 5)
             .build();
     }
 

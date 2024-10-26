@@ -11,6 +11,7 @@ import org.jahdoo.items.wand.WandItem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.registers.AttachmentRegister.BOUNCY_FOOT;
 import static org.jahdoo.registers.DataComponentRegistry.INFINITE_ITEM;
@@ -21,12 +22,8 @@ public class SaveData implements AbstractAttachment {
 
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         var localTag = new CompoundTag();
-        if(!this.itemStacks.isEmpty()){
-            for (ItemStack itemStack : this.itemStacks){
-                System.out.println(itemStack);
-                localTag.put(itemStack.getDescriptionId(), itemStack.save(provider));
-            }
-            System.out.println(this.itemStacks);
+        for(int i = 0; i < itemStacks.size(); i++){
+            localTag.put("item" + i, itemStacks.get(i).save(provider));
         }
         nbt.put("itemStacks", localTag);
     }
@@ -35,22 +32,18 @@ public class SaveData implements AbstractAttachment {
         var allKeys = nbt.getCompound("itemStacks");
         for (String keys : allKeys.getAllKeys()) {
             Optional<ItemStack> itemStack = ItemStack.parse(provider, allKeys.get(keys));
-            System.out.println(itemStack);
             this.itemStacks.add(itemStack.orElse(ItemStack.EMPTY));
         }
-
     }
 
     public void addAllItems(Player player){
         var list = player.getInventory().items;
-        var wands = list.stream().filter(itemStack -> itemStack.has(INFINITE_ITEM) && Boolean.TRUE.equals(itemStack.get(INFINITE_ITEM.value()))).toList();
+        var wands = list.stream().filter(itemStack -> itemStack.has(INFINITE_ITEM)).toList();
         this.itemStacks.addAll(wands);
         wands.forEach(items -> player.getInventory().removeItem(items));
-        System.out.println(this.itemStacks);
     }
 
     public void takeAllItems(Player player){
-        System.out.println(this.itemStacks);
         for (ItemStack itemStack : this.itemStacks) player.addItem(itemStack);
         this.itemStacks.clear();
     }

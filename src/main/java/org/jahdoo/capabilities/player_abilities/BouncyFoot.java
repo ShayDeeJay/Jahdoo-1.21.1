@@ -39,14 +39,13 @@ public class BouncyFoot implements AbstractAttachment {
     public void onTick(Player player){
         this.previousDelta = this.currentDelta;
         this.currentDelta = player.getDeltaMovement().y;
+        var isJumping = this.currentDelta != this.previousDelta;
 
-        if(this.currentDelta == this.previousDelta) this.effectTimer = 0;
+        if(!isJumping) this.effectTimer = 0;
 
         if(effectTimer > 0){
             effectTimer--;
-            if (player.isShiftKeyDown()) this.currentDelta = 0;
-            else player.resetFallDistance();
-
+            if (player.isShiftKeyDown()) this.currentDelta = 0; else player.resetFallDistance();
             if (player.verticalCollisionBelow && previousDelta != currentDelta) {
                 var reducedDelta = Math.abs(previousDelta / 1.5);
                 player.playSound(SoundEvents.HONEY_BLOCK_HIT, (float) reducedDelta, 2f);

@@ -12,17 +12,16 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureManager;
 
 public class ParticleRenderTypes {
+
     static final ParticleRenderType ABILITY_RENDERER = new ParticleRenderType() {
 
         @Override
         public BufferBuilder begin(Tesselator buffer, TextureManager textureManager) {
             Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
-
             RenderSystem.enableBlend();
             RenderSystem.depthMask(false);
             RenderSystem.enableCull();
             RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-            RenderSystem.setShaderColor(1,1,1,1f);
             RenderSystem.enableDepthTest();
             return buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
         }

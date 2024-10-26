@@ -140,8 +140,10 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 
 
     private void applyEffect(LivingEntity livingEntity, Holder<MobEffect> mobEffect){
-        if(GeneralHelpers.Random.nextInt(0, this.effectChance == 0 ? 1 : (int) this.effectChance) == 0){
-            livingEntity.addEffect(new CustomMobEffect(mobEffect, (int) effectDuration, (int) effectStrength));
+        if(!livingEntity.hasEffect(mobEffect)){
+            if (GeneralHelpers.Random.nextInt(0, this.effectChance == 0 ? 1 : (int) this.effectChance) == 0) {
+                livingEntity.addEffect(new CustomMobEffect(mobEffect, (int) effectDuration, (int) effectStrength));
+            }
         }
     }
 

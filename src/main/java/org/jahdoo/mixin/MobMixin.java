@@ -17,7 +17,6 @@
 //
 //@Mixin(Mob.class)
 //public abstract class MobMixin extends LivingEntity {
-//
 //    @Shadow
 //    protected abstract Vec3i getPickupReach();
 //
@@ -25,12 +24,11 @@
 //        super(pEntityType, pLevel);
 //    }
 //
-//
 //    @Inject(
 //        method = "aiStep",
 //        at = @At(
 //            value = "INVOKE",
-////            target = "Lnet/minecraft/world/entity/Mob;getPickupReach()Lnet/minecraft/core/Vec3i;",
+//            target = "Lnet/minecraft/world/entity/Mob;getPickupReach()Lnet/minecraft/core/Vec3i;",
 //            shift = At.Shift.AFTER
 //        ),
 //        cancellable = true

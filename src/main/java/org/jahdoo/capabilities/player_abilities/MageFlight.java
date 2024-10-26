@@ -28,6 +28,7 @@ public class MageFlight implements AbstractAttachment {
     public boolean isFlying;
     public static double manaCost = 0.5;
     public boolean jumpKeyDown;
+    public boolean isFloating;
 
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putInt("jumpTickCounter", jumpTickCounter);
@@ -64,9 +65,10 @@ public class MageFlight implements AbstractAttachment {
 
         if (this.jumpTickCounter > 0) this.jumpTickCounter--;
 
-        this.lastJumped = jumpKeyDown;
+        this.lastJumped = this.jumpKeyDown;
 
-        if (this.isFlying && jumpKeyDown) {
+        if (this.isFlying && this.jumpKeyDown) {
+
             if (manaSystem.getManaPool() > manaCost) {
                 player.getAbilities().mayfly = true;
                 player.getData(BOUNCY_FOOT).setEffectTimer(160);
@@ -74,6 +76,7 @@ public class MageFlight implements AbstractAttachment {
                 player.setDeltaMovement(player.getDeltaMovement().add(0, 0.1, 0));
                 mageFlightAnimation(wandItem, player);
             }
+
         } else {
             if(!player.isFallFlying()) player.getAbilities().mayfly = false;
         }

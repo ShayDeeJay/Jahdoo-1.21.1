@@ -86,7 +86,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
     public void onEntityHit(LivingEntity hitEntity) {
         Player player = (Player) this.genericProjectile.getOwner();
         if(player == null) return;
-        if (player.distanceTo(hitEntity) <= castDistance + 1) {
+        if (player.distanceTo(hitEntity) <= castDistance + 0.1) {
             this.shootArrowsAtTarget(hitEntity, player);
             CastHelper.chargeMana(FrostboltsAbility.abilityId.getPath().intern(), mana, player);
             CastHelper.chargeCooldown(FrostboltsAbility.abilityId.getPath().intern(), cooldown, player);
@@ -94,7 +94,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
         } else {
             sendNoTargetMessage();
         }
-
+        this.genericProjectile.discard();
     }
 
     private void shootArrowsAtTarget(LivingEntity hitEntity, Player player){
@@ -157,16 +157,26 @@ public class FrostBolts extends DefaultEntityBehaviour {
     @Override
     public void discardCondition() {
         if(this.genericProjectile != null){
-            if (this.genericProjectile.getOwner() != null && this.genericProjectile.distanceTo(this.genericProjectile.getOwner()) > castDistance + 1) {
-                this.sendNoTargetMessage();
+            var player = this.genericProjectile.getOwner();
+
+            if(player == null) {
+                this.genericProjectile.discard();
+                return;
             }
-            if(this.genericProjectile.tickCount > 200) this.genericProjectile.discard();
+
+            if (this.genericProjectile.getOwner() != null && this.genericProjectile.tickCount > 1) {
+                this.sendNoTargetMessage();
+                this.genericProjectile.discard();
+            }
         }
     }
 
     private void sendNoTargetMessage(){
-        if (this.genericProjectile.getOwner() instanceof Player player) {
-            player.displayClientMessage(Component.literal("No target in " + Math.round(castDistance) + " blocks"), true);
+        if (this.genericProjectile.getOwner() instanceof Player player){
+            var value = String.valueOf(Math.round(castDistance));
+            var element = this.getElementType().particleColourPrimary();
+            var targetDistance = GeneralHelpers.withStyleComponent(value, element);
+            player.displayClientMessage(Component.translatable("abilities.jahdoo.frost_bolts.no_target", targetDistance), true);
         }
     }
 

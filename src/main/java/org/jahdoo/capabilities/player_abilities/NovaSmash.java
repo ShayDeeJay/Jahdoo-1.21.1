@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -73,7 +74,7 @@ public class NovaSmash implements AbstractAttachment {
         if (this.canSmash){
             player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
             if(player.onGround()){
-                GeneralHelpers.getOuterRingOfRadiusRandom(player.position(), 2, 100,(pos) -> setParticleNova(pos, player));
+                GeneralHelpers.getOuterRingOfRadiusRandom(player.position(), 2, 100,(pos) -> setParticleNova(pos, player, (double) this.highestDelta /10));
                 this.setAbilityEffects(player, this.highestDelta);
                 this.setKnockbackAndDamage(player, this.highestDelta);
                 this.highestDelta = 0;
@@ -95,9 +96,9 @@ public class NovaSmash implements AbstractAttachment {
         }
     }
 
-    private void setParticleNova(Vec3 worldPosition, Player player){
-        if(player.level() instanceof ServerLevel serverLevel){
-            var directions = worldPosition.subtract(player.position());
+    public static void setParticleNova(Vec3 worldPosition, Entity entity, double speed){
+        if(entity.level() instanceof ServerLevel serverLevel){
+            var directions = worldPosition.subtract(entity.position());
             var getMysticElement = ElementRegistry.MYSTIC.get();
 
             var genericParticle = genericParticleOptions(
@@ -109,7 +110,7 @@ public class NovaSmash implements AbstractAttachment {
             );
 
             GeneralHelpers.generalHelpers.sendParticles(
-                serverLevel, genericParticle, worldPosition, 0, directions.x, directions.y + 0.1, directions.z, (double) this.highestDelta /10
+                serverLevel, genericParticle, worldPosition, 0, directions.x, directions.y + 0.1, directions.z, speed
             );
         }
     }

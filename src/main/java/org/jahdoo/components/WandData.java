@@ -15,21 +15,31 @@ public record WandData(
     List<String> abilitySet,
     String selectedAbility
 ){
-    public static final WandData DEFAULT = new WandData(4, new ArrayList<>(), new ArrayList<>(),"");
+    public static final int INIT_SLOTS = 4;
+    public static final WandData DEFAULT = new WandData(INIT_SLOTS, new ArrayList<>(), populatedList(INIT_SLOTS),"");
 
-    public WandData setAbilitySlots(int abilitySlots){
-        return new WandData(abilitySlots, this.upgradeSlots, this.abilitySet, this.selectedAbility);
+    public static List<String> populatedList(int initValue){
+        var list = new ArrayList<String>();
+        for(int i =0; i < initValue; i++) list.add("empty" + i);
+        return list;
+    }
+
+    public WandData insertNewSlot(int abilitySlots){
+        var newList = new ArrayList<>(this.abilitySet);
+        newList.add("empty" + (abilitySlots - 1));
+        return new WandData(abilitySlots, this.upgradeSlots, newList, this.selectedAbility);
     }
 
     public WandData setUpgradeSlots(int allowedSlots){
         var newList = new ArrayList<String>();
         for(int i = 0; i < allowedSlots; i++) newList.add("Empty slot");
-        return new WandData(this.abilitySlots, newList, this.abilitySet,this.selectedAbility);
+        return new WandData(this.abilitySlots, newList, this.abilitySet, this.selectedAbility);
     }
 
     public WandData setAbilityOrder(List<String> abilities){
         return new WandData(this.abilitySlots, this.upgradeSlots, abilities, this.selectedAbility);
     }
+
 
     public WandData setSelectedAbility(String selectedAbility){
         return new WandData(this.abilitySlots, this.upgradeSlots, this.abilitySet, selectedAbility);

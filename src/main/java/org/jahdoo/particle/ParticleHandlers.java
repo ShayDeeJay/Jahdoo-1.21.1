@@ -116,7 +116,7 @@ public class ParticleHandlers {
         double deltaX = getX - projectile.xOld;
         double deltaY = getY - projectile.yOld;
         double deltaZ = getZ - projectile.zOld;
-        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * multiplier);
+        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * Math.max(3, multiplier));
         for (double j = 0; j < dist; j++) {
             double coeff = j / dist;
 
@@ -145,7 +145,7 @@ public class ParticleHandlers {
         double deltaX = getX - projectile.xOld;
         double deltaY = getY - projectile.yOld;
         double deltaZ = getZ - projectile.zOld;
-        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * multiplier);
+        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * Math.max(20,multiplier));
         for (double j = 0; j < dist; j++) {
             double coeff = j / dist;
 

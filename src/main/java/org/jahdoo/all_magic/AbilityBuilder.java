@@ -27,7 +27,7 @@ public class AbilityBuilder {
     public static final String SET_ELEMENT_TYPE = "Element Type";
     public static final String LIFETIME = "Life Time";
     public static final String AOE = "Area of Effect";
-
+    public static final String SIZE = "Block Size";
 
     private final ItemStack item;
     private final String abilityId;
@@ -45,26 +45,31 @@ public class AbilityBuilder {
     private double getLuckModifier(){
         if(item != null && item.getItem() instanceof Augment){
             Double rating = item.get(DataComponentRegistry.AUGMENT_RATING.get());
-            if(rating != null) return Math.max(1, rating); else return 1;
+            if(rating != null) return Math.max(1, rating); else return 20;
         }
         return 1;
     }
 
     public AbilityBuilder setAbilityTagModifiersRandom(String name, double high, double low, boolean isHigherBetter, double step) {
         var getModifier = getLuckModifier();
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(
-            getWeightedRandomDouble(high, low, (getModifier == 0) != isHigherBetter, step, getModifier),
-            high,
-            low,
-            isHigherBetter
-        );
+        var weightedDouble = getWeightedRandomDouble(high, low, (getModifier == 0) != isHigherBetter, step, getModifier);
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(weightedDouble, high, low, step, weightedDouble, isHigherBetter);
         this.abilityHolder.abilityProperties().put(name, abilityModifiers);
         return this;
     }
 
     public AbilityBuilder setModifier(String name, double high, double low, boolean isHigherBetter, double actualValue) {
-        AbilityHolder.AbilityModifiers abilityModifiers = new AbilityHolder.AbilityModifiers(
-            actualValue, high, low, isHigherBetter
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(
+            actualValue, high, low, 0, actualValue, isHigherBetter
+        );
+
+        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
+        return this;
+    }
+
+    public AbilityBuilder setModifierWithStep(String name, double high, double low, boolean isHigherBetter, double actualValue, double step) {
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(
+            actualValue, high, low, step, actualValue, isHigherBetter
         );
 
         this.abilityHolder.abilityProperties().put(name, abilityModifiers);
@@ -72,8 +77,8 @@ public class AbilityBuilder {
     }
 
     public AbilityBuilder setModifierWithoutBounds(String name, double actualValue) {
-        AbilityHolder.AbilityModifiers abilityModifiers = new AbilityHolder.AbilityModifiers(
-            actualValue, 0, 0, true
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(
+            actualValue, 0, 0, 0, actualValue, true
         );
         this.abilityHolder.abilityProperties().put(name, abilityModifiers);
         return this;
@@ -140,6 +145,11 @@ public class AbilityBuilder {
 
     public AbilityBuilder setEffectChanceWithValue(double high, double low, double value){
         this.setModifier(EFFECT_CHANCE, high, low, false, value);
+        return this;
+    }
+
+    public AbilityBuilder setSize(double high, double low, double step){
+        this.setAbilityTagModifiersRandom(SIZE, high, low, true, step);
         return this;
     }
 

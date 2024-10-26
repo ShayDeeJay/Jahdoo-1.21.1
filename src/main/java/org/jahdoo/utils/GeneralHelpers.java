@@ -62,6 +62,19 @@ public class GeneralHelpers {
         return Collections.emptyMap();
     }
 
+    public static String roundNonWhole(double number) {
+        // Get the decimal part by subtracting the integer part
+        double decimalPart = number - (int) number;
+
+        // If the decimal part is 0, round it and return as string
+        if (decimalPart == 0) {
+            return String.valueOf(Math.round(number));
+        }
+
+        // If not, return the original number as string
+        return String.valueOf(number);
+    }
+
     public static float getFormattedFloat(float value){
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         return  Float.parseFloat(decimalFormat.format(value));

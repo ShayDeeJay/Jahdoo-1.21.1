@@ -18,6 +18,7 @@ public class Network {
         payloadRegistrar.playToServer(SelectedAbilityC2SPacket.TYPE, SelectedAbilityC2SPacket.STREAM_CODEC, SelectedAbilityC2SPacket::handle);
         payloadRegistrar.playToServer(StopUsingC2SPacket.TYPE, StopUsingC2SPacket.STREAM_CODEC, StopUsingC2SPacket::handle);
         payloadRegistrar.playToServer(FlyingPacketC2SPacket.TYPE, FlyingPacketC2SPacket.STREAM_CODEC, FlyingPacketC2SPacket::handle);
+        payloadRegistrar.playToServer(SyncPlayerItemComponentsPacket.TYPE, SyncPlayerItemComponentsPacket.STREAM_CODEC, SyncPlayerItemComponentsPacket::handle);
 
         payloadRegistrar.playToClient(ManaDataSyncS2CPacket.TYPE, ManaDataSyncS2CPacket.STREAM_CODEC, ManaDataSyncS2CPacket::handle);
         payloadRegistrar.playToClient(CooldownsDataSyncS2CPacket.TYPE, CooldownsDataSyncS2CPacket.STREAM_CODEC, CooldownsDataSyncS2CPacket::handle);

@@ -26,7 +26,6 @@ public class NovaSmashAbility extends AbstractAbility {
     public void invokeAbility(Player player) {
         if(!player.onGround()) {
             var novaSmash = player.getData(NOVA_SMASH);
-            System.out.println(player.level());
             novaSmash.setCanSmash(true);
         }
     }
