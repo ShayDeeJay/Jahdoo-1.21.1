@@ -51,7 +51,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
                 @Override
                 public void tick() {
                     super.tick();
-                    this.quadSize *= 0.9f;
+                    if(!pType.setStaticSize()) this.quadSize *= 0.9f;
                 }
 
             };

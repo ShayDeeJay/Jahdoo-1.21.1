@@ -30,6 +30,9 @@ public class ItemsRegister {
     public static final DeferredHolder<Item, Item> AUGMENT_CORE =
         ITEMS.register("augment_core", () -> new Item(new Item.Properties()));
 
+    public static final DeferredHolder<Item, Item> TOME_OF_ETERNITY =
+        ITEMS.register("tome_of_eternity", () -> new Item(new Item.Properties()));
+
     public static final DeferredHolder<Item, Item> INFUSER_ITEM =
         ITEMS.register("infuser", () -> new InfuserBlockItem(BlocksRegister.INFUSER.get(), new Item.Properties()));
 

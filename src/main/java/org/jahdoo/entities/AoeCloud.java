@@ -89,7 +89,7 @@ public class AoeCloud extends Entity implements TraceableEntity {
     public void tick() {
         super.tick();
         if(this.level() instanceof ServerLevel serverLevel){
-            if(owner == null) this.owner = serverLevel.getPlayerByUUID(this.ownerUUID);
+            if(owner == null && this.ownerUUID != null) this.owner = serverLevel.getPlayerByUUID(this.ownerUUID);
         }
 
         if(getAoe != null){

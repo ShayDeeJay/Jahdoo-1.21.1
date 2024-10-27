@@ -65,7 +65,7 @@ public class ModEvents {
 
             target.addEffect(new MobEffectInstance(MobEffects.GLOWING.getDelegate(), 20, 1, false, false), target);
 
-            var targetPos = target.position().add(0, target.getBbHeight() / 2 + 0.4, 0);
+            var targetPos = target.position().add(0, target.getBbHeight() - 0.2, 0);
 
             double deltaX = targetPos.x - player.getX();
             double deltaY = targetPos.y - (player.getY() + player.getEyeHeight());

@@ -120,7 +120,7 @@ public class GeneralHelpers {
         var wandItem = player.getMainHandItem();
         var abilityName = wandItem.get(DataComponentRegistry.WAND_DATA.get());
         if(abilityName == null) return 0;
-        var getDamageAttribute = player.getAttributes().getValue(attribute);
+        var getAttribute = player.getAttributes().getValue(attribute);
         var getAbility = AbilityRegister.getFirstSpellByTypeId(abilityName.selectedAbility());
 
         if(getAbility.isPresent()){
@@ -128,15 +128,14 @@ public class GeneralHelpers {
             float reCalculatedDamage = initialValue;
 
             if (Objects.equals(getElementType, element)) {
-                float getPercentageDamage = (float) (initialValue / 100 * getDamageAttribute);
-
+                float getPercentageDamage = (float) (initialValue / 100 * getAttribute);
                 if(isAddition){
                     reCalculatedDamage = reCalculatedDamage + getPercentageDamage;
                 } else {
                     reCalculatedDamage = reCalculatedDamage - getPercentageDamage;
                 }
-
             }
+
             return reCalculatedDamage;
         }
 

@@ -149,11 +149,9 @@ public class WandItem extends BlockItem implements GeoItem {
         player.startUsingItem(interactionHand);
         if (interactionHand == InteractionHand.MAIN_HAND) CastHelper.use(player);
 
-
 //        if (level instanceof ServerLevel serverLevel) {
 //            triggerAnimWithController(this,  player.getMainHandItem(), serverLevel, player, SINGLE_CAST_ID);
 //        }
-
 
         return super.use(level, player, interactionHand);
     }

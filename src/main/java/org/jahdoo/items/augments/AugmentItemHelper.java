@@ -193,6 +193,7 @@ public class AugmentItemHelper {
         var hoveredTag = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         var getHoveredHolder = hoveredTag.abilityProperties().get(abilityLocation);
         var abilityModifier = getHoveredHolder.abilityProperties().get(keys);
+        if(abilityModifier == null) return Component.empty();
         var format = FORMAT.format(abilityModifier.actualValue());
         var type = itemStack.get(DataComponents.CUSTOM_MODEL_DATA);
         var colour = ElementRegistry.getElementByTypeId(type.value());

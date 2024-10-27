@@ -177,9 +177,9 @@ public class NovaSmash implements AbstractAttachment {
 
         ParticleOptions bakedParticle = new BakedParticleOptions(
             element.getTypeId(),
-            (int) (particleMultiplier * 30),
-            GeneralHelpers.Random.nextFloat(0.3f, 0.5f),
-            true
+            (int) particleMultiplier,
+            GeneralHelpers.Random.nextFloat(5f, 7f),
+            false
         );
 
         List<ParticleOptions> getRandomParticle = List.of(bakedParticle, genericParticle);
