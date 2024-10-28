@@ -1,11 +1,9 @@
 package org.jahdoo.utils;
 
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomModelData;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -31,7 +29,7 @@ public class ModCreativeModTabs {
                 pOutput.accept(ItemsRegister.JIDE_POWDER.get());
                 pOutput.accept(ItemsRegister.AUGMENT_CORE.get());
                 pOutput.accept(ItemsRegister.AUGMENT_FRAGMENT.get());
-                pOutput.accept(ItemsRegister.TOME_OF_ETERNITY.get());
+                pOutput.accept(ItemsRegister.TOME_OF_UNITY.get());
                 pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
 //                for(int i = 1; i < 7; i++) {
 //                    ItemStack baseAugment = new ItemStack(ItemsRegister.AUGMENT_ITEM.get());

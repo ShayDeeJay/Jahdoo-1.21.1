@@ -2,6 +2,7 @@ package org.jahdoo.capabilities.player_abilities;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -11,6 +12,7 @@ import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.capabilities.AbstractAttachment;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.items.wand.CastHelper;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
@@ -22,6 +24,7 @@ import java.util.List;
 import static org.jahdoo.all_magic.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.all_magic.AbilityBuilder.MANA_COST;
 import static org.jahdoo.all_magic.all_abilities.abilities.DimensionalRecallAbility.abilityId;
+import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.registers.AttachmentRegister.*;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
@@ -56,25 +59,25 @@ public class DimensionalRecall implements AbstractAttachment {
         if (!(player instanceof ServerPlayer serverPlayer)) return;
         var pos = serverPlayer.getRespawnPosition();
 
+        if(startedUsing && hasAbility){
+            if (pos != null) {
+                pullParticlesToCenter(player);
 
+                if (player.getTicksUsingItem() % 3 == 0) {
+                    var setVolume = Math.min(2, player.getTicksUsingItem() / 5);
+                    var setPitch = (float) player.getTicksUsingItem() / 100;
+                    var setAudio = SoundEvents.SOUL_ESCAPE.value();
+                    var getBlockPos = player.blockPosition();
 
-        if (pos != null && startedUsing && hasAbility) {
-            pullParticlesToCenter(player);
+                    GeneralHelpers.getSoundWithPosition(player.level(), getBlockPos, setAudio, setVolume, setPitch);
+                }
 
-            if (player.getTicksUsingItem() % 3 == 0) {
-                var setVolume = Math.min(2, player.getTicksUsingItem() / 5);
-                var setPitch = (float) player.getTicksUsingItem() / 100;
-                var setAudio = SoundEvents.SOUL_ESCAPE.value();
-                var getBlockPos = player.blockPosition();
+                this.onSuccessfulCast(serverPlayer, getHolder);
 
-                GeneralHelpers.getSoundWithPosition(player.level(), getBlockPos, setAudio, setVolume, setPitch);
+            } else {
+                sendNoHomeMessage(player);
             }
-
-            this.onSuccessfulCast(serverPlayer, getHolder);
         }
-
-        //Needs to send message if no home is set
-//        throw new RuntimeException();
     }
 
     private void onSuccessfulCast(ServerPlayer serverPlayer, WandAbilityHolder wandAbilityHolder){
@@ -101,6 +104,10 @@ public class DimensionalRecall implements AbstractAttachment {
         }
     }
 
+    private void sendNoHomeMessage(Player player){
+        player.displayClientMessage(GeneralHelpers.withStyleComponentTrans("ability.jahdoo.no_home", this.getElement().textColourPrimary()), true);
+    }
+
     public void setStartedUsing(boolean startedUsing) {
         this.startedUsing = startedUsing;
     }
@@ -108,19 +115,9 @@ public class DimensionalRecall implements AbstractAttachment {
     public void pullParticlesToCenter(Player player){
         var casterData = player.getData(CASTER_DATA);
         var manaReduction = casterData.getMaxMana(player) / 60;
-        var bakedParticleOptions = new BakedParticleOptions(
-            this.getElement().getTypeId(),
-            6, 2f, false
-        );
-        var genericParticleOptions = genericParticleOptions(
-            ParticleStore.SOFT_PARTICLE_SELECTION,
-            this.getElement(), 10, 1.4f
-        );
-        var particleOptionsList = List.of(
-            bakedParticleOptions,
-            genericParticleOptions
-        );
-
+        var bakedParticleOption = bakedParticleOptions(this.getElement().getTypeId(), 6, 2f, false);
+        var genericParticleOptions = genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, this.getElement(), 10, 1.4f);
+        var particleOptionsList = List.of(bakedParticleOption, genericParticleOptions);
         var getRandomParticle = particleOptionsList.get(RandomSource.create().nextInt(0, 2));
 
         if(casterData.getManaPool() >= manaReduction){

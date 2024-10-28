@@ -10,9 +10,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.items.augments.Augment;
+import org.jahdoo.items.curious_items.TomeOfUnity;
 import org.jahdoo.items.heart_container.HealthContainer;
 import org.jahdoo.items.infuser_block_item.InfuserBlockItem;
-import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.items.wand.subWands.*;
 
 public class ItemsRegister {
@@ -30,8 +30,8 @@ public class ItemsRegister {
     public static final DeferredHolder<Item, Item> AUGMENT_CORE =
         ITEMS.register("augment_core", () -> new Item(new Item.Properties()));
 
-    public static final DeferredHolder<Item, Item> TOME_OF_ETERNITY =
-        ITEMS.register("tome_of_eternity", () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> TOME_OF_UNITY =
+        ITEMS.register("tome_of_unity", TomeOfUnity::new);
 
     public static final DeferredHolder<Item, Item> INFUSER_ITEM =
         ITEMS.register("infuser", () -> new InfuserBlockItem(BlocksRegister.INFUSER.get(), new Item.Properties()));

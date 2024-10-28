@@ -1,5 +1,6 @@
 package org.jahdoo.all_magic;
 
+import com.google.common.util.concurrent.ClosingFuture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -8,6 +9,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -29,15 +31,30 @@ public class UtilityHelpers {
         if(UtilityHelpers.range.contains(UtilityHelpers.destroySpeed(pos, newProjectile.level()))){
             BlockState blockstate = newProjectile.level().getBlockState(pos);
             if(!voidBlocks){
+                var level = newProjectile.level();
+                var centre = pos.getCenter();
+
                 if (isSilkTouch) {
-                    newProjectile.spawnAtLocation(new ItemStack(blockstate.getBlock()));
+                    var getBlock = new ItemStack(blockstate.getBlock());
+                    ItemEntity itementity = new ItemEntity(level, centre.x, centre.y, centre.z, getBlock);
+                    level.addFreshEntity(itementity);
                 } else {
-                    LootParams.Builder lootparams$builder = (new LootParams.Builder((ServerLevel) newProjectile.level())).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos)).withParameter(LootContextParams.TOOL, new ItemStack(Items.DIAMOND_PICKAXE));
-                    newProjectile.level().getBlockState(pos).getDrops(lootparams$builder).forEach(itemStack -> newProjectile.spawnAtLocation(itemStack.getItem()));
+                    if(!(level instanceof ServerLevel serverLevel)) return;
+                    var lootBuilder = new LootParams
+                        .Builder(serverLevel)
+                        .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                        .withParameter(LootContextParams.TOOL, new ItemStack(Items.DIAMOND_PICKAXE));
+                    var drops = newProjectile.level().getBlockState(pos).getDrops(lootBuilder);
+
+                    for (ItemStack itemStack : drops){
+                        ItemEntity itementity = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
+                        level.addFreshEntity(itementity);
+                    }
                 }
             }
             if (newProjectile.level() instanceof ServerLevel serverLevel) {
-                GeneralHelpers.generalHelpers.sendParticles(serverLevel, new BlockParticleOption(ParticleTypes.BLOCK, blockstate),  pos.getCenter(), 5,0, 0, 0, 1);
+                var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
+                GeneralHelpers.generalHelpers.sendParticles(serverLevel, blockPart,  pos.getCenter(), 5,0, 0, 0, 1);
             }
             newProjectile.level().removeBlock(pos, false);
         }

@@ -1,15 +1,21 @@
 package org.jahdoo.datagen;
 
+import com.sun.jna.platform.win32.WinNT;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
+import net.neoforged.neoforge.common.loot.AddTableLootModifier;
 import net.neoforged.neoforge.common.loot.LootTableIdCondition;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.loot.AddItemModifier;
+import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ItemsRegister;
+import org.jahdoo.utils.GeneralHelpers;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -76,6 +82,26 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
                     new LootTableIdCondition.Builder(ResourceLocation.parse("chests/"+location)).build(),
                 },
                 ItemsRegister.AUGMENT_CORE.get()
+            )
+        );
+
+        add("wand_chest" + additional,
+            new AddItemModifier(
+                new LootItemCondition[] {
+                    LootItemRandomChanceCondition.randomChance(0.5f).build(),
+                    new LootTableIdCondition.Builder(ResourceLocation.parse("chests/"+location)).build(),
+                },
+                ItemsRegister.WAND_ITEM_MYSTIC.get()
+            )
+        );
+
+        add("tome_chest" + additional,
+            new AddItemModifier(
+                new LootItemCondition[] {
+                    LootItemRandomChanceCondition.randomChance(0.5f).build(),
+                    new LootTableIdCondition.Builder(ResourceLocation.parse("chests/"+location)).build(),
+                },
+                ItemsRegister.TOME_OF_UNITY.get()
             )
         );
     }

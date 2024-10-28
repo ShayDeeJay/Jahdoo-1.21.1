@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
+import static org.jahdoo.items.ShareItemHelpers.addRarity;
 import static org.jahdoo.items.augments.AugmentRatingSystem.*;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
 import static org.jahdoo.registers.DataComponentRegistry.NUMBER;
@@ -238,6 +239,7 @@ public class AugmentItemHelper {
                 .append(getModifierContext(keys, format, comparison)));
     }
 
+
     public static List<Component> getAllAbilityModifiers(
         ItemStack itemStack,
         ItemStack itemStack1,
@@ -251,7 +253,7 @@ public class AugmentItemHelper {
         var ability = AbilityRegister.getSpellsByTypeId(abilityLocation);
         var rarity = ability.getFirst().rarity();
 
-        toolTips.add(withStyleComponent("Rarity: ", -9013642).copy().append(withStyleComponent(rarity.getSerializedName(), rarity.getColour())));
+        addRarity(toolTips, rarity);
         toolTips.add(Component.empty());
 
         int subHeaderColour = -2434342;
@@ -303,9 +305,7 @@ public class AugmentItemHelper {
             toolTips.add(GeneralHelpers.withStyleComponent("Placeable in wands", -12368570));
         } else {
             toolTips.add(Component.literal("Right-click to discover").withStyle(ChatFormatting.GRAY));
-
         }
-
     }
 
     public static Component getAbilityName(ItemStack itemStack, AbstractElement info){

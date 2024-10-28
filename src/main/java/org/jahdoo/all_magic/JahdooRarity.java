@@ -30,6 +30,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     ETERNAL(4, "Eternal", color(255,218, 71, 71), 3000);
 
 
+
     private static final List<JahdooRarity> getAllRarities = List.of(
         COMMON,
         UNCOMMON,

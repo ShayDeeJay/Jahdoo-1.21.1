@@ -72,7 +72,7 @@ public class VeinMiner extends AbstractUtilityProjectile {
 
             this.forAllBlocksAroundOf(start, genericProjectile.level(), target.getBlock(), veinSize,
                 (pos, state) -> {
-                    UtilityHelpers.dropItemsOrBlock(genericProjectile, pos, true, true);
+                    UtilityHelpers.dropItemsOrBlock(genericProjectile, pos, false, false);
                     ParticleHandlers.spawnPoof(serverLevel, pos.getCenter(), 1, ElementRegistry.UTILITY.get().getParticleGroup().genericSlow(), 0, 0, 0, 0.005f, 1);
                 }
             );

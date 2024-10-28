@@ -444,6 +444,40 @@ public class GeneralHelpers {
         }
     }
 
+    public static void entityMover(Entity receiver, Entity target, double velocity, double smoothingFactor) {
+        double resistance = 0.9;
+
+        // Calculate direction vector
+        double directionX = receiver.getX() - target.getX();
+        double directionY = receiver.getY() - target.getY();
+        double directionZ = receiver.getZ() - target.getZ();
+
+        // Normalize direction vector
+        double directionLength = Math.sqrt(directionX * directionX + directionY * directionY + directionZ * directionZ);
+        if (directionLength == 0) return; // Avoid division by zero
+        directionX /= directionLength;
+        directionY /= directionLength;
+        directionZ /= directionLength;
+
+        // Apply velocity to direction
+        directionX *= velocity;
+        directionY *= velocity;
+        directionZ *= velocity;
+
+        // Get current speed
+        double currentSpeedX = target.getDeltaMovement().x;
+        double currentSpeedY = target.getDeltaMovement().y;
+        double currentSpeedZ = target.getDeltaMovement().z;
+
+        // Apply smoothing factor to blend towards target direction
+        double newSpeedX = (1 - smoothingFactor) * (directionX * (1 - resistance) + currentSpeedX * resistance) + smoothingFactor * currentSpeedX;
+        double newSpeedY = (1 - smoothingFactor) * (directionY * (1 - resistance) + currentSpeedY * resistance) + smoothingFactor * currentSpeedY;
+        double newSpeedZ = (1 - smoothingFactor) * (directionZ * (1 - resistance) + currentSpeedZ * resistance) + smoothingFactor * currentSpeedZ;
+
+        // Update target's movement
+        target.setDeltaMovement(newSpeedX, newSpeedY, newSpeedZ);
+    }
+
     public static void entityMover(Entity receiver, Entity target, double velocity) {
         double resistance = 0.9;
         double directionX = receiver.getX() - target.getX();

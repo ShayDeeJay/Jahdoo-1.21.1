@@ -81,8 +81,10 @@ public class ManaBarOverlay implements LayeredDraw.Layer{
                 var cooldownStatus = casterData.getCooldown(ability.setAbilityId());
 
                 var cooldownOverlaySize = 20;
-                var currentOverlayHeight = ((cooldownStatus) * cooldownOverlaySize / cooldownCost);
-                alignedGui.displayGuiLayer(6, 5 + currentOverlayHeight, 89, cooldownOverlaySize, currentOverlayHeight);
+                if(cooldownCost > 0){
+                    var currentOverlayHeight = ((cooldownStatus) * cooldownOverlaySize / cooldownCost);
+                    alignedGui.displayGuiLayer(6, 5 + currentOverlayHeight, 89, cooldownOverlaySize, currentOverlayHeight);
+                }
             }
         }
     }

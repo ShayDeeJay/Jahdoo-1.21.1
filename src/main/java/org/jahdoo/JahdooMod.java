@@ -8,15 +8,16 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jahdoo.client.curio_renderer.TomeRenderer;
 import org.jahdoo.client.gui.infusion_table.InfusionTableScreen;
 import org.jahdoo.client.gui.wand_block.WandBlockScreen;
 import org.jahdoo.loot.ModLootModifiers;
 import org.jahdoo.recipe.RecipeRegistry;
 import org.jahdoo.registers.*;
 import org.jahdoo.utils.ModCreativeModTabs;
+import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
 @Mod(JahdooMod.MOD_ID)
 public class JahdooMod {
@@ -50,7 +51,9 @@ public class JahdooMod {
         ElementRegistry.register(modEventBus);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event) {}
+    private void commonSetup(final FMLCommonSetupEvent event) {
+        CuriosRendererRegistry.register(ItemsRegister.TOME_OF_UNITY.get(), TomeRenderer::new);
+    }
 
     @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {

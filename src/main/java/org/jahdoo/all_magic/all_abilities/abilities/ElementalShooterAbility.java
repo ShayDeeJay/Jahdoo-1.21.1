@@ -35,7 +35,7 @@ public class ElementalShooterAbility extends AbstractAbility {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(20, 10, 1)
-            .setCooldown(100, 0, 10)
+            .setCooldown(100, 10, 10)
             .setDamage(10, 5, 1)
             .setEffectChance(50, 10, 5)
             .setEffectStrength(10, 1, 1)

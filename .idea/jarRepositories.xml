@@ -41,5 +41,10 @@
       <option name="name" value="maven" />
       <option name="url" value="https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="OctoStudios" />
+      <option name="name" value="OctoStudios" />
+      <option name="url" value="https://maven.octo-studios.com/releases" />
+    </remote-repository>
   </component>
 </project>
