@@ -13,6 +13,7 @@ import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.particle.ParticleHandlers;
+import org.jahdoo.utils.PositionGetters;
 
 public class EntityBarrier {
     int radius = 6;
@@ -25,7 +26,7 @@ public class EntityBarrier {
     ){
         Vec3 blockPosAdjusted = blockPos.getCenter();
         if(expandRadius < radius) expandRadius += 0.5;
-        GeneralHelpers.getRandomSphericalPositions(blockPosAdjusted, expandRadius, expandRadius * 20,
+        PositionGetters.getRandomSphericalPositions(blockPosAdjusted, expandRadius, expandRadius * 20,
             positions -> {
                 level.addParticle(getType.getParticleGroup().magicSlow(), positions.x, positions.y, positions.z, 0,0,0);
 //                    GeneralHelpers.generalHelpers.sendParticles(serverLevel, getType.getParticleGroup().magicSlow(), positions, 0, 0, 0, 0, 0.4);

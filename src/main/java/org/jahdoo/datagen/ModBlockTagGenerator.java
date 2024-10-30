@@ -26,6 +26,7 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(BlocksRegister.TANK.get())
             .add(BlocksRegister.INFUSER.get())
             .add(BlocksRegister.CRYSTAL_ORE.get())
+            .add(BlocksRegister.CRYSTAL_DEEPSLATE_ORE.get())
             .add(BlocksRegister.WAND_MANAGER_TABLE.get())
             .add(BlocksRegister.CREATOR.get());
 

@@ -2,7 +2,6 @@ package org.jahdoo.capabilities.player_abilities;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -12,12 +11,11 @@ import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.capabilities.AbstractAttachment;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.items.wand.CastHelper;
-import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
-import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.DataComponentHelper;
+import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.PositionGetters;
 
 import java.util.List;
 
@@ -126,7 +124,7 @@ public class DimensionalRecall implements AbstractAttachment {
                 .add(0, player.getBbHeight() / 2, 0)
                 .offsetRandom(RandomSource.create(), 1.5f);
 
-            GeneralHelpers.getInnerRingOfRadiusRandom(pos, 2, numOfPoints,
+            PositionGetters.getInnerRingOfRadiusRandom(pos, 2, numOfPoints,
                 positions -> {
                     if (!(player.level() instanceof ServerLevel serverLevel)) return;
                     var directions = player.position()

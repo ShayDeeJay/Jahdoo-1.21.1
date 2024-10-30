@@ -16,6 +16,7 @@ import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.PositionGetters;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.registers.AttachmentRegister.*;
@@ -95,7 +96,7 @@ public class MageFlight implements AbstractAttachment {
             2, 1f, false
         );
         boolean getMovement = player.getDeltaMovement().y > -0.5;
-        GeneralHelpers.getInnerRingOfRadiusRandom(player.position(), player.getBbWidth() - 0.3, getMovement ? 5 : 2,
+        PositionGetters.getInnerRingOfRadiusRandom(player.position(), player.getBbWidth() - 0.3, getMovement ? 5 : 2,
             positions -> {
                 player.level().addParticle(part1, positions.x, positions.y, positions.z, 0, -0.2, 0);
                 player.level().addParticle(part2, positions.x, positions.y, positions.z, 0, -0.2, 0);

@@ -16,6 +16,7 @@ import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.PositionGetters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +94,7 @@ public class TankBlockEntity extends AbstractBEInventory {
 
     private void beamParticlesToUser(ServerLevel serverLevel, BlockPos pos, int tankSlotSize){
         if(tankSlotSize < this.getMaxSlotSize() && this.counter > 0){
-            GeneralHelpers.getOuterRingOfRadiusRandom(pos.getCenter().subtract(0, 0.5, 0), 0.5, 2,
+            PositionGetters.getOuterRingOfRadiusRandom(pos.getCenter().subtract(0, 0.5, 0), 0.5, 2,
                 positions -> {
                     Vec3 direction = pos.getCenter().add(0, 1, 0).subtract(positions).normalize();
                     GeneralHelpers.generalHelpers.sendParticles(

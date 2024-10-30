@@ -10,7 +10,7 @@ import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.utils.GeneralHelpers;
-import org.jahdoo.utils.DataComponentHelper;
+import org.jahdoo.components.DataComponentHelper;
 
 public class UseAbilityC2SPacket implements CustomPacketPayload {
     public static final Type<UseAbilityC2SPacket> TYPE = new Type<>(GeneralHelpers.modResourceLocation("use_ability"));

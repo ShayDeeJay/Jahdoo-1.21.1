@@ -9,16 +9,17 @@ import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.ElementProjectile;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
-import org.jahdoo.utils.DataComponentHelper;
+import org.jahdoo.components.DataComponentHelper;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 
@@ -39,7 +40,7 @@ public class BoltzAbility extends AbstractAbility {
             ElementProjectile elementProjectile = new ElementProjectile(
                 EntitiesRegister.LIGHTNING_ELEMENT_PROJECTILE.get(),
                 player,
-                ProjectilePropertyRegister.BOLTZ.get().setAbilityId(),
+                EntityPropertyRegister.BOLTZ.get().setAbilityId(),
                 0,
                 abilityId.getPath().intern()
             );
@@ -58,7 +59,7 @@ public class BoltzAbility extends AbstractAbility {
             double spreadY = direction.y + (Math.random() - 0.5) * spread;
             double spreadZ = direction.z + (Math.random() - 0.5) * spread;
             if(player.level() instanceof ServerLevel serverLevel){
-                GeneralHelpers.generalHelpers.sendParticles(serverLevel, particleOptions, player.position().add(0,1.5,0), 0, spreadX, spreadY, spreadZ, 1);
+                ParticleHandlers.sendParticles(serverLevel, particleOptions, player.position().add(0,1.5,0), 0, spreadX, spreadY, spreadZ, 1);
             }
         }
 

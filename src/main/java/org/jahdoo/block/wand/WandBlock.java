@@ -33,6 +33,7 @@ import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.PositionGetters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,7 +81,7 @@ public class WandBlock extends BaseEntityBlock {
             20, 1.5f, false, 0.3
         );
 
-        GeneralHelpers.getInnerRingOfRadiusRandom(blockPos, 0.1, 2,
+        PositionGetters.getInnerRingOfRadiusRandom(blockPos, 0.1, 2,
             positions -> this.placeParticle(level, positions, element, randomSource.nextInt(0,3) == 0 ? par1 : par2)
         );
     }
@@ -116,27 +117,26 @@ public class WandBlock extends BaseEntityBlock {
             return ItemInteractionResult.SUCCESS;
         }
 
-;
-
-        if (pLevel.getBlockEntity(pPos) instanceof WandBlockEntity wandBlock) {
-            ItemStack internalWand = wandBlock.getWandItemFromSlot();
-            var wandData = internalWand.get(WAND_DATA);
-            System.out.println(wandData);
-            if (heldItem.getItem() == ItemsRegister.AUGMENT_CORE.get()) {
-                if(wandData != null && wandData.abilitySlots() < 10){
-                    heldItem.shrink(1);
-                    var index = wandData.abilitySlots() + 1;
-                    int addSlotOrMax = Math.min(index, 10);
-                    internalWand.update(WAND_DATA, WandData.DEFAULT, data -> data.insertNewSlot(addSlotOrMax));
-                } else {
-                    return ItemInteractionResult.FAIL;
-                }
-            } else {
-                openWandGUI(pPlayer, pPos, pLevel);
-            }
+        if (pLevel.getBlockEntity(pPos) instanceof WandBlockEntity) {
+            openWandGUI(pPlayer, pPos, pLevel);
         }
 
         return ItemInteractionResult.SUCCESS;
+    }
+
+    private static ItemInteractionResult getItemInteractionResult(ItemStack heldItem, WandBlockEntity wandBlock) {
+        ItemStack internalWand = wandBlock.getWandItemFromSlot();
+        var wandData = internalWand.get(WAND_DATA);
+        if (heldItem.getItem() == ItemsRegister.AUGMENT_CORE.get()) {
+            if(wandData != null && wandData.abilitySlots() < 10){
+                heldItem.shrink(1);
+                var index = wandData.abilitySlots() + 1;
+                int addSlotOrMax = Math.min(index, 10);
+                internalWand.update(WAND_DATA, WandData.DEFAULT, data -> data.insertNewSlot(addSlotOrMax));
+                return ItemInteractionResult.SUCCESS;
+            }
+        }
+        return ItemInteractionResult.FAIL;
     }
 
 

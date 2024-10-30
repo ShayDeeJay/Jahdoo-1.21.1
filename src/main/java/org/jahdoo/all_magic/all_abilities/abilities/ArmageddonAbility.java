@@ -12,7 +12,7 @@ import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
@@ -25,7 +25,7 @@ public class ArmageddonAbility extends AbstractAbility {
     @Override
     public void invokeAbility(Player player) {
         Vec3 location = player.pick(40, 0,false).getLocation();
-        AoeCloud aoeCloud = new AoeCloud(player.level(), player, 3f, ProjectilePropertyRegister.ARMAGEDDON.get().setAbilityId(), abilityId.getPath().intern());
+        AoeCloud aoeCloud = new AoeCloud(player.level(), player, 3f, EntityPropertyRegister.ARMAGEDDON.get().setAbilityId(), abilityId.getPath().intern());
         aoeCloud.setPos(location.x, location.y, location.z);
         player.level().playSound(null, BlockPos.containing(location), SoundEvents.FIRECHARGE_USE, SoundSource.NEUTRAL, 1.4f, 0.3f);
         player.level().playSound(null, BlockPos.containing(location), SoundRegister.ORB_FIRE.get(), SoundSource.NEUTRAL, 0.8f, 0.6f);

@@ -8,7 +8,7 @@ import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
@@ -18,7 +18,7 @@ public class HellfireAbility extends AbstractAbility {
 
     @Override
     public void invokeAbility(Player player) {
-        AoeCloud aoeCloud = new AoeCloud(player.level(), player, 0.3f, ProjectilePropertyRegister.HELLFIRE.get().setAbilityId(), abilityId.getPath().intern());
+        AoeCloud aoeCloud = new AoeCloud(player.level(), player, 0.3f, EntityPropertyRegister.HELLFIRE.get().setAbilityId(), abilityId.getPath().intern());
         aoeCloud.setPos(player.getX(), player.getY(), player.getZ());
         player.level().addFreshEntity(aoeCloud);
     }

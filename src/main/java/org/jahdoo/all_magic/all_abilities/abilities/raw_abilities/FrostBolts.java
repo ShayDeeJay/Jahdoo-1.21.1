@@ -20,7 +20,7 @@ import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GeneralHelpers;
 
 import java.util.ArrayList;
@@ -107,7 +107,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
             double arrowY = hitEntity.getY() + (hitEntity.getBbHeight()/2) + 4;
             GenericProjectile arrow = new GenericProjectile(
                 player, arrowX, arrowY, arrowZ,
-                ProjectilePropertyRegister.ETHEREAL_ARROW.get().setAbilityId(),
+                EntityPropertyRegister.ETHEREAL_ARROW.get().setAbilityId(),
                 EtherealArrow.setArrowProperties((int) damage, (int) effectDuration, (int) effectStrength, (int) effectChance),
                 this.getElementType(),
                 FrostboltsAbility.abilityId.getPath()

@@ -9,7 +9,7 @@ import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.ElementProjectile;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
@@ -23,8 +23,8 @@ public class FireballAbility extends AbstractAbility {
         ElementProjectile elementProjectile = new ElementProjectile(
             EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(),
             player,
-            ProjectilePropertyRegister.FIRE_BALL.get().setAbilityId(),
-            -0.5,
+            EntityPropertyRegister.FIRE_BALL.get().setAbilityId(),
+            -0.3,
             abilityId.getPath().intern()
         );
         this.fireProjectile(elementProjectile, player, 0.5f);

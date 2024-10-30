@@ -25,6 +25,8 @@ import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.PositionGetters;
+
 import java.util.List;
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
@@ -74,7 +76,7 @@ public class NovaSmash implements AbstractAttachment {
         if (this.canSmash){
             player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
             if(player.onGround()){
-                GeneralHelpers.getOuterRingOfRadiusRandom(player.position(), 2, 100,(pos) -> setParticleNova(pos, player, (double) this.highestDelta /10));
+                PositionGetters.getOuterRingOfRadiusRandom(player.position(), 2, 100,(pos) -> setParticleNova(pos, player, (double) this.highestDelta /10));
                 this.setAbilityEffects(player, this.highestDelta);
                 this.setKnockbackAndDamage(player, this.highestDelta);
                 this.highestDelta = 0;
@@ -90,7 +92,7 @@ public class NovaSmash implements AbstractAttachment {
 
         if(player.level() instanceof ServerLevel serverLevel){
             this.clientDiggingParticles(player, serverLevel);
-            GeneralHelpers.getOuterRingOfRadiusRandom(player.position().add(0, 0.1, 0), 0.5, Math.max(getMaxDeltaMovement * 40, 20),
+            PositionGetters.getOuterRingOfRadiusRandom(player.position().add(0, 0.1, 0), 0.5, Math.max(getMaxDeltaMovement * 40, 20),
                 worldPosition -> this.setParticleNova(player, worldPosition, 5, serverLevel)
             );
         }

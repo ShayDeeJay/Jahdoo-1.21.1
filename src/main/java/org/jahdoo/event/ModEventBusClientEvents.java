@@ -18,7 +18,7 @@ import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
 import org.jahdoo.registers.ParticlesRegister;
-import org.jahdoo.utils.KeyBinding;
+import org.jahdoo.client.KeyBinding;
 
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

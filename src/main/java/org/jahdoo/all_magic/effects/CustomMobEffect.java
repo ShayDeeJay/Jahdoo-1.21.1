@@ -1,12 +1,9 @@
-package org.jahdoo.utils;
+package org.jahdoo.all_magic.effects;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import org.jahdoo.entities.EternalWizard;
-import org.jetbrains.annotations.Nullable;
 
 public class CustomMobEffect extends MobEffectInstance {
 

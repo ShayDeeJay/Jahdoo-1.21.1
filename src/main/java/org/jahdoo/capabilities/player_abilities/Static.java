@@ -16,8 +16,8 @@ import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.*;
-import org.jahdoo.utils.CustomMobEffect;
-import org.jahdoo.utils.DataComponentHelper;
+import org.jahdoo.all_magic.effects.CustomMobEffect;
+import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.utils.GeneralHelpers;
 
 import java.util.Map;

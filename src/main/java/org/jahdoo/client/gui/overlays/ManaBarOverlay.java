@@ -7,16 +7,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameType;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.capabilities.CastingData;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.GeneralHelpers;
-import org.jahdoo.utils.DataComponentHelper;
+import org.jahdoo.components.DataComponentHelper;
 
 import static org.jahdoo.client.SharedUI.drawStringWithBackground;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;

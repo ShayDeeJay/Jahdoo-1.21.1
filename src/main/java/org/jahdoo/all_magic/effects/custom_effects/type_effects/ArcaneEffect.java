@@ -6,17 +6,13 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jahdoo.all_magic.effects.EffectParticles;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.CustomMobEffect;
+import org.jahdoo.all_magic.effects.CustomMobEffect;
 import org.jahdoo.utils.GeneralHelpers;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ArcaneEffect extends MobEffect {
     public static final ResourceLocation att = GeneralHelpers.modResourceLocation("arcane_effects");

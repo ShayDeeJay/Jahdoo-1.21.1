@@ -28,6 +28,7 @@ import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.particle.ParticleHandlers;
+import org.jahdoo.utils.PositionGetters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +111,7 @@ public class BlockExplosion extends AbstractUtilityProjectile {
 
     private void coreParticles(ServerLevel serverLevel) {
         var bakedParticleOptions = new BakedParticleOptions(element().getTypeId(), 2, 3f, false);
-        GeneralHelpers.getRandomSphericalPositions(genericProjectile, projectileSphere, projectileSphere * 10,
+        PositionGetters.getRandomSphericalPositions(genericProjectile, projectileSphere, projectileSphere * 10,
             radiusPosition -> {
                 explosionParticle(serverLevel, radiusPosition, bakedParticleOptions);
             }
@@ -124,7 +125,7 @@ public class BlockExplosion extends AbstractUtilityProjectile {
         var bakedParticleOptions = new BakedParticleOptions(element().getTypeId(), 10, 3f, false);
         var genericParticleOptions = new GenericParticleOptions(genericParticleSelection, colour, fade, 10, 3, false, 1);
         if (totalRadius <= totalRadiusMax + 1) {
-            GeneralHelpers.getRandomSphericalPositions(genericProjectile, totalRadius - 1, totalRadius * 4,
+            PositionGetters.getRandomSphericalPositions(genericProjectile, totalRadius - 1, totalRadius * 4,
                 radiusPosition -> {
                     explosionParticle(serverLevel, radiusPosition, bakedParticleOptions);
                     explosionParticle(serverLevel, radiusPosition, genericParticleOptions);
@@ -207,7 +208,7 @@ public class BlockExplosion extends AbstractUtilityProjectile {
     }
 
     private void handleItemsAndExplosion(ServerLevel serverLevel) {
-        GeneralHelpers.getSphericalBlockPositions(genericProjectile, totalRadius,
+        PositionGetters.getSphericalBlockPositions(genericProjectile, totalRadius,
             radiusPosition -> {
                 BlockState blockstate = genericProjectile.level().getBlockState(radiusPosition);
                 var fluidState = genericProjectile.level().getFluidState(radiusPosition);

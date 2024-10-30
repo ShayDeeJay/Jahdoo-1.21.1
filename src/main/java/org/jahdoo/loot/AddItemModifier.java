@@ -16,6 +16,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
+import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.items.curious_items.TomeOfUnity;
@@ -74,6 +75,34 @@ public class AddItemModifier extends LootModifier {
         return generatedLoot;
     }
 
+    public static void createTomeAttributes(JahdooRarity rarity, ItemStack itemStack, Pair<Double, Double> regenValue, Pair<Double, Double> manaPool){
+        CuriosApi.addModifier(
+            itemStack, AttributesRegister.MANA_REGEN, GeneralHelpers.modResourceLocation("mana_regen"),
+            GeneralHelpers.Random.nextDouble(regenValue.getFirst(), regenValue.getSecond()), AttributeModifier.Operation.ADD_VALUE, "tome"
+        );
+
+        CuriosApi.addModifier(
+            itemStack, AttributesRegister.MANA_POOL, GeneralHelpers.modResourceLocation("mana_pool"),
+            GeneralHelpers.Random.nextDouble(manaPool.getFirst(), manaPool.getSecond()), AttributeModifier.Operation.ADD_VALUE, "tome"
+        );
+
+        itemStack.set(DataComponentRegistry.JAHDOO_RARITY.get(), rarity.getId());
+    }
+
+    public static ObjectArrayList<ItemStack> setGeneratedAugment(ObjectArrayList<ItemStack> generatedLoot, Item item, Random random){
+        var itemStack = new ItemStack(item);
+        var perfectRoller = random.nextInt(0, 200) == 0 ? 20 : random.nextInt(1, 19);
+        itemStack.set(DataComponentRegistry.AUGMENT_RATING, (double) perfectRoller);
+        if(random.nextInt(0, 20) == 0){
+            generatedLoot.add(itemStack);
+        } else {
+            itemStack.set(DataComponentRegistry.NUMBER, 5);
+            AugmentItemHelper.augmentIdentifierSharedRarity(itemStack);
+            generatedLoot.add(itemStack);
+        }
+        return generatedLoot;
+    }
+
     public static ObjectArrayList<ItemStack> setGeneratedWand(ObjectArrayList<ItemStack> generatedLoot, Item item){
         var getWand = ElementRegistry.getRandomElement().getWand();
         var itemStack = new ItemStack(getWand == null ? item : getWand);
@@ -90,47 +119,21 @@ public class AddItemModifier extends LootModifier {
         return generatedLoot;
     }
 
-    public static void createTomeAttributes(ItemStack itemStack, Pair<Double, Double> regenValue, Pair<Double, Double> manaPool){
-        CuriosApi.addModifier(
-            itemStack, AttributesRegister.MANA_REGEN, GeneralHelpers.modResourceLocation("mana_regen"),
-            GeneralHelpers.Random.nextDouble(regenValue.getFirst(), regenValue.getSecond()), AttributeModifier.Operation.ADD_VALUE, "tome"
-        );
-
-        CuriosApi.addModifier(
-            itemStack, AttributesRegister.MANA_POOL, GeneralHelpers.modResourceLocation("mana_pool"),
-            GeneralHelpers.Random.nextDouble(manaPool.getFirst(), manaPool.getSecond()), AttributeModifier.Operation.ADD_VALUE, "tome"
-        );
-    }
-
     public static ObjectArrayList<ItemStack> setGeneratedTome(ObjectArrayList<ItemStack> generatedLoot, Item item){
         var itemStack = new ItemStack(item);
 
         switch (getRarity()){
-            case COMMON -> createTomeAttributes(itemStack, Pair.of(0.0,10.0), Pair.of(0.0,10.0));
-            case UNCOMMON -> createTomeAttributes(itemStack, Pair.of(10.0, 20.0), Pair.of(10.0, 20.0));
-            case EPIC -> createTomeAttributes(itemStack, Pair.of(15.0, 20.0), Pair.of(15.0, 20.0));
-            case LEGENDARY -> createTomeAttributes(itemStack, Pair.of(20.0, 30.0), Pair.of(20.0, 30.0));
-            case ETERNAL -> createTomeAttributes(itemStack, Pair.of(30.0, 50.0), Pair.of(30.0, 50.0));
+            case COMMON -> createTomeAttributes(COMMON, itemStack, Pair.of(0.0, 10.0), Pair.of(0.0, 10.0));
+            case UNCOMMON -> createTomeAttributes(UNCOMMON, itemStack, Pair.of(10.0, 20.0), Pair.of(10.0, 20.0));
+            case EPIC -> createTomeAttributes(EPIC, itemStack, Pair.of(15.0, 20.0), Pair.of(15.0, 20.0));
+            case LEGENDARY -> createTomeAttributes(LEGENDARY, itemStack, Pair.of(20.0, 30.0), Pair.of(20.0, 30.0));
+            case ETERNAL -> createTomeAttributes(ETERNAL, itemStack, Pair.of(30.0, 50.0), Pair.of(30.0, 50.0));
         }
 
         generatedLoot.add(itemStack);
         return generatedLoot;
     }
 
-
-    public static ObjectArrayList<ItemStack> setGeneratedAugment(ObjectArrayList<ItemStack> generatedLoot, Item item, Random random){
-        var itemStack = new ItemStack(item);
-        if(random.nextInt(0, 20) == 0){
-            generatedLoot.add(itemStack);
-        } else {
-            var perfectRoller = random.nextInt(0, 1000) == 0 ? 20 : random.nextInt(1, 19);
-            itemStack.set(DataComponentRegistry.AUGMENT_RATING, (double) perfectRoller);
-            itemStack.set(DataComponentRegistry.NUMBER, 5);
-            AugmentItemHelper.augmentIdentifierSharedRarity(itemStack);
-            generatedLoot.add(itemStack);
-        }
-        return generatedLoot;
-    }
 
     @Override
     public MapCodec<? extends IGlobalLootModifier> codec() {

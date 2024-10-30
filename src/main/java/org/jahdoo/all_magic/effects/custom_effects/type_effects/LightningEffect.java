@@ -8,7 +8,7 @@ import org.jahdoo.all_magic.effects.EffectParticles;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.utils.CustomMobEffect;
+import org.jahdoo.all_magic.effects.CustomMobEffect;
 import org.jahdoo.utils.GeneralHelpers;
 
 import static org.jahdoo.particle.ParticleHandlers.spawnElectrifiedParticles;

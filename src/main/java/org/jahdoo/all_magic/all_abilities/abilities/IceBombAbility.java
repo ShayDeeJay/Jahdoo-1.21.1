@@ -9,7 +9,7 @@ import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.ElementProjectile;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
@@ -24,7 +24,7 @@ public class IceBombAbility extends AbstractAbility {
             new ElementProjectile(
                 EntitiesRegister.FROST_ELEMENT_PROJECTILE.get(),
                 player,
-                ProjectilePropertyRegister.ICE_NEEDLER.get().setAbilityId(),
+                EntityPropertyRegister.ICE_NEEDLER.get().setAbilityId(),
                 0,
                 abilityId.getPath().intern()
             ),

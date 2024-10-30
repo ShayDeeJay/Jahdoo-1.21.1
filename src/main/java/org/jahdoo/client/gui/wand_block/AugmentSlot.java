@@ -9,14 +9,12 @@ import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ItemsRegister;
-import org.jahdoo.utils.DataComponentHelper;
+import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
-
-import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class AugmentSlot extends SlotItemHandler {
 

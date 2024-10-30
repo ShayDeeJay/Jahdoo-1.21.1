@@ -8,10 +8,8 @@ import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.capabilities.player_abilities.PlayerScale;
-import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.registers.ProjectilePropertyRegister;
-import org.jahdoo.utils.DataComponentHelper;
+import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
 

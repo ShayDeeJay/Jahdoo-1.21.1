@@ -7,7 +7,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.all_magic.AbstractElement;
@@ -19,11 +18,9 @@ import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.registers.ItemsRegister;
-import org.jahdoo.utils.CustomMobEffect;
+import org.jahdoo.all_magic.effects.CustomMobEffect;
 import org.jahdoo.utils.GeneralHelpers;
 
-import static org.jahdoo.items.augments.AugmentItemHelper.throwNewItem;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
 
@@ -156,7 +153,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
         } else  {
             target.hurt(this.genericProjectile.damageSources().magic(), (float) damage);
         }
-        if(!target.isAlive()) throwNewItem(target, new ItemStack(ItemsRegister.AUGMENT_ITEM.get()));
+//        if(!target.isAlive()) throwNewItem(target, new ItemStack(ItemsRegister.AUGMENT_ITEM.get()));
     }
 
     ResourceLocation abilityId = GeneralHelpers.modResourceLocation("elemental_shooter_property");

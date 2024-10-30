@@ -10,7 +10,7 @@ import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.ElementProjectile;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
@@ -25,7 +25,7 @@ public class QuantumDestroyerAbility extends AbstractAbility {
         ElementProjectile elementProjectile = new ElementProjectile(
             EntitiesRegister.MYSTIC_ELEMENT_PROJECTILE.get(),
             player,
-            ProjectilePropertyRegister.QUANTUM_DESTROYER.get().setAbilityId(),
+            EntityPropertyRegister.QUANTUM_DESTROYER.get().setAbilityId(),
             0,
             abilityId.getPath().intern()
         );

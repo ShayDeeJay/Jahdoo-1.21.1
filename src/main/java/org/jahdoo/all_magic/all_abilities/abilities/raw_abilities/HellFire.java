@@ -24,8 +24,9 @@ import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.utils.CustomMobEffect;
+import org.jahdoo.all_magic.effects.CustomMobEffect;
 import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.PositionGetters;
 
 import java.util.List;
 
@@ -107,7 +108,7 @@ public class HellFire extends DefaultEntityBehaviour {
     private void novaBehaviour(ServerLevel serverLevel){
         double radius =  aoeCloud.getRadius() * 3;
         if(countdownTimer > 0) return;
-        List<Vec3> positions = GeneralHelpers.getSemicircle(aoeCloud.position(), radius, Math.max(radius / 2.5 , 6), yaw, 30);
+        var positions = PositionGetters.getSemicircle(aoeCloud.position(), radius, Math.max(radius / 2.5 , 6), yaw, 30);
         this.novaSoundManager(positions);
 
         positions.forEach(

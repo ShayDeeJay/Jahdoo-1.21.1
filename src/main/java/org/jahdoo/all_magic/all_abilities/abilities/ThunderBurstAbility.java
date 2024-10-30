@@ -12,7 +12,7 @@ import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
@@ -53,7 +53,7 @@ public class ThunderBurstAbility extends AbstractAbility {
         for(int i = 0; i < numberOfBolts; i++){
             GenericProjectile genericProjectile = new GenericProjectile(
                 player, 0,
-                ProjectilePropertyRegister.LIGHTNING_TRAIL.get().setAbilityId(),
+                EntityPropertyRegister.LIGHTNING_TRAIL.get().setAbilityId(),
                 lightningTrailModifiers, -2,
                 abilityId.getPath().intern()
             );

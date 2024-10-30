@@ -26,6 +26,7 @@ import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.PositionGetters;
 
 import java.util.List;
 import java.util.UUID;
@@ -170,7 +171,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
 
     private void setSpawnParticles(ServerLevel serverLevel){
         BakedParticleOptions bakedParticle = new BakedParticleOptions(ElementRegistry.VITALITY.get().getTypeId(), 20, 3f, false);
-        GeneralHelpers.getInnerRingOfRadiusRandom(aoeCloud.position(), 0.8, 5).forEach(
+        PositionGetters.getInnerRingOfRadiusRandom(aoeCloud.position(), 0.8, 5).forEach(
             positions -> GeneralHelpers
                 .generalHelpers
                 .sendParticles(serverLevel, bakedParticle, positions, 1, 0, 1,0,0.05)
@@ -178,7 +179,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     }
 
     private void setOuterRingPulses(ServerLevel serverLevel){
-        List<Vec3> positions = GeneralHelpers.getOuterRingOfRadiusList(aoeCloud.position(), 0.8, 20);
+        var positions = PositionGetters.getOuterRingOfRadiusList(aoeCloud.position(), 0.8, 20);
         GenericParticleOptions particleOptions = genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, this.getElementType(), 10, 0.1f, true);
         if(this.height < 1) this.height += 0.05; else this.height = 0;
 

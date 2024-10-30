@@ -1,5 +1,6 @@
 package org.jahdoo.all_magic;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.StringRepresentable;
@@ -19,24 +20,19 @@ import java.util.function.UnaryOperator;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.particle.ParticleStore.rgbToInt;
+import static org.jahdoo.utils.GeneralHelpers.withStyleComponent;
 
 //@NetworkedEnum(NetworkedEnum.NetworkCheck.BIDIRECTIONAL)
 @IndexedEnum
 public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     COMMON(0, "Common", color(255,11,176,16), 1),
-    UNCOMMON(1, "Un-common", color(255,67, 164, 222), 300),
+    UNCOMMON(1, "Uncommon", color(255,67, 164, 222), 300),
     EPIC(2, "Epic", color(255,222, 136, 255), 800),
     LEGENDARY(3, "Legendary", color(255,225, 199, 107), 1500),
     ETERNAL(4, "Eternal", color(255,218, 71, 71), 3000);
 
-
-
     private static final List<JahdooRarity> getAllRarities = List.of(
-        COMMON,
-        UNCOMMON,
-        EPIC,
-        LEGENDARY,
-        ETERNAL
+        COMMON, UNCOMMON, EPIC, LEGENDARY, ETERNAL
     );
 
     private final int id;
@@ -85,6 +81,9 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return list.get(GeneralHelpers.Random.nextInt(0, list.size()));
     }
 
+    public static Component addRarityTooltip(JahdooRarity rarity){
+        return withStyleComponent("Rarity: ", -9013642).copy().append(withStyleComponent(rarity.getSerializedName(), rarity.getColour()));
+    }
 
     //Debug using use on item
     public static void debugRarity(Player player){

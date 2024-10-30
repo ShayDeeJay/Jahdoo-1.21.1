@@ -18,18 +18,25 @@ public class ModBlockStateProvider extends BlockStateProvider {
     protected void registerStatesAndModels() {
         blockWithItem(BlocksRegister.CRYSTAL_ORE);
         blockWithItem(BlocksRegister.CRYSTAL_DEEPSLATE_ORE);
+
         simpleBlockWithItem(BlocksRegister.WAND_MANAGER_TABLE.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/infusion_table")));
+
         simpleBlockWithItem(BlocksRegister.TANK.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/tank")));
+
         simpleBlockWithItem(BlocksRegister.INFUSER.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/infuser")));
+
         simpleBlockWithItem(BlocksRegister.LIGHTING.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/lighting")));
+
         simpleBlockWithItem(BlocksRegister.JIDE_POWDER_BLOCk.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/jide_powder")));
-        simpleBlockWithItem(BlocksRegister.WAND.get(),
+
+        simpleBlock(BlocksRegister.WAND.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/wand")));
+
         simpleBlockWithItem(BlocksRegister.CREATOR.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/creator")));
     }

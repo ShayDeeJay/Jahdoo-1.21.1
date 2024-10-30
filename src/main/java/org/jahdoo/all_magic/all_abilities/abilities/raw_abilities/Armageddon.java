@@ -10,13 +10,14 @@ import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.all_abilities.abilities.ArmageddonAbility;
 import org.jahdoo.entities.AoeCloud;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.components.AbilityHolder;
+import org.jahdoo.utils.PositionGetters;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
@@ -61,7 +62,7 @@ public class Armageddon extends DefaultEntityBehaviour {
     @Override
     public void onTickMethod() {
         if(aoeCloud.tickCount == 1) {
-            GeneralHelpers.getOuterRingOfRadiusRandom(this.aoeCloud.position(), this.aoe, 200, this::setParticleNova);
+            PositionGetters.getOuterRingOfRadiusRandom(this.aoeCloud.position(), this.aoe, 200, this::setParticleNova);
             this.createModules();
         }
 
@@ -73,7 +74,7 @@ public class Armageddon extends DefaultEntityBehaviour {
     }
 
     private void createModules(){
-        List<Vec3> getPositionInRadius = GeneralHelpers.getInnerRingOfRadiusRandom(aoeCloud.position(), aoe + 2, 100);
+        var getPositionInRadius = PositionGetters.getInnerRingOfRadiusRandom(aoeCloud.position(), aoe + 2, 100);
         this.createModule(getPositionInRadius.get(GeneralHelpers.Random.nextInt(0, getPositionInRadius.size()-1)));
     }
 
@@ -98,7 +99,7 @@ public class Armageddon extends DefaultEntityBehaviour {
         AoeCloud aoeCloud = new AoeCloud(
             this.aoeCloud.level(),
             this.aoeCloud.getOwner(), 0.2f,
-            ProjectilePropertyRegister.ARMAGEDDON_MODULE.get().setAbilityId(),
+            EntityPropertyRegister.ARMAGEDDON_MODULE.get().setAbilityId(),
             armageddonModule(),
             ArmageddonAbility.abilityId.getPath().intern()
         );
@@ -140,7 +141,7 @@ public class Armageddon extends DefaultEntityBehaviour {
                 colourMain, colourFade, false
             );
 
-            GeneralHelpers.generalHelpers.sendParticles(
+            ParticleHandlers.sendParticles(
                 serverLevel, genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, speed
             );
         }
@@ -159,7 +160,7 @@ public class Armageddon extends DefaultEntityBehaviour {
                 false
             );
 
-            GeneralHelpers.generalHelpers.sendParticles(
+            ParticleHandlers.sendParticles(
                 serverLevel, genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.2
             );
         }

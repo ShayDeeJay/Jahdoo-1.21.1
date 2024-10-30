@@ -160,7 +160,7 @@ public class EternalWizard extends AbstractSkeleton {
     public void performRangedAttack(LivingEntity pTarget, float pDistanceFactor) {
         GenericProjectile arrow = new GenericProjectile(
             this, this.getX(), this.getY() + 2, this.getZ(),
-            ProjectilePropertyRegister.ETHEREAL_ARROW.get().setAbilityId(),
+            EntityPropertyRegister.ETHEREAL_ARROW.get().setAbilityId(),
             EtherealArrow.setArrowProperties(this.damage, this.effectDuration, this.effectStrength, effectChance),
             ElementRegistry.VITALITY.get(),
             FrostboltsAbility.abilityId.getPath().intern()

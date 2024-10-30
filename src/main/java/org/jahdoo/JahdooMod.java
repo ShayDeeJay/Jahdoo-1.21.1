@@ -30,7 +30,7 @@ public class JahdooMod {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(AbilityRegister::registerRegistry);
         modEventBus.addListener(ElementRegistry::registerRegistry);
-        modEventBus.addListener(ProjectilePropertyRegister::registerRegistry);
+        modEventBus.addListener(EntityPropertyRegister::registerRegistry);
 
         AttributesRegister.register(modEventBus);
         RecipeRegistry.register(modEventBus);
@@ -46,7 +46,7 @@ public class JahdooMod {
         ItemsRegister.register(modEventBus);
         ModLootModifiers.register(modEventBus);
         DataComponentRegistry.register(modEventBus);
-        ProjectilePropertyRegister.register(modEventBus);
+        EntityPropertyRegister.register(modEventBus);
         AbilityRegister.register(modEventBus);
         ElementRegistry.register(modEventBus);
     }

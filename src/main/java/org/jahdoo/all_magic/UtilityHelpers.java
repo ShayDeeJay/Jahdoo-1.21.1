@@ -22,6 +22,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.Range;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.utils.GeneralHelpers;
 
 public class UtilityHelpers {
@@ -54,7 +55,7 @@ public class UtilityHelpers {
             }
             if (newProjectile.level() instanceof ServerLevel serverLevel) {
                 var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
-                GeneralHelpers.generalHelpers.sendParticles(serverLevel, blockPart,  pos.getCenter(), 5,0, 0, 0, 1);
+                ParticleHandlers.sendParticles(serverLevel, blockPart,  pos.getCenter(), 5,0, 0, 0, 1);
             }
             newProjectile.level().removeBlock(pos, false);
         }

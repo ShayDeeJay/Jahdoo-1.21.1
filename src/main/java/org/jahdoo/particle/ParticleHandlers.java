@@ -1,7 +1,10 @@
 package org.jahdoo.particle;
 
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -13,6 +16,7 @@ import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.PositionGetters;
 
 import java.util.List;
 
@@ -70,7 +74,7 @@ public class ParticleHandlers {
         );
 
         if(casterData.getManaPool() >= manaReduction){
-            GeneralHelpers.getInnerRingOfRadiusRandom(
+            PositionGetters.getInnerRingOfRadiusRandom(
                 player.position()
                     .add(0, player.getBbHeight() / 2, 0)
                     .offsetRandom(RandomSource.create(), 1.5f), 3, (double) player.getTicksUsingItem()/10,
@@ -213,6 +217,34 @@ public class ParticleHandlers {
         }
     }
 
+    public static <T extends ParticleOptions> int sendParticles(Level level, T pType, Vec3 positions, int pParticleCount, double pXOffset, double pYOffset, double pZOffset, double pSpeed) {
+        if(level instanceof ServerLevel serverLevel){
+            var clientboundlevelparticlespacket = new ClientboundLevelParticlesPacket(pType, false, positions.x, positions.y, positions.z, (float) pXOffset, (float) pYOffset, (float) pZOffset, (float) pSpeed, pParticleCount);
+            var i = 0;
+            for (int j = 0; j < serverLevel.players().size(); ++j) {
+                var serverplayer = serverLevel.players().get(j);
+                if (sendParticles(serverplayer, positions.x, positions.y, positions.z, clientboundlevelparticlespacket)) ++i;
+            }
+            return i;
+        }
+        level.addParticle(pType, true, pXOffset,pYOffset,pZOffset,pSpeed,pSpeed,pSpeed);
+        return 0;
+    }
+
+    private static boolean sendParticles(ServerPlayer pPlayer, double pPosX, double pPosY, double pPosZ, Packet<?> pPacket) {
+        if (pPlayer.level().isClientSide) {
+            return false;
+        } else {
+            var blockpos = pPlayer.blockPosition();
+            if (blockpos.closerToCenterThan(new Vec3(pPosX, pPosY, pPosZ), 64.0D)) {
+                pPlayer.connection.send(pPacket);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     public static void EntityProjectileParticles(
         Projectile projectile,
         int tickCount,
@@ -240,37 +272,6 @@ public class ParticleHandlers {
                 BakedParticleOptions bakedSlow = new BakedParticleOptions(element.getTypeId(), 2,2.5f,false);
                 GeneralHelpers.generalHelpers.sendParticles(serverLevel, bakedSlow, position.subtract(0,heightOffset,0), 0, 0, 0, 0,0);
                 GeneralHelpers.generalHelpers.sendParticles(serverLevel, genericSlow, position.subtract(0,heightOffset,0), 0, 0, 0, 0,0);
-            }
-        }
-    }
-
-    public static void EntityProjectileParticlesClient(
-        Projectile projectile,
-        int tickCount,
-        float spread,
-        AbstractElement element
-    ){
-        if (tickCount > 1.5) {
-            Vec3 velocity = projectile.getDeltaMovement();
-            double offsetX = velocity.x * -2;  // Reverse the x direction to be behind the entity
-            double offsetY = velocity.y * -2;
-            double offsetZ = velocity.z * -2;  // Reverse the z direction to be behind the entity
-            double particleX = projectile.getX() + offsetX;
-            double particleY = projectile.getY() + projectile.getBbHeight() / 2 + offsetY;  // Adjust Y position as needed
-            double particleZ = projectile.getZ() + offsetZ;
-            double heightOffset = 0.05;
-
-            for (int i = 0; i < 6; i++){
-                Vec3 position = new Vec3(
-                    particleX + GeneralHelpers.Random.nextFloat(-spread, spread),
-                    particleY + GeneralHelpers.Random.nextFloat(-spread, spread),
-                    particleZ + GeneralHelpers.Random.nextFloat(-spread, spread)
-                );
-                GenericParticleOptions genericSlow = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 4, 1.5f);
-                BakedParticleOptions bakedSlow = new BakedParticleOptions(element.getTypeId(), 2,2.5f,false);
-
-                projectile.level().addParticle(bakedSlow, position.x, position.y, position.z, 0,0,0);
-                projectile.level().addParticle(genericSlow, position.x, position.y, position.z, 0,0,0);
             }
         }
     }

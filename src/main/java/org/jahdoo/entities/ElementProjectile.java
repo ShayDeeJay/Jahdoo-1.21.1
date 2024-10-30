@@ -20,7 +20,7 @@ import org.jahdoo.all_magic.ProjectileProperties;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -34,6 +34,7 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final EntityDataAccessor<Integer> ADDITIONAL_PREDICATE = SynchedEntityData.defineId(ElementProjectile.class, EntityDataSerializers.INT);
+
     private boolean showTrailParticles;
     private boolean setAdditionalRestriction;
 
@@ -47,8 +48,8 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
     WandAbilityHolder wandAbilityHolder;
     DefaultEntityBehaviour getProjectile;
     public String selectedAbility;
+    boolean isChildObject;
     String abilityId;
-    private boolean isChildObject;
 
     public int predicateType() {
         return this.entityData.get(ADDITIONAL_PREDICATE);
@@ -76,13 +77,13 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
         String abilityId
     ) {
         super(entityType, owner.level());
-        this.setProjectileWithOffsets(this, owner, spacing, 3);
+        this.setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
         this.wandAbilityHolder = owner.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
-        this.getProjectile = ProjectilePropertyRegister.REGISTRY.get(GeneralHelpers.modResourceLocation(selectedAbility)).getEntityProperty();
+        this.getProjectile = EntityPropertyRegister.getProperty(selectedAbility);
         this.getProjectile.getElementProjectile(this);
     }
 
@@ -94,11 +95,11 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
         String abilityId
     ) {
         super(entityType, owner.level());
-        this.setProjectileWithOffsets(this, owner, 0, 3);
+        this.setProjectileWithOffsets(this, owner, 0, 1);
         this.reapplyPosition();
         this.setOwner(owner);
         this.wandAbilityHolder = wandAbilityHolder;
-        this.getProjectile = ProjectilePropertyRegister.REGISTRY.get(GeneralHelpers.modResourceLocation(selectedAbility)).getEntityProperty();
+        this.getProjectile =  EntityPropertyRegister.getProperty(selectedAbility);
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
         this.getProjectile.getElementProjectile(this);
@@ -119,19 +120,18 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
         this.wandAbilityHolder = wandAbilityHolder;
         this.selectedAbility = selection;
         this.abilityId = abilityId;
-        this.getProjectile = ProjectilePropertyRegister.REGISTRY.get(GeneralHelpers.modResourceLocation(selection)).getEntityProperty();
+        this.getProjectile = EntityPropertyRegister.getProperty(selection);
         this.getProjectile.getElementProjectile(this);
         this.isChildObject = true;
     }
 
     public DefaultEntityBehaviour getCurrentProjectile(){
-        return ProjectilePropertyRegister.REGISTRY.get(GeneralHelpers.modResourceLocation(selectedAbility)).getEntityProperty();
+        return EntityPropertyRegister.getProperty(selectedAbility);
     }
 
     public WandAbilityHolder wandAbilityHolder(){
         return this.wandAbilityHolder;
     }
-
 
     @Override
     public void lerpTo(double pX, double pY, double pZ, float pYRot, float pXRot, int pSteps) {
@@ -172,10 +172,8 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
         super.tick();
 
         if(getProjectile != null){
-            if(!this.level().isClientSide){
-                getProjectile.onTickMethod();
-                getProjectile.discardCondition();
-            }
+            getProjectile.onTickMethod();
+            getProjectile.discardCondition();
         }
 
         if(this.level().isClientSide){
@@ -207,9 +205,6 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
         this.isChildObject = parentObject;
     }
 
-    public boolean getIsChildObject(){
-        return this.isChildObject;
-    }
 
     public void setAdditionalRestrictionBound(boolean additionalRestrictionBound){
         this.setAdditionalRestriction = additionalRestrictionBound;
@@ -235,14 +230,13 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
         this.abilityId = pCompound.getString("abilityId");
         this.wandAbilityHolder = DefaultEntityBehaviour.readTag(pCompound, this.abilityId);
         if(this.getProjectile == null && !selectedAbility.isEmpty()){
-            this.getProjectile = ProjectilePropertyRegister.REGISTRY
+            this.getProjectile = EntityPropertyRegister.REGISTRY
                 .get(GeneralHelpers.modResourceLocation(selectedAbility))
                 .getEntityProperty();
             this.getProjectile.readCompoundTag(pCompound);
             this.getProjectile.getElementProjectile(this);
         }
     }
-
 
     @Override
     public AbstractElement getElementType() {

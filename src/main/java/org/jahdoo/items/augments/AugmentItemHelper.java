@@ -24,7 +24,7 @@ import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.DataComponentHelper;
+import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.utils.GeneralHelpers;
 
 import javax.annotation.Nullable;
@@ -33,12 +33,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
-import static org.jahdoo.items.ShareItemHelpers.addRarity;
 import static org.jahdoo.items.augments.AugmentRatingSystem.*;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
 import static org.jahdoo.registers.DataComponentRegistry.NUMBER;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
-import static org.jahdoo.utils.GeneralHelpers.withStyleComponent;
 
 public class AugmentItemHelper {
 
@@ -253,7 +251,7 @@ public class AugmentItemHelper {
         var ability = AbilityRegister.getSpellsByTypeId(abilityLocation);
         var rarity = ability.getFirst().rarity();
 
-        addRarity(toolTips, rarity);
+        toolTips.add(JahdooRarity.addRarityTooltip(rarity));
         toolTips.add(Component.empty());
 
         int subHeaderColour = -2434342;

@@ -20,8 +20,9 @@ import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.utils.CustomMobEffect;
+import org.jahdoo.all_magic.effects.CustomMobEffect;
 import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.PositionGetters;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
@@ -143,18 +144,18 @@ public class Boltz extends DefaultEntityBehaviour {
         Vec3 velocityA = GeneralHelpers.getRandomParticleVelocity(projectile, 0.1);
         Vec3 velocityB = GeneralHelpers.getRandomParticleVelocity(projectile, 0.05);
 
-        GeneralHelpers.getRandomSphericalPositions(projectile, radius, numberOfPoints,
+        PositionGetters.getRandomSphericalPositions(projectile, radius, numberOfPoints,
             position -> {
-                GeneralHelpers.generalHelpers.sendParticles(
+                ParticleHandlers.sendParticles(
                 serverLevel, this.getElementType().getParticleGroup().bakedSlow(), position.add(0,0.2,0), 0,
                     velocityA.x, velocityA.y, velocityA.z, 0.05
                 );
             }
         );
 
-        GeneralHelpers.getRandomSphericalPositions(projectile, radius, numberOfPoints * 10,
+        PositionGetters.getRandomSphericalPositions(projectile, radius, numberOfPoints * 10,
             position -> {
-                GeneralHelpers.generalHelpers.sendParticles(
+                ParticleHandlers.sendParticles(
                     serverLevel, particleOptions, position.add(0,0.2,0), 1,
                     velocityB.x, velocityB.y, velocityB.z, 0.05
                 );

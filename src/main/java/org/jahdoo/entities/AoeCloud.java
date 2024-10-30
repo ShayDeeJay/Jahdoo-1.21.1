@@ -15,7 +15,7 @@ import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.EntitiesRegister;
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +49,7 @@ public class AoeCloud extends Entity implements TraceableEntity {
         this.wandAbilityHolder = livingEntity.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
-        this.getAoe = ProjectilePropertyRegister.REGISTRY.get(GeneralHelpers.modResourceLocation(selectedAbility)).getEntityProperty();
+        this.getAoe = EntityPropertyRegister.REGISTRY.get(GeneralHelpers.modResourceLocation(selectedAbility)).getEntityProperty();
         this.getAoe.getAoeCloud(this);
         this.getRandomCloudRadius = GeneralHelpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
     }
@@ -62,7 +62,7 @@ public class AoeCloud extends Entity implements TraceableEntity {
         this.wandAbilityHolder = wandAbilityHolder;
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
-        this.getAoe = ProjectilePropertyRegister.REGISTRY.get(GeneralHelpers.modResourceLocation(selectedAbility)).getEntityProperty();
+        this.getAoe = EntityPropertyRegister.REGISTRY.get(GeneralHelpers.modResourceLocation(selectedAbility)).getEntityProperty();
         this.getAoe.getAoeCloud(this);
         this.getRandomCloudRadius = GeneralHelpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
     }
@@ -118,7 +118,7 @@ public class AoeCloud extends Entity implements TraceableEntity {
         if(this.ownerUUID == null) this.ownerUUID = pCompound.getUUID("uuid");
         this.setRadius(pCompound.getFloat("radius"));
         if(getAoe == null){
-            this.getAoe = ProjectilePropertyRegister.REGISTRY
+            this.getAoe = EntityPropertyRegister.REGISTRY
                 .get(GeneralHelpers.modResourceLocation(pCompound.getString("get_selection")))
                 .getEntityProperty();
             getAoe.getAoeCloud(this);

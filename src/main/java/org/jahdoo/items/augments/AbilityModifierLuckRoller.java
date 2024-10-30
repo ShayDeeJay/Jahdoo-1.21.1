@@ -1,10 +1,10 @@
-package org.jahdoo.utils;
+package org.jahdoo.items.augments;
+
+import org.jahdoo.utils.GeneralHelpers;
 
 public class AbilityModifierLuckRoller {
 
     public static double getWeightedRandomDouble(double high, double low, boolean isHigherBetter, double step, double boundLower){
-//        double lower = 1.0; // < Bring values  closer together to make more likely
-//        double higher = 20.0;
         double boundUpper = 20.0;
         if(boundLower < 20.0){
             double ub = probability(boundLower);

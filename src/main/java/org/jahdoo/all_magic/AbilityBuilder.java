@@ -9,8 +9,7 @@ import org.jahdoo.registers.DataComponentRegistry;
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 
-import static org.jahdoo.utils.AbilityModifierLuckRoller.getWeightedRandomDouble;
-import static org.jahdoo.utils.GeneralHelpers.Random;
+import static org.jahdoo.items.augments.AbilityModifierLuckRoller.getWeightedRandomDouble;
 
 public class AbilityBuilder {
     //Mandatory mods

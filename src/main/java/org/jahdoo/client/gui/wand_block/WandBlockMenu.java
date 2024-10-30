@@ -13,7 +13,7 @@ import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.gui.AbstractInternalContainer;
 import org.jahdoo.registers.BlocksRegister;
-import org.jahdoo.utils.DataComponentHelper;
+import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jetbrains.annotations.NotNull;
 

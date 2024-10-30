@@ -8,7 +8,7 @@ import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
@@ -23,7 +23,7 @@ public class VeinMinerAbility extends AbstractAbility {
         GenericProjectile genericProjectile = new GenericProjectile(
             player,
             0.06,
-            ProjectilePropertyRegister.VEIN_MINER.get().setAbilityId(),
+            EntityPropertyRegister.VEIN_MINER.get().setAbilityId(),
             abilityId.getPath().intern()
         );
         fireUtilityProjectile(genericProjectile, player);

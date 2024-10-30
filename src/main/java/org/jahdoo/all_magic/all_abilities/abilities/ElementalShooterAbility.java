@@ -12,7 +12,7 @@ import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.GenericProjectile;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
 
-import org.jahdoo.registers.ProjectilePropertyRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GeneralHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
@@ -89,7 +89,7 @@ public class ElementalShooterAbility extends AbstractAbility {
             GenericProjectile genericProjectile = new GenericProjectile(
                 player,
                 0,
-                ProjectilePropertyRegister.ELEMENTAL_SHOOTER.get().setAbilityId(),
+                EntityPropertyRegister.ELEMENTAL_SHOOTER.get().setAbilityId(),
                 abilityId.getPath().intern()
             );
             Vec3 directionOffset = calculateDirectionOffset(player, offset);

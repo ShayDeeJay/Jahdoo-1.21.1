@@ -53,6 +53,7 @@ public class PlayerScale implements AbstractAttachment {
         var attribute = player.getAttributes();
         if(player.isDeadOrDying() && this.hasAttributeInst(player)){
             attribute.removeAttributeModifiers(multiMap);
+//            this.setScaleValue(0);
         }
     }
 

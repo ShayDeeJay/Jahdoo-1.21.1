@@ -21,8 +21,9 @@ import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.utils.CustomMobEffect;
+import org.jahdoo.all_magic.effects.CustomMobEffect;
 import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.PositionGetters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +107,7 @@ public class IceBomb extends DefaultEntityBehaviour {
 
             GeneralHelpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.blockPosition(), SoundRegister.EXPLOSION.get());
             GeneralHelpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.blockPosition(), SoundRegister.ICE_ATTACH.get());
-            GeneralHelpers.getOuterRingOfRadiusRandom(this.elementProjectile.position(), particleMultiplier, 300,
+            PositionGetters.getOuterRingOfRadiusRandom(this.elementProjectile.position(), particleMultiplier, 300,
                 worldPosition -> this.setParticleNova(worldPosition, particleMultiplier)
             );
         }
@@ -213,7 +214,7 @@ public class IceBomb extends DefaultEntityBehaviour {
             ParticleOptions genericParticle = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 2, 1f);
 
             Vec3 getPositions = GeneralHelpers.getRandomParticleVelocity(this.elementProjectile, 0.05);
-            GeneralHelpers.getRandomSphericalPositions(this.elementProjectile, 0.5f, 30,
+            PositionGetters.getRandomSphericalPositions(this.elementProjectile, 0.5f, 30,
                 position -> {
                     Vec3 newPosition = position.add(this.elementProjectile.getDeltaMovement().scale(-1.5));
                     this.idleStandard(getPositions, newPosition, serverLevel, bakedParticle);
