@@ -4,12 +4,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import static net.minecraft.world.level.block.LeverBlock.POWERED;
 
 public class RedstoneActivator extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("redstone_activator");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("redstone_activator");
 
     @Override
     public ResourceLocation getAbilityResource() {

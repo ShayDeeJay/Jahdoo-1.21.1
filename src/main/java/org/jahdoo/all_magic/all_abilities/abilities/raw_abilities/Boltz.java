@@ -21,7 +21,7 @@ import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.all_magic.effects.CustomMobEffect;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
@@ -46,7 +46,7 @@ public class Boltz extends DefaultEntityBehaviour {
         if(this.elementProjectile.getOwner() != null){
             var player = this.elementProjectile.getOwner();
             var damage = this.getTag(DAMAGE);
-            this.damage = GeneralHelpers.attributeModifierCalculator(
+            this.damage = ModHelpers.attributeModifierCalculator(
                 (LivingEntity) player,
                 (float) damage,
                 this.getElementType(),
@@ -78,13 +78,13 @@ public class Boltz extends DefaultEntityBehaviour {
     public double getTag(String name) {
         var wandAbilityHolder = this.elementProjectile.wandAbilityHolder();
         var ability = BoltzAbility.abilityId.getPath().intern();
-        return GeneralHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
+        return ModHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
     }
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         this.dischargeEffect(this.elementProjectile, (LivingEntity) this.elementProjectile.getOwner(), (int) effectChance, (int) effectDuration, (int) effectStrength, (int) dischargeRadius);
-        GeneralHelpers.getSoundWithPosition(this.elementProjectile.level(), blockHitResult.getBlockPos(), SoundRegister.EXPLOSION.get(),0.2f,2f);
+        ModHelpers.getSoundWithPosition(this.elementProjectile.level(), blockHitResult.getBlockPos(), SoundRegister.EXPLOSION.get(),0.2f,2f);
         this.elementProjectile.discard();
     }
 
@@ -92,7 +92,7 @@ public class Boltz extends DefaultEntityBehaviour {
     public void onEntityHit(LivingEntity hitEntity) {
         LivingEntity owner = (LivingEntity) this.elementProjectile.getOwner();
         hitEntity.hurt(owner != null ? owner.damageSources().magic() :  this.elementProjectile.damageSources().magic(), (float) this.damage);
-        GeneralHelpers.getSoundWithPosition( this.elementProjectile.level(),  this.elementProjectile.blockPosition(), SoundRegister.BOLT.get(), 0.1f);
+        ModHelpers.getSoundWithPosition( this.elementProjectile.level(),  this.elementProjectile.blockPosition(), SoundRegister.BOLT.get(), 0.1f);
     }
 
     private void dischargeEffect(Projectile projectile, LivingEntity owner, int chance, int duration, int amplifier, int dischargeRadius){
@@ -102,7 +102,7 @@ public class Boltz extends DefaultEntityBehaviour {
                 projectile.getBoundingBox().inflate(dischargeRadius)
             ).forEach(
                 entities -> {
-                    if(GeneralHelpers.Random.nextInt(0, 10) == 0) {
+                    if(ModHelpers.Random.nextInt(0, 10) == 0) {
                         entities.addEffect(new CustomMobEffect(EffectsRegister.LIGHTNING_EFFECT.getDelegate(), duration, amplifier));
                     }
 //                    if(GeneralHelpers.Random.nextInt(0, chance) == 0) {
@@ -110,7 +110,7 @@ public class Boltz extends DefaultEntityBehaviour {
 //                    }
                 }
             );
-            ParticleHandlers.spawnPoof(serverLevel, projectile.position(), 1, this.getElementType().getParticleGroup().magicSlow(),0,0,0, (float) dischargeRadius/15);
+            ParticleHandlers.particleBurst(serverLevel, projectile.position(), 1, this.getElementType().getParticleGroup().magicSlow(),0,0,0, (float) dischargeRadius/15);
         }
     }
 
@@ -121,7 +121,7 @@ public class Boltz extends DefaultEntityBehaviour {
     }
 
     public void applyInertia(Projectile projectile) {
-        double inertiaFactor = GeneralHelpers.Random.nextDouble(0.85, 0.90); // Adjust this value to control the rate of slowdown (0.98 means 2% reduction per tick)
+        double inertiaFactor = ModHelpers.Random.nextDouble(0.85, 0.90); // Adjust this value to control the rate of slowdown (0.98 means 2% reduction per tick)
         Vec3 currentVelocity = projectile.getDeltaMovement();
 
         double newVelocityX = currentVelocity.x * inertiaFactor;
@@ -132,22 +132,22 @@ public class Boltz extends DefaultEntityBehaviour {
     }
 
     void orbEnergyParticles(Projectile projectile, double numberOfPoints, double radius){
-        if(!(projectile.level() instanceof ServerLevel serverLevel)) return;
+        var level = projectile.level();
 
         GenericParticleOptions particleOptions = genericParticleOptions(
             ParticleStore.ELECTRIC_PARTICLE_SELECTION,
             this.getElementType(),
-            GeneralHelpers.Random.nextInt(2,8),
+            ModHelpers.Random.nextInt(2,8),
             1f, 0.3
         );
 
-        Vec3 velocityA = GeneralHelpers.getRandomParticleVelocity(projectile, 0.1);
-        Vec3 velocityB = GeneralHelpers.getRandomParticleVelocity(projectile, 0.05);
+        Vec3 velocityA = ModHelpers.getRandomParticleVelocity(projectile, 0.1);
+        Vec3 velocityB = ModHelpers.getRandomParticleVelocity(projectile, 0.05);
 
         PositionGetters.getRandomSphericalPositions(projectile, radius, numberOfPoints,
             position -> {
                 ParticleHandlers.sendParticles(
-                serverLevel, this.getElementType().getParticleGroup().bakedSlow(), position.add(0,0.2,0), 0,
+                level, this.getElementType().getParticleGroup().bakedSlow(), position.add(0,0.2,0), 0,
                     velocityA.x, velocityA.y, velocityA.z, 0.05
                 );
             }
@@ -156,7 +156,7 @@ public class Boltz extends DefaultEntityBehaviour {
         PositionGetters.getRandomSphericalPositions(projectile, radius, numberOfPoints * 10,
             position -> {
                 ParticleHandlers.sendParticles(
-                    serverLevel, particleOptions, position.add(0,0.2,0), 1,
+                    level, particleOptions, position.add(0,0.2,0), 1,
                     velocityB.x, velocityB.y, velocityB.z, 0.05
                 );
             }
@@ -167,13 +167,13 @@ public class Boltz extends DefaultEntityBehaviour {
     public void discardCondition() {
         LivingEntity owner = (LivingEntity) this.elementProjectile.getOwner();
 
-        int getRandom = GeneralHelpers.Random.nextInt(20, 30);
+        int getRandom = ModHelpers.Random.nextInt(20, 30);
 
         if(this.elementProjectile.tickCount > 10) orbEnergyParticles(this.elementProjectile, dischargeRadius / 4, Math.max(dischargeRadius /6, 0.4));
         if(this.elementProjectile.tickCount >= getRandom) {
             damageCalculator();
             this.dischargeEffect(this.elementProjectile, owner, (int) effectChance, (int) effectStrength, (int) effectDuration, (int) dischargeRadius);
-            GeneralHelpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.blockPosition(), SoundRegister.BOLT.get(),0.4f,1.5f);
+            ModHelpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.blockPosition(), SoundRegister.BOLT.get(),0.4f,1.5f);
             this.elementProjectile.discard();
         }
     }
@@ -203,7 +203,7 @@ public class Boltz extends DefaultEntityBehaviour {
         return ElementRegistry.LIGHTNING.get();
     }
 
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("boltz_property");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("boltz_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

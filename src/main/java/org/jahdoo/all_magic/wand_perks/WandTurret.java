@@ -11,7 +11,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.RandomUtils;
 import org.jahdoo.all_magic.AbstractElement;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class WandTurret {
 
     public void wandTurret(BlockPos blockPosition, Level level, AbstractElement getType){
         if(getType != null){
-            if (GeneralHelpers.Random.nextInt(0, 10) == 0) {
+            if (ModHelpers.Random.nextInt(0, 10) == 0) {
                 //Shooter Code
                 List<LivingEntity> entities = level.getNearbyEntities(
                     LivingEntity.class,

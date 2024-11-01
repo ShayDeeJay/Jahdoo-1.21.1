@@ -2,7 +2,6 @@ package org.jahdoo.capabilities.player_abilities;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -11,10 +10,11 @@ import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.capabilities.AbstractAttachment;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.items.wand.CastHelper;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.components.DataComponentHelper;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
 import java.util.List;
@@ -53,7 +53,7 @@ public class DimensionalRecall implements AbstractAttachment {
         }
 
         var getHolder = player.getMainHandItem().get(WAND_ABILITY_HOLDER);
-        var hasAbility = GeneralHelpers.getModifierValue(getHolder, abilityId.getPath().intern()) != null;
+        var hasAbility = ModHelpers.getModifierValue(getHolder, abilityId.getPath().intern()) != null;
         if (!(player instanceof ServerPlayer serverPlayer)) return;
         var pos = serverPlayer.getRespawnPosition();
 
@@ -67,7 +67,7 @@ public class DimensionalRecall implements AbstractAttachment {
                     var setAudio = SoundEvents.SOUL_ESCAPE.value();
                     var getBlockPos = player.blockPosition();
 
-                    GeneralHelpers.getSoundWithPosition(player.level(), getBlockPos, setAudio, setVolume, setPitch);
+                    ModHelpers.getSoundWithPosition(player.level(), getBlockPos, setAudio, setVolume, setPitch);
                 }
 
                 this.onSuccessfulCast(serverPlayer, getHolder);
@@ -96,14 +96,14 @@ public class DimensionalRecall implements AbstractAttachment {
                 serverPlayer.teleportTo(getLevelDimension, pos.getX(), pos.getY(), pos.getZ(), serverPlayer.yya, serverPlayer.rotA);
                 CastHelper.chargeMana(abilityName, getManaCost, serverPlayer);
                 CastHelper.chargeCooldown(abilityName, getCooldownCost, serverPlayer);
-                GeneralHelpers.getSoundWithPosition(serverPlayer.level(), serverPlayer.blockPosition(), getTeleportSound, 0.8f);
-                GeneralHelpers.getSoundWithPosition(serverPlayer.level(), serverPlayer.blockPosition(), getSuccessSound, 1, 1.2f);
+                ModHelpers.getSoundWithPosition(serverPlayer.level(), serverPlayer.blockPosition(), getTeleportSound, 0.8f);
+                ModHelpers.getSoundWithPosition(serverPlayer.level(), serverPlayer.blockPosition(), getSuccessSound, 1, 1.2f);
             }
         }
     }
 
     private void sendNoHomeMessage(Player player){
-        player.displayClientMessage(GeneralHelpers.withStyleComponentTrans("ability.jahdoo.no_home", this.getElement().textColourPrimary()), true);
+        player.displayClientMessage(ModHelpers.withStyleComponentTrans("ability.jahdoo.no_home", this.getElement().textColourPrimary()), true);
     }
 
     public void setStartedUsing(boolean startedUsing) {
@@ -126,16 +126,15 @@ public class DimensionalRecall implements AbstractAttachment {
 
             PositionGetters.getInnerRingOfRadiusRandom(pos, 2, numOfPoints,
                 positions -> {
-                    if (!(player.level() instanceof ServerLevel serverLevel)) return;
                     var directions = player.position()
                         .subtract(positions)
                         .normalize()
                         .add(0, player.getBbHeight() / 2, 0);
 
-                    GeneralHelpers.generalHelpers.sendParticles(serverLevel, getRandomParticle, positions,
+                    ParticleHandlers.sendParticles(player.level(), getRandomParticle, positions,
                         1,
                         directions.x,
-                        GeneralHelpers.Random.nextDouble(-0.3, 0.3),
+                        ModHelpers.Random.nextDouble(-0.3, 0.3),
                         directions.z,
                         (double) player.getTicksUsingItem() / 600
                     );

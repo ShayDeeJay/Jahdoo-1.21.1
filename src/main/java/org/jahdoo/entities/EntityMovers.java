@@ -1,9 +1,26 @@
 package org.jahdoo.entities;
 
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.function.Consumer;
+
 public class EntityMovers {
+
+    public static void moveEntitiesRelativeToPlayer(Entity entity, double radius, Consumer<Vec3> method) {
+        for (int i = 0; i < radius; i++) {
+            double angle = 2 * Math.PI * i / radius;
+            Direction direction = entity.getDirection();
+
+            double x = direction.getStepX() + radius * Math.cos(angle);
+            double y = direction.getStepY();
+            double z = direction.getStepZ() + radius * Math.sin(angle);
+
+            method.accept(new Vec3(x, y, z));
+        }
+    }
+
     public static void entityMover(Entity receiver, Entity target, double velocity, double smoothingFactor) {
         double resistance = 0.9;
 

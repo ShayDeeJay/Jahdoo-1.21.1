@@ -2,9 +2,8 @@ package org.jahdoo.items.wand;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animation.RawAnimation;
@@ -31,7 +30,7 @@ public class WandAnimations {
     }
 
     public static void playRandomCastAnim(SingletonGeoAnimatable animate, ItemStack itemStack, ServerLevel serverLevel, Entity entity){
-        animate.triggerAnim(entity, GeoItem.getOrAssignId(itemStack, serverLevel), "Activation", castAnims.get(GeneralHelpers.Random.nextInt(0, castAnims.size())));
+        animate.triggerAnim(entity, GeoItem.getOrAssignId(itemStack, serverLevel), "Activation", castAnims.get(ModHelpers.Random.nextInt(0, castAnims.size())));
     }
 
 }

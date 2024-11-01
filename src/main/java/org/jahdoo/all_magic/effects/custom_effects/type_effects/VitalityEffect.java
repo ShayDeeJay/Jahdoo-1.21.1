@@ -12,7 +12,7 @@ import org.jahdoo.all_magic.effects.EffectParticles;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ItemsRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 public class VitalityEffect extends MobEffect {
 
@@ -24,12 +24,12 @@ public class VitalityEffect extends MobEffect {
     @Override
     public boolean applyEffectTick(LivingEntity targetEntity, int amplifier) {
         if(targetEntity.level() instanceof ServerLevel serverLevel){
-            int getRandomChance = GeneralHelpers.Random.nextInt(0,Math.max((20-amplifier), 1));
+            int getRandomChance = ModHelpers.Random.nextInt(0,Math.max((20-amplifier), 1));
             if(getRandomChance == 0) {
-                if(GeneralHelpers.Random.nextInt(0,(20-amplifier)) == 0){
+                if(ModHelpers.Random.nextInt(0,(20-amplifier)) == 0){
                     ItemStack heartContainer = new ItemStack(ItemsRegister.HEALTH_CONTAINER.get());
                     heartContainer.set(DataComponentRegistry.HEART_CONTAINER.get(), (float) (0.1 * amplifier));
-                    double randomAngle = GeneralHelpers.Random.nextDouble() * 2 * Math.PI;
+                    double randomAngle = ModHelpers.Random.nextDouble() * 2 * Math.PI;
                     double offsetX = -Math.sin(randomAngle) * 2;
                     double offsetZ = Math.cos(randomAngle) * 2;
                     double spawnX = targetEntity.getX() + offsetX;

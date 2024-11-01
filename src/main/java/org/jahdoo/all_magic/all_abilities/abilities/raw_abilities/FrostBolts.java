@@ -21,7 +21,7 @@ import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
         if(this.genericProjectile.getOwner() != null) {
             var player = this.genericProjectile.getOwner();
             var damage = this.getTag(DAMAGE);
-            this.damage = GeneralHelpers.attributeModifierCalculator(
+            this.damage = ModHelpers.attributeModifierCalculator(
                 (LivingEntity) player,
                 (float) damage,
                 this.getElementType(),
@@ -68,7 +68,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
     public double getTag(String name) {
         var wandAbilityHolder = this.genericProjectile.wandAbilityHolder();
         var ability = FrostboltsAbility.abilityId.getPath().intern();
-        return GeneralHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
+        return ModHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
     }
 
     @Override
@@ -86,7 +86,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
     public void onEntityHit(LivingEntity hitEntity) {
         Player player = (Player) this.genericProjectile.getOwner();
         if(player == null) return;
-        if (player.distanceTo(hitEntity) <= castDistance + 0.1) {
+        if (player.isCloseEnough(hitEntity,castDistance + 0.1)) {
             this.shootArrowsAtTarget(hitEntity, player);
             CastHelper.chargeMana(FrostboltsAbility.abilityId.getPath().intern(), mana, player);
             CastHelper.chargeCooldown(FrostboltsAbility.abilityId.getPath().intern(), cooldown, player);
@@ -100,8 +100,8 @@ public class FrostBolts extends DefaultEntityBehaviour {
     private void shootArrowsAtTarget(LivingEntity hitEntity, Player player){
         for (int i = 0; i < projectileMultiplier; i++) {
 
-            double randomAngle = 2 * Math.PI * GeneralHelpers.Random.nextDouble();
-            double randomRadius = (hitEntity.getBbWidth() * 2) * Math.sqrt(GeneralHelpers.Random.nextDouble());
+            double randomAngle = 2 * Math.PI * ModHelpers.Random.nextDouble();
+            double randomRadius = (hitEntity.getBbWidth() * 2) * Math.sqrt(ModHelpers.Random.nextDouble());
             double arrowX = hitEntity.getX() + randomRadius * Math.cos(randomAngle);
             double arrowZ = hitEntity.getZ() + randomRadius * Math.sin(randomAngle);
             double arrowY = hitEntity.getY() + (hitEntity.getBbHeight()/2) + 4;
@@ -114,7 +114,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
             );
 
             if(this.genericProjectile.level() instanceof ServerLevel serverLevel){
-                ParticleHandlers.spawnPoof(serverLevel, new Vec3(arrowX, arrowY, arrowZ), 1, new BakedParticleOptions(this.getElementType().getTypeId(), 10, 1.7f, false), 0,0,0,0.07f);
+                ParticleHandlers.particleBurst(serverLevel, new Vec3(arrowX, arrowY, arrowZ), 1, new BakedParticleOptions(this.getElementType().getTypeId(), 10, 1.7f, false), 0,0,0,0.07f);
             }
 
             this.assignArrows.add(arrow);
@@ -137,7 +137,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
             arrow.shoot(directionX, directionY, directionZ, velocity, 0);
             this.genericProjectile.level().addFreshEntity(arrow);
         }
-        GeneralHelpers.getSoundWithPosition(genericProjectile.level(), hitEntity.blockPosition(), SoundEvents.WITHER_SHOOT, 1, 1.6f);
+        ModHelpers.getSoundWithPosition(genericProjectile.level(), hitEntity.blockPosition(), SoundEvents.WITHER_SHOOT, 1, 1.6f);
     }
 
     @Override
@@ -175,12 +175,12 @@ public class FrostBolts extends DefaultEntityBehaviour {
         if (this.genericProjectile.getOwner() instanceof Player player){
             var value = String.valueOf(Math.round(castDistance));
             var element = this.getElementType().particleColourPrimary();
-            var targetDistance = GeneralHelpers.withStyleComponent(value, element);
+            var targetDistance = ModHelpers.withStyleComponent(value, element);
             player.displayClientMessage(Component.translatable("abilities.jahdoo.frost_bolts.no_target", targetDistance), true);
         }
     }
 
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("frost_bolts_property");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("frost_bolts_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

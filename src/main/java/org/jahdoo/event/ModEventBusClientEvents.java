@@ -1,11 +1,13 @@
 package org.jahdoo.event;
 
+import net.minecraft.world.ItemInteractionResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.client.block_renderer.*;
 import org.jahdoo.client.entity_renderer.CustomAoeRenderer;
@@ -13,6 +15,7 @@ import org.jahdoo.client.entity_renderer.ElementProjectileRenderer;
 import org.jahdoo.client.entity_renderer.GenericProjectileRenderer;
 import org.jahdoo.client.entity_renderer.decoy.DecoyRenderer;
 import org.jahdoo.client.entity_renderer.etneral_wizzard.EternalWizardRenderer;
+import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.particle.GenericParticle;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ElementRegistry;
@@ -32,6 +35,8 @@ public class ModEventBusClientEvents {
         event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_BE.get(), WandBlockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.TANK_BE.get(), TankRenderer::new);
     }
+
+
 
     @SubscribeEvent
     public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {

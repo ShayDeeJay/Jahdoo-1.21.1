@@ -1,8 +1,6 @@
 package org.jahdoo.client.gui;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -11,7 +9,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.registers.MenusRegister;
-import org.jahdoo.utils.GeneralHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

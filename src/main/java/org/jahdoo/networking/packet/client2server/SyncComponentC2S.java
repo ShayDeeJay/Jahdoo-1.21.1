@@ -1,29 +1,26 @@
-package org.jahdoo.networking.packet;
+package org.jahdoo.networking.packet.client2server;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.components.WandAbilityHolder;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
-import static org.jahdoo.registers.AttachmentRegister.MAGE_FLIGHT;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
-public class SyncPlayerItemComponentsPacket implements CustomPacketPayload{
-    public static final Type<SyncPlayerItemComponentsPacket> TYPE = new Type<>(GeneralHelpers.modResourceLocation("sync_item_update"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, SyncPlayerItemComponentsPacket> STREAM_CODEC = CustomPacketPayload.codec(SyncPlayerItemComponentsPacket::toBytes, SyncPlayerItemComponentsPacket::new);
+public class SyncComponentC2S implements CustomPacketPayload{
+    public static final Type<SyncComponentC2S> TYPE = new Type<>(ModHelpers.modResourceLocation("sync_item_update"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, SyncComponentC2S> STREAM_CODEC = CustomPacketPayload.codec(SyncComponentC2S::toBytes, SyncComponentC2S::new);
     private WandAbilityHolder wandAbilityHolder;
 
-    public SyncPlayerItemComponentsPacket(WandAbilityHolder wandAbilityHolder) {
+    public SyncComponentC2S(WandAbilityHolder wandAbilityHolder) {
         this.wandAbilityHolder = wandAbilityHolder;
     }
 
-    public SyncPlayerItemComponentsPacket(FriendlyByteBuf buf) {
+    public SyncComponentC2S(FriendlyByteBuf buf) {
         this.wandAbilityHolder = buf.readJsonWithCodec(WandAbilityHolder.CODEC);
     }
 

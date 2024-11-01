@@ -1,6 +1,5 @@
 package org.jahdoo.all_magic;
 
-import com.google.common.util.concurrent.ClosingFuture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -23,7 +22,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.Range;
 import org.jahdoo.particle.ParticleHandlers;
-import org.jahdoo.utils.GeneralHelpers;
 
 public class UtilityHelpers {
     public static Range<Float> range = Range.of(0.0f, 10.0f);
@@ -53,10 +51,8 @@ public class UtilityHelpers {
                     }
                 }
             }
-            if (newProjectile.level() instanceof ServerLevel serverLevel) {
-                var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
-                ParticleHandlers.sendParticles(serverLevel, blockPart,  pos.getCenter(), 5,0, 0, 0, 1);
-            }
+            var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
+            ParticleHandlers.sendParticles(newProjectile.level(), blockPart,  pos.getCenter(), 5,0, 0, 0, 1);
             newProjectile.level().removeBlock(pos, false);
         }
     }

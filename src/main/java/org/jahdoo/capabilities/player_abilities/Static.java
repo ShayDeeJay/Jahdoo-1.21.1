@@ -18,7 +18,7 @@ import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.*;
 import org.jahdoo.all_magic.effects.CustomMobEffect;
 import org.jahdoo.components.DataComponentHelper;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import java.util.Map;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
@@ -67,7 +67,7 @@ public class Static implements AbstractAttachment {
     public void activate(Player player){
         Map<String, AbilityHolder.AbilityModifiers> wandAbilityHolder = DataComponentHelper.getSpecificValue(player);
         var damage = wandAbilityHolder.get(DAMAGE).actualValue();
-        this.damageA = GeneralHelpers.attributeModifierCalculator(
+        this.damageA = ModHelpers.attributeModifierCalculator(
             player,
             (float) damage,
             this.getType(),
@@ -109,7 +109,7 @@ public class Static implements AbstractAttachment {
         if (player.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get()).abilityProperties().containsKey(staticId)) {
             if(manaSystem.getManaPool() >= manaPerHitA){
                 if (!(player.level() instanceof ServerLevel serverLevel)) return;
-                int getRandomChance = GeneralHelpers.Random.nextInt(0, effectChanceA == 0 ? 20 : Math.max((int) effectChanceA, 10));
+                int getRandomChance = ModHelpers.Random.nextInt(0, effectChanceA == 0 ? 20 : Math.max((int) effectChanceA, 10));
                 if(getRandomChance == 0) setEffectParticle(player, serverLevel);
                 this.damageAttackingEntity(player, serverLevel, getRandomChance);
             } else {
@@ -123,12 +123,12 @@ public class Static implements AbstractAttachment {
         ServerLevel serverLevel
     ){
         if(targetEntity.isAlive()){
-            GeneralHelpers.getSoundWithPosition(targetEntity.level(), targetEntity.blockPosition(), SoundRegister.BOLT.get(), 0.05f, 1.5f);
+            ModHelpers.getSoundWithPosition(targetEntity.level(), targetEntity.blockPosition(), SoundRegister.BOLT.get(), 0.05f, 1.5f);
 
             GenericParticleOptions particleOptions = genericParticleOptions(
                 ParticleStore.ELECTRIC_PARTICLE_SELECTION,
                 ElementRegistry.LIGHTNING.get(),
-                GeneralHelpers.Random.nextInt(5, 8),
+                ModHelpers.Random.nextInt(5, 8),
                 1.5f,
                 0.8
             );
@@ -148,7 +148,7 @@ public class Static implements AbstractAttachment {
                 if (entities == player || entities instanceof EternalWizard) return;
                 if (player.getLastHurtByMob() == entities && player.hurtTime > 8) {
 
-                    GeneralHelpers.getSoundWithPosition(
+                    ModHelpers.getSoundWithPosition(
                         entities.level(),
                         entities.blockPosition(),
                         SoundRegister.BOLT.get(),

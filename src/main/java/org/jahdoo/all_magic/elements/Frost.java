@@ -6,16 +6,15 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import org.jahdoo.all_magic.AbstractElement;
-import org.jahdoo.all_magic.ElementProperties;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.particle.ParticleStore.*;
 
 public class Frost extends AbstractElement {
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("frost");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("frost");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -59,7 +58,7 @@ public class Frost extends AbstractElement {
 
     @Override
     public ResourceLocation getAbilityProjectileTexture() {
-        return GeneralHelpers.modResourceLocation("textures/entity/cryo_projectile.png");
+        return ModHelpers.modResourceLocation("textures/entity/cryo_projectile.png");
     }
 
     @Override

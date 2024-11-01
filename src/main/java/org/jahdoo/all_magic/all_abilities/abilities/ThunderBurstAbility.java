@@ -14,7 +14,7 @@ import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
@@ -25,18 +25,18 @@ import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.all_magic.AbilityBuilder.DAMAGE;
 
 public class ThunderBurstAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("thunder_burst");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("thunder_burst");
     public static final String NUMBER_OF_THUNDERBOLTS = "Number of Thunderbolts";
 
     private Map<String, AbilityHolder.AbilityModifiers> tagModifierHelper(Player player){
         WandAbilityHolder wandAbilityHolder = player.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
-        return GeneralHelpers.getModifierValue(wandAbilityHolder, abilityId.getPath().intern());
+        return ModHelpers.getModifierValue(wandAbilityHolder, abilityId.getPath().intern());
     }
 
     @Override
     public void invokeAbility(Player player) {
         var modifiers = this.tagModifierHelper(player);
-        double damage = GeneralHelpers.attributeModifierCalculator(
+        double damage = ModHelpers.attributeModifierCalculator(
             player,
             (float) modifiers.get(DAMAGE).actualValue(),
             this.getElemenType(),
@@ -48,7 +48,7 @@ public class ThunderBurstAbility extends AbstractAbility {
 
         Vec3 direction = player.getLookAngle();
         WandAbilityHolder lightningTrailModifiers = getLightningTrailModifiers(damage, 0.2, 10, 0);
-        GeneralHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.BOLT.get(), 2f,1f);
+        ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.BOLT.get(), 2f,1f);
 
         for(int i = 0; i < numberOfBolts; i++){
             GenericProjectile genericProjectile = new GenericProjectile(

@@ -12,6 +12,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,7 +22,7 @@ import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.WandData;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -106,7 +107,7 @@ public class WandItem extends BlockItem implements GeoItem {
 
     public void playPlaceSound(Level level, BlockPos bPos){
         SoundEvent soundEvents = SoundEvents.BEACON_ACTIVATE;
-        GeneralHelpers.getSoundWithPosition(level, bPos, soundEvents, 0.4f, 1.5f);
+        ModHelpers.getSoundWithPosition(level, bPos, soundEvents, 0.4f, 1.5f);
     }
 
     @Override
@@ -126,7 +127,7 @@ public class WandItem extends BlockItem implements GeoItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
         player.startUsingItem(interactionHand);
         if (interactionHand == InteractionHand.MAIN_HAND) CastHelper.use(player);
 
@@ -134,8 +135,14 @@ public class WandItem extends BlockItem implements GeoItem {
 //            triggerAnimWithController(this,  player.getMainHandItem(), serverLevel, player, SINGLE_CAST_ID);
 //        }
 
-        return super.use(level, player, interactionHand);
+        return InteractionResultHolder.pass(player.getMainHandItem());
     }
+
+    @Override
+    public boolean canAttackBlock(BlockState state, Level level, BlockPos pos, Player player) {
+        return false;
+    }
+
 
 
     @Override

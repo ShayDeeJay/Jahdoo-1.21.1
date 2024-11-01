@@ -7,15 +7,15 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityWheelMenu;
-import org.jahdoo.networking.packet.SelectedAbilityC2SPacket;
-import org.jahdoo.networking.packet.StopUsingC2SPacket;
+import org.jahdoo.networking.packet.client2server.SelectedAbilityC2SPacket;
+import org.jahdoo.networking.packet.client2server.StopUsingC2SPacket;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.utils.ModTags;
 
 import java.util.List;
 
-import static org.jahdoo.utils.GeneralHelpers.withStyleComponent;
-import static org.jahdoo.utils.GeneralHelpers.withStyleComponentTrans;
+import static org.jahdoo.utils.ModHelpers.withStyleComponent;
+import static org.jahdoo.utils.ModHelpers.withStyleComponentTrans;
 
 public class WandAbilitySelector {
 

@@ -7,16 +7,13 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import org.jahdoo.JahdooMod;
-import org.jahdoo.utils.GeneralHelpers;
 
 public class ModTags {
 
     public static class Items {
-        public static final TagKey<Item> INFUSE_EFFECT = tag("infuse");
         public static final TagKey<Item> WAND_TAGS = tag("wand_tag");
         private static TagKey<Item> tag(String name) {
-            return ItemTags.create(GeneralHelpers.modResourceLocation(name));
+            return ItemTags.create(ModHelpers.modResourceLocation(name));
         }
     }
 
@@ -28,9 +25,10 @@ public class ModTags {
     }
 
     public static class Block {
+        public static final TagKey<net.minecraft.world.level.block.Block> ALLOWED_BLOCK_INTERACTIONS = tag("block_interactions");
         public static final TagKey<net.minecraft.world.level.block.Block> CAN_REPLACE_BLOCK = tag("replace");
         private static TagKey<net.minecraft.world.level.block.Block> tag(String name) {
-            return BlockTags.create(GeneralHelpers.modResourceLocation(name));
+            return BlockTags.create(ModHelpers.modResourceLocation(name));
         }
     }
 }

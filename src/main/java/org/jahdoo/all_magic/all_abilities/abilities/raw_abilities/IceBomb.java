@@ -8,6 +8,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.all_magic.AbstractElement;
@@ -22,7 +23,7 @@ import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.all_magic.effects.CustomMobEffect;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         if(this.elementProjectile.getOwner() != null){
             var player = this.elementProjectile.getOwner();
             var damage = this.getTag(DAMAGE);
-            this.damage = GeneralHelpers.attributeModifierCalculator(
+            this.damage = ModHelpers.attributeModifierCalculator(
                 (LivingEntity) player,
                 (float) damage,
                 this.getElementType(),
@@ -92,7 +93,7 @@ public class IceBomb extends DefaultEntityBehaviour {
     public double getTag(String name) {
         var wandAbilityHolder = this.elementProjectile.wandAbilityHolder();
         var ability = IceBombAbility.abilityId.getPath().intern();
-        return GeneralHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
+        return ModHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
     }
 
     @Override
@@ -100,13 +101,12 @@ public class IceBomb extends DefaultEntityBehaviour {
         if(!hasHitBlock){
             hasHitBlock = true;
             double particleMultiplier = 2;
-            this.setCollisionParticle();
             this.elementProjectile.setDeltaMovement(0,0,0);
             elementProjectile.setShowTrailParticles(false);
             elementProjectile.setAnimation(2);
 
-            GeneralHelpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.blockPosition(), SoundRegister.EXPLOSION.get());
-            GeneralHelpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.blockPosition(), SoundRegister.ICE_ATTACH.get());
+            ModHelpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.blockPosition(), SoundRegister.EXPLOSION.get());
+            ModHelpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.blockPosition(), SoundRegister.ICE_ATTACH.get());
             PositionGetters.getOuterRingOfRadiusRandom(this.elementProjectile.position(), particleMultiplier, 300,
                 worldPosition -> this.setParticleNova(worldPosition, particleMultiplier)
             );
@@ -126,43 +126,34 @@ public class IceBomb extends DefaultEntityBehaviour {
         }
     }
 
-    private void setCollisionParticle(){
-        if(this.elementProjectile.level() instanceof ServerLevel serverLevel){
-            ParticleOptions particleOptions = genericParticleOptions(
-                MAGIC_PARTICLE_SELECTION, 10, 0.2f,
-                rgbToInt(174,240,255),
-                rgbToInt(0,128,255), true
-            );
-            ParticleHandlers.spawnPoofWithSpeed(serverLevel, this.elementProjectile.position(), 50, particleOptions,1);
-        }
+    private void setParticleNova(Vec3 worldPosition, double particleMultiplier){
+        Vec3 positionScrambler = worldPosition.offsetRandom(RandomSource.create(), (float) particleMultiplier);
+        Vec3 directions = positionScrambler.subtract(this.elementProjectile.position()).normalize();
+        ParticleOptions genericParticle = genericParticleOptions(
+            GENERIC_PARTICLE_SELECTION,
+            (int) (particleMultiplier * 5),
+            5,
+            this.getElementType().particleColourPrimary(),
+            rgbToInt(255,255,255),
+            false
+        );
+
+        ParticleOptions bakedParticle = new BakedParticleOptions(
+            this.getElementType().getTypeId(),
+            (int) (particleMultiplier * 20),
+            5,
+            false
+        );
+
+        List<ParticleOptions> getRandomParticle = List.of(bakedParticle, genericParticle);
+
+        ParticleHandlers.sendParticles(
+            level(), getRandomParticle.get(ModHelpers.Random.nextInt(2)) ,worldPosition, 0, directions.x, directions.y, directions.z, ModHelpers.Random.nextDouble(0.8,1.0)
+        );
     }
 
-    private void setParticleNova(Vec3 worldPosition, double particleMultiplier){
-        if(this.elementProjectile.level() instanceof ServerLevel serverLevel){
-            Vec3 positionScrambler = worldPosition.offsetRandom(RandomSource.create(), (float) particleMultiplier);
-            Vec3 directions = positionScrambler.subtract(this.elementProjectile.position()).normalize();
-            ParticleOptions genericParticle = genericParticleOptions(
-                GENERIC_PARTICLE_SELECTION,
-                (int) (particleMultiplier * 5),
-                5,
-                this.getElementType().particleColourPrimary(),
-                rgbToInt(255,255,255),
-                false
-            );
-
-            ParticleOptions bakedParticle = new BakedParticleOptions(
-                this.getElementType().getTypeId(),
-                (int) (particleMultiplier * 20),
-                5,
-                false
-            );
-
-            List<ParticleOptions> getRandomParticle = List.of(bakedParticle, genericParticle);
-
-            GeneralHelpers.generalHelpers.sendParticles(
-                serverLevel, getRandomParticle.get(GeneralHelpers.Random.nextInt(2)) ,worldPosition, 0, directions.x, directions.y, directions.z, GeneralHelpers.Random.nextDouble(0.8,1.0)
-            );
-        }
+    private Level level(){
+        return this.elementProjectile.level();
     }
 
     void applyDamageAndEffectNova(){
@@ -203,30 +194,29 @@ public class IceBomb extends DefaultEntityBehaviour {
     }
 
     void iceBombIdleParticles(){
-        if(this.elementProjectile.level() instanceof ServerLevel serverLevel && !hasHitBlock){
-            ParticleOptions bakedParticle = new BakedParticleOptions(
-                this.getElementType().getTypeId(),
-                1,
-                GeneralHelpers.Random.nextFloat(1.5f, 2.5f),
-                false
-            );
+        if(hasHitBlock) return;
+        ParticleOptions bakedParticle = new BakedParticleOptions(
+            this.getElementType().getTypeId(),
+            1,
+            ModHelpers.Random.nextFloat(1.5f, 2.5f),
+            false
+        );
 
-            ParticleOptions genericParticle = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 2, 1f);
+        ParticleOptions genericParticle = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 2, 1f);
 
-            Vec3 getPositions = GeneralHelpers.getRandomParticleVelocity(this.elementProjectile, 0.05);
-            PositionGetters.getRandomSphericalPositions(this.elementProjectile, 0.5f, 30,
-                position -> {
-                    Vec3 newPosition = position.add(this.elementProjectile.getDeltaMovement().scale(-1.5));
-                    this.idleStandard(getPositions, newPosition, serverLevel, bakedParticle);
-                    this.idleStandard(getPositions, newPosition, serverLevel, genericParticle);
-                }
-            );
-        }
+        Vec3 getPositions = ModHelpers.getRandomParticleVelocity(this.elementProjectile, 0.05);
+        PositionGetters.getRandomSphericalPositions(this.elementProjectile, 0.5f, 30,
+            position -> {
+                Vec3 newPosition = position.add(this.elementProjectile.getDeltaMovement().scale(-1.5));
+                this.idleStandard(getPositions, newPosition, level(), bakedParticle);
+                this.idleStandard(getPositions, newPosition, level(), genericParticle);
+            }
+        );
     }
 
     private void playPeriodicIdleSound(){
         if(this.elementProjectile.tickCount == 1){
-            GeneralHelpers.getSoundWithPosition(
+            ModHelpers.getSoundWithPosition(
                 this.elementProjectile.level(),
                 this.elementProjectile.blockPosition(),
                 SoundRegister.TIMER.get(),
@@ -235,7 +225,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         }
 
         if (this.elementProjectile.tickCount % 21 == 0) {
-            GeneralHelpers.getSoundWithPosition(
+            ModHelpers.getSoundWithPosition(
                 this.elementProjectile.level(),
                 this.elementProjectile.blockPosition(),
                 SoundRegister.TIMER.get(),
@@ -247,10 +237,10 @@ public class IceBomb extends DefaultEntityBehaviour {
     private void idleStandard(
         Vec3 getPositions2,
         Vec3 newPosition,
-        ServerLevel serverLevel,
+        Level serverLevel,
         ParticleOptions particle
     ){
-        GeneralHelpers.generalHelpers.sendParticles(
+        ParticleHandlers.sendParticles(
             serverLevel,
             particle,
             newPosition.add(0,0.2,0),
@@ -268,7 +258,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         return ElementRegistry.FROST.get();
     }
 
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("ice_bomb_property");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("ice_bomb_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

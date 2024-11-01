@@ -9,18 +9,18 @@ import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class BlockBombAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("block_bomb");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("block_bomb");
     public static final String EXPLOSION_RANGE = "Explosion Radius";
 
     @Override
     public void invokeAbility(Player player) {
         GenericProjectile genericProjectile = new GenericProjectile(
-            player, 0.06,
+            player, 0,
             EntityPropertyRegister.BLOCK_EXPLODER.get().setAbilityId(),
             abilityId.getPath().intern()
         );
@@ -42,7 +42,7 @@ public class BlockBombAbility extends AbstractAbility {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(10, 5, 1)
-            .setCooldown(40, 10, 5)
+            .setCooldown(600, 200, 5)
             .setAbilityTagModifiersRandom(EXPLOSION_RANGE, 30,5, true, 5)
             .build();
     }

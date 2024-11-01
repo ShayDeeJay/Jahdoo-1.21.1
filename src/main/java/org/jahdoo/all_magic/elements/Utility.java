@@ -8,12 +8,12 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.registers.EffectsRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.particle.ParticleStore.rgbToInt;
 
 public class Utility extends AbstractElement {
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("utility");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("utility");
 
     @Override
     public ResourceLocation getAbilityResource() {

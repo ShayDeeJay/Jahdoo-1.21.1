@@ -1,25 +1,19 @@
 package org.jahdoo.datagen;
 
-import com.sun.jna.platform.win32.WinNT;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
-import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
-import net.neoforged.neoforge.common.loot.AddTableLootModifier;
 import net.neoforged.neoforge.common.loot.LootTableIdCondition;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.loot.AddItemModifier;
-import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ItemsRegister;
-import org.jahdoo.utils.GeneralHelpers;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

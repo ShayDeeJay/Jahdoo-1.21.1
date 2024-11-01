@@ -3,7 +3,6 @@ package org.jahdoo.all_magic.all_abilities.abilities.raw_abilities.utility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -13,11 +12,10 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.UtilityHelpers;
-import org.jahdoo.all_magic.all_abilities.abilities.Utility.HammerAbility;
 import org.jahdoo.all_magic.all_abilities.abilities.Utility.VeinMinerAbility;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.particle.ParticleHandlers;
 
 import java.util.ArrayDeque;
@@ -27,11 +25,12 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 import static org.jahdoo.all_magic.all_abilities.abilities.Utility.VeinMinerAbility.VEIN_MINE_SIZE;
+import static org.jahdoo.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
 
 public class VeinMiner extends AbstractUtilityProjectile {
     private static final Direction[] ALL_DIRECTIONS = Direction.values();
     private static final Direction[] HORIZONTAL_DIRECTIONS = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("vein_miner_property");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("vein_miner_property");
     private int veinSize;
 
     @Override
@@ -53,31 +52,30 @@ public class VeinMiner extends AbstractUtilityProjectile {
     @Override
     public double getTag(String name) {
         var wandAbilityHolder = this.genericProjectile.wandAbilityHolder();
-        return GeneralHelpers.getModifierValue(wandAbilityHolder, VeinMinerAbility.abilityId.getPath().intern()).get(name).setValue();
+        return ModHelpers.getModifierValue(wandAbilityHolder, VeinMinerAbility.abilityId.getPath().intern()).get(name).setValue();
     }
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         if (genericProjectile.level().isClientSide) return;
 
-        if (genericProjectile.level() instanceof ServerLevel serverLevel){
-            BlockPos start = blockHitResult.getBlockPos();
-            BlockState target = genericProjectile.level().getBlockState(start);
-            if (target.isAir()) return;
+        BlockPos start = blockHitResult.getBlockPos();
+        BlockState target = genericProjectile.level().getBlockState(start);
+        if (target.isAir()) return;
 
-            double x = genericProjectile.getX();
-            double y = genericProjectile.getY();
-            double z = genericProjectile.getZ();
-            genericProjectile.level().playSound(null, x, y, z, genericProjectile.level().getBlockState(start).getSoundType().getBreakSound(), SoundSource.BLOCKS, 1, 1);
-
-            this.forAllBlocksAroundOf(start, genericProjectile.level(), target.getBlock(), veinSize,
-                (pos, state) -> {
-                    UtilityHelpers.dropItemsOrBlock(genericProjectile, pos, false, false);
-                    ParticleHandlers.spawnPoof(serverLevel, pos.getCenter(), 1, ElementRegistry.UTILITY.get().getParticleGroup().genericSlow(), 0, 0, 0, 0.005f, 1);
-                }
-            );
-            genericProjectile.discard();
-        }
+        double x = genericProjectile.getX();
+        double y = genericProjectile.getY();
+        double z = genericProjectile.getZ();
+        genericProjectile.level().playSound(null, x, y, z, genericProjectile.level().getBlockState(start).getSoundType().getBreakSound(), SoundSource.BLOCKS, 1, 1);
+        var part = ParticleHandlers.genericParticleOptions(SOFT_PARTICLE_SELECTION, ElementRegistry.UTILITY.get(), 7, 0.1f, true);
+        this.forAllBlocksAroundOf(start, genericProjectile.level(), target.getBlock(), veinSize,
+            (pos, state) -> {
+                UtilityHelpers.dropItemsOrBlock(genericProjectile, pos, false, false);
+                ParticleHandlers.particleBurst(genericProjectile.level(), pos.getCenter(), 1, part, 0, 0, 0, 0.005f, 1);
+            }
+        );
+        super.onBlockBlockHit(blockHitResult);
+        genericProjectile.discard();
     }
 
     private void forAllBlocksAroundOf(

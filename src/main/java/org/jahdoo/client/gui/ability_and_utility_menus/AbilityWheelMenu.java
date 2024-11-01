@@ -23,12 +23,12 @@ import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.augment_menu.AugmentMenu;
 import org.jahdoo.components.WandData;
-import org.jahdoo.networking.packet.SelectedAbilityC2SPacket;
-import org.jahdoo.networking.packet.StopUsingC2SPacket;
+import org.jahdoo.networking.packet.client2server.SelectedAbilityC2SPacket;
+import org.jahdoo.networking.packet.client2server.StopUsingC2SPacket;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.components.DataComponentHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -119,7 +119,7 @@ public class AbilityWheelMenu extends Screen  {
     }
 
     private void showConfig(WandData wandData, Player player, AbstractAbility selectedAbility, int posX, int posY) {
-        var configResource = GeneralHelpers.modResourceLocation("textures/gui/gui_button_cog_dark.png");
+        var configResource = ModHelpers.modResourceLocation("textures/gui/gui_button_cog_dark.png");
         var configButton = new WidgetSprites(configResource, configResource);
         var configButtonSize = 20;
         if (selectedAbility.getElemenType() == ElementRegistry.UTILITY.get()) {
@@ -216,7 +216,7 @@ public class AbilityWheelMenu extends Screen  {
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.9F);
-        var atlasLocation = GeneralHelpers.modResourceLocation("textures/gui/ability_wheel_background.png");
+        var atlasLocation = ModHelpers.modResourceLocation("textures/gui/ability_wheel_background.png");
         guiGraphics.blit(atlasLocation, xRadial, yRadial, 0, 0, easedValue, easedValue, easedValue, easedValue);
         RenderSystem.disableBlend();
     }

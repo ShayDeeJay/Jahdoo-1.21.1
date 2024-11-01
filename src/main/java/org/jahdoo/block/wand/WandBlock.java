@@ -32,7 +32,7 @@ import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ItemsRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,7 +87,7 @@ public class WandBlock extends BaseEntityBlock {
     }
 
     public void placeParticle(Level level, Vec3 pos, AbstractElement element, ParticleOptions par1){
-        double randomY = GeneralHelpers.Random.nextDouble(0.0, 0.2);
+        double randomY = ModHelpers.Random.nextDouble(0.0, 0.2);
         level.addParticle(par1, pos.x, pos.y - 0.3, pos.z, 0, randomY, 0);
     }
 
@@ -104,7 +104,7 @@ public class WandBlock extends BaseEntityBlock {
                 wandBlockEntity.dropsAllInventory(pLevel);
             }
         }
-        GeneralHelpers.getSoundWithPosition(pLevel, pPos, SoundEvents.BEACON_DEACTIVATE, 0.4f, 1.5f);
+        ModHelpers.getSoundWithPosition(pLevel, pPos, SoundEvents.BEACON_DEACTIVATE, 0.4f, 1.5f);
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
     }
 
@@ -164,9 +164,8 @@ public class WandBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        if(pLevel.isClientSide()) {
-            return null;
-        }
+        if(pLevel.isClientSide())  return null;
+
         return createTickerHelper(
             pBlockEntityType,
             BlockEntitiesRegister.WAND_BE.get(),

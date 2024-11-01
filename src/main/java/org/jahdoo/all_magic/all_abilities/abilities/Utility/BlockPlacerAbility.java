@@ -9,18 +9,17 @@ import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class BlockPlacerAbility extends AbstractAbility {
-    private final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("block_placer");
+    private final ResourceLocation abilityId = ModHelpers.modResourceLocation("block_placer");
 
     @Override
     public void invokeAbility(Player player) {
         GenericProjectile genericProjectile = new GenericProjectile(
-            player,
-            0.06,
+            player, 0,
             EntityPropertyRegister.BLOCK_PLACER.get().setAbilityId(),
             abilityId.getPath().intern()
         );
@@ -41,7 +40,6 @@ public class BlockPlacerAbility extends AbstractAbility {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(10, 5, 1)
-            .setCooldown(40, 10, 5)
             .build();
     }
 

@@ -1,14 +1,13 @@
 package org.jahdoo.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.block.tank.TankBlockEntity;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlocksRegister;
-import org.jahdoo.utils.GeneralHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,10 +62,9 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
     }
 
     protected void sendProcessingParticle(double fromHeight, double toHeight, int lifetime, float size, double speed){
-        if(!(this.level instanceof ServerLevel serverLevel)) return;
         Vec3 direction = this.getBlockPos().getCenter().add(0, toHeight, 0).subtract(this.tankPosition.getCenter()).normalize();
-        GeneralHelpers.generalHelpers.sendParticles(
-            serverLevel,
+        ParticleHandlers.sendParticles(
+            this.level,
             processingParticle(lifetime, size, false,  speed),
             this.tankPosition.getCenter().subtract(0,fromHeight,0), 0, direction.x, direction.y, direction.z, speed
         );

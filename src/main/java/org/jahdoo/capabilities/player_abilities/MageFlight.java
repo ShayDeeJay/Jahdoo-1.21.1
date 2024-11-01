@@ -7,17 +7,16 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-//import org.assets.jahdoo.capabilities.AbstractCapability;
-import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.capabilities.AbstractAttachment;
+import org.jahdoo.capabilities.CastingData;
 import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.networking.packet.MageFlightPacketS2CPacket;
+import org.jahdoo.networking.packet.client2server.MageFlightPacketS2CPacket;
+import org.jahdoo.networking.packet.server2client.MageFlightDataSyncS2CPacket;
 import org.jahdoo.particle.ParticleStore;
-import org.jahdoo.particle.particle_options.BakedParticleOptions;
-import org.jahdoo.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
+import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.registers.AttachmentRegister.*;
 import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
@@ -27,9 +26,8 @@ public class MageFlight implements AbstractAttachment {
     public int jumpTickCounter;
     public boolean lastJumped;
     public boolean isFlying;
-    public static double manaCost = 0.5;
     public boolean jumpKeyDown;
-    public boolean isFloating;
+    public static double manaCost = 0.5;
 
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putInt("jumpTickCounter", jumpTickCounter);
@@ -44,11 +42,23 @@ public class MageFlight implements AbstractAttachment {
     }
 
     public static void mageFlightTickEvent(Player player){
-        if(player instanceof ServerPlayer serverPlayer){
+        if(player instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayer(serverPlayer, new MageFlightPacketS2CPacket());
         }
         var mageFlight = player.getData(MAGE_FLIGHT);
         mageFlight.serverFlight(player);
+    }
+
+    public void setJumpTickCounter(int jumpTickCounter) {
+        this.jumpTickCounter = jumpTickCounter;
+    }
+
+    public void setLastJumped(boolean lastJumped) {
+        this.lastJumped = lastJumped;
+    }
+
+    public void setIsFlying(boolean playerFlying) {
+        this.isFlying = playerFlying;
     }
 
     public void setJumpKeyDown(boolean jumpKeyDown) {
@@ -56,46 +66,55 @@ public class MageFlight implements AbstractAttachment {
     }
 
     public void serverFlight(Player player){
+        if(player.isCreative() || player.isSpectator()) return;
+
         var wandItem = player.getMainHandItem();
-        if(player.isCreative() || !(wandItem.getItem() instanceof WandItem)) return;
         var manaSystem = player.getData(CASTER_DATA);
-        if(player.onGround()) this.isFlying = false;
+        if (cancelAttempt(player, wandItem)) return;
+
         if (!this.lastJumped && jumpKeyDown) {
             if (this.jumpTickCounter == 0) this.jumpTickCounter = 10; else this.isFlying = true;
         }
 
         if (this.jumpTickCounter > 0) this.jumpTickCounter--;
-
         this.lastJumped = this.jumpKeyDown;
 
         if (this.isFlying && this.jumpKeyDown) {
-
-            if (manaSystem.getManaPool() > manaCost) {
-                player.getAbilities().mayfly = true;
-                player.getData(BOUNCY_FOOT).setEffectTimer(160);
-                manaSystem.subtractMana(manaCost);
-                player.setDeltaMovement(player.getDeltaMovement().add(0, 0.1, 0));
-                mageFlightAnimation(wandItem, player);
-            }
-
+            flying(player, manaSystem, wandItem);
         } else {
             if(!player.isFallFlying()) player.getAbilities().mayfly = false;
         }
+
+        if(player instanceof ServerPlayer serverPlayer){
+            PacketDistributor.sendToPlayer(serverPlayer, new MageFlightDataSyncS2CPacket(jumpTickCounter, lastJumped, isFlying, jumpKeyDown));
+        }
     }
 
+    private void flying(Player player, CastingData manaSystem, ItemStack wandItem) {
+        if (manaSystem.getManaPool() > manaCost) {
+            player.getAbilities().mayfly = true;
+            player.getData(BOUNCY_FOOT).setEffectTimer(160);
+            manaSystem.subtractMana(manaCost);
+            player.setDeltaMovement(player.getDeltaMovement().add(0, 0.1, 0));
+            mageFlightAnimation(wandItem, player);
+        }
+    }
+
+    private boolean cancelAttempt(Player player, ItemStack wandItem) {
+        if(!(wandItem.getItem() instanceof WandItem) || player.onGround()) {
+            player.getAbilities().mayfly = false;
+            this.isFlying = false;
+            return true;
+        }
+        return false;
+    }
 
     private void mageFlightAnimation(ItemStack wandItem, Player player){
-        AbstractElement element = getElementByWandType(wandItem.getItem()).getFirst();
+        var element = getElementByWandType(wandItem.getItem()).getFirst();
+        var part1 = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 2, 0.2f, true);
+        var part2 = bakedParticleOptions(getElementByWandType(wandItem.getItem()).getFirst().getTypeId(), 2, 1f, false);
+        var getMovement = player.getDeltaMovement().y > -0.5;
 
-        GenericParticleOptions part1 = genericParticleOptions(
-            ParticleStore.GENERIC_PARTICLE_SELECTION, element, 2, 0.2f, true
-        );
-
-        BakedParticleOptions part2 = new BakedParticleOptions(
-            getElementByWandType(wandItem.getItem()).getFirst().getTypeId(),
-            2, 1f, false
-        );
-        boolean getMovement = player.getDeltaMovement().y > -0.5;
         PositionGetters.getInnerRingOfRadiusRandom(player.position(), player.getBbWidth() - 0.3, getMovement ? 5 : 2,
             positions -> {
                 player.level().addParticle(part1, positions.x, positions.y, positions.z, 0, -0.2, 0);
@@ -104,12 +123,8 @@ public class MageFlight implements AbstractAttachment {
         );
 
         if (player.tickCount % 3 == 0) {
-            GeneralHelpers.getSoundWithPosition(
-                player.level(),
-                player.blockPosition(),
-                SoundEvents.AMETHYST_BLOCK_RESONATE,
-                0.03f,
-                (float) player.getDeltaMovement().y
+            ModHelpers.getSoundWithPosition(
+                player.level(), player.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE, 0.03f, (float) player.getDeltaMovement().y
             );
         }
     }

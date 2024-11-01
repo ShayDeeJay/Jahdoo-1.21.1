@@ -30,6 +30,10 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(BlocksRegister.WAND_MANAGER_TABLE.get())
             .add(BlocksRegister.CREATOR.get());
 
+        this.tag(ModTags.Block.ALLOWED_BLOCK_INTERACTIONS)
+            .add(BlocksRegister.CREATOR.get())
+            .add(BlocksRegister.WAND_MANAGER_TABLE.get());
+
         this.tag(ModTags.Block.CAN_REPLACE_BLOCK)
             .add(Blocks.AIR)
             .add(Blocks.SHORT_GRASS)

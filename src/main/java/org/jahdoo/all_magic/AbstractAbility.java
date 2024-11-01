@@ -9,7 +9,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import java.util.Objects;
 
@@ -32,7 +32,7 @@ public abstract class AbstractAbility {
     public abstract ResourceLocation getAbilityResource();
 
     public String getAbilityName(){
-        return GeneralHelpers.stringIdToName(this.abilityId);
+        return ModHelpers.stringIdToName(this.abilityId);
     }
 
     public abstract void setModifiers(ItemStack itemStack);
@@ -52,7 +52,7 @@ public abstract class AbstractAbility {
     }
 
     public ResourceLocation getAbilityIconLocation(){
-        return GeneralHelpers.modResourceLocation("textures/ability_icons/"+abilityId+".png");
+        return ModHelpers.modResourceLocation("textures/ability_icons/"+abilityId+".png");
     }
 
     public abstract int getCastDuration(Player player);
@@ -73,7 +73,7 @@ public abstract class AbstractAbility {
                 projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, 0);
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
-                GeneralHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundRegister.ORB_FIRE.get(), 0.4f, 1f);
+                ModHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundRegister.ORB_FIRE.get(), 0.4f, 1f);
             }
         }
     }
@@ -85,7 +85,7 @@ public abstract class AbstractAbility {
                 projectile.shoot(direction.x(), direction.y(), direction.z(), 1.2f, 0);
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
-                GeneralHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundEvents.BONE_MEAL_USE , 0.4f, 0.1f);
+                ModHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundEvents.BONE_MEAL_USE , 0.4f, 0.1f);
             }
         }
     }

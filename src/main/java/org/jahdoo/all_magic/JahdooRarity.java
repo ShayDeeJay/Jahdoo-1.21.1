@@ -2,25 +2,21 @@ package org.jahdoo.all_magic;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.util.FastColor;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
-import net.neoforged.fml.common.asm.enumextension.NetworkedEnum;
 import org.jahdoo.registers.AbilityRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.UnaryOperator;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.particle.ParticleStore.rgbToInt;
-import static org.jahdoo.utils.GeneralHelpers.withStyleComponent;
+import static org.jahdoo.utils.ModHelpers.withStyleComponent;
 
 //@NetworkedEnum(NetworkedEnum.NetworkCheck.BIDIRECTIONAL)
 @IndexedEnum
@@ -71,14 +67,14 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     }
 
     public static JahdooRarity getRarity(){
-        var getRandom = GeneralHelpers.Random.nextInt(1, 3400);
+        var getRandom = ModHelpers.Random.nextInt(1, 3400);
         var filteredList = new ArrayList<>(getAllRarities.stream().filter(jahdooRarity -> jahdooRarity.chanceRange <= getRandom).toList());
-        return GeneralHelpers.getRandomListElement(filteredList);
+        return ModHelpers.getRandomListElement(filteredList);
     }
 
     public static AbstractAbility getAbilityWithRarity(){
         var list = AbilityRegister.getMatchingRarity(JahdooRarity.getRarity());
-        return list.get(GeneralHelpers.Random.nextInt(0, list.size()));
+        return list.get(ModHelpers.Random.nextInt(0, list.size()));
     }
 
     public static Component addRarityTooltip(JahdooRarity rarity){
@@ -88,8 +84,8 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     //Debug using use on item
     public static void debugRarity(Player player){
         if(!player.level().isClientSide){
-            GeneralHelpers.playDebugMessage(player, "NEW ROLL");
-            GeneralHelpers.playDebugMessage(player, "---------------------------------");
+            ModHelpers.playDebugMessage(player, "NEW ROLL");
+            ModHelpers.playDebugMessage(player, "---------------------------------");
 
             var common = new AtomicInteger();
             var uncommon = new AtomicInteger();
@@ -113,12 +109,12 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
                 }
             }
 
-            GeneralHelpers.playDebugMessage(player, "Common " + common.get());
-            GeneralHelpers.playDebugMessage(player, "Un-Common " + uncommon.get());
-            GeneralHelpers.playDebugMessage(player, "Epic " + epic.get());
-            GeneralHelpers.playDebugMessage(player, "Legendary " + legendary.get());
-            GeneralHelpers.playDebugMessage(player, "Eternal " + ethereal.get());
-            GeneralHelpers.playDebugMessage(player, "  ");
+            ModHelpers.playDebugMessage(player, "Common " + common.get());
+            ModHelpers.playDebugMessage(player, "Un-Common " + uncommon.get());
+            ModHelpers.playDebugMessage(player, "Epic " + epic.get());
+            ModHelpers.playDebugMessage(player, "Legendary " + legendary.get());
+            ModHelpers.playDebugMessage(player, "Eternal " + ethereal.get());
+            ModHelpers.playDebugMessage(player, "  ");
         }
     }
 }

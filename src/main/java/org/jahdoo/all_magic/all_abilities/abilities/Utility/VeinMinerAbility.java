@@ -9,20 +9,19 @@ import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 
 public class VeinMinerAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("vein_miner");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("vein_miner");
     public static final String VEIN_MINE_SIZE = "Total Vein Size";
 
     @Override
     public void invokeAbility(Player player) {
         GenericProjectile genericProjectile = new GenericProjectile(
-            player,
-            0.06,
+            player, 0,
             EntityPropertyRegister.VEIN_MINER.get().setAbilityId(),
             abilityId.getPath().intern()
         );
@@ -43,8 +42,7 @@ public class VeinMinerAbility extends AbstractAbility {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(10, 5, 1)
-            .setCooldown(40, 10, 5)
-            .setAbilityTagModifiersRandom(VEIN_MINE_SIZE, 128,16, true, 16)
+            .setAbilityTagModifiersRandom(VEIN_MINE_SIZE, 128,32, true, 32)
             .build();
     }
 

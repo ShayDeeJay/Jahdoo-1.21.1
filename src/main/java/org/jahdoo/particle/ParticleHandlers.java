@@ -15,7 +15,7 @@ import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
 import java.util.List;
@@ -24,38 +24,33 @@ import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 
 public class ParticleHandlers {
 
-    public static void spawnPoof(ServerLevel world, Vec3 pos, int particleCount, ParticleOptions particleOptions) {
-        for (int i = 0; i < 10; i++) {
-            double d0 = pos.x ;
-            double d1 = pos.y;
-            double d2 = pos.z;
-            (world).sendParticles(particleOptions, d0, d1, d2, particleCount, (world.random.nextFloat() * 1 - 0.5) / 3, (world.random.nextFloat() * 1 - 0.5) / 3, (world.random.nextFloat() * 1 - 0.5) / 3, 0.1f);
-        }
-    }
-    public static void spawnPoofWithSpeed(ServerLevel world, Vec3 pos, int particleCount, ParticleOptions particleOptions, double speed) {
-        for (int i = 0; i < 1 ; i++) {
-            double d0 = pos.x ;
-            double d1 = pos.y;
-            double d2 = pos.z;
-            (world).sendParticles(particleOptions, d0, d1, d2, particleCount, (world.random.nextFloat() * 1 - 0.5) / 6, (world.random.nextFloat() * 1 - 0.5) / 6, (world.random.nextFloat() * 1 - 0.5) / 6, speed);
+    public static void particleBurst(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions) {
+        for (int i = 0; i < 5; i++) {
+            sendParticles(world, particleOptions, pos, particleCount,
+                (world.random.nextFloat() * 1 - 0.5) / 3,
+                (world.random.nextFloat() * 1 - 0.5) / 3,
+                (world.random.nextFloat() * 1 - 0.5) / 3, 0.1f
+            );
         }
     }
 
-    public static void spawnPoof(ServerLevel world, Vec3 pos, int particleCount, ParticleOptions particleOptions, double x, double y, double z, float speed) {
+    public static void particleBurst(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions, double x, double y, double z, float speed) {
         for (int i = 0; i < 10; i++) {
-            double d0 = pos.x ;
-            double d1 = pos.y;
-            double d2 = pos.z;
-            (world).sendParticles(particleOptions, d0, d1, d2, particleCount, x, y, z, speed);
+            sendParticles(world, particleOptions, pos, particleCount, x, y, z, speed);
         }
     }
 
-    public static void spawnPoof(ServerLevel world, Vec3 pos, int particleCount, ParticleOptions particleOptions, double x, double y, double z, float speed, int totalPoofs) {
+    public static void particleBurst(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions, double x, double y, double z, float speed, int totalPoofs) {
         for (int i = 0; i < totalPoofs; i++) {
-            double d0 = pos.x ;
-            double d1 = pos.y;
-            double d2 = pos.z;
-            (world).sendParticles(particleOptions, d0, d1, d2, particleCount, x , y, z, speed);
+            sendParticles(world, particleOptions, pos, particleCount, x, y, z, speed);
+        }
+    }
+
+    public static void invisibleLight(Level world, Vec3 loc, ParticleOptions particleOptions, double bound1, double bound2) {
+        for (int i = 0; i < 3; i++) {
+            if (world.isClientSide) {
+                sendParticles(world, particleOptions, loc, 1, 0, ModHelpers.Random.nextDouble(bound1, bound2), 0, 1);
+            }
         }
     }
 
@@ -81,31 +76,19 @@ public class ParticleHandlers {
                 positions -> {
                     if (player.level() instanceof ServerLevel serverLevel) {
                         Vec3 directions = player.position().subtract(positions).normalize().add(0, player.getBbHeight() / 2, 0);
-                        GeneralHelpers.generalHelpers.sendParticles(
+                        ParticleHandlers.sendParticles(
                             serverLevel,
                             particleOptionsList.get(RandomSource.create().nextInt(0, 2)),
                             positions,
                             0,
                             directions.x,
-                            GeneralHelpers.Random.nextDouble(-0.3, 0.3),
+                            ModHelpers.Random.nextDouble(-0.3, 0.3),
                             directions.z,
                             (double) player.getTicksUsingItem()/500
                         );
                     }
                 }
             );
-        }
-    }
-
-    public static void invisibleLight(Level world, Vec3 loc, ParticleOptions particleOptions, double bound1, double bound2) {
-        for (int i = 0; i < 3; i++) {
-            double d0 = loc.x;
-            double d1 = loc.y;
-            double d2 = loc.z;
-
-            if (world.isClientSide) {
-                world.addParticle(particleOptions, d0 , d1 , d2, 0, GeneralHelpers.Random.nextDouble(bound1, bound2),0);
-            }
         }
     }
 
@@ -126,11 +109,11 @@ public class ParticleHandlers {
 
             if (projectile.level() instanceof ServerLevel serverLevel){
                 Vec3 position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
-                GeneralHelpers.generalHelpers.sendParticles(
+                ParticleHandlers.sendParticles(
                     serverLevel, particleOptions, position, 1,
-                    0.0125f * (GeneralHelpers.Random.nextFloat() - 0.5f),
-                    0.0125f * (GeneralHelpers.Random.nextFloat() - 0.5f),
-                    0.0125f * (GeneralHelpers.Random.nextFloat() - 0.5f),
+                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
                     0
                 );
             }
@@ -155,11 +138,11 @@ public class ParticleHandlers {
 
             if (projectile.level() instanceof ServerLevel serverLevel){
                 Vec3 position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
-                GeneralHelpers.generalHelpers.sendParticles(
+                ParticleHandlers.sendParticles(
                     serverLevel, particleOptions, position, 1,
-                    0.0125f * (GeneralHelpers.Random.nextFloat() - 0.5f),
-                    0.0125f * (GeneralHelpers.Random.nextFloat() - 0.5f),
-                    0.0125f * (GeneralHelpers.Random.nextFloat() - 0.5f),
+                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
                     speed
                 );
             }
@@ -181,11 +164,11 @@ public class ParticleHandlers {
 
             if (projectile.level() instanceof ServerLevel serverLevel){
                 Vec3 position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
-                GeneralHelpers.generalHelpers.sendParticles(
+                ParticleHandlers.sendParticles(
                     serverLevel, particleOptions, position, 1,
-                    0.0125f * (GeneralHelpers.Random.nextFloat() - 0.5f),
-                    0.0125f * (GeneralHelpers.Random.nextFloat() - 0.5f),
-                    0.0125f * (GeneralHelpers.Random.nextFloat() - 0.5f),
+                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
                     speed
                 );
             }
@@ -218,7 +201,7 @@ public class ParticleHandlers {
     }
 
     public static <T extends ParticleOptions> int sendParticles(Level level, T pType, Vec3 positions, int pParticleCount, double pXOffset, double pYOffset, double pZOffset, double pSpeed) {
-        if(level instanceof ServerLevel serverLevel){
+        if((level instanceof ServerLevel serverLevel)){
             var clientboundlevelparticlespacket = new ClientboundLevelParticlesPacket(pType, false, positions.x, positions.y, positions.z, (float) pXOffset, (float) pYOffset, (float) pZOffset, (float) pSpeed, pParticleCount);
             var i = 0;
             for (int j = 0; j < serverLevel.players().size(); ++j) {
@@ -226,9 +209,10 @@ public class ParticleHandlers {
                 if (sendParticles(serverplayer, positions.x, positions.y, positions.z, clientboundlevelparticlespacket)) ++i;
             }
             return i;
+        } else {
+            level.addParticle(pType, false, pXOffset, pYOffset, pZOffset, pSpeed, pSpeed, pSpeed);
+            return 0;
         }
-        level.addParticle(pType, true, pXOffset,pYOffset,pZOffset,pSpeed,pSpeed,pSpeed);
-        return 0;
     }
 
     private static boolean sendParticles(ServerPlayer pPlayer, double pPosX, double pPosY, double pPosZ, Packet<?> pPacket) {
@@ -264,14 +248,14 @@ public class ParticleHandlers {
 
             for (int i = 0; i < 6; i++){
                 Vec3 position = new Vec3(
-                    particleX + GeneralHelpers.Random.nextFloat(-spread, spread),
-                    particleY + GeneralHelpers.Random.nextFloat(-spread, spread),
-                    particleZ + GeneralHelpers.Random.nextFloat(-spread, spread)
+                    particleX + ModHelpers.Random.nextFloat(-spread, spread),
+                    particleY + ModHelpers.Random.nextFloat(-spread, spread),
+                    particleZ + ModHelpers.Random.nextFloat(-spread, spread)
                 );
                 GenericParticleOptions genericSlow = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 4, 1.5f);
                 BakedParticleOptions bakedSlow = new BakedParticleOptions(element.getTypeId(), 2,2.5f,false);
-                GeneralHelpers.generalHelpers.sendParticles(serverLevel, bakedSlow, position.subtract(0,heightOffset,0), 0, 0, 0, 0,0);
-                GeneralHelpers.generalHelpers.sendParticles(serverLevel, genericSlow, position.subtract(0,heightOffset,0), 0, 0, 0, 0,0);
+                ParticleHandlers.sendParticles(serverLevel, bakedSlow, position.subtract(0,heightOffset,0), 0, 0, 0, 0,0);
+                ParticleHandlers.sendParticles(serverLevel, genericSlow, position.subtract(0,heightOffset,0), 0, 0, 0, 0,0);
             }
         }
     }
@@ -317,19 +301,19 @@ public class ParticleHandlers {
         return new GenericParticleOptions(particleType, element.particleColourPrimary(), element.particleColourFaded(), lifetime,size, setStaticSize, 1);
     }
 
-    public static void spawnElectrifiedParticles(ServerLevel level, Vec3 position, ParticleOptions particleType, int count, LivingEntity livingEntity, double speed) {
+    public static void spawnElectrifiedParticles(Level level, Vec3 position, ParticleOptions particleType, int count, LivingEntity livingEntity, double speed) {
 
         for (int i = 0; i < count; i++) {
-            double offsetX = (GeneralHelpers.Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
-            double offsetY = GeneralHelpers.Random.nextDouble() * livingEntity.getBbHeight();
-            double offsetZ = (GeneralHelpers.Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
+            double offsetX = (ModHelpers.Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
+            double offsetY = ModHelpers.Random.nextDouble() * livingEntity.getBbHeight();
+            double offsetZ = (ModHelpers.Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
 
             // Give the particles an electrified jittery motion
-            double speedX = (GeneralHelpers.Random.nextDouble() - 0.5) * 0.1;
-            double speedY = (GeneralHelpers.Random.nextDouble() - 0.5) * 0.1;
-            double speedZ = (GeneralHelpers.Random.nextDouble() - 0.5) * 0.1;
+            double speedX = (ModHelpers.Random.nextDouble() - 0.5) * 0.1;
+            double speedY = (ModHelpers.Random.nextDouble() - 0.5) * 0.1;
+            double speedZ = (ModHelpers.Random.nextDouble() - 0.5) * 0.1;
 
-            GeneralHelpers.generalHelpers.sendParticles(
+            ParticleHandlers.sendParticles(
                 level, particleType, position.add(offsetX, offsetY, offsetZ), 1,speedX, speedY, speedZ,speed
             );
 
@@ -339,15 +323,15 @@ public class ParticleHandlers {
     public static void spawnElectrifiedParticles(ServerLevel level, Vec3 position, ParticleOptions particleType, int count, LivingEntity livingEntity, double speed, double ySpeed) {
 
         for (int i = 0; i < count; i++) {
-            double offsetX = (GeneralHelpers.Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
-            double offsetY = GeneralHelpers.Random.nextDouble() * livingEntity.getBbHeight();
-            double offsetZ = (GeneralHelpers.Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
+            double offsetX = (ModHelpers.Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
+            double offsetY = ModHelpers.Random.nextDouble() * livingEntity.getBbHeight();
+            double offsetZ = (ModHelpers.Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
 
             // Give the particles an electrified jittery motion
-            double speedX = (GeneralHelpers.Random.nextDouble() - 0.5) * 0.1;
-            double speedY = (GeneralHelpers.Random.nextDouble() - 0.5) * 0.1;
-            double speedZ = (GeneralHelpers.Random.nextDouble() - 0.5) * 0.1;
-            GeneralHelpers.generalHelpers.sendParticles(
+            double speedX = (ModHelpers.Random.nextDouble() - 0.5) * 0.1;
+            double speedY = (ModHelpers.Random.nextDouble() - 0.5) * 0.1;
+            double speedZ = (ModHelpers.Random.nextDouble() - 0.5) * 0.1;
+            ParticleHandlers.sendParticles(
                 level, particleType, position.add(offsetX, offsetY, offsetZ), 1,speedX, speedY + ySpeed, speedZ,speed
             );
         }

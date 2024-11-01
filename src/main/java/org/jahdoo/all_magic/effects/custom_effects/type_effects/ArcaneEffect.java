@@ -12,10 +12,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jahdoo.all_magic.effects.EffectParticles;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.all_magic.effects.CustomMobEffect;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 public class ArcaneEffect extends MobEffect {
-    public static final ResourceLocation att = GeneralHelpers.modResourceLocation("arcane_effects");
+    public static final ResourceLocation att = ModHelpers.modResourceLocation("arcane_effects");
 
     public ArcaneEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
@@ -25,7 +25,7 @@ public class ArcaneEffect extends MobEffect {
     public boolean applyEffectTick(LivingEntity targetEntity, int pAmplifier) {
         targetEntity.addEffect(new CustomMobEffect(MobEffects.GLOWING.getDelegate(), 2, 1));
         if(targetEntity.level() instanceof ServerLevel serverLevel){
-            int getRandomChance = GeneralHelpers.Random.nextInt(0,10);
+            int getRandomChance = ModHelpers.Random.nextInt(0,10);
             EffectParticles.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementRegistry.MYSTIC.get(), SoundEvents.SOUL_ESCAPE.value());
         }
         return true;

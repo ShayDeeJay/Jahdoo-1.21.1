@@ -15,17 +15,19 @@ import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.components.DataComponentHelper;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -60,7 +62,7 @@ public class AugmentItemHelper {
 
     public static void discoverTick(Entity entity, ItemStack itemStack){
         if(!(entity instanceof Player player)) return;
-        if(!(player.level() instanceof ServerLevel serverLevel)) return;
+        if(!(player.level() instanceof ServerLevel)) return;
         var component = itemStack.get(NUMBER);
         if(component == null) return;
         var numLoops = 3;
@@ -68,30 +70,30 @@ public class AugmentItemHelper {
         if(component <= numLoops){
             if(player.tickCount % numDistance == 0){
                 itemStack.set(NUMBER, component + 1);
-                GeneralHelpers.getSoundWithPosition(serverLevel, player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, 0.4f, 0.6F);
-                itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(GeneralHelpers.Random.nextInt(1, 7)));
+                ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, 0.4f, 0.6F);
+                itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(ModHelpers.Random.nextInt(1, 7)));
                 augmentIdentifierShared(itemStack, player);
                 if(component == numLoops){
-                    AugmentItemHelper.setDiscoveryTheme(serverLevel, player);
+                    AugmentItemHelper.setDiscoveryTheme(player.level(), player);
                 }
             }
         }
     }
 
-    public static void setDiscoveryTheme(ServerLevel serverLevel, Player player){
-        GeneralHelpers.generalHelpers.sendParticles(
-            serverLevel,
+    public static void setDiscoveryTheme(Level level, Player player){
+        ParticleHandlers.sendParticles(
+            level,
             ParticleTypes.TOTEM_OF_UNDYING,
             player.position().add(0, player.getBbHeight()/2, 0),
             50, 0,0.8,0,0.5
         );
-        GeneralHelpers.getSoundWithPosition(serverLevel, player.blockPosition(), SoundEvents.BEACON_ACTIVATE,0.7f,2F);
-        GeneralHelpers.getSoundWithPosition(serverLevel, player.blockPosition(), SoundEvents.PARROT_IMITATE_EVOKER,1f,0.8F);
+        ModHelpers.getSoundWithPosition(level, player.blockPosition(), SoundEvents.BEACON_ACTIVATE,0.7f,2F);
+        ModHelpers.getSoundWithPosition(level, player.blockPosition(), SoundEvents.PARROT_IMITATE_EVOKER,1f,0.8F);
     }
 
     public static void augmentIdentifierShared(ItemStack itemStack, @Nullable Player player){
         var abstractAbilities = AbilityRegister.REGISTRY.stream().toList();
-        var ability = abstractAbilities.get(GeneralHelpers.Random.nextInt(0, abstractAbilities.size()));
+        var ability = abstractAbilities.get(ModHelpers.Random.nextInt(0, abstractAbilities.size()));
 
         ability.setModifiers(itemStack);
         var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
@@ -265,8 +267,13 @@ public class AugmentItemHelper {
             .filter(abilityModifiers -> !exceptions.contains(abilityModifiers))
             .toList();
 
-        toolTipBase(toolTips, itemStack, itemStack1, MANA_COST, abilityLocation, -6829330);
-        toolTipBase(toolTips, itemStack, itemStack1, COOLDOWN, abilityLocation, -7471171);
+        if(abilityHolder.abilityProperties().containsKey(MANA_COST)){
+            toolTipBase(toolTips, itemStack, itemStack1, MANA_COST, abilityLocation, -6829330);
+        }
+
+        if(abilityHolder.abilityProperties().containsKey(COOLDOWN)){
+            toolTipBase(toolTips, itemStack, itemStack1, COOLDOWN, abilityLocation, -7471171);
+        }
 
         if(!filteredSuffix.isEmpty()){
             toolTips.add(Component.literal(" "));
@@ -300,7 +307,7 @@ public class AugmentItemHelper {
             var abilityLocation = wandAbilityHolder.abilityProperties().keySet().stream().findAny().get();
             toolTips.addAll(getAllAbilityModifiers(itemStack, null, abilityLocation));
             shiftForDetails(toolTips);
-            toolTips.add(GeneralHelpers.withStyleComponent("Placeable in wands", -12368570));
+            toolTips.add(ModHelpers.withStyleComponent("Placeable in wands", -12368570));
         } else {
             toolTips.add(Component.literal("Right-click to discover").withStyle(ChatFormatting.GRAY));
         }
@@ -313,7 +320,7 @@ public class AugmentItemHelper {
         if(wandAbilityHolder != null){
             wandAbilityHolder.abilityProperties().keySet().stream().findFirst().ifPresent(
                 s -> {
-                    var abstractAbility = AbilityRegister.REGISTRY.get(GeneralHelpers.modResourceLocation(s));
+                    var abstractAbility = AbilityRegister.REGISTRY.get(ModHelpers.modResourceLocation(s));
                     if(abstractAbility != null){
                         component.set(
                             Component.literal(abstractAbility.getAbilityName())

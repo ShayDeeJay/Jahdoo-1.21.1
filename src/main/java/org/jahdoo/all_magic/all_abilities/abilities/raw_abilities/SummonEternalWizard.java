@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -19,16 +20,16 @@ import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.all_abilities.abilities.SummonEternalWizardAbility;
 import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.entities.EternalWizard;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ItemsRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
@@ -51,7 +52,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         super.getAoeCloud(aoeCloud);
         var player = this.aoeCloud.getOwner();
         var damage = this.getTag(DAMAGE);
-        this.damage = GeneralHelpers.attributeModifierCalculator(
+        this.damage = ModHelpers.attributeModifierCalculator(
             player,
             (float) damage,
             this.getElementType(),
@@ -68,19 +69,20 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     public double getTag(String name) {
         var wandAbilityHolder = this.aoeCloud.getwandabilityholder();
         var ability = SummonEternalWizardAbility.abilityId.getPath().intern();
-        return GeneralHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
+        return ModHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
     }
 
     @Override
     public void onTickMethod() {
-        if(!(aoeCloud.level() instanceof ServerLevel serverLevel)) return;
-        if(eternalWizard == null && uuid != null) this.eternalWizard = (EternalWizard) serverLevel.getEntity(uuid);
-        if(this.eternalWizard != null) this.clientDiggingParticles(this.eternalWizard, serverLevel);
+        if(aoeCloud.level() instanceof ServerLevel serverLevel){
+            if(eternalWizard == null && uuid != null) this.eternalWizard = (EternalWizard) serverLevel.getEntity(uuid);
+        }
+        if(this.eternalWizard != null) this.clientDiggingParticles(this.eternalWizard, level());
 
         this.spawnAnimation();
         this.spawnEternalWizard();
-        this.setSpawnParticles(serverLevel);
-        this.setOuterRingPulses(serverLevel);
+        this.setSpawnParticles(level());
+        this.setOuterRingPulses(level());
     }
 
     @Override
@@ -114,6 +116,10 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     @Override
     public AbstractElement getElementType() {
         return ElementRegistry.VITALITY.get();
+    }
+
+    private Level level(){
+        return this.aoeCloud.level();
     }
 
     private void spawnAnimation(){
@@ -156,7 +162,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         }
     }
 
-    public void clientDiggingParticles(LivingEntity livingEntity, ServerLevel serverLevel) {
+    public void clientDiggingParticles(LivingEntity livingEntity, Level level) {
         RandomSource randomsource = livingEntity.getRandom();
         BlockState blockstate = livingEntity.getBlockStateOn();
         if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
@@ -164,21 +170,19 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
                 double d0 = livingEntity.getX() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
                 double d1 = livingEntity.getY();
                 double d2 = livingEntity.getZ() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
-                GeneralHelpers.generalHelpers.sendParticles(serverLevel, new BlockParticleOption(ParticleTypes.BLOCK, blockstate), new Vec3(d0, d1, d2), 2, 0, 0.5,0,0.5);
+                ParticleHandlers.sendParticles(level, new BlockParticleOption(ParticleTypes.BLOCK, blockstate), new Vec3(d0, d1, d2), 2, 0, 0.5,0,0.5);
             }
         }
     }
 
-    private void setSpawnParticles(ServerLevel serverLevel){
+    private void setSpawnParticles(Level level){
         BakedParticleOptions bakedParticle = new BakedParticleOptions(ElementRegistry.VITALITY.get().getTypeId(), 20, 3f, false);
         PositionGetters.getInnerRingOfRadiusRandom(aoeCloud.position(), 0.8, 5).forEach(
-            positions -> GeneralHelpers
-                .generalHelpers
-                .sendParticles(serverLevel, bakedParticle, positions, 1, 0, 1,0,0.05)
+            positions -> ParticleHandlers.sendParticles(level, bakedParticle, positions, 1, 0, 1,0,0.05)
         );
     }
 
-    private void setOuterRingPulses(ServerLevel serverLevel){
+    private void setOuterRingPulses(Level level){
         var positions = PositionGetters.getOuterRingOfRadiusList(aoeCloud.position(), 0.8, 20);
         GenericParticleOptions particleOptions = genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, this.getElementType(), 10, 0.1f, true);
         if(this.height < 1) this.height += 0.05; else this.height = 0;
@@ -186,8 +190,8 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         if(position < positions.size()){
             for(double i = 0;  i < 3; i += 1){
                 Vec3 gottenPosition = positions.get(position).add(0, this.height + i,0);
-                GeneralHelpers.generalHelpers.sendParticles(
-                    serverLevel, particleOptions, gottenPosition,
+                ParticleHandlers.sendParticles(
+                    level, particleOptions, gottenPosition,
                     0, 0, 0,0,0
                 );
             }
@@ -197,7 +201,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         }
     }
 
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("summon_eternal_wizard_property");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("summon_eternal_wizard_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

@@ -10,13 +10,13 @@ import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.capabilities.player_abilities.PlayerScale;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.components.DataComponentHelper;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 
 import static org.jahdoo.all_magic.AbilityBuilder.COOLDOWN;
 
 public class PlayerScaleAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("size_shifter");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("size_shifter");
     public static final String SCALE_VALUE = "Player Scale Value";
 
     @Override

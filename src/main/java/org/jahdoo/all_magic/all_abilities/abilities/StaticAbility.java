@@ -7,7 +7,7 @@ import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
@@ -15,7 +15,7 @@ import static org.jahdoo.registers.AttachmentRegister.STATIC;
 
 public class StaticAbility extends AbstractAbility {
 
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("static");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("static");
     public static final String mana_per_damage = "Mana Per Hit";
 
     @Override

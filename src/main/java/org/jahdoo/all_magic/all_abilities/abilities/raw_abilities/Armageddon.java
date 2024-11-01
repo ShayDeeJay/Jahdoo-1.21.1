@@ -2,8 +2,6 @@ package org.jahdoo.all_magic.all_abilities.abilities.raw_abilities;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.all_magic.AbstractElement;
@@ -13,7 +11,7 @@ import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.utils.PositionGetters;
 
@@ -41,7 +39,7 @@ public class Armageddon extends DefaultEntityBehaviour {
         if(this.aoeCloud.getOwner() != null){
             var player = this.aoeCloud.getOwner();
             var damage = this.getTag(DAMAGE);
-            this.damage = GeneralHelpers.attributeModifierCalculator(
+            this.damage = ModHelpers.attributeModifierCalculator(
                 player,
                 (float) damage,
                 this.getElementType(),
@@ -56,7 +54,7 @@ public class Armageddon extends DefaultEntityBehaviour {
     public double getTag(String name) {
         var wandAbilityHolder = this.aoeCloud.getwandabilityholder();
         var ability = ArmageddonAbility.abilityId.getPath().intern();
-        return GeneralHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
+        return ModHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
     }
 
     @Override
@@ -75,7 +73,7 @@ public class Armageddon extends DefaultEntityBehaviour {
 
     private void createModules(){
         var getPositionInRadius = PositionGetters.getInnerRingOfRadiusRandom(aoeCloud.position(), aoe + 2, 100);
-        this.createModule(getPositionInRadius.get(GeneralHelpers.Random.nextInt(0, getPositionInRadius.size()-1)));
+        this.createModule(getPositionInRadius.get(ModHelpers.Random.nextInt(0, getPositionInRadius.size()-1)));
     }
 
     @Override
@@ -103,7 +101,7 @@ public class Armageddon extends DefaultEntityBehaviour {
             armageddonModule(),
             ArmageddonAbility.abilityId.getPath().intern()
         );
-        aoeCloud.setPos(location.x, location.y + GeneralHelpers.Random.nextInt(6, 12), location.z);
+        aoeCloud.setPos(location.x, location.y + ModHelpers.Random.nextInt(6, 12), location.z);
         aoeCloud.level().addFreshEntity(aoeCloud);
     }
 
@@ -123,47 +121,21 @@ public class Armageddon extends DefaultEntityBehaviour {
         this.lifetime = compoundTag.getDouble(LIFETIME);
     }
 
-    public static void particleNova(
-        Level level,
-        Vec3 worldPosition,
-        Vec3 ownerPosition,
-        double speed,
-        int colourMain,
-        int colourFade,
-        int lifetime,
-        float size
-    ){
-        if(level instanceof ServerLevel serverLevel){
-            var directions = worldPosition.subtract(ownerPosition);
-
-            var genericParticle = genericParticleOptions(
-                GENERIC_PARTICLE_SELECTION, lifetime, size,
-                colourMain, colourFade, false
-            );
-
-            ParticleHandlers.sendParticles(
-                serverLevel, genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, speed
-            );
-        }
-    }
-
     private void setParticleNova(Vec3 worldPosition){
-        if(this.aoeCloud.level() instanceof ServerLevel serverLevel){
-            var directions = worldPosition.subtract(this.aoeCloud.position());
-            var getMysticElement = ElementRegistry.MYSTIC.get();
+        var directions = worldPosition.subtract(this.aoeCloud.position());
+        var getMysticElement = ElementRegistry.MYSTIC.get();
 
-            var genericParticle = genericParticleOptions(
-                GENERIC_PARTICLE_SELECTION, 20,
-                6f,
-                getMysticElement.particleColourPrimary(),
-                getMysticElement.particleColourSecondary(),
-                false
-            );
+        var genericParticle = genericParticleOptions(
+            GENERIC_PARTICLE_SELECTION, 20,
+            6f,
+            getMysticElement.particleColourPrimary(),
+            getMysticElement.particleColourSecondary(),
+            false
+        );
 
-            ParticleHandlers.sendParticles(
-                serverLevel, genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.2
-            );
-        }
+        ParticleHandlers.sendParticles(
+            aoeCloud.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.2
+        );
     }
 
     @Override
@@ -171,7 +143,7 @@ public class Armageddon extends DefaultEntityBehaviour {
         return ElementRegistry.INFERNO.get();
     }
 
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("armageddon_property");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("armageddon_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

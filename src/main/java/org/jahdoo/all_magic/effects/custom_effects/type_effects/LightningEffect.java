@@ -9,7 +9,7 @@ import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.all_magic.effects.CustomMobEffect;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.particle.ParticleHandlers.spawnElectrifiedParticles;
 
@@ -22,7 +22,7 @@ public class LightningEffect extends MobEffect {
     @Override
     public boolean applyEffectTick(LivingEntity targetEntity, int pAmplifier) {
         if(targetEntity.level() instanceof ServerLevel serverLevel){
-            int getRandomChance = GeneralHelpers.Random.nextInt(0,Math.max((20-pAmplifier), 1));
+            int getRandomChance = ModHelpers.Random.nextInt(0,Math.max((20-pAmplifier), 1));
             if(targetEntity.hasEffect(EffectsRegister.STUN_EFFECT.getDelegate())){
                 spawnElectrifiedParticles(serverLevel, targetEntity.position(), ElementRegistry.LIGHTNING.get().getParticleGroup().magicSlow(), 1, targetEntity, 0.1, 1);
             } else {

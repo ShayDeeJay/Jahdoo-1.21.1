@@ -7,15 +7,16 @@ import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 //import org.assets.jahdoo.capabilities.player_abilities.NovaSmash;
 import org.jahdoo.all_magic.JahdooRarity;
+import org.jahdoo.items.wand.CastHelper;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 import static org.jahdoo.registers.AttachmentRegister.NOVA_SMASH;
 
 public class NovaSmashAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("nova_smash");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("nova_smash");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -27,6 +28,7 @@ public class NovaSmashAbility extends AbstractAbility {
         if(!player.onGround()) {
             var novaSmash = player.getData(NOVA_SMASH);
             novaSmash.setCanSmash(true);
+            CastHelper.chargeManaAndCooldown(abilityId.getPath().intern(), player);
         }
     }
 
@@ -41,6 +43,11 @@ public class NovaSmashAbility extends AbstractAbility {
             .setMana(20, 5,  1)
             .setCooldown(60, 20, 5)
             .build();
+    }
+
+    @Override
+    public boolean internallyChargeManaAndCooldown() {
+        return true;
     }
 
     @Override

@@ -5,8 +5,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.networking.packet.CooldownsDataSyncS2CPacket;
-import org.jahdoo.networking.packet.ManaDataSyncS2CPacket;
+import org.jahdoo.networking.packet.server2client.CooldownsDataSyncS2CPacket;
+import org.jahdoo.networking.packet.server2client.ManaDataSyncS2CPacket;
 import org.jahdoo.registers.AttributesRegister;
 
 import java.util.Map;

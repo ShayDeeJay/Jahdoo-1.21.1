@@ -21,7 +21,7 @@ import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -151,7 +151,7 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
         if(entity == this.getOwner() || entity instanceof EternalWizard) return;
         if (getProjectile == null) return;
 
-        ParticleHandlers.spawnPoof(serverLevel, entityHitResult.getLocation(), 5, getProjectile.getElementType().getParticleGroup().baked());
+        ParticleHandlers.particleBurst(serverLevel, entityHitResult.getLocation(), 5, getProjectile.getElementType().getParticleGroup().baked());
         getProjectile.onEntityHit(livingEntity);
     }
 
@@ -163,7 +163,7 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
         getProjectile.onBlockBlockHit(blockHitResult);
         if (!blockHitResult.isInside()) {
             var splashParticles = new BakedParticleOptions(this.getElementType().getTypeId(),5,2f, false);
-            ParticleHandlers.spawnPoof(serverLevel, blockHitResult.getLocation(), 10, splashParticles);
+            ParticleHandlers.particleBurst(serverLevel, blockHitResult.getLocation(), 10, splashParticles);
         }
     }
 
@@ -231,7 +231,7 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
         this.wandAbilityHolder = DefaultEntityBehaviour.readTag(pCompound, this.abilityId);
         if(this.getProjectile == null && !selectedAbility.isEmpty()){
             this.getProjectile = EntityPropertyRegister.REGISTRY
-                .get(GeneralHelpers.modResourceLocation(selectedAbility))
+                .get(ModHelpers.modResourceLocation(selectedAbility))
                 .getEntityProperty();
             this.getProjectile.readCompoundTag(pCompound);
             this.getProjectile.getElementProjectile(this);

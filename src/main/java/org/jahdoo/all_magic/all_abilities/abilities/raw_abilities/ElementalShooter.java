@@ -19,7 +19,7 @@ import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.all_magic.effects.CustomMobEffect;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
@@ -45,7 +45,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
             var damage = this.getTag(DAMAGE);
             var elementId = getTag(SET_ELEMENT_TYPE);
             var element = ElementRegistry.getElementByTypeId((int) elementId).getFirst();
-            this.damage = GeneralHelpers.attributeModifierCalculator(
+            this.damage = ModHelpers.attributeModifierCalculator(
                 (LivingEntity) player,
                 (float) damage,
                 element,
@@ -79,7 +79,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
     public double getTag(String name) {
         var wandAbilityHolder = this.genericProjectile.wandAbilityHolder();
         var ability = ElementalShooterAbility.abilityId.getPath().intern();
-        return GeneralHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
+        return ModHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
     }
 
     @Override
@@ -87,8 +87,8 @@ public class ElementalShooter extends DefaultEntityBehaviour {
         if(!(this.genericProjectile.level() instanceof ServerLevel serverLevel)) return;
         if(blockBounce == numberOfRicochets) this.genericProjectile.discard();
 
-        GeneralHelpers.getSoundWithPosition(this.genericProjectile.level(), this.genericProjectile.blockPosition(), getElement().getElementSound(), 0.4f);
-        ParticleHandlers.spawnPoof(serverLevel, this.genericProjectile.position(), 2, getElement().getParticleGroup().bakedSlow());
+        ModHelpers.getSoundWithPosition(this.genericProjectile.level(), this.genericProjectile.blockPosition(), getElement().getElementSound(), 0.4f);
+        ParticleHandlers.particleBurst(serverLevel, this.genericProjectile.position(), 2, getElement().getParticleGroup().bakedSlow());
         this.setReboundBehaviour(blockHitResult);
     }
 
@@ -100,7 +100,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
         if(!(this.genericProjectile.level() instanceof ServerLevel serverLevel)) return;
-        ParticleHandlers.spawnPoof(serverLevel, this.genericProjectile.position(), 1, getElement().getParticleGroup().bakedSlow());
+        ParticleHandlers.particleBurst(serverLevel, this.genericProjectile.position(), 1, getElement().getParticleGroup().bakedSlow());
         this.applyEffect(hitEntity, getElement().elementEffect());
         this.setDamageByOwner(hitEntity);
         this.genericProjectile.discard();
@@ -120,7 +120,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
     public void discardCondition() {
         if (this.genericProjectile.getOwner() != null && this.genericProjectile.distanceTo(this.genericProjectile.getOwner()) > 50f) {
             if(!(this.genericProjectile.level() instanceof ServerLevel serverLevel)) return;
-            ParticleHandlers.spawnPoof(serverLevel, this.genericProjectile.position(), 1, getElement().getParticleGroup().bakedSlow());
+            ParticleHandlers.particleBurst(serverLevel, this.genericProjectile.position(), 1, getElement().getParticleGroup().bakedSlow());
             this.genericProjectile.discard();
         }
     }
@@ -138,7 +138,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 
     private void applyEffect(LivingEntity livingEntity, Holder<MobEffect> mobEffect){
         if(!livingEntity.hasEffect(mobEffect)){
-            if (GeneralHelpers.Random.nextInt(0, this.effectChance == 0 ? 1 : (int) this.effectChance) == 0) {
+            if (ModHelpers.Random.nextInt(0, this.effectChance == 0 ? 1 : (int) this.effectChance) == 0) {
                 livingEntity.addEffect(new CustomMobEffect(mobEffect, (int) effectDuration, (int) effectStrength));
             }
         }
@@ -156,7 +156,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 //        if(!target.isAlive()) throwNewItem(target, new ItemStack(ItemsRegister.AUGMENT_ITEM.get()));
     }
 
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("elemental_shooter_property");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("elemental_shooter_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

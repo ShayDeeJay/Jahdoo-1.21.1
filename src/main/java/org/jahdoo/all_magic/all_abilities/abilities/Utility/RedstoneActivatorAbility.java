@@ -9,12 +9,12 @@ import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class RedstoneActivatorAbility extends AbstractAbility {
-    private final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("redstone_activator");
+    private final ResourceLocation abilityId = ModHelpers.modResourceLocation("redstone_activator");
 
     @Override
     public void invokeAbility(Player player) {

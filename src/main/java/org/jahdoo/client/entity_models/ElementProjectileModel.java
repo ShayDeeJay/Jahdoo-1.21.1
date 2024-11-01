@@ -1,9 +1,8 @@
 package org.jahdoo.client.entity_models;
 
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.JahdooMod;
 import org.jahdoo.entities.ElementProjectile;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import software.bernie.geckolib.model.GeoModel;
 
 
@@ -17,7 +16,7 @@ public class ElementProjectileModel extends GeoModel<ElementProjectile> {
 
     @Override
     public ResourceLocation getModelResource(ElementProjectile animatable) {
-        return GeneralHelpers.modResourceLocation("geo/entity/projectile.geo.json");
+        return ModHelpers.modResourceLocation("geo/entity/projectile.geo.json");
     }
 
     @Override
@@ -27,7 +26,7 @@ public class ElementProjectileModel extends GeoModel<ElementProjectile> {
 
     @Override
     public ResourceLocation getAnimationResource(ElementProjectile animatable) {
-        return GeneralHelpers.modResourceLocation("animations/entity/projectile.animation.json");
+        return ModHelpers.modResourceLocation("animations/entity/projectile.animation.json");
     }
 
 }

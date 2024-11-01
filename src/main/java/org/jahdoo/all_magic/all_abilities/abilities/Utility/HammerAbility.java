@@ -9,18 +9,18 @@ import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class HammerAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("hammer");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("hammer");
     public static final String HAMMER_SIZE = "Hammer Range";
 
     @Override
     public void invokeAbility(Player player) {
         GenericProjectile genericProjectile = new GenericProjectile(
-            player, 0.06,
+            player, 0,
             EntityPropertyRegister.HAMMER.get().setAbilityId(),
             abilityId.getPath().intern()
         );
@@ -41,7 +41,6 @@ public class HammerAbility extends AbstractAbility {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(10, 5, 1)
-            .setCooldown(40, 10, 5)
             .setAbilityTagModifiersRandom(HAMMER_SIZE, 12,3, true, 3)
             .build();
     }

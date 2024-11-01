@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static org.jahdoo.utils.GeneralHelpers.Random;
+import static org.jahdoo.utils.ModHelpers.Random;
 
 public class PositionGetters {
 

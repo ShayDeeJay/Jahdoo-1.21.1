@@ -6,22 +6,20 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.capabilities.AbstractAttachment;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
-import static org.jahdoo.registers.AttachmentRegister.BOUNCY_FOOT;
 import static org.jahdoo.registers.AttachmentRegister.PLAYER_SCALE;
 
 public class PlayerScale implements AbstractAttachment {
 
     private ServerPlayer serverPlayer;
     private float scaledValue;
-    private final ResourceLocation effectId = GeneralHelpers.modResourceLocation("jahdoo_scale_player");
+    private final ResourceLocation effectId = ModHelpers.modResourceLocation("jahdoo_scale_player");
     private final HashMultimap<Holder<Attribute>, AttributeModifier> multiMap = HashMultimap.create();
 
     public PlayerScale(ServerPlayer serverPlayer){

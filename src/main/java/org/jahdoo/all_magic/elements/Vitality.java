@@ -7,15 +7,14 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import org.jahdoo.all_magic.AbstractElement;
-import org.jahdoo.all_magic.ElementProperties;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ItemsRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.particle.ParticleStore.*;
 
 public class Vitality extends AbstractElement {
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("vitality");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("vitality");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -59,7 +58,7 @@ public class Vitality extends AbstractElement {
 
     @Override
     public ResourceLocation getAbilityProjectileTexture() {
-        return GeneralHelpers.modResourceLocation("textures/entity/vitality_projectile.png");
+        return ModHelpers.modResourceLocation("textures/entity/vitality_projectile.png");
     }
 
     @Override

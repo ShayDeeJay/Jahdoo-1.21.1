@@ -6,7 +6,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.JahdooMod.MOD_ID;
 
@@ -16,7 +16,7 @@ public class RecipeRegistry {
 
     public static final String CREATOR_RECIPE_ID = "creator_block";
 
-    public static final DeferredHolder<RecipeType<?>, RecipeType<CreatorRecipe>> CREATOR_TYPE = RECIPE_TYPES.register(CREATOR_RECIPE_ID, () -> RecipeType.simple(GeneralHelpers.modResourceLocation(CREATOR_RECIPE_ID)));
+    public static final DeferredHolder<RecipeType<?>, RecipeType<CreatorRecipe>> CREATOR_TYPE = RECIPE_TYPES.register(CREATOR_RECIPE_ID, () -> RecipeType.simple(ModHelpers.modResourceLocation(CREATOR_RECIPE_ID)));
     public static final DeferredHolder<RecipeSerializer<?>, CreatorRecipe.Serializer> CREATOR_SERIALIZER = RECIPE_SERIALIZERS.register(CREATOR_RECIPE_ID, CreatorRecipe.Serializer::new);
 
 

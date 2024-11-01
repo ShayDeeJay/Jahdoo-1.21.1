@@ -7,18 +7,15 @@ import org.jahdoo.all_magic.AbilityBuilder;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
-import org.jahdoo.all_magic.all_abilities.abilities.raw_abilities.ArcaneShift;
-import org.jahdoo.registers.AttachmentRegister;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 
-import static org.jahdoo.all_magic.AbilityBuilder.CASTING_DISTANCE;
 import static org.jahdoo.registers.AttachmentRegister.DIMENSIONAL_RECALL;
 
 public class DimensionalRecallAbility extends AbstractAbility {
 
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("dimensional_recall");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("dimensional_recall");
 
     @Override
     public int getCastType() {
@@ -43,8 +40,8 @@ public class DimensionalRecallAbility extends AbstractAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(60, 40, 5)
-            .setCooldown(4000, 2000, 100)
+            .setMana(120, 80, 10)
+            .setCooldown(6000, 3600, 400)
             .build();
     }
 

@@ -14,7 +14,7 @@ import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.gui.AbstractInternalContainer;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.components.DataComponentHelper;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -103,7 +103,7 @@ public class WandBlockMenu extends AbstractInternalContainer {
                             //set in wand
                             targetSlots.setStackInSlot(i, copyOfSourceStack.copyWithCount(1));
 
-                            GeneralHelpers.getSoundWithPosition(level, getWandBlockEntity().getBlockPos(), SoundEvents.ARMOR_EQUIP_GENERIC.value());
+                            ModHelpers.getSoundWithPosition(level, getWandBlockEntity().getBlockPos(), SoundEvents.ARMOR_EQUIP_GENERIC.value());
                             this.getWandBlockEntity().setAllAbilities();
                         }
                     }

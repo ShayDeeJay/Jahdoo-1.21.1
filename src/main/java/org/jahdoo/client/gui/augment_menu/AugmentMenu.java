@@ -1,7 +1,5 @@
 package org.jahdoo.client.gui.augment_menu;
 
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -14,8 +12,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityIconButton;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
-import org.jahdoo.networking.packet.SyncPlayerItemComponentsPacket;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.networking.packet.client2server.SyncComponentC2S;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -27,8 +25,8 @@ import static org.jahdoo.all_magic.AbilityBuilder.MANA_COST;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
 public class AugmentMenu extends Screen  {
-    public static final ResourceLocation BUTTON_UNSELECTED = GeneralHelpers.modResourceLocation("textures/gui/gui_button_unselected.png");
-    public static final ResourceLocation BUTTON_SELECTED = GeneralHelpers.modResourceLocation("textures/gui/gui_button_selected.png");
+    public static final ResourceLocation BUTTON_UNSELECTED = ModHelpers.modResourceLocation("textures/gui/gui_button_unselected.png");
+    public static final ResourceLocation BUTTON_SELECTED = ModHelpers.modResourceLocation("textures/gui/gui_button_selected.png");
     private final WidgetSprites BUTTON = new WidgetSprites(BUTTON_UNSELECTED, BUTTON_UNSELECTED);
     private final WidgetSprites BUTTON2 = new WidgetSprites(BUTTON_SELECTED, BUTTON_SELECTED);
     private final WandAbilityHolder holder;
@@ -92,7 +90,7 @@ public class AugmentMenu extends Screen  {
     }
 
     public void menuButton(String textureLocation, int posX, int posY, int size, Button.OnPress action) {
-        var location = GeneralHelpers.modResourceLocation(textureLocation);
+        var location = ModHelpers.modResourceLocation(textureLocation);
         var button = new WidgetSprites(location, location);
         this.addRenderableWidget(new AbilityIconButton(posX, posY, button, size, action, false));
     }
@@ -107,10 +105,10 @@ public class AugmentMenu extends Screen  {
                     var abilityModifier = new AbilityHolder.AbilityModifiers(v.actualValue(), v.highestValue(), v.lowestValue(), v.step(), i, v.isHigherBetter());
                     newHolder.abilityProperties().put(e, abilityModifier);
                     newWandHolder.abilityProperties().put(abilityName, newHolder);
-                    PacketDistributor.sendToServer(new SyncPlayerItemComponentsPacket(newWandHolder));
+                    PacketDistributor.sendToServer(new SyncComponentC2S(newWandHolder));
                     this.rebuildWidgets();
                 },
-                GeneralHelpers.roundNonWhole(i),
+                ModHelpers.roundNonWholeString(i),
                 i == v.setValue(),
                 i <= v.actualValue()
             )

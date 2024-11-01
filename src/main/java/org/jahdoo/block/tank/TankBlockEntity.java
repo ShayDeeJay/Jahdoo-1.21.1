@@ -1,21 +1,20 @@
 package org.jahdoo.block.tank;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.AbstractTankUser;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
 import java.util.ArrayList;
@@ -97,11 +96,11 @@ public class TankBlockEntity extends AbstractBEInventory {
             PositionGetters.getOuterRingOfRadiusRandom(pos.getCenter().subtract(0, 0.5, 0), 0.5, 2,
                 positions -> {
                     Vec3 direction = pos.getCenter().add(0, 1, 0).subtract(positions).normalize();
-                    GeneralHelpers.generalHelpers.sendParticles(
+                    ParticleHandlers.sendParticles(
                         serverLevel, processingParticle(5,1.1f, false, 0.2),
                         positions, 0,
                         direction.x, direction.y, direction.z,
-                        GeneralHelpers.Random.nextDouble(0.08,0.12)
+                        ModHelpers.Random.nextDouble(0.08,0.12)
                     );
                 }
             );

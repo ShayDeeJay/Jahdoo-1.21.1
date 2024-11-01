@@ -11,12 +11,12 @@ import org.jahdoo.entities.ElementProjectile;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
 import org.jahdoo.registers.EntityPropertyRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class QuantumDestroyerAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("quantum_destroyer");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("quantum_destroyer");
     public static final String radius = "Energy Radius";
     public static final String gravitationalPull = "Gravitational Pull";
 

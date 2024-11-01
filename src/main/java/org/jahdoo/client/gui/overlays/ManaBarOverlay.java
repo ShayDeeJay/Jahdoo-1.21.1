@@ -13,7 +13,7 @@ import org.jahdoo.capabilities.CastingData;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.components.DataComponentHelper;
 
 import static org.jahdoo.client.SharedUI.drawStringWithBackground;
@@ -21,9 +21,9 @@ import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 
 public class ManaBarOverlay implements LayeredDraw.Layer{
     float fadeIn;
-    public static final ResourceLocation MANA_GUI = GeneralHelpers.modResourceLocation("textures/gui/mana_v4_textured.png");
-    public static final ResourceLocation TYPE_OVERLAY = GeneralHelpers.modResourceLocation("textures/gui/man_type_overlay.png");
-    public static final ResourceLocation MANA_TYPE = GeneralHelpers.modResourceLocation("textures/gui/mana_with_type.png");
+    public static final ResourceLocation MANA_GUI = ModHelpers.modResourceLocation("textures/gui/mana_v4_textured.png");
+    public static final ResourceLocation TYPE_OVERLAY = ModHelpers.modResourceLocation("textures/gui/man_type_overlay.png");
+    public static final ResourceLocation MANA_TYPE = ModHelpers.modResourceLocation("textures/gui/mana_with_type.png");
     private int types;
     AlignedGui alignedGui;
 

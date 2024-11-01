@@ -2,34 +2,28 @@ package org.jahdoo.all_magic.all_abilities.abilities.raw_abilities.utility;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.UtilityHelpers;
 import org.jahdoo.all_magic.all_abilities.abilities.Utility.HammerAbility;
-import org.jahdoo.entities.ElementProjectile;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.particle.ParticleHandlers;
 
-import static org.jahdoo.all_magic.AbilityBuilder.SIZE;
 import static org.jahdoo.all_magic.all_abilities.abilities.Utility.HammerAbility.HAMMER_SIZE;
 
 public class Hammer extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("hammer_property");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("hammer_property");
     BlockHitResult blockHitResult;
     double breakerSize;
     int size;
-    int counter;
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -51,7 +45,7 @@ public class Hammer extends AbstractUtilityProjectile {
     @Override
     public double getTag(String name) {
         var wandAbilityHolder = this.genericProjectile.wandAbilityHolder();
-        return GeneralHelpers.getModifierValue(wandAbilityHolder, HammerAbility.abilityId.getPath().intern()).get(name).setValue();
+        return ModHelpers.getModifierValue(wandAbilityHolder, HammerAbility.abilityId.getPath().intern()).get(name).setValue();
     }
 
     @Override
@@ -87,7 +81,7 @@ public class Hammer extends AbstractUtilityProjectile {
                                 z * (isLookingUpOrDown || axisX ? 1 : 0)
                             );
 
-                            UtilityHelpers.dropItemsOrBlock(genericProjectile, offsetPos, true, false);
+                            UtilityHelpers.dropItemsOrBlock(genericProjectile, offsetPos, false, false);
 
                             var particle = new GenericParticleOptions(
                                 ParticleStore.SOFT_PARTICLE_SELECTION,
@@ -96,7 +90,7 @@ public class Hammer extends AbstractUtilityProjectile {
                                 3, 1, false, 0
                             );
 
-                            ParticleHandlers.spawnPoof(serverLevel, offsetPos.getCenter(), 1,
+                            ParticleHandlers.particleBurst(serverLevel, offsetPos.getCenter(), 1,
                                 particle,
                                 !(isLookingUpOrDown && axisX) ? 0 : 0.15, isLookingUpOrDown ? 0 : 0.15, !(isLookingUpOrDown && axisZ) ? 0 : 0.15,
                                 0.005f, 1
@@ -106,10 +100,10 @@ public class Hammer extends AbstractUtilityProjectile {
                 }
             }
 
-            counter++;
-
-            if(counter == 1) genericProjectile.discard();
+            super.onBlockBlockHit(blockHitResult);
+            genericProjectile.discard();
         }
+
     }
 
 }

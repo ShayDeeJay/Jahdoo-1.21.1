@@ -10,11 +10,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.registers.BlocksRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.ModTags;
 
 public class LightPlacer extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("light_placer_property");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("light_placer_property");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -40,7 +40,7 @@ public class LightPlacer extends AbstractUtilityProjectile {
             }
         }
         level.playSound(null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), level.getBlockState(blockHitResult.getBlockPos()).getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1,1);
-
+        super.onBlockBlockHit(blockHitResult);
         genericProjectile.discard();
     }
 

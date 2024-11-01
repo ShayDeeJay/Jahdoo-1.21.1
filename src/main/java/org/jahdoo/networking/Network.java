@@ -5,7 +5,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.networking.packet.*;
+import org.jahdoo.networking.packet.client2server.*;
+import org.jahdoo.networking.packet.server2client.*;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = JahdooMod.MOD_ID)
 public class Network {
@@ -18,12 +19,15 @@ public class Network {
         payloadRegistrar.playToServer(SelectedAbilityC2SPacket.TYPE, SelectedAbilityC2SPacket.STREAM_CODEC, SelectedAbilityC2SPacket::handle);
         payloadRegistrar.playToServer(StopUsingC2SPacket.TYPE, StopUsingC2SPacket.STREAM_CODEC, StopUsingC2SPacket::handle);
         payloadRegistrar.playToServer(FlyingPacketC2SPacket.TYPE, FlyingPacketC2SPacket.STREAM_CODEC, FlyingPacketC2SPacket::handle);
-        payloadRegistrar.playToServer(SyncPlayerItemComponentsPacket.TYPE, SyncPlayerItemComponentsPacket.STREAM_CODEC, SyncPlayerItemComponentsPacket::handle);
+        payloadRegistrar.playToServer(SyncComponentC2S.TYPE, SyncComponentC2S.STREAM_CODEC, SyncComponentC2S::handle);
+        payloadRegistrar.playToServer(FallDistanceSyncC2SPacket.TYPE, FallDistanceSyncC2SPacket.STREAM_CODEC, FallDistanceSyncC2SPacket::handle);
 
         payloadRegistrar.playToClient(ManaDataSyncS2CPacket.TYPE, ManaDataSyncS2CPacket.STREAM_CODEC, ManaDataSyncS2CPacket::handle);
         payloadRegistrar.playToClient(CooldownsDataSyncS2CPacket.TYPE, CooldownsDataSyncS2CPacket.STREAM_CODEC, CooldownsDataSyncS2CPacket::handle);
         payloadRegistrar.playToClient(MageFlightPacketS2CPacket.TYPE, MageFlightPacketS2CPacket.STREAM_CODEC, MageFlightPacketS2CPacket::handle);
-//        payloadRegistrar.playToClient(NovaSmashS2CPacket.TYPE, NovaSmashS2CPacket.STREAM_CODEC, NovaSmashS2CPacket::handle);
+        payloadRegistrar.playToClient(MageFlightDataSyncS2CPacket.TYPE, MageFlightDataSyncS2CPacket.STREAM_CODEC, MageFlightDataSyncS2CPacket::handle);
+        payloadRegistrar.playToClient(BouncyFootDataSyncS2CPacket.TYPE, BouncyFootDataSyncS2CPacket.STREAM_CODEC, BouncyFootDataSyncS2CPacket::handle);
+        payloadRegistrar.playToClient(NovaSmashS2CPacket.TYPE, NovaSmashS2CPacket.STREAM_CODEC, NovaSmashS2CPacket::handle);
     }
 
 }

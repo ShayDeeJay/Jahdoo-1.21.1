@@ -13,15 +13,15 @@ import org.jahdoo.entities.GenericProjectile;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
 
 import org.jahdoo.registers.EntityPropertyRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
-import static org.jahdoo.utils.GeneralHelpers.Random;
+import static org.jahdoo.utils.ModHelpers.Random;
 
 public class ElementalShooterAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("elemental_shooter");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("elemental_shooter");
     public static final String numberOfProjectiles = "Shot Multiplier";
     public static final String numberOfRicochet = "Ricochets";
     public static final String velocity = "Projectile Velocity";
@@ -74,7 +74,7 @@ public class ElementalShooterAbility extends AbstractAbility {
     }
 
     private double getTag(Player player, String name){
-        return GeneralHelpers.getModifierValue(player.getMainHandItem().get(WAND_ABILITY_HOLDER.get()), abilityId.getPath().intern()).get(name).actualValue();
+        return ModHelpers.getModifierValue(player.getMainHandItem().get(WAND_ABILITY_HOLDER.get()), abilityId.getPath().intern()).get(name).actualValue();
     }
 
     @Override
@@ -98,7 +98,7 @@ public class ElementalShooterAbility extends AbstractAbility {
             genericProjectile.setOwner(player);
             player.level().addFreshEntity(genericProjectile);
         }
-        GeneralHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.ENDER_EYE_DEATH, 0.25f);
+        ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.ENDER_EYE_DEATH, 0.25f);
     }
 
     @Override

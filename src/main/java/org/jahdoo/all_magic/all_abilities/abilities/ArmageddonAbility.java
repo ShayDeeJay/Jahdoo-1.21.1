@@ -14,12 +14,12 @@ import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class ArmageddonAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("armageddon");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("armageddon");
     public static final String SPAWNING_SPEED = "Spawning Speed";
 
     @Override

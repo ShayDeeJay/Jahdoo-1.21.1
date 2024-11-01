@@ -6,7 +6,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 public class SoundRegister {
     private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, JahdooMod.MOD_ID);
@@ -26,6 +26,6 @@ public class SoundRegister {
     public static final DeferredHolder<SoundEvent, SoundEvent> MAGIC_EXPLOSION = registerSoundEvent("magic_explosion");
 
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
-        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(GeneralHelpers.modResourceLocation(name)));
+        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(ModHelpers.modResourceLocation(name)));
     }
 }

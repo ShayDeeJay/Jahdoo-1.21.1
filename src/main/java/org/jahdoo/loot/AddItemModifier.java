@@ -5,13 +5,10 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
@@ -24,17 +21,16 @@ import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.Random;
 import java.util.function.Supplier;
-import java.util.jar.Attributes;
 
 import static org.jahdoo.all_magic.JahdooRarity.*;
 import static org.jahdoo.recipe.CreatorRecipe.createWandAttributes;
+import static org.jahdoo.utils.ModHelpers.*;
 
 public class AddItemModifier extends LootModifier {
     public static final Supplier<MapCodec<AddItemModifier>> CODEC = Suppliers.memoize(
@@ -54,7 +50,7 @@ public class AddItemModifier extends LootModifier {
 
     @Override
     protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-        var random = GeneralHelpers.Random;
+        var random = ModHelpers.Random;
         for(LootItemCondition condition : this.conditions) {
             if(!condition.test(context)) return generatedLoot;
         }
@@ -76,14 +72,19 @@ public class AddItemModifier extends LootModifier {
     }
 
     public static void createTomeAttributes(JahdooRarity rarity, ItemStack itemStack, Pair<Double, Double> regenValue, Pair<Double, Double> manaPool){
+
+        double rangeRegenValue = ModHelpers.Random.nextDouble(regenValue.getFirst(), regenValue.getSecond());
+        var randomRegenValue = singleFormattedDouble(rangeRegenValue);
         CuriosApi.addModifier(
-            itemStack, AttributesRegister.MANA_REGEN, GeneralHelpers.modResourceLocation("mana_regen"),
-            GeneralHelpers.Random.nextDouble(regenValue.getFirst(), regenValue.getSecond()), AttributeModifier.Operation.ADD_VALUE, "tome"
+            itemStack, AttributesRegister.MANA_REGEN, ModHelpers.modResourceLocation("mana_regen"),
+            randomRegenValue, AttributeModifier.Operation.ADD_VALUE, "tome"
         );
 
+        var rangeManaPool = ModHelpers.Random.nextDouble(manaPool.getFirst(), manaPool.getSecond());
+        var randomManaPool = singleFormattedDouble(rangeManaPool);
         CuriosApi.addModifier(
-            itemStack, AttributesRegister.MANA_POOL, GeneralHelpers.modResourceLocation("mana_pool"),
-            GeneralHelpers.Random.nextDouble(manaPool.getFirst(), manaPool.getSecond()), AttributeModifier.Operation.ADD_VALUE, "tome"
+            itemStack, AttributesRegister.MANA_POOL, ModHelpers.modResourceLocation("mana_pool"),
+            randomManaPool, AttributeModifier.Operation.ADD_VALUE, "tome"
         );
 
         itemStack.set(DataComponentRegistry.JAHDOO_RARITY.get(), rarity.getId());
@@ -123,11 +124,11 @@ public class AddItemModifier extends LootModifier {
         var itemStack = new ItemStack(item);
 
         switch (getRarity()){
-            case COMMON -> createTomeAttributes(COMMON, itemStack, Pair.of(0.0, 10.0), Pair.of(0.0, 10.0));
-            case UNCOMMON -> createTomeAttributes(UNCOMMON, itemStack, Pair.of(10.0, 20.0), Pair.of(10.0, 20.0));
-            case EPIC -> createTomeAttributes(EPIC, itemStack, Pair.of(15.0, 20.0), Pair.of(15.0, 20.0));
-            case LEGENDARY -> createTomeAttributes(LEGENDARY, itemStack, Pair.of(20.0, 30.0), Pair.of(20.0, 30.0));
-            case ETERNAL -> createTomeAttributes(ETERNAL, itemStack, Pair.of(30.0, 50.0), Pair.of(30.0, 50.0));
+            case COMMON -> createTomeAttributes(COMMON, itemStack, Pair.of(0.0, 10.0), Pair.of(20.0, 40.0));
+            case UNCOMMON -> createTomeAttributes(UNCOMMON, itemStack, Pair.of(10.0, 20.0), Pair.of(40.0, 60.0));
+            case EPIC -> createTomeAttributes(EPIC, itemStack, Pair.of(15.0, 20.0), Pair.of(60.0, 80.0));
+            case LEGENDARY -> createTomeAttributes(LEGENDARY, itemStack, Pair.of(20.0, 30.0), Pair.of(80.0, 100.0));
+            case ETERNAL -> createTomeAttributes(ETERNAL, itemStack, Pair.of(30.0, 50.0), Pair.of(100.0, 120.0));
         }
 
         generatedLoot.add(itemStack);

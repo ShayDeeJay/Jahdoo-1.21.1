@@ -1,7 +1,7 @@
 package org.jahdoo.all_magic;
 
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 import java.util.Objects;
 
@@ -24,7 +24,7 @@ public abstract class AbstractEntityProperty {
     }
 
     public String getProjectilePropertyName(){
-        return GeneralHelpers.stringIdToName(setAbilityId());
+        return ModHelpers.stringIdToName(setAbilityId());
     }
 
 }

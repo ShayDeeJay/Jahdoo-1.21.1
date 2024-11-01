@@ -10,7 +10,7 @@ import org.jahdoo.items.augments.Augment;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.components.DataComponentHelper;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -82,7 +82,7 @@ public class AugmentSlot extends SlotItemHandler {
     public void setChanged() {
         this.wandBlockMenu.getWandBlockEntity().setAllAbilities();
         if(this.wandBlockMenu.getCarried().isEmpty() || this.wandBlockMenu.getCarried().getItem() instanceof Augment){
-            GeneralHelpers.getSoundWithPosition(
+            ModHelpers.getSoundWithPosition(
                 Objects.requireNonNull(this.wandBlockMenu.getWandBlockEntity().getLevel()),
                 this.wandBlockMenu.getWandBlockEntity().getBlockPos(),
                 SoundEvents.ARMOR_EQUIP_CHAIN.value()

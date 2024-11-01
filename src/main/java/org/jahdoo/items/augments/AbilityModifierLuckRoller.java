@@ -1,8 +1,9 @@
 package org.jahdoo.items.augments;
 
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 public class AbilityModifierLuckRoller {
+
 
     public static double getWeightedRandomDouble(double high, double low, boolean isHigherBetter, double step, double boundLower){
         double boundUpper = 20.0;
@@ -10,7 +11,7 @@ public class AbilityModifierLuckRoller {
             double ub = probability(boundLower);
             double lb = probability(boundUpper);
 
-            double domain = GeneralHelpers.Random.nextDouble(boundLower, boundUpper);
+            double domain = ModHelpers.Random.nextDouble(boundLower, boundUpper);
             double probability = probability(domain);
 
             double normalized = (probability - lb) / (ub - lb);

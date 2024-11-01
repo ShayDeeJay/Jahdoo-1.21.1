@@ -8,10 +8,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 
 public class BlockPlacer extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("block_placer_property");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("block_placer_property");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -32,10 +32,9 @@ public class BlockPlacer extends AbstractUtilityProjectile {
         var side = blockHitResult.getDirection();
         if (player.level().isClientSide) return;
 
-        if (player.level().getBlockState(blockPos.relative(side)).canBeReplaced()) {
-            if (replaceBlock == Blocks.AIR) return;
+        if (player.level().getBlockState(blockPos.relative(side)).canBeReplaced() && replaceBlock != Blocks.AIR) {
             player.level().setBlockAndUpdate(blockPos.relative(side), replaceBlock.defaultBlockState());
-            GeneralHelpers.getSoundWithPosition(genericProjectile.level(), blockPos, replaceBlock.defaultBlockState().getSoundType().getBreakSound());
+            ModHelpers.getSoundWithPosition(genericProjectile.level(), blockPos, replaceBlock.defaultBlockState().getSoundType().getBreakSound());
 
             if (!player.isCreative()) {
                 ItemStack handItem = player.getOffhandItem();
@@ -54,7 +53,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
                 }
             }
         }
-
+        super.onBlockBlockHit(blockHitResult);
         genericProjectile.discard();
     }
 }

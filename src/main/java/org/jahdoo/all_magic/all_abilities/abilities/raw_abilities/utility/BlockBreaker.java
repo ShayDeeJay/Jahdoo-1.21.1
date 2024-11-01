@@ -8,19 +8,17 @@ import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.UtilityHelpers;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.particle.ParticleHandlers;
 
 public class BlockBreaker extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = GeneralHelpers.modResourceLocation("block_breaker_property");
+    ResourceLocation abilityId = ModHelpers.modResourceLocation("block_breaker_property");
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
-        if (genericProjectile.level() instanceof  ServerLevel serverLevel) {
-            genericProjectile.level().playSound(null, genericProjectile.getX(), genericProjectile.getY(), genericProjectile.getZ(), genericProjectile.level().getBlockState(blockHitResult.getBlockPos()).getSoundType().getBreakSound(), SoundSource.BLOCKS, 1,1);
-            UtilityHelpers.dropItemsOrBlock(genericProjectile, blockHitResult.getBlockPos(), false, false);
-            ParticleHandlers.spawnPoof(serverLevel, blockHitResult.getBlockPos().getCenter(), 1, ElementRegistry.UTILITY.get().getParticleGroup().genericSlow(),0,0,0,0.1f);
-            genericProjectile.discard();
-        }
+        genericProjectile.level().playSound(null, genericProjectile.getX(), genericProjectile.getY(), genericProjectile.getZ(), genericProjectile.level().getBlockState(blockHitResult.getBlockPos()).getSoundType().getBreakSound(), SoundSource.BLOCKS, 1,1);
+        UtilityHelpers.dropItemsOrBlock(genericProjectile, blockHitResult.getBlockPos(), false, false);
+        super.onBlockBlockHit(blockHitResult);
+        genericProjectile.discard();
     }
 
     @Override

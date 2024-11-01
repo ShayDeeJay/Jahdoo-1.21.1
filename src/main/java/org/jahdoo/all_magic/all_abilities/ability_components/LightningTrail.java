@@ -14,7 +14,7 @@ import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
@@ -46,7 +46,7 @@ public class LightningTrail extends DefaultEntityBehaviour {
     public double getTag(String name) {
         var wandAbilityHolder = this.genericProjectile.wandAbilityHolder();
         var ability = abilityId.getPath().intern();
-        var modifier = GeneralHelpers.getModifierValue(wandAbilityHolder, ability).get(name);
+        var modifier = ModHelpers.getModifierValue(wandAbilityHolder, ability).get(name);
         return modifier != null ? modifier.actualValue() : 0;
     }
 
@@ -110,7 +110,7 @@ public class LightningTrail extends DefaultEntityBehaviour {
     @Override
     public void discardCondition() {
         if(this.genericProjectile != null){
-            if (genericProjectile.tickCount > GeneralHelpers.Random.nextInt((int) (lifetime - 2), (int) lifetime)) {
+            if (genericProjectile.tickCount > ModHelpers.Random.nextInt((int) (lifetime - 2), (int) lifetime)) {
                 genericProjectile.discard();
             }
         }
@@ -118,10 +118,10 @@ public class LightningTrail extends DefaultEntityBehaviour {
 
     private void moveLikeLightningBolt(Projectile projectile) {
         Vec3 currentMovement = projectile.getDeltaMovement();
-        if (GeneralHelpers.Random.nextDouble() < 0.98) {
-            double dx = (GeneralHelpers.Random.nextDouble() - 0.5) * randomFactor;
-            double dy = (GeneralHelpers.Random.nextDouble() - 0.5) * randomFactor;
-            double dz = (GeneralHelpers.Random.nextDouble() - 0.5) * randomFactor;
+        if (ModHelpers.Random.nextDouble() < 0.98) {
+            double dx = (ModHelpers.Random.nextDouble() - 0.5) * randomFactor;
+            double dy = (ModHelpers.Random.nextDouble() - 0.5) * randomFactor;
+            double dz = (ModHelpers.Random.nextDouble() - 0.5) * randomFactor;
             Vec3 newMovement = currentMovement.add(dx, dy, dz).normalize().scale(currentMovement.length());
             projectile.setDeltaMovement(newMovement);
         }
@@ -130,7 +130,7 @@ public class LightningTrail extends DefaultEntityBehaviour {
         projectile.setPos(projectile.getX() + vec3.x, projectile.getY() + vec3.y, projectile.getZ() + vec3.z);
     }
 
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("lightning_trail_property");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("lightning_trail_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

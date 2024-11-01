@@ -1,7 +1,6 @@
 package org.jahdoo.all_magic.all_abilities.abilities;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -16,7 +15,7 @@ import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
 import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.utils.GeneralHelpers;
+import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 import org.jahdoo.components.DataComponentHelper;
@@ -25,7 +24,7 @@ import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 
 public class BoltzAbility extends AbstractAbility {
 
-    public static final ResourceLocation abilityId = GeneralHelpers.modResourceLocation("boltz");
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("boltz");
     public static final String dischargeRadius = "Discharge Radius";
     public static final String totalBolts = "Total Boltz";
 
@@ -58,12 +57,11 @@ public class BoltzAbility extends AbstractAbility {
             double spreadX = direction.x + (Math.random() - 0.5) * spread;
             double spreadY = direction.y + (Math.random() - 0.5) * spread;
             double spreadZ = direction.z + (Math.random() - 0.5) * spread;
-            if(player.level() instanceof ServerLevel serverLevel){
-                ParticleHandlers.sendParticles(serverLevel, particleOptions, player.position().add(0,1.5,0), 0, spreadX, spreadY, spreadZ, 1);
-            }
+            ParticleHandlers.sendParticles(player.level(), particleOptions, player.position().add(0,1.5,0), 0, spreadX, spreadY, spreadZ, 1);
+
         }
 
-        GeneralHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.ORB_CREATE.get(), 0.5f,1.5f);
+        ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.ORB_CREATE.get(), 0.5f,1.5f);
     }
 
     @Override
