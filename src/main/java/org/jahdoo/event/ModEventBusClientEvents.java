@@ -36,8 +36,6 @@ public class ModEventBusClientEvents {
         event.registerBlockEntityRenderer(BlockEntitiesRegister.TANK_BE.get(), TankRenderer::new);
     }
 
-
-
     @SubscribeEvent
     public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ParticlesRegister.GENERIC.get(), GenericParticle.GenericProvider::new);

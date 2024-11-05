@@ -11,6 +11,7 @@ import org.jahdoo.registers.AttributesRegister;
 
 import java.util.Map;
 
+import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 
 public class CastingData implements AbstractAttachment{
@@ -22,7 +23,7 @@ public class CastingData implements AbstractAttachment{
 
     //Mana system
     private double manaPool;
-    private final double baseRegenSpeed = 0.1;
+    private final double BASE_MANA_REGEN = 0.15;
     private final int MIN_MANA = 0;
 
     public double getManaPool() {
@@ -34,8 +35,11 @@ public class CastingData implements AbstractAttachment{
         return maxMana != null ? (int) maxMana.getValue() : 100;
     }
 
-    public void subtractMana(double regenMana) {
+    public void subtractMana(double regenMana, Player player) {
         this.manaPool = Math.max(manaPool - regenMana, MIN_MANA);
+        if(player instanceof ServerPlayer serverPlayer) {
+            sendToPlayer(serverPlayer, new ManaDataSyncS2CPacket(manaPool));
+        }
     }
 
     public void manaRegen(Player player){
@@ -47,11 +51,15 @@ public class CastingData implements AbstractAttachment{
 
         if(getRegen != null) {
             var regenPercentage = getRegen.getValue();
-            var calculatedRegen = baseRegenSpeed / 100 * regenPercentage;
-            return calculatedRegen + baseRegenSpeed;
+            var calculatedRegen = BASE_MANA_REGEN / 100 * regenPercentage;
+            return calculatedRegen + BASE_MANA_REGEN;
         }
 
-        return baseRegenSpeed;
+        return BASE_MANA_REGEN;
+    }
+
+    public void refillMana(Player player){
+         this.manaPool = getMaxMana(player);
     }
 
     public void regenMana(Player player) {
@@ -65,7 +73,7 @@ public class CastingData implements AbstractAttachment{
     public static void manaTickEvent(ServerPlayer serverPlayer) {
         var magicData = serverPlayer.getData(CASTER_DATA);
         magicData.manaRegen(serverPlayer);
-        PacketDistributor.sendToPlayer(serverPlayer, new ManaDataSyncS2CPacket(magicData.getManaPool()));
+        sendToPlayer(serverPlayer, new ManaDataSyncS2CPacket(magicData.getManaPool()));
     }
 
     private Map<String, Integer> abilityCooldowns = new Object2IntOpenHashMap<>();
@@ -75,7 +83,7 @@ public class CastingData implements AbstractAttachment{
     public static void cooldownTickEvent(ServerPlayer serverPlayer){
         var cooldowns = serverPlayer.getData(CASTER_DATA);
         cooldowns.applyAllCooldowns();
-        PacketDistributor.sendToPlayer(serverPlayer, new CooldownsDataSyncS2CPacket(cooldowns.getAllCooldowns(), cooldowns.getAllCooldownsStatic()));
+        sendToPlayer(serverPlayer, new CooldownsDataSyncS2CPacket(cooldowns.getAllCooldowns(), cooldowns.getAllCooldownsStatic()));
     }
 
     public Map<String, Integer> getAllCooldowns() {

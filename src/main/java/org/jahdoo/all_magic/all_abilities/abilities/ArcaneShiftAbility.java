@@ -44,9 +44,9 @@ public class ArcaneShiftAbility extends AbstractAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(50, 20, 1)
+            .setMana(50, 20, 5)
             .setCooldown(1200, 400, 100)
-            .setDamage(20, 5, 1)
+            .setDamage(20, 5, 3)
             .setAbilityTagModifiersRandom(CASTING_DISTANCE, 50, 25, true, 5)
             .setAbilityTagModifiersRandom(maxEntities, 30, 5, true, 5)
             .setAbilityTagModifiersRandom(lifeTime, 10, 5, true, 1)

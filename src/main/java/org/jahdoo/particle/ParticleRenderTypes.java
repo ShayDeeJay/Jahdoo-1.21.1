@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -16,12 +17,10 @@ public class ParticleRenderTypes {
 
         @Override
         public BufferBuilder begin(Tesselator buffer, TextureManager textureManager) {
-            RenderSystem.enableBlend();
             RenderSystem.depthMask(false);
-//            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.value, GlStateManager.DestFactor..value);
-            RenderSystem.enableCull();
             RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-            RenderSystem.enableDepthTest();
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
             return buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
         }
 

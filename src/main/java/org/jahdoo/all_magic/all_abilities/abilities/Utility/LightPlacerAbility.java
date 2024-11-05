@@ -19,7 +19,6 @@ public class LightPlacerAbility extends AbstractAbility {
 
     @Override
     public void invokeAbility(Player player) {
-
         GenericProjectile genericProjectile = new GenericProjectile(
             player, 0,
             EntityPropertyRegister.LIGHT_PLACER.get().setAbilityId(),

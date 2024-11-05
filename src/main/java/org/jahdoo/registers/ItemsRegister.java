@@ -3,12 +3,15 @@ package org.jahdoo.registers;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.Item;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.items.armor.WizardArmor;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.curious_items.TomeOfUnity;
 import org.jahdoo.items.heart_container.HealthContainer;
@@ -57,6 +60,17 @@ public class ItemsRegister {
 
     public static final DeferredHolder<Item, Item> AUGMENT_FRAGMENT =
         ITEMS.register("augment_fragment", () -> new Item(new Item.Properties()));
+
+
+    public static final DeferredHolder<Item, Item> WIZARD_HELMET =
+        ITEMS.register("wizard_helmet", () -> new WizardArmor(ArmorMaterialRegistry.WIZARD, ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final DeferredHolder<Item, Item> WIZARD_CHESTPLATE =
+        ITEMS.register("wizard_chestplate", () -> new WizardArmor(ArmorMaterialRegistry.WIZARD, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final DeferredHolder<Item, Item> WIZARD_LEGGINGS =
+        ITEMS.register("wizard_leggings", () -> new WizardArmor(ArmorMaterialRegistry.WIZARD, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final DeferredHolder<Item, Item> WIZARD_BOOTS =
+        ITEMS.register("wizard_boots", () -> new WizardArmor(ArmorMaterialRegistry.WIZARD, ArmorItem.Type.BOOTS, new Item.Properties()));
+
 
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);

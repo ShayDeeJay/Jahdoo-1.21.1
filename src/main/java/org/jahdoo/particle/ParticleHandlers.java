@@ -48,9 +48,7 @@ public class ParticleHandlers {
 
     public static void invisibleLight(Level world, Vec3 loc, ParticleOptions particleOptions, double bound1, double bound2) {
         for (int i = 0; i < 3; i++) {
-            if (world.isClientSide) {
-                sendParticles(world, particleOptions, loc, 1, 0, ModHelpers.Random.nextDouble(bound1, bound2), 0, 1);
-            }
+            sendParticles(world, particleOptions, loc, 0, 0, ModHelpers.Random.nextDouble(bound1, bound2), 0, 50);
         }
     }
 
@@ -135,17 +133,14 @@ public class ParticleHandlers {
         double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * Math.max(20,multiplier));
         for (double j = 0; j < dist; j++) {
             double coeff = j / dist;
-
-            if (projectile.level() instanceof ServerLevel serverLevel){
-                Vec3 position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
-                ParticleHandlers.sendParticles(
-                    serverLevel, particleOptions, position, 1,
-                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
-                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
-                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
-                    speed
-                );
-            }
+            Vec3 position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
+            ParticleHandlers.sendParticles(
+                projectile.level(), particleOptions, position, 1,
+                0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                speed
+            );
         }
     }
 
@@ -181,8 +176,7 @@ public class ParticleHandlers {
         ParticleOptions particleTrail,
         double speed
     ){
-        if(projectile.tickCount > 2){
-            Vec3 velocity = projectile.getDeltaMovement();
+        if(projectile.tickCount > 1){
             double directionX = projectile.getX() - projectile.xOld;
             double directionY = projectile.getY() - projectile.yOld;
             double directionZ = projectile.getZ() - projectile.zOld;
@@ -195,8 +189,8 @@ public class ParticleHandlers {
             double offsetY = projectile.getY() - normalizedY * offsetDistance;
             double offsetZ = projectile.getZ() - normalizedZ * offsetDistance;
 
-            playParticles(particleMain, projectile, projectile.getX(), projectile.getY(), projectile.getZ(), (int) velocity.length() + 2);
-            playParticles2(particleTrail, projectile, offsetX, offsetY, offsetZ, (int) velocity.length() + 20, speed);
+            playParticles(particleMain, projectile, projectile.getX(), projectile.getY(), projectile.getZ(), 0);
+            playParticles2(particleTrail, projectile, offsetX, offsetY, offsetZ, 20, speed);
         }
     }
 
@@ -210,7 +204,7 @@ public class ParticleHandlers {
             }
             return i;
         } else {
-            level.addParticle(pType, false, pXOffset, pYOffset, pZOffset, pSpeed, pSpeed, pSpeed);
+            level.addParticle(pType, positions.x, positions.y, positions.z, pXOffset/100 * pSpeed, pYOffset/100 * pSpeed, pZOffset/100 * pSpeed);
             return 0;
         }
     }
@@ -235,27 +229,26 @@ public class ParticleHandlers {
         float spread,
         AbstractElement element
     ){
-        if(!(projectile.level() instanceof ServerLevel serverLevel)) return;
-        if (tickCount > 1.5) {
-            Vec3 velocity = projectile.getDeltaMovement();
-            double offsetX = velocity.x * -2;  // Reverse the x direction to be behind the entity
-            double offsetY = velocity.y * -2;
-            double offsetZ = velocity.z * -2;  // Reverse the z direction to be behind the entity
-            double particleX = projectile.getX() + offsetX;
-            double particleY = projectile.getY() + projectile.getBbHeight() / 2 + offsetY;  // Adjust Y position as needed
-            double particleZ = projectile.getZ() + offsetZ;
-            double heightOffset = 0.05;
+        if (tickCount > 2) {
+            var velocity = projectile.getDeltaMovement();
+            var offsetX = velocity.x * -2.2;  // Reverse the x direction to be behind the entity
+            var offsetY = velocity.y * -2.2;
+            var offsetZ = velocity.z * -2.2;  // Reverse the z direction to be behind the entity
+            var particleX = projectile.getX() + offsetX;
+            var particleY = projectile.getY() + projectile.getBbHeight() / 2 + offsetY;  // Adjust Y position as needed
+            var particleZ = projectile.getZ() + offsetZ;
+            var heightOffset = 0.02;
 
-            for (int i = 0; i < 6; i++){
-                Vec3 position = new Vec3(
+            for (int i = 0; i < 4; i++){
+                var position = new Vec3(
                     particleX + ModHelpers.Random.nextFloat(-spread, spread),
                     particleY + ModHelpers.Random.nextFloat(-spread, spread),
                     particleZ + ModHelpers.Random.nextFloat(-spread, spread)
                 );
-                GenericParticleOptions genericSlow = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 4, 1.5f);
-                BakedParticleOptions bakedSlow = new BakedParticleOptions(element.getTypeId(), 2,2.5f,false);
-                ParticleHandlers.sendParticles(serverLevel, bakedSlow, position.subtract(0,heightOffset,0), 0, 0, 0, 0,0);
-                ParticleHandlers.sendParticles(serverLevel, genericSlow, position.subtract(0,heightOffset,0), 0, 0, 0, 0,0);
+                var genericSlow = genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, element, 3, 1.2f);
+                var bakedSlow = bakedParticleOptions(element.getTypeId(), 2,2.5f,false);
+                ParticleHandlers.sendParticles(projectile.level(), bakedSlow, position.subtract(0,heightOffset,0), 0, 0, 0, 0,0);
+                ParticleHandlers.sendParticles(projectile.level(), genericSlow, position.subtract(0,heightOffset,0), 0, 0, 0, 0,0);
             }
         }
     }

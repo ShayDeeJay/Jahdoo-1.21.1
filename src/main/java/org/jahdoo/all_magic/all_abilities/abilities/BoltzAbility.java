@@ -77,9 +77,9 @@ public class BoltzAbility extends AbstractAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(20,10,1)
+            .setMana(30,10,5)
             .setCooldown(400,100,50)
-            .setDamage(15,5,1)
+            .setDamage(30,15,5)
             .setEffectDuration(300,100,50)
             .setEffectStrength(10, 0, 1)
             .setEffectChance(20,5,5)

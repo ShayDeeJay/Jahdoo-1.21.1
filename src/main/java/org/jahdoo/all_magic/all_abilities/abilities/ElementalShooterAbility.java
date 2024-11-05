@@ -35,14 +35,14 @@ public class ElementalShooterAbility extends AbstractAbility {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(20, 10, 1)
-            .setCooldown(100, 10, 10)
+            .setCooldown(50, 0, 10)
             .setDamage(10, 5, 1)
             .setEffectChance(50, 10, 5)
             .setEffectStrength(10, 1, 1)
             .setEffectDuration(300, 100, 20)
             .setAbilityTagModifiersRandom(numberOfProjectiles, 3, 1, true, 1)
             .setAbilityTagModifiersRandom(numberOfRicochet, 6, 1, true, 1)
-            .setAbilityTagModifiersRandom(velocity, 2, 0.8, true, 0.1)
+            .setAbilityTagModifiersRandom(velocity, 2, 1, true, 0.2)
             .setModifier(SET_ELEMENT_TYPE, 0, 0, false, Random.nextInt(1,6))
             .build();
     }

@@ -46,9 +46,9 @@ public class IceBombAbility extends AbstractAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(30, 10,  1)
+            .setMana(50, 20,  5)
             .setCooldown(600, 200, 50)
-            .setDamage(15, 5, 1)
+            .setDamage(25, 10, 5)
             .setEffectStrength(10, 5,1)
             .setEffectDuration(400,200,10)
             .build();

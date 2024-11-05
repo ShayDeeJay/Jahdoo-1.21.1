@@ -21,7 +21,9 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.all_magic.AbstractElement;
+import org.jahdoo.all_magic.all_abilities.abilities.NovaSmashAbility;
 import org.jahdoo.capabilities.AbstractAttachment;
+import org.jahdoo.items.wand.CastHelper;
 import org.jahdoo.networking.packet.server2client.MageFlightDataSyncS2CPacket;
 import org.jahdoo.networking.packet.server2client.NovaSmashS2CPacket;
 import org.jahdoo.particle.ParticleHandlers;
@@ -66,6 +68,7 @@ public class NovaSmash implements AbstractAttachment {
         this.getDamage = getDamage;
     }
 
+
     public static void novaSmashTickEvent(Player player){
         player.getData(NOVA_SMASH).onTick(player);
     }
@@ -84,6 +87,7 @@ public class NovaSmash implements AbstractAttachment {
         if (this.canSmash){
             player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
             if(player.onGround()){
+
                 PositionGetters.getOuterRingOfRadiusRandom(player.position(), 2, 100, (pos) -> setParticleNova(pos, player, (double) this.highestDelta /10));
                 this.setAbilityEffects(player, this.highestDelta);
                 this.setKnockbackAndDamage(player, this.highestDelta);
@@ -125,6 +129,7 @@ public class NovaSmash implements AbstractAttachment {
     }
 
     private void setKnockbackAndDamage(Player player, int getMaxDeltaMovement){
+        System.out.println(this.getDamage * 3);
         player.level().getNearbyEntities(
             LivingEntity.class, TargetingConditions.DEFAULT, player,
             player.getBoundingBox().inflate(6, 2, 6)
@@ -136,7 +141,7 @@ public class NovaSmash implements AbstractAttachment {
                 double length = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
                 if(livingEntity != player){
                     this.knockback(livingEntity, Math.max((double) getMaxDeltaMovement / 2, 0.3), -deltaX / length, -deltaZ / length);
-                    ModHelpers.damageEntityWithModifiers(livingEntity, player, this.getDamage, this.getElement());
+                    ModHelpers.damageEntityWithModifiers(livingEntity, player, this.getDamage * 3, this.getElement());
                 }
             }
         );

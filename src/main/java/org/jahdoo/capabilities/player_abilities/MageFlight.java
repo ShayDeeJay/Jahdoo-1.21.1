@@ -94,14 +94,16 @@ public class MageFlight implements AbstractAttachment {
         if (manaSystem.getManaPool() > manaCost) {
             player.getAbilities().mayfly = true;
             player.getData(BOUNCY_FOOT).setEffectTimer(160);
-            manaSystem.subtractMana(manaCost);
-            player.setDeltaMovement(player.getDeltaMovement().add(0, 0.1, 0));
+            manaSystem.subtractMana(manaCost, player);
+            var getDelta = player.getDeltaMovement();
+            var speedModifier = 0.05;
+            player.setDeltaMovement(player.getDeltaMovement().add(getDelta.x * speedModifier, 0.1, getDelta.z * speedModifier));
             mageFlightAnimation(wandItem, player);
         }
     }
 
     private boolean cancelAttempt(Player player, ItemStack wandItem) {
-        if(!(wandItem.getItem() instanceof WandItem) || player.onGround()) {
+        if(!(wandItem.getItem() instanceof WandItem) || player.onGround() || player.isFallFlying()) {
             player.getAbilities().mayfly = false;
             this.isFlying = false;
             return true;

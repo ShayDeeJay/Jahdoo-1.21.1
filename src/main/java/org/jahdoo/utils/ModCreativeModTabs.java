@@ -21,7 +21,7 @@ public class ModCreativeModTabs {
     }
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB = CREATIVE_MODE_TAB.register(
-        "jahdoo_tab", () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemsRegister.AUGMENT_CORE.get()))
+        "jahdoo_tab", () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemsRegister.AUGMENT_ITEM.get()))
             .title(Component.translatable("creativetab.jahdoo_tab"))
             .displayItems((pParameters, pOutput) -> {
                 pOutput.accept(BlocksRegister.CRYSTAL_ORE.get());
@@ -31,6 +31,12 @@ public class ModCreativeModTabs {
                 pOutput.accept(ItemsRegister.AUGMENT_FRAGMENT.get());
                 pOutput.accept(ItemsRegister.TOME_OF_UNITY.get());
                 pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
+
+//                pOutput.accept(ItemsRegister.WIZARD_HELMET.get());
+//                pOutput.accept(ItemsRegister.WIZARD_CHESTPLATE.get());
+//                pOutput.accept(ItemsRegister.WIZARD_LEGGINGS.get());
+//                pOutput.accept(ItemsRegister.WIZARD_BOOTS.get());
+
 //                for(int i = 1; i < 7; i++) {
 //                    ItemStack baseAugment = new ItemStack(ItemsRegister.AUGMENT_ITEM.get());
 //                    CustomModelData customModelData = new CustomModelData(i);

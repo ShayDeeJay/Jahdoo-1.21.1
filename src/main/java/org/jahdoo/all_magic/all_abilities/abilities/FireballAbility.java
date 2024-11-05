@@ -43,13 +43,13 @@ public class FireballAbility extends AbstractAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(30, 10, 1)
+            .setMana(30, 10, 5)
             .setCooldown(600, 200, 100)
-            .setDamage(25, 10, 1)
+            .setDamage(45, 20, 5)
             .setEffectDuration(300, 100, 20)
             .setEffectStrength(10, 0, 1)
-            .setEffectChance(40, 10, 5)
-            .setAbilityTagModifiersRandom(novaRange, 8, 4, true, 1)
+            .setEffectChance(40, 5, 5)
+            .setAbilityTagModifiersRandom(novaRange, 6, 3, true, 1)
             .build();
     }
 

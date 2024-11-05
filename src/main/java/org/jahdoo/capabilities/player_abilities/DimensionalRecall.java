@@ -1,19 +1,17 @@
 package org.jahdoo.capabilities.player_abilities;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.all_magic.AbstractElement;
-import org.jahdoo.capabilities.AbstractAttachment;
+import org.jahdoo.capabilities.AbstractHoldUseAttachment;
+import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.items.wand.CastHelper;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
@@ -22,42 +20,29 @@ import java.util.List;
 import static org.jahdoo.all_magic.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.all_magic.AbilityBuilder.MANA_COST;
 import static org.jahdoo.all_magic.all_abilities.abilities.DimensionalRecallAbility.abilityId;
+import static org.jahdoo.items.wand.CastHelper.validManaAndCooldown;
 import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.registers.AttachmentRegister.*;
+import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
+import static org.jahdoo.registers.AttachmentRegister.DIMENSIONAL_RECALL;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
-import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
-public class DimensionalRecall implements AbstractAttachment {
+public class DimensionalRecall extends AbstractHoldUseAttachment {
 
-    private boolean startedUsing;
-
-    public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
-        nbt.putBoolean("started_using", startedUsing);
-    }
-
-    public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
-        this.startedUsing = nbt.getBoolean("started_using");
-    }
 
     public static void staticTickEvent(Player player){
         player.getData(DIMENSIONAL_RECALL).onTickMethod(player);
     }
 
+    @Override
     public void onTickMethod(Player player){
-        var getValue = player.getMainHandItem().get(WAND_DATA);
-
-        if(!player.isUsingItem() || getValue == null) {
-            startedUsing = false;
-            return;
-        }
-
+        super.onTickMethod(player);
         var getHolder = player.getMainHandItem().get(WAND_ABILITY_HOLDER);
         var hasAbility = ModHelpers.getModifierValue(getHolder, abilityId.getPath().intern()) != null;
         if (!(player instanceof ServerPlayer serverPlayer)) return;
         var pos = serverPlayer.getRespawnPosition();
 
-        if(startedUsing && hasAbility){
+        if(startedUsing && hasAbility && validManaAndCooldown(player)){
             if (pos != null) {
                 pullParticlesToCenter(player);
 
@@ -104,10 +89,6 @@ public class DimensionalRecall implements AbstractAttachment {
 
     private void sendNoHomeMessage(Player player){
         player.displayClientMessage(ModHelpers.withStyleComponentTrans("ability.jahdoo.no_home", this.getElement().textColourPrimary()), true);
-    }
-
-    public void setStartedUsing(boolean startedUsing) {
-        this.startedUsing = startedUsing;
     }
 
     public void pullParticlesToCenter(Player player){

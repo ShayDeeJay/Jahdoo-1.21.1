@@ -37,14 +37,14 @@ public class StaticAbility extends AbstractAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(50, 20,  1)
+            .setMana(50, 20,  5)
             .setCooldown(1200, 600, 50)
-            .setDamage(15, 5, 1)
-            .setEffectDuration(300, 20, 20)
+            .setDamage(30, 10, 5)
+            .setEffectDuration(300, 50, 50)
             .setEffectStrength(10, 1,1)
-            .setEffectChance(30,1,1)
-            .setRange(10,1,1)
-            .setAbilityTagModifiersRandom(mana_per_damage, 10,5, true, 1)
+            .setEffectChance(10,1,1)
+            .setRange(15,1,1)
+            .setAbilityTagModifiersRandom(mana_per_damage, 20,5, false, 5)
             .build();
     }
 

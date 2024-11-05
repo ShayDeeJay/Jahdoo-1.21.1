@@ -29,32 +29,28 @@ public class ThunderBurstAbility extends AbstractAbility {
     public static final String NUMBER_OF_THUNDERBOLTS = "Number of Thunderbolts";
 
     private Map<String, AbilityHolder.AbilityModifiers> tagModifierHelper(Player player){
-        WandAbilityHolder wandAbilityHolder = player.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var wandAbilityHolder = player.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         return ModHelpers.getModifierValue(wandAbilityHolder, abilityId.getPath().intern());
     }
 
     @Override
     public void invokeAbility(Player player) {
         var modifiers = this.tagModifierHelper(player);
-        double damage = ModHelpers.attributeModifierCalculator(
-            player,
-            (float) modifiers.get(DAMAGE).actualValue(),
-            this.getElemenType(),
-            MAGIC_DAMAGE_MULTIPLIER,
-            true
+        var damage = ModHelpers.attributeModifierCalculator(
+            player, (float) modifiers.get(DAMAGE).actualValue(), this.getElemenType(),
+            MAGIC_DAMAGE_MULTIPLIER, true
         );
+        var numberOfBolts = modifiers.get(NUMBER_OF_THUNDERBOLTS).actualValue();
+        var direction = player.getLookAngle();
+        var lightningTrailModifiers = getLightningTrailModifiers(damage, 0.2, 10, 0);
 
-        double numberOfBolts = modifiers.get(NUMBER_OF_THUNDERBOLTS).actualValue();
-
-        Vec3 direction = player.getLookAngle();
-        WandAbilityHolder lightningTrailModifiers = getLightningTrailModifiers(damage, 0.2, 10, 0);
         ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.BOLT.get(), 2f,1f);
 
         for(int i = 0; i < numberOfBolts; i++){
             GenericProjectile genericProjectile = new GenericProjectile(
-                player, 0,
+                player, -0.3,
                 EntityPropertyRegister.LIGHTNING_TRAIL.get().setAbilityId(),
-                lightningTrailModifiers, -2,
+                lightningTrailModifiers, -1,
                 abilityId.getPath().intern()
             );
             genericProjectile.shoot(direction.x(), direction.y(), direction.z(), 1f, 0);
@@ -76,10 +72,10 @@ public class ThunderBurstAbility extends AbstractAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(50, 20,  1)
-            .setCooldown(600, 200, 100)
-            .setDamage(25, 10, 1)
-            .setAbilityTagModifiersRandom(NUMBER_OF_THUNDERBOLTS, 30,5, true, 5)
+            .setMana(60, 30,  5)
+            .setCooldown(400, 100, 100)
+            .setDamage(40, 15, 5)
+            .setAbilityTagModifiersRandom(NUMBER_OF_THUNDERBOLTS, 30,10, true, 5)
             .build();
     }
 

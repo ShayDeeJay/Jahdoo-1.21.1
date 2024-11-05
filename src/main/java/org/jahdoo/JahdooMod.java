@@ -32,6 +32,7 @@ public class JahdooMod {
         modEventBus.addListener(ElementRegistry::registerRegistry);
         modEventBus.addListener(EntityPropertyRegister::registerRegistry);
 
+        ArmorMaterialRegistry.register(modEventBus);
         AttributesRegister.register(modEventBus);
         RecipeRegistry.register(modEventBus);
         AttachmentRegister.register(modEventBus);

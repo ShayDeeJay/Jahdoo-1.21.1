@@ -32,13 +32,13 @@ import org.jahdoo.utils.PositionGetters;
 
 import java.util.UUID;
 
-import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
+import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 
 public class SummonEternalWizard extends DefaultEntityBehaviour {
     double height;
     int position;
-    double increaseRate = 0.6;
+    double increaseRate = 0.1;
     EternalWizard eternalWizard;
     UUID uuid;
     private double damage;
@@ -53,11 +53,8 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         var player = this.aoeCloud.getOwner();
         var damage = this.getTag(DAMAGE);
         this.damage = ModHelpers.attributeModifierCalculator(
-            player,
-            (float) damage,
-            this.getElementType(),
-            AttributesRegister.MAGIC_DAMAGE_MULTIPLIER,
-            true
+            player, (float) damage, this.getElementType(),
+            AttributesRegister.MAGIC_DAMAGE_MULTIPLIER, true
         );
         this.effectDuration = getTag(EFFECT_DURATION);
         this.effectStrength = getTag(EFFECT_STRENGTH);
@@ -78,7 +75,6 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
             if(eternalWizard == null && uuid != null) this.eternalWizard = (EternalWizard) serverLevel.getEntity(uuid);
         }
         if(this.eternalWizard != null) this.clientDiggingParticles(this.eternalWizard, level());
-
         this.spawnAnimation();
         this.spawnEternalWizard();
         this.setSpawnParticles(level());
@@ -124,6 +120,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
 
     private void spawnAnimation(){
         if(eternalWizard == null) return;
+
         if (eternalWizard.position().y < aoeCloud.position().y + 0.5) {
             if (eternalWizard.isNoAi()) {
                 eternalWizard.moveTo(eternalWizard.position().add(0, increaseRate, 0));
@@ -140,6 +137,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
 
     private void spawnEternalWizard(){
         if (this.eternalWizard == null && aoeCloud.getOwner() != null) {
+
             EternalWizard eternalWizard = new EternalWizard(aoeCloud.level(), (Player) aoeCloud.getOwner(), (int) damage, (int) effectDuration, (int) effectStrength, (int) lifeTime, (int) effectChance);
             eternalWizard.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
             Vec3 spawnPosition = aoeCloud.position().add(0, -1, 0);

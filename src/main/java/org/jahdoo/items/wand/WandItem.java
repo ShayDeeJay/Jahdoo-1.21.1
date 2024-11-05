@@ -2,23 +2,30 @@ package org.jahdoo.items.wand;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
+import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.components.WandData;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
@@ -38,7 +45,7 @@ import java.util.function.Consumer;
 
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
-import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.registers.AttributesRegister.replaceOrAddAttribute;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class WandItem extends BlockItem implements GeoItem {
@@ -72,14 +79,14 @@ public class WandItem extends BlockItem implements GeoItem {
 
     @Override
     public InteractionResult place(BlockPlaceContext pContext) {
-        Player player = pContext.getPlayer();
+        var clickedPos = pContext.getClickedPos();
+        var player = pContext.getPlayer();
+        var level = pContext.getLevel();
+        var itemStack = pContext.getItemInHand();
 
         if (player == null || !player.isShiftKeyDown() || !player.onGround()) return InteractionResult.PASS;
 
-        BlockPos clickedPos = pContext.getClickedPos();
         if(pContext.getLevel().getBlockState(clickedPos).isEmpty()){
-            Level level = pContext.getLevel();
-            ItemStack itemStack = player.getMainHandItem();
             level.setBlockAndUpdate(clickedPos, BlocksRegister.WAND.get().defaultBlockState());
             BlockEntity blockEntity = level.getBlockEntity(clickedPos);
             if (blockEntity instanceof WandBlockEntity wandBlockEntity) {
@@ -128,14 +135,18 @@ public class WandItem extends BlockItem implements GeoItem {
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
-        player.startUsingItem(interactionHand);
-        if (interactionHand == InteractionHand.MAIN_HAND) CastHelper.use(player);
+        var item = player.getMainHandItem();
+        player.startUsingItem(player.getUsedItemHand());
+        if (interactionHand == InteractionHand.MAIN_HAND) {
+            CastHelper.use(player);
+            return InteractionResultHolder.pass(item);
+        }
 
 //        if (level instanceof ServerLevel serverLevel) {
 //            triggerAnimWithController(this,  player.getMainHandItem(), serverLevel, player, SINGLE_CAST_ID);
 //        }
 
-        return InteractionResultHolder.pass(player.getMainHandItem());
+        return InteractionResultHolder.fail(player.getOffhandItem());
     }
 
     @Override
@@ -143,21 +154,21 @@ public class WandItem extends BlockItem implements GeoItem {
         return false;
     }
 
-
-
     @Override
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
-        consumer.accept(new GeoRenderProvider() {
-            private WandItemRenderer renderer;
+        consumer.accept(
+            new GeoRenderProvider() {
+                private WandItemRenderer renderer;
 
-            @Override
-            public BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
-                if (this.renderer == null)
-                    this.renderer = new WandItemRenderer();
+                @Override
+                public BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
+                    if (this.renderer == null)
+                        this.renderer = new WandItemRenderer();
 
-                return this.renderer;
+                    return this.renderer;
+                }
             }
-        });
+        );
     }
 
     @Override

@@ -40,8 +40,8 @@ public class NovaSmashAbility extends AbstractAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(20, 5,  1)
-            .setCooldown(60, 20, 5)
+            .setMana(30, 5,  5)
+            .setCooldown(200, 50, 10)
             .build();
     }
 

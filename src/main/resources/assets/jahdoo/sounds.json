@@ -59,5 +59,11 @@
     "sounds": [
       "jahdoo:magic_explosion"
     ]
+  },
+  "heal": {
+    "subtitles": "sounds.jahdoo.heal",
+    "sounds": [
+      "jahdoo:heal"
+    ]
   }
 }

@@ -31,15 +31,17 @@ import org.jahdoo.utils.PositionGetters;
 
 import java.util.List;
 
+import static org.jahdoo.all_magic.SharedFireProperties.fireTrailVegetationRemover;
+import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
+import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.utils.ModHelpers.Random;
 
 public class HellFire extends DefaultEntityBehaviour {
 
-    double reductionSpeed = 0.1;
-    int countdownTimer;
+    float reductionSpeed = 0.25f;
     float yaw;
-
     double damage;
     double range;
     double effectStrength;
@@ -52,14 +54,12 @@ public class HellFire extends DefaultEntityBehaviour {
         if(this.aoeCloud.getOwner() != null){
             var player = this.aoeCloud.getOwner();
             var damage = this.getTag(DAMAGE);
+            var attribute = AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
             this.damage = ModHelpers.attributeModifierCalculator(
-                player,
-                (float) damage,
-                this.getElementType(),
-                AttributesRegister.MAGIC_DAMAGE_MULTIPLIER,
-                true
+                player, (float) damage, this.getElementType(), attribute, true
             );
-            this.playerOriginalPosition = this.aoeCloud.getOwner().position();
+            this.playerOriginalPosition = player.position();
+            this.yaw = player.getYRot();
         }
         this.range = this.getTag(RANGE);
         this.effectStrength = this.getTag(EFFECT_STRENGTH);
@@ -69,8 +69,7 @@ public class HellFire extends DefaultEntityBehaviour {
     @Override
     public void addAdditionalDetails(CompoundTag compoundTag) {
         compoundTag.put("position", ModHelpers.nbtDoubleList(this.playerOriginalPosition.x, this.playerOriginalPosition.y, this.playerOriginalPosition.z));
-        compoundTag.putInt("countdown_timer", this.countdownTimer);
-        compoundTag.putDouble("reduction", this.reductionSpeed);
+        compoundTag.putFloat("reduction", this.reductionSpeed);
         compoundTag.putFloat("yaw", this.yaw);
         compoundTag.putDouble(DAMAGE, this.damage);
         compoundTag.putDouble(RANGE, this.range);
@@ -80,10 +79,9 @@ public class HellFire extends DefaultEntityBehaviour {
 
     @Override
     public void readCompoundTag(CompoundTag compoundTag) {
-        ListTag list = compoundTag.getList("position", Tag.TAG_DOUBLE);
+        var list = compoundTag.getList("position", Tag.TAG_DOUBLE);
         this.playerOriginalPosition = new Vec3(list.getDouble(0), list.getDouble(1), list.getDouble(2));
-        this.countdownTimer = compoundTag.getInt("countdown_timer");
-        this.reductionSpeed = compoundTag.getDouble("reduction");
+        this.reductionSpeed = compoundTag.getFloat("reduction");
         this.yaw = compoundTag.getFloat("yaw");
         this.damage = compoundTag.getDouble(DAMAGE);
         this.range = compoundTag.getDouble(RANGE);
@@ -93,28 +91,27 @@ public class HellFire extends DefaultEntityBehaviour {
 
     @Override
     public void onTickMethod() {
-        if(yaw == 0) yaw = this.aoeCloud.getOwner().getYRot();
-        this.reductionSpeed *= 1.03;
+        this.updateRadius();
+        this.reductionSpeed *= 1.01F;
         aoeCloud.setInvisible(true);
-        if(aoeCloud.getRadius() < this.damage) this.updateRadius(); else countdownTimer++;
-        novaBehaviour(this.aoeCloud.level());
+        novaBehaviour();
     }
 
     private void updateRadius(){
-        aoeCloud.setRadius((float) (aoeCloud.getRadius() + reductionSpeed));
+        aoeCloud.setRadius(aoeCloud.getRadius() + reductionSpeed);
     }
 
-    private void novaBehaviour(Level level){
-        double radius =  aoeCloud.getRadius() * 3;
-        if(countdownTimer > 0) return;
-        var positions = PositionGetters.getSemicircle(aoeCloud.position(), radius, Math.max(radius / 2.5 , 6), yaw, 30);
+    private void novaBehaviour(){
+        var radius = aoeCloud.getRadius() * 2;
+        var positions = PositionGetters.getSemicircle(aoeCloud.position(), radius, 5, yaw, 30);
         this.novaSoundManager(positions);
 
         positions.forEach(
             positionsA -> {
-                BlockPos blockPos = BlockPos.containing(positionsA);
-                SharedFireProperties.fireTrailVegetationRemover(this.aoeCloud.level().getBlockState(blockPos), blockPos, this.aoeCloud, this.aoeCloud.getOwner());
-                this.novaParticles(level, positionsA);
+                var newPos = positionsA.add(0,Random.nextDouble(0.1, 0.8),0);
+                var blockPos = BlockPos.containing(positionsA);
+                fireTrailVegetationRemover(this.aoeCloud.level().getBlockState(blockPos), blockPos, this.aoeCloud, this.aoeCloud.getOwner());
+                this.setParticleNova(newPos);
                 this.setNovaDamage(positionsA);
                 if (this.playerOriginalPosition.distanceTo(positionsA) >= this.range) aoeCloud.discard();
             }
@@ -122,37 +119,12 @@ public class HellFire extends DefaultEntityBehaviour {
     }
 
     private void novaSoundManager(List<Vec3> positions){
-        if(aoeCloud.tickCount == 1) ModHelpers.getSoundWithPosition(aoeCloud.level(), BlockPos.containing(positions.getFirst()), SoundRegister.DASH_EFFECT.get(), 0.6f,1.4f);
-        if (aoeCloud.tickCount % 3 == 0) ModHelpers.getSoundWithPosition(aoeCloud.level(), BlockPos.containing(positions.getFirst()), SoundEvents.FIRECHARGE_USE,0.4f,0.8f);
-    }
-
-    private void novaParticles(Level level, Vec3 positionsA){
-
-        double vx1 = (ModHelpers.Random.nextDouble() - 0.5) * 0.5;
-        double vy1 = (ModHelpers.Random.nextDouble()) * this.aoeCloud.getRadius()/15;
-
-        boolean range = aoeCloud.getRadius() > this.range;
-        double particle1 = range ? 0.2 : 0.1  ;
-        double particle2 = range ? 0.2  : Math.max(((10 - this.aoeCloud.getRadius()) / 50), 0.01);
-        var randomSource = RandomSource.create();
-
-        ParticleHandlers.sendParticles(
-            level,
-            new BakedParticleOptions(this.getElementType().getTypeId(), 4, 3f, false),
-            positionsA.add(0,0.6, 0).offsetRandom(randomSource, this.aoeCloud.getRadius()),
-            1, vy1, vy1, vy1, particle1
-        );
-
-        ParticleHandlers.sendParticles(
-            level,
-            genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 6, 1.5f),
-            positionsA.add(0, 0.6, 0).offsetRandom(randomSource, this.aoeCloud.getRadius()),
-            1, vx1, vy1, vx1, particle2
-        );
+        if(aoeCloud.tickCount == 1) ModHelpers.getSoundWithPosition(aoeCloud.level(), BlockPos.containing(positions.get(positions.size()/2)), SoundRegister.DASH_EFFECT.get(), 0.6f,1.4f);
+        if (aoeCloud.tickCount % 3 == 0) ModHelpers.getSoundWithPosition(aoeCloud.level(), BlockPos.containing(positions.get(positions.size()/2)), SoundEvents.FIRECHARGE_USE,0.4f,0.8f);
     }
 
     private void setNovaDamage(Vec3 positionsA){
-        LivingEntity livingEntity = this.getEntityInRange(positionsA);
+        var livingEntity = this.getEntityInRange(positionsA);
         if (livingEntity == null) return;
         if(!this.damageEntity(livingEntity)) return;
 
@@ -167,6 +139,24 @@ public class HellFire extends DefaultEntityBehaviour {
             aoeCloud.getOwner(),
             positionsA.x, positionsA.y, positionsA.z,
             new AABB(BlockPos.containing(positionsA)).deflate(1, 2, 1)
+        );
+    }
+
+    private void setParticleNova(Vec3 worldPosition){
+        var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), 3f);
+        var directions = positionScrambler.subtract(this.aoeCloud.position()).normalize();
+        var lifetime = (int)( this.range/2);
+        var col1 = this.getElementType().particleColourPrimary();
+        var col2 = this.getElementType().particleColourFaded();
+        var bakedParticle = bakedParticleOptions(this.getElementType().getTypeId(), lifetime, (float) 7, false);
+        var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, (float) 4, col1, col2, false);
+        var getRandomParticle = List.of(bakedParticle, genericParticle);
+        var level = this.aoeCloud.level();
+        var speed = Math.min(this.aoeCloud.getRadius() * 2, 1.5);
+        var randomY = Random.nextDouble(0, 0.4);
+
+        ParticleHandlers.sendParticles(
+            level, getRandomParticle.get(Random.nextInt(2)), worldPosition, 0, directions.x, directions.y + randomY, directions.z, speed
         );
     }
 

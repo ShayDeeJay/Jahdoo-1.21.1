@@ -45,11 +45,11 @@ public class ArmageddonAbility extends AbstractAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(80, 40, 1)
+            .setMana(80, 40, 5)
             .setCooldown(2400, 800, 100)
-            .setDamage(25, 10, 1)
+            .setDamage(40, 20, 5)
             .setCastingDistance(30, 10, 5)
-            .setLifetime(500, 300, 10)
+            .setLifetime(500, 300, 20)
             .setAoe(6,1,1)
             .setAbilityTagModifiersRandom(SPAWNING_SPEED, 30,5, false, 5)
             .build();

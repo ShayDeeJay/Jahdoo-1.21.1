@@ -56,7 +56,7 @@ public class BouncyFoot implements AbstractAttachment {
             if (player.onGround() && previousDelta != currentDelta) {
                 var reducedDelta = Math.abs(previousDelta / 1.5);
                 player.playSound(SoundEvents.HONEY_BLOCK_HIT, (float) reducedDelta, 2f);
-                player.setDeltaMovement(player.getDeltaMovement().add(0, Math.min(reducedDelta, 3), 0));
+                player.setDeltaMovement(player.getDeltaMovement().add(0, Math.min(reducedDelta, 1), 0));
             }
         }
 

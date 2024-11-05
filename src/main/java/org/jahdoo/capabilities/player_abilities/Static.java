@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.jahdoo.capabilities.AbstractAttachment;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.all_magic.AbstractElement;
@@ -21,6 +22,7 @@ import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.Map;
+
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.spawnElectrifiedParticles;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
@@ -120,7 +122,7 @@ public class Static implements AbstractAttachment {
 
     public static void setEffectParticle(
         LivingEntity targetEntity,
-        ServerLevel serverLevel
+        Level level
     ){
         if(targetEntity.isAlive()){
             ModHelpers.getSoundWithPosition(targetEntity.level(), targetEntity.blockPosition(), SoundRegister.BOLT.get(), 0.05f, 1.5f);
@@ -134,7 +136,7 @@ public class Static implements AbstractAttachment {
             );
 
             int particleCount = targetEntity instanceof Player ? 5 : 30;
-            spawnElectrifiedParticles(serverLevel, targetEntity.position(), particleOptions, particleCount, targetEntity, 0);
+            spawnElectrifiedParticles(level, targetEntity.position(), particleOptions, particleCount, targetEntity, 0);
         }
     }
 
@@ -156,9 +158,7 @@ public class Static implements AbstractAttachment {
                     );
 
                     setEffectParticle(entities, serverLevel);
-                    manaSystem.subtractMana(manaPerHitA);
-
-
+                    manaSystem.subtractMana(manaPerHitA, player);
 
                     entities.hurt(
                         player.damageSources().magic(),

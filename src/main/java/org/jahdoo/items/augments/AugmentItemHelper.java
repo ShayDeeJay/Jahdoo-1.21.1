@@ -197,6 +197,7 @@ public class AugmentItemHelper {
         if(abilityModifier == null) return Component.empty();
         var format = FORMAT.format(abilityModifier.actualValue());
         var type = itemStack.get(DataComponents.CUSTOM_MODEL_DATA);
+        if(type == null) return Component.empty();
         var colour = ElementRegistry.getElementByTypeId(type.value());
         if(!colour.isEmpty()){
             if (itemStack1 != null) {

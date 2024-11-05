@@ -109,19 +109,14 @@ public class WandBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
-        ItemStack heldItem = pPlayer.getItemInHand(pHand);
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 
-        if (pPlayer.getMainHandItem().isEmpty() && pPlayer.isShiftKeyDown()) {
-            this.pickUpWand(pPlayer, pPos, pLevel);
+        if (player.getMainHandItem().isEmpty() && player.isShiftKeyDown()) {
+            this.pickUpWand(player, pos, level);
             return ItemInteractionResult.SUCCESS;
         }
 
-        if (pLevel.getBlockEntity(pPos) instanceof WandBlockEntity) {
-            openWandGUI(pPlayer, pPos, pLevel);
-        }
-
-        return ItemInteractionResult.SUCCESS;
+        return openWandGUI(player, pos, level);
     }
 
     private static ItemInteractionResult getItemInteractionResult(ItemStack heldItem, WandBlockEntity wandBlock) {
@@ -140,11 +135,13 @@ public class WandBlock extends BaseEntityBlock {
     }
 
 
-    private void openWandGUI(Player player, BlockPos blockPos, Level level){
-        if (!(player.getMainHandItem().isEmpty())) return;
-        if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return;
-        if(!(player instanceof ServerPlayer serverPlayer)) return;
+    private ItemInteractionResult openWandGUI(Player player, BlockPos blockPos, Level level){
+        var success = ItemInteractionResult.SUCCESS;
+        var fail = ItemInteractionResult.FAIL;
+        if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return fail;
+        if(!(player instanceof ServerPlayer serverPlayer)) return fail;
         serverPlayer.openMenu(wandBlock, blockPos);
+        return success;
     }
 
     private void pickUpWand(Player player, BlockPos blockPos, Level level){
@@ -152,6 +149,7 @@ public class WandBlock extends BaseEntityBlock {
             player.setItemInHand(player.getUsedItemHand(), wandBlock.getWandItemFromSlot().copy());
             wandBlock.getWandItemFromSlot().shrink(1);
             level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+
         }
     }
 

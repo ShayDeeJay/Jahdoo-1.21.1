@@ -28,6 +28,8 @@ public class Network {
         payloadRegistrar.playToClient(MageFlightDataSyncS2CPacket.TYPE, MageFlightDataSyncS2CPacket.STREAM_CODEC, MageFlightDataSyncS2CPacket::handle);
         payloadRegistrar.playToClient(BouncyFootDataSyncS2CPacket.TYPE, BouncyFootDataSyncS2CPacket.STREAM_CODEC, BouncyFootDataSyncS2CPacket::handle);
         payloadRegistrar.playToClient(NovaSmashS2CPacket.TYPE, NovaSmashS2CPacket.STREAM_CODEC, NovaSmashS2CPacket::handle);
+
     }
 
 }
+

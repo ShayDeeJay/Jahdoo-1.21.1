@@ -45,14 +45,14 @@ public class PermafrostAbility extends AbstractAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(50, 20,  1)
+            .setMana(50, 20,  5)
             .setCooldown(1800, 1200, 100)
-            .setDamage(10, 1, 1)
+//            .setDamage(10, 1, 1)
             .setEffectDuration(600, 200, 50)
             .setEffectStrength(10, 4,1)
             .setCastingDistance(30, 10, 5)
-            .setLifetime(600, 300, 50)
-            .setAoe(5, 2, 1)
+            .setLifetime(400, 100, 50)
+            .setAoe(4, 1, 1)
             .build();
     }
 

@@ -36,9 +36,9 @@ public class HellfireAbility extends AbstractAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(20, 10,  1)
+            .setMana(40, 10,  5)
             .setCooldown(400, 100, 50)
-            .setDamage(20, 5, 1)
+            .setDamage(30, 15, 5)
             .setEffectDuration(300, 20, 20)
             .setEffectStrength(10, 0,1)
             .setRange(20,10,1)

@@ -100,9 +100,9 @@ public class CreatorRenderer implements BlockEntityRenderer<CreatorEntity> {
         pPoseStack.mulPose(Axis.YP.rotationDegrees(getCurrentTime));
 
         ItemStack outputSlot = pBlockEntity.outputItemHandler.getStackInSlot(0);
-        ItemStack itemStack = outputSlot.isEmpty() ? pBlockEntity.getOutputResult() : outputSlot;
         int maxLightLevel = getLightLevel(Objects.requireNonNull(pBlockEntity.getLevel()), pBlockEntity.getBlockPos());
 
+        ItemStack itemStack = outputSlot.isEmpty() ? pBlockEntity.getOutputResult() : outputSlot;
         itemRenderer.renderStatic(
             itemStack,
             ItemDisplayContext.FIXED,

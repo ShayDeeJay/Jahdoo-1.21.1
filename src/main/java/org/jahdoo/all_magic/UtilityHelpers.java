@@ -28,32 +28,33 @@ public class UtilityHelpers {
 
     public static void dropItemsOrBlock(Projectile newProjectile, BlockPos pos, boolean isSilkTouch, boolean voidBlocks){
         if(UtilityHelpers.range.contains(UtilityHelpers.destroySpeed(pos, newProjectile.level()))){
-            BlockState blockstate = newProjectile.level().getBlockState(pos);
+            var blockstate = newProjectile.level().getBlockState(pos);
+            var level = newProjectile.level();
             if(!voidBlocks){
-                var level = newProjectile.level();
                 var centre = pos.getCenter();
-
                 if (isSilkTouch) {
                     var getBlock = new ItemStack(blockstate.getBlock());
-                    ItemEntity itementity = new ItemEntity(level, centre.x, centre.y, centre.z, getBlock);
+                    var itementity = new ItemEntity(level, centre.x, centre.y, centre.z, getBlock);
                     level.addFreshEntity(itementity);
                 } else {
                     if(!(level instanceof ServerLevel serverLevel)) return;
+
                     var lootBuilder = new LootParams
                         .Builder(serverLevel)
                         .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
-                        .withParameter(LootContextParams.TOOL, new ItemStack(Items.DIAMOND_PICKAXE));
-                    var drops = newProjectile.level().getBlockState(pos).getDrops(lootBuilder);
+                        .withParameter(LootContextParams.TOOL, new ItemStack(Items.DIAMOND_PICKAXE))
+                        .withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
 
-                    for (ItemStack itemStack : drops){
-                        ItemEntity itementity = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
+                    var drops = blockstate.getDrops(lootBuilder);
+                    for (ItemStack itemStack : drops) {
+                        var itementity = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
                         level.addFreshEntity(itementity);
                     }
                 }
             }
             var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
-            ParticleHandlers.sendParticles(newProjectile.level(), blockPart,  pos.getCenter(), 5,0, 0, 0, 1);
-            newProjectile.level().removeBlock(pos, false);
+            ParticleHandlers.sendParticles(level, blockPart,  pos.getCenter(), 5,0, 0, 0, 1);
+            level.removeBlock(pos, false);
         }
     }
 

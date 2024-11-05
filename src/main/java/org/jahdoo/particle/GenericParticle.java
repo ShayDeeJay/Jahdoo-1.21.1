@@ -21,7 +21,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
         this.lifetime = 10 + this.random.nextInt(10);
         this.pickSprite(pSprites);
         this.hasPhysics = false;
-        this.alpha = 0.8f;
+        this.alpha = 0.6f;
     }
 
     @Override
@@ -38,8 +38,6 @@ public class GenericParticle extends SimpleAnimatedParticle {
     public @NotNull ParticleRenderType getRenderType() {
         return ParticleRenderTypes.ABILITY_RENDERER;
     }
-
-
 
     @OnlyIn(Dist.CLIENT)
     public static class BakedProvider implements ParticleProvider<BakedParticleOptions> {
@@ -86,14 +84,8 @@ public class GenericParticle extends SimpleAnimatedParticle {
                     if(!pType.setStaticSize()) this.quadSize *= 0.9f;
                     this.speedUpWhenYMotionIsBlocked = true;
                 }
-
-                @Override
-                public AABB getBoundingBox() {
-                    return super.getBoundingBox();
-                }
             };
 
-            genericParticle.setAlpha(0.8f);
             if(pType.setStaticSize()){
                 genericParticle.quadSize = pType.size();
             } else {
@@ -145,12 +137,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
                 }
             };
 
-            genericParticle.setAlpha(1f);
-            if (pType.setStaticSize()) {
-                genericParticle.quadSize = pType.size();
-            } else {
-                genericParticle.quadSize *= pType.size();
-            }
+            if (pType.setStaticSize()) genericParticle.quadSize = pType.size(); else  genericParticle.quadSize *= pType.size();
             genericParticle.setColor(pType.colour());
             genericParticle.setFadeColor(pType.fade());
             genericParticle.lifetime = pType.lifetime() + ModHelpers.Random.nextInt(pType.lifetime());
@@ -158,5 +145,6 @@ public class GenericParticle extends SimpleAnimatedParticle {
             return genericParticle;
         }
     }
+
 
 }

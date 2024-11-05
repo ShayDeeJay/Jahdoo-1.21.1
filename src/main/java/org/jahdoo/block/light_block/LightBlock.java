@@ -18,6 +18,9 @@ import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.particle.ParticleHandlers;
 
+import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
+import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
 import static org.jahdoo.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
 
 public class LightBlock extends Block {
@@ -35,7 +38,6 @@ public class LightBlock extends Block {
 
     @Override
     public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource) {
-        super.animateTick(blockState, level, blockPos, randomSource);
         AbstractElement type;
         if(level.dimension() == Level.NETHER){
             type = ElementRegistry.INFERNO.get();
@@ -45,11 +47,14 @@ public class LightBlock extends Block {
             type = ElementRegistry.UTILITY.get();
         }
 
-        var bakedParticle = new BakedParticleOptions(type.getTypeId(), 16, 1, false);
-        var generic = new GenericParticleOptions(SOFT_PARTICLE_SELECTION, type.particleColourPrimary(), type.particleColourFaded(), 16, 0.5f, false, 0.05);
+        var pos = blockPos.getCenter().subtract(0,0.05,0);
+        var lifetime = 10;
+        var size = 0.8f;
+        var bakedParticle = bakedParticleOptions(type.getTypeId(), lifetime, size + 0.2f, false);
+        var generic = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, size, type.particleColourPrimary(), type.particleColourFaded(), false);
 
-        ParticleHandlers.invisibleLight(level, blockPos.getCenter().subtract(0,0.1,0), bakedParticle, 0.01, 0.02);
-        ParticleHandlers.invisibleLight(level, blockPos.getCenter().subtract(0,0.1,0), generic, 0.02, 0.03);
+        ParticleHandlers.invisibleLight(level, pos, bakedParticle, 0.03, 0.04);
+        ParticleHandlers.invisibleLight(level, pos, generic, 0.03, 0.04);
     }
 
 

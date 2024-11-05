@@ -59,8 +59,8 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
     }
 
     private void commonLootTables(ResourceLocation resourceLocation, int additional) {
-        add("augments_chest" + additional, addLoot(resourceLocation, ItemsRegister.AUGMENT_ITEM.get(), 0.5f));
-        add("augments_core_chest" + additional, addLoot(resourceLocation, ItemsRegister.AUGMENT_CORE.get(), 0.5f));
+        add("augments_chest" + additional, addLoot(resourceLocation, ItemsRegister.AUGMENT_ITEM.get(), 0.4f));
+        add("augments_core_chest" + additional, addLoot(resourceLocation, ItemsRegister.AUGMENT_CORE.get(), 0.35f));
     }
 
     private void rareLootTales(ResourceLocation resourceLocation, int additional) {

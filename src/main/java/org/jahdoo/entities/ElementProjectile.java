@@ -191,7 +191,7 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
         }
 
         if(this.showTrailParticles){
-            ParticleHandlers.EntityProjectileParticles(this, tickCount, 0.30f, this.getElementType());
+            ParticleHandlers.EntityProjectileParticles(this, tickCount, 0.20f, this.getElementType());
         }
 
         if (this.getOwner() != null && distanceTo(this.getOwner()) > 70f) this.discard();

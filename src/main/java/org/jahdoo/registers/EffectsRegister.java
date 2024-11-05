@@ -16,9 +16,8 @@ import org.jahdoo.all_magic.effects.custom_effects.*;
 import org.jahdoo.all_magic.effects.custom_effects.type_effects.*;
 
 public class EffectsRegister {
-    public static final DeferredRegister<MobEffect> MOB_EFFECTS =
-        DeferredRegister.create(Registries.MOB_EFFECT, JahdooMod.MOD_ID);
-//
+    public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, JahdooMod.MOD_ID);
+
     public static final DeferredHolder<MobEffect, MobEffect>  STEP_BOOST = MOB_EFFECTS.register("step_boost",
         () -> new GenericEffect(MobEffectCategory.BENEFICIAL, 3434234).addAttributeModifier(Attributes.STEP_HEIGHT, ResourceLocation.withDefaultNamespace("step_height"), 1.0, AttributeModifier.Operation.ADD_VALUE));
 
@@ -29,10 +28,12 @@ public class EffectsRegister {
         () -> new GenericEffect(MobEffectCategory.BENEFICIAL, 3436524).addAttributeModifier(AttributesRegister.MANA_REGEN, ResourceLocation.withDefaultNamespace("man_regen"),1.0D, AttributeModifier.Operation.ADD_VALUE));
 
 
+    public static final DeferredHolder<MobEffect, MobEffect> REPLENISH_MANA = MOB_EFFECTS.register("replenish_mana",
+        () -> new ReplenishManaEffect(MobEffectCategory.BENEFICIAL, 3436524)
+    );
     public static final DeferredHolder<MobEffect, MobEffect> ITEM_MAGNET = MOB_EFFECTS.register("item_magnet",
         () -> new ItemMagnetEffect(MobEffectCategory.BENEFICIAL, 3436524)
     );
-
     public static final DeferredHolder<MobEffect, MobEffect> STUN_EFFECT = MOB_EFFECTS.register("stun_effect",
         () -> new StunEffect(MobEffectCategory.HARMFUL, 3436524)
     );
@@ -52,9 +53,7 @@ public class EffectsRegister {
         () -> new VitalityEffect(MobEffectCategory.HARMFUL, 3436524)
     );
 
-
     public static void register (IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);
     }
-
 }
