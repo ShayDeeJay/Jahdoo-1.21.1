@@ -13,7 +13,6 @@ public class JahdooCuriosProvider extends CuriosDataProvider {
 
     public JahdooCuriosProvider(PackOutput output, ExistingFileHelper fileHelper, CompletableFuture<HolderLookup.Provider> registries) {
         super(JahdooMod.MOD_ID, output, fileHelper, registries);
-
     }
 
     @Override

@@ -78,6 +78,8 @@ public class AugmentSlot extends SlotItemHandler {
         wandItem.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get()).abilityProperties().remove(ability);
     }
 
+
+
     @Override
     public void setChanged() {
         this.wandBlockMenu.getWandBlockEntity().setAllAbilities();

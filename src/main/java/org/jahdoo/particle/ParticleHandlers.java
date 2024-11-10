@@ -189,7 +189,7 @@ public class ParticleHandlers {
             double offsetY = projectile.getY() - normalizedY * offsetDistance;
             double offsetZ = projectile.getZ() - normalizedZ * offsetDistance;
 
-            playParticles(particleMain, projectile, projectile.getX(), projectile.getY(), projectile.getZ(), 0);
+            playParticles(particleMain, projectile, projectile.getX(), projectile.getY(), projectile.getZ(), 8);
             playParticles2(particleTrail, projectile, offsetX, offsetY, offsetZ, 20, speed);
         }
     }

@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
+import org.jahdoo.block.automation_block.AutomationBlockEntity;
 import org.jahdoo.utils.ModHelpers;
 
 public class BlockPlacer extends AbstractUtilityProjectile {
@@ -25,6 +26,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof AutomationBlockEntity) return;
         var player = (Player) genericProjectile.getOwner();
         if(player == null) return;
         var replaceBlock = Block.byItem(player.getOffhandItem().getItem());

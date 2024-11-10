@@ -11,6 +11,7 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jahdoo.client.curio_renderer.TomeRenderer;
+import org.jahdoo.client.gui.automation_block.AutomationBlockScreen;
 import org.jahdoo.client.gui.infusion_table.InfusionTableScreen;
 import org.jahdoo.client.gui.wand_block.WandBlockScreen;
 import org.jahdoo.loot.ModLootModifiers;
@@ -62,6 +63,7 @@ public class JahdooMod {
         public static void onClientSetup(RegisterMenuScreensEvent event) {
             event.register(MenusRegister.CRYSTAL_INFUSION_MENU.get(), InfusionTableScreen::new);
             event.register(MenusRegister.WAND_BLOCK_MENU.get(), WandBlockScreen::new);
+            event.register(MenusRegister.AUTOMATION_BLOCK_MENU.get(), AutomationBlockScreen::new);
 
         }
     }

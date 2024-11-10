@@ -1,12 +1,15 @@
 package org.jahdoo.all_magic.all_abilities.abilities.Utility;
 
+import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
+import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.entities.GenericProjectile;
+import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.ModHelpers;
@@ -24,6 +27,20 @@ public class BlockPlacerAbility extends AbstractAbility {
             abilityId.getPath().intern()
         );
         fireUtilityProjectile(genericProjectile, player);
+    }
+
+    @Override
+    public void invokeAbilityBlock(Vec3i direction, AbstractBEInventory entity) {
+        var augment = entity.inputItemHandler.getStackInSlot(0);
+        GenericProjectile genericProjectile = new GenericProjectile(
+            augment.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get()),
+            entity.getBlockPos().getCenter(),
+            entity.getLevel(),
+            EntityPropertyRegister.BLOCK_PLACER.get().setAbilityId(),
+            abilityId.getPath().intern()
+        );
+        genericProjectile.setMaxDistance(10);
+        fireUtilityProjectile(genericProjectile, entity.getBlockPos(), direction);
     }
 
     @Override

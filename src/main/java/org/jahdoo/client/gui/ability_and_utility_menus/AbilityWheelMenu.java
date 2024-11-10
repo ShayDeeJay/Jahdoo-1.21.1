@@ -21,7 +21,7 @@ import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.client.SharedUI;
-import org.jahdoo.client.gui.augment_menu.AugmentMenu;
+import org.jahdoo.client.gui.augment_menu.AugmentScreen;
 import org.jahdoo.components.WandData;
 import org.jahdoo.networking.packet.client2server.SelectedAbilityC2SPacket;
 import org.jahdoo.networking.packet.client2server.StopUsingC2SPacket;
@@ -34,15 +34,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static org.jahdoo.all_magic.AbilityBuilder.COOLDOWN;
-import static org.jahdoo.all_magic.AbilityBuilder.MANA_COST;
-import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.client.gui.IconLocations.COG;
+import static org.jahdoo.items.augments.Augment.isConfigAbility;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class AbilityWheelMenu extends Screen  {
     private final int buttonSize = RADIAL_SIZE / 7 + 3;
     private static final int RADIAL_SIZE = 150;
-    private float localTick = 50;
+    private float localTick = 60;
 
     public AbilityWheelMenu() {
         super(Component.literal("Ability Menu"));
@@ -64,7 +63,7 @@ public class AbilityWheelMenu extends Screen  {
         var totalSlots = abilityHolder.size();
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-        int radius = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 3.5); // Adjust radius
+        int radius = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 3.3); // Adjust radius
         double angleOffset = -Math.PI / 2.0; // Start position
 
         for (int i = 0; i < totalSlots; i++) {
@@ -76,10 +75,6 @@ public class AbilityWheelMenu extends Screen  {
                 AbilityButton(abilityHolder, i, buttonX, buttonY, i, wandData, player);
             } else {
                 showSlotIndex(i, buttonX, buttonY);
-            }
-            try{
-            } catch (IndexOutOfBoundsException ignored){
-
             }
         }
     }
@@ -119,23 +114,17 @@ public class AbilityWheelMenu extends Screen  {
     }
 
     private void showConfig(WandData wandData, Player player, AbstractAbility selectedAbility, int posX, int posY) {
-        var configResource = ModHelpers.modResourceLocation("textures/gui/gui_button_cog_dark.png");
-        var configButton = new WidgetSprites(configResource, configResource);
+        var configButton = new WidgetSprites(COG, COG);
         var configButtonSize = 20;
         if (selectedAbility.getElemenType() == ElementRegistry.UTILITY.get()) {
-            var wandAbilityHolder = player.getMainHandItem().get(WAND_ABILITY_HOLDER);
-            var abilityHolder = wandAbilityHolder.abilityProperties().get(wandData.selectedAbility());
-            var filterOutBase = abilityHolder.abilityProperties()
-                .keySet()
-                .stream()
-                .filter(name -> !name.equals(MANA_COST) && !name.equals(COOLDOWN));
-            if(!filterOutBase.toList().isEmpty()){
+            var filterOutBase = isConfigAbility(selectedAbility, wandData.selectedAbility(), player);
+            if(filterOutBase){
                 this.addRenderableWidget(
                     new AbilityIconButton(
                         posX, posY,
                         configButton,
                         configButtonSize,
-                        pButton -> this.getMinecraft().setScreen(new AugmentMenu(player.getMainHandItem(), wandData.selectedAbility(), this)),
+                        pButton -> this.getMinecraft().setScreen(new AugmentScreen(player.getMainHandItem(), wandData.selectedAbility(), this)),
                         false
                     )
                 );
@@ -188,7 +177,7 @@ public class AbilityWheelMenu extends Screen  {
 
 
     public float easeInOutCubic(float t) {
-        return t < 0.2f ? 4 * t * t * t : 1 - (float) Math.pow(-2 * t + 2, 3) / 2;
+        return t < 0.2f ? 4 * t * t * t : (float) (1 - (float) Math.pow(-2 * t + 2, 3) / 1.2);
     }
 
     @Override
@@ -204,32 +193,37 @@ public class AbilityWheelMenu extends Screen  {
             List<AbstractAbility> getAbility = AbilityRegister.getSpellsByTypeId(getAbilityId.getPath().intern());
            if(!getAbility.isEmpty()){
                 SharedUI.getAbilityNameWithColour(getAbility.getFirst(), guiGraphics, x, y - 90, true);
-            }
+           }
         }
     }
 
-    private void setRadialTexture(GuiGraphics guiGraphics, int easedValue){
+    private void setRadialTexture(GuiGraphics guiGraphics, int easedValue, float fade){
         int xRadial = (this.width - easedValue) / 2;
         int yRadial = (this.height - easedValue) / 2;
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.9F);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, fade);
         var atlasLocation = ModHelpers.modResourceLocation("textures/gui/ability_wheel_background.png");
         guiGraphics.blit(atlasLocation, xRadial, yRadial, 0, 0, easedValue, easedValue, easedValue, easedValue);
+        this.getSelectedAbilityName(guiGraphics);
         RenderSystem.disableBlend();
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        float normalizedTick = localTick / RADIAL_SIZE;
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        float normalizedTick =  this.localTick / RADIAL_SIZE;
         float easedTick = easeInOutCubic(normalizedTick);
         int easedValue = (int) (easedTick * RADIAL_SIZE);
-        this.getSelectedAbilityName(guiGraphics);
-        setRadialTexture(guiGraphics, easedValue);
-        if(localTick <= RADIAL_SIZE) this.localTick += 3f;
-        if(localTick >= (RADIAL_SIZE - 20)) super.render(guiGraphics, mouseX, mouseY, delta);
+        float frameTimeNs = getMinecraft().getFrameTimeNs();
+        float currentFrame = getMinecraft().getFps();
+        var tick = this.localTick + Math.clamp(frameTimeNs / (currentFrame * 11000), 2, 20);
+        var fade = this.localTick/120;
+        this.localTick = Math.min(tick, RADIAL_SIZE);
+        setRadialTexture(guiGraphics, easedValue, fade > 0.7 ? fade : 0);
+
+        if(this.localTick >= RADIAL_SIZE) super.render(guiGraphics, mouseX, mouseY, delta);
     }
 
     @Override

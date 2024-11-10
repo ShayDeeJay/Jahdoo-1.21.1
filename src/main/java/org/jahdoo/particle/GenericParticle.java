@@ -21,7 +21,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
         this.lifetime = 10 + this.random.nextInt(10);
         this.pickSprite(pSprites);
         this.hasPhysics = false;
-        this.alpha = 0.6f;
+        this.alpha = 0.8f;
     }
 
     @Override

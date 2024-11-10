@@ -28,6 +28,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(BlocksRegister.INFUSER.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/infuser")));
 
+        simpleBlockWithItem(BlocksRegister.AUTOMATION_BLOCK.get(),
+            new ModelFile.UncheckedModelFile(modLoc("block/automation_block")));
+
         simpleBlockWithItem(BlocksRegister.LIGHTING.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/lighting")));
 

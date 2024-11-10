@@ -62,7 +62,7 @@ public class AugmentIconButton extends ImageButton {
 
     @Override
     protected boolean isValidClickButton(int button) {
-        return this.isAvailable;
+        return this.isAvailable && !this.isSelected;
     }
 
     @Override

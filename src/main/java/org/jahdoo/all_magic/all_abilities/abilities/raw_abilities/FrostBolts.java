@@ -176,7 +176,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
             var value = String.valueOf(Math.round(castDistance));
             var element = this.getElementType().particleColourPrimary();
             var targetDistance = ModHelpers.withStyleComponent(value, element);
-            player.displayClientMessage(Component.translatable("abilities.jahdoo.frost_bolts.no_target", targetDistance), true);
+            player.displayClientMessage(ModHelpers.withStyleComponentTrans("abilities.jahdoo.frost_bolts.no_target", -1, targetDistance), true);
         }
     }
 

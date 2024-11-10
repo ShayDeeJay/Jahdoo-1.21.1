@@ -3,20 +3,35 @@ package org.jahdoo.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jahdoo.components.AbilityHolder;
+import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
+import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
+import org.jahdoo.utils.ModHelpers;
+
 import java.util.List;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
 
 public class SharedUI {
+
+    public static void renderInventoryBackground(GuiGraphics guiGraphics, Screen screen, int IMAGE_SIZE, int yOffset){
+        var x = (screen.width - IMAGE_SIZE) / 2;
+        var y = (screen.height - IMAGE_SIZE) / 2;
+        guiGraphics.blit(
+            ModHelpers.modResourceLocation("textures/gui/wand_gui.png"),
+            x, y + yOffset - 44,
+            0,0, IMAGE_SIZE, IMAGE_SIZE
+        );
+    }
 
     public static void getAbilityNameWithColour(
         AbstractAbility abstractAbility,
@@ -86,6 +101,40 @@ public class SharedUI {
         return element;
     }
 
+    public static void setSlotTexture(GuiGraphics guiGraphics, int slotX, int slotY, int imageSize){
+        var atlasLocation = ModHelpers.modResourceLocation("textures/gui/slot.png");
+        guiGraphics.blit(atlasLocation, slotX, slotY - 3, 0, 0, imageSize, imageSize);
+    }
+
+    public static void abilityIcon(GuiGraphics guiGraphics, ItemStack cachedItem, int width, int height, int offset){
+        var verticalOffset = 38 + offset;
+        var localImageSize = 50;
+        var shrinkBy = 16;
+        var imageWithShrink = localImageSize - shrinkBy;
+        var posX = (width - localImageSize) / 2 ;
+        var posY = (height - localImageSize) / 2 - 150 + verticalOffset;
+        var posX1 = (width - imageWithShrink) / 2 ;
+        var posY1 = (height - imageWithShrink) / 2 - 150 + verticalOffset;
+
+        guiGraphics.blit(
+            ModHelpers.modResourceLocation("textures/gui/gui_button.png"),
+            posX, posY, 0, 0, localImageSize, localImageSize, localImageSize, localImageSize
+        );
+
+        if(cachedItem == null) return;
+        var abstractAbility = AbilityRegister.getSpellsByTypeId(DataComponentHelper.getAbilityTypeItemStack(cachedItem));
+
+        if(!abstractAbility.isEmpty()){
+            if (!abstractAbility.getFirst().getAbilityIconLocation().getPath().isEmpty()) {
+                if(abstractAbility.getFirst().getAbilityIconLocation() != null){
+                    guiGraphics.blit(
+                        abstractAbility.getFirst().getAbilityIconLocation(),
+                        posX1, posY1, 0, 0, imageWithShrink, imageWithShrink, imageWithShrink, imageWithShrink
+                    );
+                }
+            }
+        }
+    }
 
     public static void handleSlotsInGridLayout(
         TriConsumer<Integer, Integer, Integer> slotAction,
@@ -95,46 +144,38 @@ public class SharedUI {
         int xSpacing,
         int ySpacing
     ) {
-
-        // Calculate the center of the screen
         int centerX = sharedScreenWidth / 2;
         int centerY = shareScreenHeight / 2;
 
         if (totalSlots <= 5) {
-            // All slots in a single row
             int startX = centerX - (totalSlots - 1) * xSpacing / 2; // Center the row
 
             for (int i = 0; i < totalSlots; i++) {
                 int slotX = startX + i * xSpacing;
-                int slotY = centerY; // Vertically center the single row
-
-                // Perform the slot-related action (add slot or adjust texture)
+                int slotY = centerY;
                 slotAction.accept(slotX + 80, slotY + 50, i);
             }
         } else {
-            // Split into two rows
-            int slotsInTopRow = (totalSlots + 1) / 2; // Top row gets the extra slot if totalSlots is odd
-            int slotsInBottomRow = totalSlots / 2;    // Bottom row takes the remaining slots
+            int slotsInTopRow = (totalSlots + 1) / 2;
+            int slotsInBottomRow = totalSlots / 2;
 
-            // Calculate the initial offset for the grid layout
             int startXTopRow = centerX - (slotsInTopRow - 1) * xSpacing / 2;
             int startXBottomRow = centerX - (slotsInBottomRow - 1) * xSpacing / 2;
-            int startYTopRow = centerY - ySpacing / 2; // Center top row vertically
-            int startYBottomRow = centerY + ySpacing / 2; // Center bottom row below top row
+            int startYTopRow = centerY - ySpacing / 2;
+            int startYBottomRow = centerY + ySpacing / 2;
 
             for (int i = 0; i < totalSlots; i++) {
                 int slotX, slotY;
 
-                if (i < slotsInTopRow) { // Top row
+                if (i < slotsInTopRow) {
                     slotX = startXTopRow + i * xSpacing;
                     slotY = startYTopRow;
-                } else { // Bottom row
+                } else {
                     int col = i - slotsInTopRow;
                     slotX = startXBottomRow + col * xSpacing;
                     slotY = startYBottomRow;
                 }
 
-                // Perform the slot-related action (add slot or adjust texture)
                 slotAction.accept(slotX + 80, slotY + 50, i);
             }
         }

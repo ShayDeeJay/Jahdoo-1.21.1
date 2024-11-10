@@ -8,15 +8,17 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.UtilityHelpers;
 import org.jahdoo.all_magic.all_abilities.abilities.Utility.VeinMinerAbility;
+import org.jahdoo.block.automation_block.AutomationBlockEntity;
 import org.jahdoo.entities.GenericProjectile;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
-import org.jahdoo.particle.ParticleHandlers;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -57,8 +59,9 @@ public class VeinMiner extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof AutomationBlockEntity) return;
         if (genericProjectile.level().isClientSide) return;
-
+        super.onBlockBlockHit(blockHitResult);
         BlockPos start = blockHitResult.getBlockPos();
         BlockState target = genericProjectile.level().getBlockState(start);
         if (target.isAir()) return;
@@ -74,7 +77,6 @@ public class VeinMiner extends AbstractUtilityProjectile {
                 ParticleHandlers.particleBurst(genericProjectile.level(), pos.getCenter(), 1, part, 0, 0, 0, 0.005f, 1);
             }
         );
-        super.onBlockBlockHit(blockHitResult);
         genericProjectile.discard();
     }
 

@@ -12,6 +12,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,12 +23,17 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.Range;
+import org.jahdoo.block.automation_block.AutomationBlockEntity;
 import org.jahdoo.particle.ParticleHandlers;
+import org.jahdoo.registers.ItemsRegister;
+
+import static org.jahdoo.utils.ModHelpers.Random;
 
 public class UtilityHelpers {
     public static Range<Float> range = Range.of(0.0f, 10.0f);
 
     public static void dropItemsOrBlock(Projectile newProjectile, BlockPos pos, boolean isSilkTouch, boolean voidBlocks){
+        if(newProjectile.level().getBlockEntity(pos) instanceof AutomationBlockEntity) return;
         if(UtilityHelpers.range.contains(UtilityHelpers.destroySpeed(pos, newProjectile.level()))){
             var blockstate = newProjectile.level().getBlockState(pos);
             var level = newProjectile.level();
@@ -46,9 +53,17 @@ public class UtilityHelpers {
                         .withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
 
                     var drops = blockstate.getDrops(lootBuilder);
+//                    System.out.println(drops.size());
                     for (ItemStack itemStack : drops) {
-                        var itementity = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
-                        level.addFreshEntity(itementity);
+//                        System.out.println(itemStack);
+//                        ItemEntity item;
+//                        if(Random.nextInt(0, 100) == 0){
+//                            item = new ItemEntity(level, centre.x, centre.y, centre.z, new ItemStack(ItemsRegister.JIDE_POWDER).copyWithCount(itemStack.getCount()));
+//                        } else {
+//                            item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
+//                        }
+                        var item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
+                        level.addFreshEntity(item);
                     }
                 }
             }

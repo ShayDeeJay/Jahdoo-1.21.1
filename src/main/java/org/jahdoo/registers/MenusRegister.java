@@ -8,6 +8,7 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.network.IContainerFactory;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.client.gui.automation_block.AutomationBlockMenu;
 import org.jahdoo.client.gui.infusion_table.InfusionTableMenu;
 import org.jahdoo.client.gui.wand_block.WandBlockMenu;
 
@@ -22,6 +23,8 @@ public class MenusRegister {
     public static final Supplier<MenuType<WandBlockMenu>> WAND_BLOCK_MENU =
         registerMenuType(WandBlockMenu::new, "wand_block_menu");
 
+    public static final Supplier<MenuType<AutomationBlockMenu>> AUTOMATION_BLOCK_MENU =
+        registerMenuType(AutomationBlockMenu::new, "automation_block_menu");
 
     private static <T extends AbstractContainerMenu> Supplier<MenuType<T>> registerMenuType(IContainerFactory<T> factory, String name) {
         return MENUS.register(name, () -> IMenuTypeExtension.create(factory));

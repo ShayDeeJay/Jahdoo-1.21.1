@@ -7,6 +7,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.block.automation_block.AutomationBlockEntity;
 import org.jahdoo.block.crafter.CreatorEntity;
 import org.jahdoo.block.infuser.InfuserBlockEntity;
 import org.jahdoo.block.tank.TankBlockEntity;
@@ -33,6 +34,9 @@ public class BlockEntitiesRegister {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<InfuserBlockEntity>> INFUSER_BE =
         BLOCK_ENTITIES.register("infuser_be", () -> BlockEntityType.Builder.of(InfuserBlockEntity::new, BlocksRegister.INFUSER.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AutomationBlockEntity>> AUTOMATION_BLOCK =
+        BLOCK_ENTITIES.register("automation_block", () -> BlockEntityType.Builder.of(AutomationBlockEntity::new, BlocksRegister.AUTOMATION_BLOCK.get()).build(null));
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);

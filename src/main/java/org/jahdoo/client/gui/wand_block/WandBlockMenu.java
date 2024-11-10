@@ -5,15 +5,14 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.gui.AbstractInternalContainer;
-import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.components.DataComponentHelper;
+import org.jahdoo.registers.BlocksRegister;
+import org.jahdoo.registers.MenusRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,18 +24,17 @@ import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 public class WandBlockMenu extends AbstractInternalContainer {
     public int yOffset = 24;
     public int xOffset = 0;
-    public int xSpacing = 34; // Adjust the spacing between slots horizontally
-    public int ySpacing = 38; // Adjust the spacing between slots vertically
-    public int sharedScreenWidth;
-    public int shareScreenHeight;
+    public int xSpacing = 34;
+    public int ySpacing = 38;
 
     public WandBlockMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        super(pContainerId, inv, extraData);
+        super(MenusRegister.WAND_BLOCK_MENU.get(), pContainerId, inv, extraData);
         this.addSlotsInGridLayout();
+
     }
 
     public WandBlockMenu(int pContainerId, Inventory inv, AbstractBEInventory entity, ContainerData data) {
-        super(pContainerId, inv, entity, data);
+        super(MenusRegister.WAND_BLOCK_MENU.get(), pContainerId, inv, entity, data);
         this.addSlotsInGridLayout();
     }
 
@@ -51,28 +49,15 @@ public class WandBlockMenu extends AbstractInternalContainer {
     }
 
     @Override
-    public int adjustInventoryY() {
-        return yOffset - 33;
-    }
-
-    @Override
-    public int adjustInventoryX() {
-        return xOffset;
-    }
-
-    @Override
     protected Block getAssociatedBlock() {
         return BlocksRegister.WAND.get();
     }
 
     public void addSlotsInGridLayout() {
         handleSlotsInGridLayout(
-            (slotX, slotY, index) -> {
-                this.addSlot(new AugmentSlot(this.getWandBlockEntity().inputItemHandler,index + 1, slotX, slotY, this));
-            },
+            (slotX, slotY, index) -> this.addSlot(new AugmentSlot(this.getWandBlockEntity().inputItemHandler,index + 1, slotX, slotY, this)),
             getWandBlockEntity().getAllowedSlots(),
-            sharedScreenWidth,
-            shareScreenHeight,
+            0,0,
             xSpacing,
             ySpacing
         );
@@ -80,24 +65,21 @@ public class WandBlockMenu extends AbstractInternalContainer {
 
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int slotIndex) {
-        Slot sourceSlot = slots.get(slotIndex);
-        ItemStack sourceStack = sourceSlot.getItem();
-        ItemStack copyOfSourceStack = sourceStack;
+        var sourceSlot = slots.get(slotIndex);
+        var sourceStack = sourceSlot.getItem();
+        var copyOfSourceStack = sourceStack.copy();
         int totalSlotsInWand = getWandBlockEntity().inputItemHandler.getSlots();
 
         if(!sourceStack.has(WAND_DATA)) return ItemStack.EMPTY;
-
         String sourceStackIndex = DataComponentHelper.getAbilityTypeItemStack(copyOfSourceStack);
-
-
         for(int i = 1; i < totalSlotsInWand; i++){
             if(slotIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT){
-                ItemStackHandler targetSlots = getWandBlockEntity().inputItemHandler;
+                var targetSlots = getWandBlockEntity().inputItemHandler;
                 if (!targetSlots.getStackInSlot(i).isEmpty()) {
-                    String abilityIndex = DataComponentHelper.getAbilityTypeItemStack(targetSlots.getStackInSlot(i));
+                    var abilityIndex = DataComponentHelper.getAbilityTypeItemStack(targetSlots.getStackInSlot(i));
                     if(sourceSlot.getItem().getCount() == 1){
                         if (Objects.equals(sourceStackIndex, abilityIndex)) {
-                            ItemStack wandSlotItem = targetSlots.getStackInSlot(i).copyWithCount(1);
+                            var wandSlotItem = targetSlots.getStackInSlot(i).copyWithCount(1);
                             //set player slot
                             sourceSlot.set(wandSlotItem);
                             //set in wand

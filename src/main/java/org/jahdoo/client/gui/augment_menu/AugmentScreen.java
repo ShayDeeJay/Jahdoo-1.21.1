@@ -24,16 +24,16 @@ import static org.jahdoo.all_magic.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.all_magic.AbilityBuilder.MANA_COST;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
-public class AugmentMenu extends Screen  {
+public class AugmentScreen extends Screen  {
     public static final ResourceLocation BUTTON_UNSELECTED = ModHelpers.modResourceLocation("textures/gui/gui_button_unselected.png");
     public static final ResourceLocation BUTTON_SELECTED = ModHelpers.modResourceLocation("textures/gui/gui_button_selected.png");
-    private final WidgetSprites BUTTON = new WidgetSprites(BUTTON_UNSELECTED, BUTTON_UNSELECTED);
-    private final WidgetSprites BUTTON2 = new WidgetSprites(BUTTON_SELECTED, BUTTON_SELECTED);
+    public static final WidgetSprites BUTTON = new WidgetSprites(BUTTON_UNSELECTED, BUTTON_UNSELECTED);
+    public static final WidgetSprites BUTTON2 = new WidgetSprites(BUTTON_SELECTED, BUTTON_SELECTED);
     private final WandAbilityHolder holder;
     private final String abilityName;
     private final Screen previousScreen;
 
-    public AugmentMenu(ItemStack itemStack, String abilityName, @Nullable Screen previousScreen) {
+    public AugmentScreen(ItemStack itemStack, String abilityName, @Nullable Screen previousScreen) {
         super(Component.literal("Augment Menu"));
         this.holder = itemStack.get(WAND_ABILITY_HOLDER.get());
         this.abilityName = abilityName;

@@ -44,7 +44,7 @@ public class AbilityBuilder {
     private double getLuckModifier(){
         if(item != null && item.getItem() instanceof Augment){
             var rating = item.get(DataComponentRegistry.AUGMENT_RATING.get());
-            if(rating != null) return Math.max(1, rating); else return 1;
+            if(rating != null) return Math.max(1, rating); else return 20;
         }
         return 1;
     }

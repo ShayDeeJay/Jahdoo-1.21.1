@@ -1,8 +1,8 @@
 package org.jahdoo.items.wand;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -10,20 +10,18 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.block.wand.WandBlockEntity;
+import org.jahdoo.client.gui.TestingElements;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.components.WandData;
@@ -45,7 +43,6 @@ import java.util.function.Consumer;
 
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
-import static org.jahdoo.registers.AttributesRegister.replaceOrAddAttribute;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class WandItem extends BlockItem implements GeoItem {
@@ -108,7 +105,7 @@ public class WandItem extends BlockItem implements GeoItem {
     }
 
     @Override
-    protected SoundEvent getPlaceSound(BlockState state, Level world, BlockPos pos, Player entity) {
+    protected @NotNull SoundEvent getPlaceSound(BlockState state, Level world, BlockPos pos, Player entity) {
         return SoundEvents.EMPTY;
     }
 
@@ -135,6 +132,9 @@ public class WandItem extends BlockItem implements GeoItem {
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
+//        Minecraft.getInstance().setScreen(new TestingElements());
+
+
         var item = player.getMainHandItem();
         player.startUsingItem(player.getUsedItemHand());
         if (interactionHand == InteractionHand.MAIN_HAND) {

@@ -25,12 +25,16 @@ public class ModCreativeModTabs {
             .title(Component.translatable("creativetab.jahdoo_tab"))
             .displayItems((pParameters, pOutput) -> {
                 pOutput.accept(BlocksRegister.CRYSTAL_ORE.get());
-                pOutput.accept(BlocksRegister.CRYSTAL_DEEPSLATE_ORE.get());
-                pOutput.accept(ItemsRegister.JIDE_POWDER.get());
-                pOutput.accept(ItemsRegister.AUGMENT_CORE.get());
-                pOutput.accept(ItemsRegister.AUGMENT_FRAGMENT.get());
-                pOutput.accept(ItemsRegister.TOME_OF_UNITY.get());
-                pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
+                    pOutput.accept(BlocksRegister.CRYSTAL_DEEPSLATE_ORE.get());
+                    pOutput.accept(ItemsRegister.AUTOMATION_BLOCK_ITEM.get());
+                    pOutput.accept(BlocksRegister.TANK.get());
+                    pOutput.accept(BlocksRegister.CREATOR.get());
+                    pOutput.accept(ItemsRegister.INFUSER_ITEM.get());
+                    pOutput.accept(ItemsRegister.JIDE_POWDER.get());
+                    pOutput.accept(ItemsRegister.AUGMENT_CORE.get());
+                    pOutput.accept(ItemsRegister.AUGMENT_FRAGMENT.get());
+                    pOutput.accept(ItemsRegister.TOME_OF_UNITY.get());
+                    pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
 
 //                pOutput.accept(ItemsRegister.WIZARD_HELMET.get());
 //                pOutput.accept(ItemsRegister.WIZARD_CHESTPLATE.get());
@@ -45,9 +49,6 @@ public class ModCreativeModTabs {
 //                }
 
 //                pOutput.accept(BlocksRegister.WAND_MANAGER_TABLE.get());
-                pOutput.accept(BlocksRegister.TANK.get());
-                pOutput.accept(BlocksRegister.CREATOR.get());
-                pOutput.accept(ItemsRegister.INFUSER_ITEM.get());
                 pOutput.accept(ItemsRegister.WAND_ITEM_MYSTIC.get());
                 pOutput.accept(ItemsRegister.WAND_ITEM_FROST.get());
                 pOutput.accept(ItemsRegister.WAND_ITEM_INFERNO.get());

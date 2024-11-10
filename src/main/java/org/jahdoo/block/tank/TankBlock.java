@@ -70,7 +70,8 @@ public class TankBlock extends BaseEntityBlock {
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
         if (pState.getBlock() != pNewState.getBlock()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof TankBlockEntity tankBlockEntity) tankBlockEntity.dropsAllInventory(pLevel);
+            if (blockEntity instanceof TankBlockEntity tankBlockEntity)
+                tankBlockEntity.dropsAllInventory(pLevel);
         }
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
     }

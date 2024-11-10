@@ -20,6 +20,7 @@ import org.jahdoo.utils.PositionGetters;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jahdoo.block.AbstractTankUser.findInRange;
 import static org.jahdoo.block.tank.TankBlock.LIT;
 
 
@@ -66,22 +67,10 @@ public class TankBlockEntity extends AbstractBEInventory {
 
     private List<BlockPos> getTankBlockInRange(Level pLevel, BlockPos pos) {
         List<BlockPos> allBlocks = new ArrayList<>();
-        BlockPos[] adjacentPositions = new BlockPos[] {
-            pos.below(2),
-            pos.north().below(),
-            pos.south().below(),
-            pos.east().below(),
-            pos.west().below(),
-            pos.above().below(),
-            pos.north().east().below(), // North-East
-            pos.north().west().below(), // North-West
-            pos.south().east().below(), // South-East
-            pos.south().west().below(), // South-West
-        };
 
         List<AbstractTankUser> localList = new ArrayList<>();
 
-        for (BlockPos adjacentPos : adjacentPositions) {
+        for (BlockPos adjacentPos : findInRange(pos)) {
             if(pLevel.getBlockEntity(adjacentPos) instanceof AbstractTankUser abstractTankUser){
                 localList.add(abstractTankUser);
             }

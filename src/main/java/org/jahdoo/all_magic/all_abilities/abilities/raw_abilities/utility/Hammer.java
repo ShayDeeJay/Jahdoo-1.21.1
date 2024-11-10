@@ -11,6 +11,7 @@ import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.UtilityHelpers;
 import org.jahdoo.all_magic.all_abilities.abilities.Utility.HammerAbility;
+import org.jahdoo.block.automation_block.AutomationBlockEntity;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
@@ -50,14 +51,15 @@ public class Hammer extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof AutomationBlockEntity) return;
         var owner = (LivingEntity) genericProjectile.getOwner();
-        if(owner == null) return;
+        if(owner == null && genericProjectile.blockEntityPos == null) return;
 
         if(genericProjectile.level() instanceof ServerLevel serverLevel) {
             this.blockHitResult = blockHitResult;
             var radius = (int) (this.breakerSize / 2);
             var pos = blockHitResult.getBlockPos();
-            var pDirection = owner.getDirection();
+            var pDirection = owner == null ? genericProjectile.getDirection() : owner.getDirection();
             var lookAngleY = genericProjectile.getLookAngle().y;
             var isLookingUpOrDown = lookAngleY < -0.8 || lookAngleY > 0.8;
             var axisZ = pDirection.getAxis() == Direction.Axis.Z;

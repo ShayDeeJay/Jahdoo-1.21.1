@@ -259,4 +259,22 @@ public class PositionGetters {
         }
     }
 
+
+    public static List<Vec3> getRandomSphericalPositions(Vec3 positions, double radius, double numPoints) {
+        var vec3s = new ArrayList<Vec3>();
+        for (int i = 0; i < numPoints; i++) {
+            // Generate random spherical coordinates
+            double theta = 2 * Math.PI * Random.nextDouble(); // Random angle in the xy-plane
+            double phi = Math.acos(2 * Random.nextDouble() - 1); // Random angle from z-axis
+
+            // Convert spherical coordinates to Cartesian coordinates
+            double x = radius * Math.sin(phi) * Math.cos(theta);
+            double y = radius * Math.sin(phi) * Math.sin(theta);
+            double z = radius * Math.cos(phi);
+
+            vec3s.add(new Vec3(positions.x + x, positions.y + y, positions.z + z));
+        }
+        return vec3s;
+    }
+
 }

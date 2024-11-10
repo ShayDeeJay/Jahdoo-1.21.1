@@ -1,5 +1,7 @@
 package org.jahdoo.all_magic;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -8,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
 
@@ -44,6 +47,8 @@ public abstract class AbstractAbility {
     public abstract AbstractElement getElemenType();
 
     public abstract void invokeAbility(Player player);
+
+    public void invokeAbilityBlock(Vec3i direction, AbstractBEInventory beInventory){};
 
     public abstract JahdooRarity rarity();
 
@@ -89,4 +94,13 @@ public abstract class AbstractAbility {
             }
         }
     }
+
+    public void fireUtilityProjectile(Projectile projectile, BlockPos pos, Vec3i direction){
+        if (projectile.level() instanceof ServerLevel serverLevel) {
+            Vec3 eastDirection = Vec3.atCenterOf(direction).subtract(pos.getCenter()).normalize(); // Vector pointing east
+            projectile.shoot(eastDirection.x, eastDirection.y, eastDirection.z, 0.5f, 0);
+            serverLevel.addFreshEntity(projectile);
+        }
+    }
+
 }

@@ -96,12 +96,10 @@ public class AugmentItemHelper {
         var ability = abstractAbilities.get(ModHelpers.Random.nextInt(0, abstractAbilities.size()));
 
         ability.setModifiers(itemStack);
-        var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
 
+        var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         if(player != null){
-            if(!player.level().isClientSide){
-                setAbilityToAugment(itemStack, ability, wandAbilityHolder);
-            }
+            if(!player.level().isClientSide) setAbilityToAugment(itemStack, ability, wandAbilityHolder);
         } else {
             setAbilityToAugment(itemStack, ability, wandAbilityHolder);
         }
@@ -168,14 +166,22 @@ public class AugmentItemHelper {
 
     public static Component getModifierContext(String keys, String current, int getComparison){
         String converter;
+        var time = List.of("Duration", "Speed", "Delay", "Time");
+        var probability = List.of("Chance");
+        var distance = List.of("Radius", "Distance", "Range");
+        var multiplier = List.of("Multiplier");
 
-        if(keys.contains("Duration") || keys.contains("Speed") || keys.contains("Delay") || keys.contains("Time")){
-            converter = Double.parseDouble(current) / 20 + "s";
-        } else if (keys.contains("Chance")) {
+
+        if(time.stream().anyMatch(keys::contains)){
+            var duration = Double.parseDouble(current) / 20;
+            var minutes = (int)(duration / 60);
+            var seconds = (int)(duration % 60);
+            converter = duration >= 60 ? minutes + "m " + seconds + "s" : duration + "s";
+        } else if (probability.stream().anyMatch(keys::contains)) {
             converter = convertToPercentage(Integer.parseInt(current)) + "%";
-        } else if (keys.contains("Radius") || keys.contains("Distance") || keys.contains("Range")) {
+        } else if (distance.stream().anyMatch(keys::contains)) {
             converter = current + " Blocks";
-        } else if (keys.contains("Multiplier")) {
+        } else if (multiplier.stream().anyMatch(keys::contains)) {
             converter = current + "x";
         }else {
             converter = current;
@@ -250,6 +256,7 @@ public class AugmentItemHelper {
         if(itemStack.getComponents().isEmpty()) return toolTips;
         var exceptions = List.of(COOLDOWN, MANA_COST, SET_ELEMENT_TYPE, "index");
         var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        if(wandAbilityHolder == null) return toolTips;
         var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityLocation);
         var ability = AbilityRegister.getSpellsByTypeId(abilityLocation);
         var rarity = ability.getFirst().rarity();
@@ -258,9 +265,8 @@ public class AugmentItemHelper {
         toolTips.add(Component.empty());
 
         int subHeaderColour = -2434342;
-        var curlyStart = (char) 171;
-        var curlyEnd = (char) 187;
-        String unique = curlyStart + " Unique Attributes " + curlyEnd;
+        var curlyStart = String.valueOf((char) 171);
+        var curlyEnd = String.valueOf((char) 187);
         if(abilityHolder == null) return toolTips;
 
         List<String> filteredSuffix = abilityHolder.abilityProperties().keySet()
@@ -278,7 +284,7 @@ public class AugmentItemHelper {
 
         if(!filteredSuffix.isEmpty()){
             toolTips.add(Component.literal(" "));
-            toolTips.add(Component.literal(unique).withStyle(style -> style.withColor(subHeaderColour)));
+            toolTips.add(ModHelpers.withStyleComponentTrans("augmentHelper.jahdoo.attributes", subHeaderColour, curlyStart, curlyEnd));
             filteredSuffix.forEach(keys -> toolTipBase(toolTips, itemStack, itemStack1, keys, abilityLocation, 0));
         }
 
@@ -287,30 +293,23 @@ public class AugmentItemHelper {
 
     public static void shiftForDetails(List<Component> toolTips){
         if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
-            var componentI = Component.literal("[i]").withStyle(style -> style.withColor(-2631721));
             toolTips.add(Component.literal(" "));
-
-            var prefix = "Hold ";
-            var suffix = " for details";
-
-            MutableComponent message = Component.literal(prefix)
-                .withStyle(ChatFormatting.GRAY)
-                .append(componentI)
-                .append(Component.literal(suffix).withStyle(ChatFormatting.GRAY));
-
-            toolTips.add(message);
+            var hotkey = ModHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey",-2631721);
+            var holdToDiscover = ModHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details",-10066330, hotkey);
+            toolTips.add(holdToDiscover);
         }
     }
 
     public static void getHoverText(ItemStack itemStack, List<Component> toolTips){
         if(itemStack.getComponents().has(DataComponentRegistry.WAND_ABILITY_HOLDER.get())){
             var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            if(wandAbilityHolder == null) return;
             var abilityLocation = wandAbilityHolder.abilityProperties().keySet().stream().findAny().get();
             toolTips.addAll(getAllAbilityModifiers(itemStack, null, abilityLocation));
             shiftForDetails(toolTips);
-            toolTips.add(ModHelpers.withStyleComponent("Placeable in wands", -12368570));
+            toolTips.add(ModHelpers.withStyleComponentTrans("augmentHelper.jahdoo.place", -12368570));
         } else {
-            toolTips.add(Component.literal("Right-click to discover").withStyle(ChatFormatting.GRAY));
+            toolTips.add(ModHelpers.withStyleComponentTrans("augmentHelper.jahdoo.discover", -5131855));
         }
     }
 
