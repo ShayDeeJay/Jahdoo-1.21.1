@@ -15,11 +15,8 @@ import java.util.List;
 
 
 public abstract class AbstractTankUser extends AbstractBEInventory {
-
     protected BlockPos tankPosition;
     protected int progress;
-
-
 
     public AbstractTankUser(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState, int stackSize) {
         super(pType, pPos, pBlockState, stackSize);
@@ -47,14 +44,10 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
             var blockPos = this.getTankBlockInRange(level, pPos.above())
                 .stream()
                 .filter(
-                    blockPos1 ->
-                        level.getBlockEntity(blockPos1) instanceof TankBlockEntity tankBlockEntity &&
+                    blockPos1 -> level.getBlockEntity(blockPos1) instanceof TankBlockEntity tankBlockEntity &&
                             tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() >= craftingFuelCost
                 )
-                .sorted(
-                    Comparator.comparingInt(blockPos1 -> ((TankBlockEntity) level.getBlockEntity(blockPos1))
-                        .inputItemHandler.getStackInSlot(0).getCount())
-                )
+                .sorted(Comparator.comparingInt(blockPos1 -> level.getBlockEntity(blockPos1) instanceof TankBlockEntity tankBlockEntity ? tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() : 0))
                 .toList();
 
 
@@ -72,12 +65,12 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
     }
 
     public static BlockPos[] findInRange(BlockPos pos){
-        BlockPos[] adjacentPositions = new BlockPos[27];
+        BlockPos[] adjacentPositions = new BlockPos[125]; // 5 * 5 * 5 = 125 positions
         int index = 0;
 
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -2; dy <= 0; dy++) { // Adjusted y range to move down by 1 block
-                for (int dz = -1; dz <= 1; dz++) {
+        for (int dx = -2; dx <= 2; dx++) {       // 5 blocks in x-axis
+            for (int dy = -3; dy <= 1; dy++) {   // 5 blocks in y-axis, shifted down by 1
+                for (int dz = -2; dz <= 2; dz++) { // 5 blocks in z-axis
                     adjacentPositions[index++] = pos.offset(dx, dy, dz);
                 }
             }

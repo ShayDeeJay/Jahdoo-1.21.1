@@ -21,7 +21,6 @@ import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.client.SharedUI;
-import org.jahdoo.client.gui.augment_menu.AugmentScreen;
 import org.jahdoo.components.WandData;
 import org.jahdoo.networking.packet.client2server.SelectedAbilityC2SPacket;
 import org.jahdoo.networking.packet.client2server.StopUsingC2SPacket;
@@ -35,7 +34,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static org.jahdoo.client.gui.IconLocations.COG;
-import static org.jahdoo.items.augments.Augment.isConfigAbility;
+import static org.jahdoo.items.augments.Augment.*;
+import static org.jahdoo.items.augments.AugmentItemHelper.isConfigAbility;
+import static org.jahdoo.items.augments.AugmentItemHelper.setAugmentModificationScreen;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class AbilityWheelMenu extends Screen  {
@@ -116,15 +117,16 @@ public class AbilityWheelMenu extends Screen  {
     private void showConfig(WandData wandData, Player player, AbstractAbility selectedAbility, int posX, int posY) {
         var configButton = new WidgetSprites(COG, COG);
         var configButtonSize = 20;
+        var itemStack = player.getMainHandItem();
         if (selectedAbility.getElemenType() == ElementRegistry.UTILITY.get()) {
-            var filterOutBase = isConfigAbility(selectedAbility, wandData.selectedAbility(), player);
+            var filterOutBase = isConfigAbility(selectedAbility, wandData.selectedAbility(), itemStack);
             if(filterOutBase){
                 this.addRenderableWidget(
                     new AbilityIconButton(
                         posX, posY,
                         configButton,
                         configButtonSize,
-                        pButton -> this.getMinecraft().setScreen(new AugmentScreen(player.getMainHandItem(), wandData.selectedAbility(), this)),
+                        pButton -> setAugmentModificationScreen(itemStack, this),
                         false
                     )
                 );

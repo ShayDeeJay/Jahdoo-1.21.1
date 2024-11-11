@@ -101,20 +101,17 @@ public class ParticleHandlers {
         double deltaX = getX - projectile.xOld;
         double deltaY = getY - projectile.yOld;
         double deltaZ = getZ - projectile.zOld;
-        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * Math.max(3, multiplier));
-        for (double j = 0; j < dist; j++) {
+        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 3);
+        for (double j = 0; j < Math.clamp(dist, 10, 15); j++) {
             double coeff = j / dist;
-
-            if (projectile.level() instanceof ServerLevel serverLevel){
-                Vec3 position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
-                ParticleHandlers.sendParticles(
-                    serverLevel, particleOptions, position, 1,
-                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
-                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
-                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
-                    0
-                );
-            }
+            var position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
+            ParticleHandlers.sendParticles(
+                projectile.level(), particleOptions, position, 1,
+                0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                0
+            );
         }
     }
 
@@ -130,10 +127,10 @@ public class ParticleHandlers {
         double deltaX = getX - projectile.xOld;
         double deltaY = getY - projectile.yOld;
         double deltaZ = getZ - projectile.zOld;
-        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * Math.max(20,multiplier));
-        for (double j = 0; j < dist; j++) {
+        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 3);
+        for (double j = 0; j < Math.clamp(dist, 5, 15); j++) {
             double coeff = j / dist;
-            Vec3 position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
+            var position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
             ParticleHandlers.sendParticles(
                 projectile.level(), particleOptions, position, 1,
                 0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),

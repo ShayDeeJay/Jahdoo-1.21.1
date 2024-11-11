@@ -140,7 +140,7 @@ public class WandBlock extends BaseEntityBlock {
 
 
     private ItemInteractionResult openWandGUI(Player player, BlockPos blockPos, Level level){
-        var success = ItemInteractionResult.SUCCESS;
+        var success = ItemInteractionResult.CONSUME_PARTIAL;
         var fail = ItemInteractionResult.FAIL;
         if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return fail;
         if(!(player instanceof ServerPlayer serverPlayer)) return fail;
@@ -153,7 +153,6 @@ public class WandBlock extends BaseEntityBlock {
             player.setItemInHand(player.getUsedItemHand(), wandBlock.getWandItemFromSlot().copy());
             wandBlock.getWandItemFromSlot().shrink(1);
             level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
-
         }
     }
 

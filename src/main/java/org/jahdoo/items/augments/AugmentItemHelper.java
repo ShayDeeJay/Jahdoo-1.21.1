@@ -3,10 +3,10 @@ package org.jahdoo.items.augments;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
@@ -18,6 +18,7 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.all_magic.JahdooRarity;
+import org.jahdoo.client.gui.augment_menu.AugmentScreen;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.all_magic.AbstractAbility;
@@ -320,8 +321,10 @@ public class AugmentItemHelper {
         if(wandAbilityHolder != null){
             wandAbilityHolder.abilityProperties().keySet().stream().findFirst().ifPresent(
                 s -> {
+                    var location = ModHelpers.modResourceLocation(s);
+                    if (location.getPath().isEmpty()) return;
                     var abstractAbility = AbilityRegister.REGISTRY.get(ModHelpers.modResourceLocation(s));
-                    if(abstractAbility != null){
+                    if (abstractAbility != null) {
                         component.set(
                             Component.literal(abstractAbility.getAbilityName())
                                 .withStyle((style) -> style.withColor(info.textColourPrimary()))
@@ -354,4 +357,34 @@ public class AugmentItemHelper {
         return Component.literal("Unidentified Augment").withStyle(style -> style.withColor(-9013642));
     }
 
+    public static void setAugmentModificationScreen(ItemStack itemStack, @org.jetbrains.annotations.Nullable Screen previousScreen){
+        Minecraft.getInstance().setScreen(getAugmentModificationScreen(itemStack, previousScreen));
+    }
+
+    public static Screen getAugmentModificationScreen(ItemStack itemStack, @org.jetbrains.annotations.Nullable Screen previousScreen) {
+        var itemStacks = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        if(itemStacks != null){
+            var item = itemStacks.abilityProperties().keySet().stream().findFirst();
+            if(item.isPresent()){
+                var ability = AbilityRegister.getFirstSpellByTypeId(item.get());
+                if(ability.isPresent()){
+                    if (isConfigAbility(ability.get(), item.get(), itemStack)) {
+                        return new AugmentScreen(itemStack, item.get(), previousScreen);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static boolean isConfigAbility(AbstractAbility selectedAbility, String ability, ItemStack itemStack) {
+        var wandAbilityHolder = itemStack.get(WAND_ABILITY_HOLDER);
+        if(wandAbilityHolder == null) return false;
+        var abilityHolder = wandAbilityHolder.abilityProperties().get(ability);
+        var filterOutBase = abilityHolder.abilityProperties()
+            .keySet()
+            .stream()
+            .filter(name -> !name.equals(MANA_COST) && !name.equals(COOLDOWN));
+        return selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && !filterOutBase.toList().isEmpty();
+    }
 }

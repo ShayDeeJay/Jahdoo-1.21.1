@@ -2,6 +2,7 @@ package org.jahdoo.block.tank;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -13,15 +14,22 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -32,17 +40,20 @@ import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jetbrains.annotations.Nullable;
 
-public class TankBlock extends BaseEntityBlock {
+public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
     public static final VoxelShape SHAPE_BASE = Block.box(1.95, 0, 1.95, 14.05, 2.75, 14.05);
     public static final VoxelShape JAR = Block.box(3, 2.75, 3, 13, 12.75, 13);
     public static final VoxelShape TOP = Block.box(3, 13.25, 3, 13, 16, 13);
     public static final VoxelShape SHAPE_COMMON = Shapes.or(SHAPE_BASE, JAR, TOP);
     public static final BooleanProperty LIT;
+    public static final BooleanProperty WATERLOGGED;
 
     public TankBlock(Properties pProperties) {
         super(pProperties);
         this.registerDefaultState(
-            this.defaultBlockState().setValue(LIT, false)
+            this.defaultBlockState()
+                .setValue(LIT, false)
+                .setValue(WATERLOGGED, false)
         );
     }
 
@@ -59,6 +70,7 @@ public class TankBlock extends BaseEntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(LIT);
+        builder.add(WATERLOGGED);
     }
 
     @Override
@@ -74,6 +86,23 @@ public class TankBlock extends BaseEntityBlock {
                 tankBlockEntity.dropsAllInventory(pLevel);
         }
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
+    }
+
+    @Nullable
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockPos blockpos = context.getClickedPos();
+        BlockState blockstate = context.getLevel().getBlockState(blockpos);
+        if (blockstate.is(this)) {
+            return blockstate.setValue(WATERLOGGED, false);
+        } else {
+            FluidState fluidstate = context.getLevel().getFluidState(blockpos);
+            BlockState blockstate1 = this.defaultBlockState().setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+            return blockstate1;
+        }
+    }
+
+    protected FluidState getFluidState(BlockState state) {
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override
@@ -110,6 +139,7 @@ public class TankBlock extends BaseEntityBlock {
 
     static {
         LIT = RedstoneTorchBlock.LIT;
+        WATERLOGGED = BlockStateProperties.WATERLOGGED;
     }
 }
 

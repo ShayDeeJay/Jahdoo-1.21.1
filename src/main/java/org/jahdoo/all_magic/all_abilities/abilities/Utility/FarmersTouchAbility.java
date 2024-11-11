@@ -17,9 +17,10 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 
-public class BoneMealAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("bone_meal");
-    public static final String BONE_MEAL_RANGE = "Bone Meal Radius";
+public class FarmersTouchAbility extends AbstractAbility {
+    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("farmers_touch");
+    public static final String GROWTH_CHANCE = "Growth Chance";
+    public static final String HARVEST_CHANCE = "Harvest Chance";
 
     @Override
     public void invokeAbility(Player player) {
@@ -58,8 +59,10 @@ public class BoneMealAbility extends AbstractAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(10, 5, 1)
-            .setAbilityTagModifiersRandom(BONE_MEAL_RANGE, 10, 4, true, 1)
+            .setMana(20, 10, 5)
+            .setRange(10, 1, 1)
+            .setAbilityTagModifiersRandom(GROWTH_CHANCE, 60, 10, false, 10)
+            .setAbilityTagModifiersRandom(HARVEST_CHANCE, 30, 5, false, 5)
             .build();
     }
 

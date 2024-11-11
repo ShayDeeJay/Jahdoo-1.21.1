@@ -10,12 +10,14 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
@@ -27,13 +29,15 @@ import org.jahdoo.block.automation_block.AutomationBlockEntity;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.ItemsRegister;
 
+import java.awt.image.CropImageFilter;
+
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class UtilityHelpers {
     public static Range<Float> range = Range.of(0.0f, 10.0f);
 
     public static void dropItemsOrBlock(Projectile newProjectile, BlockPos pos, boolean isSilkTouch, boolean voidBlocks){
-        if(newProjectile.level().getBlockEntity(pos) instanceof AutomationBlockEntity) return;
+//        if(newProjectile.level().getBlockEntity(pos) instanceof AutomationBlockEntity) return;
         if(UtilityHelpers.range.contains(UtilityHelpers.destroySpeed(pos, newProjectile.level()))){
             var blockstate = newProjectile.level().getBlockState(pos);
             var level = newProjectile.level();
@@ -53,16 +57,22 @@ public class UtilityHelpers {
                         .withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
 
                     var drops = blockstate.getDrops(lootBuilder);
-//                    System.out.println(drops.size());
                     for (ItemStack itemStack : drops) {
-//                        System.out.println(itemStack);
-//                        ItemEntity item;
-//                        if(Random.nextInt(0, 100) == 0){
-//                            item = new ItemEntity(level, centre.x, centre.y, centre.z, new ItemStack(ItemsRegister.JIDE_POWDER).copyWithCount(itemStack.getCount()));
-//                        } else {
-//                            item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
-//                        }
-                        var item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
+                        ItemEntity item;
+                        if(Random.nextInt(0, 100) == 0){
+                            item = new ItemEntity(level, centre.x, centre.y, centre.z, new ItemStack(ItemsRegister.JIDE_POWDER).copyWithCount(itemStack.getCount()));
+                        } else {
+                            item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
+                        }
+
+                        if(item.getItem().getItem() instanceof BlockItem blockItem){
+                            if(blockItem.getBlock() instanceof CropBlock cropBlock) {
+                                if(item.getItem().getItem() == cropBlock.getCloneItemStack(level, pos, blockstate).getItem()){
+                                    item.getItem().shrink(1);
+                                }
+                            }
+                        }
+
                         level.addFreshEntity(item);
                     }
                 }
@@ -72,6 +82,46 @@ public class UtilityHelpers {
             level.removeBlock(pos, false);
         }
     }
+
+
+    public static void harvestBreaker(Projectile newProjectile, BlockPos pos, boolean voidBlocks){
+        var blockstate = newProjectile.level().getBlockState(pos);
+        var level = newProjectile.level();
+        if(!voidBlocks){
+            var centre = pos.getCenter();
+            if(!(level instanceof ServerLevel serverLevel)) return;
+
+            var lootBuilder = new LootParams
+                .Builder(serverLevel)
+                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                .withParameter(LootContextParams.TOOL, new ItemStack(Items.DIAMOND_PICKAXE))
+                .withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
+
+            var drops = blockstate.getDrops(lootBuilder);
+            for (ItemStack itemStack : drops) {
+                ItemEntity item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);;
+//                item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
+//                if (Random.nextInt(0, 100) == 0) {
+//                    item = new ItemEntity(level, centre.x, centre.y, centre.z, new ItemStack(ItemsRegister.JIDE_POWDER).copyWithCount(itemStack.getCount()));
+//                } else {
+//                }
+
+                if (item.getItem().getItem() instanceof BlockItem blockItem) {
+                    if (blockItem.getBlock() instanceof CropBlock cropBlock) {
+                        if (item.getItem().getItem() == cropBlock.getCloneItemStack(level, pos, blockstate).getItem()) {
+                            item.getItem().shrink(1);
+                        }
+                    }
+                }
+
+                level.addFreshEntity(item);
+            }
+        }
+        var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
+        ParticleHandlers.sendParticles(level, blockPart,  pos.getCenter(), 5,0, 0, 0, 1);
+        level.removeBlock(pos, false);
+    }
+
 
     public static void lavaWaterInteractionBehaviour(Entity entity){
         BlockPos blockPos = entity.blockPosition();

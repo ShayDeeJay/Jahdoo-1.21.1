@@ -2,6 +2,7 @@ package org.jahdoo.particle;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -21,12 +22,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
         this.lifetime = 10 + this.random.nextInt(10);
         this.pickSprite(pSprites);
         this.hasPhysics = false;
-        this.alpha = 0.8f;
-    }
-
-    @Override
-    public void move(double pX, double pY, double pZ) {
-        super.move(pX, pY, pZ);
+        this.alpha = 1f;
     }
 
     @Override
@@ -38,6 +34,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
     public @NotNull ParticleRenderType getRenderType() {
         return ParticleRenderTypes.ABILITY_RENDERER;
     }
+
 
     @OnlyIn(Dist.CLIENT)
     public static class BakedProvider implements ParticleProvider<BakedParticleOptions> {
@@ -78,11 +75,14 @@ public class GenericParticle extends SimpleAnimatedParticle {
 
         public Particle createParticle(GenericParticleOptions pType, ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
             GenericParticle genericParticle = new GenericParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed,this.sprites){
+                int tick;
                 @Override
                 public void tick() {
                     super.tick();
+                    tick++;
                     if(!pType.setStaticSize()) this.quadSize *= 0.9f;
                     this.speedUpWhenYMotionIsBlocked = true;
+                    if(tick % 4 == 0) setSprite(sprites.get(random.fork()));
                 }
             };
 

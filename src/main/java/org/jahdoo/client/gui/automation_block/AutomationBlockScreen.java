@@ -7,8 +7,12 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerListener;
+import net.minecraft.world.item.ItemStack;
 import org.jahdoo.block.automation_block.AutomationBlockEntity;
 import org.jahdoo.client.gui.ToggleComponent;
+import org.jahdoo.client.gui.wand_block.AugmentSlot;
 import org.jahdoo.registers.AttachmentRegister;
 
 import java.util.List;
@@ -16,6 +20,7 @@ import java.util.List;
 import static org.jahdoo.client.SharedUI.*;
 import static org.jahdoo.client.gui.IconLocations.*;
 import static org.jahdoo.client.gui.ToggleComponent.*;
+import static org.jahdoo.items.augments.AugmentItemHelper.setAugmentModificationScreen;
 
 public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlockMenu> {
     private static final int IMAGE_SIZE = 256;
@@ -29,21 +34,37 @@ public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlo
     @Override
     protected void init() {
         super.init();
-        var entity = this.automationBlockMenu.getAutomationEntity();
-        var copy = entity.direction();
-        var currentPos = entity.getData(AttachmentRegister.POS);
-        var currentPower = entity.getData(AttachmentRegister.BOOL);
+        var copy = entity().direction();
+        var currentPos = entity().getData(AttachmentRegister.POS);
         int posX = this.width / 2 - 70;
         int posY = this.height / 2 - 100;
-        this.addRenderableWidget(ToggleComponent.menuButton(posX + 135, posY, (press) -> togglePower(entity), currentPower ? POWER_OFF : POWER_ON, "Power"));
+        this.modifyAugmentProperties(posX, posY);
         buildCarouselComponent(
             this.getMinecraft(), posX, posY,
             "Direction",
-            ()-> movePosition(copy, false, entity),
-            ()-> movePosition(copy, true, entity),
+            ()-> movePosition(copy, false, entity()),
+            ()-> movePosition(copy, true, entity()),
             copy,
             currentPos
         );
+    }
+
+    @Override
+    protected void containerTick() {
+        if(this.hoveredSlot != null) rebuildWidgets();
+    }
+
+    public AutomationBlockEntity entity(){
+        return this.automationBlockMenu.getAutomationEntity();
+    }
+
+    private void modifyAugmentProperties(int posX, int posY){
+        var currentPower = entity().getData(AttachmentRegister.BOOL);
+        int size = 16;
+        this.addRenderableWidget(ToggleComponent.menuButton(posX + 135, posY + 2, (press) -> togglePower(entity()), currentPower ? POWER_OFF : POWER_ON, "", size));
+        if(!this.entity().inputItemHandler.getStackInSlot(0).isEmpty()){
+            this.addRenderableWidget(ToggleComponent.menuButton(posX + 135, posY + 14, (press) -> setModifyAugmentScreen(entity().inputItemHandler.getStackInSlot(0).copy()), COG, "", size));
+        }
     }
 
     private void togglePower(AutomationBlockEntity entity){
@@ -71,6 +92,10 @@ public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlo
         this.addRenderableWidget(menuButton(posX + 108, posY, (press) -> buttonPressForward.run(), DIRECTION_ARROW_FORWARD));
     }
 
+    private void setModifyAugmentScreen(ItemStack itemStack){
+        setAugmentModificationScreen(itemStack, this);
+    }
+
     private void setCustomBackground(GuiGraphics guiGraphics){
         var width = this.width/2;
         var height = this.height/2;
@@ -88,6 +113,11 @@ public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlo
         guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, borderColour);
     }
 
+    public void renderSlotWithLabel(GuiGraphics guiGraphics, int i, int i1, String label){
+        guiGraphics.drawCenteredString(this.font, Component.literal(label), i + 16, i1 - 8, -1);
+        guiGraphics.blit(GUI_GENERAL_SLOT, i, i1, 0, 0, 32, 32,32, 32);
+    }
+
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
@@ -95,16 +125,26 @@ public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlo
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
         this.renderBlurredBackground(pPartialTick);
         this.setCustomBackground(guiGraphics);
+        int i = this.width / 2;
+        int i1 = this.height / 2;
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
         abilityIcon(guiGraphics, this.automationBlockMenu.getAutomationEntity().inputItemHandler.getStackInSlot(0), width, height, 109);
+        itemSlots(guiGraphics, i, i1);
         renderInventoryBackground(guiGraphics, this, IMAGE_SIZE, 24);
         setSlotTexture(
             guiGraphics,
-            this.width/2 - 128,
-            this.height/2 - 160,
+            i - 128,
+            i1 - 160,
             IMAGE_SIZE
         );
+    }
+
+    private void itemSlots(GuiGraphics guiGraphics, int i, int i1) {
+        var offsetX = automationBlockMenu.offSetX;
+        var offsetY = automationBlockMenu.offSetY;
+        renderSlotWithLabel(guiGraphics, i + 33 + offsetX, i1 -51 + offsetY, "Output");
+        renderSlotWithLabel(guiGraphics, i - 65 + offsetX, i1 -51 + offsetY, "Input");
     }
 
     @Override

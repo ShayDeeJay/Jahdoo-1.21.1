@@ -13,6 +13,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.client.gui.automation_block.AutomationBlockMenu;
 import org.jahdoo.components.DataComponentHelper;
@@ -34,6 +35,7 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static org.jahdoo.registers.AttachmentRegister.POS;
 
@@ -42,23 +44,26 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private static final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
     private static final RawAnimation FUSING = RawAnimation.begin().thenPlay("fusing");
+    public static final int AUGMENT_SLOT = 0;
+    public static final int INPUT_SLOT = 1;
+    public static final int OUTPUT_SLOT = 0;
 
     public BlockPos direction;
     private int ticker;
 
     @Override
     public int setInputSlots() {
-        return 1;
-    }
-
-    @Override
-    public int setOutputSlots() {
         return 2;
     }
 
     @Override
-    public int getMaxSlotSize() {
+    public int setOutputSlots() {
         return 1;
+    }
+
+    @Override
+    public int getMaxSlotSize() {
+        return 64;
     }
 
     public AutomationBlockEntity(BlockPos pPos, BlockState pBlockState) {
@@ -106,7 +111,7 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
     public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
         this.ticker++;
         this.assignTankBlockInRange(pLevel, pPos, 1);
-        var augmentSlot = this.inputItemHandler.getStackInSlot(0);
+        var augmentSlot = this.inputItemHandler.getStackInSlot(AUGMENT_SLOT);
         particleAnimation(pLevel, hasTankAndFuel());
         useAugment(pLevel, hasTankAndFuel(), augmentSlot);
     }
@@ -124,9 +129,11 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
                 positionalParticles(level, 30, 0.7);
                 extracted(0.05f,1.4f);
                 var getAbilityId = DataComponentHelper.getAbilityTypeItemStack(augmentSlot);
-                var getAbility = AbilityRegister.getFirstSpellByTypeId(getAbilityId).get();
-                getAbility.invokeAbilityBlock(this.direction, this);
-                this.chargeTankFuel(1);
+                var getAbility = AbilityRegister.getFirstSpellByTypeId(getAbilityId);
+                if(getAbility.isPresent()){
+                    getAbility.get().invokeAbilityBlock(this.direction, this);
+                    this.chargeTankFuel(this.setCraftingCost());
+                }
             }
         } else this.progress = 0;
     }

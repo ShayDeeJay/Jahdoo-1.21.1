@@ -12,5 +12,9 @@ public class IconLocations {
     public static final ResourceLocation COG = ModHelpers.modResourceLocation("textures/gui/gui_button_cog_dark.png");
     public static final ResourceLocation POWER_ON = ModHelpers.modResourceLocation("textures/gui/gui_button_power_on.png");
     public static final ResourceLocation POWER_OFF = ModHelpers.modResourceLocation("textures/gui/gui_button_power_off.png");
+    public static final ResourceLocation GUI_GENERAL_SLOT = ModHelpers.modResourceLocation("textures/gui/gui_general_slot.png");
+    public static final ResourceLocation GUI_AUGMENT_SLOT = ModHelpers.modResourceLocation("textures/gui/slot.png");
+
+
 
 }

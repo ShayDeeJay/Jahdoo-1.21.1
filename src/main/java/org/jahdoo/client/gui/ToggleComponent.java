@@ -20,6 +20,11 @@ public class ToggleComponent  {
         return new GuiButton(posX, posY, button, 32, action, false, resourceLocation, label);
     }
 
+    public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, String label, int size) {
+        var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
+        return new GuiButton(posX, posY, button, size, action, false, resourceLocation, label);
+    }
+
     public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation) {
         var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
         return new GuiButton(posX, posY, button, 32, action, false, resourceLocation);

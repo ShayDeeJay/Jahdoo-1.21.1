@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AutomationSlot extends SlotItemHandler {
-
     AutomationBlockMenu automationBlockMenu;
 
     public AutomationSlot(
@@ -40,6 +39,8 @@ public class AutomationSlot extends SlotItemHandler {
         );
         return isValid.get();
     }
+
+
 
     @Override
     public boolean isHighlightable() {
