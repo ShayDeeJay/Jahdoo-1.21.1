@@ -13,7 +13,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.client.gui.automation_block.AutomationBlockMenu;
 import org.jahdoo.components.DataComponentHelper;
@@ -35,15 +34,16 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
+import static org.jahdoo.registers.AttachmentRegister.BOOL;
 import static org.jahdoo.registers.AttachmentRegister.POS;
 
 
 public class AutomationBlockEntity extends AbstractTankUser implements MenuProvider, GeoBlockEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    private static final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
-    private static final RawAnimation FUSING = RawAnimation.begin().thenPlay("fusing");
+    private static final RawAnimation NS = RawAnimation.begin().thenPlay("north_and_south");
+    private static final RawAnimation EW = RawAnimation.begin().thenPlay("east_and_west");
+    private static final RawAnimation UD = RawAnimation.begin().thenPlay("up_and_down");
     public static final int AUGMENT_SLOT = 0;
     public static final int INPUT_SLOT = 1;
     public static final int OUTPUT_SLOT = 0;
@@ -68,7 +68,7 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
 
     public AutomationBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.AUTOMATION_BLOCK.get(), pPos, pBlockState, 1);
-        this.setData(AttachmentRegister.POS, this.getBlockPos().north());
+        this.setData(AttachmentRegister.POS, pPos.north());
         this.setData(AttachmentRegister.BOOL, false);
     }
 
@@ -125,9 +125,9 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
         if(!isPowered) return;
         if (isAugment && hasDirection && !isOff) {
             this.progress ++;
-            if(this.ticker % 20 == 0){
+            if(this.ticker % 10 == 0){
                 positionalParticles(level, 30, 0.7);
-                extracted(0.05f,1.4f);
+                extracted(0.05f,1.4f, level);
                 var getAbilityId = DataComponentHelper.getAbilityTypeItemStack(augmentSlot);
                 var getAbility = AbilityRegister.getFirstSpellByTypeId(getAbilityId);
                 if(getAbility.isPresent()){
@@ -138,7 +138,7 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
         } else this.progress = 0;
     }
 
-    private void extracted(float volume, float pitch) {
+    private void extracted(float volume, float pitch, Level level) {
         ModHelpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BREEZE_CHARGE, volume, pitch);
     }
 
@@ -160,7 +160,28 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, state -> state.setAndContinue(IDLE)));
+        controllers.add(
+            new AnimationController<>(
+                this,
+                state -> {
+                    var pos = this.getData(POS);
+                    if(this.hasData(POS)){
+                        System.out.println(pos);
+                        if(pos == this.getBlockPos().north() || pos == this.getBlockPos().south()){
+
+                            System.out.println(pos == this.getBlockPos().north());
+                            System.out.println(pos == this.getBlockPos().south());
+                            return state.setAndContinue(NS);
+                        }
+
+                        if(pos == this.getBlockPos().above() || pos == this.getBlockPos().below()){
+                            return state.setAndContinue(UD);
+                        }
+                    }
+                    return state.setAndContinue(EW);
+                }
+            )
+        );
     }
 
     @Override

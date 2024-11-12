@@ -59,20 +59,7 @@ public class UtilityHelpers {
                     var drops = blockstate.getDrops(lootBuilder);
                     for (ItemStack itemStack : drops) {
                         ItemEntity item;
-                        if(Random.nextInt(0, 100) == 0){
-                            item = new ItemEntity(level, centre.x, centre.y, centre.z, new ItemStack(ItemsRegister.JIDE_POWDER).copyWithCount(itemStack.getCount()));
-                        } else {
-                            item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
-                        }
-
-                        if(item.getItem().getItem() instanceof BlockItem blockItem){
-                            if(blockItem.getBlock() instanceof CropBlock cropBlock) {
-                                if(item.getItem().getItem() == cropBlock.getCloneItemStack(level, pos, blockstate).getItem()){
-                                    item.getItem().shrink(1);
-                                }
-                            }
-                        }
-
+                        item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
                         level.addFreshEntity(item);
                     }
                 }
@@ -100,11 +87,6 @@ public class UtilityHelpers {
             var drops = blockstate.getDrops(lootBuilder);
             for (ItemStack itemStack : drops) {
                 ItemEntity item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);;
-//                item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
-//                if (Random.nextInt(0, 100) == 0) {
-//                    item = new ItemEntity(level, centre.x, centre.y, centre.z, new ItemStack(ItemsRegister.JIDE_POWDER).copyWithCount(itemStack.getCount()));
-//                } else {
-//                }
 
                 if (item.getItem().getItem() instanceof BlockItem blockItem) {
                     if (blockItem.getBlock() instanceof CropBlock cropBlock) {

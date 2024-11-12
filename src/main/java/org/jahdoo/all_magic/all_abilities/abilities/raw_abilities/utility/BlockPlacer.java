@@ -67,8 +67,6 @@ public class BlockPlacer extends AbstractUtilityProjectile {
         if (level.getBlockState(blockPos.relative(side)).canBeReplaced() && replaceBlock != Blocks.AIR) {
             level.setBlockAndUpdate(blockPos.relative(side), replaceBlock.defaultBlockState());
             ModHelpers.getSoundWithPosition(level, blockPos, replaceBlock.defaultBlockState().getSoundType().getBreakSound());
-
-//            ItemStack handItem = player.getOffhandItem();
             if(player != null ){
                 if(!player.isCreative()){
                     boolean itemFound = false;

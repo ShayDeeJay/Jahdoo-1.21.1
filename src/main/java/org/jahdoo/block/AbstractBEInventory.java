@@ -101,12 +101,18 @@ public abstract class AbstractBEInventory extends BlockEntity {
         SimpleContainer inputInventory = new SimpleContainer(setInputSlots());
         SimpleContainer outputInventory = new SimpleContainer(setOutputSlots());
 
-        for(int i = 0; i < this.inputItemHandler.getSlots(); i++) {
-            inputInventory.setItem(i, inputItemHandler.getStackInSlot(i));
+        for (int i = 0; i < this.inputItemHandler.getSlots(); i++) {
+            if (i < inputInventory.getContainerSize()) {
+                inputItemHandler.getStackInSlot(i);
+                inputInventory.setItem(i, inputItemHandler.getStackInSlot(i));
+            }
         }
 
-        for(int i = 0; i < this.outputItemHandler.getSlots(); i++) {
-            outputInventory.setItem(i, outputItemHandler.getStackInSlot(i));
+        for (int i = 0; i < this.outputItemHandler.getSlots(); i++) {
+            if (i < outputInventory.getContainerSize()) {
+                outputItemHandler.getStackInSlot(i);
+                outputInventory.setItem(i, outputItemHandler.getStackInSlot(i));
+            }
         }
 
         Containers.dropContents(level, this.worldPosition, inputInventory);

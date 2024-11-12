@@ -12,8 +12,8 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.RenderUtil;
-
 import java.util.function.Consumer;
+
 
 public class AutomationBlockItem extends BlockItem implements GeoItem {
     private final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
@@ -24,9 +24,7 @@ public class AutomationBlockItem extends BlockItem implements GeoItem {
     }
 
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-
-    }
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
 
     @Override
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {

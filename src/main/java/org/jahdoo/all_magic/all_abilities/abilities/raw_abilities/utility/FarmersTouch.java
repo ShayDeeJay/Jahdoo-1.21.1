@@ -1,5 +1,6 @@
 package org.jahdoo.all_magic.all_abilities.abilities.raw_abilities.utility;
 
+import com.google.common.util.concurrent.ClosingFuture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -10,7 +11,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
@@ -30,6 +30,7 @@ import static org.jahdoo.all_magic.AbilityBuilder.*;
 import static org.jahdoo.all_magic.all_abilities.abilities.Utility.FarmersTouchAbility.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
+import static org.jahdoo.particle.ParticleStore.bakedParticleSlow;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class FarmersTouch extends AbstractUtilityProjectile {
@@ -71,7 +72,7 @@ public class FarmersTouch extends AbstractUtilityProjectile {
         this.hasHitBlock = true;
         this.genericProjectile.setInvisible(true);
         this.genericProjectile.setDeltaMovement(0,0,0);
-        PositionGetters.getOuterSquareOfRadius(this.genericProjectile.position(), counter + 1, this.range * 40,
+        PositionGetters.getOuterSquareOfRadius(this.genericProjectile.position(), counter + 0.5, this.range * 40,
             positions -> this.setParticleNova(positions, this.genericProjectile.level())
         );
         super.onBlockBlockHit(blockHitResult);
@@ -80,25 +81,21 @@ public class FarmersTouch extends AbstractUtilityProjectile {
     public void applyBoneMeal(Level level, BlockPos pPos) {
         var blockstate = level.getBlockState(pPos);
         if (level instanceof ServerLevel && !this.effectedPos.contains(pPos)) {
-            if(blockstate.getBlock() instanceof CropBlock cropBlock){
-                if(Random.nextInt(0, (int) harvestChance) == 0 && cropBlock.isMaxAge(blockstate)) {
+            if(Random.nextInt(0, (int) harvestChance) == 0) {
+                if(blockstate.getBlock() instanceof CropBlock cropBlock && cropBlock.isMaxAge(blockstate)){
                     UtilityHelpers.harvestBreaker(genericProjectile, pPos, false);
                     level.setBlockAndUpdate(pPos, cropBlock.getStateForAge(0));
-                    int col1 = this.getElementType().particleColourPrimary();
-                    int col2 = this.getElementType().particleColourFaded();
-                    var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, 8, 1f, col1, col2, false);
-                    ParticleHandlers.particleBurst(level, pPos.getCenter().add(0,0.4,0), 3, genericParticle);
+                    utilityParticleBurst(level, pPos.getCenter().add(0, 0.4, 0), 8, 1, 3, 0.1f);
                     ModHelpers.getSoundWithPosition(genericProjectile.level(), pPos, blockstate.getSoundType().getBreakSound());
-                } else {
-                    if (!(blockstate.getBlock() instanceof BonemealableBlock bonemealableblock)) return;
-                    if (!(bonemealableblock.isValidBonemealTarget(level, pPos, blockstate))) return;
-                    if(Random.nextInt(0, (int) growthChance) == 0){
-                        BoneMealItem.applyBonemeal(ItemStack.EMPTY, level, pPos, null);
-                        ModHelpers.getSoundWithPosition(level, pPos, SoundEvents.BONE_MEAL_USE);
-                    }
+                }
+            } else {
+                if (!(blockstate.getBlock() instanceof BonemealableBlock bonemealableblock)) return;
+                if (!(bonemealableblock.isValidBonemealTarget(level, pPos, blockstate))) return;
+                if(growthChance == 0 || Random.nextInt(0, (int) growthChance) == 0){
+                    BoneMealItem.applyBonemeal(ItemStack.EMPTY, level, pPos, null);
+                    ModHelpers.getSoundWithPosition(level, pPos, SoundEvents.BONE_MEAL_USE);
                 }
             }
-
             this.effectedPos.add(pPos);
         }
     }
@@ -125,8 +122,9 @@ public class FarmersTouch extends AbstractUtilityProjectile {
         var size = 3;
 
         var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, (float) (size - 0.2), col1, col2, false);
+        var speedRange = Random.nextDouble(this.range / 10, this.range / 8);
         ParticleHandlers.sendParticles(
-            level, genericParticle, worldPosition, 0, directions.x, directions.y+0.05, directions.z, Random.nextDouble(this.range /12, this.range /9)
+            level, genericParticle, worldPosition, 0, directions.x, directions.y+0.05, directions.z, speedRange
         );
     }
 

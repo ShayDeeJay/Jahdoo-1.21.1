@@ -1,50 +1,35 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"idle": {
+		"east_and_west": {
 			"loop": true,
 			"bones": {
 				"Core": {
 					"rotation": {
-						"vector": ["math.sin(query.anim_time * 60) * 3", 0, "math.sin(query.anim_time * 120) * 5"],
+						"vector": ["math.sin(query.anim_time * 60) * 6", 0, "math.sin(query.anim_time * 120) * 5"],
 						"easing": "linear"
 					}
 				}
 			}
 		},
-		"animation.model.new": {
-			"loop": "hold_on_last_frame",
-			"animation_length": 0.25,
+		"north_and_south": {
+			"loop": true,
 			"bones": {
 				"Core": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [0, -90, 0],
-							"easing": "easeOutBack",
-							"easingArgs": []
-						}
+						"vector": ["math.sin(query.anim_time * 120) * 5", "math.sin(query.anim_time * 60) * 6 -90", 0],
+						"easing": "linear"
 					}
 				}
 			}
 		},
-		"animation.model.new3": {
-			"animation_length": 0.25,
+		"up_and_down": {
+			"loop": true,
 			"bones": {
 				"Core": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [0, 0, 90],
-							"easing": "easeOutBack",
-							"easingArgs": []
-						}
+						"vector": ["-90+math.sin(query.anim_time * 120) * 5", "math.sin(query.anim_time * 60) * 6 +0", 90],
+						"easing": "linear"
 					}
 				}
 			}

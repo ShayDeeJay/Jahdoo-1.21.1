@@ -34,6 +34,16 @@ public class ParticleHandlers {
         }
     }
 
+    public static void particleBurst(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions, float speed) {
+        for (int i = 0; i < 5; i++) {
+            sendParticles(world, particleOptions, pos, particleCount,
+                (world.random.nextFloat() * 1 - 0.5) / 3,
+                (world.random.nextFloat() * 1 - 0.5) / 3,
+                (world.random.nextFloat() * 1 - 0.5) / 3, speed
+            );
+        }
+    }
+
     public static void particleBurst(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions, double x, double y, double z, float speed) {
         for (int i = 0; i < 10; i++) {
             sendParticles(world, particleOptions, pos, particleCount, x, y, z, speed);
@@ -46,9 +56,9 @@ public class ParticleHandlers {
         }
     }
 
-    public static void invisibleLight(Level world, Vec3 loc, ParticleOptions particleOptions, double bound1, double bound2) {
+    public static void invisibleLight(Level world, Vec3 loc, ParticleOptions particleOptions, double bound1, double bound2, int speed) {
         for (int i = 0; i < 3; i++) {
-            sendParticles(world, particleOptions, loc, 0, 0, ModHelpers.Random.nextDouble(bound1, bound2), 0, 50);
+            sendParticles(world, particleOptions, loc, 0, 0, ModHelpers.Random.nextDouble(bound1, bound2), 0, speed);
         }
     }
 
@@ -90,19 +100,12 @@ public class ParticleHandlers {
         }
     }
 
-    public static void playParticles(
-        ParticleOptions particleOptions,
-        Projectile projectile,
-        double getX,
-        double getY,
-        double getZ,
-        int multiplier
-    ) {
+    public static void playParticles(ParticleOptions particleOptions, Projectile projectile, double getX, double getY, double getZ) {
         double deltaX = getX - projectile.xOld;
         double deltaY = getY - projectile.yOld;
         double deltaZ = getZ - projectile.zOld;
-        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 3);
-        for (double j = 0; j < Math.clamp(dist, 10, 15); j++) {
+        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 6);
+        for (double j = 0; j < Math.max(dist, 5); j++) {
             double coeff = j / dist;
             var position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
             ParticleHandlers.sendParticles(
@@ -115,24 +118,16 @@ public class ParticleHandlers {
         }
     }
 
-    public static void playParticles2(
-        ParticleOptions particleOptions,
-        Projectile projectile,
-        double getX,
-        double getY,
-        double getZ,
-        int multiplier,
-        double speed
-    ) {
+    public static void playParticles2(ParticleOptions particleOptions, Projectile projectile, double getX, double getY, double getZ, double speed) {
         double deltaX = getX - projectile.xOld;
         double deltaY = getY - projectile.yOld;
         double deltaZ = getZ - projectile.zOld;
-        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 3);
-        for (double j = 0; j < Math.clamp(dist, 5, 15); j++) {
+        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 5);
+        for (double j = 0; j < dist; j++) {
             double coeff = j / dist;
             var position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
             ParticleHandlers.sendParticles(
-                projectile.level(), particleOptions, position, 1,
+                projectile.level(), particleOptions, position, 2,
                 0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
                 0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
                 0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
@@ -186,8 +181,8 @@ public class ParticleHandlers {
             double offsetY = projectile.getY() - normalizedY * offsetDistance;
             double offsetZ = projectile.getZ() - normalizedZ * offsetDistance;
 
-            playParticles(particleMain, projectile, projectile.getX(), projectile.getY(), projectile.getZ(), 8);
-            playParticles2(particleTrail, projectile, offsetX, offsetY, offsetZ, 20, speed);
+            playParticles(particleMain, projectile, offsetX, offsetY, offsetZ);
+            playParticles2(particleTrail, projectile, offsetX, offsetY, offsetZ, speed);
         }
     }
 

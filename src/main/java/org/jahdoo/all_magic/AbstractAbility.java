@@ -90,7 +90,7 @@ public abstract class AbstractAbility {
                 projectile.shoot(direction.x(), direction.y(), direction.z(), 1.2f, 0);
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
-                ModHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundEvents.BONE_MEAL_USE , 0.4f, 0.1f);
+                ModHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundEvents.BREEZE_CHARGE , 0.05f,1.4f);
             }
         }
     }

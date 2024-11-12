@@ -53,8 +53,8 @@ public class LightBlock extends Block {
         var bakedParticle = bakedParticleOptions(type.getTypeId(), lifetime, size + 0.2f, false);
         var generic = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, size, type.particleColourPrimary(), type.particleColourFaded(), false);
 
-        ParticleHandlers.invisibleLight(level, pos, bakedParticle, 0.03, 0.04);
-        ParticleHandlers.invisibleLight(level, pos, generic, 0.03, 0.04);
+        ParticleHandlers.invisibleLight(level, pos, bakedParticle, 0.03, 0.04,50);
+        ParticleHandlers.invisibleLight(level, pos, generic, 0.03, 0.04, 50);
     }
 
 
