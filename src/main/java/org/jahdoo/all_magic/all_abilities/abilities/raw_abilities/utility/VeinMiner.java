@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 import static org.jahdoo.all_magic.all_abilities.abilities.Utility.VeinMinerAbility.VEIN_MINE_SIZE;
+import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
 import static org.jahdoo.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
 
 public class VeinMiner extends AbstractUtilityProjectile {
@@ -70,11 +71,13 @@ public class VeinMiner extends AbstractUtilityProjectile {
         double y = genericProjectile.getY();
         double z = genericProjectile.getZ();
         genericProjectile.level().playSound(null, x, y, z, genericProjectile.level().getBlockState(start).getSoundType().getBreakSound(), SoundSource.BLOCKS, 1, 1);
-        var part = ParticleHandlers.genericParticleOptions(SOFT_PARTICLE_SELECTION, ElementRegistry.UTILITY.get(), 7, 0.1f, true);
+        var part = ParticleHandlers.genericParticleOptions(SOFT_PARTICLE_SELECTION, ElementRegistry.UTILITY.get(), 6, 0.08f, true);
+        var part2 = ParticleHandlers.genericParticleOptions(GENERIC_PARTICLE_SELECTION, ElementRegistry.UTILITY.get(), 3, 4f, false);
         this.forAllBlocksAroundOf(start, genericProjectile.level(), target.getBlock(), veinSize,
             (pos, state) -> {
                 UtilityHelpers.dropItemsOrBlock(genericProjectile, pos, false, false);
                 ParticleHandlers.particleBurst(genericProjectile.level(), pos.getCenter(), 1, part, 0, 0, 0, 0.005f, 1);
+                ParticleHandlers.particleBurst(genericProjectile.level(), pos.getCenter(), 1, part2, 0, 0, 0, 0.05f, 2);
             }
         );
         genericProjectile.discard();

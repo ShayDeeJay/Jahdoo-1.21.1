@@ -1,13 +1,21 @@
 package org.jahdoo.client.gui.overlays;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.realmsclient.util.TextRenderingUtils;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
+import net.minecraft.client.renderer.entity.DisplayRenderer;
+import net.minecraft.client.renderer.texture.Tickable;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.ticks.ScheduledTick;
+import net.minecraft.world.ticks.TickAccess;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.capabilities.CastingData;
 import org.jahdoo.items.wand.WandItem;
@@ -15,11 +23,16 @@ import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.components.DataComponentHelper;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static org.jahdoo.client.SharedUI.drawStringWithBackground;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 
-public class ManaBarOverlay implements LayeredDraw.Layer{
+public class ManaBarOverlay implements LayeredDraw.Layer {
     float fadeIn;
     public static final ResourceLocation MANA_GUI = ModHelpers.modResourceLocation("textures/gui/mana_v4_textured.png");
     public static final ResourceLocation TYPE_OVERLAY = ModHelpers.modResourceLocation("textures/gui/man_type_overlay.png");
@@ -28,7 +41,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer{
     AlignedGui alignedGui;
 
     @Override
-    public void render(GuiGraphics pGuiGraphics, DeltaTracker pDeltaTracker) {
+    public void render(@NotNull GuiGraphics pGuiGraphics, @NotNull DeltaTracker pDeltaTracker) {
         var minecraft = Minecraft.getInstance();
         var player = minecraft.player;
         if(player == null || minecraft.options.hideGui) return;
@@ -51,9 +64,8 @@ public class ManaBarOverlay implements LayeredDraw.Layer{
         //Container
         alignedGui.displayGuiLayer(1, 29, 120, 89, 29);
         alignedGui.displayGuiLayer(40, 25, 108, 52, 3);
-
         this.setTypeOverlay(alignedGui, player, manaProgress + 3);
-        this.cooldownOverlay(abstractAbility, casterData);
+        this.cooldownOverlay(abstractAbility, casterData, pGuiGraphics, minecraft);
         this.manaPoolCount(casterData, pGuiGraphics, minecraft);
 
         pGuiGraphics.pose().popPose();
@@ -66,22 +78,26 @@ public class ManaBarOverlay implements LayeredDraw.Layer{
         var colourBack = -13816531;
         var colourText = ElementRegistry.getElementByTypeId(types);
         if(!colourText.isEmpty()){
-
-            drawStringWithBackground(pGuiGraphics, minecraft.font, manaPoolCount, 58, height - 25, colourBack, colourText.getFirst().textColourSecondary(), true);
+            var pose = pGuiGraphics.pose();
+            pose.pushPose();
+            pose.translate(58, height - 16, 10D);
+            pose.scale(0.5f,0.5f,0.5f);
+            drawStringWithBackground(pGuiGraphics, minecraft.font, manaPoolCount, 0, 0, colourBack, colourText.getFirst().textColourSecondary(), true);
+            pose.popPose();
         }
     }
 
-    private void cooldownOverlay(AbstractAbility ability, CastingData casterData){
+    private void cooldownOverlay(AbstractAbility ability, CastingData casterData, GuiGraphics pGuiGraphics, Minecraft minecraft){
         if (ability != null) {
             alignedGui.displayGuiLayer(4, 26, 0, 0, 23, ability.getAbilityIconLocation());
             if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {
                 var cooldownCost = casterData.getStaticCooldown(ability.setAbilityId());
                 var cooldownStatus = casterData.getCooldown(ability.setAbilityId());
-
                 var cooldownOverlaySize = 20;
                 if(cooldownCost > 0){
                     var currentOverlayHeight = ((cooldownStatus) * cooldownOverlaySize / cooldownCost);
                     alignedGui.displayGuiLayer(6, 5 + currentOverlayHeight, 89, cooldownOverlaySize, currentOverlayHeight);
+//                    drawStringWithBackground(pGuiGraphics, minecraft.font, Component.literal(String.valueOf(cooldownCost)), 6, pGuiGraphics.guiHeight() - 13, 1, -1, false);
                 }
             }
         }
@@ -117,6 +133,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer{
             if (this.fadeIn > 0) this.fadeIn -= fadeAmount;
         }
     }
+
 
     public static class AlignedGui {
         GuiGraphics guiGraphics;

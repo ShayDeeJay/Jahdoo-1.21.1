@@ -2,17 +2,28 @@ package org.jahdoo.block.automation_block;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.VanillaInventoryCodeHooks;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.client.gui.automation_block.AutomationBlockMenu;
 import org.jahdoo.components.DataComponentHelper;
@@ -32,11 +43,11 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import java.util.List;
-import java.util.Objects;
 
-import static org.jahdoo.registers.AttachmentRegister.BOOL;
-import static org.jahdoo.registers.AttachmentRegister.POS;
+import javax.annotation.CheckForNull;
+import java.util.*;
+
+import static org.jahdoo.registers.AttachmentRegister.*;
 
 
 public class AutomationBlockEntity extends AbstractTankUser implements MenuProvider, GeoBlockEntity {
@@ -68,8 +79,8 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
 
     public AutomationBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.AUTOMATION_BLOCK.get(), pPos, pBlockState, 1);
-        this.setData(AttachmentRegister.POS, pPos.north());
-        this.setData(AttachmentRegister.BOOL, false);
+        this.setData(POS, pPos.north());
+        this.setData(BOOL, false);
     }
 
     @Override
@@ -138,6 +149,60 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
         } else this.progress = 0;
     }
 
+    public void moveItems(Level level, ItemEntity itemEntity){
+        var getPos = this.getBlockPos().above();
+        var handler = getItemHandlerAt(level, getPos.getX(), getPos.getY(), getPos.getZ(), Direction.UP);
+        handler.ifPresent(
+            iItemHandlerObjectPair -> {
+                var entityStack = itemEntity.getItem();
+                int remainingAmount = entityStack.getCount();
+                var itemHandler = iItemHandlerObjectPair.getKey();
+                for(int i = 0; i < itemHandler.getSlots(); i++){
+                    int maxStackSize = itemHandler.getSlotLimit(i);
+                    if (remainingAmount <= 0) break;
+                    var slotStack = itemHandler.getStackInSlot(i);
+                    int slotSpace = maxStackSize - slotStack.getCount(); // Use maxStackSize variable
+                    boolean isStack = slotStack.getItem() == entityStack.getItem() && slotStack.getCount() < maxStackSize;
+                    boolean emptySlot = slotStack.isEmpty();
+
+                    if (isStack) {
+                        int addAmount = Math.min(remainingAmount, slotSpace);
+                        slotStack.grow(addAmount);
+                        remainingAmount -= addAmount;
+                        entityStack.shrink(addAmount);
+                    } else if (emptySlot) {
+                        int addAmount = Math.min(remainingAmount, maxStackSize);
+                        itemHandler.insertItem(i, entityStack.copy().split(addAmount), false);
+                        remainingAmount -= addAmount;
+                        entityStack.shrink(addAmount);
+                    }
+                }
+            }
+        );
+    }
+
+    public static Optional<org.apache.commons.lang3.tuple.Pair<IItemHandler, Object>> getItemHandlerAt(Level worldIn, double x, double y, double z, Direction side) {
+        BlockPos blockpos = BlockPos.containing(x, y, z);
+        BlockState state = worldIn.getBlockState(blockpos);
+        BlockEntity blockEntity = state.hasBlockEntity() ? worldIn.getBlockEntity(blockpos) : null;
+        IItemHandler blockCap = worldIn.getCapability(Capabilities.ItemHandler.BLOCK, blockpos, state, blockEntity, side);
+        if (blockCap != null) {
+            return Optional.of(ImmutablePair.of(blockCap, blockEntity));
+        } else {
+            List<Entity> list = worldIn.getEntities((Entity)null, new AABB(x - 0.5, y - 0.5, z - 0.5, x + 0.5, y + 0.5, z + 0.5), EntitySelector.ENTITY_STILL_ALIVE);
+            if (!list.isEmpty()) {
+                Collections.shuffle(list);
+                for (Entity entity : list) {
+                    IItemHandler entityCap = entity.getCapability(Capabilities.ItemHandler.ENTITY_AUTOMATION, side);
+                    if (entityCap != null) {
+                        return Optional.of(ImmutablePair.of(entityCap, entity));
+                    }
+                }
+            }
+            return Optional.empty();
+        }
+    }
+
     private void extracted(float volume, float pitch, Level level) {
         ModHelpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BREEZE_CHARGE, volume, pitch);
     }
@@ -164,19 +229,11 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
             new AnimationController<>(
                 this,
                 state -> {
-                    var pos = this.getData(POS);
+                    var posData = this.getData(POS);
                     if(this.hasData(POS)){
-                        System.out.println(pos);
-                        if(pos == this.getBlockPos().north() || pos == this.getBlockPos().south()){
-
-                            System.out.println(pos == this.getBlockPos().north());
-                            System.out.println(pos == this.getBlockPos().south());
-                            return state.setAndContinue(NS);
-                        }
-
-                        if(pos == this.getBlockPos().above() || pos == this.getBlockPos().below()){
-                            return state.setAndContinue(UD);
-                        }
+                        var pos = this.getBlockPos();
+                        if(posData.equals(pos.north()) || posData.equals(pos.south())) return state.setAndContinue(NS);
+                        if(posData.equals(pos.above()) || posData.equals(pos.below())) return state.setAndContinue(UD);
                     }
                     return state.setAndContinue(EW);
                 }

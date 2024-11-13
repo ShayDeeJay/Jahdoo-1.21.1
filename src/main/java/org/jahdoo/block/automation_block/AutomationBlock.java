@@ -4,7 +4,9 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -32,30 +34,13 @@ import static org.jahdoo.registers.BlocksRegister.sharedBlockBehaviour;
 public class AutomationBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
 
-    public static final DirectionProperty FACING = DirectionalBlock.FACING;
-
     public AutomationBlock() {
         super(sharedBlockBehaviour());
-        this.registerDefaultState(
-            this.stateDefinition.any().setValue(FACING, Direction.NORTH)
-        );
     }
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return simpleCodec((x) -> new AutomationBlock());
-    }
-
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACING);
-    }
-
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection());
-    }
-
-    public @NotNull BlockState rotate(BlockState pState, Rotation pRotation) {
-        return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
     }
 
     @Override
@@ -88,6 +73,12 @@ public class AutomationBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         return openWandGUI(player, pos, level);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        openWandGUI(player, pos, level);
+        return ItemInteractionResult.SUCCESS;
     }
 
     private InteractionResult openWandGUI(Player player, BlockPos blockPos, Level level){

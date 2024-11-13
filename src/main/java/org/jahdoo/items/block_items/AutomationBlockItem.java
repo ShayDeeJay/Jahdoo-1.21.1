@@ -31,7 +31,6 @@ public class AutomationBlockItem extends BlockItem implements GeoItem {
         consumer.accept(
             new GeoRenderProvider() {
                 private AutomationBlockRenderer renderer;
-
                 @Override
                 public @NotNull BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
                     if (this.renderer == null) this.renderer = new AutomationBlockRenderer();

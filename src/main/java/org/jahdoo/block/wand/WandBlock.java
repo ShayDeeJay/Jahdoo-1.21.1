@@ -58,7 +58,13 @@ public class WandBlock extends BaseEntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+    public @NotNull ItemStack getCloneItemStack(
+        @NotNull BlockState state,
+        @NotNull HitResult target,
+        LevelReader level,
+        @NotNull BlockPos pos,
+        @NotNull Player player
+    ) {
         if (level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock) {
             return wandBlock.inputItemHandler.getStackInSlot(GET_WAND_SLOT);
         }
@@ -110,14 +116,9 @@ public class WandBlock extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-
-        if(level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock){
-            getItemInteractionResult(player.getMainHandItem(), wandBlock);
-        }
-
         if (player.getMainHandItem().isEmpty() && player.isShiftKeyDown()) {
             this.pickUpWand(player, pos, level);
-            return ItemInteractionResult.SUCCESS;
+            return ItemInteractionResult.CONSUME;
         }
 
         return openWandGUI(player, pos, level);
@@ -132,15 +133,14 @@ public class WandBlock extends BaseEntityBlock {
                 var index = wandData.abilitySlots() + 1;
                 int addSlotOrMax = Math.min(index, 10);
                 internalWand.update(WAND_DATA, WandData.DEFAULT, data -> data.insertNewSlot(addSlotOrMax));
-                return ItemInteractionResult.SUCCESS;
+                return ItemInteractionResult.CONSUME;
             }
         }
         return ItemInteractionResult.FAIL;
     }
 
-
     private ItemInteractionResult openWandGUI(Player player, BlockPos blockPos, Level level){
-        var success = ItemInteractionResult.CONSUME_PARTIAL;
+        var success = ItemInteractionResult.SUCCESS;
         var fail = ItemInteractionResult.FAIL;
         if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return fail;
         if(!(player instanceof ServerPlayer serverPlayer)) return fail;
