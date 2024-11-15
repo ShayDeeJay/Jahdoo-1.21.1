@@ -71,7 +71,7 @@ public class Hammer extends AbstractUtilityProjectile {
                 SoundSource.BLOCKS, 1, 1
             );
 
-            pos = pos.relative(lookAngleY < -0.8 ? pDirection.getOpposite() : pDirection, isLookingUpOrDown ? size : 0).above(isLookingUpOrDown ? 0 : size);
+            pos = pos.relative(lookAngleY < -0.8 ? pDirection.getOpposite() : pDirection, isLookingUpOrDown ? size : 0).above(isLookingUpOrDown || this.genericProjectile.blockEntityPos != null? 0 : size);
 
             if (UtilityHelpers.range.contains(UtilityHelpers.destroySpeed(blockHitResult.getBlockPos(), genericProjectile.level()))) {
                 for (int x = -radius; x <= radius; x++) {

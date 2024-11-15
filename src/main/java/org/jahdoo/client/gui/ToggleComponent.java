@@ -17,17 +17,37 @@ public class ToggleComponent  {
 
     public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, String label) {
         var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
-        return new GuiButton(posX, posY, button, 32, action, false, resourceLocation, label);
+        return new GuiButton(posX, posY, button, 32, action, false, resourceLocation, label, 6);
     }
 
     public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, String label, int size) {
         var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
-        return new GuiButton(posX, posY, button, size, action, false, resourceLocation, label);
+        return new GuiButton(posX, posY, button, size, action, false, resourceLocation, label, 6);
     }
 
     public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation) {
         var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
         return new GuiButton(posX, posY, button, 32, action, false, resourceLocation);
+    }
+
+    public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, boolean isSelected) {
+        var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
+        return new GuiButton(posX, posY, button, size, action, isSelected, resourceLocation, "", 6);
+    }
+
+    public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, boolean isSelected, int scale) {
+        var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
+        return new GuiButton(posX, posY, button, size, action, isSelected, resourceLocation, "", scale);
+    }
+
+    public static Renderable textWithBackground(int posX, int posY, Minecraft minecraft,Component header) {
+        return new Overlay() {
+            @Override
+            public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
+                guiGraphics.blit(TEXT_BACKGROUND, posX, posY, 0,0, 0, 0, 0, 0);
+                guiGraphics.drawCenteredString(minecraft.font, header, posX + 48, posY - 7,  -6052957);
+            }
+        };
     }
 
     public static Renderable textWithBackground(int posX, int posY, Component textOverlay, Minecraft minecraft,Component header) {
@@ -37,7 +57,7 @@ public class ToggleComponent  {
                 int width1 = 96;
                 int height1 = 32;
                 guiGraphics.drawCenteredString(minecraft.font, textOverlay, posX + 48, posY + 12, -2763307);
-                guiGraphics.blit(TEXT_BACKGROUND, posX, posY, 0,0, width1, height1, width1, height1);
+                guiGraphics.blit(GUI_BUTTON, posX + 32, posY, 0,0, height1, height1, height1, height1);
                 guiGraphics.drawCenteredString(minecraft.font, header, posX + 48, posY - 7, -1);
             }
         };

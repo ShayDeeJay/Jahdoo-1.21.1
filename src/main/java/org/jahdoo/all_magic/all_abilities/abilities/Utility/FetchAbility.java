@@ -8,6 +8,7 @@ import org.jahdoo.all_magic.AbilityBuilder;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
+import org.jahdoo.all_magic.all_abilities.ability_components.AbstractContainerAccessor;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.DataComponentRegistry;
@@ -16,7 +17,7 @@ import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.utils.ModHelpers;
 
-public class FetchAbility extends AbstractAbility {
+public class FetchAbility extends AbstractContainerAccessor {
     private final ResourceLocation abilityId = ModHelpers.modResourceLocation("fetch");
 
     @Override
@@ -78,5 +79,10 @@ public class FetchAbility extends AbstractAbility {
     @Override
     public AbstractElement getElemenType() {
         return ElementRegistry.UTILITY.get();
+    }
+
+    @Override
+    public boolean isOutputUser() {
+        return true;
     }
 }

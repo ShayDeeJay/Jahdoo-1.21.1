@@ -49,12 +49,10 @@ public class Fetch extends AbstractUtilityProjectile {
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof AutomationBlockEntity) return;
         var player = (Player) genericProjectile.getOwner();
-        var blockPos = blockHitResult.getBlockPos();
-        var side = blockHitResult.getDirection();
 
         List<ItemEntity> items = this.genericProjectile.level().getEntitiesOfClass(
             ItemEntity.class,
-            this.genericProjectile.getBoundingBox().inflate(11,3,11),
+            this.genericProjectile.getBoundingBox().inflate(11,11,11),
             entity -> true
         );
 
@@ -73,7 +71,7 @@ public class Fetch extends AbstractUtilityProjectile {
                     var level = entity.level();
                     var bE = level.getBlockEntity(BlockPos.containing(pos));
                     if(bE instanceof AutomationBlockEntity autoEntity){
-                        autoEntity.moveItems(level, itemEntity);
+                        autoEntity.externalOutputInventory(level, itemEntity);
                     }
                 }
             }

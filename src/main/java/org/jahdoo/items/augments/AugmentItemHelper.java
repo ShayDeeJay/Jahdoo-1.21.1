@@ -33,6 +33,7 @@ import org.jahdoo.utils.ModHelpers;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
@@ -377,6 +378,22 @@ public class AugmentItemHelper {
         return null;
     }
 
+    public static Optional<String> isValidAugmentUtil(ItemStack itemStack) {
+        var itemStacks = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        if(itemStacks != null){
+            var item = itemStacks.abilityProperties().keySet().stream().findFirst();
+            if(item.isPresent()){
+                var ability = AbilityRegister.getFirstSpellByTypeId(item.get());
+                if(ability.isPresent()){
+                    if (isConfigAbility(ability.get(), item.get(), itemStack)) {
+                        return item;
+                    }
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
     public static boolean isConfigAbility(AbstractAbility selectedAbility, String ability, ItemStack itemStack) {
         var wandAbilityHolder = itemStack.get(WAND_ABILITY_HOLDER);
         if(wandAbilityHolder == null) return false;
@@ -387,4 +404,5 @@ public class AugmentItemHelper {
             .filter(name -> !name.equals(MANA_COST) && !name.equals(COOLDOWN));
         return selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && !filterOutBase.toList().isEmpty();
     }
+
 }

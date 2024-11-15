@@ -2,22 +2,15 @@ package org.jahdoo.block.tank;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -26,8 +19,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
@@ -35,10 +26,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.block.BlockInteractionHandler;
-import org.jahdoo.block.crafter.CreatorBlock;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ItemsRegister;
+import org.jahdoo.utils.ModHelpers;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static org.jahdoo.registers.AttachmentRegister.BOOL;
 
 public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
     public static final VoxelShape SHAPE_BASE = Block.box(1.95, 0, 1.95, 14.05, 2.75, 14.05);
@@ -101,7 +95,7 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         }
     }
 
-    protected FluidState getFluidState(BlockState state) {
+    protected @NotNull FluidState getFluidState(BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
@@ -109,8 +103,8 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     protected ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
         ItemStack stack = pPlayer.getItemInHand(pHand);
         BlockEntity entity = pLevel.getBlockEntity(pPos);
-
         if (entity instanceof TankBlockEntity tankBlockEntity) {
+            getItemInteractionResult(stack, tankBlockEntity, pPlayer, pLevel);
             if (BlockInteractionHandler.stackHandlerWithFeedBack(tankBlockEntity.inputItemHandler, stack, ItemsRegister.JIDE_POWDER.get(), 0, tankBlockEntity.getMaxSlotSize(), pPlayer)) {
                 pPlayer.level().playSound(pPlayer, pPlayer.blockPosition(), SoundEvents.SAND_PLACE, SoundSource.BLOCKS);
                 return ItemInteractionResult.SUCCESS;
@@ -119,6 +113,15 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
             }
         }
         return ItemInteractionResult.SUCCESS;
+    }
+
+    private static void getItemInteractionResult(ItemStack heldItem, TankBlockEntity tankBlock, Player player, Level level) {
+        if (heldItem.getItem() == ItemsRegister.AUGMENT_CORE.get()) {
+            if(player.isCreative()) {
+                ModHelpers.getSoundWithPosition(level, tankBlock.getBlockPos(), SoundEvents.NOTE_BLOCK_BELL.value());
+                tankBlock.setData(BOOL, !tankBlock.getData(BOOL));
+            };
+        }
     }
 
     @Nullable

@@ -4,9 +4,9 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
+import org.jahdoo.all_magic.all_abilities.ability_components.AbstractContainerAccessor;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.DataComponentRegistry;
@@ -16,7 +16,7 @@ import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
-public class BlockPlacerAbility extends AbstractAbility {
+public class BlockPlacerAbility extends AbstractContainerAccessor {
     private final ResourceLocation abilityId = ModHelpers.modResourceLocation("block_placer");
 
     @Override
@@ -78,5 +78,10 @@ public class BlockPlacerAbility extends AbstractAbility {
     @Override
     public AbstractElement getElemenType() {
         return ElementRegistry.UTILITY.get();
+    }
+
+    @Override
+    public boolean isInputUser() {
+        return true;
     }
 }

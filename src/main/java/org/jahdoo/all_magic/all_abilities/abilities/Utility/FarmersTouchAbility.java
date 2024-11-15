@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
+import org.jahdoo.all_magic.all_abilities.ability_components.AbstractContainerAccessor;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.DataComponentRegistry;
@@ -85,4 +86,5 @@ public class FarmersTouchAbility extends AbstractAbility {
     public AbstractElement getElemenType() {
         return ElementRegistry.UTILITY.get();
     }
+
 }

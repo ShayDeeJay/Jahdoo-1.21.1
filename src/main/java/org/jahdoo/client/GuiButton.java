@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 
+import static org.jahdoo.client.gui.IconLocations.GUI_BUTTON_SELECTED;
 import static org.jahdoo.client.gui.IconLocations.SELECTED_GUI_BUTTON_OVERLAY;
 
 public class GuiButton extends ImageButton {
@@ -23,17 +24,17 @@ public class GuiButton extends ImageButton {
         super(pX, pY, size, size, sprites, pOnPress);
         this.defaultSize = size; // Default size is the initial size of the button
         this.sizes = size; // Initialize sizes to the default size
-        this.totalSize = size + 5; // Increased size
+        this.totalSize = size + 6; // Increased size
         this.pOnPress = pOnPress;
         this.isSelected = isSelected;
         this.buttonOverlay = buttonOverlay;
     }
 
-    public GuiButton(int pX, int pY, WidgetSprites sprites, int size, OnPress pOnPress, boolean isSelected, @Nullable ResourceLocation buttonOverlay, String label) {
+    public GuiButton(int pX, int pY, WidgetSprites sprites, int size, OnPress pOnPress, boolean isSelected, @Nullable ResourceLocation buttonOverlay, String label, int scaler) {
         super(pX, pY, size, size, sprites, pOnPress);
         this.defaultSize = size; // Default size is the initial size of the button
         this.sizes = size; // Initialize sizes to the default size
-        this.totalSize = size + 5; // Increased size
+        this.totalSize = size + scaler; // Increased size
         this.pOnPress = pOnPress;
         this.isSelected = isSelected;
         this.buttonOverlay = buttonOverlay;
@@ -46,6 +47,7 @@ public class GuiButton extends ImageButton {
 
     @Override
     public void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        this.setSize((int) sizes-4, (int) sizes-4);
         if(isSelected) sizes = totalSize;
         var normalizedTick = (sizes - defaultSize) / (totalSize - defaultSize);
         var easedTick = easeInOutCubic(normalizedTick);
@@ -56,16 +58,22 @@ public class GuiButton extends ImageButton {
         if (this.isMouseOver(pMouseX, pMouseY)) {
             sizes = Math.min(sizes + 2f, totalSize);
             int i = 4;
+            pGuiGraphics.pose().pushPose();
+            pGuiGraphics.pose().translate(0,0,2);
             pGuiGraphics.blit(SELECTED_GUI_BUTTON_OVERLAY, this.getX() - offset + i/2, this.getY() - offset + i/2, 0, 0, 0, easedValue - i, easedValue- i, easedValue- i, easedValue- i);
+            pGuiGraphics.pose().popPose();
         } else {
             if (sizes > defaultSize) sizes -= 2f;
+        }
+
+        if(isSelected){
+            pGuiGraphics.blit(GUI_BUTTON_SELECTED, this.getX() - offset, this.getY()- offset, 1, 0, 0, easedValue, easedValue, easedValue, easedValue);
         }
 
         if(buttonOverlay != null){
             pGuiGraphics.blit(buttonOverlay, this.getX() - offset, this.getY() - offset, 1, 0, 0, easedValue, easedValue, easedValue, easedValue);
         }
     }
-
 
     @Override
     protected boolean isValidClickButton(int button) {

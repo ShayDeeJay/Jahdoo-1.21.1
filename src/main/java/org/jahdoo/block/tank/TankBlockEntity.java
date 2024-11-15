@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.particle.ParticleHandlers;
+import org.jahdoo.registers.AttachmentRegister;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
@@ -32,6 +33,7 @@ public class TankBlockEntity extends AbstractBEInventory {
 
     public TankBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.TANK_BE.get(), pPos, pBlockState, 64);
+        this.setData(AttachmentRegister.BOOL, false);
     }
 
     public ItemStack getRenderer() {
@@ -67,7 +69,6 @@ public class TankBlockEntity extends AbstractBEInventory {
 
     private List<BlockPos> getTankBlockInRange(Level pLevel, BlockPos pos) {
         List<BlockPos> allBlocks = new ArrayList<>();
-
         List<AbstractTankUser> localList = new ArrayList<>();
 
         for (BlockPos adjacentPos : findInRange(pos)) {
@@ -78,6 +79,14 @@ public class TankBlockEntity extends AbstractBEInventory {
 
         this.usingThisTank.removeIf(abstractTankUser -> !localList.contains(abstractTankUser));
         return allBlocks;
+    }
+
+    public void chargeTankFuel(int craftingFuelCost){
+        if(this.getData(AttachmentRegister.BOOL)) return;
+        if(this.getLevel() == null) return;
+        this.inputItemHandler.getStackInSlot(0).shrink(craftingFuelCost);
+        var blockstate = getLevel().getBlockState(this.getBlockPos());
+        this.getLevel().sendBlockUpdated(this.getBlockPos(), blockstate, blockstate,1);
     }
 
     private void beamParticlesToUser(ServerLevel serverLevel, BlockPos pos, int tankSlotSize){

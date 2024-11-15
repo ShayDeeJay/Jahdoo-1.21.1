@@ -45,11 +45,12 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
                 .stream()
                 .filter(
                     blockPos1 -> level.getBlockEntity(blockPos1) instanceof TankBlockEntity tankBlockEntity &&
-                            tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() >= craftingFuelCost
+                    tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() >= craftingFuelCost
                 )
-                .sorted(Comparator.comparingInt(blockPos1 -> level.getBlockEntity(blockPos1) instanceof TankBlockEntity tankBlockEntity ? tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() : 0))
+                .sorted(
+                    Comparator.comparingInt(blockPos1 -> level.getBlockEntity(blockPos1) instanceof TankBlockEntity tankBlockEntity ? tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() : 0)
+                )
                 .toList();
-
 
             if (!blockPos.isEmpty()) {
                 if (tankPosition != null) {
@@ -68,9 +69,9 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
         BlockPos[] adjacentPositions = new BlockPos[125]; // 5 * 5 * 5 = 125 positions
         int index = 0;
 
-        for (int dx = -2; dx <= 2; dx++) {       // 5 blocks in x-axis
-            for (int dy = -3; dy <= 1; dy++) {   // 5 blocks in y-axis, shifted down by 1
-                for (int dz = -2; dz <= 2; dz++) { // 5 blocks in z-axis
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dy = -3; dy <= 1; dy++) {
+                for (int dz = -2; dz <= 2; dz++) {
                     adjacentPositions[index++] = pos.offset(dx, dy, dz);
                 }
             }
@@ -86,26 +87,10 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
         return null;
     }
 
-    public int getProgress(){
-        return this.progress;
-    }
-
     public abstract int setCraftingCost();
 
     protected void chargeTankFuel(int craftingFuelCost){
-        this.getTankEntity().inputItemHandler.getStackInSlot(0).shrink(craftingFuelCost);
-        if(this.getTankEntity().getLevel() == null) return;
-        var blockstate = getLevel().getBlockState(this.tankPosition);
-        this.getTankEntity().getLevel().sendBlockUpdated(this.tankPosition, blockstate, blockstate,1);
-    }
-
-    protected void sendProcessingParticle(double fromHeight, double toHeight, int lifetime, float size, double speed){
-        Vec3 direction = this.getBlockPos().getCenter().add(0, toHeight, 0).subtract(this.tankPosition.getCenter()).normalize();
-        ParticleHandlers.sendParticles(
-            this.level,
-            processingParticle(lifetime, size, false,  speed),
-            this.tankPosition.getCenter().subtract(0,fromHeight,0), 0, direction.x, direction.y, direction.z, speed
-        );
+        this.getTankEntity().chargeTankFuel(craftingFuelCost);
     }
 
     protected boolean hasTankAndFuel(){
@@ -113,7 +98,6 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
         if (!(this.level.getBlockEntity(this.tankPosition) instanceof TankBlockEntity tankBlockEntity)) return false;
         return this.tankPosition != null && tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() >= this.setCraftingCost();
     }
-
 
     private List<BlockPos> getTankBlockInRange(Level pLevel, BlockPos pos) {
         List<BlockPos> allBlocks = new ArrayList<>();

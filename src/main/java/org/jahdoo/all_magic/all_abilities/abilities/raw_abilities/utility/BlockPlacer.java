@@ -21,7 +21,6 @@ import static org.jahdoo.all_magic.all_abilities.abilities.Utility.FarmersTouchA
 
 public class BlockPlacer extends AbstractUtilityProjectile {
     ResourceLocation abilityId = ModHelpers.modResourceLocation("block_placer_property");
-
     Level level;
 
     @Override
@@ -49,8 +48,8 @@ public class BlockPlacer extends AbstractUtilityProjectile {
         var blockPos = blockHitResult.getBlockPos();
         var side = blockHitResult.getDirection();
         if (level.isClientSide) return;
-        ItemStack targetBlock = ItemStack.EMPTY;
-        Block replaceBlock = Blocks.AIR;
+        var targetBlock = ItemStack.EMPTY;
+        var replaceBlock = Blocks.AIR;
 
         if(player != null){
             targetBlock = player.getOffhandItem();
@@ -58,8 +57,10 @@ public class BlockPlacer extends AbstractUtilityProjectile {
         } else {
             if(pos != null) {
                 if(this.level.getBlockEntity(BlockPos.containing(pos)) instanceof AutomationBlockEntity entity){
-                    targetBlock = entity.inputItemHandler.getStackInSlot(AutomationBlockEntity.INPUT_SLOT);
-                    replaceBlock = Block.byItem(targetBlock.getItem());
+                    if(!entity.externalInputInventory(level).isEmpty()){
+                        targetBlock = entity.externalInputInventory(level);
+                        replaceBlock = Block.byItem(targetBlock.getItem());
+                    }
                 }
             }
         }
@@ -85,7 +86,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
                 }
             } else {
                 if(this.level.getBlockEntity(BlockPos.containing(pos)) instanceof AutomationBlockEntity entity){
-                    entity.inputItemHandler.getStackInSlot(AutomationBlockEntity.INPUT_SLOT).shrink(1);
+                    entity.externalInputInventory(level).shrink(1);
                 }
             }
         }

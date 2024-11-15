@@ -34,7 +34,7 @@ public class TestingElements extends Screen  {
 
     public GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation) {
         var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
-        return new GuiButton(posX, posY, button, 32, action, false, resourceLocation, "dfdsfsdf");
+        return new GuiButton(posX, posY, button, 32, action, false, resourceLocation, "dfdsfsdf", 6);
     }
 
     @Override

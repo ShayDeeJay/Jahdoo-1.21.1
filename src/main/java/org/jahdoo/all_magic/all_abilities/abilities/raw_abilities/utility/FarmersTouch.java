@@ -40,7 +40,7 @@ public class FarmersTouch extends AbstractUtilityProjectile {
     double range;
     double growthChance;
     private double harvestChance;
-    private List<BlockPos> effectedPos = new ArrayList<>();
+    private final List<BlockPos> effectedPos = new ArrayList<>();
 
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
@@ -72,7 +72,7 @@ public class FarmersTouch extends AbstractUtilityProjectile {
         this.hasHitBlock = true;
         this.genericProjectile.setInvisible(true);
         this.genericProjectile.setDeltaMovement(0,0,0);
-        PositionGetters.getOuterSquareOfRadius(this.genericProjectile.position(), counter + 0.5, this.range * 40,
+        PositionGetters.getOuterSquareOfRadius(this.genericProjectile.position(), counter + 0.5, this.range * 20,
             positions -> this.setParticleNova(positions, this.genericProjectile.level())
         );
         super.onBlockBlockHit(blockHitResult);
@@ -102,7 +102,7 @@ public class FarmersTouch extends AbstractUtilityProjectile {
 
     void nova(Projectile projectile, double novaMaxSize){
         if(counter < novaMaxSize){
-            counter = Math.min(counter + 0.3, novaMaxSize);
+            counter = Math.min(counter + 0.5, novaMaxSize);
             PositionGetters.getOuterSquareOfRadius(projectile.position(), counter, counter*10,
                 positions -> {
                     this.applyBoneMeal(projectile.level(), BlockPos.containing(positions));
@@ -118,10 +118,10 @@ public class FarmersTouch extends AbstractUtilityProjectile {
         int col1 = this.getElementType().particleColourPrimary();
         int col2 = this.getElementType().particleColourFaded();
         var directions = worldPosition.subtract(this.genericProjectile.position()).normalize();
-        var lifetime = (int) this.range * 2;
+        var lifetime = (int) this.range * 1.5;
         var size = 3;
 
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, (float) (size - 0.2), col1, col2, false);
+        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, Math.min(Math.max((int) lifetime, 3), 10), (float) (size - 0.2), col1, col2, false);
         var speedRange = Random.nextDouble(this.range / 10, this.range / 8);
         ParticleHandlers.sendParticles(
             level, genericParticle, worldPosition, 0, directions.x, directions.y+0.05, directions.z, speedRange

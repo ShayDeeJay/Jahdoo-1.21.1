@@ -36,8 +36,6 @@ public class AutomationBlockMenu extends AbstractInternalContainer {
 
     private void setSlot(){
         this.addSlot(new AutomationSlot(this.getAutomationEntity().inputItemHandler,AUGMENT_SLOT, posX, posY, this));
-        this.addSlot(new SlotItemHandler(this.getAutomationEntity().inputItemHandler,INPUT_SLOT, posX - 49 + offSetX, posY + offSetY));
-        this.addSlot(new SlotItemHandler(this.getAutomationEntity().outputItemHandler,OUTPUT_SLOT, posX + 49 + offSetX, posY+ offSetY));
     }
 
     public AutomationBlockEntity getAutomationEntity(){

@@ -5,6 +5,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.capabilities.player_abilities.AutoBlock;
 import org.jahdoo.networking.packet.client2server.*;
 import org.jahdoo.networking.packet.server2client.*;
 
@@ -21,8 +22,9 @@ public class Network {
         payloadRegistrar.playToServer(FlyingPacketC2SPacket.TYPE, FlyingPacketC2SPacket.STREAM_CODEC, FlyingPacketC2SPacket::handle);
         payloadRegistrar.playToServer(SyncComponentC2S.TYPE, SyncComponentC2S.STREAM_CODEC, SyncComponentC2S::handle);
         payloadRegistrar.playToServer(FallDistanceSyncC2SPacket.TYPE, FallDistanceSyncC2SPacket.STREAM_CODEC, FallDistanceSyncC2SPacket::handle);
-        payloadRegistrar.playToServer(UpdateDirectionC2SPacket.TYPE, UpdateDirectionC2SPacket.STREAM_CODEC, UpdateDirectionC2SPacket::handle);
         payloadRegistrar.playToServer(SyncComponentBlockC2S.TYPE, SyncComponentBlockC2S.STREAM_CODEC, SyncComponentBlockC2S::handle);
+        payloadRegistrar.playToServer(AutoBlockC2SPacket.TYPE, AutoBlockC2SPacket.STREAM_CODEC, AutoBlockC2SPacket::handle);
+
 
         payloadRegistrar.playToClient(ManaDataSyncS2CPacket.TYPE, ManaDataSyncS2CPacket.STREAM_CODEC, ManaDataSyncS2CPacket::handle);
         payloadRegistrar.playToClient(CooldownsDataSyncS2CPacket.TYPE, CooldownsDataSyncS2CPacket.STREAM_CODEC, CooldownsDataSyncS2CPacket::handle);

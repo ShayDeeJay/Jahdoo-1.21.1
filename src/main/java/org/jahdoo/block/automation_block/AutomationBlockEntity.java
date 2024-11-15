@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
@@ -16,15 +17,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.VanillaInventoryCodeHooks;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jahdoo.block.AbstractTankUser;
+import org.jahdoo.capabilities.player_abilities.AutoBlock;
 import org.jahdoo.client.gui.automation_block.AutomationBlockMenu;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.items.augments.Augment;
@@ -44,9 +44,11 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import javax.annotation.CheckForNull;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static org.jahdoo.capabilities.player_abilities.AutoBlock.*;
+import static org.jahdoo.client.gui.IconLocations.*;
 import static org.jahdoo.registers.AttachmentRegister.*;
 
 
@@ -56,20 +58,16 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
     private static final RawAnimation EW = RawAnimation.begin().thenPlay("east_and_west");
     private static final RawAnimation UD = RawAnimation.begin().thenPlay("up_and_down");
     public static final int AUGMENT_SLOT = 0;
-    public static final int INPUT_SLOT = 1;
-    public static final int OUTPUT_SLOT = 0;
-
-    public BlockPos direction;
     private int ticker;
 
     @Override
     public int setInputSlots() {
-        return 2;
+        return 1;
     }
 
     @Override
     public int setOutputSlots() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -77,10 +75,13 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
         return 64;
     }
 
+    public ItemStack augmentSlot(){
+        return this.inputItemHandler.getStackInSlot(AUGMENT_SLOT);
+    }
+
     public AutomationBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.AUTOMATION_BLOCK.get(), pPos, pBlockState, 1);
-        this.setData(POS, pPos.north());
-        this.setData(BOOL, false);
+        this.setData(AUTO_BLOCK, AutoBlock.initData(this.getBlockPos()));
     }
 
     @Override
@@ -93,7 +94,6 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
     protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
         super.loadAdditional(pTag, pRegistries);
         progress = pTag.getInt("infuser.progress");
-        if(this.hasData(POS)) direction = this.getData(POS);
     }
 
     @Override
@@ -101,22 +101,15 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
         super.dropsAllInventory(level);
     }
 
-    public List<Pair<String, BlockPos>> direction(){
+    public List<Pair<ResourceLocation, BlockPos>> direction(){
         return List.of(
-            Pair.of("North", this.getBlockPos().north()),
-            Pair.of("South", this.getBlockPos().south()),
-            Pair.of("East", this.getBlockPos().east()),
-            Pair.of("West", this.getBlockPos().west()),
-            Pair.of("Down", this.getBlockPos().below()),
-            Pair.of("Up", this.getBlockPos().above())
+            Pair.of(NORTH, this.getBlockPos().north()),
+            Pair.of(SOUTH, this.getBlockPos().south()),
+            Pair.of(EAST, this.getBlockPos().east()),
+            Pair.of(WEST, this.getBlockPos().west()),
+            Pair.of(DOWN, this.getBlockPos().below()),
+            Pair.of(UP, this.getBlockPos().above())
         );
-    }
-
-    public void setDirection(String direction) {
-        var pos = direction().stream()
-            .filter(pair -> pair.getFirst().equals(direction))
-            .findFirst();
-        pos.ifPresent(pair -> this.direction = pair.getSecond());
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
@@ -130,27 +123,29 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
     private void useAugment(Level level, boolean hasTank, ItemStack augmentSlot) {
         if(!hasTank) return;
         var isAugment = augmentSlot.getItem() instanceof Augment;
-        var hasDirection = this.direction != null;
-        var isOff = Objects.equals(this.direction,this.getBlockPos());
-        var isPowered = this.getData(AttachmentRegister.BOOL);
+        var hasDirection = getActionDirection(this) != null;
+        var isOff = Objects.equals(getActionDirection(this),this.getBlockPos());
+        var isPowered = getActive(this);
         if(!isPowered) return;
         if (isAugment && hasDirection && !isOff) {
             this.progress ++;
-            if(this.ticker % 10 == 0){
+            var speed  = this.getData(AUTO_BLOCK).speed();
+            if(this.ticker % (speed == 0 ? 100 : speed) == 0){
                 positionalParticles(level, 30, 0.7);
-                extracted(0.05f,1.4f, level);
+                useSound(0.05f,1.4f, level);
                 var getAbilityId = DataComponentHelper.getAbilityTypeItemStack(augmentSlot);
                 var getAbility = AbilityRegister.getFirstSpellByTypeId(getAbilityId);
                 if(getAbility.isPresent()){
-                    getAbility.get().invokeAbilityBlock(this.direction, this);
+                    getAbility.get().invokeAbilityBlock(getActionDirection(this), this);
                     this.chargeTankFuel(this.setCraftingCost());
                 }
             }
         } else this.progress = 0;
+        this.setChanged();
     }
 
-    public void moveItems(Level level, ItemEntity itemEntity){
-        var getPos = this.getBlockPos().above();
+    public void externalOutputInventory(Level level, ItemEntity itemEntity){
+        var getPos = this.getData(AUTO_BLOCK).output();
         var handler = getItemHandlerAt(level, getPos.getX(), getPos.getY(), getPos.getZ(), Direction.UP);
         handler.ifPresent(
             iItemHandlerObjectPair -> {
@@ -158,7 +153,7 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
                 int remainingAmount = entityStack.getCount();
                 var itemHandler = iItemHandlerObjectPair.getKey();
                 for(int i = 0; i < itemHandler.getSlots(); i++){
-                    int maxStackSize = itemHandler.getSlotLimit(i);
+                    int maxStackSize = itemHandler.getSlotLimit(i) == 99 ? 64 : itemHandler.getSlotLimit(i);
                     if (remainingAmount <= 0) break;
                     var slotStack = itemHandler.getStackInSlot(i);
                     int slotSpace = maxStackSize - slotStack.getCount(); // Use maxStackSize variable
@@ -180,6 +175,26 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
             }
         );
     }
+
+    public ItemStack externalInputInventory(Level level){
+        var getPos = this.getData(AUTO_BLOCK).input();
+        var handler = getItemHandlerAt(level, getPos.getX(), getPos.getY(), getPos.getZ(), Direction.DOWN);
+        AtomicReference<ItemStack> itemStack = new AtomicReference<>(ItemStack.EMPTY);
+        handler.ifPresent(
+            iItemHandlerObjectPair -> {
+                var itemHandler = iItemHandlerObjectPair.getKey();
+                for(int i = 0; i < itemHandler.getSlots(); i++){
+                    var slotStack = itemHandler.getStackInSlot(i);
+                    if(!slotStack.isEmpty()) {
+                        itemStack.set(slotStack);
+                        return;
+                    };
+                }
+            }
+        );
+        return itemStack.get();
+    }
+
 
     public static Optional<org.apache.commons.lang3.tuple.Pair<IItemHandler, Object>> getItemHandlerAt(Level worldIn, double x, double y, double z, Direction side) {
         BlockPos blockpos = BlockPos.containing(x, y, z);
@@ -203,7 +218,7 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
         }
     }
 
-    private void extracted(float volume, float pitch, Level level) {
+    private void useSound(float volume, float pitch, Level level) {
         ModHelpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BREEZE_CHARGE, volume, pitch);
     }
 
@@ -229,12 +244,13 @@ public class AutomationBlockEntity extends AbstractTankUser implements MenuProvi
             new AnimationController<>(
                 this,
                 state -> {
-                    var posData = this.getData(POS);
-                    if(this.hasData(POS)){
+                    var posData = AutoBlock.getActionDirection(this);
+                    if(this.hasData(AUTO_BLOCK)){
                         var pos = this.getBlockPos();
                         if(posData.equals(pos.north()) || posData.equals(pos.south())) return state.setAndContinue(NS);
                         if(posData.equals(pos.above()) || posData.equals(pos.below())) return state.setAndContinue(UD);
                     }
+                    this.setChanged();
                     return state.setAndContinue(EW);
                 }
             )
