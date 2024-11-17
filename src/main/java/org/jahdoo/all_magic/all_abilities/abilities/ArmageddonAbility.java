@@ -19,7 +19,7 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class ArmageddonAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("armageddon");
+    public static final ResourceLocation abilityId = ModHelpers.res("armageddon");
     public static final String SPAWNING_SPEED = "Spawning Speed";
 
     @Override

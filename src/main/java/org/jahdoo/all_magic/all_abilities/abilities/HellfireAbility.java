@@ -14,7 +14,7 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class HellfireAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("hellfire");
+    public static final ResourceLocation abilityId = ModHelpers.res("hellfire");
 
     @Override
     public void invokeAbility(Player player) {

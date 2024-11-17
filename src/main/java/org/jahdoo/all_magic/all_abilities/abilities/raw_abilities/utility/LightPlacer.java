@@ -9,13 +9,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
-import org.jahdoo.block.automation_block.AutomationBlockEntity;
+import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.ModTags;
 
 public class LightPlacer extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("light_placer_property");
+    ResourceLocation abilityId = ModHelpers.res("light_placer_property");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -29,7 +29,7 @@ public class LightPlacer extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
-        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof AutomationBlockEntity) return;
+        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         Level level = genericProjectile.level();
         BlockState replaceBlock = BlocksRegister.LIGHTING.get().defaultBlockState();
         BlockPos blockPos = blockHitResult.getBlockPos();

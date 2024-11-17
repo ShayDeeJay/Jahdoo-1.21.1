@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class EternalWizardBodyRenderer extends HumanoidMobRenderer<AbstractSkeleton, WizardModel<AbstractSkeleton>> {
-    private static final ResourceLocation SKELETON_LOCATION = ModHelpers.modResourceLocation("textures/entity/eternal_wizard/eternal_wizard.png");
+    private static final ResourceLocation SKELETON_LOCATION = ModHelpers.res("textures/entity/eternal_wizard/eternal_wizard.png");
 
     public EternalWizardBodyRenderer(EntityRendererProvider.Context pContext, ModelLayerLocation pSkeletonLayer, ModelLayerLocation pInnerModelLayer, ModelLayerLocation pOuterModelLayer) {
         super(pContext, new WizardModel<>(pContext.bakeLayer(pSkeletonLayer)), 0.5F);

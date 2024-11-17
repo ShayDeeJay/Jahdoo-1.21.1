@@ -1,21 +1,13 @@
 package org.jahdoo.client.gui.overlays;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.realmsclient.util.TextRenderingUtils;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
-import net.minecraft.client.renderer.entity.DisplayRenderer;
-import net.minecraft.client.renderer.texture.Tickable;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.ticks.ScheduledTick;
-import net.minecraft.world.ticks.TickAccess;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.capabilities.CastingData;
 import org.jahdoo.items.wand.WandItem;
@@ -25,18 +17,14 @@ import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.components.DataComponentHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
 import static org.jahdoo.client.SharedUI.drawStringWithBackground;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 
 public class ManaBarOverlay implements LayeredDraw.Layer {
     float fadeIn;
-    public static final ResourceLocation MANA_GUI = ModHelpers.modResourceLocation("textures/gui/mana_v4_textured.png");
-    public static final ResourceLocation TYPE_OVERLAY = ModHelpers.modResourceLocation("textures/gui/man_type_overlay.png");
-    public static final ResourceLocation MANA_TYPE = ModHelpers.modResourceLocation("textures/gui/mana_with_type.png");
+    public static final ResourceLocation MANA_GUI = ModHelpers.res("textures/gui/mana_v4_textured.png");
+    public static final ResourceLocation TYPE_OVERLAY = ModHelpers.res("textures/gui/man_type_overlay.png");
+    public static final ResourceLocation MANA_TYPE = ModHelpers.res("textures/gui/mana_with_type.png");
     private int types;
     AlignedGui alignedGui;
 
@@ -82,7 +70,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
             pose.pushPose();
             pose.translate(58, height - 16, 10D);
             pose.scale(0.5f,0.5f,0.5f);
-            drawStringWithBackground(pGuiGraphics, minecraft.font, manaPoolCount, 0, 0, colourBack, colourText.getFirst().textColourSecondary(), true);
+            drawStringWithBackground(pGuiGraphics, minecraft.font, manaPoolCount, 0, 0, colourBack,  -4276546, true);
             pose.popPose();
         }
     }
@@ -97,7 +85,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
                 if(cooldownCost > 0){
                     var currentOverlayHeight = ((cooldownStatus) * cooldownOverlaySize / cooldownCost);
                     alignedGui.displayGuiLayer(6, 5 + currentOverlayHeight, 89, cooldownOverlaySize, currentOverlayHeight);
-//                    drawStringWithBackground(pGuiGraphics, minecraft.font, Component.literal(String.valueOf(cooldownCost)), 6, pGuiGraphics.guiHeight() - 13, 1, -1, false);
                 }
             }
         }

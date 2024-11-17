@@ -49,7 +49,7 @@ public class AoeCloud extends Entity implements TraceableEntity {
         this.wandAbilityHolder = livingEntity.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
-        this.getAoe = EntityPropertyRegister.REGISTRY.get(ModHelpers.modResourceLocation(selectedAbility)).getEntityProperty();
+        this.getAoe = EntityPropertyRegister.REGISTRY.get(ModHelpers.res(selectedAbility)).getEntityProperty();
         this.getAoe.getAoeCloud(this);
         this.getRandomCloudRadius = ModHelpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
     }
@@ -62,7 +62,7 @@ public class AoeCloud extends Entity implements TraceableEntity {
         this.wandAbilityHolder = wandAbilityHolder;
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
-        this.getAoe = EntityPropertyRegister.REGISTRY.get(ModHelpers.modResourceLocation(selectedAbility)).getEntityProperty();
+        this.getAoe = EntityPropertyRegister.REGISTRY.get(ModHelpers.res(selectedAbility)).getEntityProperty();
         this.getAoe.getAoeCloud(this);
         this.getRandomCloudRadius = ModHelpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
     }
@@ -119,7 +119,7 @@ public class AoeCloud extends Entity implements TraceableEntity {
         this.setRadius(pCompound.getFloat("radius"));
         if(getAoe == null){
             this.getAoe = EntityPropertyRegister.REGISTRY
-                .get(ModHelpers.modResourceLocation(pCompound.getString("get_selection")))
+                .get(ModHelpers.res(pCompound.getString("get_selection")))
                 .getEntityProperty();
             getAoe.getAoeCloud(this);
             getAoe.readCompoundTag(pCompound);

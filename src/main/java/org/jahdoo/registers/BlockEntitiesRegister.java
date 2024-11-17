@@ -1,20 +1,17 @@
 package org.jahdoo.registers;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.block.automation_block.AutomationBlockEntity;
+import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.block.crafter.CreatorEntity;
 import org.jahdoo.block.infuser.InfuserBlockEntity;
 import org.jahdoo.block.tank.TankBlockEntity;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.block.wandBlockManager.WandManagerTableEntity;
-
-import java.util.function.Supplier;
 
 public class BlockEntitiesRegister {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
@@ -35,8 +32,8 @@ public class BlockEntitiesRegister {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<InfuserBlockEntity>> INFUSER_BE =
         BLOCK_ENTITIES.register("infuser_be", () -> BlockEntityType.Builder.of(InfuserBlockEntity::new, BlocksRegister.INFUSER.get()).build(null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AutomationBlockEntity>> AUTOMATION_BLOCK =
-        BLOCK_ENTITIES.register("automation_block", () -> BlockEntityType.Builder.of(AutomationBlockEntity::new, BlocksRegister.AUTOMATION_BLOCK.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ModularChaosCubeEntity>> MODULAR_CHAOS_CUBE =
+        BLOCK_ENTITIES.register("modular_chaos_cube", () -> BlockEntityType.Builder.of(ModularChaosCubeEntity::new, BlocksRegister.MODULAR_CHAOS_CUBE.get()).build(null));
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);

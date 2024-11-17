@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.utils.ModHelpers;
 
 public class FallDistanceSyncC2SPacket implements CustomPacketPayload {
-    public static final Type<FallDistanceSyncC2SPacket> TYPE = new Type<>(ModHelpers.modResourceLocation("reset_fall"));
+    public static final Type<FallDistanceSyncC2SPacket> TYPE = new Type<>(ModHelpers.res("reset_fall"));
     public static final StreamCodec<RegistryFriendlyByteBuf, FallDistanceSyncC2SPacket> STREAM_CODEC = CustomPacketPayload.codec(FallDistanceSyncC2SPacket::toBytes, FallDistanceSyncC2SPacket::new);
 
     public FallDistanceSyncC2SPacket() {}

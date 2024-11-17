@@ -13,7 +13,7 @@ import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.components.DataComponentHelper;
 
 public class UseAbilityC2SPacket implements CustomPacketPayload {
-    public static final Type<UseAbilityC2SPacket> TYPE = new Type<>(ModHelpers.modResourceLocation("use_ability"));
+    public static final Type<UseAbilityC2SPacket> TYPE = new Type<>(ModHelpers.res("use_ability"));
     public static final StreamCodec<RegistryFriendlyByteBuf, UseAbilityC2SPacket> STREAM_CODEC = CustomPacketPayload.codec(UseAbilityC2SPacket::toBytes, UseAbilityC2SPacket::new);
 
     public UseAbilityC2SPacket(FriendlyByteBuf buf) {}

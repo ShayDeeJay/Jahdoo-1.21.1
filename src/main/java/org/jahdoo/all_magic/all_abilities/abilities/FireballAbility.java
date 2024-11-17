@@ -15,7 +15,7 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class FireballAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("fireball");
+    public static final ResourceLocation abilityId = ModHelpers.res("fireball");
     public static final String novaRange = "Explosion Radius";
 
     @Override

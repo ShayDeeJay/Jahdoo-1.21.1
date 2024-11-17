@@ -15,7 +15,7 @@ import static org.jahdoo.registers.AttachmentRegister.STATIC;
 
 public class StaticAbility extends AbstractAbility {
 
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("static");
+    public static final ResourceLocation abilityId = ModHelpers.res("static");
     public static final String mana_per_damage = "Mana Per Hit";
 
     @Override
@@ -66,11 +66,6 @@ public class StaticAbility extends AbstractAbility {
     @Override
     public boolean internallyChargeManaAndCooldown() {
         return true;
-    }
-
-    @Override
-    public boolean isSwitchAbility() {
-        return true ;
     }
 
     @Override

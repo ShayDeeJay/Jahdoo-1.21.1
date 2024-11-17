@@ -11,7 +11,7 @@ import org.jahdoo.utils.ModHelpers;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 
 public class ManaDataSyncS2CPacket implements CustomPacketPayload {
-    public static final Type<ManaDataSyncS2CPacket> TYPE = new Type<>(ModHelpers.modResourceLocation("sync_client_mana"));
+    public static final Type<ManaDataSyncS2CPacket> TYPE = new Type<>(ModHelpers.res("sync_client_mana"));
     public static final StreamCodec<RegistryFriendlyByteBuf, ManaDataSyncS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(ManaDataSyncS2CPacket::toBytes, ManaDataSyncS2CPacket::new);
 
     private final double mana;

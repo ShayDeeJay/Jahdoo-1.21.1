@@ -1,6 +1,5 @@
 package org.jahdoo.all_magic.all_abilities.abilities.raw_abilities.utility;
 
-import com.google.common.util.concurrent.ClosingFuture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -17,7 +16,7 @@ import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.UtilityHelpers;
 import org.jahdoo.all_magic.all_abilities.abilities.Utility.FarmersTouchAbility;
-import org.jahdoo.block.automation_block.AutomationBlockEntity;
+import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.utils.ModHelpers;
@@ -30,11 +29,10 @@ import static org.jahdoo.all_magic.AbilityBuilder.*;
 import static org.jahdoo.all_magic.all_abilities.abilities.Utility.FarmersTouchAbility.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
-import static org.jahdoo.particle.ParticleStore.bakedParticleSlow;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class FarmersTouch extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("farmers_touch_property");
+    ResourceLocation abilityId = ModHelpers.res("farmers_touch_property");
     boolean hasHitBlock;
     double counter = 0.05;
     double range;
@@ -68,7 +66,7 @@ public class FarmersTouch extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
-        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof AutomationBlockEntity) return;
+        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         this.hasHitBlock = true;
         this.genericProjectile.setInvisible(true);
         this.genericProjectile.setDeltaMovement(0,0,0);
@@ -86,7 +84,7 @@ public class FarmersTouch extends AbstractUtilityProjectile {
                     UtilityHelpers.harvestBreaker(genericProjectile, pPos, false);
                     level.setBlockAndUpdate(pPos, cropBlock.getStateForAge(0));
                     utilityParticleBurst(level, pPos.getCenter().add(0, 0.4, 0), 8, 1, 3, 0.1f);
-                    ModHelpers.getSoundWithPosition(genericProjectile.level(), pPos, blockstate.getSoundType().getBreakSound());
+                    ModHelpers.getSoundWithPosition(genericProjectile.level(), pPos, blockstate.getSoundType(level, pPos, null).getBreakSound());
                 }
             } else {
                 if (!(blockstate.getBlock() instanceof BonemealableBlock bonemealableblock)) return;

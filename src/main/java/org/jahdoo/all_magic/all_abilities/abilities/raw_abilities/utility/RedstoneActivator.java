@@ -9,7 +9,7 @@ import org.jahdoo.utils.ModHelpers;
 import static net.minecraft.world.level.block.LeverBlock.POWERED;
 
 public class RedstoneActivator extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("redstone_activator");
+    ResourceLocation abilityId = ModHelpers.res("redstone_activator");
 
     @Override
     public ResourceLocation getAbilityResource() {

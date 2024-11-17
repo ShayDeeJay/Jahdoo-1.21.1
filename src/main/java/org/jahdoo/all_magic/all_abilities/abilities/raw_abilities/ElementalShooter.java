@@ -156,7 +156,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 //        if(!target.isAlive()) throwNewItem(target, new ItemStack(ItemsRegister.AUGMENT_ITEM.get()));
     }
 
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("elemental_shooter_property");
+    ResourceLocation abilityId = ModHelpers.res("elemental_shooter_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

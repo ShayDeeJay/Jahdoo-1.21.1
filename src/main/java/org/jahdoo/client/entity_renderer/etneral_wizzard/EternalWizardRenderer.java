@@ -13,7 +13,7 @@ import org.jahdoo.utils.ModHelpers;
 
 @OnlyIn(Dist.CLIENT)
 public class EternalWizardRenderer extends EternalWizardBodyRenderer {
-    private static final ResourceLocation ETERNAL_WIZARD = ModHelpers.modResourceLocation("textures/entity/eternal_wizard/eternal_wizard.png");
+    private static final ResourceLocation ETERNAL_WIZARD = ModHelpers.res("textures/entity/eternal_wizard/eternal_wizard.png");
 
     public EternalWizardRenderer(EntityRendererProvider.Context context) {
         super(context, ModelLayers.STRAY, ModelLayers.STRAY_INNER_ARMOR, ModelLayers.STRAY_OUTER_ARMOR);

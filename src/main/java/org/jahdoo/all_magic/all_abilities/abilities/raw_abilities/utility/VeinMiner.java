@@ -8,13 +8,12 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.UtilityHelpers;
 import org.jahdoo.all_magic.all_abilities.abilities.Utility.VeinMinerAbility;
-import org.jahdoo.block.automation_block.AutomationBlockEntity;
+import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.ElementRegistry;
@@ -33,7 +32,7 @@ import static org.jahdoo.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
 public class VeinMiner extends AbstractUtilityProjectile {
     private static final Direction[] ALL_DIRECTIONS = Direction.values();
     private static final Direction[] HORIZONTAL_DIRECTIONS = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("vein_miner_property");
+    ResourceLocation abilityId = ModHelpers.res("vein_miner_property");
     private int veinSize;
 
     @Override
@@ -60,7 +59,7 @@ public class VeinMiner extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
-        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof AutomationBlockEntity) return;
+        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         if (genericProjectile.level().isClientSide) return;
         super.onBlockBlockHit(blockHitResult);
         BlockPos start = blockHitResult.getBlockPos();

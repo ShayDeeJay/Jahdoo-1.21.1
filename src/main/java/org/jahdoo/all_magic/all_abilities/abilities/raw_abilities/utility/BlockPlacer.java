@@ -1,6 +1,5 @@
 package org.jahdoo.all_magic.all_abilities.abilities.raw_abilities.utility;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -11,16 +10,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
-import org.jahdoo.block.automation_block.AutomationBlockEntity;
+import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.utils.ModHelpers;
 
-import static org.jahdoo.all_magic.AbilityBuilder.RANGE;
-import static org.jahdoo.all_magic.all_abilities.abilities.Utility.FarmersTouchAbility.GROWTH_CHANCE;
-import static org.jahdoo.all_magic.all_abilities.abilities.Utility.FarmersTouchAbility.HARVEST_CHANCE;
-
 public class BlockPlacer extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("block_placer_property");
+    ResourceLocation abilityId = ModHelpers.res("block_placer_property");
     Level level;
 
     @Override
@@ -42,7 +37,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
-        if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof AutomationBlockEntity) return;
+        if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         var player = (Player) genericProjectile.getOwner();
         var pos = this.genericProjectile.blockEntityPos;
         var blockPos = blockHitResult.getBlockPos();
@@ -56,7 +51,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
             replaceBlock = Block.byItem(targetBlock.getItem());
         } else {
             if(pos != null) {
-                if(this.level.getBlockEntity(BlockPos.containing(pos)) instanceof AutomationBlockEntity entity){
+                if(this.level.getBlockEntity(BlockPos.containing(pos)) instanceof ModularChaosCubeEntity entity){
                     if(!entity.externalInputInventory(level).isEmpty()){
                         targetBlock = entity.externalInputInventory(level);
                         replaceBlock = Block.byItem(targetBlock.getItem());
@@ -85,7 +80,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
                     }
                 }
             } else {
-                if(this.level.getBlockEntity(BlockPos.containing(pos)) instanceof AutomationBlockEntity entity){
+                if(this.level.getBlockEntity(BlockPos.containing(pos)) instanceof ModularChaosCubeEntity entity){
                     entity.externalInputInventory(level).shrink(1);
                 }
             }

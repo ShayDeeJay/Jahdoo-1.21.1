@@ -15,7 +15,7 @@ import static org.jahdoo.registers.AttachmentRegister.DIMENSIONAL_RECALL;
 
 public class DimensionalRecallAbility extends AbstractAbility {
 
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("dimensional_recall");
+    public static final ResourceLocation abilityId = ModHelpers.res("dimensional_recall");
 
     @Override
     public int getCastType() {

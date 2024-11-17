@@ -231,7 +231,7 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
         this.wandAbilityHolder = DefaultEntityBehaviour.readTag(pCompound, this.abilityId);
         if(this.getProjectile == null && !selectedAbility.isEmpty()){
             this.getProjectile = EntityPropertyRegister.REGISTRY
-                .get(ModHelpers.modResourceLocation(selectedAbility))
+                .get(ModHelpers.res(selectedAbility))
                 .getEntityProperty();
             this.getProjectile.readCompoundTag(pCompound);
             this.getProjectile.getElementProjectile(this);

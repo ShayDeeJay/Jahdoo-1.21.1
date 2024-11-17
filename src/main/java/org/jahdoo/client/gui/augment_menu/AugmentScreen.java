@@ -7,16 +7,14 @@ import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityIconButton;
-import org.jahdoo.client.gui.automation_block.AutomationBlockScreen;
+import org.jahdoo.client.gui.modular_chaos_cube.ModularChaosCubeScreen;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.networking.packet.client2server.SyncComponentBlockC2S;
 import org.jahdoo.networking.packet.client2server.SyncComponentC2S;
-import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,12 +25,11 @@ import java.util.stream.Collectors;
 
 import static org.jahdoo.all_magic.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.all_magic.AbilityBuilder.MANA_COST;
-import static org.jahdoo.networking.packet.client2server.SyncComponentBlockC2S.sendTagsToSlot;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
 public class AugmentScreen extends Screen  {
-    public static final ResourceLocation BUTTON_UNSELECTED = ModHelpers.modResourceLocation("textures/gui/gui_button_unselected.png");
-    public static final ResourceLocation BUTTON_SELECTED = ModHelpers.modResourceLocation("textures/gui/gui_button_selected.png");
+    public static final ResourceLocation BUTTON_UNSELECTED = ModHelpers.res("textures/gui/gui_button_unselected.png");
+    public static final ResourceLocation BUTTON_SELECTED = ModHelpers.res("textures/gui/gui_button_selected.png");
     public static final WidgetSprites BUTTON = new WidgetSprites(BUTTON_UNSELECTED, BUTTON_UNSELECTED);
     public static final WidgetSprites BUTTON2 = new WidgetSprites(BUTTON_SELECTED, BUTTON_SELECTED);
     private WandAbilityHolder holder;
@@ -104,7 +101,7 @@ public class AugmentScreen extends Screen  {
     }
 
     public void menuButton(String textureLocation, int posX, int posY, int size, Button.OnPress action) {
-        var location = ModHelpers.modResourceLocation(textureLocation);
+        var location = ModHelpers.res(textureLocation);
         var button = new WidgetSprites(location, location);
         this.addRenderableWidget(new AbilityIconButton(posX, posY, button, size, action, false));
     }
@@ -138,7 +135,7 @@ public class AugmentScreen extends Screen  {
         newHolder.abilityProperties().put(e, abilityModifier);
         newWandHolder.abilityProperties().put(abilityName, newHolder);
 
-        if(this.previousScreen != null && this.previousScreen instanceof AutomationBlockScreen screen){
+        if(this.previousScreen != null && this.previousScreen instanceof ModularChaosCubeScreen screen){
             var pos = screen.entity().getBlockPos();
             PacketDistributor.sendToServer(new SyncComponentBlockC2S(newWandHolder, pos));
         } else {

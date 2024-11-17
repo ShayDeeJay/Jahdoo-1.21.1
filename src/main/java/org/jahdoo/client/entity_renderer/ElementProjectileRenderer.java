@@ -46,8 +46,4 @@ public class ElementProjectileRenderer extends GeoEntityRenderer<ElementProjecti
         return super.getRenderColor(animatable, partialTick, packedLight);
     }
 
-    @Override
-    public ResourceLocation getTextureLocation(ElementProjectile animatable) {
-        return super.getTextureLocation(animatable);
-    }
 }

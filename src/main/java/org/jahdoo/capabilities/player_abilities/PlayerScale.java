@@ -19,7 +19,7 @@ public class PlayerScale implements AbstractAttachment {
 
     private ServerPlayer serverPlayer;
     private float scaledValue;
-    private final ResourceLocation effectId = ModHelpers.modResourceLocation("jahdoo_scale_player");
+    private final ResourceLocation effectId = ModHelpers.res("jahdoo_scale_player");
     private final HashMultimap<Holder<Attribute>, AttributeModifier> multiMap = HashMultimap.create();
 
     public PlayerScale(ServerPlayer serverPlayer){

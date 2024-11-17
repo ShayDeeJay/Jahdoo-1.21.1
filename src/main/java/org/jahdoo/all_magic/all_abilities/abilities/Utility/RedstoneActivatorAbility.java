@@ -14,7 +14,7 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class RedstoneActivatorAbility extends AbstractAbility {
-    private final ResourceLocation abilityId = ModHelpers.modResourceLocation("redstone_activator");
+    private final ResourceLocation abilityId = ModHelpers.res("redstone_activator");
 
     @Override
     public void invokeAbility(Player player) {

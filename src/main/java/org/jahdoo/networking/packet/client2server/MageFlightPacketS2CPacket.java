@@ -9,7 +9,7 @@ import org.jahdoo.all_magic.wand_perks.mage_flight.MageFlightClient;
 import org.jahdoo.utils.ModHelpers;
 
 public class MageFlightPacketS2CPacket implements CustomPacketPayload {
-    public static final Type<MageFlightPacketS2CPacket> TYPE = new Type<>(ModHelpers.modResourceLocation("mage_flight_sync"));
+    public static final Type<MageFlightPacketS2CPacket> TYPE = new Type<>(ModHelpers.res("mage_flight_sync"));
     public static final StreamCodec<RegistryFriendlyByteBuf, MageFlightPacketS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(MageFlightPacketS2CPacket::toBytes, MageFlightPacketS2CPacket::new);
 
     public MageFlightPacketS2CPacket() {}

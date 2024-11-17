@@ -25,9 +25,9 @@ public class ToggleComponent  {
         return new GuiButton(posX, posY, button, size, action, false, resourceLocation, label, 6);
     }
 
-    public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation) {
+    public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, int scale) {
         var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
-        return new GuiButton(posX, posY, button, 32, action, false, resourceLocation);
+        return new GuiButton(posX, posY, button, size, action, false, resourceLocation, "", scale);
     }
 
     public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, boolean isSelected) {
@@ -35,10 +35,11 @@ public class ToggleComponent  {
         return new GuiButton(posX, posY, button, size, action, isSelected, resourceLocation, "", 6);
     }
 
-    public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, boolean isSelected, int scale) {
-        var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
+    public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, boolean isSelected, int scale, WidgetSprites button) {
         return new GuiButton(posX, posY, button, size, action, isSelected, resourceLocation, "", scale);
     }
+
+
 
     public static Renderable textWithBackground(int posX, int posY, Minecraft minecraft,Component header) {
         return new Overlay() {
@@ -54,11 +55,10 @@ public class ToggleComponent  {
         return new Overlay() {
             @Override
             public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
-                int width1 = 96;
                 int height1 = 32;
-                guiGraphics.drawCenteredString(minecraft.font, textOverlay, posX + 48, posY + 12, -2763307);
+                guiGraphics.drawCenteredString(minecraft.font, textOverlay, posX + 48, posY + 13, -2763307);
                 guiGraphics.blit(GUI_BUTTON, posX + 32, posY, 0,0, height1, height1, height1, height1);
-                guiGraphics.drawCenteredString(minecraft.font, header, posX + 48, posY - 7, -1);
+                guiGraphics.drawCenteredString(minecraft.font, header, posX + 48, posY - 7, -6052957);
             }
         };
     }

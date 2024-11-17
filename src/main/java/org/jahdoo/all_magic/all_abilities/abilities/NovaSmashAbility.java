@@ -16,7 +16,7 @@ import org.jahdoo.all_magic.AbilityBuilder;
 import static org.jahdoo.registers.AttachmentRegister.NOVA_SMASH;
 
 public class NovaSmashAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("nova_smash");
+    public static final ResourceLocation abilityId = ModHelpers.res("nova_smash");
 
     @Override
     public ResourceLocation getAbilityResource() {

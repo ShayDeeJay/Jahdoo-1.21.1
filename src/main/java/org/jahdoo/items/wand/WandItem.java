@@ -118,6 +118,7 @@ public class WandItem extends BlockItem implements GeoItem {
     public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int slotId, boolean isSoltSelected) {
         if(!(entity instanceof Player player)) return;
         if (player.getItemInHand(player.getUsedItemHand()) == itemStack) {}
+//        System.out.println(level.getBlockEntity(BlockPos.containing(player.getLookAngle())));
     }
 
     @Override

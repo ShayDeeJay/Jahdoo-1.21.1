@@ -116,6 +116,11 @@ public class WandBlock extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+
+        if(level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock){
+            getItemInteractionResult(player.getMainHandItem(), wandBlock);
+        }
+
         if (player.getMainHandItem().isEmpty() && player.isShiftKeyDown()) {
             this.pickUpWand(player, pos, level);
             return ItemInteractionResult.CONSUME;

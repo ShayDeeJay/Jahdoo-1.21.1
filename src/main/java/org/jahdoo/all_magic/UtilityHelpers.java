@@ -13,8 +13,6 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
@@ -25,22 +23,19 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.Range;
-import org.jahdoo.block.automation_block.AutomationBlockEntity;
 import org.jahdoo.particle.ParticleHandlers;
-import org.jahdoo.registers.ItemsRegister;
 
-import java.awt.image.CropImageFilter;
-
-import static org.jahdoo.utils.ModHelpers.Random;
+import static net.minecraft.world.level.block.Blocks.AIR;
 
 public class UtilityHelpers {
     public static Range<Float> range = Range.of(0.0f, 10.0f);
 
     public static void dropItemsOrBlock(Projectile newProjectile, BlockPos pos, boolean isSilkTouch, boolean voidBlocks){
-//        if(newProjectile.level().getBlockEntity(pos) instanceof AutomationBlockEntity) return;
-        if(UtilityHelpers.range.contains(UtilityHelpers.destroySpeed(pos, newProjectile.level()))){
+        var fluidState = newProjectile.level().getFluidState(pos);
+        if(UtilityHelpers.range.contains(UtilityHelpers.destroySpeed(pos, newProjectile.level())) || !fluidState.isEmpty()){
             var blockstate = newProjectile.level().getBlockState(pos);
             var level = newProjectile.level();
+            newProjectile.level().setBlock(pos, AIR.defaultBlockState(), 3);
             if(!voidBlocks){
                 var centre = pos.getCenter();
                 if (isSilkTouch) {

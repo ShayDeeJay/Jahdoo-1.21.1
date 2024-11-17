@@ -15,7 +15,7 @@ import static org.jahdoo.registers.AttachmentRegister.VITAL_REJUVENATION;
 
 public class VitalRejuvenationAbility extends AbstractAbility {
 
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("vital_rejuvenation");
+    public static final ResourceLocation abilityId = ModHelpers.res("vital_rejuvenation");
     public static final String MAX_ABSORPTION = "Max Absorption hearts";
     public static final String CAST_DELAY = "Cast Charge Delay";
 

@@ -12,7 +12,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.items.armor.WizardArmor;
 import org.jahdoo.items.augments.Augment;
-import org.jahdoo.items.block_items.AutomationBlockItem;
+import org.jahdoo.items.block_items.ModularChaosCubeItem;
 import org.jahdoo.items.curious_items.TomeOfUnity;
 import org.jahdoo.items.heart_container.HealthContainer;
 import org.jahdoo.items.block_items.InfuserBlockItem;
@@ -39,8 +39,8 @@ public class ItemsRegister {
     public static final DeferredHolder<Item, Item> INFUSER_ITEM =
         ITEMS.register("infuser", () -> new InfuserBlockItem(BlocksRegister.INFUSER.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item, Item> AUTOMATION_BLOCK_ITEM =
-        ITEMS.register("automation_block", () -> new AutomationBlockItem(BlocksRegister.AUTOMATION_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> MODULAR_CHAOS_CUBE_ITEM =
+        ITEMS.register("modular_chaos_cube", () -> new ModularChaosCubeItem(BlocksRegister.MODULAR_CHAOS_CUBE.get(), new Item.Properties()));
 
     //Wands needed their own subclass as animations do not fire for all wand instances otherwise.
     public static final DeferredHolder<Item, Item> WAND_ITEM_MYSTIC =

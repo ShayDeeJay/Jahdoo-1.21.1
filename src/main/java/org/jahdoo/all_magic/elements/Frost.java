@@ -14,7 +14,7 @@ import org.jahdoo.utils.ModHelpers;
 import static org.jahdoo.particle.ParticleStore.*;
 
 public class Frost extends AbstractElement {
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("frost");
+    ResourceLocation abilityId = ModHelpers.res("frost");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -58,7 +58,7 @@ public class Frost extends AbstractElement {
 
     @Override
     public ResourceLocation getAbilityProjectileTexture() {
-        return ModHelpers.modResourceLocation("textures/entity/cryo_projectile.png");
+        return ModHelpers.res("textures/entity/cryo_projectile.png");
     }
 
     @Override

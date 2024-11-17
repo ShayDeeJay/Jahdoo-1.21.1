@@ -16,7 +16,7 @@ import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 public class WandBlockModel extends GeoModel<WandBlockEntity> {
     @Override
     public ResourceLocation getModelResource(WandBlockEntity animatable) {
-        return ModHelpers.modResourceLocation("geo/block/wand.geo.json");
+        return ModHelpers.res("geo/block/wand.geo.json");
     }
 
     @Override
@@ -31,12 +31,12 @@ public class WandBlockModel extends GeoModel<WandBlockEntity> {
 
         String type = wandTextures.getOrDefault(itemStack.getItem(), "wand_mystic");
         String texturePath = "textures/block/" + type + ".png";
-        return ModHelpers.modResourceLocation(texturePath);
+        return ModHelpers.res(texturePath);
     }
 
     @Override
     public ResourceLocation getAnimationResource(WandBlockEntity animatable) {
-        return ModHelpers.modResourceLocation("animations/block/wand.animation.json");
+        return ModHelpers.res("animations/block/wand.animation.json");
     }
 
     @Override

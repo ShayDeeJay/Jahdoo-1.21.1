@@ -3,10 +3,8 @@ package org.jahdoo.all_magic.all_abilities.abilities;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.components.AbilityHolder;
-import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.entities.GenericProjectile;
@@ -25,7 +23,7 @@ import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.all_magic.AbilityBuilder.DAMAGE;
 
 public class ThunderBurstAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("thunder_burst");
+    public static final ResourceLocation abilityId = ModHelpers.res("thunder_burst");
     public static final String NUMBER_OF_THUNDERBOLTS = "Number of Thunderbolts";
 
     private Map<String, AbilityHolder.AbilityModifiers> tagModifierHelper(Player player){

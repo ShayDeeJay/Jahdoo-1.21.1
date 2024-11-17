@@ -5,7 +5,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.capabilities.player_abilities.AutoBlock;
 import org.jahdoo.networking.packet.client2server.*;
 import org.jahdoo.networking.packet.server2client.*;
 
@@ -23,7 +22,7 @@ public class Network {
         payloadRegistrar.playToServer(SyncComponentC2S.TYPE, SyncComponentC2S.STREAM_CODEC, SyncComponentC2S::handle);
         payloadRegistrar.playToServer(FallDistanceSyncC2SPacket.TYPE, FallDistanceSyncC2SPacket.STREAM_CODEC, FallDistanceSyncC2SPacket::handle);
         payloadRegistrar.playToServer(SyncComponentBlockC2S.TYPE, SyncComponentBlockC2S.STREAM_CODEC, SyncComponentBlockC2S::handle);
-        payloadRegistrar.playToServer(AutoBlockC2SPacket.TYPE, AutoBlockC2SPacket.STREAM_CODEC, AutoBlockC2SPacket::handle);
+        payloadRegistrar.playToServer(ModularChaosCubeC2SPacket.TYPE, ModularChaosCubeC2SPacket.STREAM_CODEC, ModularChaosCubeC2SPacket::handle);
 
 
         payloadRegistrar.playToClient(ManaDataSyncS2CPacket.TYPE, ManaDataSyncS2CPacket.STREAM_CODEC, ManaDataSyncS2CPacket::handle);
@@ -32,7 +31,7 @@ public class Network {
         payloadRegistrar.playToClient(MageFlightDataSyncS2CPacket.TYPE, MageFlightDataSyncS2CPacket.STREAM_CODEC, MageFlightDataSyncS2CPacket::handle);
         payloadRegistrar.playToClient(BouncyFootDataSyncS2CPacket.TYPE, BouncyFootDataSyncS2CPacket.STREAM_CODEC, BouncyFootDataSyncS2CPacket::handle);
         payloadRegistrar.playToClient(NovaSmashS2CPacket.TYPE, NovaSmashS2CPacket.STREAM_CODEC, NovaSmashS2CPacket::handle);
-
+        payloadRegistrar.playToClient(PlayClientSoundSyncS2CPacket.TYPE, PlayClientSoundSyncS2CPacket.STREAM_CODEC, PlayClientSoundSyncS2CPacket::handle);
     }
 
 }

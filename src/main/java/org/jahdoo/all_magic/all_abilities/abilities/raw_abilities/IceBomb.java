@@ -3,7 +3,6 @@ package org.jahdoo.all_magic.all_abilities.abilities.raw_abilities;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -258,7 +257,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         return ElementRegistry.FROST.get();
     }
 
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("ice_bomb_property");
+    ResourceLocation abilityId = ModHelpers.res("ice_bomb_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

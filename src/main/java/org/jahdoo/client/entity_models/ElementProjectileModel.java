@@ -16,7 +16,7 @@ public class ElementProjectileModel extends GeoModel<ElementProjectile> {
 
     @Override
     public ResourceLocation getModelResource(ElementProjectile animatable) {
-        return ModHelpers.modResourceLocation("geo/entity/projectile.geo.json");
+        return ModHelpers.res("geo/entity/projectile.geo.json");
     }
 
     @Override
@@ -26,7 +26,7 @@ public class ElementProjectileModel extends GeoModel<ElementProjectile> {
 
     @Override
     public ResourceLocation getAnimationResource(ElementProjectile animatable) {
-        return ModHelpers.modResourceLocation("animations/entity/projectile.animation.json");
+        return ModHelpers.res("animations/entity/projectile.animation.json");
     }
 
 }

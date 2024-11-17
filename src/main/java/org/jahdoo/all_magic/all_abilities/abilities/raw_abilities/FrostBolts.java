@@ -180,7 +180,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
         }
     }
 
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("frost_bolts_property");
+    ResourceLocation abilityId = ModHelpers.res("frost_bolts_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

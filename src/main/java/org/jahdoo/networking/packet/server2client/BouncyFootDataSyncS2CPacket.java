@@ -11,7 +11,7 @@ import org.jahdoo.utils.ModHelpers;
 import static org.jahdoo.registers.AttachmentRegister.BOUNCY_FOOT;
 
 public class BouncyFootDataSyncS2CPacket implements CustomPacketPayload {
-    public static final Type<BouncyFootDataSyncS2CPacket> TYPE = new Type<>(ModHelpers.modResourceLocation("sync_bouncy_foot"));
+    public static final Type<BouncyFootDataSyncS2CPacket> TYPE = new Type<>(ModHelpers.res("sync_bouncy_foot"));
     public static final StreamCodec<RegistryFriendlyByteBuf, BouncyFootDataSyncS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(BouncyFootDataSyncS2CPacket::toBytes, BouncyFootDataSyncS2CPacket::new);
 
     private final int effectTimer;

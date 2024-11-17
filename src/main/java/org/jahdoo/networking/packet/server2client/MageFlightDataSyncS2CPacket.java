@@ -11,7 +11,7 @@ import org.jahdoo.utils.ModHelpers;
 import static org.jahdoo.registers.AttachmentRegister.MAGE_FLIGHT;
 
 public class MageFlightDataSyncS2CPacket implements CustomPacketPayload {
-    public static final Type<MageFlightDataSyncS2CPacket> TYPE = new Type<>(ModHelpers.modResourceLocation("sync_mage_flight"));
+    public static final Type<MageFlightDataSyncS2CPacket> TYPE = new Type<>(ModHelpers.res("sync_mage_flight"));
     public static final StreamCodec<RegistryFriendlyByteBuf, MageFlightDataSyncS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(MageFlightDataSyncS2CPacket::toBytes, MageFlightDataSyncS2CPacket::new);
 
     private final int jumpTickCounter;

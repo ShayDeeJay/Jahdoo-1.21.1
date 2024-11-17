@@ -1,24 +1,20 @@
 package org.jahdoo.all_magic.all_abilities.abilities.Utility;
 
-import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.all_magic.AbilityBuilder;
-import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
-import org.jahdoo.all_magic.all_abilities.ability_components.AbstractContainerAccessor;
-import org.jahdoo.block.AbstractBEInventory;
+import org.jahdoo.all_magic.all_abilities.ability_components.AbstractBlockAbility;
 import org.jahdoo.entities.GenericProjectile;
-import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.utils.ModHelpers;
 
-public class FetchAbility extends AbstractContainerAccessor {
-    private final ResourceLocation abilityId = ModHelpers.modResourceLocation("fetch");
+public class FetchAbility extends AbstractBlockAbility {
+    private final ResourceLocation abilityId = ModHelpers.res("fetch");
 
     @Override
     public void invokeAbility(Player player) {
@@ -28,20 +24,6 @@ public class FetchAbility extends AbstractContainerAccessor {
             abilityId.getPath().intern()
         );
         fireUtilityProjectile(genericProjectile, player);
-    }
-
-    @Override
-    public void invokeAbilityBlock(Vec3i direction, AbstractBEInventory entity) {
-        var augment = entity.inputItemHandler.getStackInSlot(0);
-        GenericProjectile genericProjectile = new GenericProjectile(
-            augment.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get()),
-            entity.getBlockPos().getCenter(),
-            entity.getLevel(),
-            EntityPropertyRegister.FETCH.get().setAbilityId(),
-            abilityId.getPath().intern()
-        );
-        genericProjectile.setMaxDistance(10);
-        fireUtilityProjectile(genericProjectile, entity.getBlockPos(), direction);
     }
 
     @Override
@@ -84,5 +66,10 @@ public class FetchAbility extends AbstractContainerAccessor {
     @Override
     public boolean isOutputUser() {
         return true;
+    }
+
+    @Override
+    public String projectileKey() {
+        return EntityPropertyRegister.FETCH.get().setAbilityId();
     }
 }

@@ -10,7 +10,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
 
@@ -48,8 +47,6 @@ public abstract class AbstractAbility {
 
     public abstract void invokeAbility(Player player);
 
-    public void invokeAbilityBlock(Vec3i direction, AbstractBEInventory beInventory){};
-
     public abstract JahdooRarity rarity();
 
     public boolean isMultiType(){
@@ -57,19 +54,14 @@ public abstract class AbstractAbility {
     }
 
     public ResourceLocation getAbilityIconLocation(){
-        return ModHelpers.modResourceLocation("textures/ability_icons/"+abilityId+".png");
+        return ModHelpers.res("textures/ability_icons/"+abilityId+".png");
     }
 
     public abstract int getCastDuration(Player player);
 
-    public boolean isSwitchAbility(){
-        return false;
-    }
-
     public boolean internallyChargeManaAndCooldown(){
         return false;
     }
-
 
     public void fireProjectile(Projectile projectile, LivingEntity player, float velocity){
         if(player != null){

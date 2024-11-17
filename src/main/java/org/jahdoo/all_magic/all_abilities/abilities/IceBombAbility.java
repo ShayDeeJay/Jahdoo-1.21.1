@@ -16,7 +16,7 @@ import org.jahdoo.all_magic.AbilityBuilder;
 
 public class IceBombAbility extends AbstractAbility {
 
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("ice_bomb");
+    public static final ResourceLocation abilityId = ModHelpers.res("ice_bomb");
 
     @Override
     public void invokeAbility(Player player) {

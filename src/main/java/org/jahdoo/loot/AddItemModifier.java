@@ -104,12 +104,12 @@ public class AddItemModifier extends LootModifier {
         var randomManaPool = singleFormattedDouble(rangeManaPool);
 
         CuriosApi.addModifier(
-            itemStack, AttributesRegister.MANA_REGEN, ModHelpers.modResourceLocation("mana_regen"),
+            itemStack, AttributesRegister.MANA_REGEN, ModHelpers.res("mana_regen"),
             randomRegenValue, AttributeModifier.Operation.ADD_VALUE, "tome"
         );
 
         CuriosApi.addModifier(
-            itemStack, AttributesRegister.MANA_POOL, ModHelpers.modResourceLocation("mana_pool"),
+            itemStack, AttributesRegister.MANA_POOL, ModHelpers.res("mana_pool"),
             randomManaPool, AttributeModifier.Operation.ADD_VALUE, "tome"
         );
 

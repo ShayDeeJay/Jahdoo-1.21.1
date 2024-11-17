@@ -11,7 +11,7 @@ import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.UtilityHelpers;
 import org.jahdoo.all_magic.all_abilities.abilities.Utility.HammerAbility;
-import org.jahdoo.block.automation_block.AutomationBlockEntity;
+import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
@@ -21,7 +21,7 @@ import org.jahdoo.particle.ParticleHandlers;
 import static org.jahdoo.all_magic.all_abilities.abilities.Utility.HammerAbility.HAMMER_SIZE;
 
 public class Hammer extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("hammer_property");
+    ResourceLocation abilityId = ModHelpers.res("hammer_property");
     BlockHitResult blockHitResult;
     double breakerSize;
     int size;
@@ -51,7 +51,7 @@ public class Hammer extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
-        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof AutomationBlockEntity) return;
+        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         var owner = (LivingEntity) genericProjectile.getOwner();
         if(owner == null && genericProjectile.blockEntityPos == null) return;
 
@@ -71,7 +71,8 @@ public class Hammer extends AbstractUtilityProjectile {
                 SoundSource.BLOCKS, 1, 1
             );
 
-            pos = pos.relative(lookAngleY < -0.8 ? pDirection.getOpposite() : pDirection, isLookingUpOrDown ? size : 0).above(isLookingUpOrDown || this.genericProjectile.blockEntityPos != null? 0 : size);
+            var isPos = this.genericProjectile.blockEntityPos != null;
+            pos = pos.relative(lookAngleY < -0.8 ? pDirection.getOpposite() : pDirection, !isLookingUpOrDown || isPos ? 0 : size).above(isLookingUpOrDown || isPos ? 0 : size);
 
             if (UtilityHelpers.range.contains(UtilityHelpers.destroySpeed(blockHitResult.getBlockPos(), genericProjectile.level()))) {
                 for (int x = -radius; x <= radius; x++) {

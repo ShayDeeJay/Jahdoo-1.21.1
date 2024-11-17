@@ -8,7 +8,7 @@ import org.jahdoo.entities.Decoy;
 import org.jahdoo.utils.ModHelpers;
 
 public class AbstractDecoyRenderer <T extends Decoy, M extends DecoyModel<T>> extends HumanoidMobRenderer<T, M> {
-    public static final ResourceLocation DECOY = ModHelpers.modResourceLocation("textures/entity/eternal_wizard/decoy.png");
+    public static final ResourceLocation DECOY = ModHelpers.res("textures/entity/eternal_wizard/decoy.png");
 
     protected AbstractDecoyRenderer(EntityRendererProvider.Context pContext, M pModel, M pInnerModel, M pOuterModel) {
         super(pContext, pModel, 0.5F);

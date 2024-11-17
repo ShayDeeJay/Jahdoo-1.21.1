@@ -15,7 +15,7 @@ import org.jahdoo.all_magic.effects.CustomMobEffect;
 import org.jahdoo.utils.ModHelpers;
 
 public class ArcaneEffect extends MobEffect {
-    public static final ResourceLocation att = ModHelpers.modResourceLocation("arcane_effects");
+    public static final ResourceLocation att = ModHelpers.res("arcane_effects");
 
     public ArcaneEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);

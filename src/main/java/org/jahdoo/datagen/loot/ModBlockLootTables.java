@@ -15,9 +15,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
 
-import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ModBlockLootTables extends BlockLootSubProvider {
@@ -35,7 +33,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(BlocksRegister.WAND_MANAGER_TABLE.get());
         this.dropSelf(BlocksRegister.TANK.value());
         this.dropSelf(BlocksRegister.INFUSER.get());
-        this.dropSelf(BlocksRegister.AUTOMATION_BLOCK.get());
+        this.dropSelf(BlocksRegister.MODULAR_CHAOS_CUBE.get());
         this.dropSelf(BlocksRegister.CREATOR.get());
         this.dropOther(BlocksRegister.WAND.get(), Items.AIR);
         this.dropOther(BlocksRegister.LIGHTING.get(), Items.AIR);

@@ -16,7 +16,7 @@ import static org.jahdoo.all_magic.AbilityBuilder.*;
 
 public class ArcaneShiftAbility extends AbstractAbility {
 
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("arcane_shift");
+    public static final ResourceLocation abilityId = ModHelpers.res("arcane_shift");
     public static final String distance = "Teleport Distance";
     public static final String maxEntities = "Mystic Missile Shots";
     public static final String lifeTime = "Shot Range";

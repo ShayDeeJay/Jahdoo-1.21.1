@@ -130,7 +130,7 @@ public class LightningTrail extends DefaultEntityBehaviour {
         projectile.setPos(projectile.getX() + vec3.x, projectile.getY() + vec3.y, projectile.getZ() + vec3.z);
     }
 
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("lightning_trail_property");
+    public static final ResourceLocation abilityId = ModHelpers.res("lightning_trail_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

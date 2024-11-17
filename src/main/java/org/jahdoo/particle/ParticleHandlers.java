@@ -21,6 +21,7 @@ import org.jahdoo.utils.PositionGetters;
 import java.util.List;
 
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
+import static org.jahdoo.utils.ModHelpers.Random;
 
 public class ParticleHandlers {
 
@@ -58,7 +59,7 @@ public class ParticleHandlers {
 
     public static void invisibleLight(Level world, Vec3 loc, ParticleOptions particleOptions, double bound1, double bound2, int speed) {
         for (int i = 0; i < 3; i++) {
-            sendParticles(world, particleOptions, loc, 0, 0, ModHelpers.Random.nextDouble(bound1, bound2), 0, speed);
+            sendParticles(world, particleOptions, loc, 0, 0, Random.nextDouble(bound1, bound2), 0, speed);
         }
     }
 
@@ -90,7 +91,7 @@ public class ParticleHandlers {
                             positions,
                             0,
                             directions.x,
-                            ModHelpers.Random.nextDouble(-0.3, 0.3),
+                            Random.nextDouble(-0.3, 0.3),
                             directions.z,
                             (double) player.getTicksUsingItem()/500
                         );
@@ -104,15 +105,15 @@ public class ParticleHandlers {
         double deltaX = getX - projectile.xOld;
         double deltaY = getY - projectile.yOld;
         double deltaZ = getZ - projectile.zOld;
-        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 6);
+        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 5);
         for (double j = 0; j < Math.max(dist, 5); j++) {
             double coeff = j / dist;
             var position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
             ParticleHandlers.sendParticles(
                 projectile.level(), particleOptions, position, 1,
-                0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
-                0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
-                0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                0.0125f * (Random.nextFloat() - 0.5f),
+                0.0125f * (Random.nextFloat() - 0.5f),
+                0.0125f * (Random.nextFloat() - 0.5f),
                 0
             );
         }
@@ -128,9 +129,9 @@ public class ParticleHandlers {
             var position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
             ParticleHandlers.sendParticles(
                 projectile.level(), particleOptions, position, 2,
-                0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
-                0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
-                0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                0.0125f * (Random.nextFloat() - 0.5f),
+                0.0125f * (Random.nextFloat() - 0.5f),
+                0.0125f * (Random.nextFloat() - 0.5f),
                 speed
             );
         }
@@ -153,9 +154,9 @@ public class ParticleHandlers {
                 Vec3 position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
                 ParticleHandlers.sendParticles(
                     serverLevel, particleOptions, position, 1,
-                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
-                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
-                    0.0125f * (ModHelpers.Random.nextFloat() - 0.5f),
+                    0.0125f * (Random.nextFloat() - 0.5f),
+                    0.0125f * (Random.nextFloat() - 0.5f),
+                    0.0125f * (Random.nextFloat() - 0.5f),
                     speed
                 );
             }
@@ -233,9 +234,9 @@ public class ParticleHandlers {
 
             for (int i = 0; i < 4; i++){
                 var position = new Vec3(
-                    particleX + ModHelpers.Random.nextFloat(-spread, spread),
-                    particleY + ModHelpers.Random.nextFloat(-spread, spread),
-                    particleZ + ModHelpers.Random.nextFloat(-spread, spread)
+                    particleX + Random.nextFloat(-spread, spread),
+                    particleY + Random.nextFloat(-spread, spread),
+                    particleZ + Random.nextFloat(-spread, spread)
                 );
                 var genericSlow = genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, element, 3, 1.2f);
                 var bakedSlow = bakedParticleOptions(element.getTypeId(), 2,2.5f,false);
@@ -289,14 +290,14 @@ public class ParticleHandlers {
     public static void spawnElectrifiedParticles(Level level, Vec3 position, ParticleOptions particleType, int count, LivingEntity livingEntity, double speed) {
 
         for (int i = 0; i < count; i++) {
-            double offsetX = (ModHelpers.Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
-            double offsetY = ModHelpers.Random.nextDouble() * livingEntity.getBbHeight();
-            double offsetZ = (ModHelpers.Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
+            double offsetX = (Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
+            double offsetY = Random.nextDouble() * livingEntity.getBbHeight();
+            double offsetZ = (Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
 
             // Give the particles an electrified jittery motion
-            double speedX = (ModHelpers.Random.nextDouble() - 0.5) * 0.1;
-            double speedY = (ModHelpers.Random.nextDouble() - 0.5) * 0.1;
-            double speedZ = (ModHelpers.Random.nextDouble() - 0.5) * 0.1;
+            double speedX = (Random.nextDouble() - 0.5) * 0.1;
+            double speedY = (Random.nextDouble() - 0.5) * 0.1;
+            double speedZ = (Random.nextDouble() - 0.5) * 0.1;
 
             ParticleHandlers.sendParticles(
                 level, particleType, position.add(offsetX, offsetY, offsetZ), 1,speedX, speedY, speedZ,speed
@@ -308,14 +309,14 @@ public class ParticleHandlers {
     public static void spawnElectrifiedParticles(ServerLevel level, Vec3 position, ParticleOptions particleType, int count, LivingEntity livingEntity, double speed, double ySpeed) {
 
         for (int i = 0; i < count; i++) {
-            double offsetX = (ModHelpers.Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
-            double offsetY = ModHelpers.Random.nextDouble() * livingEntity.getBbHeight();
-            double offsetZ = (ModHelpers.Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
+            double offsetX = (Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
+            double offsetY = Random.nextDouble() * livingEntity.getBbHeight();
+            double offsetZ = (Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
 
             // Give the particles an electrified jittery motion
-            double speedX = (ModHelpers.Random.nextDouble() - 0.5) * 0.1;
-            double speedY = (ModHelpers.Random.nextDouble() - 0.5) * 0.1;
-            double speedZ = (ModHelpers.Random.nextDouble() - 0.5) * 0.1;
+            double speedX = (Random.nextDouble() - 0.5) * 0.1;
+            double speedY = (Random.nextDouble() - 0.5) * 0.1;
+            double speedZ = (Random.nextDouble() - 0.5) * 0.1;
             ParticleHandlers.sendParticles(
                 level, particleType, position.add(offsetX, offsetY, offsetZ), 1,speedX, speedY + ySpeed, speedZ,speed
             );

@@ -10,7 +10,7 @@ import org.jahdoo.entities.EternalWizard;
 import org.jahdoo.utils.ModHelpers;
 
 public class PendentLayer <T extends AbstractSkeleton> extends EyesLayer<T, WizardModel<T>> {
-    private static final RenderType PENDENT = RenderType.eyes(ModHelpers.modResourceLocation("textures/entity/eternal_wizard/pendent.png"));
+    private static final RenderType PENDENT = RenderType.eyes(ModHelpers.res("textures/entity/eternal_wizard/pendent.png"));
 
     public PendentLayer(RenderLayerParent<T, WizardModel<T>> pRenderer) {
         super(pRenderer);

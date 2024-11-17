@@ -8,7 +8,7 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 public class WizardArmorRenderer extends GeoArmorRenderer<WizardArmor> {
 
     public WizardArmorRenderer() {
-        super(new DefaultedItemGeoModel<>(ModHelpers.modResourceLocation("armor/wizard_armor")));
+        super(new DefaultedItemGeoModel<>(ModHelpers.res("armor/wizard_armor")));
     }
 
 }

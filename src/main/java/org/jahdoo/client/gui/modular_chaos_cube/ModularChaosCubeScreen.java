@@ -1,41 +1,45 @@
-package org.jahdoo.client.gui.automation_block;
+package org.jahdoo.client.gui.modular_chaos_cube;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.all_magic.all_abilities.ability_components.AbstractContainerAccessor;
-import org.jahdoo.block.automation_block.AutomationBlock;
-import org.jahdoo.block.automation_block.AutomationBlockEntity;
-import org.jahdoo.capabilities.player_abilities.AutoBlock;
+import org.jahdoo.all_magic.all_abilities.ability_components.AbstractBlockAbility;
+import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
+import org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.client.gui.ToggleComponent;
 import org.jahdoo.registers.AbilityRegister;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static org.jahdoo.block.automation_block.AutomationBlockEntity.AUGMENT_SLOT;
+import static org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity.AUGMENT_SLOT;
 import static org.jahdoo.client.SharedUI.*;
 import static org.jahdoo.client.gui.IconLocations.*;
 import static org.jahdoo.client.gui.ToggleComponent.*;
-import static org.jahdoo.client.gui.automation_block.AutomationBlockData.selectDirection;
+import static org.jahdoo.client.gui.modular_chaos_cube.ModularChaosCubeData.selectDirection;
 import static org.jahdoo.items.augments.AugmentItemHelper.*;
-import static org.jahdoo.registers.AttachmentRegister.AUTO_BLOCK;
+import static org.jahdoo.registers.AttachmentRegister.MODULAR_CHAOS_CUBE;
 
-public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlockMenu> {
+public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaosCubeMenu> {
     private static final int IMAGE_SIZE = 256;
-    private final AutomationBlockMenu automationBlockMenu;
+    private final ModularChaosCubeMenu modularChaosCubeMenu;
+    private boolean input;
+    private boolean output;
 
-    public AutomationBlockScreen(AutomationBlockMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
+
+    public ModularChaosCubeScreen(ModularChaosCubeMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
-        this.automationBlockMenu = pMenu;
+        this.modularChaosCubeMenu = pMenu;
     }
 
     @Override
@@ -45,9 +49,10 @@ public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlo
         int posY = this.height / 2 ;
         this.modifyAugmentProperties(posX, posY);
         buildCarouselComponent(posX - 70, posY - 100, "Speed");
+        var autoBlock = entity().getData(MODULAR_CHAOS_CUBE);
+        direction(posX, posY, this.input, "Insert", (button) -> selectDirection(entity(), autoBlock.updateInput(button)), () -> this.input = !input, entity().getData(MODULAR_CHAOS_CUBE).input());
+        direction(posX, posY, this.output, "Eject", (button) -> selectDirection(entity(), autoBlock.updateOutput(button)), () -> this.output = !output, entity().getData(MODULAR_CHAOS_CUBE).output());
         selectDirectionActive(posX, posY);
-        selectDirectionInput(posX, posY);
-        selectDirectionOutput(posX, posY);
         entity().setChanged();
     }
 
@@ -56,55 +61,60 @@ public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlo
         if(this.hoveredSlot != null) rebuildWidgets();
     }
 
-    public AutomationBlockEntity entity(){
-        return this.automationBlockMenu.getAutomationEntity();
+    public ModularChaosCubeEntity entity(){
+        return this.modularChaosCubeMenu.getAutomationEntity();
     }
 
     private void modifyAugmentProperties(int posX, int posY){
-        var currentPower = AutoBlock.getActive(entity());
+        var currentPower = ModularChaosCubeProperties.getActive(entity());
+        var chained = ModularChaosCubeProperties.getChained(entity());
         int size = 16;
-        this.addRenderableWidget(ToggleComponent.menuButton(posX + 76, posY - 110, (press) -> togglePower(entity()), currentPower ? POWER_OFF : POWER_ON, "", 20));
+        this.addRenderableWidget(ToggleComponent.menuButton(posX + 76, posY - 110, (press) -> togglePower(entity()), currentPower ? POWER_OFF : POWER_ON, 20, 0));
+        this.addRenderableWidget(ToggleComponent.menuButton(posX + 56, posY - 110, (press) -> toggleChained(entity()), chained ? CHAINED : UNCHAINED, 20, 0));
+
         if(!this.entity().inputItemHandler.getStackInSlot(0).isEmpty() && isValidAugmentUtil(entity().inputItemHandler.getStackInSlot(AUGMENT_SLOT)).isPresent()){
-            this.addRenderableWidget(ToggleComponent.menuButton(posX + 14, posY - 11, (press) -> setModifyAugmentScreen(entity().inputItemHandler.getStackInSlot(0).copy()), COG, "", size));
+            this.addRenderableWidget(ToggleComponent.menuButton(posX + 14, posY - 23, (press) -> setModifyAugmentScreen(entity().inputItemHandler.getStackInSlot(0).copy()), COG, "", size));
         }
     }
 
-    private void togglePower(AutomationBlockEntity entity){
-        AutomationBlockData.togglePower(entity);
+    private void togglePower(ModularChaosCubeEntity entity){
+        ModularChaosCubeData.togglePower(entity);
+        entity.activateConnectedBlocks();
+        this.rebuildWidgets();
+    }
+
+    private void toggleChained(ModularChaosCubeEntity entity){
+        ModularChaosCubeData.toggleChained(entity);
         this.rebuildWidgets();
     }
 
     private void selectDirectionActive(int posX, int posY){
-        var autoBlock = entity().getData(AUTO_BLOCK);
-        buildDirectionWidgets(posX - 109, posY - 100, "Direction", entity().direction(), (button) -> selectDirection(entity(), autoBlock.updateActionDirection(button)), entity().getData(AUTO_BLOCK).action());
+        var autoBlock = entity().getData(MODULAR_CHAOS_CUBE);
+        buildDirectionWidgets(posX - 109, posY - 100, "Direction", entity().direction(), (button) -> selectDirection(entity(), autoBlock.updateActionDirection(button)), entity().getData(MODULAR_CHAOS_CUBE).action());
     }
 
-
-    private void selectDirectionInput(int posX, int posY){
+    private void direction(int posX, int posY, boolean isInput, String label, Consumer<BlockPos> buttons, Runnable switchB, BlockPos blockPos) {
         isContainerAccessor(entity().augmentSlot()).ifPresent(
             accessor -> {
-                if(accessor.isInputUser()){
-                    var autoBlock = entity().getData(AUTO_BLOCK);
-                    buildDirectionWidgets(posX - 159, posY - 100, "Input", entity().direction(), (button) -> selectDirection(entity(), autoBlock.updateInput(button)), entity().getData(AUTO_BLOCK).input());
+                var isInsert = Objects.equals(label, "Insert");
+                if(isInsert ? accessor.isInputUser() : accessor.isOutputUser()){
+                    if(isInput) buildDirectionWidgets(posX + 94, posY - 68, label, entity().direction(), buttons, blockPos);
+                    this.addRenderableWidget(
+                        menuButton(posX + 87, posY - 85, (press) -> extendMenu(switchB), isInsert ? DIRECTION_ARROW_BACK : DIRECTION_ARROW_FORWARD, "", 26)
+                    );
                 }
             }
         );
     }
 
-    private void selectDirectionOutput(int posX, int posY){
-        isContainerAccessor(entity().augmentSlot()).ifPresent(
-            accessor -> {
-                if (accessor.isOutputUser()) {
-                    var autoBlock = entity().getData(AUTO_BLOCK);
-                    buildDirectionWidgets(posX - 60, posY - 100, "Eject", entity().direction(), (button) -> selectDirection(entity(), autoBlock.updateOutput(button)), entity().getData(AUTO_BLOCK).output());
-                }
-            }
-        );
+    private void extendMenu(Runnable switchB){
+        switchB.run();
+        this.rebuildWidgets();
     }
 
-    public static Optional<AbstractContainerAccessor> isContainerAccessor(ItemStack itemStack){
+    public static Optional<AbstractBlockAbility> isContainerAccessor(ItemStack itemStack){
         var get = AbilityRegister.getFirstSpellFromAugment(itemStack);
-        if(get.isPresent() && get.get() instanceof AbstractContainerAccessor accessor){
+        if(get.isPresent() && get.get() instanceof AbstractBlockAbility accessor){
             return Optional.of(accessor);
         }
         return Optional.empty();
@@ -144,17 +154,16 @@ public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlo
 
             this.addRenderableWidget(
                 menuButton(
-                    buttonX, buttonY,
-                    (press) -> {
-                        posConsumer.accept(button.getSecond());;
-                        this.rebuildWidgets();
-                    },
-                    button.getFirst(), 18,
-                    isThis.equals(button.getSecond()),
-                    0
+                    buttonX, buttonY, (press) -> directionWidget(posConsumer, button), button.getFirst(), 18,
+                    isThis.equals(button.getSecond()), 0, new WidgetSprites(GUI_BUTTON, GUI_BUTTON)
                 )
             );
         }
+    }
+
+    private void directionWidget(Consumer<BlockPos> posConsumer, Pair<ResourceLocation, BlockPos> button) {
+        posConsumer.accept(button.getSecond());
+        this.rebuildWidgets();
     }
 
     private void setModifyAugmentScreen(ItemStack itemStack){
@@ -162,7 +171,7 @@ public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlo
     }
 
     private void increaseSpeed(){
-        var autoBlock = entity().getData(AUTO_BLOCK);
+        var autoBlock = entity().getData(MODULAR_CHAOS_CUBE);
         if(autoBlock.speed() < 100){
             selectDirection(entity(), autoBlock.updateSpeed(autoBlock.speed() + 5));
             this.rebuildWidgets();
@@ -170,7 +179,7 @@ public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlo
     }
 
     private void decreaseSpeed(){
-        var autoBlock = entity().getData(AUTO_BLOCK);
+        var autoBlock = entity().getData(MODULAR_CHAOS_CUBE);
         if(autoBlock.speed() > 5) {
             selectDirection(entity(), autoBlock.updateSpeed(autoBlock.speed() - 5));
             this.rebuildWidgets();
@@ -181,11 +190,11 @@ public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlo
         int posX, int posY,
         String label
     ){
-        this.addRenderableOnly(textWithBackground(posX + 22, posY, Component.literal(String.valueOf(AutoBlock.getSpeed(entity()))), this.getMinecraft(), Component.literal(label)));
-        this.addRenderableWidget(menuButton(posX + 33, posY, (press) -> decreaseSpeed(), DIRECTION_ARROW_BACK));
-        this.addRenderableWidget(menuButton(posX + 75, posY, (press) -> increaseSpeed(), DIRECTION_ARROW_FORWARD));
+        var widget = new WidgetSprites(BLANK, BLANK);
+        this.addRenderableOnly(textWithBackground(posX + 22, posY, Component.literal(String.valueOf(ModularChaosCubeProperties.getSpeed(entity()))), this.getMinecraft(), Component.literal(label)));
+        this.addRenderableWidget(menuButton(posX + 41, posY + 6, (press) -> decreaseSpeed(), DIRECTION_ARROW_BACK, 20, false,4, widget));
+        this.addRenderableWidget(menuButton(posX + 79, posY + 6, (press) -> increaseSpeed(), DIRECTION_ARROW_FORWARD,  20,  false, 4, widget));
     }
-
 
     private void setCustomBackground(GuiGraphics guiGraphics){
         var width = this.width/2;
@@ -204,25 +213,20 @@ public class AutomationBlockScreen extends AbstractContainerScreen<AutomationBlo
         guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, borderColour);
     }
 
-    public void renderSlotWithLabel(GuiGraphics guiGraphics, int i, int i1, String label){
-        guiGraphics.drawCenteredString(this.font, Component.literal(label), i + 16, i1 - 8, -1);
-        guiGraphics.blit(GUI_GENERAL_SLOT, i, i1, 0, 0, 32, 32,32, 32);
-    }
-
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
         this.renderBlurredBackground(pPartialTick);
         this.setCustomBackground(guiGraphics);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
         int i = this.width / 2;
         int i1 = this.height / 2;
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
-        abilityIcon(guiGraphics, this.automationBlockMenu.getAutomationEntity().inputItemHandler.getStackInSlot(0), width, height, 109);
+        abilityIcon(guiGraphics, this.modularChaosCubeMenu.getAutomationEntity().inputItemHandler.getStackInSlot(0), width, height - 24, 109, 50);
         renderInventoryBackground(guiGraphics, this, IMAGE_SIZE, 24);
-        setSlotTexture(guiGraphics, i - 128, i1 - 160, IMAGE_SIZE);
+        setSlotTexture(guiGraphics, i - 16, i1 - 61, 32, "");
     }
 
 

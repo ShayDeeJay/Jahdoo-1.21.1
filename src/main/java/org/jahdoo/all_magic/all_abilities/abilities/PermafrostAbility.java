@@ -18,7 +18,7 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class PermafrostAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("permafrost");
+    public static final ResourceLocation abilityId = ModHelpers.res("permafrost");
     public static final String size = "Effect Radius";
     public static final String trapDura = "Trap Duration";
 

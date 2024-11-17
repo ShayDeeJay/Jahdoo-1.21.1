@@ -27,7 +27,7 @@ public class ModPlacedFeatures {
     }
 
     private static ResourceKey<PlacedFeature> registerKey(String name) {
-        return ResourceKey.create(Registries.PLACED_FEATURE, ModHelpers.modResourceLocation(name));
+        return ResourceKey.create(Registries.PLACED_FEATURE, ModHelpers.res(name));
     }
 
     private static void register(

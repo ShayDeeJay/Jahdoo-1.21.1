@@ -24,7 +24,7 @@ import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 
 public class BoltzAbility extends AbstractAbility {
 
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("boltz");
+    public static final ResourceLocation abilityId = ModHelpers.res("boltz");
     public static final String dischargeRadius = "Discharge Radius";
     public static final String totalBolts = "Total Boltz";
 

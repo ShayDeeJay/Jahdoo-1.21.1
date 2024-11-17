@@ -11,7 +11,7 @@ import org.jahdoo.utils.ModHelpers;
 import static org.jahdoo.registers.AttachmentRegister.MAGE_FLIGHT;
 
 public class FlyingPacketC2SPacket implements CustomPacketPayload{
-    public static final Type<FlyingPacketC2SPacket> TYPE = new Type<>(ModHelpers.modResourceLocation("send_flying_update"));
+    public static final Type<FlyingPacketC2SPacket> TYPE = new Type<>(ModHelpers.res("send_flying_update"));
     public static final StreamCodec<RegistryFriendlyByteBuf, FlyingPacketC2SPacket> STREAM_CODEC = CustomPacketPayload.codec(FlyingPacketC2SPacket::toBytes, FlyingPacketC2SPacket::new);
     private boolean isJumpKeyDown;
 

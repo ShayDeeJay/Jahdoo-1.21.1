@@ -14,7 +14,7 @@ import org.jahdoo.utils.ModHelpers;
 import static org.jahdoo.particle.ParticleStore.*;
 
 public class Vitality extends AbstractElement {
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("vitality");
+    ResourceLocation abilityId = ModHelpers.res("vitality");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -58,7 +58,7 @@ public class Vitality extends AbstractElement {
 
     @Override
     public ResourceLocation getAbilityProjectileTexture() {
-        return ModHelpers.modResourceLocation("textures/entity/vitality_projectile.png");
+        return ModHelpers.res("textures/entity/vitality_projectile.png");
     }
 
     @Override

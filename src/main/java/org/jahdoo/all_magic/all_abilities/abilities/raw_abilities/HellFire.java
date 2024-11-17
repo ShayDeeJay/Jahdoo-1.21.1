@@ -2,7 +2,6 @@ package org.jahdoo.all_magic.all_abilities.abilities.raw_abilities;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -10,17 +9,13 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
-import org.jahdoo.all_magic.SharedFireProperties;
 import org.jahdoo.all_magic.all_abilities.abilities.HellfireAbility;
 import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.particle.ParticleHandlers;
-import org.jahdoo.particle.ParticleStore;
-import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
@@ -172,7 +167,7 @@ public class HellFire extends DefaultEntityBehaviour {
         return ModHelpers.getModifierValue(wandAbilityHolder, ability).get(name).actualValue();
     }
 
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("hellfire_property");
+    ResourceLocation abilityId = ModHelpers.res("hellfire_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

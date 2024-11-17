@@ -199,7 +199,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         }
     }
 
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("summon_eternal_wizard_property");
+    ResourceLocation abilityId = ModHelpers.res("summon_eternal_wizard_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

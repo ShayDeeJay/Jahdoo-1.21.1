@@ -8,6 +8,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,12 +18,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.client.gui.augment_menu.AugmentScreen;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
+import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
@@ -72,7 +75,9 @@ public class AugmentItemHelper {
         if(component <= numLoops){
             if(player.tickCount % numDistance == 0){
                 itemStack.set(NUMBER, component + 1);
-                ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, 0.4f, 0.6F);
+                if(player instanceof ServerPlayer serverPlayer){
+                    ModHelpers.sendClientSound(serverPlayer, SoundEvents.EXPERIENCE_ORB_PICKUP, 0.4f, 0.6F);
+                }
                 itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(ModHelpers.Random.nextInt(1, 7)));
                 augmentIdentifierShared(itemStack, player);
                 if(component == numLoops){
@@ -89,8 +94,12 @@ public class AugmentItemHelper {
             player.position().add(0, player.getBbHeight()/2, 0),
             50, 0,0.8,0,0.5
         );
-        ModHelpers.getSoundWithPosition(level, player.blockPosition(), SoundEvents.BEACON_ACTIVATE,0.7f,2F);
-        ModHelpers.getSoundWithPosition(level, player.blockPosition(), SoundEvents.PARROT_IMITATE_EVOKER,1f,0.8F);
+
+        if(player instanceof ServerPlayer serverPlayer){
+
+            ModHelpers.sendClientSound(serverPlayer, SoundEvents.BEACON_ACTIVATE, 0.7f, 2F);
+            ModHelpers.sendClientSound(serverPlayer, SoundEvents.PARROT_IMITATE_EVOKER, 1f, 0.8F);
+        }
     }
 
     public static void augmentIdentifierShared(ItemStack itemStack, @Nullable Player player){
@@ -322,9 +331,9 @@ public class AugmentItemHelper {
         if(wandAbilityHolder != null){
             wandAbilityHolder.abilityProperties().keySet().stream().findFirst().ifPresent(
                 s -> {
-                    var location = ModHelpers.modResourceLocation(s);
+                    var location = ModHelpers.res(s);
                     if (location.getPath().isEmpty()) return;
-                    var abstractAbility = AbilityRegister.REGISTRY.get(ModHelpers.modResourceLocation(s));
+                    var abstractAbility = AbilityRegister.REGISTRY.get(ModHelpers.res(s));
                     if (abstractAbility != null) {
                         component.set(
                             Component.literal(abstractAbility.getAbilityName())

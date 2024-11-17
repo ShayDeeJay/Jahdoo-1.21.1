@@ -26,7 +26,7 @@ public class ModCreativeModTabs {
             .displayItems((pParameters, pOutput) -> {
                 pOutput.accept(BlocksRegister.CRYSTAL_ORE.get());
                     pOutput.accept(BlocksRegister.CRYSTAL_DEEPSLATE_ORE.get());
-                    pOutput.accept(ItemsRegister.AUTOMATION_BLOCK_ITEM.get());
+                    pOutput.accept(ItemsRegister.MODULAR_CHAOS_CUBE_ITEM.get());
                     pOutput.accept(BlocksRegister.TANK.get());
                     pOutput.accept(BlocksRegister.CREATOR.get());
                     pOutput.accept(ItemsRegister.INFUSER_ITEM.get());

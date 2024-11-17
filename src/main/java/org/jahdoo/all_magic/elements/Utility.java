@@ -13,7 +13,7 @@ import org.jahdoo.utils.ModHelpers;
 import static org.jahdoo.particle.ParticleStore.rgbToInt;
 
 public class Utility extends AbstractElement {
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("utility");
+    ResourceLocation abilityId = ModHelpers.res("utility");
 
     @Override
     public ResourceLocation getAbilityResource() {

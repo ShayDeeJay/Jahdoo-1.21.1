@@ -16,7 +16,7 @@ public class RecipeRegistry {
 
     public static final String CREATOR_RECIPE_ID = "creator_block";
 
-    public static final DeferredHolder<RecipeType<?>, RecipeType<CreatorRecipe>> CREATOR_TYPE = RECIPE_TYPES.register(CREATOR_RECIPE_ID, () -> RecipeType.simple(ModHelpers.modResourceLocation(CREATOR_RECIPE_ID)));
+    public static final DeferredHolder<RecipeType<?>, RecipeType<CreatorRecipe>> CREATOR_TYPE = RECIPE_TYPES.register(CREATOR_RECIPE_ID, () -> RecipeType.simple(ModHelpers.res(CREATOR_RECIPE_ID)));
     public static final DeferredHolder<RecipeSerializer<?>, CreatorRecipe.Serializer> CREATOR_SERIALIZER = RECIPE_SERIALIZERS.register(CREATOR_RECIPE_ID, CreatorRecipe.Serializer::new);
 
 

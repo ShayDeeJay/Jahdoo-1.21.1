@@ -7,7 +7,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.Tags;
@@ -46,7 +45,7 @@ public class ArmorMaterialRegistry {
         float toughness,
         float knockbackResistance
     ) {
-        List<ArmorMaterial.Layer> list = List.of(new ArmorMaterial.Layer(ModHelpers.modResourceLocation(name)));
+        List<ArmorMaterial.Layer> list = List.of(new ArmorMaterial.Layer(ModHelpers.res(name)));
         return ARMOR_MATERIALS.register(name, ()-> new ArmorMaterial(defense, enchantmentValue, equipSound, repairIngredient, list, toughness, knockbackResistance));
     }
 

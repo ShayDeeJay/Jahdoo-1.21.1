@@ -7,7 +7,9 @@ import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,11 +18,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
 import org.jahdoo.registers.*;
 
 import java.awt.*;
@@ -32,13 +36,17 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ModHelpers {
     public static final Random Random = ThreadLocalRandom.current();
 
-    public static ResourceLocation modResourceLocation(String location) {
+    public static ResourceLocation res(String location) {
         return ResourceLocation.fromNamespaceAndPath(JahdooMod.MOD_ID, location);
     }
 
     public static <T> T getRandomListElement(List<T> collection){
         Collections.shuffle(collection);
         return collection.getFirst();
+    }
+
+    public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch){
+        PacketDistributor.sendToPlayer(serverPlayer, new PlayClientSoundSyncS2CPacket(soundEvent, volume,pitch));
     }
 
     public static Map<String, AbilityHolder.AbilityModifiers> getModifierValue(WandAbilityHolder wandAbilityHolder, String tagName) {

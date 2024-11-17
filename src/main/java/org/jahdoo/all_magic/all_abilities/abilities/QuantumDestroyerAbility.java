@@ -18,7 +18,7 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.utils.ModHelpers;
 
 public class QuantumDestroyerAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("quantum_destroyer");
+    public static final ResourceLocation abilityId = ModHelpers.res("quantum_destroyer");
     public static final String radius = "Energy Radius";
     public static final String gravitationalPull = "Gravitational Pull";
 

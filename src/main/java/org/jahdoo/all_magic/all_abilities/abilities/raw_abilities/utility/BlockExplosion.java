@@ -19,7 +19,7 @@ import org.jahdoo.all_magic.AbstractUtilityProjectile;
 import org.jahdoo.all_magic.DefaultEntityBehaviour;
 import org.jahdoo.all_magic.UtilityHelpers;
 import org.jahdoo.all_magic.all_abilities.abilities.Utility.BlockBombAbility;
-import org.jahdoo.block.automation_block.AutomationBlockEntity;
+import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
@@ -33,11 +33,10 @@ import org.jahdoo.utils.PositionGetters;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.minecraft.world.level.block.Blocks.AIR;
 import static org.jahdoo.all_magic.all_abilities.abilities.Utility.BlockBombAbility.EXPLOSION_RANGE;
 
 public class BlockExplosion extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("block_bomb_property");
+    ResourceLocation abilityId = ModHelpers.res("block_bomb_property");
     boolean hasHitBlock;
     int totalRadius;
     int explosionTimer;
@@ -73,7 +72,7 @@ public class BlockExplosion extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
-        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof AutomationBlockEntity) return;
+        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         this.hasHitBlock = true;
         ModHelpers.getSoundWithPosition(genericProjectile.level(), genericProjectile.blockPosition(), SoundEvents.SLIME_BLOCK_PLACE, 1.5f);
         genericProjectile.setDeltaMovement(0, 0, 0);
@@ -214,7 +213,6 @@ public class BlockExplosion extends AbstractUtilityProjectile {
         PositionGetters.getSphericalBlockPositions(genericProjectile, totalRadius,
             radiusPosition -> {
                 BlockState blockstate = genericProjectile.level().getBlockState(radiusPosition);
-                var fluidState = genericProjectile.level().getFluidState(radiusPosition);
                 if (blockstate.isAir()) return;
                 var range = UtilityHelpers.destroySpeed(radiusPosition, genericProjectile.level());
 
@@ -237,9 +235,6 @@ public class BlockExplosion extends AbstractUtilityProjectile {
 
                     genericProjectile.level().removeBlock(radiusPosition, false);
                 }
-
-                if (fluidState.isEmpty()) return;
-                genericProjectile.level().setBlock(radiusPosition, AIR.defaultBlockState(), 3);
             }
         );
     }

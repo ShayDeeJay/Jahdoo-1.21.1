@@ -6,6 +6,6 @@ import software.bernie.geckolib.model.DefaultedItemGeoModel;
 
 public class InfuserBlockModel extends DefaultedItemGeoModel<InfuserBlockItem> {
     public InfuserBlockModel() {
-        super(ModHelpers.modResourceLocation("infuser"));
+        super(ModHelpers.res("infuser"));
     }
 }

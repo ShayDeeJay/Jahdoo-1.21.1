@@ -6,17 +6,16 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.block.automation_block.AutomationBlockEntity;
+import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
 public class SyncComponentBlockC2S implements CustomPacketPayload{
-    public static final Type<SyncComponentBlockC2S> TYPE = new Type<>(ModHelpers.modResourceLocation("sync_item_block_update"));
+    public static final Type<SyncComponentBlockC2S> TYPE = new Type<>(ModHelpers.res("sync_item_block_update"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncComponentBlockC2S> STREAM_CODEC = CustomPacketPayload.codec(SyncComponentBlockC2S::toBytes, SyncComponentBlockC2S::new);
     private WandAbilityHolder wandAbilityHolder;
     private BlockPos blockPos;
@@ -49,7 +48,7 @@ public class SyncComponentBlockC2S implements CustomPacketPayload{
     }
 
     public static void sendTagsToSlot(BlockEntity entity, WandAbilityHolder wandAbilityHolder) {
-        if(entity instanceof AutomationBlockEntity entity1){
+        if(entity instanceof ModularChaosCubeEntity entity1){
             var handler = entity1.inputItemHandler;
             var augment = handler.getStackInSlot(0).copy();
             augment.set(WAND_ABILITY_HOLDER, wandAbilityHolder);

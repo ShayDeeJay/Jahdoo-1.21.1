@@ -12,7 +12,7 @@ import static org.jahdoo.registers.AttachmentRegister.NOVA_SMASH;
 
 public class NovaSmashS2CPacket implements CustomPacketPayload {
 
-    public static final Type<NovaSmashS2CPacket> TYPE = new Type<>(ModHelpers.modResourceLocation("nova_smash_sync"));
+    public static final Type<NovaSmashS2CPacket> TYPE = new Type<>(ModHelpers.res("nova_smash_sync"));
     public static final StreamCodec<RegistryFriendlyByteBuf, NovaSmashS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(NovaSmashS2CPacket::toBytes, NovaSmashS2CPacket::new);
 
     int highestDelta;

@@ -92,7 +92,7 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     private void applyHeal(Player player, WandAbilityHolder wandAbilityHolder) {
         var maxAbsorption = DataComponentHelper.getSpecificValue(name, wandAbilityHolder, MAX_ABSORPTION);
         var foodProperties = new FoodProperties(2, 2, true, 0, Optional.empty(), Collections.emptyList());
-        var modifier = new AttributeModifier(ModHelpers.modResourceLocation("absorption"), maxAbsorption * 2, AttributeModifier.Operation.ADD_VALUE);
+        var modifier = new AttributeModifier(ModHelpers.res("absorption"), maxAbsorption * 2, AttributeModifier.Operation.ADD_VALUE);
         player.heal(1);
         Multimap<Holder<Attribute>, AttributeModifier> multiMap = HashMultimap.create();
         multiMap.put(Attributes.MAX_ABSORPTION, modifier);

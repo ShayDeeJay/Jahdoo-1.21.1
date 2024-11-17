@@ -203,7 +203,7 @@ public class Boltz extends DefaultEntityBehaviour {
         return ElementRegistry.LIGHTNING.get();
     }
 
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("boltz_property");
+    ResourceLocation abilityId = ModHelpers.res("boltz_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

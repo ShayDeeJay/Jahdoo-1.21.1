@@ -33,7 +33,7 @@ public class ModConfiguredFeatures {
     }
 
     public static ResourceKey<ConfiguredFeature<?, ?>> registerKey(String name) {
-        return ResourceKey.create(Registries.CONFIGURED_FEATURE, ModHelpers.modResourceLocation(name));
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, ModHelpers.res(name));
     }
     private static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(
         BootstrapContext<ConfiguredFeature<?, ?>> context,

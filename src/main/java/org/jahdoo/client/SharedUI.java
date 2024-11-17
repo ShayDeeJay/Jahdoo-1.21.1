@@ -8,9 +8,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
-import org.jahdoo.components.AbilityHolder;
+import org.jahdoo.client.gui.IconLocations;
 import org.jahdoo.components.DataComponentHelper;
-import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.registers.AbilityRegister;
@@ -18,7 +17,6 @@ import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 
-import java.util.List;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
 
 public class SharedUI {
@@ -27,7 +25,7 @@ public class SharedUI {
         var x = (screen.width - IMAGE_SIZE) / 2;
         var y = (screen.height - IMAGE_SIZE) / 2;
         guiGraphics.blit(
-            ModHelpers.modResourceLocation("textures/gui/wand_gui.png"),
+            ModHelpers.res("textures/gui/wand_gui.png"),
             x, y + yOffset - 44,
             0,0, IMAGE_SIZE, IMAGE_SIZE
         );
@@ -58,15 +56,13 @@ public class SharedUI {
     ){
         int element;
         if (abstractAbility.isMultiType()) {
-
-            WandAbilityHolder wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
-            AbilityHolder abilityHolder = wandAbilityHolder.abilityProperties().get(abstractAbility.setAbilityId());
-            AbilityHolder.AbilityModifiers abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
-            List<AbstractElement> abstractElement = ElementRegistry.getElementByTypeId((int) abilityModifiers.actualValue());
-
+            var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            var abilityHolder = wandAbilityHolder.abilityProperties().get(abstractAbility.setAbilityId());
+            var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
+            var abstractElement = ElementRegistry.getElementByTypeId((int) abilityModifiers.actualValue());
 
             if(!abstractElement.isEmpty()){
-                element = abstractElement.get(0).textColourPrimary();
+                element = abstractElement.getFirst().textColourPrimary();
             } else {
                 element = -1;
             }
@@ -84,15 +80,11 @@ public class SharedUI {
         AbstractElement element = ElementRegistry.MYSTIC.get();
         if (abstractAbility.isMultiType()) {
 
-            WandAbilityHolder wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
-            AbilityHolder abilityHolder = wandAbilityHolder.abilityProperties().get(abstractAbility.setAbilityId());
-            AbilityHolder.AbilityModifiers abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
-            List<AbstractElement> abstractElement = ElementRegistry.getElementByTypeId((int) abilityModifiers.actualValue());
-
-
-            if(!abstractElement.isEmpty()){
-                element = abstractElement.get(0);
-            }
+            var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            var abilityHolder = wandAbilityHolder.abilityProperties().get(abstractAbility.setAbilityId());
+            var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
+            var abstractElement = ElementRegistry.getElementByTypeId((int) abilityModifiers.actualValue());
+            if(!abstractElement.isEmpty()) element = abstractElement.getFirst();
 
         } else {
             element = abstractAbility.getElemenType();
@@ -101,14 +93,23 @@ public class SharedUI {
         return element;
     }
 
-    public static void setSlotTexture(GuiGraphics guiGraphics, int slotX, int slotY, int imageSize){
-        var atlasLocation = ModHelpers.modResourceLocation("textures/gui/slot.png");
-        guiGraphics.blit(atlasLocation, slotX, slotY - 3, 0, 0, imageSize, imageSize);
+    public static void setSlotTexture(GuiGraphics guiGraphics, int slotX, int slotY, int imageSize, String index){
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0,0, 100);
+        drawStringWithBackground(
+            guiGraphics,
+            Minecraft.getInstance().font,
+            Component.literal(index),
+            slotX + 16, slotY - 5,
+            -14145496, -6250336,
+            true
+        );
+        guiGraphics.pose().popPose();
+        guiGraphics.blit(IconLocations.GUI_AUGMENT_SLOT_V2, slotX, slotY, 0, 0, imageSize, imageSize, imageSize , imageSize);
     }
 
-    public static void abilityIcon(GuiGraphics guiGraphics, ItemStack cachedItem, int width, int height, int offset){
+    public static void abilityIcon(GuiGraphics guiGraphics, ItemStack cachedItem, int width, int height, int offset, int localImageSize){
         var verticalOffset = 38 + offset;
-        var localImageSize = 50;
         var shrinkBy = 16;
         var imageWithShrink = localImageSize - shrinkBy;
         var posX = (width - localImageSize) / 2 ;
@@ -117,7 +118,7 @@ public class SharedUI {
         var posY1 = (height - imageWithShrink) / 2 - 150 + verticalOffset;
 
         guiGraphics.blit(
-            ModHelpers.modResourceLocation("textures/gui/gui_button.png"),
+            ModHelpers.res("textures/gui/gui_button.png"),
             posX, posY, 0, 0, localImageSize, localImageSize, localImageSize, localImageSize
         );
 

@@ -21,7 +21,7 @@ import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class ElementalShooterAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("elemental_shooter");
+    public static final ResourceLocation abilityId = ModHelpers.res("elemental_shooter");
     public static final String numberOfProjectiles = "Shot Multiplier";
     public static final String numberOfRicochet = "Ricochets";
     public static final String velocity = "Projectile Velocity";

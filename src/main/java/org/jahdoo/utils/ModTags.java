@@ -13,7 +13,7 @@ public class ModTags {
     public static class Items {
         public static final TagKey<Item> WAND_TAGS = tag("wand_tag");
         private static TagKey<Item> tag(String name) {
-            return ItemTags.create(ModHelpers.modResourceLocation(name));
+            return ItemTags.create(ModHelpers.res(name));
         }
     }
 
@@ -28,7 +28,7 @@ public class ModTags {
         public static final TagKey<net.minecraft.world.level.block.Block> ALLOWED_BLOCK_INTERACTIONS = tag("block_interactions");
         public static final TagKey<net.minecraft.world.level.block.Block> CAN_REPLACE_BLOCK = tag("replace");
         private static TagKey<net.minecraft.world.level.block.Block> tag(String name) {
-            return BlockTags.create(ModHelpers.modResourceLocation(name));
+            return BlockTags.create(ModHelpers.res(name));
         }
     }
 }

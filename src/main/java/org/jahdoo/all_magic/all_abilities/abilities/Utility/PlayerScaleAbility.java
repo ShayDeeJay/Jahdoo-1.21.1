@@ -16,7 +16,7 @@ import org.jahdoo.utils.GlobalStrings;
 import static org.jahdoo.all_magic.AbilityBuilder.COOLDOWN;
 
 public class PlayerScaleAbility extends AbstractAbility {
-    public static final ResourceLocation abilityId = ModHelpers.modResourceLocation("size_shifter");
+    public static final ResourceLocation abilityId = ModHelpers.res("size_shifter");
     public static final String SCALE_VALUE = "Player Scale Value";
 
     @Override

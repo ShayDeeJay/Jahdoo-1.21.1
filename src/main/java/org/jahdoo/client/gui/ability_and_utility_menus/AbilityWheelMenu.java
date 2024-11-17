@@ -34,7 +34,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static org.jahdoo.client.gui.IconLocations.COG;
-import static org.jahdoo.items.augments.Augment.*;
 import static org.jahdoo.items.augments.AugmentItemHelper.isConfigAbility;
 import static org.jahdoo.items.augments.AugmentItemHelper.setAugmentModificationScreen;
 
@@ -207,7 +206,7 @@ public class AbilityWheelMenu extends Screen  {
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, fade);
-        var atlasLocation = ModHelpers.modResourceLocation("textures/gui/ability_wheel_background.png");
+        var atlasLocation = ModHelpers.res("textures/gui/ability_wheel_background.png");
         guiGraphics.blit(atlasLocation, xRadial, yRadial, 0, 0, easedValue, easedValue, easedValue, easedValue);
         this.getSelectedAbilityName(guiGraphics);
         RenderSystem.disableBlend();

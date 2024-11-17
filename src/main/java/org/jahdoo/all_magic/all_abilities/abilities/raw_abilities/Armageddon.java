@@ -143,7 +143,7 @@ public class Armageddon extends DefaultEntityBehaviour {
         return ElementRegistry.INFERNO.get();
     }
 
-    ResourceLocation abilityId = ModHelpers.modResourceLocation("armageddon_property");
+    ResourceLocation abilityId = ModHelpers.res("armageddon_property");
 
     @Override
     public ResourceLocation getAbilityResource() {
