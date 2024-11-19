@@ -14,7 +14,7 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
 public class BlockPlacerAbility extends AbstractBlockAbility {
-    private final ResourceLocation abilityId = ModHelpers.res("block_placer");
+    public static final ResourceLocation abilityId = ModHelpers.res("block_placer");
 
     @Override
     public void invokeAbility(Player player) {

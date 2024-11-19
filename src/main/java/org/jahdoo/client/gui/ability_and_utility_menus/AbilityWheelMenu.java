@@ -34,8 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static org.jahdoo.client.gui.IconLocations.COG;
-import static org.jahdoo.items.augments.AugmentItemHelper.isConfigAbility;
-import static org.jahdoo.items.augments.AugmentItemHelper.setAugmentModificationScreen;
+import static org.jahdoo.items.augments.AugmentItemHelper.*;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class AbilityWheelMenu extends Screen  {
@@ -125,7 +124,7 @@ public class AbilityWheelMenu extends Screen  {
                         posX, posY,
                         configButton,
                         configButtonSize,
-                        pButton -> setAugmentModificationScreen(itemStack, this),
+                        pButton -> this.getMinecraft().setScreen(getAugmentModificationScreenWand(itemStack, this)),
                         false
                     )
                 );

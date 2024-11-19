@@ -18,7 +18,8 @@ import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.particle.ParticleHandlers;
 
-import static org.jahdoo.all_magic.all_abilities.abilities.Utility.HammerAbility.HAMMER_SIZE;
+import static org.jahdoo.all_magic.AbilityBuilder.OFFSET;
+import static org.jahdoo.all_magic.AbilityBuilder.SIZE;
 
 public class Hammer extends AbstractUtilityProjectile {
     ResourceLocation abilityId = ModHelpers.res("hammer_property");
@@ -34,8 +35,8 @@ public class Hammer extends AbstractUtilityProjectile {
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
-        this.breakerSize = this.getTag(HAMMER_SIZE);
-        this.size = (int) (breakerSize/2)-1;
+        this.breakerSize = this.getTag(SIZE);
+        this.size = (int) (breakerSize/2) - (int) this.getTag(OFFSET);
     }
 
     @Override

@@ -17,26 +17,30 @@ public class ToggleComponent  {
 
     public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, String label) {
         var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
-        return new GuiButton(posX, posY, button, 32, action, false, resourceLocation, label, 6);
+        return new GuiButton(posX, posY, button, 32, action, false, resourceLocation, label, 6, true);
     }
 
     public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, String label, int size) {
         var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
-        return new GuiButton(posX, posY, button, size, action, false, resourceLocation, label, 6);
+        return new GuiButton(posX, posY, button, size, action, false, resourceLocation, label, 6, true);
     }
 
     public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, int scale) {
         var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
-        return new GuiButton(posX, posY, button, size, action, false, resourceLocation, "", scale);
+        return new GuiButton(posX, posY, button, size, action, false, resourceLocation, "", scale, true);
     }
 
     public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, boolean isSelected) {
         var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
-        return new GuiButton(posX, posY, button, size, action, isSelected, resourceLocation, "", 6);
+        return new GuiButton(posX, posY, button, size, action, isSelected, resourceLocation, "", 6, true);
     }
 
     public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, boolean isSelected, int scale, WidgetSprites button) {
-        return new GuiButton(posX, posY, button, size, action, isSelected, resourceLocation, "", scale);
+        return new GuiButton(posX, posY, button, size, action, isSelected, resourceLocation, "", scale, true);
+    }
+
+    public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, boolean isSelected, int scale, WidgetSprites button, boolean showHover) {
+        return new GuiButton(posX, posY, button, size, action, isSelected, resourceLocation, "", scale, showHover);
     }
 
 

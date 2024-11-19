@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,13 +24,17 @@ import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
-import org.jahdoo.registers.*;
+import org.jahdoo.registers.AbilityRegister;
+import org.jahdoo.registers.AttributesRegister;
+import org.jahdoo.registers.DataComponentRegistry;
 
 import java.awt.*;
 import java.text.DecimalFormat;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
 public class ModHelpers {
     public static final Random Random = ThreadLocalRandom.current();
@@ -47,6 +50,15 @@ public class ModHelpers {
 
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch){
         PacketDistributor.sendToPlayer(serverPlayer, new PlayClientSoundSyncS2CPacket(soundEvent, volume,pitch));
+    }
+
+    public static double getTag(Player player, String name, String abilityName) {
+        if(player != null){
+            var wandAbilityHolder = player.getMainHandItem().get(WAND_ABILITY_HOLDER);
+            var holder = ModHelpers.getModifierValue(wandAbilityHolder, abilityName).get(name);
+            if(holder != null) return holder.setValue();
+        }
+        return 0;
     }
 
     public static Map<String, AbilityHolder.AbilityModifiers> getModifierValue(WandAbilityHolder wandAbilityHolder, String tagName) {

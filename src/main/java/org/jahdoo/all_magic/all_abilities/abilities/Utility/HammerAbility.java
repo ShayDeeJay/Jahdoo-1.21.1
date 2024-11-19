@@ -13,9 +13,11 @@ import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
+import static org.jahdoo.all_magic.AbilityBuilder.OFFSET;
+import static org.jahdoo.all_magic.AbilityBuilder.SIZE;
+
 public class HammerAbility extends AbstractBlockAbility {
     public static final ResourceLocation abilityId = ModHelpers.res("hammer");
-    public static final String HAMMER_SIZE = "Hammer Range";
 
     @Override
     public void invokeAbility(Player player) {
@@ -41,7 +43,8 @@ public class HammerAbility extends AbstractBlockAbility {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(10, 5, 1)
-            .setAbilityTagModifiersRandom(HAMMER_SIZE, 12,3, true, 3)
+            .setAbilityTagModifiersRandom(SIZE, 12,3, true, 3)
+            .setModifierWithStep(OFFSET, 12,-12, true, 12, 1)
             .build();
     }
 

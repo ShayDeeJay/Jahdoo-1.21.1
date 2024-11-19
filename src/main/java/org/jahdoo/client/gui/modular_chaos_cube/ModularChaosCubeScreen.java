@@ -69,8 +69,8 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
         var currentPower = ModularChaosCubeProperties.getActive(entity());
         var chained = ModularChaosCubeProperties.getChained(entity());
         int size = 16;
-        this.addRenderableWidget(ToggleComponent.menuButton(posX + 76, posY - 110, (press) -> togglePower(entity()), currentPower ? POWER_OFF : POWER_ON, 20, 0));
-        this.addRenderableWidget(ToggleComponent.menuButton(posX + 56, posY - 110, (press) -> toggleChained(entity()), chained ? CHAINED : UNCHAINED, 20, 0));
+        this.addRenderableWidget(ToggleComponent.menuButton(posX + 76, posY - 112, (press) -> togglePower(entity()), currentPower ? POWER_OFF : POWER_ON, 20, 0));
+        this.addRenderableWidget(ToggleComponent.menuButton(posX + 56, posY - 112, (press) -> toggleChained(entity()), chained ? CHAINED : UNCHAINED, 20, 0));
 
         if(!this.entity().inputItemHandler.getStackInSlot(0).isEmpty() && isValidAugmentUtil(entity().inputItemHandler.getStackInSlot(AUGMENT_SLOT)).isPresent()){
             this.addRenderableWidget(ToggleComponent.menuButton(posX + 14, posY - 23, (press) -> setModifyAugmentScreen(entity().inputItemHandler.getStackInSlot(0).copy()), COG, "", size));
@@ -130,12 +130,6 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
         this.addRenderableOnly(textWithBackground(posX-10, posY, this.getMinecraft(), Component.literal(label)));
         List<Pair<ResourceLocation, BlockPos>> modifiableCopy = new ArrayList<>(copy);
 
-        if (modifiableCopy.size() > 4) {
-            Pair<ResourceLocation, BlockPos> temp = modifiableCopy.get(2);
-            modifiableCopy.set(2, modifiableCopy.get(4));
-            modifiableCopy.set(4, temp);
-        }
-
         int[][] layoutPositions = {
                 {28},
             {14, 28, 42},
@@ -192,8 +186,8 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
     ){
         var widget = new WidgetSprites(BLANK, BLANK);
         this.addRenderableOnly(textWithBackground(posX + 22, posY, Component.literal(String.valueOf(ModularChaosCubeProperties.getSpeed(entity()))), this.getMinecraft(), Component.literal(label)));
-        this.addRenderableWidget(menuButton(posX + 41, posY + 6, (press) -> decreaseSpeed(), DIRECTION_ARROW_BACK, 20, false,4, widget));
-        this.addRenderableWidget(menuButton(posX + 79, posY + 6, (press) -> increaseSpeed(), DIRECTION_ARROW_FORWARD,  20,  false, 4, widget));
+        this.addRenderableWidget(menuButton(posX + 41, posY + 6, (press) -> decreaseSpeed(), DIRECTION_ARROW_BACK, 20, false,8, widget, false));
+        this.addRenderableWidget(menuButton(posX + 79, posY + 6, (press) -> increaseSpeed(), DIRECTION_ARROW_FORWARD,  20,  false, 8, widget, false));
     }
 
     private void setCustomBackground(GuiGraphics guiGraphics){
@@ -220,10 +214,10 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
         this.renderBlurredBackground(pPartialTick);
         this.setCustomBackground(guiGraphics);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
         int i = this.width / 2;
         int i1 = this.height / 2;
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
         abilityIcon(guiGraphics, this.modularChaosCubeMenu.getAutomationEntity().inputItemHandler.getStackInSlot(0), width, height - 24, 109, 50);
         renderInventoryBackground(guiGraphics, this, IMAGE_SIZE, 24);
         setSlotTexture(guiGraphics, i - 16, i1 - 61, 32, "");

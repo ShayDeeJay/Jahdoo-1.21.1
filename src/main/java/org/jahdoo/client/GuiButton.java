@@ -18,19 +18,10 @@ public class GuiButton extends ImageButton {
     private final OnPress pOnPress;
     private final boolean isSelected;
     private final ResourceLocation buttonOverlay;
-    private String label = "";
+    private final boolean showHover;
+    private final String label;
 
-    public GuiButton(int pX, int pY, WidgetSprites sprites, int size, OnPress pOnPress, boolean isSelected, @Nullable ResourceLocation buttonOverlay) {
-        super(pX, pY, size, size, sprites, pOnPress);
-        this.defaultSize = size; // Default size is the initial size of the button
-        this.sizes = size; // Initialize sizes to the default size
-        this.totalSize = size + 6; // Increased size
-        this.pOnPress = pOnPress;
-        this.isSelected = isSelected;
-        this.buttonOverlay = buttonOverlay;
-    }
-
-    public GuiButton(int pX, int pY, WidgetSprites sprites, int size, OnPress pOnPress, boolean isSelected, @Nullable ResourceLocation buttonOverlay, String label, int scaler) {
+    public GuiButton(int pX, int pY, WidgetSprites sprites, int size, OnPress pOnPress, boolean isSelected, @Nullable ResourceLocation buttonOverlay, String label, int scaler, boolean showHover) {
         super(pX, pY, size, size, sprites, pOnPress);
         this.defaultSize = size; // Default size is the initial size of the button
         this.sizes = size; // Initialize sizes to the default size
@@ -39,6 +30,7 @@ public class GuiButton extends ImageButton {
         this.isSelected = isSelected;
         this.buttonOverlay = buttonOverlay;
         this.label = label;
+        this.showHover = showHover;
     }
 
     public float easeInOutCubic(float t) {
@@ -60,7 +52,9 @@ public class GuiButton extends ImageButton {
             int i = 4;
             pGuiGraphics.pose().pushPose();
             pGuiGraphics.pose().translate(0,0,2);
-            pGuiGraphics.blit(SELECTED_GUI_BUTTON_OVERLAY, this.getX() - offset + i/2, this.getY() - offset + i/2, 0, 0, 0, easedValue - i, easedValue- i, easedValue- i, easedValue- i);
+            if(showHover){
+                pGuiGraphics.blit(SELECTED_GUI_BUTTON_OVERLAY, this.getX() - offset + i / 2, this.getY() - offset + i / 2, 0, 0, 0, easedValue - i, easedValue - i, easedValue - i, easedValue - i);
+            }
             pGuiGraphics.pose().popPose();
         } else {
             if (sizes > defaultSize) sizes -= 2f;

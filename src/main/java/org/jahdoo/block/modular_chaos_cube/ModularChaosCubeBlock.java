@@ -62,8 +62,6 @@ public class ModularChaosCubeBlock extends BaseEntityBlock {
         return PushReaction.PUSH_ONLY;
     }
 
-
-
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {

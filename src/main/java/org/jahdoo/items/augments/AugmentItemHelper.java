@@ -18,19 +18,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.all_magic.AbstractAbility;
+import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
 import org.jahdoo.client.gui.augment_menu.AugmentScreen;
 import org.jahdoo.components.AbilityHolder;
+import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.components.WandAbilityHolder;
-import org.jahdoo.all_magic.AbstractAbility;
-import org.jahdoo.all_magic.AbstractElement;
-import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.utils.ModHelpers;
 
 import javax.annotation.Nullable;
@@ -40,10 +38,9 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
-import static org.jahdoo.items.augments.AugmentRatingSystem.*;
 import static org.jahdoo.all_magic.AbilityBuilder.*;
-import static org.jahdoo.registers.DataComponentRegistry.NUMBER;
-import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.items.augments.AugmentRatingSystem.*;
+import static org.jahdoo.registers.DataComponentRegistry.*;
 
 public class AugmentItemHelper {
 
@@ -76,6 +73,7 @@ public class AugmentItemHelper {
             if(player.tickCount % numDistance == 0){
                 itemStack.set(NUMBER, component + 1);
                 if(player instanceof ServerPlayer serverPlayer){
+
                     ModHelpers.sendClientSound(serverPlayer, SoundEvents.EXPERIENCE_ORB_PICKUP, 0.4f, 0.6F);
                 }
                 itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(ModHelpers.Random.nextInt(1, 7)));
@@ -381,6 +379,21 @@ public class AugmentItemHelper {
                     if (isConfigAbility(ability.get(), item.get(), itemStack)) {
                         return new AugmentScreen(itemStack, item.get(), previousScreen);
                     }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Screen getAugmentModificationScreenWand(ItemStack itemStack, @org.jetbrains.annotations.Nullable Screen previousScreen) {
+        var itemStacks = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var selected = itemStack.get(WAND_DATA);
+        if(itemStacks != null && selected != null){
+            var item = selected.selectedAbility();
+            var ability = AbilityRegister.getFirstSpellByTypeId(item);
+            if(ability.isPresent()){
+                if (isConfigAbility(ability.get(), item, itemStack)) {
+                    return new AugmentScreen(itemStack, item, previousScreen);
                 }
             }
         }

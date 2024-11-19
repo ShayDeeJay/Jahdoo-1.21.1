@@ -27,6 +27,7 @@ public class AbilityBuilder {
     public static final String LIFETIME = "Life Time";
     public static final String AOE = "Area of Effect";
     public static final String SIZE = "Block Size";
+    public static final String OFFSET = "Offset";
 
     private final ItemStack item;
     private final String abilityId;

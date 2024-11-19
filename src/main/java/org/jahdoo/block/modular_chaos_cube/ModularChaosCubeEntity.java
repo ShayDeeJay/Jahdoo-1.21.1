@@ -109,11 +109,11 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
     public List<Pair<ResourceLocation, BlockPos>> direction(){
         return List.of(
             Pair.of(IconLocations.NORTH, this.getBlockPos().north()),
-            Pair.of(IconLocations.SOUTH, this.getBlockPos().south()),
-            Pair.of(IconLocations.EAST, this.getBlockPos().east()),
             Pair.of(IconLocations.WEST, this.getBlockPos().west()),
-            Pair.of(IconLocations.DOWN, this.getBlockPos().below()),
-            Pair.of(IconLocations.UP, this.getBlockPos().above())
+            Pair.of(IconLocations.UP, this.getBlockPos().above()),
+            Pair.of(IconLocations.EAST, this.getBlockPos().east()),
+            Pair.of(IconLocations.SOUTH, this.getBlockPos().south()),
+            Pair.of(IconLocations.DOWN, this.getBlockPos().below())
         );
     }
 

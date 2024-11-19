@@ -26,12 +26,24 @@ public class ModEventBusClientEvents {
 
     @SubscribeEvent
     public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
+        //Block entities
         event.registerBlockEntityRenderer(BlockEntitiesRegister.CREATOR_BE.get(), CreatorRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_MANAGER_TABLE_BE.get(), WandManagerTableRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.INFUSER_BE.get(), InfuserRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.MODULAR_CHAOS_CUBE.get(), ModularChaosCubeRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_BE.get(), WandBlockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.TANK_BE.get(), TankRenderer::new);
+
+        //Entities
+        event.registerEntityRenderer(EntitiesRegister.FROST_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.FROST.get().getAbilityProjectileTexture()));
+        event.registerEntityRenderer(EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.INFERNO.get().getAbilityProjectileTexture()));
+        event.registerEntityRenderer(EntitiesRegister.MYSTIC_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.MYSTIC.get().getAbilityProjectileTexture()));
+        event.registerEntityRenderer(EntitiesRegister.VITALITY_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.VITALITY.get().getAbilityProjectileTexture()));
+        event.registerEntityRenderer(EntitiesRegister.LIGHTNING_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.LIGHTNING.get().getAbilityProjectileTexture()));
+        event.registerEntityRenderer(EntitiesRegister.GENERIC_PROJECTILE.get(), GenericProjectileRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.CUSTOM_AOE_CLOUD.get(), CustomAoeRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.ETERNAL_WIZARD.get(), EternalWizardRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.DECOY.get(), DecoyRenderer::new);
     }
 
     @SubscribeEvent
@@ -47,20 +59,6 @@ public class ModEventBusClientEvents {
         event.registerSpriteSet(ParticlesRegister.BAKED_LIGHTNING.get(), GenericParticle.BakedProvider::new);
         event.registerSpriteSet(ParticlesRegister.BAKED_UTILITY.get(), GenericParticle.BakedProvider::new);
         event.registerSpriteSet(ParticlesRegister.HEAL.get(), GenericParticle.BakedProvider::new);
-    }
-
-    @SubscribeEvent
-    public static void entityRegister(EntityRenderersEvent.RegisterRenderers event) {
-
-        event.registerEntityRenderer(EntitiesRegister.FROST_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.FROST.get().getAbilityProjectileTexture()));
-        event.registerEntityRenderer(EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.INFERNO.get().getAbilityProjectileTexture()));
-        event.registerEntityRenderer(EntitiesRegister.MYSTIC_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.MYSTIC.get().getAbilityProjectileTexture()));
-        event.registerEntityRenderer(EntitiesRegister.VITALITY_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.VITALITY.get().getAbilityProjectileTexture()));
-        event.registerEntityRenderer(EntitiesRegister.LIGHTNING_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.LIGHTNING.get().getAbilityProjectileTexture()));
-        event.registerEntityRenderer(EntitiesRegister.GENERIC_PROJECTILE.get(), GenericProjectileRenderer::new);
-        event.registerEntityRenderer(EntitiesRegister.CUSTOM_AOE_CLOUD.get(), CustomAoeRenderer::new);
-        event.registerEntityRenderer(EntitiesRegister.ETERNAL_WIZARD.get(), EternalWizardRenderer::new);
-        event.registerEntityRenderer(EntitiesRegister.DECOY.get(), DecoyRenderer::new);
     }
 
     @SubscribeEvent

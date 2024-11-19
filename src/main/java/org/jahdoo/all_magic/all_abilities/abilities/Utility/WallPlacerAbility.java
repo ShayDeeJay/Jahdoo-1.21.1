@@ -3,9 +3,9 @@ package org.jahdoo.all_magic.all_abilities.abilities.Utility;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.all_magic.AbstractAbility;
 import org.jahdoo.all_magic.AbstractElement;
 import org.jahdoo.all_magic.JahdooRarity;
+import org.jahdoo.all_magic.all_abilities.ability_components.AbstractBlockAbility;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
@@ -13,16 +13,16 @@ import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.all_magic.AbilityBuilder;
 
-public class RedstoneActivatorAbility extends AbstractAbility {
-    private final ResourceLocation abilityId = ModHelpers.res("redstone_activator");
+import static org.jahdoo.all_magic.AbilityBuilder.OFFSET;
+import static org.jahdoo.all_magic.AbilityBuilder.SIZE;
+
+public class WallPlacerAbility extends AbstractBlockAbility {
+    public static final ResourceLocation abilityId = ModHelpers.res("wall_placer");
 
     @Override
     public void invokeAbility(Player player) {
         GenericProjectile genericProjectile = new GenericProjectile(
-            player,
-            0.06,
-            EntityPropertyRegister.REDSTONE_ACTIVATOR.get().setAbilityId(),
-            abilityId.getPath().intern()
+            player, 0.06, projectileKey(), abilityId.getPath().intern()
         );
         fireUtilityProjectile(genericProjectile, player);
     }
@@ -42,8 +42,14 @@ public class RedstoneActivatorAbility extends AbstractAbility {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(10, 5, 1)
-            .setCooldown(40, 10, 5)
+            .setAbilityTagModifiersRandom(SIZE, 12,3, true, 3)
+            .setModifierWithStep(OFFSET, 12,-12, true, 12, 1)
             .build();
+    }
+
+    @Override
+    public boolean isInputUser() {
+        return true;
     }
 
     @Override
@@ -64,5 +70,10 @@ public class RedstoneActivatorAbility extends AbstractAbility {
     @Override
     public AbstractElement getElemenType() {
         return ElementRegistry.UTILITY.get();
+    }
+
+    @Override
+    public String projectileKey() {
+        return EntityPropertyRegister.WALL_PLACER.get().setAbilityId();
     }
 }
