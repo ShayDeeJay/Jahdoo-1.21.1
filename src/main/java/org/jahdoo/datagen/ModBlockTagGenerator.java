@@ -41,6 +41,7 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .addTag(BlockTags.FLOWERS)
             .addTag(BlockTags.SNOW)
             .addTag(BlockTags.CROPS)
+            .addTag(BlockTags.LEAVES)
             .addTag(BlockTags.REPLACEABLE);
 
     }

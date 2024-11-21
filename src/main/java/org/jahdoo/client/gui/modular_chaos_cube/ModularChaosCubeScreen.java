@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.all_magic.all_abilities.ability_components.AbstractBlockAbility;
+import org.jahdoo.ability.all_abilities.ability_components.AbstractBlockAbility;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.client.gui.ToggleComponent;
@@ -180,10 +180,7 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
         }
     }
 
-    public void buildCarouselComponent(
-        int posX, int posY,
-        String label
-    ){
+    public void buildCarouselComponent(int posX, int posY, String label){
         var widget = new WidgetSprites(BLANK, BLANK);
         this.addRenderableOnly(textWithBackground(posX + 22, posY, Component.literal(String.valueOf(ModularChaosCubeProperties.getSpeed(entity()))), this.getMinecraft(), Component.literal(label)));
         this.addRenderableWidget(menuButton(posX + 41, posY + 6, (press) -> decreaseSpeed(), DIRECTION_ARROW_BACK, 20, false,8, widget, false));

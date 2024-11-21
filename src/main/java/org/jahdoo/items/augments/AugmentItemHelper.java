@@ -18,9 +18,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.all_magic.AbstractAbility;
-import org.jahdoo.all_magic.AbstractElement;
-import org.jahdoo.all_magic.JahdooRarity;
+import org.jahdoo.ability.AbilityRegistrar;
+import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.ability.JahdooRarity;
 import org.jahdoo.client.gui.augment_menu.AugmentScreen;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.DataComponentHelper;
@@ -30,6 +30,7 @@ import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
-import static org.jahdoo.all_magic.AbilityBuilder.*;
+import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.items.augments.AugmentRatingSystem.*;
 import static org.jahdoo.registers.DataComponentRegistry.*;
 
@@ -121,7 +122,7 @@ public class AugmentItemHelper {
         setAbilityToAugment(itemStack, ability, wandAbilityHolder);
     }
 
-    public static void setAbilityToAugment(ItemStack itemStack, AbstractAbility ability, WandAbilityHolder wandAbilityHolder){
+    public static void setAbilityToAugment(ItemStack itemStack, AbilityRegistrar ability, WandAbilityHolder wandAbilityHolder){
         int type;
         DataComponentHelper.setAbilityTypeItemStack(itemStack, ability.setAbilityId());
         if (ability.isMultiType()) {
@@ -182,10 +183,7 @@ public class AugmentItemHelper {
 
 
         if(time.stream().anyMatch(keys::contains)){
-            var duration = Double.parseDouble(current) / 20;
-            var minutes = (int)(duration / 60);
-            var seconds = (int)(duration % 60);
-            converter = duration >= 60 ? minutes + "m " + seconds + "s" : duration + "s";
+            converter = ticksToTime(current);
         } else if (probability.stream().anyMatch(keys::contains)) {
             converter = convertToPercentage(Integer.parseInt(current)) + "%";
         } else if (distance.stream().anyMatch(keys::contains)) {
@@ -203,6 +201,15 @@ public class AugmentItemHelper {
         return Component
             .literal(converter)
             .withStyle(style -> style.withColor( getComparison == 1 ? matchesStat : getComparison == 2 ?  betterThanStat : worseThanStat));
+    }
+
+    public static @NotNull String ticksToTime(String current) {
+        String converter;
+        var duration = Double.parseDouble(current) / 20;
+        var minutes = (int)(duration / 60);
+        var seconds = (int)(duration % 60);
+        converter = duration >= 60 ? minutes + "m " + seconds + "s" : duration + "s";
+        return converter;
     }
 
     public static Component getCurrentModifierRating(ItemStack itemStack, ItemStack itemStack1, String keys, String abilityLocation) {
@@ -331,10 +338,10 @@ public class AugmentItemHelper {
                 s -> {
                     var location = ModHelpers.res(s);
                     if (location.getPath().isEmpty()) return;
-                    var abstractAbility = AbilityRegister.REGISTRY.get(ModHelpers.res(s));
-                    if (abstractAbility != null) {
+                    var abilityRegistrars = AbilityRegister.REGISTRY.get(ModHelpers.res(s));
+                    if (abilityRegistrars != null) {
                         component.set(
-                            Component.literal(abstractAbility.getAbilityName())
+                            Component.literal(abilityRegistrars.getAbilityName())
                                 .withStyle((style) -> style.withColor(info.textColourPrimary()))
                         );
                     }
@@ -365,11 +372,11 @@ public class AugmentItemHelper {
         return Component.literal("Unidentified Augment").withStyle(style -> style.withColor(-9013642));
     }
 
-    public static void setAugmentModificationScreen(ItemStack itemStack, @org.jetbrains.annotations.Nullable Screen previousScreen){
+    public static void setAugmentModificationScreen(ItemStack itemStack, @Nullable Screen previousScreen){
         Minecraft.getInstance().setScreen(getAugmentModificationScreen(itemStack, previousScreen));
     }
 
-    public static Screen getAugmentModificationScreen(ItemStack itemStack, @org.jetbrains.annotations.Nullable Screen previousScreen) {
+    public static Screen getAugmentModificationScreen(ItemStack itemStack, @Nullable Screen previousScreen) {
         var itemStacks = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         if(itemStacks != null){
             var item = itemStacks.abilityProperties().keySet().stream().findFirst();
@@ -416,7 +423,7 @@ public class AugmentItemHelper {
         return Optional.empty();
     }
 
-    public static boolean isConfigAbility(AbstractAbility selectedAbility, String ability, ItemStack itemStack) {
+    public static boolean isConfigAbility(AbilityRegistrar selectedAbility, String ability, ItemStack itemStack) {
         var wandAbilityHolder = itemStack.get(WAND_ABILITY_HOLDER);
         if(wandAbilityHolder == null) return false;
         var abilityHolder = wandAbilityHolder.abilityProperties().get(ability);

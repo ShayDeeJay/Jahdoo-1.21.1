@@ -6,7 +6,9 @@ import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -19,7 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.all_magic.AbstractElement;
+import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
@@ -128,6 +130,15 @@ public class ModHelpers {
 
     public static void  getSoundWithPosition(Level level, BlockPos position, SoundEvent audio, float volume, float pitch){
         level.playSound(null, position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume, pitch) ;
+    }
+
+    public static void sendPacketsToPlayer(Level level, CustomPacketPayload payloads) {
+        if((level instanceof ServerLevel serverLevel)){
+            for (int j = 0; j < serverLevel.players().size(); ++j) {
+                var serverplayer = serverLevel.players().get(j);
+                PacketDistributor.sendToPlayer(serverplayer, payloads);
+            }
+        }
     }
 
     public static void debugComponent(ItemStack itemStack, Player player){

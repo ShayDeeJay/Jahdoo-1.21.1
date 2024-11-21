@@ -8,16 +8,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
+import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.client.gui.IconLocations;
 import org.jahdoo.components.DataComponentHelper;
-import org.jahdoo.all_magic.AbstractAbility;
-import org.jahdoo.all_magic.AbstractElement;
+import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 
-import static org.jahdoo.all_magic.AbilityBuilder.*;
+import static org.jahdoo.ability.AbilityBuilder.*;
 
 public class SharedUI {
 
@@ -32,7 +32,7 @@ public class SharedUI {
     }
 
     public static void getAbilityNameWithColour(
-        AbstractAbility abstractAbility,
+        AbilityRegistrar abilityRegistrar,
         GuiGraphics guiGraphics,
         int posX,
         int posY,
@@ -41,23 +41,23 @@ public class SharedUI {
         var player = Minecraft.getInstance().player;
         if(player != null){
             Font font = Minecraft.getInstance().font;
-            var element = getElementColour(abstractAbility, player.getMainHandItem());
+            var element = getElementColour(abilityRegistrar, player.getMainHandItem());
             if (isCenteredString) {
-                guiGraphics.drawCenteredString(font, abstractAbility.getAbilityName(), posX, posY, element);
+                guiGraphics.drawCenteredString(font, abilityRegistrar.getAbilityName(), posX, posY, element);
                 return;
             }
-            guiGraphics.drawString(font, abstractAbility.getAbilityName(), posX, posY, element, false);
+            guiGraphics.drawString(font, abilityRegistrar.getAbilityName(), posX, posY, element, false);
         }
     }
 
     public static int getElementColour(
-        AbstractAbility abstractAbility,
+        AbilityRegistrar abilityRegistrars,
         ItemStack itemStack
     ){
         int element;
-        if (abstractAbility.isMultiType()) {
+        if (abilityRegistrars.isMultiType()) {
             var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
-            var abilityHolder = wandAbilityHolder.abilityProperties().get(abstractAbility.setAbilityId());
+            var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityRegistrars.setAbilityId());
             var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
             var abstractElement = ElementRegistry.getElementByTypeId((int) abilityModifiers.actualValue());
 
@@ -67,27 +67,27 @@ public class SharedUI {
                 element = -1;
             }
         } else {
-            element = abstractAbility.getElemenType().textColourPrimary();
+            element = abilityRegistrars.getElemenType().textColourPrimary();
         }
 
         return element;
     }
 
     public static AbstractElement getElementWithType(
-        AbstractAbility abstractAbility,
+        AbilityRegistrar abilityRegistrars,
         ItemStack itemStack
     ){
         AbstractElement element = ElementRegistry.MYSTIC.get();
-        if (abstractAbility.isMultiType()) {
+        if (abilityRegistrars.isMultiType()) {
 
             var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
-            var abilityHolder = wandAbilityHolder.abilityProperties().get(abstractAbility.setAbilityId());
+            var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityRegistrars.setAbilityId());
             var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
             var abstractElement = ElementRegistry.getElementByTypeId((int) abilityModifiers.actualValue());
             if(!abstractElement.isEmpty()) element = abstractElement.getFirst();
 
         } else {
-            element = abstractAbility.getElemenType();
+            element = abilityRegistrars.getElemenType();
         }
 
         return element;
@@ -123,13 +123,13 @@ public class SharedUI {
         );
 
         if(cachedItem == null) return;
-        var abstractAbility = AbilityRegister.getSpellsByTypeId(DataComponentHelper.getAbilityTypeItemStack(cachedItem));
+        var abilityRegistrars = AbilityRegister.getSpellsByTypeId(DataComponentHelper.getAbilityTypeItemStack(cachedItem));
 
-        if(!abstractAbility.isEmpty()){
-            if (!abstractAbility.getFirst().getAbilityIconLocation().getPath().isEmpty()) {
-                if(abstractAbility.getFirst().getAbilityIconLocation() != null){
+        if(!abilityRegistrars.isEmpty()){
+            if (!abilityRegistrars.getFirst().getAbilityIconLocation().getPath().isEmpty()) {
+                if(abilityRegistrars.getFirst().getAbilityIconLocation() != null){
                     guiGraphics.blit(
-                        abstractAbility.getFirst().getAbilityIconLocation(),
+                        abilityRegistrars.getFirst().getAbilityIconLocation(),
                         posX1, posY1, 0, 0, imageWithShrink, imageWithShrink, imageWithShrink, imageWithShrink
                     );
                 }

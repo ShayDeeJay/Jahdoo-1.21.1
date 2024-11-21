@@ -72,7 +72,6 @@ public class InfuserBlock extends BaseEntityBlock {
                     f15 * 0.02F);
             }
         }
-
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {

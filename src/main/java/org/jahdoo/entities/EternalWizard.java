@@ -23,8 +23,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jahdoo.all_magic.all_abilities.abilities.FrostboltsAbility;
-import org.jahdoo.all_magic.all_abilities.ability_components.EtherealArrow;
+import org.jahdoo.ability.all_abilities.abilities.FrostboltsAbility;
+import org.jahdoo.ability.all_abilities.ability_components.EtherealArrow;
 import org.jahdoo.entities.goals.*;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.items.wand.WandItemHelper;
@@ -34,11 +34,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-import static org.jahdoo.all_magic.AbilityBuilder.*;
+import static org.jahdoo.ability.AbilityBuilder.*;
 
 public class EternalWizard extends AbstractSkeleton {
     private static final EntityDataAccessor<Boolean> SET_MODE = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> LIFETIMES = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> PRIVATE_TICKS = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.INT);
     private final RangedCustomAttackGoal<AbstractSkeleton> wandGoal = new RangedCustomAttackGoal<>(this, 1.0D, 0, 30.0F);
     Player player;
     UUID playerUUID;
@@ -47,6 +49,7 @@ public class EternalWizard extends AbstractSkeleton {
     int effectStrength;
     int effectChance;
     int lifeTime;
+    public int privateTicks;
 
     public float getInternalScale() {
         return this.entityData.get(SCALE);
@@ -62,6 +65,22 @@ public class EternalWizard extends AbstractSkeleton {
 
     public void setMode(boolean getSelectedAbility) {
         this.entityData.set(SET_MODE, getSelectedAbility);
+    }
+
+    public int getLifetime() {
+        return this.entityData.get(LIFETIMES);
+    }
+
+    public void setLifetimes(int lifetimes) {
+        this.entityData.set(LIFETIMES, lifetimes);
+    }
+
+    public int getPrivateTicks() {
+        return this.entityData.get(PRIVATE_TICKS);
+    }
+
+    public void setPrivateTicks(int privateTicks) {
+        this.entityData.set(PRIVATE_TICKS, privateTicks);
     }
 
     public EternalWizard(EntityType<? extends AbstractSkeleton> pEntityType, Level pLevel) {
@@ -84,6 +103,7 @@ public class EternalWizard extends AbstractSkeleton {
         this.effectStrength = effectStrength;
         this.lifeTime = lifeTime;
         this.effectChance = effectChance;
+        this.setLifetimes(lifeTime);
     }
 
     @Override
@@ -132,9 +152,11 @@ public class EternalWizard extends AbstractSkeleton {
     @Override
     public void tick() {
         super.tick();
+        privateTicks++;
         if(!(this.level() instanceof ServerLevel serverLevel)) return;
+        this.setPrivateTicks(this.privateTicks);
         if(player == null && this.playerUUID != null) this.player = serverLevel.getPlayerByUUID(this.playerUUID);
-        if(this.tickCount >= lifeTime) this.discard();
+        if(this.privateTicks >= lifeTime) this.discard();
     }
 
     @Override
@@ -188,31 +210,35 @@ public class EternalWizard extends AbstractSkeleton {
         super.defineSynchedData(pBuilder);
         pBuilder.define(SET_MODE, true);
         pBuilder.define(SCALE, 0f);
+        pBuilder.define(LIFETIMES, this.lifeTime);
+        pBuilder.define(PRIVATE_TICKS, this.privateTicks);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
+        if(this.player != null) pCompound.putUUID("savePlayer", player.getUUID());
         pCompound.putBoolean("mode",this.getMode());
         pCompound.putDouble(DAMAGE, this.damage);
         pCompound.putInt(EFFECT_DURATION, this.effectDuration);
         pCompound.putInt(EFFECT_STRENGTH, this.effectStrength);
         pCompound.putInt(EFFECT_CHANCE, this.effectChance);
         pCompound.putInt(LIFETIME, this.lifeTime);
-        pCompound.putInt("customTicks", this.tickCount);
-        if(this.player != null) pCompound.putUUID("savePlayer", player.getUUID());
+        pCompound.putInt("private_ticks", this.privateTicks);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.playerUUID = pCompound.getUUID("savePlayer");
-        this.damage = pCompound.getDouble("abilityAttributes");
-        this.effectDuration = pCompound.getInt("effectDuration");
-        this.effectStrength = pCompound.getInt("effectStrength");
-        this.lifeTime = pCompound.getInt("lifeTime");
-        this.tickCount = pCompound.getInt("customTicks");
-        this.effectChance = pCompound.getInt("effectChance");
+        this.setMode(pCompound.getBoolean("mode"));
+        this.damage = pCompound.getDouble(DAMAGE);
+        this.effectDuration = pCompound.getInt(EFFECT_DURATION);
+        this.effectStrength = pCompound.getInt(EFFECT_STRENGTH);
+        this.effectChance = pCompound.getInt(EFFECT_CHANCE);
+        this.lifeTime = pCompound.getInt(LIFETIME);
+        this.privateTicks = pCompound.getInt("private_ticks");
+        this.setLifetimes(this.lifeTime);
         this.setScale(1);
         this.setMode(pCompound.getBoolean("mode"));
     }

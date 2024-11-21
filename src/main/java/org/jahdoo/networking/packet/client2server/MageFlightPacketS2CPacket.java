@@ -5,7 +5,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.all_magic.wand_perks.mage_flight.MageFlightClient;
+import org.jahdoo.ability.wand_perks.mage_flight.MageFlightClient;
 import org.jahdoo.utils.ModHelpers;
 
 public class MageFlightPacketS2CPacket implements CustomPacketPayload {

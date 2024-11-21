@@ -1,8 +1,6 @@
 package org.jahdoo.block.light_block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -10,18 +8,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.all_magic.AbstractElement;
-import org.jahdoo.all_magic.ElementProperties;
-import org.jahdoo.particle.ParticleStore;
-import org.jahdoo.particle.particle_options.BakedParticleOptions;
-import org.jahdoo.particle.particle_options.GenericParticleOptions;
+import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.particle.ParticleHandlers;
 
 import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
-import static org.jahdoo.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
 
 public class LightBlock extends Block {
 

@@ -12,7 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.level.Level;
 import org.jahdoo.components.WandAbilityHolder;
-import org.jahdoo.all_magic.DefaultEntityBehaviour;
+import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.EntitiesRegister;
 import org.jahdoo.registers.EntityPropertyRegister;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class AoeCloud extends Entity implements TraceableEntity {
+public class AoeCloud extends Entity implements TraceableEntity, IEntityProperties {
     public static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(AoeCloud.class, EntityDataSerializers.FLOAT);
     LivingEntity owner;
     UUID ownerUUID;
@@ -49,7 +49,7 @@ public class AoeCloud extends Entity implements TraceableEntity {
         this.wandAbilityHolder = livingEntity.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
-        this.getAoe = EntityPropertyRegister.REGISTRY.get(ModHelpers.res(selectedAbility)).getEntityProperty();
+        this.getAoe = EntityPropertyRegister.getProperty(selectedAbility);
         this.getAoe.getAoeCloud(this);
         this.getRandomCloudRadius = ModHelpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
     }
@@ -62,7 +62,7 @@ public class AoeCloud extends Entity implements TraceableEntity {
         this.wandAbilityHolder = wandAbilityHolder;
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
-        this.getAoe = EntityPropertyRegister.REGISTRY.get(ModHelpers.res(selectedAbility)).getEntityProperty();
+        this.getAoe = EntityPropertyRegister.getProperty(selectedAbility);
         this.getAoe.getAoeCloud(this);
         this.getRandomCloudRadius = ModHelpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
     }

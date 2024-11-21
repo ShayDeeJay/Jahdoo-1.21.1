@@ -19,7 +19,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.all_magic.AbstractAbility;
+import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.WandData;
 import org.jahdoo.networking.packet.client2server.SelectedAbilityC2SPacket;
@@ -108,11 +108,11 @@ public class AbilityWheelMenu extends Screen  {
         );
 
         if(isSelected){
-            selectedAbility.ifPresent(abstractAbility -> showConfig(wandData, player, abstractAbility, buttonX + 10, buttonY - 10));
+            selectedAbility.ifPresent(abilityRegistrars -> showConfig(wandData, player, abilityRegistrars, buttonX + 10, buttonY - 10));
         }
     }
 
-    private void showConfig(WandData wandData, Player player, AbstractAbility selectedAbility, int posX, int posY) {
+    private void showConfig(WandData wandData, Player player, AbilityRegistrar selectedAbility, int posX, int posY) {
         var configButton = new WidgetSprites(COG, COG);
         var configButtonSize = 20;
         var itemStack = player.getMainHandItem();
@@ -190,7 +190,7 @@ public class AbilityWheelMenu extends Screen  {
         int y = this.height / 2;
         if (localTick >= (RADIAL_SIZE - 20)) {
             ResourceLocation getAbilityId = DataComponentHelper.getAbilityTypeWand(getMinecraft().player);
-            List<AbstractAbility> getAbility = AbilityRegister.getSpellsByTypeId(getAbilityId.getPath().intern());
+            List<AbilityRegistrar> getAbility = AbilityRegister.getSpellsByTypeId(getAbilityId.getPath().intern());
            if(!getAbility.isEmpty()){
                 SharedUI.getAbilityNameWithColour(getAbility.getFirst(), guiGraphics, x, y - 90, true);
            }

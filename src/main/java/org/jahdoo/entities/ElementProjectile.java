@@ -14,9 +14,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jahdoo.components.WandAbilityHolder;
-import org.jahdoo.all_magic.AbstractElement;
-import org.jahdoo.all_magic.DefaultEntityBehaviour;
-import org.jahdoo.all_magic.ProjectileProperties;
+import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.ability.DefaultEntityBehaviour;
+import org.jahdoo.ability.ProjectileProperties;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.DataComponentRegistry;
@@ -30,7 +30,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import static org.jahdoo.entities.ProjectileAnimations.*;
 
-public class ElementProjectile extends ProjectileProperties implements GeoEntity {
+public class ElementProjectile extends ProjectileProperties implements IEntityProperties, GeoEntity {
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final EntityDataAccessor<Integer> ADDITIONAL_PREDICATE = SynchedEntityData.defineId(ElementProjectile.class, EntityDataSerializers.INT);
@@ -129,9 +129,6 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
         return EntityPropertyRegister.getProperty(selectedAbility);
     }
 
-    public WandAbilityHolder wandAbilityHolder(){
-        return this.wandAbilityHolder;
-    }
 
     @Override
     public void lerpTo(double pX, double pY, double pZ, float pYRot, float pXRot, int pSteps) {
@@ -269,5 +266,10 @@ public class ElementProjectile extends ProjectileProperties implements GeoEntity
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
+    }
+
+    @Override
+    public WandAbilityHolder getwandabilityholder() {
+        return this.wandAbilityHolder;
     }
 }

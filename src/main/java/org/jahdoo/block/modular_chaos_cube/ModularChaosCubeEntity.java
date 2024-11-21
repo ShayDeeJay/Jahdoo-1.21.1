@@ -23,7 +23,7 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.jahdoo.all_magic.all_abilities.ability_components.AbstractBlockAbility;
+import org.jahdoo.ability.all_abilities.ability_components.AbstractBlockAbility;
 import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.client.gui.IconLocations;

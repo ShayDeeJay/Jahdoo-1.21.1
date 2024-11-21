@@ -11,11 +11,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.all_magic.AbstractElement;
+import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
 import java.util.List;

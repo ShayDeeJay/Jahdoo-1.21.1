@@ -14,7 +14,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
-import org.jahdoo.all_magic.JahdooRarity;
+import org.jahdoo.ability.JahdooRarity;
 import org.jahdoo.components.WandData;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.augments.AugmentItemHelper;
@@ -30,7 +30,7 @@ import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.function.Supplier;
 
-import static org.jahdoo.all_magic.JahdooRarity.*;
+import static org.jahdoo.ability.JahdooRarity.*;
 import static org.jahdoo.registers.AttributesRegister.*;
 import static org.jahdoo.utils.ModHelpers.Random;
 import static org.jahdoo.utils.ModHelpers.singleFormattedDouble;

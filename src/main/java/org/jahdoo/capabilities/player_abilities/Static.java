@@ -9,15 +9,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jahdoo.capabilities.AbstractAttachment;
 import org.jahdoo.components.AbilityHolder;
-import org.jahdoo.all_magic.AbstractElement;
-import org.jahdoo.all_magic.all_abilities.abilities.StaticAbility;
+import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.ability.all_abilities.abilities.StaticAbility;
 import org.jahdoo.entities.EternalWizard;
 import org.jahdoo.items.wand.CastHelper;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.*;
-import org.jahdoo.all_magic.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.CustomMobEffect;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.utils.ModHelpers;
 
@@ -27,7 +27,7 @@ import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.spawnElectrifiedParticles;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 import static org.jahdoo.registers.AttachmentRegister.STATIC;
-import static org.jahdoo.all_magic.AbilityBuilder.*;
+import static org.jahdoo.ability.AbilityBuilder.*;
 
 public class Static implements AbstractAttachment {
 

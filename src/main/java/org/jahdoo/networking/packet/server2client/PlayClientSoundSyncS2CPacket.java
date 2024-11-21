@@ -7,6 +7,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.utils.ModHelpers;
 
@@ -43,7 +44,6 @@ public class PlayClientSoundSyncS2CPacket implements CustomPacketPayload {
                 @Override
                 public void run() {
                     if(ctx.player() instanceof LocalPlayer localPlayer) {
-
                         localPlayer.playSound(soundEvents, volume, pitch);
                     }
                 }

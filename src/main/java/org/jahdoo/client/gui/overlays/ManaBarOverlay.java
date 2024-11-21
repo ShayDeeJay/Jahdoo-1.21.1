@@ -8,7 +8,7 @@ import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.all_magic.AbstractAbility;
+import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.capabilities.CastingData;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.AbilityRegister;
@@ -34,7 +34,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var player = minecraft.player;
         if(player == null || minecraft.options.hideGui) return;
         var manaBarWidth = 57;
-        var abstractAbility = AbilityRegister.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
+        var abilityRegistrars = AbilityRegister.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
         var casterData = player.getData(CASTER_DATA);
         var manaPool = casterData.getManaPool();
         var maxMana = casterData.getMaxMana(player);
@@ -53,7 +53,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         alignedGui.displayGuiLayer(1, 29, 120, 89, 29);
         alignedGui.displayGuiLayer(40, 25, 108, 52, 3);
         this.setTypeOverlay(alignedGui, player, manaProgress + 3);
-        this.cooldownOverlay(abstractAbility, casterData, pGuiGraphics, minecraft);
+        this.cooldownOverlay(abilityRegistrars, casterData, pGuiGraphics, minecraft);
         this.manaPoolCount(casterData, pGuiGraphics, minecraft);
 
         pGuiGraphics.pose().popPose();
@@ -75,7 +75,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         }
     }
 
-    private void cooldownOverlay(AbstractAbility ability, CastingData casterData, GuiGraphics pGuiGraphics, Minecraft minecraft){
+    private void cooldownOverlay(AbilityRegistrar ability, CastingData casterData, GuiGraphics pGuiGraphics, Minecraft minecraft){
         if (ability != null) {
             alignedGui.displayGuiLayer(4, 26, 0, 0, 23, ability.getAbilityIconLocation());
             if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {

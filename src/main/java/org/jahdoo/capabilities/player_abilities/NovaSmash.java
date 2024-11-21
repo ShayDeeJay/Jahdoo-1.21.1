@@ -20,11 +20,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.all_magic.AbstractElement;
-import org.jahdoo.all_magic.all_abilities.abilities.NovaSmashAbility;
+import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.capabilities.AbstractAttachment;
-import org.jahdoo.items.wand.CastHelper;
-import org.jahdoo.networking.packet.server2client.MageFlightDataSyncS2CPacket;
 import org.jahdoo.networking.packet.server2client.NovaSmashS2CPacket;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
@@ -129,7 +126,6 @@ public class NovaSmash implements AbstractAttachment {
     }
 
     private void setKnockbackAndDamage(Player player, int getMaxDeltaMovement){
-        System.out.println(this.getDamage * 3);
         player.level().getNearbyEntities(
             LivingEntity.class, TargetingConditions.DEFAULT, player,
             player.getBoundingBox().inflate(6, 2, 6)

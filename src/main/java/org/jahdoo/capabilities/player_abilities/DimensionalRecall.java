@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.all_magic.AbstractElement;
+import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.capabilities.AbstractHoldUseAttachment;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.components.WandAbilityHolder;
@@ -17,9 +17,9 @@ import org.jahdoo.utils.PositionGetters;
 
 import java.util.List;
 
-import static org.jahdoo.all_magic.AbilityBuilder.COOLDOWN;
-import static org.jahdoo.all_magic.AbilityBuilder.MANA_COST;
-import static org.jahdoo.all_magic.all_abilities.abilities.DimensionalRecallAbility.abilityId;
+import static org.jahdoo.ability.AbilityBuilder.COOLDOWN;
+import static org.jahdoo.ability.AbilityBuilder.MANA_COST;
+import static org.jahdoo.ability.all_abilities.abilities.DimensionalRecallAbility.abilityId;
 import static org.jahdoo.items.wand.CastHelper.validManaAndCooldown;
 import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;

@@ -14,6 +14,7 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jahdoo.entities.EternalWizard;
+import org.jetbrains.annotations.NotNull;
 
 public class WizardModel <T extends Mob & RangedAttackMob> extends HumanoidModel<T> {
     public WizardModel(ModelPart pRoot) {
@@ -30,18 +31,9 @@ public class WizardModel <T extends Mob & RangedAttackMob> extends HumanoidModel
         return LayerDefinition.create(meshdefinition, 64, 32);
     }
 
-    public void prepareMobModel(T pEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick) {
+    public void prepareMobModel(@NotNull T pEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick) {
         this.rightArmPose = ArmPose.EMPTY;
         this.leftArmPose = ArmPose.EMPTY;
-        ItemStack itemstack = pEntity.getItemInHand(InteractionHand.MAIN_HAND);
-        if (itemstack.is(Items.BOW) && pEntity.isAggressive()) {
-            if (pEntity.getMainArm() == HumanoidArm.RIGHT) {
-                this.rightArmPose = ArmPose.BOW_AND_ARROW;
-            } else {
-                this.leftArmPose = ArmPose.BOW_AND_ARROW;
-            }
-        }
-
         super.prepareMobModel(pEntity, pLimbSwing, pLimbSwingAmount, pPartialTick);
     }
 

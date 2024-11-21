@@ -21,7 +21,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -179,9 +178,7 @@ public class WandItem extends BlockItem implements GeoItem {
                 private WandItemRenderer renderer;
                 @Override
                 public BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
-                    if (this.renderer == null)
-                        this.renderer = new WandItemRenderer();
-
+                    if (this.renderer == null) this.renderer = new WandItemRenderer();
                     return this.renderer;
                 }
             }

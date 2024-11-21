@@ -8,12 +8,11 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.all_magic.effects.custom_effects.*;
-import org.jahdoo.all_magic.effects.custom_effects.type_effects.*;
+import org.jahdoo.ability.effects.custom_effects.*;
+import org.jahdoo.ability.effects.custom_effects.type_effects.*;
 
 public class EffectsRegister {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, JahdooMod.MOD_ID);
@@ -26,7 +25,6 @@ public class EffectsRegister {
 
     public static final DeferredHolder<MobEffect, MobEffect> MANA_REGENERATION = MOB_EFFECTS.register("mana_regeneration",
         () -> new GenericEffect(MobEffectCategory.BENEFICIAL, 3436524).addAttributeModifier(AttributesRegister.MANA_REGEN, ResourceLocation.withDefaultNamespace("man_regen"),1.0D, AttributeModifier.Operation.ADD_VALUE));
-
 
     public static final DeferredHolder<MobEffect, MobEffect> REPLENISH_MANA = MOB_EFFECTS.register("replenish_mana",
         () -> new ReplenishManaEffect(MobEffectCategory.BENEFICIAL, 3436524)

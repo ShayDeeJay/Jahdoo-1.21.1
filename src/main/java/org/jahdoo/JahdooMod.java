@@ -1,19 +1,12 @@
 package org.jahdoo;
 
 
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jahdoo.client.curio_renderer.TomeRenderer;
-import org.jahdoo.client.gui.modular_chaos_cube.ModularChaosCubeScreen;
-import org.jahdoo.client.gui.infusion_table.InfusionTableScreen;
-import org.jahdoo.client.gui.wand_block.WandBlockScreen;
 import org.jahdoo.loot.ModLootModifiers;
 import org.jahdoo.recipe.RecipeRegistry;
 import org.jahdoo.registers.*;
@@ -55,17 +48,6 @@ public class JahdooMod {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         CuriosRendererRegistry.register(ItemsRegister.TOME_OF_UNITY.get(), TomeRenderer::new);
-    }
-
-    @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents {
-        @SubscribeEvent
-        public static void onClientSetup(RegisterMenuScreensEvent event) {
-            event.register(MenusRegister.CRYSTAL_INFUSION_MENU.get(), InfusionTableScreen::new);
-            event.register(MenusRegister.WAND_BLOCK_MENU.get(), WandBlockScreen::new);
-            event.register(MenusRegister.MODULAR_CHAOS_CUBE_MENU.get(), ModularChaosCubeScreen::new);
-
-        }
     }
 
 }

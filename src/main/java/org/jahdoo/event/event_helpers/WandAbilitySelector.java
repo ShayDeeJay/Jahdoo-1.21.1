@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.all_magic.AbstractAbility;
+import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityWheelMenu;
 import org.jahdoo.networking.packet.client2server.SelectedAbilityC2SPacket;
@@ -31,7 +31,7 @@ public class WandAbilitySelector {
         boolean condition2 = !arrangedAbilities.isEmpty() && arrangedAbilities.size() > keyNum - 1;
 
         if(condition1 || condition2){
-            List<AbstractAbility> getAbility = AbilityRegister.getSpellsByTypeId(arrangedAbilities.get(keyNum - 1));
+            List<AbilityRegistrar> getAbility = AbilityRegister.getSpellsByTypeId(arrangedAbilities.get(keyNum - 1));
             if(!getAbility.isEmpty()){
                 var a1 = getAbility.getFirst();
                 var a = withStyleComponent(a1.getAbilityName(),SharedUI.getElementColour(a1, playerHandItem));

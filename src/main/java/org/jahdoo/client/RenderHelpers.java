@@ -4,10 +4,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
+import org.jahdoo.JahdooMod;
+import org.jahdoo.utils.ModHelpers;
 import org.joml.Matrix4f;
 
 import java.awt.*;
+
+import static net.minecraft.client.renderer.blockentity.BeaconRenderer.BEAM_LOCATION;
 
 public class RenderHelpers {
 
@@ -25,7 +30,7 @@ public class RenderHelpers {
         Matrix4f matrix4f = matrix.last().pose();
         PoseStack.Pose matrix3f = matrix.last();
         int colorRGB = color.getRGB();
-
+        
         builder.addVertex(matrix4f, x, y, z).setColor(colorRGB).setNormal(matrix3f, 1.0F, 0.0F, 0.0F);
         builder.addVertex(matrix4f, dx, y, z).setColor(colorRGB).setNormal(matrix3f, 1.0F, 0.0F, 0.0F);
         builder.addVertex(matrix4f, x, y, z).setColor(colorRGB).setNormal(matrix3f, 0.0F, 1.0F, 0.0F);

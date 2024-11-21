@@ -7,6 +7,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.utils.ModHelpers;
+import org.jetbrains.annotations.NotNull;
 
 import static org.jahdoo.registers.AttachmentRegister.BOUNCY_FOOT;
 
@@ -43,7 +44,6 @@ public class BouncyFootDataSyncS2CPacket implements CustomPacketPayload {
     public boolean handle(IPayloadContext ctx) {
         ctx.enqueueWork(
             new Runnable() {
-                // Use anon - lambda causes classloading issues
                 @Override
                 public void run() {
                     if(ctx.player() instanceof LocalPlayer localPlayer) {
@@ -58,7 +58,7 @@ public class BouncyFootDataSyncS2CPacket implements CustomPacketPayload {
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 }
