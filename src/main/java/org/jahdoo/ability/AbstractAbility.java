@@ -14,4 +14,11 @@ public abstract class AbstractAbility {
         return 0;
     }
 
+    public double getTagUtility(String name) {
+        if(ModHelpers.getModifierValue(getWandAbilityHolder(), abilityId()).get(name) != null){
+            return ModHelpers.getModifierValue(getWandAbilityHolder(), abilityId()).get(name).setValue();
+        }
+        return 0;
+    }
+
 }

@@ -37,7 +37,7 @@ public class AugmentIconButton extends ImageButton {
         var easedTick = easeInOutCubic(normalizedTick);
         var easedValue = (int) (easedTick * (totalSize - defaultSize)) + defaultSize;
         var offset = (easedValue - defaultSize) / 2;
-        var colourValid = FastColor.ABGR32.color(256, 92, 92, 92);
+        var colourValid = -2763307;
         var colourInvalid = FastColor.ABGR32.color(256, 217, 215, 215);
         var getColour = !this.isAvailable ? colourValid : colourInvalid;
 

@@ -68,23 +68,6 @@ public class BlockInteractionHandler {
             }
         }
 
-//        if (!itemStack.isEmpty() && itemStack.is(item)) {
-//            if (inputSlot.isEmpty() || itemStack.is(inputSlot.getItem())) {
-//                int remainingSpace = inputSlot.getMaxStackSize() - inputSlot.getCount();
-//                if (remainingSpace > 0) {
-//                    int amountToAdd = Math.min(remainingSpace, itemStack.getCount());
-//
-//                    ItemStack itemStackCopy = itemStack.copyWithCount(amountToAdd);
-//
-//                    if (!player.getAbilities().instabuild) {
-//                        itemStack.shrink(amountToAdd);
-//                    }
-//                    itemHandler.setStackInSlot(inputSlotNumber, itemStackCopy);
-////                    itemHandler.insertItem(inputSlotNumber, itemStackCopy, false);
-//                    return true;
-//                }
-//            }
-//        }
         return false;
     }
 
@@ -99,6 +82,19 @@ public class BlockInteractionHandler {
         itemStackHandler.setStackInSlot(outputSlot, mainHandItems.copyWithCount(itemCount));
         /*if(!player.isCreative())*/ mainHandItems.shrink(itemCount);
         return true;
+    }
+
+    public static void swapItemsWithHand(
+        ItemStackHandler itemStackHandler,
+        int outputSlot,
+        Player player,
+        InteractionHand hand
+    ){
+        var count = 1;
+        var playerItem = player.getItemInHand(hand).copyWithCount(count);
+        var inventoryItem = itemStackHandler.getStackInSlot(outputSlot).copyWithCount(count);
+        itemStackHandler.setStackInSlot(outputSlot, playerItem);
+        player.setItemInHand(hand, inventoryItem);
     }
 
     public static boolean removeItemsFromSlotToHand(

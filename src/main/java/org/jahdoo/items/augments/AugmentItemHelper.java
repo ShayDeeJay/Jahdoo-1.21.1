@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.ability.all_abilities.abilities.Utility.PlayerScaleAbility.SCALE_VALUE;
 import static org.jahdoo.items.augments.AugmentRatingSystem.*;
 import static org.jahdoo.registers.DataComponentRegistry.*;
 
@@ -270,7 +271,7 @@ public class AugmentItemHelper {
     ){
         var toolTips = new ArrayList<Component>();
         if(itemStack.getComponents().isEmpty()) return toolTips;
-        var exceptions = List.of(COOLDOWN, MANA_COST, SET_ELEMENT_TYPE, "index");
+        var exceptions = List.of(COOLDOWN, MANA_COST, SET_ELEMENT_TYPE, "index", OFFSET, SCALE_VALUE);
         var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         if(wandAbilityHolder == null) return toolTips;
         var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityLocation);

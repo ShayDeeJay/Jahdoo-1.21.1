@@ -45,7 +45,7 @@ public class AbilityBuilder {
     private double getLuckModifier(){
         if(item != null && item.getItem() instanceof Augment){
             var rating = item.get(DataComponentRegistry.AUGMENT_RATING.get());
-            if(rating != null) return Math.max(1, rating); else return 20;
+            if(rating != null) return Math.max(1, rating); else return 1;
         }
         return 1;
     }
@@ -103,6 +103,11 @@ public class AbilityBuilder {
         return this;
     }
 
+    public AbilityBuilder setBlockSize(double high, double low, double step){
+        this.setAbilityTagModifiersRandom(SIZE, high, low, true, step);
+        return this;
+    }
+
     public AbilityBuilder setManaWithValue(double high, double low, double value){
         this.setModifier(MANA_COST, high, low, false, value);
         return this;
@@ -145,11 +150,6 @@ public class AbilityBuilder {
 
     public AbilityBuilder setEffectChanceWithValue(double high, double low, double value){
         this.setModifier(EFFECT_CHANCE, high, low, false, value);
-        return this;
-    }
-
-    public AbilityBuilder setSize(double high, double low, double step){
-        this.setAbilityTagModifiersRandom(SIZE, high, low, true, step);
         return this;
     }
 

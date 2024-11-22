@@ -51,7 +51,7 @@ public class BlockExplosion extends AbstractUtilityProjectile {
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
-        this.totalRadiusMax = (int) this.getTag(EXPLOSION_RANGE);
+        this.totalRadiusMax = (int) this.getTagUtility(EXPLOSION_RANGE);
     }
 
     @Override

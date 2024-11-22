@@ -30,6 +30,7 @@ import static org.jahdoo.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.client.gui.IconLocations.*;
 import static org.jahdoo.client.gui.ToggleComponent.textWithBackground;
+import static org.jahdoo.client.gui.ToggleComponent.textWithBackgroundLarge;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
 public class AugmentScreen extends Screen  {
@@ -81,22 +82,34 @@ public class AugmentScreen extends Screen  {
                 var totalWidth = buttonWidth * buttonCount;
                 var initialHorizontalOffset = (this.width - totalWidth) / 2;
                 var horizontalSpacing = new AtomicInteger(initialHorizontalOffset);
-                overlayHeader(e, verticalSpacing.get() + 10);
-                for (double i = v.lowestValue(); i <= v.highestValue(); i += v.step()) {
-                    setButtonsRow(e, v, i, horizontalSpacing, verticalSpacing, buttonWidth);
+
+
+                if(getTotalIncrements(v.lowestValue(), v.highestValue(), v.step()) < 6){
+                    overlayHeader(e, verticalSpacing.get() + 10);
+                    for (double i = v.lowestValue(); i <= v.highestValue(); i += v.step()) {
+                        setButtonsRow(e, v, i, horizontalSpacing, verticalSpacing, buttonWidth);
+                    }
+                } else {
+                    buildCarouselComponent(
+                        this.width/2 - 70,
+                        verticalSpacing.get(),
+                        e,
+                        ()-> buttonReduce(e, v),
+                        ()-> buttonIncrease(e,v),
+                        ModHelpers.roundNonWholeString(v.setValue())
+                    );
                 }
-                buildCarouselComponent(
-                    verticalSpacing.get(),
-                    initialHorizontalOffset,
-                    e,
-                    ()-> {
-                        updateAugmentConfig(e, v, v.setValue() - v.step());
-                        this.rebuildWidgets();
-                    },
-                    ()-> {}, String.valueOf(v.actualValue()));
                 verticalSpacing.set(verticalSpacing.get() + buttonHeight);
             }
         );
+    }
+
+    private int getTotalIncrements(double low, double high, double step){
+        var increments = new AtomicInteger();
+        for(double i = low; i <= high; i+=step){
+            increments.set(increments.get() + 1);
+        }
+        return increments.get();
     }
 
     private void navigationButtons(AtomicInteger verticalSpacing) {
@@ -108,10 +121,10 @@ public class AugmentScreen extends Screen  {
     }
 
     public void buildCarouselComponent(int posX, int posY, String label, Runnable onLeft, Runnable onRight, String value){
-        var widget = new WidgetSprites(BLANK, BLANK);
-        this.addRenderableOnly(textWithBackground(posX + 22, posY, Component.literal(value), this.getMinecraft(), Component.literal(label)));
-        this.addRenderableWidget(ToggleComponent.menuButton(posX + 41, posY + 6, (press) -> onLeft.run(), DIRECTION_ARROW_BACK, 20, false,8, widget, false));
-        this.addRenderableWidget(ToggleComponent.menuButton(posX + 79, posY + 6, (press) -> onRight.run(), DIRECTION_ARROW_FORWARD,  20,  false, 8, widget, false));
+        var widget = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
+        this.addRenderableOnly(textWithBackgroundLarge(posX + 22, posY, Component.literal(value), this.getMinecraft(), Component.literal(label)));
+        this.addRenderableWidget(ToggleComponent.menuButton(posX + 21, posY , (press) -> onLeft.run(), DIRECTION_ARROW_BACK, 32, false,4, widget, true));
+        this.addRenderableWidget(ToggleComponent.menuButton(posX + 86, posY, (press) -> onRight.run(), DIRECTION_ARROW_FORWARD,  32,  false, 4, widget, true));
     }
 
     private void overlayHeader(String e, int verticalSpacing) {
@@ -119,7 +132,7 @@ public class AugmentScreen extends Screen  {
             new Overlay() {
                 @Override
                 public void render(@NotNull GuiGraphics guiGraphics, int widpos, int i1, float v) {
-                    guiGraphics.drawCenteredString(font, e, width/2 , verticalSpacing -22, -1);
+                    guiGraphics.drawCenteredString(font, e, width/2 , verticalSpacing -22, -6052957);
                 }
             }
         );
@@ -153,6 +166,20 @@ public class AugmentScreen extends Screen  {
         horizontalSpacing.set(horizontalSpacing.get() + buttonWidth);
     }
 
+    private void buttonReduce(String e, AbilityHolder.AbilityModifiers v) {
+//        v.isHigherBetter() ? v.lowestValue() : v.actualValue()
+        if(v.setValue() > v.lowestValue()){
+            updateAugmentConfig(e, v, v.setValue() - v.step());
+            this.rebuildWidgets();
+        }
+    }
+
+    private void buttonIncrease(String e, AbilityHolder.AbilityModifiers v) {
+        if(v.setValue() < v.actualValue()){
+            updateAugmentConfig(e, v, v.setValue() + v.step());
+            this.rebuildWidgets();
+        }
+    }
     private void updateAugmentConfig(String e, AbilityHolder.AbilityModifiers v, double i) {
         var newWandHolder = new WandAbilityHolder(new HashMap<>(holder.abilityProperties()));
         var newHolder = new AbilityHolder(new HashMap<>(holder.abilityProperties().get(abilityName).abilityProperties()));

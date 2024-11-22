@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -26,6 +27,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.block.augment_modification_station.AugmentModificationBlock;
+import org.jahdoo.block.augment_modification_station.AugmentModificationEntity;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jetbrains.annotations.Nullable;
@@ -108,33 +111,51 @@ public class InfuserBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
-        if (!(pLevel.getBlockEntity(pPos) instanceof InfuserBlockEntity tableEntity)) return InteractionResult.FAIL;
-
-        ItemStack itemInPlayerHand = pPlayer.getItemInHand(pPlayer.getUsedItemHand());
-        ItemStack getInputSlot = tableEntity.inputItemHandler.getStackInSlot(0);
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (!(level.getBlockEntity(pos) instanceof InfuserBlockEntity tableEntity)) return ItemInteractionResult.FAIL;
+        var hands = player.getItemInHand(hand);
         ItemStack getOutputSlot = tableEntity.outputItemHandler.getStackInSlot(0);
-
-        if(getInputSlot.isEmpty() && getOutputSlot.isEmpty()){
-            if (itemInPlayerHand.getItem() == ItemsRegister.AUGMENT_ITEM.get()) {
-                tableEntity.inputItemHandler.setStackInSlot(0, itemInPlayerHand.copyWithCount(1));
-                itemInPlayerHand.shrink(1);
-                return InteractionResult.SUCCESS;
-            }
-        }
-
         if(!getOutputSlot.isEmpty()){
-            this.addItemToHand(pPlayer.getMainHandItem(), pPlayer.getUsedItemHand(), pPlayer, getOutputSlot);
-            return InteractionResult.SUCCESS;
+            this.addItemToHand(player.getMainHandItem(), player.getUsedItemHand(), player, getOutputSlot);
+            return ItemInteractionResult.SUCCESS;
+        } else {
+            AugmentModificationBlock.augmentBlockInteraction(level, pos, player, hand, tableEntity, hands, SoundEvents.VAULT_DEACTIVATE, 0.64, 8, 0.4, 0.3);
         }
-
-        if(getInputSlot.is(ItemsRegister.AUGMENT_ITEM.get())){
-            this.addItemToHand(pPlayer.getMainHandItem(), pPlayer.getUsedItemHand(), pPlayer, getInputSlot);
-            return InteractionResult.SUCCESS;
-        }
-
-        return InteractionResult.FAIL;
+        return ItemInteractionResult.SUCCESS;
+//        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
+
+//    @Override
+//    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
+//        if (!(pLevel.getBlockEntity(pPos) instanceof InfuserBlockEntity tableEntity)) return InteractionResult.FAIL;
+//
+//        ItemStack itemInPlayerHand = pPlayer.getItemInHand(pPlayer.getUsedItemHand());
+//        ItemStack getInputSlot = tableEntity.inputItemHandler.getStackInSlot(0);
+//        ItemStack getOutputSlot = tableEntity.outputItemHandler.getStackInSlot(0);
+//
+////        AugmentModificationBlock.augmentBlockInteraction(pLevel, pPos, pPlayer, pHand, augmentStation, hand, SoundEvents.VAULT_ACTIVATE);
+//
+//
+////        if(getInputSlot.isEmpty() && getOutputSlot.isEmpty()){
+////            if (itemInPlayerHand.getItem() == ItemsRegister.AUGMENT_ITEM.get()) {
+////                tableEntity.inputItemHandler.setStackInSlot(0, itemInPlayerHand.copyWithCount(1));
+////                itemInPlayerHand.shrink(1);
+////                return InteractionResult.SUCCESS;
+////            }
+////        }
+////
+////        if(!getOutputSlot.isEmpty()){
+////            this.addItemToHand(pPlayer.getMainHandItem(), pPlayer.getUsedItemHand(), pPlayer, getOutputSlot);
+////            return InteractionResult.SUCCESS;
+////        }
+////
+////        if(getInputSlot.is(ItemsRegister.AUGMENT_ITEM.get())){
+////            this.addItemToHand(pPlayer.getMainHandItem(), pPlayer.getUsedItemHand(), pPlayer, getInputSlot);
+////            return InteractionResult.SUCCESS;
+////        }
+//
+//        return InteractionResult.FAIL;
+//    }
 
     private void addItemToHand(
         ItemStack itemInPlayerHand,

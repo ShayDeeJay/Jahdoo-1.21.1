@@ -35,8 +35,9 @@ public class Hammer extends AbstractUtilityProjectile {
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
-        this.breakerSize = this.getTag(SIZE);
-        this.size = (int) (breakerSize/2) - (int) this.getTag(OFFSET);
+        this.breakerSize = this.getTagUtility(SIZE);
+        var offset = (int) this.getTagUtility(OFFSET);
+        this.size = (int) ((breakerSize/2) - offset);
     }
 
     @Override

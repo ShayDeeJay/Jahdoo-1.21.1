@@ -38,7 +38,7 @@ public class VeinMiner extends AbstractUtilityProjectile {
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
-        this.veinSize = (int) this.getTag(VEIN_MINE_SIZE);
+        this.veinSize = (int) this.getTagUtility(VEIN_MINE_SIZE);
     }
 
     @Override

@@ -47,7 +47,7 @@ public class BlockBombAbility extends AbstractBlockAbility {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(10, 5, 1)
-            .setCooldown(600, 200, 5)
+            .setCooldown(600, 200, 50)
             .setAbilityTagModifiersRandom(EXPLOSION_RANGE, 30,5, true, 5)
             .build();
     }

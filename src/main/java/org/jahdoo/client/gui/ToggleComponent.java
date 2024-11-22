@@ -67,4 +67,17 @@ public class ToggleComponent  {
         };
     }
 
+    public static Renderable textWithBackgroundLarge(int posX, int posY, Component textOverlay, Minecraft minecraft, Component header) {
+        return new Overlay() {
+            @Override
+            public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
+                int width = 96;
+                int height1 = 32;
+                guiGraphics.drawCenteredString(minecraft.font, textOverlay, posX + 48, posY + 13, -2763307);
+                guiGraphics.blit(TEXT_BACKGROUND, posX, posY, 0,0, width, height1, width, height1);
+                guiGraphics.drawCenteredString(minecraft.font, header, posX + 48, posY - 7, -6052957);
+            }
+        };
+    }
+
 }

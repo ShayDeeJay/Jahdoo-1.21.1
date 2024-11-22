@@ -43,7 +43,7 @@ public class WallPlacerAbility extends AbstractBlockAbility {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(10, 5, 1)
             .setAbilityTagModifiersRandom(SIZE, 12,3, true, 3)
-            .setModifierWithStep(OFFSET, 12,-12, true, 12, 1)
+            .setModifierWithStep(OFFSET, 12,0, true, 12, 1)
             .build();
     }
 

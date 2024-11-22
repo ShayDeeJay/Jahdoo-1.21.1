@@ -33,7 +33,7 @@ public class RenderEvenHelper {
                     if(getSelectedAbility == null) return;
                     double breakerSize = ModHelpers.getTag(player, SIZE, getSelectedAbility.selectedAbility());
                     double offSet = ModHelpers.getTag(player, OFFSET, getSelectedAbility.selectedAbility());
-                    int size = (int) ((breakerSize / 2)-offSet);
+                    int size = (int) ((breakerSize / 2) - offSet);
                     var radius = (int) (breakerSize / 2);
                     var pos = blockHitResult.getBlockPos();
                     var pDirection = player.getDirection();

@@ -42,6 +42,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
         simpleBlockWithItem(BlocksRegister.CREATOR.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/creator")));
+
+        simpleBlockWithItem(BlocksRegister.AUGMENT_MODIFICATION_STATION.get(),
+            new ModelFile.UncheckedModelFile(modLoc("block/augment_modification_station")));
     }
 
     private void blockWithItem(DeferredHolder<Block, Block> blockRegistryObject) {

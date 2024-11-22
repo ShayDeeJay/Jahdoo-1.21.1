@@ -41,10 +41,11 @@ public class HammerAbility extends AbstractBlockAbility {
 
     @Override
     public void setModifiers(ItemStack itemStack) {
+        int high = 13;
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(10, 5, 1)
-            .setAbilityTagModifiersRandom(SIZE, 12,3, true, 3)
-            .setModifierWithStep(OFFSET, 12,-12, true, 12, 1)
+            .setBlockSize(high, 3, 2)
+            .setModifierWithStep(OFFSET, high,0, true, 13, 1)
             .build();
     }
 
