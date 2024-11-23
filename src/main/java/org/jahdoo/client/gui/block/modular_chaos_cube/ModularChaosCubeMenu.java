@@ -1,4 +1,4 @@
-package org.jahdoo.client.gui.modular_chaos_cube;
+package org.jahdoo.client.gui.block.modular_chaos_cube;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -29,7 +29,7 @@ public class ModularChaosCubeMenu extends AbstractInternalContainer {
     }
 
     private void setSlot(){
-        this.addSlot(new ModularChaosCubeSlot(this.getAutomationEntity().inputItemHandler,AUGMENT_SLOT, posX, posY, this));
+        this.addSlot(new ModularChaosCubeSlot(this.getAutomationEntity().inputItemHandler,AUGMENT_SLOT, posX, posY));
     }
 
     public ModularChaosCubeEntity getAutomationEntity(){

@@ -4,6 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import org.jahdoo.ability.AbstractElement;
@@ -37,12 +38,12 @@ public class Utility extends AbstractElement {
 
     @Override
     public int particleColourPrimary() {
-        return rgbToInt(29, 172, 103);
+        return FastColor.ARGB32.color(29, 172, 103);
     }
 
     @Override
     public int particleColourSecondary() {
-        return rgbToInt(39, 236, 144);
+        return FastColor.ARGB32.color(39, 236, 144);
     }
 
     @Override

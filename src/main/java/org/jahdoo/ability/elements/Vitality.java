@@ -4,6 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import org.jahdoo.ability.AbstractElement;
@@ -38,12 +39,12 @@ public class Vitality extends AbstractElement {
 
     @Override
     public int particleColourPrimary() {
-        return rgbToInt(129, 0, 51);
+        return FastColor.ARGB32.color(129, 0, 51);
     }
 
     @Override
     public int particleColourSecondary() {
-        return rgbToInt(233, 0, 93);
+        return FastColor.ARGB32.color(233, 0, 93);
     }
 
     @Override

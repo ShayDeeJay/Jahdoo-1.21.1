@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.client.gui.ToggleComponent;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityIconButton;
-import org.jahdoo.client.gui.modular_chaos_cube.ModularChaosCubeScreen;
+import org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeScreen;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.networking.packet.client2server.SyncComponentBlockC2S;

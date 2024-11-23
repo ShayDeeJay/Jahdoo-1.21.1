@@ -27,5 +27,8 @@ public class IconLocations {
     public static final ResourceLocation BLANK = ModHelpers.res("textures/gui/blank.png");
     public static final ResourceLocation CHAINED = ModHelpers.res("textures/gui/chained.png");
     public static final ResourceLocation UNCHAINED = ModHelpers.res("textures/gui/un-chained.png");
+    public static final ResourceLocation UPGRADE = ModHelpers.res("textures/gui/gui_button_upgrade.png");
+    public static final ResourceLocation UPGRADE_DISABLED = ModHelpers.res("textures/gui/gui_button_upgrade_disabled.png");
+
 
 }

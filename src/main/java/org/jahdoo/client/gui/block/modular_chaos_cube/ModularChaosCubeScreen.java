@@ -1,4 +1,4 @@
-package org.jahdoo.client.gui.modular_chaos_cube;
+package org.jahdoo.client.gui.block.modular_chaos_cube;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.GuiGraphics;
@@ -26,7 +26,7 @@ import static org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity.AUGMENT
 import static org.jahdoo.client.SharedUI.*;
 import static org.jahdoo.client.gui.IconLocations.*;
 import static org.jahdoo.client.gui.ToggleComponent.*;
-import static org.jahdoo.client.gui.modular_chaos_cube.ModularChaosCubeData.selectDirection;
+import static org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeData.selectDirection;
 import static org.jahdoo.items.augments.AugmentItemHelper.*;
 import static org.jahdoo.registers.AttachmentRegister.MODULAR_CHAOS_CUBE;
 

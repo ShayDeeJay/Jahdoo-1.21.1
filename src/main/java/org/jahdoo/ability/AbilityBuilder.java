@@ -53,7 +53,8 @@ public class AbilityBuilder {
     public AbilityBuilder setAbilityTagModifiersRandom(String name, double high, double low, boolean isHigherBetter, double step) {
         var getModifier = getLuckModifier();
         var weightedDouble = getWeightedRandomDouble(high, low, (getModifier == 0) != isHigherBetter, step, getModifier);
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(weightedDouble, high, low, step, weightedDouble, isHigherBetter);
+        var getValue = isHigherBetter ? low : high;
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(getValue, high, low, step, getValue, isHigherBetter);
         this.abilityHolder.abilityProperties().put(name, abilityModifiers);
         return this;
     }

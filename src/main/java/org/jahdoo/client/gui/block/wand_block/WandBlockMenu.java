@@ -1,4 +1,4 @@
-package org.jahdoo.client.gui.wand_block;
+package org.jahdoo.client.gui.block.wand_block;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundEvents;

@@ -3,14 +3,22 @@ package org.jahdoo.block.augment_modification_station;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.block.AbstractTankUser;
+import org.jahdoo.client.gui.block.augment_modification_station.AugmentModificationMenu;
 import org.jahdoo.registers.BlockEntitiesRegister;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class AugmentModificationEntity extends AbstractTankUser implements RecipeInput {
+public class AugmentModificationEntity extends AbstractTankUser implements MenuProvider {
 
     int tickCounter;
 
@@ -55,17 +63,17 @@ public class AugmentModificationEntity extends AbstractTankUser implements Recip
     }
 
     @Override
-    public ItemStack getItem(int i) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public int size() {
-        return 0;
-    }
-
-    @Override
     public int setCraftingCost() {
         return 20;
+    }
+
+    @Override
+    public @NotNull Component getDisplayName() {
+        return Component.literal("");
+    }
+
+    @Override
+    public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        return new AugmentModificationMenu(i, inventory,this, this.data);
     }
 }

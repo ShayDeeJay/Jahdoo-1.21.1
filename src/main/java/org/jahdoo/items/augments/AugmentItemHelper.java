@@ -75,7 +75,6 @@ public class AugmentItemHelper {
             if(player.tickCount % numDistance == 0){
                 itemStack.set(NUMBER, component + 1);
                 if(player instanceof ServerPlayer serverPlayer){
-
                     ModHelpers.sendClientSound(serverPlayer, SoundEvents.EXPERIENCE_ORB_PICKUP, 0.4f, 0.6F);
                 }
                 itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(ModHelpers.Random.nextInt(1, 7)));
@@ -160,7 +159,8 @@ public class AugmentItemHelper {
         ItemStack itemStack1,
         String keys,
         String abilityLocation,
-        int colour
+        int colour,
+        boolean hide
     ){
         var component = getCurrentModifierRating(itemStack, itemStack1, keys, abilityLocation);
 
@@ -170,7 +170,7 @@ public class AugmentItemHelper {
             toolTips.add(component.copy().withStyle(style -> style.withColor(colour)));
         }
 
-        if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)) {
+        if (hide || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)) {
             toolTips.add(displayRating(itemStack, keys, abilityLocation));
         }
     }
@@ -267,7 +267,8 @@ public class AugmentItemHelper {
     public static List<Component> getAllAbilityModifiers(
         ItemStack itemStack,
         ItemStack itemStack1,
-        String abilityLocation
+        String abilityLocation,
+        boolean hide
     ){
         var toolTips = new ArrayList<Component>();
         if(itemStack.getComponents().isEmpty()) return toolTips;
@@ -292,17 +293,17 @@ public class AugmentItemHelper {
             .toList();
 
         if(abilityHolder.abilityProperties().containsKey(MANA_COST)){
-            toolTipBase(toolTips, itemStack, itemStack1, MANA_COST, abilityLocation, -6829330);
+            toolTipBase(toolTips, itemStack, itemStack1, MANA_COST, abilityLocation, -6829330, hide);
         }
 
         if(abilityHolder.abilityProperties().containsKey(COOLDOWN)){
-            toolTipBase(toolTips, itemStack, itemStack1, COOLDOWN, abilityLocation, -7471171);
+            toolTipBase(toolTips, itemStack, itemStack1, COOLDOWN, abilityLocation, -7471171, hide);
         }
 
         if(!filteredSuffix.isEmpty()){
             toolTips.add(Component.literal(" "));
             toolTips.add(ModHelpers.withStyleComponentTrans("augmentHelper.jahdoo.attributes", subHeaderColour, curlyStart, curlyEnd));
-            filteredSuffix.forEach(keys -> toolTipBase(toolTips, itemStack, itemStack1, keys, abilityLocation, 0));
+            filteredSuffix.forEach(keys -> toolTipBase(toolTips, itemStack, itemStack1, keys, abilityLocation, 0, hide));
         }
 
         return toolTips;
@@ -317,12 +318,12 @@ public class AugmentItemHelper {
         }
     }
 
-    public static void getHoverText(ItemStack itemStack, List<Component> toolTips){
+    public static void getHoverText(ItemStack itemStack, List<Component> toolTips, boolean hide){
         if(itemStack.getComponents().has(DataComponentRegistry.WAND_ABILITY_HOLDER.get())){
             var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
             if(wandAbilityHolder == null) return;
             var abilityLocation = wandAbilityHolder.abilityProperties().keySet().stream().findAny().get();
-            toolTips.addAll(getAllAbilityModifiers(itemStack, null, abilityLocation));
+            toolTips.addAll(getAllAbilityModifiers(itemStack, null, abilityLocation, hide));
             shiftForDetails(toolTips);
             toolTips.add(ModHelpers.withStyleComponentTrans("augmentHelper.jahdoo.place", -12368570));
         } else {

@@ -1,4 +1,4 @@
-package org.jahdoo.client.gui.infusion_table;
+package org.jahdoo.client.gui.block.infusion_table;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;

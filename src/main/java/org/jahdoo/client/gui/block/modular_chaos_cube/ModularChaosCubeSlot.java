@@ -1,4 +1,4 @@
-package org.jahdoo.client.gui.modular_chaos_cube;
+package org.jahdoo.client.gui.block.modular_chaos_cube;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -12,17 +12,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ModularChaosCubeSlot extends SlotItemHandler {
-    ModularChaosCubeMenu modularChaosCubeMenu;
 
     public ModularChaosCubeSlot(
         IItemHandler inputItemHandler,
         int index,
         int xPosition,
-        int yPosition,
-        ModularChaosCubeMenu modularChaosCubeMenu
+        int yPosition
     ) {
         super(inputItemHandler, index, xPosition, yPosition);
-        this.modularChaosCubeMenu = modularChaosCubeMenu;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.jahdoo.client.gui.modular_chaos_cube;
+package org.jahdoo.client.gui.block.modular_chaos_cube;
 
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;

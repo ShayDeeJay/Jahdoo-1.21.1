@@ -3,6 +3,7 @@ package org.jahdoo.ability.elements;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import org.jahdoo.ability.AbstractElement;
@@ -38,12 +39,12 @@ public class Frost extends AbstractElement {
 
     @Override
     public int particleColourPrimary() {
-        return rgbToInt(45, 169, 255);
+        return FastColor.ARGB32.color(45, 169, 255);
     }
 
     @Override
     public int particleColourSecondary() {
-        return rgbToInt(135,204,254);
+        return FastColor.ARGB32.color(135,204,254);
     }
 
     @Override

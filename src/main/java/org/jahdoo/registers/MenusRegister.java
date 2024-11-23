@@ -8,9 +8,10 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.network.IContainerFactory;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.client.gui.modular_chaos_cube.ModularChaosCubeMenu;
-import org.jahdoo.client.gui.infusion_table.InfusionTableMenu;
-import org.jahdoo.client.gui.wand_block.WandBlockMenu;
+import org.jahdoo.client.gui.block.augment_modification_station.AugmentModificationMenu;
+import org.jahdoo.client.gui.block.infusion_table.InfusionTableMenu;
+import org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeMenu;
+import org.jahdoo.client.gui.block.wand_block.WandBlockMenu;
 
 import java.util.function.Supplier;
 
@@ -25,6 +26,9 @@ public class MenusRegister {
 
     public static final Supplier<MenuType<ModularChaosCubeMenu>> MODULAR_CHAOS_CUBE_MENU =
         registerMenuType(ModularChaosCubeMenu::new, "modular_chaos_cube");
+
+    public static final Supplier<MenuType<AugmentModificationMenu>> AUGMENT_MODIFICATION_MENU =
+        registerMenuType(AugmentModificationMenu::new, "augment_modification_menu");
 
     private static <T extends AbstractContainerMenu> Supplier<MenuType<T>> registerMenuType(IContainerFactory<T> factory, String name) {
         return MENUS.register(name, () -> IMenuTypeExtension.create(factory));

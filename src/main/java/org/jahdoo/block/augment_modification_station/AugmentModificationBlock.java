@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -29,6 +30,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.BlockInteractionHandler;
 import org.jahdoo.block.crafter.CreatorEntity;
+import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.particle.ParticleHandlers;
@@ -106,14 +108,21 @@ public class AugmentModificationBlock extends BaseEntityBlock{
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
-        if(!(pLevel.getBlockEntity(pPos) instanceof AugmentModificationEntity augmentStation)) return ItemInteractionResult.FAIL;
-        var hand = pPlayer.getItemInHand(pHand);
-        augmentBlockInteraction(pLevel, pPos, pPlayer, pHand, augmentStation, hand, SoundEvents.VAULT_ACTIVATE, 0.05, 10, 0.9, 0.15);
-        return ItemInteractionResult.SUCCESS;
+    protected @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        ItemInteractionResult fail = ItemInteractionResult.FAIL;
+        ItemInteractionResult success = ItemInteractionResult.SUCCESS;
+        if(!(level.getBlockEntity(pos) instanceof AugmentModificationEntity augmentStation)) return fail;
+        var hands = player.getItemInHand(hand);
+        var result = augmentBlockInteraction(level, pos, player, hand, augmentStation, hands, SoundEvents.VAULT_ACTIVATE, 0.05, 10, 0.9, 0.15);
+        if(result == fail && !augmentStation.getInteractionSlot().isEmpty() && augmentStation.getInteractionSlot().has(DataComponents.CUSTOM_MODEL_DATA)){
+            if(!(player instanceof ServerPlayer serverPlayer)) return fail;
+            serverPlayer.openMenu(augmentStation, pos);
+            return success;
+        }
+        return success;
     }
 
-    public static void augmentBlockInteraction(
+    public static ItemInteractionResult augmentBlockInteraction(
         Level pLevel,
         BlockPos pPos,
         Player pPlayer,
@@ -130,7 +139,9 @@ public class AugmentModificationBlock extends BaseEntityBlock{
             ModHelpers.getSoundWithPosition(pLevel, pPos, soundEvent, 1, 1.2f);
             BlockInteractionHandler.swapItemsWithHand(augmentStation.inputItemHandler,0, pPlayer, pHand);
             setOuterRingPulse(pLevel, augmentStation.inputItemHandler.getStackInSlot(0), pPos,yOffset, lifetime, speed, radius);
+            return ItemInteractionResult.SUCCESS;
         }
+        return ItemInteractionResult.FAIL;
     }
 
     private static void setOuterRingPulse(
@@ -166,6 +177,7 @@ public class AugmentModificationBlock extends BaseEntityBlock{
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
         return new AugmentModificationEntity(pPos,pState);
     }
+
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {

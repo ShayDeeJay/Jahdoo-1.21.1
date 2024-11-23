@@ -15,9 +15,11 @@ import org.jahdoo.client.entity_renderer.ElementProjectileRenderer;
 import org.jahdoo.client.entity_renderer.GenericProjectileRenderer;
 import org.jahdoo.client.entity_renderer.decoy.DecoyRenderer;
 import org.jahdoo.client.entity_renderer.etneral_wizzard.EternalWizardRenderer;
-import org.jahdoo.client.gui.infusion_table.InfusionTableScreen;
-import org.jahdoo.client.gui.modular_chaos_cube.ModularChaosCubeScreen;
-import org.jahdoo.client.gui.wand_block.WandBlockScreen;
+import org.jahdoo.client.gui.block.augment_modification_station.AugmentModificationScreen;
+import org.jahdoo.client.gui.block.infusion_table.InfusionTableScreen;
+
+import org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeScreen;
+import org.jahdoo.client.gui.block.wand_block.WandBlockScreen;
 import org.jahdoo.particle.GenericParticle;
 import org.jahdoo.registers.*;
 
@@ -83,6 +85,6 @@ public class BusClientEvents {
         event.register(MenusRegister.CRYSTAL_INFUSION_MENU.get(), InfusionTableScreen::new);
         event.register(MenusRegister.WAND_BLOCK_MENU.get(), WandBlockScreen::new);
         event.register(MenusRegister.MODULAR_CHAOS_CUBE_MENU.get(), ModularChaosCubeScreen::new);
-
+        event.register(MenusRegister.AUGMENT_MODIFICATION_MENU.get(), AugmentModificationScreen::new);
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.utils.ModHelpers;
@@ -48,7 +49,7 @@ public class SyncComponentBlockC2S implements CustomPacketPayload{
     }
 
     public static void sendTagsToSlot(BlockEntity entity, WandAbilityHolder wandAbilityHolder) {
-        if(entity instanceof ModularChaosCubeEntity entity1){
+        if(entity instanceof AbstractTankUser entity1){
             var handler = entity1.inputItemHandler;
             var augment = handler.getStackInSlot(0).copy();
             augment.set(WAND_ABILITY_HOLDER, wandAbilityHolder);
