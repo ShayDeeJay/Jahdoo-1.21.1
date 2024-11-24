@@ -12,14 +12,35 @@ import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.client.gui.IconLocations;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.jahdoo.ability.AbilityBuilder.*;
 
 public class SharedUI {
+
+    public static List<Component> getComponents(ItemStack item){
+        var components = new ArrayList<Component>();
+        AugmentItemHelper.getHoverText(item, components, true);
+        return components;
+    }
+
+    public static void boxMaker(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset, int colourBorder){
+        var widthFrom = startX - widthOffset;
+        var heightFrom = startY - heightOffset;
+        var widthTo = startX + widthOffset;
+        var heightTo = startY + heightOffset;
+        var fromColour = -804253680;
+        var toColour = -804253680;
+        guiGraphics.fillGradient(widthFrom, heightFrom, widthTo, heightTo, fromColour, toColour);
+        guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, colourBorder);
+    }
 
     public static void renderInventoryBackground(GuiGraphics guiGraphics, Screen screen, int IMAGE_SIZE, int yOffset){
         var x = (screen.width - IMAGE_SIZE) / 2;
@@ -95,17 +116,27 @@ public class SharedUI {
 
     public static void setSlotTexture(GuiGraphics guiGraphics, int slotX, int slotY, int imageSize, String index){
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0,0, 100);
-        drawStringWithBackground(
+        double x = slotX + 16.2;
+        double y = slotY + 10.4;
+        guiGraphics.pose().translate(x, y, 100);
+        guiGraphics.pose().scale(0.7f,0.7f, 0.7f);
+        guiGraphics.pose().translate(0.2, 0.2, 0.2);
+
+        //        guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.literal(index), (int) (slotX + 16.5), slotY + 10, -1);
+        centeredStringNoShadow(
             guiGraphics,
             Minecraft.getInstance().font,
             Component.literal(index),
-            slotX + 16, slotY - 5,
-            -14145496, -6250336,
-            true
+            0, 0,
+            -10329502
         );
         guiGraphics.pose().popPose();
         guiGraphics.blit(IconLocations.GUI_AUGMENT_SLOT_V2, slotX, slotY, 0, 0, imageSize, imageSize, imageSize , imageSize);
+    }
+
+    public static void centeredStringNoShadow(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int color) {
+        FormattedCharSequence formattedcharsequence = text.getVisualOrderText();
+        guiGraphics.drawString(font, formattedcharsequence, x - font.width(formattedcharsequence) / 2, y, color, false);
     }
 
     public static void abilityIcon(GuiGraphics guiGraphics, ItemStack cachedItem, int width, int height, int offset, int localImageSize){

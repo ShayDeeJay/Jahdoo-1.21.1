@@ -41,16 +41,17 @@ public class FrostBolts extends DefaultEntityBehaviour {
     double castDistance;
     double mana;
     double cooldown;
+    boolean hasHitTarget;
 
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
+        this.projectileMultiplier = this.getTag(NUMBER_OF_PROJECTILES);
         if(this.genericProjectile.getOwner() != null) {
             var player = this.genericProjectile.getOwner();
-            var damage = this.getTag(DAMAGE);
             this.damage = ModHelpers.attributeModifierCalculator(
                 (LivingEntity) player,
-                (float) damage,
+                (float) this.getTag(NUMBER_OF_PROJECTILES),
                 this.getElementType(),
                 AttributesRegister.MAGIC_DAMAGE_MULTIPLIER,
                 true
@@ -59,7 +60,6 @@ public class FrostBolts extends DefaultEntityBehaviour {
         this.effectChance = this.getTag(EFFECT_CHANCE);
         this.effectStrength = this.getTag(EFFECT_STRENGTH);
         this.effectDuration = this.getTag(EFFECT_DURATION);
-        this.projectileMultiplier = this.getTag(NUMBER_OF_PROJECTILES);
         this.castDistance = this.getTag(CASTING_DISTANCE);
         this.mana = this.getTag(MANA_COST);
         this.cooldown = this.getTag(COOLDOWN);
@@ -91,14 +91,16 @@ public class FrostBolts extends DefaultEntityBehaviour {
         Player player = (Player) this.genericProjectile.getOwner();
         if(player == null) return;
         if (player.isCloseEnough(hitEntity,castDistance + 0.1)) {
+            this.hasHitTarget = true;
             this.shootArrowsAtTarget(hitEntity, player);
             CastHelper.chargeMana(FrostboltsAbility.abilityId.getPath().intern(), mana, player);
             CastHelper.chargeCooldown(FrostboltsAbility.abilityId.getPath().intern(), cooldown, player);
             player.displayClientMessage(Component.literal(""), true);
+            this.genericProjectile.setDeltaMovement(0,0,0);
         } else {
             sendNoTargetMessage();
+            this.genericProjectile.discard();
         }
-        this.genericProjectile.discard();
     }
 
     private void shootArrowsAtTarget(LivingEntity hitEntity, Player player){
@@ -118,7 +120,8 @@ public class FrostBolts extends DefaultEntityBehaviour {
             );
 
             if(this.genericProjectile.level() instanceof ServerLevel serverLevel){
-                ParticleHandlers.particleBurst(serverLevel, new Vec3(arrowX, arrowY, arrowZ), 1, new BakedParticleOptions(this.getElementType().getTypeId(), 10, 1.7f, false), 0,0,0,0.07f);
+                BakedParticleOptions particleOptions = ParticleHandlers.bakedParticleOptions(this.getElementType().getTypeId(), 3, 1.7f, false);
+                ParticleHandlers.particleBurst(serverLevel, new Vec3(arrowX, arrowY, arrowZ), 1, particleOptions, 0,0,0,0.1f);
             }
 
             this.assignArrows.add(arrow);
@@ -137,7 +140,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
             directionZ /= length;
 
             // Set the arrow's motion
-            float velocity = 1F; // Change this value to adjust the speed of the arrow
+            float velocity = 0.8F; // Change this value to adjust the speed of the arrow
             arrow.shoot(directionX, directionY, directionZ, velocity, 0);
             this.genericProjectile.level().addFreshEntity(arrow);
         }
@@ -146,6 +149,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
 
     @Override
     public void onTickMethod() {
+        System.out.println(this);
         if(!this.assignArrows.isEmpty()){
             this.assignArrows.forEach(
                 arrows -> {
@@ -168,7 +172,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
                 return;
             }
 
-            if (this.genericProjectile.getOwner() != null && this.genericProjectile.tickCount > 1) {
+            if (!hasHitTarget && this.genericProjectile.tickCount > 1) {
                 this.sendNoTargetMessage();
                 this.genericProjectile.discard();
             }
@@ -206,6 +210,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
         compoundTag.putDouble(CASTING_DISTANCE, this.castDistance);
         compoundTag.putDouble(MANA_COST, mana);
         compoundTag.putDouble(COOLDOWN, cooldown);
+        compoundTag.putBoolean("hit", this.hasHitTarget);
     }
 
     @Override
@@ -218,5 +223,6 @@ public class FrostBolts extends DefaultEntityBehaviour {
         this.castDistance = compoundTag.getDouble(CASTING_DISTANCE);
         this.mana = compoundTag.getDouble(MANA_COST);
         this.cooldown = compoundTag.getDouble(COOLDOWN);
+        this.hasHitTarget = compoundTag.getBoolean("hit");
     }
 }

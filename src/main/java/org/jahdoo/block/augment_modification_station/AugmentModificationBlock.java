@@ -181,7 +181,6 @@ public class AugmentModificationBlock extends BaseEntityBlock{
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-
         return createTickerHelper(
             pBlockEntityType,
             BlockEntitiesRegister.AUGMENT_MODIFICATION_STATION_BE.get(),

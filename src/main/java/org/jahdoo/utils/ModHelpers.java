@@ -1,5 +1,9 @@
 package org.jahdoo.utils;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.TypedDataComponent;
@@ -16,6 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -25,10 +30,12 @@ import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.items.augments.Augment;
 import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.registers.ItemsRegister;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -40,6 +47,17 @@ import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
 public class ModHelpers {
     public static final Random Random = ThreadLocalRandom.current();
+
+    public static void itemOverlay(ItemStack itemStack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, ItemRenderer itemRenderer) {
+        if(itemStack.getItem() instanceof Augment){
+            poseStack.pushPose();
+            float z = 0.5f;
+            poseStack.scale(z, z, z);
+            poseStack.translate(0,0,0.05);
+            itemRenderer.renderStatic(new ItemStack(ItemsRegister.JIDE_POWDER.get()), displayContext, combinedLight, combinedOverlay, poseStack, bufferSource, Minecraft.getInstance().level, 0);
+            poseStack.popPose();
+        }
+    }
 
     public static ResourceLocation res(String location) {
         return ResourceLocation.fromNamespaceAndPath(JahdooMod.MOD_ID, location);
@@ -79,6 +97,46 @@ public class ModHelpers {
         double decimalPart = number - (int) number;
         if (decimalPart == 0) return String.valueOf(Math.round(number));
         return String.valueOf(number);
+    }
+
+    public static String roundNonWholeString(String input) {
+        StringBuilder result = new StringBuilder();
+        StringBuilder numberBuffer = new StringBuilder();
+
+        for (char c : input.toCharArray()) {
+            if (Character.isDigit(c) || c == '.') {
+                // Build the numeric part
+                numberBuffer.append(c);
+            } else {
+                // Process the number if present
+                if (!numberBuffer.isEmpty()) {
+                    result.append(processNumber(numberBuffer.toString()));
+                    numberBuffer.setLength(0); // Reset the buffer
+                }
+                result.append(c); // Append non-numeric character
+            }
+        }
+
+        // Handle trailing number
+        if (!numberBuffer.isEmpty()) {
+            result.append(processNumber(numberBuffer.toString()));
+        }
+
+        return result.toString();
+    }
+
+    private static String processNumber(String number) {
+        try {
+            double num = Double.parseDouble(number);
+            double decimalPart = num - (int) num;
+            if (decimalPart == 0) {
+                return String.valueOf(Math.round(num));
+            }
+            return String.valueOf(num);
+        } catch (NumberFormatException e) {
+            // In case of unexpected parsing errors
+            return number;
+        }
     }
 
     public static double roundNonWholeDouble(double number) {
@@ -130,6 +188,10 @@ public class ModHelpers {
 
     public static void  getSoundWithPosition(Level level, BlockPos position, SoundEvent audio, float volume, float pitch){
         level.playSound(null, position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume, pitch) ;
+    }
+
+    public static void getLocalSound(Level level, BlockPos position, SoundEvent audio, float volume, float pitch){
+        level.playLocalSound(position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume, pitch, false); ;
     }
 
     public static void sendPacketsToPlayer(Level level, CustomPacketPayload payloads) {

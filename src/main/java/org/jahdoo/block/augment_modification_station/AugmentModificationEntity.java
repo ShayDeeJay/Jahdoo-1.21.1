@@ -9,7 +9,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.block.AbstractTankUser;
@@ -24,14 +23,14 @@ public class AugmentModificationEntity extends AbstractTankUser implements MenuP
 
     @Override
     protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        this.tickCounter = pTag.getInt("tick_counter");
         super.loadAdditional(pTag, pRegistries);
+        this.tickCounter = pTag.getInt("tick_counter");
     }
 
     @Override
     protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        pTag.putInt("tick_counter", this.tickCounter);
         super.saveAdditional(pTag, pRegistries);
+        pTag.putInt("tick_counter", this.tickCounter);
     }
 
     public AugmentModificationEntity(BlockPos pPos, BlockState pBlockState) {
@@ -49,7 +48,7 @@ public class AugmentModificationEntity extends AbstractTankUser implements MenuP
 
     @Override
     public int setInputSlots() {
-        return 1;
+        return 4;
     }
 
     @Override
@@ -59,7 +58,7 @@ public class AugmentModificationEntity extends AbstractTankUser implements MenuP
 
     @Override
     public int getMaxSlotSize() {
-        return 1;
+        return 64;
     }
 
     @Override

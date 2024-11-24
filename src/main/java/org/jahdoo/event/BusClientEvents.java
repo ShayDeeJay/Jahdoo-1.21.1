@@ -80,6 +80,7 @@ public class BusClientEvents {
         event.register(KeyBinding.WAND_SLOT_10A);
     }
 
+
     @SubscribeEvent
     public static void onClientSetup(RegisterMenuScreensEvent event) {
         event.register(MenusRegister.CRYSTAL_INFUSION_MENU.get(), InfusionTableScreen::new);

@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.jahdoo.block.AbstractBEInventory;
+import org.jahdoo.client.gui.block.augment_modification_station.InventorySlots;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -76,14 +77,14 @@ public abstract class AbstractInternalContainer extends AbstractContainerMenu {
     public void addPlayerInventory(Inventory playerInventory, int heightDiff) {
         for (int playerInvY = 0; playerInvY < 3; playerInvY++) {
             for (int playerInvX = 0; playerInvX < 9; playerInvX++) {
-                this.addSlot(new Slot(playerInventory, playerInvX + playerInvY * 9 + 9, 8 + playerInvX * 18 + this.adjustInventoryX(), 84 + playerInvY * 18 + heightDiff + this.adjustInventoryY()));
+                this.addSlot(new InventorySlots(playerInventory, playerInvX + playerInvY * 9 + 9, 8 + playerInvX * 18 + this.adjustInventoryX(), 84 + playerInvY * 18 + heightDiff + this.adjustInventoryY()));
             }
         }
     }
 
     public void addPlayerHotbar(Inventory playerInventory, int heightDiff) {
         for (int hotbarX = 0; hotbarX < 9; hotbarX++) {
-            this.addSlot(new Slot(playerInventory, hotbarX, 8 + hotbarX * 18 + this.adjustInventoryX(), 142 + heightDiff + this.adjustInventoryY()));
+            this.addSlot(new InventorySlots(playerInventory, hotbarX, 8 + hotbarX * 18 + this.adjustInventoryX(), 142 + heightDiff + this.adjustInventoryY()));
         }
     }
 

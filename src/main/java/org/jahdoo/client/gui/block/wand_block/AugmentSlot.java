@@ -87,7 +87,9 @@ public class AugmentSlot extends SlotItemHandler {
             ModHelpers.getSoundWithPosition(
                 Objects.requireNonNull(this.wandBlockMenu.getWandBlockEntity().getLevel()),
                 this.wandBlockMenu.getWandBlockEntity().getBlockPos(),
-                SoundEvents.ARMOR_EQUIP_CHAIN.value()
+                SoundEvents.VAULT_EJECT_ITEM,
+                1,
+                1.2f
             );
         }
     }

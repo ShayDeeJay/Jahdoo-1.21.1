@@ -33,6 +33,12 @@ public class ItemsRegister {
     public static final DeferredHolder<Item, Item> AUGMENT_CORE =
         ITEMS.register("augment_core", () -> new Item(new Item.Properties()));
 
+    public static final DeferredHolder<Item, Item> ADVANCED_AUGMENT_CORE =
+        ITEMS.register("advanced_augment_core", () -> new Item(new Item.Properties()));
+
+    public static final DeferredHolder<Item, Item> AUGMENT_HYPER_CORE =
+        ITEMS.register("augment_hyper_core", () -> new Item(new Item.Properties()));
+
     public static final DeferredHolder<Item, Item> TOME_OF_UNITY =
         ITEMS.register("tome_of_unity", TomeOfUnity::new);
 

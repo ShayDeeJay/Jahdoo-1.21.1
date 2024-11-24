@@ -20,8 +20,8 @@ public class IconLocations {
     public static final ResourceLocation POWER_ON = ModHelpers.res("textures/gui/gui_button_power_on.png");
     public static final ResourceLocation POWER_OFF = ModHelpers.res("textures/gui/gui_button_power_off.png");
     public static final ResourceLocation GUI_GENERAL_SLOT = ModHelpers.res("textures/gui/gui_general_slot.png");
-    public static final ResourceLocation GUI_AUGMENT_SLOT = ModHelpers.res("textures/gui/slot.png");
-    public static final ResourceLocation GUI_AUGMENT_SLOT_V2 = ModHelpers.res("textures/gui/slot_v2.png");
+    public static final ResourceLocation GUI_AUGMENT_SLOT = ModHelpers.res("textures/gui/slots/slot.png");
+    public static final ResourceLocation GUI_AUGMENT_SLOT_V2 = ModHelpers.res("textures/gui/slots/slot_v2.png");
     public static final ResourceLocation HOVERED_SLOT_OVERLAY = ModHelpers.res("textures/gui/hovered_slot_overlay.png");
     public static final ResourceLocation GUI_INVENTORY_OVERLAY = ModHelpers.res("textures/gui/gui_inventory_overlay.png");
     public static final ResourceLocation BLANK = ModHelpers.res("textures/gui/blank.png");
@@ -29,6 +29,9 @@ public class IconLocations {
     public static final ResourceLocation UNCHAINED = ModHelpers.res("textures/gui/un-chained.png");
     public static final ResourceLocation UPGRADE = ModHelpers.res("textures/gui/gui_button_upgrade.png");
     public static final ResourceLocation UPGRADE_DISABLED = ModHelpers.res("textures/gui/gui_button_upgrade_disabled.png");
-
+    public static final ResourceLocation GUI_ITEM_SLOT = ModHelpers.res("textures/gui/slots/gui_item_slot.png");
+    public static final ResourceLocation CORE = ModHelpers.res("textures/gui/slots/augment_core_slot.png");
+    public static final ResourceLocation ADVANCED_AUGMENT_CORE = ModHelpers.res("textures/gui/slots/advanced_augment_core_slot.png");
+    public static final ResourceLocation AUGMENT_HYPER_CORE = ModHelpers.res("textures/gui/slots/augment_hyper_core_slot.png");
 
 }

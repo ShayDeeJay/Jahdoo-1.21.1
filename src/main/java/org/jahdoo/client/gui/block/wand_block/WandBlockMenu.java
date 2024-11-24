@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.Block;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.gui.AbstractInternalContainer;
+import org.jahdoo.client.gui.block.augment_modification_station.InventorySlots;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.MenusRegister;
@@ -22,10 +23,11 @@ import static org.jahdoo.client.SharedUI.handleSlotsInGridLayout;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class WandBlockMenu extends AbstractInternalContainer {
+    public int slotsY = -7;
     public int yOffset = 24;
     public int xOffset = 0;
-    public int xSpacing = 34;
-    public int ySpacing = 38;
+    public int xSpacing = 26;
+    public int ySpacing = 30;
 
     public WandBlockMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         super(MenusRegister.WAND_BLOCK_MENU.get(), pContainerId, inv, extraData);
@@ -55,7 +57,7 @@ public class WandBlockMenu extends AbstractInternalContainer {
 
     public void addSlotsInGridLayout() {
         handleSlotsInGridLayout(
-            (slotX, slotY, index) -> this.addSlot(new AugmentSlot(this.getWandBlockEntity().inputItemHandler,index + 1, slotX, slotY, this)),
+            (slotX, slotY, index) -> this.addSlot(new AugmentSlot(this.getWandBlockEntity().inputItemHandler,index + 1, slotX, slotY + slotsY, this)),
             getWandBlockEntity().getAllowedSlots(),
             0,0,
             xSpacing,
@@ -69,7 +71,6 @@ public class WandBlockMenu extends AbstractInternalContainer {
         var sourceStack = sourceSlot.getItem();
         var copyOfSourceStack = sourceStack.copy();
         int totalSlotsInWand = getWandBlockEntity().inputItemHandler.getSlots();
-
         if(!sourceStack.has(WAND_DATA)) return ItemStack.EMPTY;
         String sourceStackIndex = DataComponentHelper.getAbilityTypeItemStack(copyOfSourceStack);
         for(int i = 1; i < totalSlotsInWand; i++){
@@ -85,7 +86,7 @@ public class WandBlockMenu extends AbstractInternalContainer {
                             //set in wand
                             targetSlots.setStackInSlot(i, copyOfSourceStack.copyWithCount(1));
 
-                            ModHelpers.getSoundWithPosition(level, getWandBlockEntity().getBlockPos(), SoundEvents.ARMOR_EQUIP_GENERIC.value());
+                            ModHelpers.getSoundWithPosition(level, getWandBlockEntity().getBlockPos(), SoundEvents.VAULT_OPEN_SHUTTER);
                             this.getWandBlockEntity().setAllAbilities();
                         }
                     }
