@@ -1,6 +1,7 @@
 package org.jahdoo.client.gui.block.augment_modification_station;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.block.AbstractTankUser;
@@ -30,4 +31,25 @@ public class AugmentModificationData {
         int value = entity.getInteractionSlot().get(DataComponents.CUSTOM_MODEL_DATA).value();
         return ElementRegistry.getElementByTypeId(value).getFirst();
     }
+
+    public static String extractName(String input) {
+        if (input == null || !input.contains("|")) return "";
+        return input.split("\\|")[0].trim();
+    }
+
+    public static AbilityHolder.AbilityModifiers getAbilityModifiers(Component component, WandAbilityHolder getTag) {
+        var abilityKey = getTag.abilityProperties().keySet().stream().findFirst().get();
+        return getTag.abilityProperties().get(abilityKey).abilityProperties().get(extractName(component.getString()));
+    }
+
+    public static boolean isInHitbox(int width, int height, double mouseX, double mouseY, boolean showInventory){
+        var widthOffset = 100;
+        var heightOffset = 115;
+        var widthFrom = width - widthOffset;
+        var heightFrom = height - heightOffset;
+        var widthTo = width + widthOffset;
+        var heightTo = height + heightOffset;
+        return mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 50 && mouseY < heightTo - (showInventory ?  120 : 5);
+    }
+
 }

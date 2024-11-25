@@ -33,5 +33,7 @@ public class IconLocations {
     public static final ResourceLocation CORE = ModHelpers.res("textures/gui/slots/augment_core_slot.png");
     public static final ResourceLocation ADVANCED_AUGMENT_CORE = ModHelpers.res("textures/gui/slots/advanced_augment_core_slot.png");
     public static final ResourceLocation AUGMENT_HYPER_CORE = ModHelpers.res("textures/gui/slots/augment_hyper_core_slot.png");
+    public static final ResourceLocation INFORMATION = ModHelpers.res("textures/gui/gui_button_information.png");
+    public static final ResourceLocation INVENTORY = ModHelpers.res("textures/gui/gui_button_inventory.png");
 
 }

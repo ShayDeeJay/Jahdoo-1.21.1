@@ -42,7 +42,7 @@ public class ElementalShooterAbility extends AbilityRegistrar {
             .setEffectDuration(300, 100, 20)
             .setAbilityTagModifiersRandom(numberOfProjectiles, 3, 1, true, 1)
             .setAbilityTagModifiersRandom(numberOfRicochet, 6, 1, true, 1)
-            .setAbilityTagModifiersRandom(velocity, 2, 1, true, 0.2)
+            .setAbilityTagModifiersRandom(velocity, 2.5, 1, true, 0.5)
             .setModifier(SET_ELEMENT_TYPE, 0, 0, false, Random.nextInt(1,6))
             .build();
     }

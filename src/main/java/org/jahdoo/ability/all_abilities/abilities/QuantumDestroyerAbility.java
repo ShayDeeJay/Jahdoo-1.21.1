@@ -52,13 +52,13 @@ public class QuantumDestroyerAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(80, 40,  5)
-            .setCooldown(2400, 800, 200)
+            .setMana(200, 100, 25)
+            .setCooldown(6000, 3600, 400)
             .setDamage(30, 10, 5)
             .setCastingDistance(30,10,5)
-            .setLifetime(400, 200, 10)
+            .setLifetime(300, 100, 20)
             .setAbilityTagModifiersRandom(radius, 6,3, true, 1)
-            .setAbilityTagModifiersRandom(gravitationalPull, 1.5,0.5, true, 0.2)
+            .setAbilityTagModifiersRandom(gravitationalPull, 2.5,0.5, true, 0.5)
             .build();
     }
 

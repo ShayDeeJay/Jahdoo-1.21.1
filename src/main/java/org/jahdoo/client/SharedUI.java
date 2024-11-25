@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.client.gui.block.augment_modification_station.AugmentModificationScreen.BORDER_COLOUR;
 
 public class SharedUI {
 
@@ -42,14 +43,33 @@ public class SharedUI {
         guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, colourBorder);
     }
 
-    public static void renderInventoryBackground(GuiGraphics guiGraphics, Screen screen, int IMAGE_SIZE, int yOffset){
-        var x = (screen.width - IMAGE_SIZE) / 2;
-        var y = (screen.height - IMAGE_SIZE) / 2;
-        guiGraphics.blit(
-            ModHelpers.res("textures/gui/wand_gui.png"),
-            x, y + yOffset - 44,
-            0,0, IMAGE_SIZE, IMAGE_SIZE
-        );
+    public static void setCustomBackground(int height, int width, GuiGraphics guiGraphics){
+        var widthOffset = 100;
+        var heightOffset = 115;
+        var widthFrom = width - widthOffset;
+        var heightFrom = height - heightOffset;
+        var widthTo = width + widthOffset;
+        var heightTo = height + heightOffset;
+        var fromColour = -804253680;
+        var toColour = -804253680;
+        var borderColour = BORDER_COLOUR;
+
+        guiGraphics.fillGradient(widthFrom, heightFrom, widthTo, heightTo, fromColour, toColour);
+        guiGraphics.hLine(width-100, width + 99, height/2 - 70, borderColour);
+        guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, borderColour);
+        guiGraphics.enableScissor(0, heightFrom + 50, width, heightTo - 5);
+    }
+
+    public static void renderInventoryBackground(GuiGraphics guiGraphics, Screen screen, int IMAGE_SIZE, int yOffset, boolean show){
+        if(show){
+            var x = (screen.width - IMAGE_SIZE) / 2;
+            var y = (screen.height - IMAGE_SIZE) / 2;
+            guiGraphics.blit(
+                ModHelpers.res("textures/gui/wand_gui.png"),
+                x, y + yOffset - 44,
+                0, 0, IMAGE_SIZE, IMAGE_SIZE
+            );
+        }
     }
 
     public static void getAbilityNameWithColour(

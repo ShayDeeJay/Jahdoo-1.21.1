@@ -1,5 +1,6 @@
 package org.jahdoo.event;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -13,6 +14,7 @@ import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.client.KeyBinding;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityWheelMenu;
+import org.jahdoo.client.gui.augment_menu.AugmentScreen;
 import org.jahdoo.event.event_helpers.WandAbilitySelector;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.EffectsRegister;
@@ -26,10 +28,20 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onKeyInput(InputEvent.Key event) {
-        Player player = Minecraft.getInstance().player;
+        Minecraft instance = Minecraft.getInstance();
+        Player player = instance.player;
 
         if(player != null && player.getMainHandItem().getItem() instanceof WandItem){
-            if (KeyBinding.QUICK_SELECT.isDown()) Minecraft.getInstance().setScreen(new AbilityWheelMenu());
+
+            if (InputConstants.isKeyDown(instance.getWindow().getWindow(), KeyBinding.QUICK_SELECT.getKey().getValue())) {
+                if(!(instance.screen instanceof AbilityWheelMenu) && !(instance.screen instanceof AugmentScreen)){
+                    instance.setScreen(new AbilityWheelMenu());
+                }
+            } else {
+                if(instance.screen instanceof AbilityWheelMenu){
+                    instance.popGuiLayer();
+                }
+            }
         }
 
         if(KeyBinding.WAND_SLOT_1A.consumeClick()) WandAbilitySelector.selectWandSlot(1);

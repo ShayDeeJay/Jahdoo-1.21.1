@@ -112,7 +112,7 @@ public class ToggleComponent  {
         return new Overlay() {
             @Override
             public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
-                guiGraphics.drawString(minecraft.font, textOverlay, posX + 48, posY + 13, 0, false);
+                guiGraphics.drawString(minecraft.font, textOverlay, posX + 48, posY + 13, 0, true);
             }
         };
     }

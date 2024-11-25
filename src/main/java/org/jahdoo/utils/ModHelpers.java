@@ -1,6 +1,7 @@
 package org.jahdoo.utils;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -20,8 +21,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -29,6 +32,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.AbilityHolder;
+import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
@@ -42,21 +46,40 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
 public class ModHelpers {
     public static final Random Random = ThreadLocalRandom.current();
 
-    public static void itemOverlay(ItemStack itemStack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, ItemRenderer itemRenderer) {
-        if(itemStack.getItem() instanceof Augment){
-            poseStack.pushPose();
-            float z = 0.5f;
-            poseStack.scale(z, z, z);
-            poseStack.translate(0,0,0.05);
-            itemRenderer.renderStatic(new ItemStack(ItemsRegister.JIDE_POWDER.get()), displayContext, combinedLight, combinedOverlay, poseStack, bufferSource, Minecraft.getInstance().level, 0);
-            poseStack.popPose();
-        }
+    public static void itemOverlay(ItemStack itemStack, ItemDisplayContext displayContext, PoseStack poseStack, Consumer<ItemStack> runnable) {
+//        var handContextRight = displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
+//        var handContextLeft = displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
+//        var groundContext = displayContext == ItemDisplayContext.GROUND;
+//        if(itemStack.getItem() instanceof Augment){
+//            var key = DataComponentHelper.getKeyFromAugment(itemStack);
+//            if(!key.isEmpty()){
+//                var ability = AbilityRegister.getFirstSpellByTypeId(key);
+//                if(ability.isPresent()){
+//                    var itemOverlay = ability.get().getItemOverlay();
+//                    if(itemOverlay != null){
+//                        poseStack.pushPose();
+//                        float z = 0.45f;
+//
+//                        poseStack.scale(z, z, handContextRight || handContextLeft ?0.5f : 1.01f);
+//                        poseStack.translate( handContextRight ? 0.0603 : handContextLeft ? -0.2014 : 0, groundContext ? 0.365 : handContextRight || handContextLeft ? 0.50 : 0.43, handContextRight || handContextLeft? -0.05 : 0);
+//                        if(handContextRight || handContextLeft){
+//                            poseStack.rotateAround(Axis.YN.rotationDegrees(0), 0, 0, 0);
+//                            poseStack.rotateAround(Axis.XN.rotationDegrees(0), 0, 0, 0);
+//                            poseStack.rotateAround(Axis.ZN.rotationDegrees(0), 0, 0, 0);
+//                        }
+//                        runnable.accept(new ItemStack(itemOverlay));
+//                        poseStack.popPose();
+//                    };
+//                }
+//            }
+//        }
     }
 
     public static ResourceLocation res(String location) {

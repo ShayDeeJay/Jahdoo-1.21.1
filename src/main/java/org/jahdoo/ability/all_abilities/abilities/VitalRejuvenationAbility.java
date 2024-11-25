@@ -43,7 +43,7 @@ public class VitalRejuvenationAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(30, 10, 5)
+            .setMana(80, 40, 5)
             .setAbilityTagModifiersRandom(MAX_ABSORPTION, 10, 2, true, 1)
             .setAbilityTagModifiersRandom(CAST_DELAY, 20, 5, false, 5)
             .build();

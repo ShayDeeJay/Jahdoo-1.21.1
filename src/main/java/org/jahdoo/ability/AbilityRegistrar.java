@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.registers.SoundRegister;
@@ -27,7 +28,6 @@ public abstract class AbilityRegistrar {
             var resourceLocation = Objects.requireNonNull(getAbilityResource());
             abilityId = resourceLocation.getPath().intern();
         }
-
         return abilityId;
     }
 
@@ -94,5 +94,4 @@ public abstract class AbilityRegistrar {
             serverLevel.addFreshEntity(projectile);
         }
     }
-
 }

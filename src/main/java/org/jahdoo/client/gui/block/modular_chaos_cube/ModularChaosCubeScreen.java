@@ -216,7 +216,7 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
         abilityIcon(guiGraphics, this.modularChaosCubeMenu.getAutomationEntity().inputItemHandler.getStackInSlot(0), width, height - 24, 109, 50);
-        renderInventoryBackground(guiGraphics, this, IMAGE_SIZE, 24);
+        renderInventoryBackground(guiGraphics, this, IMAGE_SIZE, 24, true);
         setSlotTexture(guiGraphics, i - 16, i1 - 61, 32, "");
     }
 

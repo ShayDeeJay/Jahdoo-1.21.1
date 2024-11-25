@@ -7,7 +7,7 @@
     },
     {
       "condition": "neoforge:loot_table_id",
-      "loot_table_id": "minecraft:chests/ruined_portal"
+      "loot_table_id": "minecraft:chests/village/village_snowy_house"
     }
   ],
   "item": "jahdoo:unidentified_augment"
