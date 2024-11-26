@@ -13,13 +13,20 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jahdoo.block.augment_modification_station.AugmentModificationEntity;
 import org.jahdoo.block.crafter.CreatorEntity;
+import org.jahdoo.client.SharedUI;
+import org.jahdoo.components.DataComponentHelper;
+import org.jahdoo.registers.AbilityRegister;
+import org.jahdoo.registers.ElementRegistry;
 import org.joml.Matrix4f;
 
 import java.util.Objects;
@@ -46,7 +53,14 @@ public class AugmentModificationStationRenderer implements BlockEntityRenderer<A
         int pPackedOverlay
     ){
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-
+        String keyFromAugment = DataComponentHelper.getKeyFromAugment(augmentStation.getInteractionSlot());
+        var ability = AbilityRegister.getFirstSpellByTypeId(keyFromAugment);
+        if(ability.isPresent()){
+            var getElement = ElementRegistry.getElementOptional(augmentStation.getInteractionSlot().get(DataComponents.CUSTOM_MODEL_DATA).value());
+            if(getElement.isPresent()){
+                renderNameTag(augmentStation, Component.literal(ability.get().getAbilityName()), pPoseStack, pBuffer, getElement.get().textColourPrimary());
+            }
+        }
         focusedItem(pPoseStack, augmentStation, itemRenderer, pBuffer, pPackedLight);
     }
 
@@ -77,6 +91,23 @@ public class AugmentModificationStationRenderer implements BlockEntityRenderer<A
         );
 
         pPoseStack.popPose();
+    }
+    protected void renderNameTag(BlockEntity blockEntity, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int textColour) {
+        var entity = this.entityRenderDispatcher.camera.getEntity();
+        BlockPos entityPosition = blockEntity.getBlockPos();
+
+        if (entity instanceof Player player && player.isCreative()) {
+            pPoseStack.pushPose();
+            pPoseStack.translate(0.5, 1.2, 0.2);
+            pPoseStack.mulPose(Axis.XP.rotationDegrees(180));
+            pPoseStack.scale(0.01f, 0.01f, 0.01f);
+            Matrix4f matrix4f = pPoseStack.last().pose();
+            Font font = Minecraft.getInstance().font;
+            float f1 = (float)(-font.width(pDisplayName) / 2);
+            font.drawInBatch(pDisplayName, f1, 0, textColour, false, matrix4f, pBuffer, Font.DisplayMode.SEE_THROUGH , 0, 255);
+            pPoseStack.popPose();
+
+        }
     }
 
 }

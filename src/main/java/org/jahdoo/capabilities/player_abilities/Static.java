@@ -19,6 +19,7 @@ import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.*;
 import org.jahdoo.ability.effects.CustomMobEffect;
 import org.jahdoo.components.DataComponentHelper;
+import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.Map;
@@ -28,6 +29,7 @@ import static org.jahdoo.particle.ParticleHandlers.spawnElectrifiedParticles;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 import static org.jahdoo.registers.AttachmentRegister.STATIC;
 import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
 
 public class Static implements AbstractAttachment {
 
@@ -161,16 +163,14 @@ public class Static implements AbstractAttachment {
                     manaSystem.subtractMana(manaPerHitA, player);
 
                     entities.hurt(
-                        player.damageSources().magic(),
+                        DamageUtil.source(serverLevel, MYSTIC_DAMAGE, entities, player),
                         (float) this.damageA
                     );
 
                     if (getRandomChance == 0) {
                         entities.addEffect(
                             new CustomMobEffect(
-                                EffectsRegister.LIGHTNING_EFFECT.getDelegate(),
-                                (int) effectDurationA,
-                                (int) effectStrengthA
+                                EffectsRegister.LIGHTNING_EFFECT.getDelegate(), (int) effectDurationA, (int) effectStrengthA
                             )
                         );
                     }

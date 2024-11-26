@@ -20,7 +20,7 @@ public class AugmentModificationData {
         var newHolder = new AbilityHolder(new HashMap<>(holder.abilityProperties().get(abilityName).abilityProperties()));
         var correctAdjustment = v.isHigherBetter() ? v.actualValue() + v.step() : v.actualValue() - v.step();
         var valueWithinRange = v.isHigherBetter() && v.actualValue() < v.highestValue() ? correctAdjustment : !v.isHigherBetter() && v.actualValue() > v.lowestValue() ? correctAdjustment : v.actualValue();
-        var abilityModifier = new AbilityHolder.AbilityModifiers(valueWithinRange, v.highestValue(), v.lowestValue(), v.step(), i, v.isHigherBetter());
+        var abilityModifier = new AbilityHolder.AbilityModifiers(valueWithinRange, v.highestValue(), v.lowestValue(), v.step(), valueWithinRange, v.isHigherBetter());
         newHolder.abilityProperties().put(e, abilityModifier);
         newWandHolder.abilityProperties().put(abilityName, newHolder);
         PacketDistributor.sendToServer(new SyncComponentBlockC2S(newWandHolder, user.getBlockPos()));

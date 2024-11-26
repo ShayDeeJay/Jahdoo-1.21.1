@@ -23,6 +23,7 @@ import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
@@ -33,6 +34,7 @@ import java.util.UUID;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleStore.*;
 import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
 
 public class IceBomb extends DefaultEntityBehaviour {
 
@@ -180,7 +182,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         if(!this.getHitEntities.contains(hitEntity.getUUID())){
             this.getHitEntities.add(hitEntity.getUUID());
             hitEntity.hurt(
-                this.elementProjectile.damageSources().playerAttack((Player) this.elementProjectile.getOwner()),
+                DamageUtil.source(this.elementProjectile.level(), MYSTIC_DAMAGE, hitEntity, this.elementProjectile.getOwner()),
                 (float) this.damage
             );
 

@@ -20,12 +20,12 @@ public class DamageUtil {
         return source(level, key, entity, null);
     }
 
-    static public DamageSource source(LevelAccessor level, ResourceKey<DamageType> key, @Nullable Entity entity, @Nullable Entity direct) {
+    static public DamageSource source(LevelAccessor level, ResourceKey<DamageType> key, @Nullable Entity direct, @Nullable Entity causing) {
         Holder.Reference<DamageType> type = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key);
-        if (entity != null && direct != null)
-            return new DamageSource(type, entity, direct);
-        else if (entity != null)
-            return new DamageSource(type, entity);
+        if (direct != null && causing != null)
+            return new DamageSource(type, direct, causing);
+        else if (direct != null)
+            return new DamageSource(type, direct);
         else
             return new DamageSource(type);
     }

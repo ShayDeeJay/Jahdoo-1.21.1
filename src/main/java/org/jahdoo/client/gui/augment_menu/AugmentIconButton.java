@@ -4,7 +4,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.FastColor;
+import org.jahdoo.client.SharedUI;
 
 public class AugmentIconButton extends ImageButton {
     private float sizes;
@@ -37,7 +39,7 @@ public class AugmentIconButton extends ImageButton {
         var easedTick = easeInOutCubic(normalizedTick);
         var easedValue = (int) (easedTick * (totalSize - defaultSize)) + defaultSize;
         var offset = (easedValue - defaultSize) / 2;
-        var colourValid = -2763307;
+        var colourValid = -10066330;
         var colourInvalid = FastColor.ABGR32.color(256, 217, 215, 215);
         var getColour = !this.isAvailable ? colourValid : colourInvalid;
 

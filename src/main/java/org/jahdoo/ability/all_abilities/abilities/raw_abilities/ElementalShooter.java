@@ -20,10 +20,12 @@ import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
+import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
 
 public class ElementalShooter extends DefaultEntityBehaviour {
     private int blockBounce;
@@ -147,14 +149,10 @@ public class ElementalShooter extends DefaultEntityBehaviour {
     }
 
     private void setDamageByOwner(LivingEntity target){
-        if (this.genericProjectile.getOwner() != null) {
-            target.hurt(
-                this.genericProjectile.damageSources().playerAttack((Player) this.genericProjectile.getOwner()),
-                (float) this.damage
-            );
-        } else  {
-            target.hurt(this.genericProjectile.damageSources().magic(), (float) damage);
-        }
+        target.hurt(
+            DamageUtil.source(this.genericProjectile.level(), MYSTIC_DAMAGE, target, this.genericProjectile.getOwner()),
+            (float) this.damage
+        );
     }
 
     ResourceLocation abilityId = ModHelpers.res("elemental_shooter_property");

@@ -73,7 +73,6 @@ public class ClientEvents {
         }
     }
 
-
     @SubscribeEvent
     public static void PlayerRenderer(RenderLevelStageEvent event) {
         var player = (Player) event.getCamera().getEntity();

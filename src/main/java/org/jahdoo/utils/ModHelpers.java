@@ -48,6 +48,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
+import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
 public class ModHelpers {
@@ -125,26 +126,21 @@ public class ModHelpers {
     public static String roundNonWholeString(String input) {
         StringBuilder result = new StringBuilder();
         StringBuilder numberBuffer = new StringBuilder();
-
         for (char c : input.toCharArray()) {
             if (Character.isDigit(c) || c == '.') {
-                // Build the numeric part
                 numberBuffer.append(c);
             } else {
-                // Process the number if present
                 if (!numberBuffer.isEmpty()) {
                     result.append(processNumber(numberBuffer.toString()));
-                    numberBuffer.setLength(0); // Reset the buffer
+                    numberBuffer.setLength(0);
                 }
-                result.append(c); // Append non-numeric character
+                result.append(c);
             }
         }
 
-        // Handle trailing number
         if (!numberBuffer.isEmpty()) {
             result.append(processNumber(numberBuffer.toString()));
         }
-
         return result.toString();
     }
 
@@ -198,7 +194,7 @@ public class ModHelpers {
     }
 
     public static void damageEntityWithModifiers(LivingEntity target, LivingEntity player, float currentDamage, AbstractElement getElementType){
-        target.hurt(player.damageSources().playerAttack((Player) player), attributeModifierCalculator(player, currentDamage, getElementType, AttributesRegister.MAGIC_DAMAGE_MULTIPLIER, true));
+        target.hurt(DamageUtil.source(target.level(), MYSTIC_DAMAGE, target, player), attributeModifierCalculator(player, currentDamage, getElementType, AttributesRegister.MAGIC_DAMAGE_MULTIPLIER, true));
     }
 
     public static void getSoundWithPosition(Level level, BlockPos position, SoundEvent audio){

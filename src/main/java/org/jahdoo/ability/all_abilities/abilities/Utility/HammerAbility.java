@@ -45,7 +45,7 @@ public class HammerAbility extends AbstractBlockAbility {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(10, 5, 1)
             .setBlockSize(high, 3, 2)
-            .setModifierWithStep(OFFSET, high,0, true, 13, 1)
+            .setModifierWithStep(OFFSET, high,0, true, high, 1)
             .build();
     }
 

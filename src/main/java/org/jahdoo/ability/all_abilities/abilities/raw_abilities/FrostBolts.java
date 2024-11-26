@@ -149,7 +149,6 @@ public class FrostBolts extends DefaultEntityBehaviour {
 
     @Override
     public void onTickMethod() {
-        System.out.println(this);
         if(!this.assignArrows.isEmpty()){
             this.assignArrows.forEach(
                 arrows -> {

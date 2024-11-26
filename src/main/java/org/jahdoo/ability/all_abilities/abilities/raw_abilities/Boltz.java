@@ -22,11 +22,13 @@ import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
 
 public class Boltz extends DefaultEntityBehaviour {
 
@@ -95,8 +97,8 @@ public class Boltz extends DefaultEntityBehaviour {
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
         LivingEntity owner = (LivingEntity) this.elementProjectile.getOwner();
-        hitEntity.hurt(owner != null ? owner.damageSources().magic() :  this.elementProjectile.damageSources().magic(), (float) this.damage);
-        ModHelpers.getSoundWithPosition( this.elementProjectile.level(),  this.elementProjectile.blockPosition(), SoundRegister.BOLT.get(), 0.1f);
+        hitEntity.hurt(DamageUtil.source(this.elementProjectile.level(), MYSTIC_DAMAGE, hitEntity, owner), (float) this.damage);
+        ModHelpers.getSoundWithPosition(this.elementProjectile.level(),  this.elementProjectile.blockPosition(), SoundRegister.BOLT.get(), 0.1f);
     }
 
     private void dischargeEffect(Projectile projectile, LivingEntity owner, int chance, int duration, int amplifier, int dischargeRadius){
@@ -192,9 +194,8 @@ public class Boltz extends DefaultEntityBehaviour {
         ).forEach(
             livingEntity -> {
                 if (!(livingEntity instanceof Player)) {
-
                     livingEntity.hurt(
-                        this.elementProjectile.damageSources().playerAttack((Player) this.elementProjectile.getOwner()),
+                        DamageUtil.source(this.elementProjectile.level(), MYSTIC_DAMAGE, livingEntity, this.elementProjectile.getOwner()),
                         (float) this.damage
                     );
                 }

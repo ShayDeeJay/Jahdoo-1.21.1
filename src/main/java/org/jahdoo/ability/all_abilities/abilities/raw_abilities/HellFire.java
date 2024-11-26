@@ -22,6 +22,7 @@ import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
@@ -32,6 +33,7 @@ import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class HellFire extends DefaultEntityBehaviour {
@@ -125,7 +127,7 @@ public class HellFire extends DefaultEntityBehaviour {
         if(!this.damageEntity(livingEntity)) return;
 
         livingEntity.addEffect(new CustomMobEffect(EffectsRegister.FIRE_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
-        livingEntity.hurt(aoeCloud.damageSources().playerAttack((Player) aoeCloud.getOwner()), (float) damage);
+        livingEntity.hurt(DamageUtil.source(this.aoeCloud.level(), MYSTIC_DAMAGE, livingEntity, this.aoeCloud.getOwner()), (float) damage);
     }
 
     private LivingEntity getEntityInRange(Vec3 positionsA){

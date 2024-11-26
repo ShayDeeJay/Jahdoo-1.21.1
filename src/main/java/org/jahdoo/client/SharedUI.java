@@ -17,11 +17,13 @@ import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.client.gui.ToggleComponent.textRenderable;
 import static org.jahdoo.client.gui.block.augment_modification_station.AugmentModificationScreen.BORDER_COLOUR;
 
 public class SharedUI {
@@ -32,32 +34,41 @@ public class SharedUI {
         return components;
     }
 
-    public static void boxMaker(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset, int colourBorder){
-        var widthFrom = startX - widthOffset;
-        var heightFrom = startY - heightOffset;
-        var widthTo = startX + widthOffset;
-        var heightTo = startY + heightOffset;
-        var fromColour = -804253680;
-        var toColour = -804253680;
-        guiGraphics.fillGradient(widthFrom, heightFrom, widthTo, heightTo, fromColour, toColour);
-        guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, colourBorder);
+    public static void boxMaker(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset, int colourBorder) {
+        int widthTo = startX + widthOffset * 2;
+        int heightTo = startY + heightOffset * 2;
+        int fromColour = -804253680;
+        int toColour = -804253680;
+
+        guiGraphics.fillGradient(startX, startY, widthTo, heightTo, fromColour, toColour);
+        guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
     }
 
     public static void setCustomBackground(int height, int width, GuiGraphics guiGraphics){
         var widthOffset = 100;
         var heightOffset = 115;
-        var widthFrom = width - widthOffset;
-        var heightFrom = height - heightOffset;
-        var widthTo = width + widthOffset;
-        var heightTo = height + heightOffset;
+        int i = width / 2;
+        int i1 = height / 2;
+        var widthFrom = i - widthOffset;
+        var heightFrom = i1 - heightOffset;
+        var widthTo = i + widthOffset;
+        var heightTo = i1 + heightOffset;
         var fromColour = -804253680;
         var toColour = -804253680;
         var borderColour = BORDER_COLOUR;
 
         guiGraphics.fillGradient(widthFrom, heightFrom, widthTo, heightTo, fromColour, toColour);
-        guiGraphics.hLine(width-100, width + 99, height/2 - 70, borderColour);
+        guiGraphics.hLine(i -100, i + 99, i1 - 70, borderColour);
         guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, borderColour);
         guiGraphics.enableScissor(0, heightFrom + 50, width, heightTo - 5);
+    }
+
+    public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, ItemStack itemStack, Font font) {
+        var yOff = 102;
+        int xOff = width/2 - 55;
+        guiGraphics.drawString(font, getComponents(itemStack).getFirst(), xOff, (height/2 - (yOff - 10)), 0, true);
+        guiGraphics.drawString(font, AugmentItemHelper.getHoverName(itemStack), xOff, (height/2 - yOff), 0, true);
+        abilityIcon(guiGraphics, itemStack, width - 155, height - 180, 109, 40);
     }
 
     public static void renderInventoryBackground(GuiGraphics guiGraphics, Screen screen, int IMAGE_SIZE, int yOffset, boolean show){
@@ -104,9 +115,7 @@ public class SharedUI {
 
             if(!abstractElement.isEmpty()){
                 element = abstractElement.getFirst().textColourPrimary();
-            } else {
-                element = -1;
-            }
+            } else element = -1;
         } else {
             element = abilityRegistrars.getElemenType().textColourPrimary();
         }
@@ -142,21 +151,14 @@ public class SharedUI {
         guiGraphics.pose().scale(0.7f,0.7f, 0.7f);
         guiGraphics.pose().translate(0.2, 0.2, 0.2);
 
-        //        guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.literal(index), (int) (slotX + 16.5), slotY + 10, -1);
-        centeredStringNoShadow(
-            guiGraphics,
-            Minecraft.getInstance().font,
-            Component.literal(index),
-            0, 0,
-            -10329502
-        );
+        centeredStringNoShadow(guiGraphics, Minecraft.getInstance().font, Component.literal(index), 0, 0, -10329502, false);
         guiGraphics.pose().popPose();
         guiGraphics.blit(IconLocations.GUI_AUGMENT_SLOT_V2, slotX, slotY, 0, 0, imageSize, imageSize, imageSize , imageSize);
     }
 
-    public static void centeredStringNoShadow(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int color) {
+    public static void centeredStringNoShadow(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int color, boolean shadow) {
         FormattedCharSequence formattedcharsequence = text.getVisualOrderText();
-        guiGraphics.drawString(font, formattedcharsequence, x - font.width(formattedcharsequence) / 2, y, color, false);
+        guiGraphics.drawString(font, formattedcharsequence, x - font.width(formattedcharsequence) / 2, y, color, shadow);
     }
 
     public static void abilityIcon(GuiGraphics guiGraphics, ItemStack cachedItem, int width, int height, int offset, int localImageSize){

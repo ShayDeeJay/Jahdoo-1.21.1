@@ -11,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.block.augment_modification_station.AugmentModificationEntity;
+import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.items.augments.AugmentItemHelper;
@@ -113,18 +114,13 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         int posY = (int) (ySpacer + 11 + this.yScroll);
         this.addRenderableWidget(
             menuButtonSound(
-                posX,
-                posY,
+                posX, posY,
                 (press) -> {
-                    if(canPurchase){
-                        doOnClick(component, item, nexUpgrade, posX, posY);
-                    }
+                    if(canPurchase) doOnClick(component, item, nexUpgrade, posX, posY);
                 },
-                correctAdjustment || !canPurchase ? UPGRADE_DISABLED : UPGRADE,
-                22,
+                correctAdjustment || !canPurchase ? UPGRADE_DISABLED : UPGRADE, 22,
                 correctAdjustment || !this.isInHitbox(posX, posY) || !canPurchase,
-                correctAdjustment || !canPurchase ? 0 : 8,
-                WIDGET,
+                correctAdjustment || !canPurchase ? 0 : 8, WIDGET,
                 !correctAdjustment  && this.isInHitbox(posX, posY) && canPurchase,
                 () -> {
                     var getHighest = x.isHigherBetter() ? x.actualValue() + x.step() : x.actualValue() - x.step();
@@ -169,16 +165,22 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         }
     }
 
-
     private void keyboardButton() {
+        var resourceLocation = this.showInventory ? INFORMATION : INVENTORY;
         this.addRenderableWidget(
-            menuButton(this.width/2 - 133, this.height/2 + 45, (press) -> inventoryHandler(), this.showInventory ? INFORMATION : INVENTORY , 24, false, 0, WIDGET, true)
+            menuButton(this.width/2 - 133, this.height/2 + 45, (press) -> inventoryHandler(), resourceLocation, 24, false, 0, WIDGET, true)
         );
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if(isInHitbox(mouseX, mouseY)) windowMoveVertical(scrollY * 4);
+        return true;
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if(isInHitbox(mouseX, mouseY)) windowMoveVertical(dragY);
         return true;
     }
 
@@ -202,12 +204,6 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         return mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 50 && mouseY < heightTo - (showInventory ?  120 : 5);
     }
 
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(isInHitbox(mouseX, mouseY)) windowMoveVertical(dragY);
-        return true;
-    }
-
     private void windowMoveVertical(double dragY) {
         int size = getComponents(item)
             .stream()
@@ -216,7 +212,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
             .size();
         if (size > 6 || size > 2 && showInventory) {
             int b = 7 * size * size - 135 * size + 578;
-            this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, b + (!showInventory ? 0 : -120)));
+            this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, b + (!showInventory ? -20 : -120)));
             this.rebuildWidgets();
             this.selectedY = 0;
         } else this.yScroll = 0;
@@ -229,12 +225,9 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     }
 
     private boolean canPurchase(Item itemStack){
-
         var inputItemHandler = entity().inputItemHandler;
         for(int i = 1; i < inputItemHandler.getSlots(); i++){
-            if(inputItemHandler.getStackInSlot(i).getItem() == itemStack){
-                return true;
-            }
+            if(inputItemHandler.getStackInSlot(i).getItem() == itemStack) return true;
         }
         return false;
     }
@@ -257,10 +250,9 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         int startX = this.width / 2 - 140;
         int startY = this.height/2 + 22;
 
-        header(guiGraphics, mouseX, mouseY, pPartialTick);
-        abilityIcon(guiGraphics, entity().getInteractionSlot(), this.width - 155, this.height - 180, 109, 40);
+        SharedUI.header(guiGraphics, this.width, this.height, this.item, this.font);
         overlayInventory(guiGraphics, startX, startY);
-        boxMaker(guiGraphics, startX + adjustX, startY + adjustY, 19, 50, BORDER_COLOUR);
+        boxMaker(guiGraphics, startX - 18 + adjustX, startY - 47 + adjustY, 18, 48, BORDER_COLOUR);
         coreSlots(guiGraphics, adjustX, adjustY);
     }
 
@@ -277,8 +269,10 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         guiGraphics.pose().popPose();
         guiGraphics.pose().translate(0,0,10);
         if(showInventory){
-            boxMaker(guiGraphics, startX + 140, startY + 38, 100, 55, BORDER_COLOUR);
-            boxMaker(guiGraphics, startX + 140, startY + 38, 100, 55, BORDER_COLOUR);
+            int i = 40;
+            int i1 = -17;
+            boxMaker(guiGraphics, startX + i, startY + i1, 100, 55, BORDER_COLOUR);
+            boxMaker(guiGraphics, startX + i, startY + i1, 100, 55, BORDER_COLOUR);
             renderInventoryBackground(guiGraphics, this, 256, 24, this.showInventory);
         }
         guiGraphics.pose().pushPose();
@@ -291,7 +285,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     private void selectedBox(@NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         if(this.isInHitbox(mouseX, mouseY)){
             if(this.selectedY > 0) {
-                boxMaker(guiGraphics, this.width/2, (int) (this.selectedY + 22 + yScroll), 97, 14, getAbstractElement(entity()).textColourSecondary());
+                boxMaker(guiGraphics, this.width/2 - 97, (int) (this.selectedY + 8 + yScroll), 97, 14, getAbstractElement(entity()).textColourSecondary());
             }
         }
     }
@@ -318,16 +312,16 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     private void selectedBoxUpgrade(@NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         if(this.isInHitbox(mouseX, mouseY)){
             if (this.selectedY > 0) {
-                int startX = this.width / 2 + 136;
-                int startY = this.selectedY + 22;
+                int startX = this.width / 2 + 102;
+                int startY = this.selectedY + 8;
+                boxMaker(guiGraphics, startX , (int) (startY + yScroll), 35, 14, getAbstractElement(entity()).textColourSecondary());
                 boxMaker(guiGraphics, startX, (int) (startY + yScroll), 35, 14, getAbstractElement(entity()).textColourSecondary());
-                boxMaker(guiGraphics, startX, (int) (startY + yScroll), 35, 14, getAbstractElement(entity()).textColourSecondary());
-                boxMaker(guiGraphics, startX + 48, (int) (startY + yScroll), 14, 14, getAbstractElement(entity()).textColourSecondary());
-                boxMaker(guiGraphics, startX + 48, (int) (startY + yScroll), 14, 14, getAbstractElement(entity()).textColourSecondary());
-                guiGraphics.drawCenteredString(this.font, this.upgradeValue, startX, (int) (startY - 4 + yScroll), 0);
+                boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, getAbstractElement(entity()).textColourSecondary());
+                boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, getAbstractElement(entity()).textColourSecondary());
+                guiGraphics.drawCenteredString(this.font, this.upgradeValue, startX + 34, (int) (startY + 10 + yScroll), 0);
                 if(this.item != null && this.item.has(WAND_ABILITY_HOLDER)){
                     if(this.upgradeValue != null){
-                        guiGraphics.renderFakeItem(new ItemStack(getChargeableCore()),  startX + 40, (int) (startY - 8 + yScroll));
+                        guiGraphics.renderFakeItem(new ItemStack(getChargeableCore()),  startX + 74, (int) (startY + 6 + yScroll));
                     }
                 }
             }
@@ -336,13 +330,6 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
 
     public Item getChargeableCore() {
         return calculateRatingNext(getAbilityModifiers(this.key, entity().getInteractionSlot().get(WAND_ABILITY_HOLDER)));
-    }
-
-    private void header(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
-        var yOff = 115;
-        int xOff = this.width/2 - 105;
-        textRenderable(xOff, (this.height/2 - (yOff - 10)), getComponents(item).getFirst(), this.getMinecraft()).render(guiGraphics, mouseX, mouseY, pPartialTick);
-        textRenderable(xOff, (this.height/2 - yOff), AugmentItemHelper.getHoverName(item), this.getMinecraft()).render(guiGraphics, mouseX, mouseY, pPartialTick);
     }
 
     @Override

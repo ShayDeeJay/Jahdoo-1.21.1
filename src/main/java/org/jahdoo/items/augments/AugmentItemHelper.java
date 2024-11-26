@@ -181,6 +181,7 @@ public class AugmentItemHelper {
         var probability = List.of("Chance");
         var distance = List.of("Radius", "Distance", "Range");
         var multiplier = List.of("Multiplier");
+        var by = List.of("Block Size");
 
 
         if(time.stream().anyMatch(keys::contains)){
@@ -191,7 +192,9 @@ public class AugmentItemHelper {
             converter = current + " Blocks";
         } else if (multiplier.stream().anyMatch(keys::contains)) {
             converter = current + "x";
-        }else {
+        } else if(by.stream().anyMatch(keys::contains)) {
+            converter = current + " x " + current;
+        } else {
             converter = current;
         }
 
@@ -200,7 +203,7 @@ public class AugmentItemHelper {
         var worseThanStat = -47032;
 
         return Component
-            .literal(converter)
+            .literal(ModHelpers.roundNonWholeString(converter))
             .withStyle(style -> style.withColor( getComparison == 1 ? matchesStat : getComparison == 2 ?  betterThanStat : worseThanStat));
     }
 
@@ -433,7 +436,7 @@ public class AugmentItemHelper {
             .keySet()
             .stream()
             .filter(name -> !name.equals(MANA_COST) && !name.equals(COOLDOWN));
-        return selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && !filterOutBase.toList().isEmpty();
+        return /*selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() &&*/ !filterOutBase.toList().isEmpty();
     }
 
 }

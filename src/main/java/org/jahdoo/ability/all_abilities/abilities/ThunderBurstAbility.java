@@ -24,7 +24,7 @@ import static org.jahdoo.ability.AbilityBuilder.DAMAGE;
 
 public class ThunderBurstAbility extends AbilityRegistrar {
     public static final ResourceLocation abilityId = ModHelpers.res("thunder_burst");
-    public static final String NUMBER_OF_THUNDERBOLTS = "Number of Thunderbolts";
+    public static final String NUMBER_OF_THUNDERBOLTS = "Bolt Count";
 
     private Map<String, AbilityHolder.AbilityModifiers> tagModifierHelper(Player player){
         var wandAbilityHolder = player.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());

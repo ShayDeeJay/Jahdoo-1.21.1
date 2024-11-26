@@ -14,11 +14,13 @@ import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
+import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.ability.AbilityBuilder;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
 
 
 public class LightningTrail extends DefaultEntityBehaviour {
@@ -85,7 +87,7 @@ public class LightningTrail extends DefaultEntityBehaviour {
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
         hitEntity.hurt(
-            this.genericProjectile.damageSources().playerAttack((Player) this.genericProjectile.getOwner()),
+            DamageUtil.source(this.elementProjectile.level(), MYSTIC_DAMAGE, hitEntity, this.elementProjectile.getOwner()),
             (float) damage
         );
     }
