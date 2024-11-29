@@ -40,7 +40,7 @@ public class LightPlacerAbility extends AbstractBlockAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(10, 5, 1)
+            .setMana(15, 5, 2)
             .build();
     }
 

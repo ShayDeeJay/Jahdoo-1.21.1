@@ -14,4 +14,12 @@ public class ProjectileAnimations {
     public static final RawAnimation ORB = RawAnimation.begin().thenLoop("energy_orb");
     public static final RawAnimation BOLTZ = RawAnimation.begin().thenLoop("boltz");
     public static final RawAnimation ORB_END = RawAnimation.begin().thenLoop("energy_orb_end");
+
+    public static final RawAnimation IDLE_BLOCK = RawAnimation.begin().thenPlay("idle");
+    public static final RawAnimation WEST = RawAnimation.begin().thenPlay("direction1");
+    public static final RawAnimation EAST = RawAnimation.begin().thenPlay("direction2");
+    public static final RawAnimation SOUTH = RawAnimation.begin().thenPlay("direction3");
+    public static final RawAnimation UP = RawAnimation.begin().thenPlay("direction4");
+    public static final RawAnimation DOWN = RawAnimation.begin().thenPlay("direction5");
+    public static final RawAnimation NORTH = RawAnimation.begin().thenPlay("direction6");
 }

@@ -9,7 +9,6 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jahdoo.ability.AbilityRegistrar;
-import org.jahdoo.client.gui.IconLocations;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.items.augments.AugmentItemHelper;
@@ -18,15 +17,14 @@ import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.client.gui.ToggleComponent.textRenderable;
-import static org.jahdoo.client.gui.block.augment_modification_station.AugmentModificationScreen.BORDER_COLOUR;
 
 public class SharedUI {
+
+    public static final int BOX_COLOUR = -804253680;
+    public static final int BORDER_COLOUR =  -12434878;
 
     public static List<Component> getComponents(ItemStack item){
         var components = new ArrayList<Component>();
@@ -37,11 +35,9 @@ public class SharedUI {
     public static void boxMaker(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset, int colourBorder) {
         int widthTo = startX + widthOffset * 2;
         int heightTo = startY + heightOffset * 2;
-        int fromColour = -804253680;
-        int toColour = -804253680;
 
-        guiGraphics.fillGradient(startX, startY, widthTo, heightTo, fromColour, toColour);
-        guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
+        guiGraphics.fill(startX, startY, widthTo, heightTo, BOX_COLOUR);
+        guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, BORDER_COLOUR);
     }
 
     public static void setCustomBackground(int height, int width, GuiGraphics guiGraphics){
@@ -53,13 +49,10 @@ public class SharedUI {
         var heightFrom = i1 - heightOffset;
         var widthTo = i + widthOffset;
         var heightTo = i1 + heightOffset;
-        var fromColour = -804253680;
-        var toColour = -804253680;
-        var borderColour = BORDER_COLOUR;
 
-        guiGraphics.fillGradient(widthFrom, heightFrom, widthTo, heightTo, fromColour, toColour);
-        guiGraphics.hLine(i -100, i + 99, i1 - 70, borderColour);
-        guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, borderColour);
+        guiGraphics.fill(widthFrom, heightFrom, widthTo, heightTo, BOX_COLOUR);
+        guiGraphics.hLine(i -100, i + 99, i1 - 70, BORDER_COLOUR);
+        guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, BORDER_COLOUR);
         guiGraphics.enableScissor(0, heightFrom + 50, width, heightTo - 5);
     }
 

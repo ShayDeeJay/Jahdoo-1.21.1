@@ -13,16 +13,14 @@ import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.utils.ModHelpers;
 
+import static org.jahdoo.registers.EntityPropertyRegister.FETCH;
+
 public class FetchAbility extends AbstractBlockAbility {
     public static final ResourceLocation abilityId = ModHelpers.res("fetch");
 
     @Override
     public void invokeAbility(Player player) {
-        GenericProjectile genericProjectile = new GenericProjectile(
-            player, 0,
-            EntityPropertyRegister.FETCH.get().setAbilityId(),
-            abilityId.getPath().intern()
-        );
+        var genericProjectile = new GenericProjectile(player, 0, FETCH.get().setAbilityId(), abilityId.getPath().intern());
         fireUtilityProjectile(genericProjectile, player);
     }
 
@@ -39,7 +37,8 @@ public class FetchAbility extends AbstractBlockAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(10, 5, 1)
+            .setMana(20, 10, 2)
+            .setRange(10,  3, 1)
             .build();
     }
 
@@ -70,6 +69,6 @@ public class FetchAbility extends AbstractBlockAbility {
 
     @Override
     public String projectileKey() {
-        return EntityPropertyRegister.FETCH.get().setAbilityId();
+        return FETCH.get().setAbilityId();
     }
 }

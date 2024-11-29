@@ -71,12 +71,26 @@ public class ClientEvents {
             pos.rotateAround(Axis.ZN.rotationDegrees(anim), 0, height, 0);
             if(entity.getEffect(effect).getDuration() == 0) entity.removeEffect(effect);
         }
+
+
     }
 
     @SubscribeEvent
     public static void PlayerRenderer(RenderLevelStageEvent event) {
         var player = (Player) event.getCamera().getEntity();
         var stack = player.getMainHandItem();
+//        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+//        VertexConsumer builderBlock = buffer.getBuffer(ItemBlockRenderTypes.getRenderType(BlocksRegister.NEXITE_BLOCK.get().defaultBlockState(), true));
+//
+//        var mc = Minecraft.getInstance();
+//        var renderer = mc.getBlockRenderer();
+//        if(mc.level == null) return;
+//
+//        event.getPoseStack().pushPose();
+//        event.getPoseStack().translate(2,2,2);
+//        renderer.renderBatched(BlocksRegister.TANK.get().defaultBlockState(), new BlockPos(1,1,1), mc.level, event.getPoseStack(), builderBlock, false, RandomSource.create());
+//        event.getPoseStack().popPose();
+
         renderUtilityOverlay(event, player, stack);
         renderTeleportLocationOverlay(event, player, stack);
     }

@@ -37,13 +37,13 @@ public class StaticAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(50, 20,  5)
-            .setCooldown(1200, 600, 50)
+            .setMana(80, 30,  10)
+            .setCooldown(1200, 600, 100)
             .setDamage(30, 10, 5)
             .setEffectDuration(300, 50, 50)
             .setEffectStrength(10, 1,1)
             .setEffectChance(10,1,1)
-            .setRange(15,1,1)
+            .setRange(15,5,2)
             .setAbilityTagModifiersRandom(mana_per_damage, 20,5, false, 5)
             .build();
     }

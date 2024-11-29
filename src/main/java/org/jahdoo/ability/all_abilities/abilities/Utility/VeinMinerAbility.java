@@ -46,7 +46,7 @@ public class VeinMinerAbility extends AbstractBlockAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(10, 5, 1)
+            .setMana(30, 20, 2)
             .setAbilityTagModifiersRandom(VEIN_MINE_SIZE, 128,32, true, 32)
             .build();
     }

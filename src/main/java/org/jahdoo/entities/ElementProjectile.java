@@ -188,7 +188,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         }
 
         if(this.showTrailParticles){
-            ParticleHandlers.EntityProjectileParticles(this, tickCount, 0.20f, this.getElementType());
+            ParticleHandlers.entityProjectileParticles(this, tickCount, 0.20f, this.getElementType());
         }
 
         if (this.getOwner() != null && distanceTo(this.getOwner()) > 70f) this.discard();

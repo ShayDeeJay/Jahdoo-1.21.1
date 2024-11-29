@@ -46,11 +46,11 @@ public class IceBombAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(50, 20,  5)
-            .setCooldown(600, 200, 50)
-            .setDamage(25, 10, 5)
+            .setMana(60, 20,  10)
+            .setCooldown(700, 200, 100)
+            .setDamage(20, 10, 2)
             .setEffectStrength(10, 5,1)
-            .setEffectDuration(400,200,10)
+            .setEffectDuration(600,200,100)
             .build();
     }
 

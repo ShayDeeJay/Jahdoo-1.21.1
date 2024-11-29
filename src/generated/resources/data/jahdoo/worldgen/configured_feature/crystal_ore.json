@@ -6,7 +6,7 @@
     "targets": [
       {
         "state": {
-          "Name": "jahdoo:crystal_ore"
+          "Name": "jahdoo:nexite_ore"
         },
         "target": {
           "predicate_type": "minecraft:tag_match",
@@ -15,7 +15,7 @@
       },
       {
         "state": {
-          "Name": "jahdoo:crystal_deepslate_ore"
+          "Name": "jahdoo:nexite_deepslate_ore"
         },
         "target": {
           "predicate_type": "minecraft:tag_match",

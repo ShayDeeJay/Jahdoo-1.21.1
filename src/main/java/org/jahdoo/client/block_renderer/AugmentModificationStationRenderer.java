@@ -27,6 +27,7 @@ import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.ElementRegistry;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
 import java.util.Objects;
@@ -47,26 +48,25 @@ public class AugmentModificationStationRenderer implements BlockEntityRenderer<A
     public void render(
         AugmentModificationEntity augmentStation,
         float pPartialTick,
-        PoseStack pPoseStack,
-        MultiBufferSource pBuffer,
+        @NotNull PoseStack pPoseStack,
+        @NotNull MultiBufferSource pBuffer,
         int pPackedLight,
         int pPackedOverlay
     ){
-        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-        String keyFromAugment = DataComponentHelper.getKeyFromAugment(augmentStation.getInteractionSlot());
+        var itemRenderer = Minecraft.getInstance().getItemRenderer();
+        var keyFromAugment = DataComponentHelper.getKeyFromAugment(augmentStation.getInteractionSlot());
         var ability = AbilityRegister.getFirstSpellByTypeId(keyFromAugment);
         if(ability.isPresent()){
             var getElement = ElementRegistry.getElementOptional(augmentStation.getInteractionSlot().get(DataComponents.CUSTOM_MODEL_DATA).value());
-            if(getElement.isPresent()){
-                renderNameTag(augmentStation, Component.literal(ability.get().getAbilityName()), pPoseStack, pBuffer, getElement.get().textColourPrimary());
-            }
+            var name = Component.literal(ability.get().getAbilityName());
+            getElement.ifPresent(element -> renderNameTag(name, pPoseStack, pBuffer, element.textColourPrimary()));
         }
         focusedItem(pPoseStack, augmentStation, itemRenderer, pBuffer, pPackedLight);
     }
 
     private void focusedItem(PoseStack pPoseStack, AugmentModificationEntity pBlockEntity, ItemRenderer itemRenderer, MultiBufferSource pBuffer, int packedLight){
         pPoseStack.pushPose();
-        float scaleItem = 0.40f;
+        var scaleItem = 0.40f;
         var getState = pBlockEntity.getBlockState().getValue(FACING).getOpposite();
         var N = getState == Direction.NORTH;
         var S = getState == Direction.SOUTH;
@@ -80,33 +80,27 @@ public class AugmentModificationStationRenderer implements BlockEntityRenderer<A
 
         ItemStack itemStack = pBlockEntity.inputItemHandler.getStackInSlot(0);
         itemRenderer.renderStatic(
-            itemStack,
-            ItemDisplayContext.FIXED,
-            packedLight,
-            OverlayTexture.NO_OVERLAY,
-            pPoseStack,
-            pBuffer,
-            pBlockEntity.getLevel(),
-            1
+            itemStack, ItemDisplayContext.FIXED, packedLight,
+            OverlayTexture.NO_OVERLAY, pPoseStack, pBuffer, pBlockEntity.getLevel(), 1
         );
 
         pPoseStack.popPose();
     }
-    protected void renderNameTag(BlockEntity blockEntity, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int textColour) {
-        var entity = this.entityRenderDispatcher.camera.getEntity();
-        BlockPos entityPosition = blockEntity.getBlockPos();
 
-        if (entity instanceof Player player && player.isCreative()) {
+    protected void renderNameTag(Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int textColour) {
+        var entity = this.entityRenderDispatcher.camera.getEntity();
+        double d0 = this.entityRenderDispatcher.cameraHitResult.distanceTo(entity);
+
+        if (entity instanceof Player player && player.isCreative() && d0 < 15) {
             pPoseStack.pushPose();
             pPoseStack.translate(0.5, 1.2, 0.2);
             pPoseStack.mulPose(Axis.XP.rotationDegrees(180));
             pPoseStack.scale(0.01f, 0.01f, 0.01f);
-            Matrix4f matrix4f = pPoseStack.last().pose();
-            Font font = Minecraft.getInstance().font;
-            float f1 = (float)(-font.width(pDisplayName) / 2);
+            var matrix4f = pPoseStack.last().pose();
+            var font = Minecraft.getInstance().font;
+            var f1 = (float) -font.width(pDisplayName) / 2;
             font.drawInBatch(pDisplayName, f1, 0, textColour, false, matrix4f, pBuffer, Font.DisplayMode.SEE_THROUGH , 0, 255);
             pPoseStack.popPose();
-
         }
     }
 

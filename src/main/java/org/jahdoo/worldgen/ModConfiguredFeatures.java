@@ -24,8 +24,8 @@ public class ModConfiguredFeatures {
         RuleTest deepslateReplaceables = new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
 
         List<OreConfiguration.TargetBlockState> overworldCrystalOres = List.of(
-            OreConfiguration.target(stoneReplaceable, BlocksRegister.CRYSTAL_ORE.get().defaultBlockState()),
-            OreConfiguration.target(deepslateReplaceables, BlocksRegister.CRYSTAL_DEEPSLATE_ORE.get().defaultBlockState())
+            OreConfiguration.target(stoneReplaceable, BlocksRegister.NEXITE_ORE.get().defaultBlockState()),
+            OreConfiguration.target(deepslateReplaceables, BlocksRegister.NEXITE_DEEPSLATE_ORE.get().defaultBlockState())
         );
 
         register(context, OVERWORLD_CRYSTAL_ORE_KEY, Feature.ORE, new OreConfiguration(overworldCrystalOres, 16));

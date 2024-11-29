@@ -20,7 +20,10 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.ability.AbilityBuilder;
 import org.jahdoo.components.DataComponentHelper;
 
+import static org.jahdoo.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.particle.ParticleHandlers.sendParticles;
+import static org.jahdoo.utils.ModHelpers.getSoundWithPosition;
 
 public class BoltzAbility extends AbilityRegistrar {
 
@@ -30,10 +33,9 @@ public class BoltzAbility extends AbilityRegistrar {
 
     @Override
     public void invokeAbility(Player player) {
-        int totalShots = (int) DataComponentHelper.getSpecificValue(player, player.getMainHandItem(), totalBolts);
-        Vec3 direction = player.getLookAngle();
-        GenericParticleOptions particleOptions = genericParticleOptions(ParticleStore.ELECTRIC_PARTICLE_SELECTION, this.getElemenType(), 5, 1.2f, 0.5);
-        genericParticleOptions(this.getElemenType(), 30, 1f);
+        var totalShots = (int) getSpecificValue(player, player.getMainHandItem(), totalBolts);
+        var direction = player.getLookAngle();
+        var particleOptions = genericParticleOptions(ParticleStore.ELECTRIC_PARTICLE_SELECTION, this.getElemenType(), 5, 1.2f, 0.5);
 
         for (int i = 0; i < totalShots; i++) {
             ElementProjectile elementProjectile = new ElementProjectile(
@@ -52,16 +54,16 @@ public class BoltzAbility extends AbilityRegistrar {
             player.level().addFreshEntity(elementProjectile);
         }
 
-        for(int i = 0; i < totalShots * 20; i++){
+        for(int i = 0; i < totalShots * 10; i++){
             double spread = 0.8; // Adjust the spread value as needed
             double spreadX = direction.x + (Math.random() - 0.5) * spread;
             double spreadY = direction.y + (Math.random() - 0.5) * spread;
             double spreadZ = direction.z + (Math.random() - 0.5) * spread;
-            ParticleHandlers.sendParticles(player.level(), particleOptions, player.position().add(0,1.5,0), 0, spreadX, spreadY, spreadZ, 1);
+            sendParticles(player.level(), particleOptions, player.position().add(0,1.5,0), 0, spreadX, spreadY, spreadZ, 1);
 
         }
 
-        ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.ORB_CREATE.get(), 0.5f,1.5f);
+        getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.ORB_CREATE.get(), 0.5f,1.5f);
     }
 
     @Override
@@ -77,9 +79,9 @@ public class BoltzAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(30,10,5)
-            .setCooldown(400,100,50)
-            .setDamage(30,15,5)
+            .setMana(60,20,10)
+            .setCooldown(500,100,100)
+            .setDamage(30,10,5)
             .setEffectDuration(300,100,50)
             .setEffectStrength(10, 0, 1)
             .setEffectChance(20,5,5)

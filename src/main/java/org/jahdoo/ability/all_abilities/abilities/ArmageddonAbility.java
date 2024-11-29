@@ -45,11 +45,11 @@ public class ArmageddonAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(80, 40, 5)
-            .setCooldown(2400, 800, 100)
+            .setMana(180, 80, 10)
+            .setCooldown(6000, 2400, 600)
             .setDamage(40, 20, 5)
             .setCastingDistance(30, 10, 5)
-            .setLifetime(500, 300, 20)
+            .setLifetime(400, 200, 40)
             .setAoe(6,1,1)
             .setAbilityTagModifiersRandom(SPAWNING_SPEED, 30,5, false, 5)
             .build();

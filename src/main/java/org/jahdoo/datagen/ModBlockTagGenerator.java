@@ -25,8 +25,9 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
         this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
             .add(BlocksRegister.TANK.get())
             .add(BlocksRegister.INFUSER.get())
-            .add(BlocksRegister.CRYSTAL_ORE.get())
-            .add(BlocksRegister.CRYSTAL_DEEPSLATE_ORE.get())
+            .add(BlocksRegister.NEXITE_ORE.get())
+            .add(BlocksRegister.NEXITE_DEEPSLATE_ORE.get())
+            .add(BlocksRegister.NEXITE_BLOCK.get())
             .add(BlocksRegister.WAND_MANAGER_TABLE.get())
             .add(BlocksRegister.CREATOR.get());
 

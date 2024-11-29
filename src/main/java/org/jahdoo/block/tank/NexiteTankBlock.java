@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static org.jahdoo.registers.AttachmentRegister.BOOL;
 
-public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
+public class NexiteTankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
     public static final VoxelShape SHAPE_BASE = Block.box(1.95, 0, 1.95, 14.05, 2.75, 14.05);
     public static final VoxelShape JAR = Block.box(3, 2.75, 3, 13, 12.75, 13);
     public static final VoxelShape TOP = Block.box(3, 13.25, 3, 13, 16, 13);
@@ -42,7 +42,7 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     public static final BooleanProperty LIT;
     public static final BooleanProperty WATERLOGGED;
 
-    public TankBlock(Properties pProperties) {
+    public NexiteTankBlock(Properties pProperties) {
         super(pProperties);
         this.registerDefaultState(
             this.defaultBlockState()
@@ -53,7 +53,7 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(TankBlock::new);
+        return simpleCodec(NexiteTankBlock::new);
     }
 
     @Override
@@ -76,8 +76,8 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
         if (pState.getBlock() != pNewState.getBlock()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof TankBlockEntity tankBlockEntity)
-                tankBlockEntity.dropsAllInventory(pLevel);
+            if (blockEntity instanceof NexiteTankBlockEntity nexiteTankBlockEntity)
+                nexiteTankBlockEntity.dropsAllInventory(pLevel);
         }
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
     }
@@ -103,19 +103,19 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     protected ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
         ItemStack stack = pPlayer.getItemInHand(pHand);
         BlockEntity entity = pLevel.getBlockEntity(pPos);
-        if (entity instanceof TankBlockEntity tankBlockEntity) {
-            getItemInteractionResult(stack, tankBlockEntity, pPlayer, pLevel);
-            if (BlockInteractionHandler.stackHandlerWithFeedBack(tankBlockEntity.inputItemHandler, stack, ItemsRegister.JIDE_POWDER.get(), 0, tankBlockEntity.getMaxSlotSize(), pPlayer)) {
+        if (entity instanceof NexiteTankBlockEntity nexiteTankBlockEntity) {
+            getItemInteractionResult(stack, nexiteTankBlockEntity, pPlayer, pLevel);
+            if (BlockInteractionHandler.stackHandlerWithFeedBack(nexiteTankBlockEntity.inputItemHandler, stack, ItemsRegister.NEXITE_POWDER.get(), 0, nexiteTankBlockEntity.getMaxSlotSize(), pPlayer)) {
                 pPlayer.level().playSound(pPlayer, pPlayer.blockPosition(), SoundEvents.SAND_PLACE, SoundSource.BLOCKS);
                 return ItemInteractionResult.SUCCESS;
             } else {
-                BlockInteractionHandler.RemoveItemsFromSlotToHand(tankBlockEntity.inputItemHandler,0,pPlayer,pHand,pLevel, pPos, SoundEvents.SAND_PLACE,1,1);
+                BlockInteractionHandler.RemoveItemsFromSlotToHand(nexiteTankBlockEntity.inputItemHandler,0,pPlayer,pHand,pLevel, pPos, SoundEvents.SAND_PLACE,1,1);
             }
         }
         return ItemInteractionResult.SUCCESS;
     }
 
-    private static void getItemInteractionResult(ItemStack heldItem, TankBlockEntity tankBlock, Player player, Level level) {
+    private static void getItemInteractionResult(ItemStack heldItem, NexiteTankBlockEntity tankBlock, Player player, Level level) {
         if (heldItem.getItem() == ItemsRegister.AUGMENT_CORE.get()) {
             if(player.isCreative()) {
                 ModHelpers.getSoundWithPosition(level, tankBlock.getBlockPos(), SoundEvents.NOTE_BLOCK_BELL.value());
@@ -127,15 +127,14 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new TankBlockEntity(pPos,pState);
+        return new NexiteTankBlockEntity(pPos,pState);
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
         return createTickerHelper(
-            pBlockEntityType,
-            BlockEntitiesRegister.TANK_BE.get(),
+            pBlockEntityType, BlockEntitiesRegister.TANK_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }

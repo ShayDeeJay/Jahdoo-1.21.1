@@ -40,7 +40,7 @@ public class DimensionalRecallAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(120, 80, 10)
+            .setMana(160, 80, 20)
             .setCooldown(6000, 3600, 400)
             .build();
     }

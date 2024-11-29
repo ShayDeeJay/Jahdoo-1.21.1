@@ -2,16 +2,13 @@ package org.jahdoo.client.gui;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.client.GuiButton;
-import org.jetbrains.annotations.NotNull;
 
-import static org.jahdoo.client.gui.IconLocations.*;
+import static org.jahdoo.client.IconLocations.*;
 
 public class TestingElements extends Screen  {
 

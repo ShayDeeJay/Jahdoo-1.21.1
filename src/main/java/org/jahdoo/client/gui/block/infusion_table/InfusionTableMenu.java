@@ -9,7 +9,7 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jahdoo.block.wandBlockManager.WandManagerTableEntity;
+import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.MenusRegister;
 

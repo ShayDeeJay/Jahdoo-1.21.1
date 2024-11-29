@@ -175,27 +175,47 @@ public class AugmentItemHelper {
         }
     }
 
-    public static Component getModifierContext(String keys, String current, int getComparison){
-        String converter;
+    public static Component getModifierContextSingle(String keys, String current, int getComparison){
+        return getModifierContext(keys, current, getComparison, false, "", "");
+    }
+
+    public static Component getModifierContextRange(String keys, String min, String max){
+        return getModifierContext(keys, "", 0, true, min, max);
+    }
+
+    public static Component getModifierContext(String keys, String current, int getComparison, boolean isRange, String min, String max) {
+        String displayValue;
         var time = List.of("Duration", "Speed", "Delay", "Time");
         var probability = List.of("Chance");
         var distance = List.of("Radius", "Distance", "Range");
         var multiplier = List.of("Multiplier");
         var by = List.of("Block Size");
 
-
-        if(time.stream().anyMatch(keys::contains)){
-            converter = ticksToTime(current);
+        if (time.stream().anyMatch(keys::contains)) {
+            displayValue = isRange
+                ? rangeString(ticksToTime(min), ticksToTime(max))
+                : ticksToTime(current);
         } else if (probability.stream().anyMatch(keys::contains)) {
-            converter = convertToPercentage(Integer.parseInt(current)) + "%";
+            displayValue = isRange
+                ? rangeString(
+                convertToPercentage(Integer.parseInt(min)),
+                convertToPercentage(Integer.parseInt(max))
+            ) + "%"
+                : convertToPercentage(Integer.parseInt(current)) + "%";
         } else if (distance.stream().anyMatch(keys::contains)) {
-            converter = current + " Blocks";
+            displayValue = isRange
+                ? rangeString(min, max) + " Blocks"
+                : current + " Blocks";
         } else if (multiplier.stream().anyMatch(keys::contains)) {
-            converter = current + "x";
-        } else if(by.stream().anyMatch(keys::contains)) {
-            converter = current + " x " + current;
+            displayValue = isRange
+                ? rangeString(min, max) + "x"
+                : current + "x";
+        } else if (by.stream().anyMatch(keys::contains)) {
+            displayValue = isRange
+                ? rangeString(min + "x" + min, max + "x" + max)
+                : current + " x " + current;
         } else {
-            converter = current;
+            displayValue = isRange ? rangeString(min, max) : current;
         }
 
         var matchesStat = 5987164;
@@ -203,16 +223,26 @@ public class AugmentItemHelper {
         var worseThanStat = -47032;
 
         return Component
-            .literal(ModHelpers.roundNonWholeString(converter))
-            .withStyle(style -> style.withColor( getComparison == 1 ? matchesStat : getComparison == 2 ?  betterThanStat : worseThanStat));
+            .literal(ModHelpers.roundNonWholeString(displayValue))
+            .withStyle(
+                style -> style.withColor(
+                    isRange ? matchesStat : getComparison == 1 ? matchesStat : getComparison == 2 ? betterThanStat : worseThanStat
+                )
+            );
     }
 
     public static @NotNull String ticksToTime(String current) {
         String converter;
         var duration = Double.parseDouble(current) / 20;
-        var minutes = (int)(duration / 60);
-        var seconds = (int)(duration % 60);
-        converter = duration >= 60 ? minutes + "m " + seconds + "s" : duration + "s";
+        var minutes = (int) (duration / 60);
+        var seconds = (int) (duration % 60);
+        if (minutes > 0 && seconds == 0) {
+            converter = minutes + "m";
+        } else if (minutes > 0) {
+            converter = minutes + "m " + seconds + "s";
+        } else {
+            converter = duration + "s";
+        }
         return converter;
     }
 
@@ -263,7 +293,7 @@ public class AugmentItemHelper {
             .withStyle(style -> style.withColor(colour.getFirst().particleColourSecondary()))
             .append(Component.literal(" | ")
                 .withStyle(ChatFormatting.GRAY)
-                .append(getModifierContext(keys, format, comparison)));
+                .append(getModifierContextSingle(keys, format, comparison)));
     }
 
 
@@ -280,9 +310,10 @@ public class AugmentItemHelper {
         if(wandAbilityHolder == null) return toolTips;
         var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityLocation);
         var ability = AbilityRegister.getSpellsByTypeId(abilityLocation);
-        var rarity = ability.getFirst().rarity();
 
-        toolTips.add(JahdooRarity.addRarityTooltip(rarity));
+        if(!ability.isEmpty()){
+            toolTips.add(JahdooRarity.addRarityTooltip(ability.getFirst().rarity()));
+        }
         toolTips.add(Component.empty());
 
         int subHeaderColour = -2434342;

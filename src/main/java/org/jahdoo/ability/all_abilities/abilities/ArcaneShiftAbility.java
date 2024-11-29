@@ -44,12 +44,10 @@ public class ArcaneShiftAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(50, 20, 5)
+            .setMana(90, 40, 10)
             .setCooldown(1200, 400, 100)
             .setDamage(20, 5, 3)
-            .setAbilityTagModifiersRandom(CASTING_DISTANCE, 50, 25, true, 5)
-            .setAbilityTagModifiersRandom(maxEntities, 30, 5, true, 5)
-            .setAbilityTagModifiersRandom(lifeTime, 10, 5, true, 1)
+            .setCastingDistance(50, 25, 5)
             .build();
     }
 

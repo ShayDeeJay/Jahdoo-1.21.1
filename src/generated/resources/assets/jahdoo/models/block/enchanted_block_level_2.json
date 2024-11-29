@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "jahdoo:block/enchanted_block_level_2"
+  }
+}

@@ -32,7 +32,8 @@ public class WallPlacer extends AbstractUtilityProjectile {
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
         this.breakerSize = this.getTagUtility(SIZE);
-        this.size = (int) (breakerSize/2) - (int) this.getTagUtility(OFFSET);
+        var offset = (int) this.getTagUtility(OFFSET);
+        this.size = (int) ((breakerSize/2) - offset);
         this.level = genericProjectile.level();
     }
 
@@ -105,11 +106,11 @@ public class WallPlacer extends AbstractUtilityProjectile {
                         y * (isLookingUpOrDown ? 0 : 1),
                         z * (isLookingUpOrDown || axisX ? 1 : 0)
                     );
-                    removeItemsFromInv(genericProjectile, offsetPos, side, replaceBlock, player, targetBlock, pos1);
+                    removeItemsFromInv(genericProjectile, offsetPos, side, replaceBlock, player, targetBlock, pos1, false);
                 }
             }
         }
-
+        ModHelpers.getSoundWithPosition(level, pos, replaceBlock.getSoundType(replaceBlock.defaultBlockState(), level, pos, null).getPlaceSound(), 1, 1);
         super.onBlockBlockHit(blockHitResult);
         genericProjectile.discard();
     }

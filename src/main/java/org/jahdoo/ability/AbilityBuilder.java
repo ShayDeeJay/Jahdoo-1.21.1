@@ -76,6 +76,14 @@ public class AbilityBuilder {
         this.abilityHolder.abilityProperties().put(name, abilityModifiers);
         return this;
     }
+    public AbilityBuilder setModifierWithStepSet(String name, double high, double low, boolean isHigherBetter, double actualValue, double setValue, double step) {
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(
+            actualValue, high, low, step, setValue, isHigherBetter
+        );
+
+        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
+        return this;
+    }
 
     public AbilityBuilder setModifierWithoutBounds(String name, double actualValue) {
         var abilityModifiers = new AbilityHolder.AbilityModifiers(

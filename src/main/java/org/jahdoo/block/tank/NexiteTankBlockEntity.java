@@ -22,16 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jahdoo.block.AbstractTankUser.findInRange;
-import static org.jahdoo.block.tank.TankBlock.LIT;
+import static org.jahdoo.block.tank.NexiteTankBlock.LIT;
 
 
-public class TankBlockEntity extends AbstractBEInventory {
+public class NexiteTankBlockEntity extends AbstractBEInventory {
     int counter;
     public int glowStrength = 150;
     private static final int INPUT = 0;
     public List<AbstractTankUser> usingThisTank = new ArrayList<>();
 
-    public TankBlockEntity(BlockPos pPos, BlockState pBlockState) {
+    public NexiteTankBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.TANK_BE.get(), pPos, pBlockState, 64);
         this.setData(AttachmentRegister.BOOL, false);
     }
@@ -107,7 +107,7 @@ public class TankBlockEntity extends AbstractBEInventory {
 
     private void harvestOreBelow(ServerLevel serverLevel, BlockPos pos, int tankSlotSize){
         BlockState blockState = serverLevel.getBlockState(pos.below());
-        var harvestBlock = BlocksRegister.CRYSTAL_ORE.get();
+        var harvestBlock = BlocksRegister.NEXITE_ORE.get();
 
         if(!(blockState.is(harvestBlock))) {
             if(this.counter > 0) this.counter = 0;
@@ -116,7 +116,7 @@ public class TankBlockEntity extends AbstractBEInventory {
 
         if(counter >= 200){
             if(tankSlotSize <= 64){
-                var powderItem = new ItemStack(ItemsRegister.JIDE_POWDER.get());
+                var powderItem = new ItemStack(ItemsRegister.NEXITE_POWDER.get());
                 var amountToCopy = Math.min(6 + tankSlotSize, 64);
                 serverLevel.destroyBlock(pos.below(), false);
                 this.inputItemHandler.setStackInSlot(INPUT, powderItem.copyWithCount(amountToCopy));

@@ -68,8 +68,8 @@ public class ElementalShooterAbility extends AbilityRegistrar {
     }
 
     private Vec3 calculateDirectionOffset(LivingEntity player, double offset) {
-        Vec3 lookDirection = player.getLookAngle();
-        Vec3 rightVector = new Vec3(-lookDirection.z(), 0, lookDirection.x()).normalize(); // Perpendicular to look direction
+        var lookDirection = player.getLookAngle();
+        var rightVector = new Vec3(-lookDirection.z(), 0, lookDirection.x()).normalize(); // Perpendicular to look direction
         return rightVector.scale(offset);
     }
 
@@ -79,10 +79,10 @@ public class ElementalShooterAbility extends AbilityRegistrar {
 
     @Override
     public void invokeAbility(Player player) {
-        double numberOfProjectile = getTag(player, (ElementalShooterAbility.numberOfProjectiles));
-        double velocities = getTag(player, ElementalShooterAbility.velocity);
-        double totalWidth = (numberOfProjectile - 1) * 0.1; // Adjust the total width as needed
-        double startOffset = -totalWidth / 2.0;
+        var numberOfProjectile = getTag(player, (ElementalShooterAbility.numberOfProjectiles));
+        var velocities = getTag(player, ElementalShooterAbility.velocity);
+        var totalWidth = (numberOfProjectile - 1) * 0.1; // Adjust the total width as needed
+        var startOffset = -totalWidth / 2.0;
 
         for (int i = 0; i < numberOfProjectile; i++) {
             double offset = numberOfProjectile == 1 ? 0 : startOffset + i * (totalWidth / (numberOfProjectile - 1));
@@ -92,11 +92,9 @@ public class ElementalShooterAbility extends AbilityRegistrar {
                 EntityPropertyRegister.ELEMENTAL_SHOOTER.get().setAbilityId(),
                 abilityId.getPath().intern()
             );
-            Vec3 directionOffset = calculateDirectionOffset(player, offset);
-            Vec3 direction = player.getLookAngle().add(directionOffset).normalize();
-            genericProjectile.shoot(direction.x(), direction.y(), direction.z(), (float) velocities, 0);
-            genericProjectile.setOwner(player);
-            player.level().addFreshEntity(genericProjectile);
+            var directionOffset = calculateDirectionOffset(player, offset);
+            var direction = player.getLookAngle().add(directionOffset).normalize();
+            this.fireProjectileDirection(genericProjectile, player, (float) velocities, direction);
         }
         ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.ENDER_EYE_DEATH, 0.25f);
     }

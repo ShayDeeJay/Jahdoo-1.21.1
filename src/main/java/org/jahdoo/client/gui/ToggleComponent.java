@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-import static org.jahdoo.client.gui.IconLocations.*;
+import static org.jahdoo.client.IconLocations.*;
 
 public class ToggleComponent  {
 

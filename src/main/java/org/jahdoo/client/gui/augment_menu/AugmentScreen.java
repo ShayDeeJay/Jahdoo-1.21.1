@@ -5,7 +5,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.client.SharedUI;
@@ -13,9 +12,11 @@ import org.jahdoo.client.gui.ToggleComponent;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityIconButton;
 import org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeScreen;
 import org.jahdoo.components.AbilityHolder;
+import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.networking.packet.client2server.SyncComponentBlockC2S;
 import org.jahdoo.networking.packet.client2server.SyncComponentC2S;
+import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.utils.ModHelpers;
 
 import javax.annotation.Nullable;
@@ -27,22 +28,18 @@ import java.util.stream.Collectors;
 
 import static org.jahdoo.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.ability.AbilityBuilder.MANA_COST;
-import static org.jahdoo.client.gui.IconLocations.*;
+import static org.jahdoo.client.IconLocations.*;
+import static org.jahdoo.client.SharedUI.BORDER_COLOUR;
 import static org.jahdoo.client.gui.ToggleComponent.textWithBackgroundLarge;
-import static org.jahdoo.client.gui.block.augment_modification_station.AugmentModificationScreen.BORDER_COLOUR;
-import static org.jahdoo.items.augments.AugmentItemHelper.getModifierContext;
+import static org.jahdoo.items.augments.AugmentItemHelper.getModifierContextSingle;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
 public class AugmentScreen extends Screen  {
-    public static final ResourceLocation BUTTON_UNSELECTED = ModHelpers.res("textures/gui/gui_button_unselected.png");
-    public static final ResourceLocation BUTTON_SELECTED = ModHelpers.res("textures/gui/gui_button_selected.png");
-    public static final WidgetSprites BUTTON = new WidgetSprites(BUTTON_UNSELECTED, BUTTON_UNSELECTED);
-    public static final WidgetSprites BUTTON2 = new WidgetSprites(BUTTON_SELECTED, BUTTON_SELECTED);
     private WandAbilityHolder holder;
     private final String abilityName;
     private final Screen previousScreen;
     private double yScroll;
-    private ItemStack itemStack;
+    private final ItemStack itemStack;
 
     public AugmentScreen(ItemStack itemStack, String abilityName, @Nullable Screen previousScreen) {
         super(Component.literal("Augment Menu"));
@@ -56,7 +53,7 @@ public class AugmentScreen extends Screen  {
     protected void init() {
         var initialVerticalOffset = this.height / 2 - 50;
         var verticalSpacing = new AtomicInteger(initialVerticalOffset);
-        navigationButtons(verticalSpacing);
+        navigationButtons();
         displayButtons(getModifiableList(), verticalSpacing);
     }
 
@@ -75,7 +72,7 @@ public class AugmentScreen extends Screen  {
     private void displayButtons(LinkedHashMap<String, AbilityHolder.AbilityModifiers> copy1, AtomicInteger verticalSpacing) {
         copy1.forEach(
             (e, v) -> {
-                var value = getModifierContext(e, ModHelpers.roundNonWholeString(v.setValue()), 1).getString();
+                var value = getModifierContextSingle(e, ModHelpers.roundNonWholeString(v.setValue()), 1).getString();
                 buildCarouselComponent(
                     this.width/2 - 70, verticalSpacing.get(), e, ()-> buttonReduce(e, v), ()-> buttonIncrease(e,v), value
                 );
@@ -84,22 +81,22 @@ public class AugmentScreen extends Screen  {
         );
     }
 
-    private void navigationButtons(AtomicInteger verticalSpacing) {
-        var size = 30;
+    private void navigationButtons() {
+        var size = 32;
         var x = this.width/2 - 30;
         var y =this.height/2 - 70;
-        this.menuButton("textures/gui/gui_button_close_dark.png", x - 100, y, size, (s) -> this.getMinecraft().setScreen(null));
+        this.menuButton("textures/gui/gui_button_close_dark.png", x - 101, y, size, (s) -> this.getMinecraft().setScreen(null));
         if(this.previousScreen != null){
-            this.menuButton("textures/gui/gui_button_back_dark.png", x - 100, y + 20, size, (s) -> this.getMinecraft().setScreen(previousScreen));
+            this.menuButton("textures/gui/gui_button_back_dark.png", x - 101, y + 20, size, (s) -> this.getMinecraft().setScreen(previousScreen));
         }
     }
 
     public void buildCarouselComponent(int posX, int posY, String label, Runnable onLeft, Runnable onRight, String value){
         var widget = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
-        var adjustX = 4;
-        this.addRenderableOnly(textWithBackgroundLarge(posX + 25 + adjustX, (int) (posY + yScroll), Component.literal(value), this.getMinecraft(), Component.literal(label), 10));
-        this.addRenderableWidget(ToggleComponent.menuButton(posX + 10 + adjustX, (int) (posY + yScroll), (press) -> onLeft.run(), DIRECTION_ARROW_BACK, 22, false,4, widget, false));
-        this.addRenderableWidget(ToggleComponent.menuButton(posX + 104 + adjustX, (int) (posY+ yScroll), (press) -> onRight.run(), DIRECTION_ARROW_FORWARD,  22,  false, 4, widget, false));
+        var adjustX = 2;
+        this.addRenderableOnly(textWithBackgroundLarge(posX + 25 + adjustX, (int) (posY + yScroll),  ModHelpers.withStyleComponent(value, -1381654), this.getMinecraft(), Component.literal(label), 10));
+        this.addRenderableWidget(ToggleComponent.menuButton(posX + 10 + adjustX, (int) (posY + yScroll), (press) -> onLeft.run(), DIRECTION_ARROW_BACK, 22, false,0, widget, true));
+        this.addRenderableWidget(ToggleComponent.menuButton(posX + 104 + adjustX, (int) (posY+ yScroll), (press) -> onRight.run(), DIRECTION_ARROW_FORWARD,  22,  false, 0, widget, true));
     }
 
     public void menuButton(String textureLocation, int posX, int posY, int size, Button.OnPress action) {
@@ -109,21 +106,17 @@ public class AugmentScreen extends Screen  {
     }
 
     private void buttonReduce(String e, AbilityHolder.AbilityModifiers v) {
-        var higher = v.setValue() > v.lowestValue();
-        var lower = v.setValue() > v.actualValue();
-        if(v.isHigherBetter() ? higher : lower){
-            updateAugmentConfig(e, v, v.setValue() - v.step());
-            this.rebuildWidgets();
-        }
+        var min = Math.min(v.setValue() + v.step(), v.highestValue());
+        var max = Math.max(v.setValue() - v.step(), v.lowestValue());
+        updateAugmentConfig(e, v, v.isHigherBetter() ? max : min);
+        this.rebuildWidgets();
     }
 
     private void buttonIncrease(String e, AbilityHolder.AbilityModifiers v) {
-        var higher = v.setValue() < v.actualValue();
-        var lower = v.setValue() < v.highestValue();
-        if(v.isHigherBetter() ? higher : lower){
-            updateAugmentConfig(e, v, v.setValue() + v.step());
-            this.rebuildWidgets();
-        }
+        var min = Math.max(v.setValue() - v.step(), v.actualValue());
+        var max = Math.min(v.setValue() + v.step(), v.actualValue());
+        updateAugmentConfig(e, v, v.isHigherBetter() ? max : min);
+        this.rebuildWidgets();
     }
 
     private void updateAugmentConfig(String e, AbilityHolder.AbilityModifiers v, double i) {
@@ -162,10 +155,10 @@ public class AugmentScreen extends Screen  {
     }
 
     private void windowMoveVertical(double dragY) {
-        if (this.getModifiableList().size() > 4) {
-            int listSize = this.getModifiableList().size();
-            double maxScroll = -(50 + Math.sqrt(listSize) * listSize * 6); // Adjust the multiplier (5) to fit your needs
-            this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, maxScroll));
+        int listSize = this.getModifiableList().size();
+        if (listSize > 4) {
+            var maxScroll = -20;
+            this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, maxScroll * (listSize-4)));
             this.rebuildWidgets();
         }
     }
@@ -173,8 +166,10 @@ public class AugmentScreen extends Screen  {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBlurredBackground(partialTick);
-        SharedUI.boxMaker(guiGraphics, this.width/2-130, this.height/2 - 70, 16, this.previousScreen == null ? 15 : 25, BORDER_COLOUR);
+        SharedUI.boxMaker(guiGraphics, this.width/2-131, this.height/2 - 70, 16, this.previousScreen == null ? 16 : 25, BORDER_COLOUR);
         SharedUI.setCustomBackground(this.height, this.width, guiGraphics);
+//        Centre finder
+//        SharedUI.boxMaker(guiGraphics, this.width/2 - 100, this.height/2 - 70, 50, this.previousScreen == null ? 95 : 55, BORDER_COLOUR);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.disableScissor();
         SharedUI.header(guiGraphics, this.width, this.height, itemStack, this.font);

@@ -43,12 +43,12 @@ public class FireballAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(30, 10, 5)
+            .setMana(90, 40, 10)
             .setCooldown(600, 200, 100)
             .setDamage(45, 20, 5)
             .setEffectDuration(300, 100, 20)
             .setEffectStrength(10, 0, 1)
-            .setEffectChance(40, 5, 5)
+            .setEffectChance(50, 10, 10)
             .setAbilityTagModifiersRandom(novaRange, 6, 3, true, 1)
             .build();
     }

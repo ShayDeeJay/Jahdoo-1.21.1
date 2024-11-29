@@ -14,11 +14,9 @@ import org.jahdoo.utils.ModHelpers;
 import static org.jahdoo.registers.AttachmentRegister.VITAL_REJUVENATION;
 
 public class VitalRejuvenationAbility extends AbilityRegistrar {
-
     public static final ResourceLocation abilityId = ModHelpers.res("vital_rejuvenation");
     public static final String MAX_ABSORPTION = "Max Absorption hearts";
     public static final String CAST_DELAY = "Cast Charge Delay";
-
 
     @Override
     public int getCastType() {
@@ -43,9 +41,9 @@ public class VitalRejuvenationAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(80, 40, 5)
+            .setMana(80, 40, 10)
             .setAbilityTagModifiersRandom(MAX_ABSORPTION, 10, 2, true, 1)
-            .setAbilityTagModifiersRandom(CAST_DELAY, 20, 5, false, 5)
+            .setAbilityTagModifiersRandom(CAST_DELAY, 15, 5, false, 2)
             .build();
     }
 

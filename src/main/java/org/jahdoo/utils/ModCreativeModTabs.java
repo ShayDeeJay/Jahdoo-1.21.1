@@ -24,14 +24,16 @@ public class ModCreativeModTabs {
         "jahdoo_tab", () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemsRegister.AUGMENT_ITEM.get()))
             .title(Component.translatable("creativetab.jahdoo_tab"))
             .displayItems((pParameters, pOutput) -> {
-                pOutput.accept(BlocksRegister.CRYSTAL_ORE.get());
-                    pOutput.accept(BlocksRegister.CRYSTAL_DEEPSLATE_ORE.get());
+                pOutput.accept(BlocksRegister.NEXITE_ORE.get());
+                    pOutput.accept(BlocksRegister.NEXITE_DEEPSLATE_ORE.get());
+                    pOutput.accept(BlocksRegister.NEXITE_BLOCK.get());
+                    pOutput.accept(BlocksRegister.ENCHANTED_BLOCK.get());
                     pOutput.accept(ItemsRegister.MODULAR_CHAOS_CUBE_ITEM.get());
                     pOutput.accept(BlocksRegister.TANK.get());
                     pOutput.accept(BlocksRegister.CREATOR.get());
                     pOutput.accept(BlocksRegister.AUGMENT_MODIFICATION_STATION.get());
                     pOutput.accept(ItemsRegister.INFUSER_ITEM.get());
-                    pOutput.accept(ItemsRegister.JIDE_POWDER.get());
+                    pOutput.accept(ItemsRegister.NEXITE_POWDER.get());
                     pOutput.accept(ItemsRegister.AUGMENT_CORE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_FRAGMENT.get());
                     pOutput.accept(ItemsRegister.TOME_OF_UNITY.get());

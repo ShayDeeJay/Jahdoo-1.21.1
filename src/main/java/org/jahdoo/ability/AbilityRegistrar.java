@@ -5,12 +5,15 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
 
@@ -63,11 +66,31 @@ public abstract class AbilityRegistrar {
         return false;
     }
 
+    public int Laccuracy(LivingEntity player){
+        var effect = EffectsRegister.AMPLIFY_BLOCK_REACH;
+        var getEffectLevel = player.getEffect(effect);
+        if(player.hasEffect(effect)){
+            return getEffectLevel.getAmplifier();
+        }
+        return 0;
+    }
+
     public void fireProjectile(Projectile projectile, LivingEntity player, float velocity){
         if(player != null){
             if(player.level() instanceof ServerLevel serverLevel){
                 Vec3 direction = player.getLookAngle();
-                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, 0);
+                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, Laccuracy(player));
+                projectile.setOwner(player);
+                serverLevel.addFreshEntity(projectile);
+                ModHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundRegister.ORB_FIRE.get(), 0.4f, 1f);
+            }
+        }
+    }
+
+    public void fireProjectileDirection(Projectile projectile, LivingEntity player, float velocity, Vec3 direction){
+        if(player != null){
+            if(player.level() instanceof ServerLevel serverLevel){
+                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, Laccuracy(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
                 ModHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundRegister.ORB_FIRE.get(), 0.4f, 1f);
@@ -79,7 +102,7 @@ public abstract class AbilityRegistrar {
         if(player != null){
             if(player.level() instanceof ServerLevel serverLevel){
                 Vec3 direction = player.getLookAngle();
-                projectile.shoot(direction.x(), direction.y(), direction.z(), 1.2f, 0);
+                projectile.shoot(direction.x(), direction.y(), direction.z(), 1.2f, Laccuracy(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
                 ModHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundEvents.BREEZE_CHARGE , 0.05f,1.4f);

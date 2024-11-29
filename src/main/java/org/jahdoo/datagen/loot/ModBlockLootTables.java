@@ -38,15 +38,17 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(BlocksRegister.AUGMENT_MODIFICATION_STATION.get());
         this.dropOther(BlocksRegister.WAND.get(), Items.AIR);
         this.dropOther(BlocksRegister.LIGHTING.get(), Items.AIR);
-        this.dropOther(BlocksRegister.JIDE_POWDER_BLOCk.get(), Items.AIR);
-        this.add(BlocksRegister.CRYSTAL_ORE.get(),
-            block -> createCopperLikeOreDrops(BlocksRegister.CRYSTAL_ORE.get(), ItemsRegister.JIDE_POWDER.get())
+        this.dropOther(BlocksRegister.ENCHANTED_BLOCK.get(), Items.AIR);
+        this.dropOther(BlocksRegister.NEXITE_POWDER_BLOCK.get(), Items.AIR);
+        this.add(BlocksRegister.NEXITE_ORE.get(),
+            block -> createCopperLikeOreDrops(BlocksRegister.NEXITE_ORE.get(), ItemsRegister.NEXITE_POWDER.get())
                 .withPool(LootPool.lootPool().setRolls(UniformGenerator.between(0f, 1.0F)))
         );
-        this.add(BlocksRegister.CRYSTAL_DEEPSLATE_ORE.get(),
-            block -> createCopperLikeOreDrops(BlocksRegister.CRYSTAL_ORE.get(), ItemsRegister.JIDE_POWDER.get())
+        this.add(BlocksRegister.NEXITE_DEEPSLATE_ORE.get(),
+            block -> createCopperLikeOreDrops(BlocksRegister.NEXITE_ORE.get(), ItemsRegister.NEXITE_POWDER.get())
                 .withPool(LootPool.lootPool().setRolls(UniformGenerator.between(0f, 1.0F)))
         );
+        this.dropSelf(BlocksRegister.NEXITE_BLOCK.get());
     }
 
     protected LootTable.Builder createCopperLikeOreDrops(Block pBlock, Item item) {

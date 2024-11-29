@@ -4,15 +4,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 
 import javax.annotation.Nullable;
 
-import static org.jahdoo.client.gui.IconLocations.GUI_BUTTON_SELECTED;
-import static org.jahdoo.client.gui.IconLocations.SELECTED_GUI_BUTTON_OVERLAY;
+import static org.jahdoo.client.IconLocations.GUI_BUTTON_SELECTED;
+import static org.jahdoo.client.IconLocations.SELECTED_GUI_BUTTON_OVERLAY;
 
 public class GuiButton extends ImageButton {
     private float sizes;

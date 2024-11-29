@@ -4,9 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-import org.jahdoo.block.tank.TankBlockEntity;
-import org.jahdoo.particle.ParticleHandlers;
+import org.jahdoo.block.tank.NexiteTankBlockEntity;
 import org.jahdoo.registers.BlocksRegister;
 
 import java.util.ArrayList;
@@ -23,16 +21,16 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
     }
 
     protected void assignTankBlockInRange(Level level, BlockPos pPos, int craftingFuelCost){
-        if(this.tankPosition == null || !(level.getBlockEntity(tankPosition) instanceof TankBlockEntity)){
+        if(this.tankPosition == null || !(level.getBlockEntity(tankPosition) instanceof NexiteTankBlockEntity)){
             findTank(level, pPos, craftingFuelCost);
         }
 
         if(tankPosition != null){
-            if (level.getBlockEntity(tankPosition) instanceof TankBlockEntity tankBlockEntity) {
+            if (level.getBlockEntity(tankPosition) instanceof NexiteTankBlockEntity nexiteTankBlockEntity) {
                 if (progress > 0) {
-                    if(!tankBlockEntity.usingThisTank.contains(this)) tankBlockEntity.usingThisTank.add(this);
+                    if(!nexiteTankBlockEntity.usingThisTank.contains(this)) nexiteTankBlockEntity.usingThisTank.add(this);
                 } else {
-                    tankBlockEntity.usingThisTank.remove(this);
+                    nexiteTankBlockEntity.usingThisTank.remove(this);
                 };
             }
             findTank(level, pPos, craftingFuelCost);
@@ -44,18 +42,18 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
             var blockPos = this.getTankBlockInRange(level, pPos.above())
                 .stream()
                 .filter(
-                    blockPos1 -> level.getBlockEntity(blockPos1) instanceof TankBlockEntity tankBlockEntity &&
+                    blockPos1 -> level.getBlockEntity(blockPos1) instanceof NexiteTankBlockEntity tankBlockEntity &&
                     tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() >= craftingFuelCost
                 )
                 .sorted(
-                    Comparator.comparingInt(blockPos1 -> level.getBlockEntity(blockPos1) instanceof TankBlockEntity tankBlockEntity ? tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() : 0)
+                    Comparator.comparingInt(blockPos1 -> level.getBlockEntity(blockPos1) instanceof NexiteTankBlockEntity tankBlockEntity ? tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() : 0)
                 )
                 .toList();
 
             if (!blockPos.isEmpty()) {
                 if (tankPosition != null) {
-                    if (level.getBlockEntity(tankPosition) instanceof TankBlockEntity tankBlockEntity) {
-                        tankBlockEntity.usingThisTank.remove(this);
+                    if (level.getBlockEntity(tankPosition) instanceof NexiteTankBlockEntity nexiteTankBlockEntity) {
+                        nexiteTankBlockEntity.usingThisTank.remove(this);
                     }
                 }
                 this.tankPosition = blockPos.getLast();
@@ -80,9 +78,9 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
         return adjacentPositions;
     }
 
-    protected TankBlockEntity getTankEntity(){
-        if (this.level.getBlockEntity(this.tankPosition) instanceof TankBlockEntity tankBlockEntity) {
-            return tankBlockEntity;
+    protected NexiteTankBlockEntity getTankEntity(){
+        if (this.level.getBlockEntity(this.tankPosition) instanceof NexiteTankBlockEntity nexiteTankBlockEntity) {
+            return nexiteTankBlockEntity;
         }
         return null;
     }
@@ -95,8 +93,8 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
 
     protected boolean hasTankAndFuel(){
         if(this.level == null || this.tankPosition == null) return false;
-        if (!(this.level.getBlockEntity(this.tankPosition) instanceof TankBlockEntity tankBlockEntity)) return false;
-        return this.tankPosition != null && tankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() >= this.setCraftingCost();
+        if (!(this.level.getBlockEntity(this.tankPosition) instanceof NexiteTankBlockEntity nexiteTankBlockEntity)) return false;
+        return this.tankPosition != null && nexiteTankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() >= this.setCraftingCost();
     }
 
     private List<BlockPos> getTankBlockInRange(Level pLevel, BlockPos pos) {

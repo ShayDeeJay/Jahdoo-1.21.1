@@ -1,4 +1,4 @@
-package org.jahdoo.client.gui;
+package org.jahdoo.client;
 
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.utils.ModHelpers;
@@ -35,5 +35,4 @@ public class IconLocations {
     public static final ResourceLocation AUGMENT_HYPER_CORE = ModHelpers.res("textures/gui/slots/augment_hyper_core_slot.png");
     public static final ResourceLocation INFORMATION = ModHelpers.res("textures/gui/gui_button_information.png");
     public static final ResourceLocation INVENTORY = ModHelpers.res("textures/gui/gui_button_inventory.png");
-
 }

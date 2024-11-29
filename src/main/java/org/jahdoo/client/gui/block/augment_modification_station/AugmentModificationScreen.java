@@ -14,7 +14,6 @@ import org.jahdoo.block.augment_modification_station.AugmentModificationEntity;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
-import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.networking.packet.client2server.AugmentModificationChargeC2S;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.utils.ModHelpers;
@@ -26,17 +25,16 @@ import java.util.regex.Pattern;
 
 import static net.minecraft.sounds.SoundEvents.APPLY_EFFECT_TRIAL_OMEN;
 import static org.jahdoo.client.SharedUI.*;
-import static org.jahdoo.client.gui.IconLocations.*;
+import static org.jahdoo.client.IconLocations.*;
 import static org.jahdoo.client.gui.ToggleComponent.*;
 import static org.jahdoo.client.gui.block.augment_modification_station.AugmentModificationData.*;
-import static org.jahdoo.items.augments.AugmentItemHelper.getModifierContext;
+import static org.jahdoo.items.augments.AugmentItemHelper.getModifierContextSingle;
 import static org.jahdoo.items.augments.AugmentRatingSystem.calculateRatingNext;
 import static org.jahdoo.networking.packet.client2server.AugmentModificationChargeC2S.chargeCoreSides;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 import static org.jahdoo.utils.ModHelpers.withStyleComponent;
 
 public class AugmentModificationScreen extends AbstractContainerScreen<AugmentModificationMenu> {
-    public static final int BORDER_COLOUR = -10066330;
     public static WidgetSprites WIDGET = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
     private final AugmentModificationMenu augmentModificationMenu;
     private final ItemStack item;
@@ -124,7 +122,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
                 !correctAdjustment  && this.isInHitbox(posX, posY) && canPurchase,
                 () -> {
                     var getHighest = x.isHigherBetter() ? x.actualValue() + x.step() : x.actualValue() - x.step();
-                    var original = getModifierContext(extractName(component.getString()), ModHelpers.roundNonWholeString(getHighest), 1);
+                    var original = getModifierContextSingle(extractName(component.getString()), ModHelpers.roundNonWholeString(getHighest), 1);
                     this.upgradeValue = withStyleComponent("↑ " + original.getString(), -7092917);
                     this.selectedY = correctAdjustment ? 0 : ySpacer;
                     this.key = component;
@@ -193,15 +191,15 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     }
 
     public boolean isInHitbox(double mouseX, double mouseY){
-        var width = this.width/2;
-        var height = this.height/2;
         var widthOffset = 100;
         var heightOffset = 115;
-        var widthFrom = width - widthOffset;
-        var heightFrom = height - heightOffset;
-        var widthTo = width + widthOffset;
-        var heightTo = height + heightOffset;
-        return mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 50 && mouseY < heightTo - (showInventory ?  120 : 5);
+        int i = width / 2;
+        int i1 = height / 2;
+        var widthFrom = i - widthOffset;
+        var heightFrom = i1 - heightOffset;
+        var widthTo = i + widthOffset;
+        var heightTo = i1 + heightOffset - 5;
+        return mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 35 && mouseY < heightTo - (showInventory ?  114 : 5);
     }
 
     private void windowMoveVertical(double dragY) {
@@ -218,8 +216,8 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         } else this.yScroll = 0;
     }
 
-    private void chargeCoreType(Item itemStack){
-        ItemStack itemStack1 = new ItemStack(itemStack);
+    private void chargeCoreType(Item item){
+        ItemStack itemStack1 = new ItemStack(item);
         PacketDistributor.sendToServer(new AugmentModificationChargeC2S(entity().getBlockPos(), itemStack1));
         chargeCoreSides(entity(), itemStack1);
     }
@@ -239,7 +237,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
         this.renderBlurredBackground(pPartialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
-        setCustomBackground( guiGraphics);
+        SharedUI.setCustomBackground(this.height, this.width, guiGraphics);
         selectedBoxUpgrade(guiGraphics, mouseX, mouseY);
         selectedBox(guiGraphics, mouseX, mouseY);
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
@@ -247,8 +245,8 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
 
         var adjustX = 18;
         var adjustY = -27;
-        int startX = this.width / 2 - 140;
-        int startY = this.height/2 + 22;
+        var startX = this.width / 2 - 140;
+        var startY = this.height/2 + 22;
 
         SharedUI.header(guiGraphics, this.width, this.height, this.item, this.font);
         overlayInventory(guiGraphics, startX, startY);
@@ -269,8 +267,8 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         guiGraphics.pose().popPose();
         guiGraphics.pose().translate(0,0,10);
         if(showInventory){
-            int i = 40;
-            int i1 = -17;
+            var i = 40;
+            var i1 = -17;
             boxMaker(guiGraphics, startX + i, startY + i1, 100, 55, BORDER_COLOUR);
             boxMaker(guiGraphics, startX + i, startY + i1, 100, 55, BORDER_COLOUR);
             renderInventoryBackground(guiGraphics, this, 256, 24, this.showInventory);
@@ -283,47 +281,27 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     }
 
     private void selectedBox(@NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        if(this.isInHitbox(mouseX, mouseY)){
-            if(this.selectedY > 0) {
-                boxMaker(guiGraphics, this.width/2 - 97, (int) (this.selectedY + 8 + yScroll), 97, 14, getAbstractElement(entity()).textColourSecondary());
-            }
-        }
-    }
+        if(!this.isInHitbox(mouseX, mouseY)) return;
+        if(this.selectedY <= 0) return;
+        var colour = getAbstractElement(entity()).textColourSecondary();
 
-    private void setCustomBackground(GuiGraphics guiGraphics){
-        var width = this.width/2;
-        var height = this.height/2;
-        var widthOffset = 100;
-        var heightOffset = 115;
-        var widthFrom = width - widthOffset;
-        var heightFrom = height - heightOffset;
-        var widthTo = width + widthOffset;
-        var heightTo = height + heightOffset;
-        var fromColour = -804253680;
-        var toColour = -804253680;
-        var borderColour = BORDER_COLOUR;
-
-        guiGraphics.fillGradient(widthFrom, heightFrom, widthTo, heightTo, fromColour, toColour);
-        guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, borderColour);
-        guiGraphics.hLine(width-100, width + 99, this.height/2 - 70, borderColour);
-        guiGraphics.enableScissor(0, heightFrom + 50, this.width, heightTo - 5);
+        boxMaker(guiGraphics, this.width/2 - 97, (int) (this.selectedY + 8 + yScroll), 97, 14, colour);
     }
 
     private void selectedBoxUpgrade(@NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        if(this.isInHitbox(mouseX, mouseY)){
-            if (this.selectedY > 0) {
-                int startX = this.width / 2 + 102;
-                int startY = this.selectedY + 8;
-                boxMaker(guiGraphics, startX , (int) (startY + yScroll), 35, 14, getAbstractElement(entity()).textColourSecondary());
-                boxMaker(guiGraphics, startX, (int) (startY + yScroll), 35, 14, getAbstractElement(entity()).textColourSecondary());
-                boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, getAbstractElement(entity()).textColourSecondary());
-                boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, getAbstractElement(entity()).textColourSecondary());
-                guiGraphics.drawCenteredString(this.font, this.upgradeValue, startX + 34, (int) (startY + 10 + yScroll), 0);
-                if(this.item != null && this.item.has(WAND_ABILITY_HOLDER)){
-                    if(this.upgradeValue != null){
-                        guiGraphics.renderFakeItem(new ItemStack(getChargeableCore()),  startX + 74, (int) (startY + 6 + yScroll));
-                    }
-                }
+        if(!this.isInHitbox(mouseX, mouseY)) return;
+        if(this.selectedY <= 0) return;
+        var startX = this.width / 2 + 102;
+        var startY = this.selectedY + 8;
+
+        boxMaker(guiGraphics, startX , (int) (startY + yScroll), 35, 14, getAbstractElement(entity()).textColourSecondary());
+        boxMaker(guiGraphics, startX, (int) (startY + yScroll), 35, 14, getAbstractElement(entity()).textColourSecondary());
+        boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, getAbstractElement(entity()).textColourSecondary());
+        boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, getAbstractElement(entity()).textColourSecondary());
+        guiGraphics.drawCenteredString(this.font, this.upgradeValue, startX + 34, (int) (startY + 10 + yScroll), 0);
+        if(this.item != null && this.item.has(WAND_ABILITY_HOLDER)){
+            if(this.upgradeValue != null){
+                guiGraphics.renderFakeItem(new ItemStack(getChargeableCore()),  startX + 74, (int) (startY + 6 + yScroll));
             }
         }
     }

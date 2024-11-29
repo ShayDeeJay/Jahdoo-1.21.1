@@ -1,16 +1,27 @@
 package org.jahdoo.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Collections;
+import java.util.Optional;
 
 public class BlockInteractionHandler {
 
@@ -144,4 +155,26 @@ public class BlockInteractionHandler {
         return InteractionResult.FAIL;
     }
 
+
+    public static Optional<Pair<IItemHandler, Object>> getItemHandlerAt(Level worldIn, double x, double y, double z, Direction side) {
+        var blockpos = BlockPos.containing(x, y, z);
+        var state = worldIn.getBlockState(blockpos);
+        var blockEntity = state.hasBlockEntity() ? worldIn.getBlockEntity(blockpos) : null;
+        var blockCap = worldIn.getCapability(Capabilities.ItemHandler.BLOCK, blockpos, state, blockEntity, side);
+        if (blockCap != null) {
+            return Optional.of(ImmutablePair.of(blockCap, blockEntity));
+        } else {
+            var list = worldIn.getEntities((Entity)null, new AABB(x - 0.5, y - 0.5, z - 0.5, x + 0.5, y + 0.5, z + 0.5), EntitySelector.ENTITY_STILL_ALIVE);
+            if (!list.isEmpty()) {
+                Collections.shuffle(list);
+                for (Entity entity : list) {
+                    IItemHandler entityCap = entity.getCapability(Capabilities.ItemHandler.ENTITY_AUTOMATION, side);
+                    if (entityCap != null) {
+                        return Optional.of(ImmutablePair.of(entityCap, entity));
+                    }
+                }
+            }
+            return Optional.empty();
+        }
+    }
 }

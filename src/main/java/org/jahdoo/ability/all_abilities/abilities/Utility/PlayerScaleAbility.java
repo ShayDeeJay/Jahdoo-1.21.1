@@ -38,7 +38,7 @@ public class PlayerScaleAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(10, 5, 1)
+            .setMana(15, 5, 2)
             .setModifier(COOLDOWN, 10, 10, true, 10)
             .setModifierWithStep(SCALE_VALUE, 2,-1, true, 2, 0.5)
             .build();

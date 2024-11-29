@@ -26,7 +26,7 @@ public class ItemsRegister {
 
     //Basic Items
     public static final DeferredHolder<Item, Item> AUGMENT_FRAGMENT = basicItem("augment_fragment");
-    public static final DeferredHolder<Item, Item> JIDE_POWDER = basicItem("jide_powder");
+    public static final DeferredHolder<Item, Item> NEXITE_POWDER = basicItem("nexite_powder");
     public static final DeferredHolder<Item, Item> AUGMENT_CORE = basicItem("augment_core");
     public static final DeferredHolder<Item, Item> ADVANCED_AUGMENT_CORE = basicItem("advanced_augment_core");
     public static final DeferredHolder<Item, Item> AUGMENT_HYPER_CORE = basicItem("augment_hyper_core");

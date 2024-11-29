@@ -46,7 +46,8 @@ public class PlayClientSoundSyncS2CPacket implements CustomPacketPayload {
                     if(ctx.player() instanceof LocalPlayer localPlayer) {
                         var volumeAdjust = ctx.listener().getMainThreadEventLoop().getPendingTasksCount();
                         var adjusted = volume - ((float) volumeAdjust /10);
-                        localPlayer.playSound(soundEvents, adjusted, pitch);
+                        System.out.println(volume);
+                        localPlayer.playSound(soundEvents, volume == 1.15f ? volume : adjusted, pitch);
                     }
                 }
             }

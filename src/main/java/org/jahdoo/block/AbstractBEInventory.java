@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
@@ -32,12 +33,7 @@ public abstract class AbstractBEInventory extends BlockEntity {
 
     public static GenericParticleOptions processingParticle(int lifetime, float size, boolean staticSize, double speed){
         var element = ElementRegistry.UTILITY.get();
-        return new GenericParticleOptions(
-            ParticleStore.SOFT_PARTICLE_SELECTION,
-            element.particleColourPrimary(),
-            element.particleColourFaded(),
-            lifetime, size, staticSize, speed
-        );
+        return ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, element, lifetime, size, staticSize, speed);
     }
     protected ContainerData data;
 

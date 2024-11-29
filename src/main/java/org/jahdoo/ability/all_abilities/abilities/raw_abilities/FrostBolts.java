@@ -32,7 +32,6 @@ import static org.jahdoo.ability.AbilityBuilder.*;
 
 public class FrostBolts extends DefaultEntityBehaviour {
     List<GenericProjectile> assignArrows = new ArrayList<>();
-
     double damage;
     double effectChance;
     double effectStrength;

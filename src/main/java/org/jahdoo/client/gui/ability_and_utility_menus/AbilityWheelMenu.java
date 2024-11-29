@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static org.jahdoo.client.gui.IconLocations.COG;
+import static org.jahdoo.client.IconLocations.COG;
 import static org.jahdoo.items.augments.AugmentItemHelper.*;
 
 @EventBusSubscriber(Dist.CLIENT)
@@ -213,16 +213,15 @@ public class AbilityWheelMenu extends Screen  {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        float normalizedTick =  this.localTick / RADIAL_SIZE;
-        float easedTick = easeInOutCubic(normalizedTick);
-        int easedValue = (int) (easedTick * RADIAL_SIZE);
-        float frameTimeNs = getMinecraft().getFrameTimeNs();
-        float currentFrame = getMinecraft().getFps();
+        var normalizedTick =  this.localTick / RADIAL_SIZE;
+        var easedTick = easeInOutCubic(normalizedTick);
+        var easedValue = (int) (easedTick * RADIAL_SIZE);
+        var frameTimeNs = getMinecraft().getFrameTimeNs();
+        var currentFrame = getMinecraft().getFps();
         var tick = this.localTick + Math.clamp(frameTimeNs / (currentFrame * 11000), 2, 20);
         var fade = this.localTick/120;
         this.localTick = Math.min(tick, RADIAL_SIZE);
         setRadialTexture(guiGraphics, easedValue, fade > 0.7 ? fade : 0);
-
         if(this.localTick >= RADIAL_SIZE) super.render(guiGraphics, mouseX, mouseY, delta);
     }
 

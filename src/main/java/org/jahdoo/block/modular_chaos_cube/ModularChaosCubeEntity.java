@@ -9,24 +9,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jahdoo.ability.all_abilities.ability_components.AbstractBlockAbility;
 import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties;
-import org.jahdoo.client.gui.IconLocations;
+import org.jahdoo.client.IconLocations;
 import org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeData;
 import org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeMenu;
 import org.jahdoo.components.DataComponentHelper;
@@ -47,20 +40,14 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static org.jahdoo.block.BlockInteractionHandler.getItemHandlerAt;
 import static org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties.*;
+import static org.jahdoo.entities.ProjectileAnimations.*;
 import static org.jahdoo.registers.AttachmentRegister.*;
 
 
 public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProvider, GeoBlockEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    private static final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
-    private static final RawAnimation WEST = RawAnimation.begin().thenPlay("direction1");
-    private static final RawAnimation EAST = RawAnimation.begin().thenPlay("direction2");
-    private static final RawAnimation SOUTH = RawAnimation.begin().thenPlay("direction3");
-    private static final RawAnimation UP = RawAnimation.begin().thenPlay("direction4");
-    private static final RawAnimation DOWN = RawAnimation.begin().thenPlay("direction5");
-    private static final RawAnimation NORTH = RawAnimation.begin().thenPlay("direction6");
-
     public static final int AUGMENT_SLOT = 0;
     private int ticker;
     private int entityTicker;
@@ -85,7 +72,7 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
     }
 
     public ModularChaosCubeEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntitiesRegister.MODULAR_CHAOS_CUBE.get(), pPos, pBlockState, 1);
+        super(BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(), pPos, pBlockState, 1);
         this.setData(MODULAR_CHAOS_CUBE, ModularChaosCubeProperties.initData(this.getBlockPos()));
     }
 
@@ -211,22 +198,21 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
 
     public void activateConnectedBlocks() {
         if (this.getLevel() == null) return;
-        Set<BlockPos> visited = new HashSet<>(); // Keep track of visited blocks
-
+        var visited = new HashSet<BlockPos>();
         for (Pair<ResourceLocation, BlockPos> posPair : this.direction()) {
             BlockPos blockPos = posPair.getSecond();
             if (!this.getData(MODULAR_CHAOS_CUBE).chained()) return;
             if (!visited.contains(blockPos) && this.getLevel().getBlockEntity(blockPos) instanceof ModularChaosCubeEntity blockE) {
                 if(!blockE.getData(MODULAR_CHAOS_CUBE).chained()) continue;
-                visited.add(blockPos); // Mark as visited
-                triggerBlock(blockE, visited); // Pass visited set
+                visited.add(blockPos);
+                triggerBlock(blockE, visited);
             }
         }
     }
 
     private void triggerBlock(ModularChaosCubeEntity blockE, Set<BlockPos> visited) {
-        boolean active = this.getData(MODULAR_CHAOS_CUBE).active();
-        boolean active1 = blockE.getData(MODULAR_CHAOS_CUBE).active();
+        var active = this.getData(MODULAR_CHAOS_CUBE).active();
+        var active1 = blockE.getData(MODULAR_CHAOS_CUBE).active();
         if (active != active1) ModularChaosCubeData.togglePower(blockE);
         if (blockE.getLevel() == null) return;
 
@@ -234,31 +220,9 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
             BlockPos blockPos = posPair.getSecond();
             if (!visited.contains(blockPos) && blockE.getLevel().getBlockEntity(blockPos) instanceof ModularChaosCubeEntity blockD) {
                 if(!blockD.getData(MODULAR_CHAOS_CUBE).chained()) continue;
-                visited.add(blockPos); // Mark as visited
-                triggerBlock(blockD, visited); // Recurse for the next block
+                visited.add(blockPos);
+                triggerBlock(blockD, visited);
             }
-        }
-    }
-
-    public static Optional<org.apache.commons.lang3.tuple.Pair<IItemHandler, Object>> getItemHandlerAt(Level worldIn, double x, double y, double z, Direction side) {
-        BlockPos blockpos = BlockPos.containing(x, y, z);
-        BlockState state = worldIn.getBlockState(blockpos);
-        BlockEntity blockEntity = state.hasBlockEntity() ? worldIn.getBlockEntity(blockpos) : null;
-        IItemHandler blockCap = worldIn.getCapability(Capabilities.ItemHandler.BLOCK, blockpos, state, blockEntity, side);
-        if (blockCap != null) {
-            return Optional.of(ImmutablePair.of(blockCap, blockEntity));
-        } else {
-            List<Entity> list = worldIn.getEntities((Entity)null, new AABB(x - 0.5, y - 0.5, z - 0.5, x + 0.5, y + 0.5, z + 0.5), EntitySelector.ENTITY_STILL_ALIVE);
-            if (!list.isEmpty()) {
-                Collections.shuffle(list);
-                for (Entity entity : list) {
-                    IItemHandler entityCap = entity.getCapability(Capabilities.ItemHandler.ENTITY_AUTOMATION, side);
-                    if (entityCap != null) {
-                        return Optional.of(ImmutablePair.of(entityCap, entity));
-                    }
-                }
-            }
-            return Optional.empty();
         }
     }
 
@@ -284,7 +248,7 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "idle", 10, state -> state.setAndContinue(IDLE)));
+        controllers.add(new AnimationController<>(this, "idle", 10, state -> state.setAndContinue(IDLE_BLOCK)));
         controllers.add(new AnimationController<>(this, "side_anim", 10, this::getPlayState));
     }
 

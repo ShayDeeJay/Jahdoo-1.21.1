@@ -2,8 +2,9 @@
   "values": [
     "jahdoo:tank",
     "jahdoo:infuser",
-    "jahdoo:crystal_ore",
-    "jahdoo:crystal_deepslate_ore",
+    "jahdoo:nexite_ore",
+    "jahdoo:nexite_deepslate_ore",
+    "jahdoo:nexite_block",
     "jahdoo:infusion_table",
     "jahdoo:creator"
   ]

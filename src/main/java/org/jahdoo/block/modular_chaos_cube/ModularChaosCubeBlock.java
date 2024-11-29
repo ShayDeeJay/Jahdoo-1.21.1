@@ -1,10 +1,6 @@
 package org.jahdoo.block.modular_chaos_cube;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.Options;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -92,7 +88,7 @@ public class ModularChaosCubeBlock extends BaseEntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
         return createTickerHelper(
             pBlockEntityType,
-            BlockEntitiesRegister.MODULAR_CHAOS_CUBE.get(),
+            BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }

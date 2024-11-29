@@ -54,9 +54,9 @@ public class QuantumDestroyerAbility extends AbilityRegistrar {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(200, 100, 25)
             .setCooldown(6000, 3600, 400)
-            .setDamage(30, 10, 5)
+            .setDamage(20, 10, 2)
             .setCastingDistance(30,10,5)
-            .setLifetime(300, 100, 20)
+            .setLifetime(200, 100, 20)
             .setAbilityTagModifiersRandom(radius, 6,3, true, 1)
             .setAbilityTagModifiersRandom(gravitationalPull, 2.5,0.5, true, 0.5)
             .build();

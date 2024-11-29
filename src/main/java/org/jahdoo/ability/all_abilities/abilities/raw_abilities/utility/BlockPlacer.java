@@ -65,19 +65,19 @@ public class BlockPlacer extends AbstractUtilityProjectile {
             }
         }
 
-        removeItemsFromInv(this.genericProjectile, blockPos, side, replaceBlock, player, targetBlock, pos);
+        removeItemsFromInv(this.genericProjectile, blockPos, side, replaceBlock, player, targetBlock, pos, true);
         super.onBlockBlockHit(blockHitResult);
         genericProjectile.discard();
     }
 
-    public static void removeItemsFromInv(Projectile projectile, BlockPos blockPos, Direction side, Block replaceBlock, Player player, ItemStack targetBlock, Vec3 pos) {
+    public static void removeItemsFromInv(Projectile projectile, BlockPos blockPos, Direction side, Block replaceBlock, Player player, ItemStack targetBlock, Vec3 pos, boolean playSound) {
         var level = projectile.level();
         if (level.getBlockState(blockPos.relative(side)).canBeReplaced() && replaceBlock != Blocks.AIR) {
             if(player != null ){
                 for (ItemStack itemStack : player.getInventory().items) {
                     if (itemStack.is(targetBlock.getItem()) && player.getInventory().selected != player.getInventory().items.indexOf(itemStack)) {
                         if(!player.isCreative()) itemStack.shrink(1);
-                        extracted(blockPos, side, replaceBlock, level);
+                        extracted(blockPos, side, replaceBlock, level, playSound);
                         break;
                     }
                 }
@@ -85,16 +85,18 @@ public class BlockPlacer extends AbstractUtilityProjectile {
                 if(level.getBlockEntity(BlockPos.containing(pos)) instanceof ModularChaosCubeEntity entity){
                     var localStack = entity.externalInputInventory(level);
                     if(!localStack.isEmpty()) entity.externalInputInventory(level).shrink(1);
-                    extracted(blockPos, side, Block.byItem(localStack.getItem()), level);
+                    extracted(blockPos, side, Block.byItem(localStack.getItem()), level, playSound);
                 }
             }
         }
     }
 
-    private static void extracted(BlockPos blockPos, Direction side, Block replaceBlock, Level level) {
+    private static void extracted(BlockPos blockPos, Direction side, Block replaceBlock, Level level, boolean playSound) {
         BlockState state = replaceBlock.defaultBlockState();
         level.setBlockAndUpdate(blockPos.relative(side), state);
-        ModHelpers.getSoundWithPosition(level, blockPos, state.getSoundType().getBreakSound());
+        if(playSound){
+            ModHelpers.getSoundWithPosition(level, blockPos, state.getSoundType().getBreakSound());
+        }
     }
 
     @Override

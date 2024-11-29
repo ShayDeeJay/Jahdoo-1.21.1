@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 
 import static org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity.AUGMENT_SLOT;
 import static org.jahdoo.client.SharedUI.*;
-import static org.jahdoo.client.gui.IconLocations.*;
+import static org.jahdoo.client.IconLocations.*;
 import static org.jahdoo.client.gui.ToggleComponent.*;
 import static org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeData.selectDirection;
 import static org.jahdoo.items.augments.AugmentItemHelper.*;

@@ -16,6 +16,7 @@ import org.jahdoo.ability.AbilityBuilder;
 public class BlockBombAbility extends AbstractBlockAbility {
     public static final ResourceLocation abilityId = ModHelpers.res("block_bomb");
     public static final String EXPLOSION_RANGE = "Explosion Radius";
+    public static final String BLOCK_DROP_CHANCE = "Block Drop Chance";
 
     @Override
     public void invokeAbility(Player player) {
@@ -46,9 +47,10 @@ public class BlockBombAbility extends AbstractBlockAbility {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(10, 5, 1)
-            .setCooldown(600, 200, 50)
-            .setAbilityTagModifiersRandom(EXPLOSION_RANGE, 30,5, true, 5)
+            .setMana(30, 20, 2)
+            .setCooldown(800, 400, 50)
+            .setAbilityTagModifiersRandom(EXPLOSION_RANGE, 20,5, true, 5)
+            .setAbilityTagModifiersRandom(BLOCK_DROP_CHANCE, 100,40, false, 20)
             .build();
     }
 

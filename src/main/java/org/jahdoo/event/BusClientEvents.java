@@ -33,10 +33,11 @@ public class BusClientEvents {
         event.registerBlockEntityRenderer(BlockEntitiesRegister.CREATOR_BE.get(), CreatorRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_MANAGER_TABLE_BE.get(), WandManagerTableRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.INFUSER_BE.get(), InfuserRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.MODULAR_CHAOS_CUBE.get(), ModularChaosCubeRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(), ModularChaosCubeRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_BE.get(), WandBlockRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.TANK_BE.get(), TankRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.TANK_BE.get(), NexiteTankRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.AUGMENT_MODIFICATION_STATION_BE.get(), AugmentModificationStationRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.ENCHANTED_BE.get(), EnchantedBlockRenderer::new);
 
         //Entities
         event.registerEntityRenderer(EntitiesRegister.FROST_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.FROST.get().getAbilityProjectileTexture()));

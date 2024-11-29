@@ -12,16 +12,25 @@ import org.jahdoo.ability.AbstractUtilityProjectile;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.all_abilities.abilities.Utility.FetchAbility;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
+import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.List;
 
+import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
 
 public class Fetch extends AbstractUtilityProjectile {
      ResourceLocation abilityId = ModHelpers.res("fetch_property");
+    private int range;
+
+    @Override
+    public void getGenericProjectile(GenericProjectile genericProjectile) {
+        super.getGenericProjectile(genericProjectile);
+        this.range = (int) this.getTagUtility(RANGE);
+    }
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -41,7 +50,7 @@ public class Fetch extends AbstractUtilityProjectile {
 
         List<ItemEntity> items = this.genericProjectile.level().getEntitiesOfClass(
             ItemEntity.class,
-            this.genericProjectile.getBoundingBox().inflate(11,11,11),
+            this.genericProjectile.getBoundingBox().inflate(range, range, range),
             entity -> true
         );
 
@@ -69,7 +78,7 @@ public class Fetch extends AbstractUtilityProjectile {
         };
 
         if(pickedUpItem && player instanceof ServerPlayer player1) {
-            ModHelpers.sendClientSound(player1, SoundEvents.ITEM_PICKUP, 0.5f, 1);
+            ModHelpers.sendClientSound(player1, SoundEvents.ITEM_PICKUP, 1.15f, 1);
         }
         super.onBlockBlockHit(blockHitResult);
         genericProjectile.discard();

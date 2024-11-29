@@ -148,7 +148,6 @@ public class ParticleHandlers {
         double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * multiplier);
         for (double j = 0; j < dist; j++) {
             double coeff = j / dist;
-
             if (projectile.level() instanceof ServerLevel serverLevel){
                 Vec3 position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
                 ParticleHandlers.sendParticles(
@@ -176,7 +175,7 @@ public class ParticleHandlers {
             double normalizedX = directionX / magnitude;
             double normalizedY = directionY / magnitude;
             double normalizedZ = directionZ / magnitude;
-            double offsetDistance = 0.8; // Adjust this value as needed
+            double offsetDistance = 0.8;
             double offsetX = projectile.getX() - normalizedX * offsetDistance;
             double offsetY = projectile.getY() - normalizedY * offsetDistance;
             double offsetZ = projectile.getZ() - normalizedZ * offsetDistance;
@@ -215,7 +214,7 @@ public class ParticleHandlers {
         }
     }
 
-    public static void EntityProjectileParticles(
+    public static void entityProjectileParticles(
         Projectile projectile,
         int tickCount,
         float spread,
@@ -284,6 +283,10 @@ public class ParticleHandlers {
 
     public static GenericParticleOptions genericParticleOptions(int particleType, AbstractElement element, boolean setStaticSize, int lifetime, float size){
         return new GenericParticleOptions(particleType, element.particleColourPrimary(), element.particleColourFaded(), lifetime,size, setStaticSize, 1);
+    }
+
+    public static GenericParticleOptions genericParticleOptions(int particleType, AbstractElement element, int lifetime, float size, boolean staticSize, double speed){
+        return new GenericParticleOptions(particleType, element.particleColourPrimary(), element.particleColourFaded(), lifetime, size, staticSize, speed);
     }
 
     public static void spawnElectrifiedParticles(Level level, Vec3 position, ParticleOptions particleType, int count, LivingEntity livingEntity, double speed) {
