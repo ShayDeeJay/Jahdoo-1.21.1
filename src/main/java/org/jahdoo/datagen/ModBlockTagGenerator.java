@@ -28,6 +28,7 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(BlocksRegister.NEXITE_ORE.get())
             .add(BlocksRegister.NEXITE_DEEPSLATE_ORE.get())
             .add(BlocksRegister.NEXITE_BLOCK.get())
+            .add(BlocksRegister.RAW_NEXITE_BLOCK.get())
             .add(BlocksRegister.WAND_MANAGER_TABLE.get())
             .add(BlocksRegister.CREATOR.get());
 
@@ -45,5 +46,45 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .addTag(BlockTags.LEAVES)
             .addTag(BlockTags.REPLACEABLE);
 
+        this.tag(ModTags.Block.RARE_ORE)
+            .add(Blocks.NETHER_QUARTZ_ORE)
+            .add(Blocks.ANCIENT_DEBRIS)
+            .addTag(BlockTags.GOLD_ORES)
+            .addTag(BlockTags.DIAMOND_ORES)
+            .addTag(BlockTags.EMERALD_ORES);
+
+        this.tag(ModTags.Block.COMMON_ORE)
+            .add(BlocksRegister.NEXITE_DEEPSLATE_ORE.get())
+            .add(BlocksRegister.NEXITE_ORE.get())
+            .addTag(BlockTags.IRON_ORES)
+            .addTag(BlockTags.LAPIS_ORES)
+            .addTag(BlockTags.COPPER_ORES)
+            .addTag(BlockTags.REDSTONE_ORES)
+            .addTag(BlockTags.COAL_ORES);
+
+        this.tag(ModTags.Block.RARE_BLOCKS)
+            .add(Blocks.BEACON)
+            .add(Blocks.EMERALD_BLOCK)
+            .add(Blocks.NETHERITE_BLOCK)
+            .add(Blocks.DIAMOND_BLOCK);
+
+        this.tag(ModTags.Block.GARBAGE_BLOCKS)
+            .add(Blocks.COBBLESTONE)
+            .add(Blocks.COBBLED_DEEPSLATE)
+            .add(Blocks.STONE)
+            .add(Blocks.ANDESITE)
+            .add(Blocks.TUFF)
+            .add(Blocks.DEEPSLATE)
+            .add(Blocks.DIORITE)
+            .add(Blocks.ANDESITE)
+            .add(Blocks.SAND)
+            .add(Blocks.GRAVEL)
+            .add(Blocks.BASALT)
+            .add(Blocks.BLACKSTONE)
+            .add(Blocks.CALCITE)
+            .add(Blocks.MOSS_BLOCK)
+            .add(Blocks.DRIPSTONE_BLOCK)
+            .add(Blocks.NETHERRACK)
+            .add(Blocks.GRANITE);
     }
 }

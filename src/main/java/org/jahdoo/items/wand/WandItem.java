@@ -1,6 +1,5 @@
 package org.jahdoo.items.wand;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -23,16 +22,18 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.util.FakePlayer;
+import org.jahdoo.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.components.WandData;
+import org.jahdoo.networking.packet.server2client.EnchantedBlockS2C;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.utils.ModHelpers;
@@ -47,7 +48,6 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
@@ -129,6 +129,24 @@ public class WandItem extends BlockItem implements GeoItem {
         if (player.getItemInHand(player.getUsedItemHand()) == itemStack) {}
     }
 
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        var level = context.getLevel();
+        var pos = context.getClickedPos();
+        var state = level.getBlockState(context.getClickedPos());
+        if(level instanceof ServerLevel serverLevel){
+            if(EnchantedBlockEntity.CONVERT_BLOCK.stream().anyMatch(block -> state.is(block.getFirst()))){
+                level.setBlockAndUpdate(pos, BlocksRegister.ENCHANTED_BLOCK.get().defaultBlockState());
+                if (level.getBlockEntity(pos) instanceof EnchantedBlockEntity enchantedBlockEntity) {
+                    if (!state.isAir()) {
+                        ModHelpers.sendPacketsToPlayer(serverLevel, new EnchantedBlockS2C(pos, state, 0, 1000));
+                        enchantedBlockEntity.setBlockType(state.getBlock());
+                    }
+                }
+            }
+        }
+        return super.useOn(context);
+    }
 
     @Override
     public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {

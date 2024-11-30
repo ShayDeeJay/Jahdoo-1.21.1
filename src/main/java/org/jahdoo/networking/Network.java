@@ -32,6 +32,7 @@ public class Network {
         payloadRegistrar.playToClient(NovaSmashS2CPacket.TYPE, NovaSmashS2CPacket.STREAM_CODEC, NovaSmashS2CPacket::handle);
         payloadRegistrar.playToClient(PlayClientSoundSyncS2CPacket.TYPE, PlayClientSoundSyncS2CPacket.STREAM_CODEC, PlayClientSoundSyncS2CPacket::handle);
         payloadRegistrar.playToClient(EffectSyncS2CPacket.TYPE, EffectSyncS2CPacket.STREAM_CODEC, EffectSyncS2CPacket::handle);
+        payloadRegistrar.playToClient(EnchantedBlockS2C.TYPE, EnchantedBlockS2C.STREAM_CODEC, EnchantedBlockS2C::handle);
     }
 
 }

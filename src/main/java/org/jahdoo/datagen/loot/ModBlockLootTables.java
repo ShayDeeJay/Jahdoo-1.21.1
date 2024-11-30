@@ -49,6 +49,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
                 .withPool(LootPool.lootPool().setRolls(UniformGenerator.between(0f, 1.0F)))
         );
         this.dropSelf(BlocksRegister.NEXITE_BLOCK.get());
+        this.dropSelf(BlocksRegister.RAW_NEXITE_BLOCK.get());
     }
 
     protected LootTable.Builder createCopperLikeOreDrops(Block pBlock, Item item) {

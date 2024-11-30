@@ -184,6 +184,76 @@ public class PositionGetters {
         return positions;
     }
 
+    public static void getCubeCornersAndFaceCenters(BlockPos blockPos, double distance, Consumer<Vec3> method) {
+        // The 8 corners of the cube
+        double[][] corners = {
+            {1, 1, 1},   {1, 1, -1},   {1, -1, 1},   {1, -1, -1},
+            {-1, 1, 1},  {-1, 1, -1},  {-1, -1, 1},  {-1, -1, -1}
+        };
+
+        // The centers of the 6 faces of the cube
+        double[][] faceCenters = {
+            {1, 0, 0},   {-1, 0, 0},   // +X, -X faces
+            {0, 1, 0},   {0, -1, 0},   // +Y, -Y faces
+            {0, 0, 1},   {0, 0, -1}    // +Z, -Z faces
+        };
+
+        // Center coordinates of the block as doubles
+        double centerX = blockPos.getX() + 0.5;
+        double centerY = blockPos.getY() + 0.5;
+        double centerZ = blockPos.getZ() + 0.5;
+
+        // Add corners, scaled by the distance
+        for (double[] offset : corners) {
+            method.accept(new Vec3(
+                centerX + offset[0] * distance,
+                centerY + offset[1] * distance,
+                centerZ + offset[2] * distance
+            ));
+        }
+
+        // Add face centers, scaled by the distance
+        for (double[] offset : faceCenters) {
+            method.accept(new Vec3(
+                centerX + offset[0] * distance,
+                centerY + offset[1] * distance,
+                centerZ + offset[2] * distance
+            ));
+        }
+    }
+
+    public static void getCubePositions(Vec3 entityPos, double radius, double numPoints, Consumer<Vec3> method) {
+//        Vec3 entityPos = entity.position();
+        double pointsPerFace = numPoints / 6; // Divide points equally across the six faces of the cube
+        int gridSize = (int) Math.sqrt(pointsPerFace); // Number of points per row/column on each face
+
+        // Generate points for each face of the cube
+        for (int face = 0; face < 6; face++) {
+            for (int i = 0; i < gridSize; i++) {
+                for (int j = 0; j < gridSize; j++) {
+                    // Calculate normalized positions (range from -1 to 1)
+                    double u = -1.0 + (2.0 * i / (gridSize - 1));
+                    double v = -1.0 + (2.0 * j / (gridSize - 1));
+
+                    // Scale positions to the radius
+                    double x = 0, y = 0, z = 0;
+                    switch (face) {
+                        case 0: x = radius; y = u * radius; z = v * radius; break; // +X face
+                        case 1: x = -radius; y = u * radius; z = v * radius; break; // -X face
+                        case 2: y = radius; x = u * radius; z = v * radius; break; // +Y face
+                        case 3: y = -radius; x = u * radius; z = v * radius; break; // -Y face
+                        case 4: z = radius; x = u * radius; y = v * radius; break; // +Z face
+                        case 5: z = -radius; x = u * radius; y = v * radius; break; // -Z face
+                    }
+
+                    // Translate cube point to world position, centered around the entity
+                    Vec3 pos = new Vec3(entityPos.x + x, entityPos.y + y, entityPos.z + z);
+                    method.accept(pos);
+                }
+            }
+        }
+    }
+
     public static void getSphericalPositions(Entity entity, double radius, double numPoints, Consumer<Vec3> method) {
         Vec3 entityPos = entity.position();
 

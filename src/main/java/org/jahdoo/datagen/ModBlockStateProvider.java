@@ -19,6 +19,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(BlocksRegister.NEXITE_ORE);
         blockWithItem(BlocksRegister.NEXITE_DEEPSLATE_ORE);
         blockWithItem(BlocksRegister.NEXITE_BLOCK);
+        blockWithItem(BlocksRegister.RAW_NEXITE_BLOCK);
         blockWithItem(BlocksRegister.ENCHANTED_BLOCK);
 
         simpleBlockWithItem(BlocksRegister.WAND_MANAGER_TABLE.get(),

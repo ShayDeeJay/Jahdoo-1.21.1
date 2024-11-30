@@ -27,6 +27,7 @@ public class ModCreativeModTabs {
                 pOutput.accept(BlocksRegister.NEXITE_ORE.get());
                     pOutput.accept(BlocksRegister.NEXITE_DEEPSLATE_ORE.get());
                     pOutput.accept(BlocksRegister.NEXITE_BLOCK.get());
+                    pOutput.accept(BlocksRegister.RAW_NEXITE_BLOCK.get());
                     pOutput.accept(BlocksRegister.ENCHANTED_BLOCK.get());
                     pOutput.accept(ItemsRegister.MODULAR_CHAOS_CUBE_ITEM.get());
                     pOutput.accept(BlocksRegister.TANK.get());
