@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import org.jahdoo.block.crafter.CreatorEntity;
+import org.jahdoo.items.wand.WandItem;
 import org.joml.Matrix4f;
 
 import java.util.Objects;
@@ -92,17 +93,18 @@ public class CreatorRenderer implements BlockEntityRenderer<CreatorEntity> {
 
     private void focusedItem(PoseStack pPoseStack, CreatorEntity pBlockEntity, ItemRenderer itemRenderer, MultiBufferSource pBuffer){
         pPoseStack.pushPose();
-        float getCurrentTime = (float) pBlockEntity.getAnimationTicker();
-        float scaleItem = 0.7f;
+        var getCurrentTime = (float) pBlockEntity.getAnimationTicker();
+        var outputSlot = pBlockEntity.outputItemHandler.getStackInSlot(0);
+        var itemStack = outputSlot.isEmpty() ? pBlockEntity.getOutputResult() : outputSlot;
+        var isWand = itemStack.getItem() instanceof WandItem;
+        var scaleItem = isWand ? 0.7f : 0.4f;
 
-        pPoseStack.translate(0.5f, 1.55f, 0.5f);
+        pPoseStack.translate(0.5f, isWand ? 1.55f : 1.3f, 0.5f);
         pPoseStack.scale(scaleItem, scaleItem, scaleItem);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(getCurrentTime));
 
-        ItemStack outputSlot = pBlockEntity.outputItemHandler.getStackInSlot(0);
-        int maxLightLevel = getLightLevel(Objects.requireNonNull(pBlockEntity.getLevel()), pBlockEntity.getBlockPos());
+        var maxLightLevel = getLightLevel(Objects.requireNonNull(pBlockEntity.getLevel()), pBlockEntity.getBlockPos());
 
-        ItemStack itemStack = outputSlot.isEmpty() ? pBlockEntity.getOutputResult() : outputSlot;
         itemRenderer.renderStatic(
             itemStack,
             ItemDisplayContext.FIXED,

@@ -12,6 +12,7 @@ import net.minecraft.client.player.Input;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -27,6 +28,7 @@ import org.jahdoo.networking.packet.client2server.StopUsingC2SPacket;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
+import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.components.DataComponentHelper;
 import org.jetbrains.annotations.NotNull;
@@ -38,9 +40,10 @@ import static org.jahdoo.items.augments.AugmentItemHelper.*;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class AbilityWheelMenu extends Screen  {
-    private final int buttonSize = RADIAL_SIZE / 7 + 3;
+    private final int buttonSize = RADIAL_SIZE / 7 + 3 + 6;
     private static final int RADIAL_SIZE = 150;
     private float localTick = 60;
+    private boolean switchState;
 
     public AbilityWheelMenu() {
         super(Component.literal("Ability Menu"));
@@ -62,8 +65,9 @@ public class AbilityWheelMenu extends Screen  {
         var totalSlots = abilityHolder.size();
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-        int radius = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 3.3); // Adjust radius
+        int radius = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 4); // Adjust radius
         double angleOffset = -Math.PI / 2.0; // Start position
+        if(wandData == null) return;
 
         for (int i = 0; i < totalSlots; i++) {
             double angle = angleOffset + 2 * Math.PI * i / totalSlots; // Calculate angle for each position
@@ -96,20 +100,31 @@ public class AbilityWheelMenu extends Screen  {
         this.addRenderableWidget(
             new AbilityIconButton(
                 buttonX, buttonY, abilityButton, buttonSize,
-                pButton -> {
-                    var updateAbility = abilityHolder.get(finalI);
-                    DataComponentHelper.setAbilityTypeWand(player, updateAbility);
-                    PacketDistributor.sendToServer(new StopUsingC2SPacket());
-                    PacketDistributor.sendToServer(new SelectedAbilityC2SPacket(updateAbility));
-                    this.rebuildWidgets();
-                },
-                isSelected
+                pButton -> {},
+                isSelected,
+                () -> onHoverClick(abilityHolder, finalI, player)
             )
         );
 
         if(isSelected){
-            selectedAbility.ifPresent(abilityRegistrars -> showConfig(wandData, player, abilityRegistrars, buttonX + 10, buttonY - 10));
+            selectedAbility.ifPresent(abilityRegistrars ->
+            showConfig(wandData, player, abilityRegistrars, buttonX + 20, buttonY - 10));
         }
+    }
+
+    private void onHoverClick(List<String> abilityHolder, int finalI, Player player) {
+        if(!switchState){
+            player.playSound(SoundRegister.SELECT.get(), 1f, 1.4f);
+            switchState = true;
+            onClick(abilityHolder, finalI, player);
+        }
+    }
+
+    private void onClick(List<String> abilityHolder, int finalI, Player player) {
+        var updateAbility = abilityHolder.get(finalI);
+        DataComponentHelper.setAbilityTypeWand(player, updateAbility);
+        PacketDistributor.sendToServer(new StopUsingC2SPacket());
+        PacketDistributor.sendToServer(new SelectedAbilityC2SPacket(updateAbility));
     }
 
     private void showConfig(WandData wandData, Player player, AbilityRegistrar selectedAbility, int posX, int posY) {
@@ -125,7 +140,8 @@ public class AbilityWheelMenu extends Screen  {
                         configButton,
                         configButtonSize,
                         pButton -> this.getMinecraft().setScreen(getAugmentModificationScreenWand(itemStack, this)),
-                        false
+                        false,
+                        () -> {}
                     )
                 );
             }
@@ -186,13 +202,15 @@ public class AbilityWheelMenu extends Screen  {
     }
 
     private void getSelectedAbilityName(GuiGraphics guiGraphics) {
-        int x = this.width / 2;
-        int y = this.height / 2;
+        int x = (this.width / 2);
+        int y = (this.height / 2) - 5;
         if (localTick >= (RADIAL_SIZE - 20)) {
-            ResourceLocation getAbilityId = DataComponentHelper.getAbilityTypeWand(getMinecraft().player);
-            List<AbilityRegistrar> getAbility = AbilityRegister.getSpellsByTypeId(getAbilityId.getPath().intern());
+            var getAbilityId = DataComponentHelper.getAbilityTypeWand(getMinecraft().player);
+            var getAbility = AbilityRegister.getSpellsByTypeId(getAbilityId.getPath().intern());
            if(!getAbility.isEmpty()){
                 SharedUI.getAbilityNameWithColour(getAbility.getFirst(), guiGraphics, x, y - 90, true);
+               int width = (int) (getAbilityId.getPath().intern().length() * 3.5);
+               SharedUI.boxMaker(guiGraphics, x - width, y - 96, width, 10, SharedUI.BORDER_COLOUR);
            }
         }
     }
@@ -207,22 +225,31 @@ public class AbilityWheelMenu extends Screen  {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, fade);
         var atlasLocation = ModHelpers.res("textures/gui/ability_wheel_background.png");
         guiGraphics.blit(atlasLocation, xRadial, yRadial, 0, 0, easedValue, easedValue, easedValue, easedValue);
-        this.getSelectedAbilityName(guiGraphics);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
         RenderSystem.disableBlend();
     }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        if(switchState){
+            this.rebuildWidgets();
+            this.switchState = false;
+        }
         var normalizedTick =  this.localTick / RADIAL_SIZE;
         var easedTick = easeInOutCubic(normalizedTick);
         var easedValue = (int) (easedTick * RADIAL_SIZE);
         var frameTimeNs = getMinecraft().getFrameTimeNs();
         var currentFrame = getMinecraft().getFps();
-        var tick = this.localTick + Math.clamp(frameTimeNs / (currentFrame * 11000), 2, 20);
-        var fade = this.localTick/120;
-        this.localTick = Math.min(tick, RADIAL_SIZE);
-        setRadialTexture(guiGraphics, easedValue, fade > 0.7 ? fade : 0);
-        if(this.localTick >= RADIAL_SIZE) super.render(guiGraphics, mouseX, mouseY, delta);
+        if(currentFrame > 0){
+            var tick = this.localTick + Math.clamp(frameTimeNs / (currentFrame * 11000L), 2, 20);
+            var fade = this.localTick / 120;
+            this.localTick = Math.min(tick, RADIAL_SIZE);
+            setRadialTexture(guiGraphics, easedValue, fade > 0.7 ? fade : 0);
+        }
+        if(this.localTick >= RADIAL_SIZE) {
+            this.getSelectedAbilityName(guiGraphics);
+            super.render(guiGraphics, mouseX, mouseY, delta);
+        }
     }
 
     @Override

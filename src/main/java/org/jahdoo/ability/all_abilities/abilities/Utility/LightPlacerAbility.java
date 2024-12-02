@@ -21,7 +21,7 @@ public class LightPlacerAbility extends AbstractBlockAbility {
     public void invokeAbility(Player player) {
         GenericProjectile genericProjectile = new GenericProjectile(
             player, 0,
-            EntityPropertyRegister.LIGHT_PLACER.get().setAbilityId(),
+            projectileKey(),
             abilityId.getPath().intern()
         );
         fireUtilityProjectile(genericProjectile, player);

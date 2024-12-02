@@ -5,6 +5,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.ability.all_abilities.abilities.DimensionalRecallAbility;
 import org.jahdoo.capabilities.AbstractHoldUseAttachment;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.components.WandAbilityHolder;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import static org.jahdoo.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.ability.AbilityBuilder.MANA_COST;
+import static org.jahdoo.ability.all_abilities.abilities.DimensionalRecallAbility.CASTING_TIME;
 import static org.jahdoo.ability.all_abilities.abilities.DimensionalRecallAbility.abilityId;
 import static org.jahdoo.items.wand.CastHelper.validManaAndCooldown;
 import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
@@ -39,31 +41,34 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
         super.onTickMethod(player);
         var getHolder = player.getMainHandItem().get(WAND_ABILITY_HOLDER);
         var hasAbility = ModHelpers.getModifierValue(getHolder, abilityId.getPath().intern()) != null;
+        var getCastTime = DataComponentHelper.getSpecificValue(abilityId.getPath().intern(), getHolder, CASTING_TIME);
         if (!(player instanceof ServerPlayer serverPlayer)) return;
         var pos = serverPlayer.getRespawnPosition();
 
         if(startedUsing && hasAbility && validManaAndCooldown(player)){
             if (pos != null) {
                 pullParticlesToCenter(player);
+                var setVolume = Math.min(2, player.getTicksUsingItem() / 5);
+                var setPitch = (float) player.getTicksUsingItem() / (int) getCastTime;
 
                 if (player.getTicksUsingItem() % 3 == 0) {
-                    var setVolume = Math.min(2, player.getTicksUsingItem() / 5);
-                    var setPitch = (float) player.getTicksUsingItem() / 100;
                     var setAudio = SoundEvents.SOUL_ESCAPE.value();
-                    var getBlockPos = player.blockPosition();
-
-                    ModHelpers.getSoundWithPosition(player.level(), getBlockPos, setAudio, setVolume, setPitch);
+                    ModHelpers.getSoundWithPositionV(player.level(), player.position(), setAudio, setVolume, setPitch);
                 }
 
-                this.onSuccessfulCast(serverPlayer, getHolder);
+                if (player.getTicksUsingItem() % 40 == 0) {
+                    var setAudio = SoundEvents.ILLUSIONER_CAST_SPELL;
+                    ModHelpers.getSoundWithPositionV(player.level(), player.position(), setAudio, Math.max(setVolume, 0.2f), Math.max(setPitch, 0.6f));
+                }
 
+                this.onSuccessfulCast(serverPlayer, getHolder, (int) (getCastTime == 0 ? 200 : getCastTime));
             } else {
                 sendNoHomeMessage(player);
             }
         }
     }
 
-    private void onSuccessfulCast(ServerPlayer serverPlayer, WandAbilityHolder wandAbilityHolder){
+    private void onSuccessfulCast(ServerPlayer serverPlayer, WandAbilityHolder wandAbilityHolder, int ticksUsing){
         var pos = serverPlayer.getRespawnPosition();
         var dimension = serverPlayer.getRespawnDimension();
         var abilityName = abilityId.getPath().intern();
@@ -72,10 +77,10 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
         var getSuccessSound = SoundEvents.ILLUSIONER_CAST_SPELL;
         var getManaCost = DataComponentHelper.getSpecificValue(abilityName, wandAbilityHolder, MANA_COST);
         var getCooldownCost = DataComponentHelper.getSpecificValue(abilityName, wandAbilityHolder, COOLDOWN);
-
         var getLevelDimension = serverPlayer.getServer().getLevel(dimension);
+
         if(getLevelDimension != null){
-            if (serverPlayer.getTicksUsingItem() >= 200 && getCasterData.getManaPool() >= getManaCost) {
+            if (serverPlayer.getTicksUsingItem() >= ticksUsing && getCasterData.getManaPool() >= getManaCost) {
                 this.startedUsing = false;
                 serverPlayer.stopUsingItem();
                 serverPlayer.teleportTo(getLevelDimension, pos.getX(), pos.getY(), pos.getZ(), serverPlayer.yya, serverPlayer.rotA);
@@ -103,9 +108,10 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
             var numOfPoints = (double) player.getTicksUsingItem()/10;
             var pos = player.position()
                 .add(0, player.getBbHeight() / 2, 0)
-                .offsetRandom(RandomSource.create(), 1.5f);
+                .offsetRandom(RandomSource.create(), 1f);
 
-            PositionGetters.getInnerRingOfRadiusRandom(pos, 2, numOfPoints,
+            System.out.println(numOfPoints);
+            PositionGetters.getInnerRingOfRadiusRandom(pos, 2, Math.min(numOfPoints, 10),
                 positions -> {
                     var directions = player.position()
                         .subtract(positions)
@@ -117,7 +123,7 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
                         directions.x,
                         ModHelpers.Random.nextDouble(-0.3, 0.3),
                         directions.z,
-                        (double) player.getTicksUsingItem() / 600
+                        Math.min(0.1, (double) player.getTicksUsingItem() / 1000)
                     );
                 }
             );

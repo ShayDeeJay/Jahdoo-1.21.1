@@ -22,14 +22,12 @@ public class IceBombAbility extends AbilityRegistrar {
     public void invokeAbility(Player player) {
         fireProjectile(
             new ElementProjectile(
-                EntitiesRegister.FROST_ELEMENT_PROJECTILE.get(),
-                player,
+                EntitiesRegister.FROST_ELEMENT_PROJECTILE.get(), player,
                 EntityPropertyRegister.ICE_NEEDLER.get().setAbilityId(),
                 0,
                 abilityId.getPath().intern()
             ),
-            player,
-            0.5f
+            player, 0.5f
         );
     }
 

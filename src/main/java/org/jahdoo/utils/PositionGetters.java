@@ -185,17 +185,11 @@ public class PositionGetters {
     }
 
     public static void getCubeCornersAndFaceCenters(BlockPos blockPos, double distance, Consumer<Vec3> method) {
-        // The 8 corners of the cube
-        double[][] corners = {
-            {1, 1, 1},   {1, 1, -1},   {1, -1, 1},   {1, -1, -1},
-            {-1, 1, 1},  {-1, 1, -1},  {-1, -1, 1},  {-1, -1, -1}
-        };
-
-        // The centers of the 6 faces of the cube
-        double[][] faceCenters = {
-            {1, 0, 0},   {-1, 0, 0},   // +X, -X faces
-            {0, 1, 0},   {0, -1, 0},   // +Y, -Y faces
-            {0, 0, 1},   {0, 0, -1}    // +Z, -Z faces
+        // Face normal vectors, representing +X, -X, +Y, -Y, +Z, -Z faces
+        double[][] faceNormals = {
+            {1, 0, 0}, {-1, 0, 0},  // +X, -X faces
+            {0, 1, 0}, {0, -1, 0},  // +Y, -Y faces
+            {0, 0, 1}, {0, 0, -1}   // +Z, -Z faces
         };
 
         // Center coordinates of the block as doubles
@@ -203,22 +197,32 @@ public class PositionGetters {
         double centerY = blockPos.getY() + 0.5;
         double centerZ = blockPos.getZ() + 0.5;
 
-        // Add corners, scaled by the distance
-        for (double[] offset : corners) {
-            method.accept(new Vec3(
-                centerX + offset[0] * distance,
-                centerY + offset[1] * distance,
-                centerZ + offset[2] * distance
-            ));
-        }
+        // Add 3x3 grid points on each face
+        double gridStep = distance / 2; // Step size to create a uniform 3x3 grid
+        for (double[] normal : faceNormals) {
+            // Get the two axes perpendicular to the face normal
+            double[] u = new double[3], v = new double[3];
+            if (normal[0] != 0) { // Face is on X-axis
+                u = new double[]{0, 1, 0};
+                v = new double[]{0, 0, 1};
+            } else if (normal[1] != 0) { // Face is on Y-axis
+                u = new double[]{1, 0, 0};
+                v = new double[]{0, 0, 1};
+            } else if (normal[2] != 0) { // Face is on Z-axis
+                u = new double[]{1, 0, 0};
+                v = new double[]{0, 1, 0};
+            }
 
-        // Add face centers, scaled by the distance
-        for (double[] offset : faceCenters) {
-            method.accept(new Vec3(
-                centerX + offset[0] * distance,
-                centerY + offset[1] * distance,
-                centerZ + offset[2] * distance
-            ));
+            // Iterate over the grid offsets
+            for (int i = -1; i <= 1; i++) {
+                for (int j = -1; j <= 1; j++) {
+                    method.accept(new Vec3(
+                        centerX + (normal[0] * distance) + (i * gridStep * u[0]) + (j * gridStep * v[0]),
+                        centerY + (normal[1] * distance) + (i * gridStep * u[1]) + (j * gridStep * v[1]),
+                        centerZ + (normal[2] * distance) + (i * gridStep * u[2]) + (j * gridStep * v[2])
+                    ));
+                }
+            }
         }
     }
 

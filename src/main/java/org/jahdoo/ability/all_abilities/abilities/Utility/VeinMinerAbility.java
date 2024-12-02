@@ -22,7 +22,7 @@ public class VeinMinerAbility extends AbstractBlockAbility {
     public void invokeAbility(Player player) {
         GenericProjectile genericProjectile = new GenericProjectile(
             player, 0,
-            EntityPropertyRegister.VEIN_MINER.get().setAbilityId(),
+            projectileKey(),
             abilityId.getPath().intern()
         );
         fireUtilityProjectile(genericProjectile, player);
@@ -47,7 +47,7 @@ public class VeinMinerAbility extends AbstractBlockAbility {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(30, 20, 2)
-            .setAbilityTagModifiersRandom(VEIN_MINE_SIZE, 128,32, true, 32)
+            .setAbilityTagModifiersRandom(VEIN_MINE_SIZE, 256,32, true, 32)
             .build();
     }
 

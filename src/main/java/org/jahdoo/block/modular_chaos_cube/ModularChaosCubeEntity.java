@@ -105,13 +105,13 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
+        if(this.augmentSlot().isEmpty() && this.ticker > 0) this.ticker = 0; this.progress = 0;
         this.entityTicker ++;
-        var augmentSlot = this.inputItemHandler.getStackInSlot(AUGMENT_SLOT);
-        useAugment(pLevel, hasTankAndFuel(), augmentSlot);
+        useAugment(pLevel, hasTankAndFuel(), augmentSlot());
         if(this.getData(MODULAR_CHAOS_CUBE).active()){
             var speed = this.getData(MODULAR_CHAOS_CUBE).speed();
             if (this.ticker >= (speed == 0 ? 100 : speed)) this.ticker = 0;
-            this.ticker++;
+            if(!this.augmentSlot().isEmpty()) this.ticker++;
         } else {
             if (this.ticker > 0) this.ticker = 0;
         }

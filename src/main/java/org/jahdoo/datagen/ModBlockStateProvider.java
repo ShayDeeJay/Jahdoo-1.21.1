@@ -38,7 +38,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
             new ModelFile.UncheckedModelFile(modLoc("block/lighting")));
 
         simpleBlockWithItem(BlocksRegister.NEXITE_POWDER_BLOCK.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/nexite_powder")));
+            new ModelFile.UncheckedModelFile(modLoc("block/nexite_powder_block")));
 
         simpleBlock(BlocksRegister.WAND.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/wand")));

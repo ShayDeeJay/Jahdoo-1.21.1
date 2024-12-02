@@ -107,10 +107,10 @@ public class SharedUI {
             var abstractElement = ElementRegistry.getElementByTypeId((int) abilityModifiers.actualValue());
 
             if(!abstractElement.isEmpty()){
-                element = abstractElement.getFirst().textColourPrimary();
+                element = abstractElement.getFirst().textColourSecondary();
             } else element = -1;
         } else {
-            element = abilityRegistrars.getElemenType().textColourPrimary();
+            element = abilityRegistrars.getElemenType().textColourSecondary();
         }
 
         return element;
@@ -140,13 +140,16 @@ public class SharedUI {
         guiGraphics.pose().pushPose();
         double x = slotX + 16.2;
         double y = slotY + 10.4;
-        guiGraphics.pose().translate(x, y, 100);
+        guiGraphics.pose().translate(x, y, 2);
         guiGraphics.pose().scale(0.7f,0.7f, 0.7f);
         guiGraphics.pose().translate(0.2, 0.2, 0.2);
 
         centeredStringNoShadow(guiGraphics, Minecraft.getInstance().font, Component.literal(index), 0, 0, -10329502, false);
         guiGraphics.pose().popPose();
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 2);
         guiGraphics.blit(IconLocations.GUI_AUGMENT_SLOT_V2, slotX, slotY, 0, 0, imageSize, imageSize, imageSize , imageSize);
+        guiGraphics.pose().popPose();
     }
 
     public static void centeredStringNoShadow(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int color, boolean shadow) {

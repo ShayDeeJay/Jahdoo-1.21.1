@@ -51,10 +51,7 @@ public class ThunderBurstAbility extends AbilityRegistrar {
                 lightningTrailModifiers, -1,
                 abilityId.getPath().intern()
             );
-            this.fireProjectile(genericProjectile, player, 1);
-//            genericProjectile.shoot(direction.x(), direction.y(), direction.z(), 1f, 0);
-//            genericProjectile.setOwner(player);
-//            player.level().addFreshEntity(genericProjectile);
+            this.fireProjectileNoSound(genericProjectile, player, 1);
         }
     }
 

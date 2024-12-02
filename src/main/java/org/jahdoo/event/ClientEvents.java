@@ -33,6 +33,12 @@ public class ClientEvents {
 
         if(player != null && player.getMainHandItem().getItem() instanceof WandItem){
 
+//            if(KeyBinding.QUICK_SELECT.isDown()){
+//                if(!(instance.screen instanceof AbilityWheelMenu) && !(instance.screen instanceof AugmentScreen)){
+//                    instance.setScreen(new AbilityWheelMenu());
+//                }
+//            }
+
             if (InputConstants.isKeyDown(instance.getWindow().getWindow(), KeyBinding.QUICK_SELECT.getKey().getValue())) {
                 if(!(instance.screen instanceof AbilityWheelMenu) && !(instance.screen instanceof AugmentScreen)){
                     instance.setScreen(new AbilityWheelMenu());

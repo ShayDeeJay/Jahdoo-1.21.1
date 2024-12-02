@@ -23,7 +23,7 @@ public class FarmersTouchAbility extends AbstractBlockAbility {
     public void invokeAbility(Player player) {
         GenericProjectile genericProjectile = new GenericProjectile(
             player, 0,
-            EntityPropertyRegister.BONE_MEAL.get().setAbilityId(),
+            projectileKey(),
             abilityId.getPath().intern()
         );
         fireUtilityProjectile(genericProjectile, player);

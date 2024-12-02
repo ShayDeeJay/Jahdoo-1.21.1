@@ -49,9 +49,8 @@ public class BoltzAbility extends AbilityRegistrar {
             double spreadX = direction.x + (Math.random() - 0.5) * spread;
             double spreadY = direction.y + (Math.random() - 0.5) * spread;
             double spreadZ = direction.z + (Math.random() - 0.5) * spread;
-            elementProjectile.shoot(spreadX, spreadY, spreadZ, 0.5f, 0);
-            elementProjectile.setOwner(player);
-            player.level().addFreshEntity(elementProjectile);
+
+            this.fireProjectileDirection(elementProjectile, player, 0.5f, new Vec3(spreadX, spreadY, spreadZ));
         }
 
         for(int i = 0; i < totalShots * 10; i++){
@@ -60,7 +59,6 @@ public class BoltzAbility extends AbilityRegistrar {
             double spreadY = direction.y + (Math.random() - 0.5) * spread;
             double spreadZ = direction.z + (Math.random() - 0.5) * spread;
             sendParticles(player.level(), particleOptions, player.position().add(0,1.5,0), 0, spreadX, spreadY, spreadZ, 1);
-
         }
 
         getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.ORB_CREATE.get(), 0.5f,1.5f);

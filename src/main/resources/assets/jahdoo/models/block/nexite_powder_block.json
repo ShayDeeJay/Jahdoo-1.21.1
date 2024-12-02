@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"1": "jahdoo:block/jide_powder_block",
-		"particle": "jahdoo:block/jide_powder_block"
+		"1": "jahdoo:block/nexite_powder_block",
+		"particle": "jahdoo:block/nexite_powder_block"
 	},
 	"elements": [
 		{

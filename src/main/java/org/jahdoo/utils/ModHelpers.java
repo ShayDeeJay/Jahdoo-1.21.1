@@ -2,8 +2,12 @@ package org.jahdoo.utils;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.OutlineBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -17,6 +21,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.TickRateManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -50,6 +55,7 @@ import java.util.function.Consumer;
 
 import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.registers.EffectsRegister.ARCANE_EFFECT;
 
 public class ModHelpers {
     public static final Random Random = ThreadLocalRandom.current();
@@ -209,6 +215,10 @@ public class ModHelpers {
         level.playSound(null, position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume, pitch) ;
     }
 
+    public static void  getSoundWithPositionV(Level level, Vec3 position, SoundEvent audio, float volume, float pitch){
+        level.playSound(null, position.x, position.y, position.z, audio, SoundSource.PLAYERS, volume, pitch) ;
+    }
+
     public static void getLocalSound(Level level, BlockPos position, SoundEvent audio, float volume, float pitch){
         level.playLocalSound(position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume, pitch, false); ;
     }
@@ -218,6 +228,17 @@ public class ModHelpers {
             for (int j = 0; j < serverLevel.players().size(); ++j) {
                 var serverplayer = serverLevel.players().get(j);
                 PacketDistributor.sendToPlayer(serverplayer, payloads);
+            }
+        }
+    }
+
+    public static void sendPacketsToPlayerDistance(Vec3 pos, int distance, Level level, CustomPacketPayload payloads) {
+        if((level instanceof ServerLevel serverLevel)){
+            for (int j = 0; j < serverLevel.players().size(); ++j) {
+                var serverplayer = serverLevel.players().get(j);
+                if (pos.closerThan(serverplayer.position(), distance)) {
+                    PacketDistributor.sendToPlayer(serverplayer, payloads);
+                }
             }
         }
     }

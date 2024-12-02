@@ -20,7 +20,7 @@ public class FetchAbility extends AbstractBlockAbility {
 
     @Override
     public void invokeAbility(Player player) {
-        var genericProjectile = new GenericProjectile(player, 0, FETCH.get().setAbilityId(), abilityId.getPath().intern());
+        var genericProjectile = new GenericProjectile(player, 0, projectileKey(), abilityId.getPath().intern());
         fireUtilityProjectile(genericProjectile, player);
     }
 

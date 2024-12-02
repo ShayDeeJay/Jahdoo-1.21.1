@@ -59,7 +59,7 @@ public class AugmentModificationStationRenderer implements BlockEntityRenderer<A
         if(ability.isPresent()){
             var getElement = ElementRegistry.getElementOptional(augmentStation.getInteractionSlot().get(DataComponents.CUSTOM_MODEL_DATA).value());
             var name = Component.literal(ability.get().getAbilityName());
-            getElement.ifPresent(element -> renderNameTag(name, pPoseStack, pBuffer, element.textColourPrimary()));
+            getElement.ifPresent(element -> renderNameTag(augmentStation, name, pPoseStack, pBuffer, element.textColourPrimary()));
         }
         focusedItem(pPoseStack, augmentStation, itemRenderer, pBuffer, pPackedLight);
     }
@@ -87,11 +87,11 @@ public class AugmentModificationStationRenderer implements BlockEntityRenderer<A
         pPoseStack.popPose();
     }
 
-    protected void renderNameTag(Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int textColour) {
+    protected void renderNameTag(AugmentModificationEntity bEntity, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int textColour) {
         var entity = this.entityRenderDispatcher.camera.getEntity();
-        double d0 = this.entityRenderDispatcher.cameraHitResult.distanceTo(entity);
+        var d0 = bEntity.getBlockPos().getCenter().closerThan(entity.position(), 10);
 
-        if (entity instanceof Player player && player.isCreative() && d0 < 15) {
+        if (entity instanceof Player player && player.isCreative() && d0) {
             pPoseStack.pushPose();
             pPoseStack.translate(0.5, 1.2, 0.2);
             pPoseStack.mulPose(Axis.XP.rotationDegrees(180));

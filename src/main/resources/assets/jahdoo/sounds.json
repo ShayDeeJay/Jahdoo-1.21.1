@@ -65,5 +65,11 @@
     "sounds": [
       "jahdoo:heal"
     ]
+  },
+  "select": {
+    "subtitles": "sounds.jahdoo.select",
+    "sounds": [
+      "jahdoo:select"
+    ]
   }
 }

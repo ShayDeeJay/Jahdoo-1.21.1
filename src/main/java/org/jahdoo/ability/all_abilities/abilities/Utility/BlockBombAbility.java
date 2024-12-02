@@ -22,7 +22,7 @@ public class BlockBombAbility extends AbstractBlockAbility {
     public void invokeAbility(Player player) {
         GenericProjectile genericProjectile = new GenericProjectile(
             player, 0,
-            EntityPropertyRegister.BLOCK_EXPLODER.get().setAbilityId(),
+            projectileKey(),
             abilityId.getPath().intern()
         );
         fireUtilityProjectile(genericProjectile, player);

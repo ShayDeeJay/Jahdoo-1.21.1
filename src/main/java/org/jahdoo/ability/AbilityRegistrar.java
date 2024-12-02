@@ -82,7 +82,18 @@ public abstract class AbilityRegistrar {
                 projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, Laccuracy(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
-                ModHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundRegister.ORB_FIRE.get(), 0.4f, 1f);
+                ModHelpers.getSoundWithPositionV(projectile.level(), player.position(), SoundRegister.ORB_FIRE.get(), 0.4f, 1f);
+            }
+        }
+    }
+
+    public void fireProjectileNoSound(Projectile projectile, LivingEntity player, float velocity){
+        if(player != null){
+            if(player.level() instanceof ServerLevel serverLevel){
+                Vec3 direction = player.getLookAngle();
+                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, Laccuracy(player));
+                projectile.setOwner(player);
+                serverLevel.addFreshEntity(projectile);
             }
         }
     }
@@ -93,7 +104,6 @@ public abstract class AbilityRegistrar {
                 projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, Laccuracy(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
-                ModHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundRegister.ORB_FIRE.get(), 0.4f, 1f);
             }
         }
     }
@@ -105,7 +115,7 @@ public abstract class AbilityRegistrar {
                 projectile.shoot(direction.x(), direction.y(), direction.z(), 1.2f, Laccuracy(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
-                ModHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundEvents.BREEZE_CHARGE , 0.05f,1.4f);
+                ModHelpers.getSoundWithPositionV(projectile.level(), player.position(), SoundEvents.BREEZE_CHARGE , 0.05f,1.4f);
             }
         }
     }

@@ -27,8 +27,8 @@ public class PermafrostAbility extends AbilityRegistrar {
         Vec3 location = player.pick(40, 0,false).getLocation();
         AoeCloud aoeCloud = new AoeCloud(player.level(), player, 0f, EntityPropertyRegister.ARCTIC_STORM.get().setAbilityId(), abilityId.getPath().intern());
         aoeCloud.setPos(location.x, location.y, location.z);
-        player.level().playSound(null, BlockPos.containing(location), SoundRegister.ICE_ATTACH.get(), SoundSource.NEUTRAL, 1.2f, 0.6f);
-        player.level().playSound(null, BlockPos.containing(location), SoundRegister.MAGIC_EXPLOSION.get(), SoundSource.NEUTRAL, 0.8f, 0.8f);
+        ModHelpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundRegister.ICE_ATTACH.get(), 1.2f, 0.6f);
+        ModHelpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundRegister.MAGIC_EXPLOSION.get(), 0.4f, 0.8f);
         player.level().addFreshEntity(aoeCloud);
     }
 

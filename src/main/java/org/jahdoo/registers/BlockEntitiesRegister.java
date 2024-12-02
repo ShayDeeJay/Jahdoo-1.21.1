@@ -45,7 +45,6 @@ public class BlockEntitiesRegister {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ModularChaosCubeEntity>> MODULAR_CHAOS_CUBE_BE =
         BLOCK_ENTITIES.register("modular_chaos_cube_be", () -> BlockEntityType.Builder.of(ModularChaosCubeEntity::new, BlocksRegister.MODULAR_CHAOS_CUBE.get()).build(null));
 
-
     public static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> registerBlockEntity(
         String name,
         BlockEntityType.BlockEntitySupplier<T> factory,

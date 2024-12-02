@@ -17,21 +17,10 @@ public class AbilityModifierLuckRoller {
             double normalized = (probability - lb) / (ub - lb);
 
             // Change boolean to juice values and make it so betters can roll. Might be good to figure out a way to modify these as like a perk or item?
-            // Adjust normalization based on the boolean flag
             if (!isHigherBetter) normalized = -normalized + 1;
 
             double continuous = low + normalized * (high - low);
-
-            // Custom rounding logic
-            double fractional = continuous / step - Math.floor(continuous / step);
-
-            if (fractional > 0.5) {
-                continuous = Math.ceil(continuous / step) * step;
-            } else {
-                continuous = Math.floor(continuous / step) * step;
-            }
-
-            return continuous;
+            return Math.round(continuous / step) * step;
         } else {
             if(isHigherBetter) return high; else return low;
         }

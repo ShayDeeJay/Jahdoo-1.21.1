@@ -25,6 +25,7 @@ public class SoundRegister {
     public static final DeferredHolder<SoundEvent, SoundEvent> EXPLOSION = registerSoundEvent("explosion");
     public static final DeferredHolder<SoundEvent, SoundEvent> MAGIC_EXPLOSION = registerSoundEvent("magic_explosion");
     public static final DeferredHolder<SoundEvent, SoundEvent> HEAL = registerSoundEvent("heal");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SELECT = registerSoundEvent("select");
 
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(ModHelpers.res(name)));

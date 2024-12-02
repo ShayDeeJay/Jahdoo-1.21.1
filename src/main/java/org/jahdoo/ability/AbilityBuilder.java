@@ -1,15 +1,19 @@
 package org.jahdoo.ability;
 
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.JahdooMod;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.registers.DataComponentRegistry;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 
 import static org.jahdoo.items.augments.AbilityModifierLuckRoller.getWeightedRandomDouble;
+import static org.jahdoo.registers.DataComponentRegistry.AUGMENT_RATING;
 
 public class AbilityBuilder {
     //Mandatory mods
@@ -44,7 +48,7 @@ public class AbilityBuilder {
 
     private double getLuckModifier(){
         if(item != null && item.getItem() instanceof Augment){
-            var rating = item.get(DataComponentRegistry.AUGMENT_RATING.get());
+            var rating = item.get(AUGMENT_RATING.get());
             if(rating != null) return Math.max(1, rating); else return 1;
         }
         return 1;
@@ -54,9 +58,17 @@ public class AbilityBuilder {
         var getModifier = getLuckModifier();
         var weightedDouble = getWeightedRandomDouble(high, low, (getModifier == 0) != isHigherBetter, step, getModifier);
         var getValue = isHigherBetter ? low : high;
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(getValue, high, low, step, getValue, isHigherBetter);
+        var chooseValue = this.item != null && this.item.has(AUGMENT_RATING.get()) ? getRandomWeightedDouble(low, high, step) : getValue;
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(chooseValue, high, low, step, chooseValue, isHigherBetter);
         this.abilityHolder.abilityProperties().put(name, abilityModifiers);
         return this;
+    }
+
+    private double getRandomWeightedDouble(double min, double max, double step){
+        var allowed = new ArrayList<Double>();
+        for(double i = min; i < max; i += step) allowed.add(i);
+        Collections.shuffle(allowed);
+        return allowed.getFirst();
     }
 
     public AbilityBuilder setModifier(String name, double high, double low, boolean isHigherBetter, double actualValue) {

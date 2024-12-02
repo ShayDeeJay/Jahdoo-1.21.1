@@ -37,6 +37,7 @@ import org.jahdoo.networking.packet.server2client.EnchantedBlockS2C;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.utils.ModHelpers;
+import org.jahdoo.utils.PositionGetters;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -52,7 +53,11 @@ import java.util.function.Consumer;
 
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
+import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.particle.ParticleHandlers.sendParticles;
+import static org.jahdoo.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
+import static org.jahdoo.registers.ElementRegistry.UTILITY;
 
 public class WandItem extends BlockItem implements GeoItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -130,25 +135,6 @@ public class WandItem extends BlockItem implements GeoItem {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
-        var level = context.getLevel();
-        var pos = context.getClickedPos();
-        var state = level.getBlockState(context.getClickedPos());
-        if(level instanceof ServerLevel serverLevel){
-            if(EnchantedBlockEntity.CONVERT_BLOCK.stream().anyMatch(block -> state.is(block.getFirst()))){
-                level.setBlockAndUpdate(pos, BlocksRegister.ENCHANTED_BLOCK.get().defaultBlockState());
-                if (level.getBlockEntity(pos) instanceof EnchantedBlockEntity enchantedBlockEntity) {
-                    if (!state.isAir()) {
-                        ModHelpers.sendPacketsToPlayer(serverLevel, new EnchantedBlockS2C(pos, state, 0, 1000));
-                        enchantedBlockEntity.setBlockType(state.getBlock());
-                    }
-                }
-            }
-        }
-        return super.useOn(context);
-    }
-
-    @Override
     public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
         pTooltipComponents.addAll(WandItemHelper.getItemModifiers(pStack));
     }
@@ -162,17 +148,12 @@ public class WandItem extends BlockItem implements GeoItem {
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
 //        Minecraft.getInstance().setScreen(new TestingElements());
 
-
         var item = player.getMainHandItem();
         player.startUsingItem(player.getUsedItemHand());
         if (interactionHand == InteractionHand.MAIN_HAND) {
             CastHelper.use(player);
             return InteractionResultHolder.pass(item);
         }
-
-//        if (level instanceof ServerLevel serverLevel) {
-//            triggerAnimWithController(this,  player.getMainHandItem(), serverLevel, player, SINGLE_CAST_ID);
-//        }
 
         return InteractionResultHolder.fail(player.getOffhandItem());
     }
@@ -211,7 +192,7 @@ public class WandItem extends BlockItem implements GeoItem {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, 0, state -> state.setAndContinue(IDLE_ANIMATION)));
-        controllers.add(new AnimationController<>(this, "Activation", 0, state -> PlayState.STOP)
+        controllers.add(new AnimationController<>(this, "Activation", 0, state -> PlayState.CONTINUE)
             .triggerableAnim(SINGLE_CAST_ID, SINGLE_CAST)
             .triggerableAnim(CANT_CAST_ID, CANT_CAST)
             .triggerableAnim(HOLD_CAST_ID, HOLD_CAST)

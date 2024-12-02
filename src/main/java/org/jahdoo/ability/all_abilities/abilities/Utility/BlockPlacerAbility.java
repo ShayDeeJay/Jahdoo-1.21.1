@@ -20,7 +20,7 @@ public class BlockPlacerAbility extends AbstractBlockAbility {
     public void invokeAbility(Player player) {
         GenericProjectile genericProjectile = new GenericProjectile(
             player, 0,
-            EntityPropertyRegister.BLOCK_PLACER.get().setAbilityId(),
+            projectileKey(),
             abilityId.getPath().intern()
         );
         fireUtilityProjectile(genericProjectile, player);

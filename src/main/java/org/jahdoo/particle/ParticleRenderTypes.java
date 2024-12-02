@@ -21,7 +21,7 @@ public class ParticleRenderTypes {
     static ParticleRenderType ABILITY_RENDERER = new ParticleRenderType() {
         @Override
         public BufferBuilder begin(Tesselator buffer, @NotNull TextureManager textureManager) {
-            Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
+//            Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
             RenderSystem.enableBlend();
             RenderSystem.depthMask(false);
             RenderSystem.enableCull();

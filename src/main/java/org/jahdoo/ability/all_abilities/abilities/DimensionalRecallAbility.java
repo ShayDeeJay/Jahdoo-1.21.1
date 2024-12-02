@@ -14,8 +14,8 @@ import org.jahdoo.utils.GlobalStrings;
 import static org.jahdoo.registers.AttachmentRegister.DIMENSIONAL_RECALL;
 
 public class DimensionalRecallAbility extends AbilityRegistrar {
-
     public static final ResourceLocation abilityId = ModHelpers.res("dimensional_recall");
+    public static final String CASTING_TIME = "Cast Time";
 
     @Override
     public int getCastType() {
@@ -41,7 +41,8 @@ public class DimensionalRecallAbility extends AbilityRegistrar {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setMana(160, 80, 20)
-            .setCooldown(6000, 3600, 400)
+            .setCooldown(24000, 6000, 3000)
+            .setAbilityTagModifiersRandom(CASTING_TIME, 400, 100, false, 100)
             .build();
     }
 

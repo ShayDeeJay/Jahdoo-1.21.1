@@ -18,12 +18,14 @@ public class EnchantedBlockS2C implements CustomPacketPayload{
     private BlockState block;
     private int stage;
     private int chance;
+    private int spreadChance;
 
-    public EnchantedBlockS2C(BlockPos blockPos, BlockState block, int stage, int chance) {
+    public EnchantedBlockS2C(BlockPos blockPos, BlockState block, int stage, int chance, int spreadChance) {
         this.blockPos = blockPos;
         this.block = block;
         this.stage = stage;
         this.chance = chance;
+        this.spreadChance = spreadChance;
     }
 
     public EnchantedBlockS2C(FriendlyByteBuf buf) {
@@ -31,6 +33,8 @@ public class EnchantedBlockS2C implements CustomPacketPayload{
         this.block = buf.readJsonWithCodec(BlockState.CODEC);
         this.stage = buf.readInt();
         this.chance = buf.readInt();
+        this.spreadChance = buf.readInt();
+
     }
 
     public void toBytes(FriendlyByteBuf bug) {
@@ -38,6 +42,7 @@ public class EnchantedBlockS2C implements CustomPacketPayload{
         bug.writeJsonWithCodec(BlockState.CODEC, this.block);
         bug.writeInt(stage);
         bug.writeInt(chance);
+        bug.writeInt(spreadChance);
     }
 
     public boolean handle(IPayloadContext ctx) {
@@ -49,7 +54,8 @@ public class EnchantedBlockS2C implements CustomPacketPayload{
                     if(blockE instanceof EnchantedBlockEntity entity){
                         entity.stage = stage;
                         entity.block = block.getBlock();
-                        entity.chance = chance;
+                        entity.growthChance = chance;
+                        entity.spreadChance = spreadChance;
                     }
                 }
             }

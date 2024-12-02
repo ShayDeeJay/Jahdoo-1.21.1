@@ -33,7 +33,7 @@ public class QuantumDestroyerAbility extends AbilityRegistrar {
         );
         var position = player.pick(20, 0, false).getLocation();
         elementProjectile.moveTo(position.x, position.y + 0.3, position.z);
-        fireProjectile(elementProjectile, player, 0.0f);
+        fireProjectileNoSound(elementProjectile, player, 0.0f);
         player.level().playSound(null, BlockPos.containing(position), SoundRegister.ORB_FIRE.get(), SoundSource.NEUTRAL, 0.8f, 1.2f);
         player.level().playSound(null, BlockPos.containing(position), SoundRegister.MAGIC_EXPLOSION.get(), SoundSource.NEUTRAL, 0.2f, 1.4f);
 

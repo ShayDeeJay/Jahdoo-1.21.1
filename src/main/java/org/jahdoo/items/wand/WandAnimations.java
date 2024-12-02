@@ -6,6 +6,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.utils.ModHelpers;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.RawAnimation;
 
 import java.util.List;

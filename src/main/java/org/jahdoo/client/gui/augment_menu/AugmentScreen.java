@@ -102,7 +102,7 @@ public class AugmentScreen extends Screen  {
     public void menuButton(String textureLocation, int posX, int posY, int size, Button.OnPress action) {
         var location = ModHelpers.res(textureLocation);
         var button = new WidgetSprites(location, location);
-        this.addRenderableWidget(new AbilityIconButton(posX, posY, button, size, action, false));
+        this.addRenderableWidget(new AbilityIconButton(posX, posY, button, size, action, false, () -> {}));
     }
 
     private void buttonReduce(String e, AbilityHolder.AbilityModifiers v) {

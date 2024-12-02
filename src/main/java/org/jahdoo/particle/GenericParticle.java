@@ -1,5 +1,6 @@
 package org.jahdoo.particle;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.util.RandomSource;
@@ -22,7 +23,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
         this.lifetime = 10 + this.random.nextInt(10);
         this.pickSprite(pSprites);
         this.hasPhysics = false;
-        this.alpha = 1f;
+        this.alpha = 0.5f;
     }
 
     @Override
@@ -34,7 +35,6 @@ public class GenericParticle extends SimpleAnimatedParticle {
     public @NotNull ParticleRenderType getRenderType() {
         return ParticleRenderTypes.ABILITY_RENDERER;
     }
-
 
     @OnlyIn(Dist.CLIENT)
     public static class BakedProvider implements ParticleProvider<BakedParticleOptions> {
