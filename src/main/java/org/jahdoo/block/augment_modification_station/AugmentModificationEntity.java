@@ -11,14 +11,14 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.client.gui.block.augment_modification_station.AugmentModificationMenu;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class AugmentModificationEntity extends AbstractTankUser implements MenuProvider {
-
+public class AugmentModificationEntity extends AbstractBEInventory implements MenuProvider {
     int tickCounter;
 
     @Override
@@ -39,7 +39,6 @@ public class AugmentModificationEntity extends AbstractTankUser implements MenuP
 
     public void tick(Level level, BlockPos blockPos, BlockState pState) {
         tickCounter++;
-        this.assignTankBlockInRange(level, blockPos, this.setCraftingCost());
     }
 
     public ItemStack getInteractionSlot(){
@@ -59,11 +58,6 @@ public class AugmentModificationEntity extends AbstractTankUser implements MenuP
     @Override
     public int getMaxSlotSize() {
         return 64;
-    }
-
-    @Override
-    public int setCraftingCost() {
-        return 20;
     }
 
     @Override

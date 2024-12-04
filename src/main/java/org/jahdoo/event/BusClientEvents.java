@@ -1,5 +1,6 @@
 package org.jahdoo.event;
 
+import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -80,7 +81,6 @@ public class BusClientEvents {
         event.register(KeyBinding.WAND_SLOT_9A);
         event.register(KeyBinding.WAND_SLOT_10A);
     }
-
 
     @SubscribeEvent
     public static void onClientSetup(RegisterMenuScreensEvent event) {

@@ -23,7 +23,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
         this.lifetime = 10 + this.random.nextInt(10);
         this.pickSprite(pSprites);
         this.hasPhysics = false;
-        this.alpha = 0.5f;
+//        this.alpha = 0.6f;
     }
 
     @Override
@@ -76,6 +76,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
         public Particle createParticle(GenericParticleOptions pType, ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
             GenericParticle genericParticle = new GenericParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed,this.sprites){
                 int tick;
+
                 @Override
                 public void tick() {
                     super.tick();
@@ -109,7 +110,6 @@ public class GenericParticle extends SimpleAnimatedParticle {
 
         public Particle createParticle(GenericParticleOptions pType, ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
             GenericParticle genericParticle = new GenericParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed,this.sprites){
-
                 @Override
                 public void tick() {
                     super.tick();
@@ -118,12 +118,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
                     double randX = (random.nextDouble() - 0.5) * 0.5f; // Larger random value between -1.0 and 1.0
                     double randY = (random.nextDouble() - 0.5) * 0.5f;
                     double randZ = (random.nextDouble() - 0.5) * 0.5f;
-
-                    this.setPos(
-                      this.x + randX,
-                        this.y + randY,
-                        this.z + randZ
-                    );
+                    this.setPos(this.x + randX, this.y + randY, this.z + randZ);
 
                     this.xd += (random.nextDouble() - 0.5) * 0.6; // Larger random velocity change
                     this.yd += (random.nextDouble() - 0.5) * 0.6;
@@ -141,7 +136,6 @@ public class GenericParticle extends SimpleAnimatedParticle {
             genericParticle.setColor(pType.colour());
             genericParticle.setFadeColor(pType.fade());
             genericParticle.lifetime = pType.lifetime() + ModHelpers.Random.nextInt(pType.lifetime());
-
             return genericParticle;
         }
     }

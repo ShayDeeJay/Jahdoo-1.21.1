@@ -29,7 +29,6 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
         if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         var pos = blockHitResult.getBlockPos();
         var state = level.getBlockState(pos);
-        System.out.println("imeere");
         if(level instanceof ServerLevel serverLevel){
             if(EnchantedBlockEntity.ConverterValues.isConvertibleBlock(state.getBlock())){
                 level.setBlockAndUpdate(pos, BlocksRegister.ENCHANTED_BLOCK.get().defaultBlockState());

@@ -34,10 +34,10 @@ public class ModCreativeModTabs {
                     pOutput.accept(BlocksRegister.AUGMENT_MODIFICATION_STATION.get());
                     pOutput.accept(ItemsRegister.INFUSER_ITEM.get());
                     pOutput.accept(ItemsRegister.NEXITE_POWDER.get());
-                    pOutput.accept(ItemsRegister.AUGMENT_CORE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_FRAGMENT.get());
                     pOutput.accept(ItemsRegister.TOME_OF_UNITY.get());
                     pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
+                    pOutput.accept(ItemsRegister.AUGMENT_CORE.get());
                     pOutput.accept(ItemsRegister.ADVANCED_AUGMENT_CORE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_HYPER_CORE.get());
 

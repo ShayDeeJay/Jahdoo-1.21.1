@@ -16,6 +16,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jahdoo.ability.AbilityBuilder;
 import org.jahdoo.ability.all_abilities.ability_components.AbstractBlockAbility;
 import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties;
@@ -28,6 +29,7 @@ import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.BlockEntitiesRegister;
+import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
@@ -42,6 +44,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.jahdoo.block.BlockInteractionHandler.getItemHandlerAt;
 import static org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties.*;
+import static org.jahdoo.components.DataComponentHelper.getKeyFromAugment;
+import static org.jahdoo.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.entities.ProjectileAnimations.*;
 import static org.jahdoo.registers.AttachmentRegister.*;
 
@@ -291,7 +295,9 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
 
     @Override
     public int setCraftingCost() {
-        return 1;
+        var getHolder = this.augmentSlot().get(DataComponentRegistry.WAND_ABILITY_HOLDER);
+        if(getHolder == null) return -1;
+        return (int) getSpecificValue(getKeyFromAugment(this.augmentSlot()),  getHolder, AbilityBuilder.MANA_COST);
     }
 }
 

@@ -40,6 +40,14 @@ public class SharedUI {
         guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, BORDER_COLOUR);
     }
 
+    public static void boxMaker(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset, int colourBorder, int fillColour) {
+        int widthTo = startX + widthOffset * 2;
+        int heightTo = startY + heightOffset * 2;
+
+        guiGraphics.fill(startX, startY, widthTo, heightTo, fillColour);
+        guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
+    }
+
     public static void setCustomBackground(int height, int width, GuiGraphics guiGraphics){
         var widthOffset = 100;
         var heightOffset = 115;

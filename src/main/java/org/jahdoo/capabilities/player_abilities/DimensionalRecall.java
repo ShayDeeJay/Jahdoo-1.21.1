@@ -110,7 +110,6 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
                 .add(0, player.getBbHeight() / 2, 0)
                 .offsetRandom(RandomSource.create(), 1f);
 
-            System.out.println(numOfPoints);
             PositionGetters.getInnerRingOfRadiusRandom(pos, 2, Math.min(numOfPoints, 10),
                 positions -> {
                     var directions = player.position()

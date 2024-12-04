@@ -78,9 +78,13 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
         return adjacentPositions;
     }
 
-    protected NexiteTankBlockEntity getTankEntity(){
-        if (this.level.getBlockEntity(this.tankPosition) instanceof NexiteTankBlockEntity nexiteTankBlockEntity) {
-            return nexiteTankBlockEntity;
+    public int getNexiteCount(){
+        return this.getTankEntity().inputItemHandler.getStackInSlot(0).getCount();
+    }
+
+    public NexiteTankBlockEntity getTankEntity(){
+        if (this.tankPosition != null && this.level.getBlockEntity(this.tankPosition) instanceof NexiteTankBlockEntity tank) {
+            return tank;
         }
         return null;
     }
@@ -94,7 +98,9 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
     protected boolean hasTankAndFuel(){
         if(this.level == null || this.tankPosition == null) return false;
         if (!(this.level.getBlockEntity(this.tankPosition) instanceof NexiteTankBlockEntity nexiteTankBlockEntity)) return false;
-        return this.tankPosition != null && nexiteTankBlockEntity.inputItemHandler.getStackInSlot(0).getCount() >= this.setCraftingCost();
+        var getNexite = nexiteTankBlockEntity.inputItemHandler.getStackInSlot(0).getCount();
+        var hasEnoughNexite = getNexite >= this.setCraftingCost();
+        return this.tankPosition != null && hasEnoughNexite && this.setCraftingCost() > 0;
     }
 
     private List<BlockPos> getTankBlockInRange(Level pLevel, BlockPos pos) {

@@ -4,6 +4,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.block.augment_modification_station.AugmentModificationEntity;
 import org.jahdoo.components.AbilityHolder;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.function.Consumer;
 
 public class AugmentModificationData {
-    public static void updateAugmentConfig(String e, AbilityHolder.AbilityModifiers v, double i, String abilityName, WandAbilityHolder holder, Consumer<WandAbilityHolder> holderExe, AbstractTankUser user) {
+    public static void updateAugmentConfig(String e, AbilityHolder.AbilityModifiers v, double i, String abilityName, WandAbilityHolder holder, Consumer<WandAbilityHolder> holderExe, AbstractBEInventory user) {
         var newWandHolder = new WandAbilityHolder(new HashMap<>(holder.abilityProperties()));
         var newHolder = new AbilityHolder(new HashMap<>(holder.abilityProperties().get(abilityName).abilityProperties()));
         var correctAdjustment = v.isHigherBetter() ? v.actualValue() + v.step() : v.actualValue() - v.step();

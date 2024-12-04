@@ -40,13 +40,11 @@ public class PlayClientSoundSyncS2CPacket implements CustomPacketPayload {
     public boolean handle(IPayloadContext ctx) {
         ctx.enqueueWork(
             new Runnable() {
-                // Use anon - lambda causes classloading issues
                 @Override
                 public void run() {
                     if(ctx.player() instanceof LocalPlayer localPlayer) {
                         var volumeAdjust = ctx.listener().getMainThreadEventLoop().getPendingTasksCount();
                         var adjusted = volume - ((float) volumeAdjust /10);
-                        System.out.println(volume);
                         localPlayer.playSound(soundEvents, volume == 1.15f ? volume : adjusted, pitch);
                     }
                 }

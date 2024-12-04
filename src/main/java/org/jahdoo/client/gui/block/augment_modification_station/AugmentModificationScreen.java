@@ -145,9 +145,10 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
             if(component == null) return;
             var localHolder = getAbilityModifiers(component, getTag);
             this.chargeCoreType(this.getChargeableCore());
-            updateAugmentConfig(extractName(component.getString()), localHolder, 0, abilityKey, getTag, (myHolder) -> {
-                this.item.set(WAND_ABILITY_HOLDER, myHolder);
-            },entity());
+            updateAugmentConfig(
+                extractName(component.getString()), localHolder, 0, abilityKey, getTag,
+                (myHolder) ->  this.item.set(WAND_ABILITY_HOLDER, myHolder),entity()
+            );
             if(correctAdjustment){
                 ModHelpers.getLocalSound(getMinecraft().level, entity().getBlockPos(), APPLY_EFFECT_TRIAL_OMEN, 1, 2);
             }

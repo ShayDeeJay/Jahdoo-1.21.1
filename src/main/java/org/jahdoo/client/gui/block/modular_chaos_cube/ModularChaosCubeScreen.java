@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.all_abilities.ability_components.AbstractBlockAbility;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties;
+import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.ToggleComponent;
 import org.jahdoo.registers.AbilityRegister;
 import org.jetbrains.annotations.NotNull;
@@ -128,7 +129,7 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
         BlockPos isThis
     ) {
         this.addRenderableOnly(textWithBackground(posX-10, posY, this.getMinecraft(), Component.literal(label)));
-        List<Pair<ResourceLocation, BlockPos>> modifiableCopy = new ArrayList<>(copy);
+        var modifiableCopy = new ArrayList<>(copy);
 
         int[][] layoutPositions = {
                 {28},
@@ -211,11 +212,25 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
         this.renderBlurredBackground(pPartialTick);
         this.setCustomBackground(guiGraphics);
-        int i = this.width / 2;
-        int i1 = this.height / 2;
+        var i = this.width / 2;
+        var i1 = this.height / 2;
+        var fillColour = -15020954;
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
-        abilityIcon(guiGraphics, this.modularChaosCubeMenu.getAutomationEntity().inputItemHandler.getStackInSlot(0), width, height - 24, 109, 50);
+
+        var offsetX = 220;
+        var offsetY = -38;
+
+        if(entity().getTankEntity() != null){
+            guiGraphics.drawCenteredString(font, String.valueOf(entity().getNexiteCount()),i - 144 + offsetX, i1 - 10 + offsetY, fillColour);
+            SharedUI.boxMaker(guiGraphics, i - 150 + offsetX, i1 + offsetY, 6, 20, BORDER_COLOUR, BOX_COLOUR);
+            int heightOffset = (int) ((float) 18 / 64 * this.entity().getNexiteCount());
+            if(heightOffset >= 1){
+                SharedUI.boxMaker(guiGraphics, i - 148 + offsetX, i1 + 37 + offsetY, 4, -heightOffset+1, fillColour, fillColour);
+            }
+        }
+
+        abilityIcon(guiGraphics, this.entity().augmentSlot(), width, height - 24, 109, 50);
         renderInventoryBackground(guiGraphics, this, IMAGE_SIZE, 24, true);
         setSlotTexture(guiGraphics, i - 16, i1 - 61, 32, "");
     }
