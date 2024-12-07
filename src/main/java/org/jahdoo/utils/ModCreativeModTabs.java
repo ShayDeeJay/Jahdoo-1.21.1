@@ -35,25 +35,24 @@ public class ModCreativeModTabs {
                     pOutput.accept(ItemsRegister.INFUSER_ITEM.get());
                     pOutput.accept(ItemsRegister.NEXITE_POWDER.get());
                     pOutput.accept(ItemsRegister.AUGMENT_FRAGMENT.get());
-                    pOutput.accept(ItemsRegister.TOME_OF_UNITY.get());
                     pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
                     pOutput.accept(ItemsRegister.AUGMENT_CORE.get());
                     pOutput.accept(ItemsRegister.ADVANCED_AUGMENT_CORE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_HYPER_CORE.get());
+                    pOutput.accept(ItemsRegister.TOME_OF_UNITY.get());
 
 //                pOutput.accept(ItemsRegister.WIZARD_HELMET.get());
 //                pOutput.accept(ItemsRegister.WIZARD_CHESTPLATE.get());
 //                pOutput.accept(ItemsRegister.WIZARD_LEGGINGS.get());
 //                pOutput.accept(ItemsRegister.WIZARD_BOOTS.get());
-
 //                for(int i = 1; i < 7; i++) {
 //                    ItemStack baseAugment = new ItemStack(ItemsRegister.AUGMENT_ITEM.get());
 //                    CustomModelData customModelData = new CustomModelData(i);
 //                    baseAugment.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
 //                    pOutput.accept(baseAugment);
 //                }
-
 //                pOutput.accept(BlocksRegister.WAND_MANAGER_TABLE.get());
+
                 pOutput.accept(ItemsRegister.WAND_ITEM_MYSTIC.get());
                 pOutput.accept(ItemsRegister.WAND_ITEM_FROST.get());
                 pOutput.accept(ItemsRegister.WAND_ITEM_INFERNO.get());

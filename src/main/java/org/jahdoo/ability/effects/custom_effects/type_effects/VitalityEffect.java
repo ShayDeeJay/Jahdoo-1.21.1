@@ -12,7 +12,10 @@ import org.jahdoo.ability.effects.EffectParticles;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ItemsRegister;
+import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
+
+import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
 
 public class VitalityEffect extends MobEffect {
 
@@ -37,7 +40,8 @@ public class VitalityEffect extends MobEffect {
                     double spawnZ = targetEntity.getZ() + offsetZ;
                     BehaviorUtils.throwItem(targetEntity, heartContainer, new Vec3(spawnX, spawnY, spawnZ));
                 }
-                targetEntity.hurt(targetEntity.level().damageSources().magic(), 1);
+                var source = DamageUtil.source(serverLevel, JAHDOO_SOURCE, targetEntity);
+                targetEntity.hurt(source, 1);
             }
             EffectParticles.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementRegistry.VITALITY.get(), SoundEvents.SOUL_ESCAPE.value());
         }

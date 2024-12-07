@@ -58,7 +58,6 @@ public class FarmersTouch extends AbstractUtilityProjectile {
         return new FarmersTouch();
     }
 
-
     @Override
     public String abilityId() {
         return FarmersTouchAbility.abilityId.getPath().intern();
@@ -132,6 +131,5 @@ public class FarmersTouch extends AbstractUtilityProjectile {
         if (!(genericProjectile.level() instanceof ServerLevel)) return;
         if(this.hasHitBlock) this.nova(genericProjectile, this.range);
     }
-
 
 }

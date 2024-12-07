@@ -42,11 +42,11 @@ public class MageFlight implements AbstractAttachment {
     }
 
     public static void mageFlightTickEvent(Player player){
+        var mageFlight = player.getData(MAGE_FLIGHT);
+        mageFlight.serverFlight(player);
         if(player instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayer(serverPlayer, new MageFlightPacketS2CPacket());
         }
-        var mageFlight = player.getData(MAGE_FLIGHT);
-        mageFlight.serverFlight(player);
     }
 
     public void setJumpTickCounter(int jumpTickCounter) {

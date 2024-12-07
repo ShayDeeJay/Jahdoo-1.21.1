@@ -6,7 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
@@ -25,7 +24,7 @@ import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
+import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
 
 public class ElementalShooter extends DefaultEntityBehaviour {
     private int blockBounce;
@@ -150,7 +149,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 
     private void setDamageByOwner(LivingEntity target){
         target.hurt(
-            DamageUtil.source(this.genericProjectile.level(), MYSTIC_DAMAGE, target, this.genericProjectile.getOwner()),
+            DamageUtil.source(this.genericProjectile.level(), JAHDOO_SOURCE, target, this.genericProjectile.getOwner()),
             (float) this.damage
         );
     }

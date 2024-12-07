@@ -4,18 +4,24 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
+import org.jahdoo.items.augments.Augment;
 import org.jahdoo.registers.AbilityRegister;
+import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.UnaryOperator;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.jahdoo.items.augments.AugmentItemHelper.setAbilityToAugment;
 import static org.jahdoo.utils.ModHelpers.withStyleComponent;
 import static org.jahdoo.utils.ModHelpers.withStyleComponentTrans;
 
@@ -72,6 +78,17 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     public static AbilityRegistrar getAbilityWithRarity(){
         var list = AbilityRegister.getMatchingRarity(JahdooRarity.getRarity());
         return list.get(ModHelpers.Random.nextInt(0, list.size()));
+    }
+
+    public static ItemStack getAbilityAugment(JahdooRarity...jahdooRarities){
+        var allRarities = Arrays.stream(jahdooRarities).toList();
+        var list = AbilityRegister.getMatchingRarity(allRarities.get(ModHelpers.Random.nextInt(0, allRarities.size())));
+        var ability = list.get(ModHelpers.Random.nextInt(0, list.size()));
+        var emptyStack = new ItemStack(ItemsRegister.AUGMENT_ITEM.get());
+        ability.setModifiers(emptyStack);
+        var wandAbilityHolder = emptyStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        setAbilityToAugment(emptyStack, ability, wandAbilityHolder);
+        return emptyStack;
     }
 
     public static Component addRarityTooltip(JahdooRarity rarity){

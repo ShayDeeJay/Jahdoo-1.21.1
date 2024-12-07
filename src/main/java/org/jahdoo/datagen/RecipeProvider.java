@@ -1,24 +1,18 @@
 package org.jahdoo.datagen;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.ShapelessRecipe;
-import net.minecraft.world.level.block.Blocks;
-import org.jahdoo.recipe.CreatorRecipe;
 import org.jahdoo.recipe.CreatorRecipeBuilder;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
-import org.jahdoo.utils.ModHelpers;
+import org.jahdoo.utils.ModTags;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
@@ -28,15 +22,22 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     }
 
     @Override
+    protected void generateForEnabledBlockFamilies(RecipeOutput enabledFeatures, FeatureFlagSet p_251836_) {
+        super.generateForEnabledBlockFamilies(enabledFeatures, p_251836_);
+    }
+
+    @Override
     protected void buildRecipes(RecipeOutput recipeOutput) {
         creatorBlockRecipe(recipeOutput, BlocksRegister.CREATOR.get().asItem());
         tankRecipe(recipeOutput, BlocksRegister.TANK.get().asItem());
         infuser(recipeOutput, BlocksRegister.INFUSER.get().asItem());
-        smelterRecipe(recipeOutput, BlocksRegister.NEXITE_BLOCK.get().asItem());
         advancedAugmentCore(recipeOutput, ItemsRegister.ADVANCED_AUGMENT_CORE.get());
         hyperCore(recipeOutput, ItemsRegister.AUGMENT_HYPER_CORE.get());
         augment(recipeOutput, ItemsRegister.AUGMENT_ITEM.get());
         tomeOfUnity(recipeOutput, ItemsRegister.TOME_OF_UNITY.get());
+        chaosCube(recipeOutput, BlocksRegister.MODULAR_CHAOS_CUBE.get().asItem());
+        nexite(recipeOutput, BlocksRegister.NEXITE_BLOCK.get().asItem());
+        augmentModificationTable(recipeOutput, BlocksRegister.AUGMENT_MODIFICATION_STATION.get().asItem());
         wands(recipeOutput, ItemsRegister.WAND_ITEM_FROST.get(), Items.LIGHT_BLUE_DYE, "frost");
         wands(recipeOutput, ItemsRegister.WAND_ITEM_INFERNO.get(), Items.ORANGE_DYE, "inferno");
         wands(recipeOutput, ItemsRegister.WAND_ITEM_MYSTIC.get(), Items.PURPLE_DYE, "mystic");
@@ -75,7 +76,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .requires(ItemsRegister.AUGMENT_CORE.get(), 4)
             .requires(ItemsRegister.NEXITE_POWDER.get(), 4)
             .unlockedBy("augment_core", has(ItemsRegister.AUGMENT_CORE.get()))
-            .group("creator_block")
+            .group("advanced_augment_core")
             .save(output);
     }
 
@@ -88,16 +89,6 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .requires(unique)
             .unlockedBy("augment_core", has(ItemsRegister.AUGMENT_CORE.get()))
             .group("wand"+type)
-            .save(output);
-    }
-
-    //Vanilla Smelting
-    protected void smelterRecipe(RecipeOutput output, Item result) {
-        SimpleCookingRecipeBuilder.smelting(
-                Ingredient.of(BlocksRegister.RAW_NEXITE_BLOCK.get()),
-                RecipeCategory.BUILDING_BLOCKS,
-                result, 2.0F, 200
-            ).unlockedBy("nexite_powder", has(ItemsRegister.NEXITE_POWDER.get()))
             .save(output);
     }
 
@@ -133,6 +124,33 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .pattern("MMM")
             .unlockedBy("glass", has(Items.GLASS))
             .save(output);
+    }
+
+    protected void chaosCube(RecipeOutput output, Item result) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+            .define('X', ModTags.Items.WAND_TAGS)
+            .define('M', Items.MUD_BRICKS)
+            .pattern("MMM")
+            .pattern("MXM")
+            .pattern("MMM")
+            .unlockedBy("wand_item", has(ModTags.Items.WAND_TAGS))
+            .save(output);
+    }
+
+    protected void augmentModificationTable(RecipeOutput output, Item result) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+            .define('X', ItemsRegister.AUGMENT_ITEM.get())
+            .define('M', Items.MUD_BRICKS)
+            .pattern(" X ")
+            .pattern(" M ")
+            .pattern(" M ")
+            .unlockedBy("augment_item", has(ItemsRegister.AUGMENT_ITEM.get()))
+            .save(output);
+    }
+
+    protected void nexite(RecipeOutput output, Item result) {
+        nineBlockStorageRecipes(output, RecipeCategory.MISC, ItemsRegister.NEXITE_POWDER.get(), RecipeCategory.BUILDING_BLOCKS, BlocksRegister.NEXITE_BLOCK.get());
+        oreSmelting(output, List.of(BlocksRegister.RAW_NEXITE_BLOCK.get()),RecipeCategory.BUILDING_BLOCKS, result, 2.0F, 200, "nexite");
     }
 
 }

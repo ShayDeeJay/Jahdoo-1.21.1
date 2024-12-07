@@ -1,14 +1,6 @@
 package org.jahdoo.utils;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
-import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.OutlineBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.TypedDataComponent;
@@ -21,15 +13,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.TickRateManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -37,14 +26,11 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.AbilityHolder;
-import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.components.WandAbilityHolder;
-import org.jahdoo.items.augments.Augment;
 import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.registers.ItemsRegister;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -53,9 +39,8 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
-import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
+import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
-import static org.jahdoo.registers.EffectsRegister.ARCANE_EFFECT;
 
 public class ModHelpers {
     public static final Random Random = ThreadLocalRandom.current();
@@ -200,7 +185,7 @@ public class ModHelpers {
     }
 
     public static void damageEntityWithModifiers(LivingEntity target, LivingEntity player, float currentDamage, AbstractElement getElementType){
-        target.hurt(DamageUtil.source(target.level(), MYSTIC_DAMAGE, target, player), attributeModifierCalculator(player, currentDamage, getElementType, AttributesRegister.MAGIC_DAMAGE_MULTIPLIER, true));
+        target.hurt(DamageUtil.source(target.level(), JAHDOO_SOURCE, target, player), attributeModifierCalculator(player, currentDamage, getElementType, AttributesRegister.MAGIC_DAMAGE_MULTIPLIER, true));
     }
 
     public static void getSoundWithPosition(Level level, BlockPos position, SoundEvent audio){

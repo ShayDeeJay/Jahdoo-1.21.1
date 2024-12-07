@@ -70,6 +70,7 @@ public class BusClientEvents {
     @SubscribeEvent
     public static void onKeyRegister(RegisterKeyMappingsEvent event) {
         event.register(KeyBinding.QUICK_SELECT);
+        event.register(KeyBinding.TARGET_LOCK_A);
         event.register(KeyBinding.WAND_SLOT_1A);
         event.register(KeyBinding.WAND_SLOT_2A);
         event.register(KeyBinding.WAND_SLOT_3A);

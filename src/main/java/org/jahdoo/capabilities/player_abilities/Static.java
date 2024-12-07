@@ -29,7 +29,7 @@ import static org.jahdoo.particle.ParticleHandlers.spawnElectrifiedParticles;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 import static org.jahdoo.registers.AttachmentRegister.STATIC;
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
+import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
 
 public class Static implements AbstractAttachment {
 
@@ -163,7 +163,7 @@ public class Static implements AbstractAttachment {
                     manaSystem.subtractMana(manaPerHitA, player);
 
                     entities.hurt(
-                        DamageUtil.source(serverLevel, MYSTIC_DAMAGE, entities, player),
+                        DamageUtil.source(serverLevel, JAHDOO_SOURCE, entities, player),
                         (float) this.damageA
                     );
 

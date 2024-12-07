@@ -9,7 +9,9 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jahdoo.ability.all_abilities.abilities.ArcaneShiftAbility;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityWheelMenu;
+import org.jahdoo.client.gui.overlays.ManaBarOverlay;
 import org.jahdoo.items.wand.WandItem;
+import org.jahdoo.utils.Config;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.List;
@@ -53,17 +55,17 @@ public class OverlayEvent {
 
     public static void simpleGui(RenderGuiLayerEvent.Pre event, LocalPlayer player) {
         if(player == null) return;
-        if(player.getMainHandItem().getItem() instanceof WandItem){
-            java.util.List<ResourceLocation> exceptions = List.of(
-                EXPERIENCE_LEVEL,
-                EXPERIENCE_BAR,
-                HOTBAR,
-                PLAYER_HEALTH,
-                FOOD_LEVEL,
-                CROSSHAIR
-            );
+        var exceptions = List.of(
+            EXPERIENCE_LEVEL,
+            EXPERIENCE_BAR,
+            HOTBAR,
+            PLAYER_HEALTH,
+            FOOD_LEVEL,
+            SELECTED_ITEM_NAME
+        );
 
-            if(exceptions.contains(event.getName())){
+        if(Config.CUSTOM_UI.get()){
+            if (exceptions.contains(event.getName())) {
                 event.setCanceled(true);
             }
         }

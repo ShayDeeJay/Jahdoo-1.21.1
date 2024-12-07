@@ -166,12 +166,6 @@ public class AugmentModificationBlock extends BaseEntityBlock{
         );
     }
 
-    private Optional<CreatorEntity> getEntity(Level level, BlockPos blockPos) {
-        return Optional.ofNullable(level.getBlockEntity(blockPos))
-            .filter(blockEntity -> blockEntity instanceof CreatorEntity)
-            .map(blockEntity -> (CreatorEntity) blockEntity);
-    }
-
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {

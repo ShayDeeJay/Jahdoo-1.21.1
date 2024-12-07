@@ -6,7 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -34,7 +33,7 @@ import java.util.UUID;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleStore.*;
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
+import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
 
 public class IceBomb extends DefaultEntityBehaviour {
 
@@ -182,7 +181,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         if(!this.getHitEntities.contains(hitEntity.getUUID())){
             this.getHitEntities.add(hitEntity.getUUID());
             hitEntity.hurt(
-                DamageUtil.source(this.elementProjectile.level(), MYSTIC_DAMAGE, hitEntity, this.elementProjectile.getOwner()),
+                DamageUtil.source(this.elementProjectile.level(), JAHDOO_SOURCE, hitEntity, this.elementProjectile.getOwner()),
                 (float) this.damage
             );
 

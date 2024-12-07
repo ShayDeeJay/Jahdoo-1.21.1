@@ -1,5 +1,7 @@
 package org.jahdoo.items.wand;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -36,6 +38,7 @@ import org.jahdoo.components.WandData;
 import org.jahdoo.networking.packet.server2client.EnchantedBlockS2C;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.utils.Config;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 import org.jetbrains.annotations.NotNull;
@@ -148,6 +151,19 @@ public class WandItem extends BlockItem implements GeoItem {
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
 //        Minecraft.getInstance().setScreen(new TestingElements());
 
+
+        if(level.isClientSide){
+            var current = Config.CUSTOM_UI.get();
+            var wheel = Config.QUICK_SELECT.get();
+            var lock = Config.LOCK_ON_TARGET.get();
+//            Config.CUSTOM_UI.set(!current);
+//            Config.QUICK_SELECT.set(!wheel);
+//            Config.LOCK_ON_TARGET.set(!lock);
+        }
+
+        if(player.level() instanceof ClientLevel){
+            Minecraft.getInstance().gui.setSubtitle(Component.literal("Welcome To Jahdoo"));
+        }
         var item = player.getMainHandItem();
         player.startUsingItem(player.getUsedItemHand());
         if (interactionHand == InteractionHand.MAIN_HAND) {

@@ -33,7 +33,7 @@ public class DecoyRenderer extends AbstractDecoyRenderer<Decoy, DecoyModel<Decoy
     public void render(Decoy pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         pPoseStack.pushPose();
         if(pEntity.tickCount < 20){
-            pEntity.setScale((float) Math.min(1, pEntity.getScale() + 0.06));
+            pEntity.setScale((float) Math.min(1, pEntity.getScale() + 0.06 * pPartialTicks));
             pPoseStack.scale(pEntity.getScale(), pEntity.getScale(), pEntity.getScale());
         }
         this.overriddenRenderer(pEntity, pPartialTicks, pPoseStack, pBuffer);
@@ -67,7 +67,7 @@ public class DecoyRenderer extends AbstractDecoyRenderer<Decoy, DecoyModel<Decoy
         RenderType rendertype = this.getRenderType(pEntity, flag, flag1, flag2);
         if (rendertype != null) {
             VertexConsumer vertexconsumer = pBuffer.getBuffer(rendertype);
-            this.model.renderToBuffer(pPoseStack, vertexconsumer, 150, 0, FastColor.ABGR32.color(128, 255,255,255));
+            this.model.renderToBuffer(pPoseStack, vertexconsumer, 255, 0, FastColor.ABGR32.color(200, 255,255,255));
         }
         pPoseStack.popPose();
     }

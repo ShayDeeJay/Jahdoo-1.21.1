@@ -15,12 +15,13 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class DamageTypesProvider extends DatapackBuiltinEntriesProvider {
+    public static final String JAHDOO_DAMAGE = "jahdoo_magic";
     private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
         .add(Registries.DAMAGE_TYPE, DamageTypesProvider::bootstrap);
 
 
     public static void bootstrap(BootstrapContext<DamageType> ctx) {
-        ctx.register(DamageTypeRegistry.MYSTIC_DAMAGE, new DamageType("mystic", 0.1F));
+        ctx.register(DamageTypeRegistry.JAHDOO_SOURCE, new DamageType(JAHDOO_DAMAGE, 0.1F));
     }
 
     public DamageTypesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

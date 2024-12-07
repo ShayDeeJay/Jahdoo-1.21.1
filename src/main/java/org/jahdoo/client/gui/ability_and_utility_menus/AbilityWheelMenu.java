@@ -63,8 +63,8 @@ public class AbilityWheelMenu extends Screen  {
         var wandData = wand.get(DataComponentRegistry.WAND_DATA.get());
         var abilityHolder = getAllAbilities(wand); //number of positions
         var totalSlots = abilityHolder.size();
-        int centerX = this.width / 2;
-        int centerY = this.height / 2;
+        int centerX = this.width / 2 + 2;
+        int centerY = this.height / 2 + 2;
         int radius = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 4); // Adjust radius
         double angleOffset = -Math.PI / 2.0; // Start position
         if(wandData == null) return;
@@ -97,19 +97,19 @@ public class AbilityWheelMenu extends Screen  {
         var abilityButton = new WidgetSprites(iconResource, iconResource);
         var isSelected = Objects.equals(selectedAbility.isPresent() ? selectedAbility.get().getAbilityName() : "", ability.getAbilityName());
 
+        if(isSelected){
+            selectedAbility.ifPresent(abilityRegistrars ->
+                showConfig(wandData, player, abilityRegistrars, buttonX + 20, buttonY - 10));
+        }
+
         this.addRenderableWidget(
             new AbilityIconButton(
-                buttonX, buttonY, abilityButton, buttonSize,
+                buttonX - 2, buttonY - 2, abilityButton, buttonSize,
                 pButton -> {},
                 isSelected,
                 () -> onHoverClick(abilityHolder, finalI, player)
             )
         );
-
-        if(isSelected){
-            selectedAbility.ifPresent(abilityRegistrars ->
-            showConfig(wandData, player, abilityRegistrars, buttonX + 20, buttonY - 10));
-        }
     }
 
     private void onHoverClick(List<String> abilityHolder, int finalI, Player player) {

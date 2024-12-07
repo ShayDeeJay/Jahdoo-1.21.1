@@ -9,9 +9,11 @@ import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.particle.ParticleHandlers.spawnElectrifiedParticles;
+import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
 
 public class LightningEffect extends MobEffect {
 
@@ -27,7 +29,8 @@ public class LightningEffect extends MobEffect {
                 spawnElectrifiedParticles(serverLevel, targetEntity.position(), ElementRegistry.LIGHTNING.get().getParticleGroup().magicSlow(), 1, targetEntity, 0.1, 1);
             } else {
                 if(getRandomChance == 0) {
-                    targetEntity.hurt(targetEntity.level().damageSources().magic(), (float) Math.max((double) pAmplifier / 5, 0.5));
+                    var source = DamageUtil.source(serverLevel, JAHDOO_SOURCE, targetEntity);
+                    targetEntity.hurt(source, (float) Math.max((double) pAmplifier / 5, 0.5));
                     targetEntity.addEffect(new CustomMobEffect(EffectsRegister.STUN_EFFECT.getDelegate(), pAmplifier > 3 ? 30 : pAmplifier * 10, 10));
                 }
             }

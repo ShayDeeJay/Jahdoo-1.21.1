@@ -3,7 +3,6 @@ package org.jahdoo.ability.all_abilities.ability_components;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.components.WandAbilityHolder;
@@ -20,7 +19,7 @@ import org.jahdoo.ability.AbilityBuilder;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
+import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
 
 
 public class LightningTrail extends DefaultEntityBehaviour {
@@ -87,7 +86,7 @@ public class LightningTrail extends DefaultEntityBehaviour {
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
         hitEntity.hurt(
-            DamageUtil.source(this.genericProjectile.level(), MYSTIC_DAMAGE, hitEntity, this.genericProjectile.getOwner()),
+            DamageUtil.source(this.genericProjectile.level(), JAHDOO_SOURCE, hitEntity, this.genericProjectile.getOwner()),
             (float) damage
         );
     }

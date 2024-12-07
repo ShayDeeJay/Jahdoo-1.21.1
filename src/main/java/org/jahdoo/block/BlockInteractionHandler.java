@@ -19,6 +19,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jahdoo.items.augments.AugmentItemHelper;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -102,10 +103,15 @@ public class BlockInteractionHandler {
         InteractionHand hand
     ){
         var count = 1;
-        var playerItem = player.getItemInHand(hand).copyWithCount(count);
-        var inventoryItem = itemStackHandler.getStackInSlot(outputSlot).copyWithCount(count);
-        itemStackHandler.setStackInSlot(outputSlot, playerItem);
-        player.setItemInHand(hand, inventoryItem);
+        var playerItem = player.getItemInHand(hand);
+        var inventoryItem = itemStackHandler.getStackInSlot(outputSlot);
+        itemStackHandler.setStackInSlot(outputSlot, playerItem.copyWithCount(count));
+        if(playerItem.getCount() > 1){
+            AugmentItemHelper.throwOrAddItem(player, inventoryItem.copyWithCount(count));
+            playerItem.shrink(1);
+        } else {
+            player.setItemInHand(hand, inventoryItem.copyWithCount(count));
+        }
     }
 
     public static boolean removeItemsFromSlotToHand(

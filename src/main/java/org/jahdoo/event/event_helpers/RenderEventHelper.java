@@ -3,12 +3,14 @@ package org.jahdoo.event.event_helpers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -18,8 +20,7 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.jahdoo.ability.all_abilities.abilities.ArcaneShiftAbility;
 import org.jahdoo.client.RenderHelpers;
 import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.registers.BlocksRegister;
-import org.jahdoo.registers.ItemsRegister;
+import org.jahdoo.utils.Config;
 import org.jahdoo.utils.ModHelpers;
 
 import java.awt.*;
@@ -28,7 +29,7 @@ import java.util.Objects;
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
-public class RenderEvenHelper {
+public class RenderEventHelper {
     public static void renderUtilityOverlay(RenderLevelStageEvent event, Player player, ItemStack stack) {
         var pick = player.pick(15, 1, false);
         if(stack.getItem() instanceof WandItem){
@@ -118,5 +119,63 @@ public class RenderEvenHelper {
         RenderHelpers.renderLines(matrix, aabb, color, buffer);
         matrix.popPose();
         matrix.popPose();
+    }
+
+    public static void lockNearbyTarget(RenderLevelStageEvent event) {
+        if(!Config.LOCK_ON_TARGET.get()) return;
+        var player = (Player) event.getCamera().getEntity();
+        var target = getEntityInRange(player, 15, 25);
+        if (target == null || !player.hasLineOfSight(target)) return;
+        if (!(player.getMainHandItem().getItem() instanceof WandItem)) return;
+
+        target.addEffect(new MobEffectInstance(MobEffects.GLOWING.getDelegate(), 20, 1, false, false), player);
+
+        var targetPos = target.position().add(0, target.getBbHeight() - 0.2, 0);
+
+        double deltaX = targetPos.x - player.getX();
+        double deltaY = targetPos.y - (player.getY() + player.getEyeHeight());
+        double deltaZ = targetPos.z - player.getZ();
+
+        float desiredYaw = (float) (Math.toDegrees(Math.atan2(deltaZ, deltaX)) - 90);
+        float desiredPitch = (float) -Math.toDegrees(Math.atan2(deltaY, Math.sqrt(deltaX * deltaX + deltaZ * deltaZ)));
+
+        float currentYaw = player.getYRot() % 360;
+        if (currentYaw > 180) currentYaw -= 360;
+        if (currentYaw < -180) currentYaw += 360;
+
+        desiredYaw = desiredYaw % 360;
+        if (desiredYaw > 180) desiredYaw -= 360;
+        if (desiredYaw < -180) desiredYaw += 360;
+
+        float yawDifference = desiredYaw - currentYaw;
+        if (yawDifference > 180) yawDifference -= 360;
+        if (yawDifference < -180) yawDifference += 360;
+
+
+
+        float smoothFactor = 0.013f; // Adjust for smoother/faster transitions
+        player.setYRot(currentYaw + yawDifference * smoothFactor);
+        player.setXRot(player.getXRot() + (desiredPitch - player.getXRot()) * smoothFactor);
+    }
+
+
+    public static LivingEntity getEntityInRange(Player player, double maxDistance, float maxAngle) {
+        var playerPosition = player.position();
+        var playerDirection = player.getLookAngle(); // Direction the player is looking
+
+        LivingEntity nearestEntity = player.level().getNearestEntity(
+            Mob.class,
+            TargetingConditions.DEFAULT,
+            player,
+            playerPosition.x, playerPosition.y, playerPosition.z,
+            new AABB(BlockPos.containing(playerPosition)).inflate(maxDistance, 4, maxDistance)
+        );
+
+        if (nearestEntity == null) return null;
+        var targetDirection = nearestEntity.position().subtract(playerPosition).normalize();
+
+        double angleToTarget = Math.toDegrees(Math.acos(playerDirection.dot(targetDirection)));
+
+        if (angleToTarget <= maxAngle) return nearestEntity; else return null;
     }
 }

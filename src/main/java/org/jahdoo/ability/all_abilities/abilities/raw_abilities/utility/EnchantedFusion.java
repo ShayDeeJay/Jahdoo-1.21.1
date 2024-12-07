@@ -38,6 +38,7 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
                         enchantedBlockEntity.setBlockType(state.getBlock(), 0);
                     }
                 }
+
                 PositionGetters.getCubeCornersAndFaceCenters(
                     pos,0.8, pos1 -> {
                         var directions = pos.getCenter().subtract(pos1).normalize();

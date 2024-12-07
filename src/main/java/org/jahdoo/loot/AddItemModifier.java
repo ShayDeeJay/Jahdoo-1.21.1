@@ -117,11 +117,8 @@ public class AddItemModifier extends LootModifier {
     }
 
     public static ItemStack setGeneratedAugment(Item item){
-        var random = ModHelpers.Random;
         var itemStack = new ItemStack(item);
-        var perfectRoller = random.nextInt(0, 200) == 0 ? 20 : random.nextInt(1, 19);
-        itemStack.set(DataComponentRegistry.AUGMENT_RATING, (double) perfectRoller);
-        if(random.nextInt(0, 200) != 0){
+        if(ModHelpers.Random.nextInt(0, 200) != 0){
             itemStack.set(DataComponentRegistry.NUMBER, 5);
             AugmentItemHelper.augmentIdentifierSharedRarity(itemStack);
         }

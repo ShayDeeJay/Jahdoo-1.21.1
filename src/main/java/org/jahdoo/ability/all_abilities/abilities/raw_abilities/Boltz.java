@@ -28,7 +28,7 @@ import org.jahdoo.utils.PositionGetters;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.registers.DamageTypeRegistry.MYSTIC_DAMAGE;
+import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
 
 public class Boltz extends DefaultEntityBehaviour {
 
@@ -97,7 +97,7 @@ public class Boltz extends DefaultEntityBehaviour {
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
         LivingEntity owner = (LivingEntity) this.elementProjectile.getOwner();
-        hitEntity.hurt(DamageUtil.source(this.elementProjectile.level(), MYSTIC_DAMAGE, hitEntity, owner), (float) this.damage);
+        hitEntity.hurt(DamageUtil.source(this.elementProjectile.level(), JAHDOO_SOURCE, hitEntity, owner), (float) this.damage);
         ModHelpers.getSoundWithPosition(this.elementProjectile.level(),  this.elementProjectile.blockPosition(), SoundRegister.BOLT.get(), 0.1f);
     }
 
@@ -195,7 +195,7 @@ public class Boltz extends DefaultEntityBehaviour {
             livingEntity -> {
                 if (!(livingEntity instanceof Player)) {
                     livingEntity.hurt(
-                        DamageUtil.source(this.elementProjectile.level(), MYSTIC_DAMAGE, livingEntity, this.elementProjectile.getOwner()),
+                        DamageUtil.source(this.elementProjectile.level(), JAHDOO_SOURCE, livingEntity, this.elementProjectile.getOwner()),
                         (float) this.damage
                     );
                 }
