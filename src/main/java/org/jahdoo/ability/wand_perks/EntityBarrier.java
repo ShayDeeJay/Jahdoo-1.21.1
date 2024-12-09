@@ -11,6 +11,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.entities.GenericProjectile;
+import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.utils.PositionGetters;
@@ -57,7 +58,7 @@ public class EntityBarrier {
 
                         // add force field push back sound
                         ModHelpers.getSoundWithPosition(level, entity.blockPosition(), SoundEvents.BEACON_POWER_SELECT, 0.1f, 1.5f);
-                        entity.hurt(level.damageSources().magic(), 1);
+                        DamageUtil.damageWithJahdoo(entity, 1);
                         ParticleHandlers.particleBurst(serverLevel, entity.position().add(0, entity.getBbHeight() / 2, 0), 5, getType.getParticleGroup().bakedSlow(), 0, 0, 0, 0.2f);
                     }
                 }

@@ -48,7 +48,7 @@ public class PermafrostAbility extends AbilityRegistrar {
             .setMana(50, 20,  5)
             .setCooldown(1800, 1200, 100)
 //            .setDamage(10, 1, 1)
-            .setEffectDuration(600, 200, 50)
+            .setEffectDuration(300, 100, 50)
             .setEffectStrength(10, 5,1)
             .setCastingDistance(30, 10, 5)
             .setLifetime(300, 100, 50)

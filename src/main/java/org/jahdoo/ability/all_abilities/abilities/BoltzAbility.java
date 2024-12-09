@@ -45,7 +45,7 @@ public class BoltzAbility extends AbilityRegistrar {
                 0,
                 abilityId.getPath().intern()
             );
-            double spread = 0.9; // Adjust the spread value as needed
+            double spread = 0.8; // Adjust the spread value as needed
             double spreadX = direction.x + (Math.random() - 0.5) * spread;
             double spreadY = direction.y + (Math.random() - 0.5) * spread;
             double spreadZ = direction.z + (Math.random() - 0.5) * spread;
@@ -53,7 +53,7 @@ public class BoltzAbility extends AbilityRegistrar {
             this.fireProjectileDirection(elementProjectile, player, 0.5f, new Vec3(spreadX, spreadY, spreadZ));
         }
 
-        for(int i = 0; i < totalShots * 10; i++){
+        for(int i = 0; i < totalShots * 5; i++){
             double spread = 0.8; // Adjust the spread value as needed
             double spreadX = direction.x + (Math.random() - 0.5) * spread;
             double spreadY = direction.y + (Math.random() - 0.5) * spread;

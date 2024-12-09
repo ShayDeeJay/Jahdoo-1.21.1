@@ -28,6 +28,11 @@ public class ModularChaosCubeSlot extends SlotItemHandler {
     }
 
     @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
+
+    @Override
     public boolean mayPlace(@NotNull ItemStack itemStack) {
         var abilityName = DataComponentHelper.getAbilityTypeItemStack(itemStack);
         AtomicBoolean isValid = new AtomicBoolean(false);
@@ -36,8 +41,6 @@ public class ModularChaosCubeSlot extends SlotItemHandler {
         );
         return isValid.get();
     }
-
-
 
     @Override
     public boolean isHighlightable() {

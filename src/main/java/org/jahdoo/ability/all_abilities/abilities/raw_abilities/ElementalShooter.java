@@ -148,10 +148,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
     }
 
     private void setDamageByOwner(LivingEntity target){
-        target.hurt(
-            DamageUtil.source(this.genericProjectile.level(), JAHDOO_SOURCE, target, this.genericProjectile.getOwner()),
-            (float) this.damage
-        );
+        DamageUtil.damageWithJahdoo(target, this.genericProjectile.getOwner(), this.damage);
     }
 
     ResourceLocation abilityId = ModHelpers.res("elemental_shooter_property");

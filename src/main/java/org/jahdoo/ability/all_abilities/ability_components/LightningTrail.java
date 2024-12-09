@@ -85,10 +85,7 @@ public class LightningTrail extends DefaultEntityBehaviour {
 
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
-        hitEntity.hurt(
-            DamageUtil.source(this.genericProjectile.level(), JAHDOO_SOURCE, hitEntity, this.genericProjectile.getOwner()),
-            (float) damage
-        );
+        DamageUtil.damageWithJahdoo(hitEntity, this.genericProjectile.getOwner(), damage);
     }
 
     @Override

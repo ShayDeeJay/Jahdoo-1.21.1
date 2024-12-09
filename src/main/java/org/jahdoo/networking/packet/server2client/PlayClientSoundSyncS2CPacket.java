@@ -18,23 +18,27 @@ public class PlayClientSoundSyncS2CPacket implements CustomPacketPayload {
     SoundEvent soundEvents;
     float volume;
     float pitch;
+    boolean isBatched;
 
-    public PlayClientSoundSyncS2CPacket(SoundEvent soundEvents, float volume, float pitch) {
+    public PlayClientSoundSyncS2CPacket(SoundEvent soundEvents, float volume, float pitch, boolean isBatched) {
         this.soundEvents = soundEvents;
         this.volume = volume;
         this.pitch = pitch;
+        this.isBatched = isBatched;
     }
 
     public PlayClientSoundSyncS2CPacket(FriendlyByteBuf buf) {
         this.soundEvents = buf.readJsonWithCodec(SoundEvent.CODEC).value();
         this.volume = buf.readFloat();
         this.pitch = buf.readFloat();
+        this.isBatched = buf.readBoolean();
     }
 
     public void toBytes(FriendlyByteBuf bug) {
         bug.writeJsonWithCodec(SoundEvent.CODEC, new Holder.Direct<>(soundEvents));
         bug.writeFloat(volume);
         bug.writeFloat(pitch);
+        bug.writeBoolean(isBatched);
     }
 
     public boolean handle(IPayloadContext ctx) {
@@ -44,8 +48,11 @@ public class PlayClientSoundSyncS2CPacket implements CustomPacketPayload {
                 public void run() {
                     if(ctx.player() instanceof LocalPlayer localPlayer) {
                         var volumeAdjust = ctx.listener().getMainThreadEventLoop().getPendingTasksCount();
-                        var adjusted = volume - ((float) volumeAdjust /10);
-                        localPlayer.playSound(soundEvents, volume == 1.15f ? volume : adjusted, pitch);
+                        var v = volume - (float) volumeAdjust / 6;
+                        System.out.println(volumeAdjust);
+                        System.out.println(v);
+                        var adjusted = isBatched ? v : volume;
+                        localPlayer.playSound(soundEvents, (float) adjusted, pitch);
                     }
                 }
             }

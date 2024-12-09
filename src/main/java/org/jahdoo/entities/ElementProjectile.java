@@ -91,11 +91,12 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         EntityType<? extends Projectile> entityType,
         LivingEntity owner,
         String selectedAbility,
+        double spacing,
         WandAbilityHolder wandAbilityHolder,
         String abilityId
     ) {
         super(entityType, owner.level());
-        this.setProjectileWithOffsets(this, owner, 0, 1);
+        this.setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
         this.wandAbilityHolder = wandAbilityHolder;
@@ -144,12 +145,11 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
     protected void onHitEntity(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
         if(!(level() instanceof ServerLevel serverLevel)) return;
-        if(!(entity instanceof LivingEntity livingEntity) ) return;
-        if(entity == this.getOwner() || entity instanceof EternalWizard) return;
+        if(this.getOwner() != null) if (entity.getUUID() == this.getOwner().getUUID()) return;
         if (getProjectile == null) return;
-
-        ParticleHandlers.particleBurst(serverLevel, entityHitResult.getLocation(), 5, getProjectile.getElementType().getParticleGroup().baked());
+        if(!(entity instanceof LivingEntity livingEntity) ) return;
         getProjectile.onEntityHit(livingEntity);
+        ParticleHandlers.particleBurst(serverLevel, entityHitResult.getLocation(), 5, getProjectile.getElementType().getParticleGroup().baked());
     }
 
     @Override

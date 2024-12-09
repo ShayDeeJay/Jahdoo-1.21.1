@@ -66,7 +66,9 @@ public class EternalWizardRenderer extends EternalWizardBodyRenderer {
 
 
         var lifetime = AugmentItemHelper.ticksToTime(String.valueOf(pEntity.getLifetime() - pEntity.getPrivateTicks()));
-        this.renderNameTags(pEntity, Component.literal(lifetime), pPoseStack, pBuffer, 255, 3);
+        if(pEntity.getOwner() != null){
+            this.renderNameTags(pEntity, Component.literal(lifetime), pPoseStack, pBuffer, 255, 3);
+        }
         pPoseStack.scale(scale, scale, scale);
         super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
         pPoseStack.popPose();

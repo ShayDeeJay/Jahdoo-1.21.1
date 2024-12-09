@@ -40,8 +40,7 @@ public class VitalityEffect extends MobEffect {
                     double spawnZ = targetEntity.getZ() + offsetZ;
                     BehaviorUtils.throwItem(targetEntity, heartContainer, new Vec3(spawnX, spawnY, spawnZ));
                 }
-                var source = DamageUtil.source(serverLevel, JAHDOO_SOURCE, targetEntity);
-                targetEntity.hurt(source, 1);
+                DamageUtil.damageWithJahdoo(targetEntity, 1);
             }
             EffectParticles.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementRegistry.VITALITY.get(), SoundEvents.SOUL_ESCAPE.value());
         }

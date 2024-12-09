@@ -35,7 +35,7 @@ public class GenericOwnerHurtByTargetGoal extends TargetGoal {
             if (ownerLastHurtBy == null || ownerLastHurtBy.isAlliedTo(mob))
                 return false;
             int i = owner.getLastHurtByMobTimestamp();
-            return i != this.timestamp && this.canAttack(this.ownerLastHurtBy, TargetingConditions.DEFAULT) && !(this.ownerLastHurtBy instanceof EternalWizard);
+            return i != this.timestamp && this.canAttack(this.ownerLastHurtBy, TargetingConditions.DEFAULT);
         }
     }
 

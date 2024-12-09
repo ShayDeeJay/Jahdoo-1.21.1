@@ -2,10 +2,8 @@ package org.jahdoo.ability.effects.custom_effects.type_effects;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffects;
@@ -29,7 +27,6 @@ import java.util.List;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
-import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class ArcaneEffect extends MobEffect {
@@ -80,14 +77,13 @@ public class ArcaneEffect extends MobEffect {
     }
 
     private static void explosionHandler(LivingEntity targetEntity, int pAmplifier, ServerLevel serverLevel) {
-        var source = DamageUtil.source(serverLevel, JAHDOO_SOURCE, targetEntity);
-        targetEntity.hurt(source, pAmplifier);
+        DamageUtil.damageWithJahdoo(targetEntity, pAmplifier);
         targetEntity.level().getNearbyEntities(
             LivingEntity.class,
             TargetingConditions.DEFAULT,
             targetEntity,
             targetEntity.getBoundingBox().inflate(4)
-        ).forEach(damage -> damage.hurt(source, (float) pAmplifier /2));
+        ).forEach(damage -> DamageUtil.damageWithJahdoo(damage, pAmplifier /2));
         ModHelpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), SoundRegister.EXPLOSION.get(), 1, 1.4f);
         ModHelpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), SoundEvents.AMETHYST_CLUSTER_BREAK, 0.5f, 0.1f);
     }

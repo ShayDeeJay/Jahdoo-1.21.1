@@ -161,11 +161,7 @@ public class Static implements AbstractAttachment {
 
                     setEffectParticle(entities, serverLevel);
                     manaSystem.subtractMana(manaPerHitA, player);
-
-                    entities.hurt(
-                        DamageUtil.source(serverLevel, JAHDOO_SOURCE, entities, player),
-                        (float) this.damageA
-                    );
+                    DamageUtil.damageWithJahdoo(entities, player, this.damageA);
 
                     if (getRandomChance == 0) {
                         entities.addEffect(

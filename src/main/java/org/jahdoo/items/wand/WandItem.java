@@ -4,11 +4,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -16,32 +19,42 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.Tags;
 import org.jahdoo.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.components.WandData;
+import org.jahdoo.entities.AncientGolem;
+import org.jahdoo.entities.CustomZombie;
+import org.jahdoo.entities.EternalWizard;
 import org.jahdoo.networking.packet.server2client.EnchantedBlockS2C;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.Config;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -147,18 +160,44 @@ public class WandItem extends BlockItem implements GeoItem {
         return WandItemHelper.getItemName(pStack);
     }
 
+    @Nullable
+    public static Holder<Enchantment> enchantmentFromKey(RegistryAccess registryAccess, ResourceKey<Enchantment> enchantmentkey) {
+        var reg = registryAccess.registry(Registries.ENCHANTMENT).orElse(null);
+        if (reg != null) {
+            var enchantment = reg.get(enchantmentkey);
+            if (enchantment != null) {
+                return reg.wrapAsHolder(enchantment);
+            }
+        }
+        return null;
+    }
+
+    public static void enchant(ItemStack stack, RegistryAccess access, ResourceKey<Enchantment> enchantmentKey, int level) {
+        var enchantment = enchantmentFromKey(access, enchantmentKey);
+        if (enchantment != null) {
+            stack.enchant(enchantment, level);
+        }
+    }
+
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
 //        Minecraft.getInstance().setScreen(new TestingElements());
 
 
-        if(level.isClientSide){
-            var current = Config.CUSTOM_UI.get();
-            var wheel = Config.QUICK_SELECT.get();
-            var lock = Config.LOCK_ON_TARGET.get();
-//            Config.CUSTOM_UI.set(!current);
-//            Config.QUICK_SELECT.set(!wheel);
-//            Config.LOCK_ON_TARGET.set(!lock);
+        if(level instanceof ServerLevel serverLevel){
+//            var zombo = new CustomZombie(serverLevel, null);
+//            zombo.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE.asItem()));
+//            var enchant = new ItemStack(Items.DIAMOND_SWORD);
+//            enchant(enchant, serverLevel.registryAccess(), Enchantments.SHARPNESS, 5);
+//            zombo.setItemSlot(EquipmentSlot.MAINHAND, enchant);
+
+//            var zombo = new EternalWizard(serverLevel, null, -1, 5);
+//            zombo.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
+
+
+            var zombo = new AncientGolem(serverLevel, player);
+            zombo.moveTo(player.position());
+            serverLevel.addFreshEntity(zombo);
         }
 
         if(player.level() instanceof ClientLevel){

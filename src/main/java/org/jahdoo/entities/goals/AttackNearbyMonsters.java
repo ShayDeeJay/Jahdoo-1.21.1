@@ -1,13 +1,16 @@
 package org.jahdoo.entities.goals;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import org.jahdoo.entities.EternalWizard;
+import org.jahdoo.entities.Tamable;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -15,72 +18,85 @@ import java.util.function.Predicate;
 
 public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
 
-    private static final int ATTACK_RANGE = 20;
     protected final Class<T> targetType;
     protected final int randomInterval;
     @Nullable
     protected LivingEntity target;
-    /** This filter is applied to the Entity search. Only matching entities will be targeted. */
     protected TargetingConditions targetConditions;
+    protected float trackDistance;
 
-    public AttackNearbyMonsters(Mob pMob, Class<T> pTargetType, boolean pMustSee) {
-        this(pMob, pTargetType, 2, pMustSee, false, null);
+    public AttackNearbyMonsters(Mob mob, Class<T> targetType, boolean mustSee, int randomInterval, int trackDistance) {
+        this(mob, targetType, randomInterval, mustSee, false, null);
+        this.trackDistance = trackDistance;
     }
 
-    public AttackNearbyMonsters(Mob pMob, Class<T> pTargetType, int pRandomInterval, boolean pMustSee, boolean pMustReach, @Nullable Predicate<LivingEntity> pTargetPredicate) {
-        super(pMob, pMustSee, pMustReach);
-        this.targetType = pTargetType;
-        this.randomInterval = reducedTickDelay(pRandomInterval);
+    public AttackNearbyMonsters(Mob mob, Class<T> targetType, int randomInterval, boolean mustSee, boolean mustReach, @Nullable Predicate<LivingEntity> targetPredicate) {
+        super(mob, mustSee, mustReach);
+        this.targetType = targetType;
+        this.randomInterval = reducedTickDelay(randomInterval);
         this.setFlags(EnumSet.of(Flag.TARGET));
-        this.targetConditions = TargetingConditions.forCombat().range(this.getFollowDistance()).selector(pTargetPredicate);
+        this.targetConditions = TargetingConditions.forCombat().range(this.getFollowDistance()).selector(targetPredicate);
     }
 
-    /**
-     * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-     * method as well.
-     */
     public boolean canUse() {
-        if(!(this.mob instanceof EternalWizard eternalWizard)) return false;
-
         if (this.randomInterval > 0 && this.mob.getRandom().nextInt(this.randomInterval) != 0) {
             return false;
         } else {
             this.findTarget();
-            return this.target != null && eternalWizard.getMode() && !(this.target instanceof EternalWizard);
+            return this.target != null;
         }
     }
 
-
-    protected AABB getTargetSearchArea(double pTargetDistance) {
-        return this.mob.getBoundingBox().inflate(pTargetDistance, 5, pTargetDistance);
-    }
-
-
-    boolean filterValidTarget(LivingEntity entity){
-        boolean isNeutralHostile = entity instanceof NeutralMob neutralMob && neutralMob.getTarget() == this.mob;
-        boolean isAgroEntity = entity instanceof Monster;
-        return isNeutralHostile || isAgroEntity;
+    protected AABB getTargetSearchArea(double targetDistance) {
+        return this.mob.getBoundingBox().inflate(targetDistance, trackDistance, targetDistance);
     }
 
     protected void findTarget() {
-        this.target = this.mob.level().getNearestEntity(
-                this.mob.level().getEntitiesOfClass(
-                    this.targetType,
-                    this.getTargetSearchArea(ATTACK_RANGE), this::filterValidTarget),
-                    this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ()
-            );
+        if (this.targetType != Player.class && this.targetType != ServerPlayer.class) {
+            this.target = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(this.targetType, this.getTargetSearchArea(this.getFollowDistance()), (p_148152_) -> true), this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ());
+        } else {
+            this.target = this.mob.level().getNearestPlayer(this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ());
+        }
+
     }
 
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
     public void start() {
-        this.mob.setTarget(this.target);
+        if(mob instanceof Tamable tamable){
+            if (withoutOwner(tamable)) return;
+            wizardBehaviour(tamable);
+        }
+
         super.start();
     }
 
-    public void setTarget(@Nullable LivingEntity pTarget) {
-        this.target = pTarget;
+    private boolean withoutOwner(Tamable tamable) {
+        if(tamable.getOwner() == null){
+            if(target instanceof Player){
+                this.mob.setTarget(this.target);
+            }
+        }
+        return false;
+    }
+
+    private void wizardBehaviour(Tamable tamable) {
+        var isTargetFriend = this.target instanceof Tamable tamable1 && tamable1.getOwner() == tamable.getOwner();
+        if(!isTargetFriend){
+            if (mob instanceof EternalWizard wizard) {
+                if (wizard.getMode()) {
+                    if (wizard.getOwner() != this.target) {
+                        this.mob.setTarget(this.target);
+                    }
+                }
+            } else {
+                if (tamable.getOwner() != this.target) {
+                    this.mob.setTarget(this.target);
+                }
+            }
+        }
+    }
+
+    public void setTarget(@Nullable LivingEntity target) {
+        this.target = target;
     }
 
 }

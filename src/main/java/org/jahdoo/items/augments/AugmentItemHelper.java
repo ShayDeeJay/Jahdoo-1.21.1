@@ -467,7 +467,8 @@ public class AugmentItemHelper {
             .keySet()
             .stream()
             .filter(name -> !name.equals(MANA_COST) && !name.equals(COOLDOWN));
-        return /*selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() &&*/ !filterOutBase.toList().isEmpty();
+        return /*selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && */!filterOutBase.toList().isEmpty();
+//        return selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && !filterOutBase.toList().isEmpty();
     }
 
 }

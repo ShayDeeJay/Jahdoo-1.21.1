@@ -10,8 +10,6 @@ import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 
-import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
-
 public class FireEffect extends MobEffect {
 
 
@@ -24,8 +22,7 @@ public class FireEffect extends MobEffect {
         if(targetEntity.level() instanceof ServerLevel serverLevel){
             int getRandomChance = ModHelpers.Random.nextInt(0,Math.max((20-pAmplifier), 1));
             if(getRandomChance == 0) {
-                var source = DamageUtil.source(serverLevel, JAHDOO_SOURCE, targetEntity);
-                targetEntity.hurt(source, pAmplifier);
+                DamageUtil.damageWithJahdoo(targetEntity, null, pAmplifier);
             }
             EffectParticles.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementRegistry.INFERNO.get(), SoundEvents.PLAYER_HURT_ON_FIRE);
         }

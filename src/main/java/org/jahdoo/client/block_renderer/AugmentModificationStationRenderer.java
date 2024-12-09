@@ -58,6 +58,7 @@ public class AugmentModificationStationRenderer implements BlockEntityRenderer<A
         var ability = AbilityRegister.getFirstSpellByTypeId(keyFromAugment);
         if(ability.isPresent()){
             var getElement = ElementRegistry.getElementOptional(augmentStation.getInteractionSlot().get(DataComponents.CUSTOM_MODEL_DATA).value());
+//            var name = Component.literal("");
             var name = Component.literal(ability.get().getAbilityName());
             getElement.ifPresent(element -> renderNameTag(augmentStation, name, pPoseStack, pBuffer, element.textColourPrimary()));
         }

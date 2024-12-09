@@ -1,6 +1,8 @@
 package org.jahdoo.event;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.IronGolemRenderer;
+import net.minecraft.client.renderer.entity.ZombieRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -14,6 +16,7 @@ import org.jahdoo.client.block_renderer.*;
 import org.jahdoo.client.entity_renderer.CustomAoeRenderer;
 import org.jahdoo.client.entity_renderer.ElementProjectileRenderer;
 import org.jahdoo.client.entity_renderer.GenericProjectileRenderer;
+import org.jahdoo.client.entity_renderer.ancient_golem.AncientGolemRenderer;
 import org.jahdoo.client.entity_renderer.decoy.DecoyRenderer;
 import org.jahdoo.client.entity_renderer.etneral_wizzard.EternalWizardRenderer;
 import org.jahdoo.client.gui.block.augment_modification_station.AugmentModificationScreen;
@@ -50,6 +53,8 @@ public class BusClientEvents {
         event.registerEntityRenderer(EntitiesRegister.CUSTOM_AOE_CLOUD.get(), CustomAoeRenderer::new);
         event.registerEntityRenderer(EntitiesRegister.ETERNAL_WIZARD.get(), EternalWizardRenderer::new);
         event.registerEntityRenderer(EntitiesRegister.DECOY.get(), DecoyRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.CUSTOM_ZOMBIE.get(), ZombieRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.ANCIENT_GOLEM.get(), AncientGolemRenderer::new);
     }
 
     @SubscribeEvent

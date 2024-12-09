@@ -12,6 +12,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
+import org.jahdoo.ability.all_abilities.abilities.EscapeDecoyAbility;
 import org.jahdoo.ability.all_abilities.abilities.FrostboltsAbility;
 import org.jahdoo.ability.all_abilities.ability_components.EtherealArrow;
 import org.jahdoo.components.WandAbilityHolder;
@@ -22,13 +23,19 @@ import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
+import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import static org.jahdoo.ability.all_abilities.abilities.EscapeDecoyAbility.getFromAllRandom;
 import static org.jahdoo.ability.all_abilities.abilities.FrostboltsAbility.NUMBER_OF_PROJECTILES;
 import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.items.wand.CastHelper.castAnimation;
+import static org.jahdoo.items.wand.WandAnimations.SINGLE_CAST_ID;
+import static org.jahdoo.particle.ParticleHandlers.sendParticles;
 
 public class FrostBolts extends DefaultEntityBehaviour {
     List<GenericProjectile> assignArrows = new ArrayList<>();
@@ -40,7 +47,9 @@ public class FrostBolts extends DefaultEntityBehaviour {
     double castDistance;
     double mana;
     double cooldown;
-    boolean hasHitTarget;
+    int currentShotCount;
+    LivingEntity hitTarget;
+    UUID uuid;
 
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
@@ -50,7 +59,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
             var player = this.genericProjectile.getOwner();
             this.damage = ModHelpers.attributeModifierCalculator(
                 (LivingEntity) player,
-                (float) this.getTag(NUMBER_OF_PROJECTILES),
+                (float) this.getTag(DAMAGE),
                 this.getElementType(),
                 AttributesRegister.MAGIC_DAMAGE_MULTIPLIER,
                 true
@@ -90,8 +99,10 @@ public class FrostBolts extends DefaultEntityBehaviour {
         Player player = (Player) this.genericProjectile.getOwner();
         if(player == null) return;
         if (player.isCloseEnough(hitEntity,castDistance + 0.1)) {
-            this.hasHitTarget = true;
-            this.shootArrowsAtTarget(hitEntity, player);
+            castAnimation(player, SINGLE_CAST_ID);
+            this.hitTarget = hitEntity;
+            ModHelpers.getSoundWithPositionV(genericProjectile.level(), hitEntity.position(), SoundRegister.ORB_CREATE.get(), 2f, 1f);
+            onExistenceChange(hitEntity, getElementType());
             CastHelper.chargeMana(FrostboltsAbility.abilityId.getPath().intern(), mana, player);
             CastHelper.chargeCooldown(FrostboltsAbility.abilityId.getPath().intern(), cooldown, player);
             player.displayClientMessage(Component.literal(""), true);
@@ -102,15 +113,21 @@ public class FrostBolts extends DefaultEntityBehaviour {
         }
     }
 
-    private void shootArrowsAtTarget(LivingEntity hitEntity, Player player){
-        for (int i = 0; i < projectileMultiplier; i++) {
+    public static void onExistenceChange(LivingEntity livingEntity, AbstractElement element) {
+        for (int i = 0; i < 10; i++) {
+            sendParticles(livingEntity.level(), getFromAllRandom(element, 10, 1.6f), livingEntity.position().add(0,livingEntity.getBbHeight()/2,0), 15, 0, livingEntity.getBbHeight()/4, 0, 0.15f);
+        }
+    }
 
-            double randomAngle = 2 * Math.PI * ModHelpers.Random.nextDouble();
-            double randomRadius = (hitEntity.getBbWidth() * 2) * Math.sqrt(ModHelpers.Random.nextDouble());
-            double arrowX = hitEntity.getX() + randomRadius * Math.cos(randomAngle);
-            double arrowZ = hitEntity.getZ() + randomRadius * Math.sin(randomAngle);
-            double arrowY = hitEntity.getY() + (hitEntity.getBbHeight()/2) + 4;
-            GenericProjectile arrow = new GenericProjectile(
+    private void shootArrowsAtTarget(LivingEntity hitEntity, Player player, int tickCount){
+
+        if(tickCount % 2 == 0){
+            var randomAngle = 2 * Math.PI * ModHelpers.Random.nextDouble();
+            var randomRadius = (hitEntity.getBbWidth() * 2) * Math.sqrt(ModHelpers.Random.nextDouble());
+            var arrowX = hitEntity.getX() + randomRadius * Math.cos(randomAngle);
+            var arrowZ = hitEntity.getZ() + randomRadius * Math.sin(randomAngle);
+            var arrowY = hitEntity.getY() + (hitEntity.getBbHeight() / 2) + 4;
+            var arrow = new GenericProjectile(
                 player, arrowX, arrowY, arrowZ,
                 EntityPropertyRegister.ETHEREAL_ARROW.get().setAbilityId(),
                 EtherealArrow.setArrowProperties((int) damage, (int) effectDuration, (int) effectStrength, (int) effectChance),
@@ -118,45 +135,54 @@ public class FrostBolts extends DefaultEntityBehaviour {
                 FrostboltsAbility.abilityId.getPath()
             );
 
-            if(this.genericProjectile.level() instanceof ServerLevel serverLevel){
-                BakedParticleOptions particleOptions = ParticleHandlers.bakedParticleOptions(this.getElementType().getTypeId(), 3, 1.7f, false);
-                ParticleHandlers.particleBurst(serverLevel, new Vec3(arrowX, arrowY, arrowZ), 1, particleOptions, 0,0,0,0.1f);
+            if (this.genericProjectile.level() instanceof ServerLevel serverLevel) {
+                var particleOptions = ParticleHandlers.bakedParticleOptions(this.getElementType().getTypeId(), 3, 1.7f, false);
+                ParticleHandlers.particleBurst(serverLevel, new Vec3(arrowX, arrowY, arrowZ), 1, particleOptions, 0, 0, 0, 0.1f);
             }
 
             this.assignArrows.add(arrow);
             arrow.setOwner(player);
             arrow.setDeltaMovement(0, 0, 0);
 
-            // Calculate the direction vector
-            double directionX = hitEntity.getX() - arrowX;
-            double directionY = hitEntity.getY() - arrowY;
-            double directionZ = hitEntity.getZ() - arrowZ;
+            var directionX = hitEntity.getX() - arrowX;
+            var directionY = hitEntity.getY() - arrowY;
+            var directionZ = hitEntity.getZ() - arrowZ;
 
-            // Normalize the direction vector
-            double length = Math.sqrt(directionX * directionX + directionY * directionY + directionZ * directionZ);
+            var length = Math.sqrt(directionX * directionX + directionY * directionY + directionZ * directionZ);
             directionX /= length;
             directionY /= length;
             directionZ /= length;
 
-            // Set the arrow's motion
-            float velocity = 0.8F; // Change this value to adjust the speed of the arrow
-            arrow.shoot(directionX, directionY, directionZ, velocity, 0);
+
+            arrow.shoot(directionX, directionY, directionZ, 0.8F, 0);
             this.genericProjectile.level().addFreshEntity(arrow);
+            this.currentShotCount++;
+
+            ModHelpers.getSoundWithPosition(genericProjectile.level(), hitEntity.blockPosition(), SoundEvents.BREEZE_SHOOT, 0.4f, 2f);
+            ModHelpers.getSoundWithPosition(genericProjectile.level(), hitEntity.blockPosition(), SoundRegister.ORB_CREATE.get(), 0.2f, 1.8f);
         }
-        ModHelpers.getSoundWithPosition(genericProjectile.level(), hitEntity.blockPosition(), SoundEvents.WITHER_SHOOT, 1, 1.6f);
     }
 
     @Override
     public void onTickMethod() {
-        if(!this.assignArrows.isEmpty()){
-            this.assignArrows.forEach(
-                arrows -> {
-                    if(!arrows.isAlive()) {
-                        assignArrows.forEach(Entity::discard);
-                        this.genericProjectile.discard();
-                    }
+        reassignTarget();
+        if(hitTarget != null){
+            if(this.currentShotCount < this.projectileMultiplier){
+                this.genericProjectile.moveTo(this.hitTarget.position());
+                this.shootArrowsAtTarget(hitTarget, (Player) this.genericProjectile.getOwner(), genericProjectile.tickCount);
+            }
+        }
+    }
+
+    private void reassignTarget() {
+        if(this.uuid != null){
+            var level = this.genericProjectile.level();
+            if(level instanceof ServerLevel serverLevel){
+                var foundTarget = serverLevel.getEntity(this.uuid);
+                if(foundTarget instanceof LivingEntity livingEntity){
+                    this.hitTarget = livingEntity;
                 }
-            );
+            }
         }
     }
 
@@ -170,15 +196,31 @@ public class FrostBolts extends DefaultEntityBehaviour {
                 return;
             }
 
-            if (!hasHitTarget && this.genericProjectile.tickCount > 1) {
+            if (this.hitTarget == null && this.genericProjectile.tickCount > 1) {
                 this.sendNoTargetMessage();
                 this.genericProjectile.discard();
             }
+
+            if(this.hitTarget == null || !this.hitTarget.isAlive()) discardAll();
+        }
+    }
+
+    private void discardAll() {
+        if(!this.assignArrows.isEmpty()){
+            this.assignArrows.forEach(
+                arrows -> {
+                    if(!arrows.isAlive()) {
+                        assignArrows.forEach(Entity::discard);
+                        this.genericProjectile.discard();
+                    }
+                }
+            );
         }
     }
 
     private void sendNoTargetMessage(){
         if (this.genericProjectile.getOwner() instanceof Player player){
+            CastHelper.failedCastNotification(player);
             var value = String.valueOf(Math.round(castDistance));
             var element = this.getElementType().particleColourPrimary();
             var targetDistance = ModHelpers.withStyleComponent(value, element);
@@ -208,7 +250,8 @@ public class FrostBolts extends DefaultEntityBehaviour {
         compoundTag.putDouble(CASTING_DISTANCE, this.castDistance);
         compoundTag.putDouble(MANA_COST, mana);
         compoundTag.putDouble(COOLDOWN, cooldown);
-        compoundTag.putBoolean("hit", this.hasHitTarget);
+        compoundTag.putInt("hitCount", this.currentShotCount);
+        compoundTag.putUUID("hitTarget", this.hitTarget.getUUID());
     }
 
     @Override
@@ -221,6 +264,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
         this.castDistance = compoundTag.getDouble(CASTING_DISTANCE);
         this.mana = compoundTag.getDouble(MANA_COST);
         this.cooldown = compoundTag.getDouble(COOLDOWN);
-        this.hasHitTarget = compoundTag.getBoolean("hit");
+        this.currentShotCount = compoundTag.getInt("hitCount");
+        this.uuid = compoundTag.getUUID("hitTarget");
     }
 }

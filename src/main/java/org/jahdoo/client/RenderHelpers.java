@@ -41,13 +41,6 @@ public class RenderHelpers {
         PoseStack.Pose matrix3f = matrix.last();
         int colorRGB = color.getRGB();
 
-
-//        VertexConsumer builderBlock = buffer.getBuffer(ItemBlockRenderTypes.getRenderType(BlocksRegister.NEXITE_BLOCK.get().defaultBlockState(), true));
-//        var mc = Minecraft.getInstance();
-//        var renderer = mc.getBlockRenderer();
-//        if(mc.level == null) return;
-//        renderer.renderBatched(BlocksRegister.TANK.get().defaultBlockState(), new BlockPos(8, -57, 8), mc.level,matrix, builderBlock, false, RandomSource.create());
-
         builder.addVertex(matrix4f, x, y, z).setColor(colorRGB).setNormal(matrix3f, 1.0F, 0.0F, 0.0F);
         builder.addVertex(matrix4f, dx, y, z).setColor(colorRGB).setNormal(matrix3f, 1.0F, 0.0F, 0.0F);
         builder.addVertex(matrix4f, x, y, z).setColor(colorRGB).setNormal(matrix3f, 0.0F, 1.0F, 0.0F);

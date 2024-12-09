@@ -123,10 +123,10 @@ public class HellFire extends DefaultEntityBehaviour {
     private void setNovaDamage(Vec3 positionsA){
         var livingEntity = this.getEntityInRange(positionsA);
         if (livingEntity == null) return;
-        if(!this.damageEntity(livingEntity)) return;
+        if(!this.canDamageEntity(livingEntity, this.aoeCloud.getOwner())) return;
 
         livingEntity.addEffect(new CustomMobEffect(EffectsRegister.FIRE_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
-        livingEntity.hurt(DamageUtil.source(this.aoeCloud.level(), JAHDOO_SOURCE, livingEntity, this.aoeCloud.getOwner()), (float) damage);
+        DamageUtil.damageWithJahdoo(livingEntity, aoeCloud.getOwner(), damage);
     }
 
     private LivingEntity getEntityInRange(Vec3 positionsA){

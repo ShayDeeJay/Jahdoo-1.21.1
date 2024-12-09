@@ -28,6 +28,7 @@ import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
+import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
@@ -137,7 +138,7 @@ public class NovaSmash implements AbstractAttachment {
                 double length = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
                 if(livingEntity != player){
                     this.knockback(livingEntity, Math.max((double) getMaxDeltaMovement / 2, 0.3), -deltaX / length, -deltaZ / length);
-                    ModHelpers.damageEntityWithModifiers(livingEntity, player, this.getDamage * 3, this.getElement());
+                    DamageUtil.damageEntityWithModifiers(livingEntity, player, this.getDamage * 3, this.getElement());
                 }
             }
         );

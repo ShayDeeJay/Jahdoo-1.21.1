@@ -111,8 +111,8 @@ public class RenderEventHelper {
     public static void renderSelectedBlock(RenderLevelStageEvent event, AABB aabb, Color color) {
         final Minecraft mc = Minecraft.getInstance();
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        Vec3 view = mc.gameRenderer.getMainCamera().getPosition();
-        PoseStack matrix = event.getPoseStack();
+        var view = mc.gameRenderer.getMainCamera().getPosition();
+        var matrix = event.getPoseStack();
         matrix.pushPose();
         matrix.translate(-view.x(), -view.y(), -view.z());
         matrix.pushPose();
@@ -150,8 +150,6 @@ public class RenderEventHelper {
         float yawDifference = desiredYaw - currentYaw;
         if (yawDifference > 180) yawDifference -= 360;
         if (yawDifference < -180) yawDifference += 360;
-
-
 
         float smoothFactor = 0.013f; // Adjust for smoother/faster transitions
         player.setYRot(currentYaw + yawDifference * smoothFactor);

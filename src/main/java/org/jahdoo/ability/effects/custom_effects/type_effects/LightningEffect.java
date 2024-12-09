@@ -29,8 +29,7 @@ public class LightningEffect extends MobEffect {
                 spawnElectrifiedParticles(serverLevel, targetEntity.position(), ElementRegistry.LIGHTNING.get().getParticleGroup().magicSlow(), 1, targetEntity, 0.1, 1);
             } else {
                 if(getRandomChance == 0) {
-                    var source = DamageUtil.source(serverLevel, JAHDOO_SOURCE, targetEntity);
-                    targetEntity.hurt(source, (float) Math.max((double) pAmplifier / 5, 0.5));
+                    DamageUtil.damageWithJahdoo(targetEntity, Math.max((double) pAmplifier / 5, 0.5));
                     targetEntity.addEffect(new CustomMobEffect(EffectsRegister.STUN_EFFECT.getDelegate(), pAmplifier > 3 ? 30 : pAmplifier * 10, 10));
                 }
             }

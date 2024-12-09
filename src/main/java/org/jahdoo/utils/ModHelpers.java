@@ -84,7 +84,11 @@ public class ModHelpers {
     }
 
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch){
-        PacketDistributor.sendToPlayer(serverPlayer, new PlayClientSoundSyncS2CPacket(soundEvent, volume,pitch));
+        PacketDistributor.sendToPlayer(serverPlayer, new PlayClientSoundSyncS2CPacket(soundEvent, volume, pitch, true));
+    }
+
+    public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch, boolean isBatched){
+        PacketDistributor.sendToPlayer(serverPlayer, new PlayClientSoundSyncS2CPacket(soundEvent, volume, pitch, isBatched));
     }
 
     public static double getTag(Player player, String name, String abilityName) {
@@ -182,10 +186,6 @@ public class ModHelpers {
     public static void playDebugMessage(Player player, Object... info){
         var randomColour = new Color((int)(Math.random() * 0x1000000)).getRGB();
         player.sendSystemMessage(Component.literal(Arrays.toString(info)).withStyle(style -> style.withColor(randomColour)));
-    }
-
-    public static void damageEntityWithModifiers(LivingEntity target, LivingEntity player, float currentDamage, AbstractElement getElementType){
-        target.hurt(DamageUtil.source(target.level(), JAHDOO_SOURCE, target, player), attributeModifierCalculator(player, currentDamage, getElementType, AttributesRegister.MAGIC_DAMAGE_MULTIPLIER, true));
     }
 
     public static void getSoundWithPosition(Level level, BlockPos position, SoundEvent audio){

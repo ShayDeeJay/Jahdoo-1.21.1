@@ -32,7 +32,7 @@ public class GenericOwnerHurtTargetGoal extends TargetGoal {
         } else {
             this.ownerLastHurt = owner.getLastHurtMob();
             int i = owner.getLastHurtMobTimestamp();
-            return i != this.timestamp && this.canAttack(this.ownerLastHurt, TargetingConditions.DEFAULT) &&  !(this.ownerLastHurt instanceof EternalWizard);
+            return i != this.timestamp && this.canAttack(this.ownerLastHurt, TargetingConditions.DEFAULT);
         }
     }
 

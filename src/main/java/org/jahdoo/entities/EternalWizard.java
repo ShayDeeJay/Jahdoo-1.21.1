@@ -18,32 +18,42 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jahdoo.ability.AbilityBuilder;
+import org.jahdoo.ability.all_abilities.abilities.FireballAbility;
 import org.jahdoo.ability.all_abilities.abilities.FrostboltsAbility;
 import org.jahdoo.ability.all_abilities.ability_components.EtherealArrow;
+import org.jahdoo.components.DataComponentHelper;
+import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.entities.goals.*;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.items.wand.WandItemHelper;
 import org.jahdoo.registers.*;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.ability.all_abilities.abilities.FireballAbility.abilityId;
+import static org.jahdoo.ability.all_abilities.ability_components.ArmageddonModule.buddy;
 
-public class EternalWizard extends AbstractSkeleton {
+public class EternalWizard extends AbstractSkeleton implements Tamable {
     private static final EntityDataAccessor<Boolean> SET_MODE = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> LIFETIMES = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> PRIVATE_TICKS = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.INT);
-    private final RangedCustomAttackGoal<AbstractSkeleton> wandGoal = new RangedCustomAttackGoal<>(this, 1.0D, 0, 30.0F);
-    Player player;
-    UUID playerUUID;
+    private final RangedCustomAttackGoal<AbstractSkeleton> wandGoal = new RangedCustomAttackGoal<>(this, 1.0D, 0, 60.0F);
+    LivingEntity owner;
+    UUID ownerUUID;
     double damage;
     int effectDuration;
     int effectStrength;
@@ -88,15 +98,17 @@ public class EternalWizard extends AbstractSkeleton {
         this.reassessWeaponGoal();
     }
 
-    public EternalWizard(Level pLevel, Player player) {
+    public EternalWizard(Level pLevel, Player player, int lifeTime, double damage) {
         super(EntitiesRegister.ETERNAL_WIZARD.get(), pLevel);
-        this.player = player;
+        this.owner = player;
+        this.lifeTime = lifeTime;
+        this.damage = damage;
         this.reassessWeaponGoal();
     }
 
     public EternalWizard(Level pLevel, Player player, double damage, int effectDuration, int effectStrength, int lifeTime, int effectChance) {
         super(EntitiesRegister.ETERNAL_WIZARD.get(), pLevel);
-        this.player = player;
+        this.owner = player;
         this.reassessWeaponGoal();
         this.damage = damage;
         this.effectDuration = effectDuration;
@@ -113,10 +125,11 @@ public class EternalWizard extends AbstractSkeleton {
         this.goalSelector.addGoal(5, new FollowGoal(this, 1.0D, 5.0F, 2.0F, false));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
+        this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)));
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getOwner));
+        this.targetSelector.addGoal(2, new AttackNearbyMonsters<>(this, LivingEntity.class, true, 10, 30));
         this.targetSelector.addGoal(3, (new GenericHurtByTargetGoal(this, (entity) -> entity == getOwner())).setAlertOthers());
-        this.targetSelector.addGoal(2, new AttackNearbyMonsters<>(this, Mob.class, false));
     }
 
     @Override
@@ -125,7 +138,7 @@ public class EternalWizard extends AbstractSkeleton {
     }
 
     public LivingEntity getOwner(){
-        return this.player;
+        return this.owner;
     }
 
     @Override
@@ -154,9 +167,12 @@ public class EternalWizard extends AbstractSkeleton {
         super.tick();
         privateTicks++;
         if(!(this.level() instanceof ServerLevel serverLevel)) return;
+//        if(this.getTarget() == this.owner) this.setTarget(null);
         this.setPrivateTicks(this.privateTicks);
-        if(player == null && this.playerUUID != null) this.player = serverLevel.getPlayerByUUID(this.playerUUID);
-        if(this.privateTicks >= lifeTime) this.discard();
+        if(owner == null && this.ownerUUID != null) this.owner = serverLevel.getPlayerByUUID(this.ownerUUID);
+        if(this.lifeTime != -1){
+            if (this.privateTicks >= lifeTime) this.discard();
+        }
     }
 
     @Override
@@ -180,6 +196,33 @@ public class EternalWizard extends AbstractSkeleton {
 
     @Override
     public void performRangedAttack(LivingEntity pTarget, float pDistanceFactor) {
+        fireballAbility(pTarget);
+//        this.fireProjectile(elementProjectile, player, 0.5f);
+//        shooterAbility(pTarget);
+    }
+
+    private void fireballAbility(LivingEntity target) {
+        ElementProjectile elementProjectile = new ElementProjectile(
+            EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(), this,
+            EntityPropertyRegister.FIRE_BALL.get().setAbilityId(), -0.3,
+            fireballModule(),
+            abilityId.getPath().intern()
+        );
+        fireProjectile(target, elementProjectile, 2.2, 0.5F);
+    }
+
+    public WandAbilityHolder fireballModule() {
+        return new AbilityBuilder(null, FireballAbility.abilityId.getPath().intern())
+            .setDamageWithValue(0,0, 20)
+            .setEffectDurationWithValue(0,0,200)
+            .setEffectChanceWithValue(0,0,20)
+            .setEffectStrengthWithValue(0,0,0)
+            .setModifier(FireballAbility.novaRange, 0,0,true, ModHelpers.Random.nextInt(4,6))
+            .setModifierWithoutBounds(buddy, 0)
+            .buildAndReturn();
+    }
+
+    private void shooterAbility(LivingEntity pTarget) {
         GenericProjectile arrow = new GenericProjectile(
             this, this.getX(), this.getY() + 2, this.getZ(),
             EntityPropertyRegister.ETHEREAL_ARROW.get().setAbilityId(),
@@ -187,21 +230,27 @@ public class EternalWizard extends AbstractSkeleton {
             ElementRegistry.VITALITY.get(),
             FrostboltsAbility.abilityId.getPath().intern()
         );
+        fireProjectile(pTarget, arrow, 0.9, 1.6F);
+    }
+
+    private void fireProjectile(LivingEntity pTarget, Projectile projectile, double offset, float velocity) {
         if (this.getMainHandItem().getItem() instanceof WandItem) {
-            arrow.setOwner(this);
+            projectile.setOwner(this);
             double d0 = pTarget.getX() - this.getX();
-            double d1 = pTarget.getY(0.3333333333333333D) - arrow.getY() - 0.6;
+            double d1 = pTarget.getY(0.3333333333333333D) - projectile.getY() - offset;
             double d2 = pTarget.getZ() - this.getZ();
             double d3 = Math.sqrt(d0 * d0 + d2 * d2);
-            arrow.shoot(d0, d1 + d3 * (double)0.2F, d2, 1.6F, 0);
+            projectile.shoot(d0, d1 + d3 * (double)0.2F, d2, velocity, 0);
             this.playSound(SoundRegister.ORB_CREATE.get(), 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-            this.level().addFreshEntity(arrow);
+            this.level().addFreshEntity(projectile);
         }
     }
 
     @Override
     protected @NotNull InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
-        WandItemHelper.setWizardMode(this, pPlayer);
+        if(this.owner != null){
+            WandItemHelper.setWizardMode(this, pPlayer);
+        }
         return InteractionResult.CONSUME;
     }
 
@@ -217,7 +266,7 @@ public class EternalWizard extends AbstractSkeleton {
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        if(this.player != null) pCompound.putUUID("savePlayer", player.getUUID());
+        if(this.owner != null) pCompound.putUUID("owner", owner.getUUID());
         pCompound.putBoolean("mode",this.getMode());
         pCompound.putDouble(DAMAGE, this.damage);
         pCompound.putInt(EFFECT_DURATION, this.effectDuration);
@@ -230,7 +279,9 @@ public class EternalWizard extends AbstractSkeleton {
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        this.playerUUID = pCompound.getUUID("savePlayer");
+        if(pCompound.hasUUID("owner")){
+            this.ownerUUID = pCompound.getUUID("owner");
+        }
         this.setMode(pCompound.getBoolean("mode"));
         this.damage = pCompound.getDouble(DAMAGE);
         this.effectDuration = pCompound.getInt(EFFECT_DURATION);
