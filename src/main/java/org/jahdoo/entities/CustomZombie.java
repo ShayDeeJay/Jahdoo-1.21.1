@@ -2,26 +2,20 @@ package org.jahdoo.entities;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import org.jahdoo.entities.goals.*;
 import org.jahdoo.registers.EntitiesRegister;
 
 import java.util.UUID;
 
-public class CustomZombie extends Zombie implements Tamable {
+public class CustomZombie extends Zombie implements TamableEntity {
     LivingEntity owner;
     UUID ownerUUID;
 
@@ -80,10 +74,9 @@ public class CustomZombie extends Zombie implements Tamable {
         this.goalSelector.addGoal(5, new FollowGoal(this, 1.0D, 5.0F, 2.0F, false));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)));
+        this.targetSelector.addGoal(1, new GenericHurtByTargetGoal(this));
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getOwner));
-        this.targetSelector.addGoal(3, (new GenericHurtByTargetGoal(this, (entity) -> entity == getOwner())).setAlertOthers());
     }
 
 

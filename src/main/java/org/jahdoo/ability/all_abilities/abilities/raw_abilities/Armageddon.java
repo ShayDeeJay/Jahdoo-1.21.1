@@ -3,26 +3,27 @@ package org.jahdoo.ability.all_abilities.abilities.raw_abilities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ability.all_abilities.ability_components.ArmageddonModule;
-import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.all_abilities.abilities.ArmageddonAbility;
+import org.jahdoo.ability.all_abilities.ability_components.ArmageddonModule;
+import org.jahdoo.components.AbilityHolder;
+import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.ModHelpers;
-import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.utils.PositionGetters;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.registers.AttributesRegister.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.ability.AbilityBuilder.*;
 
 
 public class Armageddon extends DefaultEntityBehaviour {
@@ -44,8 +45,9 @@ public class Armageddon extends DefaultEntityBehaviour {
                 player,
                 (float) damage,
                 this.getElementType(),
+                true,
                 MAGIC_DAMAGE_MULTIPLIER,
-                true
+                INFERNO_MAGIC_DAMAGE_MULTIPLIER
             );
         }
         this.lifetime = this.getTag(LIFETIME);

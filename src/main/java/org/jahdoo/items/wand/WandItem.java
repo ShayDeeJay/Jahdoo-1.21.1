@@ -4,14 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -19,42 +13,27 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.Tags;
-import org.jahdoo.block.enchanted_block.EnchantedBlockEntity;
+import net.minecraft.world.phys.Vec3;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.components.WandData;
 import org.jahdoo.entities.AncientGolem;
-import org.jahdoo.entities.CustomZombie;
-import org.jahdoo.entities.EternalWizard;
-import org.jahdoo.networking.packet.server2client.EnchantedBlockS2C;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.registers.ItemsRegister;
-import org.jahdoo.utils.Config;
 import org.jahdoo.utils.ModHelpers;
-import org.jahdoo.utils.PositionGetters;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -67,13 +46,15 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static net.minecraft.sounds.SoundEvents.ALLAY_THROW;
+import static net.minecraft.sounds.SoundEvents.EVOKER_PREPARE_SUMMON;
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
-import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.particle.ParticleHandlers.sendParticles;
-import static org.jahdoo.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
+import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
-import static org.jahdoo.registers.ElementRegistry.UTILITY;
+import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
+import static org.jahdoo.utils.ModHelpers.Random;
+import static org.jahdoo.utils.PositionGetters.getInnerRingOfRadiusRandom;
 
 public class WandItem extends BlockItem implements GeoItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -115,18 +96,32 @@ public class WandItem extends BlockItem implements GeoItem {
 
         if(pContext.getLevel().getBlockState(clickedPos).isEmpty()){
             level.setBlockAndUpdate(clickedPos, BlocksRegister.WAND.get().defaultBlockState());
-            BlockEntity blockEntity = level.getBlockEntity(clickedPos);
+            var blockEntity = level.getBlockEntity(clickedPos);
             if (blockEntity instanceof WandBlockEntity wandBlockEntity) {
                 playPlaceSound(level, pContext.getClickedPos());
-                ItemStack copiedWand = itemStack.copyWithCount(1);
-                itemStack.shrink(1);
+                var copiedWand = itemStack.copyWithCount(1);
+                player.setItemInHand(pContext.getHand(), ItemStack.EMPTY);
                 wandBlockEntity.inputItemHandler.setStackInSlot(GET_WAND_SLOT, copiedWand);
                 wandBlockEntity.updateView();
+                var getType = getElementByWandType(wandBlockEntity.getWandItemFromSlot().getItem());
+                if(!getType.isEmpty()){
+                    var element = getType.getFirst();
+                    var par1 = ParticleHandlers.bakedParticleOptions(element.getTypeId(), 10, 1f, false);
+                    var par2 = ParticleHandlers.genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 10, 1f, false, 0.3);
+                    getInnerRingOfRadiusRandom(clickedPos, 0.1, 20,
+                        positions -> this.placeParticle(level, positions, Random.nextInt(0, 3) == 0 ? par1 : par2)
+                    );
+                }
                 return InteractionResult.SUCCESS;
             }
         }
-
         return InteractionResult.FAIL;
+    }
+
+    public void placeParticle(Level level, Vec3 pos, ParticleOptions par1){
+        var randomY = Random.nextDouble(0.1 , 0.2);
+        var randomStartY = Random.nextDouble(0.05, 0.5);
+        level.addParticle(par1, pos.x, pos.y - randomStartY, pos.z, 0, randomY, 0);
     }
 
     @Override
@@ -140,8 +135,8 @@ public class WandItem extends BlockItem implements GeoItem {
     }
 
     public void playPlaceSound(Level level, BlockPos bPos){
-        SoundEvent soundEvents = SoundEvents.BEACON_ACTIVATE;
-        ModHelpers.getSoundWithPosition(level, bPos, soundEvents, 0.4f, 1.5f);
+        ModHelpers.getSoundWithPosition(level, bPos, ALLAY_THROW, 1, 0.8f);
+        ModHelpers.getSoundWithPosition(level, bPos, EVOKER_PREPARE_SUMMON, 0.4f, 1.6f);
     }
 
     @Override
@@ -160,33 +155,24 @@ public class WandItem extends BlockItem implements GeoItem {
         return WandItemHelper.getItemName(pStack);
     }
 
-    @Nullable
-    public static Holder<Enchantment> enchantmentFromKey(RegistryAccess registryAccess, ResourceKey<Enchantment> enchantmentkey) {
-        var reg = registryAccess.registry(Registries.ENCHANTMENT).orElse(null);
-        if (reg != null) {
-            var enchantment = reg.get(enchantmentkey);
-            if (enchantment != null) {
-                return reg.wrapAsHolder(enchantment);
-            }
-        }
-        return null;
-    }
-
-    public static void enchant(ItemStack stack, RegistryAccess access, ResourceKey<Enchantment> enchantmentKey, int level) {
-        var enchantment = enchantmentFromKey(access, enchantmentKey);
-        if (enchantment != null) {
-            stack.enchant(enchantment, level);
-        }
-    }
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
-//        Minecraft.getInstance().setScreen(new TestingElements());
-
+//        if(!level.isClientSide){
+//            ModHelpers.playDebugMessage(player, "                  ");
+//            for (AttributeInstance syncableAttribute : player.getAttributes().getSyncableAttributes()) {
+//                if (syncableAttribute.getAttribute().getRegisteredName().contains("jahdoo")) {
+//                    ModHelpers.playDebugMessageComp(player, syncableAttribute.getAttribute().getRegisteredName().replace("jahdoo:", ""));
+//                    ModHelpers.playDebugMessage(player, syncableAttribute.getValue());
+//                }
+//            }
+//            ModHelpers.playDebugMessage(player, "                  ");
+//        }
 
         if(level instanceof ServerLevel serverLevel){
 //            var zombo = new CustomZombie(serverLevel, null);
 //            zombo.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE.asItem()));
+
 //            var enchant = new ItemStack(Items.DIAMOND_SWORD);
 //            enchant(enchant, serverLevel.registryAccess(), Enchantments.SHARPNESS, 5);
 //            zombo.setItemSlot(EquipmentSlot.MAINHAND, enchant);
@@ -194,15 +180,15 @@ public class WandItem extends BlockItem implements GeoItem {
 //            var zombo = new EternalWizard(serverLevel, null, -1, 5);
 //            zombo.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
 
-
             var zombo = new AncientGolem(serverLevel, player);
             zombo.moveTo(player.position());
-            serverLevel.addFreshEntity(zombo);
+//            serverLevel.addFreshEntity(zombo);
         }
 
         if(player.level() instanceof ClientLevel){
             Minecraft.getInstance().gui.setSubtitle(Component.literal("Welcome To Jahdoo"));
         }
+
         var item = player.getMainHandItem();
         player.startUsingItem(player.getUsedItemHand());
         if (interactionHand == InteractionHand.MAIN_HAND) {
@@ -211,23 +197,6 @@ public class WandItem extends BlockItem implements GeoItem {
         }
 
         return InteractionResultHolder.fail(player.getOffhandItem());
-    }
-
-
-    public static void storeBlockType(ItemStack itemStack, BlockState state, Player player, BlockPos pos){
-        var compound = new CompoundTag();
-        compound.put("block", NbtUtils.writeBlockState(state));
-        itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
-        player.displayClientMessage(Component.literal("Assigned: ").append(state.getBlock().getName()), true);
-    }
-
-    public static Block getStoredBlock(Level level, ItemStack itemStack){
-        var holder = level.holderLookup(Registries.BLOCK);
-        var component = itemStack.get(DataComponents.CUSTOM_DATA);
-        if(component == null) return Blocks.AIR;
-        var getFromComp = component.copyTag().getCompound("block");
-        var state = NbtUtils.readBlockState(holder, getFromComp);
-        return state.getBlock();
     }
 
     @Override

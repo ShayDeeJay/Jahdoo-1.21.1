@@ -1,28 +1,55 @@
 package org.jahdoo.client.gui.block.augment_modification_station;
 
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Display;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Rotation;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.block.augment_modification_station.AugmentModificationEntity;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.networking.packet.client2server.AugmentModificationChargeC2S;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
+import org.jahdoo.utils.nonSpinItem;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
+import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventoryFollowsMouse;
 import static net.minecraft.sounds.SoundEvents.APPLY_EFFECT_TRIAL_OMEN;
 import static org.jahdoo.client.SharedUI.*;
 import static org.jahdoo.client.IconLocations.*;
@@ -32,6 +59,7 @@ import static org.jahdoo.items.augments.AugmentItemHelper.getModifierContextSing
 import static org.jahdoo.items.augments.AugmentRatingSystem.calculateRatingNext;
 import static org.jahdoo.networking.packet.client2server.AugmentModificationChargeC2S.chargeCoreSides;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.utils.ModHelpers.doubleFormattedDouble;
 import static org.jahdoo.utils.ModHelpers.withStyleComponent;
 
 public class AugmentModificationScreen extends AbstractContainerScreen<AugmentModificationMenu> {
@@ -122,7 +150,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
                 !correctAdjustment  && this.isInHitbox(posX, posY) && canPurchase,
                 () -> {
                     var getHighest = x.isHigherBetter() ? x.actualValue() + x.step() : x.actualValue() - x.step();
-                    var original = getModifierContextSingle(extractName(component.getString()), ModHelpers.roundNonWholeString(getHighest), 1);
+                    var original = getModifierContextSingle(extractName(component.getString()), String.valueOf(doubleFormattedDouble(getHighest)), 1);
                     this.upgradeValue = withStyleComponent("↑ " + original.getString(), -7092917);
                     this.selectedY = correctAdjustment ? 0 : ySpacer;
                     this.key = component;
@@ -253,7 +281,9 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         overlayInventory(guiGraphics, startX, startY);
         boxMaker(guiGraphics, startX - 18 + adjustX, startY - 47 + adjustY, 18, 48, BORDER_COLOUR);
         coreSlots(guiGraphics, adjustX, adjustY);
+
     }
+
 
     private void coreSlots(@NotNull GuiGraphics guiGraphics, int adjustX, int adjustY) {
         var spacer = new AtomicInteger();
@@ -305,6 +335,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
                 guiGraphics.renderFakeItem(new ItemStack(getChargeableCore()),  startX + 74, (int) (startY + 6 + yScroll));
             }
         }
+
     }
 
     public Item getChargeableCore() {

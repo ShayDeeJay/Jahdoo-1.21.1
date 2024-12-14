@@ -28,7 +28,7 @@ public class EnchantedFusionAbility extends AbstractBlockAbility {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.UNCOMMON;
+        return JahdooRarity.RARE;
     }
 
     @Override

@@ -1,18 +1,19 @@
 package org.jahdoo.ability.elements;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
 import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
-
-import static org.jahdoo.particle.ParticleStore.*;
 
 public class Frost extends AbstractElement {
     ResourceLocation abilityId = ModHelpers.res("frost");
@@ -65,6 +66,21 @@ public class Frost extends AbstractElement {
     @Override
     public Holder<MobEffect> elementEffect() {
         return EffectsRegister.ICE_EFFECT.getDelegate();
+    }
+
+    @Override
+    public Pair<String, Holder<Attribute>> getTypeCooldownReduction() {
+        return Pair.of(AttributesRegister.FROST_COOLDOWN_REDUCTION_PREFIX, AttributesRegister.FROST_COOLDOWN_REDUCTION);
+    }
+
+    @Override
+    public Pair<String, Holder<Attribute>> getTypeManaReduction() {
+        return Pair.of(AttributesRegister.FROST_MANA_COST_REDUCTION_PREFIX, AttributesRegister.FROST_MANA_COST_REDUCTION);
+    }
+
+    @Override
+    public Pair<String, Holder<Attribute>> getDamageTypeAmplifier() {
+        return Pair.of(AttributesRegister.FROST_MAGIC_DAMAGE_MULTIPLIER_PREFIX, AttributesRegister.FROST_MAGIC_DAMAGE_MULTIPLIER);
     }
 
     @Override

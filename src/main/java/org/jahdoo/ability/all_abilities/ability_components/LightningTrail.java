@@ -17,6 +17,7 @@ import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.ability.AbilityBuilder;
 
+import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
@@ -100,9 +101,9 @@ public class LightningTrail extends DefaultEntityBehaviour {
             moveLikeLightningBolt(this.genericProjectile);
             ParticleHandlers.GenericProjectile(
                 genericProjectile,
-                new BakedParticleOptions(getElementType().getTypeId(), 1, 0.3f, true),
-                genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, ElementRegistry.LIGHTNING.get(), 2, 1.5f),
-                0.015
+                bakedParticleOptions(getElementType().getTypeId(), 1, 0.3f, true),
+                genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, ElementRegistry.LIGHTNING.get(), 2, 1.5f),
+                0f
             );
         }
     }

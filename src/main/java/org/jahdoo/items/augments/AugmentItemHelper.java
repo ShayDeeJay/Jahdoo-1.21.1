@@ -198,10 +198,10 @@ public class AugmentItemHelper {
         } else if (probability.stream().anyMatch(keys::contains)) {
             displayValue = isRange
                 ? rangeString(
-                convertToPercentage(Integer.parseInt(min)),
-                convertToPercentage(Integer.parseInt(max))
+                convertToPercentage(Double.parseDouble(min)),
+                convertToPercentage(Double.parseDouble(max))
             ) + "%"
-                : convertToPercentage(Integer.parseInt(current)) + "%";
+                : convertToPercentage(Double.parseDouble(current)) + "%";
         } else if (distance.stream().anyMatch(keys::contains)) {
             displayValue = isRange
                 ? rangeString(min, max) + " Blocks"

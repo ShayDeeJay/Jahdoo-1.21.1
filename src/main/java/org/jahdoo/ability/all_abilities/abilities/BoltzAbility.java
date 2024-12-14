@@ -8,9 +8,7 @@ import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.JahdooRarity;
 import org.jahdoo.entities.ElementProjectile;
-import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
-import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
 import org.jahdoo.registers.EntityPropertyRegister;
@@ -18,7 +16,6 @@ import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.ability.AbilityBuilder;
-import org.jahdoo.components.DataComponentHelper;
 
 import static org.jahdoo.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
@@ -66,7 +63,7 @@ public class BoltzAbility extends AbilityRegistrar {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.UNCOMMON;
+        return JahdooRarity.RARE;
     }
 
     @Override

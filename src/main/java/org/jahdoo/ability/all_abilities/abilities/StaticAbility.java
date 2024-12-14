@@ -26,7 +26,7 @@ public class StaticAbility extends AbilityRegistrar {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.UNCOMMON;
+        return JahdooRarity.RARE;
     }
 
     @Override

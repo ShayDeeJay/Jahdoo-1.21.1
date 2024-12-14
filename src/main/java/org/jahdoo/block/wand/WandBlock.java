@@ -27,6 +27,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.components.WandData;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
@@ -79,12 +80,9 @@ public class WandBlock extends BaseEntityBlock {
         if(!level.isClientSide() && !getType.isEmpty()) return;
         AbstractElement element = getType.getFirst();
 
-        BakedParticleOptions par1 = new BakedParticleOptions(element.getTypeId(), 20, 1.5f, false);
-        GenericParticleOptions par2 = new GenericParticleOptions(
-            ParticleStore.GENERIC_PARTICLE_SELECTION,
-            element.particleColourPrimary(),
-            element.particleColourFaded(),
-            20, 1.5f, false, 0.3
+        BakedParticleOptions par1 = ParticleHandlers.bakedParticleOptions(element.getTypeId(), 20, 1.5f, false);
+        GenericParticleOptions par2 = ParticleHandlers.genericParticleOptions(
+            ParticleStore.GENERIC_PARTICLE_SELECTION, element, 20, 1.5f, false, 0.3
         );
 
         PositionGetters.getInnerRingOfRadiusRandom(blockPos, 0.1, 2,
@@ -110,16 +108,12 @@ public class WandBlock extends BaseEntityBlock {
                 wandBlockEntity.dropsAllInventory(pLevel);
             }
         }
-        ModHelpers.getSoundWithPosition(pLevel, pPos, SoundEvents.BEACON_DEACTIVATE, 0.4f, 1.5f);
+        ModHelpers.getSoundWithPosition(pLevel, pPos, SoundEvents.CHISELED_BOOKSHELF_PICKUP_ENCHANTED, 0.8f, 1.2f);
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
     }
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-
-//        if(level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock){
-//            getItemInteractionResult(player.getMainHandItem(), wandBlock);
-//        }
 
         if (player.getMainHandItem().isEmpty() && player.isShiftKeyDown()) {
             this.pickUpWand(player, pos, level);
@@ -144,7 +138,7 @@ public class WandBlock extends BaseEntityBlock {
         return ItemInteractionResult.FAIL;
     }
 
-    private ItemInteractionResult openWandGUI(Player player, BlockPos blockPos, Level level){
+    public static ItemInteractionResult openWandGUI(Player player, BlockPos blockPos, Level level){
         var success = ItemInteractionResult.SUCCESS;
         var fail = ItemInteractionResult.FAIL;
         if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return fail;

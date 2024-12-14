@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.AbstractElement;
-//import org.assets.jahdoo.capabilities.player_abilities.NovaSmash;
+//import org.assets.jahdoo.attachments.player_abilities.NovaSmash;
 import org.jahdoo.ability.JahdooRarity;
 import org.jahdoo.items.wand.CastHelper;
 import org.jahdoo.registers.ElementRegistry;
@@ -34,7 +34,7 @@ public class NovaSmashAbility extends AbilityRegistrar {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.UNCOMMON;
+        return JahdooRarity.RARE;
     }
 
     @Override

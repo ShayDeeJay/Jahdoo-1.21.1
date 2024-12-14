@@ -4,24 +4,15 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
-import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
-import org.jahdoo.client.gui.ability_and_utility_menus.AbilityWheelMenu;
-import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.networking.packet.client2server.ModularChaosCubeC2SPacket;
 
-import java.util.List;
-
-import static net.neoforged.neoforge.client.gui.VanillaGuiLayers.*;
-import static net.neoforged.neoforge.client.gui.VanillaGuiLayers.CROSSHAIR;
-import static org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties.getRelativePosition;
-import static org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties.updateAll;
+import static org.jahdoo.attachments.player_abilities.ModularChaosCubeProperties.getRelativePosition;
+import static org.jahdoo.attachments.player_abilities.ModularChaosCubeProperties.updateAll;
 import static org.jahdoo.registers.AttachmentRegister.MODULAR_CHAOS_CUBE;
 
 public class CopyPasteEvent {

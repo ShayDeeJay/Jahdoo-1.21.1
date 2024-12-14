@@ -13,26 +13,26 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.all_abilities.abilities.HellfireAbility;
+import org.jahdoo.ability.effects.CustomMobEffect;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.particle.ParticleHandlers;
-import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.ability.effects.CustomMobEffect;
 import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
 import java.util.List;
 
+import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.ability.SharedFireProperties.fireTrailVegetationRemover;
 import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
-import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
+import static org.jahdoo.registers.AttributesRegister.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class HellFire extends DefaultEntityBehaviour {
@@ -51,9 +51,10 @@ public class HellFire extends DefaultEntityBehaviour {
         if(this.aoeCloud.getOwner() != null){
             var player = this.aoeCloud.getOwner();
             var damage = this.getTag(DAMAGE);
-            var attribute = AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
+
             this.damage = ModHelpers.attributeModifierCalculator(
-                player, (float) damage, this.getElementType(), attribute, true
+                player, (float) damage, this.getElementType(), true,
+                MAGIC_DAMAGE_MULTIPLIER, INFERNO_MAGIC_DAMAGE_MULTIPLIER
             );
             this.playerOriginalPosition = player.position();
             this.yaw = player.getYRot();
@@ -123,8 +124,7 @@ public class HellFire extends DefaultEntityBehaviour {
     private void setNovaDamage(Vec3 positionsA){
         var livingEntity = this.getEntityInRange(positionsA);
         if (livingEntity == null) return;
-        if(!this.canDamageEntity(livingEntity, this.aoeCloud.getOwner())) return;
-
+        if(!canDamageEntity(livingEntity, this.aoeCloud.getOwner())) return;
         livingEntity.addEffect(new CustomMobEffect(EffectsRegister.FIRE_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
         DamageUtil.damageWithJahdoo(livingEntity, aoeCloud.getOwner(), damage);
     }
@@ -142,11 +142,12 @@ public class HellFire extends DefaultEntityBehaviour {
     private void setParticleNova(Vec3 worldPosition){
         var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), 3f);
         var directions = positionScrambler.subtract(this.aoeCloud.position()).normalize();
-        var lifetime = (int)( this.range/2);
+        var lifetime = (int) (this.range/4);
         var col1 = this.getElementType().particleColourPrimary();
         var col2 = this.getElementType().particleColourFaded();
-        var bakedParticle = bakedParticleOptions(this.getElementType().getTypeId(), lifetime, (float) 7, false);
-        var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, (float) 4, col1, col2, false);
+        var lifeExt = Math.max(lifetime, 5);
+        var bakedParticle = bakedParticleOptions(this.getElementType().getTypeId(), lifeExt, (float) 5, false);
+        var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifeExt, (float) 5, col1, col2, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
         var level = this.aoeCloud.level();
         var speed = Math.min(this.aoeCloud.getRadius() * 2, 1.5);

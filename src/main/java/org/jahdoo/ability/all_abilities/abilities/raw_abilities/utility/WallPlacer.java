@@ -21,6 +21,7 @@ import org.jahdoo.utils.ModHelpers;
 import static org.jahdoo.ability.AbilityBuilder.OFFSET;
 import static org.jahdoo.ability.AbilityBuilder.SIZE;
 import static org.jahdoo.ability.all_abilities.abilities.raw_abilities.utility.BlockPlacer.removeItemsFromInv;
+import static org.jahdoo.items.wand.WandItemHelper.getStoredBlock;
 
 public class WallPlacer extends AbstractUtilityProjectile {
     ResourceLocation abilityId = ModHelpers.res("wall_placer_property");
@@ -82,8 +83,8 @@ public class WallPlacer extends AbstractUtilityProjectile {
         var replaceBlock = Blocks.AIR;
 
         if(player != null){
-            targetBlock = new ItemStack(WandItem.getStoredBlock(level, player.getMainHandItem()));
-            replaceBlock = WandItem.getStoredBlock(level, player.getMainHandItem());
+            targetBlock = new ItemStack(getStoredBlock(level, player.getMainHandItem()));
+            replaceBlock = getStoredBlock(level, player.getMainHandItem());
         } else {
             if(pos1 != null) {
                 if(this.level.getBlockEntity(BlockPos.containing(pos1)) instanceof ModularChaosCubeEntity entity){

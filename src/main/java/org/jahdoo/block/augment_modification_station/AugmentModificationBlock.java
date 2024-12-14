@@ -12,6 +12,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -111,6 +112,7 @@ public class AugmentModificationBlock extends BaseEntityBlock{
     protected @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         ItemInteractionResult fail = ItemInteractionResult.FAIL;
         ItemInteractionResult success = ItemInteractionResult.SUCCESS;
+
         if(!(level.getBlockEntity(pos) instanceof AugmentModificationEntity augmentStation)) return fail;
         var hands = player.getItemInHand(hand);
         var result = augmentBlockInteraction(level, pos, player, hand, augmentStation, hands, SoundEvents.VAULT_ACTIVATE, 0.05, 10, 0.9, 0.15);
@@ -135,27 +137,29 @@ public class AugmentModificationBlock extends BaseEntityBlock{
         double speed,
         double radius
     ) {
-        if(hand.getItem() instanceof Augment || hand.isEmpty() && pPlayer.isShiftKeyDown()){
+        if (hand.getItem() instanceof Augment || hand.isEmpty() && pPlayer.isShiftKeyDown()) {
             ModHelpers.getSoundWithPosition(pLevel, pPos, soundEvent, 1, 1.2f);
-            BlockInteractionHandler.swapItemsWithHand(augmentStation.inputItemHandler,0, pPlayer, pHand);
-            setOuterRingPulse(pLevel, augmentStation.inputItemHandler.getStackInSlot(0), pPos,yOffset, lifetime, speed, radius);
+            BlockInteractionHandler.swapItemsWithHand(augmentStation.inputItemHandler, 0, pPlayer, pHand);
+            var stackInSlot = augmentStation.inputItemHandler.getStackInSlot(0);
+            var type = stackInSlot.get(DataComponents.CUSTOM_MODEL_DATA);
+            if (type != null) {
+                setOuterRingPulse(pLevel, type.value(), pPos, yOffset, lifetime, speed, radius);
+            }
             return ItemInteractionResult.SUCCESS;
         }
         return ItemInteractionResult.FAIL;
     }
 
-    private static void setOuterRingPulse(
+    public static void setOuterRingPulse(
         Level level,
-        ItemStack augment,
+        int getType,
         BlockPos blockPos,
         double yOffset,
         int lifetime,
         double speed,
         double radius
     ){
-        var getType = augment.get(DataComponents.CUSTOM_MODEL_DATA);
-        if(getType == null) return;
-        var particle = genericParticleOptions(ElementRegistry.getElementByTypeId(getType.value()).getFirst(), lifetime, 0.8f);
+        var particle = genericParticleOptions(ElementRegistry.getElementByTypeId(getType).getFirst(), lifetime, 0.8f);
         PositionGetters.getOuterRingOfRadiusRandom(blockPos.getBottomCenter().add(0,yOffset,0), radius, 40,
             positions -> {
                 ParticleHandlers.sendParticles(

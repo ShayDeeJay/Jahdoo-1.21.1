@@ -6,6 +6,7 @@ import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.utils.ModHelpers;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.LinkedHashMap;
 
 import static org.jahdoo.items.augments.AbilityModifierLuckRoller.getWeightedRandomDouble;
 import static org.jahdoo.registers.DataComponentRegistry.AUGMENT_RATING;
+import static org.jahdoo.utils.ModHelpers.doubleFormattedDouble;
 
 public class AbilityBuilder {
     //Mandatory mods
@@ -32,6 +34,7 @@ public class AbilityBuilder {
     public static final String AOE = "Area of Effect";
     public static final String SIZE = "Block Size";
     public static final String OFFSET = "Offset";
+    public static final String GRAVITATIONAL_PULL = "Gravitational Pull";
 
     private final ItemStack item;
     private final String abilityId;
@@ -59,7 +62,11 @@ public class AbilityBuilder {
         var weightedDouble = getWeightedRandomDouble(high, low, (getModifier == 0) != isHigherBetter, step, getModifier);
         var getValue = isHigherBetter ? low : high;
         var chooseValue = this.item != null && this.item.has(AUGMENT_RATING.get()) ? getRandomWeightedDouble(low, high, step) : getValue;
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(chooseValue, high, low, step, chooseValue, isHigherBetter);
+        var chosenR = doubleFormattedDouble(chooseValue);
+        var highR = doubleFormattedDouble(high);
+        var lowR = doubleFormattedDouble(low);
+        var stepR = doubleFormattedDouble(step);
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(chosenR, highR, lowR, stepR, chosenR, isHigherBetter);
         this.abilityHolder.abilityProperties().put(name, abilityModifiers);
         return this;
     }
@@ -116,6 +123,16 @@ public class AbilityBuilder {
 
     public AbilityBuilder setDamageWithValue(double high, double low, double actualValue){
         this.setModifier(DAMAGE, high, low, true, actualValue);
+        return this;
+    }
+
+    public AbilityBuilder setGravitationalPullWithValue(double high, double low, double actualValue){
+        this.setModifier(GRAVITATIONAL_PULL, high, low, true, actualValue);
+        return this;
+    }
+
+    public AbilityBuilder setGravitationalPull(double high, double low, double step){
+        this.setAbilityTagModifiersRandom(GRAVITATIONAL_PULL, high, low, true, step);
         return this;
     }
 

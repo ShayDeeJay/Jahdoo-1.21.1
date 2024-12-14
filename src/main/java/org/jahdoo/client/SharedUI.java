@@ -1,11 +1,18 @@
 package org.jahdoo.client;
 
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jahdoo.ability.AbilityRegistrar;
@@ -46,6 +53,63 @@ public class SharedUI {
 
         guiGraphics.fill(startX, startY, widthTo, heightTo, fillColour);
         guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
+    }
+
+    public static void renderItem(@NotNull GuiGraphics guiGraphics, double width, double height, Player player, ItemStack itemStack, float partialTicks, float scale) {
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(width, height, 1000);
+        guiGraphics.pose().scale(scale, scale, -scale);
+
+        guiGraphics.pose().rotateAround(Axis.YP.rotationDegrees(player.tickCount + partialTicks), 0,0,0); // Horizontal rotation
+        guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(180), 0,0,0); // Horizontal rotation
+
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+        itemRenderer.renderStatic(
+            itemStack,
+            ItemDisplayContext.FIXED,
+            255,
+            OverlayTexture.NO_OVERLAY,
+            guiGraphics.pose(),
+            buffer,
+            Minecraft.getInstance().level,
+            1
+        );
+
+        guiGraphics.pose().popPose();
+        Lighting.setupFor3DItems();
+    }
+
+    public static void renderItem(@NotNull GuiGraphics guiGraphics, double width, double height, ItemStack itemStack, float scale, float mouseX, float mouseY, float rotationSpeed) {
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(width/2, height/2, 5);
+        guiGraphics.pose().scale(scale, scale, -scale);
+
+        var degrees = ((float) guiGraphics.guiWidth() / 2 - mouseX) / rotationSpeed;
+        var maxRotation = 6;
+        degrees = Math.max(-maxRotation, Math.min(maxRotation, degrees));
+        var degrees1 = -((float) guiGraphics.guiHeight() / 2 - mouseY) / rotationSpeed;
+        degrees1 = Math.max(-maxRotation, Math.min(maxRotation, degrees1));
+
+        guiGraphics.pose().rotateAround(Axis.YP.rotationDegrees(degrees), 0,0,0); // Horizontal rotation
+        guiGraphics.pose().rotateAround(Axis.XP.rotationDegrees(degrees1), 0,0,0); // Horizontal rotation
+        guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(180), 0,0,0); // Horizontal rotation
+
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+        itemRenderer.renderStatic(
+            itemStack,
+            ItemDisplayContext.FIXED,
+            15728880,
+            OverlayTexture.NO_OVERLAY,
+            guiGraphics.pose(),
+            buffer,
+            Minecraft.getInstance().level,
+            1
+        );
+
+        guiGraphics.pose().popPose();
+        Lighting.setupFor3DItems();
     }
 
     public static void setCustomBackground(int height, int width, GuiGraphics guiGraphics){

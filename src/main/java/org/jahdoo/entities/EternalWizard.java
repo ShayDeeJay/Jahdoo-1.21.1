@@ -13,13 +13,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -30,7 +27,6 @@ import org.jahdoo.ability.AbilityBuilder;
 import org.jahdoo.ability.all_abilities.abilities.FireballAbility;
 import org.jahdoo.ability.all_abilities.abilities.FrostboltsAbility;
 import org.jahdoo.ability.all_abilities.ability_components.EtherealArrow;
-import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.entities.goals.*;
 import org.jahdoo.items.wand.WandItem;
@@ -45,13 +41,16 @@ import java.util.UUID;
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.ability.all_abilities.abilities.FireballAbility.abilityId;
 import static org.jahdoo.ability.all_abilities.ability_components.ArmageddonModule.buddy;
+import static org.jahdoo.items.wand.CastHelper.castAnimation;
+import static org.jahdoo.items.wand.WandAnimations.SINGLE_CAST_ID;
 
-public class EternalWizard extends AbstractSkeleton implements Tamable {
+public class EternalWizard extends AbstractSkeleton implements TamableEntity {
     private static final EntityDataAccessor<Boolean> SET_MODE = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> LIFETIMES = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> PRIVATE_TICKS = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.INT);
     private final RangedCustomAttackGoal<AbstractSkeleton> wandGoal = new RangedCustomAttackGoal<>(this, 1.0D, 0, 60.0F);
+
     LivingEntity owner;
     UUID ownerUUID;
     double damage;
@@ -125,11 +124,10 @@ public class EternalWizard extends AbstractSkeleton implements Tamable {
         this.goalSelector.addGoal(5, new FollowGoal(this, 1.0D, 5.0F, 2.0F, false));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)));
+        this.targetSelector.addGoal(1, new GenericHurtByTargetGoal(this));
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(2, new AttackNearbyMonsters<>(this, LivingEntity.class, true, 10, 30));
-        this.targetSelector.addGoal(3, (new GenericHurtByTargetGoal(this, (entity) -> entity == getOwner())).setAlertOthers());
     }
 
     @Override
@@ -196,9 +194,9 @@ public class EternalWizard extends AbstractSkeleton implements Tamable {
 
     @Override
     public void performRangedAttack(LivingEntity pTarget, float pDistanceFactor) {
-        fireballAbility(pTarget);
+//        fireballAbility(pTarget);
 //        this.fireProjectile(elementProjectile, player, 0.5f);
-//        shooterAbility(pTarget);
+        shooterAbility(pTarget);
     }
 
     private void fireballAbility(LivingEntity target) {
@@ -208,15 +206,16 @@ public class EternalWizard extends AbstractSkeleton implements Tamable {
             fireballModule(),
             abilityId.getPath().intern()
         );
-        fireProjectile(target, elementProjectile, 2.2, 0.5F);
+        fireProjectile(target, elementProjectile, 1.2, 0.5F);
     }
 
     public WandAbilityHolder fireballModule() {
+        //NOTE: Does not work when spawned without player as does not have any attributes, so may need static values
         return new AbilityBuilder(null, FireballAbility.abilityId.getPath().intern())
-            .setDamageWithValue(0,0, 20)
-            .setEffectDurationWithValue(0,0,200)
-            .setEffectChanceWithValue(0,0,20)
-            .setEffectStrengthWithValue(0,0,0)
+            .setDamageWithValue(0,0, this.damage)
+            .setEffectDurationWithValue(0,0,this.effectDuration)
+            .setEffectChanceWithValue(0,0, this.effectChance)
+            .setEffectStrengthWithValue(0,0,this.effectStrength)
             .setModifier(FireballAbility.novaRange, 0,0,true, ModHelpers.Random.nextInt(4,6))
             .setModifierWithoutBounds(buddy, 0)
             .buildAndReturn();
@@ -226,7 +225,7 @@ public class EternalWizard extends AbstractSkeleton implements Tamable {
         GenericProjectile arrow = new GenericProjectile(
             this, this.getX(), this.getY() + 2, this.getZ(),
             EntityPropertyRegister.ETHEREAL_ARROW.get().setAbilityId(),
-            EtherealArrow.setArrowProperties(this.damage, this.effectDuration, this.effectStrength, effectChance),
+            EtherealArrow.setArrowProperties(this.damage, this.effectDuration, this.effectStrength, this.effectChance),
             ElementRegistry.VITALITY.get(),
             FrostboltsAbility.abilityId.getPath().intern()
         );
@@ -242,6 +241,7 @@ public class EternalWizard extends AbstractSkeleton implements Tamable {
             double d3 = Math.sqrt(d0 * d0 + d2 * d2);
             projectile.shoot(d0, d1 + d3 * (double)0.2F, d2, velocity, 0);
             this.playSound(SoundRegister.ORB_CREATE.get(), 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
+            castAnimation(this, SINGLE_CAST_ID);
             this.level().addFreshEntity(projectile);
         }
     }

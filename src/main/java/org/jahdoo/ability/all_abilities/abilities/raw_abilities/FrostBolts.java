@@ -12,15 +12,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
-import org.jahdoo.ability.all_abilities.abilities.EscapeDecoyAbility;
 import org.jahdoo.ability.all_abilities.abilities.FrostboltsAbility;
 import org.jahdoo.ability.all_abilities.ability_components.EtherealArrow;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.items.wand.CastHelper;
 import org.jahdoo.particle.ParticleHandlers;
-import org.jahdoo.particle.particle_options.BakedParticleOptions;
-import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.registers.SoundRegister;
@@ -30,12 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.ability.all_abilities.abilities.EscapeDecoyAbility.getFromAllRandom;
 import static org.jahdoo.ability.all_abilities.abilities.FrostboltsAbility.NUMBER_OF_PROJECTILES;
-import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.items.wand.CastHelper.castAnimation;
 import static org.jahdoo.items.wand.WandAnimations.SINGLE_CAST_ID;
 import static org.jahdoo.particle.ParticleHandlers.sendParticles;
+import static org.jahdoo.registers.AttributesRegister.FROST_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
 
 public class FrostBolts extends DefaultEntityBehaviour {
     List<GenericProjectile> assignArrows = new ArrayList<>();
@@ -61,8 +60,9 @@ public class FrostBolts extends DefaultEntityBehaviour {
                 (LivingEntity) player,
                 (float) this.getTag(DAMAGE),
                 this.getElementType(),
-                AttributesRegister.MAGIC_DAMAGE_MULTIPLIER,
-                true
+                true,
+                MAGIC_DAMAGE_MULTIPLIER,
+                FROST_MAGIC_DAMAGE_MULTIPLIER
             );
         }
         this.effectChance = this.getTag(EFFECT_CHANCE);

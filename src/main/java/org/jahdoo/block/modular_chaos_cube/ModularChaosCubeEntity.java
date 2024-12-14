@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ability.AbilityBuilder;
 import org.jahdoo.ability.all_abilities.ability_components.AbstractBlockAbility;
 import org.jahdoo.block.AbstractTankUser;
-import org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties;
+import org.jahdoo.attachments.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.client.IconLocations;
 import org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeData;
 import org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeMenu;
@@ -43,7 +43,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.jahdoo.block.BlockInteractionHandler.getItemHandlerAt;
-import static org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties.*;
+import static org.jahdoo.attachments.player_abilities.ModularChaosCubeProperties.*;
 import static org.jahdoo.components.DataComponentHelper.getKeyFromAugment;
 import static org.jahdoo.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.entities.ProjectileAnimations.*;

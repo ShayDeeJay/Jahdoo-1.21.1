@@ -3,14 +3,12 @@ package org.jahdoo.entities.goals;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import org.jahdoo.entities.EternalWizard;
-import org.jahdoo.entities.Tamable;
+import org.jahdoo.entities.TamableEntity;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -57,20 +55,18 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
         } else {
             this.target = this.mob.level().getNearestPlayer(this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ());
         }
-
     }
 
     public void start() {
-        if(mob instanceof Tamable tamable){
-            if (withoutOwner(tamable)) return;
-            wizardBehaviour(tamable);
+        if(mob instanceof TamableEntity tamableEntity){
+            if (withoutOwner(tamableEntity)) return;
+            wizardBehaviour(tamableEntity);
         }
-
         super.start();
     }
 
-    private boolean withoutOwner(Tamable tamable) {
-        if(tamable.getOwner() == null){
+    private boolean withoutOwner(TamableEntity tamableEntity) {
+        if(tamableEntity.getOwner() == null){
             if(target instanceof Player){
                 this.mob.setTarget(this.target);
             }
@@ -78,8 +74,8 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
         return false;
     }
 
-    private void wizardBehaviour(Tamable tamable) {
-        var isTargetFriend = this.target instanceof Tamable tamable1 && tamable1.getOwner() == tamable.getOwner();
+    private void wizardBehaviour(TamableEntity tamableEntity) {
+        var isTargetFriend = this.target instanceof TamableEntity tamable1 && tamable1.getOwner() == tamableEntity.getOwner();
         if(!isTargetFriend){
             if (mob instanceof EternalWizard wizard) {
                 if (wizard.getMode()) {
@@ -88,7 +84,7 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
                     }
                 }
             } else {
-                if (tamable.getOwner() != this.target) {
+                if (tamableEntity.getOwner() != this.target) {
                     this.mob.setTarget(this.target);
                 }
             }

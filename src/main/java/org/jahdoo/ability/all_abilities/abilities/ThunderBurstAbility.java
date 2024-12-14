@@ -3,24 +3,25 @@ package org.jahdoo.ability.all_abilities.abilities;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.ability.AbilityBuilder;
 import org.jahdoo.ability.AbilityRegistrar;
+import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.JahdooRarity;
 import org.jahdoo.components.AbilityHolder;
-import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
-import org.jahdoo.ability.AbilityBuilder;
+import org.jahdoo.utils.ModHelpers;
 
 import java.util.Map;
 
-import static org.jahdoo.ability.all_abilities.ability_components.LightningTrail.getLightningTrailModifiers;
-import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.ability.AbilityBuilder.DAMAGE;
+import static org.jahdoo.ability.all_abilities.ability_components.LightningTrail.getLightningTrailModifiers;
+import static org.jahdoo.registers.AttributesRegister.LIGHTNING_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
 
 public class ThunderBurstAbility extends AbilityRegistrar {
     public static final ResourceLocation abilityId = ModHelpers.res("thunder_burst");
@@ -35,12 +36,11 @@ public class ThunderBurstAbility extends AbilityRegistrar {
     public void invokeAbility(Player player) {
         var modifiers = this.tagModifierHelper(player);
         var damage = ModHelpers.attributeModifierCalculator(
-            player, (float) modifiers.get(DAMAGE).actualValue(), this.getElemenType(),
-            MAGIC_DAMAGE_MULTIPLIER, true
+            player, (float) modifiers.get(DAMAGE).actualValue(), this.getElemenType(), true,
+            LIGHTNING_MAGIC_DAMAGE_MULTIPLIER, MAGIC_DAMAGE_MULTIPLIER
         );
         var numberOfBolts = modifiers.get(NUMBER_OF_THUNDERBOLTS).actualValue();
-//        var direction = player.getLookAngle();
-        var lightningTrailModifiers = getLightningTrailModifiers(damage, 0.2, 10, 0);
+        var lightningTrailModifiers = getLightningTrailModifiers(damage, 0.16, 10, 0);
 
         ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.BOLT.get(), 2f,1f);
 
@@ -49,15 +49,16 @@ public class ThunderBurstAbility extends AbilityRegistrar {
                 player, -0.3,
                 EntityPropertyRegister.LIGHTNING_TRAIL.get().setAbilityId(),
                 lightningTrailModifiers, -1,
-                abilityId.getPath().intern()
+                abilityId.getPath().intern(),
+                this.getElemenType()
             );
-            this.fireProjectileNoSound(genericProjectile, player, 1);
+            this.fireProjectileNoSound(genericProjectile, player, 1.2f);
         }
     }
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.UNCOMMON;
+        return JahdooRarity.RARE;
     }
 
     @Override

@@ -65,13 +65,13 @@ public class ParticleHandlers {
     public void pullParticlesToCenter(Player player){
         var casterData = player.getData(CASTER_DATA);
         var manaReduction = casterData.getMaxMana(player) / 60;
-        BakedParticleOptions bakedParticleOptions = new BakedParticleOptions(
+        var bakedParticleOptions = new BakedParticleOptions(
             ElementRegistry.VITALITY.get().getTypeId(),
             6, 2f, false
         );
-        GenericParticleOptions genericParticleOptions = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, ElementRegistry.VITALITY.get(), 6, 2f);
+        var genericParticleOptions = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, ElementRegistry.VITALITY.get(), 6, 2f);
 
-        List<ParticleOptions> particleOptionsList = List.of(
+        var particleOptionsList = List.of(
             bakedParticleOptions,
             genericParticleOptions
         );
@@ -101,12 +101,12 @@ public class ParticleHandlers {
     }
 
     public static void playParticles(ParticleOptions particleOptions, Projectile projectile, double getX, double getY, double getZ) {
-        double deltaX = getX - projectile.xOld;
-        double deltaY = getY - projectile.yOld;
-        double deltaZ = getZ - projectile.zOld;
-        double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 5);
+        var deltaX = getX - projectile.xOld;
+        var deltaY = getY - projectile.yOld;
+        var deltaZ = getZ - projectile.zOld;
+        var dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 5);
         for (double j = 0; j < Math.max(dist, 5); j++) {
-            double coeff = j / dist;
+            var coeff = j / dist;
             var position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
             ParticleHandlers.sendParticles(
                 projectile.level(), particleOptions, position, 1,
@@ -124,7 +124,7 @@ public class ParticleHandlers {
         double deltaZ = getZ - projectile.zOld;
         double dist = Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 5);
         for (double j = 0; j < dist; j++) {
-            double coeff = j / dist;
+            var coeff = j / dist;
             var position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
             ParticleHandlers.sendParticles(
                 projectile.level(), particleOptions, position, 2,

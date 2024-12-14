@@ -25,7 +25,6 @@ import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
@@ -35,6 +34,8 @@ import java.util.UUID;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.registers.AttributesRegister.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
 
 public class SummonEternalWizard extends DefaultEntityBehaviour {
     double height;
@@ -54,8 +55,9 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         var player = this.aoeCloud.getOwner();
         var damage = this.getTag(DAMAGE);
         this.damage = ModHelpers.attributeModifierCalculator(
-            player, (float) damage, this.getElementType(),
-            AttributesRegister.MAGIC_DAMAGE_MULTIPLIER, true
+            player, (float) damage, this.getElementType(), true,
+            MAGIC_DAMAGE_MULTIPLIER,
+            VITALITY_MAGIC_DAMAGE_MULTIPLIER
         );
         this.effectDuration = getTag(EFFECT_DURATION);
         this.effectStrength = getTag(EFFECT_STRENGTH);

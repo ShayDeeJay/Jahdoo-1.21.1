@@ -20,6 +20,8 @@ import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.utils.ModHelpers;
 
+import static org.jahdoo.items.wand.WandItemHelper.getStoredBlock;
+
 public class BlockPlacer extends AbstractUtilityProjectile {
     ResourceLocation abilityId = ModHelpers.res("block_placer_property");
     Level level;
@@ -52,8 +54,8 @@ public class BlockPlacer extends AbstractUtilityProjectile {
         var replaceBlock = Blocks.AIR;
 
         if(player != null){
-            targetBlock = new ItemStack(WandItem.getStoredBlock(level, player.getMainHandItem()));
-            replaceBlock = WandItem.getStoredBlock(level, player.getMainHandItem());
+            targetBlock = new ItemStack(getStoredBlock(level, player.getMainHandItem()));
+            replaceBlock = getStoredBlock(level, player.getMainHandItem());
         } else {
             if(pos != null) {
                 if(this.level.getBlockEntity(BlockPos.containing(pos)) instanceof ModularChaosCubeEntity entity){

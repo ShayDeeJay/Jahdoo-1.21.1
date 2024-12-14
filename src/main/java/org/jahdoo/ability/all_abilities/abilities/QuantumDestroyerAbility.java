@@ -20,7 +20,6 @@ import org.jahdoo.utils.ModHelpers;
 public class QuantumDestroyerAbility extends AbilityRegistrar {
     public static final ResourceLocation abilityId = ModHelpers.res("quantum_destroyer");
     public static final String radius = "Energy Radius";
-    public static final String gravitationalPull = "Gravitational Pull";
 
     @Override
     public void invokeAbility(Player player) {
@@ -57,8 +56,8 @@ public class QuantumDestroyerAbility extends AbilityRegistrar {
             .setDamage(20, 10, 2)
             .setCastingDistance(30,10,5)
             .setLifetime(200, 100, 20)
+            .setGravitationalPull(2,1, 0.2)
             .setAbilityTagModifiersRandom(radius, 6,3, true, 1)
-            .setAbilityTagModifiersRandom(gravitationalPull, 2.5,0.5, true, 0.5)
             .build();
     }
 

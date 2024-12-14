@@ -7,7 +7,7 @@ import org.jahdoo.ability.AbilityBuilder;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.JahdooRarity;
-import org.jahdoo.capabilities.player_abilities.PlayerScale;
+import org.jahdoo.attachments.player_abilities.PlayerScale;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.utils.ModHelpers;

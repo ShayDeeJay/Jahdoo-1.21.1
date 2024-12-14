@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.all_abilities.ability_components.AbstractBlockAbility;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
-import org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties;
+import org.jahdoo.attachments.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.ToggleComponent;
 import org.jahdoo.registers.AbilityRegister;

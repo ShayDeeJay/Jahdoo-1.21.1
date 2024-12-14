@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
-import org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties;
+import org.jahdoo.attachments.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.registers.AttachmentRegister.MODULAR_CHAOS_CUBE;

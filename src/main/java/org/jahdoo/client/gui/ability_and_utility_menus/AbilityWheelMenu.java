@@ -11,8 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -44,10 +43,13 @@ public class AbilityWheelMenu extends Screen  {
     private static final int RADIAL_SIZE = 150;
     private float localTick = 60;
     private boolean switchState;
-
+    private List<AbilityIconButton> buttons = new ArrayList<>();
+    private int slots;
+    private static final int RADIUS = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 4); // Adjust radius
     public AbilityWheelMenu() {
         super(Component.literal("Ability Menu"));
     }
+
 
     public static List<String> getAllAbilities(ItemStack wand){
         var wandData = DataComponentRegistry.WAND_DATA.get();
@@ -58,6 +60,7 @@ public class AbilityWheelMenu extends Screen  {
     @Override
     protected void init() {
         var player = this.getMinecraft().player;
+        this.buttons.clear();
         if(player == null) return;
         var wand = player.getMainHandItem();
         var wandData = wand.get(DataComponentRegistry.WAND_DATA.get());
@@ -65,24 +68,46 @@ public class AbilityWheelMenu extends Screen  {
         var totalSlots = abilityHolder.size();
         int centerX = this.width / 2 + 2;
         int centerY = this.height / 2 + 2;
-        int radius = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 4); // Adjust radius
         double angleOffset = -Math.PI / 2.0; // Start position
+
         if(wandData == null) return;
+        this.slots = wandData.abilitySlots();
 
         for (int i = 0; i < totalSlots; i++) {
             double angle = angleOffset + 2 * Math.PI * i / totalSlots; // Calculate angle for each position
-            int buttonX = (int) (centerX + radius * Math.cos(angle)) - buttonSize / 2;
-            int buttonY = (int) (centerY + radius * Math.sin(angle)) - buttonSize / 2;
+            int buttonX = (int) (centerX + RADIUS * Math.cos(angle)) - buttonSize / 2;
+            int buttonY = (int) (centerY + RADIUS * Math.sin(angle)) - buttonSize / 2;
 
             if (!abilityHolder.isEmpty() && !AbilityRegister.getSpellsByTypeId(abilityHolder.get(i)).isEmpty()) {
-                AbilityButton(abilityHolder, i, buttonX, buttonY, i, wandData, player);
+                abilityButton(abilityHolder, i, buttonX, buttonY, i, wandData, player);
             } else {
                 showSlotIndex(i, buttonX, buttonY);
             }
         }
     }
 
-    private void AbilityButton(
+    @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        var x = mouseX - (double) this.width /2;
+        var y = mouseY - (double) this.height /2;
+        var distance = x * x + y * y;
+        var radius = RADIUS * 1.6;
+        var innerRadius = RADIUS * 0.14;
+        if(distance > radius * radius || distance < innerRadius * innerRadius) return;
+        var index = posToSlice(x, y);
+        for (AbilityIconButton button : this.buttons) button.setFocused(false);
+        if(index < this.buttons.size()) this.buttons.get(index).setFocused(true);
+    }
+
+    private int posToSlice(double mouseX, double mouseY){
+        var buttons = this.slots;
+        var angle = Math.atan2(mouseY, mouseX) + (Math.PI / buttons) + Math.PI / 2 ;
+        var index = Mth.floor(angle * buttons / (2 * Math.PI));
+        if(index < 0) index += buttons;
+        return index;
+    }
+
+    private void abilityButton(
         List<String> abilityHolder,
         int i,
         int buttonX,
@@ -98,18 +123,20 @@ public class AbilityWheelMenu extends Screen  {
         var isSelected = Objects.equals(selectedAbility.isPresent() ? selectedAbility.get().getAbilityName() : "", ability.getAbilityName());
 
         if(isSelected){
-            selectedAbility.ifPresent(abilityRegistrars ->
-                showConfig(wandData, player, abilityRegistrars, buttonX + 20, buttonY - 10));
+            selectedAbility.ifPresent(abilityRegistrars -> showConfig(wandData, player, abilityRegistrars, buttonX + 20, buttonY - 10));
         }
 
-        this.addRenderableWidget(
-            new AbilityIconButton(
-                buttonX - 2, buttonY - 2, abilityButton, buttonSize,
-                pButton -> {},
-                isSelected,
-                () -> onHoverClick(abilityHolder, finalI, player)
-            )
+        var widget = new AbilityIconButton(
+            buttonX - 2, buttonY - 2, abilityButton, buttonSize,
+            pButton -> {},
+            isSelected,
+            () -> onHoverClick(abilityHolder, finalI, player)
         );
+
+        this.addRenderableWidget(widget);
+
+        buttons.add(widget);
+
     }
 
     private void onHoverClick(List<String> abilityHolder, int finalI, Player player) {
@@ -141,7 +168,7 @@ public class AbilityWheelMenu extends Screen  {
                         configButtonSize,
                         pButton -> this.getMinecraft().setScreen(getAugmentModificationScreenWand(itemStack, this)),
                         false,
-                        () -> {}
+                        () -> { }
                     )
                 );
             }
@@ -238,18 +265,18 @@ public class AbilityWheelMenu extends Screen  {
         var normalizedTick =  this.localTick / RADIAL_SIZE;
         var easedTick = easeInOutCubic(normalizedTick);
         var easedValue = (int) (easedTick * RADIAL_SIZE);
-        var frameTimeNs = getMinecraft().getFrameTimeNs();
-        var currentFrame = getMinecraft().getFps();
-        if(currentFrame > 0){
-            var tick = this.localTick + Math.clamp(frameTimeNs / (currentFrame * 11000L), 2, 20);
-            var fade = this.localTick / 120;
-            this.localTick = Math.min(tick, RADIAL_SIZE);
-            setRadialTexture(guiGraphics, easedValue, fade > 0.7 ? fade : 0);
-        }
+        var fps = getMinecraft().getFps();
+        var tick = (this.localTick + (Math.max(12 - (fps/10), 2))) + delta ;
+        var fade = this.localTick / 130;
+        this.localTick = Math.min(tick, RADIAL_SIZE);
+        setRadialTexture(guiGraphics, easedValue, fade > 0.7 ? fade : 0);
+
         if(this.localTick >= RADIAL_SIZE) {
             this.getSelectedAbilityName(guiGraphics);
             super.render(guiGraphics, mouseX, mouseY, delta);
         }
+
+
     }
 
     @Override

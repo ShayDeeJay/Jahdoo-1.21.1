@@ -12,16 +12,15 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.all_abilities.abilities.IceBombAbility;
+import org.jahdoo.ability.effects.CustomMobEffect;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.entities.ElementProjectile;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
-import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.ability.effects.CustomMobEffect;
 import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
@@ -30,10 +29,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.particle.ParticleStore.*;
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
+import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.particle.ParticleStore.rgbToInt;
+import static org.jahdoo.registers.AttributesRegister.FROST_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
 
 public class IceBomb extends DefaultEntityBehaviour {
 
@@ -56,8 +57,9 @@ public class IceBomb extends DefaultEntityBehaviour {
                 (LivingEntity) player,
                 (float) damage,
                 this.getElementType(),
-                AttributesRegister.MAGIC_DAMAGE_MULTIPLIER,
-                true
+                true,
+                MAGIC_DAMAGE_MULTIPLIER,
+                FROST_MAGIC_DAMAGE_MULTIPLIER
             );
         }
         this.effectStrength = this.getTag(EFFECT_STRENGTH);
@@ -177,7 +179,7 @@ public class IceBomb extends DefaultEntityBehaviour {
     }
 
     private void entityFreezeEffectAndDamage(LivingEntity hitEntity){
-        if(!this.damageEntity(hitEntity)) return;
+        if(!canDamageEntity(hitEntity, (LivingEntity) this.elementProjectile.getOwner())) return;
         if(!this.getHitEntities.contains(hitEntity.getUUID())){
             this.getHitEntities.add(hitEntity.getUUID());
             DamageUtil.damageWithJahdoo(hitEntity, this.elementProjectile.getOwner(), this.damage);

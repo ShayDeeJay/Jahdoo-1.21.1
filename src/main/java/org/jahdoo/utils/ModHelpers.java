@@ -29,7 +29,6 @@ import org.jahdoo.components.AbilityHolder;
 import org.jahdoo.components.WandAbilityHolder;
 import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
 import org.jahdoo.registers.AbilityRegister;
-import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 
 import java.awt.*;
@@ -39,7 +38,6 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
-import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
 public class ModHelpers {
@@ -169,6 +167,11 @@ public class ModHelpers {
         return  roundNonWholeDouble(Double.parseDouble(decimalFormat.format(value)));
     }
 
+    public static double doubleFormattedDouble(double value){
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        return  roundNonWholeDouble(Double.parseDouble(decimalFormat.format(value)));
+    }
+
     public static ListTag nbtDoubleList(double... pNumbers) {
         ListTag listtag = new ListTag();
         for(double d0 : pNumbers) listtag.add(DoubleTag.valueOf(d0));
@@ -186,6 +189,13 @@ public class ModHelpers {
     public static void playDebugMessage(Player player, Object... info){
         var randomColour = new Color((int)(Math.random() * 0x1000000)).getRGB();
         player.sendSystemMessage(Component.literal(Arrays.toString(info)).withStyle(style -> style.withColor(randomColour)));
+    }
+
+    public static void playDebugMessageComp(Player player, String... info){
+        var randomColour = new Color((int)(Math.random() * 0x1000000)).getRGB();
+        for (String o : Arrays.stream(info).toList()) {
+            player.sendSystemMessage(withStyleComponentTrans(o,randomColour));
+        }
     }
 
     public static void getSoundWithPosition(Level level, BlockPos position, SoundEvent audio){
@@ -239,29 +249,37 @@ public class ModHelpers {
         player.sendSystemMessage(Component.literal(" "));
     }
 
+    @SafeVarargs
     public static float attributeModifierCalculator(
         LivingEntity player,
         float initialValue,
         AbstractElement getElementType,
-        Holder<Attribute> attribute,
-        boolean isAddition
+        boolean isAddition,
+        Holder<Attribute> ... attribute
     ){
         var wandItem = player.getMainHandItem();
         var abilityName = wandItem.get(DataComponentRegistry.WAND_DATA.get());
         if(abilityName == null) return 0;
-        var getAttribute = player.getAttributes().getValue(attribute);
+        float getAttribute = 0;
         var getAbility = AbilityRegister.getFirstSpellByTypeId(abilityName.selectedAbility());
         if(getAbility.isEmpty()) return initialValue;
 
-        var element = SharedUI.getElementWithType(getAbility.get(), wandItem);
         float reCalculatedDamage = initialValue;
-        if (Objects.equals(getElementType, element)) {
-            float getPercentageDamage = (float) (initialValue / 100 * getAttribute);
-            if(isAddition){
-                reCalculatedDamage = reCalculatedDamage + getPercentageDamage;
-            } else {
-                reCalculatedDamage = reCalculatedDamage - getPercentageDamage;
-            }
+
+        for (Holder<Attribute> attributeHolder : attribute) {
+            getAttribute += (float) player.getAttributes().getValue(attributeHolder);
+        }
+
+        float getPercentageDamage = initialValue / 100 * getAttribute;
+
+        if(isAddition){
+            reCalculatedDamage = reCalculatedDamage + getPercentageDamage;
+        } else {
+            reCalculatedDamage = reCalculatedDamage - getPercentageDamage;
+        }
+
+        for (Holder<Attribute> attributeHolder : attribute) {
+            System.out.println(attributeHolder.getRegisteredName());
         }
         return reCalculatedDamage;
     }

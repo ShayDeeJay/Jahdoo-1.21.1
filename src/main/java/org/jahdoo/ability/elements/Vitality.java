@@ -1,18 +1,19 @@
 package org.jahdoo.ability.elements;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
 import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
-
-import static org.jahdoo.particle.ParticleStore.*;
 
 public class Vitality extends AbstractElement {
     ResourceLocation abilityId = ModHelpers.res("vitality");
@@ -70,5 +71,20 @@ public class Vitality extends AbstractElement {
     @Override
     public Holder<MobEffect> elementEffect() {
         return EffectsRegister.VITALITY_EFFECT.getDelegate();
+    }
+
+    @Override
+    public Pair<String, Holder<Attribute>> getTypeCooldownReduction() {
+        return Pair.of(AttributesRegister.VITALITY_COOLDOWN_REDUCTION_PREFIX, AttributesRegister.VITALITY_COOLDOWN_REDUCTION);
+    }
+
+    @Override
+    public Pair<String, Holder<Attribute>> getTypeManaReduction() {
+        return Pair.of(AttributesRegister.VITALITY_MANA_COST_REDUCTION_PREFIX, AttributesRegister.VITALITY_MANA_COST_REDUCTION);
+    }
+
+    @Override
+    public Pair<String, Holder<Attribute>> getDamageTypeAmplifier() {
+        return Pair.of(AttributesRegister.VITALITY_MAGIC_DAMAGE_MULTIPLIER_PREFIX, AttributesRegister.VITALITY_MAGIC_DAMAGE_MULTIPLIER);
     }
 }

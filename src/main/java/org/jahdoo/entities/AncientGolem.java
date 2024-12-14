@@ -12,13 +12,13 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.player.Player;
@@ -33,19 +33,23 @@ import org.jahdoo.entities.goals.*;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
-import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.utils.ModHelpers;
+import org.jahdoo.registers.ItemsRegister;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
 
-public class AncientGolem extends IronGolem implements Tamable{
+public class AncientGolem extends IronGolem implements TamableEntity {
 
     LivingEntity owner;
     UUID ownerUUID;
-    public AncientGolem(EntityType<? extends IronGolem> entityType, Level level) {
+    public AnimationState smash = new AnimationState();
+    public AnimationState normal = new AnimationState();
+    public AnimationState jump = new AnimationState();
+
+
+    public AncientGolem(EntityType<? extends AncientGolem> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -63,32 +67,31 @@ public class AncientGolem extends IronGolem implements Tamable{
             .add(Attributes.STEP_HEIGHT, 1.0F);
     }
 
-
-
     @Override
     protected SoundEvent getDeathSound() {
-        var isRunning = this.getSpeed() > 0.25;
-        var volume = isRunning ? 2 : 1;
-        var pitch = isRunning ? 0.4f : 1.2f;
-        var pitch2 = isRunning ? 0.2f : 0.6f;
-        ModHelpers.getSoundWithPositionV(level(), this.position(), SoundEvents.VAULT_PLACE, volume, pitch);
-        ModHelpers.getSoundWithPositionV(level(), this.position(), SoundEvents.IRON_GOLEM_STEP, volume, pitch2);
+        this.playSound(SoundEvents.ELDER_GUARDIAN_HURT, 1, 0.8f);
+        this.playSound(SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 1, 0.8f);
         return SoundEvents.EMPTY;
     }
 
-
-
     @Override
     protected @NotNull SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        ModHelpers.getSoundWithPositionV(level(), this.position(), SoundEvents.ELDER_GUARDIAN_HURT, 1, 2f);
-        ModHelpers.getSoundWithPositionV(level(), this.position(), SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 1, 2f);
+        this.playSound(SoundEvents.ELDER_GUARDIAN_HURT, 1, 2f);
+        this.playSound(SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 1, 2f);
         return SoundEvents.EMPTY;
     }
 
     @Override
     protected void playAttackSound() {
-        ModHelpers.getSoundWithPositionV(level(), this.position(), SoundEvents.VAULT_PLACE, 1, 1.2f);
-        ModHelpers.getSoundWithPositionV(level(), this.position(), SoundEvents.IRON_GOLEM_STEP, 1, 0.6f);
+        this.playSound(SoundEvents.VAULT_PLACE, 1, 1.2f);
+        this.playSound(SoundEvents.IRON_GOLEM_STEP, 1, 0.6f);
+    }
+
+    @Override
+    protected @Nullable SoundEvent getAmbientSound() {
+        this.playSound(SoundEvents.ELDER_GUARDIAN_AMBIENT, 0.2f, 1.8f);
+        this.playSound(SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 0.2f, 2f);
+        return SoundEvents.EMPTY;
     }
 
     @Override
@@ -97,8 +100,8 @@ public class AncientGolem extends IronGolem implements Tamable{
         var volume = isRunning ? 2 : 1;
         var pitch = isRunning ? 0.4f : 1.2f;
         var pitch2 = isRunning ? 0.2f : 0.6f;
-        ModHelpers.getSoundWithPositionV(level(), this.position(), SoundEvents.VAULT_PLACE, volume, pitch);
-        ModHelpers.getSoundWithPositionV(level(), this.position(), SoundEvents.IRON_GOLEM_STEP, volume, pitch2);
+        this.playSound(SoundEvents.VAULT_PLACE, volume, pitch);
+        this.playSound(SoundEvents.IRON_GOLEM_STEP, volume, pitch2);
     }
 
     public void clientDiggingParticles(LivingEntity livingEntity, Level level) {
@@ -133,7 +136,7 @@ public class AncientGolem extends IronGolem implements Tamable{
 
     public boolean canDamageEntity(LivingEntity hitEntity, LivingEntity owner){
         if(owner != null) {
-            return hitEntity.getUUID() != owner.getUUID() && !(hitEntity instanceof Tamable tamable && tamable.getOwner() == owner);
+            return hitEntity.getUUID() != owner.getUUID() && !(hitEntity instanceof TamableEntity tamableEntity && tamableEntity.getOwner() == owner);
         }
         return true;
     }
@@ -154,17 +157,15 @@ public class AncientGolem extends IronGolem implements Tamable{
     }
 
     @Override
-    protected @Nullable SoundEvent getAmbientSound() {
-        ModHelpers.getSoundWithPosition(level(), this.blockPosition(), SoundEvents.ELDER_GUARDIAN_AMBIENT, 0.2f, 1.8f);
-        ModHelpers.getSoundWithPosition(level(), this.blockPosition(), SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 0.2f, 2f);
-        return SoundEvents.EMPTY;
-    }
-
-    @Override
     public void tick() {
         super.tick();
         if(!this.level().isClientSide) particle();
         reassignPlayer();
+        this.resetFallDistance();
+
+//        System.out.println(this.sonicBoomAnimationState.getAccumulatedTime());
+
+
     }
 
     private void particle(){
@@ -177,7 +178,7 @@ public class AncientGolem extends IronGolem implements Tamable{
 
             if (this.tickCount % (isRunning ? 1 : 4) == 0) {
                 var level = this.level();
-                var position = new Vec3(this.getRandomX(0.3), this.getRandomY() - 2, this.getRandomZ(0.3));
+                var position = new Vec3(this.getRandomX(1), this.getRandomY(), this.getRandomZ(1));
                 var directions = this.position().subtract(position).normalize();
                 float y = 1f;
                 ParticleHandlers.sendParticles(
@@ -191,9 +192,35 @@ public class AncientGolem extends IronGolem implements Tamable{
     }
 
     @Override
+    public void handleEntityEvent(byte id) {
+        if(id == 4){
+            this.normal.start(this.tickCount);
+       }
+        super.handleEntityEvent(id);
+    }
+
+    @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        System.out.println("im ere");
-        return super.mobInteract(player, hand);
+        var itemstack = player.getItemInHand(hand);
+
+        this.smash.start(this.tickCount);
+//        this.playSound(SoundRegister.DASH_EFFECT.get(), 1,1.8f);
+//        this.sonicBoomAnimationState.stop();
+        if (!itemstack.is(ItemsRegister.AUGMENT_HYPER_CORE)) {
+            return InteractionResult.PASS;
+        } else {
+            float f = this.getHealth();
+            this.heal(25.0F);
+            if (this.getHealth() == f) {
+                return InteractionResult.PASS;
+            } else {
+                float f1 = 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F;
+                this.playSound(SoundEvents.VAULT_PLACE, 2, 1.2f);
+                this.playSound(SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, f1, 0.7f);
+                itemstack.consume(1, player);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+        }
     }
 
     public boolean isEntityMoving() {
@@ -208,16 +235,15 @@ public class AncientGolem extends IronGolem implements Tamable{
     }
 
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.8F, true));
-        this.goalSelector.addGoal(5, new FollowGoal(this, 1.0D, 5.0F, 2.0F, false));
+        this.goalSelector.addGoal(1, new GenericMeleeAttackGoal(this, 1.8F, true));
+        this.goalSelector.addGoal(5, new FollowGoal(this, 1.0D, 5.0F, 8.0F, false));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new GenericHurtByTargetGoal(this));
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(2, new AttackNearbyMonsters<>(this, LivingEntity.class, true, 10, 30));
-        this.targetSelector.addGoal(3, (new GenericHurtByTargetGoal(this, (entity) -> entity == getOwner())).setAlertOthers());
     }
 
     @Override

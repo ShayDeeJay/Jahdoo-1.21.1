@@ -17,14 +17,13 @@ import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
-import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.registers.DamageTypeRegistry.JAHDOO_SOURCE;
+import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
 
 public class ElementalShooter extends DefaultEntityBehaviour {
     private int blockBounce;
@@ -52,8 +51,9 @@ public class ElementalShooter extends DefaultEntityBehaviour {
                 (LivingEntity) player,
                 (float) damage,
                 element,
-                AttributesRegister.MAGIC_DAMAGE_MULTIPLIER,
-                true
+                true,
+                MAGIC_DAMAGE_MULTIPLIER,
+                element.getDamageTypeAmplifier().getSecond()
             );
         }
     }

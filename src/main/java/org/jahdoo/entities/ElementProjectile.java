@@ -143,20 +143,16 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
 
     @Override
     protected void onHitEntity(EntityHitResult entityHitResult) {
-        Entity entity = entityHitResult.getEntity();
-        if(!(level() instanceof ServerLevel serverLevel)) return;
-        if(this.getOwner() != null) if (entity.getUUID() == this.getOwner().getUUID()) return;
-        if (getProjectile == null) return;
-        if(!(entity instanceof LivingEntity livingEntity) ) return;
+        var entity = entityHitResult.getEntity();
+        if(!(level() instanceof ServerLevel serverLevel) || getProjectile == null || !(entity instanceof LivingEntity livingEntity) ) return;
+        if(!DefaultEntityBehaviour.canDamageEntity(livingEntity, (LivingEntity) this.getOwner())) return;
         getProjectile.onEntityHit(livingEntity);
         ParticleHandlers.particleBurst(serverLevel, entityHitResult.getLocation(), 5, getProjectile.getElementType().getParticleGroup().baked());
     }
 
     @Override
     protected void onHitBlock(BlockHitResult blockHitResult) {
-        if(!(level() instanceof ServerLevel serverLevel)) return;
-        if (getProjectile == null) return;
-
+        if(!(level() instanceof ServerLevel serverLevel) || getProjectile == null) return;
         getProjectile.onBlockBlockHit(blockHitResult);
         if (!blockHitResult.isInside()) {
             var splashParticles = new BakedParticleOptions(this.getElementType().getTypeId(),5,2f, false);

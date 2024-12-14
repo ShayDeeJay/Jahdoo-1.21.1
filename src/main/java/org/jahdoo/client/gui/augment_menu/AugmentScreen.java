@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventoryFollowsMouse;
 import static org.jahdoo.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.client.IconLocations.*;
@@ -173,6 +174,7 @@ public class AugmentScreen extends Screen  {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.disableScissor();
         SharedUI.header(guiGraphics, this.width, this.height, itemStack, this.font);
+
     }
 
     @Override

@@ -12,8 +12,6 @@ import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.ability.AbilityBuilder;
 
-import static org.jahdoo.ability.AbilityBuilder.*;
-
 public class ArcaneShiftAbility extends AbilityRegistrar {
 
     public static final ResourceLocation abilityId = ModHelpers.res("arcane_shift");
@@ -63,7 +61,7 @@ public class ArcaneShiftAbility extends AbilityRegistrar {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.UNCOMMON;
+        return JahdooRarity.RARE;
     }
 
 }

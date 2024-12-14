@@ -2,7 +2,7 @@ package org.jahdoo.client.gui.block.modular_chaos_cube;
 
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
-import org.jahdoo.capabilities.player_abilities.ModularChaosCubeProperties;
+import org.jahdoo.attachments.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.networking.packet.client2server.ModularChaosCubeC2SPacket;
 import static org.jahdoo.registers.AttachmentRegister.MODULAR_CHAOS_CUBE;
 public class ModularChaosCubeData {
