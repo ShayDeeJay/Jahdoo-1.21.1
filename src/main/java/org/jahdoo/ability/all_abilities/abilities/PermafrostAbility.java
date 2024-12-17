@@ -24,9 +24,9 @@ public class PermafrostAbility extends AbilityRegistrar {
 
     @Override
     public void invokeAbility(Player player) {
-        Vec3 location = player.pick(40, 0,false).getLocation();
-        AoeCloud aoeCloud = new AoeCloud(player.level(), player, 0f, EntityPropertyRegister.ARCTIC_STORM.get().setAbilityId(), abilityId.getPath().intern());
-        aoeCloud.setPos(location.x, location.y, location.z);
+        var aoeCloud = new AoeCloud(player.level(), player, 0f, EntityPropertyRegister.ARCTIC_STORM.get().setAbilityId(), abilityId.getPath().intern());
+        var position = player.position();
+        aoeCloud.setPos(position.x, position.y, position.z);
         ModHelpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundRegister.ICE_ATTACH.get(), 1.2f, 0.6f);
         ModHelpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundRegister.MAGIC_EXPLOSION.get(), 0.4f, 0.8f);
         player.level().addFreshEntity(aoeCloud);
@@ -50,9 +50,8 @@ public class PermafrostAbility extends AbilityRegistrar {
 //            .setDamage(10, 1, 1)
             .setEffectDuration(300, 100, 50)
             .setEffectStrength(10, 5,1)
-            .setCastingDistance(30, 10, 5)
             .setLifetime(300, 100, 50)
-            .setAoe(4, 1, 1)
+            .setAoe(4, 2, 0.5)
             .build();
     }
 
@@ -63,7 +62,7 @@ public class PermafrostAbility extends AbilityRegistrar {
 
     @Override
     public int getCastType() {
-        return DISTANCE_CAST;
+        return AREA_CAST;
     }
 
     @Override

@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +28,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.components.WandData;
+import org.jahdoo.items.wand.WandSlotManager;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
@@ -38,6 +40,7 @@ import org.jahdoo.utils.PositionGetters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
@@ -114,6 +117,12 @@ public class WandBlock extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (!(level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock)) return ItemInteractionResult.FAIL;
+
+        if(!stack.isEmpty()){
+            System.out.println("imere");
+            return slotTesting(stack, wandBlock);
+        }
 
         if (player.getMainHandItem().isEmpty() && player.isShiftKeyDown()) {
             this.pickUpWand(player, pos, level);
@@ -133,6 +142,25 @@ public class WandBlock extends BaseEntityBlock {
                 int addSlotOrMax = Math.min(index, 10);
                 internalWand.update(WAND_DATA, WandData.DEFAULT, data -> data.insertNewSlot(addSlotOrMax));
                 return ItemInteractionResult.CONSUME;
+            }
+        }
+        return ItemInteractionResult.FAIL;
+    }
+
+    private static ItemInteractionResult slotTesting(ItemStack heldItem, WandBlockEntity wandBlock) {
+        ItemStack internalWand = wandBlock.getWandItemFromSlot();
+        var wandData = internalWand.get(WAND_DATA);
+        if (heldItem.getItem() == ItemsRegister.POWER_GEM.get()) {
+            if(wandData != null && !wandData.upgradeSlots().isEmpty()){
+                var temp = new ArrayList<>(wandData.upgradeSlots());
+                for (ItemStack itemStack : temp) {
+                    if(itemStack.isEmpty()){
+                        temp.remove(itemStack);
+                        temp.add(heldItem);
+                        WandSlotManager.updateUpgradeSlots(wandBlock.getWandItemFromSlot(), temp);
+                        return ItemInteractionResult.CONSUME;
+                    }
+                }
             }
         }
         return ItemInteractionResult.FAIL;

@@ -2,15 +2,15 @@
 	"format_version": "1.8.0",
 	"animations": {
 		"single_cast_1": {
-			"animation_length": 0.5,
+			"animation_length": 0.4583,
 			"bones": {
-				"bone": {
+				"core": {
 					"rotation": {
 						"0.2083": {
 							"vector": [0, 360, 0],
 							"easing": "easeInExpo"
 						},
-						"0.4583": {
+						"0.4167": {
 							"vector": [0, 0, 0],
 							"easing": "easeInExpo"
 						}
@@ -42,7 +42,7 @@
 							"vector": [0, 0, 0],
 							"easing": "linear"
 						},
-						"0.5": {
+						"0.4583": {
 							"vector": [1, 1, 1],
 							"easing": "linear"
 						}
@@ -53,7 +53,7 @@
 		"cant_cast": {
 			"animation_length": 0.5,
 			"bones": {
-				"bone6": {
+				"feedback": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0],

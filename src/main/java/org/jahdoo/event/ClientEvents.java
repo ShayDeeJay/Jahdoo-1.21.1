@@ -1,47 +1,32 @@
 package org.jahdoo.event;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.OutlineBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.event.entity.item.ItemEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.client.KeyBinding;
-import org.jahdoo.client.RenderHelpers;
 import org.jahdoo.client.SharedUI;
-import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.event.event_helpers.WandAbilitySelector;
+import org.jahdoo.items.wand.PowerGemTooltipRenderer;
 import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.registers.AbilityRegister;
-import org.jahdoo.registers.EffectsRegister;
-import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.ModHelpers;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector2ic;
+import org.jahdoo.registers.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +35,7 @@ import static org.jahdoo.event.event_helpers.KeyBindHelper.*;
 import static org.jahdoo.event.event_helpers.OverlayEvent.crosshairManager;
 import static org.jahdoo.event.event_helpers.OverlayEvent.simpleGui;
 import static org.jahdoo.event.event_helpers.RenderEventHelper.*;
+import static org.jahdoo.items.wand.WandItemHelper.getAllSlots;
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
@@ -76,7 +62,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void entityRenderer(RenderLivingEvent.Pre event) {
         var entity = event.getEntity();
-        var effect = EffectsRegister.ARCANE_EFFECT;
+        var effect = EffectsRegister.MYSTIC_EFFECT;
         var putEffect = entity.getEffect(effect);
         if(putEffect != null){
             var height = entity.getBbHeight() / 2;
@@ -87,35 +73,34 @@ public class ClientEvents {
             pos.rotateAround(Axis.YN.rotationDegrees(anim), 0, height, 0);
             pos.rotateAround(Axis.ZN.rotationDegrees(anim), 0, height, 0);
             if(putEffect.getDuration() == 0) entity.removeEffect(effect);
-        }
+        } else {
 
+            var player = Minecraft.getInstance().player;
+            if(player != null && getEntityPlayerIsLookingAt(player, 30) == entity){
 
-        var player = Minecraft.getInstance().player;
-        if(player != null && getEntityPlayerIsLookingAt(player, 30) == entity){
-
-            var pose = event.getPoseStack();
-            var buffer = event.getMultiBufferSource();
-            var light = 255;
-
-            pose.pushPose();
-            pose.translate(0, 0, 0);
-//            pose.rotateAround(Axis.YP.rotationDegrees(90), 0, 0, 0);
+                var pose = event.getPoseStack();
+                var buffer = event.getMultiBufferSource();
+                var scale = Math.sin((entity.tickCount + event.getPartialTick()) / 5.0F) * 0.08F + 0.4;
+                pose.pushPose();
+                pose.translate(0, 0, 0);
 //            pose.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+//            pose.rotateAround(Axis.XN.rotationDegrees(90), 0,0,0);
+//            pose.rotateAround(Axis.YP.rotationDegrees(90), 0, 0, 0);
             pose.rotateAround(Axis.YP.rotationDegrees(entity.tickCount + event.getPartialTick()), 0, 0, 0);
-//        pose.rotateAround(Axis.ZN.rotationDegrees(90), 0,0,0);
-//        pose.rotateAround(Axis.XN.rotationDegrees(90), 0,0,0);
+//            pose.rotateAround(Axis.ZN.rotationDegrees((float) scale), 0,0,0);
+//            pose.rotateAround(Axis.XP.rotationDegrees(entity.yBodyRotO + 90), 0,0,0);
 
-//        pose.rotateAround(Axis.XP.rotationDegrees(entity.yBodyRotO + 90), 0,0,0);
-
-            var width = Math.max(entity.getBbWidth() - 0.3f, 1);
-            var scale = Math.sin((entity.tickCount + event.getPartialTick()) / 15.0F) * 0.1F + width;
-
-
-            System.out.println(scale);
-            drawSlash(pose.last(), buffer, light, (float) scale, ModHelpers.res("textures/entity/magic_circle_2.png"));
-            pose.popPose();
+//            drawSlash(pose.last(), buffer, FULL_BRIGHT, (float) scale + 0.4f, ModHelpers.res("textures/gui/gui_button_power_off.png"));
+//            drawSlash(pose.last(), buffer, FULL_BRIGHT, entity.getBbWidth() + (float) scale - 0.4f, ModHelpers.res("textures/entity/magic_circle_2.png"));
+//                drawSlash(pose.last(), buffer, FULL_BRIGHT, entity.getBbWidth() + (float) scale + 0.4f, ModHelpers.res("textures/entity/shield.png"));
+                pose.popPose();
+            }
         }
+
+
     }
+
+
 
     public static Entity getEntityPlayerIsLookingAt(Player player, double maxDistance) {
         var eyePosition = player.getEyePosition(1.0F);
@@ -146,61 +131,26 @@ public class ClientEvents {
         return closestEntity;
     }
 
-    public static void drawSlash(PoseStack.Pose pose, MultiBufferSource bufferSource, int light, float width, ResourceLocation resourceLocation) {
-        Matrix4f poseMatrix = pose.pose();
-
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(resourceLocation));
-        float halfWidth = width;
-        //old color: 125, 0, 10
-        float y = 0.01f;
-        var player = Minecraft.getInstance().player;
-        if(player != null){
-            var wand = player.getMainHandItem();
-            if(wand.getItem() instanceof WandItem){
-                var element = ElementRegistry.getElementByWandType(wand.getItem());
-                if(!element.isEmpty()){
-                    var elementColour = element.getFirst().particleColourPrimary();
-                    consumer.addVertex(poseMatrix, -halfWidth, y, -halfWidth).setColor(elementColour).setUv(0f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
-                    consumer.addVertex(poseMatrix, halfWidth, y, -halfWidth).setColor(elementColour).setUv(1f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
-                    consumer.addVertex(poseMatrix, halfWidth, y, halfWidth).setColor(elementColour).setUv(1f, 0f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
-                    consumer.addVertex(poseMatrix, -halfWidth, y, halfWidth).setColor(elementColour).setUv(0f, 0f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
-                }
-            }
-        }
-
-    }
-
     @SubscribeEvent
-    public static void tooltipEvent(RenderTooltipEvent.Pre event){
-//        var graphics = event.getGraphics();
-//        var player = Minecraft.getInstance().player;
-//        var i = 0;
-//        var components = event.getComponents();
-//        var j = components.size() == 1 ? -2 : 0;
-//
-//        for (ClientTooltipComponent clienttooltipcomponent : components) {
-//            int k = clienttooltipcomponent.getWidth(event.getFont());
-//            if (k > i) {
-//                i = k;
-//            }
-//
-//            j += clienttooltipcomponent.getHeight();
-//        }
-
-//        int i2 = i;
-//        int j2 = j;
-//        var position = event.getTooltipPositioner().positionTooltip(event.getScreenWidth(), event.getScreenHeight(), event.getX(), event.getY(), i2, j2);
-//        System.out.println(event.);
-//        SharedUI.renderItem(graphics, position.x(), position.y(), player, event.getItemStack(), Minecraft.getInstance().getTimer().getRealtimeDeltaTicks(), 20);
+    public static void tooltipEvent(RenderTooltipEvent.GatherComponents e){
+        var current = e.getTooltipElements();
+        var allSlots = getAllSlots(e.getItemStack());
+        if(allSlots.isEmpty()) return;
+        var powerGemSockets = new PowerGemTooltipRenderer.SocketComponent(e.getItemStack(), allSlots);
+        e.getTooltipElements().add(current.size(), Either.right(powerGemSockets));
     }
 
     @SubscribeEvent
     public static void PlayerRenderer(RenderLevelStageEvent event) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) return;
+
         var player = (Player) event.getCamera().getEntity();
         var stack = player.getMainHandItem();
+
         renderUtilityOverlay(event, player, stack);
         renderTeleportLocationOverlay(event, player, stack);
         lockNearbyTarget(event);
+        renderAbilityOverlay(event,stack, player);
     }
 
     @SubscribeEvent

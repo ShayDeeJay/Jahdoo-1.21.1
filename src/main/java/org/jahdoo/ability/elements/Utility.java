@@ -68,7 +68,7 @@ public class Utility extends AbstractElement {
 
     @Override
     public Holder<MobEffect> elementEffect() {
-        return EffectsRegister.ARCANE_EFFECT.getDelegate();
+        return EffectsRegister.MYSTIC_EFFECT.getDelegate();
     }
 
     @Override

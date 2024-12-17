@@ -1,10 +1,12 @@
 package org.jahdoo.event.event_helpers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,15 +20,22 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.jahdoo.ability.all_abilities.abilities.ArcaneShiftAbility;
+import org.jahdoo.ability.all_abilities.abilities.FrostboltsAbility;
 import org.jahdoo.client.RenderHelpers;
 import org.jahdoo.items.wand.WandItem;
+import org.jahdoo.registers.AbilityRegister;
+import org.jahdoo.registers.AttachmentRegister;
+import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.Config;
 import org.jahdoo.utils.ModHelpers;
 
 import java.awt.*;
+import java.util.List;
 import java.util.Objects;
 
+import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.client.RenderHelpers.drawTexture;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class RenderEventHelper {
@@ -120,6 +129,46 @@ public class RenderEventHelper {
         matrix.popPose();
         matrix.popPose();
     }
+
+
+    public static void renderAbilityOverlay(RenderLevelStageEvent event, ItemStack stack, Player player) {
+        var getSelectedAbility = stack.get(WAND_DATA);
+        if(getSelectedAbility == null) return;
+        var filtered = List.of(
+            ArcaneShiftAbility.abilityId.getPath().intern(),
+            FrostboltsAbility.abilityId.getPath().intern()
+        );
+
+        var typeId = getSelectedAbility.selectedAbility();
+        var ability = AbilityRegister.getFirstSpellByTypeId(typeId);
+        var view = event.getCamera().getPosition();
+        var pose = event.getPoseStack();
+        var buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+        if(ability.isEmpty() || filtered.contains(typeId) || player.getData(AttachmentRegister.CASTER_DATA.get()).isAbilityOnCooldown(typeId)) return;
+
+        var pickDistance = ModHelpers.getTag(player, CASTING_DISTANCE, typeId);
+        var radius = ModHelpers.getTag(player, AOE, typeId) * 3;
+        var scale = Math.sin((event.getRenderTick() + event.getPartialTick().getRealtimeDeltaTicks()) / 4.0F) * 0.5F + radius;
+        var pick = player.pick(pickDistance, event.getPartialTick().getGameTimeDeltaTicks(), false);
+        var item = stack.getItem();
+        var isWand = item instanceof WandItem;
+        var hitSurface = pick.getType() != HitResult.Type.MISS;
+        var elementByWandType = ElementRegistry.getElementByWandType(item);
+        if (!isWand || !hitSurface || elementByWandType.isEmpty()) return;
+
+        var colour = elementByWandType.getFirst().particleColourSecondary();
+        pose.pushPose();
+        pose.translate(-view.x(), -view.y(), -view.z());
+        pose.pushPose();
+        pose.translate(pick.getLocation().x, pick.getLocation().y, pick.getLocation().z);
+        pose.translate(0, 0.12f, 0);
+        pose.rotateAround(Axis.YP.rotationDegrees(event.getRenderTick() + event.getPartialTick().getRealtimeDeltaTicks()), 0, 0, 0);
+        drawTexture(pose.last(), buffer, FULL_BRIGHT, (float) scale-1, ModHelpers.res("textures/entity/shield.png"), FastColor.ARGB32.color(155, colour));
+        drawTexture(pose.last(), buffer, FULL_BRIGHT, (float) scale, ModHelpers.res("textures/entity/target.png"), FastColor.ARGB32.color(155, colour));
+        pose.popPose();
+        pose.popPose();
+    }
+
 
     public static void lockNearbyTarget(RenderLevelStageEvent event) {
         if(!Config.LOCK_ON_TARGET.get()) return;

@@ -57,11 +57,11 @@ public class SharedUI {
 
     public static void renderItem(@NotNull GuiGraphics guiGraphics, double width, double height, Player player, ItemStack itemStack, float partialTicks, float scale) {
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(width, height, 1000);
+        guiGraphics.pose().translate(width, height, 400);
         guiGraphics.pose().scale(scale, scale, -scale);
 
-        guiGraphics.pose().rotateAround(Axis.YP.rotationDegrees(player.tickCount + partialTicks), 0,0,0); // Horizontal rotation
-        guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(180), 0,0,0); // Horizontal rotation
+//        guiGraphics.pose().rotateAround(Axis.YP.rotationDegrees(-5), 0,0,0); // Horizontal rotation
+        guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(45), 0,0,0); // Horizontal rotation
 
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
@@ -77,7 +77,7 @@ public class SharedUI {
         );
 
         guiGraphics.pose().popPose();
-        Lighting.setupFor3DItems();
+        Lighting.setupForFlatItems();
     }
 
     public static void renderItem(@NotNull GuiGraphics guiGraphics, double width, double height, ItemStack itemStack, float scale, float mouseX, float mouseY, float rotationSpeed) {

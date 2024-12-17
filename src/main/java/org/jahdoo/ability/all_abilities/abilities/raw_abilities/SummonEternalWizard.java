@@ -18,7 +18,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.all_abilities.abilities.SummonEternalWizardAbility;
-import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.entities.EternalWizard;
 import org.jahdoo.particle.ParticleHandlers;

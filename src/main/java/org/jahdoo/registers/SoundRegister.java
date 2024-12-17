@@ -16,6 +16,7 @@ public class SoundRegister {
     }
     
     public static final DeferredHolder<SoundEvent, SoundEvent> DASH_EFFECT = registerSoundEvent("dash_effect");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DASH_EFFECT_INSTANT = registerSoundEvent("dash_effect_instant");
     public static final DeferredHolder<SoundEvent, SoundEvent> ORB_CREATE = registerSoundEvent("orb_create");
     public static final DeferredHolder<SoundEvent, SoundEvent> ORB_FIRE = registerSoundEvent("orb_fire");
     public static final DeferredHolder<SoundEvent, SoundEvent> ICE_EXPLOSION = registerSoundEvent("ice_explosion");

@@ -22,7 +22,7 @@ public class FireEffect extends MobEffect {
         if(targetEntity.level() instanceof ServerLevel serverLevel){
             int getRandomChance = ModHelpers.Random.nextInt(0,Math.max((20-pAmplifier), 1));
             if(getRandomChance == 0) {
-                DamageUtil.damageWithJahdoo(targetEntity, null, pAmplifier);
+                DamageUtil.damageWithJahdoo(targetEntity, pAmplifier);
             }
             EffectParticles.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementRegistry.INFERNO.get(), SoundEvents.PLAYER_HURT_ON_FIRE);
         }

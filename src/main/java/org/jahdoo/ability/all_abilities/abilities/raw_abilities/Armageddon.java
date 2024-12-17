@@ -7,8 +7,8 @@ import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.all_abilities.abilities.ArmageddonAbility;
 import org.jahdoo.ability.all_abilities.ability_components.ArmageddonModule;
-import org.jahdoo.components.AbilityHolder;
-import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.components.ability_holder.AbilityHolder;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.ElementRegistry;
@@ -66,7 +66,7 @@ public class Armageddon extends DefaultEntityBehaviour {
     @Override
     public void onTickMethod() {
         if(aoeCloud.tickCount == 1) {
-            PositionGetters.getOuterRingOfRadiusRandom(this.aoeCloud.position(), this.aoe, 200, this::setParticleNova);
+//            PositionGetters.getOuterRingOfRadiusRandom(this.aoeCloud.position(), this.aoe, 200, this::setParticleNova);
             this.createModules();
         }
 
@@ -78,8 +78,8 @@ public class Armageddon extends DefaultEntityBehaviour {
     }
 
     private void createModules(){
-        var getPositionInRadius = PositionGetters.getInnerRingOfRadiusRandom(aoeCloud.position(), aoe + 2, 100);
-        this.createModule(getPositionInRadius.get(ModHelpers.Random.nextInt(0, getPositionInRadius.size()-1)));
+        var getPositionInRadius = PositionGetters.getInnerRingOfRadiusRandom(aoeCloud.position(), this.aoeCloud.getRadius() * 2, 100);
+        this.createModule(getPositionInRadius.get(ModHelpers.Random.nextInt(0, getPositionInRadius.size())));
     }
 
     @Override
@@ -88,7 +88,7 @@ public class Armageddon extends DefaultEntityBehaviour {
     }
 
     public AbilityHolder setAbilityModifiers(String name, double value){
-        AbilityHolder.AbilityModifiers abilityModifiers = new AbilityHolder.AbilityModifiers(value, 0,0,0,value,true);
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(value, 0,0,0,value,true);
         return new AbilityHolder(Map.of(name, abilityModifiers));
     }
 
@@ -149,7 +149,7 @@ public class Armageddon extends DefaultEntityBehaviour {
         return ElementRegistry.INFERNO.get();
     }
 
-    ResourceLocation abilityId = ModHelpers.res("armageddon_property");
+    public static ResourceLocation abilityId = ModHelpers.res("armageddon_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

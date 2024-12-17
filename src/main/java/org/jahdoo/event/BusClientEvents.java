@@ -1,15 +1,11 @@
 package org.jahdoo.event;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.IronGolemRenderer;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.client.event.*;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.client.KeyBinding;
 import org.jahdoo.client.block_renderer.*;
@@ -25,12 +21,24 @@ import org.jahdoo.client.gui.block.infusion_table.InfusionTableScreen;
 import org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeScreen;
 import org.jahdoo.client.gui.block.wand_block.WandBlockScreen;
 import org.jahdoo.client.gui.block.wand_manager_table.WandManagerScreen;
+import org.jahdoo.items.wand.PowerGemTooltipRenderer;
 import org.jahdoo.particle.GenericParticle;
 import org.jahdoo.registers.*;
 
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class BusClientEvents {
+
+    @SubscribeEvent
+    public static void registerItemColour(final RegisterColorHandlersEvent.Item event){
+        event.register((stack, color) -> getColour(stack), ItemsRegister.POWER_GEM.get());
+    }
+
+    public static int getColour(ItemStack stack){
+        var colour = stack.get(DataComponentRegistry.POWER_GEM_DATA.get());
+        if(colour != null) return colour.colour();
+        return -1;
+    }
 
     @SubscribeEvent
     public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
@@ -87,6 +95,11 @@ public class BusClientEvents {
         event.register(KeyBinding.WAND_SLOT_8A);
         event.register(KeyBinding.WAND_SLOT_9A);
         event.register(KeyBinding.WAND_SLOT_10A);
+    }
+
+    @SubscribeEvent
+    public static void tooltipEvent(RegisterClientTooltipComponentFactoriesEvent event){
+        event.register(PowerGemTooltipRenderer.SocketComponent.class, PowerGemTooltipRenderer::new);
     }
 
     @SubscribeEvent

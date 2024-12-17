@@ -15,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.all_abilities.abilities.VitalRejuvenationAbility;
 import org.jahdoo.attachments.AbstractHoldUseAttachment;
 import org.jahdoo.components.DataComponentHelper;
-import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.items.wand.CastHelper;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.DataComponentRegistry;

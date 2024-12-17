@@ -24,9 +24,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.client.SharedUI;
-import org.jahdoo.components.AbilityHolder;
-import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.components.ability_holder.AbilityHolder;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
@@ -278,9 +277,6 @@ public class ModHelpers {
             reCalculatedDamage = reCalculatedDamage - getPercentageDamage;
         }
 
-        for (Holder<Attribute> attributeHolder : attribute) {
-            System.out.println(attributeHolder.getRegisteredName());
-        }
         return reCalculatedDamage;
     }
 

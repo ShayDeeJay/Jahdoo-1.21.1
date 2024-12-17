@@ -1,39 +1,25 @@
 package org.jahdoo.loot;
 
 import com.google.common.base.Suppliers;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
-import org.jahdoo.ability.JahdooRarity;
-import org.jahdoo.components.WandData;
 import org.jahdoo.items.augments.Augment;
-import org.jahdoo.items.augments.AugmentItemHelper;
-import org.jahdoo.items.curious_items.TomeOfUnity;
+import org.jahdoo.items.TomeOfUnity;
 import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.items.wand.WandSlotManager;
-import org.jahdoo.registers.AttributesRegister;
-import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
-import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.function.Supplier;
 
 import static org.jahdoo.ability.JahdooRarity.*;
-import static org.jahdoo.registers.AttributesRegister.*;
-import static org.jahdoo.utils.ModHelpers.Random;
-import static org.jahdoo.utils.ModHelpers.singleFormattedDouble;
 
 public class AddItemModifier extends LootModifier {
     public static final Supplier<MapCodec<AddItemModifier>> CODEC = Suppliers.memoize(

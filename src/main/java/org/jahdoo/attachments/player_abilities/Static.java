@@ -8,7 +8,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jahdoo.attachments.AbstractAttachment;
-import org.jahdoo.components.AbilityHolder;
+import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.all_abilities.abilities.StaticAbility;
 import org.jahdoo.entities.EternalWizard;

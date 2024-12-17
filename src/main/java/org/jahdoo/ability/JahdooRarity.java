@@ -113,13 +113,12 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
 
     public static ItemStack setGeneratedWand(JahdooRarity rarity, Item item){
         var itemStack = new ItemStack(item);
-
         switch (rarity){
-            case COMMON -> createWandAttributes(COMMON, itemStack, 2, 4, false, 0, Pair.of(0.0,5.0), Pair.of(0.0,10.0), Pair.of(0.0, 5.0));
-            case RARE -> createWandAttributes(RARE, itemStack, 2, 4, false, 0, Pair.of(0.0,5.0), Pair.of(0.0,10.0), Pair.of(4.0, 8.0));
-            case EPIC -> createWandAttributes(EPIC, itemStack, 2, 6, false, 0, Pair.of(2.0,6.0), Pair.of(5.0, 10.0), Pair.of(4.0, 8.0));
-            case LEGENDARY -> createWandAttributes(LEGENDARY, itemStack, 2, 7, false, 0, Pair.of(2.0, 6.0), Pair.of(10.0, 15.0), Pair.of(10.0, 15.0));
-            case ETERNAL -> createWandAttributes(ETERNAL, itemStack, 4, 8, true, 10, Pair.of(5.0, 10.0), Pair.of(15.0, 20.0), Pair.of(15.0, 25.0));
+            case COMMON -> createWandAttributes(COMMON, itemStack, Random.nextInt(1, 2), 3, false, 0, Pair.of(0.0,5.0), Pair.of(0.0,10.0), Pair.of(0.0, 5.0));
+            case RARE -> createWandAttributes(RARE, itemStack, Random.nextInt(1, 3), Random.nextInt(4, 7), false, 0, Pair.of(0.0,5.0), Pair.of(0.0,10.0), Pair.of(4.0, 8.0));
+            case EPIC -> createWandAttributes(EPIC, itemStack, Random.nextInt(1, 3), Random.nextInt(5, 8), false, 0, Pair.of(2.0,6.0), Pair.of(5.0, 10.0), Pair.of(4.0, 8.0));
+            case LEGENDARY -> createWandAttributes(LEGENDARY, itemStack, Random.nextInt(1, 4),Random.nextInt(6, 9), false, 0, Pair.of(2.0, 6.0), Pair.of(10.0, 15.0), Pair.of(10.0, 15.0));
+            case ETERNAL -> createWandAttributes(ETERNAL, itemStack, Random.nextInt(2, 5),Random.nextInt(8, 11), true, 10, Pair.of(5.0, 10.0), Pair.of(15.0, 20.0), Pair.of(15.0, 25.0));
         }
         return itemStack;
     }
@@ -127,7 +126,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
 
     public static ItemStack setGeneratedTome(JahdooRarity rarity, Item item){
         var itemStack = new ItemStack(item);
-
         switch (rarity){
             case COMMON -> createTomeAttributes(COMMON, itemStack, Pair.of(5.0, 10.0), Pair.of(20.0, 40.0));
             case RARE -> createTomeAttributes(RARE, itemStack, Pair.of(10.0, 20.0), Pair.of(40.0, 60.0));
@@ -160,7 +158,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
                 }
             }
 
-            itemStack.update(DataComponentRegistry.WAND_DATA.get(), WandData.DEFAULT, wandData -> wandData.insertNewSlots(abilitySlots));
+            itemStack.update(DataComponentRegistry.WAND_DATA.get(), WandData.DEFAULT, wandData -> wandData.insertNewAbilitySlots(abilitySlots));
             itemStack.set(DataComponentRegistry.JAHDOO_RARITY.get(), rarity.getId());
             //0-5 basic;
             replaceOrAddAttribute(itemStack, element.getFirst().getTypeCooldownReduction().getFirst(), element.getFirst().getTypeCooldownReduction().getSecond(), Random.nextDouble(cooldownRange.getFirst(), cooldownRange.getSecond()), EquipmentSlot.MAINHAND);

@@ -15,8 +15,6 @@ import software.bernie.geckolib.util.Color;
 
 import javax.annotation.Nullable;
 
-import static org.jahdoo.entities.ProjectileAnimations.SEMTEX;
-
 public class ElementProjectileRenderer extends GeoEntityRenderer<ElementProjectile> {
     public ElementProjectileRenderer(EntityRendererProvider.Context renderManager, ResourceLocation resourceLocation) {
         super(renderManager, new ElementProjectileModel(resourceLocation));

@@ -13,6 +13,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ability.effects.custom_effects.*;
 import org.jahdoo.ability.effects.custom_effects.type_effects.*;
+import org.jahdoo.ability.effects.custom_effects.type_effects.mystic_effect.MysticEffect;
 
 public class EffectsRegister {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, JahdooMod.MOD_ID);
@@ -35,13 +36,13 @@ public class EffectsRegister {
     public static final DeferredHolder<MobEffect, MobEffect> STUN_EFFECT = MOB_EFFECTS.register("stun_effect",
         () -> new StunEffect(MobEffectCategory.HARMFUL, 3436524)
     );
-    public static final DeferredHolder<MobEffect, MobEffect> ICE_EFFECT = MOB_EFFECTS.register("ice_effect",
-        () -> new IceEffect(MobEffectCategory.HARMFUL, 3436524)
+    public static final DeferredHolder<MobEffect, MobEffect> ICE_EFFECT = MOB_EFFECTS.register("frost_effect",
+        () -> new FrostEffect(MobEffectCategory.HARMFUL, 3436524).addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.withDefaultNamespace("frost.speed"), -0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
     );
-    public static final DeferredHolder<MobEffect, MobEffect> ARCANE_EFFECT = MOB_EFFECTS.register("mystic_damage",
-        () -> new ArcaneEffect(MobEffectCategory.HARMFUL, 3436524)
+    public static final DeferredHolder<MobEffect, MobEffect> MYSTIC_EFFECT = MOB_EFFECTS.register("mystic_effect",
+        () -> new MysticEffect(MobEffectCategory.HARMFUL, 3436524)
     );
-    public static final DeferredHolder<MobEffect, MobEffect> FIRE_EFFECT = MOB_EFFECTS.register("fire_damage",
+    public static final DeferredHolder<MobEffect, MobEffect> INFERNO_EFFECT = MOB_EFFECTS.register("inferno_effect",
         () -> new FireEffect(MobEffectCategory.HARMFUL, 3436524)
     );
     public static final DeferredHolder<MobEffect, MobEffect> LIGHTNING_EFFECT = MOB_EFFECTS.register("lightning_effect",

@@ -5,13 +5,11 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.block.AbstractBEInventory;
-import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.block.augment_modification_station.AugmentModificationEntity;
-import org.jahdoo.components.AbilityHolder;
-import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.components.ability_holder.AbilityHolder;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.networking.packet.client2server.SyncComponentBlockC2S;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.ModHelpers;
 
 import java.util.HashMap;
 import java.util.function.Consumer;

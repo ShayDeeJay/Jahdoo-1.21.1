@@ -27,7 +27,7 @@ import org.jahdoo.ability.AbilityBuilder;
 import org.jahdoo.ability.all_abilities.abilities.FireballAbility;
 import org.jahdoo.ability.all_abilities.abilities.FrostboltsAbility;
 import org.jahdoo.ability.all_abilities.ability_components.EtherealArrow;
-import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.goals.*;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.items.wand.WandItemHelper;

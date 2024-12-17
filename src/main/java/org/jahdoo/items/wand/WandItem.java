@@ -1,7 +1,5 @@
 package org.jahdoo.items.wand;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -14,7 +12,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
-import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.components.WandData;
 import org.jahdoo.entities.AncientGolem;
 import org.jahdoo.particle.ParticleHandlers;
@@ -63,7 +60,7 @@ public class WandItem extends BlockItem implements GeoItem {
     public static Properties wandProperties(){
         Properties properties = new Properties();
         properties.stacksTo(1);
-        properties.component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(),WandAbilityHolder.DEFAULT);
+        properties.component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT);
         properties.component(WAND_DATA.get(), WandData.DEFAULT);
         properties.fireResistant();
         return properties;
@@ -169,6 +166,7 @@ public class WandItem extends BlockItem implements GeoItem {
 //            ModHelpers.playDebugMessage(player, "                  ");
 //        }
 
+
         if(level instanceof ServerLevel serverLevel){
 //            var zombo = new CustomZombie(serverLevel, null);
 //            zombo.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE.asItem()));
@@ -185,13 +183,9 @@ public class WandItem extends BlockItem implements GeoItem {
 //            serverLevel.addFreshEntity(zombo);
         }
 
-        if(player.level() instanceof ClientLevel){
-            Minecraft.getInstance().gui.setSubtitle(Component.literal("Welcome To Jahdoo"));
-        }
-
-        var item = player.getMainHandItem();
-        player.startUsingItem(player.getUsedItemHand());
+//        player.startUsingItem(player.getUsedItemHand());
         if (interactionHand == InteractionHand.MAIN_HAND) {
+            var item = player.getMainHandItem();
             CastHelper.use(player);
             return InteractionResultHolder.pass(item);
         }

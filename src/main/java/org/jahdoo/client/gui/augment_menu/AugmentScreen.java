@@ -11,12 +11,10 @@ import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.ToggleComponent;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityIconButton;
 import org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeScreen;
-import org.jahdoo.components.AbilityHolder;
-import org.jahdoo.components.DataComponentHelper;
-import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.components.ability_holder.AbilityHolder;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.networking.packet.client2server.SyncComponentBlockC2S;
 import org.jahdoo.networking.packet.client2server.SyncComponentC2S;
-import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.utils.ModHelpers;
 
 import javax.annotation.Nullable;
@@ -26,7 +24,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventoryFollowsMouse;
 import static org.jahdoo.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.client.IconLocations.*;

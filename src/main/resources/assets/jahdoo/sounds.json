@@ -5,6 +5,12 @@
       "jahdoo:dash_effect"
     ]
   },
+  "dash_effect_instant": {
+    "subtitles": "sounds.jahdoo.dash_effect_instant",
+    "sounds": [
+      "jahdoo:dash_effect_instant"
+    ]
+  },
   "orb_create": {
     "subtitles": "sounds.jahdoo.orb_create",
     "sounds": [

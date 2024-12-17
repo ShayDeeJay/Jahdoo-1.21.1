@@ -1,12 +1,10 @@
 package org.jahdoo.ability;
 
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.JahdooMod;
-import org.jahdoo.components.AbilityHolder;
-import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.components.ability_holder.AbilityHolder;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.utils.ModHelpers;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

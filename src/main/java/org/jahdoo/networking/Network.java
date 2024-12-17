@@ -35,6 +35,7 @@ public class Network {
         payloadRegistrar.playToClient(PlayClientSoundSyncS2CPacket.TYPE, PlayClientSoundSyncS2CPacket.STREAM_CODEC, PlayClientSoundSyncS2CPacket::handle);
         payloadRegistrar.playToClient(EffectSyncS2CPacket.TYPE, EffectSyncS2CPacket.STREAM_CODEC, EffectSyncS2CPacket::handle);
         payloadRegistrar.playToClient(EnchantedBlockS2C.TYPE, EnchantedBlockS2C.STREAM_CODEC, EnchantedBlockS2C::handle);
+        payloadRegistrar.playToClient(MoveClientEntitySyncS2CPacket.TYPE, MoveClientEntitySyncS2CPacket.STREAM_CODEC, MoveClientEntitySyncS2CPacket::handle);
     }
 
 }

@@ -50,7 +50,7 @@ public class ArmageddonAbility extends AbilityRegistrar {
             .setDamage(40, 20, 5)
             .setCastingDistance(30, 10, 5)
             .setLifetime(400, 200, 40)
-            .setAoe(6,1,1)
+            .setAoe(6,4,0.5)
             .setAbilityTagModifiersRandom(SPAWNING_SPEED, 30,5, false, 5)
             .build();
     }

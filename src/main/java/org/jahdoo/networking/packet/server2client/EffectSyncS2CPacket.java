@@ -47,7 +47,7 @@ public class EffectSyncS2CPacket implements CustomPacketPayload {
                     if(level != null) {
                         var entity = level.getEntity(id);
                         if(entity instanceof LivingEntity livingEntity) {
-                            livingEntity.addEffect(new CustomMobEffect(EffectsRegister.ARCANE_EFFECT, duration, amp));
+                            livingEntity.addEffect(new CustomMobEffect(EffectsRegister.MYSTIC_EFFECT, duration, amp));
                         }
                     }
                 }

@@ -61,7 +61,7 @@ public class AncientGolemModel<T extends AncientGolem> extends HierarchicalModel
         var10000 = this.body;
         var10000.yRot += 0.115F * f1 ;
         var10000 = this.rightArm;
-        var10000.xRot += 0.425F * f1;
+        var10000.xRot += 0.225F * f1;
         var10000.zRot  = 0.125F ;
         var10000 = this.leftArm;
         var10000.xRot += -0.125F * f1;
@@ -84,8 +84,8 @@ public class AncientGolemModel<T extends AncientGolem> extends HierarchicalModel
         this.body.zRot = 0.1F * f3 * f;
         this.body.xRot = 0.1F * f2 * f4;
 
-        this.rightLeg.xRot = -1.5F * Mth.triangleWave(limbSwing, 13.0F) * limbSwingAmount;
-        this.leftLeg.xRot = 1.5F * Mth.triangleWave(limbSwing, 13.0F) * limbSwingAmount;
+        this.rightLeg.xRot = -1.8F * Mth.triangleWave(limbSwing, 13.0F) * limbSwingAmount;
+        this.leftLeg.xRot = 1.8F * Mth.triangleWave(limbSwing, 13.0F) * limbSwingAmount;
 
         this.leftArm.xRot = -(1.3f * f2 * f) * (limbSwingAmount > 0.8 ? 1.5f : limbSwingAmount);
         this.leftArm.zRot = 0.0F;
@@ -99,10 +99,10 @@ public class AncientGolemModel<T extends AncientGolem> extends HierarchicalModel
         this.leftArm.setPos(0, -6f, -1.5F);
         this.rightArm.setPos(0,  -6F, -1.5f);
 
-        this.rightLeg.z = 0f;
+        this.rightLeg.z = -2f;
         this.rightLeg.yRot = 0.2f;
 
-        this.leftLeg.z = -4f;
+        this.leftLeg.z = -2f;
         this.leftLeg.yRot = -0.2f;
 
         this.body.z = -1f;

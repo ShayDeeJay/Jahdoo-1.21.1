@@ -1,6 +1,6 @@
 package org.jahdoo.ability;
 
-import org.jahdoo.components.WandAbilityHolder;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.utils.ModHelpers;
 
 public abstract class AbstractAbility {
