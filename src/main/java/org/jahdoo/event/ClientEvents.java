@@ -1,35 +1,19 @@
 package org.jahdoo.event;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.event.entity.item.ItemEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.client.KeyBinding;
-import org.jahdoo.client.SharedUI;
 import org.jahdoo.event.event_helpers.WandAbilitySelector;
-import org.jahdoo.items.wand.PowerGemTooltipRenderer;
-import org.jahdoo.items.wand.WandItem;
+import org.jahdoo.client.PowerGemTooltipRenderer;
 import org.jahdoo.registers.*;
-
-import java.util.List;
-import java.util.Optional;
 
 import static org.jahdoo.event.event_helpers.KeyBindHelper.*;
 import static org.jahdoo.event.event_helpers.OverlayEvent.crosshairManager;

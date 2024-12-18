@@ -39,13 +39,14 @@ import static org.jahdoo.items.augments.AugmentItemHelper.*;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class AbilityWheelMenu extends Screen  {
-    private final int buttonSize = RADIAL_SIZE / 7 + 3 + 6;
     private static final int RADIAL_SIZE = 150;
+    private final int buttonSize = RADIAL_SIZE / 7 + 3 + 6;
     private float localTick = 60;
     private boolean switchState;
     private List<AbilityIconButton> buttons = new ArrayList<>();
     private int slots;
     private static final int RADIUS = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 4); // Adjust radius
+
     public AbilityWheelMenu() {
         super(Component.literal("Ability Menu"));
     }

@@ -1,5 +1,6 @@
 package org.jahdoo.client.gui.overlays;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -8,6 +9,7 @@ import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbilityRegistrar;
@@ -22,10 +24,15 @@ import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.components.DataComponentHelper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static net.minecraft.network.chat.Component.translatable;
+import static org.jahdoo.client.SharedUI.BORDER_COLOUR;
 import static org.jahdoo.client.SharedUI.drawStringWithBackground;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
+import static org.jahdoo.utils.ModHelpers.doubleFormattedDouble;
+import static org.jahdoo.utils.ModHelpers.roundNonWholeString;
 
 public class ManaBarOverlay implements LayeredDraw.Layer {
     float fadeIn;
@@ -38,9 +45,11 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
     @Override
     public void render(@NotNull GuiGraphics pGuiGraphics, @NotNull DeltaTracker pDeltaTracker) {
         var minecraft = Minecraft.getInstance();
-
         var player = minecraft.player;
         if(player == null || minecraft.options.hideGui) return;
+
+        attributeStats(pGuiGraphics, minecraft, player);
+
         var manaBarWidth = 57;
         var abilityRegistrars = AbilityRegister.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
         var casterData = player.getData(CASTER_DATA);
@@ -76,6 +85,54 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         pGuiGraphics.pose().popPose();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
+
+    private static void attributeStats(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player) {
+        if(!InputConstants.isKeyDown(minecraft.getWindow().getWindow(), InputConstants.KEY_TAB)) return;
+        var attSpacer = new AtomicInteger();
+        var syncableAttributes = player.getAttributes().getSyncableAttributes();
+        var startX = 14;
+        var startY = 14;
+
+        for (AttributeInstance syncableAttribute : syncableAttributes) {
+            var modName = syncableAttribute.getAttribute().getRegisteredName().split(":", 2)[0];
+            if (syncableAttribute.getValue() > 0) {
+                var prefix = translatable(syncableAttribute.getAttribute().value().getDescriptionId());
+                var readableValues = roundNonWholeString(doubleFormattedDouble(syncableAttribute.getValue()));
+                var suffix = ModHelpers.withStyleComponent(" " + readableValues, -9882);
+                if(modName.equals("jahdoo")){
+                    var string = prefix.append(suffix);
+                    pGuiGraphics.drawString(minecraft.font, string, startX, startY + attSpacer.get(), -1);
+                    attSpacer.set(attSpacer.get() + 10);
+                }
+            }
+        }
+
+        SharedUI.boxMaker(pGuiGraphics, startX - 4, startY - 4, 100, attSpacer.get()/2 + 3, BORDER_COLOUR);
+    }
+
+//    private static void attributeStats(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player) {
+//        if(!InputConstants.isKeyDown(minecraft.getWindow().getWindow(), InputConstants.KEY_TAB)) return;
+//        var attSpacer = new AtomicInteger();
+//        var syncableAttributes = player.getAttributes().getSyncableAttributes();
+//        var startX = 14;
+//        var startY = 14;
+//
+//        for (AttributeInstance syncableAttribute : syncableAttributes) {
+//            var modName = syncableAttribute.getAttribute().getRegisteredName().split(":", 2)[0];
+//            if (syncableAttribute.getValue() > 0) {
+//                var prefix = translatable(syncableAttribute.getAttribute().value().getDescriptionId());
+//                var readableValues = roundNonWholeString(doubleFormattedDouble(syncableAttribute.getValue()));
+//                var suffix = ModHelpers.withStyleComponent(" " + readableValues, -9882);
+//                if(modName.equals("jahdoo")){
+//                    var string = prefix.append(suffix);
+//                    pGuiGraphics.drawString(minecraft.font, string, startX, startY + attSpacer.get(), -1);
+//                    attSpacer.set(attSpacer.get() + 10);
+//                }
+//            }
+//        }
+//
+//        SharedUI.boxMaker(pGuiGraphics, startX - 4, startY - 4, 100, attSpacer.get()/2 + 3, BORDER_COLOUR);
+//    }
 
     private static void inventory(@NotNull GuiGraphics pGuiGraphics, LocalPlayer player) {
         var selectedIndex = player.getInventory().selected;

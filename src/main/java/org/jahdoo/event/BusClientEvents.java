@@ -21,7 +21,7 @@ import org.jahdoo.client.gui.block.infusion_table.InfusionTableScreen;
 import org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeScreen;
 import org.jahdoo.client.gui.block.wand_block.WandBlockScreen;
 import org.jahdoo.client.gui.block.wand_manager_table.WandManagerScreen;
-import org.jahdoo.items.wand.PowerGemTooltipRenderer;
+import org.jahdoo.client.PowerGemTooltipRenderer;
 import org.jahdoo.particle.GenericParticle;
 import org.jahdoo.registers.*;
 
@@ -109,6 +109,5 @@ public class BusClientEvents {
         event.register(MenusRegister.MODULAR_CHAOS_CUBE_MENU.get(), ModularChaosCubeScreen::new);
         event.register(MenusRegister.AUGMENT_MODIFICATION_MENU.get(), AugmentModificationScreen::new);
         event.register(MenusRegister.WAND_MANAGER_MENU.get(), WandManagerScreen::new);
-
     }
 }

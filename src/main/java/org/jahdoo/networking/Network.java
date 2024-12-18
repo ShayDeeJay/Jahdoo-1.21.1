@@ -24,6 +24,8 @@ public class Network {
         payloadRegistrar.playToServer(SyncComponentBlockC2S.TYPE, SyncComponentBlockC2S.STREAM_CODEC, SyncComponentBlockC2S::handle);
         payloadRegistrar.playToServer(ModularChaosCubeC2SPacket.TYPE, ModularChaosCubeC2SPacket.STREAM_CODEC, ModularChaosCubeC2SPacket::handle);
         payloadRegistrar.playToServer(AugmentModificationChargeC2S.TYPE, AugmentModificationChargeC2S.STREAM_CODEC, AugmentModificationChargeC2S::handle);
+        payloadRegistrar.playToServer(WandDataC2SPacket.TYPE, WandDataC2SPacket.STREAM_CODEC, WandDataC2SPacket::handle);
+
 
         //S2C
         payloadRegistrar.playToClient(ManaDataSyncS2CPacket.TYPE, ManaDataSyncS2CPacket.STREAM_CODEC, ManaDataSyncS2CPacket::handle);

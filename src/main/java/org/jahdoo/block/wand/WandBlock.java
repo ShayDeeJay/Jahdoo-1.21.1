@@ -7,7 +7,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -28,7 +27,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.components.WandData;
-import org.jahdoo.items.wand.WandSlotManager;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
@@ -119,17 +117,14 @@ public class WandBlock extends BaseEntityBlock {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!(level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock)) return ItemInteractionResult.FAIL;
 
-        if(!stack.isEmpty()){
-            System.out.println("imere");
-            return slotTesting(stack, wandBlock);
-        }
 
-        if (player.getMainHandItem().isEmpty() && player.isShiftKeyDown()) {
-            this.pickUpWand(player, pos, level);
-            return ItemInteractionResult.CONSUME;
-        }
+        return slotTesting(player, stack, wandBlock, pos);
 
-        return openWandGUI(player, pos, level);
+//        if (player.getMainHandItem().isEmpty() && player.isShiftKeyDown()) {
+//            this.pickUpWand(player, pos, level);
+//            return ItemInteractionResult.CONSUME;
+//        }
+//        return openWandGUI(player, pos, level);
     }
 
     private static ItemInteractionResult getItemInteractionResult(ItemStack heldItem, WandBlockEntity wandBlock) {
@@ -147,17 +142,29 @@ public class WandBlock extends BaseEntityBlock {
         return ItemInteractionResult.FAIL;
     }
 
-    private static ItemInteractionResult slotTesting(ItemStack heldItem, WandBlockEntity wandBlock) {
-        ItemStack internalWand = wandBlock.getWandItemFromSlot();
+    private static ItemInteractionResult slotTesting(Player player, ItemStack heldItem, WandBlockEntity wandBlock, BlockPos blockPos) {
+        var internalWand = wandBlock.getWandItemFromSlot();
         var wandData = internalWand.get(WAND_DATA);
-        if (heldItem.getItem() == ItemsRegister.POWER_GEM.get()) {
-            if(wandData != null && !wandData.upgradeSlots().isEmpty()){
-                var temp = new ArrayList<>(wandData.upgradeSlots());
+        if (wandData != null && !wandData.upgradeSlots().isEmpty()) {
+            var temp = new ArrayList<>(wandData.upgradeSlots());
+            if (!heldItem.isEmpty()) {
                 for (ItemStack itemStack : temp) {
-                    if(itemStack.isEmpty()){
+                    if (itemStack.isEmpty()) {
                         temp.remove(itemStack);
-                        temp.add(heldItem);
-                        WandSlotManager.updateUpgradeSlots(wandBlock.getWandItemFromSlot(), temp);
+                        temp.add(heldItem.copyWithCount(1));
+                        heldItem.shrink(1);
+                        WandData.updateUpgradeSlots(wandBlock.getWandItemFromSlot(), temp);
+//                        PacketDistributor.sendToServer(new WandDataC2SPacket(wandData, blockPos));
+                        return ItemInteractionResult.CONSUME;
+                    }
+                }
+            } else {
+                for (ItemStack itemStack : temp) {
+                    if (!itemStack.isEmpty() && player.getMainHandItem().isEmpty()) {
+                        player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
+                        temp.set(temp.indexOf(itemStack), ItemStack.EMPTY);
+                        WandData.updateUpgradeSlots(wandBlock.getWandItemFromSlot(), temp);
+//                        PacketDistributor.sendToServer(new WandDataC2SPacket(wandData, blockPos));
                         return ItemInteractionResult.CONSUME;
                     }
                 }

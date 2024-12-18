@@ -16,15 +16,11 @@ import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 public class CastingData implements AbstractAttachment{
 
     private static final String mana = "jahdoo_magic_data_mana";
-    private static final String regenSpeed = "jahdoo_magic_data_mana_regen";
     private static final String cooldowns = "jahdoo_magic_data_cooldowns";
     private static final String cooldownsStatic = "jahdoo_magic_data_cooldowns";
 
     //Mana system
     private double manaPool;
-    private final double BASE_MANA_REGEN = 0.15;
-    private final int MIN_MANA = 0;
-
     public double getManaPool() {
         return manaPool;
     }
@@ -35,10 +31,8 @@ public class CastingData implements AbstractAttachment{
     }
 
     public void subtractMana(double regenMana, Player player) {
-        this.manaPool = Math.max(manaPool - regenMana, MIN_MANA);
-        if(player instanceof ServerPlayer serverPlayer) {
-            sendToPlayer(serverPlayer, new ManaDataSyncS2CPacket(manaPool));
-        }
+        this.manaPool = Math.max(manaPool - regenMana, 0);
+        if(player instanceof ServerPlayer serverPlayer) sendToPlayer(serverPlayer, new ManaDataSyncS2CPacket(manaPool));
     }
 
     public void manaRegen(Player player){
@@ -47,14 +41,14 @@ public class CastingData implements AbstractAttachment{
 
     private double getModifiedMana(Player player){
         var getRegen = player.getAttribute(AttributesRegister.MANA_REGEN);
-
+        double baseManaRegen = 0.15;
         if(getRegen != null) {
             var regenPercentage = getRegen.getValue();
-            var calculatedRegen = BASE_MANA_REGEN / 100 * regenPercentage;
-            return calculatedRegen + BASE_MANA_REGEN;
+            var calculatedRegen = baseManaRegen / 100 * regenPercentage;
+            return calculatedRegen + baseManaRegen;
         }
 
-        return BASE_MANA_REGEN;
+        return baseManaRegen;
     }
 
     public void refillMana(Player player){

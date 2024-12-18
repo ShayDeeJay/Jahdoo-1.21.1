@@ -186,12 +186,16 @@ public class ModHelpers {
     }
 
     public static void playDebugMessage(Player player, Object... info){
-        var randomColour = new Color((int)(Math.random() * 0x1000000)).getRGB();
+        var randomColour = getRgb();
         player.sendSystemMessage(Component.literal(Arrays.toString(info)).withStyle(style -> style.withColor(randomColour)));
     }
 
+    public static int getRgb() {
+        return new Color((int) (Math.random() * 0x1000000)).getRGB();
+    }
+
     public static void playDebugMessageComp(Player player, String... info){
-        var randomColour = new Color((int)(Math.random() * 0x1000000)).getRGB();
+        var randomColour = getRgb();
         for (String o : Arrays.stream(info).toList()) {
             player.sendSystemMessage(withStyleComponentTrans(o,randomColour));
         }
@@ -241,7 +245,7 @@ public class ModHelpers {
         player.sendSystemMessage(Component.literal("New Request"));
         player.sendSystemMessage(Component.literal("-----------------------------------------------------"));
         for (TypedDataComponent<?> component : itemStack.getComponents()) {
-            player.sendSystemMessage(withStyleComponent(component.toString(), new Color((int)(Math.random() * 0x1000000)).getRGB()));
+            player.sendSystemMessage(withStyleComponent(component.toString(), getRgb()));
             player.sendSystemMessage(Component.literal(" "));
         }
         player.sendSystemMessage(Component.literal("-----------------------------------------------------"));

@@ -13,7 +13,6 @@ import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
 import org.jahdoo.components.WandData;
 import org.jahdoo.items.augments.AugmentItemHelper;
-import org.jahdoo.items.wand.WandSlotManager;
 import org.jahdoo.registers.*;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
@@ -148,7 +147,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         Pair<Double, Double> manaCostRange,
         Pair<Double, Double> damageRange
     ){
-        WandSlotManager.createNewSlotsForWand(itemStack, upgradeSlots);
+        WandData.createNewSlotsForWand(itemStack, upgradeSlots);
         var element = ElementRegistry.getElementByWandType(itemStack.getItem());
 
         if(!element.isEmpty()){
@@ -161,11 +160,11 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             itemStack.update(DataComponentRegistry.WAND_DATA.get(), WandData.DEFAULT, wandData -> wandData.insertNewAbilitySlots(abilitySlots));
             itemStack.set(DataComponentRegistry.JAHDOO_RARITY.get(), rarity.getId());
             //0-5 basic;
-            replaceOrAddAttribute(itemStack, element.getFirst().getTypeCooldownReduction().getFirst(), element.getFirst().getTypeCooldownReduction().getSecond(), Random.nextDouble(cooldownRange.getFirst(), cooldownRange.getSecond()), EquipmentSlot.MAINHAND);
+            replaceOrAddAttribute(itemStack, element.getFirst().getTypeCooldownReduction().getFirst(), element.getFirst().getTypeCooldownReduction().getSecond(), Random.nextDouble(cooldownRange.getFirst(), cooldownRange.getSecond()), EquipmentSlot.MAINHAND, false);
             //0-10 basic;
-            replaceOrAddAttribute(itemStack, element.getFirst().getTypeManaReduction().getFirst(), element.getFirst().getTypeManaReduction().getSecond(), Random.nextDouble(manaCostRange.getFirst(), manaCostRange.getSecond()), EquipmentSlot.MAINHAND);
+            replaceOrAddAttribute(itemStack, element.getFirst().getTypeManaReduction().getFirst(), element.getFirst().getTypeManaReduction().getSecond(), Random.nextDouble(manaCostRange.getFirst(), manaCostRange.getSecond()), EquipmentSlot.MAINHAND, false);
             //0-10 basic;
-            replaceOrAddAttribute(itemStack, element.getFirst().getDamageTypeAmplifier().getFirst(), element.getFirst().getDamageTypeAmplifier().getSecond(), Random.nextDouble(damageRange.getFirst(), damageRange.getSecond()), EquipmentSlot.MAINHAND);
+            replaceOrAddAttribute(itemStack, element.getFirst().getDamageTypeAmplifier().getFirst(), element.getFirst().getDamageTypeAmplifier().getSecond(), Random.nextDouble(damageRange.getFirst(), damageRange.getSecond()), EquipmentSlot.MAINHAND, false);
         }
     }
 

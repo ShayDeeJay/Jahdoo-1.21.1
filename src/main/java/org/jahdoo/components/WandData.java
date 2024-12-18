@@ -11,6 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
+
 public record WandData(
     int abilitySlots,
     List<ItemStack> upgradeSlots,
@@ -59,6 +61,14 @@ public record WandData(
 
     public WandData setUpgradeSlots(List<ItemStack> upgradeSlots){
         return new WandData(this.abilitySlots, upgradeSlots, this.abilitySet, this.selectedAbility, this.rarityId);
+    }
+
+    public static void createNewSlotsForWand(ItemStack itemStack, int slotCount){
+        itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.insertNewUpgradeSlots(slotCount));
+    }
+
+    public static void updateUpgradeSlots(ItemStack itemStack, List<ItemStack> upgrades){
+        itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.setUpgradeSlots(upgrades));
     }
 
     public void serialise(RegistryFriendlyByteBuf friendlyByteBuf){

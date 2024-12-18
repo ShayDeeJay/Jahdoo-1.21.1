@@ -155,17 +155,6 @@ public class WandItem extends BlockItem implements GeoItem {
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
-//        if(!level.isClientSide){
-//            ModHelpers.playDebugMessage(player, "                  ");
-//            for (AttributeInstance syncableAttribute : player.getAttributes().getSyncableAttributes()) {
-//                if (syncableAttribute.getAttribute().getRegisteredName().contains("jahdoo")) {
-//                    ModHelpers.playDebugMessageComp(player, syncableAttribute.getAttribute().getRegisteredName().replace("jahdoo:", ""));
-//                    ModHelpers.playDebugMessage(player, syncableAttribute.getValue());
-//                }
-//            }
-//            ModHelpers.playDebugMessage(player, "                  ");
-//        }
-
 
         if(level instanceof ServerLevel serverLevel){
 //            var zombo = new CustomZombie(serverLevel, null);
