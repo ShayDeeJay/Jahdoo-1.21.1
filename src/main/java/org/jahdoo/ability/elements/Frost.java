@@ -30,12 +30,12 @@ public class Frost extends AbstractElement {
 
     @Override
     public int textColourPrimary() {
-        return -13784577;
+        return FastColor.ARGB32.color(160,209,243);
     }
 
     @Override
     public int textColourSecondary() {
-        return -7877378;
+        return FastColor.ARGB32.color(103, 200, 249);
     }
 
     @Override

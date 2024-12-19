@@ -30,12 +30,12 @@ public class Vitality extends AbstractElement {
 
     @Override
     public int textColourPrimary() {
-        return -8323021;
+        return FastColor.ARGB32.color(226, 51, 119);
     }
 
     @Override
     public int textColourSecondary() {
-        return -1507235;
+        return FastColor.ARGB32.color(219, 0, 85);
     }
 
     @Override

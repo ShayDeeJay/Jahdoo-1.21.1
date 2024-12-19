@@ -53,7 +53,6 @@ public class Boltz extends DefaultEntityBehaviour {
             this.damage = ModHelpers.attributeModifierCalculator(
                 (LivingEntity) player,
                 (float) damage,
-                this.getElementType(),
                 true,
                 MAGIC_DAMAGE_MULTIPLIER,
                 LIGHTNING_MAGIC_DAMAGE_MULTIPLIER

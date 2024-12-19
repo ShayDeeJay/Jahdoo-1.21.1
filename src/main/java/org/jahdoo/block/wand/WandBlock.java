@@ -27,6 +27,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.components.WandData;
+import org.jahdoo.items.power_gems.PowerGemsItem;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
@@ -118,13 +119,16 @@ public class WandBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock)) return ItemInteractionResult.FAIL;
 
 
+        if (player.isShiftKeyDown()) {
+
+//                this.pickUpWand(player, pos, level);
+//                return ItemInteractionResult.CONSUME;
+            return openWandGUI(player, pos, level);
+        }
+
         return slotTesting(player, stack, wandBlock, pos);
 
-//        if (player.getMainHandItem().isEmpty() && player.isShiftKeyDown()) {
-//            this.pickUpWand(player, pos, level);
-//            return ItemInteractionResult.CONSUME;
-//        }
-//        return openWandGUI(player, pos, level);
+//        return  ItemInteractionResult.CONSUME;
     }
 
     private static ItemInteractionResult getItemInteractionResult(ItemStack heldItem, WandBlockEntity wandBlock) {

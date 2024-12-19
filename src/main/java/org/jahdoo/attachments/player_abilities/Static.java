@@ -71,10 +71,7 @@ public class Static implements AbstractAttachment {
         Map<String, AbilityHolder.AbilityModifiers> wandAbilityHolder = DataComponentHelper.getSpecificValue(player);
         var damage = wandAbilityHolder.get(DAMAGE).actualValue();
         this.damageA = ModHelpers.attributeModifierCalculator(
-            player,
-            (float) damage,
-            this.getType(),
-            true,
+            player, (float) damage, true,
             AttributesRegister.MAGIC_DAMAGE_MULTIPLIER,
             AttributesRegister.LIGHTNING_MAGIC_DAMAGE_MULTIPLIER
         );

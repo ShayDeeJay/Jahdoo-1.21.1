@@ -44,7 +44,6 @@ public class Armageddon extends DefaultEntityBehaviour {
             this.damage = ModHelpers.attributeModifierCalculator(
                 player,
                 (float) damage,
-                this.getElementType(),
                 true,
                 MAGIC_DAMAGE_MULTIPLIER,
                 INFERNO_MAGIC_DAMAGE_MULTIPLIER

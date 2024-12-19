@@ -36,7 +36,7 @@ public class DamageUtil {
     }
 
     @SafeVarargs
-    public static void damageEntityWithModifiers(LivingEntity target, LivingEntity player, float currentDamage, AbstractElement getElementType, Holder<Attribute> ... attributes){
-        target.hurt(DamageUtil.source(target.level(), JAHDOO_SOURCE, target, player), attributeModifierCalculator(player, currentDamage, getElementType, true, attributes));
+    public static void damageEntityWithModifiers(LivingEntity target, LivingEntity player, float currentDamage, Holder<Attribute> ... attributes){
+        target.hurt(DamageUtil.source(target.level(), JAHDOO_SOURCE, target, player), attributeModifierCalculator(player, currentDamage, true, attributes));
     }
 }

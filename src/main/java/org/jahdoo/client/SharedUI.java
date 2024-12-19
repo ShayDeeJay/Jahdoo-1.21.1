@@ -177,10 +177,8 @@ public class SharedUI {
             var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityRegistrars.setAbilityId());
             var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
             var abstractElement = ElementRegistry.getElementByTypeId((int) abilityModifiers.actualValue());
+            element = !abstractElement.isEmpty() ? abstractElement.getFirst().textColourSecondary() : -1;
 
-            if(!abstractElement.isEmpty()){
-                element = abstractElement.getFirst().textColourSecondary();
-            } else element = -1;
         } else {
             element = abilityRegistrars.getElemenType().textColourSecondary();
         }

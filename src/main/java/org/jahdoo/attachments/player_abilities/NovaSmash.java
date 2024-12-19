@@ -78,7 +78,6 @@ public class NovaSmash implements AbstractAttachment {
             this.getDamage = ModHelpers.attributeModifierCalculator(
                 player,
                 this.highestDelta,
-                this.getElement(),
                 false,
                 AttributesRegister.MAGIC_DAMAGE_MULTIPLIER,
                 AttributesRegister.MYSTIC_MAGIC_DAMAGE_MULTIPLIER
@@ -139,7 +138,7 @@ public class NovaSmash implements AbstractAttachment {
                     var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
                     if (livingEntity != player) {
                         this.knockback(livingEntity, Math.max((double) getMaxDeltaMovement / 2, 0.3), -deltaX / length, -deltaZ / length);
-                        DamageUtil.damageEntityWithModifiers(livingEntity, player, this.getDamage * 3, this.getElement(),  AttributesRegister.MAGIC_DAMAGE_MULTIPLIER, AttributesRegister.MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
+                        DamageUtil.damageEntityWithModifiers(livingEntity, player, this.getDamage * 3,  AttributesRegister.MAGIC_DAMAGE_MULTIPLIER, AttributesRegister.MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
                     }
                 }
             }

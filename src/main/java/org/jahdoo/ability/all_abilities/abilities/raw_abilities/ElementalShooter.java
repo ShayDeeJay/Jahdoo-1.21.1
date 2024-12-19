@@ -50,7 +50,6 @@ public class ElementalShooter extends DefaultEntityBehaviour {
             this.damage = ModHelpers.attributeModifierCalculator(
                 (LivingEntity) player,
                 (float) damage,
-                element,
                 true,
                 MAGIC_DAMAGE_MULTIPLIER,
                 element.getDamageTypeAmplifier().getSecond()

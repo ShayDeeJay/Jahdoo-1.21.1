@@ -23,7 +23,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
@@ -256,7 +255,6 @@ public class ModHelpers {
     public static float attributeModifierCalculator(
         LivingEntity player,
         float initialValue,
-        AbstractElement getElementType,
         boolean isAddition,
         Holder<Attribute> ... attribute
     ){
@@ -273,7 +271,7 @@ public class ModHelpers {
             getAttribute += (float) player.getAttributes().getValue(attributeHolder);
         }
 
-        float getPercentageDamage = initialValue / 100 * getAttribute;
+        float getPercentageDamage = (initialValue * getAttribute) / 100;
 
         if(isAddition){
             reCalculatedDamage = reCalculatedDamage + getPercentageDamage;

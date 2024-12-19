@@ -55,7 +55,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         var player = this.aoeCloud.getOwner();
         var damage = this.getTag(DAMAGE);
         this.damage = ModHelpers.attributeModifierCalculator(
-            player, (float) damage, this.getElementType(), true,
+            player, (float) damage, true,
             MAGIC_DAMAGE_MULTIPLIER,
             VITALITY_MAGIC_DAMAGE_MULTIPLIER
         );

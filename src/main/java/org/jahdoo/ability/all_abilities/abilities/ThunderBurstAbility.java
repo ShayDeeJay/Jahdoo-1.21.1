@@ -36,7 +36,7 @@ public class ThunderBurstAbility extends AbilityRegistrar {
     public void invokeAbility(Player player) {
         var modifiers = this.tagModifierHelper(player);
         var damage = ModHelpers.attributeModifierCalculator(
-            player, (float) modifiers.get(DAMAGE).actualValue(), this.getElemenType(), true,
+            player, (float) modifiers.get(DAMAGE).actualValue(),true,
             LIGHTNING_MAGIC_DAMAGE_MULTIPLIER, MAGIC_DAMAGE_MULTIPLIER
         );
         var numberOfBolts = modifiers.get(NUMBER_OF_THUNDERBOLTS).actualValue();

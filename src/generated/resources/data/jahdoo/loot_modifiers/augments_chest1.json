@@ -7,7 +7,7 @@
     },
     {
       "condition": "neoforge:loot_table_id",
-      "loot_table_id": "minecraft:chests/village/village_desert_house"
+      "loot_table_id": "minecraft:chests/jungle_temple_dispenser"
     }
   ],
   "item": "jahdoo:unidentified_augment"

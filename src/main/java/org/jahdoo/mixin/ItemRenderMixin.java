@@ -39,8 +39,7 @@ public abstract class ItemRenderMixin {
         method = "render",
         at = @At(
             value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V",
-            shift = At.Shift.BEFORE
+            target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V"
         )
     )
     public void overlayStuff(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, BakedModel p_model, CallbackInfo ci){

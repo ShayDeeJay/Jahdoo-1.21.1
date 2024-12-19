@@ -44,7 +44,7 @@ public class CastingData implements AbstractAttachment{
         double baseManaRegen = 0.15;
         if(getRegen != null) {
             var regenPercentage = getRegen.getValue();
-            var calculatedRegen = baseManaRegen / 100 * regenPercentage;
+            var calculatedRegen = (baseManaRegen * regenPercentage) / 100;
             return calculatedRegen + baseManaRegen;
         }
 

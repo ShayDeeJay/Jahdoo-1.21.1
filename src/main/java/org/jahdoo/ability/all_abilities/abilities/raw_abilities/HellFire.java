@@ -53,7 +53,7 @@ public class HellFire extends DefaultEntityBehaviour {
             var damage = this.getTag(DAMAGE);
 
             this.damage = ModHelpers.attributeModifierCalculator(
-                player, (float) damage, this.getElementType(), true,
+                player, (float) damage, true,
                 MAGIC_DAMAGE_MULTIPLIER, INFERNO_MAGIC_DAMAGE_MULTIPLIER
             );
             this.playerOriginalPosition = player.position();
@@ -91,7 +91,7 @@ public class HellFire extends DefaultEntityBehaviour {
     public void onTickMethod() {
         this.updateRadius();
         this.reductionSpeed *= 1.01F;
-        aoeCloud.setInvisible(true);
+        aoeCloud.setInvisible(false);
         novaBehaviour();
     }
 
@@ -117,7 +117,7 @@ public class HellFire extends DefaultEntityBehaviour {
     }
 
     private void novaSoundManager(List<Vec3> positions){
-        if(aoeCloud.tickCount == 1) ModHelpers.getSoundWithPosition(aoeCloud.level(), BlockPos.containing(positions.get(positions.size()/2)), SoundRegister.DASH_EFFECT.get(), 0.6f,1.4f);
+        if(aoeCloud.tickCount == 1) ModHelpers.getSoundWithPosition(aoeCloud.level(), BlockPos.containing(positions.get(positions.size()/2)), SoundRegister.DASH_EFFECT_INSTANT.get(), 0.6f,1.4f);
         if (aoeCloud.tickCount % 3 == 0) ModHelpers.getSoundWithPosition(aoeCloud.level(), BlockPos.containing(positions.get(positions.size()/2)), SoundEvents.FIRECHARGE_USE,0.4f,0.8f);
     }
 
@@ -173,7 +173,7 @@ public class HellFire extends DefaultEntityBehaviour {
         return HellfireAbility.abilityId.getPath().intern();
     }
 
-    ResourceLocation abilityId = ModHelpers.res("hellfire_property");
+    public static ResourceLocation abilityId = ModHelpers.res("hellfire_property");
 
     @Override
     public ResourceLocation getAbilityResource() {

@@ -124,13 +124,8 @@
 		"idle": {
 			"loop": true,
 			"bones": {
-				"bone": {
-					"rotation": {
-						"vector": ["math.sin(query.anim_time * 120) * 2", 0, "math.cos(query.anim_time * 100) * 1"]
-					},
-					"position": {
-						"vector": [0, "math.sin(query.anim_time * 90) / 10", 0]
-					}
+				"core": {
+					"rotation": ["math.sin(query.anim_time * 20) * 4", "math.cos(query.anim_time * 10) * 2 ", "math.cos(query.anim_time * 10) * 2"]
 				}
 			}
 		}
