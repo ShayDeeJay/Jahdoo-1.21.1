@@ -119,16 +119,12 @@ public class WandBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock)) return ItemInteractionResult.FAIL;
 
 
-        if (player.isShiftKeyDown()) {
-
-//                this.pickUpWand(player, pos, level);
-//                return ItemInteractionResult.CONSUME;
-            return openWandGUI(player, pos, level);
+        if (stack.isEmpty() && player.isShiftKeyDown()) {
+            this.pickUpWand(player, pos, level);
+            return ItemInteractionResult.CONSUME;
         }
 
-        return slotTesting(player, stack, wandBlock, pos);
-
-//        return  ItemInteractionResult.CONSUME;
+        return openWandGUI(player, pos, level);
     }
 
     private static ItemInteractionResult getItemInteractionResult(ItemStack heldItem, WandBlockEntity wandBlock) {

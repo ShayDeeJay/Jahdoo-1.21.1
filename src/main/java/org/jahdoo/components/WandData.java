@@ -71,6 +71,10 @@ public record WandData(
         itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.setUpgradeSlots(upgrades));
     }
 
+    public static WandData wandData(ItemStack itemStack){
+        return itemStack.getOrDefault(WAND_DATA, DEFAULT);
+    }
+
     public void serialise(RegistryFriendlyByteBuf friendlyByteBuf){
         friendlyByteBuf.writeInt(abilitySlots);
         ItemStack.OPTIONAL_LIST_STREAM_CODEC.encode(friendlyByteBuf, upgradeSlots);

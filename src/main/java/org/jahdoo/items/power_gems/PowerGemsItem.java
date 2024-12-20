@@ -30,7 +30,7 @@ public class PowerGemsItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(JahdooRarity.attachGemRarityTooltip(stack));
-        tooltipComponents.add(Component.empty());
+//        tooltipComponents.add(Component.empty());
         tooltipComponents.add(standAloneAttributes(stack));
     }
 

@@ -27,7 +27,7 @@ public class IceBombAbility extends AbilityRegistrar {
                 0,
                 abilityId.getPath().intern()
             ),
-            player, 0.5f
+            player, 0.35f
         );
     }
 

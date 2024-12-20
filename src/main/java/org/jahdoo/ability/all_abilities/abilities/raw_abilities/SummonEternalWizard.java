@@ -97,9 +97,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         compoundTag.putDouble(EFFECT_STRENGTH, this.effectStrength);
         compoundTag.putDouble(EFFECT_CHANCE, this.effectChance);
         compoundTag.putDouble(LIFETIME, this.lifeTime);
-        if(eternalWizard != null){
-            compoundTag.putUUID("spawnedWizard", eternalWizard.getUUID());
-        }
+        if(eternalWizard != null) compoundTag.putUUID("spawnedWizard", eternalWizard.getUUID());
     }
 
     @Override
@@ -144,12 +142,12 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     private void spawnEternalWizard(){
         if (this.eternalWizard == null && aoeCloud.getOwner() != null) {
 
-            EternalWizard eternalWizard = new EternalWizard(aoeCloud.level(), (Player) aoeCloud.getOwner(), (int) damage, (int) effectDuration, (int) effectStrength, (int) lifeTime, (int) effectChance);
+            var eternalWizard = new EternalWizard(aoeCloud.level(), (Player) aoeCloud.getOwner(), damage, effectDuration, effectStrength, (int) lifeTime, effectChance);
             eternalWizard.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
-            Vec3 spawnPosition = aoeCloud.position().add(0, -1, 0);
+            var spawnPosition = aoeCloud.position().add(0, -1, 0);
             eternalWizard.setInvulnerable(true);
             eternalWizard.moveTo(spawnPosition);
-            Vec3 directionToEntity = spawnPosition.subtract(aoeCloud.getOwner().position()).normalize();
+            var directionToEntity = spawnPosition.subtract(aoeCloud.getOwner().position()).normalize();
 
             // Calculate the yaw so that the skeleton faces away from the player
             double yaw = Math.toDegrees(Math.atan2(directionToEntity.z, directionToEntity.x)) + 90.0;
@@ -167,8 +165,8 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     }
 
     public void clientDiggingParticles(LivingEntity livingEntity, Level level) {
-        RandomSource randomsource = livingEntity.getRandom();
-        BlockState blockstate = livingEntity.getBlockStateOn();
+        var randomsource = livingEntity.getRandom();
+        var blockstate = livingEntity.getBlockStateOn();
         if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
             for (int i = 0; i < 15; ++i) {
                 double d0 = livingEntity.getX() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
@@ -180,7 +178,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     }
 
     private void setSpawnParticles(Level level){
-        BakedParticleOptions bakedParticle = new BakedParticleOptions(ElementRegistry.VITALITY.get().getTypeId(), 20, 3f, false);
+        var bakedParticle = new BakedParticleOptions(ElementRegistry.VITALITY.get().getTypeId(), 20, 3f, false);
         PositionGetters.getInnerRingOfRadiusRandom(aoeCloud.position(), 0.8, 5).forEach(
             positions -> ParticleHandlers.sendParticles(level, bakedParticle, positions, 1, 0, 1,0,0.05)
         );
@@ -188,7 +186,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
 
     private void setOuterRingPulses(Level level){
         var positions = PositionGetters.getOuterRingOfRadiusList(aoeCloud.position(), 0.8, 20);
-        GenericParticleOptions particleOptions = genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, this.getElementType(), 10, 0.1f, true);
+        var particleOptions = genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, this.getElementType(), 10, 0.1f, true);
         if(this.height < 1) this.height += 0.05; else this.height = 0;
 
         if(position < positions.size()){

@@ -57,11 +57,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
         if(this.genericProjectile.getOwner() != null) {
             var player = this.genericProjectile.getOwner();
             this.damage = ModHelpers.attributeModifierCalculator(
-                (LivingEntity) player,
-                (float) this.getTag(DAMAGE),
-                true,
-                MAGIC_DAMAGE_MULTIPLIER,
-                FROST_MAGIC_DAMAGE_MULTIPLIER
+                (LivingEntity) player, (float) this.getTag(DAMAGE), true, MAGIC_DAMAGE_MULTIPLIER, FROST_MAGIC_DAMAGE_MULTIPLIER
             );
         }
         this.effectChance = this.getTag(EFFECT_CHANCE);
@@ -129,7 +125,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
             var arrow = new GenericProjectile(
                 player, arrowX, arrowY, arrowZ,
                 EntityPropertyRegister.ETHEREAL_ARROW.get().setAbilityId(),
-                EtherealArrow.setArrowProperties((int) damage, (int) effectDuration, (int) effectStrength, (int) effectChance),
+                EtherealArrow.setArrowProperties(damage, effectDuration, effectStrength, effectChance),
                 this.getElementType(),
                 FrostboltsAbility.abilityId.getPath()
             );

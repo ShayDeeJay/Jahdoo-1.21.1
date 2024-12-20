@@ -54,9 +54,9 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
     LivingEntity owner;
     UUID ownerUUID;
     double damage;
-    int effectDuration;
-    int effectStrength;
-    int effectChance;
+    double effectDuration;
+    double effectStrength;
+    double effectChance;
     int lifeTime;
     public int privateTicks;
 
@@ -105,7 +105,7 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
         this.reassessWeaponGoal();
     }
 
-    public EternalWizard(Level pLevel, Player player, double damage, int effectDuration, int effectStrength, int lifeTime, int effectChance) {
+    public EternalWizard(Level pLevel, Player player, double damage, double effectDuration, double effectStrength, int lifeTime, double effectChance) {
         super(EntitiesRegister.ETERNAL_WIZARD.get(), pLevel);
         this.owner = player;
         this.reassessWeaponGoal();
@@ -269,9 +269,9 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
         if(this.owner != null) pCompound.putUUID("owner", owner.getUUID());
         pCompound.putBoolean("mode",this.getMode());
         pCompound.putDouble(DAMAGE, this.damage);
-        pCompound.putInt(EFFECT_DURATION, this.effectDuration);
-        pCompound.putInt(EFFECT_STRENGTH, this.effectStrength);
-        pCompound.putInt(EFFECT_CHANCE, this.effectChance);
+        pCompound.putDouble(EFFECT_DURATION, this.effectDuration);
+        pCompound.putDouble(EFFECT_STRENGTH, this.effectStrength);
+        pCompound.putDouble(EFFECT_CHANCE, this.effectChance);
         pCompound.putInt(LIFETIME, this.lifeTime);
         pCompound.putInt("private_ticks", this.privateTicks);
     }
@@ -284,9 +284,9 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
         }
         this.setMode(pCompound.getBoolean("mode"));
         this.damage = pCompound.getDouble(DAMAGE);
-        this.effectDuration = pCompound.getInt(EFFECT_DURATION);
-        this.effectStrength = pCompound.getInt(EFFECT_STRENGTH);
-        this.effectChance = pCompound.getInt(EFFECT_CHANCE);
+        this.effectDuration = pCompound.getDouble(EFFECT_DURATION);
+        this.effectStrength = pCompound.getDouble(EFFECT_STRENGTH);
+        this.effectChance = pCompound.getDouble(EFFECT_CHANCE);
         this.lifeTime = pCompound.getInt(LIFETIME);
         this.privateTicks = pCompound.getInt("private_ticks");
         this.setLifetimes(this.lifeTime);

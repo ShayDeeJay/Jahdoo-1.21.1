@@ -185,7 +185,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             case RARE -> createWandAttributes(RARE, itemStack, Random.nextInt(1, 3), Random.nextInt(4, 7), false, 0, getCooldownRange(RARE), getManaReductionRange(RARE), getDamageRange(RARE));
             case EPIC -> createWandAttributes(EPIC, itemStack, Random.nextInt(1, 3), Random.nextInt(5, 8), false, 0,getCooldownRange(EPIC), getManaReductionRange(EPIC), getDamageRange(EPIC));
             case LEGENDARY -> createWandAttributes(LEGENDARY, itemStack, Random.nextInt(1, 4),Random.nextInt(6, 9), false, 0, getCooldownRange(LEGENDARY), getManaReductionRange(LEGENDARY), getDamageRange(LEGENDARY));
-            case ETERNAL -> createWandAttributes(ETERNAL, itemStack, Random.nextInt(2, 5),Random.nextInt(8, 11), false, 10,getCooldownRange(ETERNAL), getManaReductionRange(ETERNAL), getDamageRange(ETERNAL));
+            case ETERNAL -> createWandAttributes(ETERNAL, itemStack, 8,Random.nextInt(8, 11), false, 10,getCooldownRange(ETERNAL), getManaReductionRange(ETERNAL), getDamageRange(ETERNAL));
         }
         return itemStack;
     }

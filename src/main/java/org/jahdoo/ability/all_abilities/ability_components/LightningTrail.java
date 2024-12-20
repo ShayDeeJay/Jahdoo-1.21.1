@@ -116,7 +116,7 @@ public class LightningTrail extends DefaultEntityBehaviour {
     }
 
     private void moveLikeLightningBolt(Projectile projectile) {
-        Vec3 currentMovement = projectile.getDeltaMovement();
+        var currentMovement = projectile.getDeltaMovement();
         if (ModHelpers.Random.nextDouble() < 0.98) {
             double dx = (ModHelpers.Random.nextDouble() - 0.5) * randomFactor;
             double dy = (ModHelpers.Random.nextDouble() - 0.5) * randomFactor;
@@ -125,7 +125,7 @@ public class LightningTrail extends DefaultEntityBehaviour {
             projectile.setDeltaMovement(newMovement);
         }
 
-        Vec3 vec3 = projectile.getDeltaMovement();
+        var vec3 = projectile.getDeltaMovement();
         projectile.setPos(projectile.getX() + vec3.x, projectile.getY() + vec3.y, projectile.getZ() + vec3.z);
     }
 

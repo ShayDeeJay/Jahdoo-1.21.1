@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.jahdoo.ability.JahdooRarity.*;
-import static org.jahdoo.registers.AttributesRegister.replaceOrAddAttribute;
+import static org.jahdoo.registers.AttributesRegister.*;
 import static org.jahdoo.registers.DataComponentRegistry.POWER_GEM_DATA;
 import static org.jahdoo.registers.ElementRegistry.getElementByTypeId;
 import static org.jahdoo.utils.ModHelpers.*;
@@ -117,6 +117,16 @@ public record PowerGemData(
             return "";
         }
 
+        public static boolean canMageFlight(ItemStack itemStack){
+            var attributes = itemStack.getAttributeModifiers().modifiers().stream().toList();
+            return attributes.stream().anyMatch(attribute -> attribute.attribute().value().getDescriptionId().contains(MAGE_FLIGHT_PREFIX));
+        }
+
+        public static boolean hasDestinyBond(ItemStack itemStack){
+            var attributes = itemStack.getAttributeModifiers().modifiers().stream().toList();
+            return attributes.stream().anyMatch(attribute -> attribute.attribute().value().getDescriptionId().contains(DESTINY_BOND_PREFIX));
+        }
+
         public static Component getNameWithStyle(ItemStack stack){
             return withStyleComponent(getName(stack), getGemData(stack).orElse(DEFAULT).getTypeColourSecondary());
         }
@@ -129,10 +139,13 @@ public record PowerGemData(
                 var entry = attributes.getFirst();
                 var value = roundNonWholeString(doubleFormattedDouble(entry.modifier().amount()));
                 var valueWithFix = "+" + value + "%";
+                var valueWithout = "+" + value + " ";
                 var descriptionId = entry.attribute().value().getDescriptionId();
                 var typeColour = data.elementId < 1 ? data.colour : getElementByTypeId(data.elementId()).getFirst().textColourPrimary();
                 var compName = withStyleComponentTrans(descriptionId, typeColour);
-                return withStyleComponent(compName.getString().equals("Mana") ? "+" + value + " " : valueWithFix + " ", colourPre).copy()
+                var mana = compName.getString().equals("Mana");
+                var skill = descriptionId.contains("skills");
+                return withStyleComponent(mana ? valueWithout : skill ? "" : valueWithFix + " ", colourPre).copy()
                     .append(compName);
             }
             return Component.empty();
@@ -140,6 +153,10 @@ public record PowerGemData(
 
         public static Optional<PowerGemData> getGemData(ItemStack stack){
             return Optional.ofNullable(stack.get(DataComponentRegistry.POWER_GEM_DATA.get()));
+        }
+
+        public static PowerGemData getGemDataOpen(ItemStack stack){
+            return stack.getOrDefault(POWER_GEM_DATA, DEFAULT);
         }
 
         public static void generateTypeGem(ItemStack stack, Pair<String, Holder<Attribute>> type, double value, AbstractElement getElement, JahdooRarity rarity) {
@@ -173,6 +190,11 @@ public record PowerGemData(
                     Pair.of(Pair.of(AttributesRegister.MANA_COST_REDUCTION_PREFIX, AttributesRegister.MANA_COST_REDUCTION.getDelegate()), JahdooRarity.getManaReductionRange(rarity))
                 );
 
+                var skillGems = List.of(
+                    Pair.of(Pair.of(AttributesRegister.MAGE_FLIGHT_PREFIX, AttributesRegister.MAGE_FLIGHT.getDelegate()), 1),
+                    Pair.of(Pair.of(AttributesRegister.DESTINY_BOND_PREFIX, AttributesRegister.DESTINY_BOND.getDelegate()), 1)
+                );
+
                 var allTypeAttributes = List.of(
                     Pair.of(getElement.getDamageTypeAmplifier(), JahdooRarity.getDamageRange(rarity)),
                     Pair.of(getElement.getTypeCooldownReduction(), JahdooRarity.getCooldownRange(rarity)),
@@ -182,12 +204,14 @@ public record PowerGemData(
                 var randomIndex = Random.nextInt(0, allTypeAttributes.size());
                 var getTypeAttribute = allTypeAttributes.get(randomIndex);
                 var getMultiAttribute = allMultiGems.get(randomIndex);
-                var getManaAttributes = allManaAttributes.get( Random.nextInt(0, allManaAttributes.size()));
+                var getManaAttributes = allManaAttributes.get(Random.nextInt(0, allManaAttributes.size()));
+                var getSkillAttributes = skillGems.get(Random.nextInt(0, allManaAttributes.size()));
                 stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(randomIndex));
 
 
                 switch (getRarity()){
-                    case COMMON, RARE, EPIC -> generateTypeGem(stack, getTypeAttribute.getFirst(), getTypeAttribute.getSecond(), getElement, rarity);
+                    case COMMON, RARE -> generateTypeGem(stack, getTypeAttribute.getFirst(), getTypeAttribute.getSecond(), getElement, rarity);
+                    case EPIC -> generateMultiGem(stack, getSkillAttributes.getFirst(), getSkillAttributes.getSecond(), "Skill", LEGENDARY, FastColor.ARGB32.color(234, 82, 68));
                     case LEGENDARY -> generateMultiGem(stack, getMultiAttribute.getFirst(), getMultiAttribute.getSecond(), "Versatile", rarity, FastColor.ARGB32.color(69, 100, 142));
                     case ETERNAL -> generateMultiGem(stack, getManaAttributes.getFirst(), getManaAttributes.getSecond(), "Assistant", rarity, FastColor.ARGB32.color(71, 145, 243));
                 }

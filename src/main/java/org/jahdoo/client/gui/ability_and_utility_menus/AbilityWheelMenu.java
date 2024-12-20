@@ -28,6 +28,7 @@ import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
+import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.components.DataComponentHelper;
 import org.jetbrains.annotations.NotNull;
@@ -43,14 +44,13 @@ public class AbilityWheelMenu extends Screen  {
     private final int buttonSize = RADIAL_SIZE / 7 + 3 + 6;
     private float localTick = 60;
     private boolean switchState;
-    private List<AbilityIconButton> buttons = new ArrayList<>();
+    private final List<AbilityIconButton> buttons = new ArrayList<>();
     private int slots;
-    private static final int RADIUS = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 4); // Adjust radius
+    private static final int RADIUS = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 4);
 
     public AbilityWheelMenu() {
         super(Component.literal("Ability Menu"));
     }
-
 
     public static List<String> getAllAbilities(ItemStack wand){
         var wandData = DataComponentRegistry.WAND_DATA.get();
@@ -65,11 +65,11 @@ public class AbilityWheelMenu extends Screen  {
         if(player == null) return;
         var wand = player.getMainHandItem();
         var wandData = wand.get(DataComponentRegistry.WAND_DATA.get());
-        var abilityHolder = getAllAbilities(wand); //number of positions
+        var abilityHolder = getAllAbilities(wand);
         var totalSlots = abilityHolder.size();
         int centerX = this.width / 2 + 2;
         int centerY = this.height / 2 + 2;
-        double angleOffset = -Math.PI / 2.0; // Start position
+        double angleOffset = -Math.PI / 2.0;
 
         if(wandData == null) return;
         this.slots = wandData.abilitySlots();
@@ -122,22 +122,15 @@ public class AbilityWheelMenu extends Screen  {
         var iconResource = ability.getAbilityIconLocation();
         var abilityButton = new WidgetSprites(iconResource, iconResource);
         var isSelected = Objects.equals(selectedAbility.isPresent() ? selectedAbility.get().getAbilityName() : "", ability.getAbilityName());
+        var widget = new AbilityIconButton(buttonX - 2, buttonY - 2, abilityButton, buttonSize, pButton -> {}, isSelected,
+            () -> onHoverClick(abilityHolder, finalI, player)
+        );
 
         if(isSelected){
             selectedAbility.ifPresent(abilityRegistrars -> showConfig(wandData, player, abilityRegistrars, buttonX + 20, buttonY - 10));
         }
-
-        var widget = new AbilityIconButton(
-            buttonX - 2, buttonY - 2, abilityButton, buttonSize,
-            pButton -> {},
-            isSelected,
-            () -> onHoverClick(abilityHolder, finalI, player)
-        );
-
         this.addRenderableWidget(widget);
-
         buttons.add(widget);
-
     }
 
     private void onHoverClick(List<String> abilityHolder, int finalI, Player player) {
@@ -182,12 +175,10 @@ public class AbilityWheelMenu extends Screen  {
                 @Override
                 public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
                     SharedUI.drawStringWithBackground(
-                        guiGraphics,
-                        Minecraft.getInstance().font,
+                        guiGraphics, Minecraft.getInstance().font,
                         Component.literal(String.valueOf(finalI + 1)),
-                        buttonX + 13,
-                        buttonY + 9,
-                        1, -1, true
+                        buttonX + 13, buttonY + 9,
+                        1, ColourStore.SUB_HEADER_COLOUR, true
                     );
                 }
             }
@@ -218,7 +209,6 @@ public class AbilityWheelMenu extends Screen  {
             }
         }
     }
-
 
     public float easeInOutCubic(float t) {
         return t < 0.2f ? 4 * t * t * t : (float) (1 - (float) Math.pow(-2 * t + 2, 3) / 1.2);
@@ -259,10 +249,6 @@ public class AbilityWheelMenu extends Screen  {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        if(switchState){
-            this.rebuildWidgets();
-            this.switchState = false;
-        }
         var normalizedTick =  this.localTick / RADIAL_SIZE;
         var easedTick = easeInOutCubic(normalizedTick);
         var easedValue = (int) (easedTick * RADIAL_SIZE);
@@ -272,12 +258,14 @@ public class AbilityWheelMenu extends Screen  {
         this.localTick = Math.min(tick, RADIAL_SIZE);
         setRadialTexture(guiGraphics, easedValue, fade > 0.7 ? fade : 0);
 
+        if(switchState){
+            this.rebuildWidgets();
+            this.switchState = false;
+        }
         if(this.localTick >= RADIAL_SIZE) {
             this.getSelectedAbilityName(guiGraphics);
             super.render(guiGraphics, mouseX, mouseY, delta);
         }
-
-
     }
 
     @Override

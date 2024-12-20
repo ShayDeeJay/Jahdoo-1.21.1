@@ -21,10 +21,8 @@ import static org.jahdoo.components.PowerGemData.PowerGemHelpers.standAloneAttri
 
 public class PowerGemTooltipRenderer implements ClientTooltipComponent {
     public static final ResourceLocation SLOT_TEXTURE = ModHelpers.res("textures/gui/gui_general_slot.png");
-
+    private final int spacing = Minecraft.getInstance().font.lineHeight + 4;
     private final SocketComponent comp;
-    private int spacing = Minecraft.getInstance().font.lineHeight + 4;
-    private int shiftY = 0;
 
     public PowerGemTooltipRenderer(SocketComponent comp) {
         this.comp = comp;
@@ -49,13 +47,13 @@ public class PowerGemTooltipRenderer implements ClientTooltipComponent {
         var pose = gfx.pose();
         for (int i = 0; i < this.comp.gems.size(); i++) {
             int size = 15;
-            gfx.blit(SLOT_TEXTURE, x-1, y + this.spacing * i + shiftY - 1, 0, 0, 0, size, size, size, size);
+            gfx.blit(SLOT_TEXTURE, x-1, y + this.spacing * i - 1, 0, 0, 0, size, size, size, size);
         }
 
-        for (ItemStack inst : this.comp.gems().reversed()) {
+        for (ItemStack inst : this.comp.gems()) {
             pose.pushPose();
             pose.scale(0.5F, 0.5F, 1);
-            gfx.renderFakeItem(inst, 2 * x + 5, (2 * y + 5) + (shiftY * 2));
+            gfx.renderFakeItem(inst, 2 * x + 5, (2 * y + 5));
             pose.popPose();
             y += this.spacing;
         }
@@ -64,10 +62,10 @@ public class PowerGemTooltipRenderer implements ClientTooltipComponent {
     @Override
     public void renderText(Font font, int mouseX, int mouseY, Matrix4f matrix, MultiBufferSource.BufferSource bufferSource) {
         var spacer = new AtomicInteger();
-        for (ItemStack itemStack : this.comp.gems().reversed()) {
+        for (ItemStack itemStack : this.comp.gems()) {
             var components = standAloneAttributes(itemStack);
             var getLabel = itemStack.isEmpty() ? Component.literal("Empty Slot") : components;
-            var posY = mouseY + 3 + this.spacing * spacer.get() + shiftY;
+            var posY = mouseY + 3 + this.spacing * spacer.get();
             font.drawInBatch(getLabel, mouseX + 15, posY, ColourStore.HEADER_COLOUR, true, matrix, bufferSource, Font.DisplayMode.SEE_THROUGH, 0, FULL_BRIGHT);
             spacer.set(spacer.get() + 1);
         }

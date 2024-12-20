@@ -172,9 +172,11 @@ public class WandItem extends BlockItem implements GeoItem {
 //            serverLevel.addFreshEntity(zombo);
         }
 
+
 //        player.startUsingItem(player.getUsedItemHand());
         if (interactionHand == InteractionHand.MAIN_HAND) {
             var item = player.getMainHandItem();
+
             CastHelper.use(player);
             return InteractionResultHolder.pass(item);
         }

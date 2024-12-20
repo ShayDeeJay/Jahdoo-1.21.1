@@ -11,6 +11,7 @@ import org.jahdoo.attachments.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.block.wand.WandBlock;
 import org.jahdoo.block.wand.WandBlockEntity;
+import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
 import org.jahdoo.components.WandData;
 import org.jahdoo.utils.ModHelpers;
 
@@ -43,8 +44,8 @@ public class WandDataC2SPacket implements CustomPacketPayload {
             () -> {
                 if(ctx.player().level() instanceof ServerLevel serverLevel){
                     var bEntity = serverLevel.getBlockEntity(blockPos);
-                    if(bEntity instanceof WandBlockEntity wandBlock){
-                        wandBlock.getWandItemFromSlot().set(WAND_DATA, wandData);
+                    if(bEntity instanceof WandManagerTableEntity wandBlock){
+                        wandBlock.getWandSlot().set(WAND_DATA, wandData);
                     }
                 }
             }

@@ -5,12 +5,15 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.attachments.AbstractAttachment;
+import org.jahdoo.components.PowerGemData;
+import org.jahdoo.items.wand.WandItem;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.jahdoo.registers.DataComponentRegistry.INFINITE_ITEM;
+import static org.jahdoo.registers.DataComponentRegistry.POWER_GEM_DATA;
 
 public class SaveData implements AbstractAttachment {
 
@@ -34,9 +37,10 @@ public class SaveData implements AbstractAttachment {
 
     public void addAllItems(Player player){
         var list = player.getInventory().items;
-        var wands = list.stream().filter(itemStack -> itemStack.has(INFINITE_ITEM)).toList();
-        this.itemStacks.addAll(wands);
-        wands.forEach(items -> player.getInventory().removeItem(items));
+        var item = list.stream().filter(PowerGemData.PowerGemHelpers::hasDestinyBond).toList();
+        var wandOnly = item.stream().filter(itemStack -> itemStack.getItem() instanceof WandItem).toList();
+        this.itemStacks.addAll(wandOnly);
+        item.forEach(items -> player.getInventory().removeItem(items));
     }
 
     public void takeAllItems(Player player){

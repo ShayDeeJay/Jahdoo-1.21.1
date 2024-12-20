@@ -42,8 +42,8 @@ public class CustomAoeRenderer extends EntityRenderer<AoeCloud> {
         }
 
         if(Objects.equals(entity.getEntityType(), Permafrost.abilityId.getPath().intern())){
-            int color = ElementRegistry.FROST.get().textColourPrimary();
-            drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f,  entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(90, color));
+            int color = ElementRegistry.FROST.get().textColourSecondary();
+            drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f,  entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(155, color));
         }
 
 //        drawSlash(pose.last(), bufferSource, 255, Math.min(entity.getBbWidth() + 0.2f, entity.tickCount + pPartialTick), ModHelpers.res("textures/entity/magic_circle_2.png"), FastColor.ARGB32.color(155, color));
