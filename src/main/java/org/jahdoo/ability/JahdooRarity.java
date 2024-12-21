@@ -1,6 +1,5 @@
 package org.jahdoo.ability;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.StringRepresentable;
@@ -11,7 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
-import org.jahdoo.components.PowerGemData;
+import org.jahdoo.components.RuneData;
 import org.jahdoo.components.WandData;
 import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.registers.*;
@@ -26,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.UnaryOperator;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.components.PowerGemData.PowerGemHelpers.getGemData;
+import static org.jahdoo.components.RuneData.RuneHelpers.getRuneData;
 import static org.jahdoo.items.augments.AugmentItemHelper.setAbilityToAugment;
 import static org.jahdoo.registers.AttributesRegister.*;
 import static org.jahdoo.registers.DataComponentRegistry.JAHDOO_RARITY;
@@ -113,8 +112,8 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return Component.empty();
     }
 
-    public static Component attachGemRarityTooltip(ItemStack wandItem) {
-        var data = getGemData(wandItem).orElse(PowerGemData.DEFAULT);
+    public static Component attachRuneRarityTooltip(ItemStack wandItem) {
+        var data = getRuneData(wandItem).orElse(RuneData.DEFAULT);
         var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(data.rarityId(), 0, 5));
         return JahdooRarity.addRarityTooltip(getRarity);
     }

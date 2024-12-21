@@ -57,6 +57,7 @@ public class AugmentModificationBlock extends BaseEntityBlock{
         Block.box(6, 11.25, 7, 7, 12.75, 9),
         Block.box(9, 11.25, 7, 10, 12.75, 9)
     );
+
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
 
     public AugmentModificationBlock() {

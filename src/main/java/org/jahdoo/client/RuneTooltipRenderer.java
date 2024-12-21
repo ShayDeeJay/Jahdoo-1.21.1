@@ -17,26 +17,26 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
-import static org.jahdoo.components.PowerGemData.PowerGemHelpers.standAloneAttributes;
+import static org.jahdoo.components.RuneData.RuneHelpers.standAloneAttributes;
 
-public class PowerGemTooltipRenderer implements ClientTooltipComponent {
+public class RuneTooltipRenderer implements ClientTooltipComponent {
     public static final ResourceLocation SLOT_TEXTURE = ModHelpers.res("textures/gui/gui_general_slot.png");
     private final int spacing = Minecraft.getInstance().font.lineHeight + 4;
-    private final SocketComponent comp;
+    private final RuneComponent component;
 
-    public PowerGemTooltipRenderer(SocketComponent comp) {
-        this.comp = comp;
+    public RuneTooltipRenderer(RuneComponent component) {
+        this.component = component;
     }
 
     @Override
     public int getHeight() {
-        return this.spacing * this.comp.gems.size() + 2;
+        return this.spacing * this.component.runes.size() + 2;
     }
 
     @Override
     public int getWidth(Font font) {
         int maxWidth = 0;
-        for (ItemStack inst : this.comp.gems) {
+        for (ItemStack inst : this.component.runes) {
             maxWidth = Math.max(maxWidth, font.width(standAloneAttributes(inst)) + 18);
         }
         return maxWidth;
@@ -45,12 +45,12 @@ public class PowerGemTooltipRenderer implements ClientTooltipComponent {
     @Override
     public void renderImage(Font font, int x, int y, GuiGraphics gfx) {
         var pose = gfx.pose();
-        for (int i = 0; i < this.comp.gems.size(); i++) {
+        for (int i = 0; i < this.component.runes.size(); i++) {
             int size = 15;
             gfx.blit(SLOT_TEXTURE, x-1, y + this.spacing * i - 1, 0, 0, 0, size, size, size, size);
         }
 
-        for (ItemStack inst : this.comp.gems()) {
+        for (ItemStack inst : this.component.runes()) {
             pose.pushPose();
             pose.scale(0.5F, 0.5F, 1);
             gfx.renderFakeItem(inst, 2 * x + 5, (2 * y + 5));
@@ -62,7 +62,7 @@ public class PowerGemTooltipRenderer implements ClientTooltipComponent {
     @Override
     public void renderText(Font font, int mouseX, int mouseY, Matrix4f matrix, MultiBufferSource.BufferSource bufferSource) {
         var spacer = new AtomicInteger();
-        for (ItemStack itemStack : this.comp.gems()) {
+        for (ItemStack itemStack : this.component.runes()) {
             var components = standAloneAttributes(itemStack);
             var getLabel = itemStack.isEmpty() ? Component.literal("Empty Slot") : components;
             var posY = mouseY + 3 + this.spacing * spacer.get();
@@ -71,6 +71,6 @@ public class PowerGemTooltipRenderer implements ClientTooltipComponent {
         }
     }
 
-    public record SocketComponent(ItemStack socket, List<ItemStack> gems) implements TooltipComponent {}
+    public record RuneComponent(ItemStack socket, List<ItemStack> runes) implements TooltipComponent {}
 
 }

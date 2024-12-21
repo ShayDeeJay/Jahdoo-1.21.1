@@ -3,23 +3,16 @@ package org.jahdoo.client.gui.block.wand_manager_table;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.apache.http.util.TextUtils;
 import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
-import org.jahdoo.client.IconLocations;
-import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.block.augment_modification_station.AugmentCoreSlot;
 import org.jahdoo.client.gui.block.augment_modification_station.InventorySlots;
-import org.jahdoo.components.PowerGemData;
 import org.jahdoo.components.WandData;
-import org.jahdoo.items.power_gems.PowerGemsItem;
+import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.wand.WandItemHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.jahdoo.client.IconLocations.*;
 import static org.jahdoo.client.SharedUI.*;
 import static org.jahdoo.client.gui.ToggleComponent.*;
-import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> {
     public static WidgetSprites WIDGET = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
@@ -70,7 +62,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             }
 
             if(slot instanceof AugmentCoreSlot augmentCoreSlot){
-                if(augmentCoreSlot.getItem().getItem() instanceof PowerGemsItem){
+                if(augmentCoreSlot.getItem().getItem() instanceof RuneItem){
                     augmentCoreSlot.setActive(showInventory);
                 }
             }
@@ -194,16 +186,16 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             }
         } else {
             var wand = this.wandManager.getWandManagerEntity().getWandSlot();
-            var getGems = WandData.wandData(wand);
+            var getRunes = WandData.wandData(wand);
             var index = new AtomicInteger();
-            for (ItemStack ignored : getGems.upgradeSlots()) {
+            for (ItemStack ignored : getRunes.upgradeSlots()) {
                 var size = 32;
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().translate(0,0,100);
                 var posX = startX + wandManager.offSetX + spacer.get() - (index.get() > 3 ? 148 : 0) + (this.setView ? + 94 : 0);
                 var posY = startY + wandManager.offSetY - 112 + (index.get() > 3 ? 37 : 0) + (this.setView ? - 96 : 0);
                 guiGraphics.blit(GUI_GENERAL_SLOT, posX, posY, 0,0, size, size, size, size);
-                spacer.set(spacer.get() + wandManager.gemYSpacer);
+                spacer.set(spacer.get() + wandManager.runeYSpacer);
                 index.set(index.get()+1);
                 guiGraphics.pose().popPose();
             }

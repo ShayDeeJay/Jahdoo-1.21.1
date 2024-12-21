@@ -110,30 +110,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         SharedUI.boxMaker(pGuiGraphics, startX - 4, startY - 4, 100, attSpacer.get()/2 + 3, BORDER_COLOUR);
     }
 
-//    private static void attributeStats(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player) {
-//        if(!InputConstants.isKeyDown(minecraft.getWindow().getWindow(), InputConstants.KEY_TAB)) return;
-//        var attSpacer = new AtomicInteger();
-//        var syncableAttributes = player.getAttributes().getSyncableAttributes();
-//        var startX = 14;
-//        var startY = 14;
-//
-//        for (AttributeInstance syncableAttribute : syncableAttributes) {
-//            var modName = syncableAttribute.getAttribute().getRegisteredName().split(":", 2)[0];
-//            if (syncableAttribute.getValue() > 0) {
-//                var prefix = translatable(syncableAttribute.getAttribute().value().getDescriptionId());
-//                var readableValues = roundNonWholeString(doubleFormattedDouble(syncableAttribute.getValue()));
-//                var suffix = ModHelpers.withStyleComponent(" " + readableValues, -9882);
-//                if(modName.equals("jahdoo")){
-//                    var string = prefix.append(suffix);
-//                    pGuiGraphics.drawString(minecraft.font, string, startX, startY + attSpacer.get(), -1);
-//                    attSpacer.set(attSpacer.get() + 10);
-//                }
-//            }
-//        }
-//
-//        SharedUI.boxMaker(pGuiGraphics, startX - 4, startY - 4, 100, attSpacer.get()/2 + 3, BORDER_COLOUR);
-//    }
-
     private static void inventory(@NotNull GuiGraphics pGuiGraphics, LocalPlayer player) {
         var selectedIndex = player.getInventory().selected;
         var current = player.getInventory().getItem(selectedIndex);
@@ -147,14 +123,10 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var unSelected = IconLocations.GUI_ITEM_SLOT;
         var alpha = 0.6f;
         var textColour = -7303024;
+
         renderSlot(pGuiGraphics, next, x + 20, y, unSelected, nextIndex + 1, textColour, alpha);
         renderSlot(pGuiGraphics, current, x , y, IconLocations.GUI_GENERAL_SLOT, selectedIndex + 1, -12698050, 1f);
         renderSlot(pGuiGraphics, previous, x - 20, y, unSelected, prevIndex + 1, textColour, alpha);
-
-//        pGuiGraphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(current.getCount()), x, y, -1);
-//        pGuiGraphics.renderFakeItem(current, x, y);
-//        pGuiGraphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(previous.getCount()), x - 20, y, -1);
-//        pGuiGraphics.renderFakeItem(previous, x - 20, y);
     }
 
     private static void renderSlot(@NotNull GuiGraphics pGuiGraphics, ItemStack next, int x, int y, ResourceLocation lit, int index, int textColour, float alpha) {

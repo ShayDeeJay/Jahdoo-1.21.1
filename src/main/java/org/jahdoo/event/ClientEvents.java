@@ -11,8 +11,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.client.KeyBinding;
+import org.jahdoo.client.RuneTooltipRenderer;
 import org.jahdoo.event.event_helpers.WandAbilitySelector;
-import org.jahdoo.client.PowerGemTooltipRenderer;
 import org.jahdoo.registers.*;
 
 import static org.jahdoo.event.event_helpers.KeyBindHelper.*;
@@ -120,8 +120,8 @@ public class ClientEvents {
         var current = e.getTooltipElements();
         var allSlots = getAllSlots(e.getItemStack());
         if(allSlots.isEmpty()) return;
-        var powerGemSockets = new PowerGemTooltipRenderer.SocketComponent(e.getItemStack(), allSlots);
-        e.getTooltipElements().add(current.size(), Either.right(powerGemSockets));
+        var runeSockets = new RuneTooltipRenderer.RuneComponent(e.getItemStack(), allSlots);
+        e.getTooltipElements().add(current.size(), Either.right(runeSockets));
     }
 
     @SubscribeEvent

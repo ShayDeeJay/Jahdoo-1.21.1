@@ -1,48 +1,33 @@
 package org.jahdoo.client.gui.block.wand_manager_table;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.block.AbstractBEInventory;
-import org.jahdoo.block.wand.WandBlock;
 import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
 import org.jahdoo.client.gui.AbstractInternalContainer;
 import org.jahdoo.client.gui.block.augment_modification_station.AugmentCoreSlot;
-import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.components.WandData;
-import org.jahdoo.networking.packet.client2server.AugmentModificationChargeC2S;
-import org.jahdoo.networking.packet.client2server.WandDataC2SPacket;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.registers.MenusRegister;
-import org.jahdoo.utils.ModHelpers;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.block.wand_block_manager.WandManagerTableEntity.DEFAULT_SLOTS;
-import static org.jahdoo.registers.DataComponentRegistry.POWER_GEM_DATA;
-import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class WandManagerMenu extends AbstractInternalContainer {
     public int posX = -42;
     public int posY = 41;
     public int offSetX = 5;
     public int offSetY = 110;
-    public int gemYSpacer = 37;
+    public int runeYSpacer = 37;
 
     public WandManagerMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         super(MenusRegister.WAND_MANAGER_MENU.get(), pContainerId, inv, extraData);
@@ -57,7 +42,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
     public void addSlots() {
         insertWandSlot();
         insertAugmentSlots();
-        insertGemSlots();
+        insertRuneSlots();
     }
 
     private void insertWandSlot() {
@@ -72,7 +57,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
         }
     }
 
-    private void insertGemSlots() {
+    private void insertRuneSlots() {
         try{
             var getAllSlots = this.getWandManagerEntity().getWandSlot();
             var getData = WandData.wandData(getAllSlots);
@@ -83,10 +68,10 @@ public class WandManagerMenu extends AbstractInternalContainer {
                 iHandler.setStackInSlot(index.get(), itemStack);
                 var posX = this.posX + 92 + offSetX + spacer.get() - (index.get() > 7 ? 148 : 0);
                 var posY = (this.posY + offSetY) - 136 + (index.get() > 7 ? 37 : 0);
-                var item = ItemsRegister.POWER_GEM.get();
+                var item = ItemsRegister.RUNE.get();
                 this.addSlot(new AugmentCoreSlot(iHandler, index.get(), posX, posY, item, this.getWandManagerEntity(), 1));
                 index.set(index.get() + 1);
-                spacer.set(spacer.get() + gemYSpacer);
+                spacer.set(spacer.get() + runeYSpacer);
             }
         } catch (Exception e){
             JahdooMod.logger.log(Level.DEBUG, e);

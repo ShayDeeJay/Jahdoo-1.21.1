@@ -37,7 +37,7 @@ public class ModCreativeModTabs {
                     pOutput.accept(ItemsRegister.AUGMENT_FRAGMENT.get());
                     pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
                     pOutput.accept(ItemsRegister.AUGMENT_CORE.get());
-                    pOutput.accept(ItemsRegister.POWER_GEM.get());
+                    pOutput.accept(ItemsRegister.RUNE.get());
                     pOutput.accept(ItemsRegister.ADVANCED_AUGMENT_CORE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_HYPER_CORE.get());
                     pOutput.accept(ItemsRegister.TOME_OF_UNITY.get());

@@ -8,6 +8,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.client.KeyBinding;
+import org.jahdoo.client.RuneTooltipRenderer;
 import org.jahdoo.client.block_renderer.*;
 import org.jahdoo.client.entity_renderer.CustomAoeRenderer;
 import org.jahdoo.client.entity_renderer.ElementProjectileRenderer;
@@ -21,7 +22,6 @@ import org.jahdoo.client.gui.block.infusion_table.InfusionTableScreen;
 import org.jahdoo.client.gui.block.modular_chaos_cube.ModularChaosCubeScreen;
 import org.jahdoo.client.gui.block.wand_block.WandBlockScreen;
 import org.jahdoo.client.gui.block.wand_manager_table.WandManagerScreen;
-import org.jahdoo.client.PowerGemTooltipRenderer;
 import org.jahdoo.particle.GenericParticle;
 import org.jahdoo.registers.*;
 
@@ -31,11 +31,11 @@ public class BusClientEvents {
 
     @SubscribeEvent
     public static void registerItemColour(final RegisterColorHandlersEvent.Item event){
-        event.register((stack, color) -> getColour(stack), ItemsRegister.POWER_GEM.get());
+        event.register((stack, color) -> getColour(stack), ItemsRegister.RUNE.get());
     }
 
     public static int getColour(ItemStack stack){
-        var colour = stack.get(DataComponentRegistry.POWER_GEM_DATA.get());
+        var colour = stack.get(DataComponentRegistry.RUNE_DATA.get());
         if(colour != null) return colour.colour();
         return -1;
     }
@@ -99,7 +99,7 @@ public class BusClientEvents {
 
     @SubscribeEvent
     public static void tooltipEvent(RegisterClientTooltipComponentFactoriesEvent event){
-        event.register(PowerGemTooltipRenderer.SocketComponent.class, PowerGemTooltipRenderer::new);
+        event.register(RuneTooltipRenderer.RuneComponent.class, RuneTooltipRenderer::new);
     }
 
     @SubscribeEvent

@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.attachments.AbstractAttachment;
 import org.jahdoo.attachments.CastingData;
-import org.jahdoo.components.PowerGemData;
+import org.jahdoo.components.RuneData;
 import org.jahdoo.networking.packet.client2server.MageFlightPacketS2CPacket;
 import org.jahdoo.networking.packet.server2client.MageFlightDataSyncS2CPacket;
 import org.jahdoo.particle.ParticleStore;
@@ -103,7 +103,7 @@ public class MageFlight implements AbstractAttachment {
     }
 
     private boolean cancelAttempt(Player player, ItemStack wandItem) {
-        if(!PowerGemData.PowerGemHelpers.canMageFlight(wandItem) || player.onGround() || player.isFallFlying()) {
+        if(!RuneData.RuneHelpers.canMageFlight(wandItem) || player.onGround() || player.isFallFlying()) {
             player.getAbilities().mayfly = false;
             this.isFlying = false;
             return true;
