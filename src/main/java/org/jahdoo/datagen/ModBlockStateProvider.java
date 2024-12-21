@@ -23,7 +23,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(BlocksRegister.ENCHANTED_BLOCK);
 
         simpleBlockWithItem(BlocksRegister.WAND_MANAGER_TABLE.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/infusion_table")));
+            new ModelFile.UncheckedModelFile(modLoc("block/wand_manager_table")));
 
         simpleBlockWithItem(BlocksRegister.TANK.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/tank")));
@@ -41,7 +41,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
             new ModelFile.UncheckedModelFile(modLoc("block/nexite_powder_block")));
 
         simpleBlock(BlocksRegister.WAND.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/wand")));
+            new ModelFile.UncheckedModelFile(modLoc("block/wand_mystic")));
 
         simpleBlockWithItem(BlocksRegister.CREATOR.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/creator")));

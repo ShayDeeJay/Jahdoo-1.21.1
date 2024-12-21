@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "jahdoo:block/wand"
+      "model": "jahdoo:block/wand_mystic"
     }
   }
 }

@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -26,6 +27,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.block.wand_block_manager.WandManagerTableBlock;
 import org.jahdoo.components.WandData;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
@@ -50,13 +52,20 @@ public class WandBlock extends BaseEntityBlock {
 
     VoxelShape result = Block.box(7, 0, 7, 9, 17, 9);
 
-    public WandBlock(Properties pProperties) {
-        super(pProperties);
+    public WandBlock() {
+        super(
+            BlockBehaviour.Properties
+                .ofFullCopy(Blocks.TORCH)
+                .noTerrainParticles()
+                .instabreak()
+                .lightLevel((blockState) -> 12)
+        );
     }
+
 
     @Override
     protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
-        return  simpleCodec(WandBlock::new);
+        return  simpleCodec((x) -> new WandBlock());
     }
 
     @Override

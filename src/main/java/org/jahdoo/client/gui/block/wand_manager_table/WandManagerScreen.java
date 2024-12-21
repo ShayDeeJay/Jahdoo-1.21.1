@@ -164,8 +164,6 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         renderItem(guiGraphics, this.width - shiftX1 * 2, this.height - (showInventory ? 80 : 0), wandManager.getWandManagerEntity().inputItemHandler.getStackInSlot(0),  (float) (showInventory ? 70 : 140), mouseX, mouseY, 16);
         boxMaker(guiGraphics, startX + i + 70 - shiftX1, startY + i1 - 94, 30, 86, BORDER_COLOUR, this.getMinecraft().options.getBackgroundColor(0.4F));
         guiGraphics.disableScissor();
-        boxMaker(guiGraphics, startX + i + 60, startY + i1 - 94 - 11, 20, (int) this.scale + 5, BORDER_COLOUR, this.getMinecraft().options.getBackgroundColor(0.2F));
-        boxMaker(guiGraphics, startX + i + 104, startY + i1 - 94 - 11, 20, (int) this.scale + 5, BORDER_COLOUR, this.getMinecraft().options.getBackgroundColor(0.2F));
         wandProperties(guiGraphics, startX, i, startY, i1);
         guiGraphics.pose().popPose();
     }

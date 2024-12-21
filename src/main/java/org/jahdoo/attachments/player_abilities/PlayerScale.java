@@ -17,24 +17,16 @@ import static org.jahdoo.registers.AttachmentRegister.PLAYER_SCALE;
 
 public class PlayerScale implements AbstractAttachment {
 
-    private ServerPlayer serverPlayer;
     private float scaledValue;
     private final ResourceLocation effectId = ModHelpers.res("jahdoo_scale_player");
     private final HashMultimap<Holder<Attribute>, AttributeModifier> multiMap = HashMultimap.create();
-
-    public PlayerScale(ServerPlayer serverPlayer){
-        this.serverPlayer = serverPlayer;
-    }
-
-    public PlayerScale(){}
 
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putFloat(effectId.getPath().intern(), this.scaledValue);
     }
 
     public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
-        var num = nbt.getFloat(effectId.getPath().intern());
-        setToggleEffect(serverPlayer, num);
+        this.scaledValue = nbt.getFloat(effectId.getPath().intern());
     }
 
     public static void setToggleEffect(Player player, float scaleValue){

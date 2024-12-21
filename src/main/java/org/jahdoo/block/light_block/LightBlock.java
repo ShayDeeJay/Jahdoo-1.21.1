@@ -5,6 +5,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -18,8 +20,14 @@ import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
 
 public class LightBlock extends Block {
 
-    public LightBlock(Properties pProperties) {
-        super(pProperties);
+    public LightBlock() {
+        super(
+            BlockBehaviour.Properties
+                .ofFullCopy(Blocks.TORCH)
+                .noCollission()
+                .instabreak()
+                .lightLevel((blockState) -> 15)
+        );
     }
 
     VoxelShape result = Block.box(6, 6, 6, 10, 10, 10);

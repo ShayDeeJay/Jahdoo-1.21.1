@@ -2,8 +2,10 @@ package org.jahdoo.attachments;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -17,7 +19,7 @@ public class GenericProvider<T extends AbstractAttachment> implements IAttachmen
     }
 
     @Override
-    public T read(IAttachmentHolder iAttachmentHolder, CompoundTag compoundTag, HolderLookup.Provider provider) {
+    public @NotNull T read(@NotNull IAttachmentHolder iAttachmentHolder, CompoundTag compoundTag, HolderLookup.Provider provider) {
         T attachment = factory.get();
         attachment.loadNBTData(compoundTag, provider);
         return attachment;

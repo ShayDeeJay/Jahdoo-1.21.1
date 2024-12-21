@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -26,6 +27,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.block.BlockInteractionHandler;
+import org.jahdoo.block.wand_block_manager.WandManagerTableBlock;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
@@ -42,8 +44,15 @@ public class NexiteTankBlock extends BaseEntityBlock implements SimpleWaterlogge
     public static final BooleanProperty LIT;
     public static final BooleanProperty WATERLOGGED;
 
-    public NexiteTankBlock(Properties pProperties) {
-        super(pProperties);
+
+    public NexiteTankBlock() {
+        super(
+            BlockBehaviour.Properties.of()
+                .strength(1f)
+                .sound(SoundType.COPPER_BULB)
+                .lightLevel((state) -> state.getValue(LIT) ? 4 : 0)
+                .noOcclusion()
+        );
         this.registerDefaultState(
             this.defaultBlockState()
                 .setValue(LIT, false)
@@ -53,7 +62,7 @@ public class NexiteTankBlock extends BaseEntityBlock implements SimpleWaterlogge
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(NexiteTankBlock::new);
+        return  simpleCodec((x) -> new NexiteTankBlock());
     }
 
     @Override

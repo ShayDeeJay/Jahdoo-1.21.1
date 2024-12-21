@@ -22,36 +22,36 @@ public class BlockEntitiesRegister {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, JahdooMod.MOD_ID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AugmentModificationEntity>> AUGMENT_MODIFICATION_STATION_BE =
-        BLOCK_ENTITIES.register("augment_modification_station_be", () -> BlockEntityType.Builder.of(AugmentModificationEntity::new, BlocksRegister.AUGMENT_MODIFICATION_STATION.get()).build(null));
+        registerBlockEntity("augment_modification_station_be", AugmentModificationEntity::new, BlocksRegister.AUGMENT_MODIFICATION_STATION);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreatorEntity>> CREATOR_BE =
-        BLOCK_ENTITIES.register("creator_be", () -> BlockEntityType.Builder.of(CreatorEntity::new, BlocksRegister.CREATOR.get()).build(null));
+        registerBlockEntity("creator_be", CreatorEntity::new, BlocksRegister.CREATOR);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WandManagerTableEntity>> WAND_MANAGER_TABLE_BE =
-        BLOCK_ENTITIES.register("infusion_table_be", () -> BlockEntityType.Builder.of(WandManagerTableEntity::new, BlocksRegister.WAND_MANAGER_TABLE.get()).build(null));
+        registerBlockEntity("wand_manager_table_be", WandManagerTableEntity::new, BlocksRegister.WAND_MANAGER_TABLE);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WandBlockEntity>> WAND_BE =
-        BLOCK_ENTITIES.register("wand_be", () -> BlockEntityType.Builder.of(WandBlockEntity::new, BlocksRegister.WAND.get()).build(null));
+        registerBlockEntity("wand_be", WandBlockEntity::new, BlocksRegister.WAND);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NexiteTankBlockEntity>> TANK_BE =
-        BLOCK_ENTITIES.register("tank_be", () -> BlockEntityType.Builder.of(NexiteTankBlockEntity::new, BlocksRegister.TANK.get()).build(null));
+        registerBlockEntity("tank_be", NexiteTankBlockEntity::new, BlocksRegister.TANK);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnchantedBlockEntity>> ENCHANTED_BE =
-        BLOCK_ENTITIES.register("enchanted_be", () -> BlockEntityType.Builder.of(EnchantedBlockEntity::new, BlocksRegister.ENCHANTED_BLOCK.get()).build(null));
+        registerBlockEntity("enchanted_be", EnchantedBlockEntity::new, BlocksRegister.ENCHANTED_BLOCK);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<InfuserBlockEntity>> INFUSER_BE =
-        BLOCK_ENTITIES.register("infuser_be", () -> BlockEntityType.Builder.of(InfuserBlockEntity::new, BlocksRegister.INFUSER.get()).build(null));
+        registerBlockEntity("infuser_be", InfuserBlockEntity::new, BlocksRegister.INFUSER);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ModularChaosCubeEntity>> MODULAR_CHAOS_CUBE_BE =
-        BLOCK_ENTITIES.register("modular_chaos_cube_be", () -> BlockEntityType.Builder.of(ModularChaosCubeEntity::new, BlocksRegister.MODULAR_CHAOS_CUBE.get()).build(null));
+        registerBlockEntity("modular_chaos_cube_be", ModularChaosCubeEntity::new, BlocksRegister.MODULAR_CHAOS_CUBE);
 
     public static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> registerBlockEntity(
         String name,
         BlockEntityType.BlockEntitySupplier<T> factory,
-        Block blocks
+        DeferredHolder<Block, Block> blocks
     ) {
         return BLOCK_ENTITIES.register(name,
-            () -> BlockEntityType.Builder.of(factory, blocks).build(null));
+            () -> BlockEntityType.Builder.of(factory, blocks.get()).build(null));
     }
 
     public static void register(IEventBus eventBus) {
