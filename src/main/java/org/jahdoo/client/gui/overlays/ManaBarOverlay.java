@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static net.minecraft.network.chat.Component.translatable;
 import static org.jahdoo.client.SharedUI.BORDER_COLOUR;
 import static org.jahdoo.client.SharedUI.drawStringWithBackground;
+import static org.jahdoo.items.augments.AugmentItemHelper.ticksToTime;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 import static org.jahdoo.utils.ModHelpers.doubleFormattedDouble;
 import static org.jahdoo.utils.ModHelpers.roundNonWholeString;
@@ -74,6 +75,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
 
         this.setTypeOverlay(alignedGui, player, manaProgress + 3);
         this.cooldownOverlay(abilityRegistrars, casterData, pGuiGraphics, minecraft);
+        this.cooldownTimer(abilityRegistrars, casterData, pGuiGraphics, minecraft);
         this.manaPoolCount(casterData, pGuiGraphics, minecraft);
         if(Config.CUSTOM_UI.get()){
             Minecraft.getInstance().gui.renderSelectedItemName(pGuiGraphics, 94);
@@ -227,11 +229,28 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
             if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {
                 var cooldownCost = casterData.getStaticCooldown(ability.setAbilityId());
                 var cooldownStatus = casterData.getCooldown(ability.setAbilityId());
-                var cooldownOverlaySize = 20;
+                var cooldownOverlaySize = 19;
                 if(cooldownCost > 0){
-                    var currentOverlayHeight = ((cooldownStatus) * cooldownOverlaySize / cooldownCost);
+                    var currentOverlayHeight = (cooldownStatus * cooldownOverlaySize) / cooldownCost;
                     alignedGui.displayGuiLayer(6, 5 + currentOverlayHeight, 89, cooldownOverlaySize, currentOverlayHeight);
+
                 }
+            }
+        }
+    }
+
+    private void cooldownTimer(AbilityRegistrar ability, CastingData casterData, GuiGraphics pGuiGraphics, Minecraft minecraft){
+        if (ability != null) {
+            if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {
+                var cooldownStatus = casterData.getCooldown(ability.setAbilityId());
+                pGuiGraphics.pose().pushPose();
+                var v = 0.5F;
+                pGuiGraphics.pose().scale(v, v, v);
+                var getCorrectX = Config.CUSTOM_UI.get() ? ((pGuiGraphics.guiWidth() / 2) * 2) : 32;
+                var getCorrectY = pGuiGraphics.guiHeight() * 2 - (Config.CUSTOM_UI.get() ? 40 : 20) ;
+                pGuiGraphics.pose().translate(getCorrectX, getCorrectY, 10D);
+                SharedUI.centeredStringNoShadow(pGuiGraphics, minecraft.font, Component.literal(ticksToTime(String.valueOf(cooldownStatus))), 0, 0, -1, false);
+                pGuiGraphics.pose().popPose();
             }
         }
     }

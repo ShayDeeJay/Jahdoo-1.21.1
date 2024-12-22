@@ -9,10 +9,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
+import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.block.augment_modification_station.AugmentCoreSlot;
 import org.jahdoo.client.gui.block.augment_modification_station.InventorySlots;
 import org.jahdoo.components.WandData;
 import org.jahdoo.items.runes.RuneItem;
+import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.items.wand.WandItemHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +34,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     boolean setView;
     int section;
     double scale = 1;
+    private float FADE = 0.7f;
 
     public WandManagerScreen(WandManagerMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -72,7 +75,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     private void keyboardButton() {
         var resourceLocation = this.showInventory ? INFORMATION : INVENTORY;
         this.addRenderableWidget(
-            menuButton(this.width/2 - 133, this.height/2 + 45, (press) -> inventoryHandler(), resourceLocation, 24, false, 0, WIDGET, true)
+            menuButton(this.width/2 - 136, this.height/2 + 3, (press) -> inventoryHandler(), resourceLocation, 24, false, 0, WIDGET, true)
         );
     }
 
@@ -90,19 +93,20 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        var startX = this.width / 2 - 140;
-        var startY = this.height / 2 + 22;
-        var i = 40;
-        var i1 = -17;
-        var startX1 = startX + i + 80;
-        var startY1 = startY + i1 - 88;
-
-        var x = mouseX > startX1 && mouseX < startX1 + 40 && mouseY > startY1 && mouseY < startY1 + 34;
-        if(x) {
-            System.out.println("clicked");
-            this.section = this.section == 1 ? 2 : 1;
-        }
-
+//        var startX = this.width / 2 - 140;
+//        var startY = this.height / 2 + 22;
+//        var i = 40;
+//        var i1 = -17;
+//        var startX1 = startX + i + 80;
+//        var startY1 = startY + i1 - 88;
+//
+//        var x = mouseX > startX1 && mouseX < startX1 + 40 && mouseY > startY1 && mouseY < startY1 + 34;
+//        if(x) {
+//            System.out.println("clicked");
+//            this.section = this.section == 1 ? 2 : 1;
+//        }
+//
+//        return super.mouseClicked(mouseX, mouseY, button);
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -161,8 +165,8 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0,0,-10);
         guiGraphics.enableScissor(startX + i + 70 - shiftX1, startY + i1 - 94, startX + i + 70 + 60, startY + i1 - 94 + 172);
-        renderItem(guiGraphics, this.width - shiftX1 * 2, this.height - (showInventory ? 80 : 0), wandManager.getWandManagerEntity().inputItemHandler.getStackInSlot(0),  (float) (showInventory ? 70 : 140), mouseX, mouseY, 16);
-        boxMaker(guiGraphics, startX + i + 70 - shiftX1, startY + i1 - 94, 30, 86, BORDER_COLOUR, this.getMinecraft().options.getBackgroundColor(0.4F));
+        renderItem(guiGraphics, this.width - shiftX1 * 2, this.height - (showInventory ? 84 : 6), wandManager.getWandManagerEntity().inputItemHandler.getStackInSlot(0),  (float) (showInventory ? 70 : 140), mouseX, mouseY, 16);
+        boxMaker(guiGraphics, startX + i + 70 - shiftX1, startY + i1 - 94, 30, 86 - (showInventory ? 40 : 0), BORDER_COLOUR, this.getMinecraft().options.getBackgroundColor(FADE));
         guiGraphics.disableScissor();
         wandProperties(guiGraphics, startX, i, startY, i1);
         guiGraphics.pose().popPose();
@@ -175,40 +179,54 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var spacer = new AtomicInteger();
 
         if(!this.setView){
-            for (Component components : WandItemHelper.getItemModifiers(this.wandManager.getWandManagerEntity().getWandSlot())) {
-                if (!components.getString().contains("Selected")) {
-                    guiGraphics.drawString(this.font, components, this.width / 2 - 30 + shiftX, this.height / 2 - 80 + spacer.get() + shiftY, 0);
-                    spacer.set(spacer.get() + 12);
-                    if (maxWidth < font.width(components)) maxWidth = font.width(components);
+            if(this.wandManager.getWandManagerEntity().getWandSlot().getItem() instanceof WandItem){
+                for (Component components : WandItemHelper.getItemModifiers(this.wandManager.getWandManagerEntity().getWandSlot())) {
+                    if (!components.getString().contains("Selected")) {
+                        guiGraphics.drawString(this.font, components, this.width / 2 - 30 + shiftX, this.height / 2 - 80 + spacer.get() + shiftY, 0);
+                        spacer.set(spacer.get() + 12);
+                        if (maxWidth < font.width(components)) maxWidth = font.width(components);
+                    }
                 }
             }
         } else {
             var wand = this.wandManager.getWandManagerEntity().getWandSlot();
             var getRunes = WandData.wandData(wand);
-            var index = new AtomicInteger();
-            for (ItemStack ignored : getRunes.upgradeSlots()) {
-                var size = 32;
-                guiGraphics.pose().pushPose();
-                guiGraphics.pose().translate(0,0,100);
-                var posX = startX + wandManager.offSetX + spacer.get() - (index.get() > 3 ? 148 : 0) + (this.setView ? + 94 : 0);
-                var posY = startY + wandManager.offSetY - 112 + (index.get() > 3 ? 37 : 0) + (this.setView ? - 96 : 0);
-                guiGraphics.blit(GUI_GENERAL_SLOT, posX, posY, 0,0, size, size, size, size);
-                spacer.set(spacer.get() + wandManager.runeYSpacer);
-                index.set(index.get()+1);
-                guiGraphics.pose().popPose();
-            }
+            boxMaker(guiGraphics, this.width / 2 - 38 + shiftX, this.height / 2 - 111 + shiftY, 39, 10, BORDER_COLOUR, this.getMinecraft().options.getBackgroundColor(FADE));
+            guiGraphics.drawString(this.font, Component.literal("Rune Manager"), this.width / 2 - 34 + shiftX, this.height / 2 - 105 + shiftY, -1);
+            SharedUI.handleSlotsInGridLayout(
+                (slotX, slotY, index) -> {
+                    for (ItemStack ignored : getRunes.upgradeSlots()) {
+                        var size = 32;
+                        guiGraphics.pose().pushPose();
+                        guiGraphics.pose().translate(0,0,100);
+                        guiGraphics.blit(GUI_GENERAL_SLOT, slotX + wandManager.posX - 96, slotY -  wandManager.posY - 9, 0,0, size, size, size, size);
+                        spacer.set(spacer.get() + wandManager.runeYSpacer);
+                        guiGraphics.pose().popPose();
+                    }
+                },
+                getRunes.upgradeSlots().size(),
+                this.width,
+                this.height,
+                wandManager.offSetX,
+                wandManager.offSetY
+            );
         }
 
-        boxMaker(guiGraphics, startX + i + 62 + shiftX, startY + i1 - 94 + shiftY, Math.max(maxWidth/2 + 10, 74), (int) this.scale + 85, BORDER_COLOUR, this.getMinecraft().options.getBackgroundColor(0.2F));
+        boxMaker(guiGraphics, startX + i + 62 + shiftX, startY + i1 - 94 + shiftY, Math.max(maxWidth/2 + 10, 74), (int) this.scale + 85 - (showInventory ? 40 : 0), BORDER_COLOUR, this.getMinecraft().options.getBackgroundColor(FADE));
     }
 
 
     private void coreSlots(@NotNull GuiGraphics guiGraphics, int adjustX, int adjustY) {
         var spacer = new AtomicInteger();
+        var posX = this.width / 2;
+        var posY = this.height / 2;
+        boxMaker(guiGraphics, posX + adjustX - 159, posY - 62 + adjustY, 17, 46, BORDER_COLOUR, this.getMinecraft().options.getBackgroundColor(FADE));
         for(ResourceLocation location : getOverlays()){
-            guiGraphics.blit(GUI_ITEM_SLOT, this.width/2 - 156 + adjustX, (this.height/2) + spacer.get() - 23 + adjustY, 0,0,32,32,32,32);
-            guiGraphics.blit(location, this.width/2 - 156 + adjustX, (this.height/2) + spacer.get() - 23 + adjustY, 0,0,32,32,32,32);
-            spacer.set(spacer.get() + 30);
+            var offsetX = 158;
+            var offsetY = 60;
+            guiGraphics.blit(GUI_ITEM_SLOT, posX - offsetX + adjustX, posY + spacer.get() - offsetY + adjustY, 0,0,32,32,32,32);
+            guiGraphics.blit(location, posX - offsetX + adjustX, posY + spacer.get() - offsetY + adjustY, 0,0,32,32,32,32);
+            spacer.set(spacer.get() + 28);
         }
     }
 
@@ -218,7 +236,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var i1 = -17;
         guiGraphics.pose().translate(0,0,20);
         if(showInventory){
-            boxMaker(guiGraphics, startX + i, startY + i1, 100, 55, BORDER_COLOUR);
+            boxMaker(guiGraphics, startX + i - 5, startY + i1, 105, 55, BORDER_COLOUR, this.getMinecraft().options.getBackgroundColor(FADE ));
             renderInventoryBackground(guiGraphics, this, 256, 24, this.showInventory);
         }
         guiGraphics.pose().pushPose();
@@ -227,8 +245,6 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     private List<ResourceLocation> getOverlays(){
         return List.of(CORE, ADVANCED_AUGMENT_CORE, AUGMENT_HYPER_CORE);
     }
-
-
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
@@ -239,12 +255,12 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var startX = this.width / 2 - 140;
         var startY = this.height / 2 + 22;
 
-        boxMaker(guiGraphics, startX - 18 + adjustX, startY - 47 + adjustY, 18, 48, BORDER_COLOUR);
         coreSlots(guiGraphics, adjustX, adjustY);
         renderWand(guiGraphics, mouseX, mouseY, startX, startY);
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
         overlayInventory(guiGraphics, startX, startY);
+
     }
 
     @Override

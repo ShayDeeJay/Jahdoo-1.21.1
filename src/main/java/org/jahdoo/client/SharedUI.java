@@ -109,7 +109,9 @@ public class SharedUI {
         );
 
         guiGraphics.pose().popPose();
-        Lighting.setupFor3DItems();
+        Lighting.setupLevel();
+        Lighting.setupForFlatItems();
+//        Lighting.setupFor3DItems();
     }
 
     public static void setCustomBackground(int height, int width, GuiGraphics guiGraphics){

@@ -10,6 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import org.jahdoo.ability.JahdooRarity;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.TomeOfUnity;
 import org.jahdoo.items.wand.WandItem;
@@ -76,7 +77,7 @@ public class CreatorRecipe implements Recipe<RecipeInput> {
         var asItem = this.output.getItem();
         return switch (asItem) {
             case Augment ignored -> randomAugment();
-            case WandItem ignored -> setGeneratedWand(ETERNAL, asItem);
+            case WandItem ignored -> setGeneratedWand(JahdooRarity.getRarity(), asItem);
             case TomeOfUnity ignored -> setGeneratedTome(COMMON, asItem);
             default -> this.output.copy();
         };

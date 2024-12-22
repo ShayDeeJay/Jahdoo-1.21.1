@@ -233,7 +233,7 @@ public class AugmentItemHelper {
 
     public static @NotNull String ticksToTime(String current) {
         String converter;
-        var duration = Double.parseDouble(current) / 20;
+        var duration = ModHelpers.singleFormattedDouble(Double.parseDouble(current) / 20);
         var minutes = (int) (duration / 60);
         var seconds = (int) (duration % 60);
         if (minutes > 0 && seconds == 0) {

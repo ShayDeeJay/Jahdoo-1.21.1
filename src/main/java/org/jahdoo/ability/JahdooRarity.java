@@ -180,11 +180,11 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     public static ItemStack setGeneratedWand(JahdooRarity rarity, Item item){
         var itemStack = new ItemStack(item);
         switch (rarity){
-            case COMMON -> createWandAttributes(COMMON, itemStack, Random.nextInt(1, 2), 3, false, 0, getCooldownRange(COMMON), getManaReductionRange(COMMON), getDamageRange(COMMON));
-            case RARE -> createWandAttributes(RARE, itemStack, Random.nextInt(1, 3), Random.nextInt(4, 7), false, 0, getCooldownRange(RARE), getManaReductionRange(RARE), getDamageRange(RARE));
-            case EPIC -> createWandAttributes(EPIC, itemStack, Random.nextInt(1, 3), Random.nextInt(5, 8), false, 0,getCooldownRange(EPIC), getManaReductionRange(EPIC), getDamageRange(EPIC));
-            case LEGENDARY -> createWandAttributes(LEGENDARY, itemStack, Random.nextInt(1, 4),Random.nextInt(6, 9), false, 0, getCooldownRange(LEGENDARY), getManaReductionRange(LEGENDARY), getDamageRange(LEGENDARY));
-            case ETERNAL -> createWandAttributes(ETERNAL, itemStack, 8,Random.nextInt(8, 11), false, 10,getCooldownRange(ETERNAL), getManaReductionRange(ETERNAL), getDamageRange(ETERNAL));
+            case COMMON -> createWandAttributes(COMMON, itemStack, 0, 3, false, 0, getCooldownRange(COMMON), getManaReductionRange(COMMON), getDamageRange(COMMON));
+            case RARE -> createWandAttributes(RARE, itemStack, 1, Random.nextInt(4, 7), false, 0, getCooldownRange(RARE), getManaReductionRange(RARE), getDamageRange(RARE));
+            case EPIC -> createWandAttributes(EPIC, itemStack,2, Random.nextInt(5, 8), false, 0,getCooldownRange(EPIC), getManaReductionRange(EPIC), getDamageRange(EPIC));
+            case LEGENDARY -> createWandAttributes(LEGENDARY, itemStack, 3,Random.nextInt(6, 9), false, 0, getCooldownRange(LEGENDARY), getManaReductionRange(LEGENDARY), getDamageRange(LEGENDARY));
+            case ETERNAL -> createWandAttributes(ETERNAL, itemStack, 4,Random.nextInt(8, 11), false, 10,getCooldownRange(ETERNAL), getManaReductionRange(ETERNAL), getDamageRange(ETERNAL));
         }
         return itemStack;
     }

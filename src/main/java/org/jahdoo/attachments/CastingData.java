@@ -4,6 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.JahdooMod;
 import org.jahdoo.networking.packet.server2client.CooldownsDataSyncS2CPacket;
 import org.jahdoo.networking.packet.server2client.ManaDataSyncS2CPacket;
 import org.jahdoo.registers.AttributesRegister;
@@ -78,11 +79,10 @@ public class CastingData implements AbstractAttachment{
 
     public static void cooldownTickEvent(ServerPlayer serverPlayer){
         var cooldowns = serverPlayer.getData(CASTER_DATA);
-        System.out.println(cooldowns.getAllCooldowns());
         try{
             cooldowns.applyAllCooldowns();
         } catch (Exception e){
-            log.error("e: ", e);
+            JahdooMod.logger.error("e: ", e);
             System.out.println(e);
         }
         sendToPlayer(serverPlayer, new CooldownsDataSyncS2CPacket(cooldowns.getAllCooldowns(), cooldowns.getAllCooldownsStatic()));
@@ -137,6 +137,7 @@ public class CastingData implements AbstractAttachment{
 
     public void removeAbilityFromCooldown(String ability){
         this.abilityCooldowns.remove(ability);
+        abilityCooldownsStatic.remove(ability);
     }
 
     @Override

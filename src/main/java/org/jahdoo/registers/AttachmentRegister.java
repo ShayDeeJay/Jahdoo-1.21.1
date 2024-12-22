@@ -19,16 +19,45 @@ import java.util.function.Supplier;
 public class AttachmentRegister {
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, JahdooMod.MOD_ID);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<CastingData>> CASTER_DATA = getHolder(new CastingData(), "caster_data");
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MageFlight>> MAGE_FLIGHT = getHolder(new MageFlight(), "mage_flight");
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Static>> STATIC = getHolder(new Static(), "static");
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DimensionalRecall>> DIMENSIONAL_RECALL = getHolder(new DimensionalRecall(), "dimensional_recall");
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<VitalRejuvenation>> VITAL_REJUVENATION = getHolder(new VitalRejuvenation(), "vital_rejuvenation");
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SaveData>> SAVE_DATA = getHolder(new SaveData(), "save_data");
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<NovaSmash>> NOVA_SMASH = getHolder(new NovaSmash(), "nova_smash");
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BouncyFoot>> BOUNCY_FOOT = getHolder(new BouncyFoot(), "bouncy_foot");
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerScale>> PLAYER_SCALE = getHolder(new PlayerScale(), "player_scale");
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ModularChaosCubeProperties>> MODULAR_CHAOS_CUBE = getHolder(new ModularChaosCubeProperties(), "modular_chaos_cube");
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<CastingData>> CASTER_DATA = ATTACHMENT_TYPES.register(
+        "caster_data", () -> AttachmentType.builder(CastingData::new).serialize(new GenericProvider<>(CastingData::new)).copyOnDeath().build()
+    );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MageFlight>> MAGE_FLIGHT = ATTACHMENT_TYPES.register(
+        "mage_flight", () -> AttachmentType.builder(MageFlight::new).serialize(new GenericProvider<>(MageFlight::new)).copyOnDeath().build()
+    );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Static>> STATIC = ATTACHMENT_TYPES.register(
+        "static", () -> AttachmentType.builder(Static::new).serialize(new GenericProvider<>(Static::new)).copyOnDeath().build()
+    );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DimensionalRecall>> DIMENSIONAL_RECALL = ATTACHMENT_TYPES.register(
+        "dimensional_recall", () -> AttachmentType.builder(DimensionalRecall::new).serialize(new GenericProvider<>(DimensionalRecall::new)).copyOnDeath().build()
+    );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<VitalRejuvenation>> VITAL_REJUVENATION = ATTACHMENT_TYPES.register(
+        "vital_rejuvenation", () -> AttachmentType.builder(VitalRejuvenation::new).serialize(new GenericProvider<>(VitalRejuvenation::new)).copyOnDeath().build()
+    );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SaveData>> SAVE_DATA = ATTACHMENT_TYPES.register(
+        "save_data", () -> AttachmentType.builder(SaveData::new).serialize(new GenericProvider<>(SaveData::new)).copyOnDeath().build()
+    );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<NovaSmash>> NOVA_SMASH = ATTACHMENT_TYPES.register(
+        "nova_smash", () -> AttachmentType.builder(NovaSmash::new).serialize(new GenericProvider<>(NovaSmash::new)).copyOnDeath().build()
+    );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BouncyFoot>> BOUNCY_FOOT = ATTACHMENT_TYPES.register(
+        "bouncy_foot", () -> AttachmentType.builder(BouncyFoot::new).serialize(new GenericProvider<>(BouncyFoot::new)).copyOnDeath().build()
+    );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerScale>> PLAYER_SCALE = ATTACHMENT_TYPES.register(
+        "player_scale", () -> AttachmentType.builder(PlayerScale::new).serialize(new GenericProvider<>(PlayerScale::new)).copyOnDeath().build()
+    );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ModularChaosCubeProperties>> MODULAR_CHAOS_CUBE = ATTACHMENT_TYPES.register(
+        "modular_chaos_cube", () -> AttachmentType.builder(ModularChaosCubeProperties::new).serialize(new GenericProvider<>(ModularChaosCubeProperties::new)).build()
+    );
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> BOOL = ATTACHMENT_TYPES.register(
         "bool", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build()

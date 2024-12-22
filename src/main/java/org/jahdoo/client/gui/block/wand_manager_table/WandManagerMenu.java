@@ -12,6 +12,7 @@ import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
 import org.jahdoo.client.gui.AbstractInternalContainer;
 import org.jahdoo.client.gui.block.augment_modification_station.AugmentCoreSlot;
+import org.jahdoo.client.gui.block.wand_block.AugmentSlot;
 import org.jahdoo.components.WandData;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
@@ -21,13 +22,14 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.block.wand_block_manager.WandManagerTableEntity.DEFAULT_SLOTS;
+import static org.jahdoo.client.SharedUI.handleSlotsInGridLayout;
 
 public class WandManagerMenu extends AbstractInternalContainer {
-    public int posX = -42;
-    public int posY = 41;
-    public int offSetX = 5;
-    public int offSetY = 110;
-    public int runeYSpacer = 37;
+    public int posX = 31;
+    public int posY = 100;
+    public int offSetX = 34;
+    public int offSetY = 34;
+    public int runeYSpacer = 33;
 
     public WandManagerMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         super(MenusRegister.WAND_MANAGER_MENU.get(), pContainerId, inv, extraData);
@@ -52,8 +54,8 @@ public class WandManagerMenu extends AbstractInternalContainer {
     private void insertAugmentSlots() {
         var spacer = new AtomicInteger();
         for (int i = 1; i < 4; i ++){
-            this.addSlot(new AugmentCoreSlot(getWandManagerEntity().inputItemHandler, i, posX, posY + spacer.get(), getCore().get(i-1)));
-            spacer.set(spacer.get() + 30);
+            this.addSlot(new AugmentCoreSlot(getWandManagerEntity().inputItemHandler, i, posX - 75, posY + spacer.get() - 96, getCore().get(i-1)));
+            spacer.set(spacer.get() + 28);
         }
     }
 
@@ -61,18 +63,18 @@ public class WandManagerMenu extends AbstractInternalContainer {
         try{
             var getAllSlots = this.getWandManagerEntity().getWandSlot();
             var getData = WandData.wandData(getAllSlots);
-            var spacer = new AtomicInteger();
-            var index = new AtomicInteger(4);
+            var iHandler = getWandManagerEntity().inputItemHandler;
+            var item = ItemsRegister.RUNE.get();
+            var indexOne = new AtomicInteger(4);
             for (ItemStack itemStack : getData.upgradeSlots()) {
-                var iHandler = getWandManagerEntity().inputItemHandler;
-                iHandler.setStackInSlot(index.get(), itemStack);
-                var posX = this.posX + 92 + offSetX + spacer.get() - (index.get() > 7 ? 148 : 0);
-                var posY = (this.posY + offSetY) - 136 + (index.get() > 7 ? 37 : 0);
-                var item = ItemsRegister.RUNE.get();
-                this.addSlot(new AugmentCoreSlot(iHandler, index.get(), posX, posY, item, this.getWandManagerEntity(), 1));
-                index.set(index.get() + 1);
-                spacer.set(spacer.get() + runeYSpacer);
+                iHandler.setStackInSlot(indexOne.get(), itemStack);
+                indexOne.set(indexOne.get() + 1);
             }
+
+            handleSlotsInGridLayout(
+                (slotX, slotY, index) -> this.addSlot(new AugmentCoreSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, item, this.getWandManagerEntity(), 1)),
+                getData.upgradeSlots().size(), 0,0, offSetX, offSetY
+            );
         } catch (Exception e){
             JahdooMod.logger.log(Level.DEBUG, e);
         }

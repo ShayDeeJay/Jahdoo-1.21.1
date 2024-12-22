@@ -156,17 +156,17 @@ public class ModHelpers {
     }
 
     public static float getFormattedFloat(float value){
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        var decimalFormat = new DecimalFormat("#.##");
         return  Float.parseFloat(decimalFormat.format(value));
     }
 
     public static double singleFormattedDouble(double value){
-        DecimalFormat decimalFormat = new DecimalFormat("#.#");
-        return  roundNonWholeDouble(Double.parseDouble(decimalFormat.format(value)));
+        var decimalFormat = new DecimalFormat("#.#");
+        return roundNonWholeDouble(Double.parseDouble(decimalFormat.format(value)));
     }
 
     public static double doubleFormattedDouble(double value){
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        var decimalFormat = new DecimalFormat("#.##");
         return  roundNonWholeDouble(Double.parseDouble(decimalFormat.format(value)));
     }
 

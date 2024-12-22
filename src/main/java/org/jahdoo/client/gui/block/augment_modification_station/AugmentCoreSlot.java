@@ -1,13 +1,19 @@
 package org.jahdoo.client.gui.block.augment_modification_station;
 
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
 import org.jahdoo.components.WandData;
 import org.jahdoo.networking.packet.client2server.WandDataC2SPacket;
+import org.jahdoo.registers.SoundRegister;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -35,8 +41,6 @@ public class AugmentCoreSlot extends SlotItemHandler {
         isActive = active;
     }
 
-
-
     public AugmentCoreSlot(
         IItemHandler inputItemHandler,
         int index,
@@ -59,12 +63,33 @@ public class AugmentCoreSlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(@NotNull ItemStack itemStack) {
-        return itemStack.is(this.item) && isActive;
+        if(itemStack.is(this.item) && isActive){
+            if(this.wandManagerTableEntity != null){
+                var level = wandManagerTableEntity.getLevel();
+                var pos = wandManagerTableEntity.getBlockPos();
+                if(level != null && this.getItem().isEmpty()){
+                    ModHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_INSERT_ITEM, 0.4F, 1.2F);
+                    ModHelpers.getSoundWithPosition(level, pos, SoundEvents.APPLY_EFFECT_TRIAL_OMEN, 0.4F, 2F);
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean isActive() {
         return this.isActive;
+    }
+
+    @Override
+    public void set(ItemStack stack) {
+        super.set(stack);
+    }
+
+    @Override
+    public boolean isHighlightable() {
+        return this.isActive && !this.getItem().isEmpty();
     }
 
     @Override

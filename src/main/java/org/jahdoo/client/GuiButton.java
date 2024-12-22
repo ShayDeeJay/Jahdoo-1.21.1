@@ -4,7 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import org.jahdoo.registers.SoundRegister;
 
 import javax.annotation.Nullable;
 
@@ -80,5 +84,10 @@ public class GuiButton extends ImageButton {
     public void onPress() {
         this.sizes = defaultSize;
         pOnPress.onPress(this);
+    }
+
+    @Override
+    public void playDownSound(SoundManager handler) {
+        handler.play(SimpleSoundInstance.forUI(SoundRegister.SELECT, 0.6F));
     }
 }
