@@ -70,6 +70,13 @@ public class ModHelpers {
 //        }
     }
 
+    public static List<Component> filterList(List<Component> collection, String... item){
+        var filter = Set.of(item);
+        return collection.stream()
+            .filter(component -> filter.stream().anyMatch(component.getString()::contains))
+            .toList();
+    }
+
     public static ResourceLocation res(String location) {
         return ResourceLocation.fromNamespaceAndPath(JahdooMod.MOD_ID, location);
     }

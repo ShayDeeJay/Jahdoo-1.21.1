@@ -96,7 +96,7 @@ public class MageFlight implements AbstractAttachment {
             player.getData(BOUNCY_FOOT).setEffectTimer(160);
             manaSystem.subtractMana(manaCost, player);
             var getDelta = player.getDeltaMovement();
-            var speedModifier = 0.1;
+            var speedModifier = 0.05;
             player.setDeltaMovement(player.getDeltaMovement().add(getDelta.x * speedModifier, 0.1, getDelta.z * speedModifier));
             mageFlightAnimation(wandItem, player);
         }

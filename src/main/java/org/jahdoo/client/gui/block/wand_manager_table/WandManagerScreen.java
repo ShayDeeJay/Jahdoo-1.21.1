@@ -3,64 +3,61 @@ package org.jahdoo.client.gui.block.wand_manager_table;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
-import org.jahdoo.client.IconLocations;
-import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.block.augment_modification_station.AugmentCoreSlot;
 import org.jahdoo.client.gui.block.augment_modification_station.InventorySlots;
 import org.jahdoo.components.WandData;
-import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.items.wand.WandItemHelper;
+import org.jahdoo.networking.packet.client2server.WandDataC2SPacket;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.client.IconLocations.*;
 import static org.jahdoo.client.SharedUI.*;
+import static org.jahdoo.client.SharedUI.getFadedColourBackground;
 import static org.jahdoo.client.gui.ToggleComponent.*;
-import static org.jahdoo.client.gui.block.augment_modification_station.AugmentModificationData.extractName;
-import static org.jahdoo.items.augments.AugmentItemHelper.getModifierContextSingle;
-import static org.jahdoo.items.augments.AugmentRatingSystem.calculateRatingNext;
-import static org.jahdoo.utils.ModHelpers.doubleFormattedDouble;
-import static org.jahdoo.utils.ModHelpers.withStyleComponent;
+import static org.jahdoo.registers.AttributesRegister.replaceOrAddAttribute;
+import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
+import static org.jahdoo.utils.ModHelpers.filterList;
 
 public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> {
     public static WidgetSprites WIDGET = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
     private final WandManagerMenu wandManager;
-    private double yScroll;
-    public Inventory inventory;
     boolean showInventory;
     boolean setView;
-    int section = 140;
-    double scale = 1;
-    private final float FADE = 0.7f;
+    int scaleItem = 140;
     AbstractElement element;
     int borderColour;
-    int fadeSwap;
-    private final int fadeSwapDirection = 1;
 
     public WandManagerScreen(WandManagerMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
-        this.wandManager = pMenu;
-        this.inventory = pPlayerInventory;
-        this.switchVisibility();
         var element = ElementRegistry.getElementByWandType(pMenu.getWandManagerEntity().getWandSlot().getItem());
+        var color = FastColor.ARGB32.color(100, element.getFirst().textColourPrimary());
+        this.wandManager = pMenu;
+        this.switchVisibility();
         this.element = element.getFirst();
-        this.borderColour = element.isEmpty() ? BORDER_COLOUR : FastColor.ARGB32.color(100, element.getFirst().textColourPrimary());
+        this.borderColour = element.isEmpty() ? BORDER_COLOUR : color;
     }
 
     @Override
@@ -71,23 +68,37 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     }
 
     private void upgradeButton() {
-        var posX = this.width/2 - 40;
-        var posY = this.height/2 + 48;
+        var posX = this.width/2 - 39;
+        var posY = this.height/2 + 53;
 
         this.addRenderableWidget(
             menuButtonSound(
-                posX, posY,
-                (press) -> {
-                    /*Press Action*/
-                    this.rebuildWidgets();
-                },
-                REFRESH, 32, false, 0, WIDGET, true,
-                () -> {
-                    this.fadeSwap = 1;
-                    /*Hover Action*/
-                }
+                posX, posY, (press) -> reRollBaseModifiers(),
+                REFRESH, 26, false, 0, WIDGET, true,
+                () -> {/*TODO*/}
             )
         );
+    }
+
+    public void reRollBaseModifiers(){
+        var wandItemCopy = getWand().copy();
+        var getData = wandItemCopy.get(WAND_DATA);
+        if (getData != null) {
+
+            for (var modifier : wandItemCopy.getAttributeModifiers().modifiers()) {
+                var id = modifier.modifier().id().getPath().intern();
+                var attribute = modifier.attribute();
+                var rarityId = WandData.wandData(wandItemCopy).rarityId();
+                var ranges = JahdooRarity.getAllRarities().get(rarityId).getAttributes();
+                var value = switch (id){
+                    case String s when s.contains("cooldown.cooldown_reduction") -> ranges.getRandomCooldown();
+                    case String s when s.contains("mana.cost_reduction") -> ranges.getRandomManaReduction();
+                    default -> ranges.getRandomDamage();
+                };
+                replaceOrAddAttribute(wandItemCopy, id, attribute, value, EquipmentSlot.MAINHAND, false);
+            }
+            PacketDistributor.sendToServer(new WandDataC2SPacket(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos()));
+        }
     }
 
     @Override
@@ -115,64 +126,23 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
 
     private void keyboardButton() {
         var resourceLocation = this.showInventory ? INFORMATION : INVENTORY;
-        this.addRenderableWidget(menuButton(this.width/2 - 136, this.height/2 + 3, (press) -> inventoryHandler(), resourceLocation, 24, false, 0, WIDGET, true));
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if(isInHitbox(mouseX, mouseY)) windowMoveVertical(scrollY * 4);
-        return true;
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(isInHitbox(mouseX, mouseY)) windowMoveVertical(dragY);
-        return true;
-    }
-
-    @Override
-    public void mouseMoved(double mouseX, double mouseY) {
-        var startX = this.width / 2 - 140;
-        var startY = this.height / 2 + 22;
-        var i = 40;
-        var i1 = -17;
-        var startX1 = startX + i + 80;
-        var startY1 = startY + i1 - 88;
-        var x = mouseX > startX1 && mouseX < startX1 + 40 && mouseY > startY1 && mouseY < startY1 + 34;
-//        section = x ? 1 : 2;
+        var posX = this.width / 2 - 136;
+        var posY = this.height / 2 + 3;
+        this.addRenderableWidget(
+            menuButton(
+                posX, posY,
+                (press) -> inventoryHandler(),
+                resourceLocation,
+                24, false, 0, WIDGET, true
+            )
+        );
     }
 
     public void inventoryHandler(){
         setView = !setView;
         showInventory = !showInventory;
         switchVisibility();
-        this.yScroll = 0;
         this.rebuildWidgets();
-    }
-
-    public boolean isInHitbox(double mouseX, double mouseY){
-        var widthOffset = 100;
-        var heightOffset = 115;
-        int i = width / 2;
-        int i1 = height / 2;
-        var widthFrom = i - widthOffset;
-        var heightFrom = i1 - heightOffset;
-        var widthTo = i + widthOffset;
-        var heightTo = i1 + heightOffset - 5;
-        return mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 35 && mouseY < heightTo - (showInventory ?  114 : 5);
-    }
-
-    private void windowMoveVertical(double dragY) {
-        int size = getComponents(ItemStack.EMPTY)
-            .stream()
-            .filter(component -> component.getString().contains("|"))
-            .toList()
-            .size();
-        if (size > 6 || size > 2 && showInventory) {
-            int b = 7 * size * size - 135 * size + 578;
-            this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, b + (!showInventory ? -20 : -120)));
-            this.rebuildWidgets();
-        } else this.yScroll = 0;
     }
 
     @Override
@@ -182,43 +152,58 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var i = 40;
         var i1 = -17;
         var shiftX1 = 75;
+        var minX = startX + i + 70 - shiftX1;
+        var minY = startY + i1 - 94;
+        var maxX = startX + i + 70 + 60;
+        var width1 = this.width - shiftX1 * 2;
+        var height1 = this.height - (144 - scaleItem);
+        var posX = startX + 23;
+        var posY = startY + i1 - 106;
+        var offsetY = 164 - (showInventory ? 80 : 0);
+
         guiGraphics.pose().pushPose();
-        bezelMaker(guiGraphics,startX + 23, startY + i1 - 106, 52, 164 - (showInventory ? 80 : 0), 32, this.element);
+        bezelMaker(guiGraphics, posX, posY, 52, offsetY, 32, this.element);
         guiGraphics.pose().popPose();
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0,0,-10);
-        guiGraphics.enableScissor(startX + i + 70 - shiftX1, startY + i1 - 94, startX + i + 70 + 60, startY + i1 - 94 + (!setView ? 172 : 92));
-        renderItem(guiGraphics, this.width - shiftX1 * 2, this.height - (144 - section), wandManager.getWandManagerEntity().inputItemHandler.getStackInSlot(0), section, mouseX, mouseY, 16);
+        guiGraphics.enableScissor(minX, minY, maxX, minY + (!setView ? 172 : 92));
+        renderItem(guiGraphics, width1, height1, getWand(), scaleItem, mouseX, mouseY, 16);
         if(this.element != null){
             var colorA = FastColor.ARGB32.color(0, borderColour);
             var colorFade = FastColor.ARGB32.color(100, borderColour);
-            boxMaker(guiGraphics, startX + i + 70 - shiftX1, startY + i1 - 94, 30, 86 - (showInventory ? 40 : 0), this.getMinecraft().options.getBackgroundColor(0.4f));
-            boxMakerTest(guiGraphics, startX + i + 70 - shiftX1, startY + i1 - 94, 30, 86 - (showInventory ? 40 : 0), FastColor.ARGB32.color(50, borderColour), colorA, colorFade);
+            var heightOffset = 86 - (showInventory ? 40 : 0);
+            var color = FastColor.ARGB32.color(50, borderColour);
+            boxMaker(guiGraphics, minX, minY, 30, heightOffset, getFadedColourBackground(0.4f));
+            boxMakerTest(guiGraphics, minX, minY, 30, heightOffset, color, colorA, colorFade);
         }
         guiGraphics.disableScissor();
-        wandProperties(guiGraphics, startX, i, startY, i1);
         guiGraphics.pose().popPose();
+        wandProperties(guiGraphics, startX, i, startY, i1);
 
+    }
+
+    public ItemStack getWand(){
+        return this.wandManager.getWandManagerEntity().getWandSlot();
     }
 
     private void wandProperties(@NotNull GuiGraphics guiGraphics, int startX, int i, int startY, int i1) {
         var shiftY = 0;
         var shiftX = -5;
-        var maxWidth = 0;
         var spacer = new AtomicInteger();
 
         if(!this.setView){
-            baseWandProperties(guiGraphics, shiftX, spacer, shiftY, maxWidth, startX, startY);
+            baseWandProperties(guiGraphics, shiftX, spacer, shiftY, startX, startY);
         } else {
-            var wand = this.wandManager.getWandManagerEntity().getWandSlot();
-            var getRunes = WandData.wandData(wand);
-            SharedUI.handleSlotsInGridLayout(
+            var getRunes = WandData.wandData(getWand());
+            handleSlotsInGridLayout(
                 (slotX, slotY, index) -> {
                     for (ItemStack ignored : getRunes.runeSlots()) {
                         var size = 32;
                         guiGraphics.pose().pushPose();
                         guiGraphics.pose().translate(0,0,100);
-                        guiGraphics.blit(GUI_GENERAL_SLOT, slotX + wandManager.posX - 96, slotY -  wandManager.posY - 9, 0,0, size, size, size, size);
+                        var x = slotX + wandManager.posX - 96;
+                        var y = slotY - wandManager.posY - 9;
+                        guiGraphics.blit(GUI_GENERAL_SLOT, x, y, 0,0, size, size, size, size);
                         spacer.set(spacer.get() + wandManager.runeYSpacer);
                         guiGraphics.pose().popPose();
                     }
@@ -229,59 +214,103 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
                 wandManager.offSetX,
                 wandManager.offSetY
             );
-            boxMaker(guiGraphics, startX + i + 62 + shiftX, startY + i1 - 94 + shiftY, Math.max(maxWidth/2 + 10, 74), (int) this.scale + 85 - (showInventory ? 40 : 0), borderColour, this.getMinecraft().options.getBackgroundColor(FADE));
+
+            var startX1 = startX + i + 62 + shiftX;
+            var startY1 = startY + i1 - 94 + shiftY;
+            var heightOffset = 86 - (showInventory ? 40 : 0);
+            boxMaker(guiGraphics, startX1, startY1, Math.max(10, 74), heightOffset, borderColour, groupFade());
         }
 
-        boxMaker(guiGraphics, this.width / 2 - 38 + shiftX, this.height / 2 - 111 + shiftY, 39, 10, borderColour, this.getMinecraft().options.getBackgroundColor(FADE));
-        guiGraphics.drawString(this.font, Component.literal(this.setView ? "Rune Manager" : "Wand Manager"), this.width / 2 - 34 + shiftX, this.height / 2 - 105 + shiftY, ColourStore.SUB_HEADER_COLOUR);
+        var startX1 = this.width / 2 - 38 + shiftX;
+        var startY1 = this.height / 2 - 111 + shiftY;
+        boxMaker(guiGraphics, startX1, startY1, 39, 10, borderColour, groupFade());
+
+
+        var header = Component.literal(this.setView ? "Rune Manager" : "Wand Manager");
+        var x = this.width / 2 - 34 + shiftX;
+        var y1 = this.height / 2 - 105 + shiftY;
+        guiGraphics.drawString(this.font, header, x, y1, ColourStore.SUB_HEADER_COLOUR);
     }
 
-    private int baseWandProperties(@NotNull GuiGraphics guiGraphics, int shiftX, AtomicInteger spacer, int shiftY, int maxWidth, int startX, int startY) {
-        if(this.wandManager.getWandManagerEntity().getWandSlot().getItem() instanceof WandItem){
-            var itemModifiers = WandItemHelper.getItemModifiers(this.wandManager.getWandManagerEntity().getWandSlot());
-            var rarityAndSlots = itemModifiers.stream().filter(component -> component.getString().contains("Rarity") || component.getString().contains("Slots")).toList();
-            var modifiersAndHeader = itemModifiers.stream().filter(component -> component.getString().contains("%") || component.getString().contains("Applies")).toList();
+    private static int groupFade() {
+        return getFadedColourBackground(0.7f);
+    }
+
+    private void baseWandProperties(
+        @NotNull GuiGraphics guiGraphics, 
+        int shiftX, 
+        AtomicInteger spacer, 
+        int shiftY,
+        int startX,
+        int startY
+    ) {
+        if(getWand().getItem() instanceof WandItem){
+            var itemModifiers = WandItemHelper.getItemModifiers(getWand());
+            var rarityAndSlots = filterList(itemModifiers, "Rarity", "Slots");
+            var modifiersAndHeader = filterList(itemModifiers, "%", "Applies");
             var widthHeader = 0;
             var widthProperties = 0;
+            var sharedX = this.width / 2 - 30 + shiftX;
 
             for (Component components : rarityAndSlots) {
-                guiGraphics.drawString(this.font, components, this.width / 2 - 30 + shiftX, this.height / 2 - 80 + spacer.get() + shiftY, 0);
+                var posY = this.height / 2 - 80 + spacer.get() + shiftY;
+                guiGraphics.drawString(this.font, components, sharedX, posY, 0);
                 spacer.set(spacer.get() + 12);
                 if (widthHeader < font.width(components)) widthHeader = font.width(components);
             }
-            boxMaker(guiGraphics, startX + 102 + shiftX, startY - 111 + shiftY, widthHeader/2 + 8, 20, borderColour, this.getMinecraft().options.getBackgroundColor(FADE));
+
+            var startX1 = startX + 102 + shiftX;
+            var startY1 = startY - 111 + shiftY;
+            var widthOffset = widthHeader / 2 + 8;
+            boxMaker(guiGraphics, startX1, startY1, widthOffset, 20, borderColour, groupFade());
 
             for (Component components : modifiersAndHeader) {
-                guiGraphics.drawString(this.font, components, this.width / 2 - 30 + shiftX, this.height / 2 - 64 + spacer.get() + shiftY, 0);
+                var posY = this.height / 2 - 64 + spacer.get() + shiftY;
                 var skip = components.getString().contains("Applies");
+
+                guiGraphics.drawString(this.font, components, sharedX, posY, 0);
                 if(!skip){
-                    guiGraphics.drawString(this.font, getModifierRange(wandManager, components.getString()), this.width / 2 - 28 + shiftX, this.height / 2 - 53 + spacer.get() + shiftY, ColourStore.HEADER_COLOUR);
+                    var range = getModifierRange(wandManager, components.getString());
+                    var posX = this.width / 2 - 28 + shiftX;
+                    var posY1 = this.height / 2 - 53 + spacer.get() + shiftY;
+                    guiGraphics.drawString(this.font, range, posX, posY1, ColourStore.HEADER_COLOUR);
                 }
-                spacer.set(spacer.get() + (!skip ? 24 : 13));
+                spacer.set(spacer.get() + (!skip ? 24 : 15));
                 if (widthProperties < font.width(components)) widthProperties = font.width(components);
             }
-            boxMaker(guiGraphics, startX + 102 + shiftX, startY - 69 + shiftY, widthProperties / 2 + 8, 65, borderColour, this.getMinecraft().options.getBackgroundColor(FADE));
+
+            var startY2 = startY - 69 + shiftY;
+            var offset = widthProperties / 2 + 8;
+            boxMaker(guiGraphics, startX1, startY2, offset, 65, borderColour, groupFade());
         }
-        return maxWidth;
     }
 
     public static Component getModifierRange(WandManagerMenu wandManagerMenu, String type){
         var rarity = WandData.wandData(wandManagerMenu.getWandManagerEntity().getWandSlot()).rarityId();
         var attributes = JahdooRarity.getAllRarities().get(rarity).getAttributes();
-        var first = type.contains("Cooldown") ? attributes.getCooldownRange() : type.contains("Mana") ? attributes.getManaReductionRange() : attributes.getDamageRange();
-        return ModHelpers.withStyleComponent("(" + first.getFirst() +"%"+ " - " + first.getSecond()+"%" + ")", BORDER_COLOUR);
+        var first = switch (type){
+            case String s when s.contains("Cooldown") -> attributes.getCooldownRange();
+            case String s when s.contains("Mana") -> attributes.getManaReductionRange();
+            default -> attributes.getDamageRange();
+        };
+        var headerBuilder = "(" + first.getFirst() + "%" + " - " + first.getSecond() + "%" + ")";
+        return ModHelpers.withStyleComponent(headerBuilder, BORDER_COLOUR);
     }
 
     private void coreSlots(@NotNull GuiGraphics guiGraphics, int adjustX, int adjustY) {
         var spacer = new AtomicInteger();
         var posX = this.width / 2;
         var posY = this.height / 2;
-        boxMaker(guiGraphics, posX + adjustX - 159, posY - 62 + adjustY, 17, 46, borderColour, this.getMinecraft().options.getBackgroundColor(FADE));
+        var startX = posX + adjustX - 159;
+        var startY = posY - 62 + adjustY;
+        boxMaker(guiGraphics, startX, startY, 17, 46, borderColour, groupFade());
         for(ResourceLocation location : getOverlays()){
             var offsetX = 158;
             var offsetY = 60;
-            guiGraphics.blit(GUI_ITEM_SLOT, posX - offsetX + adjustX, posY + spacer.get() - offsetY + adjustY, 0,0,32,32,32,32);
-            guiGraphics.blit(location, posX - offsetX + adjustX, posY + spacer.get() - offsetY + adjustY, 0,0,32,32,32,32);
+            var x = posX - offsetX + adjustX;
+            var y = posY + spacer.get() - offsetY + adjustY;
+            guiGraphics.blit(GUI_ITEM_SLOT, x, y, 0,0,32,32,32,32);
+            guiGraphics.blit(location, x, y, 0,0,32,32,32,32);
             spacer.set(spacer.get() + 28);
         }
     }
@@ -292,7 +321,8 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var i1 = -17;
         guiGraphics.pose().translate(0,0,20);
         if(showInventory){
-            boxMaker(guiGraphics, startX + i - 5, startY + i1, 105, 55, borderColour, this.getMinecraft().options.getBackgroundColor(FADE ));
+            var startX1 = startX + i - 5;
+            boxMaker(guiGraphics, startX1, startY + i1, 105, 55, borderColour, groupFade());
             renderInventoryBackground(guiGraphics, this, 256, 24, this.showInventory);
         }
         guiGraphics.pose().pushPose();
@@ -305,36 +335,31 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
         this.renderBlurredBackground(pPartialTick);
-//        this.renderMenuBackground(guiGraphics);
-//        if (this.fadeSwap >= 350) {
-//            this.fadeSwapDirection = -1; // Start decrementing
-//        } else if (this.fadeSwap <= 55) {
-//            this.fadeSwapDirection = 1; // Start incrementing
-//        }
-//
-//        this.fadeSwap += this.fadeSwapDirection;
-
-        var scale = 8;
-        if(!this.setView) {
-            this.section = Math.min(140, section + scale);
-        } else {
-            this.section = Math.max(62, section - scale);
-        }
-
-
         var adjustX = 18;
         var adjustY = -27;
         var startX = this.width / 2 - 140;
         var startY = this.height / 2 + 22;
 
-        SharedUI.boxMaker(guiGraphics, startX + 105, startY + 31, 35, 11, BORDER_COLOUR, SharedUI.getFadedColourBackground(0.9f));
-        guiGraphics.drawCenteredString(this.font,  ModHelpers.withStyleComponent("Re-Roll", 0xb97700), startX + 150, startY + 38, 0);
-
+        scaleItem();
+        reRollContainer(guiGraphics, startX, startY);
         coreSlots(guiGraphics, adjustX, adjustY);
         renderWand(guiGraphics, mouseX, mouseY, startX, startY);
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
         overlayInventory(guiGraphics, startX, startY);
+    }
+
+    private void reRollContainer(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
+        var startX1 = startX + 105;
+        var startY1 = startY + 35;
+        var reRoll = ModHelpers.withStyleComponent("Re-Roll", 0xb97700);
+        boxMaker(guiGraphics, startX1, startY1, 32, 9, BORDER_COLOUR, getFadedColourBackground(0.9f));
+        guiGraphics.drawCenteredString(this.font, reRoll, startX + 146, startY + 40, 0);
+    }
+
+    private void scaleItem() {
+        var scale = 8;
+        this.scaleItem = !setView ? Math.min(140, scaleItem + scale) : Math.max(62, scaleItem - scale);
     }
 
     @Override

@@ -22,10 +22,11 @@ public class RuneItemHelper {
     static void hoverToolTip(ItemStack stack, List<Component> tooltipComponents) {
         var component = standAloneAttributes(stack);
         var description = RuneData.RuneHelpers.getDescription(stack);
-        tooltipComponents.add(JahdooRarity.attachRuneRarityTooltip(stack));
         if(!component.getString().isEmpty()) {
-            tooltipComponents.add(Component.empty());
             tooltipComponents.add(component);
+            if (description.getString().isEmpty()) {
+                tooltipComponents.add(JahdooRarity.attachRuneTierTooltip(stack));
+            }
         }
         if(description.getString().isEmpty() || AugmentItemHelper.shiftForDetails(tooltipComponents)) return;
         tooltipComponents.add(ModHelpers.withStyleComponent(description.getString(), ColourStore.HEADER_COLOUR));

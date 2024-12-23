@@ -14,6 +14,7 @@ import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.components.WandData;
 import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.registers.*;
+import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -37,11 +38,11 @@ import static org.jahdoo.utils.ModHelpers.singleFormattedDouble;
 @IndexedEnum
 public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     // Enum Definitions
-    COMMON(0, "Common", color(255, 11, 176, 16), 1, COMMON_ATTRIBUTES),
-    RARE(1, "Rare", color(255, 67, 164, 222), 300, RARE_ATTRIBUTES),
-    EPIC(2, "Epic", color(255, 222, 136, 255), 800, EPIC_ATTRIBUTES),
-    LEGENDARY(3, "Legendary", color(255, 225, 199, 107), 1500, LEGENDARY_ATTRIBUTES),
-    ETERNAL(4, "Eternal", color(255, 218, 71, 71), 3000, ETERNAL_ATTRIBUTES);
+    COMMON(0, "Common", color(120, 203, 83), 1, COMMON_ATTRIBUTES),
+    RARE(1, "Rare", color(67, 164, 222), 300, RARE_ATTRIBUTES),
+    EPIC(2, "Epic", color(222, 136, 255), 800, EPIC_ATTRIBUTES),
+    LEGENDARY(3, "Legendary", color(241, 194, 50), 1500, LEGENDARY_ATTRIBUTES),
+    ETERNAL(4, "Eternal", color(218, 71, 71), 3000, ETERNAL_ATTRIBUTES);
 
     private final int id;
     private final String name;
@@ -121,6 +122,20 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             return JahdooRarity.addRarityTooltip(getRarity);
         }
         return Component.empty();
+    }
+
+    public static Component attachRuneTierTooltip(ItemStack wandItem) {
+        var data = getRuneData(wandItem);
+        var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(data.tier(), 0, 5));
+        var getTier = switch (getRarity.id){
+            case 1 -> "II";
+            case 2 -> "III";
+            case 3 -> "IV";
+            case 4 -> "V";
+            case 5 -> "VI";
+            default -> "I";
+        };
+        return withStyleComponent("Tier " + getTier, ColourStore.HEADER_COLOUR);
     }
 
     public static Component attachRuneRarityTooltip(ItemStack wandItem) {

@@ -136,7 +136,7 @@ public record RuneData(
         }
 
         public static Component getNameWithStyle(ItemStack stack){
-            return withStyleComponent(getName(stack), getRuneData(stack).getTypeColourSecondary());
+            return withStyleComponent(getName(stack), getLighterColor(getRuneData(stack).getTypeColourSecondary()));
         }
 
         public static Component standAloneAttributes(ItemStack itemStack) {
@@ -164,21 +164,6 @@ public record RuneData(
             return stack.getOrDefault(RUNE_DATA, DEFAULT);
         }
 
-        public static void generateTypeRune(ItemStack stack, Pair<String, Holder<Attribute>> type, double value, AbstractElement getElement, JahdooRarity rarity) {
-            replaceOrAddAttribute(stack,type.getFirst(),type.getSecond(), value, EquipmentSlot.MAINHAND, true);
-            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewElement(getElement.getTypeId()));
-            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewRarity(rarity.getId()));
-            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewName(getElement.getElementName() + " " + RuneData.SUFFIX));
-            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewColour(getElement.textColourSecondary()));
-        }
-
-        public static void generateMultiRune(ItemStack stack, Pair<String, Holder<Attribute>> type, double value, String name, JahdooRarity rarity, int colour) {
-            replaceOrAddAttribute(stack,type.getFirst(),type.getSecond(), value, EquipmentSlot.MAINHAND, true);
-            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewRarity(rarity.getId()));
-            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewName(name + " " + RuneData.SUFFIX));
-            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewColour(colour));
-        }
-
         public static void generateFullRune(ItemStack stack, Pair<String, Holder<Attribute>> type, double value, String name, JahdooRarity rarity, String description, int elementId, int tier, int colour) {
             replaceOrAddAttribute(stack,type.getFirst(),type.getSecond(), value, EquipmentSlot.MAINHAND, true);
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewRarity(rarity.getId()));
@@ -187,6 +172,23 @@ public record RuneData(
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewDescription(description));
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewElement(elementId));
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewTier(tier));
+        }
+
+        public static int getLighterColor(int color) {
+            // Extract ARGB components from the integer
+            int alpha = (color >> 24) & 0xFF;
+            int red = (color >> 16) & 0xFF;
+            int green = (color >> 8) & 0xFF;
+            int blue = color & 0xFF;
+
+            // Calculate the lighter shade by increasing the brightness
+            var v = 1.6;
+            red = Math.min((int) (red / v), 255);
+            green = Math.min((int) (green / v), 255);
+            blue = Math.min((int) (blue / v), 255);
+
+            // Combine the components back into an integer
+            return (alpha << 24) | (red << 16) | (green << 8) | blue;
         }
 
         public static void generateRandomTypAttribute(ItemStack stack) {
@@ -223,58 +225,25 @@ public record RuneData(
                 var getManaAttributes = allManaAttributes.get(randomIndex2);
                 var getSkillAttributes = skillRunes.get(randomIndex2);
 
-                System.out.println(getRarity());
-                System.out.println(stack);
-                switch (getRarity()){
-                    case COMMON, RARE -> {
-                        System.out.println(getRarity());
-                        System.out.println(getTypeAttribute.getFirst());
-                        System.out.println(getTypeAttribute.getSecond());
 
-                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(randomIndex));
-                        generateFullRune(stack, getTypeAttribute.getFirst(), getTypeAttribute.getSecond(), "Elemental", COMMON, "", getElement.getTypeId(), rarity.getId(), COMMON.getColour());
+                switch (getRarity()){
+                    case COMMON -> {
+                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
+                        generateFullRune(stack, getTypeAttribute.getFirst(), getTypeAttribute.getSecond(), "Elemental", COMMON, "", getElement.getTypeId(), rarity.getId(),color(224, 224, 224));
                     }
                     case EPIC -> {
-                        System.out.println(getRarity());
-                        System.out.println(getSkillAttributes.getFirst());
-                        System.out.println(getSkillAttributes.getSecond());
-                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(3));
-                        generateFullRune(stack, getSkillAttributes.getFirst(), 1, "Skill", EPIC, getSkillAttributes.getSecond(), NO_ELEMENT, rarity.getId(), FastColor.ARGB32.color(234, 82, 68));
+                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(2));
+                        generateFullRune(stack, getSkillAttributes.getFirst(), 1, "Perk", EPIC, getSkillAttributes.getSecond(), NO_ELEMENT, rarity.getId(), color(38, 224, 200));
                     }
                     case LEGENDARY -> {
-                        System.out.println(getRarity());
-                        System.out.println(getManaAttributes.getFirst());
-                        System.out.println(getManaAttributes.getSecond());
-                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(4));
-                        generateFullRune(stack, getManaAttributes.getFirst(), getManaAttributes.getSecond(), "Aether", LEGENDARY, "", NO_ELEMENT, rarity.getId(), FastColor.ARGB32.color(71, 145, 243));
+                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(0));
+                        generateFullRune(stack, getManaAttributes.getFirst(), getManaAttributes.getSecond(), "Aether", LEGENDARY, "", NO_ELEMENT, rarity.getId(), color(0, 169, 247));
                     }
                     case ETERNAL -> {
-                        System.out.println(getRarity());
-                        System.out.println(getMultiAttribute.getFirst());
-                        System.out.println(getMultiAttribute.getSecond());
                         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(5));
-                        generateFullRune(stack, getMultiAttribute.getFirst(), getMultiAttribute.getSecond(), "Cosmic", ETERNAL, "", NO_ELEMENT, rarity.getId(), FastColor.ARGB32.color(69, 100, 142));
+                        generateFullRune(stack, getMultiAttribute.getFirst(), getMultiAttribute.getSecond(), "Cosmic", ETERNAL, "", NO_ELEMENT, rarity.getId(), color(171, 87, 194));
                     }
                 }
-
-//                switch (getRarity()){
-//                    case COMMON, RARE -> {
-//                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(randomIndex));
-//                        generateTypeRune(stack, getTypeAttribute.getFirst(), getTypeAttribute.getSecond(), getElement, rarity);
-//                    }
-//                    case EPIC -> {
-//                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(3));
-//                        generateWithDescription(stack, getSkillAttributes.getFirst(), 1, "Skill", LEGENDARY, FastColor.ARGB32.color(234, 82, 68), getSkillAttributes.getSecond());
-//                    }
-//                    case LEGENDARY -> {
-//                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(4));
-//                        generateMultiRune(stack, getMultiAttribute.getFirst(), getMultiAttribute.getSecond(), "Versatile", rarity, FastColor.ARGB32.color(69, 100, 142));
-//                    }
-//                    case ETERNAL -> {
-//                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(5));
-//                        generateMultiRune(stack, getManaAttributes.getFirst(), getManaAttributes.getSecond(), "Assistant", rarity, FastColor.ARGB32.color(71, 145, 243));
-//                    }
-//                }
             }
         }
     }
