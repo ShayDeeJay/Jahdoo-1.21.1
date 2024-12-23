@@ -88,6 +88,6 @@ public class GuiButton extends ImageButton {
 
     @Override
     public void playDownSound(SoundManager handler) {
-        handler.play(SimpleSoundInstance.forUI(SoundRegister.SELECT, 0.6F));
+        handler.play(SimpleSoundInstance.forUI(SoundRegister.SELECT, 1));
     }
 }

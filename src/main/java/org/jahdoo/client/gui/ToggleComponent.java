@@ -59,11 +59,8 @@ public class ToggleComponent  {
             @Override
             public void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
                 super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-                if(this.isMouseOver(pMouseX, pMouseY)){
-                    hoverAction.run();
-                }
+                if(this.isMouseOver(pMouseX, pMouseY)) hoverAction.run();
             }
-
         };
     }
 
@@ -74,17 +71,12 @@ public class ToggleComponent  {
                 hoverAction.accept(mouseY);
                 return true;
             }
-
-
         };
     }
 
     public static GuiButton menuButton(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, boolean isSelected, int scale, WidgetSprites button, boolean showHover, String label) {
         return new GuiButton(posX, posY, button, size, action, isSelected, resourceLocation, label, scale, showHover);
     }
-
-
-
 
     public static Renderable textWithBackground(int posX, int posY, Minecraft minecraft,Component header) {
         return new Overlay() {

@@ -27,7 +27,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.block.wand_block_manager.WandManagerTableBlock;
 import org.jahdoo.components.WandData;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
@@ -143,7 +142,6 @@ public class WandBlock extends BaseEntityBlock {
                 heldItem.shrink(1);
                 var index = wandData.abilitySlots() + 1;
                 int addSlotOrMax = Math.min(index, 10);
-                internalWand.update(WAND_DATA, WandData.DEFAULT, data -> data.insertNewSlot(addSlotOrMax));
                 return ItemInteractionResult.CONSUME;
             }
         }
@@ -153,15 +151,15 @@ public class WandBlock extends BaseEntityBlock {
     private static ItemInteractionResult slotTesting(Player player, ItemStack heldItem, WandBlockEntity wandBlock, BlockPos blockPos) {
         var internalWand = wandBlock.getWandItemFromSlot();
         var wandData = internalWand.get(WAND_DATA);
-        if (wandData != null && !wandData.upgradeSlots().isEmpty()) {
-            var temp = new ArrayList<>(wandData.upgradeSlots());
+        if (wandData != null && !wandData.runeSlots().isEmpty()) {
+            var temp = new ArrayList<>(wandData.runeSlots());
             if (!heldItem.isEmpty()) {
                 for (ItemStack itemStack : temp) {
                     if (itemStack.isEmpty()) {
                         temp.remove(itemStack);
                         temp.add(heldItem.copyWithCount(1));
                         heldItem.shrink(1);
-                        WandData.updateUpgradeSlots(wandBlock.getWandItemFromSlot(), temp);
+                        WandData.updateRuneSlots(wandBlock.getWandItemFromSlot(), temp);
 //                        PacketDistributor.sendToServer(new WandDataC2SPacket(wandData, blockPos));
                         return ItemInteractionResult.CONSUME;
                     }
@@ -171,7 +169,7 @@ public class WandBlock extends BaseEntityBlock {
                     if (!itemStack.isEmpty() && player.getMainHandItem().isEmpty()) {
                         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
                         temp.set(temp.indexOf(itemStack), ItemStack.EMPTY);
-                        WandData.updateUpgradeSlots(wandBlock.getWandItemFromSlot(), temp);
+                        WandData.updateRuneSlots(wandBlock.getWandItemFromSlot(), temp);
 //                        PacketDistributor.sendToServer(new WandDataC2SPacket(wandData, blockPos));
                         return ItemInteractionResult.CONSUME;
                     }

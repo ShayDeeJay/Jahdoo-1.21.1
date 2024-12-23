@@ -55,18 +55,18 @@ public class CreatorRenderer implements BlockEntityRenderer<CreatorEntity> {
 
         for(int i = 0; i < creatorEntity.inputItemHandler.getSlots(); i++){
             ItemStack itemStack = creatorEntity.inputItemHandler.getStackInSlot(i);
-            rotateAllItems(pPoseStack, creatorEntity, () -> rotateItem(pPoseStack, creatorEntity, itemRenderer, itemStack, pBuffer, pPartialTick), i, atomicInteger.get());
+            rotateAllItems(pPoseStack, creatorEntity, () -> rotateItem(pPoseStack, creatorEntity, itemRenderer, itemStack, pBuffer, pPartialTick), i, atomicInteger.get(), pPartialTick);
         }
     }
 
-    private void rotateAllItems(PoseStack pPoseStack, CreatorEntity pBlockEntity, Runnable stuff, int index, int totalItems) {
+    private void rotateAllItems(PoseStack pPoseStack, CreatorEntity pBlockEntity, Runnable stuff, int index, int totalItems, float partialTicks) {
         pPoseStack.pushPose();
 
         if (pBlockEntity.canCraft()) {
             float angleOffset = 360.0f / totalItems;
             float itemAngle = angleOffset * index;
             pPoseStack.translate(0.5, -0.1, 0.5);
-            pPoseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (float) pBlockEntity.getAnimationTicker()));
+            pPoseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + ((float) pBlockEntity.getAnimationTicker() + partialTicks)));
         } else {
 
             float[][] positions = {
@@ -98,12 +98,11 @@ public class CreatorRenderer implements BlockEntityRenderer<CreatorEntity> {
         var itemStack = outputSlot.isEmpty() ? pBlockEntity.getOutputResult() : outputSlot;
         var isWand = itemStack.getItem() instanceof WandItem;
         var scaleItem = isWand ? 0.7f : 0.4f;
+        var maxLightLevel = getLightLevel(Objects.requireNonNull(pBlockEntity.getLevel()), pBlockEntity.getBlockPos());
 
         pPoseStack.translate(0.5f, isWand ? 1.55f : 1.3f, 0.5f);
         pPoseStack.scale(scaleItem, scaleItem, scaleItem);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(getCurrentTime));
-
-        var maxLightLevel = getLightLevel(Objects.requireNonNull(pBlockEntity.getLevel()), pBlockEntity.getBlockPos());
 
         itemRenderer.renderStatic(
             itemStack,

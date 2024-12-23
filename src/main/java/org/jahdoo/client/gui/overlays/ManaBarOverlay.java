@@ -24,7 +24,6 @@ import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.components.DataComponentHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.network.chat.Component.translatable;
@@ -37,9 +36,6 @@ import static org.jahdoo.utils.ModHelpers.roundNonWholeString;
 
 public class ManaBarOverlay implements LayeredDraw.Layer {
     float fadeIn;
-    public static final ResourceLocation MANA_GUI = ModHelpers.res("textures/gui/mana_v4_textured.png");
-    public static final ResourceLocation TYPE_OVERLAY = ModHelpers.res("textures/gui/man_type_overlay.png");
-    public static final ResourceLocation MANA_TYPE = ModHelpers.res("textures/gui/mana_with_type.png");
     private int types;
     AlignedGui alignedGui;
 
@@ -165,6 +161,9 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var goldenHearts = player.getAbsorptionAmount();
         var experienceProgress = player.experienceProgress;
         var experienceWidth = (int) (20 * experienceProgress);
+
+//        SharedUI.boxMaker(guiGraphics, guiGraphics.guiWidth()/2-1, guiGraphics.guiHeight()/2-1, (int) (goldenHearts * 42 / player.getMaxAbsorption()), 4, 0, FastColor.ARGB32.color(255, ElementRegistry.INFERNO.get().textColourPrimary()));
+//        SharedUI.boxMaker(guiGraphics, guiGraphics.guiWidth()/2, guiGraphics.guiHeight()/2, (int) (health * 40 / player.getMaxHealth()), 3, 0, FastColor.ARGB32.color(255, ElementRegistry.VITALITY.get().textColourPrimary()));
         alignedGui.displayGuiLayer(31 + shiftX, 24 + shiftY, 70, 60, 8);
         alignedGui.displayGuiLayer(31 + shiftX, 31 + shiftY, 70, 60, 8);
         alignedGui.displayGuiLayer(31 + shiftX, 38 + shiftY, 70, 60, 8);
@@ -174,7 +173,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         layoutStat(food.getFoodLevel(), shiftX, shiftY - 7, 52);
         layoutStat(health, shiftX, shiftY, 60);
         guiGraphics.pose().popPose();
-
     }
 
     private void experienceNumber(Minecraft minecraft, GuiGraphics guiGraphics, LocalPlayer player) {
@@ -263,8 +261,8 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         if(types > 0){
             int[] typeOverlay = {103, 128, 78, 53, 28, 3};
             int[] manaOverlay = {35, 43, 27, 11, 19, 20};
-            alignedGui.displayGuiLayer(0, 27, 0, typeOverlay[types - 1], 88, 25, TYPE_OVERLAY);
-            alignedGui.displayGuiLayer(25, 18, 0, manaOverlay[types - 1], manaProgress, 8, MANA_TYPE);
+//            alignedGui.displayGuiLayer(0, 27, 0, typeOverlay[types - 1], 88, 25, TYPE_OVERLAY);
+            alignedGui.displayGuiLayer(25, 18, 0, manaOverlay[types - 1], manaProgress, 8, IconLocations.MANA_LEVEL_BAR);
         }
     }
 
@@ -308,7 +306,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         public void displayGuiLayer(int xA, int yA, int offsetY, int barSizeXb, int barSizeYb){
             int positionX = xA + shiftGuiX;
             int positionY = screenHeight - yA - shiftGuiY;
-            guiGraphics.blit(MANA_GUI, positionX, positionY, 77, offsetY, barSizeXb, barSizeYb);
+            guiGraphics.blit(IconLocations.MANA_CONTAINER, positionX, positionY, 77, offsetY, barSizeXb, barSizeYb);
         }
 
         public void displayGuiLayer(int xA, int yA, int offsetX, int offsetY, int iconSize, ResourceLocation resourceLocation){

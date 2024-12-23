@@ -3,7 +3,7 @@ package org.jahdoo.items;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.ability.JahdooRarity;
+import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.registers.DataComponentRegistry;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;

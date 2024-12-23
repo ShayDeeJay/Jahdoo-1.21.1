@@ -10,12 +10,14 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.block.augment_modification_station.AugmentModificationEntity;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.networking.packet.client2server.AugmentModificationChargeC2S;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -151,7 +153,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
                 (myHolder) ->  this.item.set(WAND_ABILITY_HOLDER, myHolder),entity()
             );
             if(correctAdjustment){
-                ModHelpers.getLocalSound(getMinecraft().level, entity().getBlockPos(), APPLY_EFFECT_TRIAL_OMEN, 1, 2);
+                ModHelpers.getLocalSound(this.getMinecraft().level, entity().getBlockPos(), APPLY_EFFECT_TRIAL_OMEN, 1, 2);
             }
             this.rebuildWidgets();
         }
@@ -252,8 +254,12 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
 
         SharedUI.header(guiGraphics, this.width, this.height, this.item, this.font);
         overlayInventory(guiGraphics, startX, startY);
-        boxMaker(guiGraphics, startX - 18 + adjustX, startY - 47 + adjustY, 18, 48, BORDER_COLOUR);
-        coreSlots(guiGraphics, adjustX, adjustY);
+        var element = ElementRegistry.getElementByTypeId(getElementIdAugment(this.item));
+        if(!element.isEmpty()){
+            boxMaker(guiGraphics, startX - 18 + adjustX, startY - 47 + adjustY, 18, 48, BORDER_COLOUR);
+            SharedUI.bezelMaker(guiGraphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element.getFirst());
+            coreSlots(guiGraphics, adjustX, adjustY);
+        }
 
     }
 
@@ -273,8 +279,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         if(showInventory){
             var i = 40;
             var i1 = -17;
-            boxMaker(guiGraphics, startX + i, startY + i1, 100, 55, BORDER_COLOUR);
-            boxMaker(guiGraphics, startX + i, startY + i1, 100, 55, BORDER_COLOUR);
+            boxMaker(guiGraphics, startX + i, startY + i1, 100, 55, BORDER_COLOUR, SharedUI.getFadedColourBackground(0.9f));
             renderInventoryBackground(guiGraphics, this, 256, 24, this.showInventory);
         }
         guiGraphics.pose().pushPose();
@@ -288,8 +293,9 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         if(!this.isInHitbox(mouseX, mouseY)) return;
         if(this.selectedY <= 0) return;
         var colour = getAbstractElement(entity()).textColourSecondary();
+        var semiTransLayer = getFadedColourBackground(0.8f);
 
-        boxMaker(guiGraphics, this.width/2 - 97, (int) (this.selectedY + 8 + yScroll), 97, 14, colour);
+        boxMaker(guiGraphics, this.width/2 - 97, (int) (this.selectedY + 8 + yScroll), 97, 14, colour, semiTransLayer);
     }
 
     private void selectedBoxUpgrade(@NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
@@ -298,10 +304,12 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         var startX = this.width / 2 + 102;
         var startY = this.selectedY + 8;
 
-        boxMaker(guiGraphics, startX , (int) (startY + yScroll), 35, 14, getAbstractElement(entity()).textColourSecondary());
-        boxMaker(guiGraphics, startX, (int) (startY + yScroll), 35, 14, getAbstractElement(entity()).textColourSecondary());
-        boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, getAbstractElement(entity()).textColourSecondary());
-        boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, getAbstractElement(entity()).textColourSecondary());
+        var colourBorder = getAbstractElement(entity()).textColourSecondary();
+        var semiTransLayer = getFadedColourBackground(0.8f);
+        boxMaker(guiGraphics, startX , (int) (startY + yScroll), 35, 14, colourBorder, semiTransLayer);
+        boxMaker(guiGraphics, startX, (int) (startY + yScroll), 35, 14, colourBorder, semiTransLayer);
+        boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, colourBorder, semiTransLayer);
+        boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, colourBorder, semiTransLayer);
         guiGraphics.drawCenteredString(this.font, this.upgradeValue, startX + 34, (int) (startY + 10 + yScroll), 0);
         if(this.item != null && this.item.has(WAND_ABILITY_HOLDER)){
             if(this.upgradeValue != null){

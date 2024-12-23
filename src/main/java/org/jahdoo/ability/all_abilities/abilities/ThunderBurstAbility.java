@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbilityBuilder;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.JahdooRarity;
+import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.DataComponentRegistry;

@@ -8,8 +8,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -126,8 +128,26 @@ public class WandManagerTableBlock extends BaseEntityBlock {
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
         if (pState.getBlock() != pNewState.getBlock()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof WandManagerTableEntity) {
-                ((WandManagerTableEntity) blockEntity).dropsAllInventory(pLevel);
+            if (blockEntity instanceof WandManagerTableEntity wandManagerTable) {
+                SimpleContainer inputInventory = new SimpleContainer(wandManagerTable.setInputSlots());
+                SimpleContainer outputInventory = new SimpleContainer(wandManagerTable.setOutputSlots());
+
+                for (int i = 0; i < 4; i++) {
+                    if (i < inputInventory.getContainerSize()) {
+                        wandManagerTable.inputItemHandler.getStackInSlot(i);
+                        inputInventory.setItem(i, wandManagerTable.inputItemHandler.getStackInSlot(i));
+                    }
+                }
+
+                for (int i = 0; i < wandManagerTable.outputItemHandler.getSlots(); i++) {
+                    if (i < outputInventory.getContainerSize()) {
+                        wandManagerTable.outputItemHandler.getStackInSlot(i);
+                        outputInventory.setItem(i, wandManagerTable.outputItemHandler.getStackInSlot(i));
+                    }
+                }
+
+                Containers.dropContents(pLevel, pPos, inputInventory);
+                Containers.dropContents(pLevel, pPos, outputInventory);
             }
         }
 

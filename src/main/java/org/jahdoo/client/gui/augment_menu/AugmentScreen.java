@@ -5,6 +5,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.client.SharedUI;
@@ -83,9 +84,9 @@ public class AugmentScreen extends Screen  {
         var size = 32;
         var x = this.width/2 - 30;
         var y =this.height/2 - 70;
-        this.menuButton("textures/gui/gui_button_close_dark.png", x - 101, y, size, (s) -> this.getMinecraft().setScreen(null));
+        this.menuButton(CLOSE, x - 101, y, size, (s) -> this.getMinecraft().setScreen(null));
         if(this.previousScreen != null){
-            this.menuButton("textures/gui/gui_button_back_dark.png", x - 101, y + 20, size, (s) -> this.getMinecraft().setScreen(previousScreen));
+            this.menuButton(DIRECTION_ARROW_BACK, x - 101, y + 20, size, (s) -> this.getMinecraft().setScreen(previousScreen));
         }
     }
 
@@ -97,8 +98,7 @@ public class AugmentScreen extends Screen  {
         this.addRenderableWidget(ToggleComponent.menuButton(posX + 104 + adjustX, (int) (posY+ yScroll), (press) -> onRight.run(), DIRECTION_ARROW_FORWARD,  22,  false, 0, widget, true));
     }
 
-    public void menuButton(String textureLocation, int posX, int posY, int size, Button.OnPress action) {
-        var location = ModHelpers.res(textureLocation);
+    public void menuButton(ResourceLocation location, int posX, int posY, int size, Button.OnPress action) {
         var button = new WidgetSprites(location, location);
         this.addRenderableWidget(new AbilityIconButton(posX, posY, button, size, action, false, () -> {}));
     }

@@ -1,13 +1,9 @@
 package org.jahdoo.event;
 
-import com.sun.jna.platform.win32.WinNT;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -17,7 +13,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ability.JahdooRarity;
+import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.ability.all_abilities.abilities.Utility.BlockPlacerAbility;
 import org.jahdoo.ability.all_abilities.abilities.Utility.WallPlacerAbility;
 import org.jahdoo.attachments.CastingData;
@@ -27,13 +23,12 @@ import org.jahdoo.datagen.DamageTypesProvider;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ItemsRegister;
-import org.jahdoo.registers.SoundRegister;
 
 import java.util.Objects;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-import static org.jahdoo.ability.JahdooRarity.COMMON;
-import static org.jahdoo.ability.JahdooRarity.RARE;
+import static org.jahdoo.ability.rarity.JahdooRarity.COMMON;
+import static org.jahdoo.ability.rarity.JahdooRarity.RARE;
 import static org.jahdoo.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.items.augments.AugmentItemHelper.throwNewItem;
 import static org.jahdoo.items.wand.WandItemHelper.storeBlockType;
@@ -101,7 +96,7 @@ public class CapabilityEvents {
         var item = event.getItemStack();
         var slotAttributes = item.get(DataComponentRegistry.WAND_DATA.get());
         if(item.getItem() instanceof WandItem && slotAttributes != null){
-            for (ItemStack itemStack : slotAttributes.upgradeSlots()) {
+            for (ItemStack itemStack : slotAttributes.runeSlots()) {
                 var mods = itemStack.getAttributeModifiers().modifiers();
                 if (!mods.isEmpty()) {
                     var acMod = mods.getFirst();

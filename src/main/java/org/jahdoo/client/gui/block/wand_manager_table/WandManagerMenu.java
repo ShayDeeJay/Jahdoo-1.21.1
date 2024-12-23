@@ -12,7 +12,6 @@ import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
 import org.jahdoo.client.gui.AbstractInternalContainer;
 import org.jahdoo.client.gui.block.augment_modification_station.AugmentCoreSlot;
-import org.jahdoo.client.gui.block.wand_block.AugmentSlot;
 import org.jahdoo.components.WandData;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
@@ -66,14 +65,14 @@ public class WandManagerMenu extends AbstractInternalContainer {
             var iHandler = getWandManagerEntity().inputItemHandler;
             var item = ItemsRegister.RUNE.get();
             var indexOne = new AtomicInteger(4);
-            for (ItemStack itemStack : getData.upgradeSlots()) {
+            for (ItemStack itemStack : getData.runeSlots()) {
                 iHandler.setStackInSlot(indexOne.get(), itemStack);
                 indexOne.set(indexOne.get() + 1);
             }
 
             handleSlotsInGridLayout(
                 (slotX, slotY, index) -> this.addSlot(new AugmentCoreSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, item, this.getWandManagerEntity(), 1)),
-                getData.upgradeSlots().size(), 0,0, offSetX, offSetY
+                getData.runeSlots().size(), 0,0, offSetX, offSetY
             );
         } catch (Exception e){
             JahdooMod.logger.log(Level.DEBUG, e);
@@ -95,7 +94,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
 
     @Override
     protected int getAllSlots() {
-        int size = WandData.wandData(getWandManagerEntity().getWandSlot()).upgradeSlots().size();
+        int size = WandData.wandData(getWandManagerEntity().getWandSlot()).runeSlots().size();
         return size + DEFAULT_SLOTS;
     }
 

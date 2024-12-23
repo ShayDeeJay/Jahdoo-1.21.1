@@ -20,7 +20,6 @@ import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static org.jahdoo.components.RuneData.RuneHelpers.standAloneAttributes;
 
 public class RuneTooltipRenderer implements ClientTooltipComponent {
-    public static final ResourceLocation SLOT_TEXTURE = ModHelpers.res("textures/gui/gui_general_slot.png");
     private final int spacing = Minecraft.getInstance().font.lineHeight + 4;
     private final RuneComponent component;
 
@@ -47,7 +46,7 @@ public class RuneTooltipRenderer implements ClientTooltipComponent {
         var pose = gfx.pose();
         for (int i = 0; i < this.component.runes.size(); i++) {
             int size = 15;
-            gfx.blit(SLOT_TEXTURE, x-1, y + this.spacing * i - 1, 0, 0, 0, size, size, size, size);
+            gfx.blit(IconLocations.GUI_GENERAL_SLOT, x-1, y + this.spacing * i - 1, 0, 0, 0, size, size, size, size);
         }
 
         for (ItemStack inst : this.component.runes()) {

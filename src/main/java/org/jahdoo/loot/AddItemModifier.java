@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-import static org.jahdoo.ability.JahdooRarity.*;
+import static org.jahdoo.ability.rarity.JahdooRarity.*;
 
 public class AddItemModifier extends LootModifier {
     public static final Supplier<MapCodec<AddItemModifier>> CODEC = Suppliers.memoize(

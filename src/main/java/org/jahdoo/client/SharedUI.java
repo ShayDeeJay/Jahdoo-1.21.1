@@ -24,9 +24,14 @@ import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.client.IconLocations.GUI_BUTTON;
+import static org.jahdoo.client.IconLocations.TYPE_OVERLAY;
 
 public class SharedUI {
 
@@ -53,6 +58,33 @@ public class SharedUI {
 
         guiGraphics.fill(startX, startY, widthTo, heightTo, fillColour);
         guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
+    }
+
+    public static void boxMakerTest(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset, int colourBorder, int start, int end) {
+        int widthTo = startX + widthOffset * 2;
+        int heightTo = startY + heightOffset * 2;
+
+        guiGraphics.fillGradient(startX, startY, widthTo, heightTo, start, end);
+        guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
+    }
+
+    public static void bezelMaker(GuiGraphics guiGraphics, int posX, int posY, int offsetX, int offsetY, int size, @Nullable AbstractElement element) {
+        guiGraphics.blit(IconLocations.BEZEL_1, posX + offsetX, posY, 0, 0, size, size, size, size);
+        guiGraphics.blit(IconLocations.BEZEL_2, posX, posY, 0, 0, size, size, size, size);
+        guiGraphics.blit(IconLocations.BEZEL_3, posX + 1 , posY + offsetY, 0, 0, size, size, size, size);
+        guiGraphics.blit(IconLocations.BEZEL_4, posX + offsetX, posY + offsetY, 0, 0, size, size, size, size);
+        if(element != null){
+            int[] manaOverlay = {150, 125, 100, 75, 50, 25, 0};
+            var index = element.getTypeId();
+            var blitOffsetX = manaOverlay[index];
+            var blitOffsetY = blitOffsetX + 17;
+            var offsetXOL = 13;
+
+            guiGraphics.blit(TYPE_OVERLAY, posX + 13, posY + offsetXOL, blitOffsetX, blitOffsetX, 8, 8, 25, 150);
+            guiGraphics.blit(TYPE_OVERLAY, posX + offsetX + 11, posY + offsetXOL, blitOffsetY, blitOffsetX, 8, 8, 25, 150);
+            guiGraphics.blit(TYPE_OVERLAY, posX + 13, posY + offsetY + 11, blitOffsetX, blitOffsetY, 8, 8, 25, 150);
+            guiGraphics.blit(TYPE_OVERLAY, posX + offsetX + 11, posY + offsetY + 11, blitOffsetY, blitOffsetY, 8, 8, 25, 150);
+        }
     }
 
     public static void renderItem(@NotNull GuiGraphics guiGraphics, double width, double height, Player player, ItemStack itemStack, float partialTicks, float scale) {
@@ -92,10 +124,9 @@ public class SharedUI {
         degrees1 = Math.max(-maxRotation, Math.min(maxRotation, degrees1));
 
         guiGraphics.pose().rotateAround(Axis.YP.rotationDegrees(degrees), 0,0,0); // Horizontal rotation
-        guiGraphics.pose().rotateAround(Axis.XP.rotationDegrees(degrees1), 0,0,0); // Horizontal rotation
-        guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(180), 0,0,0); // Horizontal rotation
+        guiGraphics.pose().rotateAround(Axis.XP.rotationDegrees(degrees1 + 180), 0,0,0); // Horizontal rotation
 
-        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        var itemRenderer = Minecraft.getInstance().getItemRenderer();
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         itemRenderer.renderStatic(
             itemStack,
@@ -110,8 +141,7 @@ public class SharedUI {
 
         guiGraphics.pose().popPose();
         Lighting.setupLevel();
-        Lighting.setupForFlatItems();
-//        Lighting.setupFor3DItems();
+        Lighting.setupForEntityInInventory();
     }
 
     public static void setCustomBackground(int height, int width, GuiGraphics guiGraphics){
@@ -169,6 +199,51 @@ public class SharedUI {
         }
     }
 
+    public static int getElementColourAugment(
+        ItemStack itemStack
+    ){
+        var key = DataComponentHelper.getKeyFromAugment(itemStack);
+        var abilityRegistrars = AbilityRegister.getFirstSpellByTypeId(key).orElse(AbilityRegister.BOLTZ.get());
+        int element;
+        if (abilityRegistrars.isMultiType()) {
+            var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityRegistrars.setAbilityId());
+            var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
+            var abstractElement = ElementRegistry.getElementByTypeId((int) abilityModifiers.actualValue());
+            element = !abstractElement.isEmpty() ? abstractElement.getFirst().textColourSecondary() : -1;
+
+        } else {
+            element = abilityRegistrars.getElemenType().textColourSecondary();
+        }
+
+        return element;
+    }
+
+    public static int getFadedColourBackground(float alpha){
+        var minecraft = Minecraft.getInstance();
+        return minecraft.options.getBackgroundColor(alpha);
+    }
+
+    public static int getElementIdAugment(
+        ItemStack itemStack
+    ){
+        var key = DataComponentHelper.getKeyFromAugment(itemStack);
+        var abilityRegistrars = AbilityRegister.getFirstSpellByTypeId(key).orElse(AbilityRegister.BOLTZ.get());
+        int element;
+        if (abilityRegistrars.isMultiType()) {
+            var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityRegistrars.setAbilityId());
+            var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
+            var abstractElement = ElementRegistry.getElementByTypeId((int) abilityModifiers.actualValue());
+            element = !abstractElement.isEmpty() ? abstractElement.getFirst().getTypeId() : -1;
+
+        } else {
+            element = abilityRegistrars.getElemenType().getTypeId();
+        }
+
+        return element;
+    }
+
     public static int getElementColour(
         AbilityRegistrar abilityRegistrars,
         ItemStack itemStack
@@ -220,7 +295,7 @@ public class SharedUI {
         guiGraphics.pose().popPose();
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 2);
-        guiGraphics.blit(IconLocations.GUI_AUGMENT_SLOT_V2, slotX, slotY, 0, 0, imageSize, imageSize, imageSize , imageSize);
+        guiGraphics.blit(IconLocations.GUI_AUGMENT_SLOT, slotX, slotY, 0, 0, imageSize, imageSize, imageSize , imageSize);
         guiGraphics.pose().popPose();
     }
 
@@ -239,7 +314,7 @@ public class SharedUI {
         var posY1 = (height - imageWithShrink) / 2 - 150 + verticalOffset;
 
         guiGraphics.blit(
-            ModHelpers.res("textures/gui/gui_button.png"),
+            GUI_BUTTON,
             posX, posY, 0, 0, localImageSize, localImageSize, localImageSize, localImageSize
         );
 

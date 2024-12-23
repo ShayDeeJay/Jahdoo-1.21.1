@@ -20,7 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.JahdooRarity;
+import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.client.gui.augment_menu.AugmentScreen;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.components.DataComponentHelper;
@@ -343,13 +343,15 @@ public class AugmentItemHelper {
         return toolTips;
     }
 
-    public static void shiftForDetails(List<Component> toolTips){
+    public static boolean shiftForDetails(List<Component> toolTips){
         if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
-            toolTips.add(Component.literal(" "));
+//            toolTips.add(Component.literal(" "));
             var hotkey = ModHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey",-2631721);
             var holdToDiscover = ModHelpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details",-10066330, hotkey);
             toolTips.add(holdToDiscover);
+            return true;
         }
+        return false;
     }
 
     public static void getHoverText(ItemStack itemStack, List<Component> toolTips, boolean hide){
@@ -358,6 +360,7 @@ public class AugmentItemHelper {
             if(wandAbilityHolder == null) return;
             var abilityLocation = wandAbilityHolder.abilityProperties().keySet().stream().findAny().get();
             toolTips.addAll(getAllAbilityModifiers(itemStack, null, abilityLocation, hide));
+            toolTips.add(Component.empty());
             shiftForDetails(toolTips);
             toolTips.add(ModHelpers.withStyleComponentTrans("augmentHelper.jahdoo.place", -12368570));
         } else {

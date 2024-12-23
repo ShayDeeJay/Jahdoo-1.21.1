@@ -14,18 +14,15 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.JahdooRarity;
-import org.jahdoo.registers.AttributesRegister;
-import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.registers.ElementRegistry;
+import org.jahdoo.ability.rarity.JahdooRarity;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-import static org.jahdoo.ability.JahdooRarity.*;
+import static org.jahdoo.ability.rarity.JahdooRarity.*;
 import static org.jahdoo.registers.AttributesRegister.*;
 import static org.jahdoo.registers.DataComponentRegistry.RUNE_DATA;
+import static org.jahdoo.registers.ElementRegistry.*;
 import static org.jahdoo.registers.ElementRegistry.getElementByTypeId;
 import static org.jahdoo.utils.ModHelpers.*;
 
@@ -38,7 +35,7 @@ public record RuneData(
 ){
     public static final String SUFFIX = "Rune";
     public static final String DEFAULT_NAME = "Generic " + SUFFIX;
-    public static final RuneData DEFAULT = new RuneData(-1, DEFAULT_NAME, "Has no power", -1, 0);
+    public static final RuneData DEFAULT = new RuneData(-1, DEFAULT_NAME, "", -1, 0);
 
     public RuneData insertNewName(String name){
         return new RuneData(this.elementId, name, this.description, this.colour, this.rarityId);
@@ -61,12 +58,12 @@ public record RuneData(
     }
 
     public int getTypeColourPrimary(){
-        var element = ElementRegistry.getElementOptional(this.elementId);
+        var element = getElementOptional(this.elementId);
         return element.map(AbstractElement::textColourPrimary).orElse(colour);
     }
 
     public int getTypeColourSecondary(){
-        var element = ElementRegistry.getElementOptional(this.elementId);
+        var element = getElementOptional(this.elementId);
         return element.map(AbstractElement::textColourSecondary).orElse(colour);
     }
 
@@ -107,14 +104,13 @@ public record RuneData(
     public static class RuneHelpers {
         public static String getName(ItemStack itemStack){
             var data = getRuneData(itemStack);
-            if(data.isPresent() && !Objects.equals(data.get().name(), DEFAULT_NAME)) return data.get().name();
+            if(!Objects.equals(data.name(), DEFAULT_NAME)) return data.name();
             return DEFAULT_NAME;
         }
 
-        public static String getDescription(ItemStack itemStack){
+        public static Component getDescription(ItemStack itemStack){
             var data = getRuneData(itemStack);
-            if(data.isPresent()) return data.get().description();
-            return "";
+            return Component.literal(data.description());
         }
 
         public static boolean canMageFlight(ItemStack itemStack){
@@ -128,16 +124,17 @@ public record RuneData(
         }
 
         public static Component getNameWithStyle(ItemStack stack){
-            return withStyleComponent(getName(stack), getRuneData(stack).orElse(DEFAULT).getTypeColourSecondary());
+            return withStyleComponent(getName(stack), getRuneData(stack).getTypeColourSecondary());
         }
 
         public static Component standAloneAttributes(ItemStack itemStack) {
             var attributes = itemStack.getAttributeModifiers().modifiers().stream().toList();
+
             if(!attributes.isEmpty()){
-                var data = getRuneData(itemStack).orElse(DEFAULT);
+                var data = getRuneData(itemStack);
                 var colourPre = FastColor.ARGB32.color(121, 187, 67);
                 var entry = attributes.getFirst();
-                var value = roundNonWholeString(doubleFormattedDouble(entry.modifier().amount()));
+                var value = roundNonWholeString(singleFormattedDouble(entry.modifier().amount()));
                 var valueWithFix = "+" + value + "%";
                 var valueWithout = "+" + value + " ";
                 var descriptionId = entry.attribute().value().getDescriptionId();
@@ -151,11 +148,7 @@ public record RuneData(
             return Component.empty();
         }
 
-        public static Optional<RuneData> getRuneData(ItemStack stack){
-            return Optional.ofNullable(stack.get(DataComponentRegistry.RUNE_DATA.get()));
-        }
-
-        public static RuneData getRuneDataOpen(ItemStack stack){
+        public static RuneData getRuneData(ItemStack stack){
             return stack.getOrDefault(RUNE_DATA, DEFAULT);
         }
 
@@ -174,31 +167,39 @@ public record RuneData(
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewColour(colour));
         }
 
+        public static void generateWithDescription(ItemStack stack, Pair<String, Holder<Attribute>> type, double value, String name, JahdooRarity rarity, int colour, String description) {
+            replaceOrAddAttribute(stack,type.getFirst(),type.getSecond(), value, EquipmentSlot.MAINHAND, true);
+            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewRarity(rarity.getId()));
+            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewName(name + " " + RuneData.SUFFIX));
+            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewColour(colour));
+            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewDescription(description));
+        }
+
         public static void generateRandomTypAttribute(ItemStack stack) {
             if(stack.getAttributeModifiers().modifiers().isEmpty()){
-                var getElement = ElementRegistry.getRandomElement();
+                var getElement = getRandomElement();
                 var rarity = JahdooRarity.getRarity();
 
                 var allManaAttributes = List.of(
-                    Pair.of(Pair.of(AttributesRegister.MANA_REGEN_PREFIX, AttributesRegister.MANA_REGEN.getDelegate()), JahdooRarity.getManaRegenRange(rarity)),
-                    Pair.of(Pair.of(AttributesRegister.MANA_POOL_PREFIX, AttributesRegister.MANA_POOL.getDelegate()), JahdooRarity.getManaRange(rarity))
+                    Pair.of(Pair.of(MANA_REGEN_PREFIX, MANA_REGEN.getDelegate()), rarity.getAttributes().getRandomManaRegen()),
+                    Pair.of(Pair.of(MANA_POOL_PREFIX, MANA_POOL.getDelegate()), rarity.getAttributes().getRandomManaPool())
                 );
 
                 var allMultiRunes = List.of(
-                    Pair.of(Pair.of(AttributesRegister.MAGIC_DAMAGE_MULTIPLIER_PREFIX, AttributesRegister.MAGIC_DAMAGE_MULTIPLIER.getDelegate()), JahdooRarity.getDamageRange(rarity)),
-                    Pair.of(Pair.of(AttributesRegister.COOLDOWN_REDUCTION_PREFIX, AttributesRegister.COOLDOWN_REDUCTION.getDelegate()), JahdooRarity.getCooldownRange(rarity)),
-                    Pair.of(Pair.of(AttributesRegister.MANA_COST_REDUCTION_PREFIX, AttributesRegister.MANA_COST_REDUCTION.getDelegate()), JahdooRarity.getManaReductionRange(rarity))
+                    Pair.of(Pair.of(MAGIC_DAMAGE_MULTIPLIER_PREFIX, MAGIC_DAMAGE_MULTIPLIER.getDelegate()), rarity.getAttributes().getRandomDamage()),
+                    Pair.of(Pair.of(COOLDOWN_REDUCTION_PREFIX, COOLDOWN_REDUCTION.getDelegate()), rarity.getAttributes().getRandomCooldown()),
+                    Pair.of(Pair.of(MANA_COST_REDUCTION_PREFIX, MANA_COST_REDUCTION.getDelegate()), rarity.getAttributes().getRandomManaReduction())
                 );
 
                 var skillRunes = List.of(
-                    Pair.of(Pair.of(AttributesRegister.MAGE_FLIGHT_PREFIX, AttributesRegister.MAGE_FLIGHT.getDelegate()), 1),
-                    Pair.of(Pair.of(AttributesRegister.DESTINY_BOND_PREFIX, AttributesRegister.DESTINY_BOND.getDelegate()), 1)
+                    Pair.of(Pair.of(MAGE_FLIGHT_PREFIX, MAGE_FLIGHT.getDelegate()), "Allows the player to fly, at the cost of mana."),
+                    Pair.of(Pair.of(DESTINY_BOND_PREFIX, DESTINY_BOND.getDelegate()), "Keep your wand on death")
                 );
 
                 var allTypeAttributes = List.of(
-                    Pair.of(getElement.getDamageTypeAmplifier(), JahdooRarity.getDamageRange(rarity)),
-                    Pair.of(getElement.getTypeCooldownReduction(), JahdooRarity.getCooldownRange(rarity)),
-                    Pair.of(getElement.getTypeManaReduction(), JahdooRarity.getManaReductionRange(rarity))
+                    Pair.of(getElement.getDamageTypeAmplifier(), rarity.getAttributes().getRandomDamage()),
+                    Pair.of(getElement.getTypeCooldownReduction(), rarity.getAttributes().getRandomCooldown()),
+                    Pair.of(getElement.getTypeManaReduction(), rarity.getAttributes().getRandomManaReduction())
                 );
 
                 var randomIndex = Random.nextInt(0, allTypeAttributes.size());
@@ -215,7 +216,7 @@ public record RuneData(
                     }
                     case EPIC -> {
                         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(3));
-                        generateMultiRune(stack, getSkillAttributes.getFirst(), getSkillAttributes.getSecond(), "Skill", LEGENDARY, FastColor.ARGB32.color(234, 82, 68));
+                        generateWithDescription(stack, getSkillAttributes.getFirst(), 1, "Skill", LEGENDARY, FastColor.ARGB32.color(234, 82, 68), getSkillAttributes.getSecond());
                     }
                     case LEGENDARY -> {
                         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(4));
@@ -228,7 +229,6 @@ public record RuneData(
                 }
             }
         }
-
     }
 
 }

@@ -10,7 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ability.JahdooRarity;
+import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.TomeOfUnity;
 import org.jahdoo.items.wand.WandItem;
@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.jahdoo.ability.JahdooRarity.*;
+import static org.jahdoo.ability.rarity.JahdooRarity.*;
 
 public class CreatorRecipe implements Recipe<RecipeInput> {
     private final NonNullList<Ingredient> inputItems;

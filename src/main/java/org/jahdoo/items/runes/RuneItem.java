@@ -8,14 +8,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.*;
-import org.jahdoo.ability.JahdooRarity;
 import org.jahdoo.components.RuneData;
-import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.registers.DataComponentRegistry;
 
 import java.util.List;
 
     import static org.jahdoo.components.RuneData.RuneHelpers.*;
+import static org.jahdoo.items.runes.RuneItemHelper.hoverToolTip;
+import static org.jahdoo.items.runes.RuneItemHelper.rollRandomRune;
 
 public class RuneItem extends Item {
     public RuneItem() {
@@ -29,20 +29,12 @@ public class RuneItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(JahdooRarity.attachRuneRarityTooltip(stack));
-        tooltipComponents.add(standAloneAttributes(stack));
+        hoverToolTip(stack, tooltipComponents);
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        if(!level.isClientSide){
-            var stack = player.getMainHandItem();
-            var newStack = stack.copyWithCount(1);
-            stack.shrink(1);
-            generateRandomTypAttribute(newStack);
-            AugmentItemHelper.throwOrAddItem(player, newStack);
-        }
-        return InteractionResultHolder.fail(player.getMainHandItem());
+        return rollRandomRune(level, player);
     }
 
 }

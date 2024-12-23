@@ -1,18 +1,14 @@
 package org.jahdoo.client.gui.block.augment_modification_station;
 
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
 import org.jahdoo.components.WandData;
 import org.jahdoo.networking.packet.client2server.WandDataC2SPacket;
-import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,9 +33,6 @@ public class AugmentCoreSlot extends SlotItemHandler {
         super(inputItemHandler, index, xPosition, yPosition);
         this.item = item;
     }
-    public void setActive(boolean active) {
-        isActive = active;
-    }
 
     public AugmentCoreSlot(
         IItemHandler inputItemHandler,
@@ -54,6 +47,10 @@ public class AugmentCoreSlot extends SlotItemHandler {
         this.item = item;
         this.wandManagerTableEntity = wandManagerTableEntity;
         this.maxStackSize = maxStackSize;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     @Override
@@ -100,11 +97,11 @@ public class AugmentCoreSlot extends SlotItemHandler {
             if (getData != null) {
                 var index = new AtomicInteger(4);
                 var list = new ArrayList<ItemStack>();
-                for (ItemStack ignored : getData.upgradeSlots()) {
+                for (ItemStack ignored : getData.runeSlots()) {
                     list.add(this.wandManagerTableEntity.inputItemHandler.getStackInSlot(index.get()));
                     index.set(index.get() + 1);
                 }
-                getAllSlots.update(WAND_DATA.get(), WandData.DEFAULT, data -> data.setUpgradeSlots(list));
+                getAllSlots.update(WAND_DATA.get(), WandData.DEFAULT, data -> data.updateRuneSlots(list));
                 var getData2 = getAllSlots.get(WAND_DATA);
                 PacketDistributor.sendToServer(new WandDataC2SPacket(getData2, this.wandManagerTableEntity.getBlockPos()));
             }

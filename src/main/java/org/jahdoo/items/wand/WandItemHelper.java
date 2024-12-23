@@ -16,20 +16,17 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.JahdooRarity;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.entities.EternalWizard;
 import org.jahdoo.registers.AbilityRegister;
-import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jahdoo.ability.JahdooRarity.attachRarityTooltip;
+import static org.jahdoo.ability.rarity.JahdooRarity.attachRarityTooltip;
 import static org.jahdoo.particle.ParticleStore.rgbToInt;
-import static org.jahdoo.registers.DataComponentRegistry.JAHDOO_RARITY;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 import static org.jahdoo.utils.ColourStore.HEADER_COLOUR;
 import static org.jahdoo.utils.ColourStore.SUB_HEADER_COLOUR;
@@ -76,12 +73,8 @@ public class WandItemHelper {
         appendComponents.add(attachRarityTooltip(wandItem));
         totalSlots(appendComponents, wandItem, SUB_HEADER_COLOUR);
         appendSelectedAbility(wandItem, appendComponents);
-
         attributeToolTips(wandItem, appendComponents, abstractElement);
-
         if(!getAllSlots(wandItem).isEmpty()) appendComponents.add(Component.empty());
-        destinyBondTooltip(appendComponents, wandItem);
-
         return appendComponents;
     }
 
@@ -104,7 +97,7 @@ public class WandItemHelper {
             var colourSuf = rgbToInt(145, 145, 145);
             for (ItemAttributeModifiers.Entry entry : wandOnlyAttributes) {
                 Component translatable;
-                var value = roundNonWholeString(doubleFormattedDouble(entry.modifier().amount()));
+                var value = roundNonWholeString(singleFormattedDouble(entry.modifier().amount()));
                 var valueWithFix = "+" + value + "%";
                 var descriptionId = entry.attribute().value().getDescriptionId();
                 translatable = withStyleComponent(valueWithFix, colourSuf)
@@ -118,7 +111,7 @@ public class WandItemHelper {
 
     public static List<ItemStack> getAllSlots(ItemStack itemStack){
         var wandData = itemStack.get(WAND_DATA);
-        if(wandData != null) return wandData.upgradeSlots();
+        if(wandData != null) return wandData.runeSlots();
         return List.of();
     }
 
@@ -137,13 +130,6 @@ public class WandItemHelper {
                     }
                 }
             );
-        }
-    }
-
-    private static void destinyBondTooltip(ArrayList<Component> appendComponents, ItemStack itemStack) {
-        if(itemStack.has(DataComponentRegistry.INFINITE_ITEM)){
-            appendComponents.add(Component.literal(" "));
-            appendComponents.add(ModHelpers.withStyleComponentTrans("wandHelper.jahdoo.destiny_bond", -1781249));
         }
     }
 

@@ -36,9 +36,6 @@ public class DataComponentRegistry {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> HEART_CONTAINER =
         register("heart_container", builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT));
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> INFINITE_ITEM =
-        register("infinite_item", builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
-
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> JAHDOO_RARITY =
         register("rarity", builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
 

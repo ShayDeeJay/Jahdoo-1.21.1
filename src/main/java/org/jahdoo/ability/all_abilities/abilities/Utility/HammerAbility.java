@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.JahdooRarity;
+import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.ability.all_abilities.ability_components.AbstractBlockAbility;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.ElementRegistry;
@@ -14,7 +14,6 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.ability.AbilityBuilder;
 
 import static org.jahdoo.ability.AbilityBuilder.OFFSET;
-import static org.jahdoo.ability.AbilityBuilder.SIZE;
 
 public class HammerAbility extends AbstractBlockAbility {
     public static final ResourceLocation abilityId = ModHelpers.res("hammer");

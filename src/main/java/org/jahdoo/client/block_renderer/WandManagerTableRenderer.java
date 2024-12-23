@@ -4,34 +4,19 @@ import com.google.common.util.concurrent.AtomicDouble;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jahdoo.block.crafter.CreatorEntity;
 import org.jahdoo.block.wand_block_manager.WandManagerTableBlock;
 import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
 import org.jahdoo.components.WandData;
-import org.jahdoo.items.wand.WandItem;
-import org.joml.Matrix4f;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.jahdoo.items.wand.WandItemHelper.getItemModifiers;
-import static org.jahdoo.items.wand.WandItemHelper.getItemName;
 
 public class WandManagerTableRenderer implements BlockEntityRenderer<WandManagerTableEntity> {
     private final BlockEntityRenderDispatcher entityRenderDispatcher;
@@ -57,7 +42,7 @@ public class WandManagerTableRenderer implements BlockEntityRenderer<WandManager
         int pPackedOverlay
     ){
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
-        var outputSlot = WandData.wandData(wandManagerTable.getWandSlot()).upgradeSlots();
+        var outputSlot = WandData.wandData(wandManagerTable.getWandSlot()).runeSlots();
         var newSlots = outputSlot.stream().filter(itemStack -> !itemStack.isEmpty()).toList();
         var spacer = new AtomicDouble();
 
@@ -72,13 +57,13 @@ public class WandManagerTableRenderer implements BlockEntityRenderer<WandManager
         }
     }
 
-    private void focusedItem(PoseStack pPoseStack,  WandManagerTableEntity pBlockEntity, ItemRenderer itemRenderer, MultiBufferSource pBuffer, int packedLight, float partialTicks){
+    private void focusedItem(PoseStack pPoseStack, WandManagerTableEntity pBlockEntity, ItemRenderer itemRenderer, MultiBufferSource pBuffer, int packedLight, float partialTicks){
         pPoseStack.pushPose();
         var scaleItem = 0.80f;
         var outputSlot = pBlockEntity.getWandSlot();
         var getItem = outputSlot.isEmpty() ? ItemStack.EMPTY : outputSlot;
-        var ticks = pBlockEntity.privateTicks + partialTicks;
-        var animatePlace = Math.min(1.1, (ticks/5)) ;
+        var ticks = ((pBlockEntity.privateTicks + partialTicks) / 29) ;
+        var animatePlace = Math.max(1.1, 1.35 - (ticks)) ;
         pPoseStack.translate(0.5f, animatePlace, 0.5f);
         pPoseStack.scale(scaleItem, scaleItem, scaleItem);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(direction(pBlockEntity)));

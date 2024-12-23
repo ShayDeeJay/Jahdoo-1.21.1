@@ -15,7 +15,7 @@ import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public record WandData(
     int abilitySlots,
-    List<ItemStack> upgradeSlots,
+    List<ItemStack> runeSlots,
     List<String> abilitySet,
     String selectedAbility,
     int rarityId
@@ -29,16 +29,10 @@ public record WandData(
         return list;
     }
 
-    public WandData insertNewSlot(int abilitySlots){
-        var newList = new ArrayList<>(this.abilitySet);
-        newList.add("empty" + (abilitySlots - 1));
-        return new WandData(abilitySlots, this.upgradeSlots, newList, this.selectedAbility, this.rarityId);
-    }
-
     public WandData insertNewAbilitySlots(int abilitySlots){
         var newList = new ArrayList<>(this.abilitySet);
         for(int i = this.abilitySlots; i < abilitySlots; i++) newList.add("empty" + i);
-        return new WandData(abilitySlots, this.upgradeSlots, newList, this.selectedAbility, this.rarityId);
+        return new WandData(abilitySlots, this.runeSlots, newList, this.selectedAbility, this.rarityId);
     }
 
     public WandData insertNewUpgradeSlots(int allowedSlots){
@@ -48,27 +42,35 @@ public record WandData(
     }
 
     public WandData setAbilityOrder(List<String> abilities){
-        return new WandData(this.abilitySlots, this.upgradeSlots, abilities, this.selectedAbility, this.rarityId);
+        return new WandData(this.abilitySlots, this.runeSlots, abilities, this.selectedAbility, this.rarityId);
     }
 
     public WandData setSelectedAbility(String selectedAbility){
-        return new WandData(this.abilitySlots, this.upgradeSlots, this.abilitySet, selectedAbility, this.rarityId);
+        return new WandData(this.abilitySlots, this.runeSlots, this.abilitySet, selectedAbility, this.rarityId);
     }
 
     public WandData setRarity(int rarity){
-        return new WandData(this.abilitySlots, this.upgradeSlots, this.abilitySet, this.selectedAbility, rarity);
+        return new WandData(this.abilitySlots, this.runeSlots, this.abilitySet, this.selectedAbility, rarity);
     }
 
-    public WandData setUpgradeSlots(List<ItemStack> upgradeSlots){
+    public WandData updateRuneSlots(List<ItemStack> upgradeSlots){
         return new WandData(this.abilitySlots, upgradeSlots, this.abilitySet, this.selectedAbility, this.rarityId);
     }
 
-    public static void createNewSlotsForWand(ItemStack itemStack, int slotCount){
-        itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.insertNewUpgradeSlots(slotCount));
+    public static void createNewAbilitySlots(ItemStack itemStack, int abilitySlots){
+        itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.insertNewAbilitySlots(abilitySlots));
     }
 
-    public static void updateUpgradeSlots(ItemStack itemStack, List<ItemStack> upgrades){
-        itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.setUpgradeSlots(upgrades));
+    public static void createNewRuneSlots(ItemStack itemStack, int runeSlots){
+        itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.insertNewUpgradeSlots(runeSlots));
+    }
+
+    public static void updateRuneSlots(ItemStack itemStack, List<ItemStack> upgrades){
+        itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.updateRuneSlots(upgrades));
+    }
+
+    public static void createRarity(ItemStack itemStack, int rarityId){
+        itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.setRarity(rarityId));
     }
 
     public static WandData wandData(ItemStack itemStack){
@@ -77,7 +79,7 @@ public record WandData(
 
     public void serialise(RegistryFriendlyByteBuf friendlyByteBuf){
         friendlyByteBuf.writeInt(abilitySlots);
-        ItemStack.OPTIONAL_LIST_STREAM_CODEC.encode(friendlyByteBuf, upgradeSlots);
+        ItemStack.OPTIONAL_LIST_STREAM_CODEC.encode(friendlyByteBuf, runeSlots);
         friendlyByteBuf.writeCollection(abilitySet, FriendlyByteBuf::writeUtf);
         friendlyByteBuf.writeUtf(selectedAbility);
         friendlyByteBuf.writeInt(rarityId);
@@ -101,7 +103,7 @@ public record WandData(
     public static final Codec<WandData> CODEC = RecordCodecBuilder.create(
         instance -> instance.group(
             Codec.INT.fieldOf("ability_slots").forGetter(WandData::abilitySlots),
-            Codec.list(ItemStack.OPTIONAL_CODEC).fieldOf("upgrade_slots").forGetter(WandData::upgradeSlots),
+            Codec.list(ItemStack.OPTIONAL_CODEC).fieldOf("upgrade_slots").forGetter(WandData::runeSlots),
             Codec.list(Codec.STRING).fieldOf("ability_set").forGetter(WandData::abilitySet),
             Codec.STRING.fieldOf("selected_ability").forGetter(WandData::selectedAbility),
             Codec.INT.fieldOf("rarity_id").forGetter(WandData::rarityId)
