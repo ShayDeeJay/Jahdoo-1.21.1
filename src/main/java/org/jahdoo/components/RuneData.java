@@ -19,6 +19,8 @@ import org.jahdoo.ability.rarity.JahdooRarity;
 import java.util.List;
 import java.util.Objects;
 
+import static net.minecraft.util.FastColor.*;
+import static net.minecraft.util.FastColor.ARGB32.*;
 import static org.jahdoo.ability.rarity.JahdooRarity.*;
 import static org.jahdoo.registers.AttributesRegister.*;
 import static org.jahdoo.registers.DataComponentRegistry.RUNE_DATA;
@@ -31,30 +33,37 @@ public record RuneData(
     String name,
     String description,
     int colour,
-    int rarityId
+    int rarityId,
+    int tier
 ){
     public static final String SUFFIX = "Rune";
     public static final String DEFAULT_NAME = "Generic " + SUFFIX;
-    public static final RuneData DEFAULT = new RuneData(-1, DEFAULT_NAME, "", -1, 0);
+    public static final int NO_ELEMENT = -1;
+    public static final RuneData DEFAULT = new RuneData(NO_ELEMENT, DEFAULT_NAME, "", -1, 0, 0);
 
     public RuneData insertNewName(String name){
-        return new RuneData(this.elementId, name, this.description, this.colour, this.rarityId);
+        return new RuneData(this.elementId, name, this.description, this.colour, this.rarityId, this.tier);
     }
 
     public RuneData insertNewDescription(String description){
-        return new RuneData(this.elementId, this.name, description, this.colour, this.rarityId);
+        return new RuneData(this.elementId, this.name, description, this.colour, this.rarityId, this.tier);
     }
 
     public RuneData insertNewElement(int elementId){
-        return new RuneData(elementId, this.name, this.description, this.colour, this.rarityId);
+        return new RuneData(elementId, this.name, this.description, this.colour, this.rarityId, this.tier);
     }
 
     public RuneData insertNewRarity(int rarityId){
-        return new RuneData(this.elementId, this.name, this.description, this.colour, rarityId);
+        return new RuneData(this.elementId, this.name, this.description, this.colour, rarityId, this.tier);
     }
 
     public RuneData insertNewColour(int colour){
-        return new RuneData(this.elementId, this.name, this.description, colour, this.rarityId);
+        return new RuneData(this.elementId, this.name, this.description, colour, this.rarityId, this.tier);
+    }
+
+
+    public RuneData insertNewTier(int tier){
+        return new RuneData(this.elementId, this.name, this.description, colour, this.rarityId, tier);
     }
 
     public int getTypeColourPrimary(){
@@ -64,7 +73,7 @@ public record RuneData(
 
     public int getTypeColourSecondary(){
         var element = getElementOptional(this.elementId);
-        return element.map(AbstractElement::textColourSecondary).orElse(colour);
+        return colour;
     }
 
     public void serialise(RegistryFriendlyByteBuf friendlyByteBuf){
@@ -73,6 +82,7 @@ public record RuneData(
         friendlyByteBuf.writeUtf(this.description);
         friendlyByteBuf.writeInt(this.colour);
         friendlyByteBuf.writeInt(this.rarityId);
+        friendlyByteBuf.writeInt(this.tier);
     }
 
     public static RuneData deserialise(RegistryFriendlyByteBuf friendlyByteBuf){
@@ -80,6 +90,7 @@ public record RuneData(
             friendlyByteBuf.readInt(),
             friendlyByteBuf.readUtf(),
             friendlyByteBuf.readUtf(),
+            friendlyByteBuf.readInt(),
             friendlyByteBuf.readInt(),
             friendlyByteBuf.readInt()
         );
@@ -96,7 +107,8 @@ public record RuneData(
             Codec.STRING.fieldOf("name").forGetter(RuneData::name),
             Codec.STRING.fieldOf("description").forGetter(RuneData::description),
             Codec.INT.fieldOf("colour").forGetter(RuneData::colour),
-            Codec.INT.fieldOf("rarity_id").forGetter(RuneData::rarityId)
+            Codec.INT.fieldOf("rarity_id").forGetter(RuneData::rarityId),
+            Codec.INT.fieldOf("tier").forGetter(RuneData::tier)
             ).apply(instance, RuneData::new)
     );
 
@@ -132,7 +144,7 @@ public record RuneData(
 
             if(!attributes.isEmpty()){
                 var data = getRuneData(itemStack);
-                var colourPre = FastColor.ARGB32.color(121, 187, 67);
+                var colourPre = color(121, 187, 67);
                 var entry = attributes.getFirst();
                 var value = roundNonWholeString(singleFormattedDouble(entry.modifier().amount()));
                 var valueWithFix = "+" + value + "%";
@@ -167,12 +179,14 @@ public record RuneData(
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewColour(colour));
         }
 
-        public static void generateWithDescription(ItemStack stack, Pair<String, Holder<Attribute>> type, double value, String name, JahdooRarity rarity, int colour, String description) {
+        public static void generateFullRune(ItemStack stack, Pair<String, Holder<Attribute>> type, double value, String name, JahdooRarity rarity, String description, int elementId, int tier, int colour) {
             replaceOrAddAttribute(stack,type.getFirst(),type.getSecond(), value, EquipmentSlot.MAINHAND, true);
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewRarity(rarity.getId()));
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewName(name + " " + RuneData.SUFFIX));
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewColour(colour));
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewDescription(description));
+            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewElement(elementId));
+            stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewTier(tier));
         }
 
         public static void generateRandomTypAttribute(ItemStack stack) {
@@ -202,31 +216,65 @@ public record RuneData(
                     Pair.of(getElement.getTypeManaReduction(), rarity.getAttributes().getRandomManaReduction())
                 );
 
+                var randomIndex2 = Random.nextInt(0, allManaAttributes.size());
                 var randomIndex = Random.nextInt(0, allTypeAttributes.size());
                 var getTypeAttribute = allTypeAttributes.get(randomIndex);
                 var getMultiAttribute = allMultiRunes.get(randomIndex);
-                var getManaAttributes = allManaAttributes.get(Random.nextInt(0, allManaAttributes.size()));
-                var getSkillAttributes = skillRunes.get(Random.nextInt(0, allManaAttributes.size()));
+                var getManaAttributes = allManaAttributes.get(randomIndex2);
+                var getSkillAttributes = skillRunes.get(randomIndex2);
 
-
+                System.out.println(getRarity());
+                System.out.println(stack);
                 switch (getRarity()){
                     case COMMON, RARE -> {
+                        System.out.println(getRarity());
+                        System.out.println(getTypeAttribute.getFirst());
+                        System.out.println(getTypeAttribute.getSecond());
+
                         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(randomIndex));
-                        generateTypeRune(stack, getTypeAttribute.getFirst(), getTypeAttribute.getSecond(), getElement, rarity);
+                        generateFullRune(stack, getTypeAttribute.getFirst(), getTypeAttribute.getSecond(), "Elemental", COMMON, "", getElement.getTypeId(), rarity.getId(), COMMON.getColour());
                     }
                     case EPIC -> {
+                        System.out.println(getRarity());
+                        System.out.println(getSkillAttributes.getFirst());
+                        System.out.println(getSkillAttributes.getSecond());
                         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(3));
-                        generateWithDescription(stack, getSkillAttributes.getFirst(), 1, "Skill", LEGENDARY, FastColor.ARGB32.color(234, 82, 68), getSkillAttributes.getSecond());
+                        generateFullRune(stack, getSkillAttributes.getFirst(), 1, "Skill", EPIC, getSkillAttributes.getSecond(), NO_ELEMENT, rarity.getId(), FastColor.ARGB32.color(234, 82, 68));
                     }
                     case LEGENDARY -> {
+                        System.out.println(getRarity());
+                        System.out.println(getManaAttributes.getFirst());
+                        System.out.println(getManaAttributes.getSecond());
                         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(4));
-                        generateMultiRune(stack, getMultiAttribute.getFirst(), getMultiAttribute.getSecond(), "Versatile", rarity, FastColor.ARGB32.color(69, 100, 142));
+                        generateFullRune(stack, getManaAttributes.getFirst(), getManaAttributes.getSecond(), "Aether", LEGENDARY, "", NO_ELEMENT, rarity.getId(), FastColor.ARGB32.color(71, 145, 243));
                     }
                     case ETERNAL -> {
+                        System.out.println(getRarity());
+                        System.out.println(getMultiAttribute.getFirst());
+                        System.out.println(getMultiAttribute.getSecond());
                         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(5));
-                        generateMultiRune(stack, getManaAttributes.getFirst(), getManaAttributes.getSecond(), "Assistant", rarity, FastColor.ARGB32.color(71, 145, 243));
+                        generateFullRune(stack, getMultiAttribute.getFirst(), getMultiAttribute.getSecond(), "Cosmic", ETERNAL, "", NO_ELEMENT, rarity.getId(), FastColor.ARGB32.color(69, 100, 142));
                     }
                 }
+
+//                switch (getRarity()){
+//                    case COMMON, RARE -> {
+//                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(randomIndex));
+//                        generateTypeRune(stack, getTypeAttribute.getFirst(), getTypeAttribute.getSecond(), getElement, rarity);
+//                    }
+//                    case EPIC -> {
+//                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(3));
+//                        generateWithDescription(stack, getSkillAttributes.getFirst(), 1, "Skill", LEGENDARY, FastColor.ARGB32.color(234, 82, 68), getSkillAttributes.getSecond());
+//                    }
+//                    case LEGENDARY -> {
+//                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(4));
+//                        generateMultiRune(stack, getMultiAttribute.getFirst(), getMultiAttribute.getSecond(), "Versatile", rarity, FastColor.ARGB32.color(69, 100, 142));
+//                    }
+//                    case ETERNAL -> {
+//                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(5));
+//                        generateMultiRune(stack, getManaAttributes.getFirst(), getManaAttributes.getSecond(), "Assistant", rarity, FastColor.ARGB32.color(71, 145, 243));
+//                    }
+//                }
             }
         }
     }
