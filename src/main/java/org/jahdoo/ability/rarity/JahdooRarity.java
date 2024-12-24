@@ -194,6 +194,8 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             WandData.createRarity(itemStack, rarity.id);
             WandData.createNewAbilitySlots(itemStack, abilitySlots);
             WandData.createNewRuneSlots(itemStack, runeSlots);
+            WandData.createRefinementPotential(itemStack, rarity.attributes.getRandomRefinementPotential());
+
             //0-5 basic;
             replaceOrAddAttribute(itemStack, element.getFirst().getTypeCooldownReduction().getFirst(), element.getFirst().getTypeCooldownReduction().getSecond(), rarity.attributes.getRandomCooldown(), EquipmentSlot.MAINHAND, false);
             //0-10 basic;

@@ -1,14 +1,15 @@
 package org.jahdoo.client.gui.block.wand_manager_table;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -16,21 +17,21 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
+import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.block.augment_modification_station.AugmentCoreSlot;
 import org.jahdoo.client.gui.block.augment_modification_station.InventorySlots;
 import org.jahdoo.components.WandData;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.items.wand.WandItemHelper;
+import org.jahdoo.networking.packet.client2server.PlayerExperienceC2SPacket;
 import org.jahdoo.networking.packet.client2server.WandDataC2SPacket;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.client.IconLocations.*;
@@ -46,9 +47,10 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     private final WandManagerMenu wandManager;
     boolean showInventory;
     boolean setView;
-    int scaleItem = 140;
+    int scaleItem = 60;
     AbstractElement element;
     int borderColour;
+    boolean isHovering;
 
     public WandManagerScreen(WandManagerMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -74,8 +76,11 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         this.addRenderableWidget(
             menuButtonSound(
                 posX, posY, (press) -> reRollBaseModifiers(),
-                REFRESH, 26, false, 0, WIDGET, true,
-                () -> {/*TODO*/}
+                REFRESH, 26, !this.canModify() || showInventory, 0, WIDGET, this.canModify(),
+                () -> {
+                    this.rebuildWidgets();
+                    this.isHovering = true;
+                }
             )
         );
     }
@@ -97,7 +102,14 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
                 };
                 replaceOrAddAttribute(wandItemCopy, id, attribute, value, EquipmentSlot.MAINHAND, false);
             }
+            System.out.println(getData.refinementPotential());
+            WandData.createRefinementPotential(wandItemCopy, Math.max(0, getData.refinementPotential() - 20));
             PacketDistributor.sendToServer(new WandDataC2SPacket(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos()));
+            var player = Minecraft.getInstance().player;
+            if(player != null){
+                player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
+                PacketDistributor.sendToServer(new PlayerExperienceC2SPacket(player.experienceLevel - getExperienceCost()));
+            }
         }
     }
 
@@ -226,7 +238,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         boxMaker(guiGraphics, startX1, startY1, 39, 10, borderColour, groupFade());
 
 
-        var header = Component.literal(this.setView ? "Rune Manager" : "Wand Manager");
+        var header = Component.literal((this.setView ? "Rune" : "Wand") + " Manager");
         var x = this.width / 2 - 34 + shiftX;
         var y1 = this.height / 2 - 105 + shiftY;
         guiGraphics.drawString(this.font, header, x, y1, ColourStore.SUB_HEADER_COLOUR);
@@ -246,14 +258,14 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     ) {
         if(getWand().getItem() instanceof WandItem){
             var itemModifiers = WandItemHelper.getItemModifiers(getWand());
-            var rarityAndSlots = filterList(itemModifiers, "Rarity", "Slots");
+            var rarityAndSlots = filterList(itemModifiers, "Rarity", "Slots", "Potential");
             var modifiersAndHeader = filterList(itemModifiers, "%", "Applies");
             var widthHeader = 0;
             var widthProperties = 0;
             var sharedX = this.width / 2 - 30 + shiftX;
 
             for (Component components : rarityAndSlots) {
-                var posY = this.height / 2 - 80 + spacer.get() + shiftY;
+                var posY = this.height / 2 - 85 + spacer.get() + shiftY;
                 guiGraphics.drawString(this.font, components, sharedX, posY, 0);
                 spacer.set(spacer.get() + 12);
                 if (widthHeader < font.width(components)) widthHeader = font.width(components);
@@ -265,14 +277,14 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             boxMaker(guiGraphics, startX1, startY1, widthOffset, 20, borderColour, groupFade());
 
             for (Component components : modifiersAndHeader) {
-                var posY = this.height / 2 - 64 + spacer.get() + shiftY;
+                var posY = this.height / 2 - 74 + spacer.get() + shiftY;
                 var skip = components.getString().contains("Applies");
 
                 guiGraphics.drawString(this.font, components, sharedX, posY, 0);
                 if(!skip){
                     var range = getModifierRange(wandManager, components.getString());
                     var posX = this.width / 2 - 28 + shiftX;
-                    var posY1 = this.height / 2 - 53 + spacer.get() + shiftY;
+                    var posY1 = this.height / 2 - 64 + spacer.get() + shiftY;
                     guiGraphics.drawString(this.font, range, posX, posY1, ColourStore.HEADER_COLOUR);
                 }
                 spacer.set(spacer.get() + (!skip ? 24 : 15));
@@ -337,8 +349,10 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         this.renderBlurredBackground(pPartialTick);
         var adjustX = 18;
         var adjustY = -27;
-        var startX = this.width / 2 - 140;
-        var startY = this.height / 2 + 22;
+        var i = this.width / 2;
+        var i1 = this.height / 2;
+        var startX = i - 140;
+        var startY = i1 + 22;
 
         scaleItem();
         reRollContainer(guiGraphics, startX, startY);
@@ -347,12 +361,64 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
         overlayInventory(guiGraphics, startX, startY);
+        extracted(guiGraphics, mouseX, mouseY, i, startY);
+
+        this.isHovering = false;
+    }
+
+    private void extracted(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, int i, int startY) {
+        var player = this.getMinecraft().player;
+        if(player == null) return;
+        var exp = player.experienceLevel;
+        var getMaxCost = getExperienceCost();
+        var expColour = exp >= getMaxCost ? 8453920 : -2070938;
+        var refinementPotential = Component.literal(String.valueOf(getMaxCost));
+        var expLvl = Component.literal(String.valueOf(exp));
+        var offsetX = 0;
+        var offsetY = -27;
+        var potential = WandData.wandData(getWand()).refinementPotential();
+        if(!showInventory && isHovering && potential > 0){
+            SharedUI.boxMaker(guiGraphics, mouseX - 26 + offsetX, mouseY + offsetY, 26, 13, BORDER_COLOUR, getFadedColourBackground(0.6f));
+            SharedUI.drawStringWithBackground(guiGraphics, this.font, refinementPotential, mouseX + offsetX, mouseY + 15 + offsetY, 0, expColour, true);
+            guiGraphics.drawCenteredString(font, "Exp Cost", mouseX + offsetX, mouseY + 4 + offsetY, -1);
+            SharedUI.drawStringWithBackground(guiGraphics, this.font, expLvl, i, startY + 69, 0, 8453920, true);
+            renderExperienceBar(guiGraphics, i - 91, startY + 78);
+        }
+    }
+
+    private boolean canModify(){
+        var player = this.getMinecraft().player;
+        if(player == null) return false;
+        var exp = player.experienceLevel;
+        var potential = WandData.wandData(getWand()).refinementPotential();
+        var getMaxCost = getExperienceCost();
+        return exp >= getMaxCost && potential > 0  ;
+    }
+
+    private int getExperienceCost() {
+        var potential = WandData.wandData(getWand()).refinementPotential();
+        return Math.max(10, 100 - potential);
+    }
+
+    private void renderExperienceBar(GuiGraphics guiGraphics, int x, int l) {
+        var expBackground = ResourceLocation.withDefaultNamespace("hud/experience_bar_background");
+        var expProgress = ResourceLocation.withDefaultNamespace("hud/experience_bar_progress");
+        if(this.minecraft == null || this.minecraft.player == null) return;
+        this.minecraft.getProfiler().push("expBar");
+        int i = this.minecraft.player.getXpNeededForNextLevel();
+        if (i > 0) {
+            int k = (int)(this.minecraft.player.experienceProgress * 183.0F);
+            guiGraphics.blitSprite(expBackground, x, l, 182, 5);
+            if (k > 0) guiGraphics.blitSprite(expProgress, 182, 5, 0, 0, x, l, k, 5);
+        }
+        this.minecraft.getProfiler().pop();
     }
 
     private void reRollContainer(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
         var startX1 = startX + 105;
         var startY1 = startY + 35;
-        var reRoll = ModHelpers.withStyleComponent("Re-Roll", 0xb97700);
+        var colour = 0xb97700;
+        var reRoll = ModHelpers.withStyleComponent("Re-Roll", colour);
         boxMaker(guiGraphics, startX1, startY1, 32, 9, BORDER_COLOUR, getFadedColourBackground(0.9f));
         guiGraphics.drawCenteredString(this.font, reRoll, startX + 146, startY + 40, 0);
     }

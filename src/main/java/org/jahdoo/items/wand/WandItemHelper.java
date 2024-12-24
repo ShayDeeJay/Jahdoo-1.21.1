@@ -67,11 +67,19 @@ public class WandItemHelper {
         toolTips.add(withStyleComponentTrans("wandHelper.jahdoo.ability_slots", HEADER_COLOUR, slot));
     }
 
+    public static void appendRefinementPotential(List<Component> toolTips, ItemStack wandItem, int colour){
+        var wandData = wandItem.get(WAND_DATA);
+        if(wandData == null) return;
+        var slot = ModHelpers.withStyleComponent(String.valueOf(wandData.refinementPotential()), colour);
+        toolTips.add(withStyleComponent("Potential: ", HEADER_COLOUR).copy().append(slot));
+    }
+
     public static List<Component> getItemModifiers(ItemStack wandItem){
         var appendComponents = new ArrayList<Component>();
         var abstractElement = ElementRegistry.getElementByWandType(wandItem.getItem()).getFirst();
         appendComponents.add(attachRarityTooltip(wandItem));
         totalSlots(appendComponents, wandItem, SUB_HEADER_COLOUR);
+        appendRefinementPotential(appendComponents, wandItem, SUB_HEADER_COLOUR);
         appendSelectedAbility(wandItem, appendComponents);
         attributeToolTips(wandItem, appendComponents, abstractElement);
         if(!getAllSlots(wandItem).isEmpty()) appendComponents.add(Component.empty());

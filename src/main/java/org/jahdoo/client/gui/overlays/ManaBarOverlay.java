@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
@@ -104,7 +105,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
                 }
             }
         }
-
         SharedUI.boxMaker(pGuiGraphics, startX - 4, startY - 4, 100, attSpacer.get()/2 + 3, BORDER_COLOUR);
     }
 
@@ -162,8 +162,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var experienceProgress = player.experienceProgress;
         var experienceWidth = (int) (20 * experienceProgress);
 
-//        SharedUI.boxMaker(guiGraphics, guiGraphics.guiWidth()/2-1, guiGraphics.guiHeight()/2-1, (int) (goldenHearts * 42 / player.getMaxAbsorption()), 4, 0, FastColor.ARGB32.color(255, ElementRegistry.INFERNO.get().textColourPrimary()));
-//        SharedUI.boxMaker(guiGraphics, guiGraphics.guiWidth()/2, guiGraphics.guiHeight()/2, (int) (health * 40 / player.getMaxHealth()), 3, 0, FastColor.ARGB32.color(255, ElementRegistry.VITALITY.get().textColourPrimary()));
         alignedGui.displayGuiLayer(31 + shiftX, 24 + shiftY, 70, 60, 8);
         alignedGui.displayGuiLayer(31 + shiftX, 31 + shiftY, 70, 60, 8);
         alignedGui.displayGuiLayer(31 + shiftX, 38 + shiftY, 70, 60, 8);
@@ -257,11 +255,8 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var type = player.getMainHandItem();
         var element = ElementRegistry.getElementByWandType(type.getItem());
         if(!element.isEmpty()) this.types = element.getFirst().getTypeId();
-
         if(types > 0){
-            int[] typeOverlay = {103, 128, 78, 53, 28, 3};
             int[] manaOverlay = {35, 43, 27, 11, 19, 20};
-//            alignedGui.displayGuiLayer(0, 27, 0, typeOverlay[types - 1], 88, 25, TYPE_OVERLAY);
             alignedGui.displayGuiLayer(25, 18, 0, manaOverlay[types - 1], manaProgress, 8, IconLocations.MANA_LEVEL_BAR);
         }
     }
@@ -323,10 +318,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         public void offsetGui(int shiftGuiX, int shiftGuiY){
             this.shiftGuiX = shiftGuiX;
             this.shiftGuiY = shiftGuiY;
-        }
-
-        public int getScreenHeight() {
-            return screenHeight;
         }
 
         private void setScale(int scale){

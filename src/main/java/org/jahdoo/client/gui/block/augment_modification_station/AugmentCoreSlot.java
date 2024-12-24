@@ -101,7 +101,7 @@ public class AugmentCoreSlot extends SlotItemHandler {
                     list.add(this.wandManagerTableEntity.inputItemHandler.getStackInSlot(index.get()));
                     index.set(index.get() + 1);
                 }
-                getAllSlots.update(WAND_DATA.get(), WandData.DEFAULT, data -> data.updateRuneSlots(list));
+                getAllSlots.update(WAND_DATA.get(), WandData.DEFAULT, data -> data.setRuneSlots(list));
                 var getData2 = getAllSlots.get(WAND_DATA);
                 getAllSlots.set(WAND_DATA, getData2);
                 PacketDistributor.sendToServer(new WandDataC2SPacket(getAllSlots, this.wandManagerTableEntity.getBlockPos()));

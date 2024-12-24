@@ -48,8 +48,8 @@ public class ToggleComponent  {
         return new GuiButton(posX, posY, button, size, action, isSelected, resourceLocation, "", scale, showHover);
     }
 
-    public static GuiButton menuButtonSound(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, boolean isSelected, int scale, WidgetSprites button, boolean showHover, Runnable hoverAction) {
-        return new GuiButton(posX, posY, button, size, action, isSelected, resourceLocation, "", scale, showHover){
+    public static GuiButton menuButtonSound(int posX, int posY, Button.OnPress action, ResourceLocation resourceLocation, int size, boolean active, int scale, WidgetSprites button, boolean showHover, Runnable hoverAction) {
+        return new GuiButton(posX, posY, button, size, action, active, resourceLocation, "", scale, showHover){
             @Override
             public void playDownSound(SoundManager handler) {
                 handler.play(SimpleSoundInstance.forUI(SoundEvents.VAULT_INSERT_ITEM, 1.2F));
