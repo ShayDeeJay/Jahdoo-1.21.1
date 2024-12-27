@@ -45,8 +45,10 @@ public class ArmageddonAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(180, 80, 10)
-            .setCooldown(6000, 2400, 600)
+            .setStaticMana(150)
+            .setStaticCooldown(4800)
+//            .setMana(180, 80, 10)
+//            .setCooldown(6000, 2400, 600)
             .setDamage(40, 20, 5)
             .setCastingDistance(30, 10, 5)
             .setLifetime(400, 200, 40)

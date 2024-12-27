@@ -7,7 +7,7 @@
     },
     {
       "condition": "neoforge:loot_table_id",
-      "loot_table_id": "minecraft:chests/woodland_mansion"
+      "loot_table_id": "minecraft:chests/trial_chambers/reward_ominous_rare"
     }
   ],
   "item": "jahdoo:unidentified_augment"

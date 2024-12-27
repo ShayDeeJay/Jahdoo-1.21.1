@@ -36,8 +36,10 @@ public class HellfireAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(80, 30,  10)
-            .setCooldown(600, 200, 100)
+            .setStaticMana(80)
+            .setStaticCooldown(600)
+//            .setMana(80, 30,  10)
+//            .setCooldown(600, 200, 100)
             .setDamage(30, 15, 5)
             .setEffectDuration(300, 20, 20)
             .setEffectStrength(10, 0,1)

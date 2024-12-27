@@ -40,8 +40,8 @@ public class NovaSmashAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(40, 10,  10)
-            .setCooldown(300, 100, 50)
+            .setStaticMana(40)
+            .setStaticCooldown(400)
             .build();
     }
 

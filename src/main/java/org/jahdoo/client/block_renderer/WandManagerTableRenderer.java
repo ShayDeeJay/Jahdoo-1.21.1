@@ -62,8 +62,8 @@ public class WandManagerTableRenderer implements BlockEntityRenderer<WandManager
         var scaleItem = 0.80f;
         var outputSlot = pBlockEntity.getWandSlot();
         var getItem = outputSlot.isEmpty() ? ItemStack.EMPTY : outputSlot;
-        var ticks = ((pBlockEntity.privateTicks + partialTicks) / 29) ;
-        var animatePlace = Math.max(1.1, 1.35 - (ticks)) ;
+        var ticks = ((pBlockEntity.privateTicks + partialTicks) / 18) ;
+        var animatePlace = Math.max(1.1, 1.4 - ticks) ;
         pPoseStack.translate(0.5f, animatePlace, 0.5f);
         pPoseStack.scale(scaleItem, scaleItem, scaleItem);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(direction(pBlockEntity)));

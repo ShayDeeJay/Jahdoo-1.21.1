@@ -98,8 +98,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
             this.hitTarget = hitEntity;
             ModHelpers.getSoundWithPositionV(genericProjectile.level(), hitEntity.position(), SoundRegister.ORB_CREATE.get(), 2f, 1f);
             onExistenceChange(hitEntity, getElementType());
-            CastHelper.chargeMana(FrostboltsAbility.abilityId.getPath().intern(), mana, player);
-            CastHelper.chargeCooldown(FrostboltsAbility.abilityId.getPath().intern(), cooldown, player);
+            CastHelper.chargeManaAndCooldown(FrostboltsAbility.abilityId.getPath().intern(), player);
             player.displayClientMessage(Component.literal(""), true);
             this.genericProjectile.setDeltaMovement(0,0,0);
         } else {

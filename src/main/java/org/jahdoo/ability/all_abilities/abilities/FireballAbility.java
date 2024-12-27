@@ -20,12 +20,14 @@ public class FireballAbility extends AbilityRegistrar {
 
     @Override
     public void invokeAbility(Player player) {
-        ElementProjectile elementProjectile = new ElementProjectile(
-            EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(), player,
-            EntityPropertyRegister.FIRE_BALL.get().setAbilityId(), -0.3,
-            abilityId.getPath().intern()
+        var projCount = 1;
+        this.fireMultiShotProjectile(projCount, 0.5f, player, 0.4,
+            () -> new ElementProjectile(
+                EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(), player,
+                EntityPropertyRegister.FIRE_BALL.get().setAbilityId(), projCount == 1 ? -0.3 : 0,
+                abilityId.getPath().intern()
+            )
         );
-        this.fireProjectile(elementProjectile, player, 0.5f);
     }
 
     @Override
@@ -41,8 +43,8 @@ public class FireballAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(90, 40, 10)
-            .setCooldown(600, 200, 100)
+            .setStaticMana(60)
+            .setStaticCooldown(600)
             .setDamage(45, 20, 5)
             .setEffectDuration(300, 100, 20)
             .setEffectStrength(10, 0, 1)

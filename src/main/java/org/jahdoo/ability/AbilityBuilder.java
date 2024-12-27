@@ -104,7 +104,7 @@ public class AbilityBuilder {
 
     public AbilityBuilder setModifierWithoutBounds(String name, double actualValue) {
         var abilityModifiers = new AbilityHolder.AbilityModifiers(
-            actualValue, 0, 0, 0, actualValue, true
+            actualValue, -1, -1, 0, actualValue, true
         );
         this.abilityHolder.abilityProperties().put(name, abilityModifiers);
         return this;
@@ -134,6 +134,11 @@ public class AbilityBuilder {
         return this;
     }
 
+    public AbilityBuilder setStaticMana(double value){
+        this.setModifierWithoutBounds(MANA_COST, value);
+        return this;
+    }
+
     public AbilityBuilder setMana(double high, double low, double step){
         this.setAbilityTagModifiersRandom(MANA_COST, high, low, false, step);
         return this;
@@ -146,6 +151,11 @@ public class AbilityBuilder {
 
     public AbilityBuilder setManaWithValue(double high, double low, double value){
         this.setModifier(MANA_COST, high, low, false, value);
+        return this;
+    }
+
+    public AbilityBuilder setStaticCooldown(double value){
+        this.setModifierWithoutBounds(COOLDOWN, value);
         return this;
     }
 

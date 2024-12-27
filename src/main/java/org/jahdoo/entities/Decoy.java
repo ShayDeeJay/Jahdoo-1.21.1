@@ -42,7 +42,6 @@ public class Decoy extends Mob {
     private Player player;
     private int range;
 
-
     BakedParticleOptions bakedParticlesOptions =
         bakedParticleOptions(ElementRegistry.VITALITY.get().getTypeId(), 6, 2f, false);
     GenericParticleOptions genericParticleOptions =

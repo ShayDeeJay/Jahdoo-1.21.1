@@ -39,21 +39,20 @@ public class ThunderBurstAbility extends AbilityRegistrar {
             player, (float) modifiers.get(DAMAGE).actualValue(),true,
             LIGHTNING_MAGIC_DAMAGE_MULTIPLIER, MAGIC_DAMAGE_MULTIPLIER
         );
-        var numberOfBolts = modifiers.get(NUMBER_OF_THUNDERBOLTS).actualValue();
+        var numberOfBolts = modifiers.get(NUMBER_OF_THUNDERBOLTS).setValue();
         var lightningTrailModifiers = getLightningTrailModifiers(damage, 0.16, 10, 0);
 
         ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.BOLT.get(), 2f,1f);
 
-        for(int i = 0; i < numberOfBolts; i++){
-            GenericProjectile genericProjectile = new GenericProjectile(
-                player, -0.3,
+        this.fireMultiShotProjectile((int) numberOfBolts , 1.2f, player, 0.02,
+            () -> new GenericProjectile(
+                player, 0,
                 EntityPropertyRegister.LIGHTNING_TRAIL.get().setAbilityId(),
                 lightningTrailModifiers, -1,
                 abilityId.getPath().intern(),
                 this.getElemenType()
-            );
-            this.fireProjectileNoSound(genericProjectile, player, 1.2f);
-        }
+            )
+        );
     }
 
     @Override
@@ -69,8 +68,10 @@ public class ThunderBurstAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(80, 30,  10)
-            .setCooldown(400, 100, 100)
+            .setStaticMana(60)
+            .setStaticCooldown(300)
+//            .setMana(80, 30,  10)
+//            .setCooldown(400, 100, 100)
             .setDamage(40, 15, 5)
             .setAbilityTagModifiersRandom(NUMBER_OF_THUNDERBOLTS, 20,10, true, 2)
             .build();

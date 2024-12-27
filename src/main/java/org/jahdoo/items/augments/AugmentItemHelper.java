@@ -163,6 +163,7 @@ public class AugmentItemHelper {
         boolean hide
     ){
         var component = getCurrentModifierRating(itemStack, itemStack1, keys, abilityLocation);
+        var modifier = getModifier(itemStack, abilityLocation, keys);
 
         if(colour == 0){
             toolTips.add(component);
@@ -170,8 +171,10 @@ public class AugmentItemHelper {
             toolTips.add(component.copy().withStyle(style -> style.withColor(colour)));
         }
 
-        if (hide || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)) {
-            toolTips.add(displayRating(itemStack, keys, abilityLocation));
+        if(modifier.highestValue() != -1){
+            if (hide || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)) {
+                toolTips.add(displayRating(itemStack, keys, abilityLocation));
+            }
         }
     }
 

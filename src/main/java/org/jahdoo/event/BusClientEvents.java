@@ -46,6 +46,7 @@ public class BusClientEvents {
         event.registerBlockEntityRenderer(BlockEntitiesRegister.CREATOR_BE.get(), CreatorRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_MANAGER_TABLE_BE.get(), WandManagerTableRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.INFUSER_BE.get(), InfuserRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.CHALLENGE_ALTAR_BE.get(), ChallengeAltarRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(), ModularChaosCubeRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_BE.get(), WandBlockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.TANK_BE.get(), NexiteTankRenderer::new);

@@ -48,8 +48,10 @@ public class MysticalSemtexAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(60, 20,  10)
-            .setCooldown(600, 100, 100)
+            .setStaticMana(60)
+            .setStaticCooldown(500)
+//            .setMana(60, 20,  10)
+//            .setCooldown(600, 100, 100)
             .setDamage(45, 20, 5)
             .setAbilityTagModifiersRandom(additionalProjectile, 10,4, true, 1)
             .setAbilityTagModifiersRandom(explosionDelays, 50,20, false, 5)

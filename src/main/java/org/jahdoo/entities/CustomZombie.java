@@ -6,6 +6,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
@@ -69,7 +70,7 @@ public class CustomZombie extends Zombie implements TamableEntity {
     protected void addBehaviourGoals() {
         this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(2, new ZombieAttackGoal(this, 1.0F, false));
-        this.goalSelector.addGoal(2, new AttackNearbyMonsters<>(this, LivingEntity.class, true, 10, 4));
+        this.goalSelector.addGoal(2, new AttackNearbyMonsters<>(this, LivingEntity.class, true, 10, 20));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(5, new FollowGoal(this, 1.0D, 5.0F, 2.0F, false));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
@@ -77,6 +78,7 @@ public class CustomZombie extends Zombie implements TamableEntity {
         this.targetSelector.addGoal(1, new GenericHurtByTargetGoal(this));
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getOwner));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
 

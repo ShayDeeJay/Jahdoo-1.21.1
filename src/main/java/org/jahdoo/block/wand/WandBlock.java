@@ -85,12 +85,12 @@ public class WandBlock extends BaseEntityBlock {
     public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource) {
         if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return;
         if(wandBlock.getWandItemFromSlot().isEmpty()) return;
-        List<AbstractElement> getType = getElementByWandType(wandBlock.getWandItemFromSlot().getItem());
+        var getType = getElementByWandType(wandBlock.getWandItemFromSlot().getItem());
         if(!level.isClientSide() && !getType.isEmpty()) return;
-        AbstractElement element = getType.getFirst();
+        var element = getType.getFirst();
 
-        BakedParticleOptions par1 = ParticleHandlers.bakedParticleOptions(element.getTypeId(), 20, 1.5f, false);
-        GenericParticleOptions par2 = ParticleHandlers.genericParticleOptions(
+        var par1 = ParticleHandlers.bakedParticleOptions(element.getTypeId(), 20, 1.5f, false);
+        var par2 = ParticleHandlers.genericParticleOptions(
             ParticleStore.GENERIC_PARTICLE_SELECTION, element, 20, 1.5f, false, 0.3
         );
 

@@ -10,12 +10,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.ability.all_abilities.abilities.ElementalShooterAbility;
 import org.jahdoo.ability.rarity.JahdooRarity;
+import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.EffectsRegister;
+import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public abstract class AbilityRegistrar {
     public static final int DISTANCE_CAST = 1;
@@ -73,6 +78,12 @@ public abstract class AbilityRegistrar {
         return 0;
     }
 
+    public static Vec3 calculateDirectionOffset(LivingEntity player, double offset) {
+        var lookDirection = player.getLookAngle();
+        var rightVector = new Vec3(-lookDirection.z(), 0, lookDirection.x()).normalize(); // Perpendicular to look direction
+        return rightVector.scale(offset);
+    }
+
     public void fireProjectile(Projectile projectile, LivingEntity player, float velocity){
         if(player != null){
             if(player.level() instanceof ServerLevel serverLevel){
@@ -82,6 +93,19 @@ public abstract class AbilityRegistrar {
                 serverLevel.addFreshEntity(projectile);
                 ModHelpers.getSoundWithPositionV(projectile.level(), player.position(), SoundRegister.ORB_FIRE.get(), 0.4f, 1f);
             }
+        }
+    }
+
+    public void fireMultiShotProjectile(int numberOfProjectile, float velocities, Player player, double adjustSpread, Supplier<Projectile> projectileSupplier){
+       var totalWidth = (numberOfProjectile - 1) * adjustSpread; // Adjust the total width as needed
+        var startOffset = -totalWidth / 2.0;
+
+        for (int i = 0; i < numberOfProjectile; i++) {
+            double offset = numberOfProjectile == 1 ? 0 : startOffset + i * (totalWidth / (numberOfProjectile - 1));
+            var projectile  = projectileSupplier.get();
+            var directionOffset = calculateDirectionOffset(player, offset);
+            var direction = player.getLookAngle().add(directionOffset).normalize();
+            this.fireProjectileDirection(projectile, player, velocities, direction);
         }
     }
 

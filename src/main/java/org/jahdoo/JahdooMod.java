@@ -33,7 +33,7 @@ public class JahdooMod {
         //Register the config
         // This will use NeoForge's ConfigurationScreen to display this mod's configs
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-        container.registerConfig(ModConfig.Type.COMMON, Config.CLIENT_CONFIG);
+        container.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
         ArmorMaterialRegistry.register(modEventBus);
         AttributesRegister.register(modEventBus);
         RecipeRegistry.register(modEventBus);
@@ -57,5 +57,6 @@ public class JahdooMod {
     private void commonSetup(final FMLCommonSetupEvent event) {
         CuriosRendererRegistry.register(ItemsRegister.TOME_OF_UNITY.get(), TomeRenderer::new);
     }
+
 
 }

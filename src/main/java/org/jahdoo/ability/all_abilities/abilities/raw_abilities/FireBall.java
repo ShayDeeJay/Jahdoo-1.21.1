@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
@@ -179,7 +181,7 @@ public class FireBall extends DefaultEntityBehaviour {
         var size = ModHelpers.Random.nextDouble(0.2, 0.6);
         var bakedParticle = bakedParticleOptions(this.getElementType().getTypeId(), lifetime, (float) size, true);
         var col1 = this.getElementType().particleColourPrimary();
-        var col2 = this.getElementType().particleColourFaded();
+        var col2 =  color(51, 51, 51);
         var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, (float) (size - 0.2), col1, col2, true);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
         var randomSpeed = ModHelpers.Random.nextDouble(this.novaMaxSize/12, this.novaMaxSize/8);
@@ -245,7 +247,9 @@ public class FireBall extends DefaultEntityBehaviour {
             position -> {
                 var newPosition = position.add(this.elementProjectile.getDeltaMovement().scale(-1.5));
                 var size = ModHelpers.Random.nextFloat(2f, 3f);
-                var pType = genericParticleOptions(GENERIC_PARTICLE_SELECTION, this.getElementType(), 4, size);
+                var pType = genericParticleOptions(GENERIC_PARTICLE_SELECTION, 4, size, getElementType().particleColourPrimary(), color(51, 51, 51));
+
+//                var pType = genericParticleOptions(GENERIC_PARTICLE_SELECTION, this.getElementType(), 4, size);
                 ParticleHandlers.sendParticles(
                     level(),
                     pType,

@@ -44,6 +44,18 @@ public class ParticleHandlers {
         }
     }
 
+    public static void genericProjPart(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions, float speed) {
+        for (int i = 0; i < 2; i++) {
+            var spread = 0.2;
+            sendParticles(world, particleOptions, pos, particleCount,
+                (world.random.nextFloat() * 1 - spread) / 3,
+                (world.random.nextFloat() * 1 - spread) / 3,
+                (world.random.nextFloat() * 1 - spread) / 3,
+                speed
+            );
+        }
+    }
+
     public static void particleBurst(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions, double x, double y, double z, float speed) {
         for (int i = 0; i < 10; i++) {
             sendParticles(world, particleOptions, pos, particleCount, x, y, z, speed);

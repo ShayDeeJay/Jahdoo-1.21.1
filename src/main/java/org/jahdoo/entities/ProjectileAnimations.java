@@ -22,4 +22,8 @@ public class ProjectileAnimations {
     public static final RawAnimation UP = RawAnimation.begin().thenPlay("direction4");
     public static final RawAnimation DOWN = RawAnimation.begin().thenPlay("direction5");
     public static final RawAnimation NORTH = RawAnimation.begin().thenPlay("direction6");
+
+    public static final RawAnimation ALTAR_IDLE = RawAnimation.begin().thenPlay("idle");
+    public static final RawAnimation ALTAR_INITIATE = RawAnimation.begin().thenPlay("initiate").thenPlay("idle");
+
 }

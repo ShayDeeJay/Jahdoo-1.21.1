@@ -25,8 +25,10 @@ public class FrostboltsAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(60, 20, 10)
-            .setCooldown(600, 100, 100)
+            .setStaticMana(60)
+            .setStaticCooldown(600)
+//            .setMana(60, 20, 10)
+//            .setCooldown(600, 100, 100)
             .setDamage(25, 15, 2)
             .setAbilityTagModifiersRandom(NUMBER_OF_PROJECTILES, 30,10, true, 5)
             .setEffectDuration(300, 100, 20)

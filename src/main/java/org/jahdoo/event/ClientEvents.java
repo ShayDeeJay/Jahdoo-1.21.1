@@ -84,8 +84,6 @@ public class ClientEvents {
 
     }
 
-
-
     public static Entity getEntityPlayerIsLookingAt(Player player, double maxDistance) {
         var eyePosition = player.getEyePosition(1.0F);
         var lookVector = player.getViewVector(1.0F).scale(maxDistance);

@@ -39,8 +39,8 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(60, 20, 10)
-            .setCooldown(600, 200, 100)
+            .setStaticMana(50)
+            .setStaticCooldown(1200)
             .setLifetime(300, 100, 50)
             .setEffectDuration(200, 50, 50)
             .setRange(15, 5, 2)

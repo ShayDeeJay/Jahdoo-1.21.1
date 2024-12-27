@@ -31,6 +31,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(BlocksRegister.INFUSER.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/infuser")));
 
+        simpleBlockWithItem(BlocksRegister.CHALLENGE_ALTAR.get(),
+            new ModelFile.UncheckedModelFile(modLoc("block/challenge_altar")));
+
         simpleBlockWithItem(BlocksRegister.MODULAR_CHAOS_CUBE.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/modular_chaos_cube")));
 

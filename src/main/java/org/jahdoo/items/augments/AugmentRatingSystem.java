@@ -3,6 +3,8 @@ package org.jahdoo.items.augments;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FastColor;
+import net.minecraft.util.FastColor.ABGR32;
+import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.components.ability_holder.AbilityHolder;
@@ -10,6 +12,7 @@ import org.jahdoo.registers.ItemsRegister;
 
 import java.text.DecimalFormat;
 
+import static net.minecraft.util.FastColor.ARGB32.*;
 import static org.jahdoo.items.augments.AugmentItemHelper.getModifierContextRange;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
@@ -120,11 +123,11 @@ public class AugmentRatingSystem {
             isHigherBetter = modifier.isHigherBetter();
 
             switch (getRating){
-                case 1 -> chatFormatting = FastColor.ARGB32.color(255, 211,211,211);
-                case 2 -> chatFormatting = FastColor.ABGR32.color(255, 230,71,71);
-                case 3 -> chatFormatting = FastColor.ABGR32.color(255, 224,156,59);
-                case 4 -> chatFormatting = FastColor.ABGR32.color(255, 230,226,46);
-                default -> chatFormatting= FastColor.ABGR32.color(255, 143,185,53);
+                case 1 -> chatFormatting = color(255, 211,211,211);
+                case 2 -> chatFormatting = color(255, 230,71,71);
+                case 3 -> chatFormatting = color(255, 224,156,59);
+                case 4 -> chatFormatting = color(255, 230,226,46);
+                default -> chatFormatting= color(255, 143,185,53);
             }
         } else {
             getRating = 0;

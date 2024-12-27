@@ -47,8 +47,8 @@ public class OverchargedAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(80, 30,  10)
-            .setCooldown(1200, 400, 200)
+            .setStaticMana(80)
+            .setStaticCooldown(1200)
             .setDamage(40, 15, 5)
             .setEffectDuration(500, 100, 100)
             .setEffectStrength(10, 0, 1)

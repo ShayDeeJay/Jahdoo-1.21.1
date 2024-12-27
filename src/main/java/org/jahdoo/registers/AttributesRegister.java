@@ -25,12 +25,20 @@ import java.util.UUID;
 
 public class  AttributesRegister {
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, JahdooMod.MOD_ID);
+    //Base Attributes
     public static final String MANA_POOL_PREFIX= "mana.mana_pool";
     public static final String MANA_REGEN_PREFIX= "mana.mana_regen";
 
+    //Skill Attributes
     public static final String MAGE_FLIGHT_PREFIX= "skills.mage_flight";
     public static final String DESTINY_BOND_PREFIX= "skills.destiny_bond";
 
+    //Cast Attributes
+    public static final String SKIP_MANA_PREFIX= "mana.mana_regen";
+    public static final String SKIP_COOLDOWN_PREFIX= "mana.mana_regen";
+    public static final String HEAL_PREFIX= "mana.mana_regen";
+
+    //Element Attributes
     public static final String MANA_COST_REDUCTION_PREFIX = "mana.cost_reduction";
     public static final String COOLDOWN_REDUCTION_PREFIX= "cooldown.cooldown_reduction";
     public static final String MAGIC_DAMAGE_MULTIPLIER_PREFIX= "damage.damage_multiplier";

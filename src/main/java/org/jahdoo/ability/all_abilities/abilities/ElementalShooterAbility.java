@@ -18,6 +18,7 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.ability.AbilityBuilder;
 
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.registers.EntityPropertyRegister.ELEMENTAL_SHOOTER;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class ElementalShooterAbility extends AbilityRegistrar {
@@ -34,15 +35,16 @@ public class ElementalShooterAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(20, 10, 1)
-            .setCooldown(50, 10, 10)
+            .setStaticMana(15)
+            .setStaticCooldown(200)
+//            .setMana(20, 10, 1)
+//            .setCooldown(50, 10, 10)
             .setDamage(10, 5, 1)
             .setEffectChance(50, 10, 10)
             .setEffectStrength(10, 1, 1)
             .setEffectDuration(300, 100, 50)
             .setAbilityTagModifiersRandom(numberOfProjectiles, 3, 1, true, 1)
             .setAbilityTagModifiersRandom(numberOfRicochet, 6, 1, true, 1)
-            .setAbilityTagModifiersRandom(velocity, 2.5, 1, true, 0.5)
             .setModifier(SET_ELEMENT_TYPE, 0, 0, false, Random.nextInt(1,6))
             .build();
     }
@@ -67,11 +69,6 @@ public class ElementalShooterAbility extends AbilityRegistrar {
         return null;
     }
 
-    private Vec3 calculateDirectionOffset(LivingEntity player, double offset) {
-        var lookDirection = player.getLookAngle();
-        var rightVector = new Vec3(-lookDirection.z(), 0, lookDirection.x()).normalize(); // Perpendicular to look direction
-        return rightVector.scale(offset);
-    }
 
     private double getTag(Player player, String name){
         return ModHelpers.getModifierValue(player.getMainHandItem().get(WAND_ABILITY_HOLDER.get()), abilityId.getPath().intern()).get(name).actualValue();
@@ -80,22 +77,9 @@ public class ElementalShooterAbility extends AbilityRegistrar {
     @Override
     public void invokeAbility(Player player) {
         var numberOfProjectile = getTag(player, (ElementalShooterAbility.numberOfProjectiles));
-        var velocities = getTag(player, ElementalShooterAbility.velocity);
-        var totalWidth = (numberOfProjectile - 1) * 0.1; // Adjust the total width as needed
-        var startOffset = -totalWidth / 2.0;
-
-        for (int i = 0; i < numberOfProjectile; i++) {
-            double offset = numberOfProjectile == 1 ? 0 : startOffset + i * (totalWidth / (numberOfProjectile - 1));
-            GenericProjectile genericProjectile = new GenericProjectile(
-                player,
-                0,
-                EntityPropertyRegister.ELEMENTAL_SHOOTER.get().setAbilityId(),
-                abilityId.getPath().intern()
-            );
-            var directionOffset = calculateDirectionOffset(player, offset);
-            var direction = player.getLookAngle().add(directionOffset).normalize();
-            this.fireProjectileDirection(genericProjectile, player, (float) velocities, direction);
-        }
+        this.fireMultiShotProjectile((int) numberOfProjectile , 1.8f, player, 0.1, () ->
+            new GenericProjectile(player, 0, ELEMENTAL_SHOOTER.get().setAbilityId(), abilityId.getPath().intern())
+        );
         ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.ENDER_EYE_DEATH, 0.25f);
     }
 

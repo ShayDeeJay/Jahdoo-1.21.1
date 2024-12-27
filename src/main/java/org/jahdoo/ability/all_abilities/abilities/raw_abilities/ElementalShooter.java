@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.all_abilities.abilities.ElementalShooterAbility;
+import org.jahdoo.ability.all_abilities.ability_components.EtherealArrow;
 import org.jahdoo.ability.effects.CustomMobEffect;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.GenericProjectile;
@@ -22,7 +23,8 @@ import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.particle.ParticleHandlers.*;
+import static org.jahdoo.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
 import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
 
 public class ElementalShooter extends DefaultEntityBehaviour {
@@ -93,7 +95,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 
         ModHelpers.getSoundWithPosition(this.genericProjectile.level(), this.genericProjectile.blockPosition(), getElement().getElementSound(), 0.4f);
         if(!(this.genericProjectile.level() instanceof ServerLevel serverLevel)) return;
-        ParticleHandlers.particleBurst(serverLevel, this.genericProjectile.position(), 2, getElement().getParticleGroup().bakedSlow());
+        ParticleHandlers.particleBurst(serverLevel, this.genericProjectile.position(), 1, getElement().getParticleGroup().bakedSlow());
         this.setReboundBehaviour(blockHitResult);
     }
 
@@ -113,12 +115,20 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 
     @Override
     public void onTickMethod() {
-        ParticleHandlers.GenericProjectile(
-            this.genericProjectile,
-            new BakedParticleOptions(getElement().getTypeId(), 2, 0.25f, true),
-            genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, getElement(), 5, 1.2f),
-            0.015
-        );
+        animateParticles();
+    }
+
+    private void animateParticles() {
+        var projectile = this.genericProjectile;
+        if(projectile.tickCount > 1){
+            var baked = bakedParticleOptions(getElement().getTypeId(), 2, 1.5f, false);
+            var pos = projectile.position().add(0, 0.1, 0);
+            genericProjPart(projectile.level(), pos, 1, baked, 0.03f);
+            playParticles3(
+                genericParticleOptions(SOFT_PARTICLE_SELECTION, getElement(), 2, 0.8f, false),
+                projectile, 8, 0.01
+            );
+        }
     }
 
     @Override

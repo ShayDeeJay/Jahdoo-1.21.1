@@ -38,7 +38,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         );
 
         augmentFiles.forEach(this::simpleAugmentItemModel);
-        for(int i = 1; i < 8; i++) simpleRunesItemModel(i);
+        for(int i = 1; i < 12; i++) simpleRunesItemModel(i);
 
         simpleItemOther(ItemsRegister.NEXITE_POWDER);
         simpleItemOther(ItemsRegister.HEALTH_CONTAINER);
@@ -63,7 +63,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         );
 
 
-        for(int i = 1; i < 8; i++){
+        for(int i = 1; i < 12; i++){
             upgradeRunes(ItemsRegister.RUNE)
                 .override()
                 .predicate(modelData, i)

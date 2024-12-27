@@ -21,12 +21,14 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.components.WandData;
 import org.jahdoo.entities.AncientGolem;
 import org.jahdoo.particle.ParticleHandlers;
+import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.utils.ModHelpers;
@@ -167,11 +169,14 @@ public class WandItem extends BlockItem implements GeoItem {
 //            var zombo = new EternalWizard(serverLevel, null, -1, 5);
 //            zombo.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
 
-            var zombo = new AncientGolem(serverLevel, player);
-            zombo.moveTo(player.position());
+//            var zombo = new AncientGolem(serverLevel, player);
+//            zombo.moveTo(player.position());
 //            serverLevel.addFreshEntity(zombo);
         }
 
+//        for (var abilityRegistrar : AbilityRegister.getMatchingRarity(JahdooRarity.COMMON)) {
+//            System.out.println(abilityRegistrar.getAbilityName());
+//        }
 
 //        player.startUsingItem(player.getUsedItemHand());
         if (interactionHand == InteractionHand.MAIN_HAND) {

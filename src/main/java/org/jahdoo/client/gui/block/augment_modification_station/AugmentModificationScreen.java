@@ -74,28 +74,36 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
 
     public void displayAugmentProperties(){
         if(item.isEmpty()) return;
-        var components = getComponents(item);
         var spacer = new AtomicInteger();
-        var compNew = components.subList(1, components.size()-2);
         int width = this.width / 2;
+        var getTag = this.item.get(DataComponentRegistry.WAND_ABILITY_HOLDER);
+        if (getTag == null) return;
+        for (Component component : componentsWithBounds(item)){
+            var x = getAbilityModifiers(component, getTag);
 
-        for (Component component : compNew){
-            if(!component.equals(Component.literal(" ")) && !component.getString().contains("Unique")){
-                String regex = ".*\\d.*";
-                var ySpacer = (this.height / 2 - 85) + spacer.get();
-                int selectedY1 = (int) (ySpacer + this.yScroll);
-                buildPropertiesWithHighlight(component, width, selectedY1);
-                if (Pattern.matches(regex, component.getString()) && !component.getString().contains(")")) {
-                    var getTag = this.item.get(DataComponentRegistry.WAND_ABILITY_HOLDER);
-                    if (getTag == null) return;
-                    var x = getAbilityModifiers(component, getTag);
-                    var correctAdjustment = x.isHigherBetter() ? x.actualValue() == x.highestValue() : x.actualValue() == x.lowestValue();
-                    var nexUpgrade = x.isHigherBetter() ? x.actualValue() + x.step() == x.highestValue() : x.actualValue() - x.step() == x.lowestValue();
-                    upgradeButton(component, width, ySpacer, nexUpgrade, correctAdjustment, x);
+            if(x.highestValue() != -1){
+                if (!component.equals(Component.literal(" ")) && !component.getString().contains("Unique")) {
+                    String regex = ".*\\d.*";
+                    var ySpacer = (this.height / 2 - 90) + spacer.get();
+                    int selectedY1 = (int) (ySpacer + this.yScroll);
+                    buildPropertiesWithHighlight(component, width, selectedY1);
+                    if (Pattern.matches(regex, component.getString()) && !component.getString().contains(")")) {
+                        System.out.println(x);
+                        var correctAdjustment = x.isHigherBetter() ? x.actualValue() == x.highestValue() : x.actualValue() == x.lowestValue();
+                        var nexUpgrade = x.isHigherBetter() ? x.actualValue() + x.step() == x.highestValue() : x.actualValue() - x.step() == x.lowestValue();
+                        upgradeButton(component, width, ySpacer, nexUpgrade, correctAdjustment, x);
+                    }
+                    spacer.set(spacer.get() + (component.getString().contains(")") || !Pattern.matches(regex, component.getString()) ? 17 : 10));
                 }
-                spacer.set(spacer.get() + (component.getString().contains(")") || !Pattern.matches(regex, component.getString()) ? 17 : 10));
             }
         }
+    }
+
+    public static List<Component> componentsWithBounds(ItemStack item){
+        var components = getComponents(item);
+        var getTag =item.get(DataComponentRegistry.WAND_ABILITY_HOLDER);
+        var compNew = components.subList(1, components.size()-2).stream().filter(component -> getAbilityModifiers(component, getTag).highestValue() != -1);
+        return compNew.toList();
     }
 
     private void buildPropertiesWithHighlight(Component component, int width, int selectedY1) {
@@ -135,9 +143,11 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     }
 
     private static AbilityHolder.AbilityModifiers getAbilityModifiers(Component component, WandAbilityHolder getTag) {
-        if(component == null) return new AbilityHolder.AbilityModifiers(0,0,0,0,0,true);
+        var defaultVal = new AbilityHolder.AbilityModifiers(0,0,0,0,0,true);
+        if(component == null) return defaultVal;
         var abilityKey = getTag.abilityProperties().keySet().stream().findFirst().get();
-        return getTag.abilityProperties().get(abilityKey).abilityProperties().get(extractName(component.getString()));
+        var actualValue = getTag.abilityProperties().get(abilityKey).abilityProperties().get(extractName(component.getString()));
+        return actualValue == null ? defaultVal : actualValue;
     }
 
     private void doOnClick(Component component, ItemStack itemStack, boolean correctAdjustment, int posX, int posY){
@@ -207,11 +217,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     }
 
     private void windowMoveVertical(double dragY) {
-        int size = getComponents(item)
-            .stream()
-            .filter(component -> component.getString().contains("|"))
-            .toList()
-            .size();
+        int size = componentsWithBounds(item).size();
         if (size > 6 || size > 2 && showInventory) {
             int b = 7 * size * size - 135 * size + 578;
             this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, b + (!showInventory ? -20 : -120)));

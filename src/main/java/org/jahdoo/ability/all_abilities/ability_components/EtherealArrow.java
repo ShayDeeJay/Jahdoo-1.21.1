@@ -5,7 +5,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
+import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.entities.GenericProjectile;
@@ -110,15 +111,19 @@ public class EtherealArrow extends DefaultEntityBehaviour {
     public void onTickMethod() {
         if(this.genericProjectile != null){
             genericProjectile.setDeltaMovement(genericProjectile.getDeltaMovement().subtract(0, 0.02, 0));
-            ParticleHandlers.sendParticles(
-                genericProjectile.level(), ParticleTypes.INSTANT_EFFECT, genericProjectile.position(), 1,
-                0, 0, 0, 0
-            );
-            playParticles3(
-                genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, genericProjectile.getElementType(), 6, 1f, false),
-                genericProjectile, 20, 0.01
-            );
+            arrowPartEffect(this.genericProjectile, this.genericProjectile.getElementType());
         }
+    }
+
+    public static void arrowPartEffect(Projectile projectile, AbstractElement element) {
+        ParticleHandlers.sendParticles(
+            projectile.level(), ParticleTypes.INSTANT_EFFECT, projectile.position(), 1,
+            0, 0, 0, 0
+        );
+        playParticles3(
+            genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 6, 1f, false),
+            projectile, 20, 0.01
+        );
     }
 
     @Override

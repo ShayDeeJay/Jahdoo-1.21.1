@@ -12,6 +12,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.items.armor.WizardArmor;
 import org.jahdoo.items.augments.Augment;
+import org.jahdoo.items.block_items.ChallengeAltarBlockItem;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.block_items.ModularChaosCubeItem;
 import org.jahdoo.items.TomeOfUnity;
@@ -40,6 +41,8 @@ public class ItemsRegister {
     //Block Items
     public static final DeferredHolder<Item, Item> INFUSER_ITEM =
         ITEMS.register("infuser", () -> new InfuserBlockItem(BlocksRegister.INFUSER.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> CHALLENGE_ALTAR_ITEM =
+        ITEMS.register("challenge_altar", () -> new ChallengeAltarBlockItem(BlocksRegister.CHALLENGE_ALTAR.get(), new Item.Properties()));
     public static final DeferredHolder<Item, Item> MODULAR_CHAOS_CUBE_ITEM =
         ITEMS.register("modular_chaos_cube", () -> new ModularChaosCubeItem(BlocksRegister.MODULAR_CHAOS_CUBE.get(), new Item.Properties()));
 

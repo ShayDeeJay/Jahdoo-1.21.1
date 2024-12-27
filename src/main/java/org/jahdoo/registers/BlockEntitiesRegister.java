@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.block.augment_modification_station.AugmentModificationEntity;
+import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.block.crafter.CreatorEntity;
@@ -41,6 +42,9 @@ public class BlockEntitiesRegister {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<InfuserBlockEntity>> INFUSER_BE =
         registerBlockEntity("infuser_be", InfuserBlockEntity::new, BlocksRegister.INFUSER);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ChallengeAltarBlockEntity>> CHALLENGE_ALTAR_BE =
+        registerBlockEntity("challenge_altar_be", ChallengeAltarBlockEntity::new, BlocksRegister.CHALLENGE_ALTAR);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ModularChaosCubeEntity>> MODULAR_CHAOS_CUBE_BE =
         registerBlockEntity("modular_chaos_cube_be", ModularChaosCubeEntity::new, BlocksRegister.MODULAR_CHAOS_CUBE);

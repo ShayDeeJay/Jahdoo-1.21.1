@@ -14,6 +14,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.block.augment_modification_station.AugmentModificationBlock;
+import org.jahdoo.block.challange_altar.ChallengeAltarBlock;
 import org.jahdoo.block.enchanted_block.EnchantedBlock;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeBlock;
 import org.jahdoo.block.crafter.CreatorBlock;
@@ -34,6 +35,7 @@ public class BlocksRegister {
     public static DeferredHolder<Block, Block> WAND_MANAGER_TABLE = registerBlock("wand_manager_table",WandManagerTableBlock::new);
     public static DeferredHolder<Block, Block> CREATOR = registerBlock("creator", CreatorBlock::new);
     public static DeferredHolder<Block, Block> INFUSER = BLOCKS.register("infuser", InfuserBlock::new);
+    public static DeferredHolder<Block, Block> CHALLENGE_ALTAR = BLOCKS.register("challenge_alter", ChallengeAltarBlock::new);
     public static DeferredHolder<Block, Block> MODULAR_CHAOS_CUBE = BLOCKS.register("modular_chaos_cube", ModularChaosCubeBlock::new);
     public static DeferredHolder<Block, Block> AUGMENT_MODIFICATION_STATION = registerBlock("augment_modification_station", AugmentModificationBlock::new);
     public static DeferredHolder<Block, Block> ENCHANTED_BLOCK = registerBlock("enchanted_block", EnchantedBlock::new);

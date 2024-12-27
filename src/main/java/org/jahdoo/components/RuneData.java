@@ -8,7 +8,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +18,6 @@ import org.jahdoo.ability.rarity.JahdooRarity;
 import java.util.List;
 import java.util.Objects;
 
-import static net.minecraft.util.FastColor.*;
 import static net.minecraft.util.FastColor.ARGB32.*;
 import static org.jahdoo.ability.rarity.JahdooRarity.*;
 import static org.jahdoo.registers.AttributesRegister.*;
@@ -136,7 +134,7 @@ public record RuneData(
         }
 
         public static Component getNameWithStyle(ItemStack stack){
-            return withStyleComponent(getName(stack), getLighterColor(getRuneData(stack).getTypeColourSecondary()));
+            return withStyleComponent(getName(stack), getColourDarker(getRuneData(stack).getTypeColourSecondary(), 1.6));
         }
 
         public static Component standAloneAttributes(ItemStack itemStack) {
@@ -174,18 +172,31 @@ public record RuneData(
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewTier(tier));
         }
 
-        public static int getLighterColor(int color) {
+        public static int getColourDarker(int color, double darkValue) {
             // Extract ARGB components from the integer
             int alpha = (color >> 24) & 0xFF;
             int red = (color >> 16) & 0xFF;
             int green = (color >> 8) & 0xFF;
             int blue = color & 0xFF;
 
-            // Calculate the lighter shade by increasing the brightness
-            var v = 1.6;
-            red = Math.min((int) (red / v), 255);
-            green = Math.min((int) (green / v), 255);
-            blue = Math.min((int) (blue / v), 255);
+            red = Math.min((int) (red / darkValue), 255);
+            green = Math.min((int) (green / darkValue), 255);
+            blue = Math.min((int) (blue / darkValue), 255);
+
+            // Combine the components back into an integer
+            return (alpha << 24) | (red << 16) | (green << 8) | blue;
+        }
+
+        public static int getColourLight(int color, double lightValue) {
+            // Extract ARGB components from the integer
+            int alpha = (color >> 24) & 0xFF;
+            int red = (color >> 16) & 0xFF;
+            int green = (color >> 8) & 0xFF;
+            int blue = color & 0xFF;
+
+            red = Math.min((int) (red * lightValue), 255);
+            green = Math.min((int) (green * lightValue), 255);
+            blue = Math.min((int) (blue * lightValue), 255);
 
             // Combine the components back into an integer
             return (alpha << 24) | (red << 16) | (green << 8) | blue;
@@ -228,20 +239,22 @@ public record RuneData(
 
                 switch (getRarity()){
                     case COMMON -> {
-                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
-                        generateFullRune(stack, getTypeAttribute.getFirst(), getTypeAttribute.getSecond(), "Elemental", COMMON, "", getElement.getTypeId(), rarity.getId(),color(224, 224, 224));
+                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(getElement.getTypeId()));
+                        generateFullRune(stack, getTypeAttribute.getFirst(), getTypeAttribute.getSecond(), "Elemental", COMMON, "", getElement.getTypeId(), rarity.getId(), -1);
                     }
                     case EPIC -> {
-                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(2));
-                        generateFullRune(stack, getSkillAttributes.getFirst(), 1, "Perk", EPIC, getSkillAttributes.getSecond(), NO_ELEMENT, rarity.getId(), color(38, 224, 200));
+                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(8));
+                        generateFullRune(stack, getSkillAttributes.getFirst(), 1, "Perk", EPIC, getSkillAttributes.getSecond(), NO_ELEMENT, rarity.getId(), color(193, 255, 99));
                     }
                     case LEGENDARY -> {
                         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(0));
-                        generateFullRune(stack, getManaAttributes.getFirst(), getManaAttributes.getSecond(), "Aether", LEGENDARY, "", NO_ELEMENT, rarity.getId(), color(0, 169, 247));
+                        generateFullRune(stack, getManaAttributes.getFirst(), getManaAttributes.getSecond(), "Aether", LEGENDARY, "", NO_ELEMENT, rarity.getId(), color(0, 145, 255));
                     }
                     case ETERNAL -> {
-                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(5));
-                        generateFullRune(stack, getMultiAttribute.getFirst(), getMultiAttribute.getSecond(), "Cosmic", ETERNAL, "", NO_ELEMENT, rarity.getId(), color(171, 87, 194));
+                        var orange = color(255, 236, 69);
+                        var purple = color(171, 87, 194);
+                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(10));
+                        generateFullRune(stack, getMultiAttribute.getFirst(), getMultiAttribute.getSecond(), "Cosmic", ETERNAL, "", NO_ELEMENT, rarity.getId(), orange);
                     }
                 }
             }

@@ -262,7 +262,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
     }
 
     public void setTypeOverlayInventory(GuiGraphics guiGraphics, int positionX, int positionY){
-        if(this.hoveredSlot != null){
+        if(this.hoveredSlot != null && this.hoveredSlot.getItem().getItem() instanceof Augment){
             var type = this.hoveredSlot.getItem();
             if (type.has(CUSTOM_MODEL_DATA)) {
                 var types = type.get(CUSTOM_MODEL_DATA).value();
@@ -275,8 +275,9 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
     }
 
     public void setTypeOverlay(GuiGraphics guiGraphics, int positionX, int positionY){
-        if(this.hoveredSlot != null){
-            var type = this.hoveredSlot.getItem();
+        var item = this.hoveredSlot;
+        if(item != null && item.getItem().getItem() instanceof Augment){
+            var type = item.getItem();
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(0,0,1);
             SharedUI.boxMaker(guiGraphics, positionX + 1, positionY + 21, 13, 15, -1);

@@ -76,8 +76,11 @@ public class CastHelper {
                     var getManaCost = getSpecificValue(player, wandItem, MANA_COST);
                     var adjustedMana = ModHelpers.attributeModifierCalculator(player, (float) getManaCost, false, getElement.getTypeManaReduction().getSecond(), MANA_COST_REDUCTION);
                     var adjustedCooldown = ModHelpers.attributeModifierCalculator(player, (float) cooldownCost, false, getElement.getTypeCooldownReduction().getSecond(), COOLDOWN_REDUCTION);
-                    casterData.addCooldown(abilityName, (int) adjustedCooldown);
-                    casterData.subtractMana(adjustedMana, player);
+                    chargeCooldown(abilityName, adjustedCooldown, player);
+                    chargeMana(abilityName, adjustedMana, player);
+
+//                    casterData.addCooldown(abilityName, (int) adjustedCooldown);
+//                    casterData.subtractMana(adjustedMana, player);
                 }
                 onCast(player, ability);
             } else failedCastNotification(player);
@@ -175,6 +178,10 @@ public class CastHelper {
         }
 
         return InteractionResultHolder.pass(itemStack);
+    }
+
+    public static void onSuccessfulCastBonus(){
+
     }
 
     public static boolean getCanApplyDistanceAbility(Player player, ItemStack itemStack){
