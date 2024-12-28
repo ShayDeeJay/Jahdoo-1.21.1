@@ -6,9 +6,11 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
@@ -19,12 +21,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.ability.effects.CustomMobEffect;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.entities.AncientGolem;
 import org.jahdoo.entities.CustomZombie;
 import org.jahdoo.entities.EternalWizard;
+import org.jahdoo.networking.packet.server2client.AltarBlockS2C;
+import org.jahdoo.networking.packet.server2client.EnchantedBlockS2C;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
@@ -43,6 +48,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.entities.ProjectileAnimations.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
@@ -55,7 +62,9 @@ public class ChallengeAltarBlockEntity extends AbstractBEInventory implements Ge
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private int privateTicks;
     private boolean isSetActive;
-    private List<LivingEntity> getCurrentRoundEntities = new ArrayList<>();
+    private RoundGenerator roundGenerator;
+    public int aliveEntities;
+    public int totalEntities;
 
     @Override
     public int setInputSlots() {
@@ -121,10 +130,20 @@ public class ChallengeAltarBlockEntity extends AbstractBEInventory implements Ge
 
     }
 
-    public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
-        this.getCurrentRoundEntities.removeIf(getCurrentRoundEntity -> !getCurrentRoundEntity.isAlive());
-        if(this.isSetActive) this.privateTicks++;
+    public void setRoundGenerator(RoundGenerator roundGenerator){
+        this.roundGenerator = roundGenerator;
+    }
 
+    public RoundGenerator getRoundGenerator(){
+        return this.roundGenerator;
+    }
+
+    private void updatePacket(ServerLevel serverLevel){
+        ModHelpers.sendPacketsToPlayerDistance(this.getBlockPos().getCenter(), 64, serverLevel, new AltarBlockS2C(this.roundGenerator.getRegisterMobs().size(), this.getBlockPos()));
+    }
+
+    public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
+        if(this.isSetActive) this.privateTicks++;
         if(this.isSetActive){
             if(privateTicks % (privateTicks <= 62 ? 10 : 4) == 0){
                 var element = ElementRegistry.getRandomElement();
@@ -133,14 +152,20 @@ public class ChallengeAltarBlockEntity extends AbstractBEInventory implements Ge
                     ParticleStore.GENERIC_PARTICLE_SELECTION, element, 20, 1.5f, false, 0.3
                 );
                 PositionGetters.getInnerRingOfRadiusRandom(pPos, 0.25, 2,
-                    positions -> this.placeParticle(level, positions, element, Random.nextInt(0, 3) == 0 ? par1 : par2)
+                    positions -> this.placeParticle(positions, Random.nextInt(0, 3) == 0 ? par1 : par2)
                 );
             }
 
-            if(this.getCurrentRoundEntities.size() < 20){
-                if (this.privateTicks % 50 == 0) {
-                    this.summonEntities(pPos);
+            if(this.roundGenerator != null){
+                if(this.getLevel() instanceof ServerLevel serverLevel){
+                    updatePacket(serverLevel);
                 }
+                if (this.roundGenerator.getActiveMobs().size() < 20) {
+                    if (this.privateTicks % 150 == 0) {
+                        this.summonEntities(pPos);
+                    }
+                }
+                this.roundGenerator.getActiveMobs().removeIf(getCurrentRoundEntity -> !getCurrentRoundEntity.isAlive());
             }
 
             if(privateTicks > 62){
@@ -151,6 +176,12 @@ public class ChallengeAltarBlockEntity extends AbstractBEInventory implements Ge
                     ModHelpers.getSoundWithPosition(pLevel, pPos, randomSound, 1, 2f);
                 }
             }
+
+            if(this.roundGenerator != null && this.roundGenerator.getActiveMobs().isEmpty() && this.roundGenerator.getRegisterMobs().isEmpty()){
+                this.isSetActive = false;
+                this.privateTicks = 0;
+                this.roundGenerator = null;
+            }
         }
 
         if(privateTicks == 7) {
@@ -159,71 +190,52 @@ public class ChallengeAltarBlockEntity extends AbstractBEInventory implements Ge
                     setShockwaveNova(pos.subtract(0, 0,0));
                 }
             );
-            ModHelpers.getSoundWithPosition(pLevel, pPos, SoundEvents.DEEPSLATE_BREAK, 1, 0.6f);
-            ModHelpers.getSoundWithPosition(pLevel, pPos, SoundEvents.VAULT_OPEN_SHUTTER, 1, 0f);
+            ModHelpers.getSoundWithPosition(pLevel, pPos, SoundEvents.DEEPSLATE_BREAK, 0.4f, 0.6f);
+            ModHelpers.getSoundWithPosition(pLevel, pPos, SoundEvents.VAULT_OPEN_SHUTTER, 0.4f, 0f);
         }
     }
 
     public void summonEntities(BlockPos pPos){
         var player = this.getLevel().getNearestPlayer(TargetingConditions.DEFAULT, this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ());
-        if(player != null /*&& player.distanceToSqr(pPos.getCenter()) < 300 */&& player.onGround()){
-            System.out.println("player around");
-            for (var vec3 : PositionGetters.getInnerRingOfRadiusRandom(player.position(), 8, 6)) {
-                var pos = BlockPos.containing(vec3);
-                var above = this.getLevel().getBlockState(pos.above());
-                var below = this.getLevel().getBlockState(pos);
-                if(above.isAir() && !below.isAir()){
-                    onPosition(vec3);
+        var counter = new AtomicInteger();
+        if(player != null /*&& player.distanceToSqr(pPos.getCenter()) < 300 */){
+            var spawnPos = player.onGround() ? player.blockPosition() : pPos;
+            var radius = Random.nextInt(4, 9);
+            var points = 200;
+            for (var blockPos : PositionGetters.getRandomSphericalBlockPositions(spawnPos, radius, points)) {
+                if(counter.get() < (Math.min(2, this.roundGenerator.getRound() / 2))){
+                    var above = this.getLevel().getBlockState(blockPos.above());
+                    var main = this.getLevel().getBlockState(blockPos);
+                    var below = this.getLevel().getBlockState(blockPos.below());
+                    if (above.isAir() && main.isAir() && !below.isAir()) {
+                        onPosition(blockPos);
+                        counter.set(counter.get() + 1);
+                    }
                 }
             }
-//            PositionGetters.getInnerRingOfRadiusRandom(player.position(), 8 , 6, this::onPosition);
         }
     }
 
-    public void onPosition(Vec3 pos){
+    public void onPosition(BlockPos pos){
         if(this.getLevel() instanceof ServerLevel serverLevel){
-
-//            var actualEntity = new CustomZombie(serverLevel, null);
-            var skelly = EntityType.SKELETON.create(serverLevel);
-            var wizard = new EternalWizard(serverLevel, null, -1, 5);
-
-            if(skelly == null || wizard == null) return;
-
-            wizard.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
-            skelly.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
-            var actualEntity = List.of(wizard, skelly).get(Random.nextInt(2));
-
-
-            actualEntity.moveTo(pos);
-            this.getCurrentRoundEntities.add(actualEntity);
-            serverLevel.addFreshEntity(actualEntity);
-
-            var getEntity = actualEntity.level().getNearestPlayer(actualEntity, 30);
-            actualEntity.setTarget(getEntity);
-            if (getEntity != null) {
-                // Calculate the direction vector
-                var zomboPos = actualEntity.position();
-                var targetPos = getEntity.position();
-                double dx = targetPos.x - zomboPos.x;
-                double dz = targetPos.z - zomboPos.z;
-
-                // Calculate yaw (rotation around Y-axis)
-                float yaw = (float) (Math.atan2(-dx, dz) * (180 / Math.PI));
-                actualEntity.setYRot(yaw);
-                actualEntity.yHeadRot = yaw; // Update head rotation as well
+            if(this.roundGenerator != null){
+                var actualEntity = this.roundGenerator.getMob();
+                actualEntity.ifPresent(
+                    livingEntity -> {
+                        livingEntity.moveTo(pos.getCenter());
+                        serverLevel.addFreshEntity(livingEntity);
+                        var getEntity = livingEntity.level().getNearestPlayer(livingEntity, 30);
+                        if (livingEntity instanceof Mob mob) mob.setTarget(getEntity);
+                        if (Random.nextInt(3) == 0) {
+                            livingEntity.addEffect(new CustomMobEffect(MobEffects.MOVEMENT_SPEED, 200, Random.nextInt(0, 3)));
+                        }
+                    }
+                );
             }
-
-//            var getEntity = zombo.level().getNearbyEntities(
-//                LivingEntity.class,
-//                TargetingConditions.DEFAULT,
-//                zombo,
-//                zombo.getBoundingBox().inflate(20)
-//            );
-
         }
     }
 
-    public void placeParticle(Level level, Vec3 pos, AbstractElement element, ParticleOptions par1){
+    public void placeParticle(Vec3 pos, ParticleOptions par1){
         double randomY = ModHelpers.Random.nextDouble(0.0, 0.4);
         ParticleHandlers.sendParticles(this.getLevel(), par1, pos.subtract(0,0.4,0), 0, 0, randomY,0,0.7);
     }

@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.ability.all_abilities.ability_components.AbstractBlockAbility;
+import org.jahdoo.ability.ability_components.AbstractBlockAbility;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.attachments.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.client.SharedUI;

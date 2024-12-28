@@ -19,8 +19,8 @@ import java.util.List;
 
 import static org.jahdoo.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.ability.AbilityBuilder.MANA_COST;
-import static org.jahdoo.ability.all_abilities.abilities.DimensionalRecallAbility.CASTING_TIME;
-import static org.jahdoo.ability.all_abilities.abilities.DimensionalRecallAbility.abilityId;
+import static org.jahdoo.ability.abilities.ability_data.DimensionalRecallAbility.CASTING_TIME;
+import static org.jahdoo.ability.abilities.ability_data.DimensionalRecallAbility.abilityId;
 import static org.jahdoo.items.wand.CastHelper.validManaAndCooldown;
 import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;

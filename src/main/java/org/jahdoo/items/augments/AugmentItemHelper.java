@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.ability.all_abilities.abilities.Utility.PlayerScaleAbility.SCALE_VALUE;
+import static org.jahdoo.ability.abilities.ability_data.Utility.PlayerScaleAbility.SCALE_VALUE;
 import static org.jahdoo.items.augments.AugmentRatingSystem.*;
 import static org.jahdoo.registers.DataComponentRegistry.*;
 

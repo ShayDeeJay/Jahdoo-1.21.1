@@ -24,9 +24,9 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ability.AbilityBuilder;
-import org.jahdoo.ability.all_abilities.abilities.FireballAbility;
-import org.jahdoo.ability.all_abilities.abilities.FrostboltsAbility;
-import org.jahdoo.ability.all_abilities.ability_components.EtherealArrow;
+import org.jahdoo.ability.abilities.ability_data.FireballAbility;
+import org.jahdoo.ability.abilities.ability_data.FrostboltsAbility;
+import org.jahdoo.ability.ability_components.EtherealArrow;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.goals.*;
 import org.jahdoo.items.wand.WandItem;
@@ -39,8 +39,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.ability.all_abilities.abilities.FireballAbility.abilityId;
-import static org.jahdoo.ability.all_abilities.ability_components.ArmageddonModule.buddy;
+import static org.jahdoo.ability.abilities.ability_data.FireballAbility.abilityId;
+import static org.jahdoo.ability.ability_components.ArmageddonModule.buddy;
 import static org.jahdoo.items.wand.CastHelper.castAnimation;
 import static org.jahdoo.items.wand.WandAnimations.SINGLE_CAST_ID;
 

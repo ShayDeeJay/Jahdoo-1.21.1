@@ -55,6 +55,7 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity challengeAltarBlockEntity)) return ItemInteractionResult.FAIL;
         challengeAltarBlockEntity.setSetActive();
+        challengeAltarBlockEntity.setRoundGenerator(new RoundGenerator(challengeAltarBlockEntity, 5));
         return ItemInteractionResult.SUCCESS;
     }
 

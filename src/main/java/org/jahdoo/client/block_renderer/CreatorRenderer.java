@@ -139,27 +139,6 @@ public class CreatorRenderer implements BlockEntityRenderer<CreatorEntity> {
         pPoseStack.popPose();
     }
 
-    protected void renderNameTag(BlockPos blockPos, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
-        BlockPos cameraPosition = this.entityRenderDispatcher.camera.getBlockPosition();
-        boolean blockDistanceVisible = blockPos.closerToCenterThan(cameraPosition.getCenter(), 10);
-
-        if (blockDistanceVisible) {
-            pPoseStack.pushPose();
-            pPoseStack.translate(0.5F, 2f, 0.5F);
-            pPoseStack.mulPose(this.entityRenderDispatcher.camera.rotation());
-            //For static view, double up for double sided view
-//            pPoseStack.mulPose(Axis.YP.rotationDegrees(180));
-            pPoseStack.scale(-0.015F, -0.015F, 0.015F);
-            Matrix4f matrix4f = pPoseStack.last().pose();
-            float f1 = Minecraft.getInstance().options.getBackgroundOpacity(0.25F);
-            int j = (int)(f1 * 255.0F) << 24;
-            Font font = Minecraft.getInstance().font;
-            float f2 = (float)(-font.width(pDisplayName) / 2);
-            font.drawInBatch(pDisplayName, f2, 1, -1, false, matrix4f, pBuffer, Font.DisplayMode.SEE_THROUGH, 0, pPackedLight);
-            pPoseStack.popPose();
-        }
-    }
-
 
     private int getLightLevel(Level level, BlockPos blockPos) {
         int bLight = level.getBrightness(LightLayer.BLOCK, blockPos);

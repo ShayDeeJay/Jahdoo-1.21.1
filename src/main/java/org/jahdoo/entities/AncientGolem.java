@@ -28,7 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.all_abilities.abilities.EscapeDecoyAbility;
+import org.jahdoo.ability.abilities.ability_data.EscapeDecoyAbility;
 import org.jahdoo.entities.goals.*;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.ElementRegistry;

@@ -36,6 +36,8 @@ import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleStore.*;
 import static org.jahdoo.registers.AttachmentRegister.NOVA_SMASH;
+import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.registers.AttributesRegister.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
 
 public class NovaSmash implements AbstractAttachment {
 
@@ -75,12 +77,9 @@ public class NovaSmash implements AbstractAttachment {
         this.highestDelta = Math.max(this.highestDelta, getCurrentDelta);
 
         if (this.canSmash){
+            System.out.println(getCurrentDelta);
             this.getDamage = ModHelpers.attributeModifierCalculator(
-                player,
-                this.highestDelta,
-                false,
-                AttributesRegister.MAGIC_DAMAGE_MULTIPLIER,
-                AttributesRegister.MYSTIC_MAGIC_DAMAGE_MULTIPLIER
+                player, this.highestDelta, false, MAGIC_DAMAGE_MULTIPLIER, MYSTIC_MAGIC_DAMAGE_MULTIPLIER
             );
             player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
             if(player.onGround()){
@@ -138,7 +137,7 @@ public class NovaSmash implements AbstractAttachment {
                     var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
                     if (livingEntity != player) {
                         this.knockback(livingEntity, Math.max((double) getMaxDeltaMovement / 2, 0.3), -deltaX / length, -deltaZ / length);
-                        DamageUtil.damageEntityWithModifiers(livingEntity, player, this.getDamage * 3,  AttributesRegister.MAGIC_DAMAGE_MULTIPLIER, AttributesRegister.MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
+                        DamageUtil.damageWithJahdoo(livingEntity, player, this.getDamage * 3);
                     }
                 }
             }

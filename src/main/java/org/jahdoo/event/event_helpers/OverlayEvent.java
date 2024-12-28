@@ -2,14 +2,12 @@ package org.jahdoo.event.event_helpers;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import org.jahdoo.ability.all_abilities.abilities.ArcaneShiftAbility;
+import org.jahdoo.ability.abilities.ability_data.ArcaneShiftAbility;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityWheelMenu;
-import org.jahdoo.client.gui.overlays.ManaBarOverlay;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.utils.Config;
 import org.jahdoo.utils.ModHelpers;
@@ -18,7 +16,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static net.neoforged.neoforge.client.gui.VanillaGuiLayers.*;
-import static net.neoforged.neoforge.client.gui.VanillaGuiLayers.CROSSHAIR;
 import static org.jahdoo.ability.AbilityBuilder.CASTING_DISTANCE;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 

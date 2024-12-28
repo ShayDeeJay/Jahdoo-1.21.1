@@ -1,6 +1,5 @@
 package org.jahdoo.event.event_helpers;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,16 +16,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import org.jahdoo.ability.all_abilities.abilities.ArcaneShiftAbility;
-import org.jahdoo.ability.all_abilities.abilities.FrostboltsAbility;
+import org.jahdoo.ability.abilities.ability_data.ArcaneShiftAbility;
+import org.jahdoo.ability.abilities.ability_data.FrostboltsAbility;
 import org.jahdoo.client.RenderHelpers;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.AttachmentRegister;
-import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.Config;
 import org.jahdoo.utils.ModHelpers;
 

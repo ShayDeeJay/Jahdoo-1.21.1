@@ -86,11 +86,12 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
     }
 
     private static void attributeStats(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player) {
-        if(!InputConstants.isKeyDown(minecraft.getWindow().getWindow(), InputConstants.KEY_TAB)) return;
         var attSpacer = new AtomicInteger();
         var syncableAttributes = player.getAttributes().getSyncableAttributes();
         var startX = 14;
         var startY = 14;
+
+        if(!InputConstants.isKeyDown(minecraft.getWindow().getWindow(), InputConstants.KEY_TAB)) return;
 
         for (AttributeInstance syncableAttribute : syncableAttributes) {
             var modName = syncableAttribute.getAttribute().getRegisteredName().split(":", 2)[0];

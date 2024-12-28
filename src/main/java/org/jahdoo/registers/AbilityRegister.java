@@ -11,9 +11,9 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ability.AbilityRegistrar;
+import org.jahdoo.ability.abilities.ability_data.*;
 import org.jahdoo.ability.rarity.JahdooRarity;
-import org.jahdoo.ability.all_abilities.abilities.*;
-import org.jahdoo.ability.all_abilities.abilities.Utility.*;
+import org.jahdoo.ability.abilities.ability_data.Utility.*;
 
 import java.util.List;
 import java.util.Objects;

@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ability.AbilityBuilder;
-import org.jahdoo.ability.all_abilities.ability_components.AbstractBlockAbility;
+import org.jahdoo.ability.ability_components.AbstractBlockAbility;
 import org.jahdoo.block.AbstractTankUser;
 import org.jahdoo.attachments.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.client.IconLocations;

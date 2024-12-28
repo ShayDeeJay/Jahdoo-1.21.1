@@ -7,7 +7,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ability.all_abilities.abilities.StormRushAbility;
+import org.jahdoo.ability.abilities.ability_data.StormRushAbility;
 import org.jahdoo.ability.effects.CustomMobEffect;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.spongepowered.asm.mixin.Mixin;

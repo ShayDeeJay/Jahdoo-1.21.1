@@ -10,16 +10,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ability.all_abilities.abilities.ElementalShooterAbility;
 import org.jahdoo.ability.rarity.JahdooRarity;
-import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.EffectsRegister;
-import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public abstract class AbilityRegistrar {

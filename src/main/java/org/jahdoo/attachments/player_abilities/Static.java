@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import org.jahdoo.attachments.AbstractAttachment;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.all_abilities.abilities.StaticAbility;
+import org.jahdoo.ability.abilities.ability_data.StaticAbility;
 import org.jahdoo.entities.EternalWizard;
 import org.jahdoo.items.wand.CastHelper;
 import org.jahdoo.items.wand.WandItem;

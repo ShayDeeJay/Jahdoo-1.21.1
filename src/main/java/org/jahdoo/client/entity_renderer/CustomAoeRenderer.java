@@ -1,22 +1,18 @@
 package org.jahdoo.client.entity_renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
-import org.jahdoo.ability.all_abilities.abilities.raw_abilities.Armageddon;
-import org.jahdoo.ability.all_abilities.abilities.raw_abilities.Permafrost;
+import org.jahdoo.ability.abilities.ability.Armageddon;
+import org.jahdoo.ability.abilities.ability.Permafrost;
 import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
-import org.joml.Matrix4f;
 
 import java.util.Objects;
 

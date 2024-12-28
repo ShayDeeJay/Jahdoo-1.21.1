@@ -19,7 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.all_abilities.abilities.EscapeDecoyAbility;
+import org.jahdoo.ability.abilities.ability_data.EscapeDecoyAbility;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;

@@ -9,11 +9,11 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ability.AbstractEntityProperty;
 import org.jahdoo.ability.DefaultEntityBehaviour;
-import org.jahdoo.ability.all_abilities.abilities.raw_abilities.*;
-import org.jahdoo.ability.all_abilities.abilities.raw_abilities.utility.*;
-import org.jahdoo.ability.all_abilities.ability_components.ArmageddonModule;
-import org.jahdoo.ability.all_abilities.ability_components.EtherealArrow;
-import org.jahdoo.ability.all_abilities.ability_components.LightningTrail;
+import org.jahdoo.ability.abilities.ability.*;
+import org.jahdoo.ability.abilities.ability.utility.*;
+import org.jahdoo.ability.ability_components.ArmageddonModule;
+import org.jahdoo.ability.ability_components.EtherealArrow;
+import org.jahdoo.ability.ability_components.LightningTrail;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.function.Supplier;

@@ -56,9 +56,7 @@ public class MoveClientEntitySyncS2CPacket implements CustomPacketPayload {
                 public void run() {
                     if(ctx.player().level() instanceof ClientLevel clientLevel) {
                         var foundEntity = clientLevel.getEntity(id);
-                        if(foundEntity != null){
-                            foundEntity.setDeltaMovement(x,y,z);
-                        }
+                        if(foundEntity != null) foundEntity.setDeltaMovement(x,y,z);
                     }
                 }
             }

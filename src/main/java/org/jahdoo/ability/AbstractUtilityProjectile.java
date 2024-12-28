@@ -1,9 +1,11 @@
 package org.jahdoo.ability;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.ability.abilities.ability.ElementalShooter;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
@@ -37,16 +39,16 @@ public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
     @Override
     public void onTickMethod() {
         if(this.genericProjectile != null){
+            animateParticles(this.genericProjectile, getElementType());
+        }
+    }
 
-            ParticleHandlers.GenericProjectile(this.genericProjectile,
-                bakedParticleOptions(getElementType().getTypeId(), 2, 0.15f, true),
-                genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 5, 1.2f),
-                0.015
+    public static void animateParticles(Projectile projectile, AbstractElement element) {
+        if(projectile.tickCount > 1){
+            playParticles3(
+                genericParticleOptions(SOFT_PARTICLE_SELECTION, element, 2, 0.9f, false),
+                projectile, 8, 0.01
             );
-//            playParticles3(
-//                genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 3, 0.08f, true),
-//                genericProjectile, 10, 0.01
-//            );
         }
     }
 
