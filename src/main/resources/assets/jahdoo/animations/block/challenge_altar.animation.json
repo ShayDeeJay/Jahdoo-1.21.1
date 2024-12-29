@@ -1,6 +1,43 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
+		"spawning": {
+			"animation_length": 5.2917,
+			"bones": {
+				"pillar": {
+					"rotation": {
+						"0.7083": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						},
+						"4.5": {
+							"vector": [0, 1440, 0],
+							"easing": "easeInOutExpo"
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 3.6, 0],
+							"easing": "linear"
+						},
+						"0.5": {
+							"vector": [0, 13.6, 0],
+							"easing": "easeInElastic",
+							"easingArgs": [0.2]
+						},
+						"4.6667": {
+							"vector": [0, 13.6, 0],
+							"easing": "linear"
+						},
+						"4.9583": {
+							"vector": [0, 3.6, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.08]
+						}
+					}
+				}
+			}
+		},
 		"initiate": {
 			"loop": "hold_on_last_frame",
 			"animation_length": 3,

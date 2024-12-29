@@ -88,7 +88,6 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
                     int selectedY1 = (int) (ySpacer + this.yScroll);
                     buildPropertiesWithHighlight(component, width, selectedY1);
                     if (Pattern.matches(regex, component.getString()) && !component.getString().contains(")")) {
-                        System.out.println(x);
                         var correctAdjustment = x.isHigherBetter() ? x.actualValue() == x.highestValue() : x.actualValue() == x.lowestValue();
                         var nexUpgrade = x.isHigherBetter() ? x.actualValue() + x.step() == x.highestValue() : x.actualValue() - x.step() == x.lowestValue();
                         upgradeButton(component, width, ySpacer, nexUpgrade, correctAdjustment, x);

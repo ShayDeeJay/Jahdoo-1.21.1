@@ -77,7 +77,6 @@ public class NovaSmash implements AbstractAttachment {
         this.highestDelta = Math.max(this.highestDelta, getCurrentDelta);
 
         if (this.canSmash){
-            System.out.println(getCurrentDelta);
             this.getDamage = ModHelpers.attributeModifierCalculator(
                 player, this.highestDelta, false, MAGIC_DAMAGE_MULTIPLIER, MYSTIC_MAGIC_DAMAGE_MULTIPLIER
             );

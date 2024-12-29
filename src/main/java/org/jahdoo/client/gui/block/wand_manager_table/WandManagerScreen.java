@@ -102,7 +102,6 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
                 };
                 replaceOrAddAttribute(wandItemCopy, id, attribute, value, EquipmentSlot.MAINHAND, false);
             }
-            System.out.println(getData.refinementPotential());
             WandData.createRefinementPotential(wandItemCopy, Math.max(0, getData.refinementPotential() - 20));
             PacketDistributor.sendToServer(new WandDataC2SPacket(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos()));
             var player = Minecraft.getInstance().player;
@@ -127,7 +126,6 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             if(slot instanceof InventorySlots inventorySlots){
                 inventorySlots.setActive(showInventory);
             }
-
             if(slot instanceof AugmentCoreSlot augmentCoreSlot){
                 if(augmentCoreSlot.getItem().getItem() instanceof RuneItem){
                     augmentCoreSlot.setActive(showInventory);
@@ -142,9 +140,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var posY = this.height / 2 + 3;
         this.addRenderableWidget(
             menuButton(
-                posX, posY,
-                (press) -> inventoryHandler(),
-                resourceLocation,
+                posX, posY, (press) -> inventoryHandler(), resourceLocation,
                 24, false, 0, WIDGET, true
             )
         );

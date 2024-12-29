@@ -8,7 +8,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -19,6 +20,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jetbrains.annotations.Nullable;
+
+import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.altarClickToStart;
 import static org.jahdoo.registers.BlocksRegister.sharedBlockBehaviour;
 
 public class ChallengeAltarBlock extends BaseEntityBlock {
@@ -41,24 +44,11 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
-        if (pState.getBlock() != pNewState.getBlock()) {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof ChallengeAltarBlockEntity challengeAltarBlockEntity) {
-                challengeAltarBlockEntity.dropsAllInventory(pLevel);
-            }
-        }
-        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
-    }
-
-    @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (!(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity challengeAltarBlockEntity)) return ItemInteractionResult.FAIL;
-        challengeAltarBlockEntity.setSetActive();
-        challengeAltarBlockEntity.setRoundGenerator(new RoundGenerator(challengeAltarBlockEntity, 5));
+        if (!(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity altarE)) return ItemInteractionResult.FAIL;
+        altarClickToStart(altarE);
         return ItemInteractionResult.SUCCESS;
     }
-
 
     @Nullable
     @Override

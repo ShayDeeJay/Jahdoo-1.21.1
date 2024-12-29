@@ -1,5 +1,6 @@
 package org.jahdoo.items.wand;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -20,17 +21,25 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
-import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.components.WandData;
-import org.jahdoo.entities.AncientGolem;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
+import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.particle.ParticleHandlers;
-import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.registers.ElementRegistry;
+import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -154,15 +163,49 @@ public class WandItem extends BlockItem implements GeoItem {
         return WandItemHelper.getItemName(pStack);
     }
 
+    public static ObjectArrayList<ItemStack> getChestPlate(ServerLevel serverLevel, Player player){
+        var randomWand = ElementRegistry.getRandomElement().getWand();
+        var wand = randomWand != null ? randomWand : ItemsRegister.WAND_ITEM_FROST.get();
+
+        var loot =  LootTable.lootTable().withPool(
+            LootPool.lootPool().setRolls(UniformGenerator.between(5.0F, 13.0F))
+            .add(LootItem.lootTableItem(ItemsRegister.NEXITE_POWDER.get()).setWeight(30))
+            .add(LootItem.lootTableItem(ItemsRegister.AUGMENT_ITEM.get()).setWeight(20))
+            .add(LootItem.lootTableItem(ItemsRegister.AUGMENT_CORE.get()).setWeight(18))
+            .add(LootItem.lootTableItem(ItemsRegister.ADVANCED_AUGMENT_CORE.get()).setWeight(3))
+        ).withPool(
+            LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+                .add(LootItem.lootTableItem(wand).setWeight(15))
+                .add(LootItem.lootTableItem(ItemsRegister.TOME_OF_UNITY.get()).setWeight(12))
+                .add(LootItem.lootTableItem(ItemsRegister.AUGMENT_HYPER_CORE.get()).setWeight(1))
+        ).build();
+
+        var lootparams = new LootParams.Builder(serverLevel)
+            .withParameter(LootContextParams.ORIGIN, player.position())
+            .withParameter(LootContextParams.THIS_ENTITY, player)
+            .create(LootContextParamSets.VAULT);
+
+        return loot.getRandomItems(lootparams);
+    }
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
 
+
+
+
         if(level instanceof ServerLevel serverLevel){
+            for (var itemStack : getChestPlate(serverLevel, player)) {
+                AugmentItemHelper.throwNewItem(player, itemStack);
+            }
+
+
+
 //            var zombo = new CustomZombie(serverLevel, null);
 //            zombo.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE.asItem()));
 
 //            var enchant = new ItemStack(Items.DIAMOND_SWORD);
+//            EnchantedBookItem.createForEnchantment(new EnchantmentInstance())
 //            enchant(enchant, serverLevel.registryAccess(), Enchantments.SHARPNESS, 5);
 //            zombo.setItemSlot(EquipmentSlot.MAINHAND, enchant);
 

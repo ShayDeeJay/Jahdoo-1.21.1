@@ -91,7 +91,7 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
 
     private void selectDirectionActive(int posX, int posY){
         var autoBlock = entity().getData(MODULAR_CHAOS_CUBE);
-        buildDirectionWidgets(posX - 109, posY - 100, "Direction", entity().direction(), (button) -> selectDirection(entity(), autoBlock.updateActionDirection(button)), entity().getData(MODULAR_CHAOS_CUBE).action());
+        buildDirectionWidgets(posX - 109, posY - 100, "Direction", entity().direction(), (button) -> selectDirection(entity(), autoBlock.updateActionDirection(button)),autoBlock.action());
     }
 
     private void direction(int posX, int posY, boolean isInput, String label, Consumer<BlockPos> buttons, Runnable switchB, BlockPos blockPos) {

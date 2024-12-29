@@ -1,19 +1,20 @@
 package org.jahdoo.client.block_renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
+import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.client.block_models.ChallengeAltarModel;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlockEntity>{
@@ -25,55 +26,43 @@ public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlock
     }
 
     @Override
-    public void render(ChallengeAltarBlockEntity animatable, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-        this.focusedItem(poseStack, animatable, itemRenderer, bufferSource, packedLight, animatable.getInputAndOutputRenderer(), new Vec3(0.5f, 0.7f, 0.5f), 0.3f);
-        var roundGen = animatable.getRoundGenerator();
-        if(roundGen != null){
-            renderTextOverBlock(poseStack, bufferSource, "Round: " + roundGen.getRound(), animatable.getBlockPos(), 0);
-            renderTextOverBlock(poseStack, bufferSource, "Remaining " + animatable.totalEntities, animatable.getBlockPos(), 1);
-            renderTextOverBlock(poseStack, bufferSource, "Remaining " + animatable.totalEntities, animatable.getBlockPos(), 1);
-        }
-        super.render(animatable, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
+    public void actuallyRender(PoseStack poseStack, ChallengeAltarBlockEntity animatable, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
+        var properties = ChallengeAltarData.getProperties(animatable);
+        renderTextOverBlock(poseStack, bufferSource, "Round: " + properties.round, animatable.getBlockPos(), 0);
+        renderTextOverBlock(poseStack, bufferSource, "Allowed Total " + properties.maxMobs(), animatable.getBlockPos(), 0.2);
+        renderTextOverBlock(poseStack, bufferSource, "Allowed Map " + properties.maxMobsOnMap(), animatable.getBlockPos(), 0.4);
+        renderTextOverBlock(poseStack, bufferSource, "Killed " + properties.killedMobs, animatable.getBlockPos(), 0.6);
+        renderTextOverBlock(poseStack, bufferSource, "On Map " + properties.activeMobs.size(), animatable.getBlockPos(), 0.8);
+        super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
     }
 
-    private void focusedItem(
-        PoseStack pPoseStack,
-        ChallengeAltarBlockEntity pBlockEntity,
-        ItemRenderer itemRenderer,
-        MultiBufferSource pBuffer,
-        int packedLight,
-        ItemStack itemStack,
-        Vec3 pos,
-        float scaleItem
-    ){
-        pPoseStack.pushPose();
-        pPoseStack.translate(pos.x, pos.y, pos.z);
-        pPoseStack.scale(scaleItem, scaleItem, scaleItem);
-
-        itemRenderer.renderStatic(
-            itemStack,
-            ItemDisplayContext.FIXED,
-            packedLight,
-            OverlayTexture.NO_OVERLAY,
-            pPoseStack,
-            pBuffer,
-            pBlockEntity.getLevel(),
-            1
-        );
-
-        pPoseStack.popPose();
-    }
-
-    private static void renderTextOverBlock(PoseStack poseStack, MultiBufferSource buffer, String text, BlockPos pos, int offset) {
-        double d0 = pos.getCenter().x + (double)0.5F;
-        double d1 = pos.getCenter().y + 4.3 + offset;
-        double d2 = pos.getCenter().z + (double)0.5F;
-
+    private static void renderTextOverBlock(PoseStack poseStack, MultiBufferSource buffer, String text, BlockPos pos, double offset) {
         poseStack.pushPose();
-        var scale = 0.03F;
-        DebugRenderer.renderFloatingText(poseStack, buffer, text, d0, d1, d2, -1, scale, true, scale, true);
+        var scale = 0.02F;
+        renderFloatingText(poseStack, buffer, text, pos, -1, scale, true, scale, true, offset);
         poseStack.popPose();
+    }
+
+
+    public static void renderFloatingText(PoseStack poseStack, MultiBufferSource bufferSource, String text, BlockPos pos, int color, float scale, boolean p_270731_, float p_270825_, boolean transparent, double offset) {
+        Minecraft minecraft = Minecraft.getInstance();
+        Camera camera = minecraft.gameRenderer.getMainCamera();
+        if (camera.isInitialized()) {
+            minecraft.getEntityRenderDispatcher();
+            Font font = minecraft.font;
+            double d0 = camera.getPosition().x;
+            double d1 = camera.getPosition().y;
+            double d2 = camera.getPosition().z;
+            poseStack.pushPose();
+            poseStack.translate((float) (pos.getX() - d0 + 0.5), (float) (pos.getY() - d1) + 4.5F + offset, (float) (pos.getZ() - d2 + 0.5));
+            poseStack.mulPose(camera.rotation());
+            poseStack.scale(scale, -scale, scale);
+            float f = p_270731_ ? (float) (-font.width(text)) / 2.0F : 0.0F;
+            f -= p_270825_ / scale;
+            font.drawInBatch(text, f, 0.0F, color, false, poseStack.last().pose(), bufferSource, transparent ? Font.DisplayMode.SEE_THROUGH : Font.DisplayMode.NORMAL, 0, 15728880);
+            poseStack.popPose();
+        }
+
     }
 }
 

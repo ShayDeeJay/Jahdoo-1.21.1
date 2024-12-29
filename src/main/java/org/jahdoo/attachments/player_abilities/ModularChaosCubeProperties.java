@@ -14,8 +14,6 @@ import org.jahdoo.attachments.AbstractAttachment;
 import org.jahdoo.registers.AttachmentRegister;
 
 public class ModularChaosCubeProperties implements AbstractAttachment {
-
-
     BlockPos actionDirection;
     BlockPos inputInvDirection;
     BlockPos outputInvDirection;
@@ -75,8 +73,6 @@ public class ModularChaosCubeProperties implements AbstractAttachment {
     public static ModularChaosCubeProperties updateAll(BlockPos action, BlockPos input, BlockPos output, boolean active, int speed, BlockPos worldPosition, boolean chained){
         return new ModularChaosCubeProperties(action, input, output, active, speed, worldPosition, chained);
     }
-
-
 
     public static void setActionDirection(BlockEntity entity, BlockPos actionDirection){
         var auto = entity.getData(AttachmentRegister.MODULAR_CHAOS_CUBE);

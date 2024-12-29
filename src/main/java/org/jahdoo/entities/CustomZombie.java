@@ -29,6 +29,16 @@ public class CustomZombie extends Zombie implements TamableEntity {
         this.owner = owner;
     }
 
+    @Override
+    public boolean shouldDropExperience() {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldDropLoot() {
+        return false;
+    }
+
     public LivingEntity getOwner(){
         return this.owner;
     }

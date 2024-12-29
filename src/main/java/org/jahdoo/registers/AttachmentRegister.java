@@ -1,7 +1,6 @@
 package org.jahdoo.registers;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -13,8 +12,6 @@ import org.jahdoo.attachments.GenericProvider;
 import org.jahdoo.attachments.player_abilities.MageFlight;
 import org.jahdoo.attachments.CastingData;
 import org.jahdoo.attachments.player_abilities.*;
-
-import java.util.function.Supplier;
 
 public class AttachmentRegister {
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, JahdooMod.MOD_ID);
@@ -57,6 +54,10 @@ public class AttachmentRegister {
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ModularChaosCubeProperties>> MODULAR_CHAOS_CUBE = ATTACHMENT_TYPES.register(
         "modular_chaos_cube", () -> AttachmentType.builder(ModularChaosCubeProperties::new).serialize(new GenericProvider<>(ModularChaosCubeProperties::new)).build()
+    );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ChallengeAltarData>> CHALLENGE_ALTAR = ATTACHMENT_TYPES.register(
+        "challenge_altar", () -> AttachmentType.builder(ChallengeAltarData::new).serialize(new GenericProvider<>(ChallengeAltarData::new)).build()
     );
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> BOOL = ATTACHMENT_TYPES.register(

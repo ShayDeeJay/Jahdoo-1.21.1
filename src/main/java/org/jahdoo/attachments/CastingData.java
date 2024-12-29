@@ -83,7 +83,6 @@ public class CastingData implements AbstractAttachment{
             cooldowns.applyAllCooldowns();
         } catch (Exception e){
             JahdooMod.logger.error("e: ", e);
-            System.out.println(e);
         }
         sendToPlayer(serverPlayer, new CooldownsDataSyncS2CPacket(cooldowns.getAllCooldowns(), cooldowns.getAllCooldownsStatic()));
     }
