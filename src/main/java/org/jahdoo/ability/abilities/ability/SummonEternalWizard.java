@@ -18,7 +18,7 @@ import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.abilities.ability_data.SummonEternalWizardAbility;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.AoeCloud;
-import org.jahdoo.entities.EternalWizard;
+import org.jahdoo.entities.living.EternalWizard;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;

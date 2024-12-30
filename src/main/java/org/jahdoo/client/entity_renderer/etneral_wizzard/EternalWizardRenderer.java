@@ -1,37 +1,19 @@
 package org.jahdoo.client.entity_renderer.etneral_wizzard;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityAttachment;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.ClientHooks;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.jahdoo.entities.EternalWizard;
+import org.jahdoo.entities.living.EternalWizard;
 import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.ModHelpers;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 
 @OnlyIn(Dist.CLIENT)
 public class EternalWizardRenderer extends EternalWizardBodyRenderer {

@@ -1,17 +1,14 @@
 package org.jahdoo.client.entity_renderer.etneral_wizzard;
 
-import net.minecraft.client.model.SkeletonModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jahdoo.entities.EternalWizard;
+import org.jahdoo.entities.living.EternalWizard;
 import org.jahdoo.utils.ModHelpers;
-import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class EternalWizardBodyRenderer extends HumanoidMobRenderer<EternalWizard, WizardModel<EternalWizard>> {

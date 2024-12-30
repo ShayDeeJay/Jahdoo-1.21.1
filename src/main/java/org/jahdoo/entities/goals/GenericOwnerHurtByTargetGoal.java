@@ -5,7 +5,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import org.jahdoo.entities.EternalWizard;
 
 import java.util.EnumSet;
 

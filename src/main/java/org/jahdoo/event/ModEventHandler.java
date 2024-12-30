@@ -1,24 +1,14 @@
 package org.jahdoo.event;
 
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.animal.IronGolem;
-import net.minecraft.world.entity.monster.Zombie;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
-import net.neoforged.neoforge.event.server.ServerLifecycleEvent;
-import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.entities.AncientGolem;
-import org.jahdoo.entities.CustomZombie;
-import org.jahdoo.entities.Decoy;
-import org.jahdoo.entities.EternalWizard;
+import org.jahdoo.entities.living.*;
 import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.EntitiesRegister;
@@ -55,6 +45,7 @@ public class ModEventHandler {
         event.put(EntitiesRegister.ETERNAL_WIZARD.get(), EternalWizard.createAttributes().build());
         event.put(EntitiesRegister.DECOY.get(), Decoy.createMobAttributes().build());
         event.put(EntitiesRegister.CUSTOM_ZOMBIE.get(), CustomZombie.createMobAttributes().build());
+        event.put(EntitiesRegister.CUSTOM_SKELETON.get(), CustomSkeleton.createMobAttributes().build());
         event.put(EntitiesRegister.ANCIENT_GOLEM.get(), AncientGolem.createAttributes().build());
     }
 }

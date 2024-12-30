@@ -43,7 +43,7 @@ public class AddItemModifier extends LootModifier {
 
         for (LootItemCondition condition : this.conditions) if (!condition.test(context)) return generatedLoot;
 
-        ItemStack itemStack = switch (this.item) {
+        var itemStack = switch (this.item) {
             case Augment ignored -> setGeneratedAugment(this.item);
             case WandItem ignored -> setGeneratedWand(getRarity(), ElementRegistry.getRandomElement().getWand());
             case TomeOfUnity ignored -> setGeneratedTome(getRarity(), this.item);

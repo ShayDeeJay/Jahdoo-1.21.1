@@ -2,10 +2,8 @@ package org.jahdoo.client.entity_renderer.ancient_golem;
 
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import org.jahdoo.entities.AncientGolem;
+import org.jahdoo.entities.living.AncientGolem;
 
 import static org.jahdoo.client.entity_renderer.ancient_golem.AncientGolemRenderer.*;
 

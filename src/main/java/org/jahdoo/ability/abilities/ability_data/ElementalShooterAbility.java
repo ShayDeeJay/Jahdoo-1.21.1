@@ -74,7 +74,7 @@ public class ElementalShooterAbility extends AbilityRegistrar {
     @Override
     public void invokeAbility(Player player) {
         var numberOfProjectile = getTag(player, (ElementalShooterAbility.numberOfProjectiles));
-        this.fireMultiShotProjectile((int) numberOfProjectile , 1.8f, player, 0.1, () ->
+        this.fireMultiShotProjectile((int) numberOfProjectile , 1.2f, player, 0.1, () ->
             new GenericProjectile(player, 0, ELEMENTAL_SHOOTER.get().setAbilityId(), abilityId.getPath().intern())
         );
         ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.ENDER_EYE_DEATH, 0.25f);

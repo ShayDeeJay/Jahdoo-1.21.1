@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.EyesLayer;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
-import org.jahdoo.entities.EternalWizard;
+import org.jahdoo.entities.living.EternalWizard;
 import org.jahdoo.utils.ModHelpers;
 
 public class PendentLayer <T extends AbstractSkeleton> extends EyesLayer<T, WizardModel<T>> {

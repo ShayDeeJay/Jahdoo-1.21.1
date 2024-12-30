@@ -8,6 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
+import org.jahdoo.challenge_game_mode.MobManager;
 import org.jahdoo.networking.packet.server2client.AltarBlockS2C;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.utils.ModHelpers;
@@ -53,13 +54,12 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
             idleParticleAnim(pPos, privateTicks, this.getLevel());
             if(extracted()) return;
             if(altarData().activeMobs().isEmpty()){
-                resetAltar();
-                if(privateTicks == 98) {
-                    onActivationAnim(pLevel, pPos, privateTicks);
-                    summonMobs();
-                }
+                resetSubRound();
+                if(privateTicks == 93) onActivationAnim(pLevel, pPos, privateTicks);
+                if(privateTicks == 96) summonMobs();
             }
         }
+        this.completeRound();
         if(privateTicks == 1) onActivationAnim(pLevel, pPos, privateTicks);
         this.updatePacket();
     }
@@ -72,8 +72,17 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
         }
     }
 
-    private void resetAltar() {
+    private void resetSubRound() {
         if(altarData().killedMobs > 0 && altarData().killedMobs == altarData().maxMobs()){
+            ChallengeAltarData.resetSubRoundAltar(this);
+            this.privateTicks = 0;
+        }
+    }
+
+
+
+    private void completeRound() {
+        if(altarData().round() > 0 && altarData().round() == altarData().maxRound()){
             ChallengeAltarData.resetAltar(this);
             this.privateTicks = 0;
         }

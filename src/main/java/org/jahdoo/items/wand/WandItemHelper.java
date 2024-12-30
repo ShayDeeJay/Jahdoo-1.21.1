@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.client.SharedUI;
-import org.jahdoo.entities.EternalWizard;
+import org.jahdoo.entities.living.EternalWizard;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;

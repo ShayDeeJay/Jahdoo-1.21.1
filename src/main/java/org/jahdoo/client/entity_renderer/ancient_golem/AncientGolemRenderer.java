@@ -6,14 +6,12 @@ import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
-import net.minecraft.client.model.IronGolemModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.animal.IronGolem;
-import org.jahdoo.entities.AncientGolem;
+import org.jahdoo.entities.living.AncientGolem;
 import org.jahdoo.utils.ModHelpers;
 
 public class AncientGolemRenderer extends MobRenderer<AncientGolem, AncientGolemModel<AncientGolem>> {

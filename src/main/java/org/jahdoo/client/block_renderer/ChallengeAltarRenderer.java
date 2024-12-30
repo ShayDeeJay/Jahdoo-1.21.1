@@ -28,11 +28,16 @@ public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlock
     @Override
     public void actuallyRender(PoseStack poseStack, ChallengeAltarBlockEntity animatable, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
         var properties = ChallengeAltarData.getProperties(animatable);
-        renderTextOverBlock(poseStack, bufferSource, "Round: " + properties.round, animatable.getBlockPos(), 0);
-        renderTextOverBlock(poseStack, bufferSource, "Allowed Total " + properties.maxMobs(), animatable.getBlockPos(), 0.2);
-        renderTextOverBlock(poseStack, bufferSource, "Allowed Map " + properties.maxMobsOnMap(), animatable.getBlockPos(), 0.4);
-        renderTextOverBlock(poseStack, bufferSource, "Killed " + properties.killedMobs, animatable.getBlockPos(), 0.6);
-        renderTextOverBlock(poseStack, bufferSource, "On Map " + properties.activeMobs.size(), animatable.getBlockPos(), 0.8);
+        var isComplete = ChallengeAltarData.isCompleted(animatable);
+        if(!isComplete){
+            renderTextOverBlock(poseStack, bufferSource, "Round: " + properties.round, animatable.getBlockPos(), 0);
+            renderTextOverBlock(poseStack, bufferSource, "Allowed Total " + properties.maxMobs(), animatable.getBlockPos(), 0.2);
+            renderTextOverBlock(poseStack, bufferSource, "Allowed Map " + properties.maxMobsOnMap(), animatable.getBlockPos(), 0.4);
+            renderTextOverBlock(poseStack, bufferSource, "Killed " + properties.killedMobs, animatable.getBlockPos(), 0.6);
+            renderTextOverBlock(poseStack, bufferSource, "On Map " + properties.activeMobs.size(), animatable.getBlockPos(), 0.8);
+        } else {
+            renderTextOverBlock(poseStack, bufferSource, "Complete!", animatable.getBlockPos(), 0.8);
+        }
         super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
     }
 

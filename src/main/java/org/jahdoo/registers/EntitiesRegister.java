@@ -3,12 +3,12 @@ package org.jahdoo.registers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.monster.Zombie;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.entities.*;
+import org.jahdoo.entities.living.*;
 
 public class EntitiesRegister {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
@@ -98,11 +98,22 @@ public class EntitiesRegister {
 
     public static final DeferredHolder<EntityType<?>, EntityType<CustomZombie>> CUSTOM_ZOMBIE =
         ENTITY_TYPES.register(
-            "zombie", () -> EntityType.Builder.<CustomZombie>of(CustomZombie::new, MobCategory.MONSTER)
+            "jahdoo_zombie", () -> EntityType.Builder.<CustomZombie>of(CustomZombie::new, MobCategory.MONSTER)
                 .sized(0.6F, 1.95F)
                 .clientTrackingRange(10)
                 .build("zombie")
         );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<CustomSkeleton>> CUSTOM_SKELETON =
+        ENTITY_TYPES.register(
+            "jahdoo_skeleton", () -> EntityType.Builder.<CustomSkeleton>of(CustomSkeleton::new, MobCategory.MONSTER)
+                .sized(0.6F, 1.99F)
+                .eyeHeight(1.74F)
+                .ridingOffset(-0.7F)
+                .clientTrackingRange(10)
+                .build("zombie")
+        );
+
 
 
     public static void register(IEventBus eventBus) {

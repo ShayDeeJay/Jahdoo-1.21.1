@@ -1,4 +1,4 @@
-package org.jahdoo.entities;
+package org.jahdoo.entities.living;
 
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
@@ -28,6 +28,9 @@ import org.jahdoo.ability.abilities.ability_data.FireballAbility;
 import org.jahdoo.ability.abilities.ability_data.FrostboltsAbility;
 import org.jahdoo.ability.ability_components.EtherealArrow;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
+import org.jahdoo.entities.ElementProjectile;
+import org.jahdoo.entities.GenericProjectile;
+import org.jahdoo.entities.TamableEntity;
 import org.jahdoo.entities.goals.*;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.items.wand.WandItemHelper;

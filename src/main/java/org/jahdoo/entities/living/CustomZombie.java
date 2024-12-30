@@ -1,4 +1,4 @@
-package org.jahdoo.entities;
+package org.jahdoo.entities.living;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -6,11 +6,11 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import org.jahdoo.entities.TamableEntity;
 import org.jahdoo.entities.goals.*;
 import org.jahdoo.registers.EntitiesRegister;
 
@@ -52,7 +52,6 @@ public class CustomZombie extends Zombie implements TamableEntity {
     public void tick() {
         super.tick();
         reassignPlayer();
-
     }
 
     private void reassignPlayer() {
@@ -61,14 +60,10 @@ public class CustomZombie extends Zombie implements TamableEntity {
     }
 
     public PathNavigation getNavigation() {
-        Entity var2 = this.getControlledVehicle();
-        PathNavigation var10000;
-        if (var2 instanceof Mob mob) {
-            var10000 = mob.getNavigation();
-        } else {
-            var10000 = this.navigation;
-        }
-        return var10000;
+        var controlledVehicle = this.getControlledVehicle();
+        PathNavigation pathNavigation;
+        pathNavigation = (controlledVehicle instanceof Mob mob) ? mob.getNavigation() : this.navigation;
+        return pathNavigation;
     }
 
     @Override

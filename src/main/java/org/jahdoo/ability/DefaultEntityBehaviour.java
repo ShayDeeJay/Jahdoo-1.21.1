@@ -8,6 +8,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.*;
+import org.jahdoo.entities.living.EternalWizard;
 
 import java.util.HashMap;
 

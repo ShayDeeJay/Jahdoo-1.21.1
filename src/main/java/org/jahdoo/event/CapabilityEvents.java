@@ -112,12 +112,14 @@ public class CapabilityEvents {
         var source = event.getSource();
         if(entity instanceof Player player) player.getData(SAVE_DATA).addAllItems(player);
         if(!entity.level().isClientSide){
-            var killedByJahdoo = Objects.equals(source.getMsgId(), DamageTypesProvider.JAHDOO_DAMAGE);
-            var canGetAugment = Random.nextInt(40) == 0;
-            if(killedByJahdoo && canGetAugment) {
-                var canGetCore = Random.nextInt(40) == 0;
-                if(canGetCore) throwNewItem(entity, new ItemStack(ItemsRegister.AUGMENT_CORE.get()));
-                throwNewItem(entity, JahdooRarity.getAbilityAugment(COMMON, RARE));
+            if(entity.shouldDropExperience()){
+                var killedByJahdoo = Objects.equals(source.getMsgId(), DamageTypesProvider.JAHDOO_DAMAGE);
+                var canGetAugment = Random.nextInt(40) == 0;
+                if (killedByJahdoo && canGetAugment) {
+                    var canGetCore = Random.nextInt(40) == 0;
+                    if (canGetCore) throwNewItem(entity, new ItemStack(ItemsRegister.AUGMENT_CORE.get()));
+                    throwNewItem(entity, JahdooRarity.getAbilityAugment(COMMON, RARE));
+                }
             }
         }
     }

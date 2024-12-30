@@ -1,4 +1,4 @@
-package org.jahdoo.entities;
+package org.jahdoo.entities.living;
 
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;

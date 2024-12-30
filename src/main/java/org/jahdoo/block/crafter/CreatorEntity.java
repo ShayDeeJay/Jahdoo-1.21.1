@@ -114,7 +114,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         return getCurrentRecipe(level).get().value().getResultItem(level.registryAccess());
     }
 
-    private void successfulCraftVisual(Level level, BlockPos blockPos, ItemStack itemStack){
+    public static void successfulCraftVisual(Level level, BlockPos blockPos, ItemStack itemStack){
         if(!(level instanceof ServerLevel serverLevel)) return;
         if(itemStack.getItem() instanceof WandItem) {
             ParticleHandlers.particleBurst(

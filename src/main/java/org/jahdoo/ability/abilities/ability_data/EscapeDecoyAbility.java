@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
-import org.jahdoo.entities.Decoy;
+import org.jahdoo.entities.living.Decoy;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.registers.EffectsRegister;

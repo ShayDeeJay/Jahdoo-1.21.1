@@ -1,5 +1,6 @@
 package org.jahdoo.event;
 
+import net.minecraft.client.renderer.entity.SkeletonRenderer;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -64,6 +65,7 @@ public class BusClientEvents {
         event.registerEntityRenderer(EntitiesRegister.ETERNAL_WIZARD.get(), EternalWizardRenderer::new);
         event.registerEntityRenderer(EntitiesRegister.DECOY.get(), DecoyRenderer::new);
         event.registerEntityRenderer(EntitiesRegister.CUSTOM_ZOMBIE.get(), ZombieRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.CUSTOM_SKELETON.get(), SkeletonRenderer::new);
         event.registerEntityRenderer(EntitiesRegister.ANCIENT_GOLEM.get(), AncientGolemRenderer::new);
     }
 

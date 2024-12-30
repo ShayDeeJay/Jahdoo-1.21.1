@@ -1,4 +1,4 @@
-package org.jahdoo.entities;
+package org.jahdoo.entities.living;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -29,6 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.abilities.ability_data.EscapeDecoyAbility;
+import org.jahdoo.entities.TamableEntity;
 import org.jahdoo.entities.goals.*;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.ElementRegistry;

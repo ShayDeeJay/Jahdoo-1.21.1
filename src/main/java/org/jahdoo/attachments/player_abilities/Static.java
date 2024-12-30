@@ -11,7 +11,7 @@ import org.jahdoo.attachments.AbstractAttachment;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.abilities.ability_data.StaticAbility;
-import org.jahdoo.entities.EternalWizard;
+import org.jahdoo.entities.living.EternalWizard;
 import org.jahdoo.items.wand.CastHelper;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.particle.ParticleStore;

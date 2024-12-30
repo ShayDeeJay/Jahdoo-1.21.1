@@ -14,32 +14,22 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.block.wand.WandBlockEntity;
+import org.jahdoo.challenge_game_mode.MobItemHandler;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.WandData;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
-import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -164,28 +154,11 @@ public class WandItem extends BlockItem implements GeoItem {
     }
 
     public static ObjectArrayList<ItemStack> getChestPlate(ServerLevel serverLevel, Player player){
-        var randomWand = ElementRegistry.getRandomElement().getWand();
-        var wand = randomWand != null ? randomWand : ItemsRegister.WAND_ITEM_FROST.get();
-
-        var loot =  LootTable.lootTable().withPool(
-            LootPool.lootPool().setRolls(UniformGenerator.between(5.0F, 13.0F))
-            .add(LootItem.lootTableItem(ItemsRegister.NEXITE_POWDER.get()).setWeight(30))
-            .add(LootItem.lootTableItem(ItemsRegister.AUGMENT_ITEM.get()).setWeight(20))
-            .add(LootItem.lootTableItem(ItemsRegister.AUGMENT_CORE.get()).setWeight(18))
-            .add(LootItem.lootTableItem(ItemsRegister.ADVANCED_AUGMENT_CORE.get()).setWeight(3))
-        ).withPool(
-            LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-                .add(LootItem.lootTableItem(wand).setWeight(15))
-                .add(LootItem.lootTableItem(ItemsRegister.TOME_OF_UNITY.get()).setWeight(12))
-                .add(LootItem.lootTableItem(ItemsRegister.AUGMENT_HYPER_CORE.get()).setWeight(1))
-        ).build();
-
         var lootparams = new LootParams.Builder(serverLevel)
             .withParameter(LootContextParams.ORIGIN, player.position())
             .withParameter(LootContextParams.THIS_ENTITY, player)
             .create(LootContextParamSets.VAULT);
-
-        return loot.getRandomItems(lootparams);
+        return new MobItemHandler(serverLevel, 10).getRandomLeather().getRandomItems(lootparams);
     }
 
     @Override
@@ -195,9 +168,9 @@ public class WandItem extends BlockItem implements GeoItem {
 
 
         if(level instanceof ServerLevel serverLevel){
-            for (var itemStack : getChestPlate(serverLevel, player)) {
-                AugmentItemHelper.throwNewItem(player, itemStack);
-            }
+//            for (var itemStack : getChestPlate(serverLevel, player)) {
+//                AugmentItemHelper.throwNewItem(player, itemStack);
+//            }
 
 
 

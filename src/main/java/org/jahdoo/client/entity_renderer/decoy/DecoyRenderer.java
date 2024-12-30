@@ -8,10 +8,9 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.util.ColorRGBA;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
-import org.jahdoo.entities.Decoy;
+import org.jahdoo.entities.living.Decoy;
 import org.jetbrains.annotations.Nullable;
 
 public class DecoyRenderer extends AbstractDecoyRenderer<Decoy, DecoyModel<Decoy>> {
