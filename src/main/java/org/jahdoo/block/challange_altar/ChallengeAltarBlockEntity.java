@@ -79,8 +79,6 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
         }
     }
 
-
-
     private void completeRound() {
         if(altarData().round() > 0 && altarData().round() == altarData().maxRound()){
             ChallengeAltarData.resetAltar(this);

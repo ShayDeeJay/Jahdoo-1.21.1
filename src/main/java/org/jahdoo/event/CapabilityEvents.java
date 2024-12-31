@@ -42,7 +42,7 @@ public class CapabilityEvents {
 
     @SubscribeEvent
     public static void onPlayerTickEvent(PlayerTickEvent.Pre event){
-        Player player = event.getEntity();
+        var player = event.getEntity();
         copyPasteBlockProperties(player);
 
         if(player instanceof ServerPlayer serverPlayer){

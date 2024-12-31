@@ -1,10 +1,18 @@
 package org.jahdoo.items.wand;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.ResourceKeyArgument;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.commands.PlaceCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -16,8 +24,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -30,6 +43,7 @@ import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.utils.LevelGenerator;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -168,19 +182,8 @@ public class WandItem extends BlockItem implements GeoItem {
 
 
         if(level instanceof ServerLevel serverLevel){
-//            for (var itemStack : getChestPlate(serverLevel, player)) {
-//                AugmentItemHelper.throwNewItem(player, itemStack);
-//            }
-
-
-
-//            var zombo = new CustomZombie(serverLevel, null);
-//            zombo.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE.asItem()));
-
-//            var enchant = new ItemStack(Items.DIAMOND_SWORD);
-//            EnchantedBookItem.createForEnchantment(new EnchantmentInstance())
-//            enchant(enchant, serverLevel.registryAccess(), Enchantments.SHARPNESS, 5);
-//            zombo.setItemSlot(EquipmentSlot.MAINHAND, enchant);
+//            LevelGenerator.createNewWorld(player, serverLevel);
+//            LevelGenerator.deleteCurrentWorld(player, serverLevel);
 
 //            var zombo = new EternalWizard(serverLevel, null, -1, 5);
 //            zombo.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
@@ -188,13 +191,16 @@ public class WandItem extends BlockItem implements GeoItem {
 //            var zombo = new AncientGolem(serverLevel, player);
 //            zombo.moveTo(player.position());
 //            serverLevel.addFreshEntity(zombo);
+
+
+//            try {
+//                placeStructure(serverLevel, player.blockPosition());
+//            } catch (CommandSyntaxException e) {
+//                throw new RuntimeException(e);
+//            }
+
         }
 
-//        for (var abilityRegistrar : AbilityRegister.getMatchingRarity(JahdooRarity.COMMON)) {
-//            System.out.println(abilityRegistrar.getAbilityName());
-//        }
-
-//        player.startUsingItem(player.getUsedItemHand());
         if (interactionHand == InteractionHand.MAIN_HAND) {
             var item = player.getMainHandItem();
 
@@ -204,6 +210,7 @@ public class WandItem extends BlockItem implements GeoItem {
 
         return InteractionResultHolder.fail(player.getOffhandItem());
     }
+
 
     @Override
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {

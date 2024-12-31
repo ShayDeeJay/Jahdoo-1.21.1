@@ -10,6 +10,7 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jahdoo.client.curio_renderer.GloveRenderer;
 import org.jahdoo.client.curio_renderer.TomeRenderer;
 import org.jahdoo.loot.ModLootModifiers;
 import org.jahdoo.recipe.RecipeRegistry;
@@ -56,6 +57,7 @@ public class JahdooMod {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         CuriosRendererRegistry.register(ItemsRegister.TOME_OF_UNITY.get(), TomeRenderer::new);
+        CuriosRendererRegistry.register(ItemsRegister.ARCHMAGE_GAUNTLET.get(), GloveRenderer::new);
     }
 
 

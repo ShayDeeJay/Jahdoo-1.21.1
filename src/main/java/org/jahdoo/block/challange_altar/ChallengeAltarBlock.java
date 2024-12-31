@@ -1,6 +1,7 @@
 package org.jahdoo.block.challange_altar;
 
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -64,30 +65,12 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity altarE)) return ItemInteractionResult.FAIL;
         if(!ChallengeAltarData.isCompleted(altarE)){
             var startingRound = Math.max(1, ChallengeAltarData.getProperties(altarE).round);
-            var endingRound = startingRound;
+            var endingRound = startingRound + 5;
             resetWithRound(altarE, startingRound, endingRound);
         } else {
             if(level instanceof ServerLevel serverLevel){
                 var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter());
-                System.out.println(rewards);
-                for (var reward : rewards) {
-                    var itemEntity = new ItemEntity(serverLevel, pos.getCenter().x(), pos.getCenter().y() , pos.getCenter().z(), reward);
-                    var angle = Random.nextDouble() * 2 * Math.PI; // Random angle between 0 and 2π
-                    var horizontalOffset = 0.2 + Random.nextDouble() * 0.35; // Small horizontal variation
-                    var offsetX = Math.cos(angle) * horizontalOffset;
-                    var offsetZ = Math.sin(angle) * horizontalOffset;
-                    var velocity = new Vec3(offsetX * (Math.random() - 0.5), Random.nextDouble(0.2, 0.5), offsetZ * (Math.random() - 0.5));
-                    itemEntity.setDeltaMovement(velocity);
-                    itemEntity.setDefaultPickUpDelay();
-
-                    for (var abstractElement : ElementRegistry.REGISTRY) {
-                        successfulCraftVisual(serverLevel, pos, abstractElement);
-                    }
-                    serverLevel.addFreshEntity(itemEntity);
-                }
-                ModHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_OPEN_SHUTTER, 1f, 1.8f);
-                ModHelpers.getSoundWithPosition(level, pos, SoundEvents.ILLUSIONER_CAST_SPELL, 1f, 1f);
-                ModHelpers.getSoundWithPosition(level, pos, SoundRegister.EXPLOSION.get(), 1f, 0.9f);
+                lootSplosion(level, pos, serverLevel, rewards);
                 level.destroyBlock(pos, false);
             }
         }
@@ -96,59 +79,31 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
         return ItemInteractionResult.SUCCESS;
     }
 
-    public static void successfulCraftVisual(ServerLevel serverLevel, BlockPos blockPos, AbstractElement element){
-        ParticleHandlers.particleBurst(
-            serverLevel, blockPos.getCenter().add(0, 0.5f, 0), 1,
-            EscapeDecoyAbility.getFromAllRandom(element, 20, 1),
-            0, 0.7, 0, 0.2f, 3
-        );
-    }
+    private static void lootSplosion(Level level, BlockPos pos, ServerLevel serverLevel, ObjectArrayList<ItemStack> rewards) {
+        for (var reward : rewards) {
+            var pCenter = pos.getCenter();
+            var itemEntity = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() , pCenter.z(), reward);
+            var angle = Random.nextDouble() * 2 * Math.PI;
+            var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
+            var offsetX = Math.cos(angle) * horizontalOffset;
+            var offsetZ = Math.sin(angle) * horizontalOffset;
+            var velocity = new Vec3(offsetX * (Math.random() - 0.5), Random.nextDouble(0.2, 0.5), offsetZ * (Math.random() - 0.5));
+            itemEntity.setDeltaMovement(velocity);
+            itemEntity.setPickUpDelay(30);
 
-    public static void throwItemFromChest(BlockEntity chestEntity, ItemStack itemStack) {
-        // Get the position of the chest-like object
-        double chestX = chestEntity.getBlockPos().getX() + 0.5; // Center of the block
-        double chestY = chestEntity.getBlockPos().getY() + 1;   // Slightly above the chest
-        double chestZ = chestEntity.getBlockPos().getZ() + 0.5;
+            for (var element : ElementRegistry.REGISTRY) {
+                ParticleHandlers.particleBurst(
+                    serverLevel, pCenter.add(0, 0.5f, 0), 1,
+                    EscapeDecoyAbility.getFromAllRandom(element, 20, 1),
+                    0, 0.7, 0, 0.2f, 3
+                );
+            }
 
-        // Randomized horizontal direction
-        double angle = Random.nextDouble() * 2 * Math.PI; // Random angle between 0 and 2π
-        double horizontalOffset = 0.2 + Random.nextDouble() * 0.3; // Small horizontal variation
-        double offsetX = Math.cos(angle) * horizontalOffset;
-        double offsetZ = Math.sin(angle) * horizontalOffset;
-
-        // Upward velocity with slight random variation
-        double upwardVelocity = 0.4 + Random.nextDouble() * 0.2;
-
-        // Final velocity vector
-        Vec3 velocity = new Vec3(offsetX, upwardVelocity, offsetZ);
-
-        // Call BehaviorUtils to throw the item
-        throwItemFromBlock(chestEntity, itemStack,new Vec3(chestX, chestY, chestZ), velocity , 1);
-    }
-
-    public static void throwItemFromBlock(BlockEntity blockEntity, ItemStack stack, Vec3 offset, Vec3 speedMultiplier, float yOffset) {
-        // Calculate the spawn position relative to the block
-        double spawnX = blockEntity.getBlockPos().getX() + 0.5 + offset.x; // Center of the block with horizontal offset
-        double spawnY = blockEntity.getBlockPos().getY() + yOffset;       // Adjusted height offset
-        double spawnZ = blockEntity.getBlockPos().getZ() + 0.5 + offset.z; // Center of the block with horizontal offset
-
-        // Create the item entity
-        ItemEntity itemEntity = new ItemEntity(blockEntity.getLevel(), spawnX, spawnY, spawnZ, stack);
-
-        // Apply velocity based on the speed multiplier
-        Vec3 velocity = new Vec3(
-            speedMultiplier.x * (Math.random() - 0.5), // Randomized horizontal direction
-            speedMultiplier.y,
-            speedMultiplier.z * (Math.random() - 0.5)
-        );
-        itemEntity.setDeltaMovement(velocity);
-
-        // Set default pickup delay
-        itemEntity.setDefaultPickUpDelay();
-
-        // Add the item entity to the world
-        System.out.println(itemEntity.getItem());
-        blockEntity.getLevel().addFreshEntity(itemEntity);
+            serverLevel.addFreshEntity(itemEntity);
+        }
+        ModHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_OPEN_SHUTTER, 1f, 1.8f);
+        ModHelpers.getSoundWithPosition(level, pos, SoundEvents.ILLUSIONER_CAST_SPELL, 1f, 1f);
+        ModHelpers.getSoundWithPosition(level, pos, SoundRegister.EXPLOSION.get(), 1f, 0.9f);
     }
 
     @Nullable

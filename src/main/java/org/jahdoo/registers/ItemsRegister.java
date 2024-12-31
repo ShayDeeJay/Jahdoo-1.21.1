@@ -10,6 +10,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.items.ArchmageGauntlet;
+import org.jahdoo.items.CoreItem;
 import org.jahdoo.items.armor.WizardArmor;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.block_items.ChallengeAltarBlockItem;
@@ -31,11 +33,12 @@ public class ItemsRegister {
     public static final DeferredHolder<Item, Item> NEXITE_POWDER = basicItem("nexite_powder");
     public static final DeferredHolder<Item, Item> AUGMENT_CORE = basicItem("augment_core");
     public static final DeferredHolder<Item, Item> ADVANCED_AUGMENT_CORE = basicItem("advanced_augment_core");
-    public static final DeferredHolder<Item, Item> AUGMENT_HYPER_CORE = basicItem("augment_hyper_core");
+    public static final DeferredHolder<Item, Item> AUGMENT_HYPER_CORE = ITEMS.register("augment_hyper_core", CoreItem::new);
 
     //Complex Items
     public static final DeferredHolder<Item, Item> AUGMENT_ITEM = ITEMS.register("unidentified_augment", Augment::new);
     public static final DeferredHolder<Item, Item> TOME_OF_UNITY = ITEMS.register("tome_of_unity", TomeOfUnity::new);
+    public static final DeferredHolder<Item, Item> ARCHMAGE_GAUNTLET = ITEMS.register("archmage_gauntlet", ArchmageGauntlet::new);
     public static final DeferredHolder<Item, Item> RUNE = ITEMS.register("rune", RuneItem::new);
 
     //Block Items

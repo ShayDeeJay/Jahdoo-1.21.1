@@ -20,10 +20,17 @@ public class JahdooCuriosProvider extends CuriosDataProvider {
         this.createSlot("tome")
             .size(1)
             .dropRule(ICurio.DropRule.ALWAYS_KEEP)
-            .addCosmetic(true);
+            .replace(true);
+
+        this.createSlot("glove")
+            .size(1)
+            .dropRule(ICurio.DropRule.ALWAYS_KEEP)
+            .replace(true);
 
         this.createEntities("player")
             .addPlayer()
-            .addSlots("tome");
+            .addSlots("tome")
+            .addSlots("glove");
+
     }
 }

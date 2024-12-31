@@ -41,6 +41,7 @@ public class ModCreativeModTabs {
                     pOutput.accept(ItemsRegister.ADVANCED_AUGMENT_CORE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_HYPER_CORE.get());
                     pOutput.accept(ItemsRegister.TOME_OF_UNITY.get());
+                    pOutput.accept(ItemsRegister.ARCHMAGE_GAUNTLET.get());
 
 //                pOutput.accept(ItemsRegister.WIZARD_HELMET.get());
 //                pOutput.accept(ItemsRegister.WIZARD_CHESTPLATE.get());
