@@ -2,6 +2,7 @@ package org.jahdoo.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.block.tank.NexiteTankBlockEntity;
@@ -83,8 +84,11 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
     }
 
     public NexiteTankBlockEntity getTankEntity(){
-        if (this.tankPosition != null && this.level.getBlockEntity(this.tankPosition) instanceof NexiteTankBlockEntity tank) {
-            return tank;
+        if (this.tankPosition != null) {
+            var bEntity = this.getLevel().getBlockEntity(this.tankPosition);
+            if (bEntity instanceof NexiteTankBlockEntity tank) {
+                return tank;
+            }
         }
         return null;
     }
@@ -104,9 +108,9 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
     }
 
     private List<BlockPos> getTankBlockInRange(Level pLevel, BlockPos pos) {
-        List<BlockPos> allBlocks = new ArrayList<>();
+        var allBlocks = new ArrayList<BlockPos>();
         for (BlockPos adjacentPos : findInRange(pos)) {
-            BlockState adjacentState = pLevel.getBlockState(adjacentPos);
+            var adjacentState = pLevel.getBlockState(adjacentPos);
             if (adjacentState.is(BlocksRegister.TANK.get())) allBlocks.add(adjacentPos);
         }
         return allBlocks;

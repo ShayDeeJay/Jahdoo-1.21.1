@@ -14,7 +14,7 @@ import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.EntitiesRegister;
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
-public class ModEventHandler {
+public class ServerBusEvents {
 
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {

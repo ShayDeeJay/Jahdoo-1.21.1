@@ -1,4 +1,4 @@
-package org.jahdoo.challenge_game_mode;
+package org.jahdoo.challenge;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;

@@ -1,18 +1,9 @@
 package org.jahdoo.items.wand;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.arguments.ResourceKeyArgument;
-import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.commands.PlaceCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -24,26 +15,16 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.levelgen.structure.StructureStart;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.block.wand.WandBlockEntity;
-import org.jahdoo.challenge_game_mode.MobItemHandler;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.WandData;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.utils.LevelGenerator;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -167,38 +148,15 @@ public class WandItem extends BlockItem implements GeoItem {
         return WandItemHelper.getItemName(pStack);
     }
 
-    public static ObjectArrayList<ItemStack> getChestPlate(ServerLevel serverLevel, Player player){
-        var lootparams = new LootParams.Builder(serverLevel)
-            .withParameter(LootContextParams.ORIGIN, player.position())
-            .withParameter(LootContextParams.THIS_ENTITY, player)
-            .create(LootContextParamSets.VAULT);
-        return new MobItemHandler(serverLevel, 10).getRandomLeather().getRandomItems(lootparams);
-    }
-
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
-
-
-
-
         if(level instanceof ServerLevel serverLevel){
-//            LevelGenerator.createNewWorld(player, serverLevel);
-//            LevelGenerator.deleteCurrentWorld(player, serverLevel);
-
 //            var zombo = new EternalWizard(serverLevel, null, -1, 5);
 //            zombo.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
 
 //            var zombo = new AncientGolem(serverLevel, player);
 //            zombo.moveTo(player.position());
 //            serverLevel.addFreshEntity(zombo);
-
-
-//            try {
-//                placeStructure(serverLevel, player.blockPosition());
-//            } catch (CommandSyntaxException e) {
-//                throw new RuntimeException(e);
-//            }
-
         }
 
         if (interactionHand == InteractionHand.MAIN_HAND) {
@@ -210,7 +168,6 @@ public class WandItem extends BlockItem implements GeoItem {
 
         return InteractionResultHolder.fail(player.getOffhandItem());
     }
-
 
     @Override
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {

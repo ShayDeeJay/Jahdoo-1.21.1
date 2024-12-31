@@ -1,30 +1,29 @@
-package org.jahdoo.utils;
+package org.jahdoo.challenge;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import it.unimi.dsi.fastutil.Pair;
 import net.casual.arcade.dimensions.ArcadeDimensions;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.casual.arcade.dimensions.level.builder.CustomLevelBuilder;
-import net.minecraft.client.player.LocalPlayer;
+import net.casual.arcade.dimensions.utils.impl.VoidChunkGenerator;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Minecart;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biomes;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.utils.ModHelpers;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -32,11 +31,11 @@ import java.util.*;
 public class LevelGenerator {
 
     public static void removeCustomLevels(ServerLevel serverLevel) {
+        var levelsToRemove = new ArrayList<CustomLevel>();
         for (ServerLevel allLevel : serverLevel.getServer().getAllLevels()) {
-            if(allLevel instanceof CustomLevel customLevel){
-                removeLevel(serverLevel, customLevel);
-            }
+            if (allLevel instanceof CustomLevel cLevel) levelsToRemove.add(cLevel);
         }
+        for (CustomLevel cLevel : levelsToRemove) removeLevel(serverLevel, cLevel);
     }
 
     public static void removeLevel(ServerLevel serverLevel, CustomLevel customLevel) {
@@ -46,20 +45,30 @@ public class LevelGenerator {
     public static void createNewWorld(Player player, ServerLevel serverLevel) {
         var testKey = "end_"+UUID.randomUUID();
         generateNewLevel(serverLevel, testKey);
-        findLevel(testKey, serverLevel).ifPresent(level -> doWithServer(player, level));
+        findLevel(testKey, serverLevel).ifPresent(level -> generateStructure(player, level));
     }
 
     private static void generateNewLevel(ServerLevel serverLevel, @Nullable String key) {
-        var DimensionWithBiomes = List.of(
-            Pair.of(BuiltinDimensionTypes.NETHER, List.of(Biomes.SOUL_SAND_VALLEY, Biomes.WARPED_FOREST, Biomes.NETHER_WASTES, Biomes.CRIMSON_FOREST)),
-            Pair.of(BuiltinDimensionTypes.OVERWORLD, List.of(Biomes.THE_VOID, Biomes.SNOWY_TAIGA, Biomes.PLAINS, Biomes.DESERT, Biomes.SAVANNA, Biomes.BEACH)),
-            Pair.of(BuiltinDimensionTypes.END, List.of(Biomes.THE_END))
-        );
-        var getElement = DimensionWithBiomes.get(ModHelpers.Random.nextInt(DimensionWithBiomes.size()));
+        var dimensionWithBiomes = Pair.of(BuiltinDimensionTypes.OVERWORLD, List.of(Biomes.THE_VOID, Biomes.SNOWY_TAIGA, Biomes.PLAINS));
+        var randomBiome = ModHelpers.Random.nextInt(dimensionWithBiomes.second().size());
+        var biome = dimensionWithBiomes.second().get(randomBiome);
         var builder = new CustomLevelBuilder()
-            .timeOfDay(18000)
-            .dimensionType(BuiltinDimensionTypes.END)
-            .chunkGenerator(new TestChunkGenerator(serverLevel.getServer(), Biomes.THE_END/* getElement.second().get(ModHelpers.Random.nextInt(getElement.second().size()))*/))
+            .timeOfDay(biome == Biomes.PLAINS ? 13000 : 18000)
+            .dimensionType(dimensionWithBiomes.first())
+            .weather(
+                weather -> {
+                    weather.setRaining(biome == Biomes.SNOWY_TAIGA);
+                    weather.setThundering(false);
+                    return null;
+                }
+            )
+            .difficulty(
+                difficulty -> {
+                    difficulty.setValue(Difficulty.HARD);
+                    return null;
+                }
+            )
+            .chunkGenerator(new VoidChunkGenerator(serverLevel.getServer(), biome))
             .dimensionKey(ModHelpers.res(key == null ? UUID.randomUUID().toString() : key))
             .gameRules(
                 (gameRules) -> {
@@ -67,16 +76,15 @@ public class LevelGenerator {
                     gameRules.getRule(GameRules.RULE_DAYLIGHT).set(false, null);
                     gameRules.getRule(GameRules.RULE_WEATHER_CYCLE).set(false, null);
                     gameRules.getRule(GameRules.RULE_NATURAL_REGENERATION).set(false, null);
+                    gameRules.getRule(GameRules.RULE_MOBGRIEFING).set(false, null);
                     return null;
                 }
-            )
-            .generateStructures(true)
-            .build(serverLevel.getServer());
+            );
 
         ArcadeDimensions.add(serverLevel.getServer(), builder);
     }
 
-    private static void doWithServer(Player player, ServerLevel level){
+    private static void generateStructure(Player player, ServerLevel level){
         var pos = new BlockPos(0, 40, 0);
         var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 5).toList();
         for (var chunkPos : getAllChunks) {
@@ -95,12 +103,17 @@ public class LevelGenerator {
         }
 
         var center = pos.getCenter();
+
+        teleportToPlatform(player, level, center);
+    }
+
+    private static void teleportToPlatform(Player player, ServerLevel level, Vec3 center) {
         player.changeDimension(
             new DimensionTransition(
                 level, center.subtract(24, 2, 4), player.getDeltaMovement(), player.getYRot(), player.getXRot(), DimensionTransition.DO_NOTHING
             )
         );
-//        player.teleportTo(level, center.x - 24 , center.y - 2, center.z - 4, Set.of(),180,0);
+        player.removeAllEffects();
     }
 
     private static Optional<ServerLevel> findLevel(String id, ServerLevel serverLevel) {
@@ -121,6 +134,7 @@ public class LevelGenerator {
         if(structure == null) return;
 
         var chunkgenerator = sLevel.getChunkSource().getGenerator();
+
         var structurestart = structure.generate(
             sLevel.registryAccess(),
             chunkgenerator,
@@ -140,7 +154,7 @@ public class LevelGenerator {
             var chunkPosSecondary = new ChunkPos(SectionPos.blockToSectionCoord(boundingbox.maxX()), SectionPos.blockToSectionCoord(boundingbox.maxZ()));
             checkLoaded(sLevel, chunkPosPrimary, chunkPosSecondary);
             for (var cPos : ChunkPos.rangeClosed(chunkPosPrimary, chunkPosSecondary).toList()) {
-                var box = new BoundingBox(cPos.getMinBlockX(), sLevel.getMinBuildHeight(), cPos.getMinBlockZ(), cPos.getMaxBlockX(), sLevel.getMaxBuildHeight(), cPos.getMaxBlockZ());
+                var box = new BoundingBox(cPos.getMinBlockX(), sLevel.getMinBuildHeight(), cPos.getMinBlockZ(), cPos.getMaxBlockX(), sLevel.getMaxBuildHeight() , cPos.getMaxBlockZ());
                 structurestart.placeInChunk(sLevel, sLevel.structureManager(), chunkgenerator, sLevel.getRandom(), box, cPos);
             }
         }

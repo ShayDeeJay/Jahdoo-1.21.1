@@ -28,7 +28,7 @@ import org.jahdoo.registers.*;
 
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public class BusClientEvents {
+public class ClientBusEvents {
 
     @SubscribeEvent
     public static void registerItemColour(final RegisterColorHandlersEvent.Item event){

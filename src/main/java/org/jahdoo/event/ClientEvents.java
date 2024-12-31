@@ -15,6 +15,7 @@ import org.jahdoo.client.RuneTooltipRenderer;
 import org.jahdoo.event.event_helpers.WandAbilitySelector;
 import org.jahdoo.registers.*;
 
+import static org.jahdoo.event.event_helpers.EventHelpers.getEntityPlayerIsLookingAt;
 import static org.jahdoo.event.event_helpers.KeyBindHelper.*;
 import static org.jahdoo.event.event_helpers.OverlayEvent.crosshairManager;
 import static org.jahdoo.event.event_helpers.OverlayEvent.simpleGui;
@@ -80,37 +81,6 @@ public class ClientEvents {
                 pose.popPose();
             }
         }
-
-
-    }
-
-    public static Entity getEntityPlayerIsLookingAt(Player player, double maxDistance) {
-        var eyePosition = player.getEyePosition(1.0F);
-        var lookVector = player.getViewVector(1.0F).scale(maxDistance);
-
-        var endPoint = eyePosition.add(lookVector);
-
-        var searchBox = player.getBoundingBox().expandTowards(lookVector).inflate(1.0D);
-        var entities = player.level().getEntities(player, searchBox, entity -> entity.isPickable());
-
-        Entity closestEntity = null;
-        var closestDistance = maxDistance;
-
-        for (Entity entity : entities) {
-            var entityBox = entity.getBoundingBox().inflate(0.3D);
-            var hit = entityBox.clip(eyePosition, endPoint);
-
-            if (hit.isPresent()) {
-                var distance = eyePosition.distanceTo(hit.get());
-
-                if (distance < closestDistance) {
-                    closestEntity = entity;
-                    closestDistance = distance;
-                }
-            }
-        }
-
-        return closestEntity;
     }
 
     @SubscribeEvent
