@@ -1,5 +1,6 @@
 package org.jahdoo.items.wand;
 
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -8,6 +9,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
@@ -62,7 +64,6 @@ public class CastHelper {
     }
 
     public static void executeAndCharge(Player player) {
-        var casterData = player.getData(CASTER_DATA);
         var wandItem = player.getMainHandItem();
         var abilityName = DataComponentHelper.getAbilityTypeItemStack(wandItem);
         var ability = AbilityRegister.REGISTRY.get(res(abilityName));
@@ -78,9 +79,6 @@ public class CastHelper {
                     var adjustedCooldown = ModHelpers.attributeModifierCalculator(player, (float) cooldownCost, false, getElement.getTypeCooldownReduction().getSecond(), COOLDOWN_REDUCTION);
                     chargeCooldown(abilityName, adjustedCooldown, player);
                     chargeMana(abilityName, adjustedMana, player);
-
-//                    casterData.addCooldown(abilityName, (int) adjustedCooldown);
-//                    casterData.subtractMana(adjustedMana, player);
                 }
                 onCast(player, ability);
             } else failedCastNotification(player);
@@ -88,12 +86,12 @@ public class CastHelper {
     }
 
     public static void failedCastNotification(Player player) {
-        SoundEvent crafterFail = SoundEvents.CRAFTER_FAIL;
-        float volume = 1.6f;
-        float pitch = 1.2f;
-        SoundEvent vexHurt = SoundEvents.VEX_HURT;
-        float volume1 = 0.8f;
-        float pitch1 = 1.3f;
+        var crafterFail = SoundEvents.CRAFTER_FAIL;
+        var volume = 1.6f;
+        var pitch = 1.2f;
+        var vexHurt = SoundEvents.VEX_HURT;
+        var volume1 = 0.8f;
+        var pitch1 = 1.3f;
         if(player instanceof ServerPlayer serverPlayer){
             ModHelpers.sendClientSound(serverPlayer, crafterFail, volume, pitch, false);
             ModHelpers.sendClientSound(serverPlayer, vexHurt, volume1, pitch1, false);
@@ -120,28 +118,30 @@ public class CastHelper {
         if(ability == null) return false;
         var getElement = getElementByWandType(wandItem.getItem()).getFirst();;
         var getManaCost = getSpecificValue(player, wandItem, MANA_COST);
-        var adjustedMana = ModHelpers.attributeModifierCalculator(player, (float) getManaCost, false, MANA_COST_REDUCTION, getElement.getTypeManaReduction().getSecond());
+        var typeReduction = getElement.getTypeManaReduction().getSecond();
+        var adjustedMana = ModHelpers.attributeModifierCalculator(player, (float) getManaCost, false, MANA_COST_REDUCTION, typeReduction);
         var manaAvailable = casterData.getManaPool();
         var sufficientMana = casterData.getManaPool() >= adjustedMana;
         var abilityOnCooldown = casterData.isAbilityOnCooldown(abilityName);
 
-        if (abilityOnCooldown) {
-            var nameComp = ModHelpers.withStyleComponent(ability.getAbilityName(), getElement.particleColourSecondary());
-            var messageComp = Component.translatable("casting.jahdoo.on_cooldown", nameComp);
-            player.displayClientMessage(messageComp, true);
-            return false;
-        }
+        if(!player.isCreative()){
+            if (abilityOnCooldown) {
+                var nameComp = ModHelpers.withStyleComponent(ability.getAbilityName(), getElement.particleColourSecondary());
+                var messageComp = Component.translatable("casting.jahdoo.on_cooldown", nameComp);
+                player.displayClientMessage(messageComp, true);
+                return false;
+            }
 
-        if (!sufficientMana) {
-            var formattedCost = getFormattedFloat(adjustedMana);
-            var formattedAvailable = getFormattedFloat((float) manaAvailable);
-            var costComp = ModHelpers.withStyleComponent(String.valueOf(formattedCost), getElement.particleColourPrimary());
-            var availComp = ModHelpers.withStyleComponent(String.valueOf(formattedAvailable), getElement.particleColourSecondary());
-            var notEnoughManaMessage = Component.translatable("casting.jahdoo.insufficient_man", availComp, costComp);
-            player.displayClientMessage(notEnoughManaMessage, true);
-            return false;
+            if (!sufficientMana) {
+                var formattedCost = getFormattedFloat(adjustedMana);
+                var formattedAvailable = getFormattedFloat((float) manaAvailable);
+                var costComp = ModHelpers.withStyleComponent(String.valueOf(formattedCost), getElement.particleColourPrimary());
+                var availComp = ModHelpers.withStyleComponent(String.valueOf(formattedAvailable), getElement.particleColourSecondary());
+                var notEnoughManaMessage = Component.translatable("casting.jahdoo.insufficient_man", availComp, costComp);
+                player.displayClientMessage(notEnoughManaMessage, true);
+                return false;
+            }
         }
-
         return true;
     }
 
@@ -163,30 +163,21 @@ public class CastHelper {
     }
 
     public static InteractionResultHolder<ItemStack> use(Player player) {
-        ItemStack itemStack = player.getMainHandItem();
-        ResourceLocation abilityName = DataComponentHelper.getAbilityTypeWand(player);
-        AbilityRegistrar getAbility = AbilityRegister.REGISTRY.get(abilityName);
+        var itemStack = player.getMainHandItem();
+        var abilityName = DataComponentHelper.getAbilityTypeWand(player);
+        var getAbility = AbilityRegister.REGISTRY.get(abilityName);
+        var canUse = getCanApplyDistanceAbility(player, itemStack);
+        var cantUse = (player.onGround() && player.isShiftKeyDown()) || getAbility == null;
 
-        if((player.onGround() && player.isShiftKeyDown()) || getAbility == null) {
-            return InteractionResultHolder.fail(itemStack);
-        }
-
-        if (getCanApplyDistanceAbility(player, itemStack)) {
-            executeAndCharge(player);
-        } else {
-            failedCastNotification(player);
-        }
-
+        if(cantUse) return InteractionResultHolder.fail(itemStack);
+        if(canUse) executeAndCharge(player); else failedCastNotification(player);
         return InteractionResultHolder.pass(itemStack);
     }
 
-    public static void onSuccessfulCastBonus(){
-
-    }
 
     public static boolean getCanApplyDistanceAbility(Player player, ItemStack itemStack){
-        boolean isDistanceCast = AbilityRegister.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player)).getCastType() == DISTANCE_CAST;
-        if(isDistanceCast){
+        var isDistanceCast = AbilityRegister.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
+        if(isDistanceCast != null && isDistanceCast.getCastType() == DISTANCE_CAST){
             var getCurrentAbility = DataComponentHelper.getAbilityTypeItemStack(itemStack);
             var getAbility = ModHelpers.getModifierValue(itemStack.get(WAND_ABILITY_HOLDER.get()), getCurrentAbility);
             var allowedDistance = getAbility.get(CASTING_DISTANCE).actualValue();

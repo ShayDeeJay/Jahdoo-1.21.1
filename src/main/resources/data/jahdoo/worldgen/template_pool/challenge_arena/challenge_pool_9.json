@@ -1,0 +1,15 @@
+{
+  "name": "jahdoo:challenge_pool_9",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 10  ,
+      "element": {
+        "location": "jahdoo:challenge_arena_8",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

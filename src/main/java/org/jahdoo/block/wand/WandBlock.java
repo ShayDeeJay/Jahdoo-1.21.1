@@ -26,8 +26,10 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.components.WandData;
+import org.jahdoo.networking.packet.client2server.WandDataC2SPacket;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
@@ -124,7 +126,7 @@ public class WandBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!(level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock)) return ItemInteractionResult.FAIL;
-
+        getItemInteractionResult(stack, wandBlock);
 
         if (stack.isEmpty() && player.isShiftKeyDown()) {
             this.pickUpWand(player, pos, level);
@@ -135,13 +137,15 @@ public class WandBlock extends BaseEntityBlock {
     }
 
     private static ItemInteractionResult getItemInteractionResult(ItemStack heldItem, WandBlockEntity wandBlock) {
-        ItemStack internalWand = wandBlock.getWandItemFromSlot();
+        var internalWand = wandBlock.getWandItemFromSlot();
         var wandData = internalWand.get(WAND_DATA);
         if (heldItem.getItem() == ItemsRegister.AUGMENT_CORE.get()) {
             if(wandData != null && wandData.abilitySlots() < 10){
                 heldItem.shrink(1);
                 var index = wandData.abilitySlots() + 1;
                 int addSlotOrMax = Math.min(index, 10);
+                WandData.createNewAbilitySlots(wandBlock.getWandItemFromSlot(), addSlotOrMax);
+//                PacketDistributor.sendToServer(new WandDataC2SPacket(wa, wandBlock.getBlockPos()));
                 return ItemInteractionResult.CONSUME;
             }
         }

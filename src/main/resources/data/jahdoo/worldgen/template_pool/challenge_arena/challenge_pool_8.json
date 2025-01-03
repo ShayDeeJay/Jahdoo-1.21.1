@@ -1,11 +1,11 @@
 {
-  "name": "jahdoo:trial_start_pool",
+  "name": "jahdoo:challenge_pool_8",
   "fallback": "minecraft:empty",
   "elements": [
     {
-      "weight": 1,
+      "weight": 10  ,
       "element": {
-        "location": "jahdoo:trial",
+        "location": "jahdoo:challenge_arena_7",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"

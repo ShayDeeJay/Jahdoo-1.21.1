@@ -43,5 +43,7 @@ public class IconLocations {
     public static final ResourceLocation TYPE_OVERLAY = ModHelpers.res("textures/gui/type_overlay.png");
     public static final ResourceLocation MANA_CONTAINER = ModHelpers.res("textures/gui/mana_bar_overlay.png");
     public static final ResourceLocation MANA_LEVEL_BAR = ModHelpers.res("textures/gui/mana_bar_type.png");
+    public static final ResourceLocation IN_WAND = ModHelpers.res("textures/gui/in_wand.png");
+    public static final ResourceLocation IN_INVENTORY = ModHelpers.res("textures/gui/in_inventory.png");
 }
 

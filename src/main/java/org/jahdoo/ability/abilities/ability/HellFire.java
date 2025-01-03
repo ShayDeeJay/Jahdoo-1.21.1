@@ -108,7 +108,7 @@ public class HellFire extends DefaultEntityBehaviour {
             positionsA -> {
                 var newPos = positionsA.add(0,Random.nextDouble(0.1, 0.8),0);
                 var blockPos = BlockPos.containing(positionsA);
-                fireTrailVegetationRemover(this.aoeCloud.level().getBlockState(blockPos), blockPos, this.aoeCloud, this.aoeCloud.getOwner());
+                fireTrailVegetationRemover(this.aoeCloud.level().getBlockState(blockPos), blockPos, this.aoeCloud);
                 this.setParticleNova(newPos);
                 this.setNovaDamage(positionsA);
                 if (this.playerOriginalPosition.distanceTo(positionsA) >= this.range) aoeCloud.discard();

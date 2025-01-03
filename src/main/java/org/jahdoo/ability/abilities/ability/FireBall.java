@@ -220,7 +220,7 @@ public class FireBall extends DefaultEntityBehaviour {
                     if (distance <= aoe) {
                         BlockPos blockPos = entityPos.offset(x, y, z);
                         BlockState blockState = this.elementProjectile.level().getBlockState(blockPos);
-                        SharedFireProperties.fireTrailVegetationRemover(blockState, blockPos, this.elementProjectile, (LivingEntity) this.elementProjectile.getOwner());
+                        SharedFireProperties.fireTrailVegetationRemover(blockState, blockPos, this.elementProjectile);
                     }
                 }
             }

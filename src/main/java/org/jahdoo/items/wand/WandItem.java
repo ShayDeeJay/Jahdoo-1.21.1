@@ -161,7 +161,7 @@ public class WandItem extends BlockItem implements GeoItem {
 
         if (interactionHand == InteractionHand.MAIN_HAND) {
             var item = player.getMainHandItem();
-
+            player.startUsingItem(InteractionHand.MAIN_HAND);
             CastHelper.use(player);
             return InteractionResultHolder.pass(item);
         }

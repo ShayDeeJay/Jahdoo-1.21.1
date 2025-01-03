@@ -130,7 +130,7 @@ public class IceBomb extends DefaultEntityBehaviour {
     @Override
     public void onTickMethod() {
         applyInertia(this.elementProjectile, 0.955f);
-        if(this.elementProjectile.tickCount > INT) this.hasHitBlock = true;
+        this.hasHitBlock = this.elementProjectile.tickCount > INT - 30;
         if(!hasHitBlock){
             elementProjectile.setAnimation(3);
             this.iceBombIdleParticles();
@@ -152,9 +152,10 @@ public class IceBomb extends DefaultEntityBehaviour {
         var bakedParticle = bakedParticleOptions(this.getElementType().getTypeId(), lifetime, 5, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle).get(ModHelpers.Random.nextInt(2));
         var randSpeed = ModHelpers.Random.nextDouble(0.6, 1.4);
+        var positions = worldPosition.offsetRandom(RandomSource.create(), 0.5f);
 
         ParticleHandlers.sendParticles(
-            level(), getRandomParticle ,worldPosition.offsetRandom(RandomSource.create(), 0.5f), 0, directions.x, directions.y, directions.z, randSpeed
+            level(), getRandomParticle , positions, 0, directions.x, directions.y, directions.z, randSpeed
         );
     }
 
@@ -219,7 +220,7 @@ public class IceBomb extends DefaultEntityBehaviour {
             );
         }
 
-        if (this.elementProjectile.tickCount % (this.elementProjectile.tickCount < (INT - 20) ? 21 : 2) == 0) {
+        if (this.elementProjectile.tickCount % (this.elementProjectile.tickCount < (INT - 45) ? 21 : 2) == 0) {
             this.radScale += 0.1f;
             ModHelpers.getSoundWithPosition(
                 level(),
@@ -236,7 +237,8 @@ public class IceBomb extends DefaultEntityBehaviour {
         Level lvl,
         ParticleOptions particle
     ){
-        ParticleHandlers.sendParticles(lvl, particle, nPos.add(0,0.15,0), 1, pos2.x, pos2.y, pos2.z, Math.min((float) this.elementProjectile.tickCount / 300, 0.12));
+        var min = Math.min((float) this.elementProjectile.tickCount / 300, 0.12);
+        ParticleHandlers.sendParticles(lvl, particle, nPos.add(0,0.15,0), 1, pos2.x, pos2.y, pos2.z, min);
     }
 
     @Override

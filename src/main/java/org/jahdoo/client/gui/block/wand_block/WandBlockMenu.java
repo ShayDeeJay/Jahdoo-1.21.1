@@ -23,11 +23,11 @@ import static org.jahdoo.client.SharedUI.handleSlotsInGridLayout;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class WandBlockMenu extends AbstractInternalContainer {
-    public int slotsY = -7;
+    public int slotsY = -10;
     public int yOffset = 24;
     public int xOffset = 0;
-    public int xSpacing = 26;
-    public int ySpacing = 30;
+    public int xSpacing = 37;
+    public int ySpacing = 56;
 
     public WandBlockMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         super(MenusRegister.WAND_BLOCK_MENU.get(), pContainerId, inv, extraData);

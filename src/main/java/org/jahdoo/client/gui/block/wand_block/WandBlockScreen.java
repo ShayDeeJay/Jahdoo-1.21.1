@@ -1,5 +1,6 @@
 package org.jahdoo.client.gui.block.wand_block;
 
+import com.llamalad7.mixinextras.sugar.Share;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -7,10 +8,13 @@ import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbilityRegistrar;
+import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.client.IconLocations;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.block.augment_modification_station.InventorySlots;
 import org.jahdoo.components.DataComponentHelper;
@@ -20,6 +24,7 @@ import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ItemsRegister;
+import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -204,12 +209,15 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
 
     private void adjustAllSlotRelated(GuiGraphics guiGraphics, int slotX, int slotY, int i, int slotX1, int slotY1){
         var adjustGroupY = -1;
+        var size = 32;
+
         setSlotTexture(
             guiGraphics,
             slotX + wandBlockMenu.xOffset,
           slotY + wandBlockMenu.yOffset + adjustGroupY,
-            32,
-            String.valueOf(i + 1)
+            size,
+            String.valueOf(i + 1),
+            this.wandBlockMenu.getWandBlockEntity().inputItemHandler.getStackInSlot(i+1)
         );
 
         this.setSlotHoveredBorder(
@@ -226,9 +234,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         var isKeyDown = InputConstants.isKeyDown(window, settings.keyShift.getKey().getValue());
 
         if(conditionOne || conditionTwo){
-            if(conditionTwo && isKeyDown || conditionOne) {
-                setTypeOverlay(guiGraphics, x + 2, y - 20);
-            }
+            if(conditionTwo && isKeyDown || conditionOne) setTypeOverlay(guiGraphics, x + 2, y - 20);
             if(this.hoveredSlot.index < 36){
                 var imageWidth = 32;
                 var imageHeight = 32;
@@ -243,17 +249,13 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
                 guiGraphics.pose().translate(0,0,280);
 
                 guiGraphics.blit(
-                    ModHelpers.res("textures/gui/in_wand.png"),
-                    slotX1 - 80,
-                    slotY1 - 68 ,
-                    0, 0, imageWidth, imageHeight, imageWidth, imageHeight
+                    IN_WAND, slotX1 - 80, slotY1 - 80 , 0, 0,
+                    imageWidth, imageHeight, imageWidth, imageHeight
                 );
 
                 guiGraphics.blit(
-                    ModHelpers.res("textures/gui/in_inventory.png"),
-                    drawX - 80,
-                    drawY - 83 ,
-                    0, 0, imageWidth, imageHeight, imageWidth, imageHeight
+                    IN_INVENTORY, drawX - 80, drawY - 84 , 0, 0,
+                    imageWidth, imageHeight, imageWidth, imageHeight
                 );
 
                 guiGraphics.pose().popPose();
@@ -261,18 +263,6 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         }
     }
 
-    public void setTypeOverlayInventory(GuiGraphics guiGraphics, int positionX, int positionY){
-        if(this.hoveredSlot != null && this.hoveredSlot.getItem().getItem() instanceof Augment){
-            var type = this.hoveredSlot.getItem();
-            if (type.has(CUSTOM_MODEL_DATA)) {
-                var types = type.get(CUSTOM_MODEL_DATA).value();
-                if (types > 0 && this.showInventory) {
-                    int[] typeOverlay = {353, 441, 265, 177, 89, 1};
-                    hoveredOverlayInventory(guiGraphics, positionX, positionY, typeOverlay[types - 1]);
-                }
-            }
-        }
-    }
 
     public void setTypeOverlay(GuiGraphics guiGraphics, int positionX, int positionY){
         var item = this.hoveredSlot;
@@ -280,22 +270,10 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
             var type = item.getItem();
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(0,0,1);
-            SharedUI.boxMaker(guiGraphics, positionX + 1, positionY + 21, 13, 15, -1);
-            if (type.has(CUSTOM_MODEL_DATA)) {
-                var types = type.get(CUSTOM_MODEL_DATA).value();
-                if (types > 0) {
-                    int[] typeOverlay = {129, 161, 97, 65, 33, 1};
-                    hoveredOverlay(guiGraphics, positionX, positionY, typeOverlay[types - 1]);
-                }
-            } else {
-                hoveredOverlay(guiGraphics, positionX, positionY, 193);
-            }
+            var color = FastColor.ARGB32.color(60,  ColourStore.OFF_WHITE);
+            SharedUI.boxMaker(guiGraphics, positionX + 1, positionY + 1, 13, 25, BORDER_COLOUR, color);
             guiGraphics.pose().popPose();
         }
-    }
-
-    public static void hoveredOverlayInventory(GuiGraphics guiGraphics, int positionX, int positionY, int offset) {
-        guiGraphics.blit(GUI_INVENTORY_OVERLAY, positionX + 41, positionY + 144, 0,1, offset, 174, 88, 176, 530);
     }
 
     private static void hoveredOverlay(GuiGraphics guiGraphics, int positionX, int positionY, int offset) {
@@ -309,16 +287,13 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         var heightOffset = 115;
         var widthFrom = width - widthOffset;
         var heightFrom = height - heightOffset;
-        var widthTo = width + widthOffset;
-        var heightTo = height + heightOffset;
-        var fromColour = -1072689136;
-        var toColour = -804253680;
-        var borderColour = -10066330;
-
-        guiGraphics.fillGradient(widthFrom, heightFrom, widthTo, heightTo, fromColour, toColour);
-        guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, borderColour);
-        guiGraphics.hLine(width-100, width + 99, this.height/2 - 70, borderColour);
-        guiGraphics.hLine(width-100, width + 99, this.height/2 + 4, borderColour);
+        var element = ElementRegistry.getElementByWandType(this.wandBlockMenu.getWandBlockEntity().getWandItemFromSlot().getItem());
+        var element1 = element.getFirst();
+        var color = FastColor.ARGB32.color(40, element1.textColourPrimary());
+        var colorA = FastColor.ARGB32.color(0, element1.textColourPrimary());
+        SharedUI.boxMaker(guiGraphics, widthFrom, heightFrom, 100, 115, BORDER_COLOUR, SharedUI.getFadedColourBackground(0.9f));
+        SharedUI.boxMaker(guiGraphics, widthFrom, heightFrom, 100, 115, BORDER_COLOUR, colorA, color);
+        SharedUI.bezelMaker(guiGraphics, widthFrom - 13, heightFrom - 13, 194, 224, 32, element1);
 
     }
 
@@ -332,9 +307,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         sideBar(guiGraphics, mouseX, mouseY, pPartialTick);
         renderInventoryBackground(guiGraphics, this, IMAGE_SIZE, this.wandBlockMenu.yOffset, this.showInventory);
         header(guiGraphics, mouseX, mouseY, pPartialTick);
-        abilityIcon(guiGraphics, cachedItem, width -152, height - 29, wandBlockMenu.yOffset + 10, 44);
         this.setSlotTexturesGrid(guiGraphics);
-        setTypeOverlayInventory(guiGraphics, (width - IMAGE_SIZE) / 2, (height - IMAGE_SIZE) / 2);
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
@@ -390,8 +363,9 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
             var spacer = new AtomicInteger();
 
             for(Component component : subComponents){
-                int posX = this.width / 2 + 60 + adjustX;
-                textRenderable(posX, (int) (((double) this.height / 2 - 118 + spacer.get()) + adjustY + yScroll), component, this.getMinecraft()).render(guiGraphics, mouseX, mouseY, pPartialTick);
+                var posX = this.width / 2 + 60 + adjustX;
+                var posY = (int) (((double) this.height / 2 - 118 + spacer.get()) + adjustY + yScroll);
+                textRenderable(posX, posY, component, this.getMinecraft()).render(guiGraphics, mouseX, mouseY, pPartialTick);
                 spacer.set(spacer.get() + 10);
             }
         }
@@ -435,10 +409,11 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
 
     private void header(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
         if(this.cachedItem != null){
-            var yOff = 115;
-            int xOff = this.width / 2 - 105;
-            textRenderable(xOff, (this.height / 2 - (yOff - 10)), getComponents(cachedItem).getFirst(), this.getMinecraft()).render(guiGraphics, mouseX, mouseY, pPartialTick);
-            textRenderable(xOff, (this.height / 2 - yOff), AugmentItemHelper.getHoverName(cachedItem), this.getMinecraft()).render(guiGraphics, mouseX, mouseY, pPartialTick);
+            var yOff = 132;
+            var xOff = this.width / 2 - 76;
+            var abilitySlots = ModHelpers.withStyleComponent("Ability Slots", ColourStore.SUB_HEADER_COLOUR);
+            SharedUI.boxMaker(guiGraphics, xOff+ 44, (this.height / 2 - yOff) + 8, 32, 9, BORDER_COLOUR, SharedUI.getFadedColourBackground(1f));
+            textRenderable(xOff, (this.height / 2 - yOff), abilitySlots, this.getMinecraft()).render(guiGraphics, mouseX, mouseY, pPartialTick);
         }
     }
 

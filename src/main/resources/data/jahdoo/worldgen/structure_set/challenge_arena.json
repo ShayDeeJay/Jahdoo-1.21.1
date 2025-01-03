@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "salt": 18645352512,
+    "spacing": 80,
+    "separation": 20,
+    "type": "minecraft:random_spread"
+  },
+  "structures": [
+    {
+      "structure": "jahdoo:challenge_arena",
+      "weight": 1
+    }
+  ]
+}

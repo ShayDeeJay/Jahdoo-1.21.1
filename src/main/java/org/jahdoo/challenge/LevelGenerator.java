@@ -6,21 +6,31 @@ import net.casual.arcade.dimensions.ArcadeDimensions;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.casual.arcade.dimensions.level.builder.CustomLevelBuilder;
 import net.casual.arcade.dimensions.utils.impl.VoidChunkGenerator;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.JigsawBlock;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.fml.common.Mod;
 import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.utils.ModHelpers;
@@ -86,33 +96,27 @@ public class LevelGenerator {
 
     private static void generateStructure(Player player, ServerLevel level){
         var pos = new BlockPos(0, 40, 0);
-        var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 5).toList();
-        for (var chunkPos : getAllChunks) {
-            level.setChunkForced(chunkPos.x, chunkPos.z, true);
-        }
+        var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 16).toList();
+        for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
 
         try {
-            placeStructure(level, pos, ModHelpers.res("trial"));
+            placeStructure(level, pos);
         } catch (CommandSyntaxException e) {
             JahdooMod.logger.log(Level.ALL, e);
             throw new RuntimeException(e);
         }
 
-        for (var chunkPos : getAllChunks) {
-            level.setChunkForced(chunkPos.x, chunkPos.z, false);
-        }
-
-        var center = pos.getCenter();
-
-        teleportToPlatform(player, level, center);
+        for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
+        teleportToPlatform(player, level);
     }
 
-    private static void teleportToPlatform(Player player, ServerLevel level, Vec3 center) {
+    private static void teleportToPlatform(Player player, ServerLevel level) {
         player.changeDimension(
             new DimensionTransition(
-                level, center.subtract(24, 2, 4), player.getDeltaMovement(), player.getYRot(), player.getXRot(), DimensionTransition.DO_NOTHING
+                level, new Vec3(-24, 65, -120), player.getDeltaMovement(), 0, 0, DimensionTransition.DO_NOTHING
             )
         );
+        //Remove all effects as should only have ones allowed, which should only be ones on trinkets items etc/
         player.removeAllEffects();
     }
 
@@ -125,39 +129,19 @@ public class LevelGenerator {
         return Optional.empty();
     }
 
+    public static void placeStructure(ServerLevel sLevel, BlockPos pos) throws CommandSyntaxException {
+        Registry<StructureTemplatePool> registry = sLevel.registryAccess().registryOrThrow(Registries.TEMPLATE_POOL);
+        Holder<StructureTemplatePool> holder = registry.getHolderOrThrow(ResourceKey.create(Registries.TEMPLATE_POOL, ModHelpers.res("challenge_arena/challenge_pool_1")));
+        JigsawPlacement.generateJigsaw(sLevel, holder,  ResourceLocation.withDefaultNamespace("empty"), 10, pos, true);
+    }
 
-    public static void placeStructure(ServerLevel sLevel, BlockPos pos, ResourceLocation id) throws CommandSyntaxException {
-        var registry = sLevel.registryAccess().registry(Registries.STRUCTURE);
-        if(registry.isEmpty()) return;
 
-        var structure = registry.get().get(id);
-        if(structure == null) return;
-
-        var chunkgenerator = sLevel.getChunkSource().getGenerator();
-
-        var structurestart = structure.generate(
-            sLevel.registryAccess(),
-            chunkgenerator,
-            chunkgenerator.getBiomeSource(),
-            sLevel.getChunkSource().randomState(),
-            sLevel.getStructureManager(),
-            sLevel.getSeed(),
-            new ChunkPos(pos),
-            0,
-            sLevel,
-            (biomeHolder) -> true
-        );
-
-        if (structurestart.isValid()) {
-            var boundingbox = structurestart.getBoundingBox();
-            var chunkPosPrimary = new ChunkPos(SectionPos.blockToSectionCoord(boundingbox.minX()), SectionPos.blockToSectionCoord(boundingbox.minZ()));
-            var chunkPosSecondary = new ChunkPos(SectionPos.blockToSectionCoord(boundingbox.maxX()), SectionPos.blockToSectionCoord(boundingbox.maxZ()));
-            checkLoaded(sLevel, chunkPosPrimary, chunkPosSecondary);
-            for (var cPos : ChunkPos.rangeClosed(chunkPosPrimary, chunkPosSecondary).toList()) {
-                var box = new BoundingBox(cPos.getMinBlockX(), sLevel.getMinBuildHeight(), cPos.getMinBlockZ(), cPos.getMaxBlockX(), sLevel.getMaxBuildHeight() , cPos.getMaxBlockZ());
-                structurestart.placeInChunk(sLevel, sLevel.structureManager(), chunkgenerator, sLevel.getRandom(), box, cPos);
-            }
-        }
+    public static void placeJigsaw(
+        ServerLevel serverLevel, Holder<StructureTemplatePool> templatePool, ResourceLocation target, int maxDepth, BlockPos pos
+    ) throws CommandSyntaxException {
+        ChunkPos chunkpos = new ChunkPos(pos);
+        checkLoaded(serverLevel, chunkpos, chunkpos);
+        JigsawPlacement.generateJigsaw(serverLevel, templatePool, target, maxDepth, pos, false);
     }
 
     private static void checkLoaded(ServerLevel level, ChunkPos start, ChunkPos end) throws CommandSyntaxException {

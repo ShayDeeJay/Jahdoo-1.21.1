@@ -44,7 +44,6 @@ public class UtilityHelpers {
                     level.addFreshEntity(itementity);
                 } else {
                     if(!(level instanceof ServerLevel serverLevel)) return;
-
                     var lootBuilder = new LootParams
                         .Builder(serverLevel)
                         .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
@@ -64,7 +63,6 @@ public class UtilityHelpers {
             level.removeBlock(pos, false);
         }
     }
-
 
     public static void harvestBreaker(Projectile newProjectile, BlockPos pos, boolean voidBlocks){
         var blockstate = newProjectile.level().getBlockState(pos);
@@ -98,7 +96,6 @@ public class UtilityHelpers {
         ParticleHandlers.sendParticles(level, blockPart,  pos.getCenter(), 5,0, 0, 0, 1);
         level.removeBlock(pos, false);
     }
-
 
     public static void lavaWaterInteractionBehaviour(Entity entity){
         BlockPos blockPos = entity.blockPosition();

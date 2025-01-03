@@ -30,8 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.client.IconLocations.GUI_BUTTON;
-import static org.jahdoo.client.IconLocations.TYPE_OVERLAY;
+import static org.jahdoo.client.IconLocations.*;
 
 public class SharedUI {
 
@@ -60,7 +59,7 @@ public class SharedUI {
         guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
     }
 
-    public static void boxMakerTest(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset, int colourBorder, int start, int end) {
+    public static void boxMaker(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset, int colourBorder, int start, int end) {
         int widthTo = startX + widthOffset * 2;
         int heightTo = startY + heightOffset * 2;
 
@@ -165,7 +164,7 @@ public class SharedUI {
         int xOff = width/2 - 55;
         guiGraphics.drawString(font, getComponents(itemStack).getFirst(), xOff, (height/2 - (yOff - 10)), 0, true);
         guiGraphics.drawString(font, AugmentItemHelper.getHoverName(itemStack), xOff, (height/2 - yOff), 0, true);
-        abilityIcon(guiGraphics, itemStack, width - 155, height - 180, 109, 40);
+        abilityIcon(guiGraphics, itemStack, width - 155, height - 180, 109, 40, 12);
     }
 
     public static void renderInventoryBackground(GuiGraphics guiGraphics, Screen screen, int IMAGE_SIZE, int yOffset, boolean show){
@@ -210,10 +209,10 @@ public class SharedUI {
             var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityRegistrars.setAbilityId());
             var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
             var abstractElement = ElementRegistry.getElementByTypeId((int) abilityModifiers.actualValue());
-            element = !abstractElement.isEmpty() ? abstractElement.getFirst().textColourSecondary() : -1;
+            element = !abstractElement.isEmpty() ? abstractElement.getFirst().textColourPrimary() : -1;
 
         } else {
-            element = abilityRegistrars.getElemenType().textColourSecondary();
+            element = abilityRegistrars.getElemenType().textColourPrimary();
         }
 
         return element;
@@ -295,7 +294,24 @@ public class SharedUI {
         guiGraphics.pose().popPose();
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 2);
-        guiGraphics.blit(IconLocations.GUI_AUGMENT_SLOT, slotX, slotY, 0, 0, imageSize, imageSize, imageSize , imageSize);
+        guiGraphics.blit(GUI_AUGMENT_SLOT, slotX, slotY, 0, 0, imageSize, imageSize, imageSize , imageSize);
+        guiGraphics.pose().popPose();
+    }
+
+    public static void setSlotTexture(GuiGraphics guiGraphics, int slotX, int slotY, int imageSize, String index, ItemStack itemStack){
+        guiGraphics.pose().pushPose();
+        double x = slotX + 16.2;
+        double y = slotY + 10.4;
+        guiGraphics.pose().translate(x, y, 2);
+        guiGraphics.pose().scale(0.7f,0.7f, 0.7f);
+        guiGraphics.pose().translate(0.2, 0.2, 0.2);
+
+        centeredStringNoShadow(guiGraphics, Minecraft.getInstance().font, Component.literal(index), 0, 0, -10329502, false);
+        guiGraphics.pose().popPose();
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 2);
+        guiGraphics.blit(GUI_AUGMENT_SLOT, slotX, slotY, 0, 0, imageSize, imageSize, imageSize , imageSize);
+        abilityIcon(guiGraphics, itemStack,slotX * 2 + 33, slotY * 2 + 213, 0, 26, 10);
         guiGraphics.pose().popPose();
     }
 
@@ -304,9 +320,8 @@ public class SharedUI {
         guiGraphics.drawString(font, formattedcharsequence, x - font.width(formattedcharsequence) / 2, y, color, shadow);
     }
 
-    public static void abilityIcon(GuiGraphics guiGraphics, ItemStack cachedItem, int width, int height, int offset, int localImageSize){
+    public static void abilityIcon(GuiGraphics guiGraphics, ItemStack cachedItem, int width, int height, int offset, int localImageSize, int shrinkBy){
         var verticalOffset = 38 + offset;
-        var shrinkBy = 16;
         var imageWithShrink = localImageSize - shrinkBy;
         var posX = (width - localImageSize) / 2 ;
         var posY = (height - localImageSize) / 2 - 150 + verticalOffset;
@@ -314,7 +329,7 @@ public class SharedUI {
         var posY1 = (height - imageWithShrink) / 2 - 150 + verticalOffset;
 
         guiGraphics.blit(
-            GUI_BUTTON,
+            GUI_GENERAL_SLOT,
             posX, posY, 0, 0, localImageSize, localImageSize, localImageSize, localImageSize
         );
 

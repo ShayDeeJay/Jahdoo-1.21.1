@@ -1,6 +1,5 @@
 package org.jahdoo.client.gui.block.wand_manager_table;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -177,12 +176,12 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         guiGraphics.enableScissor(minX, minY, maxX, minY + (!setView ? 172 : 92));
         renderItem(guiGraphics, width1, height1, getWand(), scaleItem, mouseX, mouseY, 16);
         if(this.element != null){
-            var colorA = FastColor.ARGB32.color(0, borderColour);
             var colorFade = FastColor.ARGB32.color(100, borderColour);
             var heightOffset = 86 - (showInventory ? 40 : 0);
             var color = FastColor.ARGB32.color(50, borderColour);
+            var colorA = FastColor.ARGB32.color(20, borderColour);
             boxMaker(guiGraphics, minX, minY, 30, heightOffset, getFadedColourBackground(0.4f));
-            boxMakerTest(guiGraphics, minX, minY, 30, heightOffset, color, colorA, colorFade);
+            SharedUI.boxMaker(guiGraphics, minX, minY, 30, heightOffset, color, colorA, colorFade);
         }
         guiGraphics.disableScissor();
         guiGraphics.pose().popPose();

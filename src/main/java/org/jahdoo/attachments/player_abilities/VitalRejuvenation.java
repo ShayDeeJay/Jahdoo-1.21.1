@@ -128,7 +128,6 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     }
 
     private void setCastingAnimation(Vec3 worldPosition, Player player){
-
         var directions = worldPosition.subtract(player.position()).normalize().add(0,8, 0).offsetRandom(RandomSource.create(), 0.05f);
         var lifetime = 6;
         var element = ElementRegistry.VITALITY.get();

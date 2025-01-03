@@ -230,7 +230,7 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
             }
         }
 
-        abilityIcon(guiGraphics, this.entity().augmentSlot(), width, height - 24, 109, 50);
+        abilityIcon(guiGraphics, this.entity().augmentSlot(), width, height - 24, 109, 50, 12);
         renderInventoryBackground(guiGraphics, this, IMAGE_SIZE, 24, true);
         setSlotTexture(guiGraphics, i - 16, i1 - 61, 32, "");
     }
