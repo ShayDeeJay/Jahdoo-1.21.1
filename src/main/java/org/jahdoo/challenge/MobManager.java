@@ -21,6 +21,7 @@ import org.jahdoo.entities.living.CustomZombie;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -55,13 +56,14 @@ public class MobManager {
     }
 
     public static LivingEntity generateMob(LivingEntity livingEntity){
-        var getEntity = livingEntity.level().getNearestPlayer(livingEntity, 30);
+        var getEntity = livingEntity.level().getNearestPlayer(livingEntity, 200);
         if (livingEntity instanceof Mob mob) mob.setTarget(getEntity);
         return livingEntity;
     }
 
     public static LivingEntity getReadyZombie(ServerLevel serverLevel, int round){
         var entity = new CustomZombie(serverLevel, null);
+        entity.setPersistenceRequired();
         attachEquipment(entity, serverLevel, round);
         equipWeapon(entity, serverLevel, round);
         return entity;
@@ -81,6 +83,7 @@ public class MobManager {
     public static LivingEntity getReadySkeleton(ServerLevel serverLevel, int round){
         var arrow = MobItemHandler.getAllowedArrow(round);
         var entity = new CustomSkeleton(serverLevel, null, arrow);
+        entity.setPersistenceRequired();
         permIncreaseBaseAttribute(entity, 120, Attributes.ARMOR);
         attachEquipment(entity, serverLevel, round);
         equipWeapon(entity, serverLevel, round);
@@ -89,7 +92,10 @@ public class MobManager {
 
     public static void addAndPositionEntity(ChallengeAltarBlockEntity entity, BlockPos pos){
         if(entity.getLevel() instanceof ServerLevel serverLevel){
-            var actualEntity = MobManager.generateMob(getReadySkeleton(serverLevel, ChallengeAltarData.getProperties(entity).round));
+            var readyZombie = getReadyZombie(serverLevel, ChallengeAltarData.getProperties(entity).round);
+            var readySkeleton = getReadySkeleton(serverLevel, ChallengeAltarData.getProperties(entity).round);
+            var getList = List.of(readyZombie, readySkeleton).get(Random.nextInt(2));
+            var actualEntity = MobManager.generateMob(ChallengeAltarData.getRound(entity) > 5 ? getList : readyZombie);
             actualEntity.moveTo(pos.getCenter());
             ChallengeAltarData.addEntity(entity, actualEntity.getUUID());
             serverLevel.addFreshEntity(actualEntity);

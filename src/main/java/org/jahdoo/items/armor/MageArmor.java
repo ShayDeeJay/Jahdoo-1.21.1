@@ -7,12 +7,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.client.armor_renderer.MageArmorRenderer;
 import org.jahdoo.client.armor_renderer.WizardArmorRenderer;
-import org.jahdoo.components.RuneData;
-import org.jahdoo.components.RuneHolder;
-import org.jahdoo.components.WandData;
-import org.jahdoo.registers.DataComponentRegistry;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -24,29 +20,23 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
-public class WizardArmor extends ArmorItem implements GeoItem {
+public class MageArmor extends ArmorItem implements GeoItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    public WizardArmor(Holder<ArmorMaterial> material, Type type, Properties properties) {
-        super(material, type, getComponent());
-    }
-
-    private static @NotNull Properties getComponent() {
-        return new Properties()
-            .durability(37)
-            .component(DataComponentRegistry.RUNE_HOLDER.get(), RuneHolder.makeRuneSlots(1));
+    public MageArmor(Holder<ArmorMaterial> material, Type type, Properties properties) {
+        super(material, type, properties);
     }
 
     @Override
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
         consumer.accept(
             new GeoRenderProvider() {
-                private WizardArmorRenderer renderer;
+                private MageArmorRenderer renderer;
 
                 @Override
                 public @Nullable <T extends LivingEntity> HumanoidModel<?> getGeoArmorRenderer(@Nullable T livingEntity, ItemStack itemStack, @Nullable EquipmentSlot equipmentSlot, @Nullable HumanoidModel<T> original) {
                     if (this.renderer == null)
-                        this.renderer = new WizardArmorRenderer();
+                        this.renderer = new MageArmorRenderer();
 
                     return this.renderer;
                 }

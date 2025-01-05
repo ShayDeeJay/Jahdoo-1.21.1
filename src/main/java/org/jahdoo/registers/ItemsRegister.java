@@ -12,6 +12,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.items.ArchmageGauntlet;
 import org.jahdoo.items.CoreItem;
+import org.jahdoo.items.armor.MageArmor;
 import org.jahdoo.items.armor.WizardArmor;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.block_items.ChallengeAltarBlockItem;
@@ -64,6 +65,7 @@ public class ItemsRegister {
         ITEMS.register("health_container", () -> new HealthContainer(new Item.Properties()));
 
     //Armor
+    //Wizard
     public static final DeferredHolder<Item, Item> WIZARD_HELMET =
         ITEMS.register("wizard_helmet", () -> new WizardArmor(ArmorMaterialRegistry.WIZARD, ArmorItem.Type.HELMET, new Item.Properties()));
     public static final DeferredHolder<Item, Item> WIZARD_CHESTPLATE =
@@ -72,6 +74,16 @@ public class ItemsRegister {
         ITEMS.register("wizard_leggings", () -> new WizardArmor(ArmorMaterialRegistry.WIZARD, ArmorItem.Type.LEGGINGS, new Item.Properties()));
     public static final DeferredHolder<Item, Item> WIZARD_BOOTS =
         ITEMS.register("wizard_boots", () -> new WizardArmor(ArmorMaterialRegistry.WIZARD, ArmorItem.Type.BOOTS, new Item.Properties()));
+
+    //Mage
+    public static final DeferredHolder<Item, Item> MAGE_HELMET =
+        ITEMS.register("mage_helmet", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final DeferredHolder<Item, Item> MAGE_CHESTPLATE =
+        ITEMS.register("mage_chestplate", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final DeferredHolder<Item, Item> MAGE_LEGGINGS =
+        ITEMS.register("mage_leggings", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final DeferredHolder<Item, Item> MAGE_BOOTS =
+        ITEMS.register("mage_boots", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.BOOTS, new Item.Properties()));
 
     public static DeferredHolder<Item, Item> basicItem(String name){
         return ITEMS.register(name, () -> new Item(new Item.Properties()));

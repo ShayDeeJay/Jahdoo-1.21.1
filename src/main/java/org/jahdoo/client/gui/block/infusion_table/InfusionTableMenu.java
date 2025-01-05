@@ -9,12 +9,12 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
+import org.jahdoo.block.wand_block_manager.WandManagerEntity;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.MenusRegister;
 
 public class InfusionTableMenu extends AbstractContainerMenu {
-    public final WandManagerTableEntity blockEntity;
+    public final WandManagerEntity blockEntity;
     private final Level level;
     private final ContainerData data;
     private final Container accept = new SimpleContainer(1);
@@ -40,7 +40,7 @@ public class InfusionTableMenu extends AbstractContainerMenu {
         checkContainerSize(inv, TOTAL_SLOTS + 1);
 
         // Cast the BlockEntity to CrystalInfusionTableEntity and assign it to the blockEntity field
-        blockEntity = ((WandManagerTableEntity) entity);
+        blockEntity = ((WandManagerEntity) entity);
 
         // Get the level (world) associated with the player's inventory
         this.level = inv.player.level();

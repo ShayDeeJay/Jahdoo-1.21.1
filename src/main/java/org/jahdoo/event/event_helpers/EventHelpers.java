@@ -76,7 +76,6 @@ public class EventHelpers {
         if(fromMCDim && toCustomDim){
             if(player instanceof ServerPlayer serverPlayer){
                 if(serverPlayer.gameMode.isSurvival()){
-                    System.out.println("sds");
                     serverPlayer.setGameMode(GameType.ADVENTURE);
                 }
             }
@@ -108,8 +107,8 @@ public class EventHelpers {
     }
 
     public static void useRuneAttributes(ItemAttributeModifierEvent event, ItemStack item) {
-        var slotAttributes = item.get(DataComponentRegistry.WAND_DATA.get());
-        if(item.getItem() instanceof WandItem && slotAttributes != null){
+        var slotAttributes = item.get(DataComponentRegistry.RUNE_HOLDER.get());
+        if(slotAttributes != null){
             for (ItemStack itemStack : slotAttributes.runeSlots()) {
                 var mods = itemStack.getAttributeModifiers().modifiers();
                 if (!mods.isEmpty()) {

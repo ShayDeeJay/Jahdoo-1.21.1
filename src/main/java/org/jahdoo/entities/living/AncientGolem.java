@@ -163,10 +163,6 @@ public class AncientGolem extends IronGolem implements TamableEntity {
         if(!this.level().isClientSide) particle();
         reassignPlayer();
         this.resetFallDistance();
-
-//        System.out.println(this.sonicBoomAnimationState.getAccumulatedTime());
-
-
     }
 
     private void particle(){

@@ -28,6 +28,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.components.RuneHolder;
 import org.jahdoo.components.WandData;
 import org.jahdoo.networking.packet.client2server.WandDataC2SPacket;
 import org.jahdoo.particle.ParticleHandlers;
@@ -46,6 +47,7 @@ import java.util.List;
 
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 //import static org.jahdoo.registers.DataComponentRegistry.ABILITY_SLOTS;
+import static org.jahdoo.registers.DataComponentRegistry.RUNE_HOLDER;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
 
@@ -154,7 +156,7 @@ public class WandBlock extends BaseEntityBlock {
 
     private static ItemInteractionResult slotTesting(Player player, ItemStack heldItem, WandBlockEntity wandBlock, BlockPos blockPos) {
         var internalWand = wandBlock.getWandItemFromSlot();
-        var wandData = internalWand.get(WAND_DATA);
+        var wandData = internalWand.get(RUNE_HOLDER);
         if (wandData != null && !wandData.runeSlots().isEmpty()) {
             var temp = new ArrayList<>(wandData.runeSlots());
             if (!heldItem.isEmpty()) {
@@ -163,7 +165,7 @@ public class WandBlock extends BaseEntityBlock {
                         temp.remove(itemStack);
                         temp.add(heldItem.copyWithCount(1));
                         heldItem.shrink(1);
-                        WandData.updateRuneSlots(wandBlock.getWandItemFromSlot(), temp);
+                        RuneHolder.updateRuneSlots(wandBlock.getWandItemFromSlot(), temp);
 //                        PacketDistributor.sendToServer(new WandDataC2SPacket(wandData, blockPos));
                         return ItemInteractionResult.CONSUME;
                     }
@@ -173,7 +175,7 @@ public class WandBlock extends BaseEntityBlock {
                     if (!itemStack.isEmpty() && player.getMainHandItem().isEmpty()) {
                         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
                         temp.set(temp.indexOf(itemStack), ItemStack.EMPTY);
-                        WandData.updateRuneSlots(wandBlock.getWandItemFromSlot(), temp);
+                        RuneHolder.updateRuneSlots(wandBlock.getWandItemFromSlot(), temp);
 //                        PacketDistributor.sendToServer(new WandDataC2SPacket(wandData, blockPos));
                         return ItemInteractionResult.CONSUME;
                     }

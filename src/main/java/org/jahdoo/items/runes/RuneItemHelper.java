@@ -37,7 +37,7 @@ public class RuneItemHelper {
             var stack = player.getMainHandItem();
             var newStack = stack.copyWithCount(1);
             stack.shrink(1);
-            generateRandomTypAttribute(newStack);
+            generateRandomTypAttribute(newStack, null);
             AugmentItemHelper.throwOrAddItem(player, newStack);
         }
         return InteractionResultHolder.fail(player.getMainHandItem());

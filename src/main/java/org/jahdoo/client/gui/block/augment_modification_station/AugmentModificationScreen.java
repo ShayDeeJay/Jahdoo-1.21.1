@@ -78,22 +78,22 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         int width = this.width / 2;
         var getTag = this.item.get(DataComponentRegistry.WAND_ABILITY_HOLDER);
         if (getTag == null) return;
-        for (Component component : componentsWithBounds(item)){
+        var components = componentsWithBounds(item);
+
+        for (Component component : components){
             var x = getAbilityModifiers(component, getTag);
 
             if(x.highestValue() != -1){
-                if (!component.equals(Component.literal(" ")) && !component.getString().contains("Unique")) {
-                    String regex = ".*\\d.*";
-                    var ySpacer = (this.height / 2 - 90) + spacer.get();
-                    int selectedY1 = (int) (ySpacer + this.yScroll);
-                    buildPropertiesWithHighlight(component, width, selectedY1);
-                    if (Pattern.matches(regex, component.getString()) && !component.getString().contains(")")) {
-                        var correctAdjustment = x.isHigherBetter() ? x.actualValue() == x.highestValue() : x.actualValue() == x.lowestValue();
-                        var nexUpgrade = x.isHigherBetter() ? x.actualValue() + x.step() == x.highestValue() : x.actualValue() - x.step() == x.lowestValue();
-                        upgradeButton(component, width, ySpacer, nexUpgrade, correctAdjustment, x);
-                    }
-                    spacer.set(spacer.get() + (component.getString().contains(")") || !Pattern.matches(regex, component.getString()) ? 17 : 10));
+                String regex = ".*\\d.*";
+                var ySpacer = (this.height / 2 - 90) + spacer.get();
+                int selectedY1 = (int) (ySpacer + this.yScroll);
+                buildPropertiesWithHighlight(component, width, selectedY1);
+                if (Pattern.matches(regex, component.getString()) && !component.getString().contains(")")) {
+                    var correctAdjustment = x.isHigherBetter() ? x.actualValue() == x.highestValue() : x.actualValue() == x.lowestValue();
+                    var nexUpgrade = x.isHigherBetter() ? x.actualValue() + x.step() == x.highestValue() : x.actualValue() - x.step() == x.lowestValue();
+                    upgradeButton(component, width, ySpacer, nexUpgrade, correctAdjustment, x);
                 }
+                spacer.set(spacer.get() + (component.getString().contains(")") || !Pattern.matches(regex, component.getString()) ? 17 : 10));
             }
         }
     }
@@ -101,7 +101,10 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     public static List<Component> componentsWithBounds(ItemStack item){
         var components = getComponents(item);
         var getTag =item.get(DataComponentRegistry.WAND_ABILITY_HOLDER);
-        var compNew = components.subList(1, components.size()-2).stream().filter(component -> getAbilityModifiers(component, getTag).highestValue() != -1);
+        var compNew = components
+            .subList(1, components.size()-2).stream().filter(component -> getAbilityModifiers(component, getTag).highestValue() != -1)
+            .filter(component -> !component.equals(Component.literal(" ")) && !component.getString().contains("Unique"));
+//        compNew.filter(component -> !component.equals(Component.literal(" ")) && !component.getString().contains("Unique"));
         return compNew.toList();
     }
 
@@ -216,8 +219,8 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     }
 
     private void windowMoveVertical(double dragY) {
-        int size = componentsWithBounds(item).size();
-        if (size > 6 || size > 2 && showInventory) {
+        var size = componentsWithBounds(item).size();
+        if (size > 14 || size > 2 && showInventory) {
             int b = 7 * size * size - 135 * size + 578;
             this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, b + (!showInventory ? -20 : -120)));
             this.rebuildWidgets();
@@ -244,6 +247,11 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
+        var adjustX = 18;
+        var adjustY = -27;
+        var startX = this.width / 2 - 140;
+        var startY = this.height/2 + 22;
+        var element = ElementRegistry.getElementByTypeId(getElementIdAugment(this.item));
         this.renderBlurredBackground(pPartialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
         SharedUI.setCustomBackground(this.height, this.width, guiGraphics);
@@ -251,23 +259,11 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         selectedBox(guiGraphics, mouseX, mouseY);
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         guiGraphics.disableScissor();
-
-        var adjustX = 18;
-        var adjustY = -27;
-        var startX = this.width / 2 - 140;
-        var startY = this.height/2 + 22;
-
         SharedUI.header(guiGraphics, this.width, this.height, this.item, this.font);
         overlayInventory(guiGraphics, startX, startY);
-        var element = ElementRegistry.getElementByTypeId(getElementIdAugment(this.item));
-        if(!element.isEmpty()){
-            boxMaker(guiGraphics, startX - 18 + adjustX, startY - 47 + adjustY, 18, 48, BORDER_COLOUR);
-            SharedUI.bezelMaker(guiGraphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element.getFirst());
-            coreSlots(guiGraphics, adjustX, adjustY);
-        }
-
+        SharedUI.augmentCoreSlots(guiGraphics, 20, 10, BORDER_COLOUR, this.width, this.height, getFadedColourBackground(0.7f));
+        SharedUI.bezelMaker(guiGraphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element.getFirst());
     }
-
 
     private void coreSlots(@NotNull GuiGraphics guiGraphics, int adjustX, int adjustY) {
         var spacer = new AtomicInteger();
@@ -288,10 +284,6 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
             renderInventoryBackground(guiGraphics, this, 256, 24, this.showInventory);
         }
         guiGraphics.pose().pushPose();
-    }
-
-    private List<ResourceLocation> getOverlays(){
-        return List.of(CORE, ADVANCED_AUGMENT_CORE, AUGMENT_HYPER_CORE);
     }
 
     private void selectedBox(@NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {

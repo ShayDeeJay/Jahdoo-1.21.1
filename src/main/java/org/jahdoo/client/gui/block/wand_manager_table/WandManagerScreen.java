@@ -5,7 +5,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -15,10 +14,11 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
-import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
+import org.jahdoo.block.wand_block_manager.WandManagerEntity;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.block.augment_modification_station.AugmentCoreSlot;
 import org.jahdoo.client.gui.block.augment_modification_station.InventorySlots;
+import org.jahdoo.components.RuneHolder;
 import org.jahdoo.components.WandData;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.wand.WandItem;
@@ -30,7 +30,6 @@ import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.client.IconLocations.*;
@@ -116,7 +115,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         if(this.hoveredSlot != null) rebuildWidgets();
     }
 
-    public WandManagerTableEntity entity(){
+    public WandManagerEntity entity(){
         return this.wandManager.getWandManagerEntity();
     }
 
@@ -201,7 +200,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         if(!this.setView){
             baseWandProperties(guiGraphics, shiftX, spacer, shiftY, startX, startY);
         } else {
-            var getRunes = WandData.wandData(getWand());
+            var getRunes = RuneHolder.getRuneholder(getWand());
             handleSlotsInGridLayout(
                 (slotX, slotY, index) -> {
                     for (ItemStack ignored : getRunes.runeSlots()) {
@@ -226,6 +225,10 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             var startY1 = startY + i1 - 94 + shiftY;
             var heightOffset = 86 - (showInventory ? 40 : 0);
             boxMaker(guiGraphics, startX1, startY1, Math.max(10, 74), heightOffset, borderColour, groupFade());
+
+            if(getRunes.runeSlots().isEmpty()){
+                guiGraphics.drawCenteredString(this.font, "No Slots Available", startX1 + 74, startY1 + 40, ColourStore.SUB_HEADER_COLOUR);
+            }
         }
 
         var startX1 = this.width / 2 - 38 + shiftX;
@@ -304,24 +307,6 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         return ModHelpers.withStyleComponent(headerBuilder, BORDER_COLOUR);
     }
 
-    private void coreSlots(@NotNull GuiGraphics guiGraphics, int adjustX, int adjustY) {
-        var spacer = new AtomicInteger();
-        var posX = this.width / 2;
-        var posY = this.height / 2;
-        var startX = posX + adjustX - 159;
-        var startY = posY - 62 + adjustY;
-        boxMaker(guiGraphics, startX, startY, 17, 46, borderColour, groupFade());
-        for(ResourceLocation location : getOverlays()){
-            var offsetX = 158;
-            var offsetY = 60;
-            var x = posX - offsetX + adjustX;
-            var y = posY + spacer.get() - offsetY + adjustY;
-            guiGraphics.blit(GUI_ITEM_SLOT, x, y, 0,0,32,32,32,32);
-            guiGraphics.blit(location, x, y, 0,0,32,32,32,32);
-            spacer.set(spacer.get() + 28);
-        }
-    }
-
     private void overlayInventory(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
         guiGraphics.pose().popPose();
         var i = 40;
@@ -333,10 +318,6 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             renderInventoryBackground(guiGraphics, this, 256, 24, this.showInventory);
         }
         guiGraphics.pose().pushPose();
-    }
-
-    private List<ResourceLocation> getOverlays(){
-        return List.of(CORE, ADVANCED_AUGMENT_CORE, AUGMENT_HYPER_CORE);
     }
 
     @Override
@@ -351,7 +332,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
 
         scaleItem();
         reRollContainer(guiGraphics, startX, startY);
-        coreSlots(guiGraphics, adjustX, adjustY);
+        augmentCoreSlots(guiGraphics, adjustX, adjustY, borderColour, this.width, this.height, groupFade());
         renderWand(guiGraphics, mouseX, mouseY, startX, startY);
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
@@ -371,13 +352,13 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var expLvl = Component.literal(String.valueOf(exp));
         var offsetX = 0;
         var offsetY = -27;
-        var potential = WandData.wandData(getWand()).refinementPotential();
+        var potential = getPotential();
         if(!showInventory && isHovering && potential > 0){
             SharedUI.boxMaker(guiGraphics, mouseX - 26 + offsetX, mouseY + offsetY, 26, 13, BORDER_COLOUR, getFadedColourBackground(0.6f));
             SharedUI.drawStringWithBackground(guiGraphics, this.font, refinementPotential, mouseX + offsetX, mouseY + 15 + offsetY, 0, expColour, true);
             guiGraphics.drawCenteredString(font, "Exp Cost", mouseX + offsetX, mouseY + 4 + offsetY, -1);
             SharedUI.drawStringWithBackground(guiGraphics, this.font, expLvl, i, startY + 69, 0, 8453920, true);
-            renderExperienceBar(guiGraphics, i - 91, startY + 78);
+            renderExperienceBar(guiGraphics, i - 91, startY + 78, this.getMinecraft());
         }
     }
 
@@ -385,37 +366,28 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var player = this.getMinecraft().player;
         if(player == null) return false;
         var exp = player.experienceLevel;
-        var potential = WandData.wandData(getWand()).refinementPotential();
+        var potential = getPotential();
         var getMaxCost = getExperienceCost();
         return exp >= getMaxCost && potential > 0  ;
     }
 
-    private int getExperienceCost() {
-        var potential = WandData.wandData(getWand()).refinementPotential();
-        return Math.max(10, 100 - potential);
+    private int getPotential() {
+        return WandData.wandData(getWand()).refinementPotential();
     }
 
-    private void renderExperienceBar(GuiGraphics guiGraphics, int x, int l) {
-        var expBackground = ResourceLocation.withDefaultNamespace("hud/experience_bar_background");
-        var expProgress = ResourceLocation.withDefaultNamespace("hud/experience_bar_progress");
-        if(this.minecraft == null || this.minecraft.player == null) return;
-        this.minecraft.getProfiler().push("expBar");
-        int i = this.minecraft.player.getXpNeededForNextLevel();
-        if (i > 0) {
-            int k = (int)(this.minecraft.player.experienceProgress * 183.0F);
-            guiGraphics.blitSprite(expBackground, x, l, 182, 5);
-            if (k > 0) guiGraphics.blitSprite(expProgress, 182, 5, 0, 0, x, l, k, 5);
-        }
-        this.minecraft.getProfiler().pop();
+    private int getExperienceCost() {
+        var potential = getPotential();
+        return Math.max(10, 100 - potential);
     }
 
     private void reRollContainer(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
         var startX1 = startX + 105;
         var startY1 = startY + 35;
         var colour = 0xb97700;
-        var reRoll = ModHelpers.withStyleComponent("Re-Roll", colour);
-        boxMaker(guiGraphics, startX1, startY1, 32, 9, BORDER_COLOUR, getFadedColourBackground(0.9f));
-        guiGraphics.drawCenteredString(this.font, reRoll, startX + 146, startY + 40, 0);
+        var potential = getPotential() > 0;
+        var reRoll = ModHelpers.withStyleComponent(potential ? "Re-Roll" : "Unmodifiable", potential ? colour : ColourStore.HEADER_COLOUR);
+        boxMaker(guiGraphics, startX1, startY1, potential ? 30 : 42, 9, BORDER_COLOUR, getFadedColourBackground(0.9f));
+        guiGraphics.drawString(this.font, reRoll, startX + 126, startY + 40, 0);
     }
 
     private void scaleItem() {

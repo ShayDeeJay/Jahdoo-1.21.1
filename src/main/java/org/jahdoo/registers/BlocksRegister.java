@@ -22,17 +22,15 @@ import org.jahdoo.block.infuser.InfuserBlock;
 import org.jahdoo.block.light_block.LightBlock;
 import org.jahdoo.block.tank.NexiteTankBlock;
 import org.jahdoo.block.wand.WandBlock;
-import org.jahdoo.block.wand_block_manager.WandManagerTableBlock;
+import org.jahdoo.block.wand_block_manager.WandManagerBlock;
 
 import java.util.function.Supplier;
-
-import static org.jahdoo.block.tank.NexiteTankBlock.LIT;
 
 public class BlocksRegister {
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(BuiltInRegistries.BLOCK, JahdooMod.MOD_ID);
 
-    public static DeferredHolder<Block, Block> WAND_MANAGER_TABLE = registerBlock("wand_manager_table",WandManagerTableBlock::new);
+    public static DeferredHolder<Block, Block> WAND_MANAGER_TABLE = registerBlock("wand_manager_table", WandManagerBlock::new);
     public static DeferredHolder<Block, Block> CREATOR = registerBlock("creator", CreatorBlock::new);
     public static DeferredHolder<Block, Block> INFUSER = BLOCKS.register("infuser", InfuserBlock::new);
     public static DeferredHolder<Block, Block> CHALLENGE_ALTAR = BLOCKS.register("challenge_alter", ChallengeAltarBlock::new);

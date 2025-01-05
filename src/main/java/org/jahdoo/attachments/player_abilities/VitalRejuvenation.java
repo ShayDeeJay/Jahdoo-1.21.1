@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -101,13 +102,13 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
         player.eat(player.level(), ItemStack.EMPTY, foodProperties);
     }
 
-    private void successfulCastAnimation(Player player) {
+    public static void successfulCastAnimation(LivingEntity player) {
         ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, 1f,1.2f);
         ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.HEAL.get(), 1f,1f);
         PositionGetters.getOuterRingOfRadius(player.position(), 0.2, 30, vec3 -> setRejuvenationSuccessEffect(vec3, player));
     }
 
-    private void setRejuvenationSuccessEffect(Vec3 worldPosition, Player player){
+    public static void setRejuvenationSuccessEffect(Vec3 worldPosition, LivingEntity player){
         var directions = worldPosition.subtract(player.position()).normalize();
         var lifetime = 8;
         var element = ElementRegistry.VITALITY.get();

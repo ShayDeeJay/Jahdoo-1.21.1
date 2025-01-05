@@ -10,11 +10,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
@@ -164,6 +166,7 @@ public record RuneData(
 
         public static void generateFullRune(ItemStack stack, Pair<String, Holder<Attribute>> type, double value, String name, JahdooRarity rarity, String description, int elementId, int tier, int colour) {
             replaceOrAddAttribute(stack,type.getFirst(),type.getSecond(), value, EquipmentSlot.MAINHAND, true);
+            replaceOrAddAttribute(stack, Attributes.MOVEMENT_SPEED.getRegisteredName(), Attributes.MOVEMENT_SPEED, (0.1F * 40) / 100, EquipmentSlot.MAINHAND, true);
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewRarity(rarity.getId()));
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewName(name + " " + RuneData.SUFFIX));
             stack.update(RUNE_DATA.get(), RuneData.DEFAULT, data -> data.insertNewColour(colour));
@@ -202,10 +205,10 @@ public record RuneData(
             return (alpha << 24) | (red << 16) | (green << 8) | blue;
         }
 
-        public static void generateRandomTypAttribute(ItemStack stack) {
+        public static void generateRandomTypAttribute(ItemStack stack, @Nullable  JahdooRarity withRarity) {
             if(stack.getAttributeModifiers().modifiers().isEmpty()){
                 var getElement = getRandomElement();
-                var rarity = JahdooRarity.getRarity();
+                var rarity = withRarity != null ? withRarity : JahdooRarity.getRarity();
 
                 var allManaAttributes = List.of(
                     Pair.of(Pair.of(MANA_REGEN_PREFIX, MANA_REGEN.getDelegate()), rarity.getAttributes().getRandomManaRegen()),
@@ -220,7 +223,8 @@ public record RuneData(
 
                 var skillRunes = List.of(
                     Pair.of(Pair.of(MAGE_FLIGHT_PREFIX, MAGE_FLIGHT.getDelegate()), "Allows the player to fly, at the cost of mana."),
-                    Pair.of(Pair.of(DESTINY_BOND_PREFIX, DESTINY_BOND.getDelegate()), "Keep your wand on death")
+                    Pair.of(Pair.of(DESTINY_BOND_PREFIX, DESTINY_BOND.getDelegate()), "Keep your wand on death"),
+                    Pair.of(Pair.of(Attributes.MOVEMENT_SPEED.getRegisteredName(), Attributes.MOVEMENT_SPEED), "Keep your wand on death")
                 );
 
                 var allTypeAttributes = List.of(
@@ -235,7 +239,6 @@ public record RuneData(
                 var getMultiAttribute = allMultiRunes.get(randomIndex);
                 var getManaAttributes = allManaAttributes.get(randomIndex2);
                 var getSkillAttributes = skillRunes.get(randomIndex2);
-
 
                 switch (getRarity()){
                     case COMMON -> {

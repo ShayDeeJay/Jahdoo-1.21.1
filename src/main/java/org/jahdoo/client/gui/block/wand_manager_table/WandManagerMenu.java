@@ -9,10 +9,10 @@ import net.minecraft.world.level.block.Block;
 import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.block.AbstractBEInventory;
-import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
+import org.jahdoo.block.wand_block_manager.WandManagerEntity;
 import org.jahdoo.client.gui.AbstractInternalContainer;
 import org.jahdoo.client.gui.block.augment_modification_station.AugmentCoreSlot;
-import org.jahdoo.components.WandData;
+import org.jahdoo.components.RuneHolder;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.registers.MenusRegister;
@@ -20,7 +20,7 @@ import org.jahdoo.registers.MenusRegister;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.jahdoo.block.wand_block_manager.WandManagerTableEntity.DEFAULT_SLOTS;
+import static org.jahdoo.block.wand_block_manager.WandManagerEntity.DEFAULT_SLOTS;
 import static org.jahdoo.client.SharedUI.handleSlotsInGridLayout;
 
 public class WandManagerMenu extends AbstractInternalContainer {
@@ -61,7 +61,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
     private void insertRuneSlots() {
         try{
             var getAllSlots = this.getWandManagerEntity().getWandSlot();
-            var getData = WandData.wandData(getAllSlots);
+            var getData = RuneHolder.getRuneholder(getAllSlots);
             var iHandler = getWandManagerEntity().inputItemHandler;
             var item = ItemsRegister.RUNE.get();
             var indexOne = new AtomicInteger(4);
@@ -69,7 +69,6 @@ public class WandManagerMenu extends AbstractInternalContainer {
                 iHandler.setStackInSlot(indexOne.get(), itemStack);
                 indexOne.set(indexOne.get() + 1);
             }
-
             handleSlotsInGridLayout(
                 (slotX, slotY, index) -> this.addSlot(new AugmentCoreSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, item, this.getWandManagerEntity(), 1)),
                 getData.runeSlots().size(), 0,0, offSetX, offSetY
@@ -87,14 +86,14 @@ public class WandManagerMenu extends AbstractInternalContainer {
         );
     }
 
-    public WandManagerTableEntity getWandManagerEntity(){
-        if(this.blockEntity instanceof WandManagerTableEntity augmentModification) return augmentModification;
+    public WandManagerEntity getWandManagerEntity(){
+        if(this.blockEntity instanceof WandManagerEntity augmentModification) return augmentModification;
         return null;
     }
 
     @Override
     protected int getAllSlots() {
-        int size = WandData.wandData(getWandManagerEntity().getWandSlot()).runeSlots().size();
+        int size = RuneHolder.getRuneholder(getWandManagerEntity().getWandSlot()).runeSlots().size();
         return size + DEFAULT_SLOTS;
     }
 

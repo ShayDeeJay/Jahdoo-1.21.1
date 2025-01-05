@@ -4,6 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -13,6 +14,7 @@ import org.jahdoo.components.RuneData;
 import org.jahdoo.networking.packet.client2server.MageFlightPacketS2CPacket;
 import org.jahdoo.networking.packet.server2client.MageFlightDataSyncS2CPacket;
 import org.jahdoo.particle.ParticleStore;
+import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
@@ -92,12 +94,14 @@ public class MageFlight implements AbstractAttachment {
 
     private void flying(Player player, CastingData manaSystem, ItemStack wandItem) {
         if (manaSystem.getManaPool() > manaCost) {
+//            player.getData(BOUNCY_FOOT).setEffectTimer(160);
             player.getAbilities().mayfly = true;
-            player.getData(BOUNCY_FOOT).setEffectTimer(160);
-            manaSystem.subtractMana(manaCost, player);
+            var getPool = player.getAttribute(AttributesRegister.MANA_POOL);
+            var manaCost = (getPool != null ? getPool.getValue() : 1) / 150;
+            manaSystem.subtractMana(Math.min(manaCost, 2), player);
             var getDelta = player.getDeltaMovement();
-            var speedModifier = 0.05;
-            player.setDeltaMovement(player.getDeltaMovement().add(getDelta.x * speedModifier, 0.1, getDelta.z * speedModifier));
+            var speedModifier = 0.02;
+            player.setDeltaMovement(player.getDeltaMovement().add(getDelta.x * speedModifier, 0.09, getDelta.z * speedModifier));
             mageFlightAnimation(wandItem, player);
         }
     }

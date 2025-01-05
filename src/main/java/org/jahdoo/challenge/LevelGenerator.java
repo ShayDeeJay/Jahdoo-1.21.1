@@ -6,37 +6,36 @@ import net.casual.arcade.dimensions.ArcadeDimensions;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.casual.arcade.dimensions.level.builder.CustomLevelBuilder;
 import net.casual.arcade.dimensions.utils.impl.VoidChunkGenerator;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biomes;
-import net.minecraft.world.level.block.JigsawBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.fml.common.Mod;
 import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
+import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
+import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.utils.ModHelpers;
 
 import javax.annotation.Nullable;
 import java.util.*;
+
+import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
 
 public class LevelGenerator {
 
@@ -52,10 +51,10 @@ public class LevelGenerator {
         ArcadeDimensions.delete(serverLevel.getServer(), customLevel);
     }
 
-    public static void createNewWorld(Player player, ServerLevel serverLevel) {
+    public static void createNewWorld(Player player, ServerLevel serverLevel, ChallengeAltarData altarData) {
         var testKey = "end_"+UUID.randomUUID();
         generateNewLevel(serverLevel, testKey);
-        findLevel(testKey, serverLevel).ifPresent(level -> generateStructure(player, level));
+        findLevel(testKey, serverLevel).ifPresent(level -> generateStructure(player, level, altarData));
     }
 
     private static void generateNewLevel(ServerLevel serverLevel, @Nullable String key) {
@@ -94,7 +93,7 @@ public class LevelGenerator {
         ArcadeDimensions.add(serverLevel.getServer(), builder);
     }
 
-    private static void generateStructure(Player player, ServerLevel level){
+    private static void generateStructure(Player player, ServerLevel level, ChallengeAltarData data){
         var pos = new BlockPos(0, 40, 0);
         var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 16).toList();
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
@@ -107,7 +106,17 @@ public class LevelGenerator {
         }
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
+        //Here we can pass the data from the previous altar to set up the next challenge stack.
+        setAltarAndData(level, data);
         teleportToPlatform(player, level);
+    }
+
+    private static void setAltarAndData(ServerLevel level, ChallengeAltarData data) {
+        var pos = new BlockPos(-25, 67, -72);
+        level.setBlock(pos, BlocksRegister.CHALLENGE_ALTAR.get().defaultBlockState(), 2);
+        if(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity altar){
+            altar.setData(CHALLENGE_ALTAR, data);
+        }
     }
 
     private static void teleportToPlatform(Player player, ServerLevel level) {

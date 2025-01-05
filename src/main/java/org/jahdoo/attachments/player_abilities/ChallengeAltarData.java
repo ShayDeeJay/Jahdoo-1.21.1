@@ -53,7 +53,7 @@ public class ChallengeAltarData implements AbstractAttachment {
 
     // Method to update the `isActive` field
     public ChallengeAltarData resetWithNewLevel() {
-        return new ChallengeAltarData(new ArrayList<>(), false, 0, 0, 0, this.round + 1, this.maxRound);
+        return new ChallengeAltarData(new ArrayList<>(), this.isActive, 0, 0, 0, this.round + 1, this.maxRound);
     }
 
     // Method to update the `isActive` field
@@ -209,6 +209,11 @@ public class ChallengeAltarData implements AbstractAttachment {
         return Math.min(maxMobsOnMap, maxMobs - killedMobs);
     }
 
+    public boolean isSubRoundActive(BlockEntity entity){
+        var altarData = entity.getData(CHALLENGE_ALTAR);
+        return altarData.maxMobs() != altarData.killedMobs();
+    }
+
     public static void incrementKilledMobs(BlockEntity entity){
         var altarData = entity.getData(CHALLENGE_ALTAR);
         var newData = altarData.updateKilledMobs(altarData.killedMobs + 1);
@@ -221,12 +226,16 @@ public class ChallengeAltarData implements AbstractAttachment {
         altarData.addMob(uuid);
         entity.setChanged();
     }
-
     public static boolean isCompleted(BlockEntity entity){
         var altarData = entity.getData(CHALLENGE_ALTAR);
         var maxRound = altarData.maxRound();
         var round = altarData.round();
         return maxRound > 0 && round == 0;
+    }
+
+    public static boolean isActive(BlockEntity entity){
+        var altarData = entity.getData(CHALLENGE_ALTAR);
+        return altarData.isActive();
     }
 
     public static void removeEntity(BlockEntity entity, UUID uuid){
@@ -256,6 +265,10 @@ public class ChallengeAltarData implements AbstractAttachment {
         entity.setChanged();
     }
 
+    public static int getRound(BlockEntity entity){
+        var altarData = entity.getData(CHALLENGE_ALTAR);
+        return altarData.round();
+    }
 
     public static void altarClickToStart(ChallengeAltarBlockEntity altarE) {
         ChallengeAltarData.setMaxMobs(altarE);
@@ -271,18 +284,29 @@ public class ChallengeAltarData implements AbstractAttachment {
         ChallengeAltarData.maxRounds(altarE, maxRound);
     }
 
+    public static void nextSubRound(ChallengeAltarBlockEntity altarE, int round) {
+        ChallengeAltarData.setMaxMobs(altarE);
+        ChallengeAltarData.setMaxMapMobs(altarE);
+//        ChallengeAltarData.flipActive(altarE);
+        ChallengeAltarData.setRound(altarE, round);
+    }
+
     public static void setMaxMobs(BlockEntity entity) {
         var altarData = entity.getData(CHALLENGE_ALTAR);
         var round = Math.max(2, altarData.round());
-        var newMaxMobData = altarData.updateMaxMobs(round * 3 + Random.nextInt(Math.max(round /5, 3)));
+        var newMaxMobData = altarData.updateMaxMobs(round * 3 + Random.nextInt(Math.max(round / 5, 3)));
         entity.setData(CHALLENGE_ALTAR, newMaxMobData);
         entity.setChanged();
+    }
+
+    public static ChallengeAltarData newRound(int round){
+        return new ChallengeAltarData(new ArrayList<>(), false, 0, 0, 0, round, round + 5);
     }
 
     public static void setMaxMapMobs(BlockEntity entity) {
         var altarData = entity.getData(CHALLENGE_ALTAR);
         var round = altarData.round();
-        var newMaxMobMapData = altarData.updateMaxMobsOnMap(Math.max(2, Math.min(round / 2, 30)));
+        var newMaxMobMapData = altarData.updateMaxMobsOnMap(Math.max(4, Math.min(round / 2, 30)));
         entity.setData(CHALLENGE_ALTAR, newMaxMobMapData);
         entity.setChanged();
     }

@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.attachments.AbstractAttachment;
 import org.jahdoo.networking.packet.server2client.BouncyFootDataSyncS2CPacket;
+import org.jahdoo.registers.EffectsRegister;
 
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.registers.AttachmentRegister.*;
@@ -17,6 +18,7 @@ public class BouncyFoot implements AbstractAttachment {
     private double currentDelta;
     private double previousDelta;
     private int effectTimer;
+    public float setHighestFallPoint;
 
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putInt("effect_timer", this.effectTimer);
@@ -39,34 +41,34 @@ public class BouncyFoot implements AbstractAttachment {
     }
 
     public void onTick(Player player){
-        if(player instanceof ServerPlayer serverPlayer){
-            PacketDistributor.sendToPlayer(serverPlayer, new BouncyFootDataSyncS2CPacket(effectTimer, previousDelta, currentDelta));
-        }
-        this.previousDelta = this.currentDelta;
-        this.currentDelta = player.getDeltaMovement().y;
-        var isJumping = this.currentDelta != this.previousDelta;
-
-        if(!isJumping) this.effectTimer = 0;
-
-        if(effectTimer > 0){
-            effectTimer--;
-            if (player.isShiftKeyDown()) this.currentDelta = 0; else player.resetFallDistance();
-
-            if (player.onGround() && previousDelta != currentDelta) {
-                var reducedDelta = Math.abs(previousDelta / 2.5);
-                player.playSound(SoundEvents.HONEY_BLOCK_HIT, (float) reducedDelta, 2f);
-//                player.setDeltaMovement(player.getDeltaMovement().add(0, Math.min(reducedDelta, 1), 0));
-                player.setDeltaMovement(player.getDeltaMovement().add(0, Math.min(reducedDelta, 1), 0));
-
+        if(/*effectTimer > 0*/ player.hasEffect(EffectsRegister.REBOUND.getDelegate())){
+            if(player instanceof ServerPlayer serverPlayer){
+                var payload = new BouncyFootDataSyncS2CPacket(effectTimer, previousDelta, currentDelta, setHighestFallPoint);
+                PacketDistributor.sendToPlayer(serverPlayer, payload);
             }
 
-            if(player.onGround()) this.effectTimer = 0;
-        }
+            this.setHighestFallPoint = Math.max(this.setHighestFallPoint, player.fallDistance);
+            this.previousDelta = this.currentDelta;
+            this.currentDelta = player.getDeltaMovement().y;
 
+            var isJumping = this.currentDelta != this.previousDelta;
+            if(!isJumping ||player.verticalCollisionBelow) {
+                this.setEffectTimer(0);
+                this.setSetHighestFallPoint(0);
+            }
+
+            effectTimer--;
+            player.resetFallDistance();
+            if (player.isShiftKeyDown()) this.currentDelta = 0;
+        }
     }
 
     public void setEffectTimer(int effectTimer){
         this.effectTimer = effectTimer;
+    }
+
+    public void setSetHighestFallPoint(float max){
+        this.setHighestFallPoint = max;
     }
 
     public void setCurrentDelta(double currentDelta) {

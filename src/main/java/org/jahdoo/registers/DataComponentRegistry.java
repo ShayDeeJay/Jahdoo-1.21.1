@@ -8,6 +8,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.components.RuneData;
+import org.jahdoo.components.RuneHolder;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.JahdooMod;
@@ -32,6 +33,9 @@ public class DataComponentRegistry {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<RuneData>> RUNE_DATA =
         register("rune_data", (builder) -> builder.persistent(RuneData.CODEC).networkSynchronized(RuneData.STREAM_CODEC).cacheEncoding());
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<RuneHolder>> RUNE_HOLDER =
+        register("rune_holder", (builder) -> builder.persistent(RuneHolder.CODEC).networkSynchronized(RuneHolder.STREAM_CODEC).cacheEncoding());
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> HEART_CONTAINER =
         register("heart_container", builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT));

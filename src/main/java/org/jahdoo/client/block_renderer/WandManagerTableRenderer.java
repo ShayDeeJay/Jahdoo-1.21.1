@@ -14,18 +14,18 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jahdoo.block.wand_block_manager.WandManagerTableBlock;
-import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
-import org.jahdoo.components.WandData;
+import org.jahdoo.block.wand_block_manager.WandManagerBlock;
+import org.jahdoo.block.wand_block_manager.WandManagerEntity;
+import org.jahdoo.components.RuneHolder;
 
-public class WandManagerTableRenderer implements BlockEntityRenderer<WandManagerTableEntity> {
+public class WandManagerTableRenderer implements BlockEntityRenderer<WandManagerEntity> {
     private final BlockEntityRenderDispatcher entityRenderDispatcher;
     public WandManagerTableRenderer(BlockEntityRendererProvider.Context context) {
         this.entityRenderDispatcher = context.getBlockEntityRenderDispatcher();
     }
 
     private int direction(BlockEntity blockEntity){
-        var direction = blockEntity.getBlockState().getValue(WandManagerTableBlock.FACING);
+        var direction = blockEntity.getBlockState().getValue(WandManagerBlock.FACING);
         if(direction == Direction.SOUTH ) return 90;
         if(direction == Direction.WEST ) return 0;
         if(direction == Direction.NORTH ) return 90;
@@ -34,7 +34,7 @@ public class WandManagerTableRenderer implements BlockEntityRenderer<WandManager
 
     @Override
     public void render(
-        WandManagerTableEntity wandManagerTable,
+        WandManagerEntity wandManagerTable,
         float pPartialTick,
         PoseStack pPoseStack,
         MultiBufferSource pBuffer,
@@ -42,13 +42,13 @@ public class WandManagerTableRenderer implements BlockEntityRenderer<WandManager
         int pPackedOverlay
     ){
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
-        var outputSlot = WandData.wandData(wandManagerTable.getWandSlot()).runeSlots();
+        var outputSlot = RuneHolder.getRuneholder(wandManagerTable.getWandSlot()).runeSlots();
         var newSlots = outputSlot.stream().filter(itemStack -> !itemStack.isEmpty()).toList();
         var spacer = new AtomicDouble();
 
         focusedItem(pPoseStack, wandManagerTable, itemRenderer, pBuffer, pPackedLight, pPartialTick);
         var size = newSlots.size();
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             var slot = newSlots.get(i);
             pPoseStack.pushPose();
             rotateAllItems(pPoseStack, wandManagerTable, () -> rotateItem(pPoseStack, wandManagerTable, itemRenderer, slot, pBuffer, pPartialTick, pPackedLight, size), i, size, pPartialTick);
@@ -57,7 +57,7 @@ public class WandManagerTableRenderer implements BlockEntityRenderer<WandManager
         }
     }
 
-    private void focusedItem(PoseStack pPoseStack, WandManagerTableEntity pBlockEntity, ItemRenderer itemRenderer, MultiBufferSource pBuffer, int packedLight, float partialTicks){
+    private void focusedItem(PoseStack pPoseStack, WandManagerEntity pBlockEntity, ItemRenderer itemRenderer, MultiBufferSource pBuffer, int packedLight, float partialTicks){
         pPoseStack.pushPose();
         var scaleItem = 0.80f;
         var outputSlot = pBlockEntity.getWandSlot();
@@ -82,7 +82,7 @@ public class WandManagerTableRenderer implements BlockEntityRenderer<WandManager
         pPoseStack.popPose();
     }
 
-    private void rotateAllItems(PoseStack pPoseStack, WandManagerTableEntity pBlockEntity, Runnable stuff, int index, int totalItems, float partialTicks) {
+    private void rotateAllItems(PoseStack pPoseStack, WandManagerEntity pBlockEntity, Runnable stuff, int index, int totalItems, float partialTicks) {
         pPoseStack.pushPose();
         var angleOffset = 360.0f / totalItems;
         var itemAngle = angleOffset * index;
@@ -94,7 +94,7 @@ public class WandManagerTableRenderer implements BlockEntityRenderer<WandManager
 
     private void rotateItem(
         PoseStack pPoseStack,
-        WandManagerTableEntity pBlockEntity,
+        WandManagerEntity pBlockEntity,
         ItemRenderer itemRenderer,
         ItemStack itemStack,
         MultiBufferSource pBuffer,

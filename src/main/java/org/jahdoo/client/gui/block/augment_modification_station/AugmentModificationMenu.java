@@ -40,7 +40,7 @@ public class AugmentModificationMenu extends AbstractInternalContainer {
         var spacer = new AtomicInteger();
         for (int i = 1; i < 4; i ++){
             this.addSlot(new AugmentCoreSlot(getAugmentEntity().inputItemHandler, i, posX, posY + spacer.get(), getCore().get(i-1)));
-            spacer.set(spacer.get() + 30);
+            spacer.set(spacer.get() + 28);
         }
     }
 

@@ -27,7 +27,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.block.BlockInteractionHandler;
-import org.jahdoo.block.wand_block_manager.WandManagerTableBlock;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;

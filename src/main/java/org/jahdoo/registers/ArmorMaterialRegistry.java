@@ -36,6 +36,11 @@ public class ArmorMaterialRegistry {
         0
     );
 
+    public static DeferredHolder<ArmorMaterial, ArmorMaterial> MAGE = register("mage_armor",
+        makeArmorMap(3, 8, 6, 3),
+        15, SoundEvents.ARMOR_EQUIP_DIAMOND, () -> Ingredient.of(Tags.Items.INGOTS_IRON), 3, 0
+    );
+
     private static DeferredHolder<ArmorMaterial, ArmorMaterial> register(
         String name,
         EnumMap<ArmorItem.Type, Integer> defense,

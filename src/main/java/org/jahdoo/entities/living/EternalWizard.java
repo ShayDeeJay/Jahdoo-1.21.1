@@ -97,6 +97,10 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
 
     public EternalWizard(EntityType<? extends AbstractSkeleton> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+        this.owner = null;
+        this.lifeTime = -1;
+        this.setLifetimes(-1);
+        this.damage = 5;
         this.reassessWeaponGoal();
     }
 
@@ -106,6 +110,7 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
         this.lifeTime = lifeTime;
         this.damage = damage;
         this.reassessWeaponGoal();
+        this.setLifetimes(lifeTime);
     }
 
     public EternalWizard(Level pLevel, Player player, double damage, double effectDuration, double effectStrength, int lifeTime, double effectChance) {
@@ -171,9 +176,7 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
 //        if(this.getTarget() == this.owner) this.setTarget(null);
         this.setPrivateTicks(this.privateTicks);
         if(owner == null && this.ownerUUID != null) this.owner = serverLevel.getPlayerByUUID(this.ownerUUID);
-        if(this.lifeTime != -1){
-            if (this.privateTicks >= lifeTime) this.discard();
-        }
+        if(this.lifeTime != -1) if (this.privateTicks >= lifeTime) this.discard();
     }
 
     @Override

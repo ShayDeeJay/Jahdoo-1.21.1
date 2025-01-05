@@ -27,6 +27,7 @@ import java.util.List;
 
 import static org.jahdoo.ability.rarity.JahdooRarity.attachRarityTooltip;
 import static org.jahdoo.particle.ParticleStore.rgbToInt;
+import static org.jahdoo.registers.DataComponentRegistry.RUNE_HOLDER;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 import static org.jahdoo.utils.ColourStore.HEADER_COLOUR;
 import static org.jahdoo.utils.ColourStore.SUB_HEADER_COLOUR;
@@ -118,7 +119,7 @@ public class WandItemHelper {
     }
 
     public static List<ItemStack> getAllSlots(ItemStack itemStack){
-        var wandData = itemStack.get(WAND_DATA);
+        var wandData = itemStack.get(RUNE_HOLDER);
         if(wandData != null) return wandData.runeSlots();
         return List.of();
     }

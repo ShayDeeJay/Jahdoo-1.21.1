@@ -25,6 +25,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ability.abilities.ability_data.EscapeDecoyAbility;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
+import org.jahdoo.challenge.LevelGenerator;
 import org.jahdoo.challenge.RewardLootTables;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlockEntitiesRegister;
@@ -33,6 +34,8 @@ import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.Nullable;
 
+import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.*;
+import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.nextSubRound;
 import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.resetWithRound;
 import static org.jahdoo.registers.BlocksRegister.sharedBlockBehaviour;
 import static org.jahdoo.utils.ModHelpers.Random;
@@ -59,20 +62,38 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity altarE)) return ItemInteractionResult.FAIL;
-        if(!ChallengeAltarData.isCompleted(altarE)){
-            var startingRound = Math.max(1, ChallengeAltarData.getProperties(altarE).round);
-            var endingRound = startingRound + 5;
-            resetWithRound(altarE, startingRound, endingRound);
-        } else {
-            if(level instanceof ServerLevel serverLevel){
-                var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter());
-                lootSplosion(level, pos, serverLevel, rewards);
-                level.destroyBlock(pos, false);
+        if (level instanceof ServerLevel serverLevel) {
+            var altarData = getProperties(altarE);
+            if (!isCompleted(altarE)) {
+                var startingRound = Math.max(1, altarData.round);
+                if (!isActive(altarE)) {
+                    startNewChallenge(altarE, startingRound);
+                } else {
+                    readyNextSubRound(altarE, altarData, startingRound);
+                }
+            } else {
+                completionLoot(level, pos);
+                LevelGenerator.createNewWorld(player, serverLevel, ChallengeAltarData.newRound(altarData.maxRound));
             }
         }
-//        altarClickToStart(altarE);
-//        resetWithRound(altarE, 70);
         return ItemInteractionResult.SUCCESS;
+    }
+
+    private static void startNewChallenge(ChallengeAltarBlockEntity altarE, int startingRound) {
+        var endingRound = startingRound + 5;
+        resetWithRound(altarE, startingRound, endingRound);
+    }
+
+    private static void readyNextSubRound(ChallengeAltarBlockEntity altarE, ChallengeAltarData altarData, int startingRound) {
+        if (!altarData.isSubRoundActive(altarE)) nextSubRound(altarE, startingRound);
+    }
+
+    private static void completionLoot(Level level, BlockPos pos) {
+        if (level instanceof ServerLevel serverLevel) {
+            var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter());
+            lootSplosion(level, pos, serverLevel, rewards);
+            level.destroyBlock(pos, false);
+        }
     }
 
     private static void lootSplosion(Level level, BlockPos pos, ServerLevel serverLevel, ObjectArrayList<ItemStack> rewards) {

@@ -24,6 +24,10 @@ public class AttachmentRegister {
         "mage_flight", () -> AttachmentType.builder(MageFlight::new).serialize(new GenericProvider<>(MageFlight::new)).copyOnDeath().build()
     );
 
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TripleJump>> TRIPLE_JUMP = ATTACHMENT_TYPES.register(
+        "triple_jump", () -> AttachmentType.builder(TripleJump::new).serialize(new GenericProvider<>(TripleJump::new)).copyOnDeath().build()
+    );
+
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Static>> STATIC = ATTACHMENT_TYPES.register(
         "static", () -> AttachmentType.builder(Static::new).serialize(new GenericProvider<>(Static::new)).copyOnDeath().build()
     );

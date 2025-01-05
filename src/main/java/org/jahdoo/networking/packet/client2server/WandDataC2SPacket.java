@@ -8,17 +8,8 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.attachments.player_abilities.ModularChaosCubeProperties;
-import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
-import org.jahdoo.block.wand.WandBlock;
-import org.jahdoo.block.wand.WandBlockEntity;
-import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
-import org.jahdoo.components.WandData;
+import org.jahdoo.block.wand_block_manager.WandManagerEntity;
 import org.jahdoo.utils.ModHelpers;
-import org.jetbrains.annotations.Nullable;
-
-import static org.jahdoo.registers.AttachmentRegister.MODULAR_CHAOS_CUBE;
-import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class WandDataC2SPacket implements CustomPacketPayload {
     public static final Type<WandDataC2SPacket> TYPE = new Type<>(ModHelpers.res("wand_data_sync"));
@@ -47,7 +38,7 @@ public class WandDataC2SPacket implements CustomPacketPayload {
             () -> {
                 if(ctx.player().level() instanceof ServerLevel serverLevel){
                     var bEntity = serverLevel.getBlockEntity(blockPos);
-                    if(bEntity instanceof WandManagerTableEntity wandBlock){
+                    if(bEntity instanceof WandManagerEntity wandBlock){
                         wandBlock.inputItemHandler.setStackInSlot(0, itemStack);
                     }
                 }

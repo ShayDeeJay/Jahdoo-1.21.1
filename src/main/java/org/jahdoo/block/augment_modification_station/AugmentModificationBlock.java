@@ -139,7 +139,7 @@ public class AugmentModificationBlock extends BaseEntityBlock{
         double radius
     ) {
         if (hand.getItem() instanceof Augment || hand.isEmpty() && pPlayer.isShiftKeyDown()) {
-            ModHelpers.getSoundWithPosition(pLevel, pPos, soundEvent, 1, 1.2f);
+            if(!hand.isEmpty()) ModHelpers.getSoundWithPosition(pLevel, pPos, soundEvent, 1, 1.2f);
             BlockInteractionHandler.swapItemsWithHand(augmentStation.inputItemHandler, 0, pPlayer, pHand);
             var stackInSlot = augmentStation.inputItemHandler.getStackInSlot(0);
             var type = stackInSlot.get(DataComponents.CUSTOM_MODEL_DATA);

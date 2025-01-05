@@ -1,5 +1,5 @@
 {
-  "add_cosmetic": true,
   "drop_rule": "ALWAYS_KEEP",
+  "replace": true,
   "size": 1
 }

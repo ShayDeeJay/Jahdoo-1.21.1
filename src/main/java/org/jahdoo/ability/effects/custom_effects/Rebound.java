@@ -4,22 +4,20 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 
-public class FallDamageEffect extends MobEffect {
+public class Rebound extends MobEffect {
 
-
-    public FallDamageEffect(MobEffectCategory pCategory, int pColor) {
+    public Rebound(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
     }
 
     @Override
     public boolean applyEffectTick(LivingEntity targetEntity, int pAmplifier) {
-        targetEntity.resetFallDistance();
         return true;
     }
 
     @Override
     public MobEffectCategory getCategory() {
-        return MobEffectCategory.HARMFUL;
+        return MobEffectCategory.BENEFICIAL;
     }
 
 

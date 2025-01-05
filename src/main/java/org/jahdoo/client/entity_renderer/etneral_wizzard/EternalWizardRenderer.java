@@ -20,7 +20,6 @@ public class EternalWizardRenderer extends EternalWizardBodyRenderer {
 
     public EternalWizardRenderer(EntityRendererProvider.Context context) {
         super(context, ModelLayers.STRAY, ModelLayers.STRAY_INNER_ARMOR, ModelLayers.STRAY_OUTER_ARMOR);
-        this.addLayer(new WizardClothingLayerRenderer<>(this, context.getModelSet()));
     }
 
     @Override
@@ -29,28 +28,12 @@ public class EternalWizardRenderer extends EternalWizardBodyRenderer {
         pPoseStack.pushPose();
         var scale = pEntity.getInternalScale();
 
-//        var itemRenderer = Minecraft.getInstance().getItemRenderer();
-//        pPoseStack.pushPose();
-//
-//        pPoseStack.rotateAround(Axis.YN.rotationDegrees(pEntity.yHeadRot), 0, 0, 0);
-//        pPoseStack.translate(0,2.5,0);
-//        itemRenderer.renderStatic(
-//            new ItemStack(Items.DIAMOND_BLOCK),
-//            ItemDisplayContext.FIXED,
-//            255,
-//            OverlayTexture.NO_OVERLAY,
-//            pPoseStack,
-//            pBuffer,
-//            pEntity.level(),
-//            1
-//        );
-//        pPoseStack.popPose();
-
-
         var lifetime = AugmentItemHelper.ticksToTime(String.valueOf(pEntity.getLifetime() - pEntity.getPrivateTicks()));
+
         if(pEntity.getOwner() != null){
             this.renderNameTags(pEntity, Component.literal(lifetime), pPoseStack, pBuffer, 255, 3);
         }
+
         pPoseStack.scale(scale, scale, scale);
         super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
         pPoseStack.popPose();

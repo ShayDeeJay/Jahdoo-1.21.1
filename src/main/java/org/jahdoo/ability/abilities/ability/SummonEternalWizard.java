@@ -140,10 +140,14 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         if (this.eternalWizard == null && aoeCloud.getOwner() != null) {
 
             var eternalWizard = new EternalWizard(aoeCloud.level(), (Player) aoeCloud.getOwner(), damage, effectDuration, effectStrength, (int) lifeTime, effectChance);
-            eternalWizard.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
             var spawnPosition = aoeCloud.position().add(0, -1, 0);
             eternalWizard.setInvulnerable(true);
             eternalWizard.moveTo(spawnPosition);
+            eternalWizard.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
+            eternalWizard.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ItemsRegister.MAGE_HELMET.get()));
+            eternalWizard.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ItemsRegister.MAGE_CHESTPLATE.get()));
+            eternalWizard.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ItemsRegister.MAGE_LEGGINGS.get()));
+            eternalWizard.setItemSlot(EquipmentSlot.FEET, new ItemStack(ItemsRegister.MAGE_BOOTS.get()));
             var directionToEntity = spawnPosition.subtract(aoeCloud.getOwner().position()).normalize();
 
             // Calculate the yaw so that the skeleton faces away from the player
@@ -154,7 +158,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
             eternalWizard.setPos(spawnPosition.x, spawnPosition.y, spawnPosition.z);
             eternalWizard.yRotO = (float) yaw;
             eternalWizard.yHeadRotO = (float) yaw;
-
+            eternalWizard.setPersistenceRequired();
             aoeCloud.level().addFreshEntity(eternalWizard);
             eternalWizard.setNoAi(true);
             this.eternalWizard = eternalWizard;

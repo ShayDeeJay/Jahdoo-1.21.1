@@ -16,13 +16,13 @@ import org.jahdoo.client.gui.block.wand_manager_table.WandManagerMenu;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jetbrains.annotations.Nullable;
 
-public class WandManagerTableEntity extends AbstractBEInventory implements MenuProvider {
+public class WandManagerEntity extends AbstractBEInventory implements MenuProvider {
     public static final int DEFAULT_SLOTS = 4;
     public static final int ADDITIONAL_RUNE_SLOTS = 12;
     public int privateTicks;
     public ItemStack itemStack;
 
-    public WandManagerTableEntity(BlockPos pPos, BlockState pBlockState) {
+    public WandManagerEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.WAND_MANAGER_TABLE_BE.get(), pPos, pBlockState, 1);
     }
 
@@ -46,7 +46,7 @@ public class WandManagerTableEntity extends AbstractBEInventory implements MenuP
 
     @Override
     public int getMaxSlotSize() {
-        return 64;
+        return 1;
     }
 
     @Override

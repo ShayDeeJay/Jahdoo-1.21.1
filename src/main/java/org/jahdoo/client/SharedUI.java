@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.client.IconLocations.*;
@@ -36,6 +38,28 @@ public class SharedUI {
 
     public static final int BOX_COLOUR = -804253680;
     public static final int BORDER_COLOUR =  -12434878;
+
+    public static List<ResourceLocation> getOverlays(){
+        return List.of(CORE, ADVANCED_AUGMENT_CORE, AUGMENT_HYPER_CORE);
+    }
+
+    public static void augmentCoreSlots(@NotNull GuiGraphics guiGraphics, int adjustX, int adjustY, int borderColour, int width, int height, int fade) {
+        var spacer = new AtomicInteger();
+        var posX = width / 2;
+        var posY = height / 2;
+        var startX = posX + adjustX - 159;
+        var startY = posY - 62 + adjustY;
+        boxMaker(guiGraphics, startX, startY, 17, 46, borderColour, fade);
+        for(ResourceLocation location : getOverlays()){
+            var offsetX = 158;
+            var offsetY = 60;
+            var x = posX - offsetX + adjustX;
+            var y = posY + spacer.get() - offsetY + adjustY;
+            guiGraphics.blit(GUI_ITEM_SLOT, x, y, 0,0,32,32,32,32);
+            guiGraphics.blit(location, x, y, 0,0,32,32,32,32);
+            spacer.set(spacer.get() + 28);
+        }
+    }
 
     public static List<Component> getComponents(ItemStack item){
         var components = new ArrayList<Component>();
@@ -59,12 +83,27 @@ public class SharedUI {
         guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
     }
 
+
     public static void boxMaker(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset, int colourBorder, int start, int end) {
         int widthTo = startX + widthOffset * 2;
         int heightTo = startY + heightOffset * 2;
 
         guiGraphics.fillGradient(startX, startY, widthTo, heightTo, start, end);
         guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
+    }
+
+    public static void renderExperienceBar(GuiGraphics guiGraphics, int x, int l, Minecraft minecraft) {
+        var expBackground = ResourceLocation.withDefaultNamespace("hud/experience_bar_background");
+        var expProgress = ResourceLocation.withDefaultNamespace("hud/experience_bar_progress");
+        if(minecraft == null || minecraft.player == null) return;
+        minecraft.getProfiler().push("expBar");
+        int i = minecraft.player.getXpNeededForNextLevel();
+        if (i > 0) {
+            int k = (int)(minecraft.player.experienceProgress * 183.0F);
+            guiGraphics.blitSprite(expBackground, x, l, 182, 5);
+            if (k > 0) guiGraphics.blitSprite(expProgress, 182, 5, 0, 0, x, l, k, 5);
+        }
+        minecraft.getProfiler().pop();
     }
 
     public static void bezelMaker(GuiGraphics guiGraphics, int posX, int posY, int offsetX, int offsetY, int size, @Nullable AbstractElement element) {

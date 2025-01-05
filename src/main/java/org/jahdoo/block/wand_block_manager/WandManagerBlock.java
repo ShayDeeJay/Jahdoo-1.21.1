@@ -3,8 +3,6 @@ package org.jahdoo.block.wand_block_manager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -29,15 +27,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.block.AbstractBEInventory;
-import org.jahdoo.block.BlockInteractionHandler;
-import org.jahdoo.block.augment_modification_station.AugmentModificationEntity;
-import org.jahdoo.block.wand.WandBlockEntity;
-import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.BlockEntitiesRegister;
-import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.Nullable;
 
 import static org.jahdoo.block.BlockInteractionHandler.swapItemsWithHand;
@@ -46,7 +37,7 @@ import static org.jahdoo.registers.BlocksRegister.sharedBlockBehaviour;
 import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
 import static org.jahdoo.utils.ModHelpers.getSoundWithPosition;
 
-public class WandManagerTableBlock extends BaseEntityBlock {
+public class WandManagerBlock extends BaseEntityBlock {
     public static VoxelShape SHAPE_COMBINED = Shapes.or(
         Block.box(5, 0, 11.125, 11, 2, 13.125),
         Block.box(5, 0, 2.875, 11, 2, 4.875),
@@ -82,14 +73,14 @@ public class WandManagerTableBlock extends BaseEntityBlock {
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
 
-    public WandManagerTableBlock() {
+    public WandManagerBlock() {
         super(sharedBlockBehaviour());
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec((x) -> new WandManagerTableBlock());
+        return simpleCodec((x) -> new WandManagerBlock());
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
@@ -128,7 +119,7 @@ public class WandManagerTableBlock extends BaseEntityBlock {
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
         if (pState.getBlock() != pNewState.getBlock()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof WandManagerTableEntity wandManagerTable) {
+            if (blockEntity instanceof WandManagerEntity wandManagerTable) {
                 SimpleContainer inputInventory = new SimpleContainer(wandManagerTable.setInputSlots());
                 SimpleContainer outputInventory = new SimpleContainer(wandManagerTable.setOutputSlots());
 
@@ -159,7 +150,7 @@ public class WandManagerTableBlock extends BaseEntityBlock {
         ItemInteractionResult fail = ItemInteractionResult.FAIL;
         ItemInteractionResult success = ItemInteractionResult.SUCCESS;
 
-        if(!(level.getBlockEntity(pos) instanceof WandManagerTableEntity wandManager)) return fail;
+        if(!(level.getBlockEntity(pos) instanceof WandManagerEntity wandManager)) return fail;
         var hands = player.getItemInHand(interactionHand);
         var result = augmentBlockInteraction(level, pos, player, interactionHand, wandManager, hands, SoundEvents.VAULT_ACTIVATE, 1, 10, 0.6, 0.12);
 
@@ -177,7 +168,7 @@ public class WandManagerTableBlock extends BaseEntityBlock {
         BlockPos pPos,
         Player pPlayer,
         InteractionHand pHand,
-        WandManagerTableEntity wandManagerTable,
+        WandManagerEntity wandManagerTable,
         ItemStack hand,
         SoundEvent soundEvent,
         double yOffset,
@@ -186,7 +177,7 @@ public class WandManagerTableBlock extends BaseEntityBlock {
         double radius
     ) {
         if (hand.getItem() instanceof WandItem || hand.isEmpty() && pPlayer.isShiftKeyDown()) {
-            getSoundWithPosition(pLevel, pPos, soundEvent, 1, 1.2f);
+            if(!hand.isEmpty()) getSoundWithPosition(pLevel, pPos, soundEvent, 1, 1.2f);
             swapItemsWithHand(wandManagerTable.inputItemHandler, 0, pPlayer, pHand);
             var stackInSlot = wandManagerTable.inputItemHandler.getStackInSlot(0);
             var type = getElementByWandType(stackInSlot.getItem());
@@ -200,7 +191,7 @@ public class WandManagerTableBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new WandManagerTableEntity(pPos,pState);
+        return new WandManagerEntity(pPos,pState);
     }
     @Nullable
     @Override

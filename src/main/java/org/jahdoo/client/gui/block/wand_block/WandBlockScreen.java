@@ -1,6 +1,5 @@
 package org.jahdoo.client.gui.block.wand_block;
 
-import com.llamalad7.mixinextras.sugar.Share;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -13,8 +12,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbilityRegistrar;
-import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.client.IconLocations;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.client.gui.block.augment_modification_station.InventorySlots;
 import org.jahdoo.components.DataComponentHelper;
@@ -234,7 +231,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         var isKeyDown = InputConstants.isKeyDown(window, settings.keyShift.getKey().getValue());
 
         if(conditionOne || conditionTwo){
-            if(conditionTwo && isKeyDown || conditionOne) setTypeOverlay(guiGraphics, x + 2, y - 20);
+            if(conditionTwo && isKeyDown || conditionOne) selectedHighlight(guiGraphics, x + 2, y - 20);
             if(this.hoveredSlot.index < 36){
                 var imageWidth = 32;
                 var imageHeight = 32;
@@ -264,10 +261,9 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
     }
 
 
-    public void setTypeOverlay(GuiGraphics guiGraphics, int positionX, int positionY){
+    public void selectedHighlight(GuiGraphics guiGraphics, int positionX, int positionY){
         var item = this.hoveredSlot;
         if(item != null && item.getItem().getItem() instanceof Augment){
-            var type = item.getItem();
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(0,0,1);
             var color = FastColor.ARGB32.color(60,  ColourStore.OFF_WHITE);

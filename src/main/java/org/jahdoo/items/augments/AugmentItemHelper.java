@@ -451,14 +451,13 @@ public class AugmentItemHelper {
 
     public static Optional<String> isValidAugmentUtil(ItemStack itemStack) {
         var itemStacks = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
-        if(itemStacks != null){
-            var item = itemStacks.abilityProperties().keySet().stream().findFirst();
-            if(item.isPresent()){
-                var ability = AbilityRegister.getFirstSpellByTypeId(item.get());
-                if(ability.isPresent()){
-                    if (isConfigAbility(ability.get(), item.get(), itemStack)) {
-                        return item;
-                    }
+        if(itemStacks == null) return Optional.empty();
+        var item = itemStacks.abilityProperties().keySet().stream().findFirst();
+        if(item.isPresent()){
+            var ability = AbilityRegister.getFirstSpellByTypeId(item.get());
+            if(ability.isPresent()){
+                if (isConfigAbility(ability.get(), item.get(), itemStack)) {
+                    return item;
                 }
             }
         }

@@ -85,6 +85,7 @@ public class RarityAttributes {
         return refinementPotential;
     }
 
+
     public static final RarityAttributes COMMON_ATTRIBUTES = new RarityAttributes(
         Pair.of(20.0, 40.0), Pair.of(5.0, 10.0), Pair.of(0.5, 2.5), Pair.of(0.5, 4.5), Pair.of(5.0, 10.0), Pair.of(50, 100)
     );

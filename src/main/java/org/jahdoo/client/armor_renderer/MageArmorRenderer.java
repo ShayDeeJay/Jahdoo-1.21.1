@@ -5,12 +5,10 @@ import org.jahdoo.utils.ModHelpers;
 import software.bernie.geckolib.model.DefaultedItemGeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
-public class WizardArmorRenderer extends GeoArmorRenderer<WizardArmor> {
+public class MageArmorRenderer extends GeoArmorRenderer<WizardArmor> {
 
-    public WizardArmorRenderer() {
-        super(new DefaultedItemGeoModel<>(ModHelpers.res("armor/wizard_armor")));
+    public MageArmorRenderer() {
+        super(new DefaultedItemGeoModel<>(ModHelpers.res("armor/mage_armor")));
     }
-
-
 
 }

@@ -33,6 +33,9 @@ public class EffectsRegister {
     public static final DeferredHolder<MobEffect, MobEffect> ITEM_MAGNET = MOB_EFFECTS.register("item_magnet",
         () -> new ItemMagnetEffect(MobEffectCategory.BENEFICIAL, 3436524)
     );
+    public static final DeferredHolder<MobEffect, MobEffect> REBOUND = MOB_EFFECTS.register("rebound",
+        () -> new Rebound(MobEffectCategory.BENEFICIAL, 3436524)
+    );
     public static final DeferredHolder<MobEffect, MobEffect> STUN_EFFECT = MOB_EFFECTS.register("stun_effect",
         () -> new StunEffect(MobEffectCategory.HARMFUL, 3436524)
     );

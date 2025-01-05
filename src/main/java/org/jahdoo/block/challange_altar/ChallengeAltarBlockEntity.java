@@ -1,13 +1,21 @@
 package org.jahdoo.block.challange_altar;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.BossEvent;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
+import org.jahdoo.challenge.LevelGenerator;
 import org.jahdoo.challenge.MobManager;
 import org.jahdoo.networking.packet.server2client.AltarBlockS2C;
 import org.jahdoo.registers.BlockEntitiesRegister;
@@ -26,14 +34,17 @@ import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
 
 
 public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEntity {
+    public ServerBossEvent bossEvent;
     public final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public int privateTicks;
     public int initiateSpawning;
     public boolean beginSpawning;
 
+
     public ChallengeAltarBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.CHALLENGE_ALTAR_BE.get(), pPos, pBlockState);
         this.setData(CHALLENGE_ALTAR, ChallengeAltarData.DEFAULT);
+        this.bossEvent = new ServerBossEvent(Component.literal(""), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.NOTCHED_12);
     }
 
     private void updatePacket(){
@@ -44,24 +55,65 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
         }
     }
 
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        this.bossEvent.removeAllPlayers();
+    }
+
+    @Override
+    public boolean isRemoved() {
+        return super.isRemoved();
+    }
+
     private ChallengeAltarData altarData(){
         return ChallengeAltarData.getProperties(this);
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
-        if(altarData().isActive()){
+        manageActivePlayers(pPos);
+        tickBossEvent();
+        activeSubRoundEvent(pLevel, pPos);
+        resetSubRound();
+        this.completeRound();
+        if(privateTicks == 1) onActivationAnim(pLevel, pPos, privateTicks);
+        this.updatePacket();
+    }
+
+    private void activeSubRoundEvent(Level pLevel, BlockPos pPos) {
+        if(isSubRoundActive()){
             this.privateTicks++;
             idleParticleAnim(pPos, privateTicks, this.getLevel());
-            if(extracted()) return;
-            if(altarData().activeMobs().isEmpty()){
-                resetSubRound();
+            if(!extracted() && altarData().activeMobs().isEmpty()){
                 if(privateTicks == 93) onActivationAnim(pLevel, pPos, privateTicks);
                 if(privateTicks == 96) summonMobs();
             }
         }
-        this.completeRound();
-        if(privateTicks == 1) onActivationAnim(pLevel, pPos, privateTicks);
-        this.updatePacket();
+    }
+
+    private void tickBossEvent() {
+        float progress = this.altarData().maxMobs > 0 ? (float) this.altarData().activeMobs().size() / this.altarData().maxSpawnableMobs() : 0.0f;
+        bossEvent.setVisible(isSubRoundActive() && !altarData().activeMobs().isEmpty());
+        bossEvent.setProgress(progress);
+        bossEvent.setName(Component.nullToEmpty(this.altarData().activeMobs().size() + " / " + this.altarData().maxSpawnableMobs()));
+    }
+
+    private void manageActivePlayers(BlockPos pPos) {
+        if(!(this.getLevel() instanceof ServerLevel serverLevel)) return;
+        for (var player : serverLevel.players()) {
+            if(!(player instanceof ServerPlayer serverPlayer)) return;
+            var inEven = bossEvent.getPlayers().contains(serverPlayer);
+
+            if (serverPlayer.distanceToSqr(pPos.getCenter()) < 10000) {
+                if (!inEven) bossEvent.addPlayer(serverPlayer);
+            } else {
+                if (inEven) bossEvent.removePlayer(serverPlayer);
+            }
+        }
+    }
+
+    private boolean isSubRoundActive() {
+        return altarData().isSubRoundActive(this);
     }
 
     private void summonMobs() {
@@ -75,6 +127,7 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
     private void resetSubRound() {
         if(altarData().killedMobs > 0 && altarData().killedMobs == altarData().maxMobs()){
             ChallengeAltarData.resetSubRoundAltar(this);
+            bossEvent.removeAllPlayers();
             this.privateTicks = 0;
         }
     }
@@ -82,6 +135,7 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
     private void completeRound() {
         if(altarData().round() > 0 && altarData().round() == altarData().maxRound()){
             ChallengeAltarData.resetAltar(this);
+            bossEvent.removeAllPlayers();
             this.privateTicks = 0;
         }
     }
@@ -106,7 +160,7 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
         controllers.add(
             new AnimationController<>(this,
                 state -> {
-                    if(altarData().isActive()) {
+                    if(isSubRoundActive()) {
                         var animation = privateTicks <= 100 ? ALTAR_SPAWNING : ALTAR_IDLE;
                         return state.setAndContinue(animation);
                     }
@@ -132,5 +186,8 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
         super.loadAdditional(pTag, pRegistries);
         privateTicks = pTag.getInt("challenge_altar.private");
     }
+
+
+
 }
 

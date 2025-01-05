@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
 import org.jahdoo.ability.AbilityRegistrar;
+import org.jahdoo.components.RuneHolder;
 import org.jahdoo.components.WandData;
 import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.registers.*;
@@ -193,7 +194,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         if(!element.isEmpty()){
             WandData.createRarity(itemStack, rarity.id);
             WandData.createNewAbilitySlots(itemStack, abilitySlots);
-            WandData.createNewRuneSlots(itemStack, runeSlots);
+            RuneHolder.createNewRuneSlots(itemStack, runeSlots);
             WandData.createRefinementPotential(itemStack, rarity.attributes.getRandomRefinementPotential());
 
             //0-5 basic;

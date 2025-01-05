@@ -53,6 +53,10 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItemOther(ItemsRegister.WIZARD_LEGGINGS);
         simpleItemOther(ItemsRegister.WIZARD_BOOTS);
 
+        simpleItemOther(ItemsRegister.MAGE_HELMET);
+        simpleItemOther(ItemsRegister.MAGE_CHESTPLATE);
+        simpleItemOther(ItemsRegister.MAGE_LEGGINGS);
+        simpleItemOther(ItemsRegister.MAGE_BOOTS);
 
         augmentFiles.forEach( overrider ->
             simpleAugmentItem(ItemsRegister.AUGMENT_ITEM)

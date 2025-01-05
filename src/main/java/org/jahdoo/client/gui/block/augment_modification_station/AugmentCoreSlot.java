@@ -6,8 +6,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
-import org.jahdoo.components.WandData;
+import org.jahdoo.block.wand_block_manager.WandManagerEntity;
+import org.jahdoo.components.RuneHolder;
 import org.jahdoo.networking.packet.client2server.WandDataC2SPacket;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
@@ -15,12 +15,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.jahdoo.registers.DataComponentRegistry.RUNE_HOLDER;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class AugmentCoreSlot extends SlotItemHandler {
     Item item;
     int maxStackSize;
-    WandManagerTableEntity wandManagerTableEntity;
+    WandManagerEntity wandManagerTableEntity;
     boolean isActive = true;
 
     public AugmentCoreSlot(
@@ -40,7 +41,7 @@ public class AugmentCoreSlot extends SlotItemHandler {
         int xPosition,
         int yPosition,
         Item item,
-        WandManagerTableEntity wandManagerTableEntity,
+        WandManagerEntity wandManagerTableEntity,
         int maxStackSize
     ) {
         super(inputItemHandler, index, xPosition, yPosition);
@@ -93,7 +94,7 @@ public class AugmentCoreSlot extends SlotItemHandler {
     public void setChanged() {
         if(this.wandManagerTableEntity != null){
             var getAllSlots = this.wandManagerTableEntity.getWandSlot();
-            var getData = getAllSlots.get(WAND_DATA);
+            var getData = getAllSlots.get(RUNE_HOLDER);
             if (getData != null) {
                 var index = new AtomicInteger(4);
                 var list = new ArrayList<ItemStack>();
@@ -101,7 +102,8 @@ public class AugmentCoreSlot extends SlotItemHandler {
                     list.add(this.wandManagerTableEntity.inputItemHandler.getStackInSlot(index.get()));
                     index.set(index.get() + 1);
                 }
-                getAllSlots.update(WAND_DATA.get(), WandData.DEFAULT, data -> data.setRuneSlots(list));
+                getAllSlots.update(RUNE_HOLDER.get(), RuneHolder.DEFAULT, data -> data.insertNewHolder(list));
+//                getAllSlots.update(WAND_DATA.get(), WandData.DEFAULT, data -> data.setRuneSlots(list));
                 var getData2 = getAllSlots.get(WAND_DATA);
                 getAllSlots.set(WAND_DATA, getData2);
                 PacketDistributor.sendToServer(new WandDataC2SPacket(getAllSlots, this.wandManagerTableEntity.getBlockPos()));

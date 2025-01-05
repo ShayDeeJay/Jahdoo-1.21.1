@@ -16,7 +16,7 @@ import org.jahdoo.block.crafter.CreatorEntity;
 import org.jahdoo.block.infuser.InfuserBlockEntity;
 import org.jahdoo.block.tank.NexiteTankBlockEntity;
 import org.jahdoo.block.wand.WandBlockEntity;
-import org.jahdoo.block.wand_block_manager.WandManagerTableEntity;
+import org.jahdoo.block.wand_block_manager.WandManagerEntity;
 
 public class BlockEntitiesRegister {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
@@ -28,8 +28,8 @@ public class BlockEntitiesRegister {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreatorEntity>> CREATOR_BE =
         registerBlockEntity("creator_be", CreatorEntity::new, BlocksRegister.CREATOR);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WandManagerTableEntity>> WAND_MANAGER_TABLE_BE =
-        registerBlockEntity("wand_manager_table_be", WandManagerTableEntity::new, BlocksRegister.WAND_MANAGER_TABLE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WandManagerEntity>> WAND_MANAGER_TABLE_BE =
+        registerBlockEntity("wand_manager_table_be", WandManagerEntity::new, BlocksRegister.WAND_MANAGER_TABLE);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WandBlockEntity>> WAND_BE =
         registerBlockEntity("wand_be", WandBlockEntity::new, BlocksRegister.WAND);
