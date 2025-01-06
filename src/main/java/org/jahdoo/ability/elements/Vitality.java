@@ -74,17 +74,17 @@ public class Vitality extends AbstractElement {
     }
 
     @Override
-    public Pair<String, Holder<Attribute>> getTypeCooldownReduction() {
-        return Pair.of(AttributesRegister.VITALITY_COOLDOWN_REDUCTION_PREFIX, AttributesRegister.VITALITY_COOLDOWN_REDUCTION);
+    public Holder<Attribute> getTypeCooldownReduction() {
+        return  AttributesRegister.VITALITY_COOLDOWN_REDUCTION;
     }
 
     @Override
-    public Pair<String, Holder<Attribute>> getTypeManaReduction() {
-        return Pair.of(AttributesRegister.VITALITY_MANA_COST_REDUCTION_PREFIX, AttributesRegister.VITALITY_MANA_COST_REDUCTION);
+    public Holder<Attribute> getTypeManaReduction() {
+        return  AttributesRegister.VITALITY_MANA_COST_REDUCTION;
     }
 
     @Override
-    public Pair<String, Holder<Attribute>> getDamageTypeAmplifier() {
-        return Pair.of(AttributesRegister.VITALITY_MAGIC_DAMAGE_MULTIPLIER_PREFIX, AttributesRegister.VITALITY_MAGIC_DAMAGE_MULTIPLIER);
+    public Holder<Attribute> getDamageTypeAmplifier() {
+        return AttributesRegister.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
     }
 }

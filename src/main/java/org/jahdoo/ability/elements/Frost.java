@@ -68,19 +68,20 @@ public class Frost extends AbstractElement {
         return EffectsRegister.ICE_EFFECT.getDelegate();
     }
 
+
     @Override
-    public Pair<String, Holder<Attribute>> getTypeCooldownReduction() {
-        return Pair.of(AttributesRegister.FROST_COOLDOWN_REDUCTION_PREFIX, AttributesRegister.FROST_COOLDOWN_REDUCTION);
+    public Holder<Attribute> getTypeCooldownReduction() {
+        return AttributesRegister.FROST_COOLDOWN_REDUCTION;
     }
 
     @Override
-    public Pair<String, Holder<Attribute>> getTypeManaReduction() {
-        return Pair.of(AttributesRegister.FROST_MANA_COST_REDUCTION_PREFIX, AttributesRegister.FROST_MANA_COST_REDUCTION);
+    public Holder<Attribute> getTypeManaReduction() {
+        return AttributesRegister.FROST_MANA_COST_REDUCTION;
     }
 
     @Override
-    public Pair<String, Holder<Attribute>> getDamageTypeAmplifier() {
-        return Pair.of(AttributesRegister.FROST_MAGIC_DAMAGE_MULTIPLIER_PREFIX, AttributesRegister.FROST_MAGIC_DAMAGE_MULTIPLIER);
+    public Holder<Attribute> getDamageTypeAmplifier() {
+        return AttributesRegister.FROST_MAGIC_DAMAGE_MULTIPLIER;
     }
 
     @Override

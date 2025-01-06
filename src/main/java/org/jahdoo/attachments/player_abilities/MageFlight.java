@@ -4,13 +4,13 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.attachments.AbstractAttachment;
 import org.jahdoo.attachments.CastingData;
-import org.jahdoo.components.RuneData;
+import org.jahdoo.components.rune_data.RuneData;
+import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.networking.packet.client2server.MageFlightPacketS2CPacket;
 import org.jahdoo.networking.packet.server2client.MageFlightDataSyncS2CPacket;
 import org.jahdoo.particle.ParticleStore;
@@ -116,6 +116,7 @@ public class MageFlight implements AbstractAttachment {
     }
 
     private void mageFlightAnimation(ItemStack wandItem, Player player){
+        if(!(wandItem.getItem() instanceof WandItem)) return;
         var element = getElementByWandType(wandItem.getItem()).getFirst();
         var part1 = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 2, 0.2f, true);
         var part2 = bakedParticleOptions(getElementByWandType(wandItem.getItem()).getFirst().getTypeId(), 2, 1f, false);

@@ -16,22 +16,21 @@ import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.wand_block_manager.WandManagerEntity;
 import org.jahdoo.client.SharedUI;
-import org.jahdoo.client.gui.block.augment_modification_station.AugmentCoreSlot;
+import org.jahdoo.client.gui.block.RuneSlot;
 import org.jahdoo.client.gui.block.augment_modification_station.InventorySlots;
-import org.jahdoo.components.RuneHolder;
+import org.jahdoo.components.rune_data.RuneData;
+import org.jahdoo.components.rune_data.RuneHolder;
 import org.jahdoo.components.WandData;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.items.wand.WandItemHelper;
+import org.jahdoo.networking.packet.client2server.ItemInBlockC2SPacket;
 import org.jahdoo.networking.packet.client2server.PlayerExperienceC2SPacket;
-import org.jahdoo.networking.packet.client2server.WandDataC2SPacket;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ColourStore;
-import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
-
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import static org.jahdoo.client.IconLocations.*;
 import static org.jahdoo.client.SharedUI.*;
 import static org.jahdoo.client.SharedUI.getFadedColourBackground;
@@ -39,6 +38,7 @@ import static org.jahdoo.client.gui.ToggleComponent.*;
 import static org.jahdoo.registers.AttributesRegister.replaceOrAddAttribute;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 import static org.jahdoo.utils.ModHelpers.filterList;
+import static org.jahdoo.utils.ModHelpers.withStyleComponent;
 
 public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> {
     public static WidgetSprites WIDGET = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
@@ -98,10 +98,10 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
                     case String s when s.contains("mana.cost_reduction") -> ranges.getRandomManaReduction();
                     default -> ranges.getRandomDamage();
                 };
-                replaceOrAddAttribute(wandItemCopy, id, attribute, value, EquipmentSlot.MAINHAND, false);
+                replaceOrAddAttribute(wandItemCopy, attribute.getRegisteredName(), attribute, value, EquipmentSlot.MAINHAND, false);
             }
             WandData.createRefinementPotential(wandItemCopy, Math.max(0, getData.refinementPotential() - 20));
-            PacketDistributor.sendToServer(new WandDataC2SPacket(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos()));
+            PacketDistributor.sendToServer(new ItemInBlockC2SPacket(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos()));
             var player = Minecraft.getInstance().player;
             if(player != null){
                 player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
@@ -124,9 +124,9 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             if(slot instanceof InventorySlots inventorySlots){
                 inventorySlots.setActive(showInventory);
             }
-            if(slot instanceof AugmentCoreSlot augmentCoreSlot){
-                if(augmentCoreSlot.getItem().getItem() instanceof RuneItem){
-                    augmentCoreSlot.setActive(showInventory);
+            if(slot instanceof RuneSlot runeSlot){
+                if(runeSlot.getItem().getItem() instanceof RuneItem){
+                    runeSlot.setActive(showInventory);
                 }
             }
         }
@@ -200,6 +200,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         if(!this.setView){
             baseWandProperties(guiGraphics, shiftX, spacer, shiftY, startX, startY);
         } else {
+            remainingPotential(guiGraphics, shiftX, spacer, shiftY);
             var getRunes = RuneHolder.getRuneholder(getWand());
             handleSlotsInGridLayout(
                 (slotX, slotY, index) -> {
@@ -242,8 +243,39 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         guiGraphics.drawString(this.font, header, x, y1, ColourStore.SUB_HEADER_COLOUR);
     }
 
+    private void remainingPotential(@NotNull GuiGraphics guiGraphics, int shiftX, AtomicInteger spacer, int shiftY) {
+        if (getWand().getItem() instanceof WandItem) {
+            var itemModifiers = WandItemHelper.getItemModifiers(getWand());
+            var potentialList = filterList(itemModifiers, "Potential");
+            var sharedX = this.width / 2 - 30 + shiftX;
+            for (Component component : potentialList) {
+                var posY = this.height / 2 - 85 + spacer.get() + shiftY;
+                guiGraphics.drawString(this.font, component, sharedX -1, posY + 2, 0);
+            }
+        }
+    }
+
     private static int groupFade() {
         return getFadedColourBackground(0.7f);
+    }
+
+    private void hoverCarried(GuiGraphics guiGraphics, int x, int y){
+        var carried = this.hoveredSlot == null || hoveredSlot.getItem().isEmpty() ? wandManager.getCarried() : hoveredSlot.getItem();
+        if(carried.getItem() instanceof RuneItem){
+            var getTooltip = this.getTooltipFromContainerItem(carried);
+            if(!(hoveredSlot instanceof RuneSlot) || !wandManager.getCarried().isEmpty()){
+                getTooltip.add(Component.empty());
+                var carriedRuneCost = String.valueOf(RuneData.RuneHelpers.getCostFromRune(carried));
+                var carriedCostComponent = withStyleComponent(carriedRuneCost, -1);
+                var potentialCostPreFix = withStyleComponent("Potential Cost: ", ColourStore.HEADER_COLOUR);
+                getTooltip.add(potentialCostPreFix.copy().append(carriedCostComponent));
+            }
+            if (!carried.isEmpty()) {
+                guiGraphics.renderTooltip(font, getTooltip, Optional.empty(), x, y);
+//            guiGraphics.renderTooltip(font, getTooltip, x, y);
+//            guiGraphics.renderTooltip(font, getTooltip, x, y);
+            }
+        }
     }
 
     private void baseWandProperties(
@@ -304,7 +336,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             default -> attributes.getDamageRange();
         };
         var headerBuilder = "(" + first.getFirst() + "%" + " - " + first.getSecond() + "%" + ")";
-        return ModHelpers.withStyleComponent(headerBuilder, BORDER_COLOUR);
+        return withStyleComponent(headerBuilder, BORDER_COLOUR);
     }
 
     private void overlayInventory(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
@@ -335,14 +367,18 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         augmentCoreSlots(guiGraphics, adjustX, adjustY, borderColour, this.width, this.height, groupFade());
         renderWand(guiGraphics, mouseX, mouseY, startX, startY);
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
+        var hSlot = this.hoveredSlot;
+        if(hSlot != null && !(hSlot.getItem().getItem() instanceof RuneItem)){
+            this.renderTooltip(guiGraphics, mouseX, mouseY);
+        }
         overlayInventory(guiGraphics, startX, startY);
-        extracted(guiGraphics, mouseX, mouseY, i, startY);
+        experienceCost(guiGraphics, mouseX, mouseY, i, startY);
 
+        hoverCarried(guiGraphics, mouseX, mouseY);
         this.isHovering = false;
     }
 
-    private void extracted(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, int i, int startY) {
+    private void experienceCost(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, int i, int startY) {
         var player = this.getMinecraft().player;
         if(player == null) return;
         var exp = player.experienceLevel;
@@ -385,7 +421,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var startY1 = startY + 35;
         var colour = 0xb97700;
         var potential = getPotential() > 0;
-        var reRoll = ModHelpers.withStyleComponent(potential ? "Re-Roll" : "Unmodifiable", potential ? colour : ColourStore.HEADER_COLOUR);
+        var reRoll = withStyleComponent(potential ? "Re-Roll" : "Unmodifiable", potential ? colour : ColourStore.HEADER_COLOUR);
         boxMaker(guiGraphics, startX1, startY1, potential ? 30 : 42, 9, BORDER_COLOUR, getFadedColourBackground(0.9f));
         guiGraphics.drawString(this.font, reRoll, startX + 126, startY + 40, 0);
     }

@@ -1,4 +1,4 @@
-package org.jahdoo.client.gui.block.augment_modification_station;
+package org.jahdoo.client.gui.block;
 
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
@@ -7,35 +7,28 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.block.wand_block_manager.WandManagerEntity;
-import org.jahdoo.components.RuneHolder;
-import org.jahdoo.networking.packet.client2server.WandDataC2SPacket;
+import org.jahdoo.components.WandData;
+import org.jahdoo.components.rune_data.RuneData;
+import org.jahdoo.components.rune_data.RuneHolder;
+import org.jahdoo.items.runes.RuneItem;
+import org.jahdoo.networking.packet.client2server.ItemInBlockC2SPacket;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.jahdoo.registers.DataComponentRegistry.RUNE_HOLDER;
-import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
+import static org.jahdoo.components.rune_data.RuneData.RuneHelpers.getCostFromRune;
+import static org.jahdoo.components.rune_data.RuneGenerator.RuneCategories.fromName;
+import static org.jahdoo.registers.DataComponentRegistry.*;
 
-public class AugmentCoreSlot extends SlotItemHandler {
+public class RuneSlot extends SlotItemHandler {
     Item item;
     int maxStackSize;
     WandManagerEntity wandManagerTableEntity;
     boolean isActive = true;
 
-    public AugmentCoreSlot(
-        IItemHandler inputItemHandler,
-        int index,
-        int xPosition,
-        int yPosition,
-        Item item
-    ) {
-        super(inputItemHandler, index, xPosition, yPosition);
-        this.item = item;
-    }
-
-    public AugmentCoreSlot(
+    public RuneSlot(
         IItemHandler inputItemHandler,
         int index,
         int xPosition,
@@ -61,28 +54,30 @@ public class AugmentCoreSlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(@NotNull ItemStack itemStack) {
-        if(itemStack.is(this.item) && isActive){
-            if(this.wandManagerTableEntity != null){
-                var level = wandManagerTableEntity.getLevel();
-                var pos = wandManagerTableEntity.getBlockPos();
+        if(itemStack.getItem() instanceof RuneItem && isActive && this.getItem().isEmpty()){
+            var wandManager = wandManagerTableEntity;
+            var cost = getCostFromRune(itemStack);
+            if(wandManager != null){
+                var potential = WandData.potential(wandManager.getWandSlot());
+                if(cost > potential) return false;
+                var level = wandManager.getLevel();
+                var pos = wandManager.getBlockPos();
                 if(level != null && this.getItem().isEmpty()){
+                    if(level.isClientSide) return false;
                     ModHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_INSERT_ITEM, 0.4F, 1.2F);
                     ModHelpers.getSoundWithPosition(level, pos, SoundEvents.APPLY_EFFECT_TRIAL_OMEN, 0.4F, 2F);
+                    WandData.createRefinementPotential(wandManager.getWandSlot(), potential - cost);
+                    return true;
                 }
             }
-            return true;
         }
         return false;
     }
 
+
     @Override
     public boolean isActive() {
         return this.isActive;
-    }
-
-    @Override
-    public void set(ItemStack stack) {
-        super.set(stack);
     }
 
     @Override
@@ -103,11 +98,12 @@ public class AugmentCoreSlot extends SlotItemHandler {
                     index.set(index.get() + 1);
                 }
                 getAllSlots.update(RUNE_HOLDER.get(), RuneHolder.DEFAULT, data -> data.insertNewHolder(list));
-//                getAllSlots.update(WAND_DATA.get(), WandData.DEFAULT, data -> data.setRuneSlots(list));
-                var getData2 = getAllSlots.get(WAND_DATA);
-                getAllSlots.set(WAND_DATA, getData2);
-                PacketDistributor.sendToServer(new WandDataC2SPacket(getAllSlots, this.wandManagerTableEntity.getBlockPos()));
+                serverBoundPacket(getAllSlots);
             }
         }
+    }
+
+    private void serverBoundPacket(ItemStack getAllSlots) {
+        PacketDistributor.sendToServer(new ItemInBlockC2SPacket(getAllSlots, this.wandManagerTableEntity.getBlockPos()));
     }
 }

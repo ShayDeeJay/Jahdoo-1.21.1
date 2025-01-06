@@ -11,8 +11,9 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.wand_block_manager.WandManagerEntity;
 import org.jahdoo.client.gui.AbstractInternalContainer;
-import org.jahdoo.client.gui.block.augment_modification_station.AugmentCoreSlot;
-import org.jahdoo.components.RuneHolder;
+import org.jahdoo.client.gui.block.AugmentCoreSlot;
+import org.jahdoo.client.gui.block.RuneSlot;
+import org.jahdoo.components.rune_data.RuneHolder;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.registers.MenusRegister;
@@ -70,7 +71,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
                 indexOne.set(indexOne.get() + 1);
             }
             handleSlotsInGridLayout(
-                (slotX, slotY, index) -> this.addSlot(new AugmentCoreSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, item, this.getWandManagerEntity(), 1)),
+                (slotX, slotY, index) -> this.addSlot(new RuneSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, item, this.getWandManagerEntity(), 1)),
                 getData.runeSlots().size(), 0,0, offSetX, offSetY
             );
         } catch (Exception e){

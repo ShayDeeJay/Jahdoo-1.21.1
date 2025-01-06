@@ -72,17 +72,17 @@ public class Utility extends AbstractElement {
     }
 
     @Override
-    public Pair<String, Holder<Attribute>> getTypeCooldownReduction() {
+    public Holder<Attribute> getTypeCooldownReduction() {
         return null;
     }
 
     @Override
-    public Pair<String, Holder<Attribute>> getTypeManaReduction() {
+    public Holder<Attribute> getTypeManaReduction() {
         return null;
     }
 
     @Override
-    public Pair<String, Holder<Attribute>> getDamageTypeAmplifier() {
+    public Holder<Attribute> getDamageTypeAmplifier() {
         return null;
     }
 }

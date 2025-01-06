@@ -2,15 +2,19 @@ package org.jahdoo.items.armor;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.Holder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.level.Level;
 import org.jahdoo.client.armor_renderer.WizardArmorRenderer;
-import org.jahdoo.components.RuneData;
-import org.jahdoo.components.RuneHolder;
-import org.jahdoo.components.WandData;
+import org.jahdoo.components.rune_data.RuneHolder;
+import org.jahdoo.event.event_helpers.EventHelpers;
+import org.jahdoo.items.JahdooItem;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +28,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
-public class WizardArmor extends ArmorItem implements GeoItem {
+public class WizardArmor extends ArmorItem implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public WizardArmor(Holder<ArmorMaterial> material, Type type, Properties properties) {
@@ -35,6 +39,11 @@ public class WizardArmor extends ArmorItem implements GeoItem {
         return new Properties()
             .durability(37)
             .component(DataComponentRegistry.RUNE_HOLDER.get(), RuneHolder.makeRuneSlots(1));
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
     }
 
     @Override
@@ -52,6 +61,11 @@ public class WizardArmor extends ArmorItem implements GeoItem {
                 }
             }
         );
+    }
+
+    @Override
+    public EquipmentSlot getEquipmentSlot() {
+        return super.getEquipmentSlot();
     }
 
     @Override

@@ -26,15 +26,11 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.components.RuneHolder;
+import org.jahdoo.components.rune_data.RuneHolder;
 import org.jahdoo.components.WandData;
-import org.jahdoo.networking.packet.client2server.WandDataC2SPacket;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
-import org.jahdoo.particle.particle_options.BakedParticleOptions;
-import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
@@ -43,7 +39,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 //import static org.jahdoo.registers.DataComponentRegistry.ABILITY_SLOTS;

@@ -10,7 +10,7 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.List;
 
-public class TomeOfUnity extends Item implements ICurioItem {
+public class TomeOfUnity extends Item implements ICurioItem, JahdooItem {
 
     public TomeOfUnity() {
         super(new Item.Properties().stacksTo(1));

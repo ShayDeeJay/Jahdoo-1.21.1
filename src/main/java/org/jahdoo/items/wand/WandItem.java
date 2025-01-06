@@ -22,6 +22,7 @@ import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.WandData;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
+import org.jahdoo.items.JahdooItem;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
@@ -49,17 +50,16 @@ import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
 import static org.jahdoo.utils.ModHelpers.Random;
 import static org.jahdoo.utils.PositionGetters.getInnerRingOfRadiusRandom;
 
-public class WandItem extends BlockItem implements GeoItem {
+public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public String location;
 
     public static Properties wandProperties(){
-        Properties properties = new Properties();
-        properties.stacksTo(1);
-        properties.component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT);
-        properties.component(WAND_DATA.get(), WandData.DEFAULT);
-        properties.fireResistant();
-        return properties;
+        return new Properties()
+            .stacksTo(1)
+            .component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
+            .component(WAND_DATA.get(), WandData.DEFAULT)
+            .fireResistant();
     }
 
     public WandItem(String location) {

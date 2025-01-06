@@ -15,14 +15,13 @@ import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public record WandData(
     int abilitySlots,
-//    List<ItemStack> runeSlots,
     List<String> abilitySet,
     String selectedAbility,
     int rarityId,
     int refinementPotential
 ){
     public static final int INIT_SLOTS = 3;
-    public static final WandData DEFAULT = new WandData(INIT_SLOTS, /*new ArrayList<>(), */populatedList(INIT_SLOTS),"", 0, 0);
+    public static final WandData DEFAULT = new WandData(INIT_SLOTS, populatedList(INIT_SLOTS),"", 0, 0);
 
     public static List<String> populatedList(int initValue){
         var list = new ArrayList<String>();
@@ -33,46 +32,32 @@ public record WandData(
     public WandData insertNewAbilitySlots(int abilitySlots){
         var newList = new ArrayList<>(this.abilitySet);
         for(int i = this.abilitySlots; i < abilitySlots; i++) newList.add("empty" + i);
-        return new WandData(abilitySlots, /*this.runeSlots,*/ newList, this.selectedAbility, this.rarityId, this.refinementPotential);
+        return new WandData(abilitySlots, newList, this.selectedAbility, this.rarityId, this.refinementPotential);
     }
 
-//    public WandData insertNewRuneSlots(int allowedSlots){
-//        var newList = new ArrayList<ItemStack>();
-//        for(int i = 0; i < allowedSlots; i++) newList.add(ItemStack.EMPTY);
-//        return new WandData(this.abilitySlots, newList, this.abilitySet, this.selectedAbility, this.rarityId, this.refinementPotential);
-//    }
-
     public WandData setAbilityOrder(List<String> abilities){
-        return new WandData(this.abilitySlots, /*this.runeSlots,*/ abilities, this.selectedAbility, this.rarityId, this.refinementPotential);
+        return new WandData(this.abilitySlots, abilities, this.selectedAbility, this.rarityId, this.refinementPotential);
     }
 
     public WandData setSelectedAbility(String selectedAbility){
-        return new WandData(this.abilitySlots, /*this.runeSlots,*/ this.abilitySet, selectedAbility, this.rarityId, this.refinementPotential);
+        return new WandData(this.abilitySlots, this.abilitySet, selectedAbility, this.rarityId, this.refinementPotential);
     }
 
     public WandData setRarity(int rarity){
-        return new WandData(this.abilitySlots, /*this.runeSlots,*/ this.abilitySet, this.selectedAbility, rarity, this.refinementPotential);
+        return new WandData(this.abilitySlots, this.abilitySet, this.selectedAbility, rarity, this.refinementPotential);
     }
 
-//    public WandData setRuneSlots(List<ItemStack> runeSlots){
-//        return new WandData(this.abilitySlots, runeSlots, this.abilitySet, this.selectedAbility, this.rarityId, this.refinementPotential);
-//    }
-
     public WandData setRefinementPotential(int refinementPotential){
-        return new WandData(this.abilitySlots, /*this.runeSlots,*/ this.abilitySet, this.selectedAbility, this.rarityId, refinementPotential);
+        return new WandData(this.abilitySlots, this.abilitySet, this.selectedAbility, this.rarityId, refinementPotential);
+    }
+
+    private WandData chargeRefinementPotential(int refinementPotential){
+        return new WandData(this.abilitySlots, this.abilitySet, this.selectedAbility, this.rarityId, this.refinementPotential - refinementPotential);
     }
 
     public static void createNewAbilitySlots(ItemStack itemStack, int abilitySlots){
         itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.insertNewAbilitySlots(abilitySlots));
     }
-
-//    public static void createNewRuneSlots(ItemStack itemStack, int runeSlots){
-//        itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.insertNewRuneSlots(runeSlots));
-//    }
-//
-//    public static void updateRuneSlots(ItemStack itemStack, List<ItemStack> upgrades){
-//        itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.setRuneSlots(upgrades));
-//    }
 
     public static void createRarity(ItemStack itemStack, int rarityId){
         itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.setRarity(rarityId));
@@ -82,13 +67,16 @@ public record WandData(
         itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.setRefinementPotential(refinementPotential));
     }
 
-//    public static WandData makeRuneSlots(int slots){
-//        var runeSlots = new WandData(INIT_SLOTS, new ArrayList<>(), populatedList(INIT_SLOTS),"", 0, 0);
-//        return runeSlots.insertNewRuneSlots(slots);
-//    }
+    public static void chargeRefinementPotential(ItemStack itemStack, int charge){
+        itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.chargeRefinementPotential(charge));
+    }
 
     public static WandData wandData(ItemStack itemStack){
         return itemStack.getOrDefault(WAND_DATA, DEFAULT);
+    }
+
+    public static int potential(ItemStack itemStack){
+        return itemStack.getOrDefault(WAND_DATA, DEFAULT).refinementPotential();
     }
 
     public void serialise(RegistryFriendlyByteBuf friendlyByteBuf){

@@ -1,35 +1,16 @@
-package org.jahdoo.components;
+package org.jahdoo.components.rune_data;
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomModelData;
-import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.rarity.JahdooRarity;
-import org.jahdoo.registers.DataComponentRegistry;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ability.rarity.JahdooRarity.*;
-import static org.jahdoo.registers.AttributesRegister.*;
-import static org.jahdoo.registers.DataComponentRegistry.RUNE_DATA;
 import static org.jahdoo.registers.DataComponentRegistry.RUNE_HOLDER;
-import static org.jahdoo.registers.ElementRegistry.*;
-import static org.jahdoo.utils.ModHelpers.*;
 
 public record RuneHolder(
     List<ItemStack> runeSlots

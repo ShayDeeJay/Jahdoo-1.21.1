@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ability.rarity.JahdooRarity;
+import org.jahdoo.items.armor.WizardArmor;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.TomeOfUnity;
 import org.jahdoo.items.wand.WandItem;
@@ -69,7 +70,6 @@ public class CreatorRecipe implements Recipe<RecipeInput> {
 
     private ItemStack randomAugment(){
         var stack = new ItemStack(ItemsRegister.AUGMENT_ITEM);
-//        stack.set(DataComponentRegistry.AUGMENT_RATING.get(), ModHelpers.Random.nextDouble(1, 19));
         return stack;
     }
 

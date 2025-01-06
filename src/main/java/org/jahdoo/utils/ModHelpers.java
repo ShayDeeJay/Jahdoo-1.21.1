@@ -82,8 +82,7 @@ public class ModHelpers {
     }
 
     public static <T> T getRandomListElement(List<T> collection){
-        Collections.shuffle(collection);
-        return collection.getFirst();
+        return collection.get(Random.nextInt(collection.size()));
     }
 
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch){
@@ -174,7 +173,42 @@ public class ModHelpers {
 
     public static double doubleFormattedDouble(double value){
         var decimalFormat = new DecimalFormat("#.##");
-        return  roundNonWholeDouble(Double.parseDouble(decimalFormat.format(value)));
+        return roundNonWholeDouble(Double.parseDouble(decimalFormat.format(value)));
+    }
+
+    public static double tripleFormattedDouble(double value){
+        var decimalFormat = new DecimalFormat("#.###");
+        return roundNonWholeDouble(Double.parseDouble(decimalFormat.format(value)));
+    }
+
+    public static int getColourDarker(int color, double darkValue) {
+        // Extract ARGB components from the integer
+        int alpha = (color >> 24) & 0xFF;
+        int red = (color >> 16) & 0xFF;
+        int green = (color >> 8) & 0xFF;
+        int blue = color & 0xFF;
+
+        red = Math.min((int) (red / darkValue), 255);
+        green = Math.min((int) (green / darkValue), 255);
+        blue = Math.min((int) (blue / darkValue), 255);
+
+        // Combine the components back into an integer
+        return (alpha << 24) | (red << 16) | (green << 8) | blue;
+    }
+
+    public static int getColourLight(int color, double lightValue) {
+        // Extract ARGB components from the integer
+        int alpha = (color >> 24) & 0xFF;
+        int red = (color >> 16) & 0xFF;
+        int green = (color >> 8) & 0xFF;
+        int blue = color & 0xFF;
+
+        red = Math.min((int) (red * lightValue), 255);
+        green = Math.min((int) (green * lightValue), 255);
+        blue = Math.min((int) (blue * lightValue), 255);
+
+        // Combine the components back into an integer
+        return (alpha << 24) | (red << 16) | (green << 8) | blue;
     }
 
     public static ListTag nbtDoubleList(double... pNumbers) {

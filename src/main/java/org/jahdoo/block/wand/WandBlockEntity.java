@@ -42,10 +42,8 @@ import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
 
 public class WandBlockEntity extends AbstractBEInventory implements MenuProvider, GeoBlockEntity {
-
     int tickCounter;
     public static final int GET_WAND_SLOT = 0;
-
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle_block");
 
@@ -62,11 +60,11 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
             this.inputItemHandler.getStackInSlot(GET_WAND_SLOT)
             .get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
 
-        var storedAbilities = this.inputItemHandler.getStackInSlot(GET_WAND_SLOT)
-                .get(WAND_DATA.get());
+        var storedAbilities = this.inputItemHandler
+            .getStackInSlot(GET_WAND_SLOT)
+            .get(WAND_DATA.get());
 
         AtomicInteger integer = new AtomicInteger(1);
-
 
         for (String key : storedAbilities.abilitySet()) {
             var abilityRegistrars = AbilityRegister.getSpellsByTypeId(key);
@@ -85,7 +83,6 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
             }
             integer.set(integer.get() + 1);
         }
-
     }
 
     public void setAllAbilities(){
@@ -164,9 +161,10 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
     }
 
     public int getAllowedSlots(){
-        var getSlots = getWandItemFromSlot().has(WAND_DATA.get());
-        if(getSlots){
-            return Math.min(getWandItemFromSlot().get(WAND_DATA).abilitySlots(), slotsWithoutWand());
+        var getSlots = getWandItemFromSlot();
+        if(getSlots.has(WAND_DATA.get())){
+            var a = getSlots.get(WAND_DATA).abilitySlots();
+            return Math.min(a, slotsWithoutWand());
         }
         return 4;
     }

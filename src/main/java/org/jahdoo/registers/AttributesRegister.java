@@ -20,48 +20,50 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public class  AttributesRegister {
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, JahdooMod.MOD_ID);
     //Base Attributes
-    public static final String MANA_POOL_PREFIX= "mana.mana_pool";
-    public static final String MANA_REGEN_PREFIX= "mana.mana_regen";
+    public static final String MANA_POOL_PREFIX= "jahdoo.mana.mana_pool";
+    public static final String MANA_REGEN_PREFIX= "jahdoo.mana.mana_regen";
 
     //Skill Attributes
-    public static final String MAGE_FLIGHT_PREFIX= "skills.mage_flight";
-    public static final String DESTINY_BOND_PREFIX= "skills.destiny_bond";
+    public static final String MAGE_FLIGHT_PREFIX= "jahdoo.skills.mage_flight";
+    public static final String DESTINY_BOND_PREFIX= "jahdoo.skills.destiny_bond";
+    public static final String TRIPLE_JUMP_PREFIX= "jahdoo.skills.triple_jump";
 
     //Cast Attributes
-    public static final String SKIP_MANA_PREFIX= "mana.mana_regen";
-    public static final String SKIP_COOLDOWN_PREFIX= "mana.mana_regen";
-    public static final String HEAL_PREFIX= "mana.mana_regen";
+    public static final String SKIP_MANA_PREFIX= "jahdoo.mana.mana_regen";
+    public static final String SKIP_COOLDOWN_PREFIX= "jahdoo.mana.mana_regen";
+    public static final String HEAL_PREFIX= "jahdoo.mana.mana_regen";
 
     //Element Attributes
-    public static final String MANA_COST_REDUCTION_PREFIX = "mana.cost_reduction";
-    public static final String COOLDOWN_REDUCTION_PREFIX= "cooldown.cooldown_reduction";
-    public static final String MAGIC_DAMAGE_MULTIPLIER_PREFIX= "damage.damage_multiplier";
+    public static final String MANA_COST_REDUCTION_PREFIX = "jahdoo.mana.cost_reduction";
+    public static final String COOLDOWN_REDUCTION_PREFIX= "jahdoo.cooldown.cooldown_reduction";
+    public static final String MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.damage.damage_multiplier";
 
-    public static final String INFERNO_MANA_COST_REDUCTION_PREFIX = "inferno_mana.cost_reduction";
-    public static final String INFERNO_COOLDOWN_REDUCTION_PREFIX= "inferno_cooldown.cooldown_reduction";
-    public static final String INFERNO_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "inferno_damage.damage_multiplier";
+    public static final String INFERNO_MANA_COST_REDUCTION_PREFIX = "jahdoo.inferno_mana.cost_reduction";
+    public static final String INFERNO_COOLDOWN_REDUCTION_PREFIX= "jahdoo.inferno_cooldown.cooldown_reduction";
+    public static final String INFERNO_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.inferno_damage.damage_multiplier";
 
-    public static final String MYSTIC_MANA_COST_REDUCTION_PREFIX = "mystic_mana.cost_reduction";
-    public static final String MYSTIC_COOLDOWN_REDUCTION_PREFIX= "mystic_cooldown.cooldown_reduction";
-    public static final String MYSTIC_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "mystic_damage.damage_multiplier";
+    public static final String MYSTIC_MANA_COST_REDUCTION_PREFIX = "jahdoo.mystic_mana.cost_reduction";
+    public static final String MYSTIC_COOLDOWN_REDUCTION_PREFIX= "jahdoo.mystic_cooldown.cooldown_reduction";
+    public static final String MYSTIC_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.mystic_damage.damage_multiplier";
 
-    public static final String LIGHTNING_MANA_COST_REDUCTION_PREFIX = "lightning_mana.cost_reduction";
-    public static final String LIGHTNING_COOLDOWN_REDUCTION_PREFIX= "lightning_cooldown.cooldown_reduction";
-    public static final String LIGHTNING_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "lightning_damage.damage_multiplier";
+    public static final String LIGHTNING_MANA_COST_REDUCTION_PREFIX = "jahdoo.lightning_mana.cost_reduction";
+    public static final String LIGHTNING_COOLDOWN_REDUCTION_PREFIX= "jahdoo.lightning_cooldown.cooldown_reduction";
+    public static final String LIGHTNING_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.lightning_damage.damage_multiplier";
 
-    public static final String FROST_MANA_COST_REDUCTION_PREFIX = "frost_mana.cost_reduction";
-    public static final String FROST_COOLDOWN_REDUCTION_PREFIX= "frost_cooldown.cooldown_reduction";
-    public static final String FROST_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "frost_damage.damage_multiplier";
+    public static final String FROST_MANA_COST_REDUCTION_PREFIX = "jahdoo.frost_mana.cost_reduction";
+    public static final String FROST_COOLDOWN_REDUCTION_PREFIX= "jahdoo.frost_cooldown.cooldown_reduction";
+    public static final String FROST_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.frost_damage.damage_multiplier";
 
-    public static final String VITALITY_MANA_COST_REDUCTION_PREFIX = "vitality_mana.cost_reduction";
-    public static final String VITALITY_COOLDOWN_REDUCTION_PREFIX= "vitality_cooldown.cooldown_reduction";
-    public static final String VITALITY_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "vitality_damage.damage_multiplier";
+    public static final String VITALITY_MANA_COST_REDUCTION_PREFIX = "jahdoo.vitality_mana.cost_reduction";
+    public static final String VITALITY_COOLDOWN_REDUCTION_PREFIX= "jahdoo.vitality_cooldown.cooldown_reduction";
+    public static final String VITALITY_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.vitality_damage.damage_multiplier";
 
     //General attribute
     public static final DeferredHolder<Attribute, Attribute> MANA_POOL = register(MANA_POOL_PREFIX, 100);
@@ -70,6 +72,7 @@ public class  AttributesRegister {
     //Skill Attributes
     public static final DeferredHolder<Attribute, Attribute> DESTINY_BOND = register(DESTINY_BOND_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> MAGE_FLIGHT = register(MAGE_FLIGHT_PREFIX, 0);
+    public static final DeferredHolder<Attribute, Attribute> TRIPLE_JUMP = register(TRIPLE_JUMP_PREFIX, 0);
 
     //Type specific attributes
     public static final DeferredHolder<Attribute, Attribute> COOLDOWN_REDUCTION = register(COOLDOWN_REDUCTION_PREFIX, 0);
@@ -125,8 +128,25 @@ public class  AttributesRegister {
         itemStack.set(DataComponents.ATTRIBUTE_MODIFIERS, itemAttributes);
     }
 
+    public static ItemAttributeModifiers replaceOrAddAttribute(
+        List<ItemAttributeModifiers.Entry> attributeList,
+        String name,
+        Holder<Attribute> attribute,
+        double value,
+        EquipmentSlot equipmentSlot
+    ){
+        var itemAttributes = new ItemAttributeModifiers(attributeList, false);
+        Optional<ItemAttributeModifiers.Entry> existingModifier = attributeList
+            .stream()
+            .filter(att -> att.modifier().id().getPath().equals(name))
+            .findFirst();
+        existingModifier.ifPresent(attributeList::remove);
+        attributeList.add(setAttribute(name, attribute, value, equipmentSlot, true));
+        return itemAttributes;
+    }
+
     public static ItemAttributeModifiers.Entry setAttribute(String name, Holder<Attribute> attribute, double value, EquipmentSlot equipmentSlot, boolean isRandomId){
-        ResourceLocation resourcelocation = ModHelpers.res(isRandomId ? String.valueOf(UUID.randomUUID()) : name);
+        var resourcelocation = isRandomId ? ModHelpers.res(String.valueOf(UUID.randomUUID())) :  ResourceLocation.parse(name);
         var attributes = new AttributeModifier(resourcelocation, value,  AttributeModifier.Operation.ADD_VALUE);
         return new ItemAttributeModifiers.Entry(attribute, attributes,  EquipmentSlotGroup.bySlot(equipmentSlot));
     }

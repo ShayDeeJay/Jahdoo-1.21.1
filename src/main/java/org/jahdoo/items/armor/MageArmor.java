@@ -8,7 +8,8 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.client.armor_renderer.MageArmorRenderer;
-import org.jahdoo.client.armor_renderer.WizardArmorRenderer;
+import org.jahdoo.items.JahdooItem;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -20,11 +21,15 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
-public class MageArmor extends ArmorItem implements GeoItem {
+public class MageArmor extends ArmorItem implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    public MageArmor(Holder<ArmorMaterial> material, Type type, Properties properties) {
-        super(material, type, properties);
+    public MageArmor(Holder<ArmorMaterial> material, Type type) {
+        super(material, type, getComponent());
+    }
+
+    private static @NotNull Properties getComponent() {
+        return new Properties().durability(28);
     }
 
     @Override

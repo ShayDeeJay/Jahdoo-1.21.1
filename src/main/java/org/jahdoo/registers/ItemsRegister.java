@@ -77,13 +77,13 @@ public class ItemsRegister {
 
     //Mage
     public static final DeferredHolder<Item, Item> MAGE_HELMET =
-        ITEMS.register("mage_helmet", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.HELMET, new Item.Properties()));
+        ITEMS.register("mage_helmet", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.HELMET));
     public static final DeferredHolder<Item, Item> MAGE_CHESTPLATE =
-        ITEMS.register("mage_chestplate", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+        ITEMS.register("mage_chestplate", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.CHESTPLATE));
     public static final DeferredHolder<Item, Item> MAGE_LEGGINGS =
-        ITEMS.register("mage_leggings", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+        ITEMS.register("mage_leggings", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> MAGE_BOOTS =
-        ITEMS.register("mage_boots", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.BOOTS, new Item.Properties()));
+        ITEMS.register("mage_boots", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.BOOTS));
 
     public static DeferredHolder<Item, Item> basicItem(String name){
         return ITEMS.register(name, () -> new Item(new Item.Properties()));

@@ -26,7 +26,7 @@ public class EternalWizardRenderer extends EternalWizardBodyRenderer {
     public void render(EternalWizard pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         pEntity.setScale(Math.min(1, (pEntity.getInternalScale() + 0.017f)));
         pPoseStack.pushPose();
-        var scale = pEntity.getInternalScale();
+        var scale = pEntity.getOwner() != null ? pEntity.getInternalScale() : 1;
 
         var lifetime = AugmentItemHelper.ticksToTime(String.valueOf(pEntity.getLifetime() - pEntity.getPrivateTicks()));
 

@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -113,7 +114,8 @@ public class EventHelpers {
                 var mods = itemStack.getAttributeModifiers().modifiers();
                 if (!mods.isEmpty()) {
                     var acMod = mods.getFirst();
-                    event.addModifier(acMod.attribute(), acMod.modifier(), EquipmentSlotGroup.MAINHAND);
+                    var slot = item.getItem() instanceof ArmorItem armorItem ? EquipmentSlotGroup.bySlot(armorItem.getEquipmentSlot()) : EquipmentSlotGroup.MAINHAND;
+                    event.addModifier(acMod.attribute(), acMod.modifier(), slot);
                 }
             }
         }

@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -18,6 +19,8 @@ import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.entities.living.CustomSkeleton;
 import org.jahdoo.entities.living.CustomZombie;
+import org.jahdoo.entities.living.EternalWizard;
+import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
@@ -69,6 +72,17 @@ public class MobManager {
         return entity;
     }
 
+    public static LivingEntity getReadyEternalWizard(ServerLevel serverLevel){
+        var entity = new EternalWizard(serverLevel, null, 12, 100, 2, -1, 30);
+        entity.setPersistenceRequired();
+        entity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
+        entity.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ItemsRegister.MAGE_HELMET.get()));
+        entity.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ItemsRegister.MAGE_CHESTPLATE.get()));
+        entity.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ItemsRegister.MAGE_LEGGINGS.get()));
+        entity.setItemSlot(EquipmentSlot.FEET, new ItemStack(ItemsRegister.MAGE_BOOTS.get()));
+        return entity;
+    }
+
     public static void permIncreaseBaseAttribute(LivingEntity livingEntity, double percentage, Holder<Attribute> attribute){
         if(livingEntity.getAttributes().hasAttribute(attribute)){
             var baseAttribute = livingEntity.getAttributeBaseValue(attribute);
@@ -92,9 +106,12 @@ public class MobManager {
 
     public static void addAndPositionEntity(ChallengeAltarBlockEntity entity, BlockPos pos){
         if(entity.getLevel() instanceof ServerLevel serverLevel){
-            var readyZombie = getReadyZombie(serverLevel, ChallengeAltarData.getProperties(entity).round);
-            var readySkeleton = getReadySkeleton(serverLevel, ChallengeAltarData.getProperties(entity).round);
-            var getList = List.of(readyZombie, readySkeleton).get(Random.nextInt(2));
+            var readyZombie = getReadyZombie(serverLevel, ChallengeAltarData.getProperties(entity).round());
+            var readySkeleton = getReadySkeleton(serverLevel, ChallengeAltarData.getProperties(entity).round());
+            var readyWizard = getReadyEternalWizard(serverLevel);
+            var skellyOrWiz = Random.nextInt(2) == 0 ? readyWizard : readySkeleton;
+            var getList = List.of(readyZombie, skellyOrWiz).get(Random.nextInt(2));
+
             var actualEntity = MobManager.generateMob(ChallengeAltarData.getRound(entity) > 5 ? getList : readyZombie);
             actualEntity.moveTo(pos.getCenter());
             ChallengeAltarData.addEntity(entity, actualEntity.getUUID());

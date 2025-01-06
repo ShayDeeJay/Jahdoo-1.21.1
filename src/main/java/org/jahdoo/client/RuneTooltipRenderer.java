@@ -6,18 +6,16 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.utils.ColourStore;
-import org.jahdoo.utils.ModHelpers;
 import org.joml.Matrix4f;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
-import static org.jahdoo.components.RuneData.RuneHelpers.standAloneAttributes;
+import static org.jahdoo.components.rune_data.RuneData.RuneHelpers.standAloneAttributes;
 
 public class RuneTooltipRenderer implements ClientTooltipComponent {
     private final int spacing = Minecraft.getInstance().font.lineHeight + 4;

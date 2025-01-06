@@ -41,7 +41,7 @@ public class CastHelper {
         var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
         var wand = player.getMainHandItem();
         var getElement = SharedUI.getElementWithType(ability.orElseThrow(), wand);
-        var reCalculatedCooldown = ModHelpers.attributeModifierCalculator(player, (float) cooldown, false,  getElement.getTypeCooldownReduction().getSecond(), COOLDOWN_REDUCTION);
+        var reCalculatedCooldown = ModHelpers.attributeModifierCalculator(player, (float) cooldown, false,  getElement.getTypeCooldownReduction(), COOLDOWN_REDUCTION);
         cooldownSystem.addCooldown(abilityId, (int) reCalculatedCooldown);
     }
 
@@ -51,7 +51,7 @@ public class CastHelper {
         var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
         var wand = player.getMainHandItem();
         var getElement = SharedUI.getElementWithType(ability.orElseThrow(), wand);
-        var reCalculatedMana = ModHelpers.attributeModifierCalculator(player, (float) manaCost, false, getElement.getTypeManaReduction().getSecond(), MANA_COST_REDUCTION);
+        var reCalculatedMana = ModHelpers.attributeModifierCalculator(player, (float) manaCost, false, getElement.getTypeManaReduction(), MANA_COST_REDUCTION);
         manaSystem.subtractMana(reCalculatedMana, player);
     }
 
@@ -75,8 +75,8 @@ public class CastHelper {
                 if(!ability.internallyChargeManaAndCooldown()){
                     var cooldownCost = getSpecificValue(player, wandItem, COOLDOWN);
                     var getManaCost = getSpecificValue(player, wandItem, MANA_COST);
-                    var adjustedMana = ModHelpers.attributeModifierCalculator(player, (float) getManaCost, false, getElement.getTypeManaReduction().getSecond(), MANA_COST_REDUCTION);
-                    var adjustedCooldown = ModHelpers.attributeModifierCalculator(player, (float) cooldownCost, false, getElement.getTypeCooldownReduction().getSecond(), COOLDOWN_REDUCTION);
+                    var adjustedMana = ModHelpers.attributeModifierCalculator(player, (float) getManaCost, false, getElement.getTypeManaReduction(), MANA_COST_REDUCTION);
+                    var adjustedCooldown = ModHelpers.attributeModifierCalculator(player, (float) cooldownCost, false, getElement.getTypeCooldownReduction(), COOLDOWN_REDUCTION);
                     chargeCooldown(abilityName, adjustedCooldown, player);
                     chargeMana(abilityName, adjustedMana, player);
                 }
@@ -118,7 +118,7 @@ public class CastHelper {
         if(ability == null) return false;
         var getElement = getElementByWandType(wandItem.getItem()).getFirst();;
         var getManaCost = getSpecificValue(player, wandItem, MANA_COST);
-        var typeReduction = getElement.getTypeManaReduction().getSecond();
+        var typeReduction = getElement.getTypeManaReduction();
         var adjustedMana = ModHelpers.attributeModifierCalculator(player, (float) getManaCost, false, MANA_COST_REDUCTION, typeReduction);
         var manaAvailable = casterData.getManaPool();
         var sufficientMana = casterData.getManaPool() >= adjustedMana;

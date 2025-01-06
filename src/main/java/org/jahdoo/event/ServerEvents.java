@@ -1,9 +1,11 @@
 package org.jahdoo.event;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
+import net.neoforged.neoforge.event.entity.item.ItemEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -13,6 +15,11 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.attachments.CastingData;
 import org.jahdoo.attachments.player_abilities.*;
+import org.jahdoo.components.rune_data.RuneHolder;
+import org.jahdoo.items.runes.RuneItem;
+import org.jahdoo.registers.DataComponentRegistry;
+
+import java.util.ArrayList;
 
 import static org.jahdoo.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.event.event_helpers.EventHelpers.*;
@@ -63,6 +70,23 @@ public class ServerEvents {
         disallowEffectsInCustomDim(event);
     }
 
+    @SubscribeEvent
+    public static void itemClickEvent(PlayerInteractEvent.RightClickItem event) {
+        var mainHand = event.getItemStack();
+        var player = event.getEntity();
+
+        if(mainHand.has(DataComponentRegistry.RUNE_HOLDER)){
+            var rune = player.getOffhandItem();
+            var list = new ArrayList<ItemStack>();
+            System.out.println("iom,ere");
+            if(rune.getItem() instanceof RuneItem){
+                list.add(rune);
+                System.out.println("im here");
+                RuneHolder.updateRuneSlots(mainHand, list);
+                event.setCanceled(true);
+            }
+        }
+    }
 
     @SubscribeEvent
     public static void leftClickBlockInteraction(PlayerInteractEvent.LeftClickBlock event) {

@@ -11,19 +11,19 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.block.wand_block_manager.WandManagerEntity;
 import org.jahdoo.utils.ModHelpers;
 
-public class WandDataC2SPacket implements CustomPacketPayload {
-    public static final Type<WandDataC2SPacket> TYPE = new Type<>(ModHelpers.res("wand_data_sync"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, WandDataC2SPacket> STREAM_CODEC = CustomPacketPayload.codec(WandDataC2SPacket::toBytes, WandDataC2SPacket::new);
+public class ItemInBlockC2SPacket implements CustomPacketPayload {
+    public static final Type<ItemInBlockC2SPacket> TYPE = new Type<>(ModHelpers.res("wand_data_sync"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ItemInBlockC2SPacket> STREAM_CODEC = CustomPacketPayload.codec(ItemInBlockC2SPacket::toBytes, ItemInBlockC2SPacket::new);
 
     BlockPos blockPos;
     ItemStack itemStack;
 
-    public WandDataC2SPacket(ItemStack itemStack, BlockPos blockPos) {
+    public ItemInBlockC2SPacket(ItemStack itemStack, BlockPos blockPos) {
         this.itemStack = itemStack;
         this.blockPos = blockPos;
     }
 
-    public WandDataC2SPacket(FriendlyByteBuf buf) {
+    public ItemInBlockC2SPacket(FriendlyByteBuf buf) {
         this.blockPos = buf.readBlockPos();
         this.itemStack = buf.readJsonWithCodec(ItemStack.CODEC);
     }

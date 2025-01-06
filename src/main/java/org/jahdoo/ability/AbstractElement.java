@@ -65,10 +65,10 @@ public abstract class AbstractElement {
 
     public abstract Holder<MobEffect> elementEffect();
 
-    public abstract Pair<String, Holder<Attribute>> getTypeCooldownReduction();
+    public abstract Holder<Attribute> getTypeCooldownReduction();
 
-    public abstract Pair<String, Holder<Attribute>> getTypeManaReduction();
+    public abstract Holder<Attribute> getTypeManaReduction();
 
-    public abstract Pair<String, Holder<Attribute>> getDamageTypeAmplifier();
+    public abstract Holder<Attribute> getDamageTypeAmplifier();
 
 }

@@ -189,7 +189,6 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
 
     private void setSlotTexturesGrid(GuiGraphics guiGraphics){
         var entity = this.wandBlockMenu.getWandBlockEntity();
-
         SharedUI.handleSlotsInGridLayout(
             (slotX, slotY, index) -> {
                 int slotX1 = slotX - 32 / 2;

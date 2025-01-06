@@ -1,5 +1,6 @@
 package org.jahdoo.ability.rarity;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.StringRepresentable;
@@ -8,12 +9,14 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
 import org.jahdoo.ability.AbilityRegistrar;
-import org.jahdoo.components.RuneHolder;
+import org.jahdoo.components.rune_data.RuneHolder;
 import org.jahdoo.components.WandData;
 import org.jahdoo.items.augments.AugmentItemHelper;
+import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.registers.*;
 import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
@@ -28,10 +31,9 @@ import java.util.function.UnaryOperator;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ability.rarity.RarityAttributes.*;
-import static org.jahdoo.components.RuneData.RuneHelpers.getRuneData;
+import static org.jahdoo.components.rune_data.RuneData.RuneHelpers.getRuneData;
 import static org.jahdoo.items.augments.AugmentItemHelper.setAbilityToAugment;
 import static org.jahdoo.registers.AttributesRegister.*;
-import static org.jahdoo.registers.DataComponentRegistry.JAHDOO_RARITY;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 import static org.jahdoo.utils.ModHelpers.*;
 import static org.jahdoo.utils.ModHelpers.singleFormattedDouble;
@@ -139,11 +141,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return withStyleComponent("Tier " + getTier, ColourStore.HEADER_COLOUR);
     }
 
-    public static Component attachRuneRarityTooltip(ItemStack wandItem) {
-        var data = getRuneData(wandItem);
-        var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(data.rarityId(), 0, 5));
-        return JahdooRarity.addRarityTooltip(getRarity);
-    }
 
     public static ItemStack setGeneratedAugment(Item item){
         var itemStack = new ItemStack(item);
@@ -169,7 +166,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return itemStack;
     }
 
-
     public static ItemStack setGeneratedTome(JahdooRarity rarity, Item item){
         var itemStack = new ItemStack(item);
         switch (rarity){
@@ -181,7 +177,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         }
         return itemStack;
     }
-
 
     public static void createWandAttributes(
         JahdooRarity rarity,
@@ -198,11 +193,11 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             WandData.createRefinementPotential(itemStack, rarity.attributes.getRandomRefinementPotential());
 
             //0-5 basic;
-            replaceOrAddAttribute(itemStack, element.getFirst().getTypeCooldownReduction().getFirst(), element.getFirst().getTypeCooldownReduction().getSecond(), rarity.attributes.getRandomCooldown(), EquipmentSlot.MAINHAND, false);
+            replaceOrAddAttribute(itemStack, element.getFirst().getTypeCooldownReduction().getRegisteredName(), element.getFirst().getTypeCooldownReduction(), rarity.attributes.getRandomCooldown(), EquipmentSlot.MAINHAND, false);
             //0-10 basic;
-            replaceOrAddAttribute(itemStack, element.getFirst().getTypeManaReduction().getFirst(), element.getFirst().getTypeManaReduction().getSecond(),  rarity.attributes.getRandomManaReduction(), EquipmentSlot.MAINHAND, false);
+            replaceOrAddAttribute(itemStack, element.getFirst().getTypeManaReduction().getRegisteredName(), element.getFirst().getTypeManaReduction(),  rarity.attributes.getRandomManaReduction(), EquipmentSlot.MAINHAND, false);
             //0-10 basic;
-            replaceOrAddAttribute(itemStack, element.getFirst().getDamageTypeAmplifier().getFirst(), element.getFirst().getDamageTypeAmplifier().getSecond(),  rarity.attributes.getRandomDamage(), EquipmentSlot.MAINHAND, false);
+            replaceOrAddAttribute(itemStack, element.getFirst().getDamageTypeAmplifier().getRegisteredName(), element.getFirst().getDamageTypeAmplifier(),  rarity.attributes.getRandomDamage(), EquipmentSlot.MAINHAND, false);
         }
     }
 

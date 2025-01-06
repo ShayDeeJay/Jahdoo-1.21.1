@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jahdoo.block.wand_block_manager.WandManagerBlock;
 import org.jahdoo.block.wand_block_manager.WandManagerEntity;
-import org.jahdoo.components.RuneHolder;
+import org.jahdoo.components.rune_data.RuneHolder;
 
 public class WandManagerTableRenderer implements BlockEntityRenderer<WandManagerEntity> {
     private final BlockEntityRenderDispatcher entityRenderDispatcher;

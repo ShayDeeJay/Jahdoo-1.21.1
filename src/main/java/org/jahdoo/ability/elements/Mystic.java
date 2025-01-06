@@ -74,17 +74,17 @@ public class Mystic extends AbstractElement {
     }
 
     @Override
-    public Pair<String, Holder<Attribute>> getTypeCooldownReduction() {
-        return Pair.of(AttributesRegister.MYSTIC_COOLDOWN_REDUCTION_PREFIX, AttributesRegister.MYSTIC_COOLDOWN_REDUCTION);
+    public Holder<Attribute> getTypeCooldownReduction() {
+        return AttributesRegister.MYSTIC_COOLDOWN_REDUCTION;
     }
 
     @Override
-    public Pair<String, Holder<Attribute>> getTypeManaReduction() {
-        return Pair.of(AttributesRegister.MYSTIC_MANA_COST_REDUCTION_PREFIX, AttributesRegister.MYSTIC_MANA_COST_REDUCTION);
+    public Holder<Attribute> getTypeManaReduction() {
+        return AttributesRegister.MYSTIC_MANA_COST_REDUCTION;
     }
 
     @Override
-    public Pair<String, Holder<Attribute>> getDamageTypeAmplifier() {
-        return Pair.of(AttributesRegister.MYSTIC_MAGIC_DAMAGE_MULTIPLIER_PREFIX, AttributesRegister.MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
+    public Holder<Attribute> getDamageTypeAmplifier() {
+        return AttributesRegister.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
     }
 }

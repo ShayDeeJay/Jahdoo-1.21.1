@@ -43,7 +43,19 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         wands(recipeOutput, ItemsRegister.WAND_ITEM_MYSTIC.get(), Items.PURPLE_DYE, "mystic");
         wands(recipeOutput, ItemsRegister.WAND_ITEM_LIGHTNING.get(), Items.LIGHT_GRAY_DYE, "lightning");
         wands(recipeOutput, ItemsRegister.WAND_ITEM_VITALITY.get(), Items.RED_DYE, "vitality");
+        applyRune(recipeOutput, ItemsRegister.WIZARD_CHESTPLATE.get());
     }
+
+    //Creator Recipes
+    protected void applyRune(RecipeOutput output, Item result) {
+        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 24)
+            .requires(ItemsRegister.WIZARD_CHESTPLATE.get(), 1)
+            .requires(ItemsRegister.AUGMENT_CORE.get(), 1)
+            .requires(ItemsRegister.RUNE.get(), 1)
+            .unlockedBy("rune", has(ItemsRegister.RUNE.get()))
+            .save(output);
+    }
+
 
     //Creator Recipes
     protected void hyperCore(RecipeOutput output, Item result) {

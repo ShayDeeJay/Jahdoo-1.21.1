@@ -52,7 +52,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
                 (float) damage,
                 true,
                 MAGIC_DAMAGE_MULTIPLIER,
-                element.getDamageTypeAmplifier().getSecond()
+                element.getDamageTypeAmplifier()
             );
         }
     }

@@ -10,7 +10,7 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.List;
 
-public class ArchmageGauntlet extends Item implements ICurioItem {
+public class ArchmageGauntlet extends Item implements ICurioItem, JahdooItem{
 
     public ArchmageGauntlet() {
         super(new Properties().stacksTo(1));
