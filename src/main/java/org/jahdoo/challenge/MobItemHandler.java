@@ -50,12 +50,12 @@ public class MobItemHandler {
         this.regLookup2 = serverLevel.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
         this.armorTrimBasic = new ArmorTrim(regLookup1.get(TrimMaterials.COPPER).orElseThrow(), regLookup.get(TrimPatterns.FLOW).orElseThrow());
         this.armorTrimBasicSecondary = new ArmorTrim(regLookup1.get(TrimMaterials.COPPER).orElseThrow(), regLookup.get(TrimPatterns.BOLT).orElseThrow());
-        this.armorTrimIntermediate = new ArmorTrim(regLookup1.get(TrimMaterials.IRON).orElseThrow(), regLookup.get(TrimPatterns.DUNE).orElseThrow());
+        this.armorTrimIntermediate = new ArmorTrim(regLookup1.get(TrimMaterials.IRON).orElseThrow(), regLookup.get(TrimPatterns.EYE).orElseThrow());
         this.armorTrimIntermediateSecondary = new ArmorTrim(regLookup1.get(TrimMaterials.IRON).orElseThrow(), regLookup.get(TrimPatterns.SENTRY).orElseThrow());
         this.armorTrimPro = new ArmorTrim(regLookup1.get(TrimMaterials.QUARTZ).orElseThrow(), regLookup.get(TrimPatterns.SPIRE).orElseThrow());
-        this.armorTrimProSecondary = new ArmorTrim(regLookup1.get(TrimMaterials.QUARTZ).orElseThrow(), regLookup.get(TrimPatterns.WAYFINDER).orElseThrow());
-        this.armorTrimLegendary = new ArmorTrim(regLookup1.get(TrimMaterials.AMETHYST).orElseThrow(), regLookup.get(TrimPatterns.EYE).orElseThrow());
-        this.armorTrimLegendarySecondary = new ArmorTrim(regLookup1.get(TrimMaterials.AMETHYST).orElseThrow(), regLookup.get(TrimPatterns.SNOUT).orElseThrow());
+        this.armorTrimProSecondary = new ArmorTrim(regLookup1.get(TrimMaterials.QUARTZ).orElseThrow(), regLookup.get(TrimPatterns.VEX).orElseThrow());
+        this.armorTrimLegendary = new ArmorTrim(regLookup1.get(TrimMaterials.AMETHYST).orElseThrow(), regLookup.get(TrimPatterns.DUNE).orElseThrow());
+        this.armorTrimLegendarySecondary = new ArmorTrim(regLookup1.get(TrimMaterials.AMETHYST).orElseThrow(), regLookup.get(TrimPatterns.SENTRY).orElseThrow());
         this.multiplier = multiplier;
     }
 
@@ -93,7 +93,7 @@ public class MobItemHandler {
         return getRandomNetherite();
     }
 
-    public LootTable getRandomSkeletonWeapon(){
+    public LootTable getRandomWeapon(){
         return buildForSkeleton(regLookup2, multiplier);
     }
 
@@ -175,7 +175,7 @@ public class MobItemHandler {
             .build();
     }
 
-    private static @NotNull LootTable buildForSkeleton(HolderLookup.RegistryLookup<Enchantment> registryLookup, float multiplier) {
+    private static LootTable buildForSkeleton(HolderLookup.RegistryLookup<Enchantment> registryLookup, float multiplier) {
         return LootTable.lootTable()
             .withPool(weaponWithChance(registryLookup, Items.IRON_SWORD, multiplier))
             .withPool(weaponWithChance(registryLookup, Items.BOW, multiplier))
@@ -191,13 +191,13 @@ public class MobItemHandler {
             .add(getArmor(armortrim, armorTrim2, registrylookup2, item, multiplier).setWeight(1));
     }
 
-    private static LootPool.@NotNull Builder weaponWithChance(HolderLookup.RegistryLookup<Enchantment> registrylookup2, Item item, float multiplier) {
+    private static LootPool.@NotNull Builder weaponWithChance(HolderLookup.RegistryLookup<Enchantment> registryLookup, Item item, float multiplier) {
         var chance = 0.4F * multiplier;
         var min = Math.min(0.1F * multiplier, 1.0F);
         return LootPool.lootPool()
             .setRolls(UniformGenerator.between(min, 1.0f))
             .when(LootItemRandomChanceCondition.randomChance(chance))
-            .add(getWeapon(registrylookup2, multiplier, item).setWeight(1));
+            .add(getWeapon(registryLookup, multiplier, item).setWeight(1));
     }
 
     private static LootPoolSingletonContainer.@NotNull Builder<?> getWeapon(HolderLookup.RegistryLookup<Enchantment> registrylookup2, float roundMultiplier, Item item) {

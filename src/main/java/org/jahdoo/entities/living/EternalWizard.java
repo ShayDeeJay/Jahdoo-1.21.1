@@ -17,6 +17,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -127,15 +128,16 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(5, new FollowGoal(this, 1.0D, 5.0F, 2.0F, false));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new GenericHurtByTargetGoal(this));
-        this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
-        this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getOwner));
-        this.targetSelector.addGoal(2, new AttackNearbyMonsters<>(this, LivingEntity.class, true, 10, 30));
+//        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, false));
+        this.targetSelector.addGoal(1, new AttackNearbyMonsters<>(this, LivingEntity.class, false, 5, 100));
+        this.targetSelector.addGoal(2, new GenericHurtByTargetGoal(this));
+        this.targetSelector.addGoal(3, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
+        this.targetSelector.addGoal(3, new GenericOwnerHurtTargetGoal(this, this::getOwner));
     }
 
     @Override
@@ -173,6 +175,7 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
         super.tick();
         privateTicks++;
         if(!(this.level() instanceof ServerLevel serverLevel)) return;
+//        System.out.println(this.getOwner());
 //        if(this.getTarget() == this.owner) this.setTarget(null);
         this.setPrivateTicks(this.privateTicks);
         if(owner == null && this.ownerUUID != null) this.owner = serverLevel.getPlayerByUUID(this.ownerUUID);
@@ -193,7 +196,7 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
                 //Set attack interval
                 int i = 10;
                 this.wandGoal.setMinAttackInterval(i);
-                this.goalSelector.addGoal(2, this.wandGoal);
+                this.goalSelector.addGoal(1, this.wandGoal);
             }
         }
     }
@@ -254,9 +257,7 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
 
     @Override
     protected @NotNull InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
-        if(this.owner != null){
-            WandItemHelper.setWizardMode(this, pPlayer);
-        }
+        if(this.owner != null) WandItemHelper.setWizardMode(this, pPlayer);
         return InteractionResult.CONSUME;
     }
 

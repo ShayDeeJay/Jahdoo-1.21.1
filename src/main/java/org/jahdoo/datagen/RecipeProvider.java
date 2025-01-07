@@ -31,8 +31,8 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         creatorBlockRecipe(recipeOutput, BlocksRegister.CREATOR.get().asItem());
         tankRecipe(recipeOutput, BlocksRegister.TANK.get().asItem());
         infuser(recipeOutput, BlocksRegister.INFUSER.get().asItem());
-        advancedAugmentCore(recipeOutput, ItemsRegister.ADVANCED_AUGMENT_CORE.get());
-        hyperCore(recipeOutput, ItemsRegister.AUGMENT_HYPER_CORE.get());
+//        advancedAugmentCore(recipeOutput, ItemsRegister.ADVANCED_AUGMENT_CORE.get());
+//        hyperCore(recipeOutput, ItemsRegister.AUGMENT_HYPER_CORE.get());
         augment(recipeOutput, ItemsRegister.AUGMENT_ITEM.get());
         tomeOfUnity(recipeOutput, ItemsRegister.TOME_OF_UNITY.get());
         chaosCube(recipeOutput, BlocksRegister.MODULAR_CHAOS_CUBE.get().asItem());
@@ -43,17 +43,6 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         wands(recipeOutput, ItemsRegister.WAND_ITEM_MYSTIC.get(), Items.PURPLE_DYE, "mystic");
         wands(recipeOutput, ItemsRegister.WAND_ITEM_LIGHTNING.get(), Items.LIGHT_GRAY_DYE, "lightning");
         wands(recipeOutput, ItemsRegister.WAND_ITEM_VITALITY.get(), Items.RED_DYE, "vitality");
-        applyRune(recipeOutput, ItemsRegister.WIZARD_CHESTPLATE.get());
-    }
-
-    //Creator Recipes
-    protected void applyRune(RecipeOutput output, Item result) {
-        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 24)
-            .requires(ItemsRegister.WIZARD_CHESTPLATE.get(), 1)
-            .requires(ItemsRegister.AUGMENT_CORE.get(), 1)
-            .requires(ItemsRegister.RUNE.get(), 1)
-            .unlockedBy("rune", has(ItemsRegister.RUNE.get()))
-            .save(output);
     }
 
 

@@ -42,7 +42,7 @@ public class ServerBusEvents {
 
     @SubscribeEvent
     public static void attachAttribute(EntityAttributeCreationEvent event){
-        event.put(EntitiesRegister.ETERNAL_WIZARD.get(), EternalWizard.createAttributes().build());
+        event.put(EntitiesRegister.ETERNAL_WIZARD.get(), CustomSkeleton.createAttributes().build());
         event.put(EntitiesRegister.DECOY.get(), Decoy.createMobAttributes().build());
         event.put(EntitiesRegister.CUSTOM_ZOMBIE.get(), CustomZombie.createMobAttributes().build());
         event.put(EntitiesRegister.CUSTOM_SKELETON.get(), CustomSkeleton.createMobAttributes().build());

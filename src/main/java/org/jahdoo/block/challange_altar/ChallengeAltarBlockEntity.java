@@ -40,11 +40,10 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
     public int initiateSpawning;
     public boolean beginSpawning;
 
-
     public ChallengeAltarBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.CHALLENGE_ALTAR_BE.get(), pPos, pBlockState);
         this.setData(CHALLENGE_ALTAR, ChallengeAltarData.DEFAULT);
-        this.bossEvent = new ServerBossEvent(Component.literal(""), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.NOTCHED_12);
+        this.bossEvent = new ServerBossEvent(Component.literal(""), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.NOTCHED_20);
     }
 
     private void updatePacket(){
@@ -71,13 +70,15 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
-        manageActivePlayers(pPos);
-        tickBossEvent();
-        activeSubRoundEvent(pLevel, pPos);
-        resetSubRound();
-        this.completeRound();
-        if(privateTicks == 1) onActivationAnim(pLevel, pPos, privateTicks);
-        this.updatePacket();
+        if(!pLevel.isClientSide){
+            manageActivePlayers(pPos);
+            tickBossEvent();
+            activeSubRoundEvent(pLevel, pPos);
+            resetSubRound();
+            this.completeRound();
+            if (privateTicks == 1) onActivationAnim(pLevel, pPos, privateTicks);
+            this.updatePacket();
+        }
     }
 
     private void activeSubRoundEvent(Level pLevel, BlockPos pPos) {

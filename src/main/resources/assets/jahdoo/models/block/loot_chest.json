@@ -1,0 +1,128 @@
+{
+  "credit": "Made with Blockbench",
+  "texture_size": [
+    128,
+    128
+  ],
+  "textures": {
+    "particle": "jahdoo:block/loot_chest"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        68,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        -1.5
+      ],
+      "scale": [
+        0.34,
+        0.34,
+        0.34
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        68,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        -1.5
+      ],
+      "scale": [
+        0.34,
+        0.34,
+        0.34
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        -21,
+        0,
+        0
+      ],
+      "translation": [
+        1.5,
+        0,
+        1.5
+      ],
+      "scale": [
+        0.3,
+        0.3,
+        0.3
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        -21,
+        0,
+        0
+      ],
+      "translation": [
+        1.5,
+        0,
+        1.5
+      ],
+      "scale": [
+        0.3,
+        0.3,
+        0.3
+      ]
+    },
+    "ground": {
+      "scale": [
+        0.6,
+        0.6,
+        0.6
+      ]
+    },
+    "gui": {
+      "rotation": [
+        16,
+        -15,
+        0
+      ],
+      "translation": [
+        0,
+        -4.25,
+        0
+      ],
+      "scale": [
+        0.74,
+        0.74,
+        0.74
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        4,
+        0
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        -7,
+        5
+      ]
+    }
+  }
+}

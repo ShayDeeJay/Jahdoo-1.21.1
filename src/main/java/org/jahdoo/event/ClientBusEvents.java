@@ -49,6 +49,7 @@ public class ClientBusEvents {
         event.registerBlockEntityRenderer(BlockEntitiesRegister.INFUSER_BE.get(), InfuserRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.CHALLENGE_ALTAR_BE.get(), ChallengeAltarRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(), ModularChaosCubeRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.LOOT_CHEST_BE.get(), LootChestRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_BE.get(), WandBlockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.TANK_BE.get(), NexiteTankRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.AUGMENT_MODIFICATION_STATION_BE.get(), AugmentModificationStationRenderer::new);

@@ -285,6 +285,10 @@ public class ParticleHandlers {
         return new GenericParticleOptions(particleType, element.particleColourPrimary(), element.particleColourFaded(), lifetime,size,staticSize, 1);
     }
 
+    public static GenericParticleOptions genericParticleOptions(int particleType, int colourPrimary, int colourFade, int lifetime, float size, boolean staticSize, double speed){
+        return new GenericParticleOptions(particleType, colourPrimary, colourFade, lifetime,size,staticSize, speed);
+    }
+
     public static GenericParticleOptions genericParticleOptions(int particleType, int lifetime, float size, int colourPrimary, int colourSecondary){
         return new GenericParticleOptions(particleType, colourPrimary, colourSecondary, lifetime,size,false, 1);
     }

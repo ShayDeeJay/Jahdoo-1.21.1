@@ -45,7 +45,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
         }
 
         public Particle createParticle(BakedParticleOptions pType, ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-            GenericParticle genericParticle = new GenericParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed,this.sprites){
+            var genericParticle = new GenericParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, this.sprites){
                 @Override
                 public void tick() {
                     super.tick();
@@ -74,7 +74,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
         }
 
         public Particle createParticle(GenericParticleOptions pType, ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-            GenericParticle genericParticle = new GenericParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed,this.sprites){
+            var genericParticle = new GenericParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed,this.sprites){
                 int tick;
 
                 @Override
@@ -85,7 +85,14 @@ public class GenericParticle extends SimpleAnimatedParticle {
                     this.speedUpWhenYMotionIsBlocked = true;
                     if(tick % 4 == 0) setSprite(sprites.get(random.fork()));
                 }
+
+                @Override
+                public void setPos(double x, double y, double z) {
+                    super.setPos(x, y, z);
+                }
             };
+
+
 
             if(pType.setStaticSize()){
                 genericParticle.quadSize = pType.size();
@@ -109,7 +116,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
         }
 
         public Particle createParticle(GenericParticleOptions pType, ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-            GenericParticle genericParticle = new GenericParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed,this.sprites){
+            var genericParticle = new GenericParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed,this.sprites){
                 @Override
                 public void tick() {
                     super.tick();

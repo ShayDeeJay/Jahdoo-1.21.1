@@ -79,20 +79,15 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
      * Keep ticking a continuous task that has already been started
      */
     public void tick() {
-        LivingEntity livingentity = this.mob.getTarget();
+        var livingentity = this.mob.getTarget();
         if (livingentity != null) {
-            double d0 = this.mob.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
-            boolean flag = this.mob.getSensing().hasLineOfSight(livingentity);
-            boolean flag1 = this.seeTime > 0;
-            if (flag != flag1) {
-                this.seeTime = 0;
-            }
+            var d0 = this.mob.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
+            var flag = this.mob.getSensing().hasLineOfSight(livingentity);
+            var flag1 = this.seeTime > 0;
 
-            if (flag) {
-                ++this.seeTime;
-            } else {
-                --this.seeTime;
-            }
+            if (flag != flag1) this.seeTime = 0;
+
+            if (flag) ++this.seeTime; else --this.seeTime;
 
             if (!(d0 > (double)this.attackRadiusSqr) && this.seeTime >= 20) {
                 this.mob.getNavigation().stop();
@@ -103,11 +98,11 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
             }
 
             if (this.strafingTime >= 20) {
-                if ((double)this.mob.getRandom().nextFloat() < 0.3D) {
+                if (this.mob.getRandom().nextFloat() < 0.3) {
                     this.strafingClockwise = !this.strafingClockwise;
                 }
 
-                if ((double)this.mob.getRandom().nextFloat() < 0.3D) {
+                if (this.mob.getRandom().nextFloat() < 0.3) {
                     this.strafingBackwards = !this.strafingBackwards;
                 }
 
@@ -123,9 +118,7 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
 
                 this.mob.getMoveControl().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
                 Entity entity = this.mob.getControlledVehicle();
-                if (entity instanceof Mob mob) {
-                    mob.lookAt(livingentity, 30.0F, 30.0F);
-                }
+                if (entity instanceof Mob mob) mob.lookAt(livingentity, 30.0F, 30.0F);
 
                 this.mob.lookAt(livingentity, 30.0F, 30.0F);
             } else {

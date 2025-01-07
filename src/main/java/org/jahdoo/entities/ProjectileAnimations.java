@@ -28,4 +28,7 @@ public class ProjectileAnimations {
     public static final RawAnimation ALTAR_INITIATE = RawAnimation.begin().thenPlay("initiate").thenPlay("idle");
     public static final RawAnimation ALTAR_SPAWNING = RawAnimation.begin().thenPlay("spawning");
 
+    public static final RawAnimation OPEN_LOOT = RawAnimation.begin().thenPlay("open_animation");
+
+
 }

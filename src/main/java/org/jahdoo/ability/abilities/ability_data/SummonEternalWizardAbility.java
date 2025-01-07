@@ -23,8 +23,8 @@ public class SummonEternalWizardAbility extends AbilityRegistrar {
 
     @Override
     public void invokeAbility(Player player) {
-        Vec3 location = player.pick(40, 0,false).getLocation();
-        AoeCloud aoeCloud = new AoeCloud(player.level(), player, 0f, EntityPropertyRegister.SUMMON_ETERNAL_WIZARD.get().setAbilityId(), abilityId.getPath().intern());
+        var location = player.pick(40, 0,false).getLocation();
+        var aoeCloud = new AoeCloud(player.level(), player, 0f, EntityPropertyRegister.SUMMON_ETERNAL_WIZARD.get().setAbilityId(), abilityId.getPath().intern());
         aoeCloud.setPos(location.x, location.y, location.z);
         player.level().addFreshEntity(aoeCloud);
         player.level().playSound(null, BlockPos.containing(location), SoundEvents.WITHER_AMBIENT, SoundSource.BLOCKS, 2f, 0.8f);

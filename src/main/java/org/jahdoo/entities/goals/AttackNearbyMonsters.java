@@ -37,7 +37,7 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
     }
 
     public boolean canUse() {
-        if (this.randomInterval > 0 && this.mob.getRandom().nextInt(this.randomInterval) != 0) {
+        if (this.mob.getRandom().nextInt(4) != 0) {
             return false;
         } else {
             this.findTarget();
@@ -45,13 +45,13 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
         }
     }
 
-    protected AABB getTargetSearchArea(double targetDistance) {
-        return this.mob.getBoundingBox().inflate(targetDistance, trackDistance, targetDistance);
+    protected AABB getTargetSearchArea() {
+        return this.mob.getBoundingBox().inflate(60, 4.0F, 60);
     }
 
     protected void findTarget() {
         if (this.targetType != Player.class && this.targetType != ServerPlayer.class) {
-            this.target = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(this.targetType, this.getTargetSearchArea(this.getFollowDistance()), (p_148152_) -> true), this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ());
+            this.target = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(this.targetType, this.getTargetSearchArea(), (t) -> true), this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ());
         } else {
             this.target = this.mob.level().getNearestPlayer(this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ());
         }
@@ -59,33 +59,27 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
 
     public void start() {
         if(mob instanceof TamableEntity tamableEntity){
-            if (withoutOwner(tamableEntity)) return;
-            wizardBehaviour(tamableEntity);
+            handleTargeting(tamableEntity);
         }
         super.start();
     }
 
-    private boolean withoutOwner(TamableEntity tamableEntity) {
-        if(tamableEntity.getOwner() == null){
-            if(target instanceof Player){
-                this.mob.setTarget(this.target);
-            }
-        }
-        return false;
-    }
+    private void handleTargeting(TamableEntity tamableEntity) {
+        if(mob.getTarget() == null){
+            if (target == null) return;
 
-    private void wizardBehaviour(TamableEntity tamableEntity) {
-        var isTargetFriend = this.target instanceof TamableEntity tamable1 && tamable1.getOwner() == tamableEntity.getOwner();
-        if(!isTargetFriend){
-            if (mob instanceof EternalWizard wizard) {
-                if (wizard.getMode()) {
-                    if (wizard.getOwner() != this.target) {
+            var isTargetFriend = this.target instanceof TamableEntity tamableTarget && tamableTarget.getOwner() == tamableEntity.getOwner();
+            var isOwner = this.target.equals(tamableEntity.getOwner());
+
+            if (tamableEntity.getOwner() == null) {
+                if (this.target instanceof Player) this.mob.setTarget(this.target);
+            } else if (!isTargetFriend) {
+                if (!isOwner) {
+                    if (mob instanceof EternalWizard wizard) {
+                        if (wizard.getMode()) this.mob.setTarget(this.target);
+                    } else {
                         this.mob.setTarget(this.target);
                     }
-                }
-            } else {
-                if (tamableEntity.getOwner() != this.target) {
-                    this.mob.setTarget(this.target);
                 }
             }
         }

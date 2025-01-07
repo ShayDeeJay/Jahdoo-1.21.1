@@ -31,6 +31,8 @@ public class ModCreativeModTabs {
                     pOutput.accept(ItemsRegister.MODULAR_CHAOS_CUBE_ITEM.get());
                     pOutput.accept(BlocksRegister.TANK.get());
                     pOutput.accept(BlocksRegister.CREATOR.get());
+                    pOutput.accept(BlocksRegister.WAND_MANAGER_TABLE.get());
+//                    pOutput.accept(BlocksRegister.LOOT_CHEST.get());
                     pOutput.accept(BlocksRegister.AUGMENT_MODIFICATION_STATION.get());
                     pOutput.accept(ItemsRegister.INFUSER_ITEM.get());
                     pOutput.accept(ItemsRegister.NEXITE_POWDER.get());

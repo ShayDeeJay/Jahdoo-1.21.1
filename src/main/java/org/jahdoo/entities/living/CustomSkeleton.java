@@ -98,15 +98,13 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
     }
 
     protected void registerGoals() {
-        this.goalSelector.addGoal(2, new RestrictSunGoal(this));
-        this.goalSelector.addGoal(3, new FleeSunGoal(this, 1.0F));
-        this.goalSelector.addGoal(3, new AvoidEntityGoal(this, Wolf.class, 6.0F, 1.0F, 1.2));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0F));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0F));
+        this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.2, true));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal(this, Player.class, false));
+
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, false));
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
-        this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.2, true));
     }
 
     @Override

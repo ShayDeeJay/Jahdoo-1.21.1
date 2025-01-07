@@ -35,6 +35,7 @@ import org.jahdoo.utils.ModHelpers;
 import javax.annotation.Nullable;
 import java.util.*;
 
+import static net.minecraft.world.level.block.RedstoneLampBlock.LIT;
 import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
 
 public class LevelGenerator {
@@ -58,7 +59,7 @@ public class LevelGenerator {
     }
 
     private static void generateNewLevel(ServerLevel serverLevel, @Nullable String key) {
-        var dimensionWithBiomes = Pair.of(BuiltinDimensionTypes.OVERWORLD, List.of(Biomes.THE_VOID, Biomes.SNOWY_TAIGA, Biomes.PLAINS));
+        var dimensionWithBiomes = Pair.of(BuiltinDimensionTypes.OVERWORLD, List.of(Biomes.THE_VOID, /*Biomes.SNOWY_TAIGA,*/ Biomes.PLAINS));
         var randomBiome = ModHelpers.Random.nextInt(dimensionWithBiomes.second().size());
         var biome = dimensionWithBiomes.second().get(randomBiome);
         var builder = new CustomLevelBuilder()
@@ -107,13 +108,13 @@ public class LevelGenerator {
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
         //Here we can pass the data from the previous altar to set up the next challenge stack.
-        setAltarAndData(level, data);
         teleportToPlatform(player, level);
+        setAltarAndData(level, data);
     }
 
     private static void setAltarAndData(ServerLevel level, ChallengeAltarData data) {
         var pos = new BlockPos(-25, 67, -72);
-        level.setBlock(pos, BlocksRegister.CHALLENGE_ALTAR.get().defaultBlockState(), 2);
+        level.setBlockAndUpdate(pos, BlocksRegister.CHALLENGE_ALTAR.get().defaultBlockState());
         if(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity altar){
             altar.setData(CHALLENGE_ALTAR, data);
         }
@@ -121,9 +122,7 @@ public class LevelGenerator {
 
     private static void teleportToPlatform(Player player, ServerLevel level) {
         player.changeDimension(
-            new DimensionTransition(
-                level, new Vec3(-24, 65, -120), player.getDeltaMovement(), 0, 0, DimensionTransition.DO_NOTHING
-            )
+            new DimensionTransition(level, new Vec3(-24.5, 65, -120.5), player.getDeltaMovement(), 0, 0, DimensionTransition.DO_NOTHING)
         );
         //Remove all effects as should only have ones allowed, which should only be ones on trinkets items etc/
         player.removeAllEffects();
@@ -142,21 +141,6 @@ public class LevelGenerator {
         Registry<StructureTemplatePool> registry = sLevel.registryAccess().registryOrThrow(Registries.TEMPLATE_POOL);
         Holder<StructureTemplatePool> holder = registry.getHolderOrThrow(ResourceKey.create(Registries.TEMPLATE_POOL, ModHelpers.res("challenge_arena/challenge_pool_1")));
         JigsawPlacement.generateJigsaw(sLevel, holder,  ResourceLocation.withDefaultNamespace("empty"), 10, pos, true);
-    }
-
-
-    public static void placeJigsaw(
-        ServerLevel serverLevel, Holder<StructureTemplatePool> templatePool, ResourceLocation target, int maxDepth, BlockPos pos
-    ) throws CommandSyntaxException {
-        ChunkPos chunkpos = new ChunkPos(pos);
-        checkLoaded(serverLevel, chunkpos, chunkpos);
-        JigsawPlacement.generateJigsaw(serverLevel, templatePool, target, maxDepth, pos, false);
-    }
-
-    private static void checkLoaded(ServerLevel level, ChunkPos start, ChunkPos end) throws CommandSyntaxException {
-        if (ChunkPos.rangeClosed(start, end).anyMatch((chunkPos) -> !level.isLoaded(chunkPos.getWorldPosition()))) {
-            throw BlockPosArgument.ERROR_NOT_LOADED.create();
-        }
     }
 
 }

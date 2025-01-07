@@ -355,16 +355,13 @@ public class PositionGetters {
         List<BlockPos> blockPositions = new ArrayList<>();
 
         for (int i = 0; i < numPoints; i++) {
-            // Generate random spherical coordinates
             double theta = 2 * Math.PI * Random.nextDouble(); // Random angle in the xy-plane
             double phi = Math.acos(2 * Random.nextDouble() - 1); // Random angle from the z-axis
 
-            // Convert spherical coordinates to Cartesian coordinates
             double x = radius * Math.sin(phi) * Math.cos(theta);
             double y = radius * Math.sin(phi) * Math.sin(theta);
             double z = radius * Math.cos(phi);
 
-            // Round to nearest block positions and add to the list
             int blockX = center.getX() + (int) Math.round(x);
             int blockY = center.getY() + (int) Math.round(y);
             int blockZ = center.getZ() + (int) Math.round(z);

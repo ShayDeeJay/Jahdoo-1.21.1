@@ -1,8 +1,9 @@
-package org.jahdoo.block.challange_altar;
+package org.jahdoo.block.loot_chest;
 
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -10,14 +11,16 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -25,7 +28,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ability.abilities.ability_data.EscapeDecoyAbility;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
-import org.jahdoo.challenge.LevelGenerator;
+import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.challenge.RewardLootTables;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlockEntitiesRegister;
@@ -36,67 +39,66 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.*;
-import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.nextSubRound;
-import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.resetWithRound;
+import static org.jahdoo.block.augment_modification_station.AugmentModificationBlock.SHAPE_COMBINED;
 import static org.jahdoo.registers.BlocksRegister.sharedBlockBehaviour;
 import static org.jahdoo.utils.ModHelpers.Random;
 
-public class ChallengeAltarBlock extends BaseEntityBlock {
-    public static final VoxelShape SHAPE_BASE = Block.box(4.5, 5, 4.5, 11.5, 32, 11.5);
-    public static final VoxelShape SHAPE_BASE_SECOND = Block.box(3.5, 0, 3.5, 12.5, 5, 12.5);
-    public static final VoxelShape SHAPE_COMMON = Shapes.or(SHAPE_BASE_SECOND, SHAPE_BASE);
-
-    public ChallengeAltarBlock() {
+public class LootChestBlock extends BaseEntityBlock {
+    public static final DirectionProperty FACING = DirectionalBlock.FACING;
+    public static final VoxelShape SHAPE = Block.box(0.5, 0.47499999999999964, 1.4749999999999979, 15.5, 9.225, 14.474999999999998);
+    public static final VoxelShape SHAPE2 = Block.box(1.5, 0.47499999999999964, 0.47499999999999787, 14.5, 9.225, 15.474999999999998);
+    public LootChestBlock() {
         super(sharedBlockBehaviour());
+        this.registerDefaultState(
+            this.stateDefinition.any().setValue(FACING, Direction.NORTH)
+        );
     }
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec((x) -> new ChallengeAltarBlock());
+        return simpleCodec((x) -> new LootChestBlock());
+    }
+
+    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
+        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection());
+    }
+
+    public BlockState rotate(BlockState pState, Rotation pRotation) {
+        return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
+    }
+
+    public BlockState mirror(BlockState pState, Mirror pMirror) {
+        return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
+    }
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
+        pBuilder.add(FACING);
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState pState) {
+        return RenderShape.MODEL;
     }
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return SHAPE_COMMON;
+        return pState.getValue(FACING) == Direction.EAST || pState.getValue(FACING) == Direction.WEST ? SHAPE2 : SHAPE;
     }
-
     @Override
     protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (!(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity altarE)) return ItemInteractionResult.FAIL;
-        if (level instanceof ServerLevel) {
-            var altarData = getProperties(altarE);
-            if (!isCompleted(altarE)) {
-                var startingRound = Math.max(1, altarData.round);
-                if (!isActive(altarE)) {
-                    startNewChallenge(altarE, startingRound);
-                } else {
-                    readyNextSubRound(altarE, altarData, startingRound);
-                }
-            } else {
-                completionLoot(level, pos);
-//                LevelGenerator.createNewWorld(player, serverLevel, ChallengeAltarData.newRound(altarData.maxRound));
-            }
+        if (!(level.getBlockEntity(pos) instanceof LootChestEntity lootChestEntity)) return ItemInteractionResult.FAIL;
+        lootChestEntity.setOpen(true);
+        if (level instanceof ServerLevel serverLevel) {
+            completionLoot(serverLevel, pos);
             return ItemInteractionResult.SUCCESS;
         }
-
         return ItemInteractionResult.FAIL;
     }
 
-    private static void startNewChallenge(ChallengeAltarBlockEntity altarE, int startingRound) {
-        var endingRound = startingRound + 5;
-        resetWithRound(altarE, startingRound, endingRound);
-    }
 
-    private static void readyNextSubRound(ChallengeAltarBlockEntity altarE, ChallengeAltarData altarData, int startingRound) {
-        if (!altarData.isSubRoundActive(altarE)) nextSubRound(altarE, startingRound);
-    }
-
-    private static void completionLoot(Level level, BlockPos pos) {
-        if (level instanceof ServerLevel serverLevel) {
-            var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter());
-            lootSplosion(level, pos, serverLevel, rewards);
-            level.destroyBlock(pos, false);
-        }
+    private static void completionLoot(ServerLevel serverLevel, BlockPos pos) {
+        var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter());
+        lootSplosion(serverLevel, pos, serverLevel, rewards);
+//        serverLevel.destroyBlock(pos, false);
     }
 
     private static void lootSplosion(Level level, BlockPos pos, ServerLevel serverLevel, ObjectArrayList<ItemStack> rewards) {
@@ -104,10 +106,10 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
             var pCenter = pos.getCenter();
             var itemEntity = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() , pCenter.z(), reward);
             var angle = Random.nextDouble() * 2 * Math.PI;
-            var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
+            var horizontalOffset = 0.2 + Random.nextDouble() * 0.45;
             var offsetX = Math.cos(angle) * horizontalOffset;
             var offsetZ = Math.sin(angle) * horizontalOffset;
-            var velocity = new Vec3(offsetX * (Math.random() - 0.5), Random.nextDouble(0.2, 0.5), offsetZ * (Math.random() - 0.5));
+            var velocity = new Vec3(offsetX * (Math.random() - 0.5), 7, offsetZ * (Math.random() - 0.5));
             itemEntity.setDeltaMovement(velocity);
             itemEntity.setPickUpDelay(30);
 
@@ -129,7 +131,7 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new ChallengeAltarBlockEntity(pPos,pState);
+        return new LootChestEntity(pPos,pState);
     }
 
     @Nullable
@@ -138,7 +140,7 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
 
         return createTickerHelper(
             pBlockEntityType,
-            BlockEntitiesRegister.CHALLENGE_ALTAR_BE.get(),
+            BlockEntitiesRegister.LOOT_CHEST_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }

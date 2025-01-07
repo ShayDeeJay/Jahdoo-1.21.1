@@ -52,7 +52,7 @@ public class ChallengeAltarAnim {
 
     public static void placeParticle(Vec3 pos, ParticleOptions par1, Level level, int privateTicks){
         double randomY = ModHelpers.Random.nextDouble(0.0, 0.4);
-        ParticleHandlers.sendParticles(level, par1, pos.subtract(0,0.4,0), privateTicks <= 100 ? 8 : 0, 0, randomY,0, privateTicks == 94 ? 1.4 : privateTicks > 94 ? 0.7 : 0.1);
+        ParticleHandlers.sendParticles(level, par1, pos.subtract(0,0.4,0), privateTicks <= 100 ? 5 : 0, 0, randomY,0, privateTicks == 94 ? 1.4 : privateTicks > 90 ? 0.4 : 0.1);
     }
 
     private static void setShockwaveNova(Vec3 worldPosition, BlockPos pos, Level level){
