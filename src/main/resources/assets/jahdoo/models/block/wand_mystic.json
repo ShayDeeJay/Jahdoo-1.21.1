@@ -2,7 +2,7 @@
   "credit": "Made with Blockbench",
   "parent": "builtin/entity",
   "textures": {
-    "particle": "jahdoo:block/wand_mystic"
+    "particle": "jahdoo:block/wand_particles"
   },
   "display": {
     "thirdperson_righthand": {

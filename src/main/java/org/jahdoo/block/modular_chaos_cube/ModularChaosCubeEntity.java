@@ -46,7 +46,7 @@ import static org.jahdoo.block.BlockInteractionHandler.getItemHandlerAt;
 import static org.jahdoo.attachments.player_abilities.ModularChaosCubeProperties.*;
 import static org.jahdoo.components.DataComponentHelper.getKeyFromAugment;
 import static org.jahdoo.components.DataComponentHelper.getSpecificValue;
-import static org.jahdoo.entities.ProjectileAnimations.*;
+import static org.jahdoo.entities.EntityAnimations.*;
 import static org.jahdoo.registers.AttachmentRegister.*;
 
 

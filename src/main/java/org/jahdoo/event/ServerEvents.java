@@ -78,10 +78,8 @@ public class ServerEvents {
         if(mainHand.has(DataComponentRegistry.RUNE_HOLDER)){
             var rune = player.getOffhandItem();
             var list = new ArrayList<ItemStack>();
-            System.out.println("iom,ere");
             if(rune.getItem() instanceof RuneItem){
                 list.add(rune);
-                System.out.println("im here");
                 RuneHolder.updateRuneSlots(mainHand, list);
                 event.setCanceled(true);
             }

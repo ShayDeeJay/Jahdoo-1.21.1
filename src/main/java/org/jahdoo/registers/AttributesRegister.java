@@ -36,8 +36,8 @@ public class  AttributesRegister {
     public static final String TRIPLE_JUMP_PREFIX= "jahdoo.skills.triple_jump";
 
     //Cast Attributes
-    public static final String SKIP_MANA_PREFIX= "jahdoo.mana.mana_regen";
-    public static final String SKIP_COOLDOWN_PREFIX= "jahdoo.mana.mana_regen";
+    public static final String SKIP_MANA_PREFIX= "jahdoo.mana.no_mana_cost";
+    public static final String SKIP_COOLDOWN_PREFIX= "jahdoo.mana.no_cooldown_cost";
     public static final String HEAL_PREFIX= "jahdoo.mana.mana_regen";
 
     //Element Attributes
@@ -65,41 +65,41 @@ public class  AttributesRegister {
     public static final String VITALITY_COOLDOWN_REDUCTION_PREFIX= "jahdoo.vitality_cooldown.cooldown_reduction";
     public static final String VITALITY_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.vitality_damage.damage_multiplier";
 
-    //General attribute
+    //Base attribute
     public static final DeferredHolder<Attribute, Attribute> MANA_POOL = register(MANA_POOL_PREFIX, 100);
     public static final DeferredHolder<Attribute, Attribute> MANA_REGEN = register(MANA_REGEN_PREFIX, 0);
+
+    //Infinity Attributes
+    public static final DeferredHolder<Attribute, Attribute> SKIP_MANA = register(SKIP_MANA_PREFIX, 0);
+    public static final DeferredHolder<Attribute, Attribute> SKIP_COOLDOWN = register(SKIP_COOLDOWN_PREFIX, 0);
 
     //Skill Attributes
     public static final DeferredHolder<Attribute, Attribute> DESTINY_BOND = register(DESTINY_BOND_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> MAGE_FLIGHT = register(MAGE_FLIGHT_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> TRIPLE_JUMP = register(TRIPLE_JUMP_PREFIX, 0);
 
-    //Type specific attributes
+    //Cosmic attributes
     public static final DeferredHolder<Attribute, Attribute> COOLDOWN_REDUCTION = register(COOLDOWN_REDUCTION_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> MAGIC_DAMAGE_MULTIPLIER = register(MAGIC_DAMAGE_MULTIPLIER_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> MANA_COST_REDUCTION = register(MANA_COST_REDUCTION_PREFIX, 0);
 
-    //Type specific attributes
+    //Elemental attributes
     public static final DeferredHolder<Attribute, Attribute> INFERNO_COOLDOWN_REDUCTION = register(INFERNO_COOLDOWN_REDUCTION_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> INFERNO_MAGIC_DAMAGE_MULTIPLIER = register(INFERNO_MAGIC_DAMAGE_MULTIPLIER_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> INFERNO_MANA_COST_REDUCTION = register(INFERNO_MANA_COST_REDUCTION_PREFIX, 0);
 
-    //Type specific attributes
     public static final DeferredHolder<Attribute, Attribute> MYSTIC_COOLDOWN_REDUCTION = register(MYSTIC_COOLDOWN_REDUCTION_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> MYSTIC_MAGIC_DAMAGE_MULTIPLIER = register(MYSTIC_MAGIC_DAMAGE_MULTIPLIER_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> MYSTIC_MANA_COST_REDUCTION = register(MYSTIC_MANA_COST_REDUCTION_PREFIX, 0);
 
-    //Type specific attributes
     public static final DeferredHolder<Attribute, Attribute> LIGHTNING_COOLDOWN_REDUCTION = register(LIGHTNING_COOLDOWN_REDUCTION_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> LIGHTNING_MAGIC_DAMAGE_MULTIPLIER = register(LIGHTNING_MAGIC_DAMAGE_MULTIPLIER_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> LIGHTNING_MANA_COST_REDUCTION = register(LIGHTNING_MANA_COST_REDUCTION_PREFIX, 0);
 
-    //Type specific attributes
     public static final DeferredHolder<Attribute, Attribute> FROST_COOLDOWN_REDUCTION = register(FROST_COOLDOWN_REDUCTION_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> FROST_MAGIC_DAMAGE_MULTIPLIER = register(FROST_MAGIC_DAMAGE_MULTIPLIER_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> FROST_MANA_COST_REDUCTION = register(FROST_MANA_COST_REDUCTION_PREFIX, 0);
 
-    //Type specific attributes
     public static final DeferredHolder<Attribute, Attribute> VITALITY_COOLDOWN_REDUCTION = register(VITALITY_COOLDOWN_REDUCTION_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> VITALITY_MAGIC_DAMAGE_MULTIPLIER = register(VITALITY_MAGIC_DAMAGE_MULTIPLIER_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> VITALITY_MANA_COST_REDUCTION = register(VITALITY_MANA_COST_REDUCTION_PREFIX, 0);
@@ -154,6 +154,9 @@ public class  AttributesRegister {
     public static void attachAttribute(EntityAttributeModificationEvent event){
         event.add(EntityType.PLAYER, AttributesRegister.MANA_POOL);
         event.add(EntityType.PLAYER, AttributesRegister.MANA_REGEN);
+
+        event.add(EntityType.PLAYER, AttributesRegister.SKIP_MANA);
+        event.add(EntityType.PLAYER, AttributesRegister.SKIP_COOLDOWN);
 
         event.add(EntityType.PLAYER, AttributesRegister.COOLDOWN_REDUCTION);
         event.add(EntityType.PLAYER, AttributesRegister.MAGIC_DAMAGE_MULTIPLIER);

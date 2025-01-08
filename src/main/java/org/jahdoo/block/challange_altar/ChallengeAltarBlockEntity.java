@@ -1,6 +1,5 @@
 package org.jahdoo.block.challange_altar;
 
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -9,13 +8,10 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
-import org.jahdoo.challenge.LevelGenerator;
 import org.jahdoo.challenge.MobManager;
 import org.jahdoo.networking.packet.server2client.AltarBlockS2C;
 import org.jahdoo.registers.BlockEntitiesRegister;
@@ -24,13 +20,16 @@ import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
+import static net.minecraft.core.Direction.SOUTH;
 import static org.jahdoo.block.challange_altar.ChallengeAltarAnim.idleParticleAnim;
 import static org.jahdoo.block.challange_altar.ChallengeAltarAnim.onActivationAnim;
-import static org.jahdoo.entities.ProjectileAnimations.*;
+import static org.jahdoo.block.loot_chest.LootChestBlock.*;
+import static org.jahdoo.entities.EntityAnimations.*;
 import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
+import static org.jahdoo.registers.BlocksRegister.*;
 
 
 public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEntity {
@@ -70,12 +69,12 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
-        if(!pLevel.isClientSide){
+        if(pLevel instanceof ServerLevel serverLevel){
             manageActivePlayers(pPos);
             tickBossEvent();
             activeSubRoundEvent(pLevel, pPos);
             resetSubRound();
-            this.completeRound();
+            this.completeRound(serverLevel);
             if (privateTicks == 1) onActivationAnim(pLevel, pPos, privateTicks);
             this.updatePacket();
         }
@@ -85,7 +84,7 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
         if(isSubRoundActive()){
             this.privateTicks++;
             idleParticleAnim(pPos, privateTicks, this.getLevel());
-            if(!extracted() && altarData().activeMobs().isEmpty()){
+            if(!removeKilledMobs() && altarData().activeMobs().isEmpty()){
                 if(privateTicks == 93) onActivationAnim(pLevel, pPos, privateTicks);
                 if(privateTicks == 96) summonMobs();
             }
@@ -133,15 +132,16 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
         }
     }
 
-    private void completeRound() {
+    private void completeRound(ServerLevel serverLevel) {
         if(altarData().round() > 0 && altarData().round() == altarData().maxRound()){
             ChallengeAltarData.resetAltar(this);
             bossEvent.removeAllPlayers();
+            serverLevel.setBlockAndUpdate(getBlockPos(), LOOT_CHEST.get().defaultBlockState().setValue(FACING, SOUTH));
             this.privateTicks = 0;
         }
     }
 
-    private boolean extracted() {
+    private boolean removeKilledMobs() {
         for (var activeMob : altarData().activeMobs()) {
             if(this.level instanceof ServerLevel serverLevel){
                 var entity = serverLevel.getEntity(activeMob);
@@ -158,17 +158,15 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(
-            new AnimationController<>(this,
-                state -> {
-                    if(isSubRoundActive()) {
-                        var animation = privateTicks <= 100 ? ALTAR_SPAWNING : ALTAR_IDLE;
-                        return state.setAndContinue(animation);
-                    }
-                    return PlayState.STOP;
-                }
-            )
-        );
+        controllers.add(new AnimationController<>(this, this::eAnimation));
+    }
+
+    private PlayState eAnimation(AnimationState<ChallengeAltarBlockEntity> state) {
+        if(isSubRoundActive()) {
+            var animation = privateTicks <= 100 ? ALTAR_SPAWNING : ALTAR_IDLE;
+            return state.setAndContinue(animation);
+        }
+        return PlayState.STOP;
     }
 
     @Override

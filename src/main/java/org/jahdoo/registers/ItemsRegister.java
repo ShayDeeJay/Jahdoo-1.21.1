@@ -16,7 +16,7 @@ import org.jahdoo.items.armor.MageArmor;
 import org.jahdoo.items.armor.WizardArmor;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.block_items.ChallengeAltarBlockItem;
-import org.jahdoo.items.block_items.LootChestItem;
+import org.jahdoo.items.block_items.LootChestBlockItem;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.block_items.ModularChaosCubeItem;
 import org.jahdoo.items.TomeOfUnity;
@@ -49,7 +49,7 @@ public class ItemsRegister {
     public static final DeferredHolder<Item, Item> CHALLENGE_ALTAR_ITEM =
         ITEMS.register("challenge_altar", () -> new ChallengeAltarBlockItem(BlocksRegister.CHALLENGE_ALTAR.get(), new Item.Properties()));
     public static final DeferredHolder<Item, Item> LOOT_CHEST_ITEM =
-        ITEMS.register("loot_chest", () -> new LootChestItem(BlocksRegister.LOOT_CHEST.get(), new Item.Properties()));
+        ITEMS.register("loot_chest", () -> new LootChestBlockItem(BlocksRegister.LOOT_CHEST.get(), new Item.Properties()));
     public static final DeferredHolder<Item, Item> MODULAR_CHAOS_CUBE_ITEM =
         ITEMS.register("modular_chaos_cube", () -> new ModularChaosCubeItem(BlocksRegister.MODULAR_CHAOS_CUBE.get(), new Item.Properties()));
 

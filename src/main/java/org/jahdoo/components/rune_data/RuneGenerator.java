@@ -180,15 +180,14 @@ public class RuneGenerator {
             .build();
     }
 
-    public static RuneGenerator generateCosmicRune(Holder<Attribute> type, double value, int tier) {
+    public static RuneGenerator.Builder generateCosmicRune(Holder<Attribute> type, double value, int tier) {
         return new RuneGenerator.Builder(type)
             .setValue(value)
             .setName(COSMIC.getName())
             .setRarity(ETERNAL)
             .setTier(tier)
             .setColour(color(171, 87, 194))
-            .setModelData(COSMIC.getModel())
-            .build();
+            .setModelData(COSMIC.getModel());
     }
 
     public static RuneGenerator generateAetherRune(Holder<Attribute> type, double value, int tier) {
@@ -206,7 +205,8 @@ public class RuneGenerator {
         ELEMENTAL("Elemental", 5, -1),
         PERK("Perk", 15, 8),
         AETHER("Aether", 25, 0),
-        COSMIC("Cosmic", 50, 10);
+        COSMIC("Cosmic", 50, 10),
+        EMPTY("Blank", 500, -1);
 
         private final String name;
         private final int cost;
@@ -232,11 +232,9 @@ public class RuneGenerator {
 
         public static int getCostByName(String name) {
             for (RuneCategories category : RuneCategories.values()) {
-                if (category.name.equalsIgnoreCase(name)) {
-                    return category.cost;
-                }
+                if (category.name.equalsIgnoreCase(name)) return category.cost;
             }
-            throw new IllegalArgumentException("No RuneCategory found with name: " + name);
+            return -1;
         }
 
         @Override
@@ -250,7 +248,7 @@ public class RuneGenerator {
                     return category;
                 }
             }
-            throw new IllegalArgumentException("No RuneCategory found with name: " + name);
+            return EMPTY;
         }
     }
 }

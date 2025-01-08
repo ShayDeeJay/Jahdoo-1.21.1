@@ -225,10 +225,14 @@ public record RuneData(
                 );
 
                 //ETERNAL
+                var color = color(66, 66, 173);
                 var eternal = List.of(
-                    generateCosmicRune(MAGIC_DAMAGE_MULTIPLIER.getDelegate(), rarity.getAttributes().getRandomDamage(), rarity.getId()),
-                    generateCosmicRune(COOLDOWN_REDUCTION.getDelegate(), rarity.getAttributes().getRandomCooldown(), rarity.getId()),
-                    generateCosmicRune(MANA_COST_REDUCTION.getDelegate(), rarity.getAttributes().getRandomManaReduction(), rarity.getId())
+                    generateCosmicRune(MAGIC_DAMAGE_MULTIPLIER.getDelegate(), rarity.getAttributes().getRandomDamage(), rarity.getId()).build(),
+                    generateCosmicRune(COOLDOWN_REDUCTION.getDelegate(), rarity.getAttributes().getRandomCooldown(), rarity.getId()).build(),
+                    generateCosmicRune(MANA_COST_REDUCTION.getDelegate(), rarity.getAttributes().getRandomManaReduction(), rarity.getId()).build(),
+                    //Need to move these to the Infinity Rune category
+                    generateCosmicRune(SKIP_MANA.getDelegate(), 50, rarity.getId()).setColour(color).build(),
+                    generateCosmicRune(SKIP_COOLDOWN.getDelegate(), 50, rarity.getId()).setColour(color).build()
                 );
 
                 var getList = switch (getRarity()){

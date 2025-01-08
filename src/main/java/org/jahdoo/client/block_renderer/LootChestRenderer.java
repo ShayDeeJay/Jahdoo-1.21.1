@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.block.loot_chest.LootChestEntity;
@@ -32,5 +33,9 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
         super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
     }
 
+    @Override
+    public ResourceLocation getTextureLocation(LootChestEntity animatable) {
+        return super.getTextureLocation(animatable);
+    }
 }
 

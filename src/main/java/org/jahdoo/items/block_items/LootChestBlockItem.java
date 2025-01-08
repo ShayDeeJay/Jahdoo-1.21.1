@@ -3,7 +3,7 @@ package org.jahdoo.items.block_items;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
-import org.jahdoo.client.block_renderer.ChallengeAltarBlockRenderer;
+import org.jahdoo.client.block_renderer.LootChestBlockRenderer;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -15,10 +15,10 @@ import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.function.Consumer;
 
-public class LootChestItem extends BlockItem implements GeoItem {
+public class LootChestBlockItem extends BlockItem implements GeoItem {
     private final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
-     public LootChestItem(Block pBlock, Properties pProperties) {
+     public LootChestBlockItem(Block pBlock, Properties pProperties) {
         super(pBlock, pProperties);
          SingletonGeoAnimatable.registerSyncedAnimatable(this);
     }
@@ -30,11 +30,11 @@ public class LootChestItem extends BlockItem implements GeoItem {
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
         consumer.accept(
             new GeoRenderProvider() {
-                private ChallengeAltarBlockRenderer renderer;
+                private LootChestBlockRenderer renderer;
 
                 @Override
                 public @NotNull BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
-                    if (this.renderer == null) this.renderer = new ChallengeAltarBlockRenderer();
+                    if (this.renderer == null) this.renderer = new LootChestBlockRenderer();
                     return this.renderer;
                 }
 

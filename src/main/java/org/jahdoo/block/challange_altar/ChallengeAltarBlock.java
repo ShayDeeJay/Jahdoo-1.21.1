@@ -35,9 +35,12 @@ import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static net.minecraft.core.Direction.SOUTH;
 import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.*;
 import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.nextSubRound;
 import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.resetWithRound;
+import static org.jahdoo.block.loot_chest.LootChestBlock.FACING;
+import static org.jahdoo.registers.BlocksRegister.LOOT_CHEST;
 import static org.jahdoo.registers.BlocksRegister.sharedBlockBehaviour;
 import static org.jahdoo.utils.ModHelpers.Random;
 
@@ -47,7 +50,7 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE_COMMON = Shapes.or(SHAPE_BASE_SECOND, SHAPE_BASE);
 
     public ChallengeAltarBlock() {
-        super(sharedBlockBehaviour());
+        super(sharedBlockBehaviour().strength(-1.0F, 3600000.0F));
     }
 
     @Override
@@ -63,27 +66,23 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
     @Override
     protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity altarE)) return ItemInteractionResult.FAIL;
-        if (level instanceof ServerLevel) {
-            var altarData = getProperties(altarE);
-            if (!isCompleted(altarE)) {
-                var startingRound = Math.max(1, altarData.round);
-                if (!isActive(altarE)) {
-                    startNewChallenge(altarE, startingRound);
-                } else {
-                    readyNextSubRound(altarE, altarData, startingRound);
-                }
+        if (!(level instanceof ServerLevel)) return ItemInteractionResult.FAIL;
+        var altarData = getProperties(altarE);
+
+        if (!isCompleted(altarE)) {
+            var startingRound = Math.max(1, altarData.round);
+            if (!isActive(altarE)) {
+                startNewChallenge(altarE, startingRound);
             } else {
-                completionLoot(level, pos);
-//                LevelGenerator.createNewWorld(player, serverLevel, ChallengeAltarData.newRound(altarData.maxRound));
+                readyNextSubRound(altarE, altarData, startingRound);
             }
-            return ItemInteractionResult.SUCCESS;
         }
 
-        return ItemInteractionResult.FAIL;
+        return ItemInteractionResult.SUCCESS;
     }
 
     private static void startNewChallenge(ChallengeAltarBlockEntity altarE, int startingRound) {
-        var endingRound = startingRound + 5;
+        var endingRound = startingRound + 1;
         resetWithRound(altarE, startingRound, endingRound);
     }
 
@@ -121,6 +120,7 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
 
             serverLevel.addFreshEntity(itemEntity);
         }
+
         ModHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_OPEN_SHUTTER, 1f, 1.8f);
         ModHelpers.getSoundWithPosition(level, pos, SoundEvents.ILLUSIONER_CAST_SPELL, 1f, 1f);
         ModHelpers.getSoundWithPosition(level, pos, SoundRegister.EXPLOSION.get(), 1f, 0.9f);

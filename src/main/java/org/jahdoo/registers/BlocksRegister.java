@@ -35,7 +35,7 @@ public class BlocksRegister {
     public static DeferredHolder<Block, Block> WAND_MANAGER_TABLE = registerBlock("wand_manager_table", WandManagerBlock::new);
     public static DeferredHolder<Block, Block> CREATOR = registerBlock("creator", CreatorBlock::new);
     public static DeferredHolder<Block, Block> INFUSER = BLOCKS.register("infuser", InfuserBlock::new);
-    public static DeferredHolder<Block, Block> CHALLENGE_ALTAR = BLOCKS.register("challenge_alter", ChallengeAltarBlock::new);
+    public static DeferredHolder<Block, Block> CHALLENGE_ALTAR = BLOCKS.register("challenge_altar", ChallengeAltarBlock::new);
     public static DeferredHolder<Block, Block> LOOT_CHEST = BLOCKS.register("loot_chest", LootChestBlock::new);
     public static DeferredHolder<Block, Block> MODULAR_CHAOS_CUBE = BLOCKS.register("modular_chaos_cube", ModularChaosCubeBlock::new);
     public static DeferredHolder<Block, Block> AUGMENT_MODIFICATION_STATION = registerBlock("augment_modification_station", AugmentModificationBlock::new);
@@ -68,9 +68,7 @@ public class BlocksRegister {
     );
 
     public static DeferredHolder<Block, Block> RAW_NEXITE_BLOCK = registerBlock("raw_nexite_block",
-        () -> new Block(
-            BlockBehaviour.Properties.of().strength(Blocks.RAW_GOLD_BLOCK.defaultDestroyTime()).noOcclusion()
-        )
+        () -> new Block(BlockBehaviour.Properties.of().strength(Blocks.RAW_GOLD_BLOCK.defaultDestroyTime()).noOcclusion())
     );
 
     public static DeferredHolder<Block, Block> NEXITE_POWDER_BLOCK = registerBlock("nexite_powder_block",

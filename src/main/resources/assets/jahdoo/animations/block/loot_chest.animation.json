@@ -1,6 +1,35 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
+		"spawn": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 0.5417,
+			"bones": {
+				"chest": {
+					"position": {
+						"0.2917": {
+							"vector": [0, 13, 0],
+							"easing": "linear"
+						},
+						"0.5417": {
+							"vector": [0, 0, 0],
+							"easing": "easeInBounce",
+							"easingArgs": [0.2]
+						}
+					},
+					"scale": {
+						"0.0": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						},
+						"0.2917": {
+							"vector": [1, 1, 1],
+							"easing": "easeInOutCirc"
+						}
+					}
+				}
+			}
+		},
 		"open_animation": {
 			"loop": "hold_on_last_frame",
 			"animation_length": 0.375,

@@ -16,6 +16,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -68,6 +69,11 @@ public class ModHelpers {
 //                }
 //            }
 //        }
+    }
+
+    public static double getAttributeValue(Player player, Holder<Attribute> attribute){
+        var attributes = player.getAttribute(attribute);
+        return attributes != null ? attributes.getValue() : -1;
     }
 
     public static List<Component> filterList(List<Component> collection, String... item){

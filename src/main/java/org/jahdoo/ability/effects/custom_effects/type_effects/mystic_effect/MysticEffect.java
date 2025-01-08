@@ -1,6 +1,5 @@
 package org.jahdoo.ability.effects.custom_effects.type_effects.mystic_effect;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -25,6 +24,7 @@ import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -34,8 +34,6 @@ import static org.jahdoo.utils.ModHelpers.Random;
 import static org.jahdoo.utils.ModHelpers.sendPacketsToPlayer;
 
 public class MysticEffect extends MobEffect {
-    public static final ResourceLocation att = ModHelpers.res("arcane_effects");
-
     public MysticEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
     }
@@ -103,13 +101,10 @@ public class MysticEffect extends MobEffect {
     private void setParticleNova(LivingEntity livingEntity, Vec3 worldPosition, AbstractElement element){
         var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), (float) 4);
         var directions = positionScrambler.subtract(livingEntity.position()).normalize();
-        var genericParticle = genericParticleOptions(
-            MAGIC_PARTICLE_SELECTION,
-            6, 4, element.particleColourPrimary(), element.particleColourSecondary(), false
-        );
-        var bakedParticle = new BakedParticleOptions(
-            element.getTypeId(), 6, 8, false
-        );
+        var colourPrimary = element.particleColourPrimary();
+        var colourSecondary = element.particleColourSecondary();
+        var bakedParticle = new BakedParticleOptions(element.getTypeId(), 6, 8, false);
+        var genericParticle = genericParticleOptions(MAGIC_PARTICLE_SELECTION, 6, 4, colourPrimary, colourSecondary, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
 
         ParticleHandlers.sendParticles(
@@ -122,8 +117,7 @@ public class MysticEffect extends MobEffect {
     }
 
     @Override
-    public void onEffectAdded(LivingEntity livingEntity, int amplifier) {
-
+    public void onEffectAdded(@NotNull LivingEntity livingEntity, int amplifier) {
         if(livingEntity instanceof ServerPlayer serverPlayer){
             PacketDistributor.sendToPlayer(serverPlayer, new MoveClientEntitySyncS2CPacket(0, 0.7, 0, serverPlayer.getId()));
         } else {

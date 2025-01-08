@@ -27,7 +27,7 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import static org.jahdoo.entities.ProjectileAnimations.*;
+import static org.jahdoo.entities.EntityAnimations.*;
 
 public class ElementProjectile extends ProjectileProperties implements IEntityProperties, GeoEntity {
 

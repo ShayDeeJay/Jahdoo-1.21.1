@@ -8,6 +8,6 @@ import software.bernie.geckolib.model.DefaultedItemGeoModel;
 
 public class ChallengeAltarBlockModel extends DefaultedItemGeoModel<ChallengeAltarBlockItem> {
     public ChallengeAltarBlockModel() {
-        super(ModHelpers.res("challenge_alter"));
+        super(ModHelpers.res("challenge_altar"));
     }
 }

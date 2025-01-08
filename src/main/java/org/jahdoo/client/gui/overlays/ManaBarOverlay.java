@@ -14,6 +14,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbilityRegistrar;
+import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.attachments.CastingData;
 import org.jahdoo.client.IconLocations;
 import org.jahdoo.client.SharedUI;
@@ -31,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static net.minecraft.network.chat.Component.translatable;
 import static org.jahdoo.client.SharedUI.BORDER_COLOUR;
 import static org.jahdoo.client.SharedUI.drawStringWithBackground;
+import static org.jahdoo.client.gui.overlays.OverlayHelpers.attributeStats;
 import static org.jahdoo.items.augments.AugmentItemHelper.ticksToTime;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 import static org.jahdoo.utils.ModHelpers.*;
@@ -83,56 +85,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
 
         pGuiGraphics.pose().popPose();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    }
-
-    private static void attributeStats(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player) {
-        var attSpacer = new AtomicInteger();
-        var syncableAttributes = player.getAttributes().getSyncableAttributes();
-        var startX = 14;
-        var startY = 14;
-        var adjustForHeader = startY + 10;
-        int size = 0;
-        int maxWidth = 0;
-
-        if(!InputConstants.isKeyDown(minecraft.getWindow().getWindow(), InputConstants.KEY_TAB)) return;
-
-        var jahdoo = "Jahdoo";
-        pGuiGraphics.drawString(minecraft.font, jahdoo, startX, startY, ColourStore.OFF_WHITE);
-        for (AttributeInstance syncableAttribute : syncableAttributes) {
-            var modName = syncableAttribute.getAttribute().getRegisteredName().split(":", 2)[0];
-            if (syncableAttribute.getValue() > 0) {
-                if(modName.equals(jahdoo.toLowerCase())){
-                    var prefix = translatable(syncableAttribute.getAttribute().value().getDescriptionId());
-                    var readableValues = roundNonWholeString(tripleFormattedDouble(syncableAttribute.getValue()));
-                    var suffix = withStyleComponent(" " + readableValues, -9882);
-                    var string = prefix.append(suffix);
-                    pGuiGraphics.drawString(minecraft.font, string, startX, adjustForHeader + attSpacer.get(), ColourStore.HEADER_COLOUR);
-                    attSpacer.addAndGet(10);
-                    maxWidth = Math.max(minecraft.font.width(string), maxWidth);
-                }
-            }
-        }
-
-        attSpacer.addAndGet(10);
-        var minecraftN = "Minecraft";
-        pGuiGraphics.drawString(minecraft.font, minecraftN, startX, adjustForHeader + attSpacer.get() + size, ColourStore.OFF_WHITE);
-        for (AttributeInstance syncableAttribute : syncableAttributes) {
-            var modName = syncableAttribute.getAttribute().getRegisteredName().split(":", 2)[0];
-            if (syncableAttribute.getValue() > 0) {
-
-                if(modName.equals(minecraftN.toLowerCase())){
-                    var prefix = translatable(syncableAttribute.getAttribute().value().getDescriptionId());
-                    var readableValues = roundNonWholeString(tripleFormattedDouble(syncableAttribute.getValue()));
-                    var suffix = withStyleComponent(" " + readableValues, -9882);
-                    var string = prefix.append(suffix);
-                    pGuiGraphics.drawString(minecraft.font, string, startX, adjustForHeader + attSpacer.get() + size + 10, ColourStore.HEADER_COLOUR);
-                    attSpacer.addAndGet(10);
-                    maxWidth = Math.max(minecraft.font.width(string), maxWidth);
-                }
-            }
-        }
-
-        SharedUI.boxMaker(pGuiGraphics, startX - 4, startY - 4, maxWidth/2 + 4, attSpacer.get()/2 + adjustForHeader/2 + 1  , BORDER_COLOUR);
     }
 
     private static void inventory(@NotNull GuiGraphics pGuiGraphics, LocalPlayer player) {
@@ -192,12 +144,27 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         alignedGui.displayGuiLayer(31 + shiftX, 24 + shiftY, 70, 60, 8);
         alignedGui.displayGuiLayer(31 + shiftX, 31 + shiftY, 70, 60, 8);
         alignedGui.displayGuiLayer(31 + shiftX, 38 + shiftY, 70, 60, 8);
+//        var mana = ElementRegistry.FROST.get();
+//        var healths = ElementRegistry.VITALITY.get();
+//        var i = 20;
+//        statContainer(guiGraphics, 26, 26, mana.textColourPrimary(), mana.textColourSecondary(), (6 + i) ,0);
+//        statContainer(guiGraphics, 26, 26, healths.particleColourFaded(), healths.textColourPrimary(), -(40 + i) ,0);
+
         layoutStatOverlays(goldenHearts, shiftX-1, shiftY + 1, 30);
         layoutStatOverlays(food.getSaturationLevel(), shiftX-1, shiftY - 6, 37);
         layoutStat(experienceWidth, shiftX, shiftY + 7, 44);
         layoutStat(food.getFoodLevel(), shiftX, shiftY - 7, 52);
         layoutStat(health, shiftX, shiftY, 60);
         guiGraphics.pose().popPose();
+    }
+
+    private static void statContainer(GuiGraphics guiGraphics, int width, int height, int colour1, int colour2, int offsetX, int offsetY) {
+        var widthRed = 10;
+        var heightRed = 10;
+        var widthOffset = width - widthRed;
+        var heightOffset = height - heightRed;
+        SharedUI.boxMaker(guiGraphics, guiGraphics.guiWidth()/2 + offsetX, guiGraphics.guiHeight()/2 + offsetY, widthOffset, heightOffset, SharedUI.getFadedColourBackground(0.1F), SharedUI.getFadedColourBackground(0.8F));
+        SharedUI.boxMaker(guiGraphics, guiGraphics.guiWidth()/2 + 4 + offsetX, guiGraphics.guiHeight()/2 + 4 + offsetY, widthOffset - 4, heightOffset - 4, 0, colour1, colour2);
     }
 
     private void experienceNumber(Minecraft minecraft, GuiGraphics guiGraphics, LocalPlayer player) {

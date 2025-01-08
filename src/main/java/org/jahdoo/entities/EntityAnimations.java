@@ -3,7 +3,7 @@ package org.jahdoo.entities;
 
 import software.bernie.geckolib.animation.RawAnimation;
 
-public class ProjectileAnimations {
+public class EntityAnimations {
     public static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
     public static final RawAnimation ICE_SPIKES = RawAnimation.begin().thenLoop("ice_spikes");
     public static final RawAnimation FIREBALL = RawAnimation.begin().thenLoop("fireball");
@@ -29,6 +29,7 @@ public class ProjectileAnimations {
     public static final RawAnimation ALTAR_SPAWNING = RawAnimation.begin().thenPlay("spawning");
 
     public static final RawAnimation OPEN_LOOT = RawAnimation.begin().thenPlay("open_animation");
+    public static final RawAnimation SPAWN_CHEST = RawAnimation.begin().thenPlay("spawn");
 
 
 }

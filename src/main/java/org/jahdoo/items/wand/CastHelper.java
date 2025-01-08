@@ -18,6 +18,7 @@ import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.registers.AbilityRegister;
+import org.jahdoo.registers.AttributesRegister;
 import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
@@ -36,7 +37,10 @@ import static org.jahdoo.utils.ModHelpers.*;
 public class CastHelper {
 
     public static void chargeCooldown(String abilityId, double cooldown, Player player) {
+        var attributeValue = getAttributeValue(player, AttributesRegister.SKIP_COOLDOWN);
         if(player.isCreative()) return;
+        if(attributeValue > 0 && Random.nextInt(100) < attributeValue) return;
+
         var cooldownSystem = player.getData(CASTER_DATA);
         var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
         var wand = player.getMainHandItem();
@@ -46,7 +50,10 @@ public class CastHelper {
     }
 
     public static void chargeMana(String abilityId, double manaCost, Player player) {
+        var attributeValue = getAttributeValue(player, AttributesRegister.SKIP_MANA);
         if(player.isCreative()) return;
+        if(attributeValue > 0 && Random.nextInt(100) < attributeValue) return;
+
         var manaSystem = player.getData(CASTER_DATA);
         var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
         var wand = player.getMainHandItem();
@@ -173,7 +180,6 @@ public class CastHelper {
         if(canUse) executeAndCharge(player); else failedCastNotification(player);
         return InteractionResultHolder.pass(itemStack);
     }
-
 
     public static boolean getCanApplyDistanceAbility(Player player, ItemStack itemStack){
         var isDistanceCast = AbilityRegister.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));

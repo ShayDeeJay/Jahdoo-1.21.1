@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import org.jahdoo.client.block_renderer.ChallengeAltarBlockRenderer;
-import org.jahdoo.client.block_renderer.InfuserBlockRenderer;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
