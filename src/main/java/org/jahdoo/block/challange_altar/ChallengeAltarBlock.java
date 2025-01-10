@@ -54,12 +54,12 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
         return simpleCodec((x) -> new ChallengeAltarBlock());
     }
 
     @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE_COMMON;
     }
 
@@ -68,7 +68,6 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity altarE)) return ItemInteractionResult.FAIL;
         if (!(level instanceof ServerLevel)) return ItemInteractionResult.FAIL;
         var altarData = getProperties(altarE);
-
         if (!isCompleted(altarE)) {
             var startingRound = Math.max(1, altarData.round);
             if (!isActive(altarE)) {
@@ -88,42 +87,6 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
 
     private static void readyNextSubRound(ChallengeAltarBlockEntity altarE, ChallengeAltarData altarData, int startingRound) {
         if (!altarData.isSubRoundActive(altarE)) nextSubRound(altarE, startingRound);
-    }
-
-    private static void completionLoot(Level level, BlockPos pos) {
-        if (level instanceof ServerLevel serverLevel) {
-            var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter());
-            lootSplosion(level, pos, serverLevel, rewards);
-            level.destroyBlock(pos, false);
-        }
-    }
-
-    private static void lootSplosion(Level level, BlockPos pos, ServerLevel serverLevel, ObjectArrayList<ItemStack> rewards) {
-        for (var reward : rewards) {
-            var pCenter = pos.getCenter();
-            var itemEntity = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() , pCenter.z(), reward);
-            var angle = Random.nextDouble() * 2 * Math.PI;
-            var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
-            var offsetX = Math.cos(angle) * horizontalOffset;
-            var offsetZ = Math.sin(angle) * horizontalOffset;
-            var velocity = new Vec3(offsetX * (Math.random() - 0.5), Random.nextDouble(0.2, 0.5), offsetZ * (Math.random() - 0.5));
-            itemEntity.setDeltaMovement(velocity);
-            itemEntity.setPickUpDelay(30);
-
-            for (var element : ElementRegistry.REGISTRY) {
-                ParticleHandlers.particleBurst(
-                    serverLevel, pCenter.add(0, 0.5f, 0), 1,
-                    EscapeDecoyAbility.getFromAllRandom(element, 20, 1),
-                    0, 0.7, 0, 0.2f, 3
-                );
-            }
-
-            serverLevel.addFreshEntity(itemEntity);
-        }
-
-        ModHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_OPEN_SHUTTER, 1f, 1.8f);
-        ModHelpers.getSoundWithPosition(level, pos, SoundEvents.ILLUSIONER_CAST_SPELL, 1f, 1f);
-        ModHelpers.getSoundWithPosition(level, pos, SoundRegister.EXPLOSION.get(), 1f, 0.9f);
     }
 
     @Nullable

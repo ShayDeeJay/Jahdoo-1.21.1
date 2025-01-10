@@ -1,8 +1,10 @@
 package org.jahdoo;
 
 
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -15,7 +17,7 @@ import org.jahdoo.client.curio_renderer.TomeRenderer;
 import org.jahdoo.loot.ModLootModifiers;
 import org.jahdoo.recipe.RecipeRegistry;
 import org.jahdoo.registers.*;
-import org.jahdoo.utils.Config;
+import org.jahdoo.utils.Configuration;
 import org.jahdoo.utils.ModCreativeModTabs;
 import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
@@ -23,7 +25,7 @@ import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 public class JahdooMod {
 
     public static final String MOD_ID = "jahdoo";
-    public static final Logger logger = LogManager.getLogger("jahdoo_mod");
+    public static final Logger LOGGER = LogManager.getLogger("jahdoo_mod");
 
 
     public JahdooMod(IEventBus modEventBus, ModContainer container) {
@@ -31,10 +33,11 @@ public class JahdooMod {
         modEventBus.addListener(AbilityRegister::registerRegistry);
         modEventBus.addListener(ElementRegistry::registerRegistry);
         modEventBus.addListener(EntityPropertyRegister::registerRegistry);
-        //Register the config
+
+        // Register the config
         // This will use NeoForge's ConfigurationScreen to display this mod's configs
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-        container.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
+        container.registerConfig(ModConfig.Type.CLIENT, Configuration.CLIENT_CONFIG);
         ArmorMaterialRegistry.register(modEventBus);
         AttributesRegister.register(modEventBus);
         RecipeRegistry.register(modEventBus);

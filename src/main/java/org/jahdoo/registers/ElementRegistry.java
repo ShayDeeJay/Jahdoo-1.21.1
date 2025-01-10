@@ -25,7 +25,7 @@ public class ElementRegistry {
     public static final Registry<AbstractElement> REGISTRY =  new RegistryBuilder<>(ELEMENT_REGISTRY_KEY).create();
 
     public static void registerRegistry(NewRegistryEvent event) {
-        JahdooMod.logger.debug("Element.RegisterRegistry");
+        JahdooMod.LOGGER.debug("Element.RegisterRegistry");
         event.register(REGISTRY);
     }
 

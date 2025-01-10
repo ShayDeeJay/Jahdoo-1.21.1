@@ -6,7 +6,6 @@ import net.casual.arcade.dimensions.ArcadeDimensions;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.casual.arcade.dimensions.level.builder.CustomLevelBuilder;
 import net.casual.arcade.dimensions.utils.impl.VoidChunkGenerator;
-import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biomes;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
@@ -35,7 +33,6 @@ import org.jahdoo.utils.ModHelpers;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static net.minecraft.world.level.block.RedstoneLampBlock.LIT;
 import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
 
 public class LevelGenerator {
@@ -102,7 +99,7 @@ public class LevelGenerator {
         try {
             placeStructure(level, pos);
         } catch (CommandSyntaxException e) {
-            JahdooMod.logger.log(Level.ALL, e);
+            JahdooMod.LOGGER.log(Level.ALL, e);
             throw new RuntimeException(e);
         }
 

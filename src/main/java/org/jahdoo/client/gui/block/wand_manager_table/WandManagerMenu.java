@@ -75,7 +75,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
                 getData.runeSlots().size(), 0,0, offSetX, offSetY
             );
         } catch (Exception e){
-            JahdooMod.logger.log(Level.DEBUG, e);
+            JahdooMod.LOGGER.log(Level.DEBUG, e);
         }
     }
 

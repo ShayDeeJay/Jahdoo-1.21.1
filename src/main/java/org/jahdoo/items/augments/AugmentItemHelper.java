@@ -21,6 +21,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
+import org.jahdoo.challenge.LocalLootBeamData;
 import org.jahdoo.client.gui.augment_menu.AugmentScreen;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.components.DataComponentHelper;
@@ -31,6 +32,7 @@ import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -104,9 +106,7 @@ public class AugmentItemHelper {
     public static void augmentIdentifierShared(ItemStack itemStack, @Nullable Player player){
         var abstractAbilities = AbilityRegister.REGISTRY.stream().toList();
         var ability = abstractAbilities.get(ModHelpers.Random.nextInt(0, abstractAbilities.size()));
-
         ability.setModifiers(itemStack);
-
         var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         if(player != null){
             if(!player.level().isClientSide) setAbilityToAugment(itemStack, ability, wandAbilityHolder);
@@ -117,6 +117,7 @@ public class AugmentItemHelper {
 
     public static void augmentIdentifierSharedRarity(ItemStack itemStack){
         var ability = JahdooRarity.getAbilityWithRarity();
+        itemStack.set(DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA().get(), LocalLootBeamData.quickLootBeamComponent(ability.rarity()));
         ability.setModifiers(itemStack);
         var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         setAbilityToAugment(itemStack, ability, wandAbilityHolder);

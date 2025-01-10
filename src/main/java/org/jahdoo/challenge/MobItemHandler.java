@@ -94,7 +94,7 @@ public class MobItemHandler {
     }
 
     public LootTable getRandomWeapon(){
-        return buildForSkeleton(regLookup2, multiplier);
+        return buildForIron(regLookup2, multiplier);
     }
 
     public LootTable getRandomLeather(){
@@ -175,10 +175,22 @@ public class MobItemHandler {
             .build();
     }
 
-    private static LootTable buildForSkeleton(HolderLookup.RegistryLookup<Enchantment> registryLookup, float multiplier) {
+    public static LootTable buildForIron(HolderLookup.RegistryLookup<Enchantment> registryLookup, float multiplier) {
         return LootTable.lootTable()
             .withPool(weaponWithChance(registryLookup, Items.IRON_SWORD, multiplier))
             .withPool(weaponWithChance(registryLookup, Items.BOW, multiplier))
+            .build();
+    }
+
+    public static LootTable buildForDiamond(HolderLookup.RegistryLookup<Enchantment> registryLookup, float multiplier) {
+        return LootTable.lootTable()
+            .withPool(weaponWithChance(registryLookup, Items.DIAMOND_SWORD, multiplier))
+            .build();
+    }
+
+    public static LootTable buildForNetherite(HolderLookup.RegistryLookup<Enchantment> registryLookup, float multiplier) {
+        return LootTable.lootTable()
+            .withPool(weaponWithChance(registryLookup, Items.NETHERITE_SWORD, multiplier))
             .build();
     }
 
@@ -197,10 +209,10 @@ public class MobItemHandler {
         return LootPool.lootPool()
             .setRolls(UniformGenerator.between(min, 1.0f))
             .when(LootItemRandomChanceCondition.randomChance(chance))
-            .add(getWeapon(registryLookup, multiplier, item).setWeight(1));
+            .add(getEnchantement(registryLookup, multiplier, item).setWeight(1));
     }
 
-    private static LootPoolSingletonContainer.@NotNull Builder<?> getWeapon(HolderLookup.RegistryLookup<Enchantment> registrylookup2, float roundMultiplier, Item item) {
+    private static LootPoolSingletonContainer.@NotNull Builder<?> getEnchantement(HolderLookup.RegistryLookup<Enchantment> registrylookup2, float roundMultiplier, Item item) {
         var chance = Math.min(0.1F * roundMultiplier, 1.0f);
 
         return LootItem.lootTableItem(item)

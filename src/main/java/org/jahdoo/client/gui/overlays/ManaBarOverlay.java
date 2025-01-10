@@ -1,41 +1,33 @@
 package org.jahdoo.client.gui.overlays;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbilityRegistrar;
-import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.attachments.CastingData;
 import org.jahdoo.client.IconLocations;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.ColourStore;
-import org.jahdoo.utils.Config;
-import org.jahdoo.utils.ModHelpers;
+import org.jahdoo.utils.Configuration;
 import org.jahdoo.components.DataComponentHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.network.chat.Component.translatable;
-import static org.jahdoo.client.SharedUI.BORDER_COLOUR;
 import static org.jahdoo.client.SharedUI.drawStringWithBackground;
 import static org.jahdoo.client.gui.overlays.OverlayHelpers.attributeStats;
 import static org.jahdoo.items.augments.AugmentItemHelper.ticksToTime;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
-import static org.jahdoo.utils.ModHelpers.*;
 
 public class ManaBarOverlay implements LayeredDraw.Layer {
     float fadeIn;
@@ -63,7 +55,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
 
         pGuiGraphics.pose().pushPose();
         RenderSystem.enableBlend();
-        if(!Config.CUSTOM_UI.get()){
+        if(!Configuration.CUSTOM_UI.get()){
             pGuiGraphics.pose().translate(0, -fadeIn, 0);
             RenderSystem.setShaderColor(1f, 1f, 1f, fadeIn);
         }
@@ -76,7 +68,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         this.cooldownOverlay(abilityRegistrars, casterData, pGuiGraphics, minecraft);
         this.cooldownTimer(abilityRegistrars, casterData, pGuiGraphics, minecraft);
         this.manaPoolCount(casterData, pGuiGraphics, minecraft);
-        if(Config.CUSTOM_UI.get()){
+        if(Configuration.CUSTOM_UI.get()){
             Minecraft.getInstance().gui.renderSelectedItemName(pGuiGraphics, 94);
             playerStats(pGuiGraphics, player);
             experienceNumber(minecraft, pGuiGraphics, player);
@@ -236,8 +228,8 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
                 pGuiGraphics.pose().pushPose();
                 var v = 0.5F;
                 pGuiGraphics.pose().scale(v, v, v);
-                var getCorrectX = Config.CUSTOM_UI.get() ? ((pGuiGraphics.guiWidth() / 2) * 2) : 32;
-                var getCorrectY = pGuiGraphics.guiHeight() * 2 - (Config.CUSTOM_UI.get() ? 40 : 20) ;
+                var getCorrectX = Configuration.CUSTOM_UI.get() ? ((pGuiGraphics.guiWidth() / 2) * 2) : 32;
+                var getCorrectY = pGuiGraphics.guiHeight() * 2 - (Configuration.CUSTOM_UI.get() ? 40 : 20) ;
                 pGuiGraphics.pose().translate(getCorrectX, getCorrectY, 10D);
                 SharedUI.centeredStringNoShadow(pGuiGraphics, minecraft.font, Component.literal(ticksToTime(String.valueOf(cooldownStatus))), 0, 0, -1, false);
                 pGuiGraphics.pose().popPose();
@@ -260,7 +252,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var height = pGuiGraphics.guiHeight();
         if (alignedGui == null || alignedGui.getScreenWidth() != width || alignedGui.getScreenWidth() != height) {
             var alignedGui1 = new AlignedGui(pGuiGraphics, height, width);
-            if(Config.CUSTOM_UI.get()){
+            if(Configuration.CUSTOM_UI.get()){
                 alignedGui1.offsetGui(width / 2 - 16, 10);
             }
             this.alignedGui = alignedGui1;

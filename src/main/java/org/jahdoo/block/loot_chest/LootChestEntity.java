@@ -30,9 +30,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
 
     public LootChestEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.LOOT_CHEST_BE.get(), pPos, pBlockState);
-        getTexture = ModHelpers.getRandomListElement(
-            List.of("loot_chest.png", "loot_chest_1.png", "loot_chest_2.png", "loot_chest_3.png")
-        );
+        getTexture = ModHelpers.getRandomListElement(List.of("loot_chest.png", "loot_chest_1.png", "loot_chest_2.png", "loot_chest_3.png"));
     }
 
     public void setOpen(boolean open) {

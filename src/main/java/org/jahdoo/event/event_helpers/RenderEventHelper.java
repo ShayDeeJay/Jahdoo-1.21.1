@@ -24,7 +24,7 @@ import org.jahdoo.client.SharedUI;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.AttachmentRegister;
-import org.jahdoo.utils.Config;
+import org.jahdoo.utils.Configuration;
 import org.jahdoo.utils.ModHelpers;
 
 import java.awt.*;
@@ -168,7 +168,7 @@ public class RenderEventHelper {
 
 
     public static void lockNearbyTarget(RenderLevelStageEvent event) {
-        if(!Config.LOCK_ON_TARGET.get()) return;
+        if(!Configuration.LOCK_ON_TARGET.get()) return;
         var player = (Player) event.getCamera().getEntity();
         var target = getEntityInRange(player, 15, 25);
         if (target == null || !player.hasLineOfSight(target)) return;

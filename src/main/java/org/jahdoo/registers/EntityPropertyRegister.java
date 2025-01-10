@@ -28,7 +28,7 @@ public class EntityPropertyRegister {
     public static final Registry<AbstractEntityProperty> REGISTRY = new RegistryBuilder<>(PROJECTILE_PROPERTY_REGISTRY_KEY).create();
 
     public static void registerRegistry(NewRegistryEvent event) {
-        JahdooMod.logger.debug("EntityProperty.registerRegistry");
+        JahdooMod.LOGGER.debug("EntityProperty.registerRegistry");
         event.register(REGISTRY);
     }
 

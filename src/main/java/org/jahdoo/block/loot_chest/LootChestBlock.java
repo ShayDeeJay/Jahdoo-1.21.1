@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -11,8 +12,13 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Equipable;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -30,9 +36,16 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.abilities.ability_data.EscapeDecoyAbility;
+import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
+import org.jahdoo.challenge.EnchantmentHelpers;
+import org.jahdoo.challenge.MobItemHandler;
+import org.jahdoo.challenge.MobManager;
 import org.jahdoo.challenge.RewardLootTables;
+import org.jahdoo.items.TomeOfUnity;
+import org.jahdoo.items.augments.Augment;
+import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ElementRegistry;
@@ -40,6 +53,9 @@ import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.shaydee.loot_beams_neoforge.LootBeams;
+import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
+import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 
 import static net.minecraft.world.entity.ExperienceOrb.getExperienceValue;
 import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.*;
@@ -79,12 +95,12 @@ public class LootChestBlock extends BaseEntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState pState) {
+    public @NotNull RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
     }
 
     @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return pState.getValue(FACING).getAxis() == Direction.Axis.X ? SHAPE2 : SHAPE;
     }
 
@@ -94,40 +110,55 @@ public class LootChestBlock extends BaseEntityBlock {
 
         if (level instanceof ServerLevel serverLevel && !lootChestEntity.isOpen) {
             lootChestEntity.setOpen(true);
-            completionLoot(serverLevel, pos);
+            lootSplosion(pos, serverLevel, 1);
             return ItemInteractionResult.SUCCESS;
         }
 
         return ItemInteractionResult.FAIL;
     }
 
-
-    private static void completionLoot(ServerLevel serverLevel, BlockPos pos) {
-        var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter());
-        lootSplosion(serverLevel, pos, serverLevel, rewards);
-//        serverLevel.destroyBlock(pos, false);
-    }
-
-    private static void lootSplosion(Level level, BlockPos pos, ServerLevel serverLevel, ObjectArrayList<ItemStack> rewards) {
+    private static void lootSplosion(BlockPos pos, ServerLevel serverLevel, int level) {
+        var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter(), level);
         for (var reward : rewards) {
             var pCenter = pos.getCenter();
-            var itemEntity = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() + 0.1, pCenter.z(), reward);
+            var itemEntity = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() + 0.2, pCenter.z(), reward);
             var angle = Random.nextDouble() * 2 * Math.PI;
-            var horizontalOffset = 0.2 + Random.nextDouble() * 0.25;
+            var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
             var offsetX = Math.cos(angle) * horizontalOffset;
             var offsetZ = Math.sin(angle) * horizontalOffset;
             var velocity = new Vec3(offsetX * (Math.random() - 0.5), 0.35, offsetZ * (Math.random() - 0.5));
             itemEntity.setDeltaMovement(velocity);
             itemEntity.setPickUpDelay(30);
 
-            ExperienceOrb.award(serverLevel, pCenter, 10);
+//            ExperienceOrb.award(serverLevel, pCenter, 10 * level);
             for (var element : ElementRegistry.REGISTRY) particleBurst(serverLevel, element, pCenter);
+            var itemStack = itemEntity.getItem();
+            var item = itemStack.getItem();
+            if(item instanceof WandItem){
+                JahdooRarity.setGeneratedWand(JahdooRarity.getRarity(), itemStack);
+            }
+
+            if(item instanceof TomeOfUnity){
+                JahdooRarity.createTomeAttributes(JahdooRarity.getRarity(), itemStack);
+            }
+
+            if(item instanceof Augment){
+                JahdooRarity.setGeneratedAugment(itemStack);
+            }
+
+            if(item instanceof SwordItem){
+                EnchantmentHelpers.enchant(itemStack, serverLevel.registryAccess(), Enchantments.SHARPNESS, 4);
+                /*Save adding beams to weapons/armor until you get overpowered enchants on them, at least it feels
+                like there is then a reason for the beam**/
+                itemStack.set(DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA(), LootBeamComponent.Companion.DEFAULT());
+            }
+
             serverLevel.addFreshEntity(itemEntity);
         }
 
-        ModHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_OPEN_SHUTTER, 1f, 1.8f);
-        ModHelpers.getSoundWithPosition(level, pos, SoundEvents.ILLUSIONER_CAST_SPELL, 1f, 1f);
-        ModHelpers.getSoundWithPosition(level, pos, SoundRegister.EXPLOSION.get(), 0.8f, 0.9f);
+        ModHelpers.getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_OPEN_SHUTTER, 1f, 1.8f);
+        ModHelpers.getSoundWithPosition(serverLevel, pos, SoundEvents.ILLUSIONER_CAST_SPELL, 1f, 1f);
+        ModHelpers.getSoundWithPosition(serverLevel, pos, SoundRegister.EXPLOSION.get(), 0.8f, 0.9f);
     }
 
     private static void particleBurst(ServerLevel serverLevel, AbstractElement element, Vec3 pCenter) {
@@ -147,10 +178,8 @@ public class LootChestBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return createTickerHelper(
-            pBlockEntityType,
-            BlockEntitiesRegister.LOOT_CHEST_BE.get(),
-            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
+        return createTickerHelper
+            (pBlockEntityType, BlockEntitiesRegister.LOOT_CHEST_BE.get(), (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }
 }

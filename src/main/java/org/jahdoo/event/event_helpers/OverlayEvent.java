@@ -9,7 +9,7 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jahdoo.ability.abilities.ability_data.ArcaneShiftAbility;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityWheelMenu;
 import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.utils.Config;
+import org.jahdoo.utils.Configuration;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.List;
@@ -61,7 +61,7 @@ public class OverlayEvent {
             SELECTED_ITEM_NAME
         );
 
-        if(Config.CUSTOM_UI.get()){
+        if(Configuration.CUSTOM_UI.get()){
             if (exceptions.contains(event.getName())) {
                 event.setCanceled(true);
             }

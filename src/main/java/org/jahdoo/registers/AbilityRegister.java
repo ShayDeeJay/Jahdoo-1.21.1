@@ -28,7 +28,7 @@ public class AbilityRegister {
     public static final Registry<AbilityRegistrar> REGISTRY =  new RegistryBuilder<>(ABILITY_REGISTRY_KEY).create();
 
     public static void registerRegistry(NewRegistryEvent event) {
-        JahdooMod.logger.debug("SpellRegistry.registerRegistry");
+        JahdooMod.LOGGER.debug("SpellRegistry.registerRegistry");
         event.register(REGISTRY);
     }
 

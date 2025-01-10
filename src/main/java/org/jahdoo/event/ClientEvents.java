@@ -61,6 +61,7 @@ public class ClientEvents {
             if(putEffect.getDuration() == 0) entity.removeEffect(effect);
         } else {
 
+
             var player = Minecraft.getInstance().player;
             if(player != null && getEntityPlayerIsLookingAt(player, 30) == entity){
 

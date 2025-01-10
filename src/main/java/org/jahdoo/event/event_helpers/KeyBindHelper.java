@@ -8,13 +8,13 @@ import org.jahdoo.client.KeyBinding;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityWheelMenu;
 import org.jahdoo.client.gui.augment_menu.AugmentScreen;
 import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.utils.Config;
+import org.jahdoo.utils.Configuration;
 
 public class KeyBindHelper {
     public static void toggleLockAbility(Player player){
         if(KeyBinding.TARGET_LOCK_A.isDown()){
-            var lockOnTarget = Config.LOCK_ON_TARGET.get();
-            Config.LOCK_ON_TARGET.set(!lockOnTarget);
+            var lockOnTarget = Configuration.LOCK_ON_TARGET.get();
+            Configuration.LOCK_ON_TARGET.set(!lockOnTarget);
             player.displayClientMessage(Component.literal("Lock on target " + !lockOnTarget), true);
             KeyBinding.TARGET_LOCK_A.setDown(false);
         }
@@ -23,7 +23,7 @@ public class KeyBindHelper {
     public static void QuickSelectBehaviour(Player player, Minecraft instance) {
         if(player != null && player.getMainHandItem().getItem() instanceof WandItem){
 
-            if(Config.QUICK_SELECT.get()){
+            if(Configuration.QUICK_SELECT.get()){
                 if(KeyBinding.QUICK_SELECT.isDown()){
                     if(!(instance.screen instanceof AbilityWheelMenu) && !(instance.screen instanceof AugmentScreen)){
                         instance.setScreen(new AbilityWheelMenu());

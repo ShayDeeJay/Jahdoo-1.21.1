@@ -18,13 +18,9 @@ import static org.jahdoo.utils.ModHelpers.attributeModifierCalculator;
 public class DamageUtil {
     static public DamageSource source(LevelAccessor level, ResourceKey<DamageType> key, @Nullable Entity direct, @Nullable Entity causing) {
         Holder.Reference<DamageType> type = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key);
-        if (direct != null && causing != null){
-            return new DamageSource(type, direct, causing);
-        } else if (direct != null){
-            return new DamageSource(type, direct);
-        } else {
-            return new DamageSource(type);
-        }
+        if (direct != null && causing != null) return new DamageSource(type, direct, causing);
+        if (direct != null) return new DamageSource(type, direct);
+        return new DamageSource(type);
     }
 
     public static void damageWithJahdoo(Entity target, Entity cause, double damage){
