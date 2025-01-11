@@ -111,8 +111,6 @@ public class ServerEvents {
         entityDeathLoot(entity, source);
     }
 
-
-
     @SubscribeEvent
     public static void playerCloneEvent(PlayerEvent.PlayerRespawnEvent event){
         var player = event.getEntity();

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.TypedDataComponent;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -24,9 +25,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
+import org.jahdoo.particle.ParticleHandlers;
+import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 
@@ -285,6 +289,25 @@ public class ModHelpers {
                 }
             }
         }
+    }
+
+    public static void sendPacketsToPlayerDistance(Vec3 pos, int distance, Level level, Consumer<ServerPlayer> serverPlayerConsumer) {
+        if((level instanceof ServerLevel serverLevel)){
+            for (int j = 0; j < serverLevel.players().size(); ++j) {
+                var serverplayer = serverLevel.players().get(j);
+                if (pos.closerThan(serverplayer.position(), distance)) {
+                    serverPlayerConsumer.accept(serverplayer);
+                }
+            }
+        }
+    }
+
+    public static ParticleOptions getRandomColouredParticle(int colourA, int colourB, int lifetime, float size, boolean staticSize){
+        var generic = ParticleHandlers.genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, colourA, colourB,lifetime,size, staticSize, size);
+        var magic = ParticleHandlers.genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, colourA, colourB,lifetime,size, staticSize, size);
+        var soft = ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, colourA, colourB,lifetime,size, staticSize, size);
+        var collectTypes = List.of(generic, magic, soft);
+        return collectTypes.get(Random.nextInt(collectTypes.size()));
     }
 
     public static void debugComponent(ItemStack itemStack, Player player){

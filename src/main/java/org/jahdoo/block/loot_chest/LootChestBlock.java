@@ -12,10 +12,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Equipable;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -29,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -39,10 +37,7 @@ import org.jahdoo.ability.abilities.ability_data.EscapeDecoyAbility;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
-import org.jahdoo.challenge.EnchantmentHelpers;
-import org.jahdoo.challenge.MobItemHandler;
-import org.jahdoo.challenge.MobManager;
-import org.jahdoo.challenge.RewardLootTables;
+import org.jahdoo.challenge.*;
 import org.jahdoo.items.TomeOfUnity;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.wand.WandItem;
@@ -60,6 +55,7 @@ import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 import static net.minecraft.world.entity.ExperienceOrb.getExperienceValue;
 import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.*;
 import static org.jahdoo.block.augment_modification_station.AugmentModificationBlock.SHAPE_COMBINED;
+import static org.jahdoo.challenge.RewardLootTables.attachItemData;
 import static org.jahdoo.registers.BlocksRegister.sharedBlockBehaviour;
 import static org.jahdoo.utils.ModHelpers.Random;
 
@@ -110,50 +106,37 @@ public class LootChestBlock extends BaseEntityBlock {
 
         if (level instanceof ServerLevel serverLevel && !lootChestEntity.isOpen) {
             lootChestEntity.setOpen(true);
-            lootSplosion(pos, serverLevel, 1);
+            lootSplosion(pos, serverLevel, 60, 1);
             return ItemInteractionResult.SUCCESS;
         }
 
         return ItemInteractionResult.FAIL;
     }
 
-    private static void lootSplosion(BlockPos pos, ServerLevel serverLevel, int level) {
-        var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter(), level);
-        for (var reward : rewards) {
-            var pCenter = pos.getCenter();
-            var itemEntity = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() + 0.2, pCenter.z(), reward);
-            var angle = Random.nextDouble() * 2 * Math.PI;
-            var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
-            var offsetX = Math.cos(angle) * horizontalOffset;
-            var offsetZ = Math.sin(angle) * horizontalOffset;
-            var velocity = new Vec3(offsetX * (Math.random() - 0.5), 0.35, offsetZ * (Math.random() - 0.5));
-            itemEntity.setDeltaMovement(velocity);
-            itemEntity.setPickUpDelay(30);
+    private static void lootSplosion(BlockPos pos, ServerLevel serverLevel, int level, int lootMultiplier) {
+        for(int i = 0; i < lootMultiplier; i++){
+            var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter(), level);
+            for (var reward : rewards) {
+                var pCenter = pos.getCenter();
+                var itemEntity = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() + 0.2, pCenter.z(), reward);
+                var angle = Random.nextDouble() * 2 * Math.PI;
+                var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
+                var offsetX = Math.cos(angle) * horizontalOffset;
+                var offsetZ = Math.sin(angle) * horizontalOffset;
+                var velocity = new Vec3(offsetX * (Math.random() - 0.5), 0.35, offsetZ * (Math.random() - 0.5));
+                itemEntity.setDeltaMovement(velocity);
+                itemEntity.setPickUpDelay(30);
 
 //            ExperienceOrb.award(serverLevel, pCenter, 10 * level);
-            for (var element : ElementRegistry.REGISTRY) particleBurst(serverLevel, element, pCenter);
-            var itemStack = itemEntity.getItem();
-            var item = itemStack.getItem();
-            if(item instanceof WandItem){
-                JahdooRarity.setGeneratedWand(JahdooRarity.getRarity(), itemStack);
-            }
+                for (var element : ElementRegistry.REGISTRY) particleBurst(serverLevel, element, pCenter);
+                var itemStack = itemEntity.getItem();
+                var item = itemStack.getItem();
+                var rarity = JahdooRarity.getRarity();
 
-            if(item instanceof TomeOfUnity){
-                JahdooRarity.createTomeAttributes(JahdooRarity.getRarity(), itemStack);
-            }
+                attachItemData(serverLevel, item, rarity, itemStack);
 
-            if(item instanceof Augment){
-                JahdooRarity.setGeneratedAugment(itemStack);
+                serverLevel.addFreshEntity(itemEntity);
             }
-
-            if(item instanceof SwordItem){
-                EnchantmentHelpers.enchant(itemStack, serverLevel.registryAccess(), Enchantments.SHARPNESS, 4);
-                /*Save adding beams to weapons/armor until you get overpowered enchants on them, at least it feels
-                like there is then a reason for the beam**/
-                itemStack.set(DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA(), LootBeamComponent.Companion.DEFAULT());
-            }
-
-            serverLevel.addFreshEntity(itemEntity);
         }
 
         ModHelpers.getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_OPEN_SHUTTER, 1f, 1.8f);

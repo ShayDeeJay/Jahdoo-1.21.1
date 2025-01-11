@@ -28,10 +28,8 @@ public class RenderHelpers {
 
     public static void drawTexture(PoseStack.Pose pose, MultiBufferSource bufferSource, int light, float width, ResourceLocation texture, int colour) {
         Matrix4f poseMatrix = pose.pose();
-
         VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(texture));
-        float halfWidth = width * .5f;
-        //old color: 125, 0, 10
+        var halfWidth = width * 0.5f;
         consumer.addVertex(poseMatrix, -halfWidth, -.1f, -halfWidth).setColor(colour).setUv(0f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
         consumer.addVertex(poseMatrix, halfWidth, -.1f, -halfWidth).setColor(colour).setUv(1f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
         consumer.addVertex(poseMatrix, halfWidth, -.1f, halfWidth).setColor(colour).setUv(1f, 0f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);

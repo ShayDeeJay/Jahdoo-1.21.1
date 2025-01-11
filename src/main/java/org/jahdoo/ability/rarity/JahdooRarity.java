@@ -94,8 +94,10 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return ModHelpers.getRandomListElement(filteredList);
     }
 
-    public static AbilityRegistrar getAbilityWithRarity() {
-        var list = AbilityRegister.getMatchingRarity(JahdooRarity.getRarity());
+    public static AbilityRegistrar getAbilityWithRarity(boolean withUtil) {
+        var listAll = AbilityRegister.getMatchingRarity(JahdooRarity.getRarity());
+        var listNoUtil = AbilityRegister.getMatchingRarityNoUtil(JahdooRarity.getRarity());
+        var list = withUtil ? listAll : listNoUtil;
         return list.get(ModHelpers.Random.nextInt(0, list.size()));
     }
 
@@ -141,14 +143,14 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         var itemStack = new ItemStack(item);
         if(ModHelpers.Random.nextInt(0, 200) != 0){
             itemStack.set(DataComponentRegistry.NUMBER, 5);
-            AugmentItemHelper.augmentIdentifierSharedRarity(itemStack);
+            AugmentItemHelper.augmentIdentifierSharedRarity(itemStack, true);
         }
         return itemStack;
     }
 
     public static void setGeneratedAugment(ItemStack itemStack){
         itemStack.set(DataComponentRegistry.NUMBER, 5);
-        AugmentItemHelper.augmentIdentifierSharedRarity(itemStack);
+        AugmentItemHelper.augmentIdentifierSharedRarity(itemStack, false);
     }
 
     public static ItemStack setGeneratedWand(JahdooRarity rarity, Item item) {
@@ -188,22 +190,31 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         ItemStack itemStack,
         int runeSlots,
         int abilitySlots
-    ){
+    ) {
         var element = ElementRegistry.getElementByWandType(itemStack.getItem());
         attachComponent(itemStack, rarity);
-        if(!element.isEmpty()){
-            WandData.createRarity(itemStack, rarity.id);
-            WandData.createNewAbilitySlots(itemStack, abilitySlots);
-            RuneHolder.createNewRuneSlots(itemStack, runeSlots);
-            WandData.createRefinementPotential(itemStack, rarity.attributes.getRandomRefinementPotential());
+        if (element.isEmpty()) return;
 
-            //0-5 basic;
-            replaceOrAddAttribute(itemStack, element.getFirst().getTypeCooldownReduction().getRegisteredName(), element.getFirst().getTypeCooldownReduction(), rarity.attributes.getRandomCooldown(), EquipmentSlot.MAINHAND, false);
-            //0-10 basic;
-            replaceOrAddAttribute(itemStack, element.getFirst().getTypeManaReduction().getRegisteredName(), element.getFirst().getTypeManaReduction(),  rarity.attributes.getRandomManaReduction(), EquipmentSlot.MAINHAND, false);
-            //0-10 basic;
-            replaceOrAddAttribute(itemStack, element.getFirst().getDamageTypeAmplifier().getRegisteredName(), element.getFirst().getDamageTypeAmplifier(),  rarity.attributes.getRandomDamage(), EquipmentSlot.MAINHAND, false);
-        }
+        WandData.createRarity(itemStack, rarity.id);
+        WandData.createNewAbilitySlots(itemStack, abilitySlots);
+        RuneHolder.createNewRuneSlots(itemStack, runeSlots);
+        WandData.createRefinementPotential(itemStack, rarity.attributes.getRandomRefinementPotential());
+
+        var cooldownReductionType = element.getFirst().getTypeCooldownReduction();
+        var cooldownReductionName = cooldownReductionType.getRegisteredName();
+        var cooldownReductionValue = rarity.attributes.getRandomCooldown();
+
+        var manaReductionType = element.getFirst().getTypeManaReduction();
+        var manaReductionName = manaReductionType.getRegisteredName();
+        var manaReductionValue = rarity.attributes.getRandomManaReduction();
+
+        var damageAmplifierType = element.getFirst().getDamageTypeAmplifier();
+        var damageAmplifierName = damageAmplifierType.getRegisteredName();
+        var damageAmplifierValue = rarity.attributes.getRandomDamage();
+
+        replaceOrAddAttribute(itemStack, cooldownReductionName, cooldownReductionType, cooldownReductionValue, EquipmentSlot.MAINHAND, false);
+        replaceOrAddAttribute(itemStack, manaReductionName, manaReductionType, manaReductionValue, EquipmentSlot.MAINHAND, false);
+        replaceOrAddAttribute(itemStack, damageAmplifierName, damageAmplifierType, damageAmplifierValue, EquipmentSlot.MAINHAND, false);
     }
 
     public static void createTomeAttributes(JahdooRarity rarity, ItemStack itemStack){

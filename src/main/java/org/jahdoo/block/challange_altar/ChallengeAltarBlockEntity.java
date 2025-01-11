@@ -4,17 +4,28 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
+import org.jahdoo.block.SyncedBlockEntity;
 import org.jahdoo.challenge.MobManager;
 import org.jahdoo.networking.packet.server2client.AltarBlockS2C;
+import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlockEntitiesRegister;
+import org.jahdoo.registers.SoundRegister;
+import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -32,12 +43,13 @@ import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
 import static org.jahdoo.registers.BlocksRegister.*;
 
 
-public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEntity {
+public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntity {
     public ServerBossEvent bossEvent;
     public final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public int privateTicks;
     public int initiateSpawning;
     public boolean beginSpawning;
+    public double animateTick;
 
     public ChallengeAltarBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.CHALLENGE_ALTAR_BE.get(), pPos, pBlockState);
@@ -64,7 +76,7 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
         return super.isRemoved();
     }
 
-    private ChallengeAltarData altarData(){
+    public ChallengeAltarData altarData(){
         return ChallengeAltarData.getProperties(this);
     }
 
@@ -137,6 +149,12 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
             ChallengeAltarData.resetAltar(this);
             bossEvent.removeAllPlayers();
             serverLevel.setBlockAndUpdate(getBlockPos(), LOOT_CHEST.get().defaultBlockState().setValue(FACING, SOUTH));
+            ModHelpers.sendPacketsToPlayerDistance(this.getBlockPos().getCenter(), 200, serverLevel, serverPlayer -> {
+                    serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(40, 50, 30));
+                    serverPlayer.connection.send(new ClientboundSetTitleTextPacket(ModHelpers.withStyleComponent("Trial Successful", ColourStore.PERK_GREEN)));
+                    serverPlayer.playNotifySound(SoundRegister.END_TRIAL.get(), SoundSource.NEUTRAL, 1,1);
+                }
+            );
             this.privateTicks = 0;
         }
     }
@@ -178,12 +196,14 @@ public class ChallengeAltarBlockEntity extends BlockEntity implements GeoBlockEn
     protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
         super.saveAdditional(pTag, pRegistries);
         pTag.putInt("challenge_altar.private", privateTicks);
+        pTag.putDouble("animate", this.animateTick);
     }
 
     @Override
     protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
         super.loadAdditional(pTag, pRegistries);
         privateTicks = pTag.getInt("challenge_altar.private");
+        animateTick = pTag.getDouble("animate");
     }
 
 

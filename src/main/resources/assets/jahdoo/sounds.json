@@ -77,5 +77,17 @@
     "sounds": [
       "jahdoo:select"
     ]
+  },
+  "start_trial": {
+    "subtitles": "sounds.jahdoo.start_trial",
+    "sounds": [
+      "jahdoo:start_trial"
+    ]
+  },
+  "end_trial": {
+    "subtitles": "sounds.jahdoo.end_trial",
+    "sounds": [
+      "jahdoo:end_trial"
+    ]
   }
 }

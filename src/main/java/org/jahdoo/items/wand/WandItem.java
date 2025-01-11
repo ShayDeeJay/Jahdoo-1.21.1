@@ -49,6 +49,7 @@ import static net.minecraft.sounds.SoundEvents.ALLAY_THROW;
 import static net.minecraft.sounds.SoundEvents.EVOKER_PREPARE_SUMMON;
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
+import static org.jahdoo.particle.ParticleHandlers.*;
 import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
@@ -75,7 +76,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 
     @Override
     public @NotNull UseAnim getUseAnimation(ItemStack pStack) {
-        return UseAnim.NONE;
+        return UseAnim.BOW;
     }
 
     @Override
@@ -91,29 +92,27 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         var itemStack = pContext.getItemInHand();
 
         if (player == null || !player.isShiftKeyDown() || !player.onGround()) return InteractionResult.PASS;
+        if(!pContext.getLevel().getBlockState(clickedPos).isEmpty()) return InteractionResult.FAIL;
 
-        if(pContext.getLevel().getBlockState(clickedPos).isEmpty()){
-            level.setBlockAndUpdate(clickedPos, BlocksRegister.WAND.get().defaultBlockState());
-            var blockEntity = level.getBlockEntity(clickedPos);
-            if (blockEntity instanceof WandBlockEntity wandBlockEntity) {
-                playPlaceSound(level, pContext.getClickedPos());
-                var copiedWand = itemStack.copyWithCount(1);
-                player.setItemInHand(pContext.getHand(), ItemStack.EMPTY);
-                wandBlockEntity.inputItemHandler.setStackInSlot(GET_WAND_SLOT, copiedWand);
-                wandBlockEntity.updateView();
-                var getType = getElementByWandType(wandBlockEntity.getWandItemFromSlot().getItem());
-                if(!getType.isEmpty()){
-                    var element = getType.getFirst();
-                    var par1 = ParticleHandlers.bakedParticleOptions(element.getTypeId(), 10, 1f, false);
-                    var par2 = ParticleHandlers.genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 10, 1f, false, 0.3);
-                    getInnerRingOfRadiusRandom(clickedPos, 0.1, 20,
-                        positions -> this.placeParticle(level, positions, Random.nextInt(0, 3) == 0 ? par1 : par2)
-                    );
-                }
-                return InteractionResult.SUCCESS;
-            }
+        level.setBlockAndUpdate(clickedPos, BlocksRegister.WAND.get().defaultBlockState());
+        var blockEntity = level.getBlockEntity(clickedPos);
+        if (!(blockEntity instanceof WandBlockEntity wandBlockEntity)) return InteractionResult.FAIL;
+
+        playPlaceSound(level, pContext.getClickedPos());
+        var copiedWand = itemStack.copyWithCount(1);
+        player.setItemInHand(pContext.getHand(), ItemStack.EMPTY);
+        wandBlockEntity.inputItemHandler.setStackInSlot(GET_WAND_SLOT, copiedWand);
+        wandBlockEntity.updateView();
+        var getType = getElementByWandType(wandBlockEntity.getWandItemFromSlot().getItem());
+        if(!getType.isEmpty()){
+            var element = getType.getFirst();
+            var par1 = bakedParticleOptions(element.getTypeId(), 10, 1f, false);
+            var par2 = genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 10, 1f, false, 0.3);
+            getInnerRingOfRadiusRandom(clickedPos, 0.1, 20,
+                positions -> this.placeParticle(level, positions, Random.nextInt(0, 3) == 0 ? par1 : par2)
+            );
         }
-        return InteractionResult.FAIL;
+        return InteractionResult.SUCCESS;
     }
 
     public void placeParticle(Level level, Vec3 pos, ParticleOptions par1){
@@ -164,6 +163,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 //            serverLevel.addFreshEntity(zombo);
         }
 
+//        JahdooRarity.debugRarity(player);
 
         if (interactionHand == InteractionHand.MAIN_HAND) {
             var item = player.getMainHandItem();

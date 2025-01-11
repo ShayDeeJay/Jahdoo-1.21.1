@@ -97,7 +97,6 @@ public class AugmentItemHelper {
         );
 
         if(player instanceof ServerPlayer serverPlayer){
-
             ModHelpers.sendClientSound(serverPlayer, SoundEvents.BEACON_ACTIVATE, 0.7f, 2F);
             ModHelpers.sendClientSound(serverPlayer, SoundEvents.PARROT_IMITATE_EVOKER, 1f, 0.8F);
         }
@@ -115,9 +114,9 @@ public class AugmentItemHelper {
         }
     }
 
-    public static void augmentIdentifierSharedRarity(ItemStack itemStack){
-        var ability = JahdooRarity.getAbilityWithRarity();
-        itemStack.set(DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA().get(), LocalLootBeamData.quickLootBeamComponent(ability.rarity()));
+    public static void augmentIdentifierSharedRarity(ItemStack itemStack, boolean withUtil){
+        var ability = JahdooRarity.getAbilityWithRarity(withUtil);
+        itemStack.set(DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA().get(), LocalLootBeamData.rarityLootBeam(ability.rarity()));
         ability.setModifiers(itemStack);
         var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         setAbilityToAugment(itemStack, ability, wandAbilityHolder);

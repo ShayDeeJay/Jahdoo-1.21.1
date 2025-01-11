@@ -25,7 +25,6 @@ public class ElementProjectileRenderer extends GeoEntityRenderer<ElementProjecti
     public void preApplyRenderLayers(PoseStack poseStack, ElementProjectile animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
         super.preApplyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
         poseStack.translate(0.0f, -0.55f, 0.0f);
-//        poseStack.scale(4f,4f,4f);
         if(animatable.isInvisible()) poseStack.scale(0,0,0);
 
         if(animatable.predicateType() == 1) {

@@ -7,15 +7,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.FastColor;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.client.block_models.ChallengeAltarModel;
+import org.jahdoo.utils.ColourStore;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
+
+import static org.jahdoo.client.RenderHelpers.drawTexture;
 
 public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlockEntity>{
     private final EntityRenderDispatcher entityRenderDispatcher;
@@ -29,6 +35,26 @@ public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlock
     public void actuallyRender(PoseStack poseStack, ChallengeAltarBlockEntity animatable, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
         var properties = ChallengeAltarData.getProperties(animatable);
         var isComplete = ChallengeAltarData.isCompleted(animatable);
+        var i = animatable.getLevel().getGameTime();
+        poseStack.pushPose();
+        poseStack.translate(-0.5, 0, -0.5);
+        var active = ChallengeAltarData.isActive(animatable);
+        System.out.println(animatable.privateTicks);
+        var isActivated = animatable.privateTicks < 95;
+        var rad = isActivated ? ((float) animatable.privateTicks / 1000) : 0.12F;
+        if(!isActivated){
+            if(animatable.privateTicks < 120){
+                animatable.animateTick+=3;
+                poseStack.pushPose();
+                poseStack.translate(0,-1,0);
+                drawTexture(poseStack.last(), bufferSource, 255, (float) animatable.animateTick, ModHelpers.res("textures/entity/shield.png"), FastColor.ARGB32.color(50, ColourStore.PERK_GREEN));
+                poseStack.popPose();
+            } else animatable.animateTick = 0;
+        }else animatable.animateTick = 0;
+
+
+        BeaconRenderer.renderBeaconBeam(poseStack, bufferSource, BeaconRenderer.BEAM_LOCATION, partialTick, active ? 0 : 2 , i, 0, isActivated ?  animatable.privateTicks : 500, ModHelpers.getColourLight(ColourStore.PERK_GREEN, Math.min(Math.max((double) animatable.privateTicks / 70, 0.5), 1.5)), rad, rad * 6);
+        poseStack.popPose();
         if(!isComplete){
             renderTextOverBlock(poseStack, bufferSource, "Round: " + properties.round, animatable.getBlockPos(), 0);
             renderTextOverBlock(poseStack, bufferSource, "Allowed Total " + properties.maxMobs(), animatable.getBlockPos(), 0.2);

@@ -14,6 +14,7 @@ import static org.jahdoo.ability.rarity.JahdooRarity.*;
 import static org.jahdoo.ability.rarity.RarityAttributes.*;
 import static org.jahdoo.components.rune_data.RuneData.*;
 import static org.jahdoo.components.rune_data.RuneGenerator.RuneCategories.*;
+import static org.jahdoo.utils.ColourStore.*;
 
 public class RuneGenerator {
 
@@ -174,7 +175,7 @@ public class RuneGenerator {
             .setRarity(rarity)
             .setDescription(description)
             .setTier(tier)
-            .setColour(color(193, 255, 99))
+            .setColour(PERK_GREEN)
             .setModelData(PERK.getModel())
             .setConvertPercentage(percent)
             .build();
@@ -186,7 +187,7 @@ public class RuneGenerator {
             .setName(COSMIC.getName())
             .setRarity(ETERNAL)
             .setTier(tier)
-            .setColour(color(171, 87, 194))
+            .setColour(COSMIC_PURPLE)
             .setModelData(COSMIC.getModel());
     }
 
@@ -196,7 +197,7 @@ public class RuneGenerator {
             .setName(AETHER.getName())
             .setRarity(LEGENDARY)
             .setTier(tier)
-            .setColour(color(0, 145, 255))
+            .setColour(AETHER_BLUE)
             .setModelData(AETHER.getModel())
             .build();
     }

@@ -8,6 +8,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.registers.ElementRegistry;
+import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
@@ -22,20 +23,17 @@ import static org.jahdoo.utils.ModHelpers.Random;
 public class ChallengeAltarAnim {
 
     public static void idleParticleAnim(BlockPos pPos, int privateTicks, Level level) {
-        var element = ElementRegistry.getRandomElement();
-        var par1 = ParticleHandlers.bakedParticleOptions(element.getTypeId(), 20, 1.5f, false);
-        var par2 = ParticleHandlers.genericParticleOptions(
-            ParticleStore.GENERIC_PARTICLE_SELECTION, element, 20, 1.5f, false, 0.3
-        );
         PositionGetters.getInnerRingOfRadiusRandom(pPos, 0.25, 2,
-            positions -> ChallengeAltarAnim.placeParticle(positions, Random.nextInt(0, 3) == 0 ? par1 : par2, level, privateTicks)
+            positions -> {
+                var colourDarker = ModHelpers.getColourDarker(ColourStore.PERK_GREEN, 0.5f);
+                var randomColouredParticle = ModHelpers.getRandomColouredParticle(ColourStore.PERK_GREEN, colourDarker, 10, 1, false);
+                ChallengeAltarAnim.placeParticle(positions, randomColouredParticle, level, privateTicks);
+            }
         );
 
         if(privateTicks > 100){
             if (Random.nextInt(20) == 0) {
-                var normal = TRIAL_SPAWNER_AMBIENT;
-                var ominous = TRIAL_SPAWNER_AMBIENT_OMINOUS;
-                var randomSound = List.of(normal, ominous).get(Random.nextInt(2));
+                var randomSound = List.of(TRIAL_SPAWNER_AMBIENT, TRIAL_SPAWNER_AMBIENT_OMINOUS).get(Random.nextInt(2));
                 ModHelpers.getSoundWithPosition(level, pPos, randomSound, 1, 2f);
             }
         }

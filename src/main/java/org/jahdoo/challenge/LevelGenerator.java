@@ -6,13 +6,18 @@ import net.casual.arcade.dimensions.ArcadeDimensions;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.casual.arcade.dimensions.level.builder.CustomLevelBuilder;
 import net.casual.arcade.dimensions.utils.impl.VoidChunkGenerator;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
@@ -27,7 +32,10 @@ import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
+import org.jahdoo.networking.packet.server2client.MoveClientEntitySyncS2CPacket;
 import org.jahdoo.registers.BlocksRegister;
+import org.jahdoo.registers.SoundRegister;
+import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 
 import javax.annotation.Nullable;
@@ -118,11 +126,16 @@ public class LevelGenerator {
     }
 
     private static void teleportToPlatform(Player player, ServerLevel level) {
-        player.changeDimension(
-            new DimensionTransition(level, new Vec3(-24.5, 65, -120.5), player.getDeltaMovement(), 0, 0, DimensionTransition.DO_NOTHING)
-        );
+        player.changeDimension(new DimensionTransition(level, new Vec3(-24.5, 65, -120.5), player.getDeltaMovement(), 0, 0, DimensionTransition.DO_NOTHING));
         //Remove all effects as should only have ones allowed, which should only be ones on trinkets items etc/
         player.removeAllEffects();
+//        player.playNotifySound(SoundRegister.START_TRIAL.get(), SoundSource.NEUTRAL, 1f,1);
+        if(player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(40, 50, 30));
+            serverPlayer.connection.send(new ClientboundSetTitleTextPacket(ModHelpers.withStyleComponent("Trial Of Strength", ColourStore.PERK_GREEN)));
+            serverPlayer.connection.send(new ClientboundSetSubtitleTextPacket(ModHelpers.withStyleComponent("Stage 1", ColourStore.PERK_GREEN)));
+            serverPlayer.playNotifySound(SoundRegister.START_TRIAL.get(), SoundSource.NEUTRAL, 1,1);
+        }
     }
 
     private static Optional<ServerLevel> findLevel(String id, ServerLevel serverLevel) {

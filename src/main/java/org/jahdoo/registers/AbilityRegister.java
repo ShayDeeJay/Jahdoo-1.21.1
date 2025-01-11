@@ -53,6 +53,14 @@ public class AbilityRegister {
             .toList();
     }
 
+    public static List<AbilityRegistrar> getMatchingRarityNoUtil(JahdooRarity rarity) {
+        return AbilityRegister.REGISTRY
+            .stream()
+            .filter(ability -> ability.rarity().getId() == rarity.getId())
+            .filter(ability -> ability.getElemenType() != ElementRegistry.UTILITY.get())
+            .toList();
+    }
+
     public static Optional<AbilityRegistrar> getFirstSpellByTypeId(String typeId) {
         return AbilityRegister.REGISTRY
             .stream()
