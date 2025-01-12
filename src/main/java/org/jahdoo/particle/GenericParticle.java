@@ -34,6 +34,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
     @Override
     public @NotNull ParticleRenderType getRenderType() {
         return ParticleRenderTypes.ABILITY_RENDERER;
+
     }
 
     @OnlyIn(Dist.CLIENT)

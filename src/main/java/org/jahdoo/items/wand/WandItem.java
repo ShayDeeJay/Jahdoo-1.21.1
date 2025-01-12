@@ -76,7 +76,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 
     @Override
     public @NotNull UseAnim getUseAnimation(ItemStack pStack) {
-        return UseAnim.BOW;
+        return UseAnim.NONE;
     }
 
     @Override

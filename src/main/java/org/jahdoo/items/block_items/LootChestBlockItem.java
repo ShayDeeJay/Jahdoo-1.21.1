@@ -23,6 +23,8 @@ public class LootChestBlockItem extends BlockItem implements GeoItem {
          SingletonGeoAnimatable.registerSyncedAnimatable(this);
     }
 
+
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
 

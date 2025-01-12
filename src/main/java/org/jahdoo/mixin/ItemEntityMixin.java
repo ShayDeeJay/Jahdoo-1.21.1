@@ -1,12 +1,20 @@
 package org.jahdoo.mixin;
 
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.sounds.WeighedSoundEvents;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.items.CoinItem;
+import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ItemEntityBehaviour;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -45,4 +53,19 @@ public abstract class ItemEntityMixin {
 
     }
 
+    @Unique
+    private boolean lootBeams$hasPlayedSound = false;
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void onTick(CallbackInfo ci) {
+        ItemEntity itemEntity = (ItemEntity) (Object) this;
+        if (!lootBeams$hasPlayedSound && (itemEntity.onGround() || (itemEntity.onGround() && (itemEntity.tickCount < 10 && itemEntity.tickCount > 3)))) {
+            if (itemEntity.getItem().getItem() instanceof CoinItem) itemEntity.playSound(SoundRegister.COIN.get());
+            lootBeams$hasPlayedSound = true;
+        }
+
+        if(lootBeams$hasPlayedSound && !itemEntity.onGround()){
+            lootBeams$hasPlayedSound = false;
+        }
+    }
 }

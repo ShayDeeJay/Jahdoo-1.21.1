@@ -28,6 +28,7 @@ public class WandAnimations {
     public static List<String> castAnims = List.of(SINGLE_CAST_ID, ROTATION_CAST_ID, HOLD_CAST_ID);
 
     public static void triggerAnimWithController(SingletonGeoAnimatable animate, ItemStack itemStack, ServerLevel serverLevel, Entity entity, String anim){
+        animate.stopTriggeredAnim(entity, GeoItem.getOrAssignId(itemStack, serverLevel), "Activation", anim);
         animate.triggerAnim(entity, GeoItem.getOrAssignId(itemStack, serverLevel), "Activation", anim);
     }
 

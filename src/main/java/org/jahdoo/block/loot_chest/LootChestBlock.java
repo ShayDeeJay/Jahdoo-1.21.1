@@ -42,6 +42,7 @@ import org.jahdoo.items.TomeOfUnity;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.particle.ParticleHandlers;
+import org.jahdoo.registers.AttachmentRegister;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
@@ -56,6 +57,8 @@ import static net.minecraft.world.entity.ExperienceOrb.getExperienceValue;
 import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.*;
 import static org.jahdoo.block.augment_modification_station.AugmentModificationBlock.SHAPE_COMBINED;
 import static org.jahdoo.challenge.RewardLootTables.attachItemData;
+import static org.jahdoo.registers.AttachmentRegister.*;
+import static org.jahdoo.registers.BlocksRegister.CHALLENGE_ALTAR;
 import static org.jahdoo.registers.BlocksRegister.sharedBlockBehaviour;
 import static org.jahdoo.utils.ModHelpers.Random;
 
@@ -106,7 +109,11 @@ public class LootChestBlock extends BaseEntityBlock {
 
         if (level instanceof ServerLevel serverLevel && !lootChestEntity.isOpen) {
             lootChestEntity.setOpen(true);
-            lootSplosion(pos, serverLevel, 60, 1);
+            var hasData = lootChestEntity.hasData(AttachmentRegister.CHALLENGE_ALTAR);
+            var getData = lootChestEntity.getData(AttachmentRegister.CHALLENGE_ALTAR).maxMobs - 1;
+            var lootLevel = hasData ? getData : serverLevel.getData(AttachmentRegister.CHALLENGE_ALTAR).maxRound() - 6;
+            System.out.println(lootLevel);
+            lootSplosion(pos, serverLevel, lootLevel, 1);
             return ItemInteractionResult.SUCCESS;
         }
 
@@ -134,7 +141,6 @@ public class LootChestBlock extends BaseEntityBlock {
                 var rarity = JahdooRarity.getRarity();
 
                 attachItemData(serverLevel, item, rarity, itemStack);
-
                 serverLevel.addFreshEntity(itemEntity);
             }
         }

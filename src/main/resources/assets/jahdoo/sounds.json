@@ -89,5 +89,11 @@
     "sounds": [
       "jahdoo:end_trial"
     ]
+  },
+  "coin_sound": {
+    "subtitles": "sounds.jahdoo.coin_sound",
+    "sounds": [
+      "jahdoo:coin_sound"
+    ]
   }
 }

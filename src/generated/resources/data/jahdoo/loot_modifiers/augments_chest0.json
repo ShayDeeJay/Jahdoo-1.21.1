@@ -7,7 +7,7 @@
     },
     {
       "condition": "neoforge:loot_table_id",
-      "loot_table_id": "minecraft:chests/village/village_cartographer"
+      "loot_table_id": "minecraft:chests/village/village_taiga_house"
     }
   ],
   "item": "jahdoo:unidentified_augment"

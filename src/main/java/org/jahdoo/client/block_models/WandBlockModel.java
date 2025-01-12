@@ -7,16 +7,43 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 import java.util.Map;
 
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 
 public class WandBlockModel extends GeoModel<WandBlockEntity> {
+//    @Override
+//    public ResourceLocation getModelResource(WandBlockEntity animatable) {
+//        return ModHelpers.res("geo/block/wand.geo.json");
+//    }
+
+    @Override
+    public ResourceLocation getModelResource(WandBlockEntity animatable, @Nullable GeoRenderer<WandBlockEntity> renderer) {
+        return ModHelpers.res("geo/block/wand.geo.json");
+    }
+
     @Override
     public ResourceLocation getModelResource(WandBlockEntity animatable) {
         return ModHelpers.res("geo/block/wand.geo.json");
+    }
+
+    @Override
+    public ResourceLocation getTextureResource(WandBlockEntity animatable, @Nullable GeoRenderer<WandBlockEntity> renderer) {
+        ItemStack itemStack = animatable.inputItemHandler.getStackInSlot(GET_WAND_SLOT);
+        Map<Item, String> wandTextures = Map.of(
+            ItemsRegister.WAND_ITEM_FROST.get(), "wand_frost",
+            ItemsRegister.WAND_ITEM_INFERNO.get(), "wand_inferno",
+            ItemsRegister.WAND_ITEM_LIGHTNING.get(), "wand_lightning",
+            ItemsRegister.WAND_ITEM_VITALITY.get(), "wand_vitality"
+        );
+
+        String type = wandTextures.getOrDefault(itemStack.getItem(), "wand_mystic");
+        String texturePath = "textures/block/" + type + ".png";
+        return ModHelpers.res(texturePath);
     }
 
     @Override
@@ -33,6 +60,21 @@ public class WandBlockModel extends GeoModel<WandBlockEntity> {
         String texturePath = "textures/block/" + type + ".png";
         return ModHelpers.res(texturePath);
     }
+
+//    @Override
+//    public ResourceLocation getTextureResource(WandBlockEntity animatable) {
+//        ItemStack itemStack = animatable.inputItemHandler.getStackInSlot(GET_WAND_SLOT);
+//        Map<Item, String> wandTextures = Map.of(
+//            ItemsRegister.WAND_ITEM_FROST.get(), "wand_frost",
+//            ItemsRegister.WAND_ITEM_INFERNO.get(), "wand_inferno",
+//            ItemsRegister.WAND_ITEM_LIGHTNING.get(), "wand_lightning",
+//            ItemsRegister.WAND_ITEM_VITALITY.get(), "wand_vitality"
+//        );
+//
+//        String type = wandTextures.getOrDefault(itemStack.getItem(), "wand_mystic");
+//        String texturePath = "textures/block/" + type + ".png";
+//        return ModHelpers.res(texturePath);
+//    }
 
     @Override
     public ResourceLocation getAnimationResource(WandBlockEntity animatable) {

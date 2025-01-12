@@ -42,6 +42,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropOther(BlocksRegister.LIGHTING.get(), Items.AIR);
         this.dropOther(BlocksRegister.ENCHANTED_BLOCK.get(), Items.AIR);
         this.dropOther(BlocksRegister.NEXITE_POWDER_BLOCK.get(), Items.AIR);
+        this.dropOther(BlocksRegister.TRAIL_PORTAL.get(), Items.AIR);
         this.add(BlocksRegister.NEXITE_ORE.get(),
             block -> createCopperLikeOreDrops(BlocksRegister.NEXITE_ORE.get(), ItemsRegister.NEXITE_POWDER.get())
                 .withPool(LootPool.lootPool().setRolls(UniformGenerator.between(0f, 1.0F)))

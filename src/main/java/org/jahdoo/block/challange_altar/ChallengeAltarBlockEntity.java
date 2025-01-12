@@ -1,28 +1,27 @@
 package org.jahdoo.block.challange_altar;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
-import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BeaconBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.SyncedBlockEntity;
 import org.jahdoo.challenge.MobManager;
 import org.jahdoo.networking.packet.server2client.AltarBlockS2C;
-import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
-import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ColourStore;
@@ -34,13 +33,14 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import static net.minecraft.core.Direction.SOUTH;
-import static org.jahdoo.block.challange_altar.ChallengeAltarAnim.idleParticleAnim;
-import static org.jahdoo.block.challange_altar.ChallengeAltarAnim.onActivationAnim;
-import static org.jahdoo.block.loot_chest.LootChestBlock.*;
+
+import static org.jahdoo.block.challange_altar.ChallengeAltarAnim.*;
+import static org.jahdoo.block.challange_altar.ChallengeAltarBlock.readyNextSubRound;
+import static org.jahdoo.block.loot_chest.LootChestBlock.FACING;
 import static org.jahdoo.entities.EntityAnimations.*;
 import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
-import static org.jahdoo.registers.BlocksRegister.*;
+import static org.jahdoo.registers.BlocksRegister.LOOT_CHEST;
+import static org.jahdoo.registers.BlocksRegister.TRAIL_PORTAL;
 
 
 public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntity {
@@ -50,6 +50,9 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
     public int initiateSpawning;
     public boolean beginSpawning;
     public double animateTick;
+    public int buildTick;
+    public int placeCounter;
+
 
     public ChallengeAltarBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.CHALLENGE_ALTAR_BE.get(), pPos, pBlockState);
@@ -82,13 +85,64 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
 
     public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
         if(pLevel instanceof ServerLevel serverLevel){
-            manageActivePlayers(pPos);
-            tickBossEvent();
-            activeSubRoundEvent(pLevel, pPos);
-            resetSubRound();
-            this.completeRound(serverLevel);
-            if (privateTicks == 1) onActivationAnim(pLevel, pPos, privateTicks);
-            this.updatePacket();
+            if(ChallengeAltarData.isCompleted(this)) {
+                buildTick++;
+                portalBuilder(pLevel, serverLevel, pPos);
+            } else {
+                manageActivePlayers(pPos);
+                tickBossEvent();
+                activeSubRoundEvent(pLevel, pPos);
+                this.completeRound(serverLevel);
+                if (privateTicks == 1) onActivationAnim(pLevel, pPos, privateTicks);
+                this.updatePacket();
+                resetSubRound();
+            }
+        }
+    }
+
+    private void portalBuilder(Level pLevel, ServerLevel serverLevel, BlockPos pos) {
+        if (buildTick % 3 == 0) {
+            var mossyStoneBricks = Blocks.MOSSY_STONE_BRICKS;
+            var south = pos.south(4);
+            var breakSound = mossyStoneBricks.defaultBlockState().getSoundType().getBreakSound();
+
+            if (placeCounter < 5) {
+                var above = south.east(2).above(placeCounter);
+                var above1 = south.west(2).above(placeCounter);
+                if(serverLevel.getBlockState(above1).isAir()){
+                    ModHelpers.getSoundWithPosition(pLevel, above1, breakSound);
+                    serverLevel.setBlockAndUpdate(above1, mossyStoneBricks.defaultBlockState());
+                }
+                if(serverLevel.getBlockState(above).canBeReplaced()){
+                    ModHelpers.getSoundWithPosition(pLevel, above, breakSound);
+                    serverLevel.setBlockAndUpdate(above, mossyStoneBricks.defaultBlockState());
+                }
+            } else if (placeCounter < 8) {
+                int horizontalStep = placeCounter - 5; // Normalize to 0-2 range
+                var above = south.east(horizontalStep).above(5);
+                var above1 = south.west(horizontalStep).above(5);
+                if(serverLevel.getBlockState(above1).isAir()){
+                    ModHelpers.getSoundWithPosition(pLevel, above1, breakSound);
+                    serverLevel.setBlockAndUpdate(above1, mossyStoneBricks.defaultBlockState());
+                }
+                if(serverLevel.getBlockState(above).isAir()){
+                    ModHelpers.getSoundWithPosition(pLevel, above, breakSound);
+                    serverLevel.setBlockAndUpdate(above, mossyStoneBricks.defaultBlockState());
+                }
+            }
+
+            if(buildTick == 30){
+                serverLevel.setBlockAndUpdate(pos, LOOT_CHEST.get().defaultBlockState().setValue(FACING, Direction.SOUTH));
+                ModHelpers.getSoundWithPosition(pLevel, south, SoundEvents.END_PORTAL_SPAWN, 0.8F, 1.5F);
+                for (int i = 0; i < 5; i ++){
+                    serverLevel.setBlockAndUpdate(south.above(i), TRAIL_PORTAL.get().defaultBlockState());
+                    serverLevel.setBlockAndUpdate(south.west().above(i), TRAIL_PORTAL.get().defaultBlockState());
+                    serverLevel.setBlockAndUpdate(south.east().above(i), TRAIL_PORTAL.get().defaultBlockState());
+                }
+            }
+
+            placeCounter++;
+            if (placeCounter >= 8) placeCounter = 0;
         }
     }
 
@@ -137,26 +191,34 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
     }
 
     private void resetSubRound() {
-        if(altarData().killedMobs > 0 && altarData().killedMobs == altarData().maxMobs()){
-            ChallengeAltarData.resetSubRoundAltar(this);
-            bossEvent.removeAllPlayers();
-            this.privateTicks = 0;
+        if(!ChallengeAltarData.isCompleted(this)){
+            if (altarData().killedMobs > 0 && altarData().killedMobs == altarData().maxMobs()) {
+                ChallengeAltarData.resetSubRoundAltar(this);
+                bossEvent.removeAllPlayers();
+                this.privateTicks = 0;
+                readyNextSubRound(this, altarData(), Math.max(1, altarData().round));
+            }
         }
     }
 
     private void completeRound(ServerLevel serverLevel) {
-        if(altarData().round() > 0 && altarData().round() == altarData().maxRound()){
+        if(completeRound()){
             ChallengeAltarData.resetAltar(this);
             bossEvent.removeAllPlayers();
-            serverLevel.setBlockAndUpdate(getBlockPos(), LOOT_CHEST.get().defaultBlockState().setValue(FACING, SOUTH));
-            ModHelpers.sendPacketsToPlayerDistance(this.getBlockPos().getCenter(), 200, serverLevel, serverPlayer -> {
+            this.privateTicks = 0;
+            serverLevel.setData(CHALLENGE_ALTAR, ChallengeAltarData.newRound(altarData().maxRound));
+            ModHelpers.sendPacketsToPlayerDistance(this.getBlockPos().getCenter(), 200, serverLevel,
+                serverPlayer -> {
                     serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(40, 50, 30));
                     serverPlayer.connection.send(new ClientboundSetTitleTextPacket(ModHelpers.withStyleComponent("Trial Successful", ColourStore.PERK_GREEN)));
                     serverPlayer.playNotifySound(SoundRegister.END_TRIAL.get(), SoundSource.NEUTRAL, 1,1);
                 }
             );
-            this.privateTicks = 0;
         }
+    }
+
+    private boolean completeRound() {
+        return altarData().round() > 0 && altarData().round() == altarData().maxRound();
     }
 
     private boolean removeKilledMobs() {
@@ -180,7 +242,7 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
     }
 
     private PlayState eAnimation(AnimationState<ChallengeAltarBlockEntity> state) {
-        if(isSubRoundActive()) {
+        if(isSubRoundActive() && !ChallengeAltarData.isCompleted(this)) {
             var animation = privateTicks <= 100 ? ALTAR_SPAWNING : ALTAR_IDLE;
             return state.setAndContinue(animation);
         }
@@ -196,6 +258,10 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
     protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
         super.saveAdditional(pTag, pRegistries);
         pTag.putInt("challenge_altar.private", privateTicks);
+        pTag.putInt("challenge_altar.initiateSpawn", initiateSpawning);
+        pTag.putInt("challenge_altar.buildTick", buildTick);
+        pTag.putInt("challenge_altar.placeCounter", placeCounter);
+        pTag.putBoolean("challenge_altar.beginSpawn", beginSpawning);
         pTag.putDouble("animate", this.animateTick);
     }
 
@@ -203,6 +269,10 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
     protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
         super.loadAdditional(pTag, pRegistries);
         privateTicks = pTag.getInt("challenge_altar.private");
+        initiateSpawning = pTag.getInt("challenge_altar.initiateSpawn");
+        buildTick = pTag.getInt("challenge_altar.buildTick");
+        placeCounter = pTag.getInt("challenge_altar.placeCounter");
+        beginSpawning = pTag.getBoolean("challenge_altar.beginSpawning");
         animateTick = pTag.getDouble("animate");
     }
 

@@ -20,7 +20,13 @@ public class CoreItem extends Item  {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         if(level instanceof ServerLevel serverLevel){
             if(player.getMainHandItem().getItem() == ItemsRegister.AUGMENT_HYPER_CORE.get()){
-                LevelGenerator.createNewWorld(player, serverLevel, ChallengeAltarData.DEFAULT);
+                LevelGenerator.debugLevels(serverLevel);
+                for (var allEntity : serverLevel.getAllEntities()) {
+                    if(!(allEntity instanceof Player)){
+                        allEntity.kill();
+                    }
+                }
+//                LevelGenerator.createNewWorld(player, serverLevel, ChallengeAltarData.DEFAULT);
             } else {
                 LevelGenerator.removeCustomLevels(serverLevel);
             }

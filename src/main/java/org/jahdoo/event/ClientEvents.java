@@ -70,16 +70,16 @@ public class ClientEvents {
                 var scale = Math.sin((entity.tickCount + event.getPartialTick()) / 5.0F) * 0.08F + 0.4;
                 pose.pushPose();
                 pose.translate(0, 0, 0);
-//          pose.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
-//          pose.rotateAround(Axis.XN.rotationDegrees(90), 0,0,0);
-//          pose.rotateAround(Axis.YP.rotationDegrees(90), 0, 0, 0);
-            pose.rotateAround(Axis.YP.rotationDegrees(entity.tickCount + event.getPartialTick()), 0, 0, 0);
-//            pose.rotateAround(Axis.ZN.rotationDegrees((float) scale), 0,0,0);
-//            pose.rotateAround(Axis.XP.rotationDegrees(entity.yBodyRotO + 90), 0,0,0);
+//                pose.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+//                pose.rotateAround(Axis.XN.rotationDegrees(90), 0,0,0);
+//                pose.rotateAround(Axis.YP.rotationDegrees(90), 0, 0, 0);
+                pose.rotateAround(Axis.YP.rotationDegrees(entity.tickCount + event.getPartialTick()), 0, 0, 0);
+//                pose.rotateAround(Axis.ZN.rotationDegrees((float) scale), 0,0,0);
+//                pose.rotateAround(Axis.XP.rotationDegrees(entity.yBodyRotO + 90), 0,0,0);
 
-//            drawSlash(pose.last(), buffer, FULL_BRIGHT, (float) scale + 0.4f, ModHelpers.res("textures/gui/gui_button_power_off.png"));
-//            drawSlash(pose.last(), buffer, FULL_BRIGHT, entity.getBbWidth() + (float) scale - 0.4f, ModHelpers.res("textures/entity/magic_circle_2.png"));
-//            drawSlash(pose.last(), buffer, FULL_BRIGHT, entity.getBbWidth() + (float) scale + 0.4f, ModHelpers.res("textures/entity/shield.png"));
+//                drawSlash(pose.last(), buffer, FULL_BRIGHT, (float) scale + 0.4f, ModHelpers.res("textures/gui/gui_button_power_off.png"));
+//                drawSlash(pose.last(), buffer, FULL_BRIGHT, entity.getBbWidth() + (float) scale - 0.4f, ModHelpers.res("textures/entity/magic_circle_2.png"));
+//                drawSlash(pose.last(), buffer, FULL_BRIGHT, entity.getBbWidth() + (float) scale + 0.4f, ModHelpers.res("textures/entity/shield.png"));
                 pose.popPose();
             }
         }
@@ -91,6 +91,7 @@ public class ClientEvents {
         var allSlots = getAllSlots(e.getItemStack());
         if(allSlots.isEmpty()) return;
         var runeSockets = new RuneTooltipRenderer.RuneComponent(e.getItemStack(), allSlots);
+
         e.getTooltipElements().add(current.size(), Either.right(runeSockets));
     }
 

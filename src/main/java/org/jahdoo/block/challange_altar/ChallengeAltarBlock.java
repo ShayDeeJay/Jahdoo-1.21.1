@@ -81,11 +81,11 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
     }
 
     private static void startNewChallenge(ChallengeAltarBlockEntity altarE, int startingRound) {
-        var endingRound = startingRound + 1;
+        var endingRound = startingRound + 5;
         resetWithRound(altarE, startingRound, endingRound);
     }
 
-    private static void readyNextSubRound(ChallengeAltarBlockEntity altarE, ChallengeAltarData altarData, int startingRound) {
+    public static void readyNextSubRound(ChallengeAltarBlockEntity altarE, ChallengeAltarData altarData, int startingRound) {
         if (!altarData.isSubRoundActive(altarE)) nextSubRound(altarE, startingRound);
     }
 

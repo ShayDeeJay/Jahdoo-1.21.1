@@ -128,7 +128,7 @@ public class ChallengeAltarData implements AbstractAttachment {
     @Override
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         CompoundTag mobList = new CompoundTag();
-        for (UUID mob : activeMobs) mobList.putUUID(mob.toString(), mob);
+        if(this.activeMobs != null) for (UUID mob : activeMobs) mobList.putUUID(mob.toString(), mob);
         nbt.put("active_mobs", mobList);
         nbt.putBoolean("is_active", isActive);
         nbt.putInt("killed_mobs", killedMobs);

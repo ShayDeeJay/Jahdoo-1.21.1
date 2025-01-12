@@ -4,15 +4,14 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.DropExperienceBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.block.TrialPortalBlock;
 import org.jahdoo.block.augment_modification_station.AugmentModificationBlock;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlock;
 import org.jahdoo.block.enchanted_block.EnchantedBlock;
@@ -64,6 +63,18 @@ public class BlocksRegister {
                 .strength(Blocks.DIAMOND_BLOCK.defaultDestroyTime())
                 .sound(SoundType.STONE)
                 .noOcclusion()
+        )
+    );
+
+    public static final DeferredHolder<Block, Block> TRAIL_PORTAL = registerBlock("trial_portal",
+        () -> new TrialPortalBlock(
+            BlockBehaviour.Properties.of()
+                .noCollission()
+                .randomTicks()
+                .strength(-1.0F)
+                .sound(SoundType.GLASS)
+                .lightLevel(p_50870_ -> 11)
+                .pushReaction(PushReaction.BLOCK)
         )
     );
 

@@ -11,7 +11,9 @@ import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.minecraft.world.level.Level;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.client.block_models.ChallengeAltarModel;
@@ -24,37 +26,53 @@ import software.bernie.geckolib.renderer.GeoBlockRenderer;
 import static org.jahdoo.client.RenderHelpers.drawTexture;
 
 public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlockEntity>{
-    private final EntityRenderDispatcher entityRenderDispatcher;
+    public static final ResourceLocation BEAM_LOCATION = ModHelpers.res("textures/entity/beacon_beam.png");
 
     public ChallengeAltarRenderer(BlockEntityRendererProvider.Context context) {
         super(new ChallengeAltarModel());
-        this.entityRenderDispatcher = context.getEntityRenderer();
     }
 
     @Override
     public void actuallyRender(PoseStack poseStack, ChallengeAltarBlockEntity animatable, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
         var properties = ChallengeAltarData.getProperties(animatable);
         var isComplete = ChallengeAltarData.isCompleted(animatable);
-        var i = animatable.getLevel().getGameTime();
+        var level = animatable.getLevel();
+        if(level == null) return;
+        var i = level.getGameTime();
+
         poseStack.pushPose();
         poseStack.translate(-0.5, 0, -0.5);
-        var active = ChallengeAltarData.isActive(animatable);
-        System.out.println(animatable.privateTicks);
         var isActivated = animatable.privateTicks < 95;
-        var rad = isActivated ? ((float) animatable.privateTicks / 1000) : 0.12F;
+        activationNova(poseStack, animatable, bufferSource, isActivated);
+        if(isActivated) activeBeam(poseStack, animatable, bufferSource, partialTick, i, isActivated);
+        poseStack.popPose();
+
+        debugRound(poseStack, animatable, bufferSource, isComplete, properties);
+        super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+    }
+
+    private static void activationNova(PoseStack poseStack, ChallengeAltarBlockEntity animatable, MultiBufferSource bufferSource, boolean isActivated) {
         if(!isActivated){
             if(animatable.privateTicks < 120){
                 animatable.animateTick+=3;
                 poseStack.pushPose();
                 poseStack.translate(0,-1,0);
-                drawTexture(poseStack.last(), bufferSource, 255, (float) animatable.animateTick, ModHelpers.res("textures/entity/shield.png"), FastColor.ARGB32.color(50, ColourStore.PERK_GREEN));
+                System.out.println(animatable.privateTicks);
+                drawTexture(poseStack.last(), bufferSource, 255, (float) animatable.animateTick, ModHelpers.res("textures/entity/shield.png"), FastColor.ARGB32.color(Math.max(0, (50 - (animatable.privateTicks - 94) * 2)), ColourStore.PERK_GREEN));
                 poseStack.popPose();
             } else animatable.animateTick = 0;
         }else animatable.animateTick = 0;
+    }
 
+    private static void activeBeam(PoseStack poseStack, ChallengeAltarBlockEntity animatable, MultiBufferSource bufferSource, float partialTick, long i, boolean isActivated) {
+        var rad = isActivated ? ((float) animatable.privateTicks / 1000) : 0.12F;
+        var height = isActivated ? animatable.privateTicks : 500;
+        var colourLight = ModHelpers.getColourLight(ColourStore.PERK_GREEN, Math.min(Math.max((double) animatable.privateTicks / 40, 0.5), 1.2));
+        var textureScale = isActivated ? 0 : 0.5F;
+        BeaconRenderer.renderBeaconBeam(poseStack, bufferSource, BEAM_LOCATION, partialTick, textureScale, i, 0, height, colourLight, rad, rad * 6);
+    }
 
-        BeaconRenderer.renderBeaconBeam(poseStack, bufferSource, BeaconRenderer.BEAM_LOCATION, partialTick, active ? 0 : 2 , i, 0, isActivated ?  animatable.privateTicks : 500, ModHelpers.getColourLight(ColourStore.PERK_GREEN, Math.min(Math.max((double) animatable.privateTicks / 70, 0.5), 1.5)), rad, rad * 6);
-        poseStack.popPose();
+    private static void debugRound(PoseStack poseStack, ChallengeAltarBlockEntity animatable, MultiBufferSource bufferSource, boolean isComplete, ChallengeAltarData properties) {
         if(!isComplete){
             renderTextOverBlock(poseStack, bufferSource, "Round: " + properties.round, animatable.getBlockPos(), 0);
             renderTextOverBlock(poseStack, bufferSource, "Allowed Total " + properties.maxMobs(), animatable.getBlockPos(), 0.2);
@@ -64,7 +82,6 @@ public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlock
         } else {
             renderTextOverBlock(poseStack, bufferSource, "Complete!", animatable.getBlockPos(), 0.8);
         }
-        super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
     }
 
     private static void renderTextOverBlock(PoseStack poseStack, MultiBufferSource buffer, String text, BlockPos pos, double offset) {
@@ -73,7 +90,6 @@ public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlock
         renderFloatingText(poseStack, buffer, text, pos, -1, scale, true, scale, true, offset);
         poseStack.popPose();
     }
-
 
     public static void renderFloatingText(PoseStack poseStack, MultiBufferSource bufferSource, String text, BlockPos pos, int color, float scale, boolean p_270731_, float p_270825_, boolean transparent, double offset) {
         Minecraft minecraft = Minecraft.getInstance();

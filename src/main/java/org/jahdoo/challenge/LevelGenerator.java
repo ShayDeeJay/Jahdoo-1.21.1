@@ -6,12 +6,12 @@ import net.casual.arcade.dimensions.ArcadeDimensions;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.casual.arcade.dimensions.level.builder.CustomLevelBuilder;
 import net.casual.arcade.dimensions.utils.impl.VoidChunkGenerator;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
+import net.minecraft.data.worldgen.biome.BiomeData;
+import net.minecraft.data.worldgen.biome.OverworldBiomes;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +24,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
+import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.portal.DimensionTransition;
@@ -32,7 +33,6 @@ import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
-import org.jahdoo.networking.packet.server2client.MoveClientEntitySyncS2CPacket;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ColourStore;
@@ -40,7 +40,9 @@ import org.jahdoo.utils.ModHelpers;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
 import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
 
 public class LevelGenerator {
@@ -53,26 +55,39 @@ public class LevelGenerator {
         for (CustomLevel cLevel : levelsToRemove) removeLevel(serverLevel, cLevel);
     }
 
+    public static void debugLevels(ServerLevel serverLevel) {
+        for (ServerLevel allLevel : serverLevel.getServer().getAllLevels()) {
+            if (allLevel instanceof CustomLevel cLevel) System.out.println(cLevel.getDescription());
+        }
+    }
+
     public static void removeLevel(ServerLevel serverLevel, CustomLevel customLevel) {
         ArcadeDimensions.delete(serverLevel.getServer(), customLevel);
     }
 
-    public static void createNewWorld(Player player, ServerLevel serverLevel, ChallengeAltarData altarData) {
+    public static DimensionTransition createNewWorld(Player player, ServerLevel serverLevel) {
         var testKey = "end_"+UUID.randomUUID();
         generateNewLevel(serverLevel, testKey);
-        findLevel(testKey, serverLevel).ifPresent(level -> generateStructure(player, level, altarData));
+        var getLevel = new AtomicReference<ServerLevel>();
+        findLevel(testKey, serverLevel).ifPresent(
+            level -> {
+                var newTrial = serverLevel.hasData(CHALLENGE_ALTAR);
+                var getData = serverLevel.getData(CHALLENGE_ALTAR);
+                var isCustomLevel = serverLevel instanceof CustomLevel;
+                generateStructure(player, level, isCustomLevel || !newTrial ? getData : ChallengeAltarData.DEFAULT, Math.max(getData.maxRound/5, 1));
+                getLevel.set(level);
+            }
+        );
+        var pos = new Vec3(-24.5, 65, -120.5);
+        return new DimensionTransition(getLevel.get(), pos, player.getDeltaMovement(), 0, 0, DO_NOTHING);
     }
 
     private static void generateNewLevel(ServerLevel serverLevel, @Nullable String key) {
-        var dimensionWithBiomes = Pair.of(BuiltinDimensionTypes.OVERWORLD, List.of(Biomes.THE_VOID, /*Biomes.SNOWY_TAIGA,*/ Biomes.PLAINS));
-        var randomBiome = ModHelpers.Random.nextInt(dimensionWithBiomes.second().size());
-        var biome = dimensionWithBiomes.second().get(randomBiome);
         var builder = new CustomLevelBuilder()
-            .timeOfDay(biome == Biomes.PLAINS ? 13000 : 18000)
-            .dimensionType(dimensionWithBiomes.first())
+            .timeOfDay(18000)
+            .dimensionType(BuiltinDimensionTypes.OVERWORLD)
             .weather(
                 weather -> {
-                    weather.setRaining(biome == Biomes.SNOWY_TAIGA);
                     weather.setThundering(false);
                     return null;
                 }
@@ -83,7 +98,7 @@ public class LevelGenerator {
                     return null;
                 }
             )
-            .chunkGenerator(new VoidChunkGenerator(serverLevel.getServer(), biome))
+            .chunkGenerator(new VoidChunkGenerator(serverLevel.getServer(), Biomes.THE_VOID))
             .dimensionKey(ModHelpers.res(key == null ? UUID.randomUUID().toString() : key))
             .gameRules(
                 (gameRules) -> {
@@ -99,9 +114,9 @@ public class LevelGenerator {
         ArcadeDimensions.add(serverLevel.getServer(), builder);
     }
 
-    private static void generateStructure(Player player, ServerLevel level, ChallengeAltarData data){
+    private static void generateStructure(Player player, ServerLevel level, ChallengeAltarData data, int stage){
         var pos = new BlockPos(0, 40, 0);
-        var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 16).toList();
+        var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 1).toList();
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
 
         try {
@@ -113,7 +128,7 @@ public class LevelGenerator {
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
         //Here we can pass the data from the previous altar to set up the next challenge stack.
-        teleportToPlatform(player, level);
+        teleportToPlatform(player, level, stage);
         setAltarAndData(level, data);
     }
 
@@ -125,15 +140,15 @@ public class LevelGenerator {
         }
     }
 
-    private static void teleportToPlatform(Player player, ServerLevel level) {
-        player.changeDimension(new DimensionTransition(level, new Vec3(-24.5, 65, -120.5), player.getDeltaMovement(), 0, 0, DimensionTransition.DO_NOTHING));
+    private static void teleportToPlatform(Player player, ServerLevel serverLevel, int stage) {
+        player.changeDimension(new DimensionTransition(serverLevel, new Vec3(-24.5, 65, -120.5), player.getDeltaMovement(), 0, 0, DimensionTransition.DO_NOTHING));
         //Remove all effects as should only have ones allowed, which should only be ones on trinkets items etc/
         player.removeAllEffects();
 //        player.playNotifySound(SoundRegister.START_TRIAL.get(), SoundSource.NEUTRAL, 1f,1);
         if(player instanceof ServerPlayer serverPlayer) {
             serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(40, 50, 30));
             serverPlayer.connection.send(new ClientboundSetTitleTextPacket(ModHelpers.withStyleComponent("Trial Of Strength", ColourStore.PERK_GREEN)));
-            serverPlayer.connection.send(new ClientboundSetSubtitleTextPacket(ModHelpers.withStyleComponent("Stage 1", ColourStore.PERK_GREEN)));
+            serverPlayer.connection.send(new ClientboundSetSubtitleTextPacket(ModHelpers.withStyleComponent("Stage " + stage, ColourStore.PERK_GREEN)));
             serverPlayer.playNotifySound(SoundRegister.START_TRIAL.get(), SoundSource.NEUTRAL, 1,1);
         }
     }
@@ -152,5 +167,7 @@ public class LevelGenerator {
         Holder<StructureTemplatePool> holder = registry.getHolderOrThrow(ResourceKey.create(Registries.TEMPLATE_POOL, ModHelpers.res("challenge_arena/challenge_pool_1")));
         JigsawPlacement.generateJigsaw(sLevel, holder,  ResourceLocation.withDefaultNamespace("empty"), 10, pos, true);
     }
+
+
 
 }

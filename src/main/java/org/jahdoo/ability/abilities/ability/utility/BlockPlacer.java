@@ -94,7 +94,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
 
     private static void extracted(BlockPos blockPos, Direction side, Block replaceBlock, Level level, boolean playSound) {
         BlockState state = replaceBlock.defaultBlockState();
-        level.setBlockAndUpdate(blockPos.relative(side), state);
+//        level.setBlockAndUpdate(blockPos.relative(side), state);
         if(playSound){
             ModHelpers.getSoundWithPosition(level, blockPos, state.getSoundType().getBreakSound());
         }

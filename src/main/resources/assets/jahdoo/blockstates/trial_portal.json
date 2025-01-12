@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "jahdoo:block/trial_portal_ns"
+    },
+    "axis=z": {
+      "model": "jahdoo:block/trial_portal_ew"
+    }
+  }
+}

@@ -10,8 +10,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.items.ArchmageGauntlet;
-import org.jahdoo.items.CoreItem;
+import org.jahdoo.items.*;
 import org.jahdoo.items.armor.MageArmor;
 import org.jahdoo.items.armor.WizardArmor;
 import org.jahdoo.items.augments.Augment;
@@ -19,8 +18,6 @@ import org.jahdoo.items.block_items.ChallengeAltarBlockItem;
 import org.jahdoo.items.block_items.LootChestBlockItem;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.block_items.ModularChaosCubeItem;
-import org.jahdoo.items.TomeOfUnity;
-import org.jahdoo.items.HealthContainer;
 import org.jahdoo.items.block_items.InfuserBlockItem;
 import org.jahdoo.items.wand.subWands.*;
 
@@ -87,6 +84,14 @@ public class ItemsRegister {
         ITEMS.register("mage_leggings", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.LEGGINGS));
     public static final DeferredHolder<Item, Item> MAGE_BOOTS =
         ITEMS.register("mage_boots", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.BOOTS));
+
+    //Coins
+    public static final DeferredHolder<Item, Item> BRONZE_COIN =
+        ITEMS.register("bronze_coin", () -> new CoinItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> SILVER_COIN =
+        ITEMS.register("silver_coin", () -> new CoinItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> GOLD_COIN =
+        ITEMS.register("gold_coin", () -> new CoinItem(new Item.Properties()));
 
     public static DeferredHolder<Item, Item> basicItem(String name){
         return ITEMS.register(name, () -> new Item(new Item.Properties()));

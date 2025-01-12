@@ -46,6 +46,10 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItemOther(ItemsRegister.AUGMENT_FRAGMENT);
         simpleItemOther(ItemsRegister.ADVANCED_AUGMENT_CORE);
         simpleItemOther(ItemsRegister.AUGMENT_HYPER_CORE);
+        simpleItemOther(ItemsRegister.BRONZE_COIN);
+        simpleItemOther(ItemsRegister.SILVER_COIN);
+        simpleItemOther(ItemsRegister.GOLD_COIN);
+
 //        simpleItemOther(ItemsRegister.POWER_GEM);
 
         simpleItemOther(ItemsRegister.WIZARD_HELMET);

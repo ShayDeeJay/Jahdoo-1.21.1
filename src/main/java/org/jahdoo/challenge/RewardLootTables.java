@@ -55,6 +55,9 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_LEGGINGS_BUILDER = LootItem.lootTableItem(ItemsRegister.WIZARD_LEGGINGS.get());
     public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_BOOTS_BUILDER = LootItem.lootTableItem(ItemsRegister.WIZARD_BOOTS.get());
     public static final LootPoolSingletonContainer.Builder<?> ELYTRA_BUILDER = LootItem.lootTableItem(Items.ELYTRA);
+    public static final LootPoolSingletonContainer.Builder<?> GOLD_COIN = LootItem.lootTableItem(ItemsRegister.GOLD_COIN.get());
+    public static final LootPoolSingletonContainer.Builder<?> SILVER_COIN = LootItem.lootTableItem(ItemsRegister.SILVER_COIN.get());
+    public static final LootPoolSingletonContainer.Builder<?> BRONZE_COIN = LootItem.lootTableItem(ItemsRegister.BRONZE_COIN.get());
 
     public static ObjectArrayList<ItemStack> getCompletionLoot(ServerLevel serverLevel, Vec3 pos, int level) {
         var randomWand = ElementRegistry.getRandomElement().getWand();
@@ -119,6 +122,9 @@ public class RewardLootTables {
         return LootPool.lootPool()
             .setRolls(UniformGenerator.between(2.0F, 5.0F))
             .add(GOLDEN_CARROT_BUILDER.setWeight(50))
+            .add(GOLD_COIN.setWeight(50))
+            .add(SILVER_COIN.setWeight(50))
+            .add(BRONZE_COIN.setWeight(50))
             .add(IRON_BUILDER.setWeight(35))
             .add(GOLD_BUILDER.setWeight(25))
             .add(EMERALD_BUILDER.setWeight(20))
