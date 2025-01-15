@@ -41,6 +41,7 @@ import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleStore.*;
 import static org.jahdoo.registers.AttributesRegister.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.utils.PositionGetters.*;
 
 public class FireBall extends DefaultEntityBehaviour {
     private boolean hasHitLocation;
@@ -230,7 +231,8 @@ public class FireBall extends DefaultEntityBehaviour {
     private void fireball(){
         var getPositions = ModHelpers.getRandomParticleVelocity(this.elementProjectile, 0.1);
         var getPositions2 = ModHelpers.getRandomParticleVelocity(this.elementProjectile, 0.05);
-        PositionGetters.getRandomSphericalPositions(this.elementProjectile, maxRadius, 16,
+
+        getRandomSphericalPositions(this.elementProjectile, maxRadius, 16,
             position -> {
                 var newPosition = position.add(this.elementProjectile.getDeltaMovement().scale(-1.5));
                 var size = ModHelpers.Random.nextFloat(2.5f, 3.5f);
@@ -242,13 +244,12 @@ public class FireBall extends DefaultEntityBehaviour {
                     0, getPositions2.x,getPositions2.y,getPositions2.z,0);
             }
         );
-        PositionGetters.getSphericalPositions(this.elementProjectile, fireballTrail, 18,
+
+        getSphericalPositions(this.elementProjectile, fireballTrail, 18,
             position -> {
                 var newPosition = position.add(this.elementProjectile.getDeltaMovement().scale(-1.5));
                 var size = ModHelpers.Random.nextFloat(2f, 3f);
                 var pType = genericParticleOptions(GENERIC_PARTICLE_SELECTION, 4, size, getElementType().particleColourPrimary(), color(51, 51, 51));
-
-//                var pType = genericParticleOptions(GENERIC_PARTICLE_SELECTION, this.getElementType(), 4, size);
                 ParticleHandlers.sendParticles(
                     level(),
                     pType,
@@ -260,9 +261,9 @@ public class FireBall extends DefaultEntityBehaviour {
 
     private void onHitBehaviour() {
         float speed = (float) (this.novaMaxSize/10);
-        PositionGetters.getOuterRingOfRadiusRandom(this.elementProjectile.position(), 1.5, this.novaMaxSize * 30, this::setParticleNova);
+        getOuterRingOfRadiusRandom(this.elementProjectile.position(), 1.5, this.novaMaxSize * 30, this::setParticleNova);
         if(!this.isBuddy){
-            PositionGetters.getOuterRingOfRadius(this.elementProjectile.position(), 0.5, 300, this::setShockwaveNova);
+            getOuterRingOfRadius(this.elementProjectile.position(), 0.5, 300, this::setShockwaveNova);
         }
         var maxPart = Math.max((int) this.maxRadius / 2, 1);
 

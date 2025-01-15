@@ -4,34 +4,50 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FastColor;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.effects.CustomMobEffect;
 import org.jahdoo.ability.effects.EffectParticles;
+import org.jahdoo.networking.packet.server2client.EffectSyncS2CPacket;
 import org.jahdoo.networking.packet.server2client.MoveClientEntitySyncS2CPacket;
+import org.jahdoo.particle.ParticleHandlers;
+import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
+import org.jahdoo.utils.DamageUtil;
+import org.jahdoo.utils.ModHelpers;
+import org.jahdoo.utils.PositionGetters;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
+import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
+import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
 import static org.jahdoo.utils.ModHelpers.*;
 
-public class MysticEffect extends MobEffect {
-    public MysticEffect() {
+public class GreaterMysticEffect extends MobEffect {
+    public GreaterMysticEffect() {
         super(MobEffectCategory.HARMFUL, FastColor.ARGB32.color(151, 77, 178));
     }
 
     @Override
     public boolean applyEffectTick(LivingEntity targetEntity, int pAmplifier) {
+
         if(targetEntity.isAlive()){
             if (targetEntity.level() instanceof ServerLevel serverLevel) {
-                onTickApply(targetEntity, serverLevel, getElement());
+                onTickApply(targetEntity, pAmplifier, serverLevel, getElement());
                 sendEffectPacketsToPlayerDistance(targetEntity.position(), 50, serverLevel, targetEntity.getId(), new CustomMobEffect(EffectsRegister.MYSTIC_EFFECT, 10, pAmplifier));
+                sendPacketsToPlayer(serverLevel, new EffectSyncS2CPacket(targetEntity.getId(), 4, pAmplifier));
             }
         } else removeThis(targetEntity);
 
@@ -42,7 +58,7 @@ public class MysticEffect extends MobEffect {
         return ElementRegistry.MYSTIC.get();
     }
 
-    private void onTickApply(LivingEntity targetEntity, ServerLevel serverLevel, AbstractElement element) {
+    private void onTickApply(LivingEntity targetEntity, int pAmplifier, ServerLevel serverLevel, AbstractElement element) {
         targetEntity.addEffect(new CustomMobEffect(MobEffects.GLOWING.getDelegate(), 2, 1));
         var currentYVelocity = targetEntity.getDeltaMovement().y;
         var newYVelocity = Math.max(currentYVelocity, 0.01);
@@ -53,7 +69,15 @@ public class MysticEffect extends MobEffect {
             targetEntity.setDeltaMovement(0, newYVelocity, 0);
         }
 
-        idleAnim(targetEntity, serverLevel, element);
+        var ampFix = Math.min(pAmplifier, 10);
+        if (Random.nextInt(0, 30 - ampFix) == 0) {
+            PositionGetters.getOuterRingOfRadiusRandom(targetEntity.position(), targetEntity.getBbWidth() / 4, 40,
+                worldPosition -> this.setParticleNova(targetEntity, worldPosition, element)
+            );
+            explosionHandler(targetEntity, ampFix, serverLevel);
+        } else {
+            idleAnim(targetEntity, serverLevel, element);
+        }
     }
 
     private static void removeThis(LivingEntity targetEntity) {
@@ -65,6 +89,36 @@ public class MysticEffect extends MobEffect {
         var getRandomChance = Random.nextInt(0, 10);
         var sound = SoundEvents.SOUL_ESCAPE.value();
         EffectParticles.setEffectParticle(getRandomChance, targetEntity, serverLevel, element, sound);
+    }
+
+    private static void explosionHandler(LivingEntity targetEntity, int pAmplifier, ServerLevel serverLevel) {
+        DamageUtil.damageWithJahdoo(targetEntity, pAmplifier);
+        targetEntity.level().getNearbyEntities(
+            LivingEntity.class,
+            TargetingConditions.DEFAULT,
+            targetEntity,
+            targetEntity.getBoundingBox().inflate(4)
+        ).forEach(damage -> DamageUtil.damageWithJahdoo(damage, pAmplifier /2));
+        ModHelpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), SoundRegister.EXPLOSION.get(), 1, 1.4f);
+        ModHelpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), SoundEvents.AMETHYST_CLUSTER_BREAK, 0.5f, 0.1f);
+    }
+
+    private void setParticleNova(LivingEntity livingEntity, Vec3 worldPosition, AbstractElement element){
+        var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), (float) 4);
+        var directions = positionScrambler.subtract(livingEntity.position()).normalize();
+        var colourPrimary = element.particleColourPrimary();
+        var colourSecondary = element.particleColourSecondary();
+        var bakedParticle = bakedParticleOptions(element.getTypeId(), 6, 8, false);
+        var genericParticle = genericParticleOptions(MAGIC_PARTICLE_SELECTION, 6, 4, colourPrimary, colourSecondary, false);
+        var getRandomParticle = List.of(bakedParticle, genericParticle);
+
+        ParticleHandlers.sendParticles(
+            livingEntity.level(),
+            getRandomParticle.get(Random.nextInt(2)),
+            worldPosition.add(0, livingEntity.getBbHeight()/2, 0),
+            0, directions.x, directions.y, directions.z,
+            Random.nextDouble(0.8,1.0)
+        );
     }
 
     @Override

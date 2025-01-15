@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
+import org.jahdoo.items.wand.WandData;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.utils.ModHelpers;
 

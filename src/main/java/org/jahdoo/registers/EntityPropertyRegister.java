@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ability.AbstractEntityProperty;
 import org.jahdoo.ability.DefaultEntityBehaviour;
+import org.jahdoo.ability.abilities.MobAbilities.Barrage;
 import org.jahdoo.ability.abilities.ability.*;
 import org.jahdoo.ability.abilities.ability.utility.*;
 import org.jahdoo.ability.ability_components.ArmageddonModule;
@@ -70,6 +71,9 @@ public class EntityPropertyRegister {
     public static final Supplier <AbstractEntityProperty> ARMAGEDDON = registerProjectileProperty(new Armageddon());
     public static final Supplier <AbstractEntityProperty> HELLFIRE = registerProjectileProperty(new HellFire());
     public static final Supplier <AbstractEntityProperty> SUMMON_ETERNAL_WIZARD = registerProjectileProperty(new SummonEternalWizard());
+
+    //MOB ABILITIES
+    public static final Supplier <AbstractEntityProperty> BARRAGE = registerProjectileProperty(new Barrage());
 
     public static void register(IEventBus eventBus) {
         PROJECTILE_PROPERTY.register(eventBus);

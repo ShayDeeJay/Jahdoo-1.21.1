@@ -64,6 +64,7 @@ public class WallPlacer extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockBlockHit(blockHitResult);
         if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         var owner = (LivingEntity) genericProjectile.getOwner();
         if(owner == null && genericProjectile.blockEntityPos == null) return;
@@ -111,7 +112,6 @@ public class WallPlacer extends AbstractUtilityProjectile {
             }
         }
         ModHelpers.getSoundWithPosition(level, pos, replaceBlock.getSoundType(replaceBlock.defaultBlockState(), level, pos, null).getPlaceSound(), 1, 1);
-        super.onBlockBlockHit(blockHitResult);
         genericProjectile.discard();
     }
 

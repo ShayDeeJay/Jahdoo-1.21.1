@@ -3,10 +3,9 @@ package org.jahdoo.attachments.player_abilities;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.attachments.AbstractAttachment;
-import org.jahdoo.components.rune_data.RuneData;
+import org.jahdoo.items.runes.rune_data.RuneData;
 
 import static org.jahdoo.registers.AttachmentRegister.*;
 

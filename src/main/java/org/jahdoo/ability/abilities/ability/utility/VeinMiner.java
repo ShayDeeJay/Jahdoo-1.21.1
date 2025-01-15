@@ -58,9 +58,9 @@ public class VeinMiner extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockBlockHit(blockHitResult);
         if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         if (genericProjectile.level().isClientSide) return;
-        super.onBlockBlockHit(blockHitResult);
         BlockPos start = blockHitResult.getBlockPos();
         BlockState target = genericProjectile.level().getBlockState(start);
         if (target.isAir()) return;

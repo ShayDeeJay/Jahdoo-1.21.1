@@ -7,12 +7,12 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.jahdoo.components.rune_data.RuneData;
-import org.jahdoo.components.rune_data.RuneHolder;
+import org.jahdoo.items.runes.rune_data.RuneData;
+import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.components.WandData;
+import org.jahdoo.items.wand.WandData;
 
 import java.util.function.UnaryOperator;
 

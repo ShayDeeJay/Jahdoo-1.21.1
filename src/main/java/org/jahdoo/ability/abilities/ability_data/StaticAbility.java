@@ -39,8 +39,6 @@ public class StaticAbility extends AbilityRegistrar {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(50)
             .setStaticCooldown(1200)
-//            .setMana(80, 30,  10)
-//            .setCooldown(1200, 600, 100)
             .setDamage(30, 10, 5)
             .setEffectDuration(300, 50, 50)
             .setEffectStrength(10, 1,1)

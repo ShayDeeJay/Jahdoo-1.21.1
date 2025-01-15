@@ -53,8 +53,6 @@ public class QuantumDestroyerAbility extends AbilityRegistrar {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(160)
             .setStaticCooldown(6000)
-//            .setMana(200, 100, 25)
-//            .setCooldown(6000, 3600, 400)
             .setDamage(20, 10, 2)
             .setCastingDistance(30,10,5)
             .setLifetime(200, 100, 20)

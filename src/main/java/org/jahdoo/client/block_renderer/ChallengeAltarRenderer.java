@@ -57,7 +57,6 @@ public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlock
                 animatable.animateTick+=3;
                 poseStack.pushPose();
                 poseStack.translate(0,-1,0);
-                System.out.println(animatable.privateTicks);
                 drawTexture(poseStack.last(), bufferSource, 255, (float) animatable.animateTick, ModHelpers.res("textures/entity/shield.png"), FastColor.ARGB32.color(Math.max(0, (50 - (animatable.privateTicks - 94) * 2)), ColourStore.PERK_GREEN));
                 poseStack.popPose();
             } else animatable.animateTick = 0;

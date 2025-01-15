@@ -27,6 +27,7 @@ import org.jahdoo.utils.PositionGetters;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.jahdoo.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.ability.abilities.ability_data.VitalRejuvenationAbility.CAST_DELAY;
@@ -37,6 +38,7 @@ import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
 import static org.jahdoo.registers.AttachmentRegister.VITAL_REJUVENATION;
 import static org.jahdoo.utils.ModHelpers.Random;
+import static org.jahdoo.utils.ModHelpers.addTransientAttribute;
 
 public class VitalRejuvenation extends AbstractHoldUseAttachment {
 
@@ -93,11 +95,8 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     private void applyHeal(Player player, WandAbilityHolder wandAbilityHolder) {
         var maxAbsorption = DataComponentHelper.getSpecificValue(name, wandAbilityHolder, MAX_ABSORPTION);
         var foodProperties = new FoodProperties(2, 2, true, 0, Optional.empty(), Collections.emptyList());
-        var modifier = new AttributeModifier(ModHelpers.res("absorption"), maxAbsorption * 2, AttributeModifier.Operation.ADD_VALUE);
         player.heal(1);
-        Multimap<Holder<Attribute>, AttributeModifier> multiMap = HashMultimap.create();
-        multiMap.put(Attributes.MAX_ABSORPTION, modifier);
-        player.getAttributes().addTransientAttributeModifiers(multiMap);
+        addTransientAttribute(player, maxAbsorption * 2, "absorption", Attributes.MAX_ABSORPTION);
         player.setAbsorptionAmount(player.getAbsorptionAmount() + 1);
         player.eat(player.level(), ItemStack.EMPTY, foodProperties);
     }

@@ -21,17 +21,12 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
-import org.jahdoo.components.WandData;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.items.JahdooItem;
-import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
-import org.shaydee.loot_beams_neoforge.LootBeams;
-import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
-import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -41,7 +36,6 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.awt.*;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -163,7 +157,10 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 //            serverLevel.addFreshEntity(zombo);
         }
 
-//        JahdooRarity.debugRarity(player);
+//        var zombo = new AncientGolem(serverLevel, player);
+//            zombo.moveTo(player.position());
+//            serverLevel.addFreshEntity(zombo);
+//    }
 
         if (interactionHand == InteractionHand.MAIN_HAND) {
             var item = player.getMainHandItem();

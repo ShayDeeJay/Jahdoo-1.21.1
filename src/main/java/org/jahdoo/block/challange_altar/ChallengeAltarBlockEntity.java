@@ -15,7 +15,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
@@ -26,6 +25,7 @@ import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -34,6 +34,9 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.List;
+import java.util.function.BiConsumer;
+
 import static org.jahdoo.block.challange_altar.ChallengeAltarAnim.*;
 import static org.jahdoo.block.challange_altar.ChallengeAltarBlock.readyNextSubRound;
 import static org.jahdoo.block.loot_chest.LootChestBlock.FACING;
@@ -41,6 +44,7 @@ import static org.jahdoo.entities.EntityAnimations.*;
 import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
 import static org.jahdoo.registers.BlocksRegister.LOOT_CHEST;
 import static org.jahdoo.registers.BlocksRegister.TRAIL_PORTAL;
+import static org.jahdoo.utils.ModHelpers.Random;
 
 
 public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntity {
@@ -84,66 +88,56 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
+        System.out.println(ChallengeAltarData.getMaxRounds(this));
         if(pLevel instanceof ServerLevel serverLevel){
+            removeKilledMobs();
             if(ChallengeAltarData.isCompleted(this)) {
                 buildTick++;
                 portalBuilder(pLevel, serverLevel, pPos);
-            } else {
-                manageActivePlayers(pPos);
-                tickBossEvent();
-                activeSubRoundEvent(pLevel, pPos);
-                this.completeRound(serverLevel);
-                if (privateTicks == 1) onActivationAnim(pLevel, pPos, privateTicks);
-                this.updatePacket();
-                resetSubRound();
             }
+
+            manageActivePlayers(pPos);
+            tickBossEvent();
+            activeSubRoundEvent(pLevel, pPos);
+            this.completeRound(serverLevel);
+            if (privateTicks == 1) onActivationAnim(pLevel, pPos, privateTicks);
+            resetSubRound();
+            this.updatePacket();
         }
     }
 
     private void portalBuilder(Level pLevel, ServerLevel serverLevel, BlockPos pos) {
-        if (buildTick % 3 == 0) {
-            var mossyStoneBricks = Blocks.MOSSY_STONE_BRICKS;
-            var south = pos.south(4);
-            var breakSound = mossyStoneBricks.defaultBlockState().getSoundType().getBreakSound();
+        var south = pos.south(4);
+        var getRandomBlock = List.of(Blocks.MOSSY_STONE_BRICKS, Blocks.STONE_BRICKS, Blocks.COBBLESTONE, Blocks.STONE, Blocks.MOSS_BLOCK).get(Random.nextInt(5));
+        var mossyStoneBricks = getRandomBlock.defaultBlockState();
+        var placeBlockIfAbsent = getBlockPosServerLevelBiConsumer(pLevel, mossyStoneBricks);
 
-            if (placeCounter < 5) {
-                var above = south.east(2).above(placeCounter);
-                var above1 = south.west(2).above(placeCounter);
-                if(serverLevel.getBlockState(above1).isAir()){
-                    ModHelpers.getSoundWithPosition(pLevel, above1, breakSound);
-                    serverLevel.setBlockAndUpdate(above1, mossyStoneBricks.defaultBlockState());
-                }
-                if(serverLevel.getBlockState(above).canBeReplaced()){
-                    ModHelpers.getSoundWithPosition(pLevel, above, breakSound);
-                    serverLevel.setBlockAndUpdate(above, mossyStoneBricks.defaultBlockState());
-                }
-            } else if (placeCounter < 8) {
-                int horizontalStep = placeCounter - 5; // Normalize to 0-2 range
-                var above = south.east(horizontalStep).above(5);
-                var above1 = south.west(horizontalStep).above(5);
-                if(serverLevel.getBlockState(above1).isAir()){
-                    ModHelpers.getSoundWithPosition(pLevel, above1, breakSound);
-                    serverLevel.setBlockAndUpdate(above1, mossyStoneBricks.defaultBlockState());
-                }
-                if(serverLevel.getBlockState(above).isAir()){
-                    ModHelpers.getSoundWithPosition(pLevel, above, breakSound);
-                    serverLevel.setBlockAndUpdate(above, mossyStoneBricks.defaultBlockState());
-                }
-            }
-
-            if(buildTick == 30){
-                serverLevel.setBlockAndUpdate(pos, LOOT_CHEST.get().defaultBlockState().setValue(FACING, Direction.SOUTH));
-                ModHelpers.getSoundWithPosition(pLevel, south, SoundEvents.END_PORTAL_SPAWN, 0.8F, 1.5F);
-                for (int i = 0; i < 5; i ++){
-                    serverLevel.setBlockAndUpdate(south.above(i), TRAIL_PORTAL.get().defaultBlockState());
-                    serverLevel.setBlockAndUpdate(south.west().above(i), TRAIL_PORTAL.get().defaultBlockState());
-                    serverLevel.setBlockAndUpdate(south.east().above(i), TRAIL_PORTAL.get().defaultBlockState());
-                }
-            }
-
-            placeCounter++;
-            if (placeCounter >= 8) placeCounter = 0;
+        if (placeCounter < 5) {
+            // Place blocks vertically for initial steps
+            placeBlockIfAbsent.accept(south.east(2).above(placeCounter), serverLevel);
+            placeBlockIfAbsent.accept(south.west(2).above(placeCounter), serverLevel);
+        } else if (placeCounter < 8) {
+            // Normalize placeCounter and place blocks above and below
+            int horizontalStep = placeCounter - 5;
+            placeBlockIfAbsent.accept(south.east(horizontalStep).above(5), serverLevel);
+            placeBlockIfAbsent.accept(south.west(horizontalStep).above(5), serverLevel);
+            placeBlockIfAbsent.accept(south.east(horizontalStep).below(), serverLevel);
+            placeBlockIfAbsent.accept(south.west(horizontalStep).below(), serverLevel);
         }
+
+        if (buildTick == 15) {
+            // Place loot chest and portal blocks
+            serverLevel.setBlockAndUpdate(pos, LOOT_CHEST.get().defaultBlockState().setValue(FACING, Direction.SOUTH));
+            ModHelpers.getSoundWithPosition(pLevel, south, SoundEvents.END_PORTAL_SPAWN, 0.8F, 1.5F);
+            for (int i = 0; i < 5; i++) {
+                BlockPos portalBase = south.above(i);
+                serverLevel.setBlockAndUpdate(portalBase, TRAIL_PORTAL.get().defaultBlockState());
+                serverLevel.setBlockAndUpdate(portalBase.west(), TRAIL_PORTAL.get().defaultBlockState());
+                serverLevel.setBlockAndUpdate(portalBase.east(), TRAIL_PORTAL.get().defaultBlockState());
+            }
+        }
+
+        placeCounter = (placeCounter + 1) % 8;
     }
 
     private void activeSubRoundEvent(Level pLevel, BlockPos pPos) {
@@ -152,7 +146,17 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
             idleParticleAnim(pPos, privateTicks, this.getLevel());
             if(!removeKilledMobs() && altarData().activeMobs().isEmpty()){
                 if(privateTicks == 93) onActivationAnim(pLevel, pPos, privateTicks);
-                if(privateTicks == 96) summonMobs();
+                if(privateTicks == 96) summonMobs(altarData().maxSpawnableMobs());
+            }
+
+            var inPlay = altarData().activeMobs().size();
+            var allowed = altarData().maxMobsOnMap();
+            var maxMobs = altarData().maxMobs();
+            var killedMobs = altarData().killedMobs();
+            if(privateTicks < 100 || inPlay > allowed) return;
+
+            if((killedMobs + inPlay) < maxMobs && inPlay < allowed) {
+                if(Random.nextInt(10) == 0) summonMobs(1);
             }
         }
     }
@@ -182,20 +186,27 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
         return altarData().isSubRoundActive(this);
     }
 
-    private void summonMobs() {
+    private void summonMobs(int maxSpawn) {
         if(altarData().killedMobs < altarData().maxMobs()) {
-            MobManager.summonEntities(this);
+            MobManager.summonEntities(this, maxSpawn);
             this.beginSpawning = false;
             this.initiateSpawning = 0;
         }
     }
 
     private void resetSubRound() {
-        if(!ChallengeAltarData.isCompleted(this)){
+        if(!completeRound()){
             if (altarData().killedMobs > 0 && altarData().killedMobs == altarData().maxMobs()) {
-                ChallengeAltarData.resetSubRoundAltar(this);
-                bossEvent.removeAllPlayers();
                 this.privateTicks = 0;
+                ChallengeAltarData.resetSubRoundAltar(this);
+                if(getLevel() instanceof ServerLevel serverLevel){
+                    var round = ChallengeAltarData.getRound(this);
+                    var maxRound = ChallengeAltarData.getMaxRounds(this);
+                    if(round < maxRound){
+                        sendLevelPlayersNotification(serverLevel, "Round " + round, SoundEvents.NOTE_BLOCK_BELL.value(), 20);
+                    }
+                }
+                bossEvent.removeAllPlayers();
                 readyNextSubRound(this, altarData(), Math.max(1, altarData().round));
             }
         }
@@ -203,18 +214,22 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
 
     private void completeRound(ServerLevel serverLevel) {
         if(completeRound()){
+            this.privateTicks = 0;
             ChallengeAltarData.resetAltar(this);
             bossEvent.removeAllPlayers();
-            this.privateTicks = 0;
             serverLevel.setData(CHALLENGE_ALTAR, ChallengeAltarData.newRound(altarData().maxRound));
-            ModHelpers.sendPacketsToPlayerDistance(this.getBlockPos().getCenter(), 200, serverLevel,
-                serverPlayer -> {
-                    serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(40, 50, 30));
-                    serverPlayer.connection.send(new ClientboundSetTitleTextPacket(ModHelpers.withStyleComponent("Trial Successful", ColourStore.PERK_GREEN)));
-                    serverPlayer.playNotifySound(SoundRegister.END_TRIAL.get(), SoundSource.NEUTRAL, 1,1);
-                }
-            );
+            sendLevelPlayersNotification(serverLevel, "Trial Successful", SoundRegister.END_TRIAL.get(), 40);
         }
+    }
+
+    private void sendLevelPlayersNotification(ServerLevel serverLevel, String message, SoundEvent soundEvents, int fadeCalc) {
+        ModHelpers.sendPacketsToPlayerDistance(this.getBlockPos().getCenter(), 200, serverLevel,
+            serverPlayer -> {
+                serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(fadeCalc, fadeCalc + 10, fadeCalc - 10));
+                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(ModHelpers.withStyleComponent(message, ColourStore.PERK_GREEN)));
+                serverPlayer.playNotifySound(soundEvents, SoundSource.NEUTRAL, 1,1);
+            }
+        );
     }
 
     private boolean completeRound() {
@@ -225,10 +240,10 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
         for (var activeMob : altarData().activeMobs()) {
             if(this.level instanceof ServerLevel serverLevel){
                 var entity = serverLevel.getEntity(activeMob);
-                if(entity == null || !entity.isAlive()){
+                if(entity != null && !entity.isAlive()){
                     altarData().removeMob(activeMob);
                     ChallengeAltarData.incrementKilledMobs(this);
-                    if(altarData().activeMobs().isEmpty()) this.privateTicks = 0;
+//                    if(altarData().activeMobs().isEmpty()) this.privateTicks = 0;
                     return true;
                 }
             }

@@ -11,5 +11,5 @@ public class ColourStore {
     public static final int AETHER_BLUE = color(0, 145, 255);
     public static final int COSMIC_PURPLE = color(171, 87, 194);
     public static final int PERK_GREEN = color(193, 255, 99);
-
+    public static final int SYMPATHISER_ORANGE = color(255, 153, 77);
 }

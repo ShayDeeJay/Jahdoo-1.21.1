@@ -1,6 +1,5 @@
 package org.jahdoo.ability.elements;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -65,7 +64,7 @@ public class Frost extends AbstractElement {
 
     @Override
     public Holder<MobEffect> elementEffect() {
-        return EffectsRegister.ICE_EFFECT.getDelegate();
+        return EffectsRegister.FROST_EFFECT.getDelegate();
     }
 
 

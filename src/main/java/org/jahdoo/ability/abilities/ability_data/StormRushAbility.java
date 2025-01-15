@@ -36,8 +36,6 @@ public class StormRushAbility extends AbilityRegistrar {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(30)
             .setStaticCooldown(100)
-//            .setMana(30, 10,  5)
-//            .setCooldown(110, 10, 20)
             .setDamage(30, 10, 5)
             .setEffectChance(10, 1, 1)
             .setEffectDuration(300, 100, 50)

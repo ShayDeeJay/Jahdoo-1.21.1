@@ -1,19 +1,13 @@
-package org.jahdoo.components.rune_data;
+package org.jahdoo.items.runes.rune_data;
 
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.jahdoo.ability.rarity.JahdooRarity;
-import org.jahdoo.ability.rarity.RarityAttributes;
-
-import java.util.List;
-import java.util.function.UnaryOperator;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ability.rarity.JahdooRarity.*;
-import static org.jahdoo.ability.rarity.RarityAttributes.*;
-import static org.jahdoo.components.rune_data.RuneData.*;
-import static org.jahdoo.components.rune_data.RuneGenerator.RuneCategories.*;
+import static org.jahdoo.items.runes.rune_data.RuneData.*;
+import static org.jahdoo.items.runes.rune_data.RuneGenerator.RuneCategories.*;
 import static org.jahdoo.utils.ColourStore.*;
 
 public class RuneGenerator {
@@ -168,7 +162,7 @@ public class RuneGenerator {
             .build();
     }
 
-    public static RuneGenerator generatePerkRune(Holder<Attribute> type, double value, JahdooRarity rarity, String description, int tier, double percent) {
+    public static RuneGenerator generatePerkRune(Holder<Attribute> type, double value, JahdooRarity rarity, String description, int tier, double baseValue) {
         return new RuneGenerator.Builder(type)
             .setValue(value)
             .setName(PERK.getName())
@@ -177,18 +171,8 @@ public class RuneGenerator {
             .setTier(tier)
             .setColour(PERK_GREEN)
             .setModelData(PERK.getModel())
-            .setConvertPercentage(percent)
+            .setConvertPercentage(baseValue)
             .build();
-    }
-
-    public static RuneGenerator.Builder generateCosmicRune(Holder<Attribute> type, double value, int tier) {
-        return new RuneGenerator.Builder(type)
-            .setValue(value)
-            .setName(COSMIC.getName())
-            .setRarity(ETERNAL)
-            .setTier(tier)
-            .setColour(COSMIC_PURPLE)
-            .setModelData(COSMIC.getModel());
     }
 
     public static RuneGenerator generateAetherRune(Holder<Attribute> type, double value, int tier) {
@@ -202,11 +186,34 @@ public class RuneGenerator {
             .build();
     }
 
+    public static RuneGenerator.Builder generateCosmicRune(Holder<Attribute> type, double value, int tier) {
+        return new RuneGenerator.Builder(type)
+            .setValue(value)
+            .setName(COSMIC.getName())
+            .setRarity(ETERNAL)
+            .setTier(tier)
+            .setColour(COSMIC_PURPLE)
+            .setModelData(COSMIC.getModel());
+    }
+
+    public static RuneGenerator generateSympathiserRune(Holder<Attribute> type, double value, int tier) {
+        return new RuneGenerator.Builder(type)
+            .setValue(value)
+            .setName(INFINITY.getName())
+            .setRarity(ETERNAL)
+            .setTier(tier)
+            .setColour(SYMPATHISER_ORANGE)
+            .setModelData(INFINITY.getModel())
+            .build();
+    }
+
     public enum RuneCategories {
+
         ELEMENTAL("Elemental", 5, -1),
-        PERK("Perk", 15, 8),
-        AETHER("Aether", 25, 0),
-        COSMIC("Cosmic", 50, 10),
+        PERK("Perk", 10, 8),
+        AETHER("Aether", 15, 0),
+        COSMIC("Cosmic", 25, 10),
+        INFINITY("Infinity", 30, 9),
         EMPTY("Blank", 500, -1);
 
         private final String name;
@@ -251,5 +258,6 @@ public class RuneGenerator {
             }
             return EMPTY;
         }
+
     }
 }

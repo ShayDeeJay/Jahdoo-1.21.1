@@ -68,7 +68,6 @@ public class LootChestBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE2 = Block.box(1.5, 0.475, 0.475, 14.5, 9.225, 15.475);
 
     public LootChestBlock() {
-
         super(
             BlockBehaviour.Properties.of()
                 .strength(1f)
@@ -76,7 +75,6 @@ public class LootChestBlock extends BaseEntityBlock {
                 .noOcclusion()
                 .strength(-1.0F, 3600000.0F)
         );
-
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
@@ -110,9 +108,8 @@ public class LootChestBlock extends BaseEntityBlock {
         if (level instanceof ServerLevel serverLevel && !lootChestEntity.isOpen) {
             lootChestEntity.setOpen(true);
             var hasData = lootChestEntity.hasData(AttachmentRegister.CHALLENGE_ALTAR);
-            var getData = lootChestEntity.getData(AttachmentRegister.CHALLENGE_ALTAR).maxMobs - 1;
-            var lootLevel = hasData ? getData : serverLevel.getData(AttachmentRegister.CHALLENGE_ALTAR).maxRound() - 6;
-            System.out.println(lootLevel);
+            var getData = lootChestEntity.getData(AttachmentRegister.CHALLENGE_ALTAR).maxRound() - 1;
+            var lootLevel = hasData ? getData : 1;
             lootSplosion(pos, serverLevel, lootLevel, 1);
             return ItemInteractionResult.SUCCESS;
         }
@@ -134,13 +131,12 @@ public class LootChestBlock extends BaseEntityBlock {
                 itemEntity.setDeltaMovement(velocity);
                 itemEntity.setPickUpDelay(30);
 
-//            ExperienceOrb.award(serverLevel, pCenter, 10 * level);
+                ExperienceOrb.award(serverLevel, pCenter, 10 * level);
                 for (var element : ElementRegistry.REGISTRY) particleBurst(serverLevel, element, pCenter);
                 var itemStack = itemEntity.getItem();
-                var item = itemStack.getItem();
                 var rarity = JahdooRarity.getRarity();
 
-                attachItemData(serverLevel, item, rarity, itemStack);
+                attachItemData(serverLevel, rarity, itemStack);
                 serverLevel.addFreshEntity(itemEntity);
             }
         }

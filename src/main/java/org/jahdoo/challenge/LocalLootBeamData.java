@@ -29,7 +29,6 @@ public class LocalLootBeamData {
 
 
     public static void attachComponent (ItemStack itemStack, JahdooRarity rarity) {
-        System.out.println(rarity.getSerializedName());
         var component =  switch (rarity.getId()){
             case 1 -> RARE_ITEM;
             case 2 -> EPIC_ITEM;
@@ -41,6 +40,7 @@ public class LocalLootBeamData {
     }
 
     public static LootBeamComponent SPECIALLY_ENCHANTED_BOOK = lootBeamWithColour(Color.YELLOW.getRGB());
+    public static LootBeamComponent ENCHANTED_VANILLA_SWORD = lootBeamWithColour(Color.PINK.getRGB());
     public static LootBeamComponent COMMON_ITEM = rarityLootBeam(COMMON);
     public static LootBeamComponent RARE_ITEM = rarityLootBeam(RARE);
     public static LootBeamComponent EPIC_ITEM = rarityLootBeam(EPIC);

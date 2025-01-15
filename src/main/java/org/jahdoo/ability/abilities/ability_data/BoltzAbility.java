@@ -30,7 +30,7 @@ public class BoltzAbility extends AbilityRegistrar {
 
     @Override
     public void invokeAbility(Player player) {
-        var amplifier = 0;
+        var amplifier = 1;
         var totalShots = (int) getSpecificValue(player, player.getMainHandItem(), totalBolts) * amplifier;
         var direction = player.getLookAngle();
         var particleOptions = genericParticleOptions(ParticleStore.ELECTRIC_PARTICLE_SELECTION, this.getElemenType(), 5, 1.2f, 0.5);
@@ -76,9 +76,7 @@ public class BoltzAbility extends AbilityRegistrar {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(50)
-            .setStaticCooldown(600)
-//            .setMana(60,20,10)
-//            .setCooldown(500,100,100)
+            .setStaticCooldown(200)
             .setDamage(30,10,5)
             .setEffectDuration(300,100,50)
             .setEffectStrength(10, 0, 1)

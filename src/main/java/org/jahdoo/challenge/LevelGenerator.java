@@ -65,16 +65,13 @@ public class LevelGenerator {
         ArcadeDimensions.delete(serverLevel.getServer(), customLevel);
     }
 
-    public static DimensionTransition createNewWorld(Player player, ServerLevel serverLevel) {
+    public static DimensionTransition createNewWorld(Player player, ServerLevel serverLevel, ChallengeAltarData altarData) {
         var testKey = "end_"+UUID.randomUUID();
         generateNewLevel(serverLevel, testKey);
         var getLevel = new AtomicReference<ServerLevel>();
         findLevel(testKey, serverLevel).ifPresent(
             level -> {
-                var newTrial = serverLevel.hasData(CHALLENGE_ALTAR);
-                var getData = serverLevel.getData(CHALLENGE_ALTAR);
-                var isCustomLevel = serverLevel instanceof CustomLevel;
-                generateStructure(player, level, isCustomLevel || !newTrial ? getData : ChallengeAltarData.DEFAULT, Math.max(getData.maxRound/5, 1));
+                generateStructure(player, level, altarData, Math.max(altarData.maxRound/5, 1));
                 getLevel.set(level);
             }
         );
@@ -137,6 +134,7 @@ public class LevelGenerator {
         level.setBlockAndUpdate(pos, BlocksRegister.CHALLENGE_ALTAR.get().defaultBlockState());
         if(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity altar){
             altar.setData(CHALLENGE_ALTAR, data);
+            altar.setChanged();
         }
     }
 

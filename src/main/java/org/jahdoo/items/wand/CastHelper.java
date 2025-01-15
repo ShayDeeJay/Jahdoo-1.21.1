@@ -1,5 +1,6 @@
 package org.jahdoo.items.wand;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +20,7 @@ import org.jahdoo.client.SharedUI;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.AttributesRegister;
+import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
@@ -39,7 +41,7 @@ public class CastHelper {
     public static void chargeCooldown(String abilityId, double cooldown, Player player) {
         var attributeValue = getAttributeValue(player, AttributesRegister.SKIP_COOLDOWN);
         if(player.isCreative()) return;
-        if(attributeValue > 0 && Random.nextInt(100) < attributeValue) return;
+        if(attributeValue > 0 && Random.nextFloat(100) < attributeValue) return;
 
         var cooldownSystem = player.getData(CASTER_DATA);
         var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
@@ -52,7 +54,7 @@ public class CastHelper {
     public static void chargeMana(String abilityId, double manaCost, Player player) {
         var attributeValue = getAttributeValue(player, AttributesRegister.SKIP_MANA);
         if(player.isCreative()) return;
-        if(attributeValue > 0 && Random.nextInt(100) < attributeValue) return;
+        if(attributeValue > 0 && Random.nextFloat(100) < attributeValue) return;
 
         var manaSystem = player.getData(CASTER_DATA);
         var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
@@ -88,6 +90,7 @@ public class CastHelper {
                     chargeMana(abilityName, adjustedMana, player);
                 }
                 onCast(player, ability);
+                OnCastPerks.onCastPerkApply(player);
             } else failedCastNotification(player);
         } else onCast(player, ability);
     }
@@ -174,10 +177,18 @@ public class CastHelper {
         var abilityName = DataComponentHelper.getAbilityTypeWand(player);
         var getAbility = AbilityRegister.REGISTRY.get(abilityName);
         var canUse = getCanApplyDistanceAbility(player, itemStack);
-        var cantUse = (player.onGround() && player.isShiftKeyDown()) || getAbility == null;
+        var cantUseInDim = player.level() instanceof CustomLevel && getAbility.getElemenType().equals(ElementRegistry.UTILITY.get());
+        var cantUse = (player.onGround() && player.isShiftKeyDown()) || getAbility == null ;
+        var fail = InteractionResultHolder.fail(itemStack);
 
-        if(cantUse) return InteractionResultHolder.fail(itemStack);
+        if(cantUseInDim) {
+            player.displayClientMessage(Component.literal("You cant use that here"), true);
+            failedCastNotification(player);
+            return fail;
+        }
+        if(cantUse) return fail;
         if(canUse) executeAndCharge(player); else failedCastNotification(player);
+
         return InteractionResultHolder.pass(itemStack);
     }
 

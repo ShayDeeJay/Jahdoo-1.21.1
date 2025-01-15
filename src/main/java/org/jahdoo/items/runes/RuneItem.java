@@ -3,20 +3,18 @@ package org.jahdoo.items.runes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.minecraft.world.level.*;
-import org.jahdoo.components.rune_data.RuneData;
+import net.minecraft.world.level.Level;
+import org.jahdoo.items.runes.rune_data.RuneData;
 import org.jahdoo.items.JahdooItem;
 import org.jahdoo.registers.DataComponentRegistry;
 
 import java.util.List;
 
-    import static org.jahdoo.components.rune_data.RuneData.RuneHelpers.*;
+import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.getNameWithStyle;
 import static org.jahdoo.items.runes.RuneItemHelper.hoverToolTip;
 import static org.jahdoo.items.runes.RuneItemHelper.rollRandomRune;
 

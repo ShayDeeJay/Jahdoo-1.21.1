@@ -26,44 +26,48 @@ import java.util.UUID;
 
 public class  AttributesRegister {
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, JahdooMod.MOD_ID);
+    public static final String MOD = "jahdoo";
+    public static final String FIXED_VALUE = ".fixed";
+
     //Base Attributes
-    public static final String MANA_POOL_PREFIX= "jahdoo.mana.mana_pool";
-    public static final String MANA_REGEN_PREFIX= "jahdoo.mana.mana_regen";
+    public static final String MANA_POOL_PREFIX= MOD + FIXED_VALUE + ".mana.mana_pool";
+    public static final String MANA_REGEN_PREFIX= MOD + ".mana.mana_regen";
 
     //Skill Attributes
-    public static final String MAGE_FLIGHT_PREFIX= "jahdoo.skills.mage_flight";
-    public static final String DESTINY_BOND_PREFIX= "jahdoo.skills.destiny_bond";
-    public static final String TRIPLE_JUMP_PREFIX= "jahdoo.skills.triple_jump";
+    public static final String MAGE_FLIGHT_PREFIX= MOD + ".skills.mage_flight";
+    public static final String DESTINY_BOND_PREFIX= MOD + ".skills.destiny_bond";
+    public static final String TRIPLE_JUMP_PREFIX= MOD + ".skills.triple_jump";
 
     //Cast Attributes
-    public static final String SKIP_MANA_PREFIX= "jahdoo.mana.no_mana_cost";
-    public static final String SKIP_COOLDOWN_PREFIX= "jahdoo.mana.no_cooldown_cost";
-    public static final String HEAL_PREFIX= "jahdoo.mana.mana_regen";
+    public static final String SKIP_MANA_PREFIX= MOD + ".mana.no_mana_cost";
+    public static final String SKIP_COOLDOWN_PREFIX= MOD + ".no_cooldown_cost";
+    public static final String HEAL_PREFIX= MOD + ".cast.healer";
+    public static final String ABSORPTION_PREFIX= MOD + ".cast.absorption";
 
     //Element Attributes
-    public static final String MANA_COST_REDUCTION_PREFIX = "jahdoo.mana.cost_reduction";
-    public static final String COOLDOWN_REDUCTION_PREFIX= "jahdoo.cooldown.cooldown_reduction";
-    public static final String MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.damage.damage_multiplier";
+    public static final String MANA_COST_REDUCTION_PREFIX = MOD + ".mana.cost_reduction";
+    public static final String COOLDOWN_REDUCTION_PREFIX= MOD + ".cooldown.cooldown_reduction";
+    public static final String MAGIC_DAMAGE_MULTIPLIER_PREFIX= MOD + ".damage.damage_multiplier";
 
-    public static final String INFERNO_MANA_COST_REDUCTION_PREFIX = "jahdoo.inferno_mana.cost_reduction";
-    public static final String INFERNO_COOLDOWN_REDUCTION_PREFIX= "jahdoo.inferno_cooldown.cooldown_reduction";
-    public static final String INFERNO_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.inferno_damage.damage_multiplier";
+    public static final String INFERNO_MANA_COST_REDUCTION_PREFIX = MOD + ".inferno_mana.cost_reduction";
+    public static final String INFERNO_COOLDOWN_REDUCTION_PREFIX= MOD + ".inferno_cooldown.cooldown_reduction";
+    public static final String INFERNO_MAGIC_DAMAGE_MULTIPLIER_PREFIX= MOD + ".inferno_damage.damage_multiplier";
 
-    public static final String MYSTIC_MANA_COST_REDUCTION_PREFIX = "jahdoo.mystic_mana.cost_reduction";
-    public static final String MYSTIC_COOLDOWN_REDUCTION_PREFIX= "jahdoo.mystic_cooldown.cooldown_reduction";
-    public static final String MYSTIC_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.mystic_damage.damage_multiplier";
+    public static final String MYSTIC_MANA_COST_REDUCTION_PREFIX = MOD + ".mystic_mana.cost_reduction";
+    public static final String MYSTIC_COOLDOWN_REDUCTION_PREFIX= MOD + ".mystic_cooldown.cooldown_reduction";
+    public static final String MYSTIC_MAGIC_DAMAGE_MULTIPLIER_PREFIX= MOD + ".mystic_damage.damage_multiplier";
 
-    public static final String LIGHTNING_MANA_COST_REDUCTION_PREFIX = "jahdoo.lightning_mana.cost_reduction";
-    public static final String LIGHTNING_COOLDOWN_REDUCTION_PREFIX= "jahdoo.lightning_cooldown.cooldown_reduction";
-    public static final String LIGHTNING_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.lightning_damage.damage_multiplier";
+    public static final String LIGHTNING_MANA_COST_REDUCTION_PREFIX = MOD + ".lightning_mana.cost_reduction";
+    public static final String LIGHTNING_COOLDOWN_REDUCTION_PREFIX= MOD + ".lightning_cooldown.cooldown_reduction";
+    public static final String LIGHTNING_MAGIC_DAMAGE_MULTIPLIER_PREFIX= MOD + ".lightning_damage.damage_multiplier";
 
-    public static final String FROST_MANA_COST_REDUCTION_PREFIX = "jahdoo.frost_mana.cost_reduction";
-    public static final String FROST_COOLDOWN_REDUCTION_PREFIX= "jahdoo.frost_cooldown.cooldown_reduction";
-    public static final String FROST_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.frost_damage.damage_multiplier";
+    public static final String FROST_MANA_COST_REDUCTION_PREFIX = MOD + ".frost_mana.cost_reduction";
+    public static final String FROST_COOLDOWN_REDUCTION_PREFIX= MOD + ".frost_cooldown.cooldown_reduction";
+    public static final String FROST_MAGIC_DAMAGE_MULTIPLIER_PREFIX= MOD + ".frost_damage.damage_multiplier";
 
-    public static final String VITALITY_MANA_COST_REDUCTION_PREFIX = "jahdoo.vitality_mana.cost_reduction";
-    public static final String VITALITY_COOLDOWN_REDUCTION_PREFIX= "jahdoo.vitality_cooldown.cooldown_reduction";
-    public static final String VITALITY_MAGIC_DAMAGE_MULTIPLIER_PREFIX= "jahdoo.vitality_damage.damage_multiplier";
+    public static final String VITALITY_MANA_COST_REDUCTION_PREFIX = MOD + ".vitality_mana.cost_reduction";
+    public static final String VITALITY_COOLDOWN_REDUCTION_PREFIX= MOD + ".vitality_cooldown.cooldown_reduction";
+    public static final String VITALITY_MAGIC_DAMAGE_MULTIPLIER_PREFIX= MOD + ".vitality_damage.damage_multiplier";
 
     //Base attribute
     public static final DeferredHolder<Attribute, Attribute> MANA_POOL = register(MANA_POOL_PREFIX, 100);
@@ -72,6 +76,8 @@ public class  AttributesRegister {
     //Infinity Attributes
     public static final DeferredHolder<Attribute, Attribute> SKIP_MANA = register(SKIP_MANA_PREFIX, 0);
     public static final DeferredHolder<Attribute, Attribute> SKIP_COOLDOWN = register(SKIP_COOLDOWN_PREFIX, 0);
+    public static final DeferredHolder<Attribute, Attribute> CAST_HEAL = register(HEAL_PREFIX, 0);
+    public static final DeferredHolder<Attribute, Attribute> ABSORPTION_HEARTS = register(ABSORPTION_PREFIX, 0);
 
     //Skill Attributes
     public static final DeferredHolder<Attribute, Attribute> DESTINY_BOND = register(DESTINY_BOND_PREFIX, 0);

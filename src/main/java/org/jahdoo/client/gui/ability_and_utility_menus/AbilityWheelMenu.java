@@ -21,7 +21,7 @@ import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.client.SharedUI;
-import org.jahdoo.components.WandData;
+import org.jahdoo.items.wand.WandData;
 import org.jahdoo.networking.packet.client2server.SelectedAbilityC2SPacket;
 import org.jahdoo.networking.packet.client2server.StopUsingC2SPacket;
 import org.jahdoo.registers.AbilityRegister;

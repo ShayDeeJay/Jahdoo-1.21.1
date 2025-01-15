@@ -1,5 +1,6 @@
 package org.jahdoo.ability;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;

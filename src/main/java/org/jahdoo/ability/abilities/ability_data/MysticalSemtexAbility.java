@@ -23,7 +23,6 @@ public class MysticalSemtexAbility extends AbilityRegistrar {
 
     @Override
     public void invokeAbility(Player player) {
-
         var elementProjectile = new ElementProjectile(
             EntitiesRegister.MYSTIC_ELEMENT_PROJECTILE.get(),
             player,
@@ -50,8 +49,6 @@ public class MysticalSemtexAbility extends AbilityRegistrar {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(60)
             .setStaticCooldown(500)
-//            .setMana(60, 20,  10)
-//            .setCooldown(600, 100, 100)
             .setDamage(45, 20, 5)
             .setAbilityTagModifiersRandom(additionalProjectile, 10,4, true, 1)
             .setAbilityTagModifiersRandom(explosionDelays, 50,20, false, 5)

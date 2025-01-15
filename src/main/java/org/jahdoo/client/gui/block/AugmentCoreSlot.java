@@ -7,7 +7,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.block.wand_block_manager.WandManagerEntity;
-import org.jahdoo.components.rune_data.RuneHolder;
+import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.networking.packet.client2server.ItemInBlockC2SPacket;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;

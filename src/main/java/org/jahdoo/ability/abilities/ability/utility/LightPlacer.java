@@ -30,6 +30,7 @@ public class LightPlacer extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockBlockHit(blockHitResult);
         if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         Level level = genericProjectile.level();
         BlockState replaceBlock = BlocksRegister.LIGHTING.get().defaultBlockState();
@@ -43,7 +44,6 @@ public class LightPlacer extends AbstractUtilityProjectile {
             }
         }
         level.playSound(null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), level.getBlockState(blockHitResult.getBlockPos()).getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1,1);
-        super.onBlockBlockHit(blockHitResult);
         genericProjectile.discard();
     }
 

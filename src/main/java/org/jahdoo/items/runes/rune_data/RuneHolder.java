@@ -1,4 +1,4 @@
-package org.jahdoo.components.rune_data;
+package org.jahdoo.items.runes.rune_data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

@@ -3,6 +3,10 @@ package org.jahdoo.event;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -15,7 +19,9 @@ import org.jahdoo.client.KeyBinding;
 import org.jahdoo.client.RuneTooltipRenderer;
 import org.jahdoo.event.event_helpers.WandAbilitySelector;
 import org.jahdoo.registers.*;
+import org.jahdoo.utils.ModHelpers;
 
+import static org.jahdoo.client.RenderHelpers.drawTexture;
 import static org.jahdoo.event.event_helpers.EventHelpers.getEntityPlayerIsLookingAt;
 import static org.jahdoo.event.event_helpers.KeyBindHelper.*;
 import static org.jahdoo.event.event_helpers.OverlayEvent.crosshairManager;
@@ -47,10 +53,56 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void entityRenderer(RenderLivingEvent.Pre event) {
+        mysticEffectClient(event);
+        infernoEffectClient(event);
+
+//         else {
+//            var player = Minecraft.getInstance().player;
+//            if(player != null /*&& getEntityPlayerIsLookingAt(player, 30) == entity*/){
+//                var pose = event.getPoseStack();
+//                var buffer = event.getMultiBufferSource();
+//                var scale = Math.sin((entity.tickCount + event.getPartialTick()) / 5.0F) * 0.08F + 0.4;
+//                pose.pushPose();
+//                pose.translate(0, entity.getBbHeight() + 0.5, 0);
+//                pose.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+//                pose.rotateAround(Axis.XN.rotationDegrees(90), 0,0,0);
+////                pose.rotateAround(Axis.YP.rotationDegrees(90), 0, 0, 0);
+////                pose.rotateAround(Axis.YP.rotationDegrees(entity.tickCount + event.getPartialTick()), 0, 0, 0);
+////                pose.rotateAround(Axis.ZN.rotationDegrees((float) scale), 0,0,0);
+////                pose.rotateAround(Axis.XP.rotationDegrees(entity.yBodyRotO + 10), 0,0,0);
+////                pose.scale(0,0,1);
+//                drawTexture(pose.last(), buffer, 255, 1, ModHelpers.res("textures/entity/shield.png"), FastColor.ARGB32.color(155, -1));
+//                pose.popPose();
+//            }
+//        }
+    }
+    private static void infernoEffectClient(RenderLivingEvent.Pre event) {
+        var entity = event.getEntity();
+        var effect = EffectsRegister.INFERNO_EFFECT;
+        var putEffect = entity.getEffect(effect);
+        if(putEffect != null){
+            var player = Minecraft.getInstance().player;
+            if(player != null /*&& getEntityPlayerIsLookingAt(player, 30) == entity*/){
+                var pose = event.getPoseStack();
+                var buffer = event.getMultiBufferSource();
+                var scale = Math.sin((entity.tickCount + event.getPartialTick()) / 5.0F) * 0.08F + 0.4 + (entity.getBbWidth() * 4);
+                pose.pushPose();
+                var infCol = ElementRegistry.INFERNO.get();
+                var color = FastColor.ARGB32.color(155, infCol.textColourPrimary());
+                pose.translate(0, 0.11f,0);
+//                drawTexture(pose.last().copy().copy(), buffer, 255, (float) scale, ModHelpers.res("textures/entity/shield.png"), color);
+                pose.popPose();
+            }
+            if(putEffect.getDuration() == 0) entity.removeEffect(effect);
+        }
+    }
+
+
+    private static void mysticEffectClient(RenderLivingEvent.Pre event) {
         var entity = event.getEntity();
         var effect = EffectsRegister.MYSTIC_EFFECT;
         var putEffect = entity.getEffect(effect);
-        if(putEffect != null){
+        if(entity.hasEffect(effect)){
             var height = entity.getBbHeight() / 2;
             var tick = entity.tickCount;
             var anim = (tick + event.getPartialTick());
@@ -59,29 +111,6 @@ public class ClientEvents {
             pos.rotateAround(Axis.YN.rotationDegrees(anim), 0, height, 0);
             pos.rotateAround(Axis.ZN.rotationDegrees(anim), 0, height, 0);
             if(putEffect.getDuration() == 0) entity.removeEffect(effect);
-        } else {
-
-
-            var player = Minecraft.getInstance().player;
-            if(player != null && getEntityPlayerIsLookingAt(player, 30) == entity){
-
-                var pose = event.getPoseStack();
-                var buffer = event.getMultiBufferSource();
-                var scale = Math.sin((entity.tickCount + event.getPartialTick()) / 5.0F) * 0.08F + 0.4;
-                pose.pushPose();
-                pose.translate(0, 0, 0);
-//                pose.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
-//                pose.rotateAround(Axis.XN.rotationDegrees(90), 0,0,0);
-//                pose.rotateAround(Axis.YP.rotationDegrees(90), 0, 0, 0);
-                pose.rotateAround(Axis.YP.rotationDegrees(entity.tickCount + event.getPartialTick()), 0, 0, 0);
-//                pose.rotateAround(Axis.ZN.rotationDegrees((float) scale), 0,0,0);
-//                pose.rotateAround(Axis.XP.rotationDegrees(entity.yBodyRotO + 90), 0,0,0);
-
-//                drawSlash(pose.last(), buffer, FULL_BRIGHT, (float) scale + 0.4f, ModHelpers.res("textures/gui/gui_button_power_off.png"));
-//                drawSlash(pose.last(), buffer, FULL_BRIGHT, entity.getBbWidth() + (float) scale - 0.4f, ModHelpers.res("textures/entity/magic_circle_2.png"));
-//                drawSlash(pose.last(), buffer, FULL_BRIGHT, entity.getBbWidth() + (float) scale + 0.4f, ModHelpers.res("textures/entity/shield.png"));
-                pose.popPose();
-            }
         }
     }
 

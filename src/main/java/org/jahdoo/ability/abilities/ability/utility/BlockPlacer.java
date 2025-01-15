@@ -43,6 +43,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockBlockHit(blockHitResult);
         if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         var player = (Player) genericProjectile.getOwner();
         var pos = this.genericProjectile.blockEntityPos;
@@ -67,7 +68,6 @@ public class BlockPlacer extends AbstractUtilityProjectile {
         }
 
         removeItemsFromInv(this.genericProjectile, blockPos, side, replaceBlock, player, targetBlock, pos, true);
-        super.onBlockBlockHit(blockHitResult);
         genericProjectile.discard();
     }
 

@@ -1,5 +1,6 @@
 package org.jahdoo.block;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -13,15 +14,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.DimensionTransition;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.challenge.LevelGenerator;
-import org.jahdoo.particle.ParticleHandlers;
-import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.AttachmentRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.Nullable;
 
 import static org.jahdoo.particle.ParticleHandlers.*;
 import static org.jahdoo.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
-import static org.jahdoo.registers.AttachmentRegister.*;
 import static org.jahdoo.utils.ColourStore.PERK_GREEN;
 
 public class TrialPortalBlock extends NetherPortalBlock {
@@ -39,7 +37,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
             var y = (double) pos.getY() + (double) 0.5F;
             var x = (double) pos.getX() + (double) 0.5F;
             var pitch = random.nextFloat() * 0.4F + 0.8F;
-            level.playLocalSound(x, y, z, SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, SoundSource.BLOCKS, 0.5F, pitch - 0.8f, false);
+//            level.playLocalSound(x, y, z, SoundEvents., SoundSource.BLOCKS, 0.5F, pitch - 0.8f, false);
         }
 
         for(int i = 0; i < 4; ++i) {
@@ -64,7 +62,9 @@ public class TrialPortalBlock extends NetherPortalBlock {
     @Override
     public @Nullable DimensionTransition getPortalDestination(ServerLevel level, Entity entity, BlockPos pos) {
         if(!(entity instanceof Player player)) return null;
-        return LevelGenerator.createNewWorld(player, level);
+        var isContinueInstance = level instanceof CustomLevel;
+        var getData = level.getData(AttachmentRegister.CHALLENGE_ALTAR);
+        return LevelGenerator.createNewWorld(player, level, isContinueInstance ? getData : ChallengeAltarData.newRound(6));
     }
 
     @Override

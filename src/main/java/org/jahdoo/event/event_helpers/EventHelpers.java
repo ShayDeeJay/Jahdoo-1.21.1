@@ -21,22 +21,13 @@ import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import org.jahdoo.ability.abilities.ability_data.Utility.BlockPlacerAbility;
 import org.jahdoo.ability.abilities.ability_data.Utility.WallPlacerAbility;
 import org.jahdoo.ability.effects.CustomMobEffect;
-import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.components.DataComponentHelper;
-import org.jahdoo.datagen.DamageTypesProvider;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.registers.ItemsRegister;
-
-import java.util.Objects;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-import static org.jahdoo.ability.rarity.JahdooRarity.COMMON;
-import static org.jahdoo.ability.rarity.JahdooRarity.RARE;
-import static org.jahdoo.items.augments.AugmentItemHelper.throwNewItem;
 import static org.jahdoo.items.wand.WandItemHelper.storeBlockType;
 import static org.jahdoo.registers.AttachmentRegister.SAVE_DATA;
-import static org.jahdoo.utils.ModHelpers.Random;
 import static org.jahdoo.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 
 public class EventHelpers {
@@ -124,13 +115,13 @@ public class EventHelpers {
     public static void entityDeathLoot(LivingEntity entity, DamageSource source) {
         if(!entity.level().isClientSide){
             if(entity.shouldDropExperience()){
-                var killedByJahdoo = Objects.equals(source.getMsgId(), DamageTypesProvider.JAHDOO_DAMAGE);
-                var canGetAugment = Random.nextInt(40) == 0;
-                if (killedByJahdoo && canGetAugment) {
-                    var canGetCore = Random.nextInt(40) == 0;
-                    if (canGetCore) throwNewItem(entity, new ItemStack(ItemsRegister.AUGMENT_CORE.get()));
-                    throwNewItem(entity, JahdooRarity.getAbilityAugment(COMMON, RARE));
-                }
+//                var killedByJahdoo = Objects.equals(source.getMsgId(), DamageTypesProvider.JAHDOO_DAMAGE);
+//                var canGetAugment = Random.nextInt(40) == 0;
+//                if (killedByJahdoo && canGetAugment) {
+//                    var canGetCore = Random.nextInt(40) == 0;
+//                    if (canGetCore) throwNewItem(entity, new ItemStack(ItemsRegister.AUGMENT_CORE.get()));
+//                    throwNewItem(entity, JahdooRarity.getAbilityAugment(COMMON, RARE));
+//                }
             }
         }
     }

@@ -68,32 +68,6 @@ public class IceBomb extends DefaultEntityBehaviour {
     }
 
     @Override
-    public void addAdditionalDetails(CompoundTag compoundTag) {
-        compoundTag.putInt("currentLifetime", this.currentLifetime);
-        compoundTag.putBoolean("hasHitBlock", this.hasHitBlock);
-        compoundTag.putDouble("aoe",aoe);
-        CompoundTag compoundTag1 = new CompoundTag();
-        getHitEntities.forEach(uuid -> compoundTag1.putUUID(String.valueOf(getHitEntities.indexOf(uuid)), uuid));
-        compoundTag.put("entities", compoundTag1);
-        compoundTag.putDouble(EFFECT_DURATION, this.effectDuration);
-        compoundTag.putDouble(EFFECT_STRENGTH, this.effectStrength);
-        compoundTag.putDouble(DAMAGE, this.damage);
-    }
-
-    @Override
-    public void readCompoundTag(CompoundTag compoundTag) {
-        this.currentLifetime = compoundTag.getInt("currentLifetime");
-        this.hasHitBlock = compoundTag.getBoolean("hasHitBlock");
-        this.aoe = compoundTag.getDouble("aoe");
-        compoundTag.getCompound("entities").getAllKeys().forEach(
-            entries -> this.getHitEntities.add(compoundTag.getUUID("entities"))
-        );
-        this.effectDuration = compoundTag.getDouble(EFFECT_DURATION);
-        this.effectStrength = compoundTag.getDouble(EFFECT_STRENGTH);
-        this.damage = compoundTag.getDouble(DAMAGE);
-    }
-
-    @Override
     public WandAbilityHolder getWandAbilityHolder() {
         return this.elementProjectile.getwandabilityholder();
     }
@@ -121,7 +95,7 @@ public class IceBomb extends DefaultEntityBehaviour {
 
             ModHelpers.getSoundWithPosition(level(), this.elementProjectile.blockPosition(), SoundRegister.EXPLOSION.get());
             ModHelpers.getSoundWithPosition(level(), this.elementProjectile.blockPosition(), SoundRegister.ICE_ATTACH.get());
-            PositionGetters.getOuterRingOfRadiusRandom(this.elementProjectile.position(), 1, 200,
+            PositionGetters.getOuterRingOfRadiusRandom(this.elementProjectile.position(), 0.5, 150,
                 worldPosition -> this.setParticleNova(worldPosition, 0.7)
             );
         }
@@ -143,15 +117,15 @@ public class IceBomb extends DefaultEntityBehaviour {
     }
 
     private void setParticleNova(Vec3 worldPosition, double particleMultiplier){
-        var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), (float) particleMultiplier);
+        var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), (float) particleMultiplier/2);
         var directions = positionScrambler.subtract(this.elementProjectile.position()).normalize();
         var part1 = this.getElementType().particleColourPrimary();
         var part2 = this.getElementType().textColourPrimary();
-        var lifetime = (int) (particleMultiplier * 20);
+        var lifetime = (int) (particleMultiplier * 10);
         var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, 5, part1, part2, false);
         var bakedParticle = bakedParticleOptions(this.getElementType().getTypeId(), lifetime, 5, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle).get(ModHelpers.Random.nextInt(2));
-        var randSpeed = ModHelpers.Random.nextDouble(0.6, 1.4);
+        var randSpeed = ModHelpers.Random.nextDouble(0.3, 0.5);
         var positions = worldPosition.offsetRandom(RandomSource.create(), 0.5f);
 
         ParticleHandlers.sendParticles(
@@ -164,10 +138,8 @@ public class IceBomb extends DefaultEntityBehaviour {
     }
 
     void applyDamageAndEffectNova(){
-        if(aoe < (double) 8){
-            if(aoe < 2) aoe *= 1.5; else aoe += 0.5;
-            this.freezeAndDamageEnemiesNearby();
-        }
+        if(aoe < 3) aoe *= 1.5;
+        this.freezeAndDamageEnemiesNearby();
     }
 
     private void freezeAndDamageEnemiesNearby(){
@@ -184,9 +156,9 @@ public class IceBomb extends DefaultEntityBehaviour {
         if(!this.getHitEntities.contains(hitEntity.getUUID())){
             this.getHitEntities.add(hitEntity.getUUID());
             DamageUtil.damageWithJahdoo(hitEntity, this.elementProjectile.getOwner(), this.damage);
-            if (!hitEntity.hasEffect(EffectsRegister.ICE_EFFECT.getDelegate())) {
+            if (!hitEntity.hasEffect(EffectsRegister.FROST_EFFECT.getDelegate())) {
                 hitEntity.addEffect(
-                    new CustomMobEffect(EffectsRegister.ICE_EFFECT.getDelegate(), (int) effectDuration, (int) this.effectStrength)
+                    new CustomMobEffect(EffectsRegister.FROST_EFFECT.getDelegate(), (int) effectDuration, (int) this.effectStrength)
                 );
             }
         }
@@ -220,8 +192,12 @@ public class IceBomb extends DefaultEntityBehaviour {
             );
         }
 
-        if (this.elementProjectile.tickCount % (this.elementProjectile.tickCount < (INT - 45) ? 21 : 2) == 0) {
-            this.radScale += 0.1f;
+
+
+        var isIdle = this.elementProjectile.tickCount < (INT - 45);
+        if(!isIdle) this.elementProjectile.setDeltaMovement(0,0,0);
+        if (this.elementProjectile.tickCount % (isIdle ? 21 : 2) == 0) {
+            this.radScale += 0.07f;
             ModHelpers.getSoundWithPosition(
                 level(),
                 this.elementProjectile.blockPosition(),
@@ -239,6 +215,33 @@ public class IceBomb extends DefaultEntityBehaviour {
     ){
         var min = Math.min((float) this.elementProjectile.tickCount / 300, 0.12);
         ParticleHandlers.sendParticles(lvl, particle, nPos.add(0,0.15,0), 1, pos2.x, pos2.y, pos2.z, min);
+    }
+
+
+    @Override
+    public void addAdditionalDetails(CompoundTag compoundTag) {
+        compoundTag.putInt("currentLifetime", this.currentLifetime);
+        compoundTag.putBoolean("hasHitBlock", this.hasHitBlock);
+        compoundTag.putDouble("aoe",aoe);
+        CompoundTag compoundTag1 = new CompoundTag();
+        getHitEntities.forEach(uuid -> compoundTag1.putUUID(String.valueOf(getHitEntities.indexOf(uuid)), uuid));
+        compoundTag.put("entities", compoundTag1);
+        compoundTag.putDouble(EFFECT_DURATION, this.effectDuration);
+        compoundTag.putDouble(EFFECT_STRENGTH, this.effectStrength);
+        compoundTag.putDouble(DAMAGE, this.damage);
+    }
+
+    @Override
+    public void readCompoundTag(CompoundTag compoundTag) {
+        this.currentLifetime = compoundTag.getInt("currentLifetime");
+        this.hasHitBlock = compoundTag.getBoolean("hasHitBlock");
+        this.aoe = compoundTag.getDouble("aoe");
+        compoundTag.getCompound("entities").getAllKeys().forEach(
+            entries -> this.getHitEntities.add(compoundTag.getUUID("entities"))
+        );
+        this.effectDuration = compoundTag.getDouble(EFFECT_DURATION);
+        this.effectStrength = compoundTag.getDouble(EFFECT_STRENGTH);
+        this.damage = compoundTag.getDouble(DAMAGE);
     }
 
     @Override

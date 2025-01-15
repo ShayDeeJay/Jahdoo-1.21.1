@@ -44,8 +44,6 @@ public class ArcaneShiftAbility extends AbilityRegistrar {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(80)
             .setStaticCooldown(800)
-//            .setMana(90, 40, 10)
-//            .setCooldown(1200, 400, 100)
             .setDamage(20, 5, 3)
             .setCastingDistance(50, 25, 5)
             .build();

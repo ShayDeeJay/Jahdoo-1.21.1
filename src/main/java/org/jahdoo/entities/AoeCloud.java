@@ -129,7 +129,9 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         this.abilityId = pCompound.getString("ability_id");
         this.wandAbilityHolder = DefaultEntityBehaviour.readTag(pCompound, abilityId);
         this.getRandomCloudRadius = pCompound.getDouble("random_radius");
-        if(this.ownerUUID == null) this.ownerUUID = pCompound.getUUID("uuid");
+        if(pCompound.hasUUID("uuid")){
+            if (this.ownerUUID == null) this.ownerUUID = pCompound.getUUID("uuid");
+        }
         this.setRadius(pCompound.getFloat("radius"));
         if(getAoe == null){
             this.getAoe = EntityPropertyRegister.REGISTRY

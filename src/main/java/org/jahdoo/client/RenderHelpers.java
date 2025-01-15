@@ -27,8 +27,8 @@ import static net.minecraft.client.renderer.blockentity.BeaconRenderer.BEAM_LOCA
 public class RenderHelpers {
 
     public static void drawTexture(PoseStack.Pose pose, MultiBufferSource bufferSource, int light, float width, ResourceLocation texture, int colour) {
-        Matrix4f poseMatrix = pose.pose();
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(texture));
+        var poseMatrix = pose.pose();
+        var consumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(texture));
         var halfWidth = width * 0.5f;
         consumer.addVertex(poseMatrix, -halfWidth, -.1f, -halfWidth).setColor(colour).setUv(0f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
         consumer.addVertex(poseMatrix, halfWidth, -.1f, -halfWidth).setColor(colour).setUv(1f, 1f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
@@ -37,18 +37,16 @@ public class RenderHelpers {
     }
 
     public static void renderLines(PoseStack matrix, AABB aabb, Color color, MultiBufferSource buffer) {
-        float x = (float) aabb.minX;
-        float y = (float) aabb.minY;
-        float z = (float) aabb.minZ;
-        float dx = (float) aabb.maxX;
-        float dy = (float) aabb.maxY;
-        float dz = (float) aabb.maxZ;
-
-        VertexConsumer builder = buffer.getBuffer(RenderType.lines());
-
+        var x = (float) aabb.minX;
+        var y = (float) aabb.minY;
+        var z = (float) aabb.minZ;
+        var dx = (float) aabb.maxX;
+        var dy = (float) aabb.maxY;
+        var dz = (float) aabb.maxZ;
+        var builder = buffer.getBuffer(RenderType.lines());
         matrix.pushPose();
-        Matrix4f matrix4f = matrix.last().pose();
-        PoseStack.Pose matrix3f = matrix.last();
+        var matrix4f = matrix.last().pose();
+        var matrix3f = matrix.last();
         int colorRGB = color.getRGB();
 
         builder.addVertex(matrix4f, x, y, z).setColor(colorRGB).setNormal(matrix3f, 1.0F, 0.0F, 0.0F);

@@ -44,9 +44,9 @@ public class RenderEventHelper {
                 if (pick instanceof BlockHitResult blockHitResult) {
                     var getSelectedAbility = stack.get(WAND_DATA);
                     if(getSelectedAbility == null) return;
-                    double breakerSize = ModHelpers.getTag(player, SIZE, getSelectedAbility.selectedAbility());
-                    double offSet = ModHelpers.getTag(player, OFFSET, getSelectedAbility.selectedAbility());
-                    int size = (int) ((breakerSize / 2) - offSet);
+                    var breakerSize = ModHelpers.getTag(player, SIZE, getSelectedAbility.selectedAbility());
+                    var offSet = ModHelpers.getTag(player, OFFSET, getSelectedAbility.selectedAbility());
+                    var size = (int) ((breakerSize / 2) - offSet);
                     var radius = (int) (breakerSize / 2);
                     var pos = blockHitResult.getBlockPos();
                     var pDirection = player.getDirection();
@@ -59,8 +59,8 @@ public class RenderEventHelper {
                             !isLookingUpOrDown ? 0 : size)
                         .above(isLookingUpOrDown ? 0 : size);
 
-                    BlockPos.MutableBlockPos minPos = new BlockPos.MutableBlockPos(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
-                    BlockPos.MutableBlockPos maxPos = new BlockPos.MutableBlockPos(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+                    var minPos = new BlockPos.MutableBlockPos(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+                    var maxPos = new BlockPos.MutableBlockPos(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
 
                     for (int x = -radius; x <= radius; x++) {
                         for (int y = -radius; y <= radius; y++) {

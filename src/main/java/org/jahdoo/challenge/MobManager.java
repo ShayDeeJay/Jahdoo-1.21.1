@@ -3,8 +3,13 @@ package org.jahdoo.challenge;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -17,6 +22,10 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.armortrim.ArmorTrim;
+import net.minecraft.world.item.armortrim.TrimMaterials;
+import net.minecraft.world.item.armortrim.TrimPatterns;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -43,6 +52,7 @@ import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.utils.ModHelpers.*;
 import static org.jahdoo.utils.ModHelpers.Random;
 import static org.jahdoo.utils.ModHelpers.getRgb;
+import static org.jahdoo.utils.PositionGetters.*;
 
 public class MobManager {
 
@@ -86,6 +96,50 @@ public class MobManager {
         return entity;
     }
 
+    public static LivingEntity getEliteSkeleton(ServerLevel serverLevel, Vec3 pos){
+        var skeleton = new CustomSkeleton(serverLevel, null, new ItemStack(Items.ARROW));
+        skeleton.moveTo(pos);
+        skeleton.setElite();
+        var regLookup = serverLevel.registryAccess().lookup(Registries.TRIM_PATTERN).orElseThrow();
+        var regLookup1 = serverLevel.registryAccess().lookup(Registries.TRIM_MATERIAL).orElseThrow();
+        var value = new ArmorTrim(regLookup1.get(TrimMaterials.REDSTONE).orElseThrow(), regLookup.get(TrimPatterns.RIB).orElseThrow());
+        var value1 = new ArmorTrim(regLookup1.get(TrimMaterials.GOLD).orElseThrow(), regLookup.get(TrimPatterns.SILENCE).orElseThrow());
+        var value2 = new ArmorTrim(regLookup1.get(TrimMaterials.GOLD).orElseThrow(), regLookup.get(TrimPatterns.RIB).orElseThrow());
+        var value3 = new ArmorTrim(regLookup1.get(TrimMaterials.GOLD).orElseThrow(), regLookup.get(TrimPatterns.RIB).orElseThrow());
+
+        var stack = new ItemStack(Items.NETHERITE_HELMET);
+        var stack1 = new ItemStack(Items.NETHERITE_CHESTPLATE);
+        var stack2 = new ItemStack(Items.NETHERITE_LEGGINGS);
+        var stack3 = new ItemStack(Items.NETHERITE_BOOTS);
+        var bow = new ItemStack(Items.BOW);
+
+        var level = 5 ;
+        EnchantmentHelpers.enchant(stack, serverLevel.registryAccess(), Enchantments.PROTECTION, level);
+        EnchantmentHelpers.enchant(stack1, serverLevel.registryAccess(), Enchantments.PROTECTION, level);
+        EnchantmentHelpers.enchant(stack2, serverLevel.registryAccess(), Enchantments.PROTECTION, level);
+        EnchantmentHelpers.enchant(stack3, serverLevel.registryAccess(), Enchantments.PROTECTION, level);
+        EnchantmentHelpers.enchant(stack3, serverLevel.registryAccess(), Enchantments.FEATHER_FALLING, 4);
+        EnchantmentHelpers.enchant(bow, serverLevel.registryAccess(), Enchantments.POWER, level);
+
+        skeleton.addEffect(new MobEffectInstance(MobEffects.HEALTH_BOOST, -1, 5));
+        skeleton.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, -1, 0));
+        skeleton.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, -1, 3));
+
+        stack.set(DataComponents.TRIM, value);
+        stack1.set(DataComponents.TRIM, value1);
+        stack2.set(DataComponents.TRIM, value2);
+        stack.set(DataComponents.TRIM, value3);
+        skeleton.setCustomName(Component.literal("Master Archer"));
+
+        skeleton.setItemSlot(EquipmentSlot.MAINHAND, bow);
+        skeleton.setItemSlot(EquipmentSlot.HEAD, stack);
+        skeleton.setItemSlot(EquipmentSlot.CHEST, stack1);
+        skeleton.setItemSlot(EquipmentSlot.LEGS, stack2);
+        skeleton.setItemSlot(EquipmentSlot.FEET, stack3);
+        serverLevel.addFreshEntity(skeleton);
+        return skeleton;
+    }
+
     public static LivingEntity getReadyEternalWizard(ServerLevel serverLevel){
         var entity = new EternalWizard(serverLevel, null, 12, 100, 2, -1, 30);
         entity.setPersistenceRequired();
@@ -127,34 +181,33 @@ public class MobManager {
             var readyZombie = getReadyZombie(serverLevel, ChallengeAltarData.getProperties(entity).round());
             var readySkeleton = getReadySkeleton(serverLevel, ChallengeAltarData.getProperties(entity).round());
             var readyWizard = getReadyEternalWizard(serverLevel);
-            var skellyOrWiz = Random.nextInt(20) == 0 ? readyWizard : readySkeleton;
+            var skellyOrWiz = Random.nextInt(Math.max(20 - ChallengeAltarData.getRound(entity), 5)) == 0 ? readyWizard : readySkeleton;
             var getList = List.of(readyZombie, skellyOrWiz).get(Random.nextInt(2));
             var actualEntity = MobManager.generateMob(ChallengeAltarData.getRound(entity) > 5 ? getList : readyZombie);
             setOuterRingPulses(actualEntity.level(), pos.getCenter(), actualEntity.getBbWidth());
             getSoundWithPosition(actualEntity.level(), pos, SoundEvents.WITHER_SPAWN, 0.05f, 3f);
             getSoundWithPosition(actualEntity.level(), pos, SoundRegister.HEAL.get(), 1f, 2f);
-            actualEntity.moveTo(pos.getCenter());
+            actualEntity.moveTo(pos.getCenter().subtract(0,0.5,0));
             ChallengeAltarData.addEntity(entity, actualEntity.getUUID());
             serverLevel.addFreshEntity(actualEntity);
         }
     }
 
-    public static void summonEntities(ChallengeAltarBlockEntity entity){
+    public static void summonEntities(ChallengeAltarBlockEntity entity, int maxSpawn){
         var pos = entity.getBlockPos();
-        var data = ChallengeAltarData.getProperties(entity);
         var player = entity.getLevel().getNearestPlayer(TargetingConditions.DEFAULT, pos.getX(), pos.getY(), pos.getZ());
         var counter = new AtomicInteger();
         var spawnPos =  player != null ? player.blockPosition() : pos;
         var radius = Random.nextInt(4, 9);
         var points = 200;
-        for (var blockPos : PositionGetters.getRandomSphericalBlockPositions(spawnPos, radius, points)) {
-            if(counter.get() < data.maxSpawnableMobs()){
-                var above = entity.getLevel().getBlockState(blockPos.above());
-                var main = entity.getLevel().getBlockState(blockPos);
-                var below = entity.getLevel().getBlockState(blockPos.below());
+        for (var blockPos : getRandomSphericalBlockPositions(spawnPos, radius, points)) {
+            if(counter.get() < maxSpawn){
+                var above = entity.getLevel().getBlockState(blockPos.above(2));
+                var main = entity.getLevel().getBlockState(blockPos.above());
+                var below = entity.getLevel().getBlockState(blockPos);
                 if (above.isAir() && main.isAir() && !below.isAir()) {
-                    MobManager.addAndPositionEntity(entity, blockPos);
-                    counter.set(counter.get() + 1);
+                    MobManager.addAndPositionEntity(entity, blockPos.above());
+                    counter.incrementAndGet();
                 }
             }
         }
@@ -162,7 +215,7 @@ public class MobManager {
 
     public static void setOuterRingPulses(Level level, Vec3 position, double radius){
         var particleOptions = genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, getRgb(), getRgb(), Random.nextInt(7, 10), 0.1f, true, 1);
-        PositionGetters.getOuterRingOfRadiusRandom(position, radius, radius * 40,
+        getOuterRingOfRadiusRandom(position, radius, radius * 40,
             pos -> ParticleHandlers.sendParticles(
                 level, particleOptions, pos, 0, 0, 1,0, Random.nextDouble(0.1, 0.4)
             )

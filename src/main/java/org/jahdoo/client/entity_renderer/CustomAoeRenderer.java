@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import org.jahdoo.ability.abilities.MobAbilities.Barrage;
 import org.jahdoo.ability.abilities.ability.Armageddon;
 import org.jahdoo.ability.abilities.ability.Permafrost;
 import org.jahdoo.entities.AoeCloud;
@@ -40,6 +41,10 @@ public class CustomAoeRenderer extends EntityRenderer<AoeCloud> {
         if(Objects.equals(entity.getEntityType(), Permafrost.abilityId.getPath().intern())){
             int color = ElementRegistry.FROST.get().textColourSecondary();
             drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f,  entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(155, color));
+        }
+
+        if(Objects.equals(entity.getEntityType(), Barrage.abilityId.getPath().intern())){
+            drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f,  entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(100, -1));
         }
 
 //        drawSlash(pose.last(), bufferSource, 255, Math.min(entity.getBbWidth() + 0.2f, entity.tickCount + pPartialTick), ModHelpers.res("textures/entity/magic_circle_2.png"), FastColor.ARGB32.color(155, color));

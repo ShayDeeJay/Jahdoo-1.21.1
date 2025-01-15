@@ -270,6 +270,11 @@ public class ChallengeAltarData implements AbstractAttachment {
         return altarData.round();
     }
 
+    public static int getMaxRounds(BlockEntity entity){
+        var altarData = entity.getData(CHALLENGE_ALTAR);
+        return altarData.maxRound();
+    }
+
     public static void altarClickToStart(ChallengeAltarBlockEntity altarE) {
         ChallengeAltarData.setMaxMobs(altarE);
         ChallengeAltarData.setMaxMapMobs(altarE);
@@ -315,4 +320,16 @@ public class ChallengeAltarData implements AbstractAttachment {
         return blockEntity.getData(CHALLENGE_ALTAR);
     }
 
+    @Override
+    public String toString() {
+        return "ChallengeAltarData{" +
+            "activeMobs=" + activeMobs +
+            ", isActive=" + isActive +
+            ", killedMobs=" + killedMobs +
+            ", maxMobsOnMap=" + maxMobsOnMap +
+            ", maxMobs=" + maxMobs +
+            ", round=" + round +
+            ", maxRound=" + maxRound +
+            '}';
+    }
 }

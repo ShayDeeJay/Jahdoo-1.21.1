@@ -70,8 +70,6 @@ public class ThunderBurstAbility extends AbilityRegistrar {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(60)
             .setStaticCooldown(300)
-//            .setMana(80, 30,  10)
-//            .setCooldown(400, 100, 100)
             .setDamage(40, 15, 5)
             .setAbilityTagModifiersRandom(NUMBER_OF_THUNDERBOLTS, 20,10, true, 2)
             .build();

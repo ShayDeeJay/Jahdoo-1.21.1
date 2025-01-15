@@ -11,8 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
 import org.jahdoo.ability.AbilityRegistrar;
-import org.jahdoo.components.rune_data.RuneHolder;
-import org.jahdoo.components.WandData;
+import org.jahdoo.items.runes.rune_data.RuneHolder;
+import org.jahdoo.items.wand.WandData;
 import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.registers.*;
 import org.jahdoo.utils.ColourStore;
@@ -29,7 +29,7 @@ import java.util.function.UnaryOperator;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.challenge.LocalLootBeamData.*;
 import static org.jahdoo.ability.rarity.RarityAttributes.*;
-import static org.jahdoo.components.rune_data.RuneData.RuneHelpers.getRuneData;
+import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.getRuneData;
 import static org.jahdoo.items.augments.AugmentItemHelper.setAbilityToAugment;
 import static org.jahdoo.registers.AttributesRegister.*;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
@@ -43,7 +43,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     RARE(1, "Rare", color(67, 164, 222), 1500, RARE_ATTRIBUTES),
     EPIC(2, "Epic", color(222, 136, 255), 4500, EPIC_ATTRIBUTES),
     LEGENDARY(3, "Legendary", color(241, 194, 50), 5500, LEGENDARY_ATTRIBUTES),
-    ETERNAL(4, "Eternal", color(218, 71, 71), 6000, ETERNAL_ATTRIBUTES);
+    ETERNAL(4, "Eternal", color(255, 66, 66), 6000, ETERNAL_ATTRIBUTES);
 
     private final int id;
     private final String name;

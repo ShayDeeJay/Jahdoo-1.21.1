@@ -1,6 +1,8 @@
 package org.jahdoo.event;
 
+import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.SkeletonRenderer;
+import net.minecraft.client.renderer.entity.TippableArrowRenderer;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -68,6 +70,7 @@ public class ClientBusEvents {
         event.registerEntityRenderer(EntitiesRegister.CUSTOM_ZOMBIE.get(), ZombieRenderer::new);
         event.registerEntityRenderer(EntitiesRegister.CUSTOM_SKELETON.get(), SkeletonRenderer::new);
         event.registerEntityRenderer(EntitiesRegister.ANCIENT_GOLEM.get(), AncientGolemRenderer::new);
+
     }
 
     @SubscribeEvent

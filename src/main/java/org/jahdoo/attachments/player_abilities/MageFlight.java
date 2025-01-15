@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.attachments.AbstractAttachment;
 import org.jahdoo.attachments.CastingData;
-import org.jahdoo.components.rune_data.RuneData;
+import org.jahdoo.items.runes.rune_data.RuneData;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.networking.packet.client2server.MageFlightPacketS2CPacket;
 import org.jahdoo.networking.packet.server2client.MageFlightDataSyncS2CPacket;

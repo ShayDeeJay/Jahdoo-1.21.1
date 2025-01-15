@@ -20,6 +20,7 @@ import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.utils.PositionGetters;
 
+import static org.jahdoo.ability.UtilityHelpers.*;
 import static org.jahdoo.ability.abilities.ability_data.Utility.BlockBombAbility.BLOCK_DROP_CHANCE;
 import static org.jahdoo.ability.abilities.ability_data.Utility.BlockBombAbility.EXPLOSION_RANGE;
 import static org.jahdoo.particle.ParticleHandlers.*;
@@ -45,11 +46,11 @@ public class BlockExplosion extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockBlockHit(blockHitResult);
         if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         this.hasHitBlock = true;
         ModHelpers.getSoundWithPosition(genericProjectile.level(), genericProjectile.blockPosition(), SoundEvents.SLIME_BLOCK_PLACE, 1.5f);
         genericProjectile.setDeltaMovement(0, 0, 0);
-        super.onBlockBlockHit(blockHitResult);
     }
 
     @Override
@@ -132,11 +133,11 @@ public class BlockExplosion extends AbstractUtilityProjectile {
             radiusPosition -> {
                 BlockState blockstate = genericProjectile.level().getBlockState(radiusPosition);
                 if (blockstate.isAir()) return;
-                var range = UtilityHelpers.destroySpeed(radiusPosition, genericProjectile.level());
+                var range = destroySpeed(radiusPosition, genericProjectile.level());
                 if (!UtilityHelpers.range.contains(range)) return;
 
                 if (Random.nextInt(0, this.blockDropChance) == 0) {
-                    UtilityHelpers.dropItemsOrBlock(genericProjectile, radiusPosition, false, false);
+                    dropItemsOrBlock(genericProjectile, radiusPosition, false, false);
                 }
 
                 var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);

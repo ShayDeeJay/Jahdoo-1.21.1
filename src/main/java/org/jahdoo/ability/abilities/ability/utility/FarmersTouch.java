@@ -65,6 +65,7 @@ public class FarmersTouch extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockBlockHit(blockHitResult);
         if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         this.hasHitBlock = true;
         this.genericProjectile.setInvisible(true);
@@ -72,7 +73,6 @@ public class FarmersTouch extends AbstractUtilityProjectile {
         PositionGetters.getOuterSquareOfRadius(this.genericProjectile.position(), counter + 0.5, this.range * 20,
             positions -> this.setParticleNova(positions, this.genericProjectile.level())
         );
-        super.onBlockBlockHit(blockHitResult);
     }
 
     public void applyBoneMeal(Level level, BlockPos pPos) {

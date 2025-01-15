@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
-import static org.jahdoo.components.rune_data.RuneData.RuneHelpers.standAloneAttributes;
+import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.standAloneAttributes;
 
 public class RuneTooltipRenderer implements ClientTooltipComponent {
     private final int spacing = Minecraft.getInstance().font.lineHeight + 4;

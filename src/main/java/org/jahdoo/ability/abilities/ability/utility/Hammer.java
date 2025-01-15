@@ -52,6 +52,7 @@ public class Hammer extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockBlockHit(blockHitResult);
         if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         var owner = (LivingEntity) genericProjectile.getOwner();
         if(owner == null && genericProjectile.blockEntityPos == null) return;
@@ -104,7 +105,6 @@ public class Hammer extends AbstractUtilityProjectile {
                 }
             }
 
-            super.onBlockBlockHit(blockHitResult);
             genericProjectile.discard();
         }
 

@@ -13,7 +13,7 @@ import org.jahdoo.block.wand_block_manager.WandManagerEntity;
 import org.jahdoo.client.gui.AbstractInternalContainer;
 import org.jahdoo.client.gui.block.AugmentCoreSlot;
 import org.jahdoo.client.gui.block.RuneSlot;
-import org.jahdoo.components.rune_data.RuneHolder;
+import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.registers.MenusRegister;

@@ -46,8 +46,6 @@ public class IceBombAbility extends AbilityRegistrar {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(45)
             .setStaticCooldown(400)
-//            .setMana(60, 20,  10)
-//            .setCooldown(700, 200, 100)
             .setDamage(20, 10, 2)
             .setEffectStrength(10, 5,1)
             .setEffectDuration(600,200,100)

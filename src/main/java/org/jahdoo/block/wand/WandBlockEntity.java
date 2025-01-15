@@ -16,7 +16,7 @@ import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.client.gui.block.wand_block.WandBlockMenu;
-import org.jahdoo.components.WandData;
+import org.jahdoo.items.wand.WandData;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.BlockEntitiesRegister;

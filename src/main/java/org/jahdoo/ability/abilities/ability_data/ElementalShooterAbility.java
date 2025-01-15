@@ -33,9 +33,7 @@ public class ElementalShooterAbility extends AbilityRegistrar {
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(15)
-            .setStaticCooldown(50)
-//            .setMana(20, 10, 1)
-//            .setCooldown(50, 10, 10)
+            .setStaticCooldown(0)
             .setDamage(10, 5, 1)
             .setEffectChance(50, 10, 10)
             .setEffectStrength(10, 1, 1)

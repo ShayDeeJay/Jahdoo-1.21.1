@@ -1,5 +1,7 @@
 package org.jahdoo.utils;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -9,15 +11,18 @@ import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -78,6 +83,13 @@ public class ModHelpers {
     public static double getAttributeValue(Player player, Holder<Attribute> attribute){
         var attributes = player.getAttribute(attribute);
         return attributes != null ? attributes.getValue() : -1;
+    }
+
+    public static void addTransientAttribute(Player player, double value, String id, Holder<Attribute> attributeHolder) {
+        var modifier = new AttributeModifier(ModHelpers.res(id), value, AttributeModifier.Operation.ADD_VALUE);
+        Multimap<Holder<Attribute>, AttributeModifier> multiMap = HashMultimap.create();
+        multiMap.put(attributeHolder, modifier);
+        player.getAttributes().addTransientAttributeModifiers(multiMap);
     }
 
     public static List<Component> filterList(List<Component> collection, String... item){
@@ -297,6 +309,17 @@ public class ModHelpers {
                 var serverplayer = serverLevel.players().get(j);
                 if (pos.closerThan(serverplayer.position(), distance)) {
                     serverPlayerConsumer.accept(serverplayer);
+                }
+            }
+        }
+    }
+
+    public static void sendEffectPacketsToPlayerDistance(Vec3 pos, int distance, Level level, int entityId, MobEffectInstance effectInstance) {
+        if((level instanceof ServerLevel serverLevel)){
+            for (int j = 0; j < serverLevel.players().size(); ++j) {
+                var serverplayer = serverLevel.players().get(j);
+                if (pos.closerThan(serverplayer.position(), distance)) {
+                    serverplayer.connection.send(new ClientboundUpdateMobEffectPacket(entityId, effectInstance, true));
                 }
             }
         }

@@ -44,6 +44,7 @@ public class Fetch extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockBlockHit(blockHitResult);
         if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         var player = (Player) genericProjectile.getOwner();
         var pickedUpItem = false;
@@ -80,7 +81,6 @@ public class Fetch extends AbstractUtilityProjectile {
         if(pickedUpItem && player instanceof ServerPlayer player1) {
             ModHelpers.sendClientSound(player1, SoundEvents.ITEM_PICKUP, 1.15f, 1);
         }
-        super.onBlockBlockHit(blockHitResult);
         genericProjectile.discard();
     }
 

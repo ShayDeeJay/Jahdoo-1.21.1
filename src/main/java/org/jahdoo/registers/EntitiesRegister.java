@@ -3,6 +3,7 @@ package org.jahdoo.registers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -111,8 +112,9 @@ public class EntitiesRegister {
                 .eyeHeight(1.74F)
                 .ridingOffset(-0.7F)
                 .clientTrackingRange(10)
-                .build("zombie")
+                .build("skeleton")
         );
+
 
 
 

@@ -1,25 +1,26 @@
 package org.jahdoo.event;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
-import net.neoforged.neoforge.event.entity.item.ItemEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.attachments.CastingData;
 import org.jahdoo.attachments.player_abilities.*;
-import org.jahdoo.components.rune_data.RuneHolder;
+import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.utils.ModHelpers;
 
 import java.util.ArrayList;
 
@@ -90,7 +91,15 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void levelChangeEvent(LevelTickEvent.Pre tickEvent){
-
+        if(tickEvent.getLevel() instanceof CustomLevel level){
+            for (var entity : level.getEntities().getAll()) {
+                if(entity instanceof Mob mob){
+                    if(mob.getTarget() == null) {
+                        mob.setTarget(ModHelpers.getRandomListElement(level.players()));
+                    }
+                }
+            }
+        }
     }
 
     @SubscribeEvent

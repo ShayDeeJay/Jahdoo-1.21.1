@@ -7,9 +7,8 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.block.wand_block_manager.WandManagerEntity;
-import org.jahdoo.components.WandData;
-import org.jahdoo.components.rune_data.RuneData;
-import org.jahdoo.components.rune_data.RuneHolder;
+import org.jahdoo.items.wand.WandData;
+import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.networking.packet.client2server.ItemInBlockC2SPacket;
 import org.jahdoo.utils.ModHelpers;
@@ -18,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.jahdoo.components.rune_data.RuneData.RuneHelpers.getCostFromRune;
-import static org.jahdoo.components.rune_data.RuneGenerator.RuneCategories.fromName;
+import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.getCostFromRune;
 import static org.jahdoo.registers.DataComponentRegistry.*;
 
 public class RuneSlot extends SlotItemHandler {

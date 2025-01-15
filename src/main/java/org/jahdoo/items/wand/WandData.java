@@ -1,4 +1,4 @@
-package org.jahdoo.components;
+package org.jahdoo.items.wand;
 
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;

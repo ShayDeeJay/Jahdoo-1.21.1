@@ -69,12 +69,12 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
         if (!(level instanceof ServerLevel)) return ItemInteractionResult.FAIL;
         var altarData = getProperties(altarE);
         if (!isCompleted(altarE)) {
-            var startingRound = Math.max(1, altarData.round);
+            var startingRound = Math.max(1, altarData.round());
             if (!isActive(altarE)) {
                 startNewChallenge(altarE, startingRound);
-            } else {
+            } /*else {
                 readyNextSubRound(altarE, altarData, startingRound);
-            }
+            }*/
         }
 
         return ItemInteractionResult.SUCCESS;

@@ -47,8 +47,6 @@ public class SummonEternalWizardAbility extends AbilityRegistrar {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(100)
             .setStaticCooldown(6000)
-//            .setMana(150, 50,  10)
-//            .setCooldown(6000, 3600, 400)
             .setDamage(40, 15, 5)
             .setEffectStrength(10, 0, 1)
             .setEffectDuration(600, 200, 50)

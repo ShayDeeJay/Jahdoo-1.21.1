@@ -42,8 +42,6 @@ public class DimensionalRecallAbility extends AbilityRegistrar {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(120)
             .setStaticCooldown(7200)
-//            .setMana(160, 80, 20)
-//            .setCooldown(24000, 6000, 3000)
             .setAbilityTagModifiersRandom(CASTING_TIME, 400, 100, false, 100)
             .build();
     }

@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
@@ -14,8 +15,10 @@ import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import static net.minecraft.sounds.SoundEvents.TRIAL_SPAWNER_AMBIENT;
 import static net.minecraft.sounds.SoundEvents.TRIAL_SPAWNER_AMBIENT_OMINOUS;
@@ -45,50 +48,14 @@ public class ChallengeAltarAnim {
         }
     }
 
-    static void portalBuilder(Level pLevel, ServerLevel serverLevel, int buildTick, int placeCounter, BlockPos pos) {
-        if (buildTick % 3 == 0) {
-            var mossyStoneBricks = Blocks.MOSSY_STONE_BRICKS;
-            var south = pos.south(4);
-            var breakSound = mossyStoneBricks.defaultBlockState().getSoundType().getBreakSound();
-
-            if (placeCounter < 5) {
-                var above = south.east(2).above(placeCounter);
-                var above1 = south.west(2).above(placeCounter);
-                if(serverLevel.getBlockState(above1).isAir()){
-                    ModHelpers.getSoundWithPosition(pLevel, above1, breakSound);
-                    serverLevel.setBlockAndUpdate(above1, mossyStoneBricks.defaultBlockState());
-                }
-                if(serverLevel.getBlockState(above).canBeReplaced()){
-                    ModHelpers.getSoundWithPosition(pLevel, above, breakSound);
-                    serverLevel.setBlockAndUpdate(above, mossyStoneBricks.defaultBlockState());
-                }
-            } else if (placeCounter < 8) {
-                int horizontalStep = placeCounter - 5; // Normalize to 0-2 range
-                var above = south.east(horizontalStep).above(5);
-                var above1 = south.west(horizontalStep).above(5);
-                if(serverLevel.getBlockState(above1).isAir()){
-                    ModHelpers.getSoundWithPosition(pLevel, above1, breakSound);
-                    serverLevel.setBlockAndUpdate(above1, mossyStoneBricks.defaultBlockState());
-                }
-                if(serverLevel.getBlockState(above).isAir()){
-                    ModHelpers.getSoundWithPosition(pLevel, above, breakSound);
-                    serverLevel.setBlockAndUpdate(above, mossyStoneBricks.defaultBlockState());
-                }
+    static @NotNull BiConsumer<BlockPos, ServerLevel> getBlockPosServerLevelBiConsumer(Level pLevel, BlockState mossyStoneBricks) {
+        return (targetPos, level1) -> {
+            var breakSound = mossyStoneBricks.getSoundType(pLevel, targetPos, null).getBreakSound();
+            if (!level1.getBlockState(targetPos).is(mossyStoneBricks.getBlock())) {
+                ModHelpers.getSoundWithPosition(pLevel, targetPos, breakSound);
+                level1.setBlockAndUpdate(targetPos, mossyStoneBricks);
             }
-
-            if(buildTick == 30){
-                serverLevel.setBlockAndUpdate(pos, LOOT_CHEST.get().defaultBlockState().setValue(FACING, Direction.SOUTH));
-                ModHelpers.getSoundWithPosition(pLevel, south, SoundEvents.END_PORTAL_SPAWN, 0.8F, 1.5F);
-                for (int i = 0; i < 5; i ++){
-                    serverLevel.setBlockAndUpdate(south.above(i), TRAIL_PORTAL.get().defaultBlockState());
-                    serverLevel.setBlockAndUpdate(south.west().above(i), TRAIL_PORTAL.get().defaultBlockState());
-                    serverLevel.setBlockAndUpdate(south.east().above(i), TRAIL_PORTAL.get().defaultBlockState());
-                }
-            }
-
-            placeCounter++;
-            if (placeCounter >= 8) placeCounter = 0;
-        }
+        };
     }
 
     public static void onActivationAnim(Level pLevel, BlockPos pPos, int privateTicks) {

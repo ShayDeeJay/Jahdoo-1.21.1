@@ -13,6 +13,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ability.effects.custom_effects.*;
 import org.jahdoo.ability.effects.custom_effects.type_effects.*;
+import org.jahdoo.ability.effects.custom_effects.type_effects.fire_effect.GreaterInfernoEffect;
+import org.jahdoo.ability.effects.custom_effects.type_effects.fire_effect.InfernoEffect;
+import org.jahdoo.ability.effects.custom_effects.type_effects.mystic_effect.GreaterMysticEffect;
 import org.jahdoo.ability.effects.custom_effects.type_effects.mystic_effect.MysticEffect;
 
 public class EffectsRegister {
@@ -30,27 +33,40 @@ public class EffectsRegister {
     public static final DeferredHolder<MobEffect, MobEffect> REPLENISH_MANA = MOB_EFFECTS.register("replenish_mana",
         () -> new ReplenishManaEffect(MobEffectCategory.BENEFICIAL, 3436524)
     );
+
     public static final DeferredHolder<MobEffect, MobEffect> ITEM_MAGNET = MOB_EFFECTS.register("item_magnet",
         () -> new ItemMagnetEffect(MobEffectCategory.BENEFICIAL, 3436524)
     );
+
     public static final DeferredHolder<MobEffect, MobEffect> REBOUND = MOB_EFFECTS.register("rebound",
         () -> new Rebound(MobEffectCategory.BENEFICIAL, 3436524)
     );
+
     public static final DeferredHolder<MobEffect, MobEffect> STUN_EFFECT = MOB_EFFECTS.register("stun_effect",
         () -> new StunEffect(MobEffectCategory.HARMFUL, 3436524)
     );
-    public static final DeferredHolder<MobEffect, MobEffect> ICE_EFFECT = MOB_EFFECTS.register("frost_effect",
+
+    public static final DeferredHolder<MobEffect, MobEffect> FROST_EFFECT = MOB_EFFECTS.register("frost_effect",
         () -> new FrostEffect(MobEffectCategory.HARMFUL, 3436524).addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.withDefaultNamespace("frost.speed"), -0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
     );
-    public static final DeferredHolder<MobEffect, MobEffect> MYSTIC_EFFECT = MOB_EFFECTS.register("mystic_effect",
-        () -> new MysticEffect(MobEffectCategory.HARMFUL, 3436524)
-    );
-    public static final DeferredHolder<MobEffect, MobEffect> INFERNO_EFFECT = MOB_EFFECTS.register("inferno_effect",
-        () -> new FireEffect(MobEffectCategory.HARMFUL, 3436524)
-    );
+
+    public static final DeferredHolder<MobEffect, MobEffect> MYSTIC_EFFECT =
+        MOB_EFFECTS.register("mystic_effect", MysticEffect::new);
+
+    public static final DeferredHolder<MobEffect, MobEffect> GREATER_MYSTIC_EFFECT =
+        MOB_EFFECTS.register("greater_mystic_effect", GreaterMysticEffect::new);
+
+    public static final DeferredHolder<MobEffect, MobEffect> INFERNO_EFFECT =
+        MOB_EFFECTS.register("inferno_effect", InfernoEffect::new);
+
+    public static final DeferredHolder<MobEffect, MobEffect> GREATER_INFERNO_EFFECT =
+        MOB_EFFECTS.register("greater_inferno_effect", GreaterInfernoEffect::new);
+
+
     public static final DeferredHolder<MobEffect, MobEffect> LIGHTNING_EFFECT = MOB_EFFECTS.register("lightning_effect",
         () -> new LightningEffect(MobEffectCategory.HARMFUL, 3436524)
     );
+
     public static final DeferredHolder<MobEffect, MobEffect> VITALITY_EFFECT = MOB_EFFECTS.register("vitality_effect",
         () -> new VitalityEffect(MobEffectCategory.HARMFUL, 3436524)
     );

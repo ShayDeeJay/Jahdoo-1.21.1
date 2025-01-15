@@ -171,9 +171,9 @@ public class Permafrost extends DefaultEntityBehaviour {
         var livingEntity1 = this.getEntityInRange(positionsA);
         if(livingEntity == null || !livingEntity.isAlive()) livingEntity = this.getEntityInRange(positionsA);
         if(livingEntity1 != null && canDamageEntity(livingEntity1, this.aoeCloud.getOwner())){
-            var effect = livingEntity1.getEffect(EffectsRegister.ICE_EFFECT);
+            var effect = livingEntity1.getEffect(EffectsRegister.FROST_EFFECT);
             if(this.aoeCloud.tickCount % 20 == 0){
-                livingEntity1.addEffect(new CustomMobEffect(EffectsRegister.ICE_EFFECT.getDelegate(), (int) effectDuration, Math.min((int) effectStrength, (effect == null ? 0 : effect.getAmplifier()) + 1)));
+                livingEntity1.addEffect(new CustomMobEffect(EffectsRegister.FROST_EFFECT.getDelegate(), (int) effectDuration, Math.min((int) effectStrength, (effect == null ? 0 : effect.getAmplifier()) + 1)));
             }
         }
     }

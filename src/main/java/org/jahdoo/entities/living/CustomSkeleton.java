@@ -36,6 +36,7 @@ import org.jahdoo.entities.goals.AttackNearbyMonsters;
 import org.jahdoo.entities.goals.FollowGoal;
 import org.jahdoo.entities.goals.GenericOwnerHurtByTargetGoal;
 import org.jahdoo.entities.goals.GenericOwnerHurtTargetGoal;
+import org.jahdoo.registers.AttachmentRegister;
 import org.jahdoo.registers.EntitiesRegister;
 
 import javax.annotation.Nullable;
@@ -49,6 +50,7 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
     LivingEntity owner;
     UUID ownerUUID;
     ItemStack arrowType;
+    private boolean isElite;
     private final RangedBowAttackGoal<AbstractSkeleton> bowGoal = new RangedBowAttackGoal<>(this, 1.0F, 20, 25.0F);
     public CustomSkeleton(EntityType<? extends Skeleton> entityType, Level level) {
         super(entityType, level);
@@ -58,6 +60,10 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
         super(EntitiesRegister.CUSTOM_SKELETON.get(), level);
         this.owner = owner;
         this.arrowType = arrowType;
+    }
+
+    public void setElite(){
+        this.isElite = true;
     }
 
     @Override
@@ -98,8 +104,9 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
     }
 
     protected void registerGoals() {
+
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2, true));
         this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0F));
-        this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.2, true));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
@@ -121,7 +128,9 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
         var d1 = target.getY(0.3333333333333333) - getArrow.getY();
         var d2 = target.getZ() - this.getZ();
         var d3 = Math.sqrt(d0 * d0 + d2 * d2);
-        getArrow.shoot(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.level().getDifficulty().getId() * 4));
+        var velocity = isElite ? 2F : 1.6F;
+        var inaccuracy = isElite ? 0F : (14 - this.level().getDifficulty().getId() * 4);
+        getArrow.shoot(d0, d1 + d3 * (double)0.2F, d2, velocity, inaccuracy);
         this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
         this.level().addFreshEntity(getArrow);
     }
@@ -136,14 +145,21 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
                 var i = this.getHardAttackInterval();
                 if (this.level().getDifficulty() != Difficulty.HARD) i = this.getAttackInterval();
                 this.bowGoal.setMinAttackInterval(i);
-                this.goalSelector.addGoal(4, this.bowGoal);
+                this.goalSelector.addGoal(1, this.bowGoal);
             }
         }
     }
 
     @Override
     protected AbstractArrow getArrow(ItemStack arrow, float velocity, @Nullable ItemStack weapon) {
-        return ProjectileUtil.getMobArrow(this, arrow, velocity, weapon);
+        var mobArrow = ProjectileUtil.getMobArrow(this, arrow, velocity, weapon);
+        if(isElite){
+            if (Random.nextInt(2) == 0) {
+                mobArrow.setData(AttachmentRegister.BOOL.get(), true);
+                mobArrow.setBaseDamage(20);
+            }
+        }
+        return mobArrow;
     }
 
     @Override
@@ -170,6 +186,7 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
         super.addAdditionalSaveData(compound);
         if(this.owner != null) compound.putUUID("saveOwner", owner.getUUID());
         compound.put("item", this.arrowType.save(this.registryAccess()));
+        compound.putBoolean("isElite", isElite);
     }
 
     @Override
@@ -180,5 +197,6 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
             ItemStack.parse(this.registryAccess(), compound.getCompound("item"))
                 .ifPresent(itemStack ->  this.arrowType = itemStack);
         }
+        this.isElite = compound.getBoolean("isElite");
     }
 }

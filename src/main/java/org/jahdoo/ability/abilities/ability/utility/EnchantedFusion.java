@@ -23,6 +23,7 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockBlockHit(blockHitResult);
         var level = getLevel();
         if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         var pos = blockHitResult.getBlockPos();
@@ -46,7 +47,6 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
                 );
             }
         }
-        super.onBlockBlockHit(blockHitResult);
         genericProjectile.discard();
     }
 

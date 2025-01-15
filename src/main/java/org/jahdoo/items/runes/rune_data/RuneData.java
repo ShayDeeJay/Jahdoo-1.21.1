@@ -1,30 +1,34 @@
-package org.jahdoo.components.rune_data;
+package org.jahdoo.items.runes.rune_data;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
+import org.jahdoo.ability.rarity.RarityAttributes;
 import org.jahdoo.items.wand.WandItem;
+import org.jahdoo.registers.AttributesRegister;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.util.FastColor.ARGB32.*;
 import static org.jahdoo.ability.rarity.JahdooRarity.*;
-import static org.jahdoo.components.rune_data.RuneGenerator.*;
-import static org.jahdoo.components.rune_data.RuneGenerator.RuneCategories.fromName;
+import static org.jahdoo.challenge.LocalLootBeamData.attachComponent;
+import static org.jahdoo.items.runes.rune_data.RuneGenerator.*;
+import static org.jahdoo.items.runes.rune_data.RuneGenerator.RuneCategories.fromName;
 import static org.jahdoo.registers.AttributesRegister.*;
 import static org.jahdoo.registers.DataComponentRegistry.RUNE_DATA;
 import static org.jahdoo.registers.ElementRegistry.*;
@@ -118,6 +122,12 @@ public record RuneData(
 
 
     public static class RuneHelpers {
+        public static int getTier(ItemStack itemStack){
+            var data = getRuneData(itemStack);
+            if(!Objects.equals(data.name(), DEFAULT_NAME)) return data.tier();
+            return -1;
+        }
+
         public static String getName(ItemStack itemStack){
             var data = getRuneData(itemStack);
             if(!Objects.equals(data.name(), DEFAULT_NAME)) return data.name();
@@ -161,24 +171,33 @@ public record RuneData(
 
         public static Component standAloneAttributes(ItemStack itemStack) {
             var attributes = itemStack.getAttributeModifiers().modifiers().stream().toList();
+            if (attributes.isEmpty()) return Component.empty();
 
-            if(!attributes.isEmpty()){
-                var data = getRuneData(itemStack);
-                var colourPre = color(121, 187, 67);
-                var entry = attributes.getFirst();
-                var descriptionId = entry.attribute().value().getDescriptionId();
-                var speed = descriptionId.contains("speed");
-                var value = roundNonWholeString(singleFormattedDouble(speed ? entry.modifier().amount() * 1000 : entry.modifier().amount()));
-                var valueWithFix = "+" + value + "%";
-                var valueWithout = "+" + value + " ";
-                var typeColour = data.elementId < 1 ? data.colour : getElementByTypeId(data.elementId()).getFirst().textColourPrimary();
-                var compName = withStyleComponentTrans(descriptionId, typeColour);
-                var mana = compName.getString().equals("Mana");
-                var skill = descriptionId.contains("skills");
-                return withStyleComponent(mana ? valueWithout : skill ? "" : valueWithFix + " ", colourPre).copy()
-                    .append(compName);
+            var data = getRuneData(itemStack);
+            var colourPre = color(121, 187, 67);
+            var entry = attributes.getFirst();
+            var descriptionId = entry.attribute().value().getDescriptionId();
+            var amount = entry.modifier().amount();
+            var typeColour = data.elementId < 1 ? data.colour : getElementByTypeId(data.elementId()).getFirst().textColourPrimary();
+            var compName = withStyleComponentTrans(descriptionId, typeColour);
+            var isAbsorption = descriptionId.contains("absorption");
+            var isMaxHealth = descriptionId.contains("health");
+            var isSpeed = descriptionId.contains("speed");
+
+            if(isSpeed) amount = amount * 1000;
+            if(isAbsorption || isMaxHealth) amount = (amount/2);
+
+            var value = roundNonWholeString(singleFormattedDouble(amount));
+
+            if(descriptionId.contains(FIXED_VALUE) || isAbsorption || isMaxHealth) {
+                return withStyleComponent("+" + value + " ", colourPre).copy().append(compName);
             }
-            return Component.empty();
+
+            if(descriptionId.contains("skills")){
+                return withStyleComponent("", colourPre).copy().append(compName);
+            }
+
+            return withStyleComponent("+" + value + "%" + " ", colourPre).copy().append(compName);
         }
 
         public static RuneData getRuneData(ItemStack stack){
@@ -198,51 +217,46 @@ public record RuneData(
                 var getElement = getRandomElement();
                 var rarity = withRarity != null ? withRarity : JahdooRarity.getRarity();
 
-                //COMMON
-                var common = List.of(
-                    generateElementalRune(getElement.getTypeManaReduction(), rarity.getAttributes().getRandomManaReduction(), COMMON, getElement.getTypeId(), rarity.getId()),
-                    generatePerkRune(DESTINY_BOND.getDelegate(), NO_VALUE, COMMON, "Keep your item on death.", rarity.getId(), NO_VALUE)
-                );
-
-                //RARE
-                var rare = List.of(
-                    generateElementalRune(getElement.getDamageTypeAmplifier(), rarity.getAttributes().getRandomDamage(), RARE, getElement.getTypeId(), rarity.getId()),
-                    //Move out MC base stat boost stuff to a new cat
-                    generatePerkRune(Attributes.MOVEMENT_SPEED, rarity.getAttributes().getRandomDamage(), RARE, NO_DESCRIPTION, rarity.getId(), 0.1),
-                    generatePerkRune(TRIPLE_JUMP, NO_VALUE, RARE, "Allows player to jump up to 3 times", rarity.getId(), NO_VALUE)
-                );
-
-                //EPIC
-                var epic = List.of(
-                    generateElementalRune(getElement.getTypeCooldownReduction(), rarity.getAttributes().getRandomCooldown(), EPIC, getElement.getTypeId(), rarity.getId()),
-                    generatePerkRune(MAGE_FLIGHT.getDelegate(), NO_VALUE, EPIC, "Allows the player to fly, at the cost of mana.", rarity.getId(),NO_VALUE)
-                );
-
-                //LEGENDARY
-                var legendary = List.of(
-                    generateAetherRune(MANA_REGEN.getDelegate(), rarity.getAttributes().getRandomManaRegen(), rarity.getId()),
-                    generateAetherRune(MANA_POOL.getDelegate(), rarity.getAttributes().getRandomManaPool(), rarity.getId())
-                );
-
-                //ETERNAL
-                var color = color(66, 66, 173);
-                var eternal = List.of(
-                    generateCosmicRune(MAGIC_DAMAGE_MULTIPLIER.getDelegate(), rarity.getAttributes().getRandomDamage(), rarity.getId()).build(),
-                    generateCosmicRune(COOLDOWN_REDUCTION.getDelegate(), rarity.getAttributes().getRandomCooldown(), rarity.getId()).build(),
-                    generateCosmicRune(MANA_COST_REDUCTION.getDelegate(), rarity.getAttributes().getRandomManaReduction(), rarity.getId()).build(),
-                    //Need to move these to the Infinity Rune category
-                    generateCosmicRune(SKIP_MANA.getDelegate(), 50, rarity.getId()).setColour(color).build(),
-                    generateCosmicRune(SKIP_COOLDOWN.getDelegate(), 50, rarity.getId()).setColour(color).build()
-                );
+                final var attributes = rarity.getAttributes();
+                final var id = rarity.getId();
 
                 var getList = switch (getRarity()){
-                    case COMMON -> common;
-                    case RARE -> rare;
-                    case EPIC -> epic;
-                    case LEGENDARY -> legendary;
-                    case ETERNAL -> eternal;
+                    case COMMON ->
+                        List.of(
+                            generateElementalRune(getElement.getTypeManaReduction(), attributes.getRandomManaReduction(), COMMON, getElement.getTypeId(), id),
+                            generatePerkRune(DESTINY_BOND.getDelegate(), NO_VALUE, COMMON, "Keep your item on death.", NO_VALUE, NO_VALUE)
+                        );
+                    case RARE ->
+                        List.of(
+                            generateElementalRune(getElement.getDamageTypeAmplifier(), attributes.getRandomDamage(), RARE, getElement.getTypeId(), id),
+                            generatePerkRune(Attributes.MOVEMENT_SPEED, attributes.getRandomDamage(), RARE, NO_DESCRIPTION, id, 0.1)
+                        );
+                    case EPIC ->
+                        List.of(
+                            generateElementalRune(getElement.getTypeCooldownReduction(), attributes.getRandomCooldown(), EPIC, getElement.getTypeId(), id),
+                            generatePerkRune(TRIPLE_JUMP, NO_VALUE, RARE, "Allows player to jump up to 3 times", NO_VALUE, NO_VALUE)
+                        );
+                    case LEGENDARY ->
+                        List.of(
+                            generateAetherRune(MANA_REGEN.getDelegate(), attributes.getRandomManaRegen(), id),
+                            generateAetherRune(MANA_POOL.getDelegate(), attributes.getRandomManaPool(), id),
+                            generatePerkRune(Attributes.MAX_HEALTH, attributes.getRandomMaxHealth(), LEGENDARY, "Increase max health", id, NO_VALUE),
+                            generatePerkRune(Attributes.MAX_ABSORPTION, attributes.getRandomMaxAbsorption(), LEGENDARY, "Increase absorption heart capacity", id, NO_VALUE),
+                            generatePerkRune(MAGE_FLIGHT.getDelegate(), NO_VALUE, LEGENDARY, "Allows the player to fly, at the cost of mana.", NO_VALUE, NO_VALUE)
+                        );
+                    case ETERNAL ->
+                        List.of(
+                            generateCosmicRune(MAGIC_DAMAGE_MULTIPLIER.getDelegate(), attributes.getRandomDamage(), id).build(),
+                            generateCosmicRune(COOLDOWN_REDUCTION.getDelegate(), attributes.getRandomCooldown(), id).build(),
+                            generateCosmicRune(MANA_COST_REDUCTION.getDelegate(), attributes.getRandomManaReduction(), id).build(),
+                            generateSympathiserRune(CAST_HEAL.getDelegate(), attributes.getRandomHealChance(), id),
+                            generateSympathiserRune(ABSORPTION_HEARTS.getDelegate(), attributes.getRandomHealChance(), id),
+                            generateSympathiserRune(SKIP_MANA.getDelegate(), attributes.getRandomHealChance(), id),
+                            generateSympathiserRune(SKIP_COOLDOWN.getDelegate(), attributes.getRandomHealChance(), id)
+                        );
                 };
 
+                attachComponent(stack, rarity);
                 generateFullRune(stack, getRandomListElement(getList));
             }
         }
