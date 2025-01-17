@@ -43,7 +43,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     RARE(1, "Rare", color(67, 164, 222), 1500, RARE_ATTRIBUTES),
     EPIC(2, "Epic", color(222, 136, 255), 4500, EPIC_ATTRIBUTES),
     LEGENDARY(3, "Legendary", color(241, 194, 50), 5500, LEGENDARY_ATTRIBUTES),
-    ETERNAL(4, "Eternal", color(255, 66, 66), 6000, ETERNAL_ATTRIBUTES);
+    ETERNAL(4, "Eternal", color(225,92,199), 6000, ETERNAL_ATTRIBUTES);
 
     private final int id;
     private final String name;

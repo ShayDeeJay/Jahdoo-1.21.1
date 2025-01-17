@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.abilities.ability_data.IceBombAbility;
-import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.ElementProjectile;
 import org.jahdoo.particle.ParticleHandlers;
@@ -158,7 +158,7 @@ public class IceBomb extends DefaultEntityBehaviour {
             DamageUtil.damageWithJahdoo(hitEntity, this.elementProjectile.getOwner(), this.damage);
             if (!hitEntity.hasEffect(EffectsRegister.FROST_EFFECT.getDelegate())) {
                 hitEntity.addEffect(
-                    new CustomMobEffect(EffectsRegister.FROST_EFFECT.getDelegate(), (int) effectDuration, (int) this.effectStrength)
+                    new JahdooMobEffect(EffectsRegister.FROST_EFFECT.getDelegate(), (int) effectDuration, (int) this.effectStrength)
                 );
             }
         }

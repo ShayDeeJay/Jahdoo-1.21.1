@@ -1,25 +1,22 @@
-package org.jahdoo.ability.effects.custom_effects.type_effects.fire_effect;
+package org.jahdoo.ability.effects.type_effects.inferno;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.EffectHelpers;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.DamageUtil;
-import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ability.effects.EffectParticles.*;
+import static org.jahdoo.ability.effects.EffectHelpers.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.utils.ModHelpers.sendEffectPacketsToPlayerDistance;
 
 public class InfernoEffect extends MobEffect {
 
@@ -32,15 +29,11 @@ public class InfernoEffect extends MobEffect {
     public boolean applyEffectTick(LivingEntity targetEntity, int pAmplifier) {
         if(targetEntity.isAlive()){
             if (targetEntity.level() instanceof ServerLevel serverLevel) {
-                var getRandomChance = ModHelpers.Random.nextInt(0, Math.max((20 - pAmplifier), 1));
+                var getRandomChance = EffectHelpers.getGetRandomChance(pAmplifier);
                 if (getRandomChance == 0) DamageUtil.damageWithJahdoo(targetEntity, pAmplifier);
                 setEffectParticle(getRandomChance, targetEntity, serverLevel, getElement(), SoundEvents.PLAYER_HURT_ON_FIRE);
-                targetEntity.addEffect(new CustomMobEffect(MobEffects.GLOWING.getDelegate(), 2, 1));
-                var effectInstance = new CustomMobEffect(EffectsRegister.INFERNO_EFFECT, 10, pAmplifier);
-                sendEffectPacketsToPlayerDistance(targetEntity.position(), 50, serverLevel, targetEntity.getId(), effectInstance);
             }
         }
-
         return true;
     }
 

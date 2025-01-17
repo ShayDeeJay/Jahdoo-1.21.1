@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.abilities.ability_data.ElementalShooterAbility;
-import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.particle.ParticleHandlers;
@@ -148,7 +148,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
     private void applyEffect(LivingEntity livingEntity, Holder<MobEffect> mobEffect){
         if(!livingEntity.hasEffect(mobEffect)){
             if (ModHelpers.Random.nextInt(0, this.effectChance == 0 ? 1 : (int) this.effectChance) == 0) {
-                livingEntity.addEffect(new CustomMobEffect(mobEffect, (int) effectDuration, (int) effectStrength));
+                livingEntity.addEffect(new JahdooMobEffect(mobEffect, (int) effectDuration, (int) effectStrength));
             }
         }
     }

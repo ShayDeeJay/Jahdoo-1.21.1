@@ -1,4 +1,4 @@
-package org.jahdoo.ability.effects.custom_effects;
+package org.jahdoo.ability.effects;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;

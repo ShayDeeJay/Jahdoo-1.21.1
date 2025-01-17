@@ -12,21 +12,28 @@ import static org.jahdoo.ability.rarity.JahdooRarity.*;
 public class LocalLootBeamData {
 
     public static LootBeamComponent rarityLootBeam(JahdooRarity rarity){
-        var beamHeight = 0.6F + ((float) rarity.getId() / 4);
-        var beamRadius = 0.55F + ((float) rarity.getId() / 10);
-        var shadowRadius = 0.2f + ((float) rarity.getId() / 10);
+        var beamHeight = 0.5F + ((float) rarity.getId() / 4);
+        var beamRadius = 0.35F + ((float) rarity.getId() / 10);
+        var shadowRadius = 0.4f + ((float) rarity.getId() / 10);
         var renderDistance = 48.0 + (rarity.getId() * 20);
-        return new LootBeamComponent(rarity.getColour(), beamHeight, 0.8F, 0F, 0.2F, true, true, true, beamRadius, 0.4F, shadowRadius, true, renderDistance);
+        return new LootBeamComponent(rarity.getColour(), beamHeight, 0.8F,  0.2F, true, true, beamRadius, 0.4F, shadowRadius, true, renderDistance, false, 20, 0.1, shadowRadius, false);
     }
 
     public static LootBeamComponent lootBeamWithColour(int colour){
         var beamHeight = 0.75F;
-        var beamRadius = 0.40F;
-        var shadowRadius = 0.2f;
+        var beamRadius = 0.45F;
+        var shadowRadius = 0.3f;
         var renderDistance = 64.0;
-        return new LootBeamComponent(colour, beamHeight, 0.8F, 0F, 0.2F, true, true, true, beamRadius, 0.4F, shadowRadius, true, renderDistance);
+        return new LootBeamComponent(colour, beamHeight, 0.8F,  0.2F, true, true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  false, 20, 0.1, shadowRadius, false);
     }
 
+    public static LootBeamComponent legendaryLootBeam(JahdooRarity rarity){
+        var beamHeight = 0.5F + ((float) rarity.getId() / 4);
+        var beamRadius = 0.35F + ((float) rarity.getId() / 10);
+        var shadowRadius = 0.4f + ((float) rarity.getId() / 10);
+        var renderDistance = 128;
+        return new LootBeamComponent(rarity.getColour(), beamHeight, 0.8F,  0.2F, true, true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  true, 5, 0.25, 1.5, true);
+    }
 
     public static void attachComponent (ItemStack itemStack, JahdooRarity rarity) {
         var component =  switch (rarity.getId()){
@@ -45,5 +52,5 @@ public class LocalLootBeamData {
     public static LootBeamComponent RARE_ITEM = rarityLootBeam(RARE);
     public static LootBeamComponent EPIC_ITEM = rarityLootBeam(EPIC);
     public static LootBeamComponent LEGENDARY_ITEM = rarityLootBeam(LEGENDARY);
-    public static LootBeamComponent ETERNAL_ITEM = rarityLootBeam(ETERNAL);
+    public static LootBeamComponent ETERNAL_ITEM = legendaryLootBeam(ETERNAL);
 }

@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.abilities.ability_data.HellfireAbility;
-import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.particle.ParticleHandlers;
@@ -125,7 +125,7 @@ public class HellFire extends DefaultEntityBehaviour {
         var livingEntity = this.getEntityInRange(positionsA);
         if (livingEntity == null) return;
         if(!canDamageEntity(livingEntity, this.aoeCloud.getOwner())) return;
-        livingEntity.addEffect(new CustomMobEffect(EffectsRegister.INFERNO_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
+        livingEntity.addEffect(new JahdooMobEffect(EffectsRegister.INFERNO_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
         DamageUtil.damageWithJahdoo(livingEntity, aoeCloud.getOwner(), damage);
     }
 

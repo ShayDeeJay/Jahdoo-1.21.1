@@ -1,28 +1,20 @@
-package org.jahdoo.ability.effects.custom_effects.type_effects;
+package org.jahdoo.ability.effects;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import org.jahdoo.ability.effects.EffectParticles;
-import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.utils.ModHelpers;
 
-public class FrostEffect extends MobEffect {
-    public FrostEffect(MobEffectCategory pCategory, int pColor) {
+public class StunEffect extends MobEffect {
+    public StunEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
     }
 
     @Override
     public boolean applyEffectTick(LivingEntity targetEntity, int pAmplifier) {
-        if(targetEntity.level() instanceof ServerLevel serverLevel){
-            int getRandomChance = ModHelpers.Random.nextInt(0,20);
-            EffectParticles.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementRegistry.FROST.get(), SoundRegister.ICE_ATTACH.get());
-        }
+        this.addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.withDefaultNamespace("assets.jahdoo.movement_speed_stun"), -((double) pAmplifier / 100), AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
         return true;
     }
 

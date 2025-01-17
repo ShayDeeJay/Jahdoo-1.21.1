@@ -1,16 +1,13 @@
 package org.jahdoo.networking.packet.server2client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Holder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.utils.ModHelpers;
 
@@ -50,7 +47,7 @@ public class EffectSyncS2CPacket implements CustomPacketPayload {
                     if(level != null) {
                         var entity = level.getEntity(id);
                         if(entity instanceof LivingEntity livingEntity) {
-                            livingEntity.addEffect(new CustomMobEffect(EffectsRegister.MYSTIC_EFFECT, duration, amp));
+                            livingEntity.addEffect(new JahdooMobEffect(EffectsRegister.MYSTIC_EFFECT, duration, amp));
                         }
                     }
                 }

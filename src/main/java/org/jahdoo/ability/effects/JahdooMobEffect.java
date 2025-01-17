@@ -5,9 +5,9 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 
-public class CustomMobEffect extends MobEffectInstance {
+public class JahdooMobEffect extends MobEffectInstance {
 
-    public CustomMobEffect(Holder<MobEffect> pEffect, int pDuration, int pAmplifier) {
+    public JahdooMobEffect(Holder<MobEffect> pEffect, int pDuration, int pAmplifier) {
         super(pEffect, pDuration, pAmplifier, false, false, false);
     }
 

@@ -1,6 +1,5 @@
 package org.jahdoo.ability.abilities.ability_data;
 
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;
@@ -11,21 +10,17 @@ import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.entities.living.Decoy;
-import org.jahdoo.particle.ParticleHandlers;
-import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.ability.AbilityBuilder;
 
-import java.util.List;
-
+import static org.jahdoo.particle.ParticleHandlers.getFromAllRandom;
 import static org.jahdoo.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.utils.ModHelpers.Random;
 
 
 public class EscapeDecoyAbility extends AbilityRegistrar {
@@ -77,9 +72,9 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
             var duration = (int) tagModifier.get(EFFECT_DURATION).actualValue();
 
             var lookVector = player.getLookAngle();
-            player.addEffect(new CustomMobEffect(MobEffects.MOVEMENT_SPEED, duration, 6));
-            player.addEffect(new CustomMobEffect(MobEffects.REGENERATION, duration, 0));
-            player.addEffect(new CustomMobEffect(EffectsRegister.STEP_BOOST, duration, 1));
+            player.addEffect(new JahdooMobEffect(MobEffects.MOVEMENT_SPEED, duration, 6));
+            player.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, duration, 0));
+            player.addEffect(new JahdooMobEffect(EffectsRegister.STEP_BOOST, duration, 1));
 
             ModHelpers.getSoundWithPositionV(player.level(), player.position(), SoundEvents.WARDEN_ATTACK_IMPACT, 1,0.6f);
             ModHelpers.getSoundWithPositionV(player.level(), player.position(), SoundEvents.CAMEL_DASH, 1,1.6f);
@@ -103,15 +98,6 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
         for (int i = 0; i < 10; i++) {
             sendParticles(livingEntity.level(), getFromAllRandom(element, 10, 1.6f), livingEntity.position().add(0, 1f, 0), 5, 0, 0.5, 0, 0.15f);
         }
-    }
-
-    public static ParticleOptions getFromAllRandom(AbstractElement element, int lifetime, float size){
-        var baked = ParticleHandlers.bakedParticleOptions(element.getTypeId(), lifetime, size, false);
-        var generic = ParticleHandlers.genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, lifetime, size);
-        var magic = ParticleHandlers.genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, element, lifetime, size);
-        var soft = ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, element, lifetime, size);
-        var collectTypes = List.of(baked, generic, magic, soft);
-        return collectTypes.get(Random.nextInt(collectTypes.size()));
     }
 
     @Override

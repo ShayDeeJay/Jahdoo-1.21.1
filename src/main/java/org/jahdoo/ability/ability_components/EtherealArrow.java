@@ -13,7 +13,7 @@ import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
-import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.ability.AbilityBuilder;
@@ -99,7 +99,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
             }
 
             if (ModHelpers.Random.nextInt(0, (int) Math.max(effectChance, 1)) == 0) {
-                hitEntity.addEffect(new CustomMobEffect(genericProjectile.getElementType().elementEffect(), (int) effectDuration, (int) effectStrength));
+                hitEntity.addEffect(new JahdooMobEffect(genericProjectile.getElementType().elementEffect(), (int) effectDuration, (int) effectStrength));
             }
 
             DamageUtil.damageWithJahdoo(hitEntity, this.genericProjectile.getOwner(), (float) damage);

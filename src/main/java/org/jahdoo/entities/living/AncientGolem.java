@@ -40,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
+import static org.jahdoo.particle.ParticleHandlers.getFromAllRandom;
 
 public class AncientGolem extends IronGolem implements TamableEntity {
 
@@ -180,7 +181,7 @@ public class AncientGolem extends IronGolem implements TamableEntity {
                 float y = 1f;
                 ParticleHandlers.sendParticles(
                     level,
-                    EscapeDecoyAbility.getFromAllRandom(element(), 12, 1f),
+                    getFromAllRandom(element(), 12, 1f),
                     position.add(0, y, 0), isRunning ? 5 : 0,
                     directions.x, directions.y, directions.z, 0.12
                 );

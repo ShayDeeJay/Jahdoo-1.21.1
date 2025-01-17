@@ -11,7 +11,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.abilities.ability_data.BoltzAbility;
-import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.ElementProjectile;
 import org.jahdoo.particle.ParticleHandlers;
@@ -117,7 +117,7 @@ public class Boltz extends DefaultEntityBehaviour {
                 if (DefaultEntityBehaviour.canDamageEntity(livingEntity, (LivingEntity) owner)) {
                     DamageUtil.damageWithJahdoo(livingEntity, owner, (float) this.damage);
                     if(Random.nextInt(0, (int) effectChance) == 0) {
-                        livingEntity.addEffect(new CustomMobEffect(EffectsRegister.LIGHTNING_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
+                        livingEntity.addEffect(new JahdooMobEffect(EffectsRegister.LIGHTNING_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
                     }
                 }
             }

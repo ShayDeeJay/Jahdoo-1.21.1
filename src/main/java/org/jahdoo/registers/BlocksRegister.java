@@ -21,6 +21,7 @@ import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeBlock;
 import org.jahdoo.block.crafter.CreatorBlock;
 import org.jahdoo.block.infuser.InfuserBlock;
 import org.jahdoo.block.light_block.LightBlock;
+import org.jahdoo.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.block.tank.NexiteTankBlock;
 import org.jahdoo.block.wand.WandBlock;
 import org.jahdoo.block.wand_block_manager.WandManagerBlock;
@@ -42,6 +43,8 @@ public class BlocksRegister {
     public static DeferredHolder<Block, Block> WAND = BLOCKS.register("wand_mystic", WandBlock::new);
     public static DeferredHolder<Block, Block> TANK = registerBlock("tank", NexiteTankBlock::new);
     public static DeferredHolder<Block, Block> LIGHTING = BLOCKS.register("lighting", LightBlock::new);
+    public static DeferredHolder<Block, Block> SHOPPING_TABLE = registerBlock("shopping_table", ShoppingTableBlock::new);
+
 
     public static DeferredHolder<Block, Block> NEXITE_ORE = registerBlock("nexite_ore",
         () -> new DropExperienceBlock(

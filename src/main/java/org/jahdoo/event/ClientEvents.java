@@ -23,6 +23,7 @@ import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.client.RenderHelpers.drawTexture;
 import static org.jahdoo.event.event_helpers.EventHelpers.getEntityPlayerIsLookingAt;
+import static org.jahdoo.event.event_helpers.EventHelpers.mysticEffectClient;
 import static org.jahdoo.event.event_helpers.KeyBindHelper.*;
 import static org.jahdoo.event.event_helpers.OverlayEvent.crosshairManager;
 import static org.jahdoo.event.event_helpers.OverlayEvent.simpleGui;
@@ -54,7 +55,6 @@ public class ClientEvents {
     @SubscribeEvent
     public static void entityRenderer(RenderLivingEvent.Pre event) {
         mysticEffectClient(event);
-        infernoEffectClient(event);
 
 //         else {
 //            var player = Minecraft.getInstance().player;
@@ -75,43 +75,6 @@ public class ClientEvents {
 //                pose.popPose();
 //            }
 //        }
-    }
-    private static void infernoEffectClient(RenderLivingEvent.Pre event) {
-        var entity = event.getEntity();
-        var effect = EffectsRegister.INFERNO_EFFECT;
-        var putEffect = entity.getEffect(effect);
-        if(putEffect != null){
-            var player = Minecraft.getInstance().player;
-            if(player != null /*&& getEntityPlayerIsLookingAt(player, 30) == entity*/){
-                var pose = event.getPoseStack();
-                var buffer = event.getMultiBufferSource();
-                var scale = Math.sin((entity.tickCount + event.getPartialTick()) / 5.0F) * 0.08F + 0.4 + (entity.getBbWidth() * 4);
-                pose.pushPose();
-                var infCol = ElementRegistry.INFERNO.get();
-                var color = FastColor.ARGB32.color(155, infCol.textColourPrimary());
-                pose.translate(0, 0.11f,0);
-//                drawTexture(pose.last().copy().copy(), buffer, 255, (float) scale, ModHelpers.res("textures/entity/shield.png"), color);
-                pose.popPose();
-            }
-            if(putEffect.getDuration() == 0) entity.removeEffect(effect);
-        }
-    }
-
-
-    private static void mysticEffectClient(RenderLivingEvent.Pre event) {
-        var entity = event.getEntity();
-        var effect = EffectsRegister.MYSTIC_EFFECT;
-        var putEffect = entity.getEffect(effect);
-        if(entity.hasEffect(effect)){
-            var height = entity.getBbHeight() / 2;
-            var tick = entity.tickCount;
-            var anim = (tick + event.getPartialTick());
-            var pos = event.getPoseStack();
-            pos.rotateAround(Axis.XN.rotationDegrees(anim), 0, height, 0);
-            pos.rotateAround(Axis.YN.rotationDegrees(anim), 0, height, 0);
-            pos.rotateAround(Axis.ZN.rotationDegrees(anim), 0, height, 0);
-            if(putEffect.getDuration() == 0) entity.removeEffect(effect);
-        }
     }
 
     @SubscribeEvent

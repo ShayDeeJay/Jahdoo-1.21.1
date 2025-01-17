@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ability.abilities.ability_data.StormRushAbility;
-import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -48,7 +48,7 @@ public abstract class PlayerSpinAttackMixin extends LivingEntity {
                     var strength = getSpecificValue(ability, wandAbilityHolder, EFFECT_STRENGTH);
                     if (target instanceof LivingEntity livingEntity) {
                         if (Random.nextInt(0, (int) chance) == 0) {
-                            livingEntity.addEffect(new CustomMobEffect(LIGHTNING_EFFECT, (int) duration, (int) strength));
+                            livingEntity.addEffect(new JahdooMobEffect(LIGHTNING_EFFECT, (int) duration, (int) strength));
                         }
                     }
                 }

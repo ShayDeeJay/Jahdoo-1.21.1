@@ -131,25 +131,25 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.getProjectile.getGenericProjectile(this);
     }
 
-    public GenericProjectile(
-        Entity owner,
-        double spawnX, double spawnY, double spawnZ,
-        String projectileSelectionIndex,
-        WandAbilityHolder wandAbilityHolder,
-        String abilityId,
-        AbstractElement element
-    ) {
-        super(EntitiesRegister.GENERIC_PROJECTILE.get(), owner.level());
-        this.moveTo(spawnX, spawnY, spawnZ, this.getYRot(), this.getXRot());
-        this.reapplyPosition();
-        this.setOwner(owner);
-        this.wandAbilityHolder = wandAbilityHolder;
-        this.abilityId = abilityId;
-        this.projectileSelectionIndex = projectileSelectionIndex;
-        this.getProjectile = EntityPropertyRegister.getProperty(projectileSelectionIndex);
-        this.getProjectile.getGenericProjectile(this);
-        this.getElement = element;
-    }
+//    public GenericProjectile(
+//        Entity owner,
+//        double spawnX, double spawnY, double spawnZ,
+//        String projectileSelectionIndex,
+//        WandAbilityHolder wandAbilityHolder,
+//        String abilityId,
+//        AbstractElement element
+//    ) {
+//        super(EntitiesRegister.GENERIC_PROJECTILE.get(), owner.level());
+//        this.moveTo(spawnX, spawnY, spawnZ, this.getYRot(), this.getXRot());
+//        this.reapplyPosition();
+//        this.setOwner(owner);
+//        this.wandAbilityHolder = wandAbilityHolder;
+//        this.abilityId = abilityId;
+//        this.projectileSelectionIndex = projectileSelectionIndex;
+//        this.getProjectile = EntityPropertyRegister.getProperty(projectileSelectionIndex);
+//        this.getProjectile.getGenericProjectile(this);
+//        this.getElement = element;
+//    }
 
     public WandAbilityHolder wandAbilityHolder(){
         return this.wandAbilityHolder;

@@ -57,6 +57,7 @@ import static net.minecraft.world.entity.ExperienceOrb.getExperienceValue;
 import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.*;
 import static org.jahdoo.block.augment_modification_station.AugmentModificationBlock.SHAPE_COMBINED;
 import static org.jahdoo.challenge.RewardLootTables.attachItemData;
+import static org.jahdoo.particle.ParticleHandlers.getFromAllRandom;
 import static org.jahdoo.registers.AttachmentRegister.*;
 import static org.jahdoo.registers.BlocksRegister.CHALLENGE_ALTAR;
 import static org.jahdoo.registers.BlocksRegister.sharedBlockBehaviour;
@@ -149,7 +150,7 @@ public class LootChestBlock extends BaseEntityBlock {
     private static void particleBurst(ServerLevel serverLevel, AbstractElement element, Vec3 pCenter) {
         ParticleHandlers.particleBurst(
             serverLevel, pCenter.add(0, 0.3f, 0), 1,
-            EscapeDecoyAbility.getFromAllRandom(element, 10, Random.nextFloat(1, 2)),
+            getFromAllRandom(element, 10, Random.nextFloat(1, 2)),
             0, 0.3, 0, 0.2f, 3
         );
     }

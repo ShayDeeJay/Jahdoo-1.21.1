@@ -17,7 +17,7 @@ import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.registers.*;
-import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
@@ -162,7 +162,7 @@ public class Static implements AbstractAttachment {
 
                     if (getRandomChance == 0) {
                         entities.addEffect(
-                            new CustomMobEffect(
+                            new JahdooMobEffect(
                                 EffectsRegister.LIGHTNING_EFFECT.getDelegate(), (int) effectDurationA, (int) effectStrengthA
                             )
                         );

@@ -19,7 +19,7 @@ import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
-import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
@@ -173,7 +173,7 @@ public class Permafrost extends DefaultEntityBehaviour {
         if(livingEntity1 != null && canDamageEntity(livingEntity1, this.aoeCloud.getOwner())){
             var effect = livingEntity1.getEffect(EffectsRegister.FROST_EFFECT);
             if(this.aoeCloud.tickCount % 20 == 0){
-                livingEntity1.addEffect(new CustomMobEffect(EffectsRegister.FROST_EFFECT.getDelegate(), (int) effectDuration, Math.min((int) effectStrength, (effect == null ? 0 : effect.getAmplifier()) + 1)));
+                livingEntity1.addEffect(new JahdooMobEffect(EffectsRegister.FROST_EFFECT.getDelegate(), (int) effectDuration, Math.min((int) effectStrength, (effect == null ? 0 : effect.getAmplifier()) + 1)));
             }
         }
     }

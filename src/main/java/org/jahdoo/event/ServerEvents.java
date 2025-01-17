@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -67,7 +68,6 @@ public class ServerEvents {
         setGameModeOnDimChange(event, player);
     }
 
-
     @SubscribeEvent
     public static void effectEvent(MobEffectEvent.Applicable event) {
         disallowEffectsInCustomDim(event);
@@ -90,7 +90,13 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public static void levelChangeEvent(LevelTickEvent.Pre tickEvent){
+    public static void onEntityDamageEvent(LivingDamageEvent.Pre event){
+        var entity = event.getEntity();
+        greaterFrostEffectDamageAmplifier(event, entity);
+    }
+
+    @SubscribeEvent
+    public static void levelTickEvent(LevelTickEvent.Pre tickEvent){
         if(tickEvent.getLevel() instanceof CustomLevel level){
             for (var entity : level.getEntities().getAll()) {
                 if(entity instanceof Mob mob){
@@ -122,6 +128,7 @@ public class ServerEvents {
         var entity = event.getEntity();
         var source = event.getSource();
 
+        onDeathGreaterFrostEffect(entity);
         resetGameModeOnDeath(entity);
         saveDestinyBondItems(entity);
         entityDeathLoot(entity, source);

@@ -18,7 +18,7 @@ import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.SharedFireProperties;
 import org.jahdoo.ability.abilities.ability_data.FireballAbility;
 import org.jahdoo.ability.ability_components.ArmageddonModule;
-import org.jahdoo.ability.effects.CustomMobEffect;
+import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.ElementProjectile;
 import org.jahdoo.particle.ParticleHandlers;
@@ -28,7 +28,6 @@ import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.DamageUtil;
 import org.jahdoo.utils.ModHelpers;
-import org.jahdoo.utils.PositionGetters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,7 +124,7 @@ public class FireBall extends DefaultEntityBehaviour {
     public void onEntityHit(LivingEntity hitEntity) {
         var chance = effectChance == 0 ? 100 : effectChance;
         if (ModHelpers.Random.nextInt(0, (int) chance) == 0) {
-            hitEntity.addEffect(new CustomMobEffect(EffectsRegister.INFERNO_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
+            hitEntity.addEffect(new JahdooMobEffect(EffectsRegister.INFERNO_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
         }
         DamageUtil.damageWithJahdoo(hitEntity, this.elementProjectile.getOwner(), damage);
         onHitBehaviour();

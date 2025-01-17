@@ -1,4 +1,4 @@
-package org.jahdoo.ability.effects.custom_effects.type_effects.mystic_effect;
+package org.jahdoo.ability.effects.type_effects.mystic;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -7,19 +7,17 @@ import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.effects.CustomMobEffect;
-import org.jahdoo.ability.effects.EffectParticles;
+import org.jahdoo.ability.effects.JahdooMobEffect;
+import org.jahdoo.ability.effects.EffectHelpers;
 import org.jahdoo.networking.packet.server2client.EffectSyncS2CPacket;
 import org.jahdoo.networking.packet.server2client.MoveClientEntitySyncS2CPacket;
 import org.jahdoo.particle.ParticleHandlers;
-import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.SoundRegister;
@@ -46,7 +44,7 @@ public class GreaterMysticEffect extends MobEffect {
         if(targetEntity.isAlive()){
             if (targetEntity.level() instanceof ServerLevel serverLevel) {
                 onTickApply(targetEntity, pAmplifier, serverLevel, getElement());
-                sendEffectPacketsToPlayerDistance(targetEntity.position(), 50, serverLevel, targetEntity.getId(), new CustomMobEffect(EffectsRegister.MYSTIC_EFFECT, 10, pAmplifier));
+                sendEffectPacketsToPlayerDistance(targetEntity.position(), 50, serverLevel, targetEntity.getId(), new JahdooMobEffect(EffectsRegister.MYSTIC_EFFECT, 10, pAmplifier));
                 sendPacketsToPlayer(serverLevel, new EffectSyncS2CPacket(targetEntity.getId(), 4, pAmplifier));
             }
         } else removeThis(targetEntity);
@@ -59,7 +57,7 @@ public class GreaterMysticEffect extends MobEffect {
     }
 
     private void onTickApply(LivingEntity targetEntity, int pAmplifier, ServerLevel serverLevel, AbstractElement element) {
-        targetEntity.addEffect(new CustomMobEffect(MobEffects.GLOWING.getDelegate(), 2, 1));
+        targetEntity.addEffect(new JahdooMobEffect(MobEffects.GLOWING.getDelegate(), 2, 1));
         var currentYVelocity = targetEntity.getDeltaMovement().y;
         var newYVelocity = Math.max(currentYVelocity, 0.01);
 
@@ -88,7 +86,7 @@ public class GreaterMysticEffect extends MobEffect {
     private static void idleAnim(LivingEntity targetEntity, ServerLevel serverLevel, AbstractElement element) {
         var getRandomChance = Random.nextInt(0, 10);
         var sound = SoundEvents.SOUL_ESCAPE.value();
-        EffectParticles.setEffectParticle(getRandomChance, targetEntity, serverLevel, element, sound);
+        EffectHelpers.setEffectParticle(getRandomChance, targetEntity, serverLevel, element, sound);
     }
 
     private static void explosionHandler(LivingEntity targetEntity, int pAmplifier, ServerLevel serverLevel) {

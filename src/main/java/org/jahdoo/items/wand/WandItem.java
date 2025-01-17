@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.wand.WandBlockEntity;
+import org.jahdoo.challenge.LocalLootBeamData;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.items.JahdooItem;
@@ -27,6 +29,9 @@ import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.shaydee.loot_beams_neoforge.LootBeamRenderer;
+import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
+import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -41,6 +46,7 @@ import java.util.function.Consumer;
 
 import static net.minecraft.sounds.SoundEvents.ALLAY_THROW;
 import static net.minecraft.sounds.SoundEvents.EVOKER_PREPARE_SUMMON;
+import static org.jahdoo.ability.rarity.JahdooRarity.*;
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
 import static org.jahdoo.particle.ParticleHandlers.*;
@@ -163,8 +169,9 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 //    }
 
         if (interactionHand == InteractionHand.MAIN_HAND) {
-            var item = player.getMainHandItem();
 
+            var item = player.getMainHandItem();
+            LocalLootBeamData.attachComponent(item, ETERNAL);
             player.startUsingItem(InteractionHand.MAIN_HAND);
             CastHelper.use(player);
             return InteractionResultHolder.pass(item);

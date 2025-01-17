@@ -28,10 +28,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.ability.abilities.ability_data.EscapeDecoyAbility.getFromAllRandom;
 import static org.jahdoo.ability.abilities.ability_data.FrostboltsAbility.NUMBER_OF_PROJECTILES;
 import static org.jahdoo.items.wand.CastHelper.castAnimation;
 import static org.jahdoo.items.wand.WandAnimations.SINGLE_CAST_ID;
+import static org.jahdoo.particle.ParticleHandlers.getFromAllRandom;
 import static org.jahdoo.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.registers.AttributesRegister.FROST_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
