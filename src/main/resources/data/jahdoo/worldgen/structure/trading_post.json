@@ -1,6 +1,6 @@
 {
   "type": "minecraft:jigsaw",
-  "start_pool": "jahdoo:challenge_arena/challenge_pool_1",
+  "start_pool": "jahdoo:trading_post/trading_post_main",
   "size": 7,
   "biomes": "#jahdoo:has_structure/trial",
   "terrain_adaptation": "beard_thin",

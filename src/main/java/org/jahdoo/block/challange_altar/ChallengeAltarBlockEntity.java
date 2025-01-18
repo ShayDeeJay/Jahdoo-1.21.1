@@ -88,7 +88,6 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
-        System.out.println(ChallengeAltarData.getMaxRounds(this));
         if(pLevel instanceof ServerLevel serverLevel){
             removeKilledMobs();
             if(ChallengeAltarData.isCompleted(this)) {

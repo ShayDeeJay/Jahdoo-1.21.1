@@ -1,18 +1,20 @@
 package org.jahdoo.challenge;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
-import net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -56,10 +58,10 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> WIZARD_CHEST_BUILDER = LootItem.lootTableItem(ItemsRegister.WIZARD_CHESTPLATE.get());
     public static final LootPoolSingletonContainer.Builder<?> WIZARD_LEGGINGS_BUILDER = LootItem.lootTableItem(ItemsRegister.WIZARD_LEGGINGS.get());
     public static final LootPoolSingletonContainer.Builder<?> WIZARD_BOOTS_BUILDER = LootItem.lootTableItem(ItemsRegister.WIZARD_BOOTS.get());
-    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_HELM_BUILDER = LootItem.lootTableItem(ItemsRegister.WIZARD_HELMET.get());
-    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_CHEASTPLATE_BUILDER = LootItem.lootTableItem(ItemsRegister.WIZARD_CHESTPLATE.get());
-    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_LEGGINGS_BUILDER = LootItem.lootTableItem(ItemsRegister.WIZARD_LEGGINGS.get());
-    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_BOOTS_BUILDER = LootItem.lootTableItem(ItemsRegister.WIZARD_BOOTS.get());
+    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_HELM_BUILDER = LootItem.lootTableItem(ItemsRegister.MAGE_HELMET.get());
+    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_CHEASTPLATE_BUILDER = LootItem.lootTableItem(ItemsRegister.MAGE_CHESTPLATE.get());
+    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_LEGGINGS_BUILDER = LootItem.lootTableItem(ItemsRegister.MAGE_LEGGINGS.get());
+    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_BOOTS_BUILDER = LootItem.lootTableItem(ItemsRegister.MAGE_BOOTS.get());
     public static final LootPoolSingletonContainer.Builder<?> ELYTRA_BUILDER = LootItem.lootTableItem(Items.ELYTRA);
     public static final LootPoolSingletonContainer.Builder<?> GOLD_COIN = LootItem.lootTableItem(ItemsRegister.GOLD_COIN.get());
     public static final LootPoolSingletonContainer.Builder<?> SILVER_COIN = LootItem.lootTableItem(ItemsRegister.SILVER_COIN.get());
@@ -71,23 +73,24 @@ public class RewardLootTables {
         var wand = randomWand != null ? randomWand : ItemsRegister.WAND_ITEM_FROST.get();
 
         var wand_builder = LootItem.lootTableItem(wand);
-        var loot = LootTable.lootTable().withPool(commonPool());
+        var loot = LootTable.lootTable().withPool(commonPool(serverLevel));
 
-        loot.withPool(rareWeaponPool(wand_builder));
-        loot.withPool(rarePool());
+        if (Random.nextInt(Math.max(1, 10 - level)) == 0) loot.withPool(epicPool(serverLevel));
+        if (Random.nextInt(Math.max(1, 100 - level)) == 0) loot.withPool(legendaryPool(serverLevel));
 
-        if (Random.nextInt(Math.max(1, 10 - level)) == 0) loot.withPool(epicPool());
-        if (Random.nextInt(Math.max(1, 100 - level)) == 0) loot.withPool(legendaryPool());
+        loot.withPool(rareWeaponPool(wand_builder, serverLevel));
+        loot.withPool(rarePool(serverLevel));
 
         var param = LootContextParams.ORIGIN;
         var vault = LootContextParamSets.VAULT;
+        var shouldEnchant = Random.nextInt(10) == 0 ? loot.apply(randomApplicableEnchantment(serverLevel.registryAccess())) : loot;
         var lootParams = new LootParams.Builder(serverLevel).withParameter(param, pos).create(vault);
-        var lootWithEnchantment = Random.nextInt(5) == 0 ? loot.apply(randomApplicableEnchantment(serverLevel.registryAccess())) : loot;
-        return lootWithEnchantment.build().getRandomItems(lootParams);
+        return shouldEnchant.build().getRandomItems(lootParams);
     }
 
-    private static LootPool.@NotNull Builder legendaryPool() {
-        return LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+    private static LootPool.@NotNull Builder legendaryPool(ServerLevel serverLevel) {
+        var builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F));
+        return builder
             .add(AUGMENT_HYPER_CORE_BUILDER.setWeight(6))
             .add(WIZARD_HELM_BUILDER.setWeight(1))
             .add(WIZARD_CHEST_BUILDER.setWeight(1))
@@ -96,8 +99,9 @@ public class RewardLootTables {
             .add(GOLD_COIN.setWeight(1));
     }
 
-    private static LootPool.@NotNull Builder epicPool() {
-        return LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+    private static LootPool.@NotNull Builder epicPool(ServerLevel serverLevel) {
+        var builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F));
+        return builder
             .add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight(6))
             .add(TOME_OF_UNITY_BUILDER.setWeight(4))
             .add(BATTLEMAGE_HELM_BUILDER.setWeight(1))
@@ -106,26 +110,29 @@ public class RewardLootTables {
             .add(BATTLEMAGE_BOOTS_BUILDER.setWeight(1));
     }
 
-    private static LootPool.@NotNull Builder rarePool() {
-        return LootPool.lootPool().setRolls(UniformGenerator.between(1.0F, 3.0F))
+    private static LootPool.@NotNull Builder rarePool(ServerLevel serverLevel) {
+        var builder = LootPool.lootPool().setRolls(UniformGenerator.between(1.0F, 3.0F));
+        return builder
             .add(NEXITE_BLOCK_BUILDER.setWeight(20))
             .add(AUGMENT_CORE_BUILDER.setWeight(15))
             .add(BOOK_BUILDER.setWeight(5));
     }
 
-    private static LootPool.@NotNull Builder rareWeaponPool(LootPoolSingletonContainer.Builder<? extends LootPoolSingletonContainer.Builder<?>> WAND_BUILDER) {
-        return LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-            .add(IRON_SWORD_BUILDER.setWeight(20))
-            .add(DIAMOND_SWORD_BUILDER.setWeight(10))
+    private static LootPool.@NotNull Builder rareWeaponPool(LootPoolSingletonContainer.Builder<? extends LootPoolSingletonContainer.Builder<?>> WAND_BUILDER, ServerLevel serverLevel) {
+        var builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F));
+        return builder
             .add(RUNE.setWeight(5))
             .add(AUGMENT_ITEM_BUILDER.setWeight(5))
-            .add(NETHERITE_SWORD_BUILDER.setWeight(3))
             .add(SILVER_COIN.setWeight(1))
-            .add(WAND_BUILDER.setWeight(2));
+            .add(WAND_BUILDER.setWeight(2))
+            .add(IRON_SWORD_BUILDER.setWeight(20))
+            .add(DIAMOND_SWORD_BUILDER.setWeight(10))
+            .add(NETHERITE_SWORD_BUILDER.setWeight(2));
     }
 
-    private static LootPool.@NotNull Builder commonPool() {
-        return LootPool.lootPool().setRolls(UniformGenerator.between(2.0F, 5.0F))
+    private static LootPool.@NotNull Builder commonPool(ServerLevel serverLevel) {
+        var builder = LootPool.lootPool().setRolls(UniformGenerator.between(2.0F, 5.0F));
+        return builder
             .add(GOLDEN_CARROT_BUILDER.setWeight(50))
             .add(IRON_BUILDER.setWeight(35))
             .add(GOLD_BUILDER.setWeight(25))
@@ -138,6 +145,7 @@ public class RewardLootTables {
             .add(ELYTRA_BUILDER.setWeight(1));
     }
 
+
     public static void attachItemData(ServerLevel serverLevel, JahdooRarity rarity, ItemStack itemStack) {
         var item = itemStack.getItem();
         switch (item){
@@ -147,8 +155,22 @@ public class RewardLootTables {
             case RuneItem ignored -> RuneData.RuneHelpers.generateRandomTypAttribute(itemStack, null);
             case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem);
             case SwordItem ignored -> enchantSword(serverLevel, itemStack);
+            case EnchantedBookItem ignored -> enchantedBook(serverLevel, itemStack);
             default -> { /*IGNORE*/ }
         }
+    }
+
+    private static void enchantedBook(ServerLevel serverLevel, ItemStack itemStack){
+        serverLevel.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getRandom(RandomSource.create()).ifPresent(
+            key -> {
+                var value = key.getDelegate().value();
+                var maxLevel = value.getMaxLevel();
+                var minLevel = value.getMinLevel();
+                enchant(itemStack, serverLevel.registryAccess(), key.getKey(), maxLevel > minLevel ? Random.nextInt(minLevel, maxLevel) : 1);
+                var lootBeamData = DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA();
+                if(!itemStack.has(lootBeamData)) itemStack.set(lootBeamData, LocalLootBeamData.SPECIALLY_ENCHANTED_BOOK);
+            }
+        );
     }
 
     private static void enchantSword(ServerLevel serverLevel, ItemStack itemStack) {

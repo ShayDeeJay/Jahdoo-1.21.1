@@ -39,7 +39,7 @@ public class TomeOfUnity extends Item implements ICurioItem, JahdooItem {
         for (var tooltip : tooltips) {
             var text = "attribute.name.jahdoo.mana.mana_regen";
             var contains = tooltip.contains(Component.translatable(text));
-            var text1 = "attribute.name.jahdoo.mana.mana_pool";
+            var text1 = "attribute.name.jahdoo.fixed.mana.mana_pool";
             var contains1 = tooltip.contains(Component.translatable(text1));
             if(contains){
                 var value = getValue(tooltip);

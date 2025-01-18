@@ -64,7 +64,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
         if(!(entity instanceof Player player)) return null;
         var isContinueInstance = level instanceof CustomLevel;
         var getData = level.getData(AttachmentRegister.CHALLENGE_ALTAR);
-        return LevelGenerator.createNewWorld(player, level, isContinueInstance ? getData : ChallengeAltarData.newRound(6));
+        return LevelGenerator.createNewWorld(player, level, isContinueInstance ? getData : ChallengeAltarData.newRound(6), LevelGenerator.DimHandler.tradingPost());
     }
 
     @Override

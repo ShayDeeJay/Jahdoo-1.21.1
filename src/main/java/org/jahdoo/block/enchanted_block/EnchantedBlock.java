@@ -68,7 +68,6 @@ public class EnchantedBlock extends BaseEntityBlock {
     }
 
 
-
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(ENCHANTMENT_STAGE);

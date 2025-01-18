@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 
 import static org.jahdoo.particle.ParticleStore.rgbToInt;
 
-public abstract class AbstractBEInventory extends BlockEntity {
+public abstract class AbstractBEInventory extends SyncedBlockEntity {
 
     public static GenericParticleOptions processingParticle(int lifetime, float size, boolean staticSize, double speed){
         var element = ElementRegistry.UTILITY.get();
@@ -62,7 +62,7 @@ public abstract class AbstractBEInventory extends BlockEntity {
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider pRegistries) {
-        handleUpdateTag(pkt.getTag(), pRegistries);
+        super.onDataPacket(net, pkt, pRegistries);
         if(level == null) return;
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
@@ -134,16 +134,4 @@ public abstract class AbstractBEInventory extends BlockEntity {
         inputItemHandler.deserializeNBT(pRegistries, pTag.getCompound("inputInventory"));
         outputItemHandler.deserializeNBT(pRegistries, pTag.getCompound("outputInventory"));
     }
-
-    @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider pRegistries) {
-        return saveWithoutMetadata(pRegistries);
-    }
-
 }

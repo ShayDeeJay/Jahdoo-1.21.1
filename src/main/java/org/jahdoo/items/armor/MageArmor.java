@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import org.jahdoo.client.armor_renderer.MageArmorRenderer;
 import org.jahdoo.items.JahdooItem;
 import org.jetbrains.annotations.NotNull;
