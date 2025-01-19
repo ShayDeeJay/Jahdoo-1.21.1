@@ -115,8 +115,8 @@ public class AugmentItemHelper {
         }
     }
 
-    public static void augmentIdentifierSharedRarity(ItemStack itemStack, boolean withUtil){
-        var ability = JahdooRarity.getAbilityWithRarity(withUtil);
+    public static void augmentIdentifierSharedRarity(ItemStack itemStack, boolean withUtil, JahdooRarity rarity){
+        var ability = JahdooRarity.getAbilityWithRarity(withUtil, rarity);
         LocalLootBeamData.attachComponent(itemStack, ability.rarity());
         ability.setModifiers(itemStack);
         var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());

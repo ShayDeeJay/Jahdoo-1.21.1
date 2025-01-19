@@ -7,6 +7,7 @@ import net.casual.arcade.dimensions.level.builder.CustomLevelBuilder;
 import net.casual.arcade.dimensions.utils.impl.VoidChunkGenerator;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.*;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.resources.ResourceKey;
@@ -16,9 +17,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.*;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -33,6 +37,7 @@ import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.client.block_renderer.ShoppingTableRenderer;
 import org.jahdoo.registers.BlocksRegister;
+import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
@@ -47,6 +52,7 @@ import static org.jahdoo.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.challenge.LevelGenerator.DimHandler.TRADING_POST;
 import static org.jahdoo.challenge.LevelGenerator.DimHandler.TRIAL;
 import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
+import static org.jahdoo.registers.ItemsRegister.*;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class LevelGenerator {
@@ -86,7 +92,7 @@ public class LevelGenerator {
         }
 
         public static DimHandler tradingPost(){
-            return new DimHandler(new Vec3(-21.5, 50, -42.5), TRADING_POST);
+            return new DimHandler(new Vec3(-22.5, 51, -42.5), TRADING_POST);
         }
     }
 
@@ -176,19 +182,61 @@ public class LevelGenerator {
     }
 
     private static void setLootChests(ServerLevel level) {
-        var pos = new BlockPos(-25, 51, -21);
-        var posPurchase = new BlockPos(-20, 61, -26);
+        var chestPositions = new BlockPos(-21, 55, -25);
+        var eliteItemPosition = new BlockPos(-16, 54, -15);
+        var normalItemPosition = new BlockPos(-14, 53, -28);
+        var keyItemPosition = new BlockPos(-32, 53, -28);
 
-        var state = BlocksRegister.LOOT_CHEST.get().defaultBlockState().setValue(FACING, Direction.SOUTH);
-        var purchase = BlocksRegister.SHOPPING_TABLE.get().defaultBlockState().setValue(FACING, Direction.WEST);
-        level.setBlockAndUpdate(pos, state);
-        level.setBlockAndUpdate(pos.west(2), state);
-        level.setBlockAndUpdate(pos.west(4), state);
+        var chestState = BlocksRegister.LOOT_CHEST.get().defaultBlockState().setValue(FACING, Direction.SOUTH);
+        for(int i = 0; i <= 4; i += 2) level.setBlockAndUpdate(chestPositions.west(i), chestState);
 
-        level.setBlockAndUpdate(posPurchase,  purchase.setValue(TEXTURE, Random.nextInt(4)));
-        level.setBlockAndUpdate(posPurchase.south(1), purchase.setValue(TEXTURE, Random.nextInt(4)));
-        level.setBlockAndUpdate(posPurchase.south(4), purchase.setValue(TEXTURE, Random.nextInt(4)));
-        level.setBlockAndUpdate(posPurchase.south(5), purchase.setValue(TEXTURE, Random.nextInt(4)));
+        var shoppingTableState = BlocksRegister.SHOPPING_TABLE.get().defaultBlockState();
+
+        var eliteState = shoppingTableState.setValue(FACING, Direction.NORTH).setValue(TEXTURE, 2);
+        for(int i = 0; i <= 14; i += 7){
+            var pos = eliteItemPosition.west(i);
+            level.setBlockAndUpdate(pos, eliteState);
+            var blockEntity = level.getBlockEntity(pos);
+            if(blockEntity instanceof ShoppingTableEntity entity){
+                entity.setItem(RewardLootTables.getEliteItem(level, pos.getCenter()));
+                entity.setCost(new ItemStack(GOLD_COIN).copyWithCount(99));
+            }
+        }
+
+        var normalState = shoppingTableState.setValue(FACING, Direction.WEST);
+        for(int i = 0; i <= 6; i += 3) {
+            var isRandomTable = i == 0;
+            var pos = normalItemPosition.south(i);
+            level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, isRandomTable ? 3 : 0));
+            var blockEntity = level.getBlockEntity(pos);
+            if(blockEntity instanceof ShoppingTableEntity entity){
+                if(isRandomTable){
+                    entity.setCost(new ItemStack(GOLD_COIN).copyWithCount(1));
+                }
+            }
+        }
+
+        var keyState = shoppingTableState.setValue(FACING, Direction.EAST).setValue(TEXTURE, 1);
+        for(int i = 6; i >= 0; i -= 3) {
+            var pos = keyItemPosition.south(i);
+            level.setBlockAndUpdate(pos, keyState);
+            var blockEntity = level.getBlockEntity(pos);
+            if(blockEntity instanceof ShoppingTableEntity entity){
+                var itemStack = new ItemStack(ItemsRegister.LOOT_KEY);
+                var value = Random.nextInt(4);
+                itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(value));
+                entity.setItem(itemStack);
+
+                var cost = switch (value){
+                    case 1 -> new ItemStack(BRONZE_COIN).copyWithCount(64);
+                    case 2 -> new ItemStack(SILVER_COIN).copyWithCount(32);
+                    case 3 -> new ItemStack(GOLD_COIN).copyWithCount(64);
+                    default -> new ItemStack(BRONZE_COIN).copyWithCount(32);
+                };
+
+                entity.setCost(cost);
+            }
+        }
     }
 
     private static void playerSetup(Player player, ServerLevel serverLevel, int stage) {

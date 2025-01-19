@@ -3,15 +3,13 @@ package org.jahdoo.block.shopping_table;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -21,22 +19,16 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.block.BlockInteractionHandler;
-import org.jahdoo.challenge.RewardLootTables;
-import org.jahdoo.client.block_renderer.ShoppingTableRenderer;
 import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.Nullable;
-
-import static org.jahdoo.utils.ModHelpers.Random;
 
 public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -87,10 +79,52 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
         var entity = level.getBlockEntity(pos);
         if(!(entity instanceof ShoppingTableEntity shoppingTable)) return ItemInteractionResult.FAIL;
-        var stackInSlot = shoppingTable.getItem().extractItem(0, 1, false);
-        player.playSound(SoundEvents.ITEM_PICKUP, 0.5F, 0.8F);
-        AugmentItemHelper.throwOrAddItem(player, stackInSlot);
+        if(hasEnoughToBuy(player, shoppingTable.getCost().getItem(), shoppingTable.getCost().getCount())){
+            var isRandomisedTable = state.getValue(TEXTURE) == 3;
+            if(isRandomisedTable) shoppingTable.insertRandomItem();
+
+            var stackInSlot = shoppingTable.getItem().extractItem(0, 1, false);
+            if (!stackInSlot.isEmpty()) {
+                player.playSound(SoundEvents.ITEM_PICKUP, 0.5F, 0.8F);
+                AugmentItemHelper.throwOrAddItem(player, stackInSlot);
+                shoppingTable.getItem().setStackInSlot(1, ItemStack.EMPTY);
+                return ItemInteractionResult.SUCCESS;
+            }
+        }
+
+        ModHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_CLOSE_SHUTTER, 0.6F,2F);
+        if(level.isClientSide) player.displayClientMessage(Component.literal("Insufficient Funds"), true);
         return ItemInteractionResult.SUCCESS;
+    }
+
+    public static boolean hasEnoughToBuy(Player player, Item item, int quantity) {
+        int count = 0;
+        for (ItemStack stack : player.getInventory().items) {
+            if (stack.getItem() == item) count += stack.getCount();
+            if (count >= quantity) break;
+        }
+
+        if (count >= quantity) {
+            int remaining = quantity;
+            for (ItemStack stack : player.getInventory().items) {
+                if (stack.getItem() == item) {
+                    int stackSize = stack.getCount();
+
+                    if (stackSize <= remaining) {
+                        remaining -= stackSize;
+                        stack.setCount(0);
+                    } else {
+                        stack.shrink(remaining);
+                        remaining = 0;
+                    }
+
+                    if (remaining <= 0) break;
+                }
+            }
+            return true;
+        }
+
+        return false; // Not enough items
     }
 
     @Nullable

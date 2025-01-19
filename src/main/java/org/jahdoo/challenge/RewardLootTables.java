@@ -8,7 +8,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -29,7 +28,9 @@ import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ItemsRegister;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 
 import static org.jahdoo.challenge.EnchantmentHelpers.*;
@@ -69,18 +70,46 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> RUNE = LootItem.lootTableItem(ItemsRegister.RUNE.get());
 
     public static ObjectArrayList<ItemStack> getCompletionLoot(ServerLevel serverLevel, Vec3 pos, int level) {
-        var randomWand = ElementRegistry.getRandomElement().getWand();
-        var wand = randomWand != null ? randomWand : ItemsRegister.WAND_ITEM_FROST.get();
-
-        var wand_builder = LootItem.lootTableItem(wand);
         var loot = LootTable.lootTable().withPool(commonPool(serverLevel));
-
         if (Random.nextInt(Math.max(1, 10 - level)) == 0) loot.withPool(epicPool(serverLevel));
         if (Random.nextInt(Math.max(1, 100 - level)) == 0) loot.withPool(legendaryPool(serverLevel));
-
-        loot.withPool(rareWeaponPool(wand_builder, serverLevel));
+        loot.withPool(rareWeaponPool(serverLevel));
         loot.withPool(rarePool(serverLevel));
+        return createLootParams(serverLevel, pos, loot);
+    }
 
+    private static LootPoolSingletonContainer.@NotNull Builder<? extends LootPoolSingletonContainer.Builder<?>> getRandomWand() {
+        var randomWand = ElementRegistry.getRandomElement().getWand();
+        var wand = randomWand != null ? randomWand : ItemsRegister.WAND_ITEM_FROST.get();
+        return LootItem.lootTableItem(wand);
+    }
+
+    public static ItemStack getEliteItem(ServerLevel serverLevel, Vec3 pos) {
+        var loot = LootTable.lootTable().withPool(poolForEliteShopping());
+        var lootParams = ModHelpers.getRandomListElement(createLootParams(serverLevel, pos, loot));
+        var rarity = JahdooRarity.ETERNAL;
+        attachItemData(serverLevel, rarity, lootParams, true, rarity);
+        return lootParams;
+    }
+
+    private static LootPool.@NotNull Builder poolForEliteShopping() {
+        var builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F));
+        return builder
+            .add(RUNE.setWeight(5))
+            .add(AUGMENT_ITEM_BUILDER.setWeight(5))
+            .add(TOME_OF_UNITY_BUILDER.setWeight(4))
+            .add(getRandomWand().setWeight(2))
+            .add(WIZARD_HELM_BUILDER.setWeight(1))
+            .add(WIZARD_CHEST_BUILDER.setWeight(1))
+            .add(WIZARD_LEGGINGS_BUILDER.setWeight(1))
+            .add(WIZARD_BOOTS_BUILDER.setWeight(1))
+            .add(BATTLEMAGE_HELM_BUILDER.setWeight(1))
+            .add(BATTLEMAGE_CHEASTPLATE_BUILDER.setWeight(1))
+            .add(BATTLEMAGE_LEGGINGS_BUILDER.setWeight(1))
+            .add(BATTLEMAGE_BOOTS_BUILDER.setWeight(1));
+    }
+
+    private static @NotNull ObjectArrayList<ItemStack> createLootParams(ServerLevel serverLevel, Vec3 pos, LootTable.Builder loot) {
         var param = LootContextParams.ORIGIN;
         var vault = LootContextParamSets.VAULT;
         var shouldEnchant = Random.nextInt(10) == 0 ? loot.apply(randomApplicableEnchantment(serverLevel.registryAccess())) : loot;
@@ -118,13 +147,13 @@ public class RewardLootTables {
             .add(BOOK_BUILDER.setWeight(5));
     }
 
-    private static LootPool.@NotNull Builder rareWeaponPool(LootPoolSingletonContainer.Builder<? extends LootPoolSingletonContainer.Builder<?>> WAND_BUILDER, ServerLevel serverLevel) {
+    private static LootPool.@NotNull Builder rareWeaponPool(ServerLevel serverLevel) {
         var builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F));
         return builder
             .add(RUNE.setWeight(5))
             .add(AUGMENT_ITEM_BUILDER.setWeight(5))
             .add(SILVER_COIN.setWeight(1))
-            .add(WAND_BUILDER.setWeight(2))
+            .add(getRandomWand().setWeight(2))
             .add(IRON_SWORD_BUILDER.setWeight(20))
             .add(DIAMOND_SWORD_BUILDER.setWeight(10))
             .add(NETHERITE_SWORD_BUILDER.setWeight(2));
@@ -146,15 +175,15 @@ public class RewardLootTables {
     }
 
 
-    public static void attachItemData(ServerLevel serverLevel, JahdooRarity rarity, ItemStack itemStack) {
+    public static void attachItemData(ServerLevel serverLevel, JahdooRarity rarity, ItemStack itemStack, boolean isGuaranteeEnchantment, @Nullable JahdooRarity runeRarity) {
         var item = itemStack.getItem();
         switch (item){
             case WandItem ignored -> JahdooRarity.setGeneratedWand(rarity, itemStack);
             case TomeOfUnity ignored -> JahdooRarity.createTomeAttributes(rarity, itemStack);
-            case Augment ignored -> JahdooRarity.setGeneratedAugment(itemStack);
-            case RuneItem ignored -> RuneData.RuneHelpers.generateRandomTypAttribute(itemStack, null);
-            case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem);
-            case SwordItem ignored -> enchantSword(serverLevel, itemStack);
+            case Augment ignored -> JahdooRarity.setGeneratedAugment(itemStack, rarity);
+            case RuneItem ignored -> RuneData.RuneHelpers.generateRandomTypAttribute(itemStack, runeRarity);
+            case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem, isGuaranteeEnchantment);
+            case SwordItem ignored -> enchantSword(serverLevel, itemStack, isGuaranteeEnchantment);
             case EnchantedBookItem ignored -> enchantedBook(serverLevel, itemStack);
             default -> { /*IGNORE*/ }
         }
@@ -173,41 +202,45 @@ public class RewardLootTables {
         );
     }
 
-    private static void enchantSword(ServerLevel serverLevel, ItemStack itemStack) {
+    private static void enchantSword(ServerLevel serverLevel, ItemStack itemStack, boolean isGuaranteed) {
         if(Random.nextInt(50) != 0) return;
 
-        attachEnchantment(itemStack, serverLevel, Enchantments.SHARPNESS, 6, 11);
-        attachEnchantment(itemStack, serverLevel, Enchantments.SWEEPING_EDGE, 4, 8);
-        attachEnchantment(itemStack, serverLevel, Enchantments.LOOTING, 4, 8);
-        attachEnchantment(itemStack, serverLevel, Enchantments.UNBREAKING, 4, 8);
+        attachEnchantment(itemStack, serverLevel, Enchantments.SHARPNESS, 6, 11, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, Enchantments.SWEEPING_EDGE, 4, 8, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, Enchantments.LOOTING, 4, 8, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, Enchantments.UNBREAKING, 4, 8, isGuaranteed);
     }
 
-    private static void enchantArmorItem(ServerLevel serverLevel, ItemStack itemStack, ArmorItem armorItem) {
-        if(Random.nextInt(50) != 0) return;
+    private static void enchantArmorItem(ServerLevel serverLevel, ItemStack itemStack, ArmorItem armorItem, boolean isGuaranteed) {
+        if(!isGuaranteed){
+            if (Random.nextInt(50) != 0) return;
+        }
 
-        attachEnchantment(itemStack, serverLevel, Enchantments.BLAST_PROTECTION, 5, 10);
-        attachEnchantment(itemStack, serverLevel, Enchantments.PROJECTILE_PROTECTION, 5, 10);
-        attachEnchantment(itemStack, serverLevel, Enchantments.PROTECTION, 5, 10);
-        attachEnchantment(itemStack, serverLevel, Enchantments.UNBREAKING, 4, 9);
+        attachEnchantment(itemStack, serverLevel, Enchantments.BLAST_PROTECTION, 5, 10, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, Enchantments.PROJECTILE_PROTECTION, 5, 10, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, Enchantments.PROTECTION, 5, 10, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, Enchantments.UNBREAKING, 4, 9, isGuaranteed);
 
         if(armorItem.getEquipmentSlot() == EquipmentSlot.FEET){
-            attachEnchantment(itemStack, serverLevel, Enchantments.SOUL_SPEED, 4, 9);
-            attachEnchantment(itemStack, serverLevel, Enchantments.DEPTH_STRIDER, 4, 9);
-            attachEnchantment(itemStack, serverLevel, Enchantments.FEATHER_FALLING, 5, 10);
+            attachEnchantment(itemStack, serverLevel, Enchantments.SOUL_SPEED, 4, 9, isGuaranteed);
+            attachEnchantment(itemStack, serverLevel, Enchantments.DEPTH_STRIDER, 4, 9, isGuaranteed);
+            attachEnchantment(itemStack, serverLevel, Enchantments.FEATHER_FALLING, 5, 10, isGuaranteed);
         }
 
         if(armorItem.getEquipmentSlot() == EquipmentSlot.LEGS){
-            attachEnchantment(itemStack, serverLevel, Enchantments.SWIFT_SNEAK, 4, 9);
+            attachEnchantment(itemStack, serverLevel, Enchantments.SWIFT_SNEAK, 4, 9, isGuaranteed);
         }
 
         if(armorItem.getEquipmentSlot() == EquipmentSlot.HEAD){
-            attachEnchantment(itemStack, serverLevel, Enchantments.RESPIRATION, 4, 9);
+            attachEnchantment(itemStack, serverLevel, Enchantments.RESPIRATION, 4, 9, isGuaranteed);
         }
 
     }
 
-    private static void attachEnchantment(ItemStack itemStack, ServerLevel serverLevel, ResourceKey<Enchantment> enchantmentKey, int minVal, int maxVal) {
-        if(Random.nextInt(20) != 0) return;
+    private static void attachEnchantment(ItemStack itemStack, ServerLevel serverLevel, ResourceKey<Enchantment> enchantmentKey, int minVal, int maxVal, boolean isGuaranteed) {
+        if(!isGuaranteed){
+            if (Random.nextInt(20) != 0) return;
+        }
 
         enchant(itemStack, serverLevel.registryAccess(), enchantmentKey, Random.nextInt(minVal, maxVal));
         var lootBeamData = DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA();

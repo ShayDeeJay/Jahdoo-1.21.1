@@ -1,10 +1,9 @@
 package org.jahdoo.block.loot_chest;
 
 import com.mojang.serialization.MapCodec;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -14,8 +13,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -26,41 +23,21 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.abilities.ability_data.EscapeDecoyAbility;
 import org.jahdoo.ability.rarity.JahdooRarity;
-import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
-import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.challenge.*;
-import org.jahdoo.items.TomeOfUnity;
-import org.jahdoo.items.augments.Augment;
-import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.particle.ParticleHandlers;
-import org.jahdoo.registers.AttachmentRegister;
-import org.jahdoo.registers.BlockEntitiesRegister;
-import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.registers.SoundRegister;
+import org.jahdoo.registers.*;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.shaydee.loot_beams_neoforge.LootBeams;
-import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
-import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 
-import static net.minecraft.world.entity.ExperienceOrb.getExperienceValue;
-import static org.jahdoo.attachments.player_abilities.ChallengeAltarData.*;
-import static org.jahdoo.block.augment_modification_station.AugmentModificationBlock.SHAPE_COMBINED;
 import static org.jahdoo.challenge.RewardLootTables.attachItemData;
 import static org.jahdoo.particle.ParticleHandlers.getFromAllRandom;
-import static org.jahdoo.registers.AttachmentRegister.*;
-import static org.jahdoo.registers.BlocksRegister.CHALLENGE_ALTAR;
-import static org.jahdoo.registers.BlocksRegister.sharedBlockBehaviour;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class LootChestBlock extends BaseEntityBlock {
@@ -106,16 +83,25 @@ public class LootChestBlock extends BaseEntityBlock {
     protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!(level.getBlockEntity(pos) instanceof LootChestEntity lootChestEntity)) return ItemInteractionResult.FAIL;
 
-        if (level instanceof ServerLevel serverLevel && !lootChestEntity.isOpen) {
-            lootChestEntity.setOpen(true);
-            var hasData = lootChestEntity.hasData(AttachmentRegister.CHALLENGE_ALTAR);
-            var getData = lootChestEntity.getData(AttachmentRegister.CHALLENGE_ALTAR).maxRound() - 1;
-            var lootLevel = hasData ? getData : 1;
-            lootSplosion(pos, serverLevel, lootLevel, 1);
-            return ItemInteractionResult.SUCCESS;
+        if(!lootChestEntity.isOpen){
+            var isKey = stack.is(ItemsRegister.LOOT_KEY);
+            if (level instanceof ServerLevel serverLevel && isKey) {
+                var value = stack.get(DataComponents.CUSTOM_MODEL_DATA).value();
+                var isValid = value == lootChestEntity.getRarity;
+                if (isValid) {
+                    lootChestEntity.setOpen(true);
+                    var hasData = lootChestEntity.hasData(AttachmentRegister.CHALLENGE_ALTAR);
+                    var getData = lootChestEntity.getData(AttachmentRegister.CHALLENGE_ALTAR).maxRound() - 1;
+                    var lootLevel = hasData ? getData : 1;
+                    lootSplosion(pos, serverLevel, lootLevel + (value * value), value + 1);
+                    stack.shrink(1);
+                    return ItemInteractionResult.SUCCESS;
+                }
+            }
+            ModHelpers.getSoundWithPosition(level, pos, SoundEvents.LODESTONE_COMPASS_LOCK, 1,1.8F);
         }
 
-        return ItemInteractionResult.FAIL;
+        return ItemInteractionResult.SUCCESS;
     }
 
     private static void lootSplosion(BlockPos pos, ServerLevel serverLevel, int level, int lootMultiplier) {
@@ -137,7 +123,7 @@ public class LootChestBlock extends BaseEntityBlock {
                 var itemStack = itemEntity.getItem();
                 var rarity = JahdooRarity.getRarity();
 
-                attachItemData(serverLevel, rarity, itemStack);
+                attachItemData(serverLevel, rarity, itemStack, false, null);
                 serverLevel.addFreshEntity(itemEntity);
             }
         }

@@ -39,6 +39,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
         augmentFiles.forEach(this::simpleAugmentItemModel);
         for(int i = 1; i < 12; i++) simpleRunesItemModel(i);
+        for(int i = 1; i < 4; i++) simpleKeyItemModel(i);
 
         simpleItemOther(ItemsRegister.NEXITE_POWDER);
         simpleItemOther(ItemsRegister.HEALTH_CONTAINER);
@@ -50,7 +51,6 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItemOther(ItemsRegister.SILVER_COIN);
         simpleItemOther(ItemsRegister.GOLD_COIN);
 
-//        simpleItemOther(ItemsRegister.POWER_GEM);
 
         simpleItemOther(ItemsRegister.WIZARD_HELMET);
         simpleItemOther(ItemsRegister.WIZARD_CHESTPLATE);
@@ -75,7 +75,15 @@ public class ModItemModelProvider extends ItemModelProvider {
             upgradeRunes(ItemsRegister.RUNE)
                 .override()
                 .predicate(modelData, i)
-                .model(modelFile("item/"+i))
+                .model(modelFile("item/rune"+i))
+                .end();
+        }
+
+        for(int i = 1; i < 4; i++){
+            keys(ItemsRegister.LOOT_KEY)
+                .override()
+                .predicate(modelData, i)
+                .model(modelFile("item/key"+i))
                 .end();
         }
     }
@@ -105,7 +113,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private void simpleRunesItemModel(int item) {
-        withExistingParent(String.valueOf(item),
+        withExistingParent("rune"+item,
             ResourceLocation.withDefaultNamespace("item/generated"))
             .texture("layer0", ModHelpers.res("item/runes/rune" + item));
     }
@@ -116,5 +124,17 @@ public class ModItemModelProvider extends ItemModelProvider {
             .texture("layer0", ModHelpers.res("item/runes/" + item.getId().getPath()));
     }
 
+
+    private void simpleKeyItemModel(int item) {
+        withExistingParent("key"+item,
+            ResourceLocation.withDefaultNamespace("item/generated"))
+            .texture("layer0", ModHelpers.res("item/keys/key" + item));
+    }
+
+    private ItemModelBuilder keys(DeferredHolder<Item, Item> item) {
+        return withExistingParent(item.getId().getPath(),
+            ResourceLocation.withDefaultNamespace("item/generated"))
+            .texture("layer0", ModHelpers.res("item/keys/" + item.getId().getPath()));
+    }
 
 }

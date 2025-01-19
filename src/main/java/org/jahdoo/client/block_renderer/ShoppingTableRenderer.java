@@ -1,11 +1,9 @@
 package org.jahdoo.client.block_renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
@@ -13,27 +11,24 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import org.checkerframework.checker.units.qual.N;
 import org.jahdoo.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ColourStore;
-import org.jahdoo.utils.ModHelpers;
 import org.joml.Matrix4f;
 
 import static org.jahdoo.block.shopping_table.ShoppingTableBlock.TEXTURE;
+import static org.jahdoo.client.block_renderer.ShoppingTableRenderer.DisplayDirection.*;
 
 public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableEntity>{
     private final BlockEntityRenderDispatcher entityRenderDispatcher;
@@ -68,17 +63,19 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
     }
 
     private void renderPrice(ShoppingTableEntity pBlockEntity, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, ItemRenderer itemRenderer, DisplayDirection direction) {
-        var itemStack1 = new ItemStack(ItemsRegister.GOLD_COIN.get());
+        var itemStack1 = pBlockEntity.getCost() == null ? ItemStack.EMPTY : pBlockEntity.getCost();
         var number = 0.5f;
 
-        pPoseStack.pushPose();
-        renderPrice(pBlockEntity, Component.literal("24"), pPoseStack, pBuffer, -1,direction);
-        pPoseStack.translate(direction.x, number, direction.z);
-        var x = 0.2f;
-        pPoseStack.scale(x, x, x);
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(direction.direction));
-        itemRenderer.renderStatic(itemStack1, ItemDisplayContext.FIXED, pPackedLight, OverlayTexture.NO_OVERLAY, pPoseStack, pBuffer, pBlockEntity.getLevel(), 1);
-        pPoseStack.popPose();
+        if(!itemStack1.isEmpty()){
+            pPoseStack.pushPose();
+            renderCostText(pBlockEntity, Component.literal(String.valueOf(itemStack1.getCount())), pPoseStack, pBuffer, -1, direction);
+            pPoseStack.translate(direction.x, number, direction.z);
+            var x = 0.2f;
+            pPoseStack.scale(x, x, x);
+            pPoseStack.mulPose(Axis.YP.rotationDegrees(direction.direction));
+            itemRenderer.renderStatic(itemStack1, ItemDisplayContext.FIXED, pPackedLight, OverlayTexture.NO_OVERLAY, pPoseStack, pBuffer, pBlockEntity.getLevel(), 1);
+            pPoseStack.popPose();
+        }
 
     }
 
@@ -88,7 +85,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
             var height = 1.3f;
             var scale = itemStack1.getItem() instanceof WandItem ? 0.75F : 0.5f;
 
-            renderName(itemStack1.getHoverName(), pPoseStack, pBuffer, pPackedLight, direction);
+            renderName(pBlockEntity, itemStack1.getHoverName(), pPoseStack, pBuffer, pPackedLight, direction);
             pPoseStack.pushPose();
             pPoseStack.translate(0.5f, height, 0.5f);
             pPoseStack.scale(scale, scale, scale);
@@ -98,34 +95,36 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
         }
     }
 
-    protected void renderPrice(BlockEntity bEntity, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int textColour, DisplayDirection direction) {
+    protected void renderCostText(BlockEntity bEntity, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int textColour, DisplayDirection direction) {
         var z = 0.01f;
-
         pPoseStack.pushPose();
-        pPoseStack.translate(direction.x, 0.78, direction.z);
+        var adjustEastWest = direction == EAST ? 0.01 : direction == WEST ? -0.01 : direction == SOUTH ? 0.01 : direction == NORTH ? -0.01 : 0;
+
+        pPoseStack.translate(direction.x + adjustEastWest, 0.78, direction.z + adjustEastWest);
         pPoseStack.mulPose(Axis.ZP.rotationDegrees(180));
         pPoseStack.mulPose(Axis.YP.rotationDegrees(direction.direction));
         pPoseStack.scale(z, z, z);
         var matrix4f = pPoseStack.last().pose();
         var font = Minecraft.getInstance().font;
         var f1 = (float) -font.width(pDisplayName) / 2;
-        font.drawInBatch(pDisplayName, f1, 0, textColour, true, matrix4f, pBuffer, Font.DisplayMode.SEE_THROUGH , 0, 255);
+        font.drawInBatch(pDisplayName, f1, 0, textColour, false, matrix4f, pBuffer, Font.DisplayMode.NORMAL , 0, 255);
         pPoseStack.popPose();
     }
 
-    protected void renderName(Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource, int packedLight, DisplayDirection direction) {
+    protected void renderName(BlockEntity entity, Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource, int packedLight, DisplayDirection direction) {
+        var isRandomTable = entity.getBlockState().getValue(TEXTURE) == 3;
         pPoseStack.pushPose();
-        pPoseStack.translate(0.5, 2.1, 0.5);
+        pPoseStack.translate(0.5, entity.getBlockState().getValue(TEXTURE) == 2 ? 2.1 : 1.9, 0.5);
 
         pPoseStack.mulPose(Axis.XP.rotationDegrees(180));
         pPoseStack.mulPose(Axis.YP.rotationDegrees(direction.direction));
         pPoseStack.mulPose(Axis.ZP.rotationDegrees(180));
-        var x = 0.015F;
+        var x = isRandomTable ? 0.025F : 0.015F;
         pPoseStack.scale(x, -x, x);
         Matrix4f matrix4f = pPoseStack.last().pose();
         var font = Minecraft.getInstance().font;
         var f1 = (float)(-font.width(displayName) / 2);
-        font.drawInBatch(displayName, f1, 0, ColourStore.OFF_WHITE, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
+        font.drawInBatch(isRandomTable ? Component.literal("?") : displayName, isRandomTable ? -3 : f1, 0, ColourStore.OFF_WHITE, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         pPoseStack.popPose();
     }
 

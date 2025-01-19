@@ -3,10 +3,11 @@ package org.jahdoo.datagen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 import org.jahdoo.recipe.CreatorRecipeBuilder;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
@@ -37,6 +38,9 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         tomeOfUnity(recipeOutput, ItemsRegister.TOME_OF_UNITY.get());
         chaosCube(recipeOutput, BlocksRegister.MODULAR_CHAOS_CUBE.get().asItem());
         nexite(recipeOutput, BlocksRegister.NEXITE_BLOCK.get().asItem());
+        multiStageCompressionRecipes(recipeOutput, ItemsRegister.BRONZE_COIN.get(), ItemsRegister.SILVER_COIN.get(), ItemsRegister.GOLD_COIN.get());
+//        coin(recipeOutput, ItemsRegister.BRONZE_COIN.get(), ItemsRegister.SILVER_COIN.get());
+//        coin(recipeOutput, ItemsRegister.SILVER_COIN.get(), ItemsRegister.GOLD_COIN.get());
         augmentModificationTable(recipeOutput, BlocksRegister.AUGMENT_MODIFICATION_STATION.get().asItem());
         wands(recipeOutput, ItemsRegister.WAND_ITEM_FROST.get(), Items.LIGHT_BLUE_DYE, "frost");
         wands(recipeOutput, ItemsRegister.WAND_ITEM_INFERNO.get(), Items.ORANGE_DYE, "inferno");
@@ -138,6 +142,17 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .save(output);
     }
 
+    protected void Gold(RecipeOutput output, Item result) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+            .define('X', ModTags.Items.WAND_TAGS)
+            .define('M', Items.MUD_BRICKS)
+            .pattern("MMM")
+            .pattern("MXM")
+            .pattern("MMM")
+            .unlockedBy("wand_item", has(ModTags.Items.WAND_TAGS))
+            .save(output);
+    }
+
     protected void augmentModificationTable(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
             .define('X', ItemsRegister.AUGMENT_ITEM.get())
@@ -152,6 +167,47 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     protected void nexite(RecipeOutput output, Item result) {
         nineBlockStorageRecipes(output, RecipeCategory.MISC, ItemsRegister.NEXITE_POWDER.get(), RecipeCategory.BUILDING_BLOCKS, BlocksRegister.NEXITE_BLOCK.get());
         oreSmelting(output, List.of(BlocksRegister.RAW_NEXITE_BLOCK.get()),RecipeCategory.BUILDING_BLOCKS, result, 2.0F, 200, "nexite");
+    }
+
+    protected void coin(RecipeOutput output, Item inputItem, Item outputItem) {
+        nineBlockStorageRecipes(output, RecipeCategory.MISC, inputItem, RecipeCategory.MISC, outputItem);
+
+    }
+
+    protected static void multiStageCompressionRecipes(RecipeOutput recipeOutput, ItemLike firstStage, ItemLike secondStage, ItemLike thirdStage) {
+        // First compression: from firstStage to secondStage
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, secondStage)
+            .define('#', firstStage)
+            .pattern("###")
+            .pattern("###")
+            .pattern("###")
+            .group(null)
+            .unlockedBy(getHasName(firstStage), has(firstStage))
+            .save(recipeOutput, ResourceLocation.parse(getSimpleRecipeName(secondStage)));
+
+        // Second compression: from secondStage to thirdStage
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, thirdStage)
+            .define('#', secondStage)
+            .pattern("###")
+            .pattern("###")
+            .pattern("###")
+            .group(null)
+            .unlockedBy(getHasName(secondStage), has(secondStage))
+            .save(recipeOutput, ResourceLocation.parse(getSimpleRecipeName(thirdStage)));
+
+        // First decompression: from secondStage back to firstStage
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, firstStage, 9)
+            .requires(secondStage)
+            .group(null)
+            .unlockedBy(getHasName(secondStage), has(secondStage))
+            .save(recipeOutput, ResourceLocation.parse(getSimpleRecipeName(firstStage) + "_unpack"));
+
+        // Second decompression: from thirdStage back to secondStage
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, secondStage, 9)
+            .requires(thirdStage)
+            .group(null)
+            .unlockedBy(getHasName(thirdStage), has(thirdStage))
+            .save(recipeOutput, ResourceLocation.parse(getSimpleRecipeName(secondStage) + "_unpack"));
     }
 
 }

@@ -18,6 +18,7 @@ import org.jahdoo.registers.*;
 import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.ArrayList;
@@ -94,9 +95,10 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return ModHelpers.getRandomListElement(filteredList);
     }
 
-    public static AbilityRegistrar getAbilityWithRarity(boolean withUtil) {
-        var listAll = AbilityRegister.getMatchingRarity(JahdooRarity.getRarity());
-        var listNoUtil = AbilityRegister.getMatchingRarityNoUtil(JahdooRarity.getRarity());
+    public static AbilityRegistrar getAbilityWithRarity(boolean withUtil, @Nullable JahdooRarity rarity) {
+        var correctRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
+        var listAll = AbilityRegister.getMatchingRarity(correctRarity);
+        var listNoUtil = AbilityRegister.getMatchingRarityNoUtil(correctRarity);
         var list = withUtil ? listAll : listNoUtil;
         return list.get(ModHelpers.Random.nextInt(0, list.size()));
     }
@@ -143,14 +145,14 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         var itemStack = new ItemStack(item);
         if(ModHelpers.Random.nextInt(0, 200) != 0){
             itemStack.set(DataComponentRegistry.NUMBER, 5);
-            AugmentItemHelper.augmentIdentifierSharedRarity(itemStack, true);
+            AugmentItemHelper.augmentIdentifierSharedRarity(itemStack, true, null);
         }
         return itemStack;
     }
 
-    public static void setGeneratedAugment(ItemStack itemStack){
+    public static void setGeneratedAugment(ItemStack itemStack, JahdooRarity rarity){
         itemStack.set(DataComponentRegistry.NUMBER, 5);
-        AugmentItemHelper.augmentIdentifierSharedRarity(itemStack, false);
+        AugmentItemHelper.augmentIdentifierSharedRarity(itemStack, false, rarity);
     }
 
     public static ItemStack setGeneratedWand(JahdooRarity rarity, Item item) {

@@ -21,16 +21,19 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 
 import static org.jahdoo.entities.EntityAnimations.*;
+import static org.jahdoo.utils.ModHelpers.Random;
 
 public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity {
     public final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public int privateTicks;
     boolean isOpen = false;
     public String getTexture;
+    public int getRarity;
 
     public LootChestEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.LOOT_CHEST_BE.get(), pPos, pBlockState);
-        getTexture = ModHelpers.getRandomListElement(List.of("loot_chest.png", "loot_chest_1.png", "loot_chest_2.png", "loot_chest_3.png"));
+        getRarity = Random.nextInt(4);
+        getTexture = List.of("loot_chest.png", "loot_chest_1.png", "loot_chest_2.png", "loot_chest_3.png").get(getRarity);
     }
 
     public void setOpen(boolean open) {
@@ -81,6 +84,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         pTag.putInt("loot_chest.private", privateTicks);
         pTag.putBoolean("isOpen", isOpen);
         pTag.putString("texture", getTexture);
+        pTag.putInt("getRarity", getRarity);
     }
 
     @Override
@@ -89,6 +93,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         privateTicks = pTag.getInt("loot_chest.private");
         isOpen = pTag.getBoolean("isOpen");
         getTexture = pTag.getString("texture");
+        getRarity = pTag.getInt("getRarity");
     }
 
 }

@@ -1,3 +1,6 @@
-// 1.21.1	2025-01-17T21:24:15.7758711	Tags for minecraft:item mod id jahdoo
+// 1.21.1	2025-01-18T21:46:09.8679624	Tags for minecraft:item mod id jahdoo
 244513d544696041240843a3fa203ae1322538f1 data/jahdoo/tags/item/wand_tag.json
-fc66b6e1e91558900b52068e1ce7f9c68cda50e5 data/minecraft/tags/item/enchantable/armor.json
+c6f764cfad815a3351d3b5c6b911fbf4b5a02087 data/minecraft/tags/item/enchantable/chest_armor.json
+bba4e5dc57f882fcad230c657f2d421d6d969c38 data/minecraft/tags/item/enchantable/foot_armor.json
+04f1f2dcb3668078756de356a91b1898b8406899 data/minecraft/tags/item/enchantable/head_armor.json
+3537dc203b3a3c7b8e975a2f1da300fde80c46c2 data/minecraft/tags/item/enchantable/leg_armor.json

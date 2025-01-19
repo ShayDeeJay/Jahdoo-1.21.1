@@ -1,9 +1,11 @@
 package org.jahdoo.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomModelData;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -22,6 +24,7 @@ import org.jahdoo.attachments.player_abilities.*;
 import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import static org.jahdoo.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.registers.AttachmentRegister.SAVE_DATA;
+import static org.jahdoo.utils.ModHelpers.Random;
 
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID)
@@ -78,6 +82,7 @@ public class ServerEvents {
     public static void itemClickEvent(PlayerInteractEvent.RightClickItem event) {
         var mainHand = event.getItemStack();
         var player = event.getEntity();
+
 
         if(mainHand.has(DataComponentRegistry.RUNE_HOLDER)){
             var rune = player.getOffhandItem();
