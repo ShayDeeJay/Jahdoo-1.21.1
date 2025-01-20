@@ -30,11 +30,10 @@ import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.ModHelpers;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static org.jahdoo.items.wand.WandItemHelper.storeBlockType;
-import static org.jahdoo.particle.ParticleHandlers.getFromAllRandom;
+import static org.jahdoo.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.registers.AttachmentRegister.SAVE_DATA;
 import static org.jahdoo.utils.ModHelpers.getSoundWithPosition;
@@ -171,10 +170,10 @@ public class EventHelpers {
     public static void onDeathGreaterFrostEffect(LivingEntity entity) {
         if(entity.hasEffect(EffectsRegister.GREATER_FROST_EFFECT)){
             getSoundWithPosition(entity.level(), entity.blockPosition(), SoundEvents.GLASS_BREAK, 1, 1);
-            getFromAllRandom(ElementRegistry.FROST.get(), 20, 1);
+            getAllParticleTypes(ElementRegistry.FROST.get(), 20, 1);
             sendParticles(
                 entity.level(),
-                getFromAllRandom(ElementRegistry.FROST.get(), 12, 1.5f),
+                getAllParticleTypes(ElementRegistry.FROST.get(), 12, 1.5f),
                 entity.position().add(0, entity.getBbHeight()/2, 0), 30,
                 0, 1, 0, 0.2
             );
@@ -187,10 +186,10 @@ public class EventHelpers {
             var modifiedDamage = origin * 2;
             if(!entity.isAlive()){
                 getSoundWithPosition(entity.level(), entity.blockPosition(), SoundEvents.GLASS_BREAK, 1, 1);
-                getFromAllRandom(ElementRegistry.FROST.get(), 20, 1);
+                getAllParticleTypes(ElementRegistry.FROST.get(), 20, 1);
                 sendParticles(
                     entity.level(),
-                    getFromAllRandom(ElementRegistry.FROST.get(), 12, 1.5f),
+                    getAllParticleTypes(ElementRegistry.FROST.get(), 12, 1.5f),
                     entity.position().add(0, entity.getBbHeight()/2, 0), 30,
                     0, 1, 0, 0.2
                 );

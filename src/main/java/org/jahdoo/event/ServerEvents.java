@@ -1,14 +1,20 @@
 package org.jahdoo.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
+import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
@@ -21,14 +27,22 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.attachments.CastingData;
 import org.jahdoo.attachments.player_abilities.*;
+import org.jahdoo.challenge.LevelGenerator;
+import org.jahdoo.entities.living.CustomSkeleton;
+import org.jahdoo.entities.living.CustomZombie;
+import org.jahdoo.entities.living.EternalWizard;
 import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.items.runes.RuneItem;
+import org.jahdoo.items.wand.WandItem;
+import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
+import static org.jahdoo.block.TrialPortalBlock.*;
 import static org.jahdoo.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.registers.AttachmentRegister.SAVE_DATA;
@@ -62,7 +76,14 @@ public class ServerEvents {
     public static void blockInteraction(UseItemOnBlockEvent event) {
         var item = event.getItemStack().getItem();
         var player = event.getPlayer();
-        var getBlock = event.getLevel().getBlockState(event.getPos());
+        var pos = event.getPos();
+        var getBlock = event.getLevel().getBlockState(pos);
+
+//        if(item instanceof WandItem){
+//            var block = BlocksRegister.TRAIL_PORTAL.get();
+//            var setBlockState = block.defaultBlockState().setValue(DIMENSION_KEY, KEY_TRADING_POST);
+//            event.getLevel().setBlockAndUpdate(pos.above(), setBlockState);
+//        }
 
         removeWandInteractionWithBlocks(event, player, item, getBlock);
     }
@@ -98,6 +119,7 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onEntityDamageEvent(LivingDamageEvent.Pre event){
         var entity = event.getEntity();
+
         greaterFrostEffectDamageAmplifier(event, entity);
     }
 
@@ -129,10 +151,39 @@ public class ServerEvents {
         useRuneAttributes(event, item);
     }
 
+
+
     @SubscribeEvent
     public static void livingDeathEvent(LivingDeathEvent event){
         var entity = event.getEntity();
         var source = event.getSource();
+        var bonus = entity.tickCount / 10;
+
+        if(entity.level() instanceof CustomLevel){
+            if(entity instanceof CustomZombie){
+                System.out.println(bonus);
+                if(Random.nextInt(0,Math.min(10, bonus)) == 0){
+                    var stack = new ItemStack(ItemsRegister.BRONZE_COIN).copyWithCount(Math.max(1, 10 - bonus));
+                    BehaviorUtils.throwItem(entity, stack, entity.position());
+                }
+            }
+
+            if(entity instanceof CustomSkeleton){
+                if(Random.nextInt(0,Math.min(5, bonus)) == 0){
+                    var stack = new ItemStack(ItemsRegister.BRONZE_COIN).copyWithCount(Math.max(1, 20 - bonus));
+                    BehaviorUtils.throwItem(entity, stack, entity.position());
+                }
+            }
+
+            if(entity instanceof EternalWizard wizard){
+                if(wizard.getOwner() == null){
+                    if (Random.nextInt(0,Math.min(10 , bonus)) == 0) {
+                        var stack = new ItemStack(ItemsRegister.SILVER_COIN).copyWithCount(Math.max(1, 10 - bonus));
+                        BehaviorUtils.throwItem(entity, stack, entity.position());
+                    }
+                }
+            }
+        }
 
         onDeathGreaterFrostEffect(entity);
         resetGameModeOnDeath(entity);

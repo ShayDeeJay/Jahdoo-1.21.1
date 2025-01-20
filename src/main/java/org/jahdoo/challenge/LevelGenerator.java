@@ -47,6 +47,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
+import static org.jahdoo.block.TrialPortalBlock.*;
 import static org.jahdoo.block.loot_chest.LootChestBlock.FACING;
 import static org.jahdoo.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.challenge.LevelGenerator.DimHandler.TRADING_POST;
@@ -62,7 +63,7 @@ public class LevelGenerator {
         for (ServerLevel allLevel : serverLevel.getServer().getAllLevels()) {
             if (allLevel instanceof CustomLevel cLevel) levelsToRemove.add(cLevel);
         }
-        for (CustomLevel cLevel : levelsToRemove) removeLevel(serverLevel, cLevel);
+        for (CustomLevel cLevel : levelsToRemove) removeLevel(cLevel);
     }
 
     public static void debugLevels(ServerLevel serverLevel) {
@@ -71,13 +72,8 @@ public class LevelGenerator {
         }
     }
 
-    public static void removeLevel(ServerLevel serverLevel, CustomLevel customLevel) {
-        ArcadeDimensions.delete(serverLevel.getServer(), customLevel);
-    }
-
-    @FunctionalInterface
-    public interface ExceptionRunnable {
-        void run() throws CommandSyntaxException;
+    public static void removeLevel(CustomLevel customLevel) {
+        ArcadeDimensions.delete(customLevel.getServer(), customLevel);
     }
 
     public record DimHandler(
@@ -103,6 +99,7 @@ public class LevelGenerator {
         findLevel(testKey, serverLevel).ifPresent(
             level -> {
                 generateStructure(player, level, altarData, Math.max(altarData.maxRound/5, 1), handler.id());
+                level.setData(CHALLENGE_ALTAR, altarData);
                 getLevel.set(level);
             }
         );
@@ -210,10 +207,19 @@ public class LevelGenerator {
             level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, isRandomTable ? 3 : 0));
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
-                if(isRandomTable){
-                    entity.setCost(new ItemStack(GOLD_COIN).copyWithCount(1));
+                switch (i){
+                    case 0 -> entity.setCost(new ItemStack(GOLD_COIN).copyWithCount(1));
+                    case 3 -> {
+                        entity.setItem(new ItemStack(AUGMENT_ITEM));
+                        entity.setCost(new ItemStack(GOLD_COIN).copyWithCount(20));
+                    }
+                    case 6 -> {
+                        entity.setItem(new ItemStack(RUNE));
+                        entity.setCost(new ItemStack(GOLD_COIN).copyWithCount(10));
+                    }
                 }
             }
+
         }
 
         var keyState = shoppingTableState.setValue(FACING, Direction.EAST).setValue(TEXTURE, 1);
@@ -228,13 +234,25 @@ public class LevelGenerator {
                 entity.setItem(itemStack);
 
                 var cost = switch (value){
-                    case 1 -> new ItemStack(BRONZE_COIN).copyWithCount(64);
-                    case 2 -> new ItemStack(SILVER_COIN).copyWithCount(32);
-                    case 3 -> new ItemStack(GOLD_COIN).copyWithCount(64);
-                    default -> new ItemStack(BRONZE_COIN).copyWithCount(32);
+                    case 1 -> new ItemStack(BRONZE_COIN).copyWithCount(40);
+                    case 2 -> new ItemStack(SILVER_COIN).copyWithCount(40);
+                    case 3 -> new ItemStack(PLATINUM_COIN).copyWithCount(3);
+                    default -> new ItemStack(BRONZE_COIN).copyWithCount(20);
                 };
 
                 entity.setCost(cost);
+            }
+        }
+
+        var portalBlock = BlocksRegister.TRAIL_PORTAL.get().defaultBlockState();
+        var portalExit = new BlockPos(-4, 51, -17);
+        var portalNextLevel = new BlockPos(-40, 51, -17);
+        for(int i = 0; i < 3; i++) {
+            var pos = portalExit.west(i);
+            var pos1 = portalNextLevel.west(i);
+            for(int x = 0; x < 5; x++){
+                level.setBlockAndUpdate(pos.above(x), portalBlock.setValue(DIMENSION_KEY, KEY_HOME));
+                level.setBlockAndUpdate(pos1.above(x), portalBlock.setValue(DIMENSION_KEY, KEY_TRIAL));
             }
         }
     }
@@ -261,8 +279,8 @@ public class LevelGenerator {
     }
 
     public static void placeStructureJigsaw(ServerLevel sLevel, BlockPos pos, ResourceLocation location) throws CommandSyntaxException {
-        Registry<StructureTemplatePool> registry = sLevel.registryAccess().registryOrThrow(Registries.TEMPLATE_POOL);
-        Holder<StructureTemplatePool> holder = registry.getHolderOrThrow(ResourceKey.create(Registries.TEMPLATE_POOL, location));
+        var registry = sLevel.registryAccess().registryOrThrow(Registries.TEMPLATE_POOL);
+        var holder = registry.getHolderOrThrow(ResourceKey.create(Registries.TEMPLATE_POOL, location));
         JigsawPlacement.generateJigsaw(sLevel, holder,  ResourceLocation.withDefaultNamespace("empty"), 10, pos, true);
     }
 

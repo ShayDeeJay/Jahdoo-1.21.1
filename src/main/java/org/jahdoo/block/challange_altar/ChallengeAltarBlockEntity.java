@@ -21,6 +21,7 @@ import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.SyncedBlockEntity;
 import org.jahdoo.challenge.MobManager;
 import org.jahdoo.networking.packet.server2client.AltarBlockS2C;
+import org.jahdoo.registers.AttachmentRegister;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ColourStore;
@@ -37,6 +38,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import static org.jahdoo.block.TrialPortalBlock.*;
 import static org.jahdoo.block.challange_altar.ChallengeAltarAnim.*;
 import static org.jahdoo.block.challange_altar.ChallengeAltarBlock.readyNextSubRound;
 import static org.jahdoo.block.loot_chest.LootChestBlock.FACING;
@@ -130,10 +132,12 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
             ModHelpers.getSoundWithPosition(pLevel, south, SoundEvents.END_PORTAL_SPAWN, 0.8F, 1.5F);
             for (int i = 0; i < 5; i++) {
                 BlockPos portalBase = south.above(i);
-                serverLevel.setBlockAndUpdate(portalBase, TRAIL_PORTAL.get().defaultBlockState());
-                serverLevel.setBlockAndUpdate(portalBase.west(), TRAIL_PORTAL.get().defaultBlockState());
-                serverLevel.setBlockAndUpdate(portalBase.east(), TRAIL_PORTAL.get().defaultBlockState());
+                var portalState = TRAIL_PORTAL.get().defaultBlockState().setValue(DIMENSION_KEY, KEY_TRADING_POST);
+                serverLevel.setBlockAndUpdate(portalBase, portalState);
+                serverLevel.setBlockAndUpdate(portalBase.west(), portalState);
+                serverLevel.setBlockAndUpdate(portalBase.east(), portalState);
             }
+//            serverLevel.setData(CHALLENGE_ALTAR, this.getData(CHALLENGE_ALTAR));
         }
 
         placeCounter = (placeCounter + 1) % 8;

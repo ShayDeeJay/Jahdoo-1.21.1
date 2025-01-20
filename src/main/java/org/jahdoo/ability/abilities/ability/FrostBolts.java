@@ -31,7 +31,7 @@ import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.ability.abilities.ability_data.FrostboltsAbility.NUMBER_OF_PROJECTILES;
 import static org.jahdoo.items.wand.CastHelper.castAnimation;
 import static org.jahdoo.items.wand.WandAnimations.SINGLE_CAST_ID;
-import static org.jahdoo.particle.ParticleHandlers.getFromAllRandom;
+import static org.jahdoo.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.registers.AttributesRegister.FROST_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
@@ -109,7 +109,7 @@ public class FrostBolts extends DefaultEntityBehaviour {
 
     public static void onExistenceChange(LivingEntity livingEntity, AbstractElement element) {
         for (int i = 0; i < 10; i++) {
-            sendParticles(livingEntity.level(), getFromAllRandom(element, 10, 1.6f), livingEntity.position().add(0,livingEntity.getBbHeight()/2,0), 15, 0, livingEntity.getBbHeight()/4, 0, 0.15f);
+            sendParticles(livingEntity.level(), getAllParticleTypes(element, 10, 1.6f), livingEntity.position().add(0,livingEntity.getBbHeight()/2,0), 15, 0, livingEntity.getBbHeight()/4, 0, 0.15f);
         }
     }
 

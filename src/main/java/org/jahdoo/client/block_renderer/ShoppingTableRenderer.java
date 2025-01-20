@@ -1,6 +1,8 @@
 package org.jahdoo.client.block_renderer;
 
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -27,6 +29,7 @@ import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ColourStore;
 import org.joml.Matrix4f;
 
+import static net.minecraft.client.renderer.RenderStateShard.*;
 import static org.jahdoo.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.client.block_renderer.ShoppingTableRenderer.DisplayDirection.*;
 
@@ -53,7 +56,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
             pPoseStack.translate(0.01, 0.814, 0.01);
             pPoseStack.scale(scale, scale, scale);
 
-            blockRenderer.renderSingleBlock(state, pPoseStack, pBuffer, pPackedLight, pPackedOverlay, ModelData.EMPTY, RenderType.translucentMovingBlock());
+            blockRenderer.renderSingleBlock(state, pPoseStack, pBuffer, pPackedLight, pPackedOverlay, ModelData.EMPTY, TRANSLUCENT_MOVING_BLOCK);
             pPoseStack.popPose();
         }
 
@@ -61,6 +64,21 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
         renderSaleItem(pBlockEntity, pPoseStack, pBuffer, pPackedLight, itemRenderer, direction);
 
     }
+
+    public static final RenderType TRANSLUCENT_MOVING_BLOCK = RenderType.create(
+        "translucent_moving_block", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 786432, false, true, translucentMovingBlockState()
+    );
+
+    private static RenderType.CompositeState translucentMovingBlockState() {
+        return RenderType.CompositeState.builder()
+            .setLightmapState(LIGHTMAP)
+            .setShaderState(RENDERTYPE_TRANSLUCENT_SHADER)
+            .setTextureState(BLOCK_SHEET_MIPPED)
+            .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+            .setOutputState(ITEM_ENTITY_TARGET)
+            .createCompositeState(true);
+    }
+
 
     private void renderPrice(ShoppingTableEntity pBlockEntity, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, ItemRenderer itemRenderer, DisplayDirection direction) {
         var itemStack1 = pBlockEntity.getCost() == null ? ItemStack.EMPTY : pBlockEntity.getCost();
@@ -124,6 +142,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
         Matrix4f matrix4f = pPoseStack.last().pose();
         var font = Minecraft.getInstance().font;
         var f1 = (float)(-font.width(displayName) / 2);
+
         font.drawInBatch(isRandomTable ? Component.literal("?") : displayName, isRandomTable ? -3 : f1, 0, ColourStore.OFF_WHITE, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         pPoseStack.popPose();
     }

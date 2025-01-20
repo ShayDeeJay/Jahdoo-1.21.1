@@ -16,6 +16,8 @@ import org.jahdoo.utils.ModTags;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static org.jahdoo.registers.ItemsRegister.*;
+
 public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     public RecipeProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pRegistries) {
@@ -34,53 +36,53 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         infuser(recipeOutput, BlocksRegister.INFUSER.get().asItem());
 //        advancedAugmentCore(recipeOutput, ItemsRegister.ADVANCED_AUGMENT_CORE.get());
 //        hyperCore(recipeOutput, ItemsRegister.AUGMENT_HYPER_CORE.get());
-        augment(recipeOutput, ItemsRegister.AUGMENT_ITEM.get());
-        tomeOfUnity(recipeOutput, ItemsRegister.TOME_OF_UNITY.get());
+        augment(recipeOutput, AUGMENT_ITEM.get());
+        tomeOfUnity(recipeOutput, TOME_OF_UNITY.get());
         chaosCube(recipeOutput, BlocksRegister.MODULAR_CHAOS_CUBE.get().asItem());
         nexite(recipeOutput, BlocksRegister.NEXITE_BLOCK.get().asItem());
-        multiStageCompressionRecipes(recipeOutput, ItemsRegister.BRONZE_COIN.get(), ItemsRegister.SILVER_COIN.get(), ItemsRegister.GOLD_COIN.get());
-//        coin(recipeOutput, ItemsRegister.BRONZE_COIN.get(), ItemsRegister.SILVER_COIN.get());
+//        multiStageCompressionRecipes(recipeOutput, BRONZE_COIN.get(), SILVER_COIN.get(), GOLD_COIN.get());
+        coin(recipeOutput);
 //        coin(recipeOutput, ItemsRegister.SILVER_COIN.get(), ItemsRegister.GOLD_COIN.get());
         augmentModificationTable(recipeOutput, BlocksRegister.AUGMENT_MODIFICATION_STATION.get().asItem());
-        wands(recipeOutput, ItemsRegister.WAND_ITEM_FROST.get(), Items.LIGHT_BLUE_DYE, "frost");
-        wands(recipeOutput, ItemsRegister.WAND_ITEM_INFERNO.get(), Items.ORANGE_DYE, "inferno");
-        wands(recipeOutput, ItemsRegister.WAND_ITEM_MYSTIC.get(), Items.PURPLE_DYE, "mystic");
-        wands(recipeOutput, ItemsRegister.WAND_ITEM_LIGHTNING.get(), Items.LIGHT_GRAY_DYE, "lightning");
-        wands(recipeOutput, ItemsRegister.WAND_ITEM_VITALITY.get(), Items.RED_DYE, "vitality");
+        wands(recipeOutput, WAND_ITEM_FROST.get(), Items.LIGHT_BLUE_DYE, "frost");
+        wands(recipeOutput, WAND_ITEM_INFERNO.get(), Items.ORANGE_DYE, "inferno");
+        wands(recipeOutput, WAND_ITEM_MYSTIC.get(), Items.PURPLE_DYE, "mystic");
+        wands(recipeOutput, WAND_ITEM_LIGHTNING.get(), Items.LIGHT_GRAY_DYE, "lightning");
+        wands(recipeOutput, WAND_ITEM_VITALITY.get(), Items.RED_DYE, "vitality");
     }
 
 
     //Creator Recipes
     protected void hyperCore(RecipeOutput output, Item result) {
         CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 24)
-            .requires(ItemsRegister.ADVANCED_AUGMENT_CORE.get(), 4)
+            .requires(ADVANCED_AUGMENT_CORE.get(), 4)
             .requires(BlocksRegister.NEXITE_BLOCK.get(), 4)
-            .unlockedBy("augment_hyper_core", has(ItemsRegister.ADVANCED_AUGMENT_CORE.get()))
+            .unlockedBy("augment_hyper_core", has(ADVANCED_AUGMENT_CORE.get()))
             .save(output);
     }
 
     protected void augment(RecipeOutput output, Item result) {
         CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 18)
-            .requires(ItemsRegister.AUGMENT_FRAGMENT.get(), 3)
-            .requires(ItemsRegister.AUGMENT_CORE.get())
-            .unlockedBy("augment", has(ItemsRegister.AUGMENT_ITEM.get()))
+            .requires(AUGMENT_FRAGMENT.get(), 3)
+            .requires(AUGMENT_CORE.get())
+            .unlockedBy("augment", has(AUGMENT_ITEM.get()))
             .save(output);
     }
 
     protected void tomeOfUnity(RecipeOutput output, Item result) {
         CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 32)
             .requires(Items.BOOK)
-            .requires(ItemsRegister.AUGMENT_FRAGMENT.get())
-            .requires(ItemsRegister.AUGMENT_CORE.get(), 2)
-            .unlockedBy("tome_of_unity", has(ItemsRegister.AUGMENT_CORE.get()))
+            .requires(AUGMENT_FRAGMENT.get())
+            .requires(AUGMENT_CORE.get(), 2)
+            .unlockedBy("tome_of_unity", has(AUGMENT_CORE.get()))
             .save(output);
     }
 
     protected void advancedAugmentCore(RecipeOutput output, Item result) {
         CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 12)
-            .requires(ItemsRegister.AUGMENT_CORE.get(), 4)
-            .requires(ItemsRegister.NEXITE_POWDER.get(), 4)
-            .unlockedBy("augment_core", has(ItemsRegister.AUGMENT_CORE.get()))
+            .requires(AUGMENT_CORE.get(), 4)
+            .requires(NEXITE_POWDER.get(), 4)
+            .unlockedBy("augment_core", has(AUGMENT_CORE.get()))
             .group("advanced_augment_core")
             .save(output);
     }
@@ -88,11 +90,11 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     //Wands
     protected void wands(RecipeOutput output, Item result, Item unique, String type) {
         CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 12)
-            .requires(ItemsRegister.AUGMENT_CORE.get())
+            .requires(AUGMENT_CORE.get())
             .requires(Items.DIAMOND)
             .requires(Items.STICK)
             .requires(unique)
-            .unlockedBy("augment_core", has(ItemsRegister.AUGMENT_CORE.get()))
+            .unlockedBy("augment_core", has(AUGMENT_CORE.get()))
             .group("wand"+type)
             .save(output);
     }
@@ -112,7 +114,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     protected void infuser(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
             .define('M', Items.MUD_BRICKS)
-            .define('X', ItemsRegister.AUGMENT_ITEM.get())
+            .define('X', AUGMENT_ITEM.get())
             .pattern(" M ")
             .pattern("MXM")
             .pattern(" M ")
@@ -155,59 +157,25 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     protected void augmentModificationTable(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
-            .define('X', ItemsRegister.AUGMENT_ITEM.get())
+            .define('X', AUGMENT_ITEM.get())
             .define('M', Items.MUD_BRICKS)
             .pattern(" X ")
             .pattern(" M ")
             .pattern(" M ")
-            .unlockedBy("augment_item", has(ItemsRegister.AUGMENT_ITEM.get()))
+            .unlockedBy("augment_item", has(AUGMENT_ITEM.get()))
             .save(output);
     }
 
     protected void nexite(RecipeOutput output, Item result) {
-        nineBlockStorageRecipes(output, RecipeCategory.MISC, ItemsRegister.NEXITE_POWDER.get(), RecipeCategory.BUILDING_BLOCKS, BlocksRegister.NEXITE_BLOCK.get());
+        nineBlockStorageRecipes(output, RecipeCategory.MISC, NEXITE_POWDER.get(), RecipeCategory.BUILDING_BLOCKS, BlocksRegister.NEXITE_BLOCK.get());
         oreSmelting(output, List.of(BlocksRegister.RAW_NEXITE_BLOCK.get()),RecipeCategory.BUILDING_BLOCKS, result, 2.0F, 200, "nexite");
     }
 
-    protected void coin(RecipeOutput output, Item inputItem, Item outputItem) {
-        nineBlockStorageRecipes(output, RecipeCategory.MISC, inputItem, RecipeCategory.MISC, outputItem);
-
-    }
-
-    protected static void multiStageCompressionRecipes(RecipeOutput recipeOutput, ItemLike firstStage, ItemLike secondStage, ItemLike thirdStage) {
-        // First compression: from firstStage to secondStage
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, secondStage)
-            .define('#', firstStage)
-            .pattern("###")
-            .pattern("###")
-            .pattern("###")
-            .group(null)
-            .unlockedBy(getHasName(firstStage), has(firstStage))
-            .save(recipeOutput, ResourceLocation.parse(getSimpleRecipeName(secondStage)));
-
-        // Second compression: from secondStage to thirdStage
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, thirdStage)
-            .define('#', secondStage)
-            .pattern("###")
-            .pattern("###")
-            .pattern("###")
-            .group(null)
-            .unlockedBy(getHasName(secondStage), has(secondStage))
-            .save(recipeOutput, ResourceLocation.parse(getSimpleRecipeName(thirdStage)));
-
-        // First decompression: from secondStage back to firstStage
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, firstStage, 9)
-            .requires(secondStage)
-            .group(null)
-            .unlockedBy(getHasName(secondStage), has(secondStage))
-            .save(recipeOutput, ResourceLocation.parse(getSimpleRecipeName(firstStage) + "_unpack"));
-
-        // Second decompression: from thirdStage back to secondStage
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, secondStage, 9)
-            .requires(thirdStage)
-            .group(null)
-            .unlockedBy(getHasName(thirdStage), has(thirdStage))
-            .save(recipeOutput, ResourceLocation.parse(getSimpleRecipeName(secondStage) + "_unpack"));
+    protected void coin(RecipeOutput output) {
+        var misc = RecipeCategory.MISC;
+        nineBlockStorageRecipes(output, misc, BRONZE_COIN.get(), misc, SILVER_COIN.get(), "packed_silver", null, "unpacked_bronze", null);
+        nineBlockStorageRecipes(output, misc, SILVER_COIN.get(), misc, GOLD_COIN.get(),"packed_gold", null, "unpacked_silver", null);
+        nineBlockStorageRecipes(output, misc, GOLD_COIN.get(), misc, PLATINUM_COIN.get(), "packed_platinum", null, "unpacked_gold", null);
     }
 
 }

@@ -74,6 +74,7 @@ public class RewardLootTables {
         if (Random.nextInt(Math.max(1, 10 - level)) == 0) loot.withPool(epicPool(serverLevel));
         if (Random.nextInt(Math.max(1, 100 - level)) == 0) loot.withPool(legendaryPool(serverLevel));
         loot.withPool(rareWeaponPool(serverLevel));
+
         loot.withPool(rarePool(serverLevel));
         return createLootParams(serverLevel, pos, loot);
     }

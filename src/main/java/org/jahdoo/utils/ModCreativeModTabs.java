@@ -48,6 +48,7 @@ public class ModCreativeModTabs {
                     pOutput.accept(ItemsRegister.BRONZE_COIN.get());
                     pOutput.accept(ItemsRegister.SILVER_COIN.get());
                     pOutput.accept(ItemsRegister.GOLD_COIN.get());
+                    pOutput.accept(ItemsRegister.PLATINUM_COIN.get());
 
                     pOutput.accept(ItemsRegister.WIZARD_HELMET.get());
                     pOutput.accept(ItemsRegister.WIZARD_CHESTPLATE.get());

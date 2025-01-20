@@ -17,7 +17,7 @@ import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.ability.AbilityBuilder;
 
-import static org.jahdoo.particle.ParticleHandlers.getFromAllRandom;
+import static org.jahdoo.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 import static org.jahdoo.ability.AbilityBuilder.*;
@@ -96,7 +96,7 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
 
     public static void onExistenceChange(LivingEntity livingEntity, AbstractElement element) {
         for (int i = 0; i < 10; i++) {
-            sendParticles(livingEntity.level(), getFromAllRandom(element, 10, 1.6f), livingEntity.position().add(0, 1f, 0), 5, 0, 0.5, 0, 0.15f);
+            sendParticles(livingEntity.level(), getAllParticleTypes(element, 10, 1.6f), livingEntity.position().add(0, 1f, 0), 5, 0, 0.5, 0, 0.15f);
         }
     }
 

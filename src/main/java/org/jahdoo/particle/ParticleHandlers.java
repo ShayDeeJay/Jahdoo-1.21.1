@@ -112,7 +112,7 @@ public class ParticleHandlers {
         }
     }
 
-    public static ParticleOptions getFromAllRandom(AbstractElement element, int lifetime, float size){
+    public static ParticleOptions getAllParticleTypes(AbstractElement element, int lifetime, float size){
         var baked = ParticleHandlers.bakedParticleOptions(element.getTypeId(), lifetime, size, false);
         var generic = ParticleHandlers.genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, lifetime, size);
         var magic = ParticleHandlers.genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, element, lifetime, size);
@@ -120,6 +120,15 @@ public class ParticleHandlers {
         var collectTypes = List.of(baked, generic, magic, soft);
         return collectTypes.get(Random.nextInt(collectTypes.size()));
     }
+
+    public static ParticleOptions getNonBakedParticles(int colour1, int colour2, int lifetime, float size){
+        var generic = ParticleHandlers.genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
+        var magic = ParticleHandlers.genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
+        var soft = ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
+        var collectTypes = List.of(generic, magic, soft);
+        return collectTypes.get(Random.nextInt(collectTypes.size()));
+    }
+
 
     public static void playParticles(ParticleOptions particleOptions, Projectile projectile, double getX, double getY, double getZ) {
         var deltaX = getX - projectile.xOld;

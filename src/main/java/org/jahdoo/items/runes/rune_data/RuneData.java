@@ -44,7 +44,7 @@ public record RuneData(
     int tier
 ){
     public static final String SUFFIX = "Rune";
-    public static final String DEFAULT_NAME = "Generic";
+    public static final String DEFAULT_NAME = "Unidentified";
     public static final int NO_ELEMENT = -1;
     public static final int NO_VALUE = -1;
     public static final String NO_DESCRIPTION = "";

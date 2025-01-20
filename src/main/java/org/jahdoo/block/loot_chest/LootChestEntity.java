@@ -4,9 +4,12 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.block.SyncedBlockEntity;
+import org.jahdoo.items.KeyItem;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
@@ -21,12 +24,14 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 
 import static org.jahdoo.entities.EntityAnimations.*;
+import static org.jahdoo.particle.ParticleHandlers.*;
 import static org.jahdoo.utils.ModHelpers.Random;
+import static org.jahdoo.utils.PositionGetters.getInnerRingOfRadiusRandom;
 
 public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity {
     public final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public int privateTicks;
-    boolean isOpen = false;
+    public boolean isOpen = false;
     public String getTexture;
     public int getRarity;
 
@@ -40,26 +45,42 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         isOpen = open;
     }
 
-    public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
+    public void tick(Level pLevel, BlockPos pos, BlockState blockState) {
         updateBlock();
         privateTicks++;
+        var id = getRarity;
+
+        if(!this.isOpen){
+            if(this.privateTicks % (6 - getRarity) == 0){
+                for (var vec3 : getInnerRingOfRadiusRandom(pos.getCenter().subtract(0, 0.35, 0), 0.55, Math.max(3, 5 * id))) {
+                    var colour1 = KeyItem.getJahdooRarity(new CustomModelData(id));
+                    var darker = ModHelpers.getColourDarker(colour1.getColour(), 0.5f);
+                    var size = Random.nextFloat(1.2f, 1.6f) - ((float) getRarity / 30);
+                    var lifetime = 6 + id + Random.nextInt(2, 5);
+                    var particleColour = getNonBakedParticles(colour1.getColour(), darker, lifetime, size);
+                    var ySpeed = 0.1 + ((double) id / 80) + Random.nextDouble(0.07, 0.13);
+
+                    pLevel.addParticle(particleColour, vec3.x, vec3.y, vec3.z, 0, ySpeed, 0);
+                }
+            }
+        }
 
         if(privateTicks == 1){
-            ModHelpers.getSoundWithPosition(pLevel, pPos, SoundEvents.ENDER_EYE_LAUNCH, 1f, 2f);
-            ModHelpers.getSoundWithPosition(pLevel, pPos, SoundEvents.ENDER_EYE_DEATH, 1f, 2f);
+            ModHelpers.getSoundWithPosition(pLevel, pos, SoundEvents.ENDER_EYE_LAUNCH, 1f, 2f);
+            ModHelpers.getSoundWithPosition(pLevel, pos, SoundEvents.ENDER_EYE_DEATH, 1f, 2f);
         }
 
         if(privateTicks == 7){
             var volume = 2;
             var pitch = 0.4f;
             var pitch2 = 0.2f;
-            ModHelpers.getSoundWithPosition(pLevel, pPos, SoundEvents.VAULT_PLACE, volume, pitch);
-            ModHelpers.getSoundWithPosition(pLevel, pPos, SoundEvents.IRON_GOLEM_STEP, volume, pitch2);
+            ModHelpers.getSoundWithPosition(pLevel, pos, SoundEvents.VAULT_PLACE, volume, pitch);
+            ModHelpers.getSoundWithPosition(pLevel, pos, SoundEvents.IRON_GOLEM_STEP, volume, pitch2);
         }
 
         if(pLevel instanceof ServerLevel serverLevel){
 //            if(privateTicks >= 20) serverLevel.destroyBlock(pPos, false);
-            serverLevel.sendBlockUpdated(pPos, blockState, blockState, 2);
+            serverLevel.sendBlockUpdated(pos, blockState, blockState, 2);
         }
     }
 

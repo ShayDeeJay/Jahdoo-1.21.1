@@ -28,7 +28,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.abilities.ability_data.EscapeDecoyAbility;
 import org.jahdoo.entities.TamableEntity;
 import org.jahdoo.entities.goals.*;
 import org.jahdoo.particle.ParticleHandlers;
@@ -40,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
-import static org.jahdoo.particle.ParticleHandlers.getFromAllRandom;
+import static org.jahdoo.particle.ParticleHandlers.getAllParticleTypes;
 
 public class AncientGolem extends IronGolem implements TamableEntity {
 
@@ -181,7 +180,7 @@ public class AncientGolem extends IronGolem implements TamableEntity {
                 float y = 1f;
                 ParticleHandlers.sendParticles(
                     level,
-                    getFromAllRandom(element(), 12, 1f),
+                    getAllParticleTypes(element(), 12, 1f),
                     position.add(0, y, 0), isRunning ? 5 : 0,
                     directions.x, directions.y, directions.z, 0.12
                 );

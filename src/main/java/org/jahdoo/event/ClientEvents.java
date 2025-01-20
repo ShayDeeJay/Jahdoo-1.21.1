@@ -3,18 +3,24 @@ package org.jahdoo.event;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.block.shopping_table.ShoppingTableBlock;
+import org.jahdoo.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.client.KeyBinding;
 import org.jahdoo.client.RuneTooltipRenderer;
 import org.jahdoo.event.event_helpers.WandAbilitySelector;
@@ -85,6 +91,7 @@ public class ClientEvents {
         var runeSockets = new RuneTooltipRenderer.RuneComponent(e.getItemStack(), allSlots);
 
         e.getTooltipElements().add(current.size(), Either.right(runeSockets));
+
     }
 
     @SubscribeEvent
@@ -102,9 +109,30 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
-        var player = Minecraft.getInstance().player;
+        var instance = Minecraft.getInstance();
+        var player = instance.player;
         crosshairManager(event);
         simpleGui(event, player);
+
+
+        if(player != null){
+            var x = player.pick(3, event.getPartialTick().getGameTimeDeltaTicks(), false);
+            var entity = player.level().getBlockEntity(BlockPos.containing(x.getLocation()));
+
+            if(entity instanceof ShoppingTableEntity tableEntity){
+                var guiGraphics = event.getGuiGraphics();
+                var width = guiGraphics.guiWidth()/2;
+                var height = guiGraphics.guiHeight()/2;
+                var itemStack = tableEntity.getItem().getStackInSlot(0);
+                var tooltipHeight = Screen.getTooltipFromItem(instance, itemStack);
+                var getState = tableEntity.getBlockState().getValue(ShoppingTableBlock.TEXTURE);
+                if(instance.screen == null){
+                    if (tooltipHeight.size() > 1 && getState != 3) {
+                        guiGraphics.renderTooltip(instance.font, itemStack, width + 60, height - (tooltipHeight.size() * 3));
+                    }
+                }
+            }
+        }
     }
 }
 

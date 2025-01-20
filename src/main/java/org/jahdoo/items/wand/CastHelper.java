@@ -177,7 +177,7 @@ public class CastHelper {
         var abilityName = DataComponentHelper.getAbilityTypeWand(player);
         var getAbility = AbilityRegister.REGISTRY.get(abilityName);
         var canUse = getCanApplyDistanceAbility(player, itemStack);
-        var cantUseInDim = player.level() instanceof CustomLevel && getAbility.getElemenType().equals(ElementRegistry.UTILITY.get());
+        var cantUseInDim = player.level() instanceof CustomLevel && getAbility != null && !getAbility.isMultiType() && getAbility.getElemenType().equals(ElementRegistry.UTILITY.get());
         var cantUse = (player.onGround() && player.isShiftKeyDown()) || getAbility == null ;
         var fail = InteractionResultHolder.fail(itemStack);
 

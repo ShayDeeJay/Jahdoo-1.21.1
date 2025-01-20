@@ -87,12 +87,10 @@ public class ItemsRegister {
         ITEMS.register("mage_boots", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.BOOTS));
 
     //Coins
-    public static final DeferredHolder<Item, Item> BRONZE_COIN =
-        ITEMS.register("bronze_coin", () -> new CoinItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> SILVER_COIN =
-        ITEMS.register("silver_coin", () -> new CoinItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> GOLD_COIN =
-        ITEMS.register("gold_coin", () -> new CoinItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> BRONZE_COIN = ITEMS.register("bronze_coin", CoinItem::new);
+    public static final DeferredHolder<Item, Item> SILVER_COIN = ITEMS.register("silver_coin", CoinItem::new);
+    public static final DeferredHolder<Item, Item> GOLD_COIN = ITEMS.register("gold_coin", CoinItem::new);
+    public static final DeferredHolder<Item, Item> PLATINUM_COIN = ITEMS.register("platinum_coin", CoinItem::new);
 
     public static DeferredHolder<Item, Item> basicItem(String name){
         return ITEMS.register(name, () -> new Item(new Item.Properties()));

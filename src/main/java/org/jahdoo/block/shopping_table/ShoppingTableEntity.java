@@ -33,6 +33,10 @@ public class ShoppingTableEntity extends AbstractBEInventory {
         return this.getItem().getStackInSlot(1);
     }
 
+    public boolean canPurchase(){
+        return !getItem().getStackInSlot(0).isEmpty();
+    }
+
     @Override
     public void onLoad() {
         super.onLoad();

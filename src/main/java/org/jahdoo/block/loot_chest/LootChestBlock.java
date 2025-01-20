@@ -6,12 +6,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -29,16 +31,21 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
+import org.jahdoo.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.challenge.*;
+import org.jahdoo.items.KeyItem;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.*;
 import org.jahdoo.utils.ModHelpers;
+import org.jahdoo.utils.PositionGetters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.jahdoo.challenge.RewardLootTables.attachItemData;
-import static org.jahdoo.particle.ParticleHandlers.getFromAllRandom;
+import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.utils.ModHelpers.Random;
+import static org.jahdoo.utils.PositionGetters.*;
 
 public class LootChestBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
@@ -136,7 +143,7 @@ public class LootChestBlock extends BaseEntityBlock {
     private static void particleBurst(ServerLevel serverLevel, AbstractElement element, Vec3 pCenter) {
         ParticleHandlers.particleBurst(
             serverLevel, pCenter.add(0, 0.3f, 0), 1,
-            getFromAllRandom(element, 10, Random.nextFloat(1, 2)),
+            getAllParticleTypes(element, 10, Random.nextFloat(1, 2)),
             0, 0.3, 0, 0.2f, 3
         );
     }

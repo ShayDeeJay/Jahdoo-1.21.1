@@ -25,6 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.utils.ModHelpers;
@@ -79,16 +80,26 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
         var entity = level.getBlockEntity(pos);
         if(!(entity instanceof ShoppingTableEntity shoppingTable)) return ItemInteractionResult.FAIL;
-        if(hasEnoughToBuy(player, shoppingTable.getCost().getItem(), shoppingTable.getCost().getCount())){
-            var isRandomisedTable = state.getValue(TEXTURE) == 3;
-            if(isRandomisedTable) shoppingTable.insertRandomItem();
 
-            var stackInSlot = shoppingTable.getItem().extractItem(0, 1, false);
-            if (!stackInSlot.isEmpty()) {
-                player.playSound(SoundEvents.ITEM_PICKUP, 0.5F, 0.8F);
-                AugmentItemHelper.throwOrAddItem(player, stackInSlot);
-                shoppingTable.getItem().setStackInSlot(1, ItemStack.EMPTY);
-                return ItemInteractionResult.SUCCESS;
+        if(shoppingTable.canPurchase()){
+            var cost = shoppingTable.getCost();
+            var enoughToBuy = hasEnoughToBuy(player, cost.getItem(), cost.getCount());
+
+            if(enoughToBuy){
+                var isRandomisedTable = state.getValue(TEXTURE) == 3;
+                if (isRandomisedTable) {
+                    System.out.println("im ere");
+                    shoppingTable.insertRandomItem();
+                }
+
+                var item = shoppingTable.getItem();
+                var stackInSlot = item.extractItem(0, item.getStackInSlot(0).getCount(), false);
+                if (!stackInSlot.isEmpty()) {
+                    player.playSound(SoundEvents.ITEM_PICKUP, 0.5F, 0.8F);
+                    AugmentItemHelper.throwOrAddItem(player, stackInSlot);
+                    item.setStackInSlot(1, ItemStack.EMPTY);
+                    return ItemInteractionResult.SUCCESS;
+                }
             }
         }
 

@@ -44,6 +44,7 @@ public class BlocksRegister {
     public static DeferredHolder<Block, Block> TANK = registerBlock("tank", NexiteTankBlock::new);
     public static DeferredHolder<Block, Block> LIGHTING = BLOCKS.register("lighting", LightBlock::new);
     public static DeferredHolder<Block, Block> SHOPPING_TABLE = registerBlock("shopping_table", ShoppingTableBlock::new);
+    public static final DeferredHolder<Block, Block> TRAIL_PORTAL = registerBlock("trial_portal", TrialPortalBlock::new);
 
 
     public static DeferredHolder<Block, Block> NEXITE_ORE = registerBlock("nexite_ore",
@@ -66,18 +67,6 @@ public class BlocksRegister {
                 .strength(Blocks.DIAMOND_BLOCK.defaultDestroyTime())
                 .sound(SoundType.STONE)
                 .noOcclusion()
-        )
-    );
-
-    public static final DeferredHolder<Block, Block> TRAIL_PORTAL = registerBlock("trial_portal",
-        () -> new TrialPortalBlock(
-            BlockBehaviour.Properties.of()
-                .noCollission()
-                .randomTicks()
-                .strength(-1.0F)
-                .sound(SoundType.GLASS)
-                .lightLevel(p_50870_ -> 11)
-                .pushReaction(PushReaction.BLOCK)
         )
     );
 

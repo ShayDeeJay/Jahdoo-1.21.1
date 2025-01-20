@@ -50,7 +50,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItemOther(ItemsRegister.BRONZE_COIN);
         simpleItemOther(ItemsRegister.SILVER_COIN);
         simpleItemOther(ItemsRegister.GOLD_COIN);
-
+        simpleItemOther(ItemsRegister.PLATINUM_COIN);
 
         simpleItemOther(ItemsRegister.WIZARD_HELMET);
         simpleItemOther(ItemsRegister.WIZARD_CHESTPLATE);

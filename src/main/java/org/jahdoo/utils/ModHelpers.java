@@ -104,7 +104,8 @@ public class ModHelpers {
     }
 
     public static <T> T getRandomListElement(List<T> collection){
-        return collection.get(Random.nextInt(collection.size()));
+        var index = !collection.isEmpty() ? Random.nextInt(collection.size()) : 0 ;
+        return collection.get(index);
     }
 
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch){
