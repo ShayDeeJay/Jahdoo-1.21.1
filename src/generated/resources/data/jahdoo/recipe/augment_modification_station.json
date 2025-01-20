@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "minecraft:mud_bricks"
+    },
+    "X": {
+      "item": "jahdoo:unidentified_augment"
+    }
+  },
+  "pattern": [
+    " X ",
+    " M ",
+    " M "
+  ],
+  "result": {
+    "count": 1,
+    "id": "jahdoo:augment_modification_station"
+  }
+}

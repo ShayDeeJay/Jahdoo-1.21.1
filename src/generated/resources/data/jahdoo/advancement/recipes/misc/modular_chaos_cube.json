@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "jahdoo:modular_chaos_cube"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "wand_item": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#jahdoo:wand_tag"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "wand_item"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "jahdoo:modular_chaos_cube"
+    ]
+  }
+}

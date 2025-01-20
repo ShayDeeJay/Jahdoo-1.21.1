@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "jahdoo:augment_modification_station"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "jahdoo:blocks/augment_modification_station"
+}

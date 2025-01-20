@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "jahdoo:tome_of_unity"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "tome_of_unity": {
+      "conditions": {
+        "items": [
+          {
+            "items": "jahdoo:augment_core"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "tome_of_unity"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "jahdoo:tome_of_unity"
+    ]
+  }
+}

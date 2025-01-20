@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "level=0": {
+      "model": "jahdoo:block/shopping_table"
+    },
+    "level=1": {
+      "model": "jahdoo:block/shopping_table_1"
+    },
+    "level=2": {
+      "model": "jahdoo:block/shopping_table_2"
+    },
+    "level=3": {
+      "model": "jahdoo:block/shopping_table_3"
+    }
+  }
+}

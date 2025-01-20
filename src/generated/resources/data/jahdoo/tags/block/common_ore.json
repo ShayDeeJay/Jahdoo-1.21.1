@@ -1,0 +1,11 @@
+{
+  "values": [
+    "jahdoo:nexite_deepslate_ore",
+    "jahdoo:nexite_ore",
+    "#minecraft:iron_ores",
+    "#minecraft:lapis_ores",
+    "#minecraft:copper_ores",
+    "#minecraft:redstone_ores",
+    "#minecraft:coal_ores"
+  ]
+}

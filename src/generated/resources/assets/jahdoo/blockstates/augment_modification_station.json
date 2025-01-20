@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "jahdoo:block/augment_modification_station",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "jahdoo:block/augment_modification_station",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "jahdoo:block/augment_modification_station",
+      "y": 0
+    },
+    "facing=west": {
+      "model": "jahdoo:block/augment_modification_station",
+      "y": 90
+    }
+  }
+}

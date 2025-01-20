@@ -1,0 +1,22 @@
+{
+  "type": "jahdoo:creator_block",
+  "cost": 12,
+  "ingredients": [
+    {
+      "item": "jahdoo:augment_core"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:stick"
+    },
+    {
+      "item": "minecraft:light_blue_dye"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "jahdoo:wand_frost"
+  }
+}

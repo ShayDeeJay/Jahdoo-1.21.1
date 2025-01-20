@@ -14,7 +14,7 @@ import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 public class SyncComponentC2S implements CustomPacketPayload{
     public static final Type<SyncComponentC2S> TYPE = new Type<>(ModHelpers.res("sync_item_update"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncComponentC2S> STREAM_CODEC = CustomPacketPayload.codec(SyncComponentC2S::toBytes, SyncComponentC2S::new);
-    private WandAbilityHolder wandAbilityHolder;
+    private final WandAbilityHolder wandAbilityHolder;
 
     public SyncComponentC2S(WandAbilityHolder wandAbilityHolder) {
         this.wandAbilityHolder = wandAbilityHolder;

@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.jahdoo.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ArrowMixin",
+    "DisableSpinAttackLayerMixin",
+    "ItemEntityMixin",
+    "LivingEntityMixin",
+    "PlayerSpinAttackMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "ItemRenderMixin"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "minecraft:mud_bricks"
+    },
+    "X": {
+      "tag": "jahdoo:wand_tag"
+    }
+  },
+  "pattern": [
+    "MMM",
+    "MXM",
+    "MMM"
+  ],
+  "result": {
+    "count": 1,
+    "id": "jahdoo:modular_chaos_cube"
+  }
+}

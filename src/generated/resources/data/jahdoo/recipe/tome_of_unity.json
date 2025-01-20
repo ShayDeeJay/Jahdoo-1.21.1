@@ -1,0 +1,22 @@
+{
+  "type": "jahdoo:creator_block",
+  "cost": 32,
+  "ingredients": [
+    {
+      "item": "minecraft:book"
+    },
+    {
+      "item": "jahdoo:augment_fragment"
+    },
+    {
+      "item": "jahdoo:augment_core"
+    },
+    {
+      "item": "jahdoo:augment_core"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "jahdoo:tome_of_unity"
+  }
+}

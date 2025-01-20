@@ -1,0 +1,32 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"swipe_cast": {
+			"animation_length": 0.5,
+			"bones": {
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						},
+						"0.125": {
+							"vector": [-137.01526, -26.59402, 68.04309],
+							"easing": "easeInElastic",
+							"easingArgs": []
+						},
+						"0.25": {
+							"vector": [-81.86658, 7.0063, 28.82058],
+							"easing": "linear"
+						},
+						"0.5": {
+							"vector": [-83.93384, 54.99582, 2.98816],
+							"easing": "easeInElastic",
+							"easingArgs": []
+						}
+					}
+				}
+			}
+		}
+	}
+}

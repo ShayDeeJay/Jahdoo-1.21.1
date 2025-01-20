@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:nether_quartz_ore",
+    "minecraft:ancient_debris",
+    "#minecraft:gold_ores",
+    "#minecraft:diamond_ores",
+    "#minecraft:emerald_ores"
+  ]
+}

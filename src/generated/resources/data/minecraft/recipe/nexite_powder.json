@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "jahdoo:nexite_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "jahdoo:nexite_powder"
+  }
+}

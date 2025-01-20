@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "jahdoo:gold_coin"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "jahdoo:silver_coin"
+  }
+}
