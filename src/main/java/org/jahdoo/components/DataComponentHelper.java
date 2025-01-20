@@ -52,11 +52,13 @@ public class DataComponentHelper {
     }
 
     public static ResourceLocation getAbilityTypeWand(Player player) {
-        if(player != null && player.getMainHandItem().getItem() instanceof WandItem){
-            ItemStack playerWand = player.getMainHandItem();
-            String abilityName = playerWand.get(WAND_DATA.get()).selectedAbility();
-            if(abilityName != null){
-                return ModHelpers.res(abilityName);
+        if(player != null) {
+            var itemInHand = player.getItemInHand(player.getUsedItemHand());
+            if (itemInHand.getItem() instanceof WandItem) {
+                String abilityName = itemInHand.get(WAND_DATA.get()).selectedAbility();
+                if (abilityName != null) {
+                    return ModHelpers.res(abilityName);
+                }
             }
         }
         return ModHelpers.res("");

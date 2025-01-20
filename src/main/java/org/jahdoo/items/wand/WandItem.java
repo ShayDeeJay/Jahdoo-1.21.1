@@ -169,9 +169,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 //    }
 
         if (interactionHand == InteractionHand.MAIN_HAND) {
-
             var item = player.getMainHandItem();
-            LocalLootBeamData.attachComponent(item, ETERNAL);
             player.startUsingItem(InteractionHand.MAIN_HAND);
             CastHelper.use(player);
             return InteractionResultHolder.pass(item);

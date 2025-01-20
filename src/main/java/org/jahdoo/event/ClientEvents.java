@@ -1,10 +1,13 @@
 package org.jahdoo.event;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -12,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -25,7 +29,9 @@ import org.jahdoo.client.KeyBinding;
 import org.jahdoo.client.RuneTooltipRenderer;
 import org.jahdoo.event.event_helpers.WandAbilitySelector;
 import org.jahdoo.registers.*;
+import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
+import org.joml.Matrix4f;
 
 import static org.jahdoo.client.RenderHelpers.drawTexture;
 import static org.jahdoo.event.event_helpers.EventHelpers.getEntityPlayerIsLookingAt;
@@ -61,7 +67,6 @@ public class ClientEvents {
     @SubscribeEvent
     public static void entityRenderer(RenderLivingEvent.Pre event) {
         mysticEffectClient(event);
-
 //         else {
 //            var player = Minecraft.getInstance().player;
 //            if(player != null /*&& getEntityPlayerIsLookingAt(player, 30) == entity*/){

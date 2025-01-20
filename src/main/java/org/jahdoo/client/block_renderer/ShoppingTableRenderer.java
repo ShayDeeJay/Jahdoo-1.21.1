@@ -45,18 +45,15 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
     public void render(ShoppingTableEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         var mc = Minecraft.getInstance();
         var itemRenderer = mc.getItemRenderer();
-        var blockRenderer = mc.getBlockRenderer();
         var direction = DisplayDirection.fromMCDirection(pBlockEntity.getBlockState().getValue(ShoppingTableBlock.FACING));
-        var state = Blocks.TINTED_GLASS.defaultBlockState();
-
 
         if(pBlockEntity.getBlockState().getValue(TEXTURE) == 2/*Set bool as render case, made for better items*/){
             pPoseStack.pushPose();
-            var scale = 0.98F;
-            pPoseStack.translate(0.01, 0.814, 0.01);
+            var scale = 1.99F;
+            pPoseStack.translate(0.5, 1.31, 0.5);
             pPoseStack.scale(scale, scale, scale);
-
-            blockRenderer.renderSingleBlock(state, pPoseStack, pBuffer, pPackedLight, pPackedOverlay, ModelData.EMPTY, TRANSLUCENT_MOVING_BLOCK);
+            var stack = new ItemStack(Blocks.TINTED_GLASS.asItem());
+            itemRenderer.renderStatic(stack, ItemDisplayContext.FIXED, pPackedLight, OverlayTexture.NO_OVERLAY, pPoseStack, pBuffer, pBlockEntity.getLevel(), 1);
             pPoseStack.popPose();
         }
 
@@ -64,21 +61,6 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
         renderSaleItem(pBlockEntity, pPoseStack, pBuffer, pPackedLight, itemRenderer, direction);
 
     }
-
-    public static final RenderType TRANSLUCENT_MOVING_BLOCK = RenderType.create(
-        "translucent_moving_block", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 786432, false, true, translucentMovingBlockState()
-    );
-
-    private static RenderType.CompositeState translucentMovingBlockState() {
-        return RenderType.CompositeState.builder()
-            .setLightmapState(LIGHTMAP)
-            .setShaderState(RENDERTYPE_TRANSLUCENT_SHADER)
-            .setTextureState(BLOCK_SHEET_MIPPED)
-            .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-            .setOutputState(ITEM_ENTITY_TARGET)
-            .createCompositeState(true);
-    }
-
 
     private void renderPrice(ShoppingTableEntity pBlockEntity, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, ItemRenderer itemRenderer, DisplayDirection direction) {
         var itemStack1 = pBlockEntity.getCost() == null ? ItemStack.EMPTY : pBlockEntity.getCost();

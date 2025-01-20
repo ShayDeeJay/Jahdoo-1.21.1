@@ -58,7 +58,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
                     var size = Random.nextFloat(1.2f, 1.6f) - ((float) getRarity / 30);
                     var lifetime = 6 + id + Random.nextInt(2, 5);
                     var particleColour = getNonBakedParticles(colour1.getColour(), darker, lifetime, size);
-                    var ySpeed = 0.1 + ((double) id / 80) + Random.nextDouble(0.07, 0.13);
+                    var ySpeed = /*0.1 +*/ ((double) id / 60) + Random.nextDouble(0.07, 0.13);
 
                     pLevel.addParticle(particleColour, vec3.x, vec3.y, vec3.z, 0, ySpeed, 0);
                 }

@@ -204,11 +204,11 @@ public record RuneData(
             return stack.getOrDefault(RUNE_DATA, DEFAULT);
         }
 
-        public static void generateFullRune(ItemStack stack, RuneGenerator runeGenerator) {
-            var isPercentage = runeGenerator.getPercentage() > 0 ? (runeGenerator.getValue() * runeGenerator.getPercentage()) / 100 : runeGenerator.getValue();
-            replaceOrAddAttribute(stack, runeGenerator.getType().getRegisteredName(), runeGenerator.getType(), isPercentage, EquipmentSlot.MAINHAND, true);
-            stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(runeGenerator.getModelData()));
-            var value = new RuneData(runeGenerator.getElementId(), runeGenerator.getName(), runeGenerator.getDescription(), runeGenerator.getColour(), runeGenerator.getRarity().getId(), runeGenerator.getTier());
+        public static void generateFullRune(ItemStack stack, RuneGenerator runGen) {
+            var isPercentage = runGen.getPercentage() > 0 ? (runGen.getValue() * runGen.getPercentage()) / 100 : runGen.getValue();
+            replaceOrAddAttribute(stack, runGen.getType().getRegisteredName(), runGen.getType(), isPercentage, EquipmentSlot.MAINHAND, true);
+            stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(runGen.getModelData()));
+            var value = new RuneData(runGen.getElementId(), runGen.getName(), runGen.getDescription(), runGen.getColour(), runGen.getRarity().getId(), runGen.getTier());
             stack.set(RUNE_DATA, value);
         }
 
