@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -12,6 +13,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -25,10 +27,10 @@ import org.jahdoo.challenge.LocalLootBeamData;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.items.JahdooItem;
-import org.jahdoo.registers.BlocksRegister;
-import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.registers.*;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.shaydee.loot_beams_neoforge.LootBeamRenderer;
 import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
@@ -40,12 +42,22 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
+import top.theillusivec4.curios.Curios;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.CuriosCapability;
+import top.theillusivec4.curios.api.SlotContext;
+import top.theillusivec4.curios.api.type.ISlotType;
+import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
+import top.theillusivec4.curios.common.CuriosConfig;
+import top.theillusivec4.curios.common.data.CuriosSlotManager;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static net.minecraft.sounds.SoundEvents.ALLAY_THROW;
 import static net.minecraft.sounds.SoundEvents.EVOKER_PREPARE_SUMMON;
+import static net.minecraft.world.InteractionHand.*;
 import static org.jahdoo.ability.rarity.JahdooRarity.*;
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
@@ -166,16 +178,35 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 //        var zombo = new AncientGolem(serverLevel, player);
 //            zombo.moveTo(player.position());
 //            serverLevel.addFreshEntity(zombo);
-//    }
 
-        if (interactionHand == InteractionHand.MAIN_HAND) {
-            var item = player.getMainHandItem();
-            player.startUsingItem(InteractionHand.MAIN_HAND);
+
+        if (canOffHand(player, interactionHand)) {
+            var item = player.getItemInHand(interactionHand);
+            player.startUsingItem(interactionHand);
             CastHelper.use(player);
             return InteractionResultHolder.pass(item);
         }
 
         return InteractionResultHolder.fail(player.getOffhandItem());
+    }
+
+    public static boolean canOffHand(Player player, InteractionHand interactionHand){
+        var curio = CuriosApi.getCuriosInventory(player);
+
+        if(interactionHand == OFF_HAND){
+            if(curio.isEmpty()) return false;
+            var isGauntletEquipped = curio.get().isEquipped(ItemsRegister.ARCHMAGE_GAUNTLET.get());
+            if(isGauntletEquipped){
+                return true;
+            } else {
+                var elementColour = ElementRegistry.getElementByWandType(player.getItemInHand(interactionHand).getItem());
+                var sendMessage = ModHelpers.withStyleComponent("You don't have the power to use this yet", elementColour.getFirst().textColourPrimary());
+                player.displayClientMessage(sendMessage, true);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public JahdooRarity getRarity(){

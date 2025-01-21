@@ -54,8 +54,9 @@ public class BlockPlacer extends AbstractUtilityProjectile {
         var replaceBlock = Blocks.AIR;
 
         if(player != null){
-            targetBlock = new ItemStack(getStoredBlock(level, player.getMainHandItem()));
-            replaceBlock = getStoredBlock(level, player.getMainHandItem());
+            var mainHandItem = player.getItemInHand(player.getUsedItemHand());
+            targetBlock = new ItemStack(getStoredBlock(level, mainHandItem));
+            replaceBlock = getStoredBlock(level, mainHandItem);
         } else {
             if(pos != null) {
                 if(this.level.getBlockEntity(BlockPos.containing(pos)) instanceof ModularChaosCubeEntity entity){

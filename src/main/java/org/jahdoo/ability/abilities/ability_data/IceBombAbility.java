@@ -24,7 +24,7 @@ public class IceBombAbility extends AbilityRegistrar {
             new ElementProjectile(
                 EntitiesRegister.FROST_ELEMENT_PROJECTILE.get(), player,
                 EntityPropertyRegister.ICE_NEEDLER.get().setAbilityId(),
-                0,
+                offsetShoot(player),
                 abilityId.getPath().intern()
             ),
             player, 0.35f

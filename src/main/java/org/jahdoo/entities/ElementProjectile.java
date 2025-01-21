@@ -79,7 +79,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         this.setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
-        this.wandAbilityHolder = owner.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        this.wandAbilityHolder = owner.getItemInHand(owner.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
         this.getProjectile = EntityPropertyRegister.getProperty(selectedAbility);

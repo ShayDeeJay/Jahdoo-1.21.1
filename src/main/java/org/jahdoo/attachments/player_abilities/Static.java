@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jahdoo.attachments.AbstractAttachment;
 import org.jahdoo.components.ability_holder.AbilityHolder;
@@ -104,10 +105,11 @@ public class Static implements AbstractAttachment {
         if(player == null) return;
         var manaSystem = player.getData(CASTER_DATA);
         if(!this.getIsActive()) return;
-        if(!(player.getMainHandItem().getItem() instanceof WandItem)) return;
+        var mainHandItem = player.getItemInHand(player.getUsedItemHand());
+        if(!(mainHandItem.getItem() instanceof WandItem)) return;
 
         String staticId = StaticAbility.abilityId.getPath().intern();
-        if (player.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get()).abilityProperties().containsKey(staticId)) {
+        if (mainHandItem.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get()).abilityProperties().containsKey(staticId)) {
             if(manaSystem.getManaPool() >= manaPerHitA){
                 if (!(player.level() instanceof ServerLevel serverLevel)) return;
                 int getRandomChance = ModHelpers.Random.nextInt(0, effectChanceA == 0 ? 20 : Math.max((int) effectChanceA, 10));

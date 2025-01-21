@@ -89,7 +89,7 @@ public class BlockInteractionHandler {
         Player player,
         int itemCount
     ){
-        ItemStack mainHandItems = player.getMainHandItem();
+        ItemStack mainHandItems = player.getItemInHand(player.getUsedItemHand());
         if(mainHandItems.isEmpty()) return false;
         itemStackHandler.setStackInSlot(outputSlot, mainHandItems.copyWithCount(itemCount));
         /*if(!player.isCreative())*/ mainHandItems.shrink(itemCount);
@@ -125,11 +125,12 @@ public class BlockInteractionHandler {
         if(outputSlotTotal.isEmpty()) return false;
 
         // Removes all items from slot to empty hand
-        if (player.getMainHandItem().isEmpty()) {
+        var mainHandItem = player.getItemInHand(player.getUsedItemHand());
+        if (mainHandItem.isEmpty()) {
             player.setItemInHand(interactionHand, itemStackHandler.extractItem(outputSlot, outputSlotTotal.getCount(), false));
             return true;
-        } else if(player.getMainHandItem().is(outputSlotTotal.getItem()) &&  player.getMainHandItem().getCount() < 64) {
-            player.getMainHandItem().grow(outputSlotTotal.getCount() - player.getMainHandItem().getCount());
+        } else if(mainHandItem.is(outputSlotTotal.getItem()) &&  mainHandItem.getCount() < 64) {
+            mainHandItem.grow(outputSlotTotal.getCount() - mainHandItem.getCount());
             return true;
         }
 
@@ -151,7 +152,7 @@ public class BlockInteractionHandler {
         ItemStack outputSlotTotal = itemStackHandler.getStackInSlot(outputSlot);
 
         if(!itemStackHandler.getStackInSlot(outputSlot).isEmpty()){
-            if (player.getMainHandItem().isEmpty() && player.isShiftKeyDown()) {
+            if (player.getItemInHand(player.getUsedItemHand()).isEmpty() && player.isShiftKeyDown()) {
                 player.setItemInHand(interactionHand, outputSlotTotal);
                 itemStackHandler.extractItem(outputSlot, outputSlotTotal.getCount(), false);
                 level.playLocalSound(blockPos, soundEvents, SoundSource.NEUTRAL, volume, pitch, false);

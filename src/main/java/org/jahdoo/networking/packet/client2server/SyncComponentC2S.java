@@ -32,7 +32,7 @@ public class SyncComponentC2S implements CustomPacketPayload{
         ctx.enqueueWork(
             () -> {
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
-                    serverPlayer.getMainHandItem().set(WAND_ABILITY_HOLDER, this.wandAbilityHolder);
+                    serverPlayer.getItemInHand(serverPlayer.getUsedItemHand()).set(WAND_ABILITY_HOLDER, this.wandAbilityHolder);
                 }
             }
         );

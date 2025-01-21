@@ -83,8 +83,9 @@ public class WallPlacer extends AbstractUtilityProjectile {
         var replaceBlock = Blocks.AIR;
 
         if(player != null){
-            targetBlock = new ItemStack(getStoredBlock(level, player.getMainHandItem()));
-            replaceBlock = getStoredBlock(level, player.getMainHandItem());
+            var mainHandItem = player.getItemInHand(player.getUsedItemHand());
+            targetBlock = new ItemStack(getStoredBlock(level, mainHandItem));
+            replaceBlock = getStoredBlock(level, mainHandItem);
         } else {
             if(pos1 != null) {
                 if(this.level.getBlockEntity(BlockPos.containing(pos1)) instanceof ModularChaosCubeEntity entity){

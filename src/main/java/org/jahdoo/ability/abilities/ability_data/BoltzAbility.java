@@ -31,7 +31,7 @@ public class BoltzAbility extends AbilityRegistrar {
     @Override
     public void invokeAbility(Player player) {
         var amplifier = 1;
-        var totalShots = (int) getSpecificValue(player, player.getMainHandItem(), totalBolts) * amplifier;
+        var totalShots = (int) getSpecificValue(player, player.getItemInHand(player.getUsedItemHand()), totalBolts) * amplifier;
         var direction = player.getLookAngle();
         var particleOptions = genericParticleOptions(ParticleStore.ELECTRIC_PARTICLE_SELECTION, this.getElemenType(), 5, 1.2f, 0.5);
 

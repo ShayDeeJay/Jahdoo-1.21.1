@@ -22,7 +22,7 @@ public class WandAbilitySelector {
     public static void selectWandSlot(int keyNum){
         Player player = Minecraft.getInstance().player;
         if(player == null) return;
-        ItemStack playerHandItem = player.getMainHandItem();
+        ItemStack playerHandItem = player.getItemInHand(player.getUsedItemHand());
         if(!playerHandItem.is(ModTags.Items.WAND_TAGS)) return;
 
         List<String> arrangedAbilities = AbilityWheelMenu.getAllAbilities(playerHandItem);

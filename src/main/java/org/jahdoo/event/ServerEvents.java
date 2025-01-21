@@ -38,6 +38,7 @@ import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
+import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -144,14 +145,10 @@ public class ServerEvents {
         saveBlockType(event, item, blockState, pos);
     }
 
-
     @SubscribeEvent
     public static void attributeEvent(ItemAttributeModifierEvent event) {
-        var item = event.getItemStack();
-        useRuneAttributes(event, item);
+        useRuneAttributes(event);
     }
-
-
 
     @SubscribeEvent
     public static void livingDeathEvent(LivingDeathEvent event){
@@ -160,16 +157,17 @@ public class ServerEvents {
         var bonus = entity.tickCount / 10;
 
         if(entity.level() instanceof CustomLevel){
+            var max = Math.max(1, bonus);
             if(entity instanceof CustomZombie){
                 System.out.println(bonus);
-                if(Random.nextInt(0,Math.min(10, bonus)) == 0){
+                if(Random.nextInt(0, Math.min(10, max)) == 0){
                     var stack = new ItemStack(ItemsRegister.BRONZE_COIN).copyWithCount(Math.max(1, 10 - bonus));
                     BehaviorUtils.throwItem(entity, stack, entity.position());
                 }
             }
 
             if(entity instanceof CustomSkeleton){
-                if(Random.nextInt(0,Math.min(5, bonus)) == 0){
+                if(Random.nextInt(0,Math.min(5, max)) == 0){
                     var stack = new ItemStack(ItemsRegister.BRONZE_COIN).copyWithCount(Math.max(1, 20 - bonus));
                     BehaviorUtils.throwItem(entity, stack, entity.position());
                 }
@@ -177,7 +175,7 @@ public class ServerEvents {
 
             if(entity instanceof EternalWizard wizard){
                 if(wizard.getOwner() == null){
-                    if (Random.nextInt(0,Math.min(10 , bonus)) == 0) {
+                    if (Random.nextInt(0,Math.min(10 , max)) == 0) {
                         var stack = new ItemStack(ItemsRegister.SILVER_COIN).copyWithCount(Math.max(1, 10 - bonus));
                         BehaviorUtils.throwItem(entity, stack, entity.position());
                     }

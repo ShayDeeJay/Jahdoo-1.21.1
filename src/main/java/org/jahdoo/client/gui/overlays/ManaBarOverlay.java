@@ -238,7 +238,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
     }
 
     public void setTypeOverlay(AlignedGui alignedGui, Player player, int manaProgress){
-        var type = player.getMainHandItem();
+        var type = player.getItemInHand(player.getUsedItemHand());
         var element = ElementRegistry.getElementByWandType(type.getItem());
         if(!element.isEmpty()) this.types = element.getFirst().getTypeId();
         if(types > 0){
@@ -261,7 +261,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
 
     private void setFadeGui(Player player){
         var fadeAmount = 0.07f;
-        var wandItem = player.getMainHandItem().getItem();
+        var wandItem = player.getItemInHand(player.getUsedItemHand()).getItem();
         if (wandItem instanceof WandItem) {
             if (this.fadeIn < 1) this.fadeIn += fadeAmount;
         } else {

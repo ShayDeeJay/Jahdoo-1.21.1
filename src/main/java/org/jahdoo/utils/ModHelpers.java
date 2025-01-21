@@ -118,7 +118,7 @@ public class ModHelpers {
 
     public static double getTag(Player player, String name, String abilityName) {
         if(player != null){
-            var wandAbilityHolder = player.getMainHandItem().get(WAND_ABILITY_HOLDER);
+            var wandAbilityHolder = player.getItemInHand(player.getUsedItemHand()).get(WAND_ABILITY_HOLDER);
             var holder = ModHelpers.getModifierValue(wandAbilityHolder, abilityName).get(name);
             if(holder != null) return holder.setValue();
         }
@@ -352,7 +352,7 @@ public class ModHelpers {
         boolean isAddition,
         Holder<Attribute> ... attribute
     ){
-        var wandItem = player.getMainHandItem();
+        var wandItem = player.getItemInHand(player.getUsedItemHand());
         var abilityName = wandItem.get(DataComponentRegistry.WAND_DATA.get());
         if(abilityName == null) return 0;
         float getAttribute = 0;

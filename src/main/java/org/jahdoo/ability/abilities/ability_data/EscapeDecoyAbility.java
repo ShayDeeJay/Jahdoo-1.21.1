@@ -64,7 +64,7 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
 
     @Override
     public void invokeAbility(Player player) {
-        var tagModifier = ModHelpers.getModifierValue(player.getMainHandItem().get(WAND_ABILITY_HOLDER.get()), abilityId.getPath().intern());
+        var tagModifier = ModHelpers.getModifierValue(player.getItemInHand(player.getUsedItemHand()).get(WAND_ABILITY_HOLDER.get()), abilityId.getPath().intern());
         var range = tagModifier.get(RANGE);
         if(range != null){
             var decoy = new Decoy(player.level(), player, (int) range.setValue());

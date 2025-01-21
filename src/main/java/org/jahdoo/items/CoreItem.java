@@ -24,11 +24,12 @@ public class CoreItem extends Item  {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+        var hand = player.getItemInHand(player.getUsedItemHand());
         if(level instanceof ServerLevel serverLevel){
             var block = BlocksRegister.TRAIL_PORTAL.get();
 
 
-            var item = player.getMainHandItem().getItem();
+            var item = hand.getItem();
             if(item == AUGMENT_HYPER_CORE.get()){
                 var setBlockState = block.defaultBlockState().setValue(DIMENSION_KEY, KEY_TRADING_POST);
                 level.setBlockAndUpdate(BlockPos.containing(player.position()), setBlockState);
@@ -49,6 +50,6 @@ public class CoreItem extends Item  {
             }
         }
 
-        return InteractionResultHolder.fail(player.getMainHandItem());
+        return InteractionResultHolder.fail(hand);
     }
 }

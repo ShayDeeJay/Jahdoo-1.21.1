@@ -1,6 +1,8 @@
 package org.jahdoo.ability.abilities.ability_data;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbilityRegistrar;
@@ -24,7 +26,7 @@ public class FireballAbility extends AbilityRegistrar {
         this.fireMultiShotProjectile(projCount, 0.5f, player, 0.4,
             () -> new ElementProjectile(
                 EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(), player,
-                EntityPropertyRegister.FIRE_BALL.get().setAbilityId(), projCount == 1 ? -0.3 : 0,
+                EntityPropertyRegister.FIRE_BALL.get().setAbilityId(), projCount == 1 ? offsetShoot(player) : 0,
                 abilityId.getPath().intern()
             )
         );

@@ -34,7 +34,7 @@ public class OverlayEvent {
     private static void hideCrosshairForArcaneShift(RenderGuiLayerEvent.Pre event) {
         var player = Minecraft.getInstance().player;
         if(player == null) return;
-        var stack = player.getMainHandItem();
+        var stack = player.getItemInHand(player.getUsedItemHand());
         var getSelectedAbility = stack.get(WAND_DATA);
         if(getSelectedAbility == null) return;
         if(Objects.equals(getSelectedAbility.selectedAbility(), ArcaneShiftAbility.abilityId.getPath().intern())){

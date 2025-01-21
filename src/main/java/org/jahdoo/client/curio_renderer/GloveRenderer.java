@@ -37,14 +37,15 @@ public class GloveRenderer implements ICurioRenderer {
         float headPitch
     ) {
         if (!(renderLayerParent.getModel() instanceof HumanoidModel<?> humanoidModel)) return;
-        var scale = 0.4f;
+
+        var scale = 0.6f;
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
         poseStack.pushPose();
 
-        humanoidModel.rightArm.translateAndRotate(poseStack);
-        poseStack.translate(-0.067,0.35,-0.005);
+        humanoidModel.leftArm.translateAndRotate(poseStack);
+        poseStack.translate(0.088,0.5,0.015);
         poseStack.mulPose(Axis.XP.rotation(1.57f));
-        poseStack.mulPose(Axis.ZP.rotation(15.7f));
+        poseStack.mulPose(Axis.ZP.rotation(18.85f));
         poseStack.scale(scale, scale, scale);
         itemRenderer.renderStatic(itemStack, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, null, 0);
         poseStack.popPose();

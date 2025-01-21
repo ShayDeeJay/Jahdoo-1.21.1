@@ -46,7 +46,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.setProjectileWithOffsets(this, player, offset, 1);
         this.reapplyPosition();
         this.setOwner(player);
-        this.wandAbilityHolder = player.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        this.wandAbilityHolder = player.getItemInHand(player.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         this.projectileSelectionIndex = projectileSelectionIndex;
         this.abilityId = abilityId;
         this.getProjectile = EntityPropertyRegister.getProperty(projectileSelectionIndex);
@@ -64,7 +64,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.setProjectileWithOffsets(this, player, offset, 1);
         this.reapplyPosition();
         this.setOwner(player);
-        this.wandAbilityHolder = player.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        this.wandAbilityHolder = player.getItemInHand(player.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         this.projectileSelectionIndex = projectileSelectionIndex;
         this.abilityId = abilityId;
         this.getProjectile = EntityPropertyRegister.getProperty(projectileSelectionIndex);

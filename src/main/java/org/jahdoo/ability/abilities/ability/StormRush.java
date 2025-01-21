@@ -27,7 +27,7 @@ public class StormRush extends AbstractAbility {
 
     public StormRush(Player player){
         this.player = player;
-        this.wandAbilityHolder = player.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        this.wandAbilityHolder = player.getItemInHand(player.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
     }
 
     public void launchPlayerDirection() {
@@ -39,7 +39,7 @@ public class StormRush extends AbstractAbility {
 
         player.playSound(SoundRegister.DASH_EFFECT_INSTANT.get(),0.5f,1);
         player.playSound(SoundRegister.BOLT.get(), 0.5f,0.8f);
-        player.startAutoSpinAttack(10, damageModified, player.getMainHandItem());
+        player.startAutoSpinAttack(10, damageModified, player.getItemInHand(player.getUsedItemHand()));
 
         if(player.level().isClientSide){
             Vec3 lookVector = player.getLookAngle().scale(launchDistances);

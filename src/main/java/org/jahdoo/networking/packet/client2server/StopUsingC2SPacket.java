@@ -1,6 +1,7 @@
 package org.jahdoo.networking.packet.client2server;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketListener;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -22,7 +23,7 @@ public class StopUsingC2SPacket implements CustomPacketPayload {
     public boolean handle(IPayloadContext ctx) {
         ctx.enqueueWork(
             () -> {
-                if(ctx.player() instanceof ServerPlayer serverPlayer && serverPlayer.getMainHandItem().getItem() instanceof WandItem){
+                if(ctx.player() instanceof ServerPlayer serverPlayer && serverPlayer.getItemInHand(serverPlayer.getUsedItemHand()).getItem() instanceof WandItem){
                     serverPlayer.releaseUsingItem();
                 }
             }

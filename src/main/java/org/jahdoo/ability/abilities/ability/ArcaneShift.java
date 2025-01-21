@@ -18,7 +18,7 @@ public class ArcaneShift extends AbstractAbility {
 
     public ArcaneShift(Player player) {
         this.player = player;
-        this.wandAbilityHolder = player.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        this.wandAbilityHolder = player.getItemInHand(player.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
     }
 
     @Override

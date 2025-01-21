@@ -32,7 +32,7 @@ public class SelectedAbilityC2SPacket implements CustomPacketPayload {
         ctx.enqueueWork(
             () -> {
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
-                    if(serverPlayer.getMainHandItem().getItem() instanceof WandItem){
+                    if(serverPlayer.getItemInHand(serverPlayer.getUsedItemHand()).getItem() instanceof WandItem){
                         if(currentAbility != null){
                             DataComponentHelper.setAbilityTypeWand(serverPlayer, this.currentAbility);
                         }

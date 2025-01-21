@@ -23,7 +23,7 @@ public abstract class DisableSpinAttackLayerMixin {
         cancellable = true
     )
     private void cancelRender(PoseStack poseStack, MultiBufferSource buffer, int packedLight, LivingEntity livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci){
-        if(livingEntity.getMainHandItem().getItem() instanceof WandItem){
+        if(livingEntity.getItemInHand(livingEntity.getUsedItemHand()).getItem() instanceof WandItem){
             ci.cancel();
         }
     }

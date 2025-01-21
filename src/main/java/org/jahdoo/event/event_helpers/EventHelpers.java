@@ -32,10 +32,12 @@ import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static org.jahdoo.items.wand.WandItemHelper.storeBlockType;
 import static org.jahdoo.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.registers.AttachmentRegister.SAVE_DATA;
+import static org.jahdoo.registers.DataComponentRegistry.*;
 import static org.jahdoo.utils.ModHelpers.getSoundWithPosition;
 import static org.jahdoo.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 
@@ -107,17 +109,19 @@ public class EventHelpers {
         }
     }
 
-    public static void useRuneAttributes(ItemAttributeModifierEvent event, ItemStack item) {
-        var slotAttributes = item.get(DataComponentRegistry.RUNE_HOLDER.get());
-        if(slotAttributes != null){
-            for (ItemStack itemStack : slotAttributes.runeSlots()) {
-                var mods = itemStack.getAttributeModifiers().modifiers();
-                if (!mods.isEmpty()) {
-                    var acMod = mods.getFirst();
-                    var slot = item.getItem() instanceof ArmorItem armorItem ? EquipmentSlotGroup.bySlot(armorItem.getEquipmentSlot()) : EquipmentSlotGroup.MAINHAND;
-                    event.addModifier(acMod.attribute(), acMod.modifier(), slot);
-                }
-            }
+    public static void useRuneAttributes(ItemAttributeModifierEvent event) {
+        var item = event.getItemStack();
+        var slotAttributes = item.get(RUNE_HOLDER.get());
+        if(slotAttributes == null) return;
+
+        for (ItemStack itemStack : slotAttributes.runeSlots()) {
+            var mods = itemStack.getAttributeModifiers().modifiers();
+            if (mods.isEmpty()) return;
+            var acMod = mods.getFirst();
+            /*Would be nice if can actually control the hand allowed. One way would be to add a component that changes
+            * when swapped. Or just get slot context from inventory tick?*/
+            var slot = item.getItem() instanceof ArmorItem armorItem ? bySlot(armorItem.getEquipmentSlot()) : MAINHAND ;
+            event.addModifier(acMod.attribute(), acMod.modifier(), slot);
         }
     }
 

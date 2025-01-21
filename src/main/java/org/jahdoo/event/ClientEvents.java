@@ -104,7 +104,7 @@ public class ClientEvents {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) return;
 
         var player = (Player) event.getCamera().getEntity();
-        var stack = player.getMainHandItem();
+        var stack = player.getItemInHand(player.getUsedItemHand());
 
         renderUtilityOverlay(event, player, stack);
         renderTeleportLocationOverlay(event, player, stack);

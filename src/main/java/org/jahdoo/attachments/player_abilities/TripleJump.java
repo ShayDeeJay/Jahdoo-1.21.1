@@ -31,7 +31,7 @@ public class TripleJump implements AbstractAttachment {
     }
 
     private void onClientTick(Player player) {
-        if(!(player instanceof LocalPlayer localPlayer) || !RuneData.RuneHelpers.canTripleJump(player.getMainHandItem())) return;
+        if(!(player instanceof LocalPlayer localPlayer) || !RuneData.RuneHelpers.canTripleJump(player.getItemInHand(player.getUsedItemHand()))) return;
         if(player.verticalCollisionBelow) {
             clientJumpCount = 0;
         } else if (localPlayer.input.jumping){

@@ -5,6 +5,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -78,6 +79,10 @@ public abstract class AbilityRegistrar {
         var lookDirection = player.getLookAngle();
         var rightVector = new Vec3(-lookDirection.z(), 0, lookDirection.x()).normalize(); // Perpendicular to look direction
         return rightVector.scale(offset);
+    }
+
+    public static double offsetShoot(LivingEntity livingEntity){
+        return livingEntity.getUsedItemHand() == InteractionHand.MAIN_HAND ? -0.3 : 0.3;
     }
 
     public void fireProjectile(Projectile projectile, LivingEntity player, float velocity){

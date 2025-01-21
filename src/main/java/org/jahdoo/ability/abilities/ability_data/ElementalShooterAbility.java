@@ -66,7 +66,7 @@ public class ElementalShooterAbility extends AbilityRegistrar {
 
 
     private double getTag(Player player, String name){
-        return ModHelpers.getModifierValue(player.getMainHandItem().get(WAND_ABILITY_HOLDER.get()), abilityId.getPath().intern()).get(name).actualValue();
+        return ModHelpers.getModifierValue(player.getItemInHand(player.getUsedItemHand()).get(WAND_ABILITY_HOLDER.get()), abilityId.getPath().intern()).get(name).actualValue();
     }
 
     @Override

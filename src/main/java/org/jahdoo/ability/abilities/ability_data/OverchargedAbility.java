@@ -26,7 +26,7 @@ public class OverchargedAbility extends AbilityRegistrar {
                 EntitiesRegister.LIGHTNING_ELEMENT_PROJECTILE.get(),
                 player,
                 EntityPropertyRegister.OVERCHARGED.get().setAbilityId(),
-                0,
+                offsetShoot(player),
                 abilityId.getPath().intern()
             ),
             player,

@@ -70,7 +70,7 @@ public class MageFlight implements AbstractAttachment {
     public void serverFlight(Player player){
         if(player.isCreative() || player.isSpectator()) return;
 
-        var wandItem = player.getMainHandItem();
+        var wandItem = player.getItemInHand(player.getUsedItemHand());
         var manaSystem = player.getData(CASTER_DATA);
         if (cancelAttempt(player, wandItem)) return;
 

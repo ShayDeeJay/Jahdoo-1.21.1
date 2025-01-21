@@ -49,7 +49,7 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         this.reapplyPosition();
         this.setRadius(setWidth);
         this.owner = livingEntity;
-        this.wandAbilityHolder = livingEntity.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        this.wandAbilityHolder = livingEntity.getItemInHand(livingEntity.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         this.setEntityType(selectedAbility);
 //        this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;

@@ -57,9 +57,7 @@ public class WizardArmor extends ArmorItem implements GeoItem, JahdooItem {
 
                 @Override
                 public @Nullable <T extends LivingEntity> HumanoidModel<?> getGeoArmorRenderer(@Nullable T livingEntity, ItemStack itemStack, @Nullable EquipmentSlot equipmentSlot, @Nullable HumanoidModel<T> original) {
-                    if (this.renderer == null)
-                        this.renderer = new WizardArmorRenderer();
-
+                    if (this.renderer == null) this.renderer = new WizardArmorRenderer();
                     return this.renderer;
                 }
             }

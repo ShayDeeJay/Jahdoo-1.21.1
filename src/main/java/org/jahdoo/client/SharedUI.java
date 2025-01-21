@@ -228,7 +228,7 @@ public class SharedUI {
         var player = Minecraft.getInstance().player;
         if(player != null){
             Font font = Minecraft.getInstance().font;
-            var element = getElementColour(abilityRegistrar, player.getMainHandItem());
+            var element = getElementColour(abilityRegistrar, player.getItemInHand(player.getUsedItemHand()));
             if (isCenteredString) {
                 guiGraphics.drawCenteredString(font, abilityRegistrar.getAbilityName(), posX, posY, element);
                 return;

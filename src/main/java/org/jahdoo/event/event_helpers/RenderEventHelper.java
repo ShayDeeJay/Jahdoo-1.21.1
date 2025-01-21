@@ -172,7 +172,7 @@ public class RenderEventHelper {
         var player = (Player) event.getCamera().getEntity();
         var target = getEntityInRange(player, 15, 25);
         if (target == null || !player.hasLineOfSight(target)) return;
-        if (!(player.getMainHandItem().getItem() instanceof WandItem)) return;
+        if (!(player.getItemInHand(player.getUsedItemHand()).getItem() instanceof WandItem)) return;
 
         target.addEffect(new MobEffectInstance(MobEffects.GLOWING.getDelegate(), 20, 1, false, false), player);
 

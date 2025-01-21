@@ -25,7 +25,7 @@ public abstract class AbstractHoldUseAttachment implements AbstractAttachment{
     }
 
     public void onTickMethod(Player player){
-        var getValue = player.getMainHandItem().get(WAND_DATA);
+        var getValue = player.getItemInHand(player.getUsedItemHand()).get(WAND_DATA);
 
         if(!player.isUsingItem() || getValue == null) {
             startedUsing = false;

@@ -21,7 +21,7 @@ public class KeyBindHelper {
     }
 
     public static void QuickSelectBehaviour(Player player, Minecraft instance) {
-        if(player != null && player.getMainHandItem().getItem() instanceof WandItem){
+        if(player != null && player.getItemInHand(player.getUsedItemHand()).getItem() instanceof WandItem){
 
             if(Configuration.QUICK_SELECT.get()){
                 if(KeyBinding.QUICK_SELECT.isDown()){

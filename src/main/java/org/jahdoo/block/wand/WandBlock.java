@@ -167,7 +167,7 @@ public class WandBlock extends BaseEntityBlock {
                 }
             } else {
                 for (ItemStack itemStack : temp) {
-                    if (!itemStack.isEmpty() && player.getMainHandItem().isEmpty()) {
+                    if (!itemStack.isEmpty() && player.getItemInHand(player.getUsedItemHand()).isEmpty()) {
                         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
                         temp.set(temp.indexOf(itemStack), ItemStack.EMPTY);
                         RuneHolder.updateRuneSlots(wandBlock.getWandItemFromSlot(), temp);

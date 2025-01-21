@@ -30,44 +30,44 @@ public class  AttributesRegister {
     public static final String FIXED_VALUE = ".fixed";
 
     //Base Attributes
-    public static final String MANA_POOL_PREFIX= MOD + FIXED_VALUE + ".mana.mana_pool";
+    public static final String MANA_POOL_PREFIX = MOD + FIXED_VALUE + ".mana.mana_pool";
     public static final String MANA_REGEN_PREFIX= MOD + ".mana.mana_regen";
 
     //Skill Attributes
-    public static final String MAGE_FLIGHT_PREFIX= MOD + ".skills.mage_flight";
-    public static final String DESTINY_BOND_PREFIX= MOD + ".skills.destiny_bond";
-    public static final String TRIPLE_JUMP_PREFIX= MOD + ".skills.triple_jump";
+    public static final String MAGE_FLIGHT_PREFIX = MOD + ".skills.mage_flight";
+    public static final String DESTINY_BOND_PREFIX = MOD + ".skills.destiny_bond";
+    public static final String TRIPLE_JUMP_PREFIX = MOD + ".skills.triple_jump";
 
     //Cast Attributes
-    public static final String SKIP_MANA_PREFIX= MOD + ".mana.no_mana_cost";
-    public static final String SKIP_COOLDOWN_PREFIX= MOD + ".no_cooldown_cost";
+    public static final String SKIP_MANA_PREFIX = MOD + ".mana.no_mana_cost";
+    public static final String SKIP_COOLDOWN_PREFIX = MOD + ".no_cooldown_cost";
     public static final String HEAL_PREFIX= MOD + ".cast.healer";
-    public static final String ABSORPTION_PREFIX= MOD + ".cast.absorption";
+    public static final String ABSORPTION_PREFIX = MOD + ".cast.absorption";
 
     //Element Attributes
     public static final String MANA_COST_REDUCTION_PREFIX = MOD + ".mana.cost_reduction";
-    public static final String COOLDOWN_REDUCTION_PREFIX= MOD + ".cooldown.cooldown_reduction";
-    public static final String MAGIC_DAMAGE_MULTIPLIER_PREFIX= MOD + ".damage.damage_multiplier";
+    public static final String COOLDOWN_REDUCTION_PREFIX = MOD + ".cooldown.cooldown_reduction";
+    public static final String MAGIC_DAMAGE_MULTIPLIER_PREFIX = MOD + ".damage.damage_multiplier";
 
     public static final String INFERNO_MANA_COST_REDUCTION_PREFIX = MOD + ".inferno_mana.cost_reduction";
-    public static final String INFERNO_COOLDOWN_REDUCTION_PREFIX= MOD + ".inferno_cooldown.cooldown_reduction";
-    public static final String INFERNO_MAGIC_DAMAGE_MULTIPLIER_PREFIX= MOD + ".inferno_damage.damage_multiplier";
+    public static final String INFERNO_COOLDOWN_REDUCTION_PREFIX = MOD + ".inferno_cooldown.cooldown_reduction";
+    public static final String INFERNO_MAGIC_DAMAGE_MULTIPLIER_PREFIX = MOD + ".inferno_damage.damage_multiplier";
 
     public static final String MYSTIC_MANA_COST_REDUCTION_PREFIX = MOD + ".mystic_mana.cost_reduction";
-    public static final String MYSTIC_COOLDOWN_REDUCTION_PREFIX= MOD + ".mystic_cooldown.cooldown_reduction";
-    public static final String MYSTIC_MAGIC_DAMAGE_MULTIPLIER_PREFIX= MOD + ".mystic_damage.damage_multiplier";
+    public static final String MYSTIC_COOLDOWN_REDUCTION_PREFIX = MOD + ".mystic_cooldown.cooldown_reduction";
+    public static final String MYSTIC_MAGIC_DAMAGE_MULTIPLIER_PREFIX = MOD + ".mystic_damage.damage_multiplier";
 
     public static final String LIGHTNING_MANA_COST_REDUCTION_PREFIX = MOD + ".lightning_mana.cost_reduction";
-    public static final String LIGHTNING_COOLDOWN_REDUCTION_PREFIX= MOD + ".lightning_cooldown.cooldown_reduction";
-    public static final String LIGHTNING_MAGIC_DAMAGE_MULTIPLIER_PREFIX= MOD + ".lightning_damage.damage_multiplier";
+    public static final String LIGHTNING_COOLDOWN_REDUCTION_PREFIX = MOD + ".lightning_cooldown.cooldown_reduction";
+    public static final String LIGHTNING_MAGIC_DAMAGE_MULTIPLIER_PREFIX = MOD + ".lightning_damage.damage_multiplier";
 
     public static final String FROST_MANA_COST_REDUCTION_PREFIX = MOD + ".frost_mana.cost_reduction";
-    public static final String FROST_COOLDOWN_REDUCTION_PREFIX= MOD + ".frost_cooldown.cooldown_reduction";
-    public static final String FROST_MAGIC_DAMAGE_MULTIPLIER_PREFIX= MOD + ".frost_damage.damage_multiplier";
+    public static final String FROST_COOLDOWN_REDUCTION_PREFIX = MOD + ".frost_cooldown.cooldown_reduction";
+    public static final String FROST_MAGIC_DAMAGE_MULTIPLIER_PREFIX = MOD + ".frost_damage.damage_multiplier";
 
     public static final String VITALITY_MANA_COST_REDUCTION_PREFIX = MOD + ".vitality_mana.cost_reduction";
-    public static final String VITALITY_COOLDOWN_REDUCTION_PREFIX= MOD + ".vitality_cooldown.cooldown_reduction";
-    public static final String VITALITY_MAGIC_DAMAGE_MULTIPLIER_PREFIX= MOD + ".vitality_damage.damage_multiplier";
+    public static final String VITALITY_COOLDOWN_REDUCTION_PREFIX = MOD + ".vitality_cooldown.cooldown_reduction";
+    public static final String VITALITY_MAGIC_DAMAGE_MULTIPLIER_PREFIX = MOD + ".vitality_damage.damage_multiplier";
 
     //Base attribute
     public static final DeferredHolder<Attribute, Attribute> MANA_POOL = register(MANA_POOL_PREFIX, 100);

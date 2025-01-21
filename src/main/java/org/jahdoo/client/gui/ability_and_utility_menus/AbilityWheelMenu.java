@@ -63,7 +63,7 @@ public class AbilityWheelMenu extends Screen  {
         var player = this.getMinecraft().player;
         this.buttons.clear();
         if(player == null) return;
-        var wand = player.getMainHandItem();
+        var wand = player.getItemInHand(player.getUsedItemHand());
         var wandData = wand.get(DataComponentRegistry.WAND_DATA.get());
         var abilityHolder = getAllAbilities(wand);
         var totalSlots = abilityHolder.size();
@@ -151,7 +151,7 @@ public class AbilityWheelMenu extends Screen  {
     private void showConfig(WandData wandData, Player player, AbilityRegistrar selectedAbility, int posX, int posY) {
         var configButton = new WidgetSprites(COG, COG);
         var configButtonSize = 20;
-        var itemStack = player.getMainHandItem();
+        var itemStack = player.getItemInHand(player.getUsedItemHand());
         if (selectedAbility.getElemenType() == ElementRegistry.UTILITY.get()) {
             var filterOutBase = isConfigAbility(selectedAbility, wandData.selectedAbility(), itemStack);
             if(filterOutBase){

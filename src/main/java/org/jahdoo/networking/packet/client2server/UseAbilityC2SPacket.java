@@ -31,7 +31,7 @@ public class UseAbilityC2SPacket implements CustomPacketPayload {
         ctx.enqueueWork(
             () -> {
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
-                    if( ctx.player().getMainHandItem().getItem() instanceof WandItem){
+                    if( ctx.player().getItemInHand(ctx.player().getUsedItemHand()).getItem() instanceof WandItem){
                         this.invokeSelectedAbility(serverPlayer);
                     }
                 }

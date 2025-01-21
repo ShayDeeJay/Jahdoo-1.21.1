@@ -27,7 +27,7 @@ public class MysticalSemtexAbility extends AbilityRegistrar {
             EntitiesRegister.MYSTIC_ELEMENT_PROJECTILE.get(),
             player,
             EntityPropertyRegister.MYSTICAL_SEMTEX.get().setAbilityId(),
-            -0.3,
+            offsetShoot(player),
             abilityId.getPath().intern()
         );
         elementProjectile.setPredicate(1);

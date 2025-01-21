@@ -28,7 +28,7 @@ public class ThunderBurstAbility extends AbilityRegistrar {
     public static final String NUMBER_OF_THUNDERBOLTS = "Bolt Count";
 
     private Map<String, AbilityHolder.AbilityModifiers> tagModifierHelper(Player player){
-        var wandAbilityHolder = player.getMainHandItem().get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var wandAbilityHolder = player.getItemInHand(player.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         return ModHelpers.getModifierValue(wandAbilityHolder, abilityId.getPath().intern());
     }
 
