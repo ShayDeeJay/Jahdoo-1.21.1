@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
@@ -33,6 +34,7 @@ import org.jahdoo.registers.ElementRegistry;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
+import static net.minecraft.world.item.component.ItemAttributeModifiers.*;
 import static org.jahdoo.items.wand.WandItemHelper.storeBlockType;
 import static org.jahdoo.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.particle.ParticleHandlers.sendParticles;
@@ -114,13 +116,17 @@ public class EventHelpers {
         var slotAttributes = item.get(RUNE_HOLDER.get());
         if(slotAttributes == null) return;
 
+        var handComponent = item.get(INTERACTION_HAND);
+        var hand = handComponent == null ? 2 : handComponent;
+        if(hand == 2) return;
+
         for (ItemStack itemStack : slotAttributes.runeSlots()) {
             var mods = itemStack.getAttributeModifiers().modifiers();
             if (mods.isEmpty()) return;
             var acMod = mods.getFirst();
-            /*Would be nice if can actually control the hand allowed. One way would be to add a component that changes
-            * when swapped. Or just get slot context from inventory tick?*/
-            var slot = item.getItem() instanceof ArmorItem armorItem ? bySlot(armorItem.getEquipmentSlot()) : MAINHAND ;
+            /* Would be nice if you could actually control the hand allowed. One way would be to add a component that changes
+            *  when swapped. Or just get slot context from inventory tick? */
+            var slot = item.getItem() instanceof ArmorItem armorItem ? bySlot(armorItem.getEquipmentSlot()) : hand == 0 ? MAINHAND : OFFHAND;
             event.addModifier(acMod.attribute(), acMod.modifier(), slot);
         }
     }

@@ -164,9 +164,7 @@ public class LevelGenerator {
             setAltarAndData(level, data);
         }
 
-        if(isTrading){
-            setLootChests(level);
-        }
+        if(isTrading) setLootChests(level);
     }
 
     private static void setAltarAndData(ServerLevel level, ChallengeAltarData data) {
@@ -219,7 +217,6 @@ public class LevelGenerator {
                     }
                 }
             }
-
         }
 
         var keyState = shoppingTableState.setValue(FACING, Direction.EAST).setValue(TEXTURE, 1);

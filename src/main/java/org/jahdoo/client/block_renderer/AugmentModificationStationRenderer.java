@@ -100,7 +100,7 @@ public class AugmentModificationStationRenderer implements BlockEntityRenderer<A
             var matrix4f = pPoseStack.last().pose();
             var font = Minecraft.getInstance().font;
             var f1 = (float) -font.width(pDisplayName) / 2;
-            font.drawInBatch(pDisplayName, f1, 0, textColour, false, matrix4f, pBuffer, Font.DisplayMode.SEE_THROUGH , 0, 255);
+            font.drawInBatch(pDisplayName, f1, 0, textColour, false, matrix4f, pBuffer, Font.DisplayMode.NORMAL  , 0, 255);
             pPoseStack.popPose();
         }
     }

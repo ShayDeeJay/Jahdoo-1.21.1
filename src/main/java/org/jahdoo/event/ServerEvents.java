@@ -105,7 +105,6 @@ public class ServerEvents {
         var mainHand = event.getItemStack();
         var player = event.getEntity();
 
-
         if(mainHand.has(DataComponentRegistry.RUNE_HOLDER)){
             var rune = player.getOffhandItem();
             var list = new ArrayList<ItemStack>();
@@ -120,7 +119,6 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onEntityDamageEvent(LivingDamageEvent.Pre event){
         var entity = event.getEntity();
-
         greaterFrostEffectDamageAmplifier(event, entity);
     }
 

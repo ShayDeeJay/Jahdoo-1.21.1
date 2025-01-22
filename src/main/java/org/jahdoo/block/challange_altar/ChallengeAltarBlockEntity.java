@@ -1,7 +1,6 @@
 package org.jahdoo.block.challange_altar;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -20,13 +19,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.SyncedBlockEntity;
 import org.jahdoo.challenge.MobManager;
+import org.jahdoo.challenge.RewardLootTables;
 import org.jahdoo.networking.packet.server2client.AltarBlockS2C;
-import org.jahdoo.registers.AttachmentRegister;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
-import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -36,15 +34,13 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 
 import static org.jahdoo.block.TrialPortalBlock.*;
 import static org.jahdoo.block.challange_altar.ChallengeAltarAnim.*;
 import static org.jahdoo.block.challange_altar.ChallengeAltarBlock.readyNextSubRound;
-import static org.jahdoo.block.loot_chest.LootChestBlock.FACING;
+import static org.jahdoo.block.loot_chest.LootChestBlock.lootsplosian;
 import static org.jahdoo.entities.EntityAnimations.*;
 import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
-import static org.jahdoo.registers.BlocksRegister.LOOT_CHEST;
 import static org.jahdoo.registers.BlocksRegister.TRAIL_PORTAL;
 import static org.jahdoo.utils.ModHelpers.Random;
 
@@ -128,7 +124,12 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
 
         if (buildTick == 15) {
             // Place loot chest and portal blocks
-            serverLevel.setBlockAndUpdate(pos, LOOT_CHEST.get().defaultBlockState().setValue(FACING, Direction.SOUTH));
+            pLevel.destroyBlock(pos, false);
+            int round = this.altarData().round;
+            var setLootValue = round + (round * round);
+            var rewards = RewardLootTables.getCoinItems(serverLevel, pos.getCenter());
+            lootsplosian(pos, serverLevel, setLootValue, 10, ColourStore.PERK_GREEN, rewards);
+
             ModHelpers.getSoundWithPosition(pLevel, south, SoundEvents.END_PORTAL_SPAWN, 0.8F, 1.5F);
             for (int i = 0; i < 5; i++) {
                 BlockPos portalBase = south.above(i);
@@ -165,10 +166,11 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
     }
 
     private void tickBossEvent() {
-        float progress = this.altarData().maxMobs > 0 ? (float) this.altarData().activeMobs().size() / this.altarData().maxSpawnableMobs() : 0.0f;
-        bossEvent.setVisible(isSubRoundActive() && !altarData().activeMobs().isEmpty());
+        var data = this.altarData();
+        var progress = data.maxMobs > 0 ? (float) data.activeMobs().size() / data.maxSpawnableMobs() : 0.0f;
+        bossEvent.setVisible(isSubRoundActive() && !data.activeMobs().isEmpty());
         bossEvent.setProgress(progress);
-        bossEvent.setName(Component.nullToEmpty(this.altarData().activeMobs().size() + " / " + this.altarData().maxSpawnableMobs()));
+        bossEvent.setName(Component.nullToEmpty(data.activeMobs().size() + " / " + data.maxSpawnableMobs()));
     }
 
     private void manageActivePlayers(BlockPos pPos) {

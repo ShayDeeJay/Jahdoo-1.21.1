@@ -4,11 +4,9 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -23,17 +21,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.wand.WandBlockEntity;
-import org.jahdoo.challenge.LocalLootBeamData;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.items.JahdooItem;
 import org.jahdoo.registers.*;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.shaydee.loot_beams_neoforge.LootBeamRenderer;
-import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
-import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -42,27 +35,19 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import top.theillusivec4.curios.Curios;
 import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.CuriosCapability;
-import top.theillusivec4.curios.api.SlotContext;
-import top.theillusivec4.curios.api.type.ISlotType;
-import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
-import top.theillusivec4.curios.common.CuriosConfig;
-import top.theillusivec4.curios.common.data.CuriosSlotManager;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import static net.minecraft.sounds.SoundEvents.ALLAY_THROW;
 import static net.minecraft.sounds.SoundEvents.EVOKER_PREPARE_SUMMON;
 import static net.minecraft.world.InteractionHand.*;
-import static org.jahdoo.ability.rarity.JahdooRarity.*;
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
 import static org.jahdoo.particle.ParticleHandlers.*;
 import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.registers.DataComponentRegistry.INTERACTION_HAND;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
 import static org.jahdoo.utils.ModHelpers.Random;
@@ -151,7 +136,33 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     @Override
     public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int slotId, boolean isSoltSelected) {
         if(!(entity instanceof Player player)) return;
-        if (player.getItemInHand(player.getUsedItemHand()) == itemStack) {}
+        var itemInMain = player.getMainHandItem();
+        var itemInOff = player.getOffhandItem();
+        var isItemInMain = itemInMain == itemStack;
+        var isItemInOff = itemInOff == itemStack;
+        var interactState = itemStack.get(INTERACTION_HAND);
+
+        validateRuneHand(itemStack, player, interactState, isItemInMain, isItemInOff);
+    }
+
+    private static void validateRuneHand(
+        ItemStack itemStack,
+        Player player,
+        Integer interactState,
+        boolean isItemInMain,
+        boolean isItemInOff
+    ) {
+        if(interactState != null){
+
+            if(isItemInMain){
+                if(interactState != 0) itemStack.set(INTERACTION_HAND, 0);
+            } else if (isItemInOff && canOffHand(player, OFF_HAND)) {
+                if(interactState != 1) itemStack.set(INTERACTION_HAND, 1);
+            } else {
+                if(interactState != 2) itemStack.set(INTERACTION_HAND, 2);
+            }
+
+        } else itemStack.set(INTERACTION_HAND, 2);
     }
 
     @Override
@@ -165,20 +176,8 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
-        if(level instanceof ServerLevel serverLevel){
-//            var zombo = new EternalWizard(serverLevel, null, -1, 5);
-//            zombo.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
-
-//            var zombo = new AncientGolem(serverLevel, player);
-//            zombo.moveTo(player.position());
-//            serverLevel.addFreshEntity(zombo);
-        }
-
-//        var zombo = new AncientGolem(serverLevel, player);
-//            zombo.moveTo(player.position());
-//            serverLevel.addFreshEntity(zombo);
-
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+        if(level instanceof ServerLevel serverLevel){}
 
         if (canOffHand(player, interactionHand)) {
             var item = player.getItemInHand(interactionHand);
@@ -188,6 +187,12 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         }
 
         return InteractionResultHolder.fail(player.getOffhandItem());
+    }
+
+    @Override
+    public EquipmentSlot getEquipmentSlot(ItemStack stack) {
+//        System.out.println(stack);
+        return super.getEquipmentSlot(stack);
     }
 
     public static boolean canOffHand(Player player, InteractionHand interactionHand){
@@ -207,6 +212,13 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean canEquip(ItemStack stack, EquipmentSlot armorType, LivingEntity entity) {
+        boolean canEquip = super.canEquip(stack, armorType, entity);
+        System.out.println(canEquip);
+        return canEquip;
     }
 
     public JahdooRarity getRarity(){

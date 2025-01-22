@@ -46,6 +46,9 @@ public class DataComponentRegistry {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> NUMBER =
         register("number", builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> INTERACTION_HAND =
+            register("interaction_hand", builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
+
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name, UnaryOperator<DataComponentType.Builder<T>> builderUnaryOperator) {
         return COMPONENTS.register(name, () -> builderUnaryOperator.apply(DataComponentType.builder()).build());
     }

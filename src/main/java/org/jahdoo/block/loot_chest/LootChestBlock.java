@@ -4,10 +4,8 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -30,24 +28,21 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
-import org.jahdoo.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.challenge.*;
 import org.jahdoo.items.KeyItem;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.*;
 import org.jahdoo.utils.ModHelpers;
-import org.jahdoo.utils.PositionGetters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 import static org.jahdoo.challenge.RewardLootTables.attachItemData;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.utils.ModHelpers.Random;
 import static org.jahdoo.utils.ModHelpers.getRandomColouredParticle;
-import static org.jahdoo.utils.PositionGetters.*;
 
 public class LootChestBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
@@ -102,7 +97,11 @@ public class LootChestBlock extends BaseEntityBlock {
                     var hasData = lootChestEntity.hasData(AttachmentRegister.CHALLENGE_ALTAR);
                     var getData = lootChestEntity.getData(AttachmentRegister.CHALLENGE_ALTAR).maxRound() - 1;
                     var lootLevel = hasData ? getData : 1;
-                    lootSplosion(pos, serverLevel, lootLevel + (value * value), value + 1, lootChestEntity);
+                    var getId = new CustomModelData(lootChestEntity.getRarity);
+                    var colour = KeyItem.getJahdooRarity(getId).getColour();
+                    var setLootValue = lootLevel + (value * value);
+                    var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter(), setLootValue);
+                    lootsplosian(pos, serverLevel, setLootValue, value + 1, colour, rewards);
                     stack.shrink(1);
                     return ItemInteractionResult.SUCCESS;
                 }
@@ -113,9 +112,8 @@ public class LootChestBlock extends BaseEntityBlock {
         return ItemInteractionResult.SUCCESS;
     }
 
-    private static void lootSplosion(BlockPos pos, ServerLevel serverLevel, int level, int lootMultiplier, LootChestEntity lootChest) {
+    public static void lootsplosian(BlockPos pos, ServerLevel serverLevel, int level, int lootMultiplier, int colour, List<ItemStack> rewards) {
         for(int i = 0; i < lootMultiplier; i++){
-            var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter(), level);
             for (var reward : rewards) {
                 var pCenter = pos.getCenter();
                 var itemEntity = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() + 0.2, pCenter.z(), reward);
@@ -128,7 +126,7 @@ public class LootChestBlock extends BaseEntityBlock {
                 itemEntity.setPickUpDelay(30);
 
                 ExperienceOrb.award(serverLevel, pCenter, 10 * level);
-                for (var element : ElementRegistry.REGISTRY) particleBurst(serverLevel, lootChest, pCenter);
+                particleBurst(serverLevel, pCenter, colour);
                 var itemStack = itemEntity.getItem();
                 var rarity = JahdooRarity.getRarity();
 
@@ -142,9 +140,7 @@ public class LootChestBlock extends BaseEntityBlock {
         ModHelpers.getSoundWithPosition(serverLevel, pos, SoundRegister.EXPLOSION.get(), 0.8f, 0.9f);
     }
 
-    private static void particleBurst(ServerLevel serverLevel, LootChestEntity lootChest, Vec3 pCenter) {
-        var getId = new CustomModelData(lootChest.getRarity);
-        var colour = KeyItem.getJahdooRarity(getId).getColour();
+    public static void particleBurst(ServerLevel serverLevel, Vec3 pCenter, int colour) {
         var fade = ModHelpers.getColourDarker(colour, 0.5);
         var randomColouredParticle = getRandomColouredParticle(colour, fade, Random.nextInt(10, 20), 1f, false);
         var pos = pCenter.add(0, 0.3f, 0);

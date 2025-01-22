@@ -33,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 
+import static net.minecraft.world.entity.EquipmentSlot.*;
+import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static org.jahdoo.challenge.EnchantmentHelpers.*;
 import static org.jahdoo.utils.ModHelpers.Random;
 
@@ -68,6 +70,7 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> SILVER_COIN = LootItem.lootTableItem(ItemsRegister.SILVER_COIN.get());
     public static final LootPoolSingletonContainer.Builder<?> BRONZE_COIN = LootItem.lootTableItem(ItemsRegister.BRONZE_COIN.get());
     public static final LootPoolSingletonContainer.Builder<?> RUNE = LootItem.lootTableItem(ItemsRegister.RUNE.get());
+    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_GAUNTLET = LootItem.lootTableItem(ItemsRegister.ARCHMAGE_GAUNTLET.get());
 
     public static ObjectArrayList<ItemStack> getCompletionLoot(ServerLevel serverLevel, Vec3 pos, int level) {
         var loot = LootTable.lootTable().withPool(commonPool(serverLevel));
@@ -93,6 +96,12 @@ public class RewardLootTables {
         return lootParams;
     }
 
+    public static ObjectArrayList<ItemStack> getCoinItems(ServerLevel serverLevel, Vec3 pos) {
+        var loot = LootTable.lootTable().withPool(coinLoot());
+        return createLootParams(serverLevel, pos, loot);
+    }
+
+
     private static LootPool.@NotNull Builder poolForEliteShopping() {
         var builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F));
         return builder
@@ -107,7 +116,8 @@ public class RewardLootTables {
             .add(BATTLEMAGE_HELM_BUILDER.setWeight(1))
             .add(BATTLEMAGE_CHEASTPLATE_BUILDER.setWeight(1))
             .add(BATTLEMAGE_LEGGINGS_BUILDER.setWeight(1))
-            .add(BATTLEMAGE_BOOTS_BUILDER.setWeight(1));
+            .add(BATTLEMAGE_BOOTS_BUILDER.setWeight(1))
+            .add(BATTLEMAGE_GAUNTLET.setWeight(1));
     }
 
     private static @NotNull ObjectArrayList<ItemStack> createLootParams(ServerLevel serverLevel, Vec3 pos, LootTable.Builder loot) {
@@ -116,6 +126,14 @@ public class RewardLootTables {
         var shouldEnchant = Random.nextInt(10) == 0 ? loot.apply(randomApplicableEnchantment(serverLevel.registryAccess())) : loot;
         var lootParams = new LootParams.Builder(serverLevel).withParameter(param, pos).create(vault);
         return shouldEnchant.build().getRandomItems(lootParams);
+    }
+
+    private static LootPool.@NotNull Builder coinLoot() {
+        var builder = LootPool.lootPool().setRolls(UniformGenerator.between(2.0F, 5.0F));
+        return builder
+                .add(BRONZE_COIN.setWeight(40))
+                .add(SILVER_COIN.setWeight(5))
+                .add(GOLD_COIN.setWeight(1));
     }
 
     private static LootPool.@NotNull Builder legendaryPool(ServerLevel serverLevel) {
@@ -206,36 +224,34 @@ public class RewardLootTables {
     private static void enchantSword(ServerLevel serverLevel, ItemStack itemStack, boolean isGuaranteed) {
         if(Random.nextInt(50) != 0) return;
 
-        attachEnchantment(itemStack, serverLevel, Enchantments.SHARPNESS, 6, 11, isGuaranteed);
-        attachEnchantment(itemStack, serverLevel, Enchantments.SWEEPING_EDGE, 4, 8, isGuaranteed);
-        attachEnchantment(itemStack, serverLevel, Enchantments.LOOTING, 4, 8, isGuaranteed);
-        attachEnchantment(itemStack, serverLevel, Enchantments.UNBREAKING, 4, 8, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, SHARPNESS, 6, 11, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, SWEEPING_EDGE, 4, 8, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, LOOTING, 4, 8, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, UNBREAKING, 4, 8, isGuaranteed);
     }
 
     private static void enchantArmorItem(ServerLevel serverLevel, ItemStack itemStack, ArmorItem armorItem, boolean isGuaranteed) {
-        if(!isGuaranteed){
-            if (Random.nextInt(50) != 0) return;
+        if(!isGuaranteed) if (Random.nextInt(50) != 0) return;
+
+        attachEnchantment(itemStack, serverLevel, BLAST_PROTECTION, 5, 10, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, PROJECTILE_PROTECTION, 5, 10, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, PROTECTION, 5, 10, isGuaranteed);
+        attachEnchantment(itemStack, serverLevel, UNBREAKING, 4, 9, isGuaranteed);
+
+        var slot = armorItem.getEquipmentSlot();
+        if(slot == FEET){
+            attachEnchantment(itemStack, serverLevel, SOUL_SPEED, 4, 9, isGuaranteed);
+            attachEnchantment(itemStack, serverLevel, DEPTH_STRIDER, 4, 9, isGuaranteed);
+            attachEnchantment(itemStack, serverLevel, FEATHER_FALLING, 5, 10, isGuaranteed);
         }
 
-        attachEnchantment(itemStack, serverLevel, Enchantments.BLAST_PROTECTION, 5, 10, isGuaranteed);
-        attachEnchantment(itemStack, serverLevel, Enchantments.PROJECTILE_PROTECTION, 5, 10, isGuaranteed);
-        attachEnchantment(itemStack, serverLevel, Enchantments.PROTECTION, 5, 10, isGuaranteed);
-        attachEnchantment(itemStack, serverLevel, Enchantments.UNBREAKING, 4, 9, isGuaranteed);
-
-        if(armorItem.getEquipmentSlot() == EquipmentSlot.FEET){
-            attachEnchantment(itemStack, serverLevel, Enchantments.SOUL_SPEED, 4, 9, isGuaranteed);
-            attachEnchantment(itemStack, serverLevel, Enchantments.DEPTH_STRIDER, 4, 9, isGuaranteed);
-            attachEnchantment(itemStack, serverLevel, Enchantments.FEATHER_FALLING, 5, 10, isGuaranteed);
+        if(slot == LEGS){
+            attachEnchantment(itemStack, serverLevel, SWIFT_SNEAK, 4, 9, isGuaranteed);
         }
 
-        if(armorItem.getEquipmentSlot() == EquipmentSlot.LEGS){
-            attachEnchantment(itemStack, serverLevel, Enchantments.SWIFT_SNEAK, 4, 9, isGuaranteed);
+        if(slot == HEAD){
+            attachEnchantment(itemStack, serverLevel, RESPIRATION, 4, 9, isGuaranteed);
         }
-
-        if(armorItem.getEquipmentSlot() == EquipmentSlot.HEAD){
-            attachEnchantment(itemStack, serverLevel, Enchantments.RESPIRATION, 4, 9, isGuaranteed);
-        }
-
     }
 
     private static void attachEnchantment(ItemStack itemStack, ServerLevel serverLevel, ResourceKey<Enchantment> enchantmentKey, int minVal, int maxVal, boolean isGuaranteed) {

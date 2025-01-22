@@ -10,4 +10,6 @@ public class LootChestBlockRenderer extends GeoItemRenderer<LootChestBlockItem> 
         super(new LootChestBlockModel());
     }
 
+
+
 }
