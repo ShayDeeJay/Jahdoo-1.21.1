@@ -29,24 +29,7 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
     protected void start() {
         var chestLoot = BuiltInLootTables.all().stream().filter(it -> it.location().getPath().intern().contains("chest")).toList();
         chestLoot.forEach(entries -> commonLootTables(entries.location(), chestLoot.indexOf(entries)));
-        rareLootTableLocations.forEach(entries -> rareLootTales(entries.location(), rareLootTableLocations.indexOf(entries)));
     }
-
-    public static final List<ResourceKey<LootTable>> rareLootTableLocations = List.of(
-        END_CITY_TREASURE,
-        VILLAGE_WEAPONSMITH,
-        VILLAGE_TOOLSMITH,
-        STRONGHOLD_LIBRARY,
-        DESERT_PYRAMID,
-        JUNGLE_TEMPLE,
-        WOODLAND_MANSION,
-        IGLOO_CHEST,
-        SHIPWRECK_TREASURE,
-        BASTION_TREASURE,
-        ANCIENT_CITY,
-        ANCIENT_CITY_ICE_BOX,
-        RUINED_PORTAL
-    );
 
     public static AddItemModifier addLoot(ResourceLocation resourceLocation, Item item, float chance){
         return new AddItemModifier(
@@ -63,8 +46,4 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
         add("augments_core_chest" + additional, addLoot(resourceLocation, ItemsRegister.AUGMENT_CORE.get(), 0.35f));
     }
 
-    private void rareLootTales(ResourceLocation resourceLocation, int additional) {
-        add("wand_chest" + additional, addLoot(resourceLocation, ItemsRegister.WAND_ITEM_MYSTIC.get(), 0.2f));
-        add("tome_chest" + additional, addLoot(resourceLocation, ItemsRegister.TOME_OF_UNITY.get(), 0.3f));
-    }
 }

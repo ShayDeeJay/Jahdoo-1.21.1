@@ -5,10 +5,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -35,7 +33,10 @@ import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 
 import static net.minecraft.world.entity.EquipmentSlot.*;
 import static net.minecraft.world.item.enchantment.Enchantments.*;
+import static org.jahdoo.ability.rarity.JahdooRarity.*;
 import static org.jahdoo.challenge.EnchantmentHelpers.*;
+import static org.jahdoo.items.runes.rune_data.RuneData.*;
+import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.*;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class RewardLootTables {
@@ -70,7 +71,8 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> SILVER_COIN = LootItem.lootTableItem(ItemsRegister.SILVER_COIN.get());
     public static final LootPoolSingletonContainer.Builder<?> BRONZE_COIN = LootItem.lootTableItem(ItemsRegister.BRONZE_COIN.get());
     public static final LootPoolSingletonContainer.Builder<?> RUNE = LootItem.lootTableItem(ItemsRegister.RUNE.get());
-    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_GAUNTLET = LootItem.lootTableItem(ItemsRegister.ARCHMAGE_GAUNTLET.get());
+    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_GAUNTLET = LootItem.lootTableItem(ItemsRegister.BATTLEMAGE_GAUNTLET.get());
+    public static final LootPoolSingletonContainer.Builder<?> INGMAS_SWORD = LootItem.lootTableItem(ItemsRegister.INGMAS_SWORD.get());
 
     public static ObjectArrayList<ItemStack> getCompletionLoot(ServerLevel serverLevel, Vec3 pos, int level) {
         var loot = LootTable.lootTable().withPool(commonPool(serverLevel));
@@ -91,13 +93,13 @@ public class RewardLootTables {
     public static ItemStack getEliteItem(ServerLevel serverLevel, Vec3 pos) {
         var loot = LootTable.lootTable().withPool(poolForEliteShopping());
         var lootParams = ModHelpers.getRandomListElement(createLootParams(serverLevel, pos, loot));
-        var rarity = JahdooRarity.ETERNAL;
+        var rarity = ETERNAL;
         attachItemData(serverLevel, rarity, lootParams, true, rarity);
         return lootParams;
     }
 
-    public static ObjectArrayList<ItemStack> getCoinItems(ServerLevel serverLevel, Vec3 pos) {
-        var loot = LootTable.lootTable().withPool(coinLoot());
+    public static ObjectArrayList<ItemStack> getCoinItems(ServerLevel serverLevel, Vec3 pos, int level) {
+        var loot = LootTable.lootTable().withPool(coinLoot(level));
         return createLootParams(serverLevel, pos, loot);
     }
 
@@ -128,8 +130,8 @@ public class RewardLootTables {
         return shouldEnchant.build().getRandomItems(lootParams);
     }
 
-    private static LootPool.@NotNull Builder coinLoot() {
-        var builder = LootPool.lootPool().setRolls(UniformGenerator.between(2.0F, 5.0F));
+    private static LootPool.@NotNull Builder coinLoot(float level) {
+        var builder = LootPool.lootPool().setRolls(UniformGenerator.between(level/2, level));
         return builder
                 .add(BRONZE_COIN.setWeight(40))
                 .add(SILVER_COIN.setWeight(5))
@@ -175,7 +177,8 @@ public class RewardLootTables {
             .add(getRandomWand().setWeight(2))
             .add(IRON_SWORD_BUILDER.setWeight(20))
             .add(DIAMOND_SWORD_BUILDER.setWeight(10))
-            .add(NETHERITE_SWORD_BUILDER.setWeight(2));
+            .add(NETHERITE_SWORD_BUILDER.setWeight(2))
+            .add(INGMAS_SWORD.setWeight(1));
     }
 
     private static LootPool.@NotNull Builder commonPool(ServerLevel serverLevel) {
@@ -197,10 +200,10 @@ public class RewardLootTables {
     public static void attachItemData(ServerLevel serverLevel, JahdooRarity rarity, ItemStack itemStack, boolean isGuaranteeEnchantment, @Nullable JahdooRarity runeRarity) {
         var item = itemStack.getItem();
         switch (item){
-            case WandItem ignored -> JahdooRarity.setGeneratedWand(rarity, itemStack);
-            case TomeOfUnity ignored -> JahdooRarity.createTomeAttributes(rarity, itemStack);
-            case Augment ignored -> JahdooRarity.setGeneratedAugment(itemStack, rarity);
-            case RuneItem ignored -> RuneData.RuneHelpers.generateRandomTypAttribute(itemStack, runeRarity);
+            case WandItem ignored -> setGeneratedWand(rarity, itemStack);
+            case TomeOfUnity ignored -> createTomeAttributes(rarity, itemStack);
+            case Augment ignored -> setGeneratedAugment(itemStack, rarity);
+            case RuneItem ignored -> generateRandomTypAttribute(itemStack, runeRarity);
             case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem, isGuaranteeEnchantment);
             case SwordItem ignored -> enchantSword(serverLevel, itemStack, isGuaranteeEnchantment);
             case EnchantedBookItem ignored -> enchantedBook(serverLevel, itemStack);

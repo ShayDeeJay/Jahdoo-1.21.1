@@ -14,12 +14,14 @@ import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.abilities.ability_data.*;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.ability.abilities.ability_data.Utility.*;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.registers.ElementRegistry.*;
 
 public class AbilityRegister {
 
@@ -57,8 +59,16 @@ public class AbilityRegister {
         return AbilityRegister.REGISTRY
             .stream()
             .filter(ability -> ability.rarity().getId() == rarity.getId())
-            .filter(ability -> ability.getElemenType() != ElementRegistry.UTILITY.get())
+            .filter(ability -> ability.getElemenType() != UTILITY.get())
             .toList();
+    }
+
+    public static List<AbilityRegistrar> getMatchingRarityUtilOnly(JahdooRarity rarity) {
+        return AbilityRegister.REGISTRY
+                .stream()
+                .filter(ability -> ability.rarity().getId() == rarity.getId())
+                .filter(ability -> ability.getElemenType() == UTILITY.get())
+                .toList();
     }
 
     public static Optional<AbilityRegistrar> getFirstSpellByTypeId(String typeId) {
@@ -69,13 +79,17 @@ public class AbilityRegister {
     }
 
     public static Optional<AbilityRegistrar> getFirstSpellFromAugment(ItemStack itemStack) {
-        if(!itemStack.isEmpty()){
-            var typeId = itemStack.get(WAND_ABILITY_HOLDER).abilityProperties().keySet().stream().findFirst();
+        if(itemStack.isEmpty()) return Optional.empty();
 
-            return AbilityRegister.REGISTRY
-                .stream()
-                .filter(ability -> Objects.equals(ability.setAbilityId(), typeId.get()))
-                .findFirst();
+        var wandAbilityHolder = itemStack.get(WAND_ABILITY_HOLDER);
+        if(wandAbilityHolder != null) {
+            var typeId = wandAbilityHolder.abilityProperties().keySet().stream().findFirst();
+            return typeId.flatMap(
+            s -> AbilityRegister.REGISTRY
+                    .stream()
+                    .filter(ability -> Objects.equals(ability.setAbilityId(), s))
+                    .findFirst()
+            );
         }
 
         return Optional.empty();

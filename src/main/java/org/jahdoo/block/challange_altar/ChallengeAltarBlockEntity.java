@@ -13,6 +13,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,7 +21,9 @@ import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
 import org.jahdoo.block.SyncedBlockEntity;
 import org.jahdoo.challenge.MobManager;
 import org.jahdoo.challenge.RewardLootTables;
+import org.jahdoo.items.KeyItem;
 import org.jahdoo.networking.packet.server2client.AltarBlockS2C;
+import org.jahdoo.registers.AttachmentRegister;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ColourStore;
@@ -39,6 +42,7 @@ import static org.jahdoo.block.TrialPortalBlock.*;
 import static org.jahdoo.block.challange_altar.ChallengeAltarAnim.*;
 import static org.jahdoo.block.challange_altar.ChallengeAltarBlock.readyNextSubRound;
 import static org.jahdoo.block.loot_chest.LootChestBlock.lootsplosian;
+import static org.jahdoo.challenge.RewardLootTables.*;
 import static org.jahdoo.entities.EntityAnimations.*;
 import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
 import static org.jahdoo.registers.BlocksRegister.TRAIL_PORTAL;
@@ -125,11 +129,12 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
         if (buildTick == 15) {
             // Place loot chest and portal blocks
             pLevel.destroyBlock(pos, false);
-            int round = this.altarData().round;
-            var setLootValue = round + (round * round);
-            var rewards = RewardLootTables.getCoinItems(serverLevel, pos.getCenter());
-            lootsplosian(pos, serverLevel, setLootValue, 10, ColourStore.PERK_GREEN, rewards);
-
+            var lootLevel = this.altarData().maxRound;
+            var setLootValue = (lootLevel + 3) * Random.nextInt(1, 5);
+            var rewards = getCoinItems(serverLevel, pos.getCenter(), lootLevel);
+            for(int i = 0; i < 4; i++){
+                lootsplosian(pos, serverLevel, setLootValue, ColourStore.PERK_GREEN, rewards, false);
+            }
             ModHelpers.getSoundWithPosition(pLevel, south, SoundEvents.END_PORTAL_SPAWN, 0.8F, 1.5F);
             for (int i = 0; i < 5; i++) {
                 BlockPos portalBase = south.above(i);
@@ -138,9 +143,7 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
                 serverLevel.setBlockAndUpdate(portalBase.west(), portalState);
                 serverLevel.setBlockAndUpdate(portalBase.east(), portalState);
             }
-//            serverLevel.setData(CHALLENGE_ALTAR, this.getData(CHALLENGE_ALTAR));
         }
-
         placeCounter = (placeCounter + 1) % 8;
     }
 
@@ -248,7 +251,6 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
                 if(entity != null && !entity.isAlive()){
                     altarData().removeMob(activeMob);
                     ChallengeAltarData.incrementKilledMobs(this);
-//                    if(altarData().activeMobs().isEmpty()) this.privateTicks = 0;
                     return true;
                 }
             }

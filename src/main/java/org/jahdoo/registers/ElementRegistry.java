@@ -29,31 +29,42 @@ public class ElementRegistry {
         event.register(REGISTRY);
     }
 
+    @Deprecated
     public static List<AbstractElement> getElementByWandType(Item wand) {
-        return ElementRegistry.REGISTRY
+        return REGISTRY
             .stream()
             .filter(ability -> ability.getWand() == wand)
             .toList();
     }
 
+    public static Optional<AbstractElement>getElementFromWand(Item wand) {
+        var element = REGISTRY
+                .stream()
+                .filter(ability -> ability.getWand() == wand)
+                .toList();
+
+        return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
+    }
+
+    @Deprecated
     public static List<AbstractElement> getElementByTypeId(int typeId) {
-        return ElementRegistry.REGISTRY
+        return REGISTRY
             .stream()
             .filter(ability -> ability.getTypeId() == typeId)
             .toList();
     }
 
-    public static Optional<AbstractElement> getElementOptional(int typeId) {
-        return ElementRegistry.REGISTRY
-            .stream()
-            .filter(ability -> ability.getTypeId() == typeId)
-            .toList()
-            .stream()
-            .findFirst();
+    public static Optional<AbstractElement>getElementById(int typeId) {
+        var element = REGISTRY
+                .stream()
+                .filter(ability -> ability.getTypeId() == typeId)
+                .toList();
+        return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
     }
 
+
     public static AbstractElement getRandomElement() {
-        var list = ElementRegistry.REGISTRY.stream().toList().stream().filter(element -> element != ElementRegistry.UTILITY.get());
+        var list = REGISTRY.stream().toList().stream().filter(element -> element != UTILITY.get());
         var registry = new ArrayList<>(list.toList());
         Collections.shuffle(registry);
         return registry.getFirst();

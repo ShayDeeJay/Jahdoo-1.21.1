@@ -37,7 +37,6 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 //        advancedAugmentCore(recipeOutput, ItemsRegister.ADVANCED_AUGMENT_CORE.get());
 //        hyperCore(recipeOutput, ItemsRegister.AUGMENT_HYPER_CORE.get());
         augment(recipeOutput, AUGMENT_ITEM.get());
-        tomeOfUnity(recipeOutput, TOME_OF_UNITY.get());
         chaosCube(recipeOutput, BlocksRegister.MODULAR_CHAOS_CUBE.get().asItem());
         nexite(recipeOutput, BlocksRegister.NEXITE_BLOCK.get().asItem());
 //        multiStageCompressionRecipes(recipeOutput, BRONZE_COIN.get(), SILVER_COIN.get(), GOLD_COIN.get());
@@ -66,15 +65,6 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .requires(AUGMENT_FRAGMENT.get(), 3)
             .requires(AUGMENT_CORE.get())
             .unlockedBy("augment", has(AUGMENT_ITEM.get()))
-            .save(output);
-    }
-
-    protected void tomeOfUnity(RecipeOutput output, Item result) {
-        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 32)
-            .requires(Items.BOOK)
-            .requires(AUGMENT_FRAGMENT.get())
-            .requires(AUGMENT_CORE.get(), 2)
-            .unlockedBy("tome_of_unity", has(AUGMENT_CORE.get()))
             .save(output);
     }
 

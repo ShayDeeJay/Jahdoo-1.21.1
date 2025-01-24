@@ -40,16 +40,8 @@ public class AddItemModifier extends LootModifier {
     @Override
     protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         if(this.item == null) return generatedLoot;
-
         for (LootItemCondition condition : this.conditions) if (!condition.test(context)) return generatedLoot;
-
-        var itemStack = switch (this.item) {
-            case Augment ignored -> setGeneratedAugment(this.item);
-            case WandItem ignored -> setGeneratedWand(getRarity(), ElementRegistry.getRandomElement().getWand());
-            case TomeOfUnity ignored -> setGeneratedTome(getRarity(), this.item);
-            default -> new ItemStack(this.item);
-        };
-
+        var itemStack = this.item instanceof Augment ? setGeneratedAugment(this.item) : new ItemStack(this.item);
         generatedLoot.add(itemStack);
         return generatedLoot;
     }

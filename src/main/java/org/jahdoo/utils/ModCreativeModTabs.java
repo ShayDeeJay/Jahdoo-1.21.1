@@ -1,9 +1,11 @@
 package org.jahdoo.utils;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomModelData;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -37,14 +39,24 @@ public class ModCreativeModTabs {
                     pOutput.accept(BlocksRegister.AUGMENT_MODIFICATION_STATION.get());
                     pOutput.accept(ItemsRegister.INFUSER_ITEM.get());
                     pOutput.accept(ItemsRegister.NEXITE_POWDER.get());
-//                    pOutput.accept(ItemsRegister.AUGMENT_FRAGMENT.get());
+                    pOutput.accept(ItemsRegister.INGMAS_SWORD.get());
+                    pOutput.accept(ItemsRegister.ELEMENTAL_SWORD.get());
+
+                    for(int i = 1; i < 5; i++) {
+                        ItemStack baseAugment = new ItemStack(ItemsRegister.ELEMENTAL_SWORD.get());
+                        CustomModelData customModelData = new CustomModelData(i);
+                        baseAugment.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
+                        pOutput.accept(baseAugment);
+                    }
+
+                    pOutput.accept(ItemsRegister.ANCIENT_GLAIVE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
                     pOutput.accept(ItemsRegister.RUNE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_CORE.get());
                     pOutput.accept(ItemsRegister.ADVANCED_AUGMENT_CORE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_HYPER_CORE.get());
                     pOutput.accept(ItemsRegister.TOME_OF_UNITY.get());
-                    pOutput.accept(ItemsRegister.ARCHMAGE_GAUNTLET.get());
+                    pOutput.accept(ItemsRegister.BATTLEMAGE_GAUNTLET.get());
                     pOutput.accept(ItemsRegister.BRONZE_COIN.get());
                     pOutput.accept(ItemsRegister.SILVER_COIN.get());
                     pOutput.accept(ItemsRegister.GOLD_COIN.get());
@@ -59,6 +71,7 @@ public class ModCreativeModTabs {
                     pOutput.accept(ItemsRegister.MAGE_CHESTPLATE.get());
                     pOutput.accept(ItemsRegister.MAGE_LEGGINGS.get());
                     pOutput.accept(ItemsRegister.MAGE_BOOTS.get());
+
 //                for(int i = 1; i < 7; i++) {
 //                    ItemStack baseAugment = new ItemStack(ItemsRegister.AUGMENT_ITEM.get());
 //                    CustomModelData customModelData = new CustomModelData(i);
@@ -66,6 +79,7 @@ public class ModCreativeModTabs {
 //                    pOutput.accept(baseAugment);
 //                }
 //                pOutput.accept(BlocksRegister.WAND_MANAGER_TABLE.get());
+
                 pOutput.accept(ItemsRegister.WAND_ITEM_MYSTIC.get());
                 pOutput.accept(ItemsRegister.WAND_ITEM_FROST.get());
                 pOutput.accept(ItemsRegister.WAND_ITEM_INFERNO.get());

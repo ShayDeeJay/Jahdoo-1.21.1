@@ -35,7 +35,7 @@ public class LocalLootBeamData {
         return new LootBeamComponent(rarity.getColour(), beamHeight, 0.8F,  0.2F, true, true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  true, 5, 0.25, 1.5, true);
     }
 
-    public static void attachComponent (ItemStack itemStack, JahdooRarity rarity) {
+    public static void attachLootBeamComponent(ItemStack itemStack, JahdooRarity rarity) {
         var component =  switch (rarity.getId()){
             case 1 -> RARE_ITEM;
             case 2 -> EPIC_ITEM;

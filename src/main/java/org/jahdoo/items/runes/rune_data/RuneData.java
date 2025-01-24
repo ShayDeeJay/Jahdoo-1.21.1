@@ -1,6 +1,5 @@
 package org.jahdoo.items.runes.rune_data;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.component.DataComponents;
@@ -13,20 +12,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
-import org.jahdoo.ability.rarity.RarityAttributes;
 import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.registers.AttributesRegister;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.util.FastColor.ARGB32.*;
 import static org.jahdoo.ability.rarity.JahdooRarity.*;
-import static org.jahdoo.challenge.LocalLootBeamData.attachComponent;
+import static org.jahdoo.challenge.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.items.runes.rune_data.RuneGenerator.*;
 import static org.jahdoo.items.runes.rune_data.RuneGenerator.RuneCategories.fromName;
 import static org.jahdoo.registers.AttributesRegister.*;
@@ -76,7 +71,7 @@ public record RuneData(
     }
 
     public int getTypeColourPrimary(){
-        var element = getElementOptional(this.elementId);
+        var element = getElementById(this.elementId);
         return element.map(AbstractElement::textColourPrimary).orElse(colour);
     }
 
@@ -256,7 +251,7 @@ public record RuneData(
                         );
                 };
 
-                attachComponent(stack, rarity);
+                attachLootBeamComponent(stack, rarity);
                 generateFullRune(stack, getRandomListElement(getList));
             }
         }

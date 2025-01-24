@@ -11,7 +11,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -156,7 +155,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 
             if(isItemInMain){
                 if(interactState != 0) itemStack.set(INTERACTION_HAND, 0);
-            } else if (isItemInOff && canOffHand(player, OFF_HAND)) {
+            } else if (isItemInOff && canOffHand(player, OFF_HAND, false)) {
                 if(interactState != 1) itemStack.set(INTERACTION_HAND, 1);
             } else {
                 if(interactState != 2) itemStack.set(INTERACTION_HAND, 2);
@@ -179,7 +178,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         if(level instanceof ServerLevel serverLevel){}
 
-        if (canOffHand(player, interactionHand)) {
+        if (canOffHand(player, interactionHand, true)) {
             var item = player.getItemInHand(interactionHand);
             player.startUsingItem(interactionHand);
             CastHelper.use(player);
@@ -189,36 +188,22 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         return InteractionResultHolder.fail(player.getOffhandItem());
     }
 
-    @Override
-    public EquipmentSlot getEquipmentSlot(ItemStack stack) {
-//        System.out.println(stack);
-        return super.getEquipmentSlot(stack);
-    }
-
-    public static boolean canOffHand(Player player, InteractionHand interactionHand){
-        var curio = CuriosApi.getCuriosInventory(player);
-
+    public static boolean canOffHand(LivingEntity entity, InteractionHand interactionHand, boolean shouldSendMessage){
+        var curio = CuriosApi.getCuriosInventory(entity);
         if(interactionHand == OFF_HAND){
             if(curio.isEmpty()) return false;
-            var isGauntletEquipped = curio.get().isEquipped(ItemsRegister.ARCHMAGE_GAUNTLET.get());
+            var isGauntletEquipped = curio.get().isEquipped(ItemsRegister.BATTLEMAGE_GAUNTLET.get());
             if(isGauntletEquipped){
                 return true;
             } else {
-                var elementColour = ElementRegistry.getElementByWandType(player.getItemInHand(interactionHand).getItem());
-                var sendMessage = ModHelpers.withStyleComponent("You don't have the power to use this yet", elementColour.getFirst().textColourPrimary());
-                player.displayClientMessage(sendMessage, true);
+                var elementColour = ElementRegistry.getElementByWandType(entity.getItemInHand(interactionHand).getItem());
+                var sendMessage = ModHelpers.withStyleComponent("You don't have the power to offhand this yet.", elementColour.getFirst().textColourPrimary());
+                if(shouldSendMessage && entity instanceof Player player) player.displayClientMessage(sendMessage, true);
                 return false;
             }
         }
 
         return true;
-    }
-
-    @Override
-    public boolean canEquip(ItemStack stack, EquipmentSlot armorType, LivingEntity entity) {
-        boolean canEquip = super.canEquip(stack, armorType, entity);
-        System.out.println(canEquip);
-        return canEquip;
     }
 
     public JahdooRarity getRarity(){

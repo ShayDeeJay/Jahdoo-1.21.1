@@ -31,6 +31,9 @@ public class ModItemTagGenerator extends ItemTagsProvider {
             .add(ItemsRegister.WAND_ITEM_LIGHTNING.get())
             .add(ItemsRegister.WAND_ITEM_VITALITY.get());
 
+        this.tag(ItemTags.SWORDS)
+                .add(ItemsRegister.INGMAS_SWORD.get());
+
         this.tag(ItemTags.HEAD_ARMOR_ENCHANTABLE)
             .add(ItemsRegister.WIZARD_HELMET.get())
             .add(ItemsRegister.MAGE_HELMET.get());

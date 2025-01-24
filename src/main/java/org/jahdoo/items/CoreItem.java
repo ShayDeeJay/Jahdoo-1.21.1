@@ -32,13 +32,13 @@ public class CoreItem extends Item  {
             var item = hand.getItem();
             if(item == AUGMENT_HYPER_CORE.get()){
                 var setBlockState = block.defaultBlockState().setValue(DIMENSION_KEY, KEY_TRADING_POST);
-//                level.setBlockAndUpdate(BlockPos.containing(player.position()), setBlockState);
+                level.setBlockAndUpdate(BlockPos.containing(player.position()), setBlockState);
 //                LevelGenerator.debugLevels(serverLevel);
-                for (var allEntity : serverLevel.getAllEntities()) {
-                    if(!(allEntity instanceof Player)){
-                        allEntity.kill();
-                    }
-                }
+//                for (var allEntity : serverLevel.getAllEntities()) {
+//                    if(!(allEntity instanceof Player)){
+//                        allEntity.kill();
+//                    }
+//                }
 //                System.out.println(level.getData());
 //                System.out.println(level.getData(AttachmentRegister.CHALLENGE_ALTAR.get()));
 //                LevelGenerator.createNewWorld(player, serverLevel, ChallengeAltarData.DEFAULT);

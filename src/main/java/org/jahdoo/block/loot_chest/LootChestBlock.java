@@ -101,7 +101,10 @@ public class LootChestBlock extends BaseEntityBlock {
                     var colour = KeyItem.getJahdooRarity(getId).getColour();
                     var setLootValue = lootLevel + (value * value);
                     var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter(), setLootValue);
-                    lootsplosian(pos, serverLevel, setLootValue, value + 1, colour, rewards);
+                    int lootMultiplier = value + 1;
+                    for(int i = 0; i < lootMultiplier; i++){
+                        lootsplosian(pos, serverLevel, setLootValue,  colour, rewards, true);
+                    }
                     stack.shrink(1);
                     return ItemInteractionResult.SUCCESS;
                 }
@@ -112,27 +115,23 @@ public class LootChestBlock extends BaseEntityBlock {
         return ItemInteractionResult.SUCCESS;
     }
 
-    public static void lootsplosian(BlockPos pos, ServerLevel serverLevel, int level, int lootMultiplier, int colour, List<ItemStack> rewards) {
-        for(int i = 0; i < lootMultiplier; i++){
-            for (var reward : rewards) {
-                var pCenter = pos.getCenter();
-                var itemEntity = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() + 0.2, pCenter.z(), reward);
-                var angle = Random.nextDouble() * 2 * Math.PI;
-                var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
-                var offsetX = Math.cos(angle) * horizontalOffset;
-                var offsetZ = Math.sin(angle) * horizontalOffset;
-                var velocity = new Vec3(offsetX * (Math.random() - 0.5), 0.35, offsetZ * (Math.random() - 0.5));
-                itemEntity.setDeltaMovement(velocity);
-                itemEntity.setPickUpDelay(30);
-
-                ExperienceOrb.award(serverLevel, pCenter, 10 * level);
-                particleBurst(serverLevel, pCenter, colour);
-                var itemStack = itemEntity.getItem();
-                var rarity = JahdooRarity.getRarity();
-
-                attachItemData(serverLevel, rarity, itemStack, false, null);
-                serverLevel.addFreshEntity(itemEntity);
-            }
+    public static void lootsplosian(BlockPos pos, ServerLevel serverLevel, int level, int colour, List<ItemStack> rewards, boolean shouldDropExperience) {
+        for (var reward : rewards) {
+            var pCenter = pos.getCenter();
+            var itemEntity = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() + 0.2, pCenter.z(), reward);
+            var angle = Random.nextDouble() * 2 * Math.PI;
+            var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
+            var offsetX = Math.cos(angle) * horizontalOffset;
+            var offsetZ = Math.sin(angle) * horizontalOffset;
+            var velocity = new Vec3(offsetX * (Math.random() - 0.5), 0.35, offsetZ * (Math.random() - 0.5));
+            itemEntity.setDeltaMovement(velocity);
+            itemEntity.setPickUpDelay(30);
+            if(shouldDropExperience) ExperienceOrb.award(serverLevel, pCenter, 10 * level);
+            particleBurst(serverLevel, pCenter, colour);
+            var itemStack = itemEntity.getItem();
+            var rarity = JahdooRarity.getRarity();
+            attachItemData(serverLevel, rarity, itemStack, false, null);
+            serverLevel.addFreshEntity(itemEntity);
         }
 
         ModHelpers.getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_OPEN_SHUTTER, 1f, 1.8f);

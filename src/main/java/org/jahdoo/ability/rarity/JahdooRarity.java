@@ -4,12 +4,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.items.wand.WandData;
@@ -20,6 +22,7 @@ import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,6 +106,12 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return list.get(ModHelpers.Random.nextInt(0, list.size()));
     }
 
+    public static AbilityRegistrar getAbilityUtil(@Nullable JahdooRarity rarity) {
+        var correctRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
+        var listAll = AbilityRegister.getMatchingRarityUtilOnly(correctRarity);
+        return listAll.get(ModHelpers.Random.nextInt(0, listAll.size()));
+    }
+
     public static ItemStack getAbilityAugment(JahdooRarity...jahdooRarities){
         var allRarities = Arrays.stream(jahdooRarities).toList();
         var list = AbilityRegister.getMatchingRarity(allRarities.get(ModHelpers.Random.nextInt(0, allRarities.size())));
@@ -143,10 +152,8 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
 
     public static ItemStack setGeneratedAugment(Item item){
         var itemStack = new ItemStack(item);
-        if(ModHelpers.Random.nextInt(0, 200) != 0){
-            itemStack.set(DataComponentRegistry.NUMBER, 5);
-            AugmentItemHelper.augmentIdentifierSharedRarity(itemStack, true, null);
-        }
+        itemStack.set(DataComponentRegistry.NUMBER, 5);
+        AugmentItemHelper.augmentIdentifierSharedUtil(itemStack,  null);
         return itemStack;
     }
 
@@ -194,7 +201,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         int abilitySlots
     ) {
         var element = ElementRegistry.getElementByWandType(itemStack.getItem());
-        attachComponent(itemStack, rarity);
+        attachLootBeamComponent(itemStack, rarity);
         if (element.isEmpty()) return;
 
         WandData.createRarity(itemStack, rarity.id);
@@ -222,19 +229,24 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     public static void createTomeAttributes(JahdooRarity rarity, ItemStack itemStack){
         var randomRegenValue = singleFormattedDouble(rarity.attributes.getRandomManaRegen());
         var randomManaPool = singleFormattedDouble(rarity.attributes.getRandomManaPool());
-        attachComponent(itemStack, rarity);
+        var manaRegen = MANA_REGEN;
+        var manaPool = MANA_POOL;
+
+        attachLootBeamComponent(itemStack, rarity);
+        itemStack.set(DataComponentRegistry.JAHDOO_RARITY.get(), rarity.getId());
+
+
 
         CuriosApi.addModifier(
-            itemStack, AttributesRegister.MANA_REGEN, ModHelpers.res("mana_regen"),
+            itemStack, manaRegen, manaRegen.getId(),
             randomRegenValue, AttributeModifier.Operation.ADD_VALUE, "tome"
         );
 
         CuriosApi.addModifier(
-            itemStack, AttributesRegister.MANA_POOL, ModHelpers.res("mana_pool"),
+            itemStack, manaPool, manaPool.getId(),
             randomManaPool, AttributeModifier.Operation.ADD_VALUE, "tome"
         );
 
-        itemStack.set(DataComponentRegistry.JAHDOO_RARITY.get(), rarity.getId());
     }
 
     //Debug using use on item

@@ -1,10 +1,8 @@
 package org.jahdoo;
 
 
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -60,7 +58,7 @@ public class JahdooMod {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         CuriosRendererRegistry.register(ItemsRegister.TOME_OF_UNITY.get(), TomeRenderer::new);
-        CuriosRendererRegistry.register(ItemsRegister.ARCHMAGE_GAUNTLET.get(), GloveRenderer::new);
+        CuriosRendererRegistry.register(ItemsRegister.BATTLEMAGE_GAUNTLET.get(), GloveRenderer::new);
     }
 
 

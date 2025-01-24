@@ -9,7 +9,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,7 +32,6 @@ import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
-import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -115,9 +113,17 @@ public class AugmentItemHelper {
         }
     }
 
-    public static void augmentIdentifierSharedRarity(ItemStack itemStack, boolean withUtil, JahdooRarity rarity){
+    public static void augmentIdentifierSharedRarity(ItemStack itemStack, boolean withUtil, @Nullable JahdooRarity rarity){
         var ability = JahdooRarity.getAbilityWithRarity(withUtil, rarity);
-        LocalLootBeamData.attachComponent(itemStack, ability.rarity());
+        LocalLootBeamData.attachLootBeamComponent(itemStack, ability.rarity());
+        ability.setModifiers(itemStack);
+        var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        setAbilityToAugment(itemStack, ability, wandAbilityHolder);
+    }
+
+    public static void augmentIdentifierSharedUtil(ItemStack itemStack, @Nullable JahdooRarity rarity){
+        var ability = JahdooRarity.getAbilityUtil(rarity);
+        LocalLootBeamData.attachLootBeamComponent(itemStack, ability.rarity());
         ability.setModifiers(itemStack);
         var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
         setAbilityToAugment(itemStack, ability, wandAbilityHolder);
