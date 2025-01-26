@@ -8,6 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.block.wand_block_manager.WandManagerEntity;
 import org.jahdoo.utils.ModHelpers;
 
@@ -38,7 +39,7 @@ public class ItemInBlockC2SPacket implements CustomPacketPayload {
             () -> {
                 if(ctx.player().level() instanceof ServerLevel serverLevel){
                     var bEntity = serverLevel.getBlockEntity(blockPos);
-                    if(bEntity instanceof WandManagerEntity wandBlock){
+                    if(bEntity instanceof AbstractBEInventory wandBlock){
                         wandBlock.inputItemHandler.setStackInSlot(0, itemStack);
                     }
                 }

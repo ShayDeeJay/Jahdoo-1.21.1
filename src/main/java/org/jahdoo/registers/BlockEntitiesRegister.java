@@ -15,6 +15,7 @@ import org.jahdoo.block.loot_chest.LootChestEntity;
 import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.block.crafter.CreatorEntity;
 import org.jahdoo.block.infuser.InfuserBlockEntity;
+import org.jahdoo.block.rune_table.RuneTableEntity;
 import org.jahdoo.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.block.tank.NexiteTankBlockEntity;
 import org.jahdoo.block.wand.WandBlockEntity;
@@ -56,6 +57,9 @@ public class BlockEntitiesRegister {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ShoppingTableEntity>> SHOPPING_TABLE_BE =
         registerBlockEntity("shopping_table_be", ShoppingTableEntity::new, BlocksRegister.SHOPPING_TABLE);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RuneTableEntity>> RUNE_TABLE_BE =
+            registerBlockEntity("rune_table_be", RuneTableEntity::new, BlocksRegister.RUNE_TABLE);
 
     public static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> registerBlockEntity(
         String name,

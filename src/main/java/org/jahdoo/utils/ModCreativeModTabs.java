@@ -4,13 +4,17 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.items.runes.rune_data.RuneData;
+import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.registers.BlocksRegister;
+import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ItemsRegister;
 
 import static net.minecraft.world.item.CreativeModeTabs.SPAWN_EGGS;
@@ -43,13 +47,24 @@ public class ModCreativeModTabs {
                     pOutput.accept(ItemsRegister.ELEMENTAL_SWORD.get());
 
                     for(int i = 1; i < 5; i++) {
-                        ItemStack baseAugment = new ItemStack(ItemsRegister.ELEMENTAL_SWORD.get());
-                        CustomModelData customModelData = new CustomModelData(i);
+                        var baseAugment = new ItemStack(ItemsRegister.ELEMENTAL_SWORD.get());
+                        var customModelData = new CustomModelData(i);
                         baseAugment.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
                         pOutput.accept(baseAugment);
                     }
 
                     pOutput.accept(ItemsRegister.ANCIENT_GLAIVE.get());
+                    var pendent = new ItemStack(ItemsRegister.PENDENT.get());
+                    RuneHolder.createNewRuneSlots(pendent, 1);
+                    pOutput.accept(pendent);
+                    for (int i = 1; i < 4; i++){
+                        var basePendent = new ItemStack(ItemsRegister.PENDENT.get());
+                        var customModelData = new CustomModelData(i);
+                        basePendent.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
+                        RuneHolder.createNewRuneSlots(basePendent, i+1);
+                        pOutput.accept(basePendent);
+                    }
+
                     pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
                     pOutput.accept(ItemsRegister.RUNE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_CORE.get());

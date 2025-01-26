@@ -4,8 +4,10 @@ import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
@@ -25,6 +27,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.ability.abilities.ability_data.VitalRejuvenationAbility;
 import org.jahdoo.attachments.CastingData;
 import org.jahdoo.attachments.player_abilities.*;
 import org.jahdoo.challenge.LevelGenerator;
@@ -34,9 +37,7 @@ import org.jahdoo.entities.living.EternalWizard;
 import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.registers.BlocksRegister;
-import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.registers.ItemsRegister;
+import org.jahdoo.registers.*;
 import org.jahdoo.utils.ModHelpers;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
@@ -120,6 +121,7 @@ public class ServerEvents {
     public static void onEntityDamageEvent(LivingDamageEvent.Pre event){
         var entity = event.getEntity();
         greaterFrostEffectDamageAmplifier(event, entity);
+        greaterVitalityEffect(event, entity);
     }
 
     @SubscribeEvent

@@ -3,14 +3,11 @@ package org.jahdoo.datagen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ItemLike;
 import org.jahdoo.recipe.CreatorRecipeBuilder;
 import org.jahdoo.registers.BlocksRegister;
-import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModTags;
 
 import java.util.List;
@@ -34,14 +31,10 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         creatorBlockRecipe(recipeOutput, BlocksRegister.CREATOR.get().asItem());
         tankRecipe(recipeOutput, BlocksRegister.TANK.get().asItem());
         infuser(recipeOutput, BlocksRegister.INFUSER.get().asItem());
-//        advancedAugmentCore(recipeOutput, ItemsRegister.ADVANCED_AUGMENT_CORE.get());
-//        hyperCore(recipeOutput, ItemsRegister.AUGMENT_HYPER_CORE.get());
         augment(recipeOutput, AUGMENT_ITEM.get());
         chaosCube(recipeOutput, BlocksRegister.MODULAR_CHAOS_CUBE.get().asItem());
         nexite(recipeOutput, BlocksRegister.NEXITE_BLOCK.get().asItem());
-//        multiStageCompressionRecipes(recipeOutput, BRONZE_COIN.get(), SILVER_COIN.get(), GOLD_COIN.get());
-        coin(recipeOutput);
-//        coin(recipeOutput, ItemsRegister.SILVER_COIN.get(), ItemsRegister.GOLD_COIN.get());
+        coinCompressor(recipeOutput);
         augmentModificationTable(recipeOutput, BlocksRegister.AUGMENT_MODIFICATION_STATION.get().asItem());
         wands(recipeOutput, WAND_ITEM_FROST.get(), Items.LIGHT_BLUE_DYE, "frost");
         wands(recipeOutput, WAND_ITEM_INFERNO.get(), Items.ORANGE_DYE, "inferno");
@@ -161,7 +154,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         oreSmelting(output, List.of(BlocksRegister.RAW_NEXITE_BLOCK.get()),RecipeCategory.BUILDING_BLOCKS, result, 2.0F, 200, "nexite");
     }
 
-    protected void coin(RecipeOutput output) {
+    protected void coinCompressor(RecipeOutput output) {
         var misc = RecipeCategory.MISC;
         nineBlockStorageRecipes(output, misc, BRONZE_COIN.get(), misc, SILVER_COIN.get(), "packed_silver", null, "unpacked_bronze", null);
         nineBlockStorageRecipes(output, misc, SILVER_COIN.get(), misc, GOLD_COIN.get(),"packed_gold", null, "unpacked_silver", null);

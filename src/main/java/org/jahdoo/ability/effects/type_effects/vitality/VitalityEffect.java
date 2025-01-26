@@ -2,6 +2,7 @@ package org.jahdoo.ability.effects.type_effects.vitality;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,8 +25,8 @@ import static org.jahdoo.items.augments.AugmentItemHelper.throwNewItem;
 public class VitalityEffect extends MobEffect {
 
 
-    public VitalityEffect(MobEffectCategory pCategory, int pColor) {
-        super(pCategory, pColor);
+    public VitalityEffect() {
+        super(MobEffectCategory.HARMFUL, FastColor.ARGB32.color(226, 51, 119));
     }
 
     @Override

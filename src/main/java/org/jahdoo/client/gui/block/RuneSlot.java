@@ -6,8 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.block.wand_block_manager.WandManagerEntity;
-import org.jahdoo.items.wand.WandData;
+import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.networking.packet.client2server.ItemInBlockC2SPacket;
@@ -23,7 +22,7 @@ import static org.jahdoo.registers.DataComponentRegistry.*;
 public class RuneSlot extends SlotItemHandler {
     Item item;
     int maxStackSize;
-    WandManagerEntity wandManagerTableEntity;
+    AbstractBEInventory bEntity;
     boolean isActive = true;
 
     public RuneSlot(
@@ -32,12 +31,12 @@ public class RuneSlot extends SlotItemHandler {
         int xPosition,
         int yPosition,
         Item item,
-        WandManagerEntity wandManagerTableEntity,
+        AbstractBEInventory bEntity,
         int maxStackSize
     ) {
         super(inputItemHandler, index, xPosition, yPosition);
         this.item = item;
-        this.wandManagerTableEntity = wandManagerTableEntity;
+        this.bEntity = bEntity;
         this.maxStackSize = maxStackSize;
     }
 
@@ -53,18 +52,18 @@ public class RuneSlot extends SlotItemHandler {
     @Override
     public boolean mayPlace(@NotNull ItemStack itemStack) {
         if(itemStack.getItem() instanceof RuneItem && isActive && this.getItem().isEmpty()){
-            var wandManager = wandManagerTableEntity;
+            var wandManager = bEntity;
             var cost = getCostFromRune(itemStack);
             if(wandManager != null){
-                var potential = WandData.potential(wandManager.getWandSlot());
-                if(cost > potential) return false;
+//                var potential = WandData.potential(wandManager.inputItemHandler.getStackInSlot(0));
+//                if(cost > potential) return false;
                 var level = wandManager.getLevel();
                 var pos = wandManager.getBlockPos();
                 if(level != null && this.getItem().isEmpty()){
                     if(level.isClientSide) return false;
                     ModHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_INSERT_ITEM, 0.4F, 1.2F);
                     ModHelpers.getSoundWithPosition(level, pos, SoundEvents.APPLY_EFFECT_TRIAL_OMEN, 0.4F, 2F);
-                    WandData.createRefinementPotential(wandManager.getWandSlot(), potential - cost);
+//                    WandData.createRefinementPotential(wandManager.inputItemHandler.getStackInSlot(0), potential - cost);
                     return true;
                 }
             }
@@ -85,14 +84,14 @@ public class RuneSlot extends SlotItemHandler {
 
     @Override
     public void setChanged() {
-        if(this.wandManagerTableEntity != null){
-            var getAllSlots = this.wandManagerTableEntity.getWandSlot();
+        if(this.bEntity != null){
+            var getAllSlots = this.bEntity.inputItemHandler.getStackInSlot(0);
             var getData = getAllSlots.get(RUNE_HOLDER);
             if (getData != null) {
                 var index = new AtomicInteger(4);
                 var list = new ArrayList<ItemStack>();
                 for (ItemStack ignored : getData.runeSlots()) {
-                    list.add(this.wandManagerTableEntity.inputItemHandler.getStackInSlot(index.get()));
+                    list.add(this.bEntity.inputItemHandler.getStackInSlot(index.get()));
                     index.set(index.get() + 1);
                 }
                 getAllSlots.update(RUNE_HOLDER.get(), RuneHolder.DEFAULT, data -> data.insertNewHolder(list));
@@ -102,6 +101,6 @@ public class RuneSlot extends SlotItemHandler {
     }
 
     private void serverBoundPacket(ItemStack getAllSlots) {
-        PacketDistributor.sendToServer(new ItemInBlockC2SPacket(getAllSlots, this.wandManagerTableEntity.getBlockPos()));
+        PacketDistributor.sendToServer(new ItemInBlockC2SPacket(getAllSlots, this.bEntity.getBlockPos()));
     }
 }

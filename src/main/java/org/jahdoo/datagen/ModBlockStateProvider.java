@@ -31,6 +31,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(BlocksRegister.SHOPPING_TABLE.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/shopping_table")));
 
+        simpleBlockWithItem(BlocksRegister.RUNE_TABLE.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/rune_table")));
+
         simpleBlockWithItem(BlocksRegister.INFUSER.get(),
             new ModelFile.UncheckedModelFile(modLoc("block/infuser")));
 

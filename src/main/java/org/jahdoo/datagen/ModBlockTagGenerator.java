@@ -36,7 +36,8 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
 
         this.tag(ModTags.Block.ALLOWED_BLOCK_INTERACTIONS)
             .add(BlocksRegister.CREATOR.get())
-            .add(BlocksRegister.WAND_MANAGER_TABLE.get());
+            .add(BlocksRegister.WAND_MANAGER_TABLE.get())
+            .add(BlocksRegister.RUNE_TABLE.value());
 
         this.tag(ModTags.Block.CAN_REPLACE_BLOCK)
             .add(Blocks.AIR)

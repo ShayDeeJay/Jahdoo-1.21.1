@@ -21,6 +21,7 @@ import org.jahdoo.block.modular_chaos_cube.ModularChaosCubeBlock;
 import org.jahdoo.block.crafter.CreatorBlock;
 import org.jahdoo.block.infuser.InfuserBlock;
 import org.jahdoo.block.light_block.LightBlock;
+import org.jahdoo.block.rune_table.RuneTable;
 import org.jahdoo.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.block.tank.NexiteTankBlock;
 import org.jahdoo.block.wand.WandBlock;
@@ -44,6 +45,7 @@ public class BlocksRegister {
     public static DeferredHolder<Block, Block> TANK = registerBlock("tank", NexiteTankBlock::new);
     public static DeferredHolder<Block, Block> LIGHTING = BLOCKS.register("lighting", LightBlock::new);
     public static DeferredHolder<Block, Block> SHOPPING_TABLE = registerBlock("shopping_table", ShoppingTableBlock::new);
+    public static DeferredHolder<Block, Block> RUNE_TABLE = registerBlock("rune_table", RuneTable::new);
     public static final DeferredHolder<Block, Block> TRAIL_PORTAL = registerBlock("trial_portal", TrialPortalBlock::new);
 
 

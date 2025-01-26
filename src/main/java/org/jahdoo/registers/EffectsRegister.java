@@ -20,6 +20,7 @@ import org.jahdoo.ability.effects.type_effects.lightning.GreaterLightningEffect;
 import org.jahdoo.ability.effects.type_effects.lightning.LightningEffect;
 import org.jahdoo.ability.effects.type_effects.mystic.GreaterMysticEffect;
 import org.jahdoo.ability.effects.type_effects.mystic.MysticEffect;
+import org.jahdoo.ability.effects.type_effects.vitality.GreaterVitalityEffect;
 import org.jahdoo.ability.effects.type_effects.vitality.VitalityEffect;
 
 import static net.minecraft.resources.ResourceLocation.*;
@@ -58,7 +59,6 @@ public class EffectsRegister {
     public static final DeferredHolder<MobEffect, MobEffect> FROST_EFFECT = MOB_EFFECTS.register("frost_effect",
         () -> new FrostEffect().addAttributeModifier(Attributes.MOVEMENT_SPEED, withDefaultNamespace("frost.speed"), -0.15F, ADD_MULTIPLIED_TOTAL)
     );
-
     public static final DeferredHolder<MobEffect, MobEffect> GREATER_FROST_EFFECT =
         MOB_EFFECTS.register("greater_frost_effect", GreaterFrostEffect::new);
 
@@ -84,9 +84,11 @@ public class EffectsRegister {
         MOB_EFFECTS.register("greater_lightning_effect", GreaterLightningEffect::new);
 
 
-    public static final DeferredHolder<MobEffect, MobEffect> VITALITY_EFFECT = MOB_EFFECTS.register("vitality_effect",
-        () -> new VitalityEffect(MobEffectCategory.HARMFUL, 3436524)
-    );
+    public static final DeferredHolder<MobEffect, MobEffect> VITALITY_EFFECT =
+        MOB_EFFECTS.register("vitality_effect", VitalityEffect::new);
+
+    public static final DeferredHolder<MobEffect, MobEffect> GREATER_VITALITY_EFFECT =
+        MOB_EFFECTS.register("greater_vitality_effect", GreaterVitalityEffect::new);
 
     public static void register (IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);

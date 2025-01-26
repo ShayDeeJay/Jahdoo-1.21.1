@@ -1,13 +1,8 @@
 package org.jahdoo.attachments.player_abilities;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -27,7 +22,6 @@ import org.jahdoo.utils.PositionGetters;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.jahdoo.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.ability.abilities.ability_data.VitalRejuvenationAbility.CAST_DELAY;
@@ -107,23 +101,18 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
         PositionGetters.getOuterRingOfRadius(player.position(), 0.2, 30, vec3 -> setRejuvenationSuccessEffect(vec3, player));
     }
 
-    public static void setRejuvenationSuccessEffect(Vec3 worldPosition, LivingEntity player){
-        var directions = worldPosition.subtract(player.position()).normalize();
+    public static void setRejuvenationSuccessEffect(Vec3 worldPosition, LivingEntity livingEntity){
+        var directions = worldPosition.subtract(livingEntity.position()).normalize();
         var lifetime = 8;
         var element = ElementRegistry.VITALITY.get();
         var col1 = element.particleColourPrimary();
         var col2 = element.particleColourFaded();
         var bakedParticle = bakedParticleOptions(7, lifetime, 0.1f, true);
-
         var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.1f, col1, col2, true);
 
-        if(player.level().isClientSide){
-            ParticleHandlers.sendParticles(
-                player.level(), bakedParticle, worldPosition, 0, directions.x, directions.y + 4, directions.z, Random.nextDouble(3, 6)
-            );
-            ParticleHandlers.sendParticles(
-                player.level(), genericParticle, worldPosition, 0, directions.x, directions.y + 4, directions.z, Random.nextDouble(3, 6)
-            );
+        if(livingEntity.level().isClientSide){
+            ParticleHandlers.sendParticles(livingEntity.level(), bakedParticle, worldPosition, 0, directions.x, directions.y + 4, directions.z, Random.nextDouble(3, 6));
+            ParticleHandlers.sendParticles(livingEntity.level(), genericParticle, worldPosition, 0, directions.x, directions.y + 4, directions.z, Random.nextDouble(3, 6));
         }
     }
 

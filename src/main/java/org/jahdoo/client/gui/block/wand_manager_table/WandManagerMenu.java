@@ -61,6 +61,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
 
     private void insertRuneSlots() {
         try{
+
             var getAllSlots = this.getWandManagerEntity().getWandSlot();
             var getData = RuneHolder.getRuneholder(getAllSlots);
             var iHandler = getWandManagerEntity().inputItemHandler;
@@ -70,10 +71,12 @@ public class WandManagerMenu extends AbstractInternalContainer {
                 iHandler.setStackInSlot(indexOne.get(), itemStack);
                 indexOne.set(indexOne.get() + 1);
             }
+
             handleSlotsInGridLayout(
                 (slotX, slotY, index) -> this.addSlot(new RuneSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, item, this.getWandManagerEntity(), 1)),
                 getData.runeSlots().size(), 0,0, offSetX, offSetY
             );
+
         } catch (Exception e){
             JahdooMod.LOGGER.log(Level.DEBUG, e);
         }

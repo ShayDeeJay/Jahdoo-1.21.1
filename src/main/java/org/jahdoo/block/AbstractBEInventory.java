@@ -10,6 +10,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Containers;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -99,15 +100,15 @@ public abstract class AbstractBEInventory extends SyncedBlockEntity {
 
         for (int i = 0; i < this.inputItemHandler.getSlots(); i++) {
             if (i < inputInventory.getContainerSize()) {
-                inputItemHandler.getStackInSlot(i);
-                inputInventory.setItem(i, inputItemHandler.getStackInSlot(i));
+                var stackInSlot = inputItemHandler.getStackInSlot(i);
+                inputInventory.setItem(i, stackInSlot);
             }
         }
 
         for (int i = 0; i < this.outputItemHandler.getSlots(); i++) {
             if (i < outputInventory.getContainerSize()) {
-                outputItemHandler.getStackInSlot(i);
-                outputInventory.setItem(i, outputItemHandler.getStackInSlot(i));
+                var stackInSlot = outputItemHandler.getStackInSlot(i);
+                outputInventory.setItem(i, stackInSlot);
             }
         }
 

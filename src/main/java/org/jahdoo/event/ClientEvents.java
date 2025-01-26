@@ -7,6 +7,7 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -23,6 +24,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.client.KeyBinding;
@@ -91,18 +93,17 @@ public class ClientEvents {
     @SubscribeEvent
     public static void tooltipEvent(RenderTooltipEvent.GatherComponents e){
         var current = e.getTooltipElements();
-        var allSlots = getAllSlots(e.getItemStack());
+        var itemStack = e.getItemStack();
+        var allSlots = getAllSlots(itemStack);
         if(allSlots.isEmpty()) return;
-        var runeSockets = new RuneTooltipRenderer.RuneComponent(e.getItemStack(), allSlots);
+        var runeSockets = new RuneTooltipRenderer.RuneComponent(itemStack, allSlots);
 
         e.getTooltipElements().add(current.size(), Either.right(runeSockets));
-
     }
 
     @SubscribeEvent
     public static void PlayerRenderer(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) return;
-
         var player = (Player) event.getCamera().getEntity();
         var stack = player.getItemInHand(player.getUsedItemHand());
 
@@ -118,7 +119,6 @@ public class ClientEvents {
         var player = instance.player;
         crosshairManager(event);
         simpleGui(event, player);
-
 
         if(player != null){
             var x = player.pick(3, event.getPartialTick().getGameTimeDeltaTicks(), false);

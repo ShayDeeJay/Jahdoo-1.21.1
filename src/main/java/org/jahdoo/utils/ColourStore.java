@@ -12,4 +12,5 @@ public class ColourStore {
     public static final int COSMIC_PURPLE = color(171, 87, 194);
     public static final int PERK_GREEN = color(193, 255, 99);
     public static final int SYMPATHISER_ORANGE = color(255, 153, 77);
+    public static final int PENDENT_NAME = color(91, 174, 252);
 }

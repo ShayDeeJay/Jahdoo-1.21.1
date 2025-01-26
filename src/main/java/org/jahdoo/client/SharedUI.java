@@ -158,14 +158,14 @@ public class SharedUI {
         var degrees = ((float) guiGraphics.guiWidth() / 2 - mouseX) / rotationSpeed;
         var maxRotation = 6;
         degrees = Math.max(-maxRotation, Math.min(maxRotation, degrees));
-        var degrees1 = -((float) guiGraphics.guiHeight() / 2 - mouseY) / rotationSpeed;
+        var degrees1 = ((float) guiGraphics.guiHeight() / 2 - mouseY) / rotationSpeed;
         degrees1 = Math.max(-maxRotation, Math.min(maxRotation, degrees1));
 
-        guiGraphics.pose().rotateAround(Axis.YP.rotationDegrees(degrees), 0,0,0); // Horizontal rotation
+        guiGraphics.pose().rotateAround(Axis.YP.rotationDegrees(degrees + 180), 0,0,0); // Horizontal rotation
         guiGraphics.pose().rotateAround(Axis.XP.rotationDegrees(degrees1 + 180), 0,0,0); // Horizontal rotation
 
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
-        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+        var buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         itemRenderer.renderStatic(
             itemStack,
             ItemDisplayContext.FIXED,

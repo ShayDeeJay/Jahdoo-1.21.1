@@ -31,11 +31,14 @@ public class TomeOfUnity extends Item implements ICurioItem, JahdooItem {
     public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
         var list = new ArrayList<Component>();
         var getRarityId = stack.get(DataComponentRegistry.JAHDOO_RARITY);
+
         if(getRarityId != null){
             var getRarity = JahdooRarity.getAllRarities().get(getRarityId);
             list.addFirst(JahdooRarity.addRarityTooltip(getRarity));
         }
+
         list.add(Component.empty());
+
         for (var tooltip : tooltips) {
             var text = "attribute.name.jahdoo.mana.mana_regen";
             var contains = tooltip.contains(Component.translatable(text));

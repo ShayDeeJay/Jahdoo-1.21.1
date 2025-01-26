@@ -7,13 +7,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
@@ -26,20 +24,21 @@ import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import org.jahdoo.ability.abilities.ability_data.Utility.BlockPlacerAbility;
 import org.jahdoo.ability.abilities.ability_data.Utility.WallPlacerAbility;
 import org.jahdoo.ability.effects.JahdooMobEffect;
+import org.jahdoo.attachments.player_abilities.VitalRejuvenation;
 import org.jahdoo.components.DataComponentHelper;
 import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-import static net.minecraft.world.entity.EquipmentSlotGroup.*;
-import static net.minecraft.world.item.component.ItemAttributeModifiers.*;
+import static net.minecraft.world.entity.EquipmentSlotGroup.MAINHAND;
+import static net.minecraft.world.entity.EquipmentSlotGroup.bySlot;
 import static org.jahdoo.items.wand.WandItemHelper.storeBlockType;
 import static org.jahdoo.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.registers.AttachmentRegister.SAVE_DATA;
-import static org.jahdoo.registers.DataComponentRegistry.*;
+import static org.jahdoo.registers.DataComponentRegistry.RUNE_HOLDER;
+import static org.jahdoo.utils.ModHelpers.Random;
 import static org.jahdoo.utils.ModHelpers.getSoundWithPosition;
 import static org.jahdoo.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 
@@ -116,9 +115,10 @@ public class EventHelpers {
         var slotAttributes = item.get(RUNE_HOLDER.get());
         if(slotAttributes == null) return;
 
-        var handComponent = item.get(INTERACTION_HAND);
-        var hand = handComponent == null ? 2 : handComponent;
-        if(hand == 2) return;
+        System.out.println(item);
+//        var handComponent = item.get(INTERACTION_HAND);
+//        var hand = handComponent == null ? 2 : handComponent;
+//        if(hand == 2) return;
 
         for (ItemStack itemStack : slotAttributes.runeSlots()) {
             var mods = itemStack.getAttributeModifiers().modifiers();
@@ -126,7 +126,8 @@ public class EventHelpers {
             var acMod = mods.getFirst();
             /* Would be nice if you could actually control the hand allowed. One way would be to add a component that changes
             *  when swapped. Or just get slot context from inventory tick? */
-            var slot = item.getItem() instanceof ArmorItem armorItem ? bySlot(armorItem.getEquipmentSlot()) : hand == 0 ? MAINHAND : OFFHAND;
+//            var slot = item.getItem() instanceof ArmorItem armorItem ? bySlot(armorItem.getEquipmentSlot()) : hand == 0 ? MAINHAND : OFFHAND;
+            var slot = item.getItem() instanceof ArmorItem armorItem ? bySlot(armorItem.getEquipmentSlot()) : MAINHAND;
             event.addModifier(acMod.attribute(), acMod.modifier(), slot);
         }
     }
@@ -205,6 +206,18 @@ public class EventHelpers {
                 );
             }
             event.setNewDamage(modifiedDamage);
+        }
+    }
+
+    public static void greaterVitalityEffect(LivingDamageEvent.Pre event, LivingEntity entity) {
+        if(entity.hasEffect(EffectsRegister.GREATER_VITALITY_EFFECT)){
+            var getAttacker = event.getSource().getEntity();
+            if(Random.nextInt(4) == 0){
+                if(getAttacker instanceof Player player){
+                    VitalRejuvenation.successfulCastAnimation(player);
+                    player.heal(2);
+                }
+            }
         }
     }
 

@@ -43,6 +43,7 @@ public class ItemsRegister {
     public static final DeferredHolder<Item, Item> INGMAS_SWORD = ITEMS.register("ingmas_sword", IngmasSword::new);
     public static final DeferredHolder<Item, Item> ELEMENTAL_SWORD = ITEMS.register("elemental_sword", ElementalSword::new);
     public static final DeferredHolder<Item, Item> ANCIENT_GLAIVE = ITEMS.register("ancient_glaive", AncientGlaive::new);
+    public static final DeferredHolder<Item, Item> PENDENT = ITEMS.register("pendent", Pendent::new);
 
     //Block Items
     public static final DeferredHolder<Item, Item> INFUSER_ITEM =
