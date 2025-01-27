@@ -196,9 +196,15 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
             if(isGauntletEquipped){
                 return true;
             } else {
-                var elementColour = ElementRegistry.getElementByWandType(entity.getItemInHand(interactionHand).getItem());
-                var sendMessage = ModHelpers.withStyleComponent("You don't have the power to offhand this yet.", elementColour.getFirst().textColourPrimary());
-                if(shouldSendMessage && entity instanceof Player player) player.displayClientMessage(sendMessage, true);
+                if(shouldSendMessage){
+                    var item = entity.getItemInHand(interactionHand).getItem();
+                    ElementRegistry.getElementFromWand(item).ifPresent(
+                        abstractElement -> {
+                            var sendMessage = ModHelpers.withStyleComponent("You don't have the power to offhand this yet.", abstractElement.textColourPrimary());
+                            if (entity instanceof Player player) player.displayClientMessage(sendMessage, true);
+                        }
+                    );
+                }
                 return false;
             }
         }

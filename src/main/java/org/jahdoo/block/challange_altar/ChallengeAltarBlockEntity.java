@@ -131,8 +131,8 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
             pLevel.destroyBlock(pos, false);
             var lootLevel = this.altarData().maxRound;
             var setLootValue = (lootLevel + 3) * Random.nextInt(1, 5);
-            var rewards = getCoinItems(serverLevel, pos.getCenter(), lootLevel);
             for(int i = 0; i < 4; i++){
+                var rewards = getCoinItems(serverLevel, pos.getCenter(), lootLevel);
                 lootsplosian(pos, serverLevel, setLootValue, ColourStore.PERK_GREEN, rewards, false);
             }
             ModHelpers.getSoundWithPosition(pLevel, south, SoundEvents.END_PORTAL_SPAWN, 0.8F, 1.5F);

@@ -30,7 +30,7 @@ public class RuneItem extends Item implements JahdooItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        hoverToolTip(stack, tooltipComponents);
+        tooltipComponents.addAll(hoverToolTip(stack));
     }
 
     @Override

@@ -1,14 +1,18 @@
 package org.jahdoo.ability.abilities.ability;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ability.AbstractAbility;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.ability.abilities.ability_data.ArcaneShiftAbility;
+import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.utils.ModHelpers.Random;
 
 
 public class ArcaneShift extends AbstractAbility {
@@ -37,15 +41,50 @@ public class ArcaneShift extends AbstractAbility {
         var maxEntity = getTag(ArcaneShiftAbility.maxEntities);
         var lifeTimes = getTag(ArcaneShiftAbility.lifeTime);
         var position = player.pick(distances, 0, false).getLocation();;
+        for(int i = 0; i < 50; i++){
+            var particle = ParticleHandlers.getAllParticleTypes(ElementRegistry.MYSTIC.get(), 10, 1.5f);
+            var x = player.getRandomX(1);
+            var y = player.getRandomY();
+            var z = player.getRandomZ(1);
+            player.level().addParticle(particle, x, y, z, Random.nextDouble(0.1, 0.3) - 0.2, Random.nextDouble(0.2, 0.5), Random.nextDouble(0.1, 0.3)- 0.2);
+        }
 
         if(!player.level().isClientSide) {
-            player.teleportTo(position.x, position.y + 1, position.z);
-//            shootSpikesRandomly(player, (int) maxEntity, 0.8, (int) lifeTimes);
-
+            var blockPos = BlockPos.containing(position).getCenter();
+            player.teleportTo(blockPos.x, blockPos.y + 0.5, blockPos.z);
             ModHelpers.getSoundWithPositionV(player.level(), position, SoundEvents.ENDERMAN_TELEPORT, 0.5f, 0.8f);
             ModHelpers.getSoundWithPositionV(player.level(), position, SoundEvents.ILLUSIONER_PREPARE_MIRROR, 0.5f, 2f);
             player.resetFallDistance();
         }
+
+
+        for(int i = 0; i < 50; i++){
+            var particle = ParticleHandlers.getAllParticleTypes(ElementRegistry.MYSTIC.get(), 10, 1.5f);
+            var x = getRandomX(position.x, 1, 1.5);
+            var y = getY(position.y + 1, Random.nextDouble(), 2);
+            var z = getRandomZ(position.z, 1, 1.5);
+            player.level().addParticle(particle, x, y, z, Random.nextDouble(0.1, 0.3) - 0.2, Random.nextDouble(0.2, 0.5), Random.nextDouble(0.1, 0.3)- 0.2);
+        }
+    }
+
+    public double getX(double posX, double scale, double width) {
+        return posX + width * scale;
+    }
+
+    public double getRandomX(double posX, double scale, double width) {
+        return this.getX(posX, ((double)2.0F * Random.nextDouble() - (double)1.0F) * scale, width);
+    }
+
+    public double getY(double posY, double scale, double width) {
+        return posY + width * scale;
+    }
+
+    public double getZ(double posZ, double scale, double width) {
+        return posZ + width * scale;
+    }
+
+    public double getRandomZ(double posZ, double scale, double width) {
+        return this.getZ(posZ, ((double)2.0F * Random.nextDouble() - (double)1.0F) * scale, width);
     }
 
 //    private void shootSpikesRandomly(Player player, int maxEntities, double velocity, int discardTime){

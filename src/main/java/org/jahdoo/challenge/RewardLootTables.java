@@ -22,6 +22,7 @@ import org.jahdoo.items.TomeOfUnity;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.runes.rune_data.RuneData;
+import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ElementRegistry;
@@ -66,6 +67,7 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_CHEASTPLATE_BUILDER = LootItem.lootTableItem(ItemsRegister.MAGE_CHESTPLATE.get());
     public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_LEGGINGS_BUILDER = LootItem.lootTableItem(ItemsRegister.MAGE_LEGGINGS.get());
     public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_BOOTS_BUILDER = LootItem.lootTableItem(ItemsRegister.MAGE_BOOTS.get());
+
     public static final LootPoolSingletonContainer.Builder<?> ELYTRA_BUILDER = LootItem.lootTableItem(Items.ELYTRA);
     public static final LootPoolSingletonContainer.Builder<?> GOLD_COIN = LootItem.lootTableItem(ItemsRegister.GOLD_COIN.get());
     public static final LootPoolSingletonContainer.Builder<?> SILVER_COIN = LootItem.lootTableItem(ItemsRegister.SILVER_COIN.get());
@@ -234,6 +236,7 @@ public class RewardLootTables {
     }
 
     private static void enchantArmorItem(ServerLevel serverLevel, ItemStack itemStack, ArmorItem armorItem, boolean isGuaranteed) {
+        RuneHolder.createNewRuneSlots(itemStack, Random.nextInt(2));
         if(!isGuaranteed) if (Random.nextInt(50) != 0) return;
 
         attachEnchantment(itemStack, serverLevel, BLAST_PROTECTION, 5, 10, isGuaranteed);

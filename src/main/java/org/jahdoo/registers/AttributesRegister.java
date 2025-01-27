@@ -125,7 +125,7 @@ public class  AttributesRegister {
     ){
         var attributeList = new ArrayList<>(itemStack.getAttributeModifiers().modifiers().stream().toList());
         var itemAttributes = new ItemAttributeModifiers(attributeList, false);
-        Optional<ItemAttributeModifiers.Entry> existingModifier = attributeList
+        var existingModifier = attributeList
             .stream()
             .filter(att -> att.modifier().id().getPath().equals(name))
             .findFirst();
@@ -142,7 +142,7 @@ public class  AttributesRegister {
         EquipmentSlot equipmentSlot
     ){
         var itemAttributes = new ItemAttributeModifiers(attributeList, false);
-        Optional<ItemAttributeModifiers.Entry> existingModifier = attributeList
+        var existingModifier = attributeList
             .stream()
             .filter(att -> att.modifier().id().getPath().equals(name))
             .findFirst();
@@ -152,7 +152,7 @@ public class  AttributesRegister {
     }
 
     public static ItemAttributeModifiers.Entry setAttribute(String name, Holder<Attribute> attribute, double value, EquipmentSlot equipmentSlot, boolean isRandomId){
-        var resourcelocation = isRandomId ? ModHelpers.res(String.valueOf(UUID.randomUUID())) :  ResourceLocation.parse(name);
+        var resourcelocation = isRandomId ? ModHelpers.res(String.valueOf(UUID.randomUUID())) : ResourceLocation.parse(name);
         var attributes = new AttributeModifier(resourcelocation, value,  AttributeModifier.Operation.ADD_VALUE);
         return new ItemAttributeModifiers.Entry(attribute, attributes,  EquipmentSlotGroup.bySlot(equipmentSlot));
     }
@@ -160,6 +160,8 @@ public class  AttributesRegister {
     public static void attachAttribute(EntityAttributeModificationEvent event){
         event.add(EntityType.PLAYER, AttributesRegister.MANA_POOL);
         event.add(EntityType.PLAYER, AttributesRegister.MANA_REGEN);
+        event.add(EntityType.PLAYER, AttributesRegister.MAGE_FLIGHT);
+        event.add(EntityType.PLAYER, AttributesRegister.TRIPLE_JUMP);
 
         event.add(EntityType.PLAYER, AttributesRegister.SKIP_MANA);
         event.add(EntityType.PLAYER, AttributesRegister.SKIP_COOLDOWN);

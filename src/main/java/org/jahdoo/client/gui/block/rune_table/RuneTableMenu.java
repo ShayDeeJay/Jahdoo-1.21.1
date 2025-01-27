@@ -25,6 +25,7 @@ import static org.jahdoo.block.wand_block_manager.WandManagerEntity.DEFAULT_SLOT
 import static org.jahdoo.client.SharedUI.handleSlotsInGridLayout;
 
 public class RuneTableMenu extends AbstractInternalContainer  {
+
     public int posX = 31;
     public int posY = 100;
     public int offSetX = 34;
@@ -70,11 +71,12 @@ public class RuneTableMenu extends AbstractInternalContainer  {
                 iHandler.setStackInSlot(indexOne.get(), itemStack);
                 indexOne.set(indexOne.get() + 1);
             }
+
             handleSlotsInGridLayout(
                 (slotX, slotY, index) -> this.addSlot(new RuneSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, item, this.getRuneTableEntity(), 1)),
                 getData.runeSlots().size(), 0,0, offSetX, offSetY
             );
-        } catch (Exception e){
+        } catch (Exception e) {
             JahdooMod.LOGGER.log(Level.DEBUG, e);
         }
     }

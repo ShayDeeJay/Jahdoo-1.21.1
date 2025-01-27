@@ -88,7 +88,6 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
             if(enoughToBuy){
                 var isRandomisedTable = state.getValue(TEXTURE) == 3;
                 if (isRandomisedTable) {
-                    System.out.println("im ere");
                     shoppingTable.insertRandomItem();
                 }
 

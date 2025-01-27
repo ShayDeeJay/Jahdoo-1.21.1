@@ -13,12 +13,16 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -30,10 +34,14 @@ import org.jahdoo.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.client.KeyBinding;
 import org.jahdoo.client.RuneTooltipRenderer;
 import org.jahdoo.event.event_helpers.WandAbilitySelector;
+import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.registers.*;
 import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.joml.Matrix4f;
+import top.theillusivec4.curios.api.CuriosApi;
+
+import java.util.Optional;
 
 import static org.jahdoo.client.RenderHelpers.drawTexture;
 import static org.jahdoo.event.event_helpers.EventHelpers.getEntityPlayerIsLookingAt;
@@ -42,6 +50,7 @@ import static org.jahdoo.event.event_helpers.KeyBindHelper.*;
 import static org.jahdoo.event.event_helpers.OverlayEvent.crosshairManager;
 import static org.jahdoo.event.event_helpers.OverlayEvent.simpleGui;
 import static org.jahdoo.event.event_helpers.RenderEventHelper.*;
+import static org.jahdoo.items.runes.RuneItemHelper.hoverToolTip;
 import static org.jahdoo.items.wand.WandItemHelper.getAllSlots;
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, value = Dist.CLIENT)
@@ -98,7 +107,8 @@ public class ClientEvents {
         if(allSlots.isEmpty()) return;
         var runeSockets = new RuneTooltipRenderer.RuneComponent(itemStack, allSlots);
 
-        e.getTooltipElements().add(current.size(), Either.right(runeSockets));
+        e.getItemStack().getAttributeModifiers().withTooltip(false);
+        current.add(current.size(), Either.right(runeSockets));
     }
 
     @SubscribeEvent
@@ -121,8 +131,9 @@ public class ClientEvents {
         simpleGui(event, player);
 
         if(player != null){
-            var x = player.pick(3, event.getPartialTick().getGameTimeDeltaTicks(), false);
-            var entity = player.level().getBlockEntity(BlockPos.containing(x.getLocation()));
+            var partialTicks = event.getPartialTick().getGameTimeDeltaTicks();
+            var pick = player.pick(3, partialTicks, false);
+            var entity = player.level().getBlockEntity(BlockPos.containing(pick.getLocation()));
 
             if(entity instanceof ShoppingTableEntity tableEntity){
                 var guiGraphics = event.getGuiGraphics();

@@ -115,6 +115,7 @@ public class ServerEvents {
                 event.setCanceled(true);
             }
         }
+
     }
 
     @SubscribeEvent
@@ -151,6 +152,11 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
+    public static void attributeEvent(CurioAttributeModifierEvent event) {
+        useRuneAttributesCurios(event);
+    }
+
+    @SubscribeEvent
     public static void livingDeathEvent(LivingDeathEvent event){
         var entity = event.getEntity();
         var source = event.getSource();
@@ -159,7 +165,6 @@ public class ServerEvents {
         if(entity.level() instanceof CustomLevel){
             var max = Math.max(1, bonus);
             if(entity instanceof CustomZombie){
-                System.out.println(bonus);
                 if(Random.nextInt(0, Math.min(10, max)) == 0){
                     var stack = new ItemStack(ItemsRegister.BRONZE_COIN).copyWithCount(Math.max(1, 10 - bonus));
                     BehaviorUtils.throwItem(entity, stack, entity.position());

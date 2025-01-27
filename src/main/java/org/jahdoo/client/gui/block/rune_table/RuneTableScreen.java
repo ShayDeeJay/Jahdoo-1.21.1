@@ -45,12 +45,11 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
     public RuneTableScreen(RuneTableMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
-        var element = ElementRegistry.getElementByWandType(pMenu.getRuneTableEntity().inputItemHandler.getStackInSlot(0).getItem());
-        var color = -1;
+        var element = ElementRegistry.getElementFromWand(pMenu.getRuneTableEntity().inputItemHandler.getStackInSlot(0).getItem());
         this.runeTableMenu = pMenu;
         this.switchVisibility();
-        this.element = ElementRegistry.MYSTIC.get();
-        this.borderColour = element.isEmpty() ? BORDER_COLOUR : color;
+        this.element = element.orElse(ElementRegistry.MYSTIC.get());
+        this.borderColour = element.map(AbstractElement::textColourPrimary).orElseGet(() -> FastColor.ARGB32.color(56, 157, 59));
     }
 
     @Override
@@ -78,7 +77,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
-    private void wandProperties(@NotNull GuiGraphics guiGraphics, int startX, int i, int startY, int i1) {
+    private void wandProperties(@NotNull GuiGraphics guiGraphics) {
         var shiftY = 0;
         var shiftX = -5;
         var spacer = new AtomicInteger();
@@ -143,7 +142,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0,0,-10);
         guiGraphics.enableScissor(minX, minY, maxX, minY + (!setView ? 172 : 92));
-        SharedUI.renderItem(guiGraphics, width1, height1, getWand(), scaleItem, mouseX, mouseY, 16);
+        SharedUI.renderItem(guiGraphics, width1, height1, getWand(), scaleItem - (getWand().getItem() instanceof WandItem ? 0 : 10), mouseX, mouseY, 16);
         if(this.element != null){
             var colorFade = FastColor.ARGB32.color(100, borderColour);
             var heightOffset = 86 - (showInventory ? 40 : 0);
@@ -220,7 +219,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         scaleItem();
         augmentCoreSlots(guiGraphics, adjustX, adjustY, borderColour, this.width, this.height, groupFade());
         renderItem(guiGraphics, mouseX, mouseY, startX, startY);
-        wandProperties(guiGraphics, startX, i, startY, i1);
+        wandProperties(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         var hSlot = this.hoveredSlot;
         if(hSlot != null && !(hSlot.getItem().getItem() instanceof RuneItem)){

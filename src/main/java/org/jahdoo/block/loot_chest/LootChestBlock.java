@@ -100,9 +100,9 @@ public class LootChestBlock extends BaseEntityBlock {
                     var getId = new CustomModelData(lootChestEntity.getRarity);
                     var colour = KeyItem.getJahdooRarity(getId).getColour();
                     var setLootValue = lootLevel + (value * value);
-                    var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter(), setLootValue);
                     int lootMultiplier = value + 1;
                     for(int i = 0; i < lootMultiplier; i++){
+                        var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter(), setLootValue);
                         lootsplosian(pos, serverLevel, setLootValue,  colour, rewards, true);
                     }
                     stack.shrink(1);

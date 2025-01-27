@@ -12,6 +12,7 @@ import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.generateRandomTypAttribute;
@@ -19,7 +20,8 @@ import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.standAloneAt
 
 public class RuneItemHelper {
 
-    static void hoverToolTip(ItemStack stack, List<Component> tooltipComponents) {
+    public static List<Component> hoverToolTip(ItemStack stack) {
+        var tooltipComponents = new ArrayList<Component>();
         var component = standAloneAttributes(stack);
         var description = RuneData.RuneHelpers.getDescription(stack);
         var hasTier = RuneData.RuneHelpers.getTier(stack);
@@ -30,8 +32,9 @@ public class RuneItemHelper {
             if (hasTier != -1) tooltipComponents.add(componentRune);
         }
 
-        if(description.getString().isEmpty() || AugmentItemHelper.shiftForDetails(tooltipComponents)) return;
+        if(description.getString().isEmpty() || AugmentItemHelper.shiftForDetails(tooltipComponents)) return tooltipComponents;
         tooltipComponents.add(ModHelpers.withStyleComponent(description.getString(), ColourStore.HEADER_COLOUR));
+        return tooltipComponents;
     }
 
     static @NotNull InteractionResultHolder<ItemStack> rollRandomRune(Level level, Player player) {

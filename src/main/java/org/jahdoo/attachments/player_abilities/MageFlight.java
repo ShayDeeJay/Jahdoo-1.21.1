@@ -15,6 +15,7 @@ import org.jahdoo.networking.packet.client2server.MageFlightPacketS2CPacket;
 import org.jahdoo.networking.packet.server2client.MageFlightDataSyncS2CPacket;
 import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.registers.AttributesRegister;
+import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.PositionGetters;
 
@@ -22,6 +23,7 @@ import static org.jahdoo.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.registers.AttachmentRegister.*;
 import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
+import static org.jahdoo.registers.ElementRegistry.getElementFromWand;
 
 public class MageFlight implements AbstractAttachment {
 
@@ -107,7 +109,7 @@ public class MageFlight implements AbstractAttachment {
     }
 
     private boolean cancelAttempt(Player player, ItemStack wandItem) {
-        if(!RuneData.RuneHelpers.canMageFlight(wandItem) || player.onGround() || player.isFallFlying()) {
+        if(!RuneData.RuneHelpers.canMageFlight(player) || player.onGround() || player.isFallFlying()) {
             player.getAbilities().mayfly = false;
             this.isFlying = false;
             return true;
@@ -116,10 +118,9 @@ public class MageFlight implements AbstractAttachment {
     }
 
     private void mageFlightAnimation(ItemStack wandItem, Player player){
-        if(!(wandItem.getItem() instanceof WandItem)) return;
-        var element = getElementByWandType(wandItem.getItem()).getFirst();
+        var element = getElementFromWand(wandItem.getItem()).orElse(ElementRegistry.getRandomElement());
         var part1 = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 2, 0.2f, true);
-        var part2 = bakedParticleOptions(getElementByWandType(wandItem.getItem()).getFirst().getTypeId(), 2, 1f, false);
+        var part2 = bakedParticleOptions(element.getTypeId(), 2, 1f, false);
         var getMovement = player.getDeltaMovement().y > -0.5;
 
         PositionGetters.getInnerRingOfRadiusRandom(player.position(), player.getBbWidth() - 0.3, getMovement ? 5 : 2,

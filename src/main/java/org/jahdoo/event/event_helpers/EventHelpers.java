@@ -5,13 +5,16 @@ import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
@@ -21,22 +24,32 @@ import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
+import org.apache.logging.log4j.Level;
+import org.jahdoo.JahdooMod;
 import org.jahdoo.ability.abilities.ability_data.Utility.BlockPlacerAbility;
 import org.jahdoo.ability.abilities.ability_data.Utility.WallPlacerAbility;
 import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.attachments.player_abilities.VitalRejuvenation;
 import org.jahdoo.components.DataComponentHelper;
+import org.jahdoo.items.BattlemageGauntlet;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
+import org.jahdoo.utils.ModTags;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
+import top.theillusivec4.curios.api.type.capability.ICurioItem;
+import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
+
+import java.util.Optional;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-import static net.minecraft.world.entity.EquipmentSlotGroup.MAINHAND;
-import static net.minecraft.world.entity.EquipmentSlotGroup.bySlot;
+import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static org.jahdoo.items.wand.WandItemHelper.storeBlockType;
 import static org.jahdoo.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.registers.AttachmentRegister.SAVE_DATA;
+import static org.jahdoo.registers.DataComponentRegistry.INTERACTION_HAND;
 import static org.jahdoo.registers.DataComponentRegistry.RUNE_HOLDER;
 import static org.jahdoo.utils.ModHelpers.Random;
 import static org.jahdoo.utils.ModHelpers.getSoundWithPosition;
@@ -110,15 +123,46 @@ public class EventHelpers {
         }
     }
 
+    public static void useRuneAttributesCurios(CurioAttributeModifierEvent event) {
+        var item = event.getItemStack();
+        var slotAttributes = item.get(RUNE_HOLDER.get());
+//        var player = event.getSlotContext().entity();
+//        var wandMods = player.getOffhandItem().getAttributeModifiers();
+//        var canOffhand = WandItem.canOffHand(player, InteractionHand.OFF_HAND, false);
+//        event.clearModifiers();
+//        if(canOffhand && item.getItem() instanceof BattlemageGauntlet){
+//            for (ItemAttributeModifiers.Entry modifier : wandMods.modifiers()) {
+//                try {
+//                    event.addModifier(modifier.attribute(), modifier.modifier());
+//                }        catch (Exception e){
+//                    JahdooMod.LOGGER.log(Level.ALL, e);
+//                }
+//            }
+//        }
+
+        if(slotAttributes == null) return;
+
+        for (ItemStack itemStack : slotAttributes.runeSlots()) {
+            var mods = itemStack.getAttributeModifiers().modifiers();
+            if (mods.isEmpty()) return;
+            var acMod = mods.getFirst();
+            try {
+                event.addModifier(acMod.attribute(), acMod.modifier());
+            } catch (Exception e){
+                JahdooMod.LOGGER.log(Level.ALL, e);
+            }
+        }
+
+    }
+
     public static void useRuneAttributes(ItemAttributeModifierEvent event) {
         var item = event.getItemStack();
         var slotAttributes = item.get(RUNE_HOLDER.get());
-        if(slotAttributes == null) return;
+        var handComponent = item.get(INTERACTION_HAND);
+        var hand = handComponent == null ? 2 : handComponent;
+        if(slotAttributes == null || item.getItem() instanceof ICurioItem) return;
 
-        System.out.println(item);
-//        var handComponent = item.get(INTERACTION_HAND);
-//        var hand = handComponent == null ? 2 : handComponent;
-//        if(hand == 2) return;
+        if(item.is(ModTags.Items.WAND_TAGS) && hand == 2) return;
 
         for (ItemStack itemStack : slotAttributes.runeSlots()) {
             var mods = itemStack.getAttributeModifiers().modifiers();
@@ -126,10 +170,11 @@ public class EventHelpers {
             var acMod = mods.getFirst();
             /* Would be nice if you could actually control the hand allowed. One way would be to add a component that changes
             *  when swapped. Or just get slot context from inventory tick? */
-//            var slot = item.getItem() instanceof ArmorItem armorItem ? bySlot(armorItem.getEquipmentSlot()) : hand == 0 ? MAINHAND : OFFHAND;
-            var slot = item.getItem() instanceof ArmorItem armorItem ? bySlot(armorItem.getEquipmentSlot()) : MAINHAND;
+            var slot = item.getItem() instanceof ArmorItem armorItem ? bySlot(armorItem.getEquipmentSlot()) : hand == 0 ? MAINHAND : OFFHAND;
+
             event.addModifier(acMod.attribute(), acMod.modifier(), slot);
         }
+
     }
 
     public static void entityDeathLoot(LivingEntity entity, DamageSource source) {
@@ -165,7 +210,6 @@ public class EventHelpers {
         if(event.getEntity().level() instanceof CustomLevel){
             if(!(event.getEffectInstance() instanceof JahdooMobEffect) && event.getEffectInstance().getEffect().value().isBeneficial()){
                 event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
-
             }
         }
     }

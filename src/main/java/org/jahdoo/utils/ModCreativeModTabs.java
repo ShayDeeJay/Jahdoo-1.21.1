@@ -65,6 +65,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(basePendent);
                     }
 
+                    pOutput.accept(ItemsRegister.EXPERIENCE_ORB.get());
                     pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
                     pOutput.accept(ItemsRegister.RUNE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_CORE.get());
