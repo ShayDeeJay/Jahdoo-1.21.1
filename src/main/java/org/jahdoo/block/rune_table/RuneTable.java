@@ -3,6 +3,7 @@ package org.jahdoo.block.rune_table;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -29,6 +30,7 @@ import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jetbrains.annotations.Nullable;
 
+import static org.jahdoo.block.BlockInteractionHandler.*;
 import static org.jahdoo.block.BlockInteractionHandler.swapItemsWithHand;
 
 public class RuneTable extends BaseEntityBlock {
@@ -113,12 +115,13 @@ public class RuneTable extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+        var fail = ItemInteractionResult.FAIL;
         var entity = level.getBlockEntity(pos);
-        if(!(entity instanceof RuneTableEntity runeTable)) return ItemInteractionResult.FAIL;
+        if(!(entity instanceof RuneTableEntity runeTable)) return fail;
 
         var hasItem = runeTable.getItem().getStackInSlot(0).isEmpty();
         if(!hasItem && player.isShiftKeyDown()){
-            BlockInteractionHandler.removeItemsFromSlotToHand(runeTable.inputItemHandler, 0, player, hand);
+            removeItemsFromSlotToHand(runeTable.inputItemHandler, 0, player, hand);
             return ItemInteractionResult.SUCCESS;
         } else if (stack.has(DataComponentRegistry.RUNE_HOLDER) && hasItem) {
             swapItemsWithHand(runeTable.inputItemHandler, 0, player, hand);
@@ -126,9 +129,8 @@ public class RuneTable extends BaseEntityBlock {
         } else {
             if(!(player instanceof ServerPlayer serverPlayer)) return ItemInteractionResult.SUCCESS;
             serverPlayer.openMenu(runeTable, pos);
+            return ItemInteractionResult.SUCCESS;
         }
-
-        return ItemInteractionResult.FAIL;
     }
 
     @Nullable

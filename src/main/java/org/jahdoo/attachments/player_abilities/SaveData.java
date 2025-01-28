@@ -14,6 +14,8 @@ import org.jahdoo.items.wand.WandItem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.jahdoo.items.runes.rune_data.RuneData.*;
 
@@ -37,21 +39,43 @@ public class SaveData implements AbstractAttachment {
         }
     }
 
-    public void addAllItems(Player player){
-        var list = player.getInventory().items;
-        var item = list.stream().filter(RuneHelpers::hasDestinyBond).toList();
-        var wandOnly = item.stream().filter(itemStack -> !itemStack.isEmpty() && !(itemStack.getItem() instanceof RuneItem)).toList();
-        this.itemStacks.addAll(wandOnly);
-        item.forEach(items -> player.getInventory().removeItem(items));
+    public void addAllItems(Player player) {
+        var mainInventoryItems = player.getInventory().items;
+        var additionalSlotsItems = StreamSupport
+                .stream(player.getAllSlots().spliterator(), false)
+                .toList();
+
+        var filteredMainInventory = mainInventoryItems
+                .stream()
+                .filter(RuneHelpers::hasDestinyBond)
+                .toList();
+
+        var filteredAdditionalSlots = additionalSlotsItems
+                .stream()
+                .filter(RuneHelpers::hasDestinyBond)
+                .toList();
+
+        var allFilteredItems = new ArrayList<>(filteredMainInventory);
+
+        allFilteredItems.addAll(filteredAdditionalSlots);
+
+        var wandItems = allFilteredItems
+                .stream()
+                .distinct()
+                .filter(itemStack -> !itemStack.isEmpty() && !(itemStack.getItem() instanceof RuneItem))
+                .toList();
+
+        this.itemStacks.addAll(wandItems);
+        allFilteredItems.forEach(player.getInventory()::removeItem);
     }
 
     public void takeAllItems(Player player){
         for (ItemStack itemStack : this.itemStacks) {
             if(itemStack.getItem() instanceof ArmorItem armorItem){
                 var slot = armorItem.getEquipmentSlot();
-                player.setItemSlot(slot, itemStack);
-//                if(!player.hasItemInSlot(slot)){
-//                } else player.addItem(itemStack);
+                if(!player.hasItemInSlot(slot)){
+                    player.setItemSlot(slot, itemStack);
+                } else player.addItem(itemStack);
             } else {
                 player.addItem(itemStack);
             }

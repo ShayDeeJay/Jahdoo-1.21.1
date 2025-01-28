@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
@@ -170,7 +171,7 @@ public class EventHelpers {
             var acMod = mods.getFirst();
             /* Would be nice if you could actually control the hand allowed. One way would be to add a component that changes
             *  when swapped. Or just get slot context from inventory tick? */
-            var slot = item.getItem() instanceof ArmorItem armorItem ? bySlot(armorItem.getEquipmentSlot()) : hand == 0 ? MAINHAND : OFFHAND;
+            var slot = item.getItem() instanceof ArmorItem ? ARMOR : hand == 0 ? MAINHAND : OFFHAND;
 
             event.addModifier(acMod.attribute(), acMod.modifier(), slot);
         }

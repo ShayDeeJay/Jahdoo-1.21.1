@@ -34,8 +34,8 @@ public class ExperienceOrb extends Item {
             level.addParticle(particle, x, y, z, Random.nextDouble(0.1, 0.3) - 0.2, Random.nextDouble(0.1, 0.3), Random.nextDouble(0.1, 0.3)- 0.2);
         }
 
-        player.playSound(SoundEvents.PLAYER_LEVELUP, 1, 1.5f);
-        player.playSound(SoundRegister.ORB_CREATE.get(), 1, 2f);
+        player.playSound(SoundEvents.PLAYER_LEVELUP, 1, 0.5f);
+        player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 1, 1.5f);
         return super.use(level, player, usedHand);
     }
 }

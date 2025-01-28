@@ -120,8 +120,8 @@ public class BlockInteractionHandler {
         Player player,
         InteractionHand interactionHand
     ) {
-        ItemStack outputSlotTotal = itemStackHandler.getStackInSlot(outputSlot);
-        Inventory playInventory = player.getInventory();
+        var outputSlotTotal = itemStackHandler.getStackInSlot(outputSlot);
+        var playInventory = player.getInventory();
         if(outputSlotTotal.isEmpty()) return false;
 
         // Removes all items from slot to empty hand

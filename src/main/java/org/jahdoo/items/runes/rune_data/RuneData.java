@@ -12,10 +12,12 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.AttributesRegister;
+import org.jahdoo.registers.DataComponentRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -148,8 +150,19 @@ public record RuneData(
         }
 
         public static boolean hasDestinyBond(ItemStack itemStack){
-            var attributes = itemStack.getAttributeModifiers().modifiers().stream().toList();
-            return attributes.stream().anyMatch(attribute -> attribute.attribute().value().getDescriptionId().contains(DESTINY_BOND_PREFIX));
+            var getHolder = itemStack.get(DataComponentRegistry.RUNE_HOLDER);
+            if(getHolder == null) return false;
+
+            for (ItemStack runeSlot : getHolder.runeSlots()) {
+                for (ItemAttributeModifiers.Entry modifier : runeSlot.getAttributeModifiers().modifiers()) {
+                    if(modifier.attribute().equals(DESTINY_BOND)) return true;
+                }
+            }
+
+            return false;
+//            var attributes = itemStack.getAttributeModifiers().modifiers().stream().toList();
+//            System.out.println(itemStack.get(DataComponentRegistry.RUNE_HOLDER));
+//            return attributes.stream().anyMatch(attribute -> attribute.attribute().value().getDescriptionId().contains(DESTINY_BOND_PREFIX));
         }
 
         public static Component getNameWithStyle(ItemStack stack){

@@ -39,7 +39,6 @@ public record RuneHolder(
         itemStack.update(RUNE_HOLDER, RuneHolder.DEFAULT, data -> data.insertNewRuneSlots(runeSlots));
     }
 
-
     public static void updateRuneSlots(ItemStack itemStack, List<ItemStack> upgrades){
         itemStack.update(RUNE_HOLDER, RuneHolder.DEFAULT, data -> data.insertNewHolder(upgrades));
     }

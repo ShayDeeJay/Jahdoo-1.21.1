@@ -57,12 +57,15 @@ public abstract class AbstractInternalContainer extends AbstractContainerMenu {
         var copyOfSourceStack = sourceStack.copy();
         if (!sourceSlot.hasItem()) return ItemStack.EMPTY;
 
-        if (slotIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
-            if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX + getAllSlots(), false)) {
+        var vanilla = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
+        var beInventory = TE_INVENTORY_FIRST_SLOT_INDEX + getAllSlots();
+
+        if (slotIndex < vanilla) {
+            if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, beInventory, false)) {
                 return ItemStack.EMPTY;
             }
-        } else if (slotIndex < TE_INVENTORY_FIRST_SLOT_INDEX + getAllSlots()) {
-            if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) {
+        } else if (slotIndex < beInventory) {
+            if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, vanilla, false)) {
                 return ItemStack.EMPTY;
             }
         } else {

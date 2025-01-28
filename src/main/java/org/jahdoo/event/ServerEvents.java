@@ -106,15 +106,18 @@ public class ServerEvents {
         var mainHand = event.getItemStack();
         var player = event.getEntity();
 
-        if(mainHand.has(DataComponentRegistry.RUNE_HOLDER)){
-            var rune = player.getOffhandItem();
-            var list = new ArrayList<ItemStack>();
-            if(rune.getItem() instanceof RuneItem){
-                list.add(rune);
-                RuneHolder.updateRuneSlots(mainHand, list);
-                event.setCanceled(true);
-            }
-        }
+        System.out.println(event.getLevel());
+        System.out.println(mainHand.get(DataComponentRegistry.RUNE_HOLDER));
+
+//        if(mainHand.has(DataComponentRegistry.RUNE_HOLDER)){
+//            var rune = player.getOffhandItem();
+//            var list = new ArrayList<ItemStack>();
+//            if(rune.getItem() instanceof RuneItem){
+//                list.add(rune);
+//                RuneHolder.updateRuneSlots(mainHand, list);
+//                event.setCanceled(true);
+//            }
+//        }
 
     }
 

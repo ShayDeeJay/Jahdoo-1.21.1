@@ -94,8 +94,8 @@ public class RuneSlot extends SlotItemHandler {
                     list.add(this.bEntity.inputItemHandler.getStackInSlot(index.get()));
                     index.set(index.get() + 1);
                 }
-                getAllSlots.update(RUNE_HOLDER.get(), RuneHolder.DEFAULT, data -> data.insertNewHolder(list));
-                serverBoundPacket(getAllSlots);
+                RuneHolder.updateRuneSlots(getAllSlots, list);
+                    serverBoundPacket(getAllSlots);
             }
         }
     }
