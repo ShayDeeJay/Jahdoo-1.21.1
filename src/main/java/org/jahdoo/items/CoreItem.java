@@ -8,10 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
-import org.jahdoo.registers.AttachmentRegister;
 import org.jahdoo.registers.BlocksRegister;
-import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.challenge.LevelGenerator;
 
 import static org.jahdoo.block.TrialPortalBlock.*;

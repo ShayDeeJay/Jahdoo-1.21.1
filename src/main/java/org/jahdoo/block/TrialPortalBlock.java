@@ -19,10 +19,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.portal.DimensionTransition;
-import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
+import org.jahdoo.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.challenge.LevelGenerator;
 import org.jahdoo.registers.AttachmentRegister;
-import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.Nullable;
 
@@ -105,7 +104,9 @@ public class TrialPortalBlock extends NetherPortalBlock {
         //Delete old level on leave.
         if(level instanceof CustomLevel customLevel) LevelGenerator.removeLevel(customLevel);
         level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-        return createNewWorld(player, level, isContinueInstance ? getData : ChallengeAltarData.newRound(1), dimId == KEY_TRADING_POST ? tradingPost() : trial());
+        var getDim = dimId == KEY_TRADING_POST ? tradingPost() : trial();
+        var challengeLevelData = ChallengeLevelData.newRound(1, getDim.id());
+        return createNewWorld(player, level, isContinueInstance ? getData : challengeLevelData, getDim);
     }
 
     @Override

@@ -55,15 +55,15 @@ public class RuneSlot extends SlotItemHandler {
             var wandManager = bEntity;
             var cost = getCostFromRune(itemStack);
             if(wandManager != null){
-//                var potential = WandData.potential(wandManager.inputItemHandler.getStackInSlot(0));
-//                if(cost > potential) return false;
+                var potential = RuneHolder.potential(wandManager.inputItemHandler.getStackInSlot(0));
+                if(cost > potential) return false;
                 var level = wandManager.getLevel();
                 var pos = wandManager.getBlockPos();
                 if(level != null && this.getItem().isEmpty()){
                     if(level.isClientSide) return false;
                     ModHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_INSERT_ITEM, 0.4F, 1.2F);
                     ModHelpers.getSoundWithPosition(level, pos, SoundEvents.APPLY_EFFECT_TRIAL_OMEN, 0.4F, 2F);
-//                    WandData.createRefinementPotential(wandManager.inputItemHandler.getStackInSlot(0), potential - cost);
+                    RuneHolder.createRefinementPotential(wandManager.inputItemHandler.getStackInSlot(0), potential - cost);
                     return true;
                 }
             }
@@ -95,7 +95,7 @@ public class RuneSlot extends SlotItemHandler {
                     index.set(index.get() + 1);
                 }
                 RuneHolder.updateRuneSlots(getAllSlots, list);
-                    serverBoundPacket(getAllSlots);
+//                serverBoundPacket(getAllSlots);
             }
         }
     }

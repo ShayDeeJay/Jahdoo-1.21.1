@@ -35,7 +35,7 @@ public class WizardArmor extends ArmorItem implements GeoItem, JahdooItem {
     private static @NotNull Properties getComponent() {
         return new Properties()
             .durability(37)
-            .component(DataComponentRegistry.RUNE_HOLDER.get(), RuneHolder.makeRuneSlots(1));
+            .component(DataComponentRegistry.RUNE_HOLDER.get(), RuneHolder.makeRuneSlots(1, 0));
     }
 
     @Override

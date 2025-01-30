@@ -17,7 +17,6 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -286,9 +285,8 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        if(pCompound.hasUUID("owner")){
-            this.ownerUUID = pCompound.getUUID("owner");
-        }
+        this.ownerUUID = pCompound.getUUID("owner");
+
         this.setMode(pCompound.getBoolean("mode"));
         this.damage = pCompound.getDouble(DAMAGE);
         this.effectDuration = pCompound.getDouble(EFFECT_DURATION);

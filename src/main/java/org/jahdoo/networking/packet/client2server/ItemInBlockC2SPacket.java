@@ -26,12 +26,12 @@ public class ItemInBlockC2SPacket implements CustomPacketPayload {
 
     public ItemInBlockC2SPacket(FriendlyByteBuf buf) {
         this.blockPos = buf.readBlockPos();
-        this.itemStack = buf.readJsonWithCodec(ItemStack.CODEC);
+        this.itemStack = buf.readJsonWithCodec(ItemStack.SINGLE_ITEM_CODEC);
     }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeBlockPos(blockPos);
-        buf.writeJsonWithCodec(ItemStack.CODEC, itemStack);
+        buf.writeJsonWithCodec(ItemStack.SINGLE_ITEM_CODEC, itemStack);
     }
 
     public void handle(IPayloadContext ctx) {

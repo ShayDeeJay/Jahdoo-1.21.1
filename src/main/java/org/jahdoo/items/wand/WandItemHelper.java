@@ -69,7 +69,7 @@ public class WandItemHelper {
     }
 
     public static void appendRefinementPotential(List<Component> toolTips, ItemStack wandItem, int colour){
-        var wandData = wandItem.get(WAND_DATA);
+        var wandData = wandItem.get(RUNE_HOLDER);
         if(wandData == null) return;
         var slot = ModHelpers.withStyleComponent(String.valueOf(wandData.refinementPotential()), colour);
         toolTips.add(withStyleComponent("Potential: ", HEADER_COLOUR).copy().append(slot));
@@ -77,16 +77,17 @@ public class WandItemHelper {
 
     public static List<Component> getItemModifiers(ItemStack wandItem){
         var appendComponents = new ArrayList<Component>();
-        var abstractElement = ElementRegistry.getElementByWandType(wandItem.getItem()).getFirst();
-        appendComponents.add(attachRarityTooltip(wandItem));
-        totalSlots(appendComponents, wandItem, SUB_HEADER_COLOUR);
-        appendRefinementPotential(appendComponents, wandItem, SUB_HEADER_COLOUR);
-        appendSelectedAbility(wandItem, appendComponents);
-        attributeToolTips(wandItem, appendComponents, abstractElement);
-        if(!getAllSlots(wandItem).isEmpty()) appendComponents.add(Component.empty());
+        var abstractElement = ElementRegistry.getElementFromWand(wandItem.getItem());
+        if(abstractElement.isPresent()){
+            appendComponents.add(attachRarityTooltip(wandItem));
+            totalSlots(appendComponents, wandItem, SUB_HEADER_COLOUR);
+            appendRefinementPotential(appendComponents, wandItem, SUB_HEADER_COLOUR);
+            appendSelectedAbility(wandItem, appendComponents);
+            attributeToolTips(wandItem, appendComponents, abstractElement.get());
+            if (!getAllSlots(wandItem).isEmpty()) appendComponents.add(Component.empty());
+        }
         return appendComponents;
     }
-
 
     public static void attributeToolTips(ItemStack itemStack, List<Component> appendComponents, AbstractElement abstractElement) {
         var type = withStyleComponent(abstractElement.getElementName(), abstractElement.textColourPrimary());
@@ -141,7 +142,6 @@ public class WandItemHelper {
             );
         }
     }
-
 
     public static void storeBlockType(ItemStack itemStack, BlockState state, Player player, BlockPos pos){
         var compound = new CompoundTag();

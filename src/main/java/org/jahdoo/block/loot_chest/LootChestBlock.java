@@ -39,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static org.jahdoo.challenge.RewardLootTables.*;
 import static org.jahdoo.challenge.RewardLootTables.attachItemData;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.utils.ModHelpers.Random;
@@ -102,8 +103,8 @@ public class LootChestBlock extends BaseEntityBlock {
                     var setLootValue = lootLevel + (value * value);
                     int lootMultiplier = value + 1;
                     for(int i = 0; i < lootMultiplier; i++){
-                        var rewards = RewardLootTables.getCompletionLoot(serverLevel, pos.getCenter(), setLootValue);
-                        lootsplosian(pos, serverLevel, setLootValue,  colour, rewards, true);
+                        var rewards = getCompletionLoot(serverLevel, pos.getCenter(), setLootValue);
+                        lootsplosian(pos, serverLevel, lootMultiplier,  colour, rewards, true);
                     }
                     stack.shrink(1);
                     return ItemInteractionResult.SUCCESS;
@@ -126,8 +127,22 @@ public class LootChestBlock extends BaseEntityBlock {
             var velocity = new Vec3(offsetX * (Math.random() - 0.5), 0.35, offsetZ * (Math.random() - 0.5));
             itemEntity.setDeltaMovement(velocity);
             itemEntity.setPickUpDelay(30);
-            if(shouldDropExperience) ExperienceOrb.award(serverLevel, pCenter, 10 * level);
-            particleBurst(serverLevel, pCenter, colour);
+            if(shouldDropExperience && Random.nextInt(10) == 0) {
+                var exp = ItemsRegister.EXPERIENCE_ORB.get();
+                var itemStack = new ItemStack(exp);
+
+                switch (JahdooRarity.getRarity()) {
+                    case COMMON, RARE -> itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
+                    case EPIC -> itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(2));
+                    case LEGENDARY, ETERNAL -> {/*No Data*/}
+                }
+
+                var itemEntity1 = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() + 0.2, pCenter.z(), itemStack);
+                itemEntity1.setDeltaMovement(velocity);
+                itemEntity1.setPickUpDelay(30);
+                serverLevel.addFreshEntity(itemEntity1);
+            }
+            particleBurst(serverLevel, pCenter, colour, level);
             var itemStack = itemEntity.getItem();
             var rarity = JahdooRarity.getRarity();
             attachItemData(serverLevel, rarity, itemStack, false, null);
@@ -139,12 +154,12 @@ public class LootChestBlock extends BaseEntityBlock {
         ModHelpers.getSoundWithPosition(serverLevel, pos, SoundRegister.EXPLOSION.get(), 0.8f, 0.9f);
     }
 
-    public static void particleBurst(ServerLevel serverLevel, Vec3 pCenter, int colour) {
+    public static void particleBurst(ServerLevel serverLevel, Vec3 pCenter, int colour, int multiplier) {
         var fade = ModHelpers.getColourDarker(colour, 0.5);
         var randomColouredParticle = getRandomColouredParticle(colour, fade, Random.nextInt(10, 20), 1f, false);
         var pos = pCenter.add(0, 0.3f, 0);
 
-        ParticleHandlers.particleBurst(serverLevel, pos, 1, randomColouredParticle, 0, 0.3, 0, 0.2f, 3);
+        ParticleHandlers.particleBurst(serverLevel, pos, 2 * multiplier, randomColouredParticle, 0, 0.3, 0, 0.2f, 3);
     }
 
     @Nullable

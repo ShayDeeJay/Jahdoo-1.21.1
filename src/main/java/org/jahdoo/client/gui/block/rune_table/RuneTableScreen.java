@@ -6,7 +6,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ArmorItem;
@@ -18,10 +17,10 @@ import org.jahdoo.client.gui.block.RuneSlot;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.runes.rune_data.RuneData;
 import org.jahdoo.items.runes.rune_data.RuneHolder;
-import org.jahdoo.items.wand.WandData;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.items.wand.WandItemHelper;
 import org.jahdoo.registers.ElementRegistry;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -30,7 +29,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
-import static net.minecraft.world.entity.EquipmentSlot.*;
 import static org.jahdoo.client.IconLocations.GUI_BUTTON;
 import static org.jahdoo.client.IconLocations.GUI_GENERAL_SLOT;
 import static org.jahdoo.client.SharedUI.*;
@@ -64,7 +62,6 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         return this.runeTableMenu.getRuneTableEntity();
     }
 
-
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
@@ -74,7 +71,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         var spacer = new AtomicInteger();
 
         remainingPotential(guiGraphics, shiftX, spacer, shiftY);
-        var getRunes = RuneHolder.getRuneholder(getWand());
+        var getRunes = RuneHolder.getRuneholder(getItem());
         handleSlotsInGridLayout(
             (slotX, slotY, index) -> {
                 for (ItemStack ignored : getRunes.runeSlots()) {
@@ -119,11 +116,10 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         final int ITEM_OFFSET_X = 40;
         final int ITEM_OFFSET_Y = -17;
         final int SHIFT_X = 75;
-        final int WAND_ITEM_OFFSET = getWand().getItem() instanceof WandItem ? 80 : 90;
+        final int WAND_ITEM_OFFSET = getItem().getItem() instanceof WandItem ? 80 : 90;
         final int SCALED_ITEM = scaleItem - WAND_ITEM_OFFSET;
         final int OFFSET_Y = 164 - 80;
 
-        // Calculate positions and dimensions
         int minX = startX + ITEM_OFFSET_X + 70 - SHIFT_X;
         int minY = startY + ITEM_OFFSET_Y - 94;
         int maxX = startX + ITEM_OFFSET_X + 55;
@@ -132,36 +128,32 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         int posX = startX + 23;
         int posY = startY + ITEM_OFFSET_Y - 106;
 
-        // Render the bezel
         guiGraphics.pose().pushPose();
         bezelMaker(guiGraphics, posX, posY, 52, OFFSET_Y, 32, null);
         guiGraphics.pose().popPose();
 
-        // Enable scissor for clipping
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, -10);
         guiGraphics.enableScissor(minX, minY, maxX, minY + 172);
 
-        // Render the item or armor stand
         var stand = EntityType.ARMOR_STAND.create(getMinecraft().level);
-        if (getWand().getItem() instanceof ArmorItem armorItem && stand != null) {
-            stand.setItemSlot(armorItem.getEquipmentSlot(), getWand());
+        if (getItem().getItem() instanceof ArmorItem armorItem && stand != null) {
+            stand.setItemSlot(armorItem.getEquipmentSlot(), getItem());
             stand.setInvisible(true);
 
             int yOffset = switch (armorItem.getEquipmentSlot()) {
-                case HEAD -> 90;
+                case HEAD -> 70;
                 case CHEST -> 8;
                 case LEGS -> -30;
                 case FEET -> -60;
                 default -> 20;
             };
 
-            renderEntityInInventoryFollowsMouse(guiGraphics, this.leftPos - 46, this.topPos, this.leftPos + 75, this.height / 2 + yOffset, 40, 0.0625F, mouseX, mouseY, stand);
+            renderEntityInInventoryFollowsMouse(guiGraphics, this.leftPos - 48, this.topPos, this.leftPos + 75, this.height / 2 + yOffset, 40, 0.0625F, mouseX, mouseY, stand);
         } else {
-            SharedUI.renderItem(guiGraphics, width, height, getWand(), SCALED_ITEM, mouseX, mouseY, 16);
+            SharedUI.renderItem(guiGraphics, width, height, getItem(), SCALED_ITEM, mouseX, mouseY, 16);
         }
 
-        // Render additional UI elements if needed
         if (this.element != null) {
             int colorFade = FastColor.ARGB32.color(100, borderColour);
             int heightOffset = 86 - 40;
@@ -172,26 +164,20 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
             SharedUI.boxMaker(guiGraphics, minX, minY, 30, heightOffset, color, colorA, colorFade);
         }
 
-        // Clean up
         guiGraphics.disableScissor();
         guiGraphics.pose().popPose();
     }
 
-    public ItemStack getWand(){
-        return this.runeTableMenu.getRuneTableEntity().inputItemHandler.getStackInSlot(0);
+    public ItemStack getItem(){
+        return entity().inputItemHandler.getStackInSlot(0);
     }
 
-
     private void remainingPotential(@NotNull GuiGraphics guiGraphics, int shiftX, AtomicInteger spacer, int shiftY) {
-        if (getWand().getItem() instanceof WandItem) {
-            var itemModifiers = WandItemHelper.getItemModifiers(getWand());
-            var potentialList = filterList(itemModifiers, "Potential");
-            var sharedX = this.width / 2 - 30 + shiftX;
-            for (Component component : potentialList) {
-                var posY = this.height / 2 - 85 + spacer.get() + shiftY;
-                guiGraphics.drawString(this.font, component, sharedX -1, posY + 2, 0);
-            }
-        }
+        var slot = ModHelpers.withStyleComponent(String.valueOf(getPotential()), SUB_HEADER_COLOUR);
+        var component = withStyleComponent("Potential: ", HEADER_COLOUR).copy().append(slot);
+        var sharedX = this.width / 2 - 30 + shiftX;
+        var posY = this.height / 2 - 85 + spacer.get() + shiftY;
+        guiGraphics.drawString(this.font, component, sharedX -1, posY + 2, 0);
     }
 
     private static int groupFade() {
@@ -202,13 +188,6 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         var carried = this.hoveredSlot == null || hoveredSlot.getItem().isEmpty() ? runeTableMenu.getCarried() : hoveredSlot.getItem();
         if(carried.getItem() instanceof RuneItem){
             var getTooltip = this.getTooltipFromContainerItem(carried);
-            if(!(hoveredSlot instanceof RuneSlot) || !runeTableMenu.getCarried().isEmpty()){
-                getTooltip.add(Component.empty());
-                var carriedRuneCost = String.valueOf(RuneData.RuneHelpers.getCostFromRune(carried));
-                var carriedCostComponent = withStyleComponent(carriedRuneCost, -1);
-                var potentialCostPreFix = withStyleComponent("Potential Cost: ", HEADER_COLOUR);
-                getTooltip.add(potentialCostPreFix.copy().append(carriedCostComponent));
-            }
             if (!carried.isEmpty()) {
                 guiGraphics.renderTooltip(font, getTooltip, Optional.empty(), x, y);
             }
@@ -286,17 +265,8 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         livingEntity.yHeadRot = f8;
     }
 
-    private boolean canModify(){
-        var player = this.getMinecraft().player;
-        if(player == null) return false;
-        var exp = player.experienceLevel;
-        var potential = getPotential();
-        var getMaxCost = getExperienceCost();
-        return exp >= getMaxCost && potential > 0  ;
-    }
-
     private int getPotential() {
-        return WandData.wandData(getWand()).refinementPotential();
+        return RuneHolder.potential(getItem());
     }
 
     private int getExperienceCost() {

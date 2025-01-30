@@ -36,7 +36,7 @@ import static org.jahdoo.client.SharedUI.*;
 import static org.jahdoo.client.SharedUI.getFadedColourBackground;
 import static org.jahdoo.client.gui.ToggleComponent.*;
 import static org.jahdoo.registers.AttributesRegister.replaceOrAddAttribute;
-import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
+import static org.jahdoo.registers.DataComponentRegistry.*;
 import static org.jahdoo.utils.ModHelpers.filterList;
 import static org.jahdoo.utils.ModHelpers.withStyleComponent;
 
@@ -85,28 +85,29 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
 
     public void reRollBaseModifiers(){
         var wandItemCopy = getWand().copy();
-        var getData = wandItemCopy.get(WAND_DATA);
-        if (getData != null) {
 
-            for (var modifier : wandItemCopy.getAttributeModifiers().modifiers()) {
-                var id = modifier.modifier().id().getPath().intern();
-                var attribute = modifier.attribute();
-                var rarityId = WandData.wandData(wandItemCopy).rarityId();
+        for (var modifier : wandItemCopy.getAttributeModifiers().modifiers()) {
+            var id = modifier.modifier().id().getPath().intern();
+            var attribute = modifier.attribute();
+            var rarityId = wandItemCopy.get(JAHDOO_RARITY);
+            if(rarityId != null){
                 var ranges = JahdooRarity.getAllRarities().get(rarityId).getAttributes();
-                var value = switch (id){
+                var value = switch (id) {
                     case String s when s.contains("cooldown.cooldown_reduction") -> ranges.getRandomCooldown();
                     case String s when s.contains("mana.cost_reduction") -> ranges.getRandomManaReduction();
                     default -> ranges.getRandomDamage();
                 };
                 replaceOrAddAttribute(wandItemCopy, attribute.getRegisteredName(), attribute, value, EquipmentSlot.MAINHAND, false);
             }
-            WandData.createRefinementPotential(wandItemCopy, Math.max(0, getData.refinementPotential() - 20));
-            PacketDistributor.sendToServer(new ItemInBlockC2SPacket(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos()));
-            var player = Minecraft.getInstance().player;
-            if(player != null){
-                player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
-                PacketDistributor.sendToServer(new PlayerExperienceC2SPacket(player.experienceLevel - getExperienceCost()));
-            }
+        }
+
+        RuneHolder.createRefinementPotential(wandItemCopy, Math.max(0, RuneHolder.potential(wandItemCopy) - 20));
+        PacketDistributor.sendToServer(new ItemInBlockC2SPacket(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos()));
+
+        var player = Minecraft.getInstance().player;
+        if(player != null){
+            player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
+            PacketDistributor.sendToServer(new PlayerExperienceC2SPacket(player.experienceLevel - getExperienceCost()));
         }
     }
 
@@ -328,15 +329,19 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     }
 
     public static Component getModifierRange(WandManagerMenu wandManagerMenu, String type){
-        var rarity = WandData.wandData(wandManagerMenu.getWandManagerEntity().getWandSlot()).rarityId();
-        var attributes = JahdooRarity.getAllRarities().get(rarity).getAttributes();
-        var first = switch (type){
-            case String s when s.contains("Cooldown") -> attributes.getCooldownRange();
-            case String s when s.contains("Mana") -> attributes.getManaReductionRange();
-            default -> attributes.getDamageRange();
-        };
-        var headerBuilder = "(" + first.getFirst() + "%" + " - " + first.getSecond() + "%" + ")";
-        return withStyleComponent(headerBuilder, BORDER_COLOUR);
+        var wandSlot = wandManagerMenu.getWandManagerEntity().getWandSlot();
+        var rarity = wandSlot.get(JAHDOO_RARITY);
+        if(rarity != null){
+            var attributes = JahdooRarity.getAllRarities().get(rarity).getAttributes();
+            var first = switch (type) {
+                case String s when s.contains("Cooldown") -> attributes.getCooldownRange();
+                case String s when s.contains("Mana") -> attributes.getManaReductionRange();
+                default -> attributes.getDamageRange();
+            };
+            var headerBuilder = "(" + first.getFirst() + "%" + " - " + first.getSecond() + "%" + ")";
+            return withStyleComponent(headerBuilder, BORDER_COLOUR);
+        }
+        return Component.empty();
     }
 
     private void overlayInventory(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
@@ -408,7 +413,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     }
 
     private int getPotential() {
-        return WandData.wandData(getWand()).refinementPotential();
+        return  RuneHolder.potential(getWand());
     }
 
     private int getExperienceCost() {

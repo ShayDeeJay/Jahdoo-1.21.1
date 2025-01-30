@@ -46,7 +46,7 @@ public class RuneTableRenderer implements BlockEntityRenderer<RuneTableEntity>{
     ) {
         var renderItem = pBlockEntity.getItem().getStackInSlot(0);
         if(!renderItem.isEmpty()){
-            var height = 0.9F;
+            var height = 0.83F;
             var scale = 0.5f;
             var direction = pBlockEntity.getBlockState().getValue(FACING);
             pPoseStack.pushPose();

@@ -40,7 +40,10 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
         var jahdooRarity = KeyItem.getJahdooRarity(new CustomModelData(animatable.getRarity));
         var displayName = ModHelpers.withStyleComponent(jahdooRarity.getSerializedName(), jahdooRarity.getColour());
 
-        if(!animatable.isOpen) renderName(animatable, displayName, poseStack, bufferSource, packedLight, direction, partialTick);
+        if(!animatable.isOpen) {
+            renderName(animatable, displayName, poseStack, bufferSource, packedLight, direction, partialTick);
+            renderNameReverse(animatable, displayName, poseStack, bufferSource, packedLight, direction, partialTick);
+        }
         super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
     }
 
@@ -58,6 +61,24 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
         var f1 = (float)(-font.width(displayName) / 2);
         font.drawInBatch(displayName, f1, 0, ColourStore.OFF_WHITE, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         pPoseStack.popPose();
+
+    }
+
+    protected void renderNameReverse(LootChestEntity entity, Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource, int packedLight, ShoppingTableRenderer.DisplayDirection direction, float partialTicks) {
+        pPoseStack.pushPose();
+        var uniqueOffset = (entity.getRarity ) * 0.5 ; // Or another unique value per entity
+        var scale = Math.sin(((entity.privateTicks + partialTicks) / 10.0F) + uniqueOffset) * 0.08F + 1.4;
+
+        pPoseStack.translate(0, scale, 0);
+//        pPoseStack.mulPose(Axis.YP.rotationDegrees(direction.direction()).invert());
+        var x = 0.020F;
+        pPoseStack.scale(x, -x, x);
+        Matrix4f matrix4f = pPoseStack.last().pose();
+        var font = Minecraft.getInstance().font;
+        var f1 = (float)(-font.width(displayName) / 2);
+        font.drawInBatch(displayName, f1, 0, ColourStore.OFF_WHITE, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
+        pPoseStack.popPose();
+
     }
 
     @Override

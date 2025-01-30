@@ -13,17 +13,14 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.BossEvent;
-import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
+import org.jahdoo.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.block.SyncedBlockEntity;
+import org.jahdoo.challenge.LevelGenerator;
 import org.jahdoo.challenge.MobManager;
-import org.jahdoo.challenge.RewardLootTables;
-import org.jahdoo.items.KeyItem;
 import org.jahdoo.networking.packet.server2client.AltarBlockS2C;
-import org.jahdoo.registers.AttachmentRegister;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ColourStore;
@@ -62,7 +59,7 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
 
     public ChallengeAltarBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.CHALLENGE_ALTAR_BE.get(), pPos, pBlockState);
-        this.setData(CHALLENGE_ALTAR, ChallengeAltarData.DEFAULT);
+        this.setData(CHALLENGE_ALTAR, ChallengeLevelData.DEFAULT);
         this.bossEvent = new ServerBossEvent(Component.literal(""), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.NOTCHED_20);
     }
 
@@ -85,14 +82,14 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
         return super.isRemoved();
     }
 
-    public ChallengeAltarData altarData(){
-        return ChallengeAltarData.getProperties(this);
+    public ChallengeLevelData altarData(){
+        return ChallengeLevelData.getProperties(this);
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
         if(pLevel instanceof ServerLevel serverLevel){
             removeKilledMobs();
-            if(ChallengeAltarData.isCompleted(this)) {
+            if(ChallengeLevelData.isCompleted(this)) {
                 buildTick++;
                 portalBuilder(pLevel, serverLevel, pPos);
             }
@@ -206,12 +203,12 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
         if(!completeRound()){
             if (altarData().killedMobs > 0 && altarData().killedMobs == altarData().maxMobs()) {
                 this.privateTicks = 0;
-                ChallengeAltarData.resetSubRoundAltar(this);
+                ChallengeLevelData.resetSubRoundAltar(this);
                 if(getLevel() instanceof ServerLevel serverLevel){
-                    var round = ChallengeAltarData.getRound(this);
-                    var maxRound = ChallengeAltarData.getMaxRounds(this);
+                    var round = ChallengeLevelData.getRound(this);
+                    var maxRound = ChallengeLevelData.getMaxRounds(this);
                     if(round < maxRound){
-                        sendLevelPlayersNotification(serverLevel, "Round " + round, SoundEvents.NOTE_BLOCK_BELL.value(), 20);
+                        sendLevelPlayersNotification(serverLevel, "Round " + round, SoundRegister.END_TRIAL.get(), 20);
                     }
                 }
                 bossEvent.removeAllPlayers();
@@ -223,9 +220,9 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
     private void completeRound(ServerLevel serverLevel) {
         if(completeRound()){
             this.privateTicks = 0;
-            ChallengeAltarData.resetAltar(this);
+            ChallengeLevelData.resetAltar(this);
             bossEvent.removeAllPlayers();
-            serverLevel.setData(CHALLENGE_ALTAR, ChallengeAltarData.newRound(altarData().maxRound));
+            serverLevel.setData(CHALLENGE_ALTAR, ChallengeLevelData.newRound(altarData().maxRound, LevelGenerator.DimHandler.TRADING_POST));
             sendLevelPlayersNotification(serverLevel, "Trial Successful", SoundRegister.END_TRIAL.get(), 40);
         }
     }
@@ -250,7 +247,7 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
                 var entity = serverLevel.getEntity(activeMob);
                 if(entity != null && !entity.isAlive()){
                     altarData().removeMob(activeMob);
-                    ChallengeAltarData.incrementKilledMobs(this);
+                    ChallengeLevelData.incrementKilledMobs(this);
                     return true;
                 }
             }
@@ -264,7 +261,7 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
     }
 
     private PlayState eAnimation(AnimationState<ChallengeAltarBlockEntity> state) {
-        if(isSubRoundActive() && !ChallengeAltarData.isCompleted(this)) {
+        if(isSubRoundActive() && !ChallengeLevelData.isCompleted(this)) {
             var animation = privateTicks <= 100 ? ALTAR_SPAWNING : ALTAR_IDLE;
             return state.setAndContinue(animation);
         }

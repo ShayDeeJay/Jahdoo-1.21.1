@@ -1,50 +1,39 @@
 package org.jahdoo.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomModelData;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
-import net.neoforged.neoforge.event.LootTableLoadEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingUseTotemEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ability.abilities.ability_data.VitalRejuvenationAbility;
 import org.jahdoo.attachments.CastingData;
 import org.jahdoo.attachments.player_abilities.*;
 import org.jahdoo.challenge.LevelGenerator;
 import org.jahdoo.entities.living.CustomSkeleton;
 import org.jahdoo.entities.living.CustomZombie;
 import org.jahdoo.entities.living.EternalWizard;
-import org.jahdoo.items.runes.rune_data.RuneHolder;
-import org.jahdoo.items.runes.RuneItem;
-import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.registers.*;
+import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
-import javax.swing.*;
-import java.util.ArrayList;
+import java.util.Objects;
 
-import static org.jahdoo.block.TrialPortalBlock.*;
+import static org.jahdoo.challenge.LevelGenerator.DimHandler.TRADING_POST;
+import static org.jahdoo.challenge.LevelGenerator.DimHandler.TRIAL;
 import static org.jahdoo.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.registers.AttachmentRegister.SAVE_DATA;
@@ -106,8 +95,8 @@ public class ServerEvents {
         var mainHand = event.getItemStack();
         var player = event.getEntity();
 
-        System.out.println(event.getLevel());
-        System.out.println(mainHand.get(DataComponentRegistry.RUNE_HOLDER));
+//        System.out.println(event.getLevel());
+//        System.out.println(mainHand.get(DataComponentRegistry.RUNE_HOLDER));
 
 //        if(mainHand.has(DataComponentRegistry.RUNE_HOLDER)){
 //            var rune = player.getOffhandItem();
@@ -137,6 +126,31 @@ public class ServerEvents {
                         mob.setTarget(ModHelpers.getRandomListElement(level.players()));
                     }
                 }
+            }
+        }
+
+    }
+
+    @SubscribeEvent
+    public static void totem(LivingUseTotemEvent event){
+        var entity = event.getEntity();
+
+        if(entity.level() instanceof CustomLevel) event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void levelTickEvent(EntityJoinLevelEvent event){
+        var level = event.getLevel();
+        var entity = event.getEntity();
+
+        if(level instanceof CustomLevel customLevel && entity instanceof Player player){
+            var getData = ChallengeLevelData.getProperties(customLevel);
+            if(Objects.equals(getData.dimType, TRIAL)){
+                LevelGenerator.playerSetup(player, getData.round());
+            }
+
+            if(Objects.equals(getData.dimType, TRADING_POST)){
+                ChallengeLevelData.setDimension(customLevel, TRIAL);
             }
         }
     }

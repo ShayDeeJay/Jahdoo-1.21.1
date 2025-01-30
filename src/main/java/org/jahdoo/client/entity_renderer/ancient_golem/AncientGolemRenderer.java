@@ -281,7 +281,6 @@ public class AncientGolemRenderer extends MobRenderer<AncientGolem, AncientGolem
 
     public AncientGolemRenderer(EntityRendererProvider.Context context) {
         super(context, new AncientGolemModel<>(context.bakeLayer(ModelLayers.IRON_GOLEM)), 0.7F);
-//        this.addLayer(new AncientGolemCrackLayer(this));
     }
 
     public ResourceLocation getTextureLocation(AncientGolem entity) {
@@ -295,11 +294,12 @@ public class AncientGolemRenderer extends MobRenderer<AncientGolem, AncientGolem
 
     protected void setupRotations(AncientGolem entity, PoseStack poseStack, float bob, float yBodyRot, float partialTick, float scale) {
         super.setupRotations(entity, poseStack, bob, yBodyRot, partialTick, scale);
-        if (!((double)entity.walkAnimation.speed() < 0.01)) {
-            float f1 = entity.walkAnimation.position(partialTick) + 6.0F;
-            float f2 = (Math.abs(f1 % 13.0F - 6.5F) - 3.25F) / 3.25F;
+        var walkAnimation = entity.walkAnimation;
+        if (!((double) walkAnimation.speed() < 0.01)) {
+            var f1 = walkAnimation.position(partialTick) + 6.0F;
+            var f2 = (Math.abs(f1 % 13.0F - 6.5F) - 3.25F) / 3.25F;
             poseStack.mulPose(Axis.ZP.rotationDegrees(6.5F * f2));
         }
-
     }
+
 }

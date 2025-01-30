@@ -36,25 +36,25 @@ import static org.jahdoo.block.BlockInteractionHandler.swapItemsWithHand;
 public class RuneTable extends BaseEntityBlock {
 
     public static final VoxelShape SHAPE_COMBINED = Shapes.or(
-        Block.box(0, 9, 0, 16, 12, 16),
-        Block.box(10, 0, 1, 15, 2, 6),
-        Block.box(11, 2, 2, 14, 9, 5),
-        Block.box(1, 0, 1, 6, 2, 6),
-        Block.box(2, 2, 2, 5, 9, 5),
-        Block.box(1, 0, 10, 6, 2, 15),
-        Block.box(2, 2, 11, 5, 9, 14),
-        Block.box(10, 0, 10, 15, 2, 15),
-        Block.box(11, 2, 11, 14, 9, 14),
-        Block.box(4.5, 12, 4.5, 11.5, 14, 11.5),
-        Block.box(11.25, 4, 5, 13.75, 6.5, 11),
-        Block.box(5, 4, 11.25, 11, 6.5, 13.75),
-        Block.box(5, 4, 2.25, 11, 6.5, 4.75),
-        Block.box(2.25, 4, 5, 4.75, 6.5, 11),
-        Block.box(5.5, 7, 0, 10.5, 9, 0),
-        Block.box(5.5, 7, 0, 10.5, 9, 0),
-        Block.box(5.5, 7, 16, 10.5, 9, 16),
-        Block.box(0, 7, 5.5, 0, 9, 10.5),
-        Block.box(16, 7, 5.5, 16, 9, 10.5)
+            Block.box(0, 9, 0, 16, 12, 16),
+            Block.box(10, 0, 1, 15, 2, 6),
+            Block.box(11, 2, 2, 14, 9, 5),
+            Block.box(1, 0, 1, 6, 2, 6),
+            Block.box(2, 2, 2, 5, 9, 5),
+            Block.box(1, 0, 10, 6, 2, 15),
+            Block.box(2, 2, 11, 5, 9, 14),
+            Block.box(10, 0, 10, 15, 2, 15),
+            Block.box(11, 2, 11, 14, 9, 14),
+            Block.box(4.5, 11, 4.5, 11.5, 13, 11.5),
+            Block.box(11.25, 4, 5, 13.75, 6.5, 11),
+            Block.box(5, 4, 11.25, 11, 6.5, 13.75),
+            Block.box(5, 4, 2.25, 11, 6.5, 4.75),
+            Block.box(2.25, 4, 5, 4.75, 6.5, 11),
+            Block.box(5.5, 7, 0, 10.5, 9, 0),
+            Block.box(5.5, 7, 0, 10.5, 9, 0),
+            Block.box(5.5, 7, 16, 10.5, 9, 16),
+            Block.box(0, 7, 5.5, 0, 9, 10.5),
+            Block.box(16, 7, 5.5, 16, 9, 10.5)
     );
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;

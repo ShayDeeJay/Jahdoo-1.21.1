@@ -1,17 +1,22 @@
 package org.jahdoo.challenge;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -21,7 +26,6 @@ import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.items.TomeOfUnity;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.runes.RuneItem;
-import org.jahdoo.items.runes.rune_data.RuneData;
 import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.BlocksRegister;
@@ -36,7 +40,6 @@ import static net.minecraft.world.entity.EquipmentSlot.*;
 import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static org.jahdoo.ability.rarity.JahdooRarity.*;
 import static org.jahdoo.challenge.EnchantmentHelpers.*;
-import static org.jahdoo.items.runes.rune_data.RuneData.*;
 import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.*;
 import static org.jahdoo.utils.ModHelpers.Random;
 
@@ -72,6 +75,7 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> GOLD_COIN = LootItem.lootTableItem(ItemsRegister.GOLD_COIN.get());
     public static final LootPoolSingletonContainer.Builder<?> SILVER_COIN = LootItem.lootTableItem(ItemsRegister.SILVER_COIN.get());
     public static final LootPoolSingletonContainer.Builder<?> BRONZE_COIN = LootItem.lootTableItem(ItemsRegister.BRONZE_COIN.get());
+    public static final LootPoolSingletonContainer.Builder<?> XP = LootItem.lootTableItem(ItemsRegister.EXPERIENCE_ORB.get());
     public static final LootPoolSingletonContainer.Builder<?> RUNE = LootItem.lootTableItem(ItemsRegister.RUNE.get());
     public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_GAUNTLET = LootItem.lootTableItem(ItemsRegister.BATTLEMAGE_GAUNTLET.get());
     public static final LootPoolSingletonContainer.Builder<?> INGMAS_SWORD = LootItem.lootTableItem(ItemsRegister.INGMAS_SWORD.get());
@@ -104,7 +108,6 @@ public class RewardLootTables {
         var loot = LootTable.lootTable().withPool(coinLoot(level));
         return createLootParams(serverLevel, pos, loot);
     }
-
 
     private static LootPool.@NotNull Builder poolForEliteShopping() {
         var builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F));
@@ -236,7 +239,7 @@ public class RewardLootTables {
     }
 
     private static void enchantArmorItem(ServerLevel serverLevel, ItemStack itemStack, ArmorItem armorItem, boolean isGuaranteed) {
-        RuneHolder.createNewRuneSlots(itemStack, Random.nextInt(2));
+        RuneHolder.createNewRuneSlots(itemStack, Random.nextInt(2), Random.nextInt(80, 320));
         if(!isGuaranteed) if (Random.nextInt(50) != 0) return;
 
         attachEnchantment(itemStack, serverLevel, BLAST_PROTECTION, 5, 10, isGuaranteed);
@@ -261,9 +264,7 @@ public class RewardLootTables {
     }
 
     private static void attachEnchantment(ItemStack itemStack, ServerLevel serverLevel, ResourceKey<Enchantment> enchantmentKey, int minVal, int maxVal, boolean isGuaranteed) {
-        if(!isGuaranteed){
-            if (Random.nextInt(20) != 0) return;
-        }
+        if(!isGuaranteed) if (Random.nextInt(20) != 0) return;
 
         enchant(itemStack, serverLevel.registryAccess(), enchantmentKey, Random.nextInt(minVal, maxVal));
         var lootBeamData = DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA();

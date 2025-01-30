@@ -5,11 +5,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.attachments.AbstractAttachment;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.runes.rune_data.RuneData;
 import org.jahdoo.items.wand.WandItem;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,29 +44,42 @@ public class SaveData implements AbstractAttachment {
 
     public void addAllItems(Player player) {
         var mainInventoryItems = player.getInventory().items;
+
         var additionalSlotsItems = StreamSupport
-                .stream(player.getAllSlots().spliterator(), false)
-                .toList();
+            .stream(player.getAllSlots().spliterator(), false)
+            .toList();
 
         var filteredMainInventory = mainInventoryItems
-                .stream()
-                .filter(RuneHelpers::hasDestinyBond)
-                .toList();
+            .stream()
+            .filter(RuneHelpers::hasDestinyBond)
+            .toList();
 
         var filteredAdditionalSlots = additionalSlotsItems
-                .stream()
-                .filter(RuneHelpers::hasDestinyBond)
-                .toList();
+            .stream()
+            .filter(RuneHelpers::hasDestinyBond)
+            .toList();
 
         var allFilteredItems = new ArrayList<>(filteredMainInventory);
 
         allFilteredItems.addAll(filteredAdditionalSlots);
 
+        var curioSlotsItems = CuriosApi.getCuriosInventory(player);
+        if(curioSlotsItems.isPresent()){
+            var withSlots = curioSlotsItems.get().getEquippedCurios();
+            var slots = withSlots.getSlots();
+            for (int i = 0; i < slots; i++) {
+                var getCurioItem = withSlots.getStackInSlot(i);
+                if(RuneHelpers.hasDestinyBond(getCurioItem)){
+                    allFilteredItems.add(getCurioItem);
+                }
+            }
+        }
+
         var wandItems = allFilteredItems
-                .stream()
-                .distinct()
-                .filter(itemStack -> !itemStack.isEmpty() && !(itemStack.getItem() instanceof RuneItem))
-                .toList();
+            .stream()
+            .distinct()
+            .filter(itemStack -> !itemStack.isEmpty() && !(itemStack.getItem() instanceof RuneItem))
+            .toList();
 
         this.itemStacks.addAll(wandItems);
         allFilteredItems.forEach(player.getInventory()::removeItem);
@@ -71,11 +87,12 @@ public class SaveData implements AbstractAttachment {
 
     public void takeAllItems(Player player){
         for (ItemStack itemStack : this.itemStacks) {
-            if(itemStack.getItem() instanceof ArmorItem armorItem){
+            var item = itemStack.getItem();
+            if (item instanceof ArmorItem armorItem) {
                 var slot = armorItem.getEquipmentSlot();
-                if(!player.hasItemInSlot(slot)){
-                    player.setItemSlot(slot, itemStack);
-                } else player.addItem(itemStack);
+                var isSlotEmpty = !player.hasItemInSlot(slot);
+
+                if(isSlotEmpty) player.setItemSlot(slot, itemStack); else player.addItem(itemStack);
             } else {
                 player.addItem(itemStack);
             }

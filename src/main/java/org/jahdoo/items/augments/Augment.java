@@ -44,7 +44,6 @@ public class Augment extends Item implements MenuAccess {
             setAugmentModificationScreen(itemStack, null);
         }
 
-
         AugmentItemHelper.discoverUse(itemStack, player);
         return InteractionResultHolder.fail(player.getItemInHand(interactionHand));
     }

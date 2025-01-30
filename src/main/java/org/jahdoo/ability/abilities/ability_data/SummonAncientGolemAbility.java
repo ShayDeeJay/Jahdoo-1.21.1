@@ -17,23 +17,24 @@ import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.utils.ModHelpers;
 
-public class SummonEternalWizardAbility extends AbilityRegistrar {
-    public static final ResourceLocation abilityId = ModHelpers.res("eternal_wizard");
+public class SummonAncientGolemAbility extends AbilityRegistrar {
+    public static final ResourceLocation abilityId = ModHelpers.res("ancient_golem");
 
     @Override
     public void invokeAbility(Player player) {
         var location = player.pick(40, 0,false).getLocation();
-        var aoeCloud = new AoeCloud(player.level(), player, 0f, EntityPropertyRegister.SUMMON_ETERNAL_WIZARD.get().setAbilityId(), abilityId.getPath().intern());
+        var selectedAbility = EntityPropertyRegister.SUMMON_ANCIENT_GOLEM.get().setAbilityId();
+        var intern = abilityId.getPath().intern();
+        var aoeCloud = new AoeCloud(player.level(), player, 0f, selectedAbility, intern);
         aoeCloud.setPos(location.x, location.y, location.z);
         player.level().addFreshEntity(aoeCloud);
         player.level().playSound(null, BlockPos.containing(location), SoundEvents.ELDER_GUARDIAN_DEATH, SoundSource.BLOCKS, 2f, 1.4f);
         player.level().playSound(null, BlockPos.containing(location), SoundRegister.EXPLOSION.get(), SoundSource.BLOCKS, 2f, 1.2f);
-
     }
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.EPIC;
+        return JahdooRarity.ETERNAL;
     }
 
     @Override
@@ -44,9 +45,8 @@ public class SummonEternalWizardAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setStaticMana(100)
+            .setStaticMana(200)
             .setStaticCooldown(6000)
-            .setDamage(40, 15, 5)
             .setEffectStrength(10, 0, 1)
             .setEffectDuration(600, 200, 50)
             .setEffectChance(60, 20, 10)

@@ -55,17 +55,25 @@ public class ModCreativeModTabs {
 
                     pOutput.accept(ItemsRegister.ANCIENT_GLAIVE.get());
                     var pendent = new ItemStack(ItemsRegister.PENDENT.get());
-                    RuneHolder.createNewRuneSlots(pendent, 1);
+                    RuneHolder.createNewRuneSlots(pendent, 1, 0);
                     pOutput.accept(pendent);
                     for (int i = 1; i < 4; i++){
                         var basePendent = new ItemStack(ItemsRegister.PENDENT.get());
                         var customModelData = new CustomModelData(i);
                         basePendent.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
-                        RuneHolder.createNewRuneSlots(basePendent, i+1);
+                        RuneHolder.createNewRuneSlots(basePendent, i+1, 0);
                         pOutput.accept(basePendent);
                     }
 
                     pOutput.accept(ItemsRegister.EXPERIENCE_ORB.get());
+
+                    for(int i = 1; i < 3; i++) {
+                        var baseAugment = new ItemStack(ItemsRegister.EXPERIENCE_ORB.get());
+                        var customModelData = new CustomModelData(i);
+                        baseAugment.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
+                        pOutput.accept(baseAugment);
+                    }
+
                     pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
                     pOutput.accept(ItemsRegister.RUNE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_CORE.get());

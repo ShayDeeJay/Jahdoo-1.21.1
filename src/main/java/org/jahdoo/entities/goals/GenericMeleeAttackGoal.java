@@ -1,15 +1,19 @@
 package org.jahdoo.entities.goals;
 
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
+import org.jahdoo.ability.effects.JahdooMobEffect;
+import org.jahdoo.entities.living.AncientGolem;
+import org.jahdoo.registers.EffectsRegister;
 
 import java.util.EnumSet;
+
+import static net.minecraft.world.entity.EntitySelector.NO_CREATIVE_OR_SPECTATOR;
+import static org.jahdoo.utils.ModHelpers.Random;
 
 public class GenericMeleeAttackGoal extends Goal {
     protected final PathfinderMob mob;
@@ -82,7 +86,7 @@ public class GenericMeleeAttackGoal extends Goal {
 
     public void stop() {
         LivingEntity livingentity = this.mob.getTarget();
-        if (!EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingentity)) {
+        if (!NO_CREATIVE_OR_SPECTATOR.test(livingentity)) {
             this.mob.setTarget(null);
         }
         this.mob.setAggressive(false);
@@ -140,6 +144,14 @@ public class GenericMeleeAttackGoal extends Goal {
     protected void checkAndPerformAttack(LivingEntity target) {
         if (this.canPerformAttack(target)) {
             this.mob.doHurtTarget(target);
+            if(this.mob instanceof AncientGolem ancientGolem){
+                var chance = ancientGolem.effectChance;
+                var strength = ancientGolem.effectStrength;
+                var duration = ancientGolem.effectDuration;
+                if(Random.nextInt((int) chance) == 0){
+                    target.addEffect(new JahdooMobEffect(EffectsRegister.VITALITY_EFFECT, (int) duration, (int) strength));
+                }
+            }
             this.resetAttackCooldown();
         }
     }

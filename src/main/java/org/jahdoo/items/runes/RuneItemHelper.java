@@ -17,6 +17,8 @@ import java.util.List;
 
 import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.generateRandomTypAttribute;
 import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.standAloneAttributes;
+import static org.jahdoo.utils.ColourStore.HEADER_COLOUR;
+import static org.jahdoo.utils.ModHelpers.withStyleComponent;
 
 public class RuneItemHelper {
 
@@ -32,9 +34,16 @@ public class RuneItemHelper {
             if (hasTier != -1) tooltipComponents.add(componentRune);
         }
 
-        if(description.getString().isEmpty() || AugmentItemHelper.shiftForDetails(tooltipComponents)) return tooltipComponents;
-        tooltipComponents.add(ModHelpers.withStyleComponent(description.getString(), ColourStore.HEADER_COLOUR));
+        if(!description.getString().isEmpty() && !AugmentItemHelper.shiftForDetails(tooltipComponents)) {
+            tooltipComponents.add(ModHelpers.withStyleComponent(description.getString(), ColourStore.HEADER_COLOUR));
+        }
+
+        var carriedRuneCost = String.valueOf(RuneData.RuneHelpers.getCostFromRune(stack));
+        var carriedCostComponent = withStyleComponent(carriedRuneCost, -1);
+        var potentialCostPreFix = withStyleComponent("Potential Cost: ", HEADER_COLOUR);
+        tooltipComponents.add(potentialCostPreFix.copy().append(carriedCostComponent));
         return tooltipComponents;
+
     }
 
     static @NotNull InteractionResultHolder<ItemStack> rollRandomRune(Level level, Player player) {

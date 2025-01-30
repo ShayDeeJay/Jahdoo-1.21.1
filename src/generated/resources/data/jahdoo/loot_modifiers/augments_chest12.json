@@ -7,7 +7,7 @@
     },
     {
       "condition": "neoforge:loot_table_id",
-      "loot_table_id": "minecraft:chests/village/village_snowy_house"
+      "loot_table_id": "minecraft:chests/trial_chambers/intersection_barrel"
     }
   ],
   "item": "jahdoo:unidentified_augment"

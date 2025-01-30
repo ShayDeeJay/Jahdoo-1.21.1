@@ -111,10 +111,12 @@ public class AugmentItemHelper {
         } else {
             setAbilityToAugment(itemStack, ability, wandAbilityHolder);
         }
+        itemStack.set(JAHDOO_RARITY, ability.rarity().getId());
     }
 
     public static void augmentIdentifierSharedRarity(ItemStack itemStack, boolean withUtil, @Nullable JahdooRarity rarity){
         var ability = JahdooRarity.getAbilityWithRarity(withUtil, rarity);
+
         LocalLootBeamData.attachLootBeamComponent(itemStack, ability.rarity());
         ability.setModifiers(itemStack);
         var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
@@ -131,9 +133,11 @@ public class AugmentItemHelper {
 
     public static void setAbilityToAugment(ItemStack itemStack, AbilityRegistrar ability, WandAbilityHolder wandAbilityHolder){
         int type;
+
         DataComponentHelper.setAbilityTypeItemStack(itemStack, ability.setAbilityId());
+
         if (ability.isMultiType()) {
-            AbilityHolder.AbilityModifiers abilityModifiers = wandAbilityHolder
+            var abilityModifiers = wandAbilityHolder
                 .abilityProperties()
                 .get(ability.setAbilityId())
                 .abilityProperties()
@@ -320,10 +324,12 @@ public class AugmentItemHelper {
         if(wandAbilityHolder == null) return toolTips;
         var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityLocation);
         var ability = AbilityRegister.getSpellsByTypeId(abilityLocation);
+        var index = itemStack.get(JAHDOO_RARITY);
 
-        if(!ability.isEmpty()){
-            toolTips.add(JahdooRarity.addRarityTooltip(ability.getFirst().rarity()));
+        if(!ability.isEmpty() && index != null){
+            toolTips.add(JahdooRarity.addRarityTooltip(JahdooRarity.getAllRarities().get(index)));
         }
+
         toolTips.add(Component.empty());
 
         int subHeaderColour = -2434342;

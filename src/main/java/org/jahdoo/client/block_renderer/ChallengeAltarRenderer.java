@@ -9,12 +9,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
-import net.minecraft.world.level.Level;
-import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
+import org.jahdoo.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.client.block_models.ChallengeAltarModel;
 import org.jahdoo.utils.ColourStore;
@@ -34,8 +32,8 @@ public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlock
 
     @Override
     public void actuallyRender(PoseStack poseStack, ChallengeAltarBlockEntity animatable, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
-        var properties = ChallengeAltarData.getProperties(animatable);
-        var isComplete = ChallengeAltarData.isCompleted(animatable);
+        var properties = ChallengeLevelData.getProperties(animatable);
+        var isComplete = ChallengeLevelData.isCompleted(animatable);
         var level = animatable.getLevel();
         if(level == null) return;
         var i = level.getGameTime();
@@ -71,7 +69,7 @@ public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlock
         BeaconRenderer.renderBeaconBeam(poseStack, bufferSource, BEAM_LOCATION, partialTick, textureScale, i, 0, height, colourLight, rad, rad * 6);
     }
 
-    private static void debugRound(PoseStack poseStack, ChallengeAltarBlockEntity animatable, MultiBufferSource bufferSource, boolean isComplete, ChallengeAltarData properties) {
+    private static void debugRound(PoseStack poseStack, ChallengeAltarBlockEntity animatable, MultiBufferSource bufferSource, boolean isComplete, ChallengeLevelData properties) {
         if(!isComplete){
             renderTextOverBlock(poseStack, bufferSource, "Round: " + properties.round, animatable.getBlockPos(), 0);
             renderTextOverBlock(poseStack, bufferSource, "Allowed Total " + properties.maxMobs(), animatable.getBlockPos(), 0.2);

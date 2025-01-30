@@ -36,6 +36,7 @@ import static org.jahdoo.ability.rarity.RarityAttributes.*;
 import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.getRuneData;
 import static org.jahdoo.items.augments.AugmentItemHelper.setAbilityToAugment;
 import static org.jahdoo.registers.AttributesRegister.*;
+import static org.jahdoo.registers.DataComponentRegistry.JAHDOO_RARITY;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 import static org.jahdoo.utils.ModHelpers.*;
 import static org.jahdoo.utils.ModHelpers.singleFormattedDouble;
@@ -128,10 +129,15 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return withStyleComponentTrans("rarity.jahdoo.current_rarity", -9013642).copy().append(withStyleComponent(rarity.getSerializedName(), rarity.getColour()));
     }
 
+    public static Component addRarityTooltip(int id){
+        var rarity = JahdooRarity.getAllRarities().get(id);
+        return withStyleComponentTrans("rarity.jahdoo.current_rarity", -9013642).copy().append(withStyleComponent(rarity.getSerializedName(), rarity.getColour()));
+    }
+
     public static Component attachRarityTooltip(ItemStack wandItem) {
-        var getRarityId = wandItem.get(WAND_DATA);
+        var getRarityId = wandItem.get(JAHDOO_RARITY);
         if(getRarityId != null) {
-            var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(getRarityId.rarityId(), 0, 5));
+            var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(getRarityId, 0, 5));
             return JahdooRarity.addRarityTooltip(getRarity);
         }
         return Component.empty();
@@ -160,6 +166,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     public static void setGeneratedAugment(ItemStack itemStack, JahdooRarity rarity){
         itemStack.set(DataComponentRegistry.NUMBER, 5);
         AugmentItemHelper.augmentIdentifierSharedRarity(itemStack, false, rarity);
+        itemStack.set(JAHDOO_RARITY, rarity.id);
     }
 
     public static ItemStack setGeneratedWand(JahdooRarity rarity, Item item) {
@@ -206,8 +213,8 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
 
         WandData.createRarity(itemStack, rarity.id);
         WandData.createNewAbilitySlots(itemStack, abilitySlots);
-        RuneHolder.createNewRuneSlots(itemStack, runeSlots);
-        WandData.createRefinementPotential(itemStack, rarity.attributes.getRandomRefinementPotential());
+        RuneHolder.createNewRuneSlots(itemStack, runeSlots, rarity.attributes.getRandomRefinementPotential());
+        itemStack.set(JAHDOO_RARITY, rarity.id);
 
         var cooldownReductionType = element.getFirst().getTypeCooldownReduction();
         var cooldownReductionName = cooldownReductionType.getRegisteredName();

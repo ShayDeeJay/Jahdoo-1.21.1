@@ -12,16 +12,15 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.abilities.ability_data.*;
-import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.ability.abilities.ability_data.Utility.*;
-import org.jahdoo.components.ability_holder.WandAbilityHolder;
+import org.jahdoo.ability.rarity.JahdooRarity;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
-import static org.jahdoo.registers.ElementRegistry.*;
+import static org.jahdoo.registers.ElementRegistry.UTILITY;
 
 public class AbilityRegister {
 
@@ -131,6 +130,7 @@ public class AbilityRegister {
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> SUMMON_ETERNAL_WIZARD = registerSpell(new SummonEternalWizardAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ESCAPE_DECOY = registerSpell(new EscapeDecoyAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> VITAL_REJUVENATION = registerSpell(new VitalRejuvenationAbility());
+    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> SUMMON_ANCIENT_GOLEM = registerSpell(new SummonAncientGolemAbility());
 
 
     //Utility

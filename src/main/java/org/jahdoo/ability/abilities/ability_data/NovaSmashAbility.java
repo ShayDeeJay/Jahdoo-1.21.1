@@ -3,6 +3,7 @@ package org.jahdoo.ability.abilities.ability_data;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.checkerframework.checker.units.qual.K;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.AbstractElement;
 //import org.assets.jahdoo.attachments.player_abilities.NovaSmash;
@@ -42,6 +43,7 @@ public class NovaSmashAbility extends AbilityRegistrar {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(40)
             .setStaticCooldown(400)
+            .setDamage(12, 4, 2)
             .build();
     }
 

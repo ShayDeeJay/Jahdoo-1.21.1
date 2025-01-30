@@ -17,7 +17,7 @@ import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 public class DataComponentHelper {
 
     public static double getSpecificValue(Player player, ItemStack itemStack, String modifier){
-        ResourceLocation abilityName = DataComponentHelper.getAbilityTypeWand(player);
+        var abilityName = DataComponentHelper.getAbilityTypeWand(player);
         var wandAbilityHolder = itemStack.get(WAND_ABILITY_HOLDER.get());
         var allModifiers = wandAbilityHolder.abilityProperties().get(abilityName.getPath().intern());
         if(allModifiers.abilityProperties().containsKey(modifier)){

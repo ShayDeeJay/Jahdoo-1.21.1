@@ -22,20 +22,16 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biomes;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
-import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
+import org.jahdoo.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.block.shopping_table.ShoppingTableEntity;
-import org.jahdoo.client.block_renderer.ShoppingTableRenderer;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.registers.SoundRegister;
@@ -86,13 +82,12 @@ public class LevelGenerator {
         public static DimHandler trial(){
             return new DimHandler(new Vec3(-24.5, 65, -120.5), TRIAL);
         }
-
         public static DimHandler tradingPost(){
             return new DimHandler(new Vec3(-22.5, 51, -42.5), TRADING_POST);
         }
     }
 
-    public static DimensionTransition createNewWorld(Player player, ServerLevel serverLevel, ChallengeAltarData altarData, DimHandler handler) {
+    public static DimensionTransition createNewWorld(Player player, ServerLevel serverLevel, ChallengeLevelData altarData, DimHandler handler) {
         var testKey = "end_"+UUID.randomUUID();
         generateNewLevel(serverLevel, testKey);
         var getLevel = new AtomicReference<ServerLevel>();
@@ -139,9 +134,9 @@ public class LevelGenerator {
         ArcadeDimensions.add(serverLevel.getServer(), builder);
     }
 
-    private static void generateStructure(Player player, ServerLevel level, ChallengeAltarData data, int stage, String id){
+    private static void generateStructure(Player player, ServerLevel level, ChallengeLevelData data, int stage, String id){
         var pos = new BlockPos(0, 40, 0);
-        var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 4).toList();
+        var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 3).toList();
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
         var isTrial = Objects.equals(id, TRIAL);
         var isTrading = Objects.equals(id, TRADING_POST);
@@ -159,15 +154,12 @@ public class LevelGenerator {
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
         //Here we can pass the data from the previous altar to set up the next challenge stack.
-        if(isTrial){
-            playerSetup(player, level, stage);
-            setAltarAndData(level, data);
-        }
+        if(isTrial) setTrialDim(level, data);
 
-        if(isTrading) setLootChests(level);
+        if(isTrading) setTradingPost(level);
     }
 
-    private static void setAltarAndData(ServerLevel level, ChallengeAltarData data) {
+    private static void setTrialDim(ServerLevel level, ChallengeLevelData data) {
         var pos = new BlockPos(-25, 67, -72);
         level.setBlockAndUpdate(pos, BlocksRegister.CHALLENGE_ALTAR.get().defaultBlockState());
         if(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity altar){
@@ -176,7 +168,7 @@ public class LevelGenerator {
         }
     }
 
-    private static void setLootChests(ServerLevel level) {
+    private static void setTradingPost(ServerLevel level) {
         var chestPositions = new BlockPos(-21, 55, -25);
         var eliteItemPosition = new BlockPos(-16, 54, -15);
         var normalItemPosition = new BlockPos(-14, 53, -28);
@@ -254,7 +246,7 @@ public class LevelGenerator {
         }
     }
 
-    private static void playerSetup(Player player, ServerLevel serverLevel, int stage) {
+    public static void playerSetup(Player player, int stage) {
         //Remove all effects as should only have ones allowed, which should only be ones on trinkets items etc/
         player.removeAllEffects();
 
@@ -262,7 +254,7 @@ public class LevelGenerator {
             serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(40, 50, 30));
             serverPlayer.connection.send(new ClientboundSetTitleTextPacket(ModHelpers.withStyleComponent("Trial Of Strength", ColourStore.PERK_GREEN)));
             serverPlayer.connection.send(new ClientboundSetSubtitleTextPacket(ModHelpers.withStyleComponent("Stage " + stage, ColourStore.PERK_GREEN)));
-            serverPlayer.playNotifySound(SoundRegister.START_TRIAL.get(), SoundSource.NEUTRAL, 1,1);
+            serverPlayer.playNotifySound(SoundRegister.START_TRIAL.get(), SoundSource.BLOCKS, 1, 1);
         }
     }
 

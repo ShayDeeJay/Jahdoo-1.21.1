@@ -46,8 +46,7 @@ import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
 import static org.jahdoo.particle.ParticleHandlers.*;
 import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
-import static org.jahdoo.registers.DataComponentRegistry.INTERACTION_HAND;
-import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
+import static org.jahdoo.registers.DataComponentRegistry.*;
 import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
 import static org.jahdoo.utils.ModHelpers.Random;
 import static org.jahdoo.utils.PositionGetters.getInnerRingOfRadiusRandom;
@@ -213,10 +212,9 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     }
 
     public JahdooRarity getRarity(){
-        var wandData = this.components().get(WAND_DATA.get());
-        var getWandData = wandData == null ? WandData.DEFAULT : wandData;
-        var getRarityId = getWandData.rarityId();
-        return JahdooRarity.getAllRarities().get(getRarityId);
+        var wandData = this.components().get(JAHDOO_RARITY.get());
+        var getWandData = wandData == null ? 0 : wandData;
+        return JahdooRarity.getAllRarities().get(getWandData);
     }
 
     @Override

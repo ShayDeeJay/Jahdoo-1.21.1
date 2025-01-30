@@ -71,6 +71,7 @@ public class EntityPropertyRegister {
     public static final Supplier <AbstractEntityProperty> ARMAGEDDON = registerProjectileProperty(new Armageddon());
     public static final Supplier <AbstractEntityProperty> HELLFIRE = registerProjectileProperty(new HellFire());
     public static final Supplier <AbstractEntityProperty> SUMMON_ETERNAL_WIZARD = registerProjectileProperty(new SummonEternalWizard());
+    public static final Supplier <AbstractEntityProperty> SUMMON_ANCIENT_GOLEM = registerProjectileProperty(new SummonAncientGolem());
 
     //MOB ABILITIES
     public static final Supplier <AbstractEntityProperty> BARRAGE = registerProjectileProperty(new Barrage());

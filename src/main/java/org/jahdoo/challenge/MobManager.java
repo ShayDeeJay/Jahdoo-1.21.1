@@ -17,9 +17,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.armortrim.ArmorTrim;
@@ -31,7 +29,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.attachments.player_abilities.ChallengeAltarData;
+import org.jahdoo.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.entities.living.CustomSkeleton;
 import org.jahdoo.entities.living.CustomZombie;
@@ -41,7 +39,6 @@ import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.ModHelpers;
-import org.jahdoo.utils.PositionGetters;
 
 import java.util.List;
 import java.util.UUID;
@@ -178,17 +175,17 @@ public class MobManager {
 
     public static void addAndPositionEntity(ChallengeAltarBlockEntity entity, BlockPos pos){
         if(entity.getLevel() instanceof ServerLevel serverLevel){
-            var readyZombie = getReadyZombie(serverLevel, ChallengeAltarData.getProperties(entity).round());
-            var readySkeleton = getReadySkeleton(serverLevel, ChallengeAltarData.getProperties(entity).round());
+            var readyZombie = getReadyZombie(serverLevel, ChallengeLevelData.getProperties(entity).round());
+            var readySkeleton = getReadySkeleton(serverLevel, ChallengeLevelData.getProperties(entity).round());
             var readyWizard = getReadyEternalWizard(serverLevel);
-            var skellyOrWiz = Random.nextInt(Math.max(20 - ChallengeAltarData.getRound(entity), 5)) == 0 ? readyWizard : readySkeleton;
+            var skellyOrWiz = Random.nextInt(Math.max(20 - ChallengeLevelData.getRound(entity), 5)) == 0 ? readyWizard : readySkeleton;
             var getList = List.of(readyZombie, skellyOrWiz).get(Random.nextInt(2));
-            var actualEntity = MobManager.generateMob(ChallengeAltarData.getRound(entity) > 5 ? getList : readyZombie);
+            var actualEntity = MobManager.generateMob(ChallengeLevelData.getRound(entity) > 5 ? getList : readyZombie);
             setOuterRingPulses(actualEntity.level(), pos.getCenter(), actualEntity.getBbWidth());
             getSoundWithPosition(actualEntity.level(), pos, SoundEvents.WITHER_SPAWN, 0.05f, 3f);
             getSoundWithPosition(actualEntity.level(), pos, SoundRegister.HEAL.get(), 1f, 2f);
             actualEntity.moveTo(pos.getCenter().subtract(0,0.5,0));
-            ChallengeAltarData.addEntity(entity, actualEntity.getUUID());
+            ChallengeLevelData.addEntity(entity, actualEntity.getUUID());
             serverLevel.addFreshEntity(actualEntity);
         }
     }

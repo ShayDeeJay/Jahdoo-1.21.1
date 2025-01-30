@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -14,33 +15,28 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
-import org.jahdoo.ability.abilities.ability_data.SummonEternalWizardAbility;
+import org.jahdoo.ability.abilities.ability_data.SummonAncientGolemAbility;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.AoeCloud;
-import org.jahdoo.entities.living.EternalWizard;
-import org.jahdoo.particle.ParticleHandlers;
+import org.jahdoo.entities.living.AncientGolem;
 import org.jahdoo.particle.ParticleStore;
-import org.jahdoo.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
-import org.jahdoo.utils.PositionGetters;
 
 import java.util.UUID;
 
-import static net.minecraft.world.entity.EquipmentSlot.*;
 import static org.jahdoo.ability.AbilityBuilder.*;
-import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.registers.AttributesRegister.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.particle.ParticleHandlers.*;
+import static org.jahdoo.utils.PositionGetters.getInnerRingOfRadiusRandom;
+import static org.jahdoo.utils.PositionGetters.getOuterRingOfRadiusList;
 
-public class SummonEternalWizard extends DefaultEntityBehaviour {
+public class SummonAncientGolem extends DefaultEntityBehaviour {
     double height;
     int position;
-    double increaseRate = 0.1;
-    EternalWizard eternalWizard;
+    double increaseRate = 0.5;
+    AncientGolem ancientGolem;
     UUID uuid;
-    private double damage;
     private double effectDuration;
     private double effectStrength;
     private double effectChance;
@@ -49,13 +45,6 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     @Override
     public void getAoeCloud(AoeCloud aoeCloud) {
         super.getAoeCloud(aoeCloud);
-        var player = this.aoeCloud.getOwner();
-        var damage = this.getTag(DAMAGE);
-        this.damage = ModHelpers.attributeModifierCalculator(
-            player, (float) damage, true,
-            MAGIC_DAMAGE_MULTIPLIER,
-            VITALITY_MAGIC_DAMAGE_MULTIPLIER
-        );
         this.effectDuration = getTag(EFFECT_DURATION);
         this.effectStrength = getTag(EFFECT_STRENGTH);
         this.effectChance = getTag(EFFECT_CHANCE);
@@ -69,15 +58,17 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
 
     @Override
     public String abilityId() {
-        return SummonEternalWizardAbility.abilityId.getPath().intern();
+        return SummonAncientGolemAbility.abilityId.getPath().intern();
     }
 
     @Override
     public void onTickMethod() {
         if(aoeCloud.level() instanceof ServerLevel serverLevel){
-            if(eternalWizard == null && uuid != null) this.eternalWizard = (EternalWizard) serverLevel.getEntity(uuid);
+            if(ancientGolem == null && uuid != null && serverLevel.getEntity(uuid) instanceof AncientGolem ancientGolems) {
+                this.ancientGolem = ancientGolems;
+            }
         }
-        if(this.eternalWizard != null) this.clientDiggingParticles(this.eternalWizard, level());
+        if(this.ancientGolem != null) this.clientDiggingParticles(this.ancientGolem, level());
         this.spawnAnimation();
         this.spawnEternalWizard();
         this.setSpawnParticles(level());
@@ -89,12 +80,11 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         compoundTag.putDouble("height", this.height);
         compoundTag.putInt("position", this.position);
         compoundTag.putDouble("increaseRate", this.increaseRate);
-        compoundTag.putDouble(DAMAGE, this.damage);
         compoundTag.putDouble(EFFECT_DURATION, this.effectDuration);
         compoundTag.putDouble(EFFECT_STRENGTH, this.effectStrength);
         compoundTag.putDouble(EFFECT_CHANCE, this.effectChance);
         compoundTag.putDouble(LIFETIME, this.lifeTime);
-        if(eternalWizard != null) compoundTag.putUUID("spawnedWizard", eternalWizard.getUUID());
+        if(ancientGolem != null) compoundTag.putUUID("spawnedGolem", ancientGolem.getUUID());
     }
 
     @Override
@@ -102,8 +92,9 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         this.height = compoundTag.getDouble("height");
         this.position = compoundTag.getInt("position");
         this.increaseRate = compoundTag.getDouble("increaseRate");
-        this.uuid = compoundTag.getUUID("spawnedWizard");
-        this.damage = compoundTag.getDouble(DAMAGE);
+        if(compoundTag.contains("spawnedGolem")){
+            this.uuid = compoundTag.getUUID("spawnedGolem");
+        }
         this.effectChance = compoundTag.getDouble(EFFECT_CHANCE);
         this.effectDuration = compoundTag.getDouble(EFFECT_DURATION);
         this.effectStrength = compoundTag.getDouble(EFFECT_STRENGTH);
@@ -120,48 +111,48 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     }
 
     private void spawnAnimation(){
-        if(eternalWizard == null) return;
+        if(ancientGolem == null) return;
 
-        if (eternalWizard.position().y < aoeCloud.position().y + 0.5) {
-            if (eternalWizard.isNoAi()) {
-                eternalWizard.moveTo(eternalWizard.position().add(0, increaseRate, 0));
-                if (increaseRate > 0.2) increaseRate -= 0.1;
+        if (ancientGolem.position().y < aoeCloud.position().y + 0.5) {
+            if (ancientGolem.isNoAi()) {
+                ancientGolem.moveTo(ancientGolem.position().add(0, increaseRate, 0));
             }
         }
 
         if (aoeCloud.tickCount > 18) {
-            if (eternalWizard.isInvulnerable()) eternalWizard.setInvulnerable(false);
-            if (eternalWizard.isNoAi()) eternalWizard.setNoAi(false);
+            if (ancientGolem.isInvulnerable()) ancientGolem.setInvulnerable(false);
+            if (ancientGolem.isNoAi()) ancientGolem.setNoAi(false);
             aoeCloud.discard();
         }
     }
 
     private void spawnEternalWizard(){
-        if (this.eternalWizard == null && aoeCloud.getOwner() != null) {
+        if (this.ancientGolem == null && aoeCloud.getOwner() != null) {
+            System.out.println(aoeCloud.level());
+            var ancientGolemLocal = new AncientGolem(aoeCloud.level(), (Player) aoeCloud.getOwner(), effectDuration, effectStrength, (int) lifeTime, effectChance);
 
-            var eternalWizard = new EternalWizard(aoeCloud.level(), (Player) aoeCloud.getOwner(), damage, effectDuration, effectStrength, (int) lifeTime, effectChance);
-            var spawnPosition = aoeCloud.position().add(0, -1, 0);
-            eternalWizard.setInvulnerable(true);
-            eternalWizard.moveTo(spawnPosition);
-            eternalWizard.setItemSlot(MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
-            eternalWizard.setItemSlot(HEAD, new ItemStack(ItemsRegister.MAGE_HELMET.get()));
-            eternalWizard.setItemSlot(CHEST, new ItemStack(ItemsRegister.MAGE_CHESTPLATE.get()));
-            eternalWizard.setItemSlot(LEGS, new ItemStack(ItemsRegister.MAGE_LEGGINGS.get()));
-            eternalWizard.setItemSlot(FEET, new ItemStack(ItemsRegister.MAGE_BOOTS.get()));
+            var spawnPosition = aoeCloud.position().add(0, -1.5, 0);
+            ancientGolemLocal.setInvulnerable(true);
+            ancientGolemLocal.moveTo(spawnPosition);
+            ancientGolemLocal.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemsRegister.WAND_ITEM_VITALITY.get()));
+            ancientGolemLocal.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ItemsRegister.MAGE_HELMET.get()));
+            ancientGolemLocal.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ItemsRegister.MAGE_CHESTPLATE.get()));
+            ancientGolemLocal.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ItemsRegister.MAGE_LEGGINGS.get()));
+            ancientGolemLocal.setItemSlot(EquipmentSlot.FEET, new ItemStack(ItemsRegister.MAGE_BOOTS.get()));
             var directionToEntity = spawnPosition.subtract(aoeCloud.getOwner().position()).normalize();
 
             // Calculate the yaw so that the skeleton faces away from the player
-            var yaw = Math.toDegrees(Math.atan2(directionToEntity.z, directionToEntity.x)) + 90.0;
-            eternalWizard.setYRot((float) yaw);
-            eternalWizard.setYHeadRot((float) yaw);
-            eternalWizard.setYBodyRot((float) yaw);
-            eternalWizard.setPos(spawnPosition.x, spawnPosition.y, spawnPosition.z);
-            eternalWizard.yRotO = (float) yaw;
-            eternalWizard.yHeadRotO = (float) yaw;
-            eternalWizard.setPersistenceRequired();
-            aoeCloud.level().addFreshEntity(eternalWizard);
-            eternalWizard.setNoAi(true);
-            this.eternalWizard = eternalWizard;
+            double yaw = Math.toDegrees(Math.atan2(directionToEntity.z, directionToEntity.x)) + 90.0;
+            ancientGolemLocal.setYRot((float) yaw);
+            ancientGolemLocal.setYHeadRot((float) yaw);
+            ancientGolemLocal.setYBodyRot((float) yaw);
+            ancientGolemLocal.setPos(spawnPosition.x, spawnPosition.y, spawnPosition.z);
+            ancientGolemLocal.yRotO = (float) yaw;
+            ancientGolemLocal.yHeadRotO = (float) yaw;
+            ancientGolemLocal.setPersistenceRequired();
+            aoeCloud.level().addFreshEntity(ancientGolemLocal);
+            ancientGolemLocal.setNoAi(true);
+            this.ancientGolem = ancientGolemLocal;
         }
     }
 
@@ -173,30 +164,27 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
                 var d0 = livingEntity.getX() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
                 var d1 = livingEntity.getY();
                 var d2 = livingEntity.getZ() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
-                ParticleHandlers.sendParticles(level, new BlockParticleOption(ParticleTypes.BLOCK, blockstate), new Vec3(d0, d1, d2), 2, 0, 0.5,0,0.5);
+                sendParticles(level, new BlockParticleOption(ParticleTypes.BLOCK, blockstate), new Vec3(d0, d1, d2), 2, 0, 0.5,0,0.5);
             }
         }
     }
 
     private void setSpawnParticles(Level level){
-        var bakedParticle = new BakedParticleOptions(ElementRegistry.VITALITY.get().getTypeId(), 20, 3f, false);
-        PositionGetters.getInnerRingOfRadiusRandom(aoeCloud.position(), 0.8, 5).forEach(
-            positions -> ParticleHandlers.sendParticles(level, bakedParticle, positions, 1, 0, 1,0,0.05)
+        var bakedParticle = bakedParticleOptions(getElementType().getTypeId(), 20, 3f, false);
+        getInnerRingOfRadiusRandom(aoeCloud.position(), this.ancientGolem.getBbWidth(), 5).forEach(
+            positions -> sendParticles(level, bakedParticle, positions, 1, 0, 1,0,0.05)
         );
     }
 
     private void setOuterRingPulses(Level level){
-        var positions = PositionGetters.getOuterRingOfRadiusList(aoeCloud.position(), 0.8, 20);
+        var positions = getOuterRingOfRadiusList(aoeCloud.position(), this.ancientGolem.getBbWidth(), 20);
         var particleOptions = genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, this.getElementType(), 10, 0.1f, true);
         if(this.height < 1) this.height += 0.05; else this.height = 0;
 
         if(position < positions.size()){
             for(double i = 0;  i < 3; i += 1){
-                Vec3 gottenPosition = positions.get(position).add(0, this.height + i,0);
-                ParticleHandlers.sendParticles(
-                    level, particleOptions, gottenPosition,
-                    0, 0, 0,0,0
-                );
+                var gottenPosition = positions.get(position).add(0, this.height + i,0);
+                sendParticles(level, particleOptions, gottenPosition, 0, 0, 0,0,0);
             }
             this.position++;
         } else{
@@ -204,7 +192,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         }
     }
 
-    ResourceLocation abilityId = ModHelpers.res("summon_eternal_wizard_property");
+    ResourceLocation abilityId = ModHelpers.res("summon_ancient_golem_property");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -213,6 +201,6 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
 
     @Override
     public DefaultEntityBehaviour getEntityProperty() {
-        return new SummonEternalWizard();
+        return new SummonAncientGolem();
     }
 }
