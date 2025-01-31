@@ -115,6 +115,15 @@ public class EntitiesRegister {
                 .build("skeleton")
         );
 
+    public static final DeferredHolder<EntityType<?>, EntityType<FlamingSkull>> FLAMING_SKULL =
+        ENTITY_TYPES.register(
+            "flaming_skull", () -> EntityType.Builder.<FlamingSkull>of(FlamingSkull::new, MobCategory.MISC)
+                .sized(0.8f, 0.8f)
+                .updateInterval(1)
+                .build("flaming_skull")
+        );
+
+
 
 
 

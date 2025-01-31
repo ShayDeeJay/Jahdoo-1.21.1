@@ -2,29 +2,39 @@ package org.jahdoo.items.wand;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.ability.ProjectileProperties;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
+import org.jahdoo.entities.ElementProjectile;
+import org.jahdoo.entities.FlamingSkull;
+import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.items.JahdooItem;
 import org.jahdoo.registers.*;
 import org.jahdoo.utils.ModHelpers;
+import org.jahdoo.utils.PositionGetters;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -42,12 +52,16 @@ import java.util.function.Consumer;
 import static net.minecraft.sounds.SoundEvents.ALLAY_THROW;
 import static net.minecraft.sounds.SoundEvents.EVOKER_PREPARE_SUMMON;
 import static net.minecraft.world.InteractionHand.*;
+import static org.jahdoo.ability.AbilityRegistrar.fireMultiShotProjectile;
+import static org.jahdoo.ability.AbilityRegistrar.offsetShoot;
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
 import static org.jahdoo.particle.ParticleHandlers.*;
 import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
 import static org.jahdoo.registers.DataComponentRegistry.*;
 import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
+import static org.jahdoo.registers.ElementRegistry.getElementFromWand;
+import static org.jahdoo.utils.ModHelpers.*;
 import static org.jahdoo.utils.ModHelpers.Random;
 import static org.jahdoo.utils.PositionGetters.getInnerRingOfRadiusRandom;
 
@@ -92,15 +106,16 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         level.setBlockAndUpdate(clickedPos, BlocksRegister.WAND.get().defaultBlockState());
         var blockEntity = level.getBlockEntity(clickedPos);
         if (!(blockEntity instanceof WandBlockEntity wandBlockEntity)) return InteractionResult.FAIL;
+        var copiedWand = itemStack.copyWithCount(1);
 
         playPlaceSound(level, pContext.getClickedPos());
-        var copiedWand = itemStack.copyWithCount(1);
         player.setItemInHand(pContext.getHand(), ItemStack.EMPTY);
         wandBlockEntity.inputItemHandler.setStackInSlot(GET_WAND_SLOT, copiedWand);
         wandBlockEntity.updateView();
-        var getType = getElementByWandType(wandBlockEntity.getWandItemFromSlot().getItem());
-        if(!getType.isEmpty()){
-            var element = getType.getFirst();
+        var getType = getElementFromWand(wandBlockEntity.getWandItemFromSlot().getItem());
+
+        if(getType.isPresent()){
+            var element = getType.get();
             var par1 = bakedParticleOptions(element.getTypeId(), 10, 1f, false);
             var par2 = genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 10, 1f, false, 0.3);
             getInnerRingOfRadiusRandom(clickedPos, 0.1, 20,
@@ -127,8 +142,8 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     }
 
     public void playPlaceSound(Level level, BlockPos bPos){
-        ModHelpers.getSoundWithPosition(level, bPos, ALLAY_THROW, 1, 0.8f);
-        ModHelpers.getSoundWithPosition(level, bPos, EVOKER_PREPARE_SUMMON, 0.4f, 1.6f);
+        getSoundWithPosition(level, bPos, ALLAY_THROW, 1, 0.8f);
+        getSoundWithPosition(level, bPos, EVOKER_PREPARE_SUMMON, 0.4f, 1.6f);
     }
 
     @Override
@@ -150,17 +165,18 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         boolean isItemInMain,
         boolean isItemInOff
     ) {
+        var hand = INTERACTION_HAND;
         if(interactState != null){
 
             if(isItemInMain){
-                if(interactState != 0) itemStack.set(INTERACTION_HAND, 0);
+                if(interactState != 0) itemStack.set(hand, 0);
             } else if (isItemInOff && canOffHand(player, OFF_HAND, false)) {
-                if(interactState != 1) itemStack.set(INTERACTION_HAND, 1);
+                if(interactState != 1) itemStack.set(hand, 1);
             } else {
-                if(interactState != 2) itemStack.set(INTERACTION_HAND, 2);
+                if(interactState != 2) itemStack.set(hand, 2);
             }
 
-        } else itemStack.set(INTERACTION_HAND, 2);
+        } else itemStack.set(hand, 2);
     }
 
     @Override
@@ -175,10 +191,14 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
-        if(level instanceof ServerLevel serverLevel){}
+        var item = player.getItemInHand(interactionHand);
+
+        if(level instanceof ServerLevel){
+            fireMultiShotProjectile(3, 0.35F, player, 1.8, () -> new FlamingSkull(player, 0));
+            return InteractionResultHolder.pass(item);
+        }
 
         if (canOffHand(player, interactionHand, true)) {
-            var item = player.getItemInHand(interactionHand);
             player.startUsingItem(interactionHand);
             CastHelper.use(player);
             return InteractionResultHolder.pass(item);
@@ -187,28 +207,35 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         return InteractionResultHolder.fail(player.getOffhandItem());
     }
 
-    public static boolean canOffHand(LivingEntity entity, InteractionHand interactionHand, boolean shouldSendMessage){
+    public static boolean canOffHand(
+        LivingEntity entity,
+        InteractionHand interactionHand,
+        boolean shouldSendMessage
+    ){
         var curio = CuriosApi.getCuriosInventory(entity);
+
         if(interactionHand == OFF_HAND){
             if(curio.isEmpty()) return false;
+
             var isGauntletEquipped = curio.get().isEquipped(ItemsRegister.BATTLEMAGE_GAUNTLET.get());
-            if(isGauntletEquipped){
-                return true;
-            } else {
-                if(shouldSendMessage){
-                    var item = entity.getItemInHand(interactionHand).getItem();
-                    ElementRegistry.getElementFromWand(item).ifPresent(
-                        abstractElement -> {
-                            var sendMessage = ModHelpers.withStyleComponent("You don't have the power to offhand this yet.", abstractElement.textColourPrimary());
-                            if (entity instanceof Player player) player.displayClientMessage(sendMessage, true);
-                        }
-                    );
-                }
-                return false;
+            if(isGauntletEquipped) return true;
+
+            if(shouldSendMessage){
+                var item = entity.getItemInHand(interactionHand).getItem();
+                getElementFromWand(item).ifPresent(element -> sendCantUseMessage(entity, element));
             }
+
+            return false;
         }
 
         return true;
+    }
+
+    private static void sendCantUseMessage(LivingEntity entity, AbstractElement abstractElement) {
+        var text = "You don't have the power to offhand this yet.";
+        var colour = abstractElement.textColourPrimary();
+        var sendMessage = withStyleComponent(text, colour);
+        if (entity instanceof Player player) player.displayClientMessage(sendMessage, true);
     }
 
     public JahdooRarity getRarity(){

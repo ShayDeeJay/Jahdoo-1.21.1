@@ -26,7 +26,9 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
@@ -343,6 +345,17 @@ public class ModHelpers {
         }
         player.sendSystemMessage(Component.literal("-----------------------------------------------------"));
         player.sendSystemMessage(Component.literal(" "));
+    }
+
+    public static boolean hasLineOfSight(Entity pathfinder, Entity target) {
+        if (target.level() != pathfinder.level()) {
+            return false;
+        } else {
+            var vec3 = new Vec3(pathfinder.getX(), pathfinder.getEyeY(), pathfinder.getZ());
+            var vec31 = new Vec3(target.getX(), target.getEyeY(), target.getZ());
+            var context = new ClipContext(vec3, vec31, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, pathfinder);
+            return !(vec31.distanceTo(vec3) > (double) 128.0F) && pathfinder.level().clip(context).getType() == HitResult.Type.MISS;
+        }
     }
 
     @SafeVarargs

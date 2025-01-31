@@ -56,9 +56,9 @@ public class EntityMovers {
     }
 
     public static void entityMover(Entity receiver, Entity target, double velocity) {
-        double resistance = 0.9;
+        double resistance = 0.86 ;
         double directionX = receiver.getX() - target.getX();
-        double directionY = receiver.getY() - target.getY();
+        double directionY = receiver.getY() - target.getY() + target.getBbHeight();
         double directionZ = receiver.getZ() - target.getZ();
 
         double directionLength = Math.sqrt(directionX * directionX + directionY * directionY + directionZ * directionZ);

@@ -15,6 +15,9 @@ public class EntityAnimations {
     public static final RawAnimation BOLTZ = RawAnimation.begin().thenLoop("boltz");
     public static final RawAnimation ORB_END = RawAnimation.begin().thenLoop("energy_orb_end");
 
+    public static final RawAnimation IDLE_SKULL = RawAnimation.begin().thenLoop("idle");
+
+
     public static final RawAnimation IDLE_BLOCK = RawAnimation.begin().thenPlay("idle");
     public static final RawAnimation WEST = RawAnimation.begin().thenPlay("direction1");
     public static final RawAnimation EAST = RawAnimation.begin().thenPlay("direction2");

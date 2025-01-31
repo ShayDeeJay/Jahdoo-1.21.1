@@ -96,7 +96,7 @@ public class ParticleHandlers {
                 positions -> {
                     if (player.level() instanceof ServerLevel serverLevel) {
                         Vec3 directions = player.position().subtract(positions).normalize().add(0, player.getBbHeight() / 2, 0);
-                        ParticleHandlers.sendParticles(
+                        sendParticles(
                             serverLevel,
                             particleOptionsList.get(RandomSource.create().nextInt(0, 2)),
                             positions,
@@ -113,18 +113,18 @@ public class ParticleHandlers {
     }
 
     public static ParticleOptions getAllParticleTypes(AbstractElement element, int lifetime, float size){
-        var baked = ParticleHandlers.bakedParticleOptions(element.getTypeId(), lifetime, size, false);
-        var generic = ParticleHandlers.genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, lifetime, size);
-        var magic = ParticleHandlers.genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, element, lifetime, size);
-        var soft = ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, element, lifetime, size);
+        var baked = bakedParticleOptions(element.getTypeId(), lifetime, size, false);
+        var generic = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, lifetime, size);
+        var magic = genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, element, lifetime, size);
+        var soft = genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, element, lifetime, size);
         var collectTypes = List.of(baked, generic, magic, soft);
         return collectTypes.get(Random.nextInt(collectTypes.size()));
     }
 
     public static ParticleOptions getNonBakedParticles(int colour1, int colour2, int lifetime, float size){
-        var generic = ParticleHandlers.genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
-        var magic = ParticleHandlers.genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
-        var soft = ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
+        var generic = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
+        var magic = genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
+        var soft = genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
         var collectTypes = List.of(generic, magic, soft);
         return collectTypes.get(Random.nextInt(collectTypes.size()));
     }
@@ -138,7 +138,7 @@ public class ParticleHandlers {
         for (double j = 0; j < Math.max(dist, 5); j++) {
             var coeff = j / dist;
             var position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
-            ParticleHandlers.sendParticles(
+            sendParticles(
                 projectile.level(), particleOptions, position, 1,
                 0.0125f * (Random.nextFloat() - 0.5f),
                 0.0125f * (Random.nextFloat() - 0.5f),
@@ -156,7 +156,7 @@ public class ParticleHandlers {
         for (double j = 0; j < dist; j++) {
             var coeff = j / dist;
             var position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
-            ParticleHandlers.sendParticles(
+            sendParticles(
                 projectile.level(), particleOptions, position, 2,
                 0.0125f * (Random.nextFloat() - 0.5f),
                 0.0125f * (Random.nextFloat() - 0.5f),
@@ -180,7 +180,7 @@ public class ParticleHandlers {
             double coeff = j / dist;
             if (projectile.level() instanceof ServerLevel serverLevel){
                 Vec3 position = new Vec3((float) (projectile.xo + deltaX * coeff), (float) (projectile.yo + deltaY * coeff) + 0.1, (float) (projectile.zo + deltaZ * coeff));
-                ParticleHandlers.sendParticles(
+                sendParticles(
                     serverLevel, particleOptions, position, 1,
                     0.0125f * (Random.nextFloat() - 0.5f),
                     0.0125f * (Random.nextFloat() - 0.5f),
@@ -268,8 +268,42 @@ public class ParticleHandlers {
                 );
                 var genericSlow = genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, element, 3, 1.2f);
                 var bakedSlow = bakedParticleOptions(element.getTypeId(), 2,2.5f,false);
-                ParticleHandlers.sendParticles(projectile.level(), bakedSlow, position.subtract(0,heightOffset,0), 0, 0, 0, 0,0);
-                ParticleHandlers.sendParticles(projectile.level(), genericSlow, position.subtract(0,heightOffset,0), 0, 0, 0, 0,0);
+                var subtract = position.subtract(0, heightOffset, 0);
+                var level = projectile.level();
+                sendParticles(level, bakedSlow, subtract, 0, 0, 0, 0,0);
+                sendParticles(level, genericSlow, subtract, 0, 0, 0, 0,0);
+            }
+        }
+    }
+
+    public static void flamingSkull(
+            Projectile projectile,
+            int tickCount,
+            float spread,
+            AbstractElement element
+    ){
+        if (tickCount > 2) {
+            var velocity = projectile.getDeltaMovement();
+            var offsetX = velocity.x * -2.2;  // Reverse the x direction to be behind the entity
+            var offsetY = velocity.y * -2.2;
+            var offsetZ = velocity.z * -2.2;  // Reverse the z direction to be behind the entity
+            var particleX = projectile.getX() + offsetX;
+            var particleY = projectile.getY() + projectile.getBbHeight() / 2 + offsetY;  // Adjust Y position as needed
+            var particleZ = projectile.getZ() + offsetZ;
+            var heightOffset = 0.04;
+
+            for (int i = 0; i < 3; i++){
+                var position = new Vec3(
+                    particleX + Random.nextFloat(-spread, spread),
+                    particleY + Random.nextFloat(-spread, spread),
+                    particleZ + Random.nextFloat(-spread, spread)
+                );
+                var genericSlow = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 3, 1.8f);
+                var bakedSlow = genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, element, 3, 0.8f);
+                var subtract = position.subtract(0, heightOffset, 0);
+                var level = projectile.level();
+                sendParticles(level, bakedSlow, subtract, 0, 0, 0, 0,0);
+                sendParticles(level, genericSlow, subtract, 0, 0, 0, 0,0);
             }
         }
     }
@@ -335,7 +369,7 @@ public class ParticleHandlers {
             double speedY = (Random.nextDouble() - 0.5) * 0.1;
             double speedZ = (Random.nextDouble() - 0.5) * 0.1;
 
-            ParticleHandlers.sendParticles(
+            sendParticles(
                 level, particleType, position.add(offsetX, offsetY, offsetZ), 1,speedX, speedY, speedZ,speed
             );
 
@@ -353,7 +387,7 @@ public class ParticleHandlers {
             double speedX = (Random.nextDouble() - 0.5) * 0.1;
             double speedY = (Random.nextDouble() - 0.5) * 0.1;
             double speedZ = (Random.nextDouble() - 0.5) * 0.1;
-            ParticleHandlers.sendParticles(
+            sendParticles(
                 level, particleType, position.add(offsetX, offsetY, offsetZ), 1,speedX, speedY + ySpeed, speedZ,speed
             );
         }

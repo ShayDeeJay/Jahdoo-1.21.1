@@ -15,6 +15,7 @@ import org.jahdoo.client.RuneTooltipRenderer;
 import org.jahdoo.client.block_renderer.*;
 import org.jahdoo.client.entity_renderer.CustomAoeRenderer;
 import org.jahdoo.client.entity_renderer.ElementProjectileRenderer;
+import org.jahdoo.client.entity_renderer.FlamingSkullRenderer;
 import org.jahdoo.client.entity_renderer.GenericProjectileRenderer;
 import org.jahdoo.client.entity_renderer.ancient_golem.AncientGolemRenderer;
 import org.jahdoo.client.entity_renderer.decoy.DecoyRenderer;
@@ -73,6 +74,7 @@ public class ClientBusEvents {
         event.registerEntityRenderer(EntitiesRegister.CUSTOM_ZOMBIE.get(), ZombieRenderer::new);
         event.registerEntityRenderer(EntitiesRegister.CUSTOM_SKELETON.get(), SkeletonRenderer::new);
         event.registerEntityRenderer(EntitiesRegister.ANCIENT_GOLEM.get(), AncientGolemRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.FLAMING_SKULL.get(), FlamingSkullRenderer::new);
 
     }
 

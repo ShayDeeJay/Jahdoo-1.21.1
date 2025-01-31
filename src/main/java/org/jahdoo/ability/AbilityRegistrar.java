@@ -66,7 +66,7 @@ public abstract class AbilityRegistrar {
         return false;
     }
 
-    public int Laccuracy(LivingEntity player){
+    public static int Laccuracy(LivingEntity player){
         var effect = EffectsRegister.AMPLIFY_BLOCK_REACH;
         var getEffectLevel = player.getEffect(effect);
         if(player.hasEffect(effect)){
@@ -97,7 +97,7 @@ public abstract class AbilityRegistrar {
         }
     }
 
-    public void fireMultiShotProjectile(int numberOfProjectile, float velocities, Player player, double adjustSpread, Supplier<Projectile> projectileSupplier){
+    public static void fireMultiShotProjectile(int numberOfProjectile, float velocities, Player player, double adjustSpread, Supplier<Projectile> projectileSupplier){
        var totalWidth = (numberOfProjectile - 1) * adjustSpread; // Adjust the total width as needed
         var startOffset = -totalWidth / 2.0;
 
@@ -106,7 +106,7 @@ public abstract class AbilityRegistrar {
             var projectile  = projectileSupplier.get();
             var directionOffset = calculateDirectionOffset(player, offset);
             var direction = player.getLookAngle().add(directionOffset).normalize();
-            this.fireProjectileDirection(projectile, player, velocities, direction);
+            fireProjectileDirection(projectile, player, velocities, direction);
         }
     }
 
@@ -121,7 +121,7 @@ public abstract class AbilityRegistrar {
         }
     }
 
-    public void fireProjectileDirection(Projectile projectile, LivingEntity player, float velocity, Vec3 direction){
+    public static void fireProjectileDirection(Projectile projectile, LivingEntity player, float velocity, Vec3 direction){
         if(player != null){
             if(player.level() instanceof ServerLevel serverLevel){
                 projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, Laccuracy(player));
