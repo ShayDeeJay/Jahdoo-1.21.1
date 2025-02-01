@@ -45,6 +45,7 @@ public class AugmentRatingSystem {
     }
 
     public static double convertToPercentage(double max) {
+        if (max == 0) return 100.0;
         if (max <= 0) return 0;
         return Double.parseDouble(FORMAT.format((1.0 / max) * 100));
     }

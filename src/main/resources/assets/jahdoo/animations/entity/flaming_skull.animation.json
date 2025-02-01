@@ -3,7 +3,7 @@
 	"animations": {
 		"idle": {
 			"loop": true,
-			"animation_length": 0.5,
+			"animation_length": 24,
 			"bones": {
 				"bone": {
 					"rotation": {
@@ -18,6 +18,440 @@
 							"vector": [15, 0, 0],
 							"easing": "easeOutElastic",
 							"easingArgs": [0.2]
+						},
+						"0.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"1.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"1.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"1.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"1.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"2.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"2.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"2.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"2.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"3.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"3.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"3.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"3.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"4.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"4.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"4.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"4.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"5.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"5.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"5.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"5.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"6.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"6.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"6.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"6.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"7.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"7.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"7.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"7.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"8.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"8.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"8.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"8.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"9.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"9.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"9.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"9.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"10.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"10.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"10.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"10.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"11.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"11.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"11.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"11.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"12.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"12.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"12.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"12.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"13.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"13.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"13.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"13.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"14.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"14.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"14.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"14.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"15.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"15.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"15.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"15.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"16.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"16.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"16.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"16.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"17.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"17.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"17.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"17.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"18.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"18.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"18.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"18.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"19.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"19.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"19.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"19.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"20.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"20.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"20.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"20.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"21.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"21.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"21.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"21.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"22.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"22.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"22.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"22.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"23.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"23.25": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"23.5": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						},
+						"23.75": {
+							"vector": [42.5, 0, 0],
+							"easing": "easeOutElastic"
+						},
+						"24.0": {
+							"vector": [15, 0, 0],
+							"easing": "easeOutElastic",
+							"easingArgs": [0.2]
+						}
+					}
+				},
+				"bone3": {
+					"scale": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.75": {
+							"vector": [1, 1, 1],
+							"easing": "easeInElastic"
 						}
 					}
 				}

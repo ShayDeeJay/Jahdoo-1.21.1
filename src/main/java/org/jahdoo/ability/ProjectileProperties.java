@@ -14,17 +14,20 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
+import org.jahdoo.ability.abilities.ability_data.BurningSkullsAbility;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ProjectileProperties extends Projectile {
     private static final EntityDataAccessor<Integer> ANIMATION_TYPE = SynchedEntityData.defineId(ProjectileProperties.class, EntityDataSerializers.INT);
 
-    private int lerpSteps;
-    private double lerpX;
-    private double lerpY;
-    private double lerpZ;
-    private double lerpYRot;
-    private double lerpXRot;
+    protected int lerpSteps;
+    protected double lerpX;
+    protected double lerpY;
+    protected double lerpZ;
+    protected double lerpYRot;
+    protected double lerpXRot;
 
     public int animationType() {
         return this.entityData.get(ANIMATION_TYPE);
@@ -98,6 +101,14 @@ public abstract class ProjectileProperties extends Projectile {
         double spawnX = forwardOffsetX + rightOffsetX;
         double spawnZ = forwardOffsetZ + rightOffsetZ;
         projectile.moveTo(spawnX, forwardOffsetY, spawnZ, projectile.getYRot(), projectile.getXRot());
+    }
+
+    public static double getTag(String name, WandAbilityHolder wandAbilityHolder) {
+        var abName = BurningSkullsAbility.abilityId.getPath().intern();
+        if(ModHelpers.getModifierValue(wandAbilityHolder, abName).get(name) != null){
+            return ModHelpers.getModifierValue(wandAbilityHolder,abName).get(name).setValue();
+        }
+        return 0;
     }
 
     @Override

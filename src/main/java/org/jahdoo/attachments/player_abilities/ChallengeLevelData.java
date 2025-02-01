@@ -134,16 +134,16 @@ public class ChallengeLevelData implements AbstractAttachment {
 
     // CODEC for serialization/deserialization
     public static final Codec<ChallengeLevelData> CODEC = RecordCodecBuilder.create(
-            instance -> instance.group(
-                    Codec.list(UUIDUtil.CODEC).fieldOf("active_mobs").forGetter(ChallengeLevelData::activeMobs),
-                    Codec.BOOL.fieldOf("is_active").forGetter(ChallengeLevelData::isActive),
-                    Codec.INT.fieldOf("killed_mobs").forGetter(ChallengeLevelData::killedMobs),
-                    Codec.INT.fieldOf("max_mobs_on_map").forGetter(ChallengeLevelData::maxMobsOnMap),
-                    Codec.INT.fieldOf("max_mobs").forGetter(ChallengeLevelData::maxMobs),
-                    Codec.INT.fieldOf("round").forGetter(ChallengeLevelData::round),
-                    Codec.INT.fieldOf("maxRound").forGetter(ChallengeLevelData::maxRound),
-                    Codec.STRING.fieldOf("dimension").forGetter(ChallengeLevelData::dimension) // Add dimension to CODEC
-            ).apply(instance, ChallengeLevelData::new)
+        instance -> instance.group(
+            Codec.list(UUIDUtil.CODEC).fieldOf("active_mobs").forGetter(ChallengeLevelData::activeMobs),
+            Codec.BOOL.fieldOf("is_active").forGetter(ChallengeLevelData::isActive),
+            Codec.INT.fieldOf("killed_mobs").forGetter(ChallengeLevelData::killedMobs),
+            Codec.INT.fieldOf("max_mobs_on_map").forGetter(ChallengeLevelData::maxMobsOnMap),
+            Codec.INT.fieldOf("max_mobs").forGetter(ChallengeLevelData::maxMobs),
+            Codec.INT.fieldOf("round").forGetter(ChallengeLevelData::round),
+            Codec.INT.fieldOf("maxRound").forGetter(ChallengeLevelData::maxRound),
+            Codec.STRING.fieldOf("dimension").forGetter(ChallengeLevelData::dimension) // Add dimension to CODEC
+        ).apply(instance, ChallengeLevelData::new)
     );
 
     // Save NBT data
@@ -158,7 +158,7 @@ public class ChallengeLevelData implements AbstractAttachment {
         nbt.putInt("max_mobs", maxMobs);
         nbt.putInt("round", round);
         nbt.putInt("maxRound", maxRound);
-        nbt.putString("dimension", dimType); // Save dimension
+        if(dimType != null) nbt.putString("dimension", dimType); // Save dimension
     }
 
     // Load NBT data

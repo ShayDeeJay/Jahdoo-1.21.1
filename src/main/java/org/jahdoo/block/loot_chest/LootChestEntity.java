@@ -25,6 +25,7 @@ import java.util.List;
 
 import static org.jahdoo.entities.EntityAnimations.*;
 import static org.jahdoo.particle.ParticleHandlers.*;
+import static org.jahdoo.utils.ModHelpers.*;
 import static org.jahdoo.utils.ModHelpers.Random;
 import static org.jahdoo.utils.PositionGetters.getInnerRingOfRadiusRandom;
 
@@ -54,7 +55,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
             if(this.privateTicks % (6 - getRarity) == 0){
                 for (var vec3 : getInnerRingOfRadiusRandom(pos.getCenter().subtract(0, 0.35, 0), 0.55, Math.max(3, 5 * id))) {
                     var colour1 = KeyItem.getJahdooRarity(new CustomModelData(id));
-                    var darker = ModHelpers.getColourDarker(colour1.getColour(), 0.5f);
+                    var darker = getColourDarker(colour1.getColour(), 0.5f);
                     var size = Random.nextFloat(1.2f, 1.6f) - ((float) getRarity / 30);
                     var lifetime = 6 + id + Random.nextInt(2, 5);
                     var particleColour = getNonBakedParticles(colour1.getColour(), darker, lifetime, size);
@@ -66,16 +67,16 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         }
 
         if(privateTicks == 1){
-            ModHelpers.getSoundWithPosition(pLevel, pos, SoundEvents.ENDER_EYE_LAUNCH, 1f, 2f);
-            ModHelpers.getSoundWithPosition(pLevel, pos, SoundEvents.ENDER_EYE_DEATH, 1f, 2f);
+            getSoundWithPosition(pLevel, pos, SoundEvents.ENDER_EYE_LAUNCH, 1f, 2f);
+            getSoundWithPosition(pLevel, pos, SoundEvents.ENDER_EYE_DEATH, 1f, 2f);
         }
 
         if(privateTicks == 7){
             var volume = 2;
             var pitch = 0.4f;
             var pitch2 = 0.2f;
-            ModHelpers.getSoundWithPosition(pLevel, pos, SoundEvents.VAULT_PLACE, volume, pitch);
-            ModHelpers.getSoundWithPosition(pLevel, pos, SoundEvents.IRON_GOLEM_STEP, volume, pitch2);
+            getSoundWithPosition(pLevel, pos, SoundEvents.VAULT_PLACE, volume, pitch);
+            getSoundWithPosition(pLevel, pos, SoundEvents.IRON_GOLEM_STEP, volume, pitch2);
         }
 
         if(pLevel instanceof ServerLevel serverLevel){

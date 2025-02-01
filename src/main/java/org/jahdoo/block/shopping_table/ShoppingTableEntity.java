@@ -62,9 +62,11 @@ public class ShoppingTableEntity extends AbstractBEInventory {
     public void insertRandomItem() {
         if(!(this.getLevel() instanceof ServerLevel serverLevel)) return;
         var rewards = RewardLootTables.getCompletionLoot(serverLevel, this.worldPosition.getCenter(), 0);
-        var randomListElement = ModHelpers.getRandomListElement(rewards);
-        RewardLootTables.attachItemData(serverLevel, JahdooRarity.getRarity(), randomListElement, false, null);
-        getItem().setStackInSlot(0, randomListElement);
+        if(!rewards.isEmpty()){
+            var randomListElement = ModHelpers.getRandomListElement(rewards);
+            RewardLootTables.attachItemData(serverLevel, JahdooRarity.getRarity(), randomListElement, false, null);
+            getItem().setStackInSlot(0, randomListElement);
+        }
     }
 
     @Override

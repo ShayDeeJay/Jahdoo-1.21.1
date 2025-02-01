@@ -1,6 +1,9 @@
 package org.jahdoo.entities;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -12,62 +15,98 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.ProjectileProperties;
+import org.jahdoo.ability.abilities.ability_data.BurningSkullsAbility;
 import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
-import org.jahdoo.particle.ParticleHandlers;
-import org.jahdoo.particle.particle_options.BakedParticleOptions;
-import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.entities.living.EternalWizard;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
 import org.jahdoo.utils.ModHelpers;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.Comparator;
-
 import static java.util.Comparator.*;
+import static org.jahdoo.ability.AbilityBuilder.*;
+import static org.jahdoo.ability.AbilityBuilder.DAMAGE;
 import static org.jahdoo.ability.DefaultEntityBehaviour.*;
 import static org.jahdoo.entities.EntityAnimations.*;
 import static org.jahdoo.entities.EntityMovers.*;
 import static org.jahdoo.particle.ParticleHandlers.*;
+import static org.jahdoo.registers.AttributesRegister.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.registers.DataComponentRegistry.*;
+import static org.jahdoo.registers.EffectsRegister.*;
 import static org.jahdoo.utils.ModHelpers.*;
 
-public class FlamingSkull extends ProjectileProperties implements IEntityProperties, GeoEntity {
+public class BurningSkull extends ProjectileProperties implements GeoEntity {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private static final EntityDataAccessor<Integer> LIFETIMES = SynchedEntityData.defineId(BurningSkull.class, EntityDataSerializers.INT);
 
-    private int lerpSteps;
-    private double lerpX;
-    private double lerpY;
-    private double lerpZ;
-    private double lerpYRot;
-    private double lerpXRot;
-
-    WandAbilityHolder wandAbilityHolder;
-    public String selectedAbility;
     public LivingEntity target;
+    double damage;
+    double effectDuration;
+    double effectStrength;
+    double effectChance;
 
-    public FlamingSkull(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public BurningSkull(EntityType<? extends Projectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public FlamingSkull(
+    public BurningSkull(
         LivingEntity owner,
-//        String selectedAbility,
         double spacing
     ) {
         super(EntitiesRegister.FLAMING_SKULL.get(), owner.level());
         this.setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
-        this.wandAbilityHolder = owner.getItemInHand(owner.getUsedItemHand()).get(WAND_ABILITY_HOLDER.get());
-//        this.selectedAbility = selectedAbility;
+        var holder = owner.getItemInHand(owner.getUsedItemHand()).get(WAND_ABILITY_HOLDER.get());
+        this.effectChance = getTag(EFFECT_CHANCE, holder);
+        this.effectStrength = getTag(EFFECT_STRENGTH, holder);
+        this.effectDuration = getTag(EFFECT_DURATION, holder);
+        setLifetimes((int) getTag(LIFETIME, holder));
+        if(!(this.getOwner() instanceof Player)){
+            this.damage = getTag(DAMAGE, holder);
+        } else {
+            damageWithModifiers(holder);
+        }
+    }
+
+    public int getLifetime() {
+        return this.entityData.get(LIFETIMES);
+    }
+
+    public void setLifetimes(int lifetimes) {
+        this.entityData.set(LIFETIMES, lifetimes);
+    }
+
+    private void damageWithModifiers(WandAbilityHolder holder) {
+        var player = this.getOwner();
+        var damage = getTag(DAMAGE, holder);
+        this.damage = ModHelpers.attributeModifierCalculator(
+            (LivingEntity) player,
+            (float) damage,
+            true,
+            MAGIC_DAMAGE_MULTIPLIER,
+            INFERNO_MAGIC_DAMAGE_MULTIPLIER
+        );
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        System.out.println(tickCount);
+        System.out.println(getLifetime());
+        setTargetDelay();
+        ambientSound();
+        entityMovement();
+        discardTime();
     }
 
     @Override
@@ -89,57 +128,50 @@ public class FlamingSkull extends ProjectileProperties implements IEntityPropert
         var biteVolume = 0.6F;
         var biteSound = SoundEvents.BLAZE_SHOOT;
         this.playSound(biteSound, biteVolume, bitePitch);
-        var effectInstance = new JahdooMobEffect(EffectsRegister.INFERNO_EFFECT, 100, 2);
-        livingEntity.addEffect(effectInstance);
-        entity.hurt(this.damageSources().generic(), 5);
+        if(effectChance == 0 || Random.nextInt((int) effectChance) == 0){
+            var effectInstance = new JahdooMobEffect(INFERNO_EFFECT, (int) effectDuration, (int) effectStrength);
+            livingEntity.addEffect(effectInstance);
+        }
+        entity.hurt(this.damageSources().generic(), (float) damage);
         discardTask();
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult blockHitResult) {
+    protected void onHitBlock(@NotNull BlockHitResult blockHitResult) {
         if(!(level() instanceof ServerLevel )) return;
         discardTask();
     }
 
-    @Override
-    public void tick() {
-        super.tick();
-
-        if(this.tickCount > 5) this.setTarget();
-
-        if(this.level().isClientSide){
-            if (this.lerpSteps > 0) {
-                var d = this.getX() + (this.lerpX - this.getX()) / (double) this.lerpSteps;
-                var e = this.getY() + (this.lerpY - this.getY()) / (double) this.lerpSteps;
-                var y = this.getZ() + (this.lerpZ - this.getZ()) / (double) this.lerpSteps;
-                var g = Mth.wrapDegrees(this.lerpYRot - (double) this.getYRot());
-                this.setYRot(this.getYRot() + (float) g / (float) this.lerpSteps);
-                this.setXRot(this.getXRot() + (float) (this.lerpXRot - (double) this.getXRot()) / (float) this.lerpSteps);
-                --this.lerpSteps;
-                this.setPos(d, e, y);
-                this.setRot(this.getYRot(), this.getXRot());
-            }
-        }
-
-        playAttackSound();
-
-        if(target != null) entityMover(target, this, 0.2);
-
+    private void entityMovement() {
+        this.setLifetimes(getLifetime());
+        var canPathFind = target != null && target.isAlive() && !level().isClientSide;
+        if (canPathFind) entityMover(target, this, 0.2);
         flamingSkull(this, tickCount, 0.35f, this.getElementType());
-
-        if(this.tickCount > 50) discardTask();
     }
 
     private void discardTask() {
         for (int i = 0; i < 5; i++){
-            var splashParticles = getAllParticleTypes(getElementType(), 10, 2);
+            var splashParticles = getAllParticleTypesAlt(getElementType(), 10, 2);
             particleBurst(this.level(), this.position(), 1, splashParticles, 0.1f);
         }
         this.discard();
     }
 
+    private void setTargetDelay(){
+        if(this.tickCount > 5) this.setTarget();
+    }
 
-    private void playAttackSound() {
+    private void discardTime(){
+        if(this.tickCount > getLifetime()) discardTask();
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(LIFETIMES, 0);
+    }
+
+    private void ambientSound() {
 
         var bitePitch = 0.5F;
         var biteVolume = 1F;
@@ -158,6 +190,7 @@ public class FlamingSkull extends ProjectileProperties implements IEntityPropert
             this.playSound(biteSound, biteVolume, bitePitch);
             this.playSound(fireSound, fireVolume, firePitch);
         }
+
     }
 
     public void setTarget() {
@@ -168,6 +201,7 @@ public class FlamingSkull extends ProjectileProperties implements IEntityPropert
                 .getEntitiesOfClass(LivingEntity.class, bound)
                 .stream()
                 .filter(livingEntity -> !(livingEntity instanceof Player))
+                .filter(livingEntity -> canDamageEntity(livingEntity, (LivingEntity) this.getOwner()))
                 .sorted(comparingDouble(livingEntity -> livingEntity.distanceToSqr(this)))
                 .toList();
 
@@ -182,13 +216,22 @@ public class FlamingSkull extends ProjectileProperties implements IEntityPropert
     @Override
     protected void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
+        pCompound.putDouble("damage", damage);
+        pCompound.putDouble("effect_duration", effectDuration);
+        pCompound.putDouble("effect_strength", effectStrength);
+        pCompound.putDouble("effect_chance", effectChance);
+//        pCompound.putDouble("lifetime", lifetime);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag pCompound) {
-        super.readAdditionalSaveData(pCompound);;
+        super.readAdditionalSaveData(pCompound);
+        this.damage = pCompound.getDouble("damage");
+        this.effectDuration = pCompound.getDouble("effect_duration");
+        this.effectStrength = pCompound.getDouble("effect_strength");
+        this.effectChance = pCompound.getDouble("effect_chance");
+//        this.lifetime = pCompound.getDouble("lifetime");
     }
-
 
     @Override
     public AbstractElement getElementType() {
@@ -197,13 +240,8 @@ public class FlamingSkull extends ProjectileProperties implements IEntityPropert
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(
-            new AnimationController<>(this,
-                state -> switch (this.animationType()) {
-                    default -> state.setAndContinue(IDLE_SKULL);
-                }
-            )
-        );
+        var animation = new AnimationController<>(this, state -> state.setAndContinue(IDLE_SKULL));
+        controllers.add(animation);
     }
 
     @Override
@@ -211,8 +249,5 @@ public class FlamingSkull extends ProjectileProperties implements IEntityPropert
         return this.geoCache;
     }
 
-    @Override
-    public WandAbilityHolder getwandabilityholder() {
-        return this.wandAbilityHolder;
-    }
+
 }

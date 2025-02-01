@@ -112,6 +112,7 @@ public class AbilityRegister {
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ARMAGEDDON = registerSpell(new ArmageddonAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> FIREBALL = registerSpell(new FireballAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> HELLFIRE = registerSpell(new HellfireAbility());
+    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> BURNING_SKULLS = registerSpell(new BurningSkullsAbility());
 
     //Mystic
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ARCANE_SHIFT = registerSpell(new ArcaneShiftAbility());
@@ -119,7 +120,6 @@ public class AbilityRegister {
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> QUANTUM_DESTROYER = registerSpell(new QuantumDestroyerAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> NOVA_SMASH = registerSpell(new NovaSmashAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> DIMENSIONAL_RECALL = registerSpell(new DimensionalRecallAbility());
-
 
     //Frost
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> PERMAFROST = registerSpell(new PermafrostAbility());
@@ -131,7 +131,6 @@ public class AbilityRegister {
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ESCAPE_DECOY = registerSpell(new EscapeDecoyAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> VITAL_REJUVENATION = registerSpell(new VitalRejuvenationAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> SUMMON_ANCIENT_GOLEM = registerSpell(new SummonAncientGolemAbility());
-
 
     //Utility
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> BLOCK_BOMB = registerSpell(new BlockBombAbility());

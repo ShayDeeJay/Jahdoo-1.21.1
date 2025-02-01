@@ -30,6 +30,7 @@ import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ModHelpers;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
+import java.util.List;
 import java.util.Objects;
 
 import static org.jahdoo.challenge.LevelGenerator.DimHandler.TRADING_POST;
@@ -119,16 +120,15 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void levelTickEvent(LevelTickEvent.Pre tickEvent){
-        if(tickEvent.getLevel() instanceof CustomLevel level){
-            for (var entity : level.getEntities().getAll()) {
-                if(entity instanceof Mob mob){
-                    if(mob.getTarget() == null) {
-                        mob.setTarget(ModHelpers.getRandomListElement(level.players()));
-                    }
+        if(!(tickEvent.getLevel() instanceof CustomLevel level)) return;
+        for (var entity : level.getEntities().getAll()) {
+            if(entity instanceof Mob mob && mob.getTarget() == null){
+                var players = level.players();
+                if(!players.isEmpty()){
+                    mob.setTarget(ModHelpers.getRandomListElement(players));
                 }
             }
         }
-
     }
 
     @SubscribeEvent

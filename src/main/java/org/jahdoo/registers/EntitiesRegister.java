@@ -3,7 +3,6 @@ package org.jahdoo.registers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.projectile.Arrow;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -115,9 +114,9 @@ public class EntitiesRegister {
                 .build("skeleton")
         );
 
-    public static final DeferredHolder<EntityType<?>, EntityType<FlamingSkull>> FLAMING_SKULL =
+    public static final DeferredHolder<EntityType<?>, EntityType<BurningSkull>> FLAMING_SKULL =
         ENTITY_TYPES.register(
-            "flaming_skull", () -> EntityType.Builder.<FlamingSkull>of(FlamingSkull::new, MobCategory.MISC)
+            "flaming_skull", () -> EntityType.Builder.<BurningSkull>of(BurningSkull::new, MobCategory.MISC)
                 .sized(0.8f, 0.8f)
                 .updateInterval(1)
                 .build("flaming_skull")

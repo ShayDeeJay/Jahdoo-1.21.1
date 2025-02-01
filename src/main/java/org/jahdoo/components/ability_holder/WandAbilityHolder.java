@@ -6,9 +6,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 
 public record WandAbilityHolder(Map<String, AbilityHolder> abilityProperties) {
 
@@ -18,6 +21,12 @@ public record WandAbilityHolder(Map<String, AbilityHolder> abilityProperties) {
         WandAbilityHolder::serialise,
         WandAbilityHolder::deserialise
     );
+
+    public static WandAbilityHolder getHolder(ItemStack itemStack){
+        var getHolder = itemStack.get(WAND_ABILITY_HOLDER);
+        if(getHolder != null) return getHolder;
+        return DEFAULT;
+    }
 
     private void serialise(FriendlyByteBuf friendlyByteBuf){
         friendlyByteBuf.writeMap(abilityProperties, ByteBufCodecs.STRING_UTF8, AbilityHolder.STREAM_CODEC);

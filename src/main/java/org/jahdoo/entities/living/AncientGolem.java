@@ -231,7 +231,7 @@ public class AncientGolem extends IronGolem implements TamableEntity {
                 var level = this.level();
                 var position = new Vec3(this.getRandomX(1), this.getRandomY(), this.getRandomZ(1));
                 var directions = this.position().subtract(position).normalize();
-                float y = 1f;
+                var y = 1f;
                 ParticleHandlers.sendParticles(
                     level,
                     getAllParticleTypes(element(), 12, 1f),
@@ -259,7 +259,7 @@ public class AncientGolem extends IronGolem implements TamableEntity {
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         var itemstack = player.getItemInHand(hand);
-        this.smash.start(this.tickCount);
+//        this.smash.start(this.tickCount);
 //        this.playSound(SoundRegister.DASH_EFFECT.get(), 1,1.8f);
 //        this.sonicBoomAnimationState.stop();
         if (!itemstack.is(ItemsRegister.AUGMENT_HYPER_CORE)) {

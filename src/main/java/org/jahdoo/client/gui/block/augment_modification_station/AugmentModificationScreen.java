@@ -104,7 +104,6 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         var compNew = components
             .subList(1, components.size()-2).stream().filter(component -> getAbilityModifiers(component, getTag).highestValue() != -1)
             .filter(component -> !component.equals(Component.literal(" ")) && !component.getString().contains("Unique"));
-//        compNew.filter(component -> !component.equals(Component.literal(" ")) && !component.getString().contains("Unique"));
         return compNew.toList();
     }
 

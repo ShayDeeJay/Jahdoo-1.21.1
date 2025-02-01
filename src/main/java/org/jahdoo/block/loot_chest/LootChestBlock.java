@@ -29,7 +29,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ability.rarity.JahdooRarity;
-import org.jahdoo.challenge.*;
 import org.jahdoo.items.KeyItem;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.*;
@@ -41,7 +40,6 @@ import java.util.List;
 
 import static org.jahdoo.challenge.RewardLootTables.*;
 import static org.jahdoo.challenge.RewardLootTables.attachItemData;
-import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.utils.ModHelpers.Random;
 import static org.jahdoo.utils.ModHelpers.getRandomColouredParticle;
 

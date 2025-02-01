@@ -33,6 +33,7 @@ public class AbilityBuilder {
     public static final String SIZE = "Block Size";
     public static final String OFFSET = "Offset";
     public static final String GRAVITATIONAL_PULL = "Gravitational Pull";
+    public static final String ENTITY_MULTIPLIER = "Shot Multiplier";
 
     private final ItemStack item;
     private final String abilityId;
@@ -191,6 +192,11 @@ public class AbilityBuilder {
 
     public AbilityBuilder setEffectChance(double high, double low, double step){
         this.setAbilityTagModifiersRandom(EFFECT_CHANCE, high, low, false, step);
+        return this;
+    }
+
+    public AbilityBuilder shotMultiplier(double high, double low, double step){
+        this.setAbilityTagModifiersRandom(ENTITY_MULTIPLIER, high, low, true, step);
         return this;
     }
 

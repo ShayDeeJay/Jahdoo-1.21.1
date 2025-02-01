@@ -2,39 +2,30 @@ package org.jahdoo.items.wand;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jahdoo.ability.AbstractElement;
-import org.jahdoo.ability.ProjectileProperties;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
-import org.jahdoo.entities.ElementProjectile;
-import org.jahdoo.entities.FlamingSkull;
-import org.jahdoo.entities.GenericProjectile;
+import org.jahdoo.entities.BurningSkull;
 import org.jahdoo.items.JahdooItem;
 import org.jahdoo.registers.*;
-import org.jahdoo.utils.ModHelpers;
-import org.jahdoo.utils.PositionGetters;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -53,13 +44,11 @@ import static net.minecraft.sounds.SoundEvents.ALLAY_THROW;
 import static net.minecraft.sounds.SoundEvents.EVOKER_PREPARE_SUMMON;
 import static net.minecraft.world.InteractionHand.*;
 import static org.jahdoo.ability.AbilityRegistrar.fireMultiShotProjectile;
-import static org.jahdoo.ability.AbilityRegistrar.offsetShoot;
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
 import static org.jahdoo.particle.ParticleHandlers.*;
 import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
 import static org.jahdoo.registers.DataComponentRegistry.*;
-import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
 import static org.jahdoo.registers.ElementRegistry.getElementFromWand;
 import static org.jahdoo.utils.ModHelpers.*;
 import static org.jahdoo.utils.ModHelpers.Random;
@@ -192,11 +181,6 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
-
-        if(level instanceof ServerLevel){
-            fireMultiShotProjectile(3, 0.35F, player, 1.8, () -> new FlamingSkull(player, 0));
-            return InteractionResultHolder.pass(item);
-        }
 
         if (canOffHand(player, interactionHand, true)) {
             player.startUsingItem(interactionHand);
