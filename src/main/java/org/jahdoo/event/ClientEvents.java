@@ -107,7 +107,6 @@ public class ClientEvents {
         if(allSlots.isEmpty()) return;
         var runeSockets = new RuneTooltipRenderer.RuneComponent(itemStack, allSlots);
 
-        e.getItemStack().getAttributeModifiers().withTooltip(false);
         current.add(current.size(), Either.right(runeSockets));
     }
 

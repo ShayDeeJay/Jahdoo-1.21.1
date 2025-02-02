@@ -1,12 +1,12 @@
-package org.jahdoo.client.gui.overlays;
+package org.jahdoo.client.overlays;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import org.jahdoo.client.SharedUI;
 import org.jahdoo.utils.ColourStore;
+import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,20 +14,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static net.minecraft.network.chat.Component.translatable;
 import static org.jahdoo.client.SharedUI.BORDER_COLOUR;
 import static org.jahdoo.utils.ModHelpers.*;
-import static org.jahdoo.utils.ModHelpers.withStyleComponent;
 
 public class OverlayHelpers {
 
-    static void attributeStats(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player) {
+    static void attributeStats(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player, int startX, int startY) {
         var attSpacer = new AtomicInteger();
         var syncableAttributes = player.getAttributes().getSyncableAttributes();
-        var startX = 14;
-        var startY = 14;
         var adjustForHeader = startY + 10;
         int size = 0;
         int maxWidth = 0;
-
-        if(!InputConstants.isKeyDown(minecraft.getWindow().getWindow(), InputConstants.KEY_TAB)) return;
 
         var jahdoo = "Jahdoo";
         pGuiGraphics.drawString(minecraft.font, jahdoo, startX, startY, ColourStore.OFF_WHITE);
@@ -65,7 +60,39 @@ public class OverlayHelpers {
             }
         }
 
-        SharedUI.boxMaker(pGuiGraphics, startX - 4, startY - 4, maxWidth/2 + 4, attSpacer.get()/2 + adjustForHeader/2 + 1  , BORDER_COLOUR);
+        SharedUI.boxMaker(pGuiGraphics, startX - 4, startY - 4, maxWidth/2 + 4, attSpacer.get()/2 + adjustForHeader/2 - 40, BORDER_COLOUR);
     }
 
+
+    static void jahdooStat(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player, int startX, int startY) {
+        var attSpacer = new AtomicInteger();
+        var syncableAttributes = player.getAttributes().getSyncableAttributes();
+        var adjustForHeader = startY + 10;
+
+        var jahdoo = "Jahdoo";
+        pGuiGraphics.drawCenteredString(minecraft.font, jahdoo, startX + 55, startY + 2, ColourStore.OFF_WHITE);
+        SharedUI.boxMaker(pGuiGraphics, startX - 4, startY - 4, 60, 10, BORDER_COLOUR);
+
+        for (AttributeInstance syncableAttribute : syncableAttributes) {
+            var modName = syncableAttribute.getAttribute().getRegisteredName().split(":", 2)[0];
+            if (syncableAttribute.getValue() > 0) {
+                if(modName.equals(jahdoo.toLowerCase())){
+                    var text = syncableAttribute.getAttribute().value().getDescriptionId();
+                    var prefix = ModHelpers.withStyleComponentTrans(text, ColourStore.HEADER_COLOUR);
+                    var readableValues = roundNonWholeString(tripleFormattedDouble(syncableAttribute.getValue()));
+                    var suffix = withStyleComponent(" " + readableValues, -9882);
+                    var string = prefix.copy().append(suffix);
+                    var splitText = minecraft.font.split(string, 90);
+                    var spacer = 0;
+                    for (var formattedCharSequence : splitText) {
+                        pGuiGraphics.drawCenteredString(minecraft.font, formattedCharSequence, startX + 56, adjustForHeader + 13 + attSpacer.get() + spacer, ColourStore.HEADER_COLOUR);
+                        spacer += 10;
+                    }
+                    SharedUI.boxMaker(pGuiGraphics, startX - 4, startY + 18 + attSpacer.get(), 60, 4 + spacer/2, BORDER_COLOUR);
+
+                    attSpacer.addAndGet(spacer == 10 ? 19 : 30);
+                }
+            }
+        }
+    }
 }

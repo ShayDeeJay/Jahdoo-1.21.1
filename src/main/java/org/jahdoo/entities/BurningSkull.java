@@ -244,6 +244,8 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         controllers.add(animation);
     }
 
+
+
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;

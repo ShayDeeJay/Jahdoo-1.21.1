@@ -6,7 +6,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.client.gui.overlays.ManaBarOverlay;
+import org.jahdoo.client.overlays.ManaBarOverlay;
 import org.jahdoo.utils.ModHelpers;
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

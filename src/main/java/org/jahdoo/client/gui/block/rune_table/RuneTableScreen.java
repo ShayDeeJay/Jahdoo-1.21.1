@@ -6,35 +6,27 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.block.rune_table.RuneTableEntity;
 import org.jahdoo.client.SharedUI;
-import org.jahdoo.client.gui.block.RuneSlot;
 import org.jahdoo.items.runes.RuneItem;
-import org.jahdoo.items.runes.rune_data.RuneData;
 import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.items.wand.WandItemHelper;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
 import static org.jahdoo.client.IconLocations.GUI_BUTTON;
 import static org.jahdoo.client.IconLocations.GUI_GENERAL_SLOT;
 import static org.jahdoo.client.SharedUI.*;
 import static org.jahdoo.utils.ColourStore.HEADER_COLOUR;
 import static org.jahdoo.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.utils.ModHelpers.filterList;
 import static org.jahdoo.utils.ModHelpers.withStyleComponent;
 
 public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
@@ -149,7 +141,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
                 default -> 20;
             };
 
-            renderEntityInInventoryFollowsMouse(guiGraphics, this.leftPos - 48, this.topPos, this.leftPos + 75, this.height / 2 + yOffset, 40, 0.0625F, mouseX, mouseY, stand);
+            renderEntityInInventoryFollowsMouse(guiGraphics, this.leftPos - 48, this.topPos, this.leftPos + 75, this.height / 2 + yOffset, 40, 0.0625F, mouseX, mouseY, stand,  320.0F);
         } else {
             SharedUI.renderItem(guiGraphics, width, height, getItem(), SCALED_ITEM, mouseX, mouseY, 16);
         }
@@ -228,41 +220,6 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
         hoverCarried(guiGraphics, mouseX, mouseY);
         this.isHovering = false;
-    }
-
-    public static void renderEntityInInventoryFollowsMouse(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int scale, float yOffset, float mouseX, float mouseY, LivingEntity entity) {
-        var f = (float)(x1 + x2) / 2.0F;
-        var f1 = (float)(y1 + y2) / 2.0F;
-        var f2 = (float)Math.atan((f - mouseX) / 320.0F);
-        var f3 = (float)Math.atan((f1 - mouseY) / 320.0F);
-        renderEntityInInventoryFollowsAngle(guiGraphics, x1, y1, x2, y2, scale, yOffset, f2, f3, entity);
-    }
-
-    public static void renderEntityInInventoryFollowsAngle(GuiGraphics guiGraphics, int i, int i1, int i2, int i3, int i4, float v, float angleXComponent, float angleYComponent, LivingEntity livingEntity) {
-        var f = (float)(i + i2) / 2.0F;
-        var f1 = (float)(i1 + i3) / 2.0F;
-        Quaternionf quaternionf = (new Quaternionf()).rotateZ((float)Math.PI);
-        Quaternionf quaternionfA = (new Quaternionf()).rotateX(angleYComponent * 20.0F * ((float)Math.PI / 180F));
-        quaternionf.mul(quaternionfA);
-        var f4 = livingEntity.yBodyRot;
-        var f5 = livingEntity.getYRot();
-        var f6 = livingEntity.getXRot();
-        var f7 = livingEntity.yHeadRotO;
-        var f8 = livingEntity.yHeadRot;
-        livingEntity.yBodyRot = 180.0F + angleXComponent * 20.0F;
-        livingEntity.setYRot(180.0F + angleXComponent * 40.0F);
-        livingEntity.setXRot(-angleYComponent * 20.0F);
-        livingEntity.yHeadRot = livingEntity.getYRot();
-        livingEntity.yHeadRotO = livingEntity.getYRot();
-        var f9 = livingEntity.getScale();
-        Vector3f vector3f = new Vector3f(0.0F, livingEntity.getBbHeight() / 2.0F + v * f9, 0.0F);
-        var f10 = (float)i4 / f9;
-        renderEntityInInventory(guiGraphics, f, f1, f10, vector3f, quaternionf, quaternionfA, livingEntity);
-        livingEntity.yBodyRot = f4;
-        livingEntity.setYRot(f5);
-        livingEntity.setXRot(f6);
-        livingEntity.yHeadRotO = f7;
-        livingEntity.yHeadRot = f8;
     }
 
     private int getPotential() {

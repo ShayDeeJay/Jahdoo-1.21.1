@@ -1,10 +1,10 @@
 package org.jahdoo.items.wand;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -22,8 +22,9 @@ import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
+import org.jahdoo.client.overlays.ChoiceSelectionScreen;
+import org.jahdoo.client.overlays.StatScreen;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
-import org.jahdoo.entities.BurningSkull;
 import org.jahdoo.items.JahdooItem;
 import org.jahdoo.registers.*;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +44,6 @@ import java.util.function.Consumer;
 import static net.minecraft.sounds.SoundEvents.ALLAY_THROW;
 import static net.minecraft.sounds.SoundEvents.EVOKER_PREPARE_SUMMON;
 import static net.minecraft.world.InteractionHand.*;
-import static org.jahdoo.ability.AbilityRegistrar.fireMultiShotProjectile;
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
 import static org.jahdoo.particle.ParticleHandlers.*;
@@ -181,6 +181,10 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
+
+        if(level.isClientSide){
+            Minecraft.getInstance().setScreen(new StatScreen());
+        }
 
         if (canOffHand(player, interactionHand, true)) {
             player.startUsingItem(interactionHand);

@@ -127,19 +127,6 @@ public class EventHelpers {
     public static void useRuneAttributesCurios(CurioAttributeModifierEvent event) {
         var item = event.getItemStack();
         var slotAttributes = item.get(RUNE_HOLDER.get());
-//        var player = event.getSlotContext().entity();
-//        var wandMods = player.getOffhandItem().getAttributeModifiers();
-//        var canOffhand = WandItem.canOffHand(player, InteractionHand.OFF_HAND, false);
-//        event.clearModifiers();
-//        if(canOffhand && item.getItem() instanceof BattlemageGauntlet){
-//            for (ItemAttributeModifiers.Entry modifier : wandMods.modifiers()) {
-//                try {
-//                    event.addModifier(modifier.attribute(), modifier.modifier());
-//                }        catch (Exception e){
-//                    JahdooMod.LOGGER.log(Level.ALL, e);
-//                }
-//            }
-//        }
 
         if(slotAttributes == null) return;
 

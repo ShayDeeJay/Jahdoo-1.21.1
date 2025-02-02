@@ -1,4 +1,4 @@
-package org.jahdoo.client.gui.overlays;
+package org.jahdoo.client.overlays;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.DeltaTracker;
@@ -23,9 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.minecraft.network.chat.Component.translatable;
 import static org.jahdoo.client.SharedUI.drawStringWithBackground;
-import static org.jahdoo.client.gui.overlays.OverlayHelpers.attributeStats;
 import static org.jahdoo.items.augments.AugmentItemHelper.ticksToTime;
 import static org.jahdoo.registers.AttachmentRegister.CASTER_DATA;
 
@@ -39,8 +37,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var minecraft = Minecraft.getInstance();
         var player = minecraft.player;
         if(player == null || minecraft.options.hideGui) return;
-
-        attributeStats(pGuiGraphics, minecraft, player);
 
         var manaBarWidth = 57;
         var abilityRegistrars = AbilityRegister.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));

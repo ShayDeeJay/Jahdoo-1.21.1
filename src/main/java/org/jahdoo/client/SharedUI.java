@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -26,11 +27,14 @@ import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.client.IconLocations.*;
 
@@ -367,10 +371,7 @@ public class SharedUI {
         var posX1 = (width - imageWithShrink) / 2 ;
         var posY1 = (height - imageWithShrink) / 2 - 150 + verticalOffset;
 
-        guiGraphics.blit(
-            GUI_GENERAL_SLOT,
-            posX, posY, 0, 0, localImageSize, localImageSize, localImageSize, localImageSize
-        );
+        guiGraphics.blit(GUI_GENERAL_SLOT, posX, posY, 0, 0, localImageSize, localImageSize, localImageSize, localImageSize);
 
         if(cachedItem == null) return;
         var abilityRegistrars = AbilityRegister.getSpellsByTypeId(DataComponentHelper.getAbilityTypeItemStack(cachedItem));
@@ -430,6 +431,41 @@ public class SharedUI {
                 slotAction.accept(slotX + 80, slotY + 50, i);
             }
         }
+    }
+
+    public static void renderEntityInInventoryFollowsMouse(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int scale, float yOffset, float mouseX, float mouseY, LivingEntity entity, float rotationSmoothing) {
+        var f = (float)(x1 + x2) / 2.0F;
+        var f1 = (float)(y1 + y2) / 2.0F;
+        var f2 = (float)Math.atan((f - mouseX) / rotationSmoothing);
+        var f3 = (float)Math.atan((f1 - mouseY) / rotationSmoothing);
+        renderEntityInInventoryFollowsAngle(guiGraphics, x1, y1, x2, y2, scale, yOffset, f2, f3, entity);
+    }
+
+    public static void renderEntityInInventoryFollowsAngle(GuiGraphics guiGraphics, int i, int i1, int i2, int i3, int i4, float v, float angleXComponent, float angleYComponent, LivingEntity livingEntity) {
+        var f = (float)(i + i2) / 2.0F;
+        var f1 = (float)(i1 + i3) / 2.0F;
+        Quaternionf quaternionf = (new Quaternionf()).rotateZ((float)Math.PI);
+        Quaternionf quaternionfA = (new Quaternionf()).rotateX(angleYComponent * 20.0F * ((float)Math.PI / 180F));
+        quaternionf.mul(quaternionfA);
+        var f4 = livingEntity.yBodyRot;
+        var f5 = livingEntity.getYRot();
+        var f6 = livingEntity.getXRot();
+        var f7 = livingEntity.yHeadRotO;
+        var f8 = livingEntity.yHeadRot;
+        livingEntity.yBodyRot = 180.0F + angleXComponent * 20.0F;
+        livingEntity.setYRot(180.0F + angleXComponent * 40.0F);
+        livingEntity.setXRot(-angleYComponent * 20.0F);
+        livingEntity.yHeadRot = livingEntity.getYRot();
+        livingEntity.yHeadRotO = livingEntity.getYRot();
+        var f9 = livingEntity.getScale();
+        Vector3f vector3f = new Vector3f(0.0F, livingEntity.getBbHeight() / 2.0F + v * f9, 0.0F);
+        var f10 = (float)i4 / f9;
+        renderEntityInInventory(guiGraphics, f, f1, f10, vector3f, quaternionf, quaternionfA, livingEntity);
+        livingEntity.yBodyRot = f4;
+        livingEntity.setYRot(f5);
+        livingEntity.setXRot(f6);
+        livingEntity.yHeadRotO = f7;
+        livingEntity.yHeadRot = f8;
     }
 
     public static void drawStringWithBackground(GuiGraphics guiGraphics, Font pFont, Component pText, int pX, int pY, int backgroundColour, int textColour, boolean isCentered) {
