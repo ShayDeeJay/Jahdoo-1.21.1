@@ -70,8 +70,10 @@ public class MobItemHandler {
                 if (round > 60) acceptableArrows.add(Potions.SLOWNESS);
                 if (round > 75) acceptableArrows.add(Potions.WEAVING);
                 if (round > 90) acceptableArrows.add(Potions.HARMING);
-                var getPotion = acceptableArrows.get(Random.nextInt(0, acceptableArrows.size()));
-                normalArrow.set(DataComponents.POTION_CONTENTS, new PotionContents(getPotion));
+                if(!acceptableArrows.isEmpty()){
+                    var getPotion = acceptableArrows.get(Random.nextInt(0, acceptableArrows.size()));
+                    normalArrow.set(DataComponents.POTION_CONTENTS, new PotionContents(getPotion));
+                }
                 return normalArrow;
             }
         }

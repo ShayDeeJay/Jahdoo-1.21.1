@@ -33,21 +33,15 @@ public abstract class ItemRenderMixin {
 
     @Shadow public abstract void renderStatic(ItemStack stack, ItemDisplayContext displayContext, int combinedLight, int combinedOverlay, PoseStack poseStack, MultiBufferSource bufferSource, @Nullable Level level, int seed);
 
-    @Shadow @Final private Minecraft minecraft;
-
     @Inject(
         method = "render",
-        at = @At(
-            value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V"
-        )
+        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V")
     )
     public void overlayStuff(ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, BakedModel p_model, CallbackInfo ci){
         ModHelpers.itemOverlay(itemStack, displayContext,poseStack,
             (itemStack1) -> this.renderStatic(itemStack1, displayContext, combinedLight, combinedOverlay, poseStack, bufferSource, Minecraft.getInstance().level, 0)
         );
     }
-
 
 
 }

@@ -215,7 +215,7 @@ public class SharedUI {
             var x = (screen.width - IMAGE_SIZE) / 2;
             var y = (screen.height - IMAGE_SIZE) / 2;
             guiGraphics.blit(
-                ModHelpers.res("textures/gui/wand_gui.png"),
+                WAND_GUI,
                 x, y + yOffset - 44,
                 0, 0, IMAGE_SIZE, IMAGE_SIZE
             );

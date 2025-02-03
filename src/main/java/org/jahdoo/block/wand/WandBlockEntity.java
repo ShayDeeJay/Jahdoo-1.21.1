@@ -11,6 +11,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.ability.AbstractElement;
@@ -69,13 +70,15 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
         for (String key : storedAbilities.abilitySet()) {
             var abilityRegistrars = AbilityRegister.getSpellsByTypeId(key);
             if (!abilityRegistrars.isEmpty()) {
+                var ability = abilityRegistrars.getFirst();
                 var itemStack = new ItemStack(ItemsRegister.AUGMENT_ITEM.get());
                 itemStack.set(NUMBER, 4);
                 var abilityHolder = actualAbilities.abilityProperties().get(key);
-                setAbilityToAugment(itemStack, abilityRegistrars.getFirst(), actualAbilities);
+                setAbilityToAugment(itemStack, ability, actualAbilities);
                 var newHolder = new WandAbilityHolder(new LinkedHashMap<>());
                 newHolder.abilityProperties().put(key, abilityHolder);
                 itemStack.set(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), newHolder);
+                itemStack.set(DataComponentRegistry.JAHDOO_RARITY, ability.rarity().getId());
                 this.inputItemHandler.setStackInSlot(integer.get(), itemStack);
 
             } else {

@@ -1,6 +1,7 @@
 package org.jahdoo.ability.abilities.ability_data;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbilityBuilder;
@@ -14,7 +15,10 @@ import org.jahdoo.registers.SoundRegister;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.utils.ModHelpers;
 
+import java.util.ArrayList;
+
 import static org.jahdoo.ability.AbilityBuilder.ENTITY_MULTIPLIER;
+import static org.jahdoo.components.DataComponentHelper.*;
 
 public class BurningSkullsAbility extends AbilityRegistrar {
     public static final ResourceLocation abilityId = ModHelpers.res("burning_skulls");
@@ -22,10 +26,33 @@ public class BurningSkullsAbility extends AbilityRegistrar {
     @Override
     public void invokeAbility(Player player) {
         var itemInHand = player.getItemInHand(player.getUsedItemHand());
-        var numberOfProjectile = DataComponentHelper.getSpecificValue(player, itemInHand, ENTITY_MULTIPLIER);
-        var adjustSpread = 1.8 - (numberOfProjectile / 4);
-        player.playSound(SoundRegister.ORB_FIRE.get(), 1, 0.85F);
-        fireMultiShotProjectile((int) numberOfProjectile, 0.35F, player, adjustSpread, () -> new BurningSkull(player, 0));
+        var projectileCount = getSpecificValue(player, itemInHand, ENTITY_MULTIPLIER);
+        var adjustSpread = 1.8 - (projectileCount / 4);
+        infernoSoundEffect(player);
+        var getLocalEntities = new ArrayList<>(BurningSkull.getValidTargets(player, player, 10));
+
+        var totalWidth = (projectileCount - 1) * adjustSpread; // Adjust the total width as needed
+        var startOffset = -totalWidth / 2.0;
+
+        if(!player.level().isClientSide){
+            System.out.println(getLocalEntities);
+            for (int i = 0; i < projectileCount; i++) {
+                var isValid = !getLocalEntities.isEmpty();
+                var skull = new BurningSkull(player, 0, isValid ? getLocalEntities.getFirst() : null);
+                if (isValid) getLocalEntities.removeFirst();
+
+                var offset = projectileCount == 1 ? 0 : startOffset + i * (totalWidth / (projectileCount - 1));
+                var directionOffset = calculateDirectionOffset(player, offset);
+                var direction = player.getLookAngle().add(directionOffset).normalize();
+                fireProjectileDirection(skull, player, 0.3F, direction);
+            }
+            System.out.println(getLocalEntities);
+        }
+    }
+
+    public static void infernoSoundEffect(Player player) {
+        player.playSound(SoundRegister.HEAL.get(), 1, 0.65F);
+        player.playSound(SoundEvents.FIRECHARGE_USE, 1, 0.65F);
     }
 
     @Override

@@ -183,7 +183,9 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         var item = player.getItemInHand(interactionHand);
 
         if(level.isClientSide){
-            Minecraft.getInstance().setScreen(new StatScreen());
+//            Minecraft.getInstance().setScreen(new ChoiceSelectionScreen());
+//            return InteractionResultHolder.pass(item);
+
         }
 
         if (canOffHand(player, interactionHand, true)) {

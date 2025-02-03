@@ -30,6 +30,7 @@ public class FireballAbility extends AbilityRegistrar {
                 abilityId.getPath().intern()
             )
         );
+        BurningSkullsAbility.infernoSoundEffect(player);
     }
 
     @Override

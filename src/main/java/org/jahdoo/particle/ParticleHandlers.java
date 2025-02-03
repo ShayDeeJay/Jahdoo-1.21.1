@@ -330,7 +330,7 @@ public class ParticleHandlers {
     }
 
     public static GenericParticleOptions genericParticleOptions(int type, AbstractElement element, int lifetime, float size){
-        return new GenericParticleOptions(type, element.particleColourPrimary(), element.particleColourFaded(), lifetime,size,false, 1);
+        return new GenericParticleOptions(type, element.textColourSecondary(), element.textColourSecondary(), lifetime,size,false, 1);
     }
 
     public static BakedParticleOptions bakedParticleOptions(int type, int lifetime, float size, boolean setStaticSize){

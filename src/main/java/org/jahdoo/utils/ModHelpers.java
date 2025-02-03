@@ -3,6 +3,7 @@ package org.jahdoo.utils;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.TypedDataComponent;
@@ -80,6 +81,32 @@ public class ModHelpers {
 //                }
 //            }
 //        }
+    }
+
+    public static int getScreens(Player player, int base, int add){
+        if(player.level().isClientSide){
+            var screen = Minecraft.getInstance().screen;
+            System.out.println(screen);
+            if(screen != null) {
+                System.out.println("deeper");
+                return base + add;
+            }
+        }
+        return base;
+    }
+
+
+    public static Color getCyclicColorVariant(int baseColor, int ticker, double range, double transitionDelay) {
+        int red = (baseColor >> 16) & 0xFF;
+        int green = (baseColor >> 8) & 0xFF;
+        int blue = baseColor & 0xFF;
+
+        double phase = Math.sin(ticker / transitionDelay);
+        int variantRed = (int) Math.min(Math.max(red + phase * range, 0.0), 255.0);
+        int variantGreen = (int) Math.min(Math.max(green + phase * range, 0.0), 255.0);
+        int variantBlue = (int) Math.min(Math.max(blue + phase * range, 0.0), 255.0);
+
+        return new Color(variantRed, variantGreen, variantBlue);
     }
 
     public static double getAttributeValue(Player player, Holder<Attribute> attribute){

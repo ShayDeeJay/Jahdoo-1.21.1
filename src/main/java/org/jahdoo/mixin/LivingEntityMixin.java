@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import static org.jahdoo.registers.EffectsRegister.*;
+import static org.jahdoo.registers.ElementRegistry.*;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
@@ -24,30 +25,20 @@ public abstract class LivingEntityMixin extends Entity {
     @Override
     public int getTeamColor() {
         int color = super.getTeamColor();
+
         if (this.hasEffect(MYSTIC_EFFECT)) {
-            color = ElementRegistry.MYSTIC.get().particleColourPrimary();
-        }
-
-        if (this.hasEffect(INFERNO_EFFECT)) {
-            color = ElementRegistry.INFERNO.get().particleColourPrimary();
-        }
-
-        if (this.hasEffect(FROST_EFFECT)) {
-            color = ElementRegistry.FROST.get().particleColourPrimary();
-        }
-
-        if (this.hasEffect(LIGHTNING_EFFECT)) {
-            color = ElementRegistry.LIGHTNING.get().particleColourPrimary();
-        }
-
-        if (this.hasEffect(VITALITY_EFFECT)) {
-            color = ElementRegistry.VITALITY.get().particleColourPrimary();
+            color = MYSTIC.get().textColourPrimary();
+        } else if (this.hasEffect(INFERNO_EFFECT)) {
+            color = INFERNO.get().textColourPrimary();
+        } else if (this.hasEffect(FROST_EFFECT)) {
+            color = FROST.get().textColourPrimary();
+        } else if (this.hasEffect(LIGHTNING_EFFECT)) {
+            color = LIGHTNING.get().textColourPrimary();
+        } else if (this.hasEffect(VITALITY_EFFECT)) {
+            color = VITALITY.get().textColourPrimary();
         }
 
         return color;
     }
 
-    private static int getElementColour(DeferredHolder<AbstractElement, AbstractElement> element){
-        return element.get().textColourPrimary();
-    }
 }

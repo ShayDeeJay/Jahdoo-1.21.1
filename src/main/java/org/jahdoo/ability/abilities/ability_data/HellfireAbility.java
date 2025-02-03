@@ -20,6 +20,7 @@ public class HellfireAbility extends AbilityRegistrar {
     public void invokeAbility(Player player) {
         AoeCloud aoeCloud = new AoeCloud(player.level(), player, 0.3f, EntityPropertyRegister.HELLFIRE.get().setAbilityId(), abilityId.getPath().intern());
         aoeCloud.setPos(player.getX(), player.getY(), player.getZ());
+        BurningSkullsAbility.infernoSoundEffect(player);
         player.level().addFreshEntity(aoeCloud);
     }
 

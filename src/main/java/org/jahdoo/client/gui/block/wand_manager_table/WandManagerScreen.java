@@ -264,17 +264,8 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var carried = this.hoveredSlot == null || hoveredSlot.getItem().isEmpty() ? wandManager.getCarried() : hoveredSlot.getItem();
         if(carried.getItem() instanceof RuneItem){
             var getTooltip = this.getTooltipFromContainerItem(carried);
-            if(!(hoveredSlot instanceof RuneSlot) || !wandManager.getCarried().isEmpty()){
-                getTooltip.add(Component.empty());
-                var carriedRuneCost = String.valueOf(RuneData.RuneHelpers.getCostFromRune(carried));
-                var carriedCostComponent = withStyleComponent(carriedRuneCost, -1);
-                var potentialCostPreFix = withStyleComponent("Potential Cost: ", ColourStore.HEADER_COLOUR);
-                getTooltip.add(potentialCostPreFix.copy().append(carriedCostComponent));
-            }
             if (!carried.isEmpty()) {
                 guiGraphics.renderTooltip(font, getTooltip, Optional.empty(), x, y);
-//            guiGraphics.renderTooltip(font, getTooltip, x, y);
-//            guiGraphics.renderTooltip(font, getTooltip, x, y);
             }
         }
     }

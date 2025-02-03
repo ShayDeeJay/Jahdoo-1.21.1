@@ -40,7 +40,6 @@ public abstract class ItemEntityMixin {
         ),
         cancellable = true
     )
-
     private void onItemInteraction(Player player, CallbackInfo ci){
         ItemStack item = this.getItem();
         if(this.pickupDelay == 0 && (this.target == null || this.target.equals(player.getUUID()))){

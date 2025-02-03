@@ -7,13 +7,16 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.ProjectileProperties;
 import org.jahdoo.ability.abilities.ability_data.BurningSkullsAbility;
@@ -25,11 +28,14 @@ import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.List;
 
 import static java.util.Comparator.*;
 import static org.jahdoo.ability.AbilityBuilder.*;
@@ -53,16 +59,19 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
     double effectDuration;
     double effectStrength;
     double effectChance;
-
+    private float bobOffset = 0; // This will keep track of the bob progress
     public BurningSkull(EntityType<? extends Projectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+        this.setLifetimes(-1);
     }
 
     public BurningSkull(
         LivingEntity owner,
-        double spacing
+        double spacing,
+        @Nullable LivingEntity target
     ) {
         super(EntitiesRegister.FLAMING_SKULL.get(), owner.level());
+        if(target != null) this.target = target;
         this.setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
@@ -76,6 +85,10 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         } else {
             damageWithModifiers(holder);
         }
+    }
+
+    public void setTarget(LivingEntity livingEntity){
+        this.target = livingEntity;
     }
 
     public int getLifetime() {
@@ -101,8 +114,6 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
-        System.out.println(tickCount);
-        System.out.println(getLifetime());
         setTargetDelay();
         ambientSound();
         entityMovement();
@@ -162,6 +173,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
     }
 
     private void discardTime(){
+        if(getLifetime() < 0) return;
         if(this.tickCount > getLifetime()) discardTask();
     }
 
@@ -196,14 +208,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
     public void setTarget() {
         var isTargetDead = target != null && !target.isAlive();
         if(this.target == null || isTargetDead) {
-            var bound = this.getBoundingBox().inflate(20);
-            var nearbyEntities = this.level()
-                .getEntitiesOfClass(LivingEntity.class, bound)
-                .stream()
-                .filter(livingEntity -> !(livingEntity instanceof Player))
-                .filter(livingEntity -> canDamageEntity(livingEntity, (LivingEntity) this.getOwner()))
-                .sorted(comparingDouble(livingEntity -> livingEntity.distanceToSqr(this)))
-                .toList();
+            var nearbyEntities = getValidTargets(this, (LivingEntity) this.getOwner(), 20);
 
             if(!nearbyEntities.isEmpty()){
                 var getClosest = nearbyEntities.getFirst();
@@ -211,6 +216,16 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
                 if(canSee) this.target = getClosest;
             }
         }
+    }
+
+    public static List<LivingEntity> getValidTargets(Entity entity, LivingEntity owner, int range) {
+        return entity.level()
+                .getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(range))
+                .stream()
+                .filter(livingEntity -> !(livingEntity instanceof Player))
+                .filter(livingEntity -> canDamageEntity(livingEntity, owner))
+                .sorted(comparingDouble(livingEntity -> livingEntity.distanceToSqr(entity)))
+                .toList();
     }
 
     @Override

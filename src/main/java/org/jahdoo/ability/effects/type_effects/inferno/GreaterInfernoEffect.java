@@ -61,8 +61,8 @@ public class GreaterInfernoEffect extends MobEffect {
         var directions = positionScrambler.subtract(livingEntity.position()).normalize();
         var lifetime = 4;
         var size = ModHelpers.Random.nextDouble(0.2, 0.4);
-        var col1 = element.particleColourPrimary();
-        var col2 = element.particleColourSecondary();
+        var col1 = element.textColourPrimary();
+        var col2 = element.textColourSecondary();
         var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, (float) (size - 0.2), col1, col2, true);
         var randomSpeed = ModHelpers.Random.nextDouble(0.1, 0.3);
 

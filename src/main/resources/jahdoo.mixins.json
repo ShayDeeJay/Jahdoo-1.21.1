@@ -6,6 +6,7 @@
   "mixins": [
     "ArrowMixin",
     "DisableSpinAttackLayerMixin",
+    "InventoryMixin",
     "ItemEntityMixin",
     "LivingEntityMixin",
     "PlayerSpinAttackMixin"
