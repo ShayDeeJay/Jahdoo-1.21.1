@@ -16,11 +16,11 @@ import org.jahdoo.utils.ModHelpers;
 public class FrostboltsAbility extends AbilityRegistrar {
     public static final ResourceLocation abilityId = ModHelpers.res("frostbolts");
     public static final String NUMBER_OF_PROJECTILES = "Total Arrows";
+
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
     }
-
 
     @Override
     public void setModifiers(ItemStack itemStack) {
@@ -64,18 +64,12 @@ public class FrostboltsAbility extends AbilityRegistrar {
     @Override
     public void invokeAbility(Player player) {
         if(player != null){
-            GenericProjectile elementProjectile = new GenericProjectile(
-                player, 0,
-                EntityPropertyRegister.FROST_BOLT.get().setAbilityId(),
-                abilityId.getPath().intern(),
-                this.getElemenType()
-            );
-//            Vec3 direction = player.getLookAngle();
-//            elementProjectile.shoot(direction.x(), direction.y(), direction.z(), 100f, 0);
+            var projSelect = EntityPropertyRegister.FROST_BOLT.get().setAbilityId();
+            var id = abilityId.getPath().intern();
+            var elementProjectile = new GenericProjectile(player, 0, projSelect, id, this.getElemenType());
             elementProjectile.setOwner(player);
             elementProjectile.setInvisible(true);
-            elementProjectile.getElementType();
-            this.fireProjectileNoSound(elementProjectile, player, 100f);
+            fireProjectileNoSound(elementProjectile, player, 100f);
             player.level().addFreshEntity(elementProjectile);
         }
     }

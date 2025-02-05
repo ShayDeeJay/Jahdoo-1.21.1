@@ -32,6 +32,7 @@ import static org.jahdoo.client.SharedUI.BORDER_COLOUR;
 import static org.jahdoo.client.gui.ToggleComponent.textWithBackgroundLarge;
 import static org.jahdoo.items.augments.AugmentItemHelper.getModifierContextSingle;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.utils.Maths.roundNonWholeString;
 
 public class AugmentScreen extends Screen  {
     private WandAbilityHolder holder;
@@ -71,7 +72,7 @@ public class AugmentScreen extends Screen  {
     private void displayButtons(LinkedHashMap<String, AbilityHolder.AbilityModifiers> copy1, AtomicInteger verticalSpacing) {
         copy1.forEach(
             (e, v) -> {
-                var value = getModifierContextSingle(e, ModHelpers.roundNonWholeString(v.setValue()), 1).getString();
+                var value = getModifierContextSingle(e, roundNonWholeString(v.setValue()), 1).getString();
                 buildCarouselComponent(
                     this.width/2 - 70, verticalSpacing.get(), e, ()-> buttonReduce(e, v), ()-> buttonIncrease(e,v), value
                 );

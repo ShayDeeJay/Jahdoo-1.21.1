@@ -47,5 +47,7 @@ public class ServerBusEvents {
         event.put(EntitiesRegister.CUSTOM_ZOMBIE.get(), CustomZombie.createMobAttributes().build());
         event.put(EntitiesRegister.CUSTOM_SKELETON.get(), CustomSkeleton.createMobAttributes().build());
         event.put(EntitiesRegister.ANCIENT_GOLEM.get(), AncientGolem.createAttributes().build());
+        event.put(EntitiesRegister.VOID_SPIDER.get(), VoidSpider.createMain().build());
+        event.put(EntitiesRegister.VOID_SPIDER_SPAWN.get(), VoidSpider.createBaby().build());
     }
 }

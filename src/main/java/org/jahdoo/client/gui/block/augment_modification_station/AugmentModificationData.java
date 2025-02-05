@@ -14,7 +14,7 @@ import org.jahdoo.registers.ElementRegistry;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import static org.jahdoo.utils.ModHelpers.doubleFormattedDouble;
+import static org.jahdoo.utils.Maths.doubleFormattedDouble;
 
 public class AugmentModificationData {
     public static void updateAugmentConfig(String e, AbilityHolder.AbilityModifiers v, double i, String abilityName, WandAbilityHolder holder, Consumer<WandAbilityHolder> holderExe, AbstractBEInventory user) {

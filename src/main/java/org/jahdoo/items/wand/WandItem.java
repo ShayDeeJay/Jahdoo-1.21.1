@@ -3,6 +3,7 @@ package org.jahdoo.items.wand;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
@@ -11,7 +12,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -27,6 +32,7 @@ import org.jahdoo.client.overlays.StatScreen;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.items.JahdooItem;
 import org.jahdoo.registers.*;
+import org.jahdoo.utils.Maths;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -46,6 +52,7 @@ import static net.minecraft.sounds.SoundEvents.EVOKER_PREPARE_SUMMON;
 import static net.minecraft.world.InteractionHand.*;
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
+import static org.jahdoo.items.wand.WandItemHelper.*;
 import static org.jahdoo.particle.ParticleHandlers.*;
 import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
 import static org.jahdoo.registers.DataComponentRegistry.*;
@@ -59,11 +66,11 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     public String location;
 
     public static Properties wandProperties(){
-        return new Properties()
-            .stacksTo(1)
-            .component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
-            .component(WAND_DATA.get(), WandData.DEFAULT)
-            .fireResistant();
+        return new Item.Properties()
+                .stacksTo(1)
+                .component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
+                .component(WAND_DATA.get(), WandData.DEFAULT)
+                .fireResistant();
     }
 
     public WandItem(String location) {
@@ -84,55 +91,12 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 
     @Override
     public InteractionResult place(BlockPlaceContext pContext) {
-        var clickedPos = pContext.getClickedPos();
-        var player = pContext.getPlayer();
-        var level = pContext.getLevel();
-        var itemStack = pContext.getItemInHand();
-
-        if (player == null || !player.isShiftKeyDown() || !player.onGround()) return InteractionResult.PASS;
-        if(!pContext.getLevel().getBlockState(clickedPos).isEmpty()) return InteractionResult.FAIL;
-
-        level.setBlockAndUpdate(clickedPos, BlocksRegister.WAND.get().defaultBlockState());
-        var blockEntity = level.getBlockEntity(clickedPos);
-        if (!(blockEntity instanceof WandBlockEntity wandBlockEntity)) return InteractionResult.FAIL;
-        var copiedWand = itemStack.copyWithCount(1);
-
-        playPlaceSound(level, pContext.getClickedPos());
-        player.setItemInHand(pContext.getHand(), ItemStack.EMPTY);
-        wandBlockEntity.inputItemHandler.setStackInSlot(GET_WAND_SLOT, copiedWand);
-        wandBlockEntity.updateView();
-        var getType = getElementFromWand(wandBlockEntity.getWandItemFromSlot().getItem());
-
-        if(getType.isPresent()){
-            var element = getType.get();
-            var par1 = bakedParticleOptions(element.getTypeId(), 10, 1f, false);
-            var par2 = genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 10, 1f, false, 0.3);
-            getInnerRingOfRadiusRandom(clickedPos, 0.1, 20,
-                positions -> this.placeParticle(level, positions, Random.nextInt(0, 3) == 0 ? par1 : par2)
-            );
-        }
-        return InteractionResult.SUCCESS;
-    }
-
-    public void placeParticle(Level level, Vec3 pos, ParticleOptions par1){
-        var randomY = Random.nextDouble(0.1 , 0.2);
-        var randomStartY = Random.nextDouble(0.05, 0.5);
-        level.addParticle(par1, pos.x, pos.y - randomStartY, pos.z, 0, randomY, 0);
+        return onPlace(pContext);
     }
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return false;
-    }
-
-    @Override
-    protected @NotNull SoundEvent getPlaceSound(BlockState state, Level world, BlockPos pos, Player entity) {
-        return SoundEvents.EMPTY;
-    }
-
-    public void playPlaceSound(Level level, BlockPos bPos){
-        getSoundWithPosition(level, bPos, ALLAY_THROW, 1, 0.8f);
-        getSoundWithPosition(level, bPos, EVOKER_PREPARE_SUMMON, 0.4f, 1.6f);
     }
 
     @Override
@@ -147,25 +111,19 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         validateRuneHand(itemStack, player, interactState, isItemInMain, isItemInOff);
     }
 
-    private static void validateRuneHand(
-        ItemStack itemStack,
-        Player player,
-        Integer interactState,
-        boolean isItemInMain,
-        boolean isItemInOff
-    ) {
-        var hand = INTERACTION_HAND;
-        if(interactState != null){
-
-            if(isItemInMain){
-                if(interactState != 0) itemStack.set(hand, 0);
-            } else if (isItemInOff && canOffHand(player, OFF_HAND, false)) {
-                if(interactState != 1) itemStack.set(hand, 1);
-            } else {
-                if(interactState != 2) itemStack.set(hand, 2);
-            }
-
-        } else itemStack.set(hand, 2);
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
+        if(!interactionTarget.level().isClientSide){
+            var maxHealth = Attributes.MAX_HEALTH;
+//            interactionTarget.getAttributes().getInstance(maxHealth).setBaseValue(200);
+            System.out.println(interactionTarget.getAttributes().getValue(maxHealth));
+            System.out.println(interactionTarget.getHealth());
+//            System.out.println(interactionTarget.getAttributes().getInstance(Attributes.MAX_HEALTH).setBaseValue(200));
+//            for (var syncableAttribute : interactionTarget.getAttributes().getInstance().) {
+//                System.out.println(interactionTarget.getAttributes().getValue(syncableAttribute.getAttribute()));
+//            }
+        }
+        return super.interactLivingEntity(stack, player, interactionTarget, usedHand);
     }
 
     @Override
@@ -182,10 +140,18 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
 
-        if(level.isClientSide){
+        if(!level.isClientSide){
 //            Minecraft.getInstance().setScreen(new ChoiceSelectionScreen());
 //            return InteractionResultHolder.pass(item);
-
+            var getEntity = EntityType.ZOMBIE.create(level);
+            var maxHealth = Attributes.MAX_HEALTH;
+            var instance = getEntity.getAttributes().getInstance(maxHealth);
+//            System.out.println(instance.getValue());
+//            instance.setBaseValue(25);
+//            System.out.println(getEntity.getHealth());
+//
+//            getEntity.moveTo(player.position());
+//            level.addFreshEntity(getEntity);
         }
 
         if (canOffHand(player, interactionHand, true)) {
@@ -195,37 +161,6 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         }
 
         return InteractionResultHolder.fail(player.getOffhandItem());
-    }
-
-    public static boolean canOffHand(
-        LivingEntity entity,
-        InteractionHand interactionHand,
-        boolean shouldSendMessage
-    ){
-        var curio = CuriosApi.getCuriosInventory(entity);
-
-        if(interactionHand == OFF_HAND){
-            if(curio.isEmpty()) return false;
-
-            var isGauntletEquipped = curio.get().isEquipped(ItemsRegister.BATTLEMAGE_GAUNTLET.get());
-            if(isGauntletEquipped) return true;
-
-            if(shouldSendMessage){
-                var item = entity.getItemInHand(interactionHand).getItem();
-                getElementFromWand(item).ifPresent(element -> sendCantUseMessage(entity, element));
-            }
-
-            return false;
-        }
-
-        return true;
-    }
-
-    private static void sendCantUseMessage(LivingEntity entity, AbstractElement abstractElement) {
-        var text = "You don't have the power to offhand this yet.";
-        var colour = abstractElement.textColourPrimary();
-        var sendMessage = withStyleComponent(text, colour);
-        if (entity instanceof Player player) player.displayClientMessage(sendMessage, true);
     }
 
     public JahdooRarity getRarity(){

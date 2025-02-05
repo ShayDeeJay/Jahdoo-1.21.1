@@ -20,9 +20,8 @@ public class KeyBindHelper {
         }
     }
 
-    public static void QuickSelectBehaviour(Player player, Minecraft instance) {
+    public static void quickSelectBehaviour(Player player, Minecraft instance) {
         if(player != null && player.getItemInHand(player.getUsedItemHand()).getItem() instanceof WandItem){
-
             if(Configuration.QUICK_SELECT.get()){
                 if(KeyBinding.QUICK_SELECT.isDown()){
                     if(!(instance.screen instanceof AbilityWheelMenu) && !(instance.screen instanceof AugmentScreen)){

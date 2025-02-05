@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import org.jahdoo.entities.living.VoidSpider;
 import org.jahdoo.items.wand.WandItem;
 
 import java.util.EnumSet;
@@ -33,10 +34,6 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
         this.attackIntervalMin = pAttackCooldown;
     }
 
-    /**
-     * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-     * method as well.
-     */
     public boolean canUse() {
         return this.mob.getTarget() != null && this.isHoldingWand();
     }
@@ -45,24 +42,15 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
         return this.mob.isHolding(is -> is.getItem() instanceof WandItem);
     }
 
-    /**
-     * Returns whether an in-progress EntityAIBase should continue executing
-     */
     public boolean canContinueToUse() {
-        return (this.canUse() || !this.mob.getNavigation().isDone()) && this.isHoldingWand();
+        return (this.canUse() || !this.mob.getNavigation().isDone()) && this.isHoldingWand() || this.mob instanceof VoidSpider;
     }
 
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
     public void start() {
         super.start();
         this.mob.setAggressive(true);
     }
 
-    /**
-     * Reset the task's internal state. Called when this task is interrupted by another one
-     */
     public void stop() {
         super.stop();
         this.mob.setAggressive(false);
@@ -75,12 +63,10 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
         return true;
     }
 
-    /**
-     * Keep ticking a continuous task that has already been started
-     */
     public void tick() {
         var livingentity = this.mob.getTarget();
         if (livingentity != null) {
+
             var d0 = this.mob.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
             var flag = this.mob.getSensing().hasLineOfSight(livingentity);
             var flag1 = this.seeTime > 0;
@@ -125,7 +111,7 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
                 this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
             }
 
-            if (this.mob.isUsingItem()) {
+            if (this.mob.isUsingItem() || this.mob instanceof VoidSpider) {
                 if (!flag && this.seeTime < -60) {
                     this.mob.stopUsingItem();
                 } else if (flag) {

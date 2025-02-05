@@ -20,6 +20,7 @@ import org.jahdoo.registers.ElementRegistry;
 
 import java.util.Objects;
 
+import static org.jahdoo.items.wand.WandItemHelper.canOffHand;
 import static org.jahdoo.registers.ElementRegistry.*;
 import static org.jahdoo.utils.ModHelpers.*;
 
@@ -54,7 +55,7 @@ public class ElementalSword extends SwordItem {
 
     @Override
     public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        var canOffhand = WandItem.canOffHand(attacker, InteractionHand.OFF_HAND, false);
+        var canOffhand = canOffHand(attacker, InteractionHand.OFF_HAND, false);
         var getWand = attacker.getOffhandItem().getItem();
 
         getElementFromWand(getWand).ifPresent(

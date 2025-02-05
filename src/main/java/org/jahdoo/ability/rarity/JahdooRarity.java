@@ -37,9 +37,8 @@ import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.getRuneData;
 import static org.jahdoo.items.augments.AugmentItemHelper.setAbilityToAugment;
 import static org.jahdoo.registers.AttributesRegister.*;
 import static org.jahdoo.registers.DataComponentRegistry.JAHDOO_RARITY;
-import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
+import static org.jahdoo.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.utils.ModHelpers.*;
-import static org.jahdoo.utils.ModHelpers.singleFormattedDouble;
 
 @IndexedEnum
 public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {

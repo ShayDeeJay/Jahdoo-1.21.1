@@ -63,7 +63,6 @@ public class MobItemHandler {
         ItemStack normalArrow;
         if(Random.nextInt(0, 30) == 0){
             if (round >= 30) {
-                normalArrow = new ItemStack(Items.TIPPED_ARROW);
                 var acceptableArrows = new ArrayList<Holder<Potion>>();
                 if (round > 30) acceptableArrows.add(Potions.WEAKNESS);
                 if (round > 45) acceptableArrows.add(Potions.POISON);
@@ -71,28 +70,33 @@ public class MobItemHandler {
                 if (round > 75) acceptableArrows.add(Potions.WEAVING);
                 if (round > 90) acceptableArrows.add(Potions.HARMING);
                 if(!acceptableArrows.isEmpty()){
+                    normalArrow = new ItemStack(Items.TIPPED_ARROW);
                     var getPotion = acceptableArrows.get(Random.nextInt(0, acceptableArrows.size()));
                     normalArrow.set(DataComponents.POTION_CONTENTS, new PotionContents(getPotion));
+                    return normalArrow;
                 }
-                return normalArrow;
             }
         }
         normalArrow = new ItemStack(Items.ARROW);
         return normalArrow;
     }
 
-    public LootTable getByRound(int round){
+    public LootTable getByRound(int round) {
         var switchChance = Random.nextInt(2) == 0;
-        if(round > 0 && round <= 10) return getRandomLeather();
-        if(round > 10 && round <= 20) return switchChance ? getRandomLeather() : getRandomChain();
-        if(round > 20 && round <= 30) return getRandomChain();
-        if(round > 30 && round <= 40) return switchChance ? getRandomChain() : getRandomIron();
-        if(round > 40 && round <= 50) return getRandomIron();
-        if(round > 50 && round <= 60) return switchChance ? getRandomIron() : getRandomGold();
-        if(round > 60 && round <= 70) return getRandomGold();
-        if(round > 70 && round <= 80) return switchChance ? getRandomGold() : getRandomDiamond();
-        if(round > 80 && round <= 90) return getRandomDiamond();
-        return getRandomNetherite();
+        int range = (round - 1) / 10; // Determine the range (0-9, 10-19, etc.)
+
+        return switch (range) {
+            case 0 -> getRandomLeather(); // 1-10
+            case 1 -> switchChance ? getRandomLeather() : getRandomChain(); // 11-20
+            case 2 -> getRandomChain();// 21-30
+            case 3 -> switchChance ? getRandomChain() : getRandomIron(); // 31-40
+            case 4 -> getRandomIron(); // 41-50
+            case 5 -> switchChance ? getRandomIron() : getRandomGold(); // 51-60
+            case 6 -> getRandomGold(); // 61-70
+            case 7 -> switchChance ? getRandomGold() : getRandomDiamond(); // 71-80
+            case 8 -> getRandomDiamond(); // 81-90
+            default -> getRandomNetherite(); // 91 and above
+        };
     }
 
     public LootTable getRandomWeapon(){

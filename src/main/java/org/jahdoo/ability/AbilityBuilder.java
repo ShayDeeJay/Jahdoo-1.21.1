@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 
 import static org.jahdoo.items.augments.AbilityModifierLuckRoller.getWeightedRandomDouble;
 import static org.jahdoo.registers.DataComponentRegistry.AUGMENT_RATING;
-import static org.jahdoo.utils.ModHelpers.doubleFormattedDouble;
+import static org.jahdoo.utils.Maths.doubleFormattedDouble;
 
 public class AbilityBuilder {
     //Mandatory mods

@@ -16,6 +16,8 @@ import static net.minecraft.network.chat.Component.translatable;
 import static org.jahdoo.client.SharedUI.BORDER_COLOUR;
 import static org.jahdoo.registers.ElementRegistry.*;
 import static org.jahdoo.utils.ColourStore.*;
+import static org.jahdoo.utils.Maths.roundNonWholeString;
+import static org.jahdoo.utils.Maths.tripleFormattedDouble;
 import static org.jahdoo.utils.ModHelpers.*;
 
 public class OverlayHelpers {

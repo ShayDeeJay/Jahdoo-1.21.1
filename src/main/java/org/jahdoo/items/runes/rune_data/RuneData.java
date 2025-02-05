@@ -33,6 +33,8 @@ import static org.jahdoo.registers.AttributesRegister.*;
 import static org.jahdoo.registers.DataComponentRegistry.RUNE_DATA;
 import static org.jahdoo.registers.ElementRegistry.*;
 import static org.jahdoo.registers.ElementRegistry.getElementByTypeId;
+import static org.jahdoo.utils.Maths.roundNonWholeString;
+import static org.jahdoo.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.utils.ModHelpers.*;
 
 public record RuneData(

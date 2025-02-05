@@ -11,6 +11,7 @@ import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import static org.jahdoo.registers.AttachmentRegister.BOUNCY_FOOT;
+import static org.jahdoo.utils.Maths.singleFormattedDouble;
 
 public class BouncyFootDataSyncS2CPacket implements CustomPacketPayload {
     public static final Type<BouncyFootDataSyncS2CPacket> TYPE = new Type<>(ModHelpers.res("sync_bouncy_foot"));
@@ -58,7 +59,7 @@ public class BouncyFootDataSyncS2CPacket implements CustomPacketPayload {
                             if(maxFall > 0.5D){
                                 var reducedDelta = Math.abs(previousDelta / 2.5);
                                 localPlayer.playSound(SoundEvents.FROG_TONGUE, (float) reducedDelta + 0.2f, 1.8f);
-                                localPlayer.setDeltaMovement(localPlayer.getDeltaMovement().add(0, ModHelpers.singleFormattedDouble(Math.min(reducedDelta, 1)), 0));
+                                localPlayer.setDeltaMovement(localPlayer.getDeltaMovement().add(0, singleFormattedDouble(Math.min(reducedDelta, 1)), 0));
                             }
                         }
                     }

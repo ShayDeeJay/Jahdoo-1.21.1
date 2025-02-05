@@ -44,7 +44,7 @@ public class ThunderBurstAbility extends AbilityRegistrar {
 
         ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.BOLT.get(), 2f,1f);
 
-        this.fireMultiShotProjectile((int) numberOfBolts , 1.2f, player, 0.02,
+        fireMultiShotProjectile((int) numberOfBolts , 1.2f, player, 0.02,
             () -> new GenericProjectile(
                 player, 0,
                 EntityPropertyRegister.LIGHTNING_TRAIL.get().setAbilityId(),

@@ -34,7 +34,7 @@ import static org.jahdoo.items.augments.AugmentItemHelper.getModifierContextSing
 import static org.jahdoo.items.augments.AugmentRatingSystem.calculateRatingNext;
 import static org.jahdoo.networking.packet.client2server.AugmentModificationChargeC2S.chargeCoreSides;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
-import static org.jahdoo.utils.ModHelpers.doubleFormattedDouble;
+import static org.jahdoo.utils.Maths.doubleFormattedDouble;
 import static org.jahdoo.utils.ModHelpers.withStyleComponent;
 
 public class AugmentModificationScreen extends AbstractContainerScreen<AugmentModificationMenu> {

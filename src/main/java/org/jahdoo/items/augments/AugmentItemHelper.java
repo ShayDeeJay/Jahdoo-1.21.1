@@ -44,6 +44,8 @@ import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.ability.abilities.ability_data.Utility.PlayerScaleAbility.SCALE_VALUE;
 import static org.jahdoo.items.augments.AugmentRatingSystem.*;
 import static org.jahdoo.registers.DataComponentRegistry.*;
+import static org.jahdoo.utils.Maths.roundNonWholeString;
+import static org.jahdoo.utils.Maths.singleFormattedDouble;
 
 public class AugmentItemHelper {
 
@@ -237,7 +239,7 @@ public class AugmentItemHelper {
         var worseThanStat = -47032;
 
         return Component
-            .literal(ModHelpers.roundNonWholeString(displayValue))
+            .literal(roundNonWholeString(displayValue))
             .withStyle(
                 style -> style.withColor(
                     isRange ? matchesStat : getComparison == 1 ? matchesStat : getComparison == 2 ? betterThanStat : worseThanStat
@@ -247,7 +249,7 @@ public class AugmentItemHelper {
 
     public static @NotNull String ticksToTime(String current) {
         String converter;
-        var duration = ModHelpers.singleFormattedDouble(Double.parseDouble(current) / 20);
+        var duration = singleFormattedDouble(Double.parseDouble(current) / 20);
         var minutes = (int) (duration / 60);
         var seconds = (int) (duration % 60);
         if (minutes > 0 && seconds == 0) {

@@ -20,6 +20,7 @@ import org.jahdoo.client.entity_renderer.GenericProjectileRenderer;
 import org.jahdoo.client.entity_renderer.ancient_golem.AncientGolemRenderer;
 import org.jahdoo.client.entity_renderer.decoy.DecoyRenderer;
 import org.jahdoo.client.entity_renderer.etneral_wizzard.EternalWizardRenderer;
+import org.jahdoo.client.entity_renderer.void_spider.VoidSpiderRenderer;
 import org.jahdoo.client.gui.block.augment_modification_station.AugmentModificationScreen;
 import org.jahdoo.client.gui.block.infusion_table.InfusionTableScreen;
 
@@ -75,6 +76,8 @@ public class ClientBusEvents {
         event.registerEntityRenderer(EntitiesRegister.CUSTOM_SKELETON.get(), SkeletonRenderer::new);
         event.registerEntityRenderer(EntitiesRegister.ANCIENT_GOLEM.get(), AncientGolemRenderer::new);
         event.registerEntityRenderer(EntitiesRegister.FLAMING_SKULL.get(), FlamingSkullRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.VOID_SPIDER.get(), VoidSpiderRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.VOID_SPIDER_SPAWN.get(), VoidSpiderRenderer::new);
 
     }
 

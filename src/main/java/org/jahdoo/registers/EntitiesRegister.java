@@ -3,6 +3,7 @@ package org.jahdoo.registers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.monster.Spider;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -95,6 +96,24 @@ public class EntitiesRegister {
                 .clientTrackingRange(10)
                 .build("ancient_golem")
         );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<VoidSpider>> VOID_SPIDER =
+        ENTITY_TYPES.register(
+            "void_spider", () -> EntityType.Builder.<VoidSpider>of(VoidSpider::new, MobCategory.MONSTER)
+                .sized(1.4F, 0.9F)
+                .passengerAttachments(0.765F)
+                .clientTrackingRange(8)
+                .build("void_spider")
+        );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<VoidSpider>> VOID_SPIDER_SPAWN =
+            ENTITY_TYPES.register(
+            "void_spider_spawn", () -> EntityType.Builder.<VoidSpider>of(VoidSpider::new, MobCategory.MONSTER)
+                .sized(1.4F, 0.9F)
+                .passengerAttachments(0.765F)
+                .clientTrackingRange(8)
+                .build("void_spider")
+            );
 
     public static final DeferredHolder<EntityType<?>, EntityType<CustomZombie>> CUSTOM_ZOMBIE =
         ENTITY_TYPES.register(

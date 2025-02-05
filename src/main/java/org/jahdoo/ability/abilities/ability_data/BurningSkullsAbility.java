@@ -31,11 +31,10 @@ public class BurningSkullsAbility extends AbilityRegistrar {
         infernoSoundEffect(player);
         var getLocalEntities = new ArrayList<>(BurningSkull.getValidTargets(player, player, 10));
 
-        var totalWidth = (projectileCount - 1) * adjustSpread; // Adjust the total width as needed
+        var totalWidth = (projectileCount - 1) * adjustSpread;
         var startOffset = -totalWidth / 2.0;
 
         if(!player.level().isClientSide){
-            System.out.println(getLocalEntities);
             for (int i = 0; i < projectileCount; i++) {
                 var isValid = !getLocalEntities.isEmpty();
                 var skull = new BurningSkull(player, 0, isValid ? getLocalEntities.getFirst() : null);
@@ -46,7 +45,6 @@ public class BurningSkullsAbility extends AbilityRegistrar {
                 var direction = player.getLookAngle().add(directionOffset).normalize();
                 fireProjectileDirection(skull, player, 0.3F, direction);
             }
-            System.out.println(getLocalEntities);
         }
     }
 

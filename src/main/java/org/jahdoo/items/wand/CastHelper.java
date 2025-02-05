@@ -33,6 +33,8 @@ import static org.jahdoo.registers.AttributesRegister.COOLDOWN_REDUCTION;
 import static org.jahdoo.registers.AttributesRegister.MANA_COST_REDUCTION;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
 import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
+import static org.jahdoo.registers.ElementRegistry.getElementFromWand;
+import static org.jahdoo.utils.Maths.getFormattedFloat;
 import static org.jahdoo.utils.ModHelpers.*;
 
 
@@ -127,7 +129,7 @@ public class CastHelper {
         var abilityName = DataComponentHelper.getAbilityTypeItemStack(wandItem);
         var ability = AbilityRegister.REGISTRY.get(res(abilityName));
         if(ability == null) return false;
-        var getElement = getElementByWandType(wandItem.getItem()).getFirst();;
+        var getElement = getElementFromWand(wandItem.getItem()).orElseThrow();
         var getManaCost = getSpecificValue(player, wandItem, MANA_COST);
         var typeReduction = getElement.getTypeManaReduction();
         var adjustedMana = ModHelpers.attributeModifierCalculator(player, (float) getManaCost, false, MANA_COST_REDUCTION, typeReduction);
@@ -201,9 +203,9 @@ public class CastHelper {
             var allowedDistance = getAbility.get(CASTING_DISTANCE).actualValue();
             var lookAtLocation = player.pick(allowedDistance, 0, false);
             var isValidCastLocation = lookAtLocation.getType() == HitResult.Type.MISS;
-            var getWandElement = getElementByWandType(itemStack.getItem());
+            var getWandElement = getElementFromWand(itemStack.getItem()).orElseThrow();
             var distance = String.valueOf(Math.round(allowedDistance));
-            var colour = getWandElement.getFirst().particleColourSecondary();
+            var colour = getWandElement.particleColourSecondary();
             var distanceCompo = ModHelpers.withStyleComponent(distance, colour);
             var notAllowedDistanceMessage = Component.translatable("casting.jahdoo.distance", distanceCompo);
 
