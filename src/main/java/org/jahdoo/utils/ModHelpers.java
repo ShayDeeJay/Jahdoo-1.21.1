@@ -22,7 +22,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -33,7 +32,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.components.ability_holder.AbilityHolder;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
@@ -43,7 +41,6 @@ import org.jahdoo.registers.AbilityRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 
 import java.awt.*;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -327,7 +324,7 @@ public class ModHelpers {
     ){
         var wandItem = player.getItemInHand(player.getUsedItemHand());
         var abilityName = wandItem.get(DataComponentRegistry.WAND_DATA.get());
-        if(abilityName == null) return 0;
+        if(abilityName == null) return initialValue;
         float getAttribute = 0;
         var getAbility = AbilityRegister.getFirstSpellByTypeId(abilityName.selectedAbility());
         if(getAbility.isEmpty()) return initialValue;

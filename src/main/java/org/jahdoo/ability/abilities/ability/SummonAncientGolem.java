@@ -28,27 +28,39 @@ import java.util.UUID;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.particle.ParticleHandlers.*;
+import static org.jahdoo.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.registers.AttributesRegister.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.utils.PositionGetters.getInnerRingOfRadiusRandom;
 import static org.jahdoo.utils.PositionGetters.getOuterRingOfRadiusList;
 
 public class SummonAncientGolem extends DefaultEntityBehaviour {
-    double height;
-    int position;
-    double increaseRate = 0.5;
-    AncientGolem ancientGolem;
-    UUID uuid;
+    private double height;
+    private int position;
+    private double increaseRate = 0.5;
+    private AncientGolem ancientGolem;
+    private UUID uuid;
     private double effectDuration;
     private double effectStrength;
     private double effectChance;
     private double lifeTime;
+    private double damage;
 
     @Override
     public void getAoeCloud(AoeCloud aoeCloud) {
         super.getAoeCloud(aoeCloud);
+        var player = this.aoeCloud.getOwner();
+        var damage = this.getTag(DAMAGE);
         this.effectDuration = getTag(EFFECT_DURATION);
         this.effectStrength = getTag(EFFECT_STRENGTH);
         this.effectChance = getTag(EFFECT_CHANCE);
         this.lifeTime = getTag(LIFETIME);
+        if(player != null){
+            this.damage = ModHelpers.attributeModifierCalculator(
+                player, (float) damage, true,
+                MAGIC_DAMAGE_MULTIPLIER,
+                VITALITY_MAGIC_DAMAGE_MULTIPLIER
+            );
+        }
     }
 
     @Override
@@ -84,6 +96,7 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
         compoundTag.putDouble(EFFECT_STRENGTH, this.effectStrength);
         compoundTag.putDouble(EFFECT_CHANCE, this.effectChance);
         compoundTag.putDouble(LIFETIME, this.lifeTime);
+        compoundTag.putDouble(DAMAGE, this.damage);
         if(ancientGolem != null) compoundTag.putUUID("spawnedGolem", ancientGolem.getUUID());
     }
 
@@ -99,6 +112,7 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
         this.effectDuration = compoundTag.getDouble(EFFECT_DURATION);
         this.effectStrength = compoundTag.getDouble(EFFECT_STRENGTH);
         this.lifeTime = compoundTag.getDouble(LIFETIME);
+        this.damage = compoundTag.getDouble(DAMAGE);
     }
 
     @Override
@@ -129,7 +143,7 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
     private void spawnEternalWizard(){
         if (this.ancientGolem == null && aoeCloud.getOwner() != null) {
             System.out.println(aoeCloud.level());
-            var ancientGolemLocal = new AncientGolem(aoeCloud.level(), (Player) aoeCloud.getOwner(), effectDuration, effectStrength, (int) lifeTime, effectChance);
+            var ancientGolemLocal = new AncientGolem(aoeCloud.level(), (Player) aoeCloud.getOwner(), damage, effectDuration, effectStrength, (int) lifeTime, effectChance);
 
             var spawnPosition = aoeCloud.position().add(0, -1.5, 0);
             ancientGolemLocal.setInvulnerable(true);

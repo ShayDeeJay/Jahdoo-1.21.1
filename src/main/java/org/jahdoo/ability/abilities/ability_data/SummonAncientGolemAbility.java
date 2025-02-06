@@ -47,6 +47,7 @@ public class SummonAncientGolemAbility extends AbilityRegistrar {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
             .setStaticMana(200)
             .setStaticCooldown(6000)
+            .setDamage(40, 10, 5)
             .setEffectStrength(10, 0, 1)
             .setEffectDuration(600, 200, 50)
             .setEffectChance(60, 20, 10)

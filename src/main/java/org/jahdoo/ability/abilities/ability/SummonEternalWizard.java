@@ -51,11 +51,13 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         super.getAoeCloud(aoeCloud);
         var player = this.aoeCloud.getOwner();
         var damage = this.getTag(DAMAGE);
-        this.damage = ModHelpers.attributeModifierCalculator(
-            player, (float) damage, true,
-            MAGIC_DAMAGE_MULTIPLIER,
-            VITALITY_MAGIC_DAMAGE_MULTIPLIER
-        );
+        if(player != null){
+            this.damage = ModHelpers.attributeModifierCalculator(
+                player, (float) damage, true,
+                MAGIC_DAMAGE_MULTIPLIER,
+                VITALITY_MAGIC_DAMAGE_MULTIPLIER
+            );
+        }
         this.effectDuration = getTag(EFFECT_DURATION);
         this.effectStrength = getTag(EFFECT_STRENGTH);
         this.effectChance = getTag(EFFECT_CHANCE);

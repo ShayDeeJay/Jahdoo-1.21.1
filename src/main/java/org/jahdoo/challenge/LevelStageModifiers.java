@@ -1,13 +1,19 @@
 package org.jahdoo.challenge;
 
+import net.minecraft.core.Holder;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.level.storage.loot.LootTable;
+import org.jahdoo.ability.effects.JahdooMobEffect;
+import org.jahdoo.utils.Maths;
 
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class LevelStageModifiers {
 
-    public LootTable getByRound(int round) {
+    public static LootTable getByRound(int round) {
         var switchChance = Random.nextInt(2) == 0;
         int range = (round - 1) / 5; // Determine the range (0-4, 5-9, etc.)
 
@@ -37,12 +43,25 @@ public class LevelStageModifiers {
         return null;
     }
 
-    public void setGuaranteedMods(LivingEntity livingEntity, int getMaxLevel) {
-//        livingEntity.getAttributes()./
+    public static void attributeWithChance(
+        Holder<Attribute> attributes,
+        LivingEntity getEntity,
+        int multiplier,
+        int chance
+    ){
+        if(Maths.percentageChance(chance) && getEntity.getAttributes().hasAttribute(attributes)){
+            var attributeInstance = getEntity.getAttributes().getInstance(attributes);
+            if (attributeInstance == null) return;
+            attributeInstance.setBaseValue(Maths.getPercentageTotal(multiplier, attributeInstance.getValue()));
+        }
     }
 
-    public void setModifiersRandom(LivingEntity livingEntity, int getMaxLevel) {
-
+    public static void effectWithChance(LivingEntity livingEntity, Holder<MobEffect> effect, int amplifier, int chance) {
+        if(Maths.percentageChance(chance)){
+            if(!livingEntity.hasEffect(effect)){
+                livingEntity.addEffect(new JahdooMobEffect(effect, MobEffectInstance.INFINITE_DURATION, amplifier));
+            }
+        }
     }
 
 }

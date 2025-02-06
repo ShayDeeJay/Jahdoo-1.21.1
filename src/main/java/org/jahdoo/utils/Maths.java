@@ -2,6 +2,8 @@ package org.jahdoo.utils;
 
 import java.text.DecimalFormat;
 
+import static org.jahdoo.utils.ModHelpers.Random;
+
 public class Maths {
 
     public static double getPercentage(double multiplier, double baseValue){
@@ -10,6 +12,16 @@ public class Maths {
 
     public static double getPercentageTotal(double multiplier, double baseValue){
         return baseValue + (multiplier * baseValue) / 100;
+    }
+
+    public static boolean percentageChance(int percentageChance) {
+        if(percentageChance == 0) return false;
+        if (percentageChance < 0 || percentageChance > 100) {
+            throw new IllegalArgumentException("Percentage chance must be between 0 and 100.");
+        }
+
+        int randomValue = Random.nextInt(100) + 1; // Generates a number between 1 and 100
+        return randomValue <= percentageChance;
     }
 
     public static String roundNonWholeString(double number) {

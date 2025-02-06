@@ -1,38 +1,22 @@
 package org.jahdoo.items.wand;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
-import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
-import org.jahdoo.client.overlays.ChoiceSelectionScreen;
-import org.jahdoo.client.overlays.StatScreen;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.items.JahdooItem;
-import org.jahdoo.registers.*;
-import org.jahdoo.utils.Maths;
+import org.jahdoo.registers.BlocksRegister;
+import org.jahdoo.registers.DataComponentRegistry;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -42,24 +26,13 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-import static net.minecraft.sounds.SoundEvents.ALLAY_THROW;
-import static net.minecraft.sounds.SoundEvents.EVOKER_PREPARE_SUMMON;
-import static net.minecraft.world.InteractionHand.*;
-import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.items.wand.WandAnimations.*;
 import static org.jahdoo.items.wand.WandItemHelper.*;
-import static org.jahdoo.particle.ParticleHandlers.*;
-import static org.jahdoo.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
 import static org.jahdoo.registers.DataComponentRegistry.*;
-import static org.jahdoo.registers.ElementRegistry.getElementFromWand;
-import static org.jahdoo.utils.ModHelpers.*;
-import static org.jahdoo.utils.ModHelpers.Random;
-import static org.jahdoo.utils.PositionGetters.getInnerRingOfRadiusRandom;
 
 public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -113,16 +86,6 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
-        if(!interactionTarget.level().isClientSide){
-            var maxHealth = Attributes.MAX_HEALTH;
-//            interactionTarget.getAttributes().getInstance(maxHealth).setBaseValue(200);
-            System.out.println(interactionTarget.getAttributes().getValue(maxHealth));
-            System.out.println(interactionTarget.getHealth());
-//            System.out.println(interactionTarget.getAttributes().getInstance(Attributes.MAX_HEALTH).setBaseValue(200));
-//            for (var syncableAttribute : interactionTarget.getAttributes().getInstance().) {
-//                System.out.println(interactionTarget.getAttributes().getValue(syncableAttribute.getAttribute()));
-//            }
-        }
         return super.interactLivingEntity(stack, player, interactionTarget, usedHand);
     }
 
@@ -139,20 +102,6 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
-
-        if(!level.isClientSide){
-//            Minecraft.getInstance().setScreen(new ChoiceSelectionScreen());
-//            return InteractionResultHolder.pass(item);
-            var getEntity = EntityType.ZOMBIE.create(level);
-            var maxHealth = Attributes.MAX_HEALTH;
-            var instance = getEntity.getAttributes().getInstance(maxHealth);
-//            System.out.println(instance.getValue());
-//            instance.setBaseValue(25);
-//            System.out.println(getEntity.getHealth());
-//
-//            getEntity.moveTo(player.position());
-//            level.addFreshEntity(getEntity);
-        }
 
         if (canOffHand(player, interactionHand, true)) {
             player.startUsingItem(interactionHand);

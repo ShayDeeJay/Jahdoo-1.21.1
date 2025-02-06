@@ -9,6 +9,7 @@ import net.minecraft.world.level.pathfinder.Path;
 import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.entities.living.AncientGolem;
 import org.jahdoo.registers.EffectsRegister;
+import org.jahdoo.utils.DamageUtil;
 
 import java.util.EnumSet;
 
@@ -20,16 +21,16 @@ public class GenericMeleeAttackGoal extends Goal {
     private final double speedModifier;
     private final boolean followingTargetEvenIfNotSeen;
     private Path path;
-    private double pathedTargetX;
-    private double pathedTargetY;
-    private double pathedTargetZ;
+    private double pathTargetX;
+    private double pathTargetY;
+    private double pathTargetZ;
     private int ticksUntilNextPathRecalculation;
     private int ticksUntilNextAttack;
     private final int attackInterval = 20;
     private long lastCanUseCheck;
     private static final long COOLDOWN_BETWEEN_CAN_USE_CHECKS = 20L;
     private int failedPathFindingPenalty = 0;
-    private boolean canPenalize = false;
+    private final boolean canPenalize = false;
 
     public GenericMeleeAttackGoal(PathfinderMob mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
         this.mob = mob;
@@ -39,7 +40,7 @@ public class GenericMeleeAttackGoal extends Goal {
     }
 
     public boolean canUse() {
-        long i = this.mob.level().getGameTime();
+        var i = this.mob.level().getGameTime();
         if (i - this.lastCanUseCheck < 20L) {
             return false;
         } else {
@@ -102,10 +103,10 @@ public class GenericMeleeAttackGoal extends Goal {
         if (livingentity != null) {
             this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
             this.ticksUntilNextPathRecalculation = Math.max(this.ticksUntilNextPathRecalculation - 1, 0);
-            if ((this.followingTargetEvenIfNotSeen || this.mob.getSensing().hasLineOfSight(livingentity)) && this.ticksUntilNextPathRecalculation <= 0 && (this.pathedTargetX == (double)0.0F && this.pathedTargetY == (double)0.0F && this.pathedTargetZ == (double)0.0F || livingentity.distanceToSqr(this.pathedTargetX, this.pathedTargetY, this.pathedTargetZ) >= (double)1.0F || this.mob.getRandom().nextFloat() < 0.05F)) {
-                this.pathedTargetX = livingentity.getX();
-                this.pathedTargetY = livingentity.getY();
-                this.pathedTargetZ = livingentity.getZ();
+            if ((this.followingTargetEvenIfNotSeen || this.mob.getSensing().hasLineOfSight(livingentity)) && this.ticksUntilNextPathRecalculation <= 0 && (this.pathTargetX == (double)0.0F && this.pathTargetY == (double)0.0F && this.pathTargetZ == (double)0.0F || livingentity.distanceToSqr(this.pathTargetX, this.pathTargetY, this.pathTargetZ) >= (double)1.0F || this.mob.getRandom().nextFloat() < 0.05F)) {
+                this.pathTargetX = livingentity.getX();
+                this.pathTargetY = livingentity.getY();
+                this.pathTargetZ = livingentity.getZ();
                 this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
                 double d0 = this.mob.distanceToSqr(livingentity);
                 if (this.canPenalize) {
@@ -143,8 +144,8 @@ public class GenericMeleeAttackGoal extends Goal {
 
     protected void checkAndPerformAttack(LivingEntity target) {
         if (this.canPerformAttack(target)) {
-            this.mob.doHurtTarget(target);
             if(this.mob instanceof AncientGolem ancientGolem){
+                DamageUtil.damageWithJahdoo(target, this.mob, ancientGolem.damage);
                 var chance = ancientGolem.effectChance;
                 var strength = ancientGolem.effectStrength;
                 var duration = ancientGolem.effectDuration;
