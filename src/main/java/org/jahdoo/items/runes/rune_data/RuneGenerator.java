@@ -230,8 +230,10 @@ public class RuneGenerator {
             return name;
         }
 
-        public int getCost() {
-            return cost;
+        public int getCost(int tier) {
+            var max = Math.max(tier + 1, 1);
+            System.out.println(max);
+            return (cost * max);
         }
 
         public int getModel() {

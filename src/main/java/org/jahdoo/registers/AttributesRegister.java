@@ -12,6 +12,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -130,7 +131,8 @@ public class  AttributesRegister {
             .filter(att -> att.modifier().id().getPath().equals(name))
             .findFirst();
         existingModifier.ifPresent(attributeList::remove);
-        attributeList.add(setAttribute(name, attribute, value, equipmentSlot, isRandomId));
+        var attributes = setAttribute(name, attribute, value, equipmentSlot, isRandomId);
+        attributeList.add(attributes);
         itemStack.set(DataComponents.ATTRIBUTE_MODIFIERS, itemAttributes);
     }
 

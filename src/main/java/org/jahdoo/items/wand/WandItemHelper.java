@@ -87,11 +87,11 @@ public class WandItemHelper {
         toolTips.add(withStyleComponentTrans("wandHelper.jahdoo.ability_slots", HEADER_COLOUR, slot));
     }
 
-    public static void appendRefinementPotential(List<Component> toolTips, ItemStack wandItem, int colour){
+    public static void appendRefinementPotential(List<Component> toolTips, ItemStack wandItem){
         var wandData = wandItem.get(RUNE_HOLDER);
         if(wandData == null) return;
-        var slot = ModHelpers.withStyleComponent(String.valueOf(wandData.refinementPotential()), colour);
-        toolTips.add(withStyleComponent("Potential: ", HEADER_COLOUR).copy().append(slot));
+        var slot = ModHelpers.withStyleComponent(String.valueOf(wandData.refinementPotential()), SUB_HEADER_COLOUR);
+        toolTips.add(toolTips.size(), withStyleComponent("Potential: ", HEADER_COLOUR).copy().append(slot));
     }
 
     public static List<Component> getItemModifiers(ItemStack wandItem){
@@ -100,7 +100,7 @@ public class WandItemHelper {
         if(abstractElement.isPresent()){
             appendComponents.add(attachRarityTooltip(wandItem));
             totalSlots(appendComponents, wandItem, SUB_HEADER_COLOUR);
-            appendRefinementPotential(appendComponents, wandItem, SUB_HEADER_COLOUR);
+            appendRefinementPotential(appendComponents, wandItem);
             appendSelectedAbility(wandItem, appendComponents);
             attributeToolTips(wandItem, appendComponents, abstractElement.get());
             if (!getAllSlots(wandItem).isEmpty()) appendComponents.add(Component.empty());

@@ -56,18 +56,16 @@ public class ElementRegistry {
 
     public static Optional<AbstractElement>getElementById(int typeId) {
         var element = REGISTRY
-                .stream()
-                .filter(ability -> ability.getTypeId() == typeId)
-                .toList();
+            .stream()
+            .filter(ability -> ability.getTypeId() == typeId)
+            .toList();
         return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
     }
 
 
     public static AbstractElement getRandomElement() {
-        var list = REGISTRY.stream().toList().stream().filter(element -> element != UTILITY.get());
-        var registry = new ArrayList<>(list.toList());
-        Collections.shuffle(registry);
-        return registry.getFirst();
+        var list = REGISTRY.stream().toList().stream().filter(element -> element != UTILITY.get());;
+        return ModHelpers.getRandomListElement(list.toList());
     }
 
     private static DeferredHolder<AbstractElement, AbstractElement> registerElement(AbstractElement spell) {

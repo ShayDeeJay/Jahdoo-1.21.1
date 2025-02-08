@@ -2,11 +2,13 @@ package org.jahdoo.items.armor;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import org.jahdoo.client.armor_renderer.MageArmorRenderer;
 import org.jahdoo.items.JahdooItem;
@@ -20,9 +22,10 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.List;
 import java.util.function.Consumer;
 
-public class MageArmor extends ArmorItem implements GeoItem, JahdooItem {
+public class MageArmor extends BaseArmor implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public MageArmor(Holder<ArmorMaterial> material, Type type) {
@@ -31,6 +34,16 @@ public class MageArmor extends ArmorItem implements GeoItem, JahdooItem {
 
     private static @NotNull Properties getComponent() {
         return new Properties().durability(28);
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        return super.getName(stack);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 
     @Override

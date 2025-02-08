@@ -23,6 +23,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.rarity.JahdooRarity;
+import org.jahdoo.items.Pendent;
 import org.jahdoo.items.TomeOfUnity;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.runes.RuneItem;
@@ -40,6 +41,8 @@ import static net.minecraft.world.entity.EquipmentSlot.*;
 import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static org.jahdoo.ability.rarity.JahdooRarity.*;
 import static org.jahdoo.challenge.EnchantmentHelpers.*;
+import static org.jahdoo.challenge.trading_post.ShoppingArmor.enchantArmorItem;
+import static org.jahdoo.challenge.trading_post.ShoppingWeapon.enchantSword;
 import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.*;
 import static org.jahdoo.utils.ModHelpers.Random;
 
@@ -79,6 +82,8 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> RUNE = LootItem.lootTableItem(ItemsRegister.RUNE.get());
     public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_GAUNTLET = LootItem.lootTableItem(ItemsRegister.BATTLEMAGE_GAUNTLET.get());
     public static final LootPoolSingletonContainer.Builder<?> INGMAS_SWORD = LootItem.lootTableItem(ItemsRegister.INGMAS_SWORD.get());
+    public static final LootPoolSingletonContainer.Builder<?> ANCIENT_AMULET = LootItem.lootTableItem(ItemsRegister.PENDENT.get());
+
 
     public static ObjectArrayList<ItemStack> getCompletionLoot(ServerLevel serverLevel, Vec3 pos, int level) {
         var loot = LootTable.lootTable().withPool(commonPool(serverLevel));
@@ -124,7 +129,8 @@ public class RewardLootTables {
             .add(BATTLEMAGE_CHEASTPLATE_BUILDER.setWeight(1))
             .add(BATTLEMAGE_LEGGINGS_BUILDER.setWeight(1))
             .add(BATTLEMAGE_BOOTS_BUILDER.setWeight(1))
-            .add(BATTLEMAGE_GAUNTLET.setWeight(1));
+            .add(BATTLEMAGE_GAUNTLET.setWeight(1))
+            .add(ANCIENT_AMULET.setWeight(1));
     }
 
     private static @NotNull ObjectArrayList<ItemStack> createLootParams(ServerLevel serverLevel, Vec3 pos, LootTable.Builder loot) {
@@ -202,15 +208,15 @@ public class RewardLootTables {
     }
 
 
-    public static void attachItemData(ServerLevel serverLevel, JahdooRarity rarity, ItemStack itemStack, boolean isGuaranteeEnchantment, @Nullable JahdooRarity runeRarity) {
+    public static void attachItemData(ServerLevel serverLevel, JahdooRarity rarity, ItemStack itemStack, boolean isSpecial, @Nullable JahdooRarity runeRarity) {
         var item = itemStack.getItem();
         switch (item){
             case WandItem ignored -> setGeneratedWand(rarity, itemStack);
             case TomeOfUnity ignored -> createTomeAttributes(rarity, itemStack);
             case Augment ignored -> setGeneratedAugment(itemStack, rarity);
             case RuneItem ignored -> generateRandomTypAttribute(itemStack, runeRarity);
-            case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem, isGuaranteeEnchantment);
-            case SwordItem ignored -> enchantSword(serverLevel, itemStack, isGuaranteeEnchantment);
+            case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem, isSpecial);
+            case SwordItem ignored -> enchantSword(serverLevel, itemStack, isSpecial);
             case EnchantedBookItem ignored -> enchantedBook(serverLevel, itemStack);
             default -> { /*IGNORE*/ }
         }
@@ -229,42 +235,9 @@ public class RewardLootTables {
         );
     }
 
-    private static void enchantSword(ServerLevel serverLevel, ItemStack itemStack, boolean isGuaranteed) {
-        if(Random.nextInt(50) != 0) return;
 
-        attachEnchantment(itemStack, serverLevel, SHARPNESS, 6, 11, isGuaranteed);
-        attachEnchantment(itemStack, serverLevel, SWEEPING_EDGE, 4, 8, isGuaranteed);
-        attachEnchantment(itemStack, serverLevel, LOOTING, 4, 8, isGuaranteed);
-        attachEnchantment(itemStack, serverLevel, UNBREAKING, 4, 8, isGuaranteed);
-    }
-
-    private static void enchantArmorItem(ServerLevel serverLevel, ItemStack itemStack, ArmorItem armorItem, boolean isGuaranteed) {
-        RuneHolder.createNewRuneSlots(itemStack, Random.nextInt(2), Random.nextInt(80, 320));
-        if(!isGuaranteed) if (Random.nextInt(50) != 0) return;
-
-        attachEnchantment(itemStack, serverLevel, BLAST_PROTECTION, 5, 10, isGuaranteed);
-        attachEnchantment(itemStack, serverLevel, PROJECTILE_PROTECTION, 5, 10, isGuaranteed);
-        attachEnchantment(itemStack, serverLevel, PROTECTION, 5, 10, isGuaranteed);
-        attachEnchantment(itemStack, serverLevel, UNBREAKING, 4, 9, isGuaranteed);
-
-        var slot = armorItem.getEquipmentSlot();
-        if(slot == FEET){
-            attachEnchantment(itemStack, serverLevel, SOUL_SPEED, 4, 9, isGuaranteed);
-            attachEnchantment(itemStack, serverLevel, DEPTH_STRIDER, 4, 9, isGuaranteed);
-            attachEnchantment(itemStack, serverLevel, FEATHER_FALLING, 5, 10, isGuaranteed);
-        }
-
-        if(slot == LEGS){
-            attachEnchantment(itemStack, serverLevel, SWIFT_SNEAK, 4, 9, isGuaranteed);
-        }
-
-        if(slot == HEAD){
-            attachEnchantment(itemStack, serverLevel, RESPIRATION, 4, 9, isGuaranteed);
-        }
-    }
-
-    private static void attachEnchantment(ItemStack itemStack, ServerLevel serverLevel, ResourceKey<Enchantment> enchantmentKey, int minVal, int maxVal, boolean isGuaranteed) {
-        if(!isGuaranteed) if (Random.nextInt(20) != 0) return;
+    public static void attachEnchantment(ItemStack itemStack, ServerLevel serverLevel, ResourceKey<Enchantment> enchantmentKey, int minVal, int maxVal, boolean isSpecial) {
+        if (Random.nextInt(isSpecial ? 5 : 20) != 0) return;
 
         enchant(itemStack, serverLevel.registryAccess(), enchantmentKey, Random.nextInt(minVal, maxVal));
         var lootBeamData = DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA();

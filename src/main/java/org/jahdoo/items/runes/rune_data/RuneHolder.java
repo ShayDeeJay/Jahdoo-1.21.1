@@ -35,7 +35,7 @@ public record RuneHolder(
     }
 
     public static void createNewRuneSlots(ItemStack itemStack, int runeSlots, int refinementPotential){
-        itemStack.update(RUNE_HOLDER, RuneHolder.DEFAULT, data -> data.insertNewRuneSlots(runeSlots, refinementPotential));
+        itemStack.set(RUNE_HOLDER, makeRuneSlots(runeSlots, refinementPotential));
     }
 
     public static void createRefinementPotential(ItemStack itemStack, int refinementPotential){

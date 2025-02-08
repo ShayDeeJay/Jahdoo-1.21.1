@@ -233,6 +233,7 @@ public class LevelGenerator {
             }
         }
 
+        //Entrance and exit portals
         var portalBlock = BlocksRegister.TRAIL_PORTAL.get().defaultBlockState();
         var portalExit = new BlockPos(-4, 51, -17);
         var portalNextLevel = new BlockPos(-40, 51, -17);

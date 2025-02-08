@@ -97,11 +97,15 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
                     case String s when s.contains("mana.cost_reduction") -> ranges.getRandomManaReduction();
                     default -> ranges.getRandomDamage();
                 };
+//                System.out.println(value);
+//                System.out.println(attribute);
+//                System.out.println(attribute.getRegisteredName());
                 replaceOrAddAttribute(wandItemCopy, attribute.getRegisteredName(), attribute, value, EquipmentSlot.MAINHAND, false);
             }
         }
 
-        RuneHolder.createRefinementPotential(wandItemCopy, Math.max(0, RuneHolder.potential(wandItemCopy) - 20));
+        var max = Math.max(0, RuneHolder.potential(wandItemCopy) - 20);
+        RuneHolder.createRefinementPotential(wandItemCopy, max);
         PacketDistributor.sendToServer(new ItemInBlockC2SPacket(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos()));
 
         var player = Minecraft.getInstance().player;

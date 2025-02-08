@@ -159,9 +159,6 @@ public record RuneData(
             }
 
             return false;
-//            var attributes = itemStack.getAttributeModifiers().modifiers().stream().toList();
-//            System.out.println(itemStack.get(DataComponentRegistry.RUNE_HOLDER));
-//            return attributes.stream().anyMatch(attribute -> attribute.attribute().value().getDescriptionId().contains(DESTINY_BOND_PREFIX));
         }
 
         public static Component getNameWithStyle(ItemStack stack){
@@ -170,7 +167,8 @@ public record RuneData(
 
         public static int getCostFromRune(@NotNull ItemStack itemStack) {
             var name = RuneData.RuneHelpers.getName(itemStack);
-            return fromName(name).getCost();
+            var tier = RuneData.RuneHelpers.getTier(itemStack);
+            return fromName(name).getCost(tier);
         }
 
         public static Component standAloneAttributes(ItemStack itemStack) {
@@ -182,8 +180,7 @@ public record RuneData(
             var entry = attributes.getFirst();
             var descriptionId = entry.attribute().value().getDescriptionId();
             var amount = entry.modifier().amount();
-            var abstractElement = getElementById(data.elementId()).orElseThrow();
-            var typeColour = data.elementId < 1 ? data.colour : abstractElement.textColourPrimary();
+            var typeColour = data.elementId < 1 ? data.colour : getElementById(data.elementId()).orElseThrow().textColourPrimary();
             var compName = withStyleComponentTrans(descriptionId, typeColour);
             var isAbsorption = descriptionId.contains("absorption");
             var isMaxHealth = descriptionId.contains("health");

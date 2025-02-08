@@ -206,24 +206,23 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         int runeSlots,
         int abilitySlots
     ) {
-        var element = ElementRegistry.getElementByWandType(itemStack.getItem());
+        var element = ElementRegistry.getElementFromWand(itemStack.getItem()).orElseThrow();
         attachLootBeamComponent(itemStack, rarity);
-        if (element.isEmpty()) return;
 
         WandData.createRarity(itemStack, rarity.id);
         WandData.createNewAbilitySlots(itemStack, abilitySlots);
         RuneHolder.createNewRuneSlots(itemStack, runeSlots, rarity.attributes.getRandomRefinementPotential());
         itemStack.set(JAHDOO_RARITY, rarity.id);
 
-        var cooldownReductionType = element.getFirst().getTypeCooldownReduction();
+        var cooldownReductionType = element.getTypeCooldownReduction();
         var cooldownReductionName = cooldownReductionType.getRegisteredName();
         var cooldownReductionValue = rarity.attributes.getRandomCooldown();
 
-        var manaReductionType = element.getFirst().getTypeManaReduction();
+        var manaReductionType = element.getTypeManaReduction();
         var manaReductionName = manaReductionType.getRegisteredName();
         var manaReductionValue = rarity.attributes.getRandomManaReduction();
 
-        var damageAmplifierType = element.getFirst().getDamageTypeAmplifier();
+        var damageAmplifierType = element.getDamageTypeAmplifier();
         var damageAmplifierName = damageAmplifierType.getRegisteredName();
         var damageAmplifierValue = rarity.attributes.getRandomDamage();
 
@@ -240,8 +239,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
 
         attachLootBeamComponent(itemStack, rarity);
         itemStack.set(DataComponentRegistry.JAHDOO_RARITY.get(), rarity.getId());
-
-
 
         CuriosApi.addModifier(
             itemStack, manaRegen, manaRegen.getId(),

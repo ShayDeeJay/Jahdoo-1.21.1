@@ -14,7 +14,8 @@ import org.jahdoo.utils.ModHelpers;
 
 public class ItemInBlockC2SPacket implements CustomPacketPayload {
     public static final Type<ItemInBlockC2SPacket> TYPE = new Type<>(ModHelpers.res("wand_data_sync"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, ItemInBlockC2SPacket> STREAM_CODEC = CustomPacketPayload.codec(ItemInBlockC2SPacket::toBytes, ItemInBlockC2SPacket::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ItemInBlockC2SPacket> STREAM_CODEC =
+            CustomPacketPayload.codec(ItemInBlockC2SPacket::toBytes, ItemInBlockC2SPacket::new);
 
     BlockPos blockPos;
     ItemStack itemStack;
@@ -26,12 +27,12 @@ public class ItemInBlockC2SPacket implements CustomPacketPayload {
 
     public ItemInBlockC2SPacket(FriendlyByteBuf buf) {
         this.blockPos = buf.readBlockPos();
-        this.itemStack = buf.readJsonWithCodec(ItemStack.SINGLE_ITEM_CODEC);
+        this.itemStack = buf.readJsonWithCodec(ItemStack.OPTIONAL_CODEC);
     }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeBlockPos(blockPos);
-        buf.writeJsonWithCodec(ItemStack.SINGLE_ITEM_CODEC, itemStack);
+        buf.writeJsonWithCodec(ItemStack.OPTIONAL_CODEC, itemStack);
     }
 
     public void handle(IPayloadContext ctx) {
