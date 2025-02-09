@@ -1,5 +1,6 @@
 package org.jahdoo.items.wand;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -9,12 +10,17 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
+import org.jahdoo.client.overlays.StatScreen;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.items.JahdooItem;
+import org.jahdoo.items.runes.RuneItem;
+import org.jahdoo.items.runes.RuneItemHelper;
+import org.jahdoo.items.runes.rune_data.RuneData;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +97,15 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 
     @Override
     public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
-        pTooltipComponents.addAll(WandItemHelper.getItemModifiers(pStack));
+        pTooltipComponents.addAll(WandItemHelper.getItemModifiers(pStack, (int) pContext.level().getGameTime()));
+
+        var list = pStack.getAttributeModifiers().modifiers().stream().toList();
+        if(list.size() > 3){
+            for (var entry : list.subList(3, list.size())) {
+                pTooltipComponents.add(RuneData.RuneHelpers.standAloneAttributes(entry));
+            }
+        }
+
     }
 
     @Override
@@ -102,6 +116,10 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
+
+        if(level.isClientSide){
+            Minecraft.getInstance().setScreen(new StatScreen(player));
+        }
 
         if (canOffHand(player, interactionHand, true)) {
             player.startUsingItem(interactionHand);

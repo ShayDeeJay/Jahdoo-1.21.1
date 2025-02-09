@@ -117,7 +117,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
             var info = ElementRegistry.getElementByTypeId(Math.max(getElement.value(), 0));
             if (itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get()) != null && !info.isEmpty()) {
                 toolTips.add(AugmentItemHelper.getAbilityName(itemStack, info.getFirst()));
-                toolTips.addAll(getAllAbilityModifiers(itemStack, itemStack1, abilityLocation, false));
+                toolTips.addAll(getAllAbilityModifiers(itemStack, itemStack1, abilityLocation, false, (int) this.getMinecraft().level.getGameTime()));
                 shiftForDetails(toolTips);
             }
         }
@@ -349,7 +349,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         var adjustX = -198;
         var adjustY = 120;
         if(this.cachedItem != null && !this.cachedItem.isEmpty()){
-            var components = SharedUI.getComponents(this.cachedItem);
+            var components = SharedUI.getComponents(this.cachedItem, (int) this.getMinecraft().level.getGameTime());
             var subComponents = new ArrayList<Component>();
             subComponents.add(ModHelpers.withStyleComponent("Description: ", -23281));
             for (String s : wrapText()) subComponents.add(ModHelpers.withStyleComponent(s, -1));
@@ -392,7 +392,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
     }
 
     private void windowMoveVertical(double dragY) {
-        int size = getComponents(this.cachedItem)
+        int size = getComponents(this.cachedItem, (int) this.getMinecraft().level.getGameTime())
             .stream()
             .filter(component -> component.getString().contains("|"))
             .toList()

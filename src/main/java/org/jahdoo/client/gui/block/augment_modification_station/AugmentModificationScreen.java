@@ -78,7 +78,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         int width = this.width / 2;
         var getTag = this.item.get(DataComponentRegistry.WAND_ABILITY_HOLDER);
         if (getTag == null) return;
-        var components = componentsWithBounds(item);
+        var components = componentsWithBounds(item, (int) this.getMinecraft().level.getGameTime());
 
         for (Component component : components){
             var x = getAbilityModifiers(component, getTag);
@@ -98,8 +98,8 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         }
     }
 
-    public static List<Component> componentsWithBounds(ItemStack item){
-        var components = getComponents(item);
+    public static List<Component> componentsWithBounds(ItemStack item, int tick){
+        var components = getComponents(item, tick);
         var getTag =item.get(DataComponentRegistry.WAND_ABILITY_HOLDER);
         var compNew = components
             .subList(1, components.size()-2).stream().filter(component -> getAbilityModifiers(component, getTag).highestValue() != -1)
@@ -218,7 +218,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     }
 
     private void windowMoveVertical(double dragY) {
-        var size = componentsWithBounds(item).size();
+        var size = componentsWithBounds(item, (int) this.getMinecraft().level.getGameTime()).size();
         if (size > 14 || size > 2 && showInventory) {
             int b = 7 * size * size - 135 * size + 578;
             this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, b + (!showInventory ? -20 : -120)));
@@ -258,7 +258,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         selectedBox(guiGraphics, mouseX, mouseY);
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         guiGraphics.disableScissor();
-        SharedUI.header(guiGraphics, this.width, this.height, this.item, this.font);
+        SharedUI.header(guiGraphics, this.width, this.height, this.item, this.font, (int) this.getMinecraft().level.getGameTime());
         overlayInventory(guiGraphics, startX, startY);
         SharedUI.augmentCoreSlots(guiGraphics, 20, 10, BORDER_COLOUR, this.width, this.height, getFadedColourBackground(0.7f));
         SharedUI.bezelMaker(guiGraphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element.getFirst());

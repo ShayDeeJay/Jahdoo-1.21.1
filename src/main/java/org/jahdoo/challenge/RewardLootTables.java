@@ -101,36 +101,9 @@ public class RewardLootTables {
         return LootItem.lootTableItem(wand);
     }
 
-    public static ItemStack getEliteItem(ServerLevel serverLevel, Vec3 pos) {
-        var loot = LootTable.lootTable().withPool(poolForEliteShopping());
-        var lootParams = ModHelpers.getRandomListElement(createLootParams(serverLevel, pos, loot));
-        var rarity = ETERNAL;
-        attachItemData(serverLevel, rarity, lootParams, true, rarity);
-        return lootParams;
-    }
-
     public static ObjectArrayList<ItemStack> getCoinItems(ServerLevel serverLevel, Vec3 pos, int level) {
         var loot = LootTable.lootTable().withPool(coinLoot(level));
         return createLootParams(serverLevel, pos, loot);
-    }
-
-    private static LootPool.@NotNull Builder poolForEliteShopping() {
-        var builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F));
-        return builder
-            .add(RUNE.setWeight(5))
-            .add(AUGMENT_ITEM_BUILDER.setWeight(5))
-            .add(TOME_OF_UNITY_BUILDER.setWeight(4))
-            .add(getRandomWand().setWeight(2))
-            .add(WIZARD_HELM_BUILDER.setWeight(1))
-            .add(WIZARD_CHEST_BUILDER.setWeight(1))
-            .add(WIZARD_LEGGINGS_BUILDER.setWeight(1))
-            .add(WIZARD_BOOTS_BUILDER.setWeight(1))
-            .add(BATTLEMAGE_HELM_BUILDER.setWeight(1))
-            .add(BATTLEMAGE_CHEASTPLATE_BUILDER.setWeight(1))
-            .add(BATTLEMAGE_LEGGINGS_BUILDER.setWeight(1))
-            .add(BATTLEMAGE_BOOTS_BUILDER.setWeight(1))
-            .add(BATTLEMAGE_GAUNTLET.setWeight(1))
-            .add(ANCIENT_AMULET.setWeight(1));
     }
 
     private static @NotNull ObjectArrayList<ItemStack> createLootParams(ServerLevel serverLevel, Vec3 pos, LootTable.Builder loot) {

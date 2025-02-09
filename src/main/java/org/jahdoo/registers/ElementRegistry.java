@@ -13,10 +13,7 @@ import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.elements.*;
 import org.jahdoo.utils.ModHelpers;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ElementRegistry {
 
@@ -42,7 +39,6 @@ public class ElementRegistry {
                 .stream()
                 .filter(ability -> ability.getWand() == wand)
                 .toList();
-
         return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
     }
 
@@ -62,10 +58,20 @@ public class ElementRegistry {
         return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
     }
 
+    public static List<AbstractElement> getAllElements() {
+        return REGISTRY.stream().filter(element -> element != UTILITY.get()).toList();
+    }
+
+    public static List<AbstractElement> getElementsWithout(AbstractElement...elements) {
+        return REGISTRY.stream()
+            .filter(element -> !Arrays.stream(elements).toList().contains(element))
+            .filter(element -> element != UTILITY.get())
+            .toList();
+    }
 
     public static AbstractElement getRandomElement() {
-        var list = REGISTRY.stream().toList().stream().filter(element -> element != UTILITY.get());;
-        return ModHelpers.getRandomListElement(list.toList());
+        var list = REGISTRY.stream().filter(element -> element != UTILITY.get()).toList();
+        return ModHelpers.getRandomListElement(list);
     }
 
     private static DeferredHolder<AbstractElement, AbstractElement> registerElement(AbstractElement spell) {

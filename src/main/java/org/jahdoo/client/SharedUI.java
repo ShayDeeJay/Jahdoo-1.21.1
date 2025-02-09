@@ -65,9 +65,9 @@ public class SharedUI {
         }
     }
 
-    public static List<Component> getComponents(ItemStack item){
+    public static List<Component> getComponents(ItemStack item, int tick){
         var components = new ArrayList<Component>();
-        AugmentItemHelper.getHoverText(item, components, true);
+        AugmentItemHelper.getHoverText(item, components, true, tick);
         return components;
     }
 
@@ -202,10 +202,10 @@ public class SharedUI {
         guiGraphics.enableScissor(0, heightFrom + 50, width, heightTo - 5);
     }
 
-    public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, ItemStack itemStack, Font font) {
+    public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, ItemStack itemStack, Font font, int tick) {
         var yOff = 102;
         int xOff = width/2 - 55;
-        guiGraphics.drawString(font, getComponents(itemStack).getFirst(), xOff, (height/2 - (yOff - 10)), 0, true);
+        guiGraphics.drawString(font, getComponents(itemStack, tick).getFirst(), xOff, (height/2 - (yOff - 10)), 0, true);
         guiGraphics.drawString(font, AugmentItemHelper.getHoverName(itemStack), xOff, (height/2 - yOff), 0, true);
         abilityIcon(guiGraphics, itemStack, width - 155, height - 180, 109, 40, 12);
     }

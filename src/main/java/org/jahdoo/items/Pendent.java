@@ -8,9 +8,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ability.rarity.JahdooRarity;
+import org.jahdoo.items.wand.WandItemHelper;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
@@ -35,6 +37,15 @@ public class Pendent extends Item implements ICurioItem, JahdooItem {
     @Override
     public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
         return new ArrayList<>();
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        var data = stack.get(DataComponentRegistry.RUNE_HOLDER);
+        if(data != null){
+            WandItemHelper.appendRefinementPotential(tooltipComponents, stack);
+        }
     }
 
     @Override

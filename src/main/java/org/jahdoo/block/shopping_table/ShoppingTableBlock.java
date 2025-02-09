@@ -25,7 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import org.jahdoo.challenge.trading_post.ItemCosts;
 import org.jahdoo.items.augments.AugmentItemHelper;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.utils.ModHelpers;
@@ -82,8 +82,7 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
         if(!(entity instanceof ShoppingTableEntity shoppingTable)) return ItemInteractionResult.FAIL;
 
         if(shoppingTable.canPurchase()){
-            var cost = shoppingTable.getCost();
-            var enoughToBuy = hasEnoughToBuy(player, cost.getItem(), cost.getCount());
+            var enoughToBuy = hasEnoughToBuy(player, shoppingTable.getCurrencyType().getItem(), shoppingTable.getCost());
 
             if(enoughToBuy){
                 var isRandomisedTable = state.getValue(TEXTURE) == 3;
@@ -97,13 +96,15 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
                     player.playSound(SoundEvents.ITEM_PICKUP, 0.5F, 0.8F);
                     AugmentItemHelper.throwOrAddItem(player, stackInSlot);
                     item.setStackInSlot(1, ItemStack.EMPTY);
+                    shoppingTable.itemCosts = ItemCosts.EMPTY_COST;
                     return ItemInteractionResult.SUCCESS;
                 }
+            } else {
+                if(level.isClientSide) player.displayClientMessage(Component.literal("Insufficient Funds"), true);
+                return ItemInteractionResult.SUCCESS;
             }
         }
 
-        ModHelpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_CLOSE_SHUTTER, 0.6F,2F);
-        if(level.isClientSide) player.displayClientMessage(Component.literal("Insufficient Funds"), true);
         return ItemInteractionResult.SUCCESS;
     }
 

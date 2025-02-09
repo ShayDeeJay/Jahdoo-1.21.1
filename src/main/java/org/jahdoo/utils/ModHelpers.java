@@ -106,6 +106,34 @@ public class ModHelpers {
         return new Color(variantRed, variantGreen, variantBlue);
     }
 
+    public static int getColorTransition(int startColor, int endColor, int ticker, double transitionDelay) {
+        // Extract RGB components from the start color
+        int startRed = (startColor >> 16) & 0xFF;
+        int startGreen = (startColor >> 8) & 0xFF;
+        int startBlue = startColor & 0xFF;
+
+        // Extract RGB components from the end color
+        int endRed = (endColor >> 16) & 0xFF;
+        int endGreen = (endColor >> 8) & 0xFF;
+        int endBlue = endColor & 0xFF;
+
+        // Calculate progress using a sinusoidal function
+        double progress = 0.5 * (1.0 + Math.sin(2 * Math.PI * ticker / transitionDelay));
+
+        // Interpolate each RGB component
+        int red = (int) (startRed + (endRed - startRed) * progress);
+        int green = (int) (startGreen + (endGreen - startGreen) * progress);
+        int blue = (int) (startBlue + (endBlue - startBlue) * progress);
+
+        // Ensure the values are within the valid range [0, 255]
+        red = Math.min(Math.max(red, 0), 255);
+        green = Math.min(Math.max(green, 0), 255);
+        blue = Math.min(Math.max(blue, 0), 255);
+
+        // Pack the interpolated RGB components into an integer
+        return (red << 16) | (green << 8) | blue;
+    }
+
     public static double getAttributeValue(Player player, Holder<Attribute> attribute){
         var attributes = player.getAttribute(attribute);
         return attributes != null ? attributes.getValue() : -1;

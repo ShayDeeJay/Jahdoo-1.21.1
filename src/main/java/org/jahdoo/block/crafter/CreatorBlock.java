@@ -71,8 +71,8 @@ public class CreatorBlock extends BaseEntityBlock{
     protected @NotNull ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
         if(!(pLevel.getBlockEntity(pPos) instanceof CreatorEntity wandManager)) return ItemInteractionResult.FAIL;
         ItemStack stack = pPlayer.getItemInHand(pHand);
-        ItemStackHandler inputItemHandler = wandManager.inputItemHandler;
-        ItemStackHandler outputItemHandler = wandManager.outputItemHandler;
+        var inputItemHandler = wandManager.inputItemHandler;
+        var outputItemHandler = wandManager.outputItemHandler;
 
         if(!stack.isEmpty()){
             for (int i = 0; i < inputItemHandler.getSlots(); i++) {

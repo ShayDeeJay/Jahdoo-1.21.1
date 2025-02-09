@@ -1,21 +1,28 @@
 package org.jahdoo.block.shopping_table;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.AbstractBEInventory;
 import org.jahdoo.challenge.RewardLootTables;
+import org.jahdoo.challenge.trading_post.ItemCosts;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.utils.ModHelpers;
 
+import static org.jahdoo.challenge.trading_post.ItemCosts.*;
+
 public class ShoppingTableEntity extends AbstractBEInventory {
 
+    ItemCosts itemCosts;
 
     public ShoppingTableEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.SHOPPING_TABLE_BE.get(), pPos, pBlockState, 64);
@@ -25,12 +32,16 @@ public class ShoppingTableEntity extends AbstractBEInventory {
         return this.inputItemHandler;
     }
 
-    public void setCost(ItemStack cost) {
-        this.getItem().setStackInSlot(1, cost);
+    public void setCost(ItemCosts cost) {
+        this.itemCosts = cost;
     }
 
-    public ItemStack getCost() {
-        return this.getItem().getStackInSlot(1);
+    public int getCost(){
+        return itemCosts.value();
+    }
+
+    public ItemStack getCurrencyType() {
+        return getItemStack(itemCosts.CurrencyType());
     }
 
     public boolean canPurchase(){
@@ -52,9 +63,15 @@ public class ShoppingTableEntity extends AbstractBEInventory {
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
         if(!(pLevel instanceof ServerLevel serverLevel)) return;
+        for (var player : serverLevel.players()) {
+            if(level instanceof CustomLevel){
+                player.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, 5, 5));
+                player.addEffect(new JahdooMobEffect(MobEffects.SATURATION, 5, 5));
+            }
+        }
         if(pState.getValue(ShoppingTableBlock.TEXTURE) == 3){
             if(serverLevel.getGameTime() % 30 != 0) return;
-            if(getCost().isEmpty()) return;
+            if(getCurrencyType().isEmpty()) return;
             insertRandomItem();
         }
     }
@@ -87,11 +104,13 @@ public class ShoppingTableEntity extends AbstractBEInventory {
     @Override
     protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
         super.saveAdditional(pTag, pRegistries);
+        saveData(pTag, itemCosts);
     }
 
     @Override
     protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
         super.loadAdditional(pTag, pRegistries);
+        this.itemCosts = loadData(pTag);
     }
 
 }

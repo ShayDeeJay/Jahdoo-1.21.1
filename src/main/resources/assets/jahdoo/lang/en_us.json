@@ -100,10 +100,10 @@
   "attribute.name.jahdoo.skills.destiny_bond": "Destiny Bond",
   "attribute.name.jahdoo.skills.triple_jump": "Triple Jump",
 
-  "attribute.name.jahdoo.mana.no_mana_cost": "Skip Mana Cost Chance",
-  "attribute.name.jahdoo.no_cooldown_cost": "Skip Cooldown Cost Chance",
-  "attribute.name.jahdoo.cast.healer": "Heal On Cast Chance",
-  "attribute.name.jahdoo.cast.absorption": "Absorption Hearts On Cast Chance",
+  "attribute.name.jahdoo.mana.no_mana_cost": "Ignore Mana Cost",
+  "attribute.name.jahdoo.no_cooldown_cost": "Ignore Cooldown Cost",
+  "attribute.name.jahdoo.cast.healer": "Heal On Cast",
+  "attribute.name.jahdoo.cast.absorption": "Absorption Hearts On Cast",
 
   "attribute.name.jahdoo.mana.mana_regen": "Mana Regen",
   "attribute.name.jahdoo.fixed.mana.mana_pool": "Mana",

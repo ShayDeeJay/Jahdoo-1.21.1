@@ -1,13 +1,10 @@
 package org.jahdoo.client.block_renderer;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -20,16 +17,12 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.checkerframework.checker.units.qual.N;
 import org.jahdoo.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.items.wand.WandItem;
-import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.utils.ColourStore;
 import org.joml.Matrix4f;
 
-import static net.minecraft.client.renderer.RenderStateShard.*;
 import static org.jahdoo.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.client.block_renderer.ShoppingTableRenderer.DisplayDirection.*;
 
@@ -63,12 +56,12 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
     }
 
     private void renderPrice(ShoppingTableEntity pBlockEntity, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, ItemRenderer itemRenderer, DisplayDirection direction) {
-        var itemStack1 = pBlockEntity.getCost() == null ? ItemStack.EMPTY : pBlockEntity.getCost();
+        var itemStack1 = pBlockEntity.getCurrencyType() == null ? ItemStack.EMPTY : pBlockEntity.getCurrencyType();
         var number = 0.5f;
 
         if(!itemStack1.isEmpty()){
             pPoseStack.pushPose();
-            renderCostText(pBlockEntity, Component.literal(String.valueOf(itemStack1.getCount())), pPoseStack, pBuffer, -1, direction);
+            renderCostText(pBlockEntity, Component.literal(String.valueOf(pBlockEntity.getCost())), pPoseStack, pBuffer, -1, direction);
             pPoseStack.translate(direction.x, number, direction.z);
             var x = 0.2f;
             pPoseStack.scale(x, x, x);

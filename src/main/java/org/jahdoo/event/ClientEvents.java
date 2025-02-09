@@ -16,6 +16,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.client.KeyBinding;
+import org.jahdoo.client.OverlayBlockTooltip;
 import org.jahdoo.client.RuneTooltipRenderer;
 import org.jahdoo.entities.living.VoidSpider;
 import org.jahdoo.event.event_helpers.WandAbilitySelector;
@@ -105,26 +106,7 @@ public class ClientEvents {
         var player = instance.player;
         crosshairManager(event);
         simpleGui(event, player);
-
-        if(player != null){
-            var partialTicks = event.getPartialTick().getGameTimeDeltaTicks();
-            var pick = player.pick(3, partialTicks, false);
-            var entity = player.level().getBlockEntity(BlockPos.containing(pick.getLocation()));
-
-            if(entity instanceof ShoppingTableEntity tableEntity){
-                var guiGraphics = event.getGuiGraphics();
-                var width = guiGraphics.guiWidth()/2;
-                var height = guiGraphics.guiHeight()/2;
-                var itemStack = tableEntity.getItem().getStackInSlot(0);
-                var tooltipHeight = Screen.getTooltipFromItem(instance, itemStack);
-                var getState = tableEntity.getBlockState().getValue(ShoppingTableBlock.TEXTURE);
-                if(instance.screen == null){
-                    if (tooltipHeight.size() > 1 && getState != 3) {
-                        guiGraphics.renderTooltip(instance.font, itemStack, width + 60, height - (tooltipHeight.size() * 3));
-                    }
-                }
-            }
-        }
+        OverlayBlockTooltip.overlayEvent(event);
     }
 }
 

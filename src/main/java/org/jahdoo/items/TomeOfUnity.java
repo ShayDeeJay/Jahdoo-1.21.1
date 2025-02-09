@@ -34,7 +34,7 @@ public class TomeOfUnity extends Item implements ICurioItem, JahdooItem {
 
         if(getRarityId != null){
             var getRarity = JahdooRarity.getAllRarities().get(getRarityId);
-            list.addFirst(JahdooRarity.addRarityTooltip(getRarity));
+            list.addFirst(JahdooRarity.addRarityTooltip(getRarity, (int) context.level().getGameTime()));
         }
 
         list.add(Component.empty());

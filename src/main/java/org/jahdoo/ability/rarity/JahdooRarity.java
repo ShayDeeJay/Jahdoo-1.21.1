@@ -1,5 +1,6 @@
 package org.jahdoo.ability.rarity;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.StringRepresentable;
@@ -47,7 +48,8 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     RARE(1, "Rare", color(67, 164, 222), 1500, RARE_ATTRIBUTES),
     EPIC(2, "Epic", color(222, 136, 255), 4500, EPIC_ATTRIBUTES),
     LEGENDARY(3, "Legendary", color(241, 194, 50), 5500, LEGENDARY_ATTRIBUTES),
-    ETERNAL(4, "Eternal", color(225,92,199), 6000, ETERNAL_ATTRIBUTES);
+    ETERNAL(4, "Eternal", color(225,92,199), 6000, ETERNAL_ATTRIBUTES),
+    UNIQUE(5, "Unique", color(247, 100, 67), -1, ETERNAL_ATTRIBUTES);
 
     private final int id;
     private final String name;
@@ -56,7 +58,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     private final int chanceRange;
     private final RarityAttributes attributes;
 
-    private static final List<JahdooRarity> getAllRarities = List.of(COMMON, RARE, EPIC, LEGENDARY, ETERNAL);
+    private static final List<JahdooRarity> getAllRarities = List.of(COMMON, RARE, EPIC, LEGENDARY, ETERNAL, UNIQUE);
 
     JahdooRarity(int id, String name, int color, int chanceRange, RarityAttributes attributes) {
         this.id = id;
@@ -94,21 +96,30 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
 
     public static JahdooRarity getRarity() {
         var getRandom = ModHelpers.Random.nextInt(1, 6020);
-        var filteredList = new ArrayList<>(getAllRarities.stream().filter(jahdooRarity -> jahdooRarity.chanceRange <= getRandom).toList());
+        var filteredList = new ArrayList<>(
+            getAllRarities.stream()
+                .filter(jahdooRarity -> jahdooRarity.id != 5)
+                .filter(jahdooRarity -> jahdooRarity.chanceRange <= getRandom)
+                .toList()
+        );
         return ModHelpers.getRandomListElement(filteredList);
     }
 
     public static AbilityRegistrar getAbilityWithRarity(boolean withUtil, @Nullable JahdooRarity rarity) {
-        var correctRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
-        var listAll = AbilityRegister.getMatchingRarity(correctRarity);
-        var listNoUtil = AbilityRegister.getMatchingRarityNoUtil(correctRarity);
+        var removeRarity = getJahdooRarity(rarity);
+        var listAll = AbilityRegister.getMatchingRarity(removeRarity);
+        var listNoUtil = AbilityRegister.getMatchingRarityNoUtil(removeRarity);
         var list = withUtil ? listAll : listNoUtil;
         return list.get(ModHelpers.Random.nextInt(0, list.size()));
     }
 
-    public static AbilityRegistrar getAbilityUtil(@Nullable JahdooRarity rarity) {
+    private static JahdooRarity getJahdooRarity(@Nullable JahdooRarity rarity) {
         var correctRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
-        var listAll = AbilityRegister.getMatchingRarityUtilOnly(correctRarity);
+        return correctRarity == JahdooRarity.UNIQUE ? JahdooRarity.EPIC : correctRarity;
+    }
+
+    public static AbilityRegistrar getAbilityUtil(@Nullable JahdooRarity rarity) {
+        var listAll = AbilityRegister.getMatchingRarityUtilOnly(getJahdooRarity(rarity));
         return listAll.get(ModHelpers.Random.nextInt(0, listAll.size()));
     }
 
@@ -124,20 +135,29 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return emptyStack;
     }
 
-    public static Component addRarityTooltip(JahdooRarity rarity){
-        return withStyleComponentTrans("rarity.jahdoo.current_rarity", -9013642).copy().append(withStyleComponent(rarity.getSerializedName(), rarity.getColour()));
+    public static Component addRarityTooltip(JahdooRarity rarity, int tick){
+        var colorA = color(166, 255, 125);
+        var colorB = color(104, 243, 252);
+        var id = "rarity.jahdoo.current_rarity";
+        var colour = getColorTransition(colorA, colorB, tick, 50);
+        var getCorrectColour = rarity.id == 5 ? colour : rarity.getColour();
+        var sibling = withStyleComponent(rarity.getSerializedName(), getCorrectColour);
+
+        return withStyleComponentTrans(id, -9013642).copy().append(sibling);
     }
 
     public static Component addRarityTooltip(int id){
         var rarity = JahdooRarity.getAllRarities().get(id);
-        return withStyleComponentTrans("rarity.jahdoo.current_rarity", -9013642).copy().append(withStyleComponent(rarity.getSerializedName(), rarity.getColour()));
+        return withStyleComponentTrans("rarity.jahdoo.current_rarity", -9013642)
+                .copy()
+                .append(withStyleComponent(rarity.getSerializedName(), rarity.getColour()));
     }
 
-    public static Component attachRarityTooltip(ItemStack wandItem) {
+    public static Component attachRarityTooltip(ItemStack wandItem, int tick) {
         var getRarityId = wandItem.get(JAHDOO_RARITY);
         if(getRarityId != null) {
             var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(getRarityId, 0, 5));
-            return JahdooRarity.addRarityTooltip(getRarity);
+            return JahdooRarity.addRarityTooltip(getRarity, tick);
         }
         return Component.empty();
     }
@@ -150,6 +170,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             case 2 -> "III";
             case 3 -> "IV";
             case 4 -> "V";
+            case 5 -> "VI";
             default -> "I";
         };
         return withStyleComponent("Tier " + getTier, ColourStore.HEADER_COLOUR);

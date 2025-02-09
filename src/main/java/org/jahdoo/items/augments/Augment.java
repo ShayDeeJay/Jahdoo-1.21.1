@@ -72,7 +72,7 @@ public class Augment extends Item implements MenuAccess {
 
     @Override
     public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
-        AugmentItemHelper.getHoverText(pStack, pTooltipComponents, false);
+        AugmentItemHelper.getHoverText(pStack, pTooltipComponents, false, (int) pContext.level().getGameTime());
     }
 
     @Override

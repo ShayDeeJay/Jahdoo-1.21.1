@@ -37,6 +37,7 @@ import static org.jahdoo.client.RenderHelpers.drawTexture;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class RenderEventHelper {
+
     public static void renderUtilityOverlay(RenderLevelStageEvent event, Player player, ItemStack stack) {
         var pick = player.pick(15, 1, false);
         if(stack.getItem() instanceof WandItem){

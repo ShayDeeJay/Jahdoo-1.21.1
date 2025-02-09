@@ -250,7 +250,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
 
     private void remainingPotential(@NotNull GuiGraphics guiGraphics, int shiftX, AtomicInteger spacer, int shiftY) {
         if (getWand().getItem() instanceof WandItem) {
-            var itemModifiers = WandItemHelper.getItemModifiers(getWand());
+            var itemModifiers = WandItemHelper.getItemModifiers(getWand(), (int) this.getMinecraft().level.getGameTime());
             var potentialList = filterList(itemModifiers, "Potential");
             var sharedX = this.width / 2 - 30 + shiftX;
             for (Component component : potentialList) {
@@ -283,7 +283,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         int startY
     ) {
         if(getWand().getItem() instanceof WandItem){
-            var itemModifiers = WandItemHelper.getItemModifiers(getWand());
+            var itemModifiers = WandItemHelper.getItemModifiers(getWand(), (int) this.getMinecraft().level.getGameTime());
             var rarityAndSlots = filterList(itemModifiers, "Rarity", "Slots", "Potential");
             var modifiersAndHeader = filterList(itemModifiers, "%", "Applies");
             var widthHeader = 0;

@@ -15,9 +15,12 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.registers.DataComponentRegistry;
+import org.jahdoo.registers.ElementRegistry;
+import org.jahdoo.utils.ColourStore;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,6 +31,7 @@ import static org.jahdoo.items.runes.rune_data.RuneGenerator.RuneCategories.from
 import static org.jahdoo.items.runes.rune_data.RuneGenerator.*;
 import static org.jahdoo.registers.AttributesRegister.*;
 import static org.jahdoo.registers.DataComponentRegistry.RUNE_DATA;
+import static org.jahdoo.registers.ElementRegistry.*;
 import static org.jahdoo.registers.ElementRegistry.getElementById;
 import static org.jahdoo.registers.ElementRegistry.getRandomElement;
 import static org.jahdoo.utils.Maths.roundNonWholeString;
@@ -202,6 +206,53 @@ public record RuneData(
             return withStyleComponent("+" + value + "%" + " ", colourPre).copy().append(compName);
         }
 
+        public static int getColourBy(String attributeName){
+            if(attributeName.contains("mystic")){
+                return MYSTIC.get().textColourPrimary();
+            } else if (attributeName.contains("vitality")) {
+                return VITALITY.get().textColourPrimary();
+            } else if (attributeName.contains("lightning")) {
+                return LIGHTNING.get().textColourPrimary();
+            } else if (attributeName.contains("inferno")) {
+                return INFERNO.get().textColourPrimary();
+            } else if (attributeName.contains("frost")) {
+                return FROST.get().textColourPrimary();
+            } else if (attributeName.contains("mana.mana")) {
+                return ColourStore.AETHER_BLUE;
+            } else if (attributeName.contains("skills")) {
+                return ColourStore.PERK_GREEN;
+            }
+
+            return -1;
+        }
+
+        public static Component standAloneAttributes(ItemAttributeModifiers.Entry entry) {
+            var colourPre = color(121, 187, 67);
+            var descriptionId = entry.attribute().value().getDescriptionId();
+            var amount = entry.modifier().amount();
+            var typeColour = getColourBy(descriptionId);
+            var compName = withStyleComponentTrans(descriptionId, typeColour);
+            var isAbsorption = descriptionId.contains("absorption");
+            var isMaxHealth = descriptionId.contains("health");
+            var isSpeed = descriptionId.contains("speed");
+
+            if(isSpeed) amount = amount * 1000;
+            if(isAbsorption || isMaxHealth) amount = (amount/2);
+
+            var value = roundNonWholeString(singleFormattedDouble(amount));
+
+            if(descriptionId.contains(FIXED_VALUE) || isAbsorption || isMaxHealth) {
+                return withStyleComponent("+" + value + " ", colourPre).copy().append(compName);
+            }
+
+            if(descriptionId.contains("skills")){
+                return withStyleComponent("", colourPre).copy().append(compName);
+            }
+
+            return withStyleComponent("+" + value + "%" + " ", colourPre).copy().append(compName);
+        }
+
+
         public static RuneData getRuneData(ItemStack stack){
             return stack.getOrDefault(RUNE_DATA, DEFAULT);
         }
@@ -218,9 +269,8 @@ public record RuneData(
             if(stack.getAttributeModifiers().modifiers().isEmpty()){
                 var getElement = getRandomElement();
                 var rarity = withRarity != null ? withRarity : JahdooRarity.getRarity();
-
-                final var attributes = rarity.getAttributes();
-                final var id = rarity.getId();
+                var attributes = rarity.getAttributes();
+                var id = rarity.getId();
 
                 var getList = switch (getRarity()){
                     case COMMON ->
@@ -256,6 +306,7 @@ public record RuneData(
                             generateSympathiserRune(SKIP_MANA.getDelegate(), attributes.getRandomHealChance(), id),
                             generateSympathiserRune(SKIP_COOLDOWN.getDelegate(), attributes.getRandomHealChance(), id)
                         );
+                    case UNIQUE -> List.of(generateSympathiserRune(CAST_HEAL.getDelegate(), attributes.getRandomHealChance(), id));
                 };
 
                 attachLootBeamComponent(stack, rarity);

@@ -94,11 +94,11 @@ public class WandItemHelper {
         toolTips.add(toolTips.size(), withStyleComponent("Potential: ", HEADER_COLOUR).copy().append(slot));
     }
 
-    public static List<Component> getItemModifiers(ItemStack wandItem){
+    public static List<Component> getItemModifiers(ItemStack wandItem, int tick){
         var appendComponents = new ArrayList<Component>();
         var abstractElement = ElementRegistry.getElementFromWand(wandItem.getItem());
         if(abstractElement.isPresent()){
-            appendComponents.add(attachRarityTooltip(wandItem));
+            appendComponents.add(attachRarityTooltip(wandItem, tick));
             totalSlots(appendComponents, wandItem, SUB_HEADER_COLOUR);
             appendRefinementPotential(appendComponents, wandItem);
             appendSelectedAbility(wandItem, appendComponents);
@@ -252,10 +252,10 @@ public class WandItemHelper {
 
     static @NotNull Item.Properties wandInit() {
         return new Item.Properties()
-                .stacksTo(1)
-                .component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
-                .component(WAND_DATA.get(), WandData.DEFAULT)
-                .fireResistant();
+            .stacksTo(1)
+            .component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
+            .component(WAND_DATA.get(), WandData.DEFAULT)
+            .fireResistant();
     }
 
     private static void sendCantUseMessage(LivingEntity entity, AbstractElement abstractElement) {

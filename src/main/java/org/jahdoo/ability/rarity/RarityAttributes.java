@@ -59,15 +59,15 @@ public class RarityAttributes {
         return getRandomDouble(healChance);
     }
 
-    public Integer getRandomRefinementPotential() {
+    public int getRandomRefinementPotential() {
         return getRandomInteger(refinementPotential);
     }
 
-    public Integer getRandomMaxHealth() {
+    public int getRandomMaxHealth() {
         return getRandomInteger(maxHealth);
     }
 
-    public Integer getRandomMaxAbsorption() {
+    public int getRandomMaxAbsorption() {
         return getRandomInteger(maxAbsorption);
     }
 
@@ -75,7 +75,7 @@ public class RarityAttributes {
         return Random.nextDouble(range.getFirst(), range.getSecond());
     }
 
-    private Integer getRandomInteger(Pair<Integer, Integer> range) {
+    private int getRandomInteger(Pair<Integer, Integer> range) {
         return Random.nextInt(range.getFirst(), range.getSecond());
     }
 

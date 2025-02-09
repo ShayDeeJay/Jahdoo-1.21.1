@@ -171,7 +171,7 @@ public class AugmentScreen extends Screen  {
 //        SharedUI.boxMaker(guiGraphics, this.width/2 - 100, this.height/2 - 70, 50, this.previousScreen == null ? 95 : 55, BORDER_COLOUR);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.disableScissor();
-        SharedUI.header(guiGraphics, this.width, this.height, itemStack, this.font);
+        SharedUI.header(guiGraphics, this.width, this.height, itemStack, this.font, (int) this.getMinecraft().level.getGameTime());
 
     }
 

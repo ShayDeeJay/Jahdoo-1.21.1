@@ -22,6 +22,7 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
@@ -32,6 +33,9 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.block.shopping_table.ShoppingTableEntity;
+import org.jahdoo.challenge.trading_post.ItemCosts;
+import org.jahdoo.challenge.trading_post.ShoppingItems;
+import org.jahdoo.items.runes.rune_data.RuneData;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
 import org.jahdoo.registers.SoundRegister;
@@ -48,6 +52,7 @@ import static org.jahdoo.block.loot_chest.LootChestBlock.FACING;
 import static org.jahdoo.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.challenge.LevelGenerator.DimHandler.TRADING_POST;
 import static org.jahdoo.challenge.LevelGenerator.DimHandler.TRIAL;
+import static org.jahdoo.challenge.trading_post.ShoppingItems.getEliteShoppingItem;
 import static org.jahdoo.registers.AttachmentRegister.CHALLENGE_ALTAR;
 import static org.jahdoo.registers.ItemsRegister.*;
 import static org.jahdoo.utils.ModHelpers.Random;
@@ -155,7 +160,6 @@ public class LevelGenerator {
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
         //Here we can pass the data from the previous altar to set up the next challenge stack.
         if(isTrial) setTrialDim(level, data);
-
         if(isTrading) setTradingPost(level);
     }
 
@@ -182,11 +186,13 @@ public class LevelGenerator {
         var eliteState = shoppingTableState.setValue(FACING, Direction.NORTH).setValue(TEXTURE, 2);
         for(int i = 0; i <= 14; i += 7){
             var pos = eliteItemPosition.west(i);
+            level.setBlockAndUpdate(pos.above(), Blocks.BARRIER.defaultBlockState());
             level.setBlockAndUpdate(pos, eliteState);
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
-                entity.setItem(RewardLootTables.getEliteItem(level, pos.getCenter()));
-                entity.setCost(new ItemStack(GOLD_COIN).copyWithCount(99));
+                var shoppingItem = getEliteShoppingItem(level);
+                entity.setItem(shoppingItem.ShoppingItem());
+                entity.setCost(shoppingItem.itemCosts());
             }
         }
 
@@ -198,14 +204,16 @@ public class LevelGenerator {
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
                 switch (i){
-                    case 0 -> entity.setCost(new ItemStack(GOLD_COIN).copyWithCount(1));
+                    case 0 -> entity.setCost(ItemCosts.getGoldCost(1));
                     case 3 -> {
                         entity.setItem(new ItemStack(AUGMENT_ITEM));
-                        entity.setCost(new ItemStack(GOLD_COIN).copyWithCount(20));
+                        entity.setCost(ItemCosts.getGoldCost(20));
                     }
                     case 6 -> {
-                        entity.setItem(new ItemStack(RUNE));
-                        entity.setCost(new ItemStack(GOLD_COIN).copyWithCount(10));
+                        var randomLootItem = new ItemStack(RUNE);
+                        RuneData.RuneHelpers.generateRandomTypAttribute(randomLootItem, null);
+                        entity.setItem(randomLootItem);
+                        entity.setCost(ItemCosts.getGoldCost(10));
                     }
                 }
             }
@@ -223,10 +231,10 @@ public class LevelGenerator {
                 entity.setItem(itemStack);
 
                 var cost = switch (value){
-                    case 1 -> new ItemStack(BRONZE_COIN).copyWithCount(40);
-                    case 2 -> new ItemStack(SILVER_COIN).copyWithCount(40);
-                    case 3 -> new ItemStack(PLATINUM_COIN).copyWithCount(3);
-                    default -> new ItemStack(BRONZE_COIN).copyWithCount(20);
+                    case 1 -> ItemCosts.getBronzeCost(40);
+                    case 2 -> ItemCosts.getSilverCost(40);
+                    case 3 -> ItemCosts.getPlatinumCost(3);
+                    default -> ItemCosts.getBronzeCost(20);
                 };
 
                 entity.setCost(cost);
