@@ -30,116 +30,91 @@ public class ModItemModelProvider extends ItemModelProvider {
         registerXpOrbModels();
         registerSimpleItems();
         registerArmorModels();
+        registerMagnets();
     }
 
     private void registerAugmentModels() {
-        List<String> augmentFiles = List.of(
-            "fire_augment",
-            "ice_augment",
-            "lightning_augment",
-            "mystic_augment",
-            "vitalis_augment",
-            "utility_augment"
+        var augmentFiles = List.of("fire_augment", "ice_augment", "lightning_augment", "mystic_augment", "vitalis_augment", "utility_augment");
+        augmentFiles.forEach(
+            location -> {
+                createModel(location, "item/augments/" + location);
+                createAugmentOverride(location, augmentFiles.indexOf(location) + 1);
+            }
         );
-        augmentFiles.forEach(this::createAugmentModel);
-        augmentFiles.forEach(this::createAugmentOverride);
+//        augmentFiles.forEach(this::createAugmentOverride);
     }
 
     private void registerRuneModels() {
         for (int i = 1; i < 12; i++) {
-            createRuneModel(i);
-            createRuneOverride(i);
+            createModel("rune" + i, "item/runes/rune" + i);
+            createOverride(i, ItemsRegister.RUNE, "item/rune");
         }
     }
 
     private void registerKeyModels() {
         for (int i = 1; i < 4; i++) {
-            createKeyModel(i);
-            createKeyOverride(i);
+            createModel("key" + i, "item/keys/key" + i);
+            createOverride(i, ItemsRegister.LOOT_KEY, "item/key");
         }
     }
 
     private void registerXpOrbModels() {
         for (int i = 1; i < 3; i++) {
-            createXpOrbModel(i);
-            createXpOrbOverride(i);
+            createModel("xp_orb" + i, "item/xp_orbs/xp_orb" + i);
+            createOverride(i, ItemsRegister.EXPERIENCE_ORB, "item/xp_orb");
+        }
+    }
+
+    private void registerMagnets() {
+        for (int i = 1; i < 12; i++) {
+            createModel("magnet" + i, "item/magnets/magnet_" + i);
+            createOverride(i, ItemsRegister.MAGNET, "item/magnet");
         }
     }
 
     private void registerSimpleItems() {
-        List<DeferredHolder<Item, Item>> simpleItems = List.of(
-                ItemsRegister.NEXITE_POWDER, ItemsRegister.HEALTH_CONTAINER,
-                ItemsRegister.AUGMENT_CORE, ItemsRegister.AUGMENT_FRAGMENT,
-                ItemsRegister.ADVANCED_AUGMENT_CORE, ItemsRegister.AUGMENT_HYPER_CORE,
-                ItemsRegister.BRONZE_COIN, ItemsRegister.SILVER_COIN,
-                ItemsRegister.GOLD_COIN, ItemsRegister.PLATINUM_COIN
+        var simpleItems = List.of(
+            ItemsRegister.NEXITE_POWDER, ItemsRegister.HEALTH_CONTAINER,
+            ItemsRegister.AUGMENT_CORE, ItemsRegister.AUGMENT_FRAGMENT,
+            ItemsRegister.ADVANCED_AUGMENT_CORE, ItemsRegister.AUGMENT_HYPER_CORE,
+            ItemsRegister.BRONZE_COIN, ItemsRegister.SILVER_COIN,
+            ItemsRegister.GOLD_COIN, ItemsRegister.PLATINUM_COIN
         );
 
         simpleItems.forEach(this::createSimpleItemModel);
     }
 
     private void registerArmorModels() {
-        List<DeferredHolder<Item, Item>> armorItems = List.of(
-                ItemsRegister.WIZARD_HELMET, ItemsRegister.WIZARD_CHESTPLATE,
-                ItemsRegister.WIZARD_LEGGINGS, ItemsRegister.WIZARD_BOOTS,
-                ItemsRegister.MAGE_HELMET, ItemsRegister.MAGE_CHESTPLATE,
-                ItemsRegister.MAGE_LEGGINGS, ItemsRegister.MAGE_BOOTS
+        var armorItems = List.of(
+            ItemsRegister.WIZARD_HELMET, ItemsRegister.WIZARD_CHESTPLATE,
+            ItemsRegister.WIZARD_LEGGINGS, ItemsRegister.WIZARD_BOOTS,
+            ItemsRegister.MAGE_HELMET, ItemsRegister.MAGE_CHESTPLATE,
+            ItemsRegister.MAGE_LEGGINGS, ItemsRegister.MAGE_BOOTS
         );
 
         armorItems.forEach(this::createSimpleItemModel);
     }
 
-    private void createAugmentModel(String augment) {
-        withExistingParent(augment, ResourceLocation.withDefaultNamespace("item/generated"))
-                .texture("layer0", ModHelpers.res("item/augments/" + augment));
-    }
-
-    private void createAugmentOverride(String augment) {
-        simpleAugmentItem(ItemsRegister.AUGMENT_ITEM)
+    private void createAugmentOverride(String augment, int index) {
+        var item = ItemsRegister.AUGMENT_ITEM;
+        getWithParent(item, "item/augments/" + item.getId().getPath())
                 .override()
-                .predicate(MODEL_DATA, List.of("fire_augment", "ice_augment", "lightning_augment",
-                        "mystic_augment", "vitalis_augment", "utility_augment").indexOf(augment) + 1)
+                .predicate(MODEL_DATA, index)
                 .model(modelFile("item/" + augment))
                 .end();
     }
 
-    private void createRuneModel(int runeId) {
-        withExistingParent("rune" + runeId, ResourceLocation.withDefaultNamespace("item/generated"))
-                .texture("layer0", ModHelpers.res("item/runes/rune" + runeId));
-    }
-
-    private void createRuneOverride(int runeId) {
-        upgradeRunes(ItemsRegister.RUNE)
+    private void createOverride(int runeId, DeferredHolder<Item, Item> item, String prefix) {
+        getWithParent(item, prefix + "s/" + item.getId().getPath())
                 .override()
                 .predicate(MODEL_DATA, runeId)
-                .model(modelFile("item/rune" + runeId))
+                .model(modelFile(prefix + runeId))
                 .end();
     }
 
-    private void createKeyModel(int keyId) {
-        withExistingParent("key" + keyId, ResourceLocation.withDefaultNamespace("item/generated"))
-                .texture("layer0", ModHelpers.res("item/keys/key" + keyId));
-    }
-
-    private void createKeyOverride(int keyId) {
-        keys(ItemsRegister.LOOT_KEY)
-                .override()
-                .predicate(MODEL_DATA, keyId)
-                .model(modelFile("item/key" + keyId))
-                .end();
-    }
-
-    private void createXpOrbModel(int orbId) {
-        withExistingParent("xp_orb" + orbId, ResourceLocation.withDefaultNamespace("item/generated"))
-                .texture("layer0", ModHelpers.res("item/xp_orbs/xp_orb" + orbId));
-    }
-
-    private void createXpOrbOverride(int orbId) {
-        xp(ItemsRegister.EXPERIENCE_ORB)
-                .override()
-                .predicate(MODEL_DATA, orbId)
-                .model(modelFile("item/xp_orb" + orbId))
-                .end();
+    private void createModel(String augment, String model) {
+        withExistingParent(augment, ResourceLocation.withDefaultNamespace("item/generated"))
+                .texture("layer0", ModHelpers.res(model));
     }
 
     private void createSimpleItemModel(DeferredHolder<Item, Item> item) {
@@ -147,28 +122,8 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private ItemModelBuilder getWithParent(DeferredHolder<Item, Item> item, String path) {
-        return withExistingParent(item.getId().getPath(), ResourceLocation.parse("item/generated"))
+        return withExistingParent(item.getId().getPath(), ResourceLocation.withDefaultNamespace("item/generated"))
                 .texture("layer0", ModHelpers.res(path));
-    }
-
-    private ItemModelBuilder simpleAugmentItem(DeferredHolder<Item, Item> item) {
-        return withExistingParent(item.getId().getPath(), ResourceLocation.withDefaultNamespace("item/generated"))
-                .texture("layer0", ModHelpers.res("item/augments/" + item.getId().getPath()));
-    }
-
-    private ItemModelBuilder upgradeRunes(DeferredHolder<Item, Item> item) {
-        return withExistingParent(item.getId().getPath(), ResourceLocation.withDefaultNamespace("item/generated"))
-                .texture("layer0", ModHelpers.res("item/runes/" + item.getId().getPath()));
-    }
-
-    private ItemModelBuilder keys(DeferredHolder<Item, Item> item) {
-        return withExistingParent(item.getId().getPath(), ResourceLocation.withDefaultNamespace("item/generated"))
-                .texture("layer0", ModHelpers.res("item/keys/" + item.getId().getPath()));
-    }
-
-    private ItemModelBuilder xp(DeferredHolder<Item, Item> item) {
-        return withExistingParent(item.getId().getPath(), ResourceLocation.withDefaultNamespace("item/generated"))
-                .texture("layer0", ModHelpers.res("item/xp_orbs/" + item.getId().getPath()));
     }
 
     private ModelFile modelFile(String location) {

@@ -3,7 +3,9 @@ package org.jahdoo.items;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.ability.rarity.JahdooRarity;
+import org.jahdoo.items.runes.rune_data.RuneData;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
@@ -21,7 +23,7 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.utils.ColourStore.AETHER_BLUE;
 import static org.jahdoo.utils.ColourStore.PERK_GREEN;
 
-public class TomeOfUnity extends Item implements ICurioItem, JahdooItem {
+public class TomeOfUnity extends RelicItem {
 
     public TomeOfUnity() {
         super(new Item.Properties().stacksTo(1));
@@ -30,35 +32,25 @@ public class TomeOfUnity extends Item implements ICurioItem, JahdooItem {
     @Override
     public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
         var list = new ArrayList<Component>();
-        var getRarityId = stack.get(DataComponentRegistry.JAHDOO_RARITY);
-
-        if(getRarityId != null){
-            var getRarity = JahdooRarity.getAllRarities().get(getRarityId);
-            list.addFirst(JahdooRarity.addRarityTooltip(getRarity, (int) context.level().getGameTime()));
-        }
-
+        var lists = stack.getAttributeModifiers().modifiers().stream().toList();
         list.add(Component.empty());
-
-        for (var tooltip : tooltips) {
-            var text = "attribute.name.jahdoo.mana.mana_regen";
-            var contains = tooltip.contains(Component.translatable(text));
-            var text1 = "attribute.name.jahdoo.fixed.mana.mana_pool";
-            var contains1 = tooltip.contains(Component.translatable(text1));
-            if(contains){
-                var value = getValue(tooltip);
-                list.add(ModHelpers.withStyleComponent("+" + value + "% ", AETHER_BLUE).copy().append(Component.translatable(text)));
-            }
-
-            if(contains1){
-                var value = getValue(tooltip);
-                list.add(ModHelpers.withStyleComponent(value + " ", AETHER_BLUE).copy().append(Component.translatable(text1)));
+        if(!lists.isEmpty()){
+            for (var entry : lists) {
+                tooltips.add(RuneData.RuneHelpers.standAloneAttributes(entry));
             }
         }
         return list;
     }
 
-    private static @NotNull String getValue(Component tooltip) {
-        return tooltip.plainCopy().toString().substring(93).replaceAll("\\D+$", "");
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        var list = stack.getAttributeModifiers().modifiers().stream().toList();
+        if(!list.isEmpty()){
+            for (var entry : list) {
+                tooltipComponents.add(RuneData.RuneHelpers.standAloneAttributes(entry));
+            }
+        }
     }
 
     @Override

@@ -19,13 +19,13 @@ public class ItemMagnetEffect extends MobEffect {
     @Override
     public boolean applyEffectTick(LivingEntity targetEntity, int pAmplifier) {
 
-        List<ItemEntity> items = targetEntity.level().getEntitiesOfClass(
+        var items = targetEntity.level().getEntitiesOfClass(
             ItemEntity.class,
             targetEntity.getBoundingBox().inflate(pAmplifier),
             entity -> true
         );
 
-        List<ExperienceOrb> experienceOrbs = targetEntity.level().getEntitiesOfClass(
+        var experienceOrbs = targetEntity.level().getEntitiesOfClass(
             ExperienceOrb.class,
             targetEntity.getBoundingBox().inflate(pAmplifier),
             entity -> true

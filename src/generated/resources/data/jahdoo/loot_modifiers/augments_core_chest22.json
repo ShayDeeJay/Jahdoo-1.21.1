@@ -7,7 +7,7 @@
     },
     {
       "condition": "neoforge:loot_table_id",
-      "loot_table_id": "minecraft:chests/village/village_taiga_house"
+      "loot_table_id": "minecraft:chests/ancient_city_ice_box"
     }
   ],
   "item": "jahdoo:augment_core"

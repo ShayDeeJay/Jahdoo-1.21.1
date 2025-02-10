@@ -93,7 +93,7 @@ public class LevelGenerator {
     }
 
     public static DimensionTransition createNewWorld(Player player, ServerLevel serverLevel, ChallengeLevelData altarData, DimHandler handler) {
-        var testKey = "end_"+UUID.randomUUID();
+        var testKey = handler.id + "-" + UUID.randomUUID();
         generateNewLevel(serverLevel, testKey);
         var getLevel = new AtomicReference<ServerLevel>();
         findLevel(testKey, serverLevel).ifPresent(

@@ -3,8 +3,7 @@
     "minecraft:player"
   ],
   "slots": [
-    "pendent",
-    "tome",
-    "glove"
+    "relic",
+    "magnet"
   ]
 }

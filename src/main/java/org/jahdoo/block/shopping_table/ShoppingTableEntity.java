@@ -18,6 +18,7 @@ import org.jahdoo.challenge.trading_post.ItemCosts;
 import org.jahdoo.registers.BlockEntitiesRegister;
 import org.jahdoo.utils.ModHelpers;
 
+import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static org.jahdoo.challenge.trading_post.ItemCosts.*;
 
 public class ShoppingTableEntity extends AbstractBEInventory {
@@ -65,10 +66,13 @@ public class ShoppingTableEntity extends AbstractBEInventory {
         if(!(pLevel instanceof ServerLevel serverLevel)) return;
         for (var player : serverLevel.players()) {
             if(level instanceof CustomLevel){
-                player.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, 5, 5));
-                player.addEffect(new JahdooMobEffect(MobEffects.SATURATION, 5, 5));
+                if(!player.hasEffect(REGENERATION)){
+                    player.addEffect(new JahdooMobEffect(REGENERATION, 20, 3));
+                    player.addEffect(new JahdooMobEffect(MobEffects.SATURATION, 20, 3));
+                }
             }
         }
+
         if(pState.getValue(ShoppingTableBlock.TEXTURE) == 3){
             if(serverLevel.getGameTime() % 30 != 0) return;
             if(getCurrencyType().isEmpty()) return;

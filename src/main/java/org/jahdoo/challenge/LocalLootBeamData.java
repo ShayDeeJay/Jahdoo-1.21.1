@@ -31,7 +31,7 @@ public class LocalLootBeamData {
         var beamHeight = 0.5F + ((float) rarity.getId() / 4);
         var beamRadius = 0.35F + ((float) rarity.getId() / 10);
         var shadowRadius = 0.4f + ((float) rarity.getId() / 10);
-        var renderDistance = 128;
+        var renderDistance = 250;
         return new LootBeamComponent(rarity.getColour(), beamHeight, 0.8F,  0.2F, true, true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  true, 5, 0.25, 1.5, true);
     }
 
@@ -41,6 +41,7 @@ public class LocalLootBeamData {
             case 2 -> EPIC_ITEM;
             case 3 -> LEGENDARY_ITEM;
             case 4 -> ETERNAL_ITEM;
+            case 5 -> UNIQUE_ITEM;
             default -> COMMON_ITEM;
         };
         itemStack.set(DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA(), component);
@@ -52,5 +53,7 @@ public class LocalLootBeamData {
     public static LootBeamComponent RARE_ITEM = rarityLootBeam(RARE);
     public static LootBeamComponent EPIC_ITEM = rarityLootBeam(EPIC);
     public static LootBeamComponent LEGENDARY_ITEM = rarityLootBeam(LEGENDARY);
-    public static LootBeamComponent ETERNAL_ITEM = legendaryLootBeam(ETERNAL);
+    public static LootBeamComponent ETERNAL_ITEM = rarityLootBeam(ETERNAL);
+    public static LootBeamComponent UNIQUE_ITEM = legendaryLootBeam(UNIQUE);
+
 }

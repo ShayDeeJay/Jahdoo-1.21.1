@@ -1,5 +1,5 @@
 {
-  "creativetab.jahdoo_tab": "Jahdoo",
+  "creative_tab.jahdoo_tab": "Jahdoo",
 
   "item.jahdoo.augment_fragment": "Augment Fragment",
   "item.jahdoo.bronze_coin": "Bronze Coin",
@@ -45,10 +45,9 @@
   "effect.jahdoo.lightning_effect": "Augmented Voltage",
   "effect.jahdoo.vitality": "Augmented Vitality",
 
-  "curios.identifier.tome": "Tome",
-  "curios.identifier.glove": "Relics",
-  "curios.identifier.pendent": "Pendent",
-  "curios.modifiers.tome": "Magic Amplifiers",
+  "curios.identifier.relic": "Relics",
+  "curios.identifier.magnet": "Magnet",
+
   "sounds.jahdoo.dash_effect": "Woosh",
 
   "ability.jahdoo.frost_bolts.no_target": "No target within %s blocks",

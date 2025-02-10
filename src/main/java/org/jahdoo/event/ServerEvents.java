@@ -145,7 +145,7 @@ public class ServerEvents {
 
         if(level instanceof CustomLevel customLevel && entity instanceof Player player){
             var getData = ChallengeLevelData.getProperties(customLevel);
-            if(Objects.equals(getData.dimType, TRIAL)){
+            if(!customLevel.getDescriptionKey().contains(TRADING_POST)){
                 LevelGenerator.playerSetup(player, getData.round());
             }
 

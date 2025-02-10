@@ -127,8 +127,11 @@ public class EventHelpers {
     public static void useRuneAttributesCurios(CurioAttributeModifierEvent event) {
         var item = event.getItemStack();
         var slotAttributes = item.get(RUNE_HOLDER.get());
-
+        for (var modifier : item.getAttributeModifiers().modifiers()) {
+            event.addModifier(modifier.attribute(), modifier.modifier());
+        }
         if(slotAttributes == null) return;
+
 
         for (ItemStack itemStack : slotAttributes.runeSlots()) {
             var mods = itemStack.getAttributeModifiers().modifiers();

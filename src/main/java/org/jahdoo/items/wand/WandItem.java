@@ -46,10 +46,10 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 
     public static Properties wandProperties(){
         return new Item.Properties()
-                .stacksTo(1)
-                .component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
-                .component(WAND_DATA.get(), WandData.DEFAULT)
-                .fireResistant();
+            .stacksTo(1)
+            .component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
+            .component(WAND_DATA.get(), WandData.DEFAULT)
+            .fireResistant();
     }
 
     public WandItem(String location) {

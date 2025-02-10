@@ -1,8 +1,11 @@
 package org.jahdoo.event;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.Input;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.world.entity.MoverType;
@@ -18,6 +21,7 @@ import org.jahdoo.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.client.KeyBinding;
 import org.jahdoo.client.OverlayBlockTooltip;
 import org.jahdoo.client.RuneTooltipRenderer;
+import org.jahdoo.client.gui.ability_and_utility_menus.AbilityWheelMenu;
 import org.jahdoo.entities.living.VoidSpider;
 import org.jahdoo.event.event_helpers.WandAbilitySelector;
 
@@ -75,6 +79,14 @@ public class ClientEvents {
 //                pose.popPose();
 //            }
 //        }
+    }
+
+    @SubscribeEvent
+    public static void updateInputEvent(MovementInputUpdateEvent event) {
+        Input eInput = event.getInput();
+        if (eInput.jumping) {
+//            eInput.jumping = false;
+        }
     }
 
     @SubscribeEvent

@@ -3,9 +3,11 @@ package org.jahdoo.utils;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.DoubleTag;
@@ -17,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -24,8 +27,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
@@ -321,6 +326,44 @@ public class ModHelpers {
         return collectTypes.get(Random.nextInt(collectTypes.size()));
     }
 
+    public static int stackDurability(ItemStack itemStack){
+        return itemStack.getItem().getMaxDamage(itemStack) - itemStack.getItem().getDamage(itemStack);
+    }
+
+    public static void hurtAndKeepItem(ItemStack itemStack, int damage, Level level, LivingEntity livingEntity) {
+        var damageChance = Random.nextInt(10) == 0;
+        if (damageChance && itemStack.isDamageableItem()) {
+            damage = itemStack.getItem().damageItem(itemStack, damage, livingEntity, (item) -> { });
+
+            if (damage > 0) {
+                if(level instanceof ServerLevel serverLevel){
+                    damage = EnchantmentHelper.processDurabilityChange(serverLevel, itemStack, damage);
+                }
+
+                if (damage <= 0) return;
+            }
+
+            if (livingEntity instanceof ServerPlayer sp) {
+                if (damage != 0) {
+                    CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger(sp, itemStack, itemStack.getDamageValue() + damage);
+                }
+            }
+
+            var i = itemStack.getDamageValue() + damage;
+            itemStack.setDamageValue(i);
+
+            if (stackDurability(itemStack) == 0) {
+                livingEntity.playSound(SoundEvents.ITEM_BREAK);
+            }
+        }
+    }
+
+    public static void setDurability (ItemStack itemStack, int maxDamage) {
+        itemStack.set(DataComponents.MAX_DAMAGE, maxDamage);
+        itemStack.set(DataComponents.MAX_STACK_SIZE, 1);
+        itemStack.set(DataComponents.DAMAGE, 0);
+    }
+
     public static void debugComponent(ItemStack itemStack, Player player){
         player.sendSystemMessage(Component.literal("New Request"));
         player.sendSystemMessage(Component.literal("-----------------------------------------------------"));
@@ -357,9 +400,9 @@ public class ModHelpers {
         var getAbility = AbilityRegister.getFirstSpellByTypeId(abilityName.selectedAbility());
         if(getAbility.isEmpty()) return initialValue;
 
-        float reCalculatedDamage = initialValue;
+        var reCalculatedDamage = initialValue;
 
-        for (Holder<Attribute> attributeHolder : attribute) {
+        for (var attributeHolder : attribute) {
             getAttribute += (float) player.getAttributes().getValue(attributeHolder);
         }
 

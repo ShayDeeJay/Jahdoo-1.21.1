@@ -23,6 +23,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.rarity.JahdooRarity;
+import org.jahdoo.items.Magnet;
 import org.jahdoo.items.Pendent;
 import org.jahdoo.items.TomeOfUnity;
 import org.jahdoo.items.augments.Augment;
@@ -36,6 +37,7 @@ import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
+import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 
 import static net.minecraft.world.entity.EquipmentSlot.*;
 import static net.minecraft.world.item.enchantment.Enchantments.*;
@@ -44,6 +46,7 @@ import static org.jahdoo.challenge.EnchantmentHelpers.*;
 import static org.jahdoo.challenge.trading_post.ShoppingArmor.enchantArmorItem;
 import static org.jahdoo.challenge.trading_post.ShoppingWeapon.enchantSword;
 import static org.jahdoo.items.runes.rune_data.RuneData.RuneHelpers.*;
+import static org.jahdoo.registers.DataComponentRegistry.JAHDOO_RARITY;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class RewardLootTables {
@@ -83,6 +86,7 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_GAUNTLET = LootItem.lootTableItem(ItemsRegister.BATTLEMAGE_GAUNTLET.get());
     public static final LootPoolSingletonContainer.Builder<?> INGMAS_SWORD = LootItem.lootTableItem(ItemsRegister.INGMAS_SWORD.get());
     public static final LootPoolSingletonContainer.Builder<?> ANCIENT_AMULET = LootItem.lootTableItem(ItemsRegister.PENDENT.get());
+    public static final LootPoolSingletonContainer.Builder<?> MAGNET = LootItem.lootTableItem(ItemsRegister.MAGNET.get());
 
 
     public static ObjectArrayList<ItemStack> getCompletionLoot(ServerLevel serverLevel, Vec3 pos, int level) {
@@ -159,6 +163,7 @@ public class RewardLootTables {
             .add(AUGMENT_ITEM_BUILDER.setWeight(5))
             .add(SILVER_COIN.setWeight(1))
             .add(getRandomWand().setWeight(2))
+            .add(MAGNET.setWeight(5))
             .add(IRON_SWORD_BUILDER.setWeight(20))
             .add(DIAMOND_SWORD_BUILDER.setWeight(10))
             .add(NETHERITE_SWORD_BUILDER.setWeight(2))
@@ -191,8 +196,19 @@ public class RewardLootTables {
             case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem, isSpecial);
             case SwordItem ignored -> enchantSword(serverLevel, itemStack, isSpecial);
             case EnchantedBookItem ignored -> enchantedBook(serverLevel, itemStack);
+            case Magnet ignored -> magnetItem(rarity, itemStack);
             default -> { /*IGNORE*/ }
         }
+    }
+
+    public static @NotNull ItemStack magnetItem(JahdooRarity getRarity, ItemStack itemStack) {
+        var id = getRarity.getId() + 1;
+        var origin = id * 1000;
+        ModHelpers.setDurability(itemStack, Random.nextInt(origin, origin * 3));
+        itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(id - 1));
+        itemStack.set(JAHDOO_RARITY, getRarity.getId());
+        attachLootBeam(itemStack, LocalLootBeamData.rarityLootBeam(getRarity));
+        return itemStack;
     }
 
     private static void enchantedBook(ServerLevel serverLevel, ItemStack itemStack){
@@ -202,19 +218,21 @@ public class RewardLootTables {
                 var maxLevel = value.getMaxLevel();
                 var minLevel = value.getMinLevel();
                 enchant(itemStack, serverLevel.registryAccess(), key.getKey(), maxLevel > minLevel ? Random.nextInt(minLevel, maxLevel) : 1);
-                var lootBeamData = DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA();
-                if(!itemStack.has(lootBeamData)) itemStack.set(lootBeamData, LocalLootBeamData.SPECIALLY_ENCHANTED_BOOK);
+                attachLootBeam(itemStack, LocalLootBeamData.SPECIALLY_ENCHANTED_BOOK);
             }
         );
+    }
+
+    private static void attachLootBeam(ItemStack itemStack, LootBeamComponent data) {
+        var lootBeamData = DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA();
+        if(!itemStack.has(lootBeamData)) itemStack.set(lootBeamData, data);
     }
 
 
     public static void attachEnchantment(ItemStack itemStack, ServerLevel serverLevel, ResourceKey<Enchantment> enchantmentKey, int minVal, int maxVal, boolean isSpecial) {
         if (Random.nextInt(isSpecial ? 5 : 20) != 0) return;
-
         enchant(itemStack, serverLevel.registryAccess(), enchantmentKey, Random.nextInt(minVal, maxVal));
-        var lootBeamData = DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA();
-        if(!itemStack.has(lootBeamData)) itemStack.set(lootBeamData, LocalLootBeamData.ENCHANTED_VANILLA_SWORD);
+        attachLootBeam(itemStack, LocalLootBeamData.ENCHANTED_VANILLA_SWORD);
     }
 
 }

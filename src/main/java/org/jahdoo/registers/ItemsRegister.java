@@ -45,6 +45,7 @@ public class ItemsRegister {
     public static final DeferredHolder<Item, Item> ANCIENT_GLAIVE = ITEMS.register("ancient_glaive", AncientGlaive::new);
     public static final DeferredHolder<Item, Item> PENDENT = ITEMS.register("pendent", Pendent::new);
     public static final DeferredHolder<Item, Item> EXPERIENCE_ORB = ITEMS.register("xp_orb", ExperienceOrb::new);
+    public static final DeferredHolder<Item, Item> MAGNET = ITEMS.register("magnet", Magnet::new);
 
     //Block Items
     public static final DeferredHolder<Item, Item> INFUSER_ITEM =

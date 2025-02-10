@@ -17,26 +17,20 @@ public class JahdooCuriosProvider extends CuriosDataProvider {
 
     @Override
     public void generate(HolderLookup.Provider registries, ExistingFileHelper fileHelper) {
-        this.createSlot("tome")
+        this.createSlot("relic")
             .size(1)
             .dropRule(ICurio.DropRule.ALWAYS_DROP)
             .replace(true);
 
-        this.createSlot("glove")
-            .size(1)
-            .dropRule(ICurio.DropRule.ALWAYS_DROP)
-            .replace(true);
-
-        this.createSlot("pendent")
+        this.createSlot("magnet")
             .size(1)
             .dropRule(ICurio.DropRule.ALWAYS_DROP)
             .replace(true);
 
         this.createEntities("player")
             .addPlayer()
-            .addSlots("tome")
-            .addSlots("glove")
-            .addSlots("pendent");
+            .addSlots("relic")
+            .addSlots("magnet");
 
     }
 }

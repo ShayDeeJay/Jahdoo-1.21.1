@@ -261,15 +261,18 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         attachLootBeamComponent(itemStack, rarity);
         itemStack.set(DataComponentRegistry.JAHDOO_RARITY.get(), rarity.getId());
 
-        CuriosApi.addModifier(
-            itemStack, manaRegen, manaRegen.getId(),
-            randomRegenValue, AttributeModifier.Operation.ADD_VALUE, "tome"
-        );
+        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue, EquipmentSlot.MAINHAND, false);
+        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, randomManaPool, EquipmentSlot.OFFHAND, false);
 
-        CuriosApi.addModifier(
-            itemStack, manaPool, manaPool.getId(),
-            randomManaPool, AttributeModifier.Operation.ADD_VALUE, "tome"
-        );
+//        CuriosApi.addModifier(
+//            itemStack, manaRegen, manaRegen.getId(),
+//            randomRegenValue, AttributeModifier.Operation.ADD_VALUE, "relic"
+//        );
+//
+//        CuriosApi.addModifier(
+//            itemStack, manaPool, manaPool.getId(),
+//            randomManaPool, AttributeModifier.Operation.ADD_VALUE, "relic"
+//        );
 
     }
 
