@@ -24,6 +24,7 @@ import org.jahdoo.client.RuneTooltipRenderer;
 import org.jahdoo.client.gui.ability_and_utility_menus.AbilityWheelMenu;
 import org.jahdoo.entities.living.VoidSpider;
 import org.jahdoo.event.event_helpers.WandAbilitySelector;
+import org.jahdoo.utils.ModHelpers;
 
 import static org.jahdoo.event.event_helpers.EventHelpers.mysticEffectClient;
 import static org.jahdoo.event.event_helpers.KeyBindHelper.quickSelectBehaviour;
@@ -104,7 +105,7 @@ public class ClientEvents {
     public static void PlayerRenderer(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) return;
         var player = (Player) event.getCamera().getEntity();
-        var stack = player.getItemInHand(player.getUsedItemHand());
+        var stack = ModHelpers.getUsedItem(player);
 
         renderUtilityOverlay(event, player, stack);
         renderTeleportLocationOverlay(event, player, stack);

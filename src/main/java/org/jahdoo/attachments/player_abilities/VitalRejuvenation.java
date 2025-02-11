@@ -49,7 +49,7 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     public void onTickMethod(Player player) {
         super.onTickMethod(player);
         if(this.startedUsing && validManaAndCooldown(player)){
-            var wandAbilityHolder = player.getItemInHand(player.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            var wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
             if(wandAbilityHolder == null || !wandAbilityHolder.abilityProperties().containsKey(name)) return;
             var castDelay = DataComponentHelper.getSpecificValue(name, wandAbilityHolder, CAST_DELAY);
 

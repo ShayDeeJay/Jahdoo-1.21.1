@@ -66,7 +66,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private void registerMagnets() {
-        for (int i = 1; i < 12; i++) {
+        for (int i = 1; i < 5; i++) {
             createModel("magnet" + i, "item/magnets/magnet_" + i);
             createOverride(i, ItemsRegister.MAGNET, "item/magnet");
         }

@@ -25,7 +25,7 @@ public class BurningSkullsAbility extends AbilityRegistrar {
 
     @Override
     public void invokeAbility(Player player) {
-        var itemInHand = player.getItemInHand(player.getUsedItemHand());
+        var itemInHand = ModHelpers.getUsedItem(player);
         var projectileCount = getSpecificValue(player, itemInHand, ENTITY_MULTIPLIER);
         var adjustSpread = 1.8 - (projectileCount / 4);
         infernoSoundEffect(player);

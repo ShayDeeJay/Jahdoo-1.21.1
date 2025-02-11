@@ -1,5 +1,7 @@
 package org.jahdoo.items;
 
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -12,8 +14,13 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
+import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.registers.AttributesRegister;
+import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
+
+import static org.jahdoo.utils.ColourStore.*;
+import static org.jahdoo.utils.ModHelpers.withStyleComponent;
 
 public class AncientGlaive extends SwordItem {
 
@@ -36,6 +43,11 @@ public class AncientGlaive extends SwordItem {
                 .build();
         properties.attributes(attributes);
         return properties;
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        return withStyleComponent("Ancient Glaive", SUB_HEADER_COLOUR);
     }
 
     @Override

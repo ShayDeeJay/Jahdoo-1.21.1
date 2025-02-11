@@ -9,6 +9,7 @@ import org.jahdoo.client.gui.ability_and_utility_menus.AbilityWheelMenu;
 import org.jahdoo.client.gui.augment_menu.AugmentScreen;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.utils.Configuration;
+import org.jahdoo.utils.ModHelpers;
 
 public class KeyBindHelper {
     public static void toggleLockAbility(Player player){
@@ -21,7 +22,7 @@ public class KeyBindHelper {
     }
 
     public static void quickSelectBehaviour(Player player, Minecraft instance) {
-        if(player != null && player.getItemInHand(player.getUsedItemHand()).getItem() instanceof WandItem){
+        if(player != null && ModHelpers.getUsedItem(player).getItem() instanceof WandItem){
             if(Configuration.QUICK_SELECT.get()){
                 if(KeyBinding.QUICK_SELECT.isDown()){
                     if(!(instance.screen instanceof AbilityWheelMenu) && !(instance.screen instanceof AugmentScreen)){

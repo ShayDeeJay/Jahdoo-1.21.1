@@ -47,7 +47,7 @@ public class RuneItemHelper {
     }
 
     static @NotNull InteractionResultHolder<ItemStack> rollRandomRune(Level level, Player player) {
-        var stack = player.getItemInHand(player.getUsedItemHand());
+        var stack = ModHelpers.getUsedItem(player);
         if(!level.isClientSide){
             var newStack = stack.copyWithCount(1);
             stack.shrink(1);

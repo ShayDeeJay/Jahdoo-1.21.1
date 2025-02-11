@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.living.Decoy;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
@@ -64,7 +65,7 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
 
     @Override
     public void invokeAbility(Player player) {
-        var tagModifier = ModHelpers.getModifierValue(player.getItemInHand(player.getUsedItemHand()).get(WAND_ABILITY_HOLDER.get()), abilityId.getPath().intern());
+        var tagModifier = ModHelpers.getModifierValue(WandAbilityHolder.getHolderFromWand(player), abilityId.getPath().intern());
         var range = tagModifier.get(RANGE);
         if(range != null){
             var decoy = new Decoy(player.level(), player, (int) range.setValue());

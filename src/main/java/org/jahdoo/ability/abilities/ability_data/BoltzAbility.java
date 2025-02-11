@@ -31,31 +31,31 @@ public class BoltzAbility extends AbilityRegistrar {
     @Override
     public void invokeAbility(Player player) {
         var amplifier = 1;
-        var totalShots = (int) getSpecificValue(player, player.getItemInHand(player.getUsedItemHand()), totalBolts) * amplifier;
+        var totalShots = (int) getSpecificValue(player, ModHelpers.getUsedItem(player), totalBolts) * amplifier;
         var direction = player.getLookAngle();
         var particleOptions = genericParticleOptions(ParticleStore.ELECTRIC_PARTICLE_SELECTION, this.getElemenType(), 5, 1.2f, 0.5);
 
         for (int i = 0; i < totalShots; i++) {
-            ElementProjectile elementProjectile = new ElementProjectile(
+            var elementProjectile = new ElementProjectile(
                 EntitiesRegister.LIGHTNING_ELEMENT_PROJECTILE.get(),
                 player,
                 EntityPropertyRegister.BOLTZ.get().setAbilityId(),
                 0,
                 abilityId.getPath().intern()
             );
-            double spread =  0.8 * amplifier; // Adjust the spread value as needed
-            double spreadX = direction.x + (Math.random() - 0.5) * spread;
-            double spreadY = direction.y + (Math.random() - 0.5) * spread;
-            double spreadZ = direction.z + (Math.random() - 0.5) * spread;
+            var spread =  0.8 * amplifier; // Adjust the spread value as needed
+            var spreadX = direction.x + (Math.random() - 0.5) * spread;
+            var spreadY = direction.y + (Math.random() - 0.5) * spread;
+            var spreadZ = direction.z + (Math.random() - 0.5) * spread;
 
-            this.fireProjectileDirection(elementProjectile, player, 0.5f, new Vec3(spreadX, spreadY, spreadZ));
+            fireProjectileDirection(elementProjectile, player, 0.5f, new Vec3(spreadX, spreadY, spreadZ));
         }
 
         for(int i = 0; i < totalShots * 5; i++){
-            double spread = 0.8; // Adjust the spread value as needed
-            double spreadX = direction.x + (Math.random() - 0.5) * spread;
-            double spreadY = direction.y + (Math.random() - 0.5) * spread;
-            double spreadZ = direction.z + (Math.random() - 0.5) * spread;
+            var spread = 0.8; // Adjust the spread value as needed
+            var spreadX = direction.x + (Math.random() - 0.5) * spread;
+            var spreadY = direction.y + (Math.random() - 0.5) * spread;
+            var spreadZ = direction.z + (Math.random() - 0.5) * spread;
             sendParticles(player.level(), particleOptions, player.position().add(0,1.5,0), 0, spreadX, spreadY, spreadZ, 1);
         }
 

@@ -71,14 +71,6 @@ public class RarityAttributes {
         return getRandomInteger(maxAbsorption);
     }
 
-    private double getRandomDouble(Pair<Double, Double> range) {
-        return Random.nextDouble(range.getFirst(), range.getSecond());
-    }
-
-    private int getRandomInteger(Pair<Integer, Integer> range) {
-        return Random.nextInt(range.getFirst(), range.getSecond());
-    }
-
     public Pair<Double, Double> getManaPoolRange() {
         return manaPool;
     }
@@ -115,23 +107,76 @@ public class RarityAttributes {
         return maxAbsorption;
     }
 
-    public static final RarityAttributes COMMON_ATTRIBUTES = new RarityAttributes(
-        Pair.of(20.0, 40.0), Pair.of(5.0, 10.0), Pair.of(0.5, 2.5), Pair.of(0.5, 4.5), Pair.of(5.0, 10.0), Pair.of(50, 100), Pair.of(1.0, 1.5), Pair.of(2, 4), Pair.of(1, 2)
-    );
+    private double getRandomDouble(Pair<Double, Double> range) {
+        return Random.nextDouble(range.getFirst(), range.getSecond());
+    }
 
-    public static final RarityAttributes RARE_ATTRIBUTES = new RarityAttributes(
-        Pair.of(40.0, 60.0), Pair.of(10.0, 15.0), Pair.of(2.5, 4.5), Pair.of(4.5, 8.5), Pair.of(10.0, 15.0), Pair.of(100, 150), Pair.of(2.0, 2.5), Pair.of(5, 7), Pair.of(3, 4)
-    );
+    private int getRandomInteger(Pair<Integer, Integer> range) {
+        return Random.nextInt(range.getFirst(), range.getSecond());
+    }
 
-    public static final RarityAttributes EPIC_ATTRIBUTES = new RarityAttributes(
-        Pair.of(60.0, 80.0), Pair.of(15.0, 20.0), Pair.of(4.5, 6.5), Pair.of(8.5, 12.5), Pair.of(15.0, 20.0), Pair.of(150, 200), Pair.of(3.0, 3.5), Pair.of(8, 10), Pair.of(5, 6)
-    );
+    public static final RarityAttributes COMMON_ATTRIBUTES =
+        new RarityAttributes(
+            Pair.of(10.0, 20.0),   // Mana Pool
+            Pair.of(2.5, 5.0),    // Mana Regen
+            Pair.of(0.5, 2.0),     // Cooldown
+            Pair.of(1.0, 3.0),     // Mana Reduction
+            Pair.of(3.0, 6.0),    // Damage
+            Pair.of(50, 100),      // Refinement Potential
+            Pair.of(1.0, 1.5),     // Heal Chance
+            Pair.of(2, 4),         // Max Health
+            Pair.of(1, 2)          // Max Absorption
+        );
 
-    public static final RarityAttributes LEGENDARY_ATTRIBUTES = new RarityAttributes(
-        Pair.of(80.0, 100.0), Pair.of(20.0, 25.0), Pair.of(6.5, 8.5), Pair.of(12.5, 16.5), Pair.of(20.0, 25.0), Pair.of(200, 250), Pair.of(4.0, 4.5), Pair.of(11, 13), Pair.of(7, 8)
-    );
+    public static final RarityAttributes RARE_ATTRIBUTES =
+        new RarityAttributes(
+            Pair.of(20.0, 30.0),   // Mana Pool
+            Pair.of(5.0, 7.5),   // Mana Regen
+            Pair.of(2.0, 3.5),     // Cooldown
+            Pair.of(3.0, 5.0),     // Mana Reduction
+            Pair.of(6.0, 9.0),   // Damage
+            Pair.of(100, 150),     // Refinement Potential
+            Pair.of(2.0, 2.5),     // Heal Chance
+            Pair.of(5, 7),         // Max Health
+            Pair.of(3, 4)          // Max Absorption
+        );
 
-    public static final RarityAttributes ETERNAL_ATTRIBUTES = new RarityAttributes(
-        Pair.of(100.0, 120.0), Pair.of(25.0, 40.0), Pair.of(8.5, 11.5), Pair.of(16.5, 22.5), Pair.of(25.0, 45.0), Pair.of(250, 300), Pair.of(5.0, 5.5), Pair.of(14, 16), Pair.of(9, 10)
-    );
+    public static final RarityAttributes EPIC_ATTRIBUTES =
+        new RarityAttributes(
+            Pair.of(30.0, 40.0),   // Mana Pool
+            Pair.of(7.5, 10.0),   // Mana Regen
+            Pair.of(3.5, 5.0),     // Cooldown
+            Pair.of(5.0, 7.0),    // Mana Reduction
+            Pair.of(9.0, 12.0),   // Damage
+            Pair.of(150, 200),     // Refinement Potential
+            Pair.of(3.0, 3.5),     // Heal Chance
+            Pair.of(8, 10),        // Max Health
+            Pair.of(5, 6)          // Max Absorption
+        );
+
+    public static final RarityAttributes LEGENDARY_ATTRIBUTES =
+        new RarityAttributes(
+            Pair.of(40.0, 50.0),  // Mana Pool
+            Pair.of(10.0, 12.5),   // Mana Regen
+            Pair.of(5.0, 6.5),     // Cooldown
+            Pair.of(7.0, 9.0),   // Mana Reduction
+            Pair.of(12.0, 15.0),   // Damage
+            Pair.of(200, 250),     // Refinement Potential
+            Pair.of(4.0, 4.5),     // Heal Chance
+            Pair.of(11, 13),       // Max Health
+            Pair.of(7, 8)          // Max Absorption
+        );
+
+    public static final RarityAttributes ETERNAL_ATTRIBUTES =
+        new RarityAttributes(
+            Pair.of(50.0, 60.0), // Mana Pool
+            Pair.of(12.5, 15.0),   // Mana Regen
+            Pair.of(6.5, 8.0),    // Cooldown
+            Pair.of(9.0, 12.0),   // Mana Reduction
+            Pair.of(15.0, 18.0),   // Damage
+            Pair.of(250, 300),     // Refinement Potential
+            Pair.of(5.0, 5.5),     // Heal Chance
+            Pair.of(14, 16),       // Max Health
+            Pair.of(9, 10)         // Max Absorption
+        );
 }

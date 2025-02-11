@@ -17,9 +17,11 @@ import java.util.Objects;
 
 import static net.neoforged.neoforge.client.gui.VanillaGuiLayers.*;
 import static org.jahdoo.ability.AbilityBuilder.CASTING_DISTANCE;
+import static org.jahdoo.ability.abilities.ability_data.ArcaneShiftAbility.*;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 
 public class OverlayEvent {
+
     public static void crosshairManager(RenderGuiLayerEvent.Pre event) {
         hideCrosshairForAbilityWheel(event);
         hideCrosshairForArcaneShift(event);
@@ -34,11 +36,11 @@ public class OverlayEvent {
     private static void hideCrosshairForArcaneShift(RenderGuiLayerEvent.Pre event) {
         var player = Minecraft.getInstance().player;
         if(player == null) return;
-        var stack = player.getItemInHand(player.getUsedItemHand());
+        var stack = ModHelpers.getUsedItem(player);
         var getSelectedAbility = stack.get(WAND_DATA);
         if(getSelectedAbility == null) return;
-        if(Objects.equals(getSelectedAbility.selectedAbility(), ArcaneShiftAbility.abilityId.getPath().intern())){
-            double pickDistance = ModHelpers.getTag(player, CASTING_DISTANCE, getSelectedAbility.selectedAbility());
+        if(Objects.equals(getSelectedAbility.selectedAbility(), abilityId.getPath().intern())){
+            var pickDistance = ModHelpers.getTag(player, CASTING_DISTANCE, getSelectedAbility.selectedAbility());
             var pick = player.pick(pickDistance, 1, false);
             if (stack.getItem() instanceof WandItem) {
                 if (pick.getType() != HitResult.Type.MISS) {
@@ -53,12 +55,8 @@ public class OverlayEvent {
     public static void simpleGui(RenderGuiLayerEvent.Pre event, LocalPlayer player) {
         if(player == null) return;
         var exceptions = List.of(
-            EXPERIENCE_LEVEL,
-            EXPERIENCE_BAR,
-            HOTBAR,
-            PLAYER_HEALTH,
-            FOOD_LEVEL,
-            SELECTED_ITEM_NAME
+            EXPERIENCE_LEVEL, EXPERIENCE_BAR, HOTBAR,
+            PLAYER_HEALTH, FOOD_LEVEL, SELECTED_ITEM_NAME
         );
 
         if(Configuration.CUSTOM_UI.get()){

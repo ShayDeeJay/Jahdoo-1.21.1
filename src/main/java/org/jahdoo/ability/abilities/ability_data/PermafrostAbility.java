@@ -46,7 +46,7 @@ public class PermafrostAbility extends AbilityRegistrar {
             .setStaticCooldown(1200)
             .setEffectDuration(300, 100, 50)
             .setEffectStrength(10, 5,1)
-            .setLifetime(300, 100, 50)
+            .setLifetime(200, 100, 20)
             .setAoe(4, 2, 0.5)
             .build();
     }

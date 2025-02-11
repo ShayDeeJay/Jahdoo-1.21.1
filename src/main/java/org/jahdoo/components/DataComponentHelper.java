@@ -42,7 +42,7 @@ public class DataComponentHelper {
 
     public static Map<String, AbilityHolder.AbilityModifiers> getSpecificValue(Player player){
         var abilityName = DataComponentHelper.getAbilityTypeWand(player);
-        var wandAbilityHolder = player.getItemInHand(player.getUsedItemHand()).get(WAND_ABILITY_HOLDER.get());
+        var wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
         var allModifiers = wandAbilityHolder.abilityProperties().get(abilityName.getPath().intern());
         return allModifiers.abilityProperties();
     }
@@ -53,7 +53,7 @@ public class DataComponentHelper {
 
     public static ResourceLocation getAbilityTypeWand(Player player) {
         if(player != null) {
-            var itemInHand = player.getItemInHand(player.getUsedItemHand());
+            var itemInHand = ModHelpers.getUsedItem(player);
             if (itemInHand.getItem() instanceof WandItem) {
                 String abilityName = itemInHand.get(WAND_DATA.get()).selectedAbility();
                 if (abilityName != null) {
@@ -73,9 +73,10 @@ public class DataComponentHelper {
     }
 
     public static void setAbilityTypeWand(Player player, String ability) {
-        if(player != null && player.getItemInHand(player.getUsedItemHand()).getItem() instanceof WandItem){
-            ItemStack wandItem = player.getItemInHand(player.getUsedItemHand());
-            wandItem.update(WAND_DATA.get(), WandData.DEFAULT, data -> data.setSelectedAbility(ability));
+        if(player == null) return;
+        var item = ModHelpers.getUsedItem(player);
+        if(item.getItem() instanceof WandItem){
+            item.update(WAND_DATA.get(), WandData.DEFAULT, data -> data.setSelectedAbility(ability));
         }
     }
 

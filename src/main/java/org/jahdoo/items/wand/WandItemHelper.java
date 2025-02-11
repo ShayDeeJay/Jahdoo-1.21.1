@@ -94,11 +94,11 @@ public class WandItemHelper {
         toolTips.add(toolTips.size(), withStyleComponent("Potential: ", HEADER_COLOUR).copy().append(slot));
     }
 
-    public static List<Component> getItemModifiers(ItemStack wandItem, int tick){
+    public static List<Component> getItemModifiers(ItemStack wandItem, Level level){
         var appendComponents = new ArrayList<Component>();
         var abstractElement = ElementRegistry.getElementFromWand(wandItem.getItem());
         if(abstractElement.isPresent()){
-            appendComponents.add(attachRarityTooltip(wandItem, tick));
+            appendComponents.add(attachRarityTooltip(wandItem, level));
             totalSlots(appendComponents, wandItem, SUB_HEADER_COLOUR);
             appendRefinementPotential(appendComponents, wandItem);
             appendSelectedAbility(wandItem, appendComponents);

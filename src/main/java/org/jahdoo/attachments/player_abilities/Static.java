@@ -105,7 +105,7 @@ public class Static implements AbstractAttachment {
         if(player == null) return;
         var manaSystem = player.getData(CASTER_DATA);
         if(!this.getIsActive()) return;
-        var mainHandItem = player.getItemInHand(player.getUsedItemHand());
+        var mainHandItem = ModHelpers.getUsedItem(player);
         if(!(mainHandItem.getItem() instanceof WandItem)) return;
 
         String staticId = StaticAbility.abilityId.getPath().intern();

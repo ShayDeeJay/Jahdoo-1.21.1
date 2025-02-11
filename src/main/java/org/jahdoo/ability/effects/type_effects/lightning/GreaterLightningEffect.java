@@ -32,7 +32,6 @@ public class GreaterLightningEffect extends MobEffect {
             shootSpikesRandomly(0.8f, targetEntity, pAmplifier);
             EffectHelpers.GreaterGlowSync(targetEntity, pAmplifier, serverLevel, EffectsRegister.LIGHTNING_EFFECT);
         }
-
         return true;
     }
 
@@ -48,8 +47,7 @@ public class GreaterLightningEffect extends MobEffect {
                 var z = Math.cos(phi);
                 var newPosition = targetEntity.position().add(targetEntity.getDeltaMovement().scale(4.5));
                 var genericProjectile = new GenericProjectile(
-                    targetEntity,
-                    newPosition.x, newPosition.y, newPosition.z,
+                    targetEntity, newPosition.x, newPosition.y, newPosition.z,
                     EntityPropertyRegister.LIGHTNING_TRAIL.get().setAbilityId(),
                     getLightningTrailModifiers(5 * amplifier, 4, 8, 1),
                     ElementRegistry.LIGHTNING.get(),

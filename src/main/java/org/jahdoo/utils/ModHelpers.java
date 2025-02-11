@@ -85,18 +85,9 @@ public class ModHelpers {
 //        }
     }
 
-    public static int getScreens(Player player, int base, int add){
-        if(player.level().isClientSide){
-            var screen = Minecraft.getInstance().screen;
-            System.out.println(screen);
-            if(screen != null) {
-                System.out.println("deeper");
-                return base + add;
-            }
-        }
-        return base;
+    public static ItemStack getUsedItem(LivingEntity player){
+        return player.getItemInHand(player.getUsedItemHand());
     }
-
 
     public static Color getCyclicColorVariant(int baseColor, int ticker, double range, double transitionDelay) {
         int red = (baseColor >> 16) & 0xFF;
@@ -177,7 +168,7 @@ public class ModHelpers {
 
     public static double getTag(Player player, String name, String abilityName) {
         if(player != null){
-            var wandAbilityHolder = player.getItemInHand(player.getUsedItemHand()).get(WAND_ABILITY_HOLDER);
+            var wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
             var holder = ModHelpers.getModifierValue(wandAbilityHolder, abilityName).get(name);
             if(holder != null) return holder.setValue();
         }
@@ -393,7 +384,7 @@ public class ModHelpers {
         boolean isAddition,
         Holder<Attribute> ... attribute
     ){
-        var wandItem = player.getItemInHand(player.getUsedItemHand());
+        var wandItem = ModHelpers.getUsedItem(player);
         var abilityName = wandItem.get(DataComponentRegistry.WAND_DATA.get());
         if(abilityName == null) return initialValue;
         float getAttribute = 0;

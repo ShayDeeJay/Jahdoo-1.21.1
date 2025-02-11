@@ -79,7 +79,6 @@ public class ChoiceSelectionScreen extends Screen  {
 
         var i = this.height / 2;
         for (var position : getPositions()) {
-            System.out.println(fadeEntryBack);
             SharedUI.boxMaker(guiGraphics, position, -1, getSize(), this.height,  SharedUI.getFadedColourBackground(0.1f), SharedUI.getFadedColourBackground(fadeEntryBack));
         }
 

@@ -117,7 +117,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
             var info = ElementRegistry.getElementByTypeId(Math.max(getElement.value(), 0));
             if (itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get()) != null && !info.isEmpty()) {
                 toolTips.add(AugmentItemHelper.getAbilityName(itemStack, info.getFirst()));
-                toolTips.addAll(getAllAbilityModifiers(itemStack, itemStack1, abilityLocation, false, (int) this.getMinecraft().level.getGameTime()));
+                toolTips.addAll(getAllAbilityModifiers(itemStack, itemStack1, abilityLocation, false, this.getMinecraft().level));
                 shiftForDetails(toolTips);
             }
         }
@@ -282,14 +282,17 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         var heightOffset = 115;
         var widthFrom = width - widthOffset;
         var heightFrom = height - heightOffset;
-        var element = ElementRegistry.getElementByWandType(this.wandBlockMenu.getWandBlockEntity().getWandItemFromSlot().getItem());
-        var element1 = element.getFirst();
-        var color = FastColor.ARGB32.color(40, element1.textColourPrimary());
-        var colorA = FastColor.ARGB32.color(0, element1.textColourPrimary());
+        var element = ElementRegistry.getElementFromWand(getWandItem().getItem()).orElseThrow();
+        var color = FastColor.ARGB32.color(40, element.textColourPrimary());
+        var colorA = FastColor.ARGB32.color(0, element.textColourPrimary());
         SharedUI.boxMaker(guiGraphics, widthFrom, heightFrom, 100, 115, BORDER_COLOUR, SharedUI.getFadedColourBackground(0.9f));
         SharedUI.boxMaker(guiGraphics, widthFrom, heightFrom, 100, 115, BORDER_COLOUR, colorA, color);
-        SharedUI.bezelMaker(guiGraphics, widthFrom - 13, heightFrom - 13, 194, 224, 32, element1);
+        SharedUI.bezelMaker(guiGraphics, widthFrom - 13, heightFrom - 13, 194, 224, 32, element);
 
+    }
+
+    private ItemStack getWandItem() {
+        return this.wandBlockMenu.getWandBlockEntity().getWandItemFromSlot();
     }
 
     @Override
@@ -349,7 +352,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         var adjustX = -198;
         var adjustY = 120;
         if(this.cachedItem != null && !this.cachedItem.isEmpty()){
-            var components = SharedUI.getComponents(this.cachedItem, (int) this.getMinecraft().level.getGameTime());
+            var components = SharedUI.getComponents(this.cachedItem, this.getMinecraft().level);
             var subComponents = new ArrayList<Component>();
             subComponents.add(ModHelpers.withStyleComponent("Description: ", -23281));
             for (String s : wrapText()) subComponents.add(ModHelpers.withStyleComponent(s, -1));
@@ -392,7 +395,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
     }
 
     private void windowMoveVertical(double dragY) {
-        int size = getComponents(this.cachedItem, (int) this.getMinecraft().level.getGameTime())
+        int size = getComponents(this.cachedItem, this.getMinecraft().level)
             .stream()
             .filter(component -> component.getString().contains("|"))
             .toList()

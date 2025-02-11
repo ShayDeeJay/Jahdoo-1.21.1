@@ -47,7 +47,7 @@ public class CastHelper {
 
         var cooldownSystem = player.getData(CASTER_DATA);
         var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
-        var wand = player.getItemInHand(player.getUsedItemHand());
+        var wand = ModHelpers.getUsedItem(player);
         var getElement = SharedUI.getElementWithType(ability.orElseThrow(), wand);
         var reCalculatedCooldown = ModHelpers.attributeModifierCalculator(player, (float) cooldown, false,  getElement.getTypeCooldownReduction(), COOLDOWN_REDUCTION);
         cooldownSystem.addCooldown(abilityId, (int) reCalculatedCooldown);
@@ -60,14 +60,14 @@ public class CastHelper {
 
         var manaSystem = player.getData(CASTER_DATA);
         var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
-        var wand = player.getItemInHand(player.getUsedItemHand());
+        var wand = ModHelpers.getUsedItem(player);
         var getElement = SharedUI.getElementWithType(ability.orElseThrow(), wand);
         var reCalculatedMana = ModHelpers.attributeModifierCalculator(player, (float) manaCost, false, getElement.getTypeManaReduction(), MANA_COST_REDUCTION);
         manaSystem.subtractMana(reCalculatedMana, player);
     }
 
     public static void chargeManaAndCooldown(String abilityId, Player player){
-        var wandItem = player.getItemInHand(player.getUsedItemHand());
+        var wandItem = ModHelpers.getUsedItem(player);
         var cooldownCost = getSpecificValue(player, wandItem, COOLDOWN);
         var getManaCost = getSpecificValue(player, wandItem, MANA_COST);
         chargeMana(abilityId, getManaCost, player);
@@ -75,7 +75,7 @@ public class CastHelper {
     }
 
     public static void executeAndCharge(Player player) {
-        var wandItem = player.getItemInHand(player.getUsedItemHand());
+        var wandItem = ModHelpers.getUsedItem(player);
         var abilityName = DataComponentHelper.getAbilityTypeItemStack(wandItem);
         var ability = AbilityRegister.REGISTRY.get(res(abilityName));
         if (ability == null) return;
@@ -125,7 +125,7 @@ public class CastHelper {
 
     public static boolean validManaAndCooldown(Player player){
         var casterData = player.getData(CASTER_DATA);
-        var wandItem = player.getItemInHand(player.getUsedItemHand());
+        var wandItem = ModHelpers.getUsedItem(player);
         var abilityName = DataComponentHelper.getAbilityTypeItemStack(wandItem);
         var ability = AbilityRegister.REGISTRY.get(res(abilityName));
         if(ability == null) return false;
@@ -176,7 +176,7 @@ public class CastHelper {
     }
 
     public static InteractionResultHolder<ItemStack> use(Player player) {
-        var itemStack = player.getItemInHand(player.getUsedItemHand());
+        var itemStack = ModHelpers.getUsedItem(player);
         var abilityName = DataComponentHelper.getAbilityTypeWand(player);
         var getAbility = AbilityRegister.REGISTRY.get(abilityName);
         var canUse = getCanApplyDistanceAbility(player, itemStack);

@@ -318,7 +318,7 @@ public class AugmentItemHelper {
         ItemStack itemStack1,
         String abilityLocation,
         boolean hide,
-        int tick
+        Level level
     ){
         var toolTips = new ArrayList<Component>();
         if(itemStack.getComponents().isEmpty()) return toolTips;
@@ -330,7 +330,7 @@ public class AugmentItemHelper {
         var index = itemStack.get(JAHDOO_RARITY);
 
         if(!ability.isEmpty() && index != null){
-            toolTips.add(JahdooRarity.addRarityTooltip(JahdooRarity.getAllRarities().get(index), tick));
+            toolTips.add(JahdooRarity.addRarityTooltip(JahdooRarity.getAllRarities().get(index), level));
         }
 
         toolTips.add(Component.empty());
@@ -373,12 +373,12 @@ public class AugmentItemHelper {
         return false;
     }
 
-    public static void getHoverText(ItemStack itemStack, List<Component> toolTips, boolean hide, int tick){
+    public static void getHoverText(ItemStack itemStack, List<Component> toolTips, boolean hide, Level level){
         if(itemStack.getComponents().has(DataComponentRegistry.WAND_ABILITY_HOLDER.get())){
             var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
             if(wandAbilityHolder == null) return;
             var abilityLocation = wandAbilityHolder.abilityProperties().keySet().stream().findAny().get();
-            toolTips.addAll(getAllAbilityModifiers(itemStack, null, abilityLocation, hide, tick));
+            toolTips.addAll(getAllAbilityModifiers(itemStack, null, abilityLocation, hide, level));
             toolTips.add(Component.empty());
             shiftForDetails(toolTips);
             toolTips.add(ModHelpers.withStyleComponentTrans("augmentHelper.jahdoo.place", -12368570));

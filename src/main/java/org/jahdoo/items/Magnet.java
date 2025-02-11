@@ -3,25 +3,20 @@ package org.jahdoo.items;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.entities.EntityMovers;
 import org.jahdoo.items.runes.rune_data.RuneData;
-import org.jahdoo.items.wand.WandItemHelper;
-import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.utils.ColourStore;
-import org.jahdoo.utils.ModHelpers;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jahdoo.items.runes.rune_data.RuneData.*;
 import static org.jahdoo.utils.ColourStore.*;
 import static org.jahdoo.utils.ModHelpers.*;
 
@@ -49,30 +44,41 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        tooltipComponents.add(JahdooRarity.attachRarityTooltip(stack, (int) context.level().getGameTime()));
-        tooltipComponents.add(Component.empty());
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> toolTips, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, toolTips, tooltipFlag);
         var list = stack.getAttributeModifiers().modifiers().stream().toList();
         if(!list.isEmpty()){
             for (var entry : list) {
-                tooltipComponents.add(RuneData.RuneHelpers.standAloneAttributes(entry));
+                toolTips.add(RuneHelpers.standAloneAttributes(entry));
             }
         }
     }
 
     @Override
+    public List<Component> getSlotsTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
+        var newComp = new ArrayList<Component>();
+        var rarity = JahdooRarity.attachRarityTooltip(stack, context.level());
+        newComp.add(rarity);
+        if(!rarity.getString().isEmpty()){
+            newComp.addAll(tooltips);
+            newComp.add(Component.empty());
+        }
+        return newComp;
+    }
+
+    @Override
     public Component getName(ItemStack stack) {
         var type = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        var suffix = "Rune Amulet";
+        var suffix = "Magnet";
         if(type == null) return withStyleComponent("Lesser " + suffix, SUB_HEADER_COLOUR);
         var id = type.value();
         var typeName = switch (id){
-            case 2 -> "Greater " + suffix;
-            case 3 -> "Ancient " + suffix;
-            default -> "Simple " + suffix;
+            case 1 -> "Simple ";
+            case 2 -> "Greater ";
+            case 3 -> "Perfect ";
+            default -> "Ancient ";
         };
-        return withStyleComponent(typeName, id == 1 ? PERK_GREEN : id == 2 ? PENDENT_NAME : JahdooRarity.EPIC.getColour());
+        return withStyleComponent(typeName + suffix, id == 1 ? PERK_GREEN : id == 2 ? PENDENT_NAME : JahdooRarity.EPIC.getColour());
     }
 
     @Override

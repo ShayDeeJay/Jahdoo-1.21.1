@@ -16,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.components.DataComponentHelper;
@@ -65,9 +66,9 @@ public class SharedUI {
         }
     }
 
-    public static List<Component> getComponents(ItemStack item, int tick){
+    public static List<Component> getComponents(ItemStack item, Level level){
         var components = new ArrayList<Component>();
-        AugmentItemHelper.getHoverText(item, components, true, tick);
+        AugmentItemHelper.getHoverText(item, components, true, level);
         return components;
     }
 
@@ -202,10 +203,10 @@ public class SharedUI {
         guiGraphics.enableScissor(0, heightFrom + 50, width, heightTo - 5);
     }
 
-    public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, ItemStack itemStack, Font font, int tick) {
+    public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, ItemStack itemStack, Font font, Level level) {
         var yOff = 102;
         int xOff = width/2 - 55;
-        guiGraphics.drawString(font, getComponents(itemStack, tick).getFirst(), xOff, (height/2 - (yOff - 10)), 0, true);
+        guiGraphics.drawString(font, getComponents(itemStack, level).getFirst(), xOff, (height/2 - (yOff - 10)), 0, true);
         guiGraphics.drawString(font, AugmentItemHelper.getHoverName(itemStack), xOff, (height/2 - yOff), 0, true);
         abilityIcon(guiGraphics, itemStack, width - 155, height - 180, 109, 40, 12);
     }
@@ -232,7 +233,7 @@ public class SharedUI {
         var player = Minecraft.getInstance().player;
         if(player != null){
             Font font = Minecraft.getInstance().font;
-            var element = getElementColour(abilityRegistrar, player.getItemInHand(player.getUsedItemHand()));
+            var element = getElementColour(abilityRegistrar, ModHelpers.getUsedItem(player));
             if (isCenteredString) {
                 guiGraphics.drawCenteredString(font, abilityRegistrar.getAbilityName(), posX, posY, element);
                 return;

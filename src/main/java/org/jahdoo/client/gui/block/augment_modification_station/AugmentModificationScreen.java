@@ -3,12 +3,14 @@ package org.jahdoo.client.gui.block.augment_modification_station;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.block.augment_modification_station.AugmentModificationEntity;
@@ -78,7 +80,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         int width = this.width / 2;
         var getTag = this.item.get(DataComponentRegistry.WAND_ABILITY_HOLDER);
         if (getTag == null) return;
-        var components = componentsWithBounds(item, (int) this.getMinecraft().level.getGameTime());
+        var components = componentsWithBounds(item, this.getMinecraft().level);
 
         for (Component component : components){
             var x = getAbilityModifiers(component, getTag);
@@ -98,8 +100,8 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         }
     }
 
-    public static List<Component> componentsWithBounds(ItemStack item, int tick){
-        var components = getComponents(item, tick);
+    public static List<Component> componentsWithBounds(ItemStack item, Level level){
+        var components = getComponents(item, level);
         var getTag =item.get(DataComponentRegistry.WAND_ABILITY_HOLDER);
         var compNew = components
             .subList(1, components.size()-2).stream().filter(component -> getAbilityModifiers(component, getTag).highestValue() != -1)
@@ -163,8 +165,9 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
                 extractName(component.getString()), localHolder, 0, abilityKey, getTag,
                 (myHolder) ->  this.item.set(WAND_ABILITY_HOLDER, myHolder),entity()
             );
-            if(correctAdjustment){
-                ModHelpers.getLocalSound(this.getMinecraft().level, entity().getBlockPos(), APPLY_EFFECT_TRIAL_OMEN, 1, 2);
+            var level = getMinecraft().level;
+            if(correctAdjustment && level != null){
+                ModHelpers.getLocalSound(level, entity().getBlockPos(), APPLY_EFFECT_TRIAL_OMEN, 1, 2);
             }
             this.rebuildWidgets();
         }
@@ -218,7 +221,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     }
 
     private void windowMoveVertical(double dragY) {
-        var size = componentsWithBounds(item, (int) this.getMinecraft().level.getGameTime()).size();
+        var size = componentsWithBounds(item, this.getMinecraft().level).size();
         if (size > 14 || size > 2 && showInventory) {
             int b = 7 * size * size - 135 * size + 578;
             this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, b + (!showInventory ? -20 : -120)));
@@ -258,7 +261,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         selectedBox(guiGraphics, mouseX, mouseY);
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         guiGraphics.disableScissor();
-        SharedUI.header(guiGraphics, this.width, this.height, this.item, this.font, (int) this.getMinecraft().level.getGameTime());
+        SharedUI.header(guiGraphics, this.width, this.height, this.item, this.font, this.getMinecraft().level);
         overlayInventory(guiGraphics, startX, startY);
         SharedUI.augmentCoreSlots(guiGraphics, 20, 10, BORDER_COLOUR, this.width, this.height, getFadedColourBackground(0.7f));
         SharedUI.bezelMaker(guiGraphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element.getFirst());

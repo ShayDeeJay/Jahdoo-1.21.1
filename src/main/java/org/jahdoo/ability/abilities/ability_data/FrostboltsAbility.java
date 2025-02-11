@@ -67,6 +67,7 @@ public class FrostboltsAbility extends AbilityRegistrar {
             var projSelect = EntityPropertyRegister.FROST_BOLT.get().setAbilityId();
             var id = abilityId.getPath().intern();
             var elementProjectile = new GenericProjectile(player, 0, projSelect, id, this.getElemenType());
+
             elementProjectile.setOwner(player);
             elementProjectile.setInvisible(true);
             fireProjectileNoSound(elementProjectile, player, 100f);

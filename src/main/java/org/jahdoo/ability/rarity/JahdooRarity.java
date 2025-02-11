@@ -10,6 +10,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -135,11 +136,12 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return emptyStack;
     }
 
-    public static Component addRarityTooltip(JahdooRarity rarity, int tick){
+    public static Component addRarityTooltip(JahdooRarity rarity, Level level){
+        if(level == null) return Component.empty();
         var colorA = color(166, 255, 125);
         var colorB = color(104, 243, 252);
         var id = "rarity.jahdoo.current_rarity";
-        var colour = getColorTransition(colorA, colorB, tick, 50);
+        var colour = getColorTransition(colorA, colorB, (int) level.getGameTime(), 50);
         var getCorrectColour = rarity.id == 5 ? colour : rarity.getColour();
         var sibling = withStyleComponent(rarity.getSerializedName(), getCorrectColour);
 
@@ -153,11 +155,11 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
                 .append(withStyleComponent(rarity.getSerializedName(), rarity.getColour()));
     }
 
-    public static Component attachRarityTooltip(ItemStack wandItem, int tick) {
+    public static Component attachRarityTooltip(ItemStack wandItem, Level level) {
         var getRarityId = wandItem.get(JAHDOO_RARITY);
-        if(getRarityId != null) {
+        if(getRarityId != null && level != null) {
             var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(getRarityId, 0, 5));
-            return JahdooRarity.addRarityTooltip(getRarity, tick);
+            return JahdooRarity.addRarityTooltip(getRarity, level);
         }
         return Component.empty();
     }

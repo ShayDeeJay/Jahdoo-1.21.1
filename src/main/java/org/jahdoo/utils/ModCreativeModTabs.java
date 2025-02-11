@@ -116,7 +116,7 @@ public class ModCreativeModTabs {
     private static void registerMagnets(CreativeModeTab.Output pOutput) {
         pOutput.accept((ItemsRegister.MAGNET.get()));
 
-        for(int i = 1; i < 12; i++) {
+        for(int i = 1; i < 5; i++) {
             var magnet= new ItemStack(ItemsRegister.MAGNET.get());
             var customModelData = new CustomModelData(i);
             magnet.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);

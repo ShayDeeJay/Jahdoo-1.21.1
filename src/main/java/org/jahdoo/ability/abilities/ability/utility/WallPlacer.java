@@ -83,7 +83,7 @@ public class WallPlacer extends AbstractUtilityProjectile {
         var replaceBlock = Blocks.AIR;
 
         if(player != null){
-            var mainHandItem = player.getItemInHand(player.getUsedItemHand());
+            var mainHandItem = ModHelpers.getUsedItem(player);
             targetBlock = new ItemStack(getStoredBlock(level, mainHandItem));
             replaceBlock = getStoredBlock(level, mainHandItem);
         } else {

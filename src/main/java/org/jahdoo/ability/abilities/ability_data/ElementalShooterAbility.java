@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.GenericProjectile;
 import static org.jahdoo.ability.AbilityBuilder.*;
 
@@ -66,15 +67,17 @@ public class ElementalShooterAbility extends AbilityRegistrar {
 
 
     private double getTag(Player player, String name){
-        return ModHelpers.getModifierValue(player.getItemInHand(player.getUsedItemHand()).get(WAND_ABILITY_HOLDER.get()), abilityId.getPath().intern()).get(name).actualValue();
+        var wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
+        var id = abilityId.getPath().intern();
+        return ModHelpers.getModifierValue(wandAbilityHolder, id).get(name).actualValue();
     }
 
     @Override
     public void invokeAbility(Player player) {
-        var numberOfProjectile = getTag(player, (ElementalShooterAbility.numberOfProjectiles));
-        this.fireMultiShotProjectile((int) numberOfProjectile , 1.2f, player, 0.1, () ->
-            new GenericProjectile(player, 0, ELEMENTAL_SHOOTER.get().setAbilityId(), abilityId.getPath().intern())
-        );
+        var projectileCount = getTag(player, (ElementalShooterAbility.numberOfProjectiles));
+        var index = ELEMENTAL_SHOOTER.get().setAbilityId();
+        var aId = abilityId.getPath().intern();
+        fireMultiShotProjectile((int) projectileCount , 1.2f, player, 0.1, () -> new GenericProjectile(player, 0, index, aId));
         ModHelpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.ENDER_EYE_DEATH, 0.25f);
     }
 

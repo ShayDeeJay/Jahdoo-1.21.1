@@ -24,7 +24,7 @@ public class BattlemageGauntlet extends Item implements ICurioItem, JahdooItem {
         var getRarityId = stack.get(DataComponentRegistry.JAHDOO_RARITY);
         if(getRarityId != null){
             var getRarity = JahdooRarity.getAllRarities().get(getRarityId);
-            tooltips.addFirst(JahdooRarity.addRarityTooltip(getRarity, (int) context.level().getGameTime()));
+            tooltips.addFirst(JahdooRarity.addRarityTooltip(getRarity, context.level()));
         }
         var component = new ArrayList<Component>();
         component.add(Component.empty());

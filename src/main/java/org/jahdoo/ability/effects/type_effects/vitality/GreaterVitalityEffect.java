@@ -21,7 +21,6 @@ import static org.jahdoo.items.augments.AugmentItemHelper.throwNewItem;
 
 public class GreaterVitalityEffect extends MobEffect {
 
-
     public GreaterVitalityEffect() {
         super(MobEffectCategory.HARMFUL, FastColor.ARGB32.color(226, 51, 119));
     }
@@ -33,7 +32,6 @@ public class GreaterVitalityEffect extends MobEffect {
         }
         return true;
     }
-
 
     @Override
     public MobEffectCategory getCategory() {
@@ -49,4 +47,5 @@ public class GreaterVitalityEffect extends MobEffect {
     public boolean isBeneficial() {
         return true;
     }
+
 }

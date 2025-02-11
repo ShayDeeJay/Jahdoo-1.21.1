@@ -25,6 +25,7 @@ import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.abilities.ability_data.NovaSmashAbility;
 import org.jahdoo.attachments.AbstractAttachment;
 import org.jahdoo.components.DataComponentHelper;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.networking.packet.server2client.NovaSmashS2CPacket;
 import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.particle.particle_options.BakedParticleOptions;
@@ -87,7 +88,7 @@ public class NovaSmash implements AbstractAttachment {
         this.highestDelta = Math.max(this.highestDelta, getCurrentDelta);
 
         if (this.canSmash){
-            var getHolder = player.getItemInHand(player.getUsedItemHand()).get(WAND_ABILITY_HOLDER);
+            var getHolder = WandAbilityHolder.getHolderFromWand(player);
             var getValue = (float) getSpecificValue(NovaSmashAbility.abilityId.getPath().intern(), getHolder,AbilityBuilder.DAMAGE);
             this.getDamage = ModHelpers.attributeModifierCalculator(player, getValue, false, MAGIC_DAMAGE_MULTIPLIER, MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
             player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
@@ -108,7 +109,6 @@ public class NovaSmash implements AbstractAttachment {
     private void setAbilityEffects(Player player){
         getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.PLAYER_BIG_FALL);
         getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.EXPLOSION.get(), 1,0.6f);
-        System.out.println(getDamage);
         this.clientDiggingParticles(player, player.level());
 
         if(player.level() instanceof ServerLevel){

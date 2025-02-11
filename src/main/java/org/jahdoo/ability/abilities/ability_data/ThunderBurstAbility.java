@@ -8,6 +8,7 @@ import org.jahdoo.ability.AbilityRegistrar;
 import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.components.ability_holder.AbilityHolder;
+import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.DataComponentRegistry;
 import org.jahdoo.registers.ElementRegistry;
@@ -28,7 +29,7 @@ public class ThunderBurstAbility extends AbilityRegistrar {
     public static final String NUMBER_OF_THUNDERBOLTS = "Bolt Count";
 
     private Map<String, AbilityHolder.AbilityModifiers> tagModifierHelper(Player player){
-        var wandAbilityHolder = player.getItemInHand(player.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
         return ModHelpers.getModifierValue(wandAbilityHolder, abilityId.getPath().intern());
     }
 

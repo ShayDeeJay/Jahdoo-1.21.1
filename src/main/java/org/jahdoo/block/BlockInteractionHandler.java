@@ -20,6 +20,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jahdoo.items.augments.AugmentItemHelper;
+import org.jahdoo.utils.ModHelpers;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -89,7 +90,7 @@ public class BlockInteractionHandler {
         Player player,
         int itemCount
     ){
-        ItemStack mainHandItems = player.getItemInHand(player.getUsedItemHand());
+        ItemStack mainHandItems = ModHelpers.getUsedItem(player);
         if(mainHandItems.isEmpty()) return false;
         itemStackHandler.setStackInSlot(outputSlot, mainHandItems.copyWithCount(itemCount));
         /*if(!player.isCreative())*/ mainHandItems.shrink(itemCount);
@@ -125,7 +126,7 @@ public class BlockInteractionHandler {
         if(outputSlotTotal.isEmpty()) return false;
 
         // Removes all items from slot to empty hand
-        var mainHandItem = player.getItemInHand(player.getUsedItemHand());
+        var mainHandItem = ModHelpers.getUsedItem(player);
         if (mainHandItem.isEmpty()) {
             player.setItemInHand(interactionHand, itemStackHandler.extractItem(outputSlot, outputSlotTotal.getCount(), false));
             return true;
@@ -152,7 +153,7 @@ public class BlockInteractionHandler {
         ItemStack outputSlotTotal = itemStackHandler.getStackInSlot(outputSlot);
 
         if(!itemStackHandler.getStackInSlot(outputSlot).isEmpty()){
-            if (player.getItemInHand(player.getUsedItemHand()).isEmpty() && player.isShiftKeyDown()) {
+            if (ModHelpers.getUsedItem(player).isEmpty() && player.isShiftKeyDown()) {
                 player.setItemInHand(interactionHand, outputSlotTotal);
                 itemStackHandler.extractItem(outputSlot, outputSlotTotal.getCount(), false);
                 level.playLocalSound(blockPos, soundEvents, SoundSource.NEUTRAL, volume, pitch, false);

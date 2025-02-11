@@ -42,12 +42,13 @@ import java.util.ArrayList;
 
 import static org.jahdoo.block.wand.WandBlockEntity.GET_WAND_SLOT;
 //import static org.jahdoo.registers.DataComponentRegistry.ABILITY_SLOTS;
+import static org.jahdoo.particle.ParticleStore.*;
 import static org.jahdoo.registers.DataComponentRegistry.RUNE_HOLDER;
 import static org.jahdoo.registers.DataComponentRegistry.WAND_DATA;
 import static org.jahdoo.registers.ElementRegistry.getElementByWandType;
+import static org.jahdoo.registers.ElementRegistry.getElementFromWand;
 
 public class WandBlock extends BaseEntityBlock {
-
     VoxelShape result = Block.box(7, 0, 7, 9, 17, 9);
 
     public WandBlock() {
@@ -59,7 +60,6 @@ public class WandBlock extends BaseEntityBlock {
                 .lightLevel((blockState) -> 12)
         );
     }
-
 
     @Override
     protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
@@ -84,18 +84,20 @@ public class WandBlock extends BaseEntityBlock {
     public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource) {
         if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return;
         if(wandBlock.getWandItemFromSlot().isEmpty()) return;
-        var getType = getElementByWandType(wandBlock.getWandItemFromSlot().getItem());
-        if(!level.isClientSide() && !getType.isEmpty()) return;
-        var element = getType.getFirst();
+        var getType = getElementFromWand(wandBlock.getWandItemFromSlot().getItem());
+        if(!level.isClientSide()) return;
 
-        var par1 = ParticleHandlers.bakedParticleOptions(element.getTypeId(), 20, 1.5f, false);
-        var par2 = ParticleHandlers.genericParticleOptions(
-            ParticleStore.GENERIC_PARTICLE_SELECTION, element, 20, 1.5f, false, 0.3
+        getType.ifPresent(
+            element -> {
+                var par1 = ParticleHandlers.bakedParticleOptions(element.getTypeId(), 20, 1.5f, false);
+                var par2 = ParticleHandlers.genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 20, 1.5f, false, 0.3);
+
+                PositionGetters.getInnerRingOfRadiusRandom(blockPos, 0.1, 2,
+                    positions -> this.placeParticle(level, positions, element, randomSource.nextInt(0,3) == 0 ? par1 : par2)
+                );
+            }
         );
 
-        PositionGetters.getInnerRingOfRadiusRandom(blockPos, 0.1, 2,
-            positions -> this.placeParticle(level, positions, element, randomSource.nextInt(0,3) == 0 ? par1 : par2)
-        );
     }
 
     public void placeParticle(Level level, Vec3 pos, AbstractElement element, ParticleOptions par1){
@@ -167,7 +169,7 @@ public class WandBlock extends BaseEntityBlock {
                 }
             } else {
                 for (ItemStack itemStack : temp) {
-                    if (!itemStack.isEmpty() && player.getItemInHand(player.getUsedItemHand()).isEmpty()) {
+                    if (!itemStack.isEmpty() && ModHelpers.getUsedItem(player).isEmpty()) {
                         player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
                         temp.set(temp.indexOf(itemStack), ItemStack.EMPTY);
                         RuneHolder.updateRuneSlots(wandBlock.getWandItemFromSlot(), temp);

@@ -33,7 +33,7 @@ public class IceBombAbility extends AbilityRegistrar {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.EPIC;
+        return JahdooRarity.RARE;
     }
 
     @Override

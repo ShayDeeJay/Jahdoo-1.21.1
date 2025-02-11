@@ -38,7 +38,7 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
     @Override
     public void onTickMethod(Player player){
         super.onTickMethod(player);
-        var getHolder = player.getItemInHand(player.getUsedItemHand()).get(WAND_ABILITY_HOLDER);
+        var getHolder = WandAbilityHolder.getHolderFromWand(player);
         var hasAbility = ModHelpers.getModifierValue(getHolder, abilityId.getPath().intern()) != null;
         var getCastTime = DataComponentHelper.getSpecificValue(abilityId.getPath().intern(), getHolder, CASTING_TIME);
         if (!(player instanceof ServerPlayer serverPlayer)) return;

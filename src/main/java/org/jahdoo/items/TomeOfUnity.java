@@ -33,7 +33,6 @@ public class TomeOfUnity extends RelicItem {
     public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
         var list = new ArrayList<Component>();
         var lists = stack.getAttributeModifiers().modifiers().stream().toList();
-        list.add(Component.empty());
         if(!lists.isEmpty()){
             for (var entry : lists) {
                 tooltips.add(RuneData.RuneHelpers.standAloneAttributes(entry));
@@ -43,12 +42,23 @@ public class TomeOfUnity extends RelicItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    public List<Component> getSlotsTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
+        var newComp = new ArrayList<Component>();
+        var rarity = JahdooRarity.attachRarityTooltip(stack, context.level());
+        newComp.add(rarity);
+        newComp.addAll(tooltips);
+        newComp.add(Component.empty());
+        return newComp;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltips, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltips, tooltipFlag);
+
         var list = stack.getAttributeModifiers().modifiers().stream().toList();
         if(!list.isEmpty()){
             for (var entry : list) {
-                tooltipComponents.add(RuneData.RuneHelpers.standAloneAttributes(entry));
+                tooltips.add(RuneData.RuneHelpers.standAloneAttributes(entry));
             }
         }
     }

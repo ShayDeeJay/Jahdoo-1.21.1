@@ -39,6 +39,7 @@ public abstract class PlayerSpinAttackMixin extends LivingEntity {
     )
     private void attackEvent(Entity target, CallbackInfo ci){
         if(this.isAutoSpinAttack()){
+            System.out.println("im runninnnggg");
             var wandAbilityHolder = this.getItemInHand(this.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER);
             if(wandAbilityHolder != null){
                 var ability = StormRushAbility.abilityId.getPath().intern();

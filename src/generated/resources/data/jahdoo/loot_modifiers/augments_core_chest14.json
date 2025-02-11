@@ -7,7 +7,7 @@
     },
     {
       "condition": "neoforge:loot_table_id",
-      "loot_table_id": "minecraft:chests/trial_chambers/corridor"
+      "loot_table_id": "minecraft:chests/trial_chambers/reward"
     }
   ],
   "item": "jahdoo:augment_core"

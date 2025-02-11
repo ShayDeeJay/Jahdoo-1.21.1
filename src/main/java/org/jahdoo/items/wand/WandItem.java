@@ -97,7 +97,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 
     @Override
     public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
-        pTooltipComponents.addAll(WandItemHelper.getItemModifiers(pStack, (int) pContext.level().getGameTime()));
+        pTooltipComponents.addAll(WandItemHelper.getItemModifiers(pStack, pContext.level()));
 
         var list = pStack.getAttributeModifiers().modifiers().stream().toList();
         if(list.size() > 3){
@@ -118,7 +118,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         var item = player.getItemInHand(interactionHand);
 
         if(level.isClientSide){
-            Minecraft.getInstance().setScreen(new StatScreen(player));
+//            Minecraft.getInstance().setScreen(new StatScreen(player));
         }
 
         if (canOffHand(player, interactionHand, true)) {
