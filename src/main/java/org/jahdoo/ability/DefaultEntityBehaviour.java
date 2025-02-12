@@ -20,13 +20,13 @@ public abstract class DefaultEntityBehaviour extends AbstractEntityProperty {
     public AbstractElement getElementType(){return null;}
     public void getElementProjectile(ElementProjectile elementProjectile) { this.elementProjectile = elementProjectile; }
     public void getGenericProjectile(GenericProjectile genericProjectile) { this.genericProjectile = genericProjectile; }
-    public void getAoeCloud(AoeCloud aoeCloud){ this.aoeCloud = aoeCloud; }
-    public void onBlockBlockHit(BlockHitResult blockHitResult){}
-    public void onEntityHit(LivingEntity hitEntity){}
-    public void onTickMethod(){}
-    public void discardCondition(){}
-    public void addAdditionalDetails(CompoundTag compoundTag){}
-    public void readCompoundTag(CompoundTag compoundTag){}
+    public void getAoeCloud(AoeCloud aoeCloud) { this.aoeCloud = aoeCloud; }
+    public void onBlockBlockHit(BlockHitResult blockHitResult) { }
+    public void onEntityHit(LivingEntity hitEntity) { }
+    public void onTickMethod() { }
+    public void discardCondition() { }
+    public void addAdditionalDetails(CompoundTag compoundTag) { }
+    public void readCompoundTag(CompoundTag compoundTag) { }
 
     public boolean damageEntity(LivingEntity hitEntity){
         return !(hitEntity instanceof EternalWizard) && !(hitEntity instanceof Player);
@@ -34,7 +34,9 @@ public abstract class DefaultEntityBehaviour extends AbstractEntityProperty {
 
     public static boolean canDamageEntity(LivingEntity hitEntity, LivingEntity owner){
         if(owner != null) {
-            return hitEntity.getUUID() != owner.getUUID() && !(hitEntity instanceof TamableEntity tamableEntity && tamableEntity.getOwner() == owner);
+            var isPlayerTamed = !(hitEntity instanceof TamableEntity tamableEntity && tamableEntity.getOwner() == owner);
+            var isOwner = hitEntity.getUUID() != owner.getUUID();
+            return isOwner && isPlayerTamed;
         }
         return true;
     }
@@ -60,10 +62,10 @@ public abstract class DefaultEntityBehaviour extends AbstractEntityProperty {
         CompoundTag compoundTag
     ){
         var storedAbility = new CompoundTag();
-        if(wandAbilityHolder.abilityProperties().get(abilityId) != null){
-            wandAbilityHolder.abilityProperties().get(abilityId).abilityProperties().forEach(
-                (key, value) -> storedAbility.putDouble(key, value.actualValue())
-            );
+        var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityId);
+
+        if(abilityHolder != null){
+            abilityHolder.abilityProperties().forEach((key, value) -> storedAbility.putDouble(key, value.actualValue()));
         }
         compoundTag.put("wandAbilities", storedAbility);
     }

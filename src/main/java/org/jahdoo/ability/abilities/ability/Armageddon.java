@@ -99,7 +99,7 @@ public class Armageddon extends DefaultEntityBehaviour {
     }
 
     private void createModule(Vec3 location){
-        AoeCloud aoeCloud = new AoeCloud(
+        var aoeCloud = new AoeCloud(
             this.aoeCloud.level(),
             this.aoeCloud.getOwner(), 0.2f,
             EntityPropertyRegister.ARMAGEDDON_MODULE.get().setAbilityId(),

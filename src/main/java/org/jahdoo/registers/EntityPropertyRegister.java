@@ -15,6 +15,7 @@ import org.jahdoo.ability.abilities.ability.utility.*;
 import org.jahdoo.ability.ability_components.ArmageddonModule;
 import org.jahdoo.ability.ability_components.EtherealArrow;
 import org.jahdoo.ability.ability_components.LightningTrail;
+import org.jahdoo.ability.ability_components.SoulSiphonNova;
 import org.jahdoo.utils.ModHelpers;
 
 import java.util.function.Supplier;
@@ -68,6 +69,7 @@ public class EntityPropertyRegister {
     //USED FOR AOE ENTITY
     public static final Supplier <AbstractEntityProperty> ARCTIC_STORM = registerProjectileProperty(new Permafrost());
     public static final Supplier <AbstractEntityProperty> ARMAGEDDON_MODULE = registerProjectileProperty(new ArmageddonModule());
+    public static final Supplier <AbstractEntityProperty> SOUL_SIPHON_NOVA = registerProjectileProperty(new SoulSiphonNova());
     public static final Supplier <AbstractEntityProperty> ARMAGEDDON = registerProjectileProperty(new Armageddon());
     public static final Supplier <AbstractEntityProperty> HELLFIRE = registerProjectileProperty(new HellFire());
     public static final Supplier <AbstractEntityProperty> SUMMON_ETERNAL_WIZARD = registerProjectileProperty(new SummonEternalWizard());

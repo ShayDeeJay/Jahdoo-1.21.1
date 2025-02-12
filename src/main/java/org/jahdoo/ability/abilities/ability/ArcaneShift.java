@@ -40,7 +40,7 @@ public class ArcaneShift extends AbstractAbility {
         var distances = getTag(CASTING_DISTANCE);
         var maxEntity = getTag(ArcaneShiftAbility.maxEntities);
         var lifeTimes = getTag(ArcaneShiftAbility.lifeTime);
-        var position = player.pick(distances, 0, false).getLocation();;
+        var position = player.pick(distances, 0, false).getLocation();
         for(int i = 0; i < 50; i++){
             var particle = ParticleHandlers.getAllParticleTypes(ElementRegistry.MYSTIC.get(), 10, 1.5f);
             var x = player.getRandomX(1);

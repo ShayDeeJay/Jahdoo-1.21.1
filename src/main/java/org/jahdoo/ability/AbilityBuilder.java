@@ -48,17 +48,17 @@ public class AbilityBuilder {
         this.abilityId = abilityId;
     }
 
-    private double getLuckModifier(){
-        if(item != null && item.getItem() instanceof Augment){
-            var rating = item.get(AUGMENT_RATING.get());
-            if(rating != null) return Math.max(1, rating); else return 1;
-        }
-        return 1;
-    }
+//    private double getLuckModifier(){
+//        if(item != null && item.getItem() instanceof Augment){
+//            var rating = item.get(AUGMENT_RATING.get());
+//            if(rating != null) return Math.max(1, rating); else return 1;
+//        }
+//        return 1;
+//    }
 
     public AbilityBuilder setAbilityTagModifiersRandom(String name, double high, double low, boolean isHigherBetter, double step) {
-        var getModifier = getLuckModifier();
-        var weightedDouble = getWeightedRandomDouble(high, low, (getModifier == 0) != isHigherBetter, step, getModifier);
+//        var getModifier = getLuckModifier();
+//        var weightedDouble = getWeightedRandomDouble(high, low, (getModifier == 0) != isHigherBetter, step, getModifier);
         var getValue = isHigherBetter ? low : high;
         var chooseValue = this.item != null && this.item.has(AUGMENT_RATING.get()) ? getRandomWeightedDouble(low, high, step) : getValue;
         var chosenR = doubleFormattedDouble(chooseValue);

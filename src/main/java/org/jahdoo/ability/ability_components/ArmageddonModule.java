@@ -74,9 +74,8 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
 
     private void setProjectile(){
         if(this.aoeCloud.getOwner() != null){
-            float setRandomYHeight = ModHelpers.Random.nextFloat(0.3f, 0.6f);
-
-            ElementProjectile fireProjectile = new ElementProjectile(
+            var setRandomYHeight = ModHelpers.Random.nextFloat(0.3f, 0.6f);
+            var fireProjectile = new ElementProjectile(
                 EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(),
                 this.aoeCloud.getOwner(), aoeCloud.getX(), aoeCloud.getY(), aoeCloud.getZ(),
                 EntityPropertyRegister.FIRE_BALL.get().setAbilityId(),
@@ -100,7 +99,6 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
                     var size = ModHelpers.Random.nextFloat(0.8f, 1.2f);
                     var particle = genericParticleOptions(type, 6, size, colour1, colour2, true);
                     var yOff = ModHelpers.Random.nextDouble(1, 1.5);
-                    var mew = ModHelpers.getRandomParticleVelocity(this.aoeCloud, 0.2);
 
                     ParticleHandlers.sendParticles(
                         aoeCloud.level(), particle, positions.add(0, yOff,0), 0, 0, 0, 0, 0.2

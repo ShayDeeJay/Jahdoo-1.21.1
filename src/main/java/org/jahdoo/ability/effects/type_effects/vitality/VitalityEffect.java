@@ -35,8 +35,7 @@ public class VitalityEffect extends MobEffect {
             int getRandomChance = getGetRandomChance(amplifier);
             if(getRandomChance == 0) {
                 if(ModHelpers.Random.nextInt(0,(20-amplifier)) == 0){
-                    var heartContainer = createHearContainer(amplifier);
-                    throwNewItem(targetEntity, heartContainer);
+                    throwHeartContainer(targetEntity, (float) (0.1 * amplifier));
                 }
                 DamageUtil.damageWithJahdoo(targetEntity, 1);
             }
@@ -45,9 +44,14 @@ public class VitalityEffect extends MobEffect {
         return true;
     }
 
-    private static @NotNull ItemStack createHearContainer(int amplifier) {
+    public static void throwHeartContainer(LivingEntity targetEntity, float healAmount) {
+        var heartContainer = createHearContainer(healAmount);
+        throwNewItem(targetEntity, heartContainer);
+    }
+
+    private static @NotNull ItemStack createHearContainer(float amplifier) {
         var heartContainer = new ItemStack(ItemsRegister.HEALTH_CONTAINER.get());
-        heartContainer.set(DataComponentRegistry.HEART_CONTAINER.get(), (float) (0.1 * amplifier));
+        heartContainer.set(DataComponentRegistry.HEART_CONTAINER.get(), amplifier);
         return heartContainer;
     }
 

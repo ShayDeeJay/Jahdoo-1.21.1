@@ -14,24 +14,21 @@ import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.ability.AbilityBuilder;
 
+import static org.jahdoo.registers.EntitiesRegister.*;
+
 public class OverchargedAbility extends AbilityRegistrar {
     public static final ResourceLocation abilityId = ModHelpers.res("overcharged");
-    public static final String gravitationalPull = "Gravitational Pull";
-    public static final String instability = "Instability";
+    public static final String HEAL_VALUE = "Heal Value";
+    public static final String PULSES = "Pulse Multiplier";
 
     @Override
     public void invokeAbility(Player player) {
-        fireProjectile(
-            new ElementProjectile(
-                EntitiesRegister.LIGHTNING_ELEMENT_PROJECTILE.get(),
-                player,
-                EntityPropertyRegister.OVERCHARGED.get().setAbilityId(),
-                offsetShoot(player),
-                abilityId.getPath().intern()
-            ),
-            player,
-            0.8f
+        var projectile = new ElementProjectile(
+            VITALITY_ELEMENT_PROJECTILE.get(), player,
+            EntityPropertyRegister.OVERCHARGED.get().setAbilityId(),
+            offsetShoot(player), abilityId.getPath().intern()
         );
+        fireProjectile(projectile, player, 0.8f);
     }
 
     @Override
@@ -47,14 +44,12 @@ public class OverchargedAbility extends AbilityRegistrar {
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setStaticMana(80)
+            .setStaticMana(100)
             .setStaticCooldown(1200)
-            .setDamage(40, 15, 5)
-            .setEffectDuration(500, 100, 100)
-            .setEffectStrength(10, 0, 1)
-            .setEffectChance(30, 5, 5)
-            .setGravitationalPull(2, 1, 0.2)
-            .setAbilityTagModifiersRandom(instability, 7,3, false, 1)
+            .setDamage(20, 10, 2)
+            .setRange(2.5, 1.5, 0.2)
+            .setAbilityTagModifiersRandom(HEAL_VALUE, 1.5,0.5, true, 0.2)
+            .setAbilityTagModifiersRandom(PULSES, 5,1, true, 1)
             .build();
     }
 
@@ -75,6 +70,6 @@ public class OverchargedAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.LIGHTNING.get();
+        return ElementRegistry.VITALITY.get();
     }
 }

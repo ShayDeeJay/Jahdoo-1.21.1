@@ -11,6 +11,7 @@ import net.minecraft.util.FastColor;
 import org.jahdoo.ability.abilities.MobAbilities.Barrage;
 import org.jahdoo.ability.abilities.ability.Armageddon;
 import org.jahdoo.ability.abilities.ability.Permafrost;
+import org.jahdoo.ability.ability_components.SoulSiphonNova;
 import org.jahdoo.entities.AoeCloud;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModHelpers;
@@ -36,6 +37,11 @@ public class CustomAoeRenderer extends EntityRenderer<AoeCloud> {
         if(Objects.equals(entity.getEntityType(), Armageddon.abilityId.getPath().intern())){
             int color = ElementRegistry.INFERNO.get().textColourSecondary();
             drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f, entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(155, color));
+        }
+
+        if(Objects.equals(entity.getEntityType(), SoulSiphonNova.abilityId.getPath().intern())){
+            int color = ElementRegistry.VITALITY.get().textColourSecondary();
+            drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f,  entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(155, color));
         }
 
         if(Objects.equals(entity.getEntityType(), Permafrost.abilityId.getPath().intern())){

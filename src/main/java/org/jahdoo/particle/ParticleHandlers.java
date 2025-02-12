@@ -275,7 +275,7 @@ public class ParticleHandlers {
                     particleY + Random.nextFloat(-spread, spread),
                     particleZ + Random.nextFloat(-spread, spread)
                 );
-                var genericSlow = genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, element, 3, 1.2f);
+                var genericSlow = genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, element, 3, 1.2f, false);
                 var bakedSlow = bakedParticleOptions(element.getTypeId(), 2,2.5f,false);
                 var subtract = position.subtract(0, heightOffset, 0);
                 var level = projectile.level();
