@@ -16,6 +16,7 @@ import org.jahdoo.items.armor.WizardArmor;
 import org.jahdoo.items.augments.Augment;
 import org.jahdoo.items.block_items.ChallengeAltarBlockItem;
 import org.jahdoo.items.block_items.LootChestBlockItem;
+import org.jahdoo.items.magnet.Magnet;
 import org.jahdoo.items.runes.RuneItem;
 import org.jahdoo.items.block_items.ModularChaosCubeItem;
 import org.jahdoo.items.block_items.InfuserBlockItem;

@@ -9,27 +9,30 @@ import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.DefaultEntityBehaviour;
 import org.jahdoo.ability.effects.type_effects.vitality.VitalityEffect;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
-import org.jahdoo.particle.ParticleHandlers;
-import org.jahdoo.particle.ParticleStore;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.utils.ModHelpers;
+import org.jahdoo.utils.DamageUtil;
+import org.jahdoo.utils.Maths;
 import org.jahdoo.utils.PositionGetters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jahdoo.ability.AbilityBuilder.DAMAGE;
 import static org.jahdoo.ability.AbilityBuilder.RANGE;
-import static org.jahdoo.ability.abilities.ability_data.OverchargedAbility.HEAL_VALUE;
-import static org.jahdoo.ability.abilities.ability_data.OverchargedAbility.PULSES;
+import static org.jahdoo.ability.abilities.ability_data.LifeSiphonAbility.HEAL_VALUE;
 import static org.jahdoo.components.DataComponentHelper.*;
+import static org.jahdoo.particle.ParticleHandlers.*;
 import static org.jahdoo.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.particle.ParticleHandlers.sendParticles;
+import static org.jahdoo.particle.ParticleStore.*;
+import static org.jahdoo.utils.ModHelpers.*;
 
 public class SoulSiphonNova extends DefaultEntityBehaviour {
-    public static final ResourceLocation abilityId = ModHelpers.res("soul_siphon_nova_property");
+    public static final ResourceLocation abilityId = res("soul_siphon_nova_property");
     public static final String COMPONENT_NAME = "soul_siphon_nova";
+    public List<LivingEntity> targetedEntities = new ArrayList<>();
     int privateTicks;
-    double aoe = 0.05;
+    double aoe;
 
     public static WandAbilityHolder setModifiers(double damage, double range, double healValue) {
         return new AbilityBuilder(null, abilityId.getPath().intern())
@@ -40,19 +43,20 @@ public class SoulSiphonNova extends DefaultEntityBehaviour {
     }
 
     public float getValue(String value){
-        return (float) getSpecificValue(abilityId.getPath().intern(), this.aoeCloud.getwandabilityholder(), value);
+        var id = abilityId.getPath().intern();
+        var holder = this.aoeCloud.getwandabilityholder();
+        return (float) getSpecificValue(id, holder, value);
     }
 
     @Override
     public void onTickMethod() {
         if(aoe <= getValue(RANGE)) {
-            aoe += 0.25;
+            aoe += 0.2;
             damageEntitiesLocally();
         } else {
             aoeCloud.discard();
         }
         aoeCloud.setRadius((float) aoe);
-        if(aoe >= aoeCloud.getRandomRadius()) privateTicks++;
         pullParticlesToCenter();
     }
 
@@ -60,9 +64,12 @@ public class SoulSiphonNova extends DefaultEntityBehaviour {
         var bounding = aoeCloud.getBoundingBox().inflate(aoe, 1, aoe);
         var list = aoeCloud.level().getEntitiesOfClass(LivingEntity.class, bounding);
         for (var livingEntity : list) {
-            if(canDamageEntity(livingEntity, this.aoeCloud.getOwner())){
-                livingEntity.hurt(aoeCloud.damageSources().generic(), getValue(DAMAGE));
-                if(livingEntity.hurtMarked){
+            var canDamage = canDamageEntity(livingEntity, this.aoeCloud.getOwner());
+            var beenTargeted = targetedEntities.contains(livingEntity);
+            if(canDamage && !beenTargeted){
+                targetedEntities.add(livingEntity);
+                DamageUtil.damageWithJahdoo(livingEntity, aoeCloud.getOwner(), getValue(DAMAGE));
+                if(Maths.percentageChance(50)){
                     VitalityEffect.throwHeartContainer(livingEntity, getValue(HEAL_VALUE));
                 }
             }
@@ -71,34 +78,32 @@ public class SoulSiphonNova extends DefaultEntityBehaviour {
 
     public void pullParticlesToCenter(){
         var lifetime = 5;
-        var bakedParticleOptions = ParticleHandlers.bakedParticleOptions(getElementType().getTypeId(), lifetime, 2f, false);
-        var genericParticleOptions = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, getElementType(), lifetime, 2f);
-        var particleOptionsList = List.of(bakedParticleOptions, genericParticleOptions);
+        var part1 = bakedParticleOptions(getElementType().getTypeId(), lifetime, 2f, false);
+        var part2 = genericParticleOptions(GENERIC_PARTICLE_SELECTION, getElementType(), lifetime, 2f);
+        var particleOptionsList = List.of(part1, part2);
+        var pos = this.aoeCloud.position();
 
         PositionGetters.getOuterRingOfRadiusRandom(
-            this.aoeCloud.position(), aoe * 2.8, aoe * 5,
-            positions -> {
+            pos, aoe * 2.8, aoe * 5, positions -> {
                 if (this.aoeCloud.level() instanceof ServerLevel serverLevel) {
-                    var directions = this.aoeCloud.position().subtract(positions).normalize();
-                    sendParticles(
-                        serverLevel, ModHelpers.getRandomListElement(particleOptionsList),
-                        positions, 0, directions.x, directions.y, directions.z, 1
-                    );
+                    var directions = pos.subtract(positions).normalize();
+                    var randomElement = getRandomListElement(particleOptionsList);
+                    sendParticles(serverLevel, randomElement, positions, 0, directions.x, directions.y, directions.z, 1);
                 }
             }
         );
     }
 
     @Override
-    public void addAdditionalDetails(CompoundTag compoundTag) {
-        compoundTag.putInt("private_ticks", privateTicks);
-        compoundTag.putDouble("aoe", aoe);
+    public void addAdditionalDetails(CompoundTag tag) {
+        tag.putInt("private_ticks", privateTicks);
+        tag.putDouble("aoe", aoe);
     }
 
     @Override
-    public void readCompoundTag(CompoundTag compoundTag) {
-        this.privateTicks = compoundTag.getInt("private_ticks");
-        this.aoe = compoundTag.getDouble("aoe");
+    public void readCompoundTag(CompoundTag tag) {
+        this.privateTicks = tag.getInt("private_ticks");
+        this.aoe = tag.getDouble("aoe");
     }
 
     @Override

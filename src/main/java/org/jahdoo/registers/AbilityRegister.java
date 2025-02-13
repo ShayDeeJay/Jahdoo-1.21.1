@@ -103,7 +103,7 @@ public class AbilityRegister {
 
     //Volt
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> BOLTZ = registerSpell(new BoltzAbility());
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> OVERCHARGED = registerSpell(new OverchargedAbility());
+    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> OVERCHARGED = registerSpell(new LifeSiphonAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> STATIC = registerSpell(new StaticAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> STORM_RUSH = registerSpell(new StormRushAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> THUNDER_BURST = registerSpell(new ThunderBurstAbility());

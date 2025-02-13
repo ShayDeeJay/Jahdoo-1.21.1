@@ -36,6 +36,7 @@ import org.jahdoo.particle.ParticleHandlers;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.registers.EntitiesRegister;
 import org.jahdoo.registers.ItemsRegister;
+import org.jahdoo.registers.SoundRegister;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,7 +93,8 @@ public class AncientGolem extends IronGolem implements TamableEntity {
             .add(Attributes.MAX_HEALTH, 100.0F)
             .add(Attributes.MOVEMENT_SPEED, 0.25F)
             .add(Attributes.KNOCKBACK_RESISTANCE, 1.0F)
-            .add(Attributes.STEP_HEIGHT, 1.0F);
+            .add(Attributes.STEP_HEIGHT, 1.0F)
+            .add(Attributes.ATTACK_DAMAGE, 15f);
     }
 
     public float getInternalScale() {
@@ -219,27 +221,30 @@ public class AncientGolem extends IronGolem implements TamableEntity {
     public void tick() {
         privateTicks++;
         super.tick();
-        if(!this.level().isClientSide) particle();
         reassignPlayer();
         this.resetFallDistance();
         this.endOfLife();
     }
 
-    private void particle(){
+    public void runningParticle(){
         if(!this.level().isClientSide){
             var isRunning = this.getSpeed() > 0.25 && isEntityMoving();
             if (isRunning) {
                 this.setKnockback(this);
                 clientDiggingParticles(this, level());
             }
+        }
+    }
 
+    public void particle(){
+        if(!this.level().isClientSide){
+            var isRunning = this.getSpeed() > 0.25 && isEntityMoving();
             if (this.tickCount % (isRunning ? 1 : 4) == 0) {
                 var level = this.level();
                 var position = new Vec3(this.getRandomX(1), this.getRandomY(), this.getRandomZ(1));
                 var directions = this.position().subtract(position).normalize();
                 ParticleHandlers.sendParticles(
-                    level,
-                    getAllParticleTypes(element(), 12, 1f),
+                    level, getAllParticleTypes(element(), 12, 1f),
                     position.add(0, 1, 0), isRunning ? 5 : 0,
                     directions.x, directions.y, directions.z, 0.12
                 );
@@ -265,8 +270,6 @@ public class AncientGolem extends IronGolem implements TamableEntity {
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         var itemstack = player.getItemInHand(hand);
 //        this.smash.start(this.tickCount);
-//        this.playSound(SoundRegister.DASH_EFFECT.get(), 1,1.8f);
-//        this.sonicBoomAnimationState.stop();
         if (!itemstack.is(ItemsRegister.AUGMENT_HYPER_CORE)) {
             return InteractionResult.PASS;
         } else {
@@ -327,9 +330,7 @@ public class AncientGolem extends IronGolem implements TamableEntity {
         compound.putDouble(DAMAGE, damage);
         compound.putInt(LIFETIME, lifeTime);
         compound.putInt("ticks", privateTicks);
-        if(this.owner != null) {
-            compound.putUUID("saveOwner", owner.getUUID());
-        }
+        if(this.owner != null) compound.putUUID("saveOwner", owner.getUUID());
     }
 
     @Override
@@ -341,9 +342,7 @@ public class AncientGolem extends IronGolem implements TamableEntity {
         this.damage = compound.getDouble(DAMAGE);
         this.lifeTime = compound.getInt(LIFETIME);
         this.privateTicks = compound.getInt("ticks");
-        if(compound.hasUUID("saveOwner")){
-            this.ownerUUID = compound.getUUID("saveOwner");
-        }
+        if(compound.hasUUID("saveOwner")) this.ownerUUID = compound.getUUID("saveOwner");
     }
 
     private AbstractElement element(){

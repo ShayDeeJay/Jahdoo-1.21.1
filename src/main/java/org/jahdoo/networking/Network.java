@@ -26,6 +26,7 @@ public class Network {
         payloadRegistrar.playToServer(AugmentModificationChargeC2S.TYPE, AugmentModificationChargeC2S.STREAM_CODEC, AugmentModificationChargeC2S::handle);
         payloadRegistrar.playToServer(ItemInBlockC2SPacket.TYPE, ItemInBlockC2SPacket.STREAM_CODEC, ItemInBlockC2SPacket::handle);
         payloadRegistrar.playToServer(PlayerExperienceC2SPacket.TYPE, PlayerExperienceC2SPacket.STREAM_CODEC, PlayerExperienceC2SPacket::handle);
+        payloadRegistrar.playToServer(MagnetActiveC2SPacket.TYPE, MagnetActiveC2SPacket.STREAM_CODEC, MagnetActiveC2SPacket::handle);
 
 
         //S2C

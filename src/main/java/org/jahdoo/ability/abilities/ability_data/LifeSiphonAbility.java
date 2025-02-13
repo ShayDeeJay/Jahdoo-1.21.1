@@ -8,7 +8,6 @@ import org.jahdoo.ability.AbstractElement;
 import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.entities.ElementProjectile;
 import org.jahdoo.registers.ElementRegistry;
-import org.jahdoo.registers.EntitiesRegister;
 import org.jahdoo.registers.EntityPropertyRegister;
 import org.jahdoo.utils.ModHelpers;
 import org.jahdoo.utils.GlobalStrings;
@@ -16,8 +15,8 @@ import org.jahdoo.ability.AbilityBuilder;
 
 import static org.jahdoo.registers.EntitiesRegister.*;
 
-public class OverchargedAbility extends AbilityRegistrar {
-    public static final ResourceLocation abilityId = ModHelpers.res("overcharged");
+public class LifeSiphonAbility extends AbilityRegistrar {
+    public static final ResourceLocation abilityId = ModHelpers.res("life_siphon");
     public static final String HEAL_VALUE = "Heal Value";
     public static final String PULSES = "Pulse Multiplier";
 

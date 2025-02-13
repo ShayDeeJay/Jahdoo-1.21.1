@@ -237,14 +237,11 @@ public class AugmentItemHelper {
         var matchesStat = 5987164;
         var betterThanStat = -12988840;
         var worseThanStat = -47032;
+        var colour = isRange ? matchesStat : getComparison == 1 ? matchesStat : getComparison == 2 ? betterThanStat : worseThanStat;
 
         return Component
             .literal(roundNonWholeString(displayValue))
-            .withStyle(
-                style -> style.withColor(
-                    isRange ? matchesStat : getComparison == 1 ? matchesStat : getComparison == 2 ? betterThanStat : worseThanStat
-                )
-            );
+            .withStyle(style -> style.withColor(colour));
     }
 
     public static @NotNull String ticksToTime(String current) {

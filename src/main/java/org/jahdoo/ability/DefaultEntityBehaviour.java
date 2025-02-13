@@ -13,6 +13,7 @@ import org.jahdoo.entities.living.EternalWizard;
 import java.util.HashMap;
 
 public abstract class DefaultEntityBehaviour extends AbstractEntityProperty {
+
     protected AoeCloud aoeCloud;
     protected ElementProjectile elementProjectile;
     public GenericProjectile genericProjectile;
@@ -77,4 +78,5 @@ public abstract class DefaultEntityBehaviour extends AbstractEntityProperty {
         var newVelocityZ = currentVelocity.z * inertiaFactor;
         projectile.setDeltaMovement(newVelocityX, newVelocityY, newVelocityZ);
     }
+
 }

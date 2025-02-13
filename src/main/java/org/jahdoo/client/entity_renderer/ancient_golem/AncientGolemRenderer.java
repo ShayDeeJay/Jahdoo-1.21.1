@@ -235,6 +235,7 @@ public class AncientGolemRenderer extends MobRenderer<AncientGolem, AncientGolem
             new Keyframe(0.2083F, KeyframeAnimations.degreeVec(7.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
             new Keyframe(1.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)
         ))
+
         .addAnimation("head", new AnimationChannel(
             AnimationChannel.Targets.POSITION,
             new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
@@ -252,6 +253,7 @@ public class AncientGolemRenderer extends MobRenderer<AncientGolem, AncientGolem
             new Keyframe(0.2917F, KeyframeAnimations.degreeVec(-73.4753F, -25.37252F, 1.46928F), AnimationChannel.Interpolations.LINEAR),
             new Keyframe(1.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)
         ))
+
         .addAnimation("right_arm", new AnimationChannel(
             AnimationChannel.Targets.POSITION,
             new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -269,6 +271,7 @@ public class AncientGolemRenderer extends MobRenderer<AncientGolem, AncientGolem
             new Keyframe(0.2917F, KeyframeAnimations.degreeVec(-73.4753F, 25.37252F, -1.46928F), AnimationChannel.Interpolations.LINEAR),
             new Keyframe(1.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)
         ))
+
         .addAnimation("left_arm", new AnimationChannel(
             AnimationChannel.Targets.POSITION,
             new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),

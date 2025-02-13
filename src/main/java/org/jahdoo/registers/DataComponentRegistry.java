@@ -7,6 +7,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jahdoo.items.magnet.MagnetData;
 import org.jahdoo.items.runes.rune_data.RuneData;
 import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.components.ability_holder.AbilityHolder;
@@ -36,6 +37,9 @@ public class DataComponentRegistry {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<RuneHolder>> RUNE_HOLDER =
         register("rune_holder", (builder) -> builder.persistent(RuneHolder.CODEC).networkSynchronized(RuneHolder.STREAM_CODEC).cacheEncoding());
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<MagnetData>> MAGNET_DATA =
+        register("magnet_data", (builder) -> builder.persistent(MagnetData.CODEC).networkSynchronized(MagnetData.STREAM_CODEC).cacheEncoding());
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> HEART_CONTAINER =
         register("heart_container", builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT));

@@ -10,6 +10,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.items.magnet.MagnetData;
 import org.jahdoo.items.runes.rune_data.RuneHolder;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.ItemsRegister;
@@ -117,9 +118,10 @@ public class ModCreativeModTabs {
         pOutput.accept((ItemsRegister.MAGNET.get()));
 
         for(int i = 1; i < 5; i++) {
-            var magnet= new ItemStack(ItemsRegister.MAGNET.get());
+            var magnet = new ItemStack(ItemsRegister.MAGNET.get());
             var customModelData = new CustomModelData(i);
             magnet.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
+            MagnetData.setDataByType(magnet);
             pOutput.accept(magnet);
         }
     }

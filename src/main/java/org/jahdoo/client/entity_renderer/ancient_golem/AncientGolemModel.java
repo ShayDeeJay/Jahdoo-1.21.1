@@ -76,9 +76,8 @@ public class AncientGolemModel<T extends AncientGolem> extends HierarchicalModel
         var f2 = Mth.cos(f1);
         var f3 = Mth.sin(f1);
         var f4 = Math.min(0.35F, f);
-        var var10000 = this.head;
 
-        var10000.zRot += 0.3F * f3 * f;
+        this.head.zRot += 0.3F * f3 * f;
         this.body.zRot = 0.1F * f3 * f;
         this.body.xRot = 0.1F * f2 * f4;
 

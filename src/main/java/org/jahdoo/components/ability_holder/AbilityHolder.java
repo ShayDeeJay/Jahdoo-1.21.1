@@ -15,9 +15,7 @@ public record AbilityHolder(Map<String, AbilityModifiers> abilityProperties) {
     }
 
     private static AbilityHolder deserialise(FriendlyByteBuf friendlyByteBuf){
-        return new AbilityHolder(
-            friendlyByteBuf.readMap(ByteBufCodecs.STRING_UTF8, AbilityModifiers.STREAM_CODEC)
-        );
+        return new AbilityHolder(friendlyByteBuf.readMap(ByteBufCodecs.STRING_UTF8, AbilityModifiers.STREAM_CODEC));
     }
 
     public static final StreamCodec<FriendlyByteBuf, AbilityHolder> STREAM_CODEC = StreamCodec.ofMember(

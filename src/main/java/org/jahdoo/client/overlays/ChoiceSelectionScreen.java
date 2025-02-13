@@ -1,6 +1,6 @@
 package org.jahdoo.client.overlays;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -60,29 +60,32 @@ public class ChoiceSelectionScreen extends Screen  {
     }
 
     private void sharedPress() {
-        var minecraft1 = this.getMinecraft();
+        var minecraft = this.getMinecraft();
+        var player = minecraft.player;
 
-        minecraft1.player.playSound(SoundRegister.SELECT.get(),2,1);
-        minecraft1.setScreen(null);
+        if (player == null) return;
+        player.playSound(SoundRegister.SELECT.get(),2,1);
+        minecraft.setScreen(null);
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBlurredBackground(partialTick);
-        this.fadeEntryBack = Math.min(0.6F, this.fadeEntryBack + 0.03F);
         var font = getMinecraft().font;
         var itemStack = new ItemStack(ItemsRegister.WAND_ITEM_FROST.get());
         var tooltip = new ArrayList<>(getTooltipFromItem(getMinecraft(), itemStack));
+        var fadedColourBackground = FastColor.ARGB32.color((int) Math.max(0, fade), ColourStore.SYMPATHISER_ORANGE);
+        var i = this.height / 2;
+        this.renderBlurredBackground(partialTick);
+        this.fadeEntryBack = Math.min(0.6F, this.fadeEntryBack + 0.03F);
 
         sectionHighlight(mouseX, this::increaseAlpha, this::increaseAlpha, this::increaseAlpha);
-        var fadedColourBackground = FastColor.ARGB32.color((int) Math.max(0, fade), ColourStore.SYMPATHISER_ORANGE);
-
-        var i = this.height / 2;
-        for (var position : getPositions()) {
-            SharedUI.boxMaker(guiGraphics, position, -1, getSize(), this.height,  SharedUI.getFadedColourBackground(0.1f), SharedUI.getFadedColourBackground(fadeEntryBack));
-        }
-
+        selectionSections(guiGraphics);
         selectionBox(guiGraphics, getSize(), fadedColourBackground);
+        textSelection(guiGraphics, tooltip, i, font);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+    private void textSelection(GuiGraphics guiGraphics, ArrayList<Component> tooltip, int i, Font font) {
         if(this.fadeEntryBack > 0.4){
             for (var position : getPositions()) {
                 var spacer = 0;
@@ -94,8 +97,15 @@ public class ChoiceSelectionScreen extends Screen  {
                 }
             }
         }
+    }
 
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    private void selectionSections(GuiGraphics guiGraphics) {
+        var edges = SharedUI.getFadedColourBackground(0.1f);
+        var centre = SharedUI.getFadedColourBackground(fadeEntryBack);
+
+        for (var position : getPositions()) {
+            SharedUI.boxMaker(guiGraphics, position, -1, getSize(), this.height, edges, centre);
+        }
     }
 
     private void increaseAlpha(int offset) {
@@ -110,11 +120,12 @@ public class ChoiceSelectionScreen extends Screen  {
         var pos3 = pos.get(2);
 
         var spaceBy = getSize() * 2;
-        if(mouseX > pos2 &&  mouseX < pos2 + spaceBy) {
+        if(mouseX > pos2 - 1 &&  mouseX < pos2 + spaceBy) {
             doOn0.accept(pos2);
-        } else if (mouseX > pos1 - 4  &&  mouseX < pos1 + spaceBy) {
+            getMinecraft().player.playSound(SoundRegister.SELECT.get());
+        } else if (mouseX > pos1 - 1  &&  mouseX < pos1 + spaceBy) {
             doOn1.accept(pos1);
-        } else if (mouseX > pos3 - 4 &&  mouseX < pos3 + spaceBy) {
+        } else if (mouseX > pos3 - 1 &&  mouseX < pos3 + spaceBy) {
             doOn2.accept(pos3);
         } else {
             if(fade > 0) fade -= 10;
@@ -126,11 +137,14 @@ public class ChoiceSelectionScreen extends Screen  {
         var spacer = getSize() * 2 + 20;
         var posSecond = posFirst - spacer;
         var posThird = posFirst + spacer;
+
         return List.of(posFirst, posSecond, posThird);
     }
 
     private void selectionBox(GuiGraphics guiGraphics, int xPos, int color) {
-        SharedUI.boxMaker(guiGraphics, selectionOffset, 0, xPos, this.height,  SharedUI.getFadedColourBackground(0f), color);
+        var border = SharedUI.getFadedColourBackground(0f);
+
+        SharedUI.boxMaker(guiGraphics, selectionOffset, 0, xPos, this.height, border, color);
     }
 
     @Override

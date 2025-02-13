@@ -5,9 +5,8 @@ import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
-import org.jahdoo.ability.abilities.ability_data.OverchargedAbility;
+import org.jahdoo.ability.abilities.ability_data.LifeSiphonAbility;
 import org.jahdoo.ability.effects.EffectHelpers;
-import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.GenericProjectile;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
@@ -51,7 +50,7 @@ public class GreaterLightningEffect extends MobEffect {
                     EntityPropertyRegister.LIGHTNING_TRAIL.get().setAbilityId(),
                     getLightningTrailModifiers(5 * amplifier, 4, 8, 1),
                     ElementRegistry.LIGHTNING.get(),
-                    OverchargedAbility.abilityId.getPath()
+                    LifeSiphonAbility.abilityId.getPath()
                 );
                 ModHelpers.getSoundWithPosition(targetEntity.level(), targetEntity.blockPosition(), SoundRegister.BOLT.get(), 0.3f, 0.8f);
                 genericProjectile.shoot(x, y, z, speeds + 0.1f, 0);

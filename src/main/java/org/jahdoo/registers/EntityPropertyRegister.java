@@ -48,7 +48,7 @@ public class EntityPropertyRegister {
     public static final Supplier <AbstractEntityProperty> ICE_NEEDLER = registerProjectileProperty(new IceBomb());
     public static final Supplier <AbstractEntityProperty> MYSTICAL_SEMTEX = registerProjectileProperty(new MysticalSemtex());
     public static final Supplier <AbstractEntityProperty> QUANTUM_DESTROYER = registerProjectileProperty(new QuantumDestroyer());
-    public static final Supplier <AbstractEntityProperty> OVERCHARGED = registerProjectileProperty(new Overcharge());
+    public static final Supplier <AbstractEntityProperty> OVERCHARGED = registerProjectileProperty(new LifeSiphon());
     public static final Supplier <AbstractEntityProperty> BOLTZ = registerProjectileProperty(new Boltz());
 
     //USED FOR GENERIC PROJECTILE

@@ -5,17 +5,13 @@ import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
@@ -32,17 +28,12 @@ import org.jahdoo.ability.abilities.ability_data.Utility.WallPlacerAbility;
 import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.attachments.player_abilities.VitalRejuvenation;
 import org.jahdoo.components.DataComponentHelper;
-import org.jahdoo.items.BattlemageGauntlet;
 import org.jahdoo.items.wand.WandItem;
 import org.jahdoo.registers.EffectsRegister;
 import org.jahdoo.registers.ElementRegistry;
 import org.jahdoo.utils.ModTags;
-import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
-import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
-
-import java.util.Optional;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
@@ -127,23 +118,23 @@ public class EventHelpers {
     public static void useRuneAttributesCurios(CurioAttributeModifierEvent event) {
         var item = event.getItemStack();
         var slotAttributes = item.get(RUNE_HOLDER.get());
+        if(slotAttributes != null) {
+            for (var itemStack : slotAttributes.runeSlots()) {
+                var mods = itemStack.getAttributeModifiers().modifiers();
+                if (mods.isEmpty()) return;
+                var acMod = mods.getFirst();
+                try {
+                    event.addModifier(acMod.attribute(), acMod.modifier());
+                } catch (Exception e){
+                    JahdooMod.LOGGER.log(Level.ALL, e);
+                }
+            }
+
+        }
+
         for (var modifier : item.getAttributeModifiers().modifiers()) {
             event.addModifier(modifier.attribute(), modifier.modifier());
         }
-        if(slotAttributes == null) return;
-
-
-        for (ItemStack itemStack : slotAttributes.runeSlots()) {
-            var mods = itemStack.getAttributeModifiers().modifiers();
-            if (mods.isEmpty()) return;
-            var acMod = mods.getFirst();
-            try {
-                event.addModifier(acMod.attribute(), acMod.modifier());
-            } catch (Exception e){
-                JahdooMod.LOGGER.log(Level.ALL, e);
-            }
-        }
-
     }
 
     public static void useRuneAttributes(ItemAttributeModifierEvent event) {

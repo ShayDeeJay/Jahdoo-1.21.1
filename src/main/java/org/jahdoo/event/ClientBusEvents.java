@@ -1,8 +1,6 @@
 package org.jahdoo.event;
 
-import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.SkeletonRenderer;
-import net.minecraft.client.renderer.entity.TippableArrowRenderer;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -99,7 +97,7 @@ public class ClientBusEvents {
     @SubscribeEvent
     public static void onKeyRegister(RegisterKeyMappingsEvent event) {
         event.register(KeyBinding.QUICK_SELECT);
-        event.register(KeyBinding.TARGET_LOCK_A);
+        event.register(KeyBinding.MAGNET);
         event.register(KeyBinding.WAND_SLOT_1A);
         event.register(KeyBinding.WAND_SLOT_2A);
         event.register(KeyBinding.WAND_SLOT_3A);

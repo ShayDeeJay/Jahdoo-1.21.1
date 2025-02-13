@@ -1,11 +1,14 @@
 package org.jahdoo.entities.goals;
 
+import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ability.effects.JahdooMobEffect;
 import org.jahdoo.entities.living.AncientGolem;
 import org.jahdoo.registers.EffectsRegister;
@@ -14,6 +17,7 @@ import org.jahdoo.utils.DamageUtil;
 import java.util.EnumSet;
 
 import static net.minecraft.world.entity.EntitySelector.NO_CREATIVE_OR_SPECTATOR;
+import static org.jahdoo.registers.EffectsRegister.*;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 public class GenericMeleeAttackGoal extends Goal {
@@ -113,7 +117,7 @@ public class GenericMeleeAttackGoal extends Goal {
                     this.ticksUntilNextPathRecalculation += this.failedPathFindingPenalty;
                     if (this.mob.getNavigation().getPath() != null) {
                         Node finalPathPoint = this.mob.getNavigation().getPath().getEndNode();
-                        if (finalPathPoint != null && livingentity.distanceToSqr((double)finalPathPoint.x, (double)finalPathPoint.y, (double)finalPathPoint.z) < (double)1.0F) {
+                        if (finalPathPoint != null && livingentity.distanceToSqr(finalPathPoint.x, finalPathPoint.y, finalPathPoint.z) < (double)1.0F) {
                             this.failedPathFindingPenalty = 0;
                         } else {
                             this.failedPathFindingPenalty += 10;
@@ -137,6 +141,13 @@ public class GenericMeleeAttackGoal extends Goal {
             }
 
             this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+            if(this.mob instanceof AncientGolem ancientGolem){
+                ancientGolem.particle();
+                if(this.isTimeToAttack()){
+                    ancientGolem.runningParticle();
+                }
+            }
+
             this.checkAndPerformAttack(livingentity);
         }
 
@@ -146,11 +157,17 @@ public class GenericMeleeAttackGoal extends Goal {
         if (this.canPerformAttack(target)) {
             if(this.mob instanceof AncientGolem ancientGolem){
                 DamageUtil.damageWithJahdoo(target, this.mob, ancientGolem.damage);
+                if(ancientGolem.level() instanceof ServerLevel serverLevel){
+                    serverLevel.getChunkSource().broadcast(this.mob, new ClientboundEntityEventPacket(this.mob, (byte)4));
+                }
+                new ClientboundEntityEventPacket(this.mob, (byte)9);
                 var chance = ancientGolem.effectChance;
                 var strength = ancientGolem.effectStrength;
                 var duration = ancientGolem.effectDuration;
-                if(Random.nextInt((int) chance) == 0){
-                    target.addEffect(new JahdooMobEffect(EffectsRegister.VITALITY_EFFECT, (int) duration, (int) strength));
+                var wild = chance == 0 ? 20 : chance;
+                if(Random.nextInt((int) wild) == 0){
+                    var instance = new JahdooMobEffect(VITALITY_EFFECT, (int) duration, (int) strength);
+                    target.addEffect(instance);
                 }
             }
             this.resetAttackCooldown();
