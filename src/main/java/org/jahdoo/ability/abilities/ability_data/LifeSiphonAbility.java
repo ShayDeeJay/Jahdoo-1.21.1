@@ -14,6 +14,7 @@ import org.jahdoo.utils.GlobalStrings;
 import org.jahdoo.ability.AbilityBuilder;
 
 import static org.jahdoo.registers.EntitiesRegister.*;
+import static org.jahdoo.registers.EntityPropertyRegister.*;
 
 public class LifeSiphonAbility extends AbilityRegistrar {
     public static final ResourceLocation abilityId = ModHelpers.res("life_siphon");
@@ -23,8 +24,7 @@ public class LifeSiphonAbility extends AbilityRegistrar {
     @Override
     public void invokeAbility(Player player) {
         var projectile = new ElementProjectile(
-            VITALITY_ELEMENT_PROJECTILE.get(), player,
-            EntityPropertyRegister.OVERCHARGED.get().setAbilityId(),
+            VITALITY_ELEMENT_PROJECTILE.get(), player, OVERCHARGED.get().setAbilityId(),
             offsetShoot(player), abilityId.getPath().intern()
         );
         fireProjectile(projectile, player, 0.8f);

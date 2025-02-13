@@ -3,6 +3,7 @@ package org.jahdoo.ability.abilities.ability;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -100,13 +101,16 @@ public class Boltz extends DefaultEntityBehaviour {
         LivingEntity owner = (LivingEntity) this.elementProjectile.getOwner();
         if(DefaultEntityBehaviour.canDamageEntity(hitEntity, (LivingEntity) this.elementProjectile.getOwner())){
             DamageUtil.damageWithJahdoo(hitEntity, owner, (float) this.damage);
-            ModHelpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.blockPosition(), SoundRegister.BOLT.get(), 0.1f);
+
+            ModHelpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.blockPosition(), SoundRegister.ICE_ATTACH.get(), 0.1f);
         }
     }
 
     private void dischargeEffect(){
         var projectile = this.elementProjectile;
         var owner = projectile.getOwner();
+        var instance = new JahdooMobEffect(getElementType().elementEffect(), (int) effectDuration, (int) effectStrength);
+
         projectile.level().getNearbyEntities(
             LivingEntity.class,
             TargetingConditions.DEFAULT,
@@ -117,18 +121,20 @@ public class Boltz extends DefaultEntityBehaviour {
                 if (DefaultEntityBehaviour.canDamageEntity(livingEntity, (LivingEntity) owner)) {
                     DamageUtil.damageWithJahdoo(livingEntity, owner, (float) this.damage);
                     if(Random.nextInt(0, (int) effectChance) == 0) {
-                        livingEntity.addEffect(new JahdooMobEffect(EffectsRegister.LIGHTNING_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
+                        livingEntity.addEffect(instance);
                     }
                 }
             }
         );
+
         if(projectile.level() instanceof ServerLevel serverLevel){
             var particleOptions = genericParticleOptions(
                 GENERIC_PARTICLE_SELECTION, this.getElementType(), Random.nextInt(2,8), 1.4f, 0
             );
             ParticleHandlers.particleBurst(serverLevel, projectile.position(), 1, particleOptions, 0, 0, 0, (float) dischargeRadius / 15);
         }
-        ModHelpers.getSoundWithPosition(projectile.level(), projectile.blockPosition(), SoundRegister.BOLT.get(),0.4f,1.5f);
+
+        elementProjectile.playSound(SoundRegister.ICE_ATTACH.get(),0.4F,1.5F);
     }
 
     @Override
@@ -138,12 +144,11 @@ public class Boltz extends DefaultEntityBehaviour {
     }
 
     public void applyInertia(Projectile projectile) {
-        double inertiaFactor = Random.nextDouble(0.85, 0.90); // Adjust this value to control the rate of slowdown (0.98 means 2% reduction per tick)
-        Vec3 currentVelocity = projectile.getDeltaMovement();
-
-        double newVelocityX = currentVelocity.x * inertiaFactor;
-        double newVelocityY = currentVelocity.y * inertiaFactor;
-        double newVelocityZ = currentVelocity.z * inertiaFactor;
+        var inertiaFactor = Random.nextDouble(0.85, 0.90); // Adjust this value to control the rate of slowdown (0.98 means 2% reduction per tick)
+        var currentVelocity = projectile.getDeltaMovement();
+        var newVelocityX = currentVelocity.x * inertiaFactor;
+        var newVelocityY = currentVelocity.y * inertiaFactor;
+        var newVelocityZ = currentVelocity.z * inertiaFactor;
 
         projectile.setDeltaMovement(newVelocityX, newVelocityY, newVelocityZ);
     }
@@ -183,17 +188,24 @@ public class Boltz extends DefaultEntityBehaviour {
 
     @Override
     public void discardCondition() {
-        int getRandom = Random.nextInt(20, 50);
-        if(this.elementProjectile.tickCount > 5) orbEnergyParticles(this.elementProjectile, Math.min(dischargeRadius / 4, 0.5), Math.max(dischargeRadius /6, 0.4));
-        if(this.elementProjectile.tickCount >= getRandom) {
+        var getRandom = Random.nextInt(20, 50);
+        var projectile = this.elementProjectile;
+
+        if(projectile.tickCount > 5) {
+            var min = Math.min(dischargeRadius / 4, 0.5);
+            var max = Math.max(dischargeRadius / 6, 0.4);
+            orbEnergyParticles(projectile, min, max);
+        }
+
+        if(projectile.tickCount >= getRandom) {
             this.dischargeEffect();
-            this.elementProjectile.discard();
+            projectile.discard();
         }
     }
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.LIGHTNING.get();
+        return ElementRegistry.FROST.get();
     }
 
     ResourceLocation abilityId = ModHelpers.res("boltz_property");

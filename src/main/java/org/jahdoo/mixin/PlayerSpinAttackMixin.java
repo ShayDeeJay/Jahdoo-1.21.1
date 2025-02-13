@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static org.jahdoo.ability.AbilityBuilder.*;
 import static org.jahdoo.components.DataComponentHelper.getSpecificValue;
-import static org.jahdoo.registers.EffectsRegister.LIGHTNING_EFFECT;
+import static org.jahdoo.registers.EffectsRegister.FROST_EFFECT;
 import static org.jahdoo.utils.ModHelpers.Random;
 
 @Mixin(Player.class)
@@ -39,7 +39,6 @@ public abstract class PlayerSpinAttackMixin extends LivingEntity {
     )
     private void attackEvent(Entity target, CallbackInfo ci){
         if(this.isAutoSpinAttack()){
-            System.out.println("im runninnnggg");
             var wandAbilityHolder = this.getItemInHand(this.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER);
             if(wandAbilityHolder != null){
                 var ability = StormRushAbility.abilityId.getPath().intern();
@@ -49,7 +48,8 @@ public abstract class PlayerSpinAttackMixin extends LivingEntity {
                     var strength = getSpecificValue(ability, wandAbilityHolder, EFFECT_STRENGTH);
                     if (target instanceof LivingEntity livingEntity) {
                         if (Random.nextInt(0, (int) chance) == 0) {
-                            livingEntity.addEffect(new JahdooMobEffect(LIGHTNING_EFFECT, (int) duration, (int) strength));
+                            var effect = new JahdooMobEffect(FROST_EFFECT, (int) duration, (int) strength);
+                            livingEntity.addEffect(effect);
                         }
                     }
                 }

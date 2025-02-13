@@ -55,10 +55,10 @@ public class EffectsRegister {
         () -> new StunEffect(MobEffectCategory.HARMFUL, 3436524)
     );
 
-
     public static final DeferredHolder<MobEffect, MobEffect> FROST_EFFECT = MOB_EFFECTS.register("frost_effect",
         () -> new FrostEffect().addAttributeModifier(Attributes.MOVEMENT_SPEED, withDefaultNamespace("frost.speed"), -0.15F, ADD_MULTIPLIED_TOTAL)
     );
+
     public static final DeferredHolder<MobEffect, MobEffect> GREATER_FROST_EFFECT =
         MOB_EFFECTS.register("greater_frost_effect", GreaterFrostEffect::new);
 

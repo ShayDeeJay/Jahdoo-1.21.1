@@ -246,7 +246,7 @@ public class SharedUI {
         ItemStack itemStack
     ){
         var key = DataComponentHelper.getKeyFromAugment(itemStack);
-        var abilityRegistrars = AbilityRegister.getFirstSpellByTypeId(key).orElse(AbilityRegister.BOLTZ.get());
+        var abilityRegistrars = AbilityRegister.getFirstSpellByTypeId(key).orElseThrow();
         int element;
         if (abilityRegistrars.isMultiType()) {
             var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
@@ -271,7 +271,7 @@ public class SharedUI {
         ItemStack itemStack
     ){
         var key = DataComponentHelper.getKeyFromAugment(itemStack);
-        var abilityRegistrars = AbilityRegister.getFirstSpellByTypeId(key).orElse(AbilityRegister.BOLTZ.get());
+        var abilityRegistrars = AbilityRegister.getFirstSpellByTypeId(key).orElseThrow();
         int element;
         if (abilityRegistrars.isMultiType()) {
             var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());

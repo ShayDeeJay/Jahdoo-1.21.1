@@ -12,16 +12,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.client.overlays.ChoiceSelectionScreen;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.items.JahdooItem;
-import org.jahdoo.items.runes.rune_data.RuneData;
 import org.jahdoo.registers.BlocksRegister;
 import org.jahdoo.registers.DataComponentRegistry;
-import org.jahdoo.utils.ColourStore;
-import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -86,37 +82,14 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         var isItemInOff = itemInOff == itemStack;
         var interactState = itemStack.get(INTERACTION_HAND);
 
-        validateRuneHand(itemStack, player, interactState, isItemInMain, isItemInOff);
-    }
-
-    @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
-        return super.interactLivingEntity(stack, player, interactionTarget, usedHand);
+        canOffhandWand(itemStack, player, interactState, isItemInMain, isItemInOff);
     }
 
     @Override
     public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> toolTip, TooltipFlag pTooltipFlag) {
         toolTip.addAll(WandItemHelper.getItemModifiers(pStack, pContext.level()));
-
-        var list = pStack.getAttributeModifiers().modifiers().stream().toList();
-        if(list.size() > 3){
-            var text = "Bonus Modifiers";
-            var comp = Component.empty();
-
-            for (var s : text.split("")) {
-                comp.append(ModHelpers.withStyleComponent(s, pContext.level().getGameTime() % 8 == 0 ? ColourStore.SUB_HEADER_COLOUR : ColourStore.MAGNET_RANGE_GREEN));
-            }
-
-            toolTip.add(comp);
-            var runeHolder = pStack.get(RUNE_HOLDER);
-            var maxSize = runeHolder != null ? runeHolder.runeSlots().size() : list.size();
-            for (var entry : list.subList(3, Math.max(maxSize, 4))) {
-                toolTip.add(RuneData.RuneHelpers.standAloneAttributes(entry));
-            }
-            toolTip.add(Component.empty());
-        }
+        bonusModifierTooltip(pStack, toolTip);
     }
-
 
     @Override
     public @NotNull Component getName(@NotNull ItemStack pStack) {
@@ -128,7 +101,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         var item = player.getItemInHand(interactionHand);
 
         if(level.isClientSide){
-            Minecraft.getInstance().setScreen(new ChoiceSelectionScreen());
+//            Minecraft.getInstance().setScreen(new ChoiceSelectionScreen());
         }
 
         if (canOffHand(player, interactionHand, true)) {
@@ -140,24 +113,9 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         return InteractionResultHolder.fail(player.getOffhandItem());
     }
 
-    public JahdooRarity getRarity(){
-        var wandData = this.components().get(JAHDOO_RARITY.get());
-        var getWandData = wandData == null ? 0 : wandData;
-        return JahdooRarity.getAllRarities().get(getWandData);
-    }
-
     @Override
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
-        consumer.accept(
-            new GeoRenderProvider() {
-                private WandItemRenderer renderer;
-                @Override
-                public BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
-                    if (this.renderer == null) this.renderer = new WandItemRenderer();
-                    return this.renderer;
-                }
-            }
-        );
+        wandItemRenderer(consumer);
     }
 
     @Override

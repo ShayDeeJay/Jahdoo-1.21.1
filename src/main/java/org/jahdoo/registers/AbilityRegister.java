@@ -102,12 +102,10 @@ public class AbilityRegister {
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ELEMENTAL_SHOOTER = registerSpell(new ElementalShooterAbility());
 
     //Volt
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> BOLTZ = registerSpell(new BoltzAbility());
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> OVERCHARGED = registerSpell(new LifeSiphonAbility());
+//    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> BOLTZ = registerSpell(new BoltzAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> STATIC = registerSpell(new StaticAbility());
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> STORM_RUSH = registerSpell(new StormRushAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> THUNDER_BURST = registerSpell(new ThunderBurstAbility());
-//
+
     //Inferno
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ARMAGEDDON = registerSpell(new ArmageddonAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> FIREBALL = registerSpell(new FireballAbility());
@@ -125,12 +123,14 @@ public class AbilityRegister {
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> PERMAFROST = registerSpell(new PermafrostAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ICE_BOMB = registerSpell(new IceBombAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> FROST_BOLTS = registerSpell(new FrostboltsAbility());
+    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> STORM_RUSH = registerSpell(new StormRushAbility());
 
     //Vitality
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> SUMMON_ETERNAL_WIZARD = registerSpell(new SummonEternalWizardAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ESCAPE_DECOY = registerSpell(new EscapeDecoyAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> VITAL_REJUVENATION = registerSpell(new VitalRejuvenationAbility());
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> SUMMON_ANCIENT_GOLEM = registerSpell(new SummonAncientGolemAbility());
+    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> LIFE_SIPHON = registerSpell(new LifeSiphonAbility());
 
     //Utility
     public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> BLOCK_BOMB = registerSpell(new BlockBombAbility());

@@ -1,5 +1,6 @@
 package org.jahdoo.items.wand;
 
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleOptions;
@@ -22,17 +23,23 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ability.AbstractElement;
+import org.jahdoo.ability.rarity.JahdooRarity;
 import org.jahdoo.block.wand.WandBlockEntity;
 import org.jahdoo.client.SharedUI;
+import org.jahdoo.client.item_renderer.WandItemRenderer;
 import org.jahdoo.components.ability_holder.WandAbilityHolder;
 import org.jahdoo.entities.living.EternalWizard;
+import org.jahdoo.items.runes.rune_data.RuneData;
 import org.jahdoo.registers.*;
+import org.jahdoo.utils.ColourStore;
 import org.jahdoo.utils.ModHelpers;
 import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static net.minecraft.sounds.SoundEvents.ALLAY_THROW;
 import static net.minecraft.sounds.SoundEvents.EVOKER_PREPARE_SUMMON;
@@ -94,6 +101,26 @@ public class WandItemHelper {
         toolTips.add(toolTips.size(), withStyleComponent("Potential: ", HEADER_COLOUR).copy().append(slot));
     }
 
+    static void bonusModifierTooltip(ItemStack pStack, List<Component> toolTip) {
+        var list = pStack.getAttributeModifiers().modifiers().stream().toList();
+        if(list.size() > 3){
+            var text = "Bonus Modifiers";
+            var comp = Component.empty();
+
+            for (var s : text.split("")) {
+                comp.append(ModHelpers.withStyleComponent(s,  ColourStore.SUB_HEADER_COLOUR));
+            }
+
+            toolTip.add(comp);
+            var runeHolder = pStack.get(RUNE_HOLDER);
+            var maxSize = runeHolder != null ? runeHolder.runeSlots().size() : list.size();
+            for (var entry : list.subList(3, Math.max(maxSize, 4))) {
+                toolTip.add(RuneData.RuneHelpers.standAloneAttributes(entry));
+            }
+            toolTip.add(Component.empty());
+        }
+    }
+
     public static List<Component> getItemModifiers(ItemStack wandItem, Level level){
         var appendComponents = new ArrayList<Component>();
         var abstractElement = ElementRegistry.getElementFromWand(wandItem.getItem());
@@ -106,6 +133,25 @@ public class WandItemHelper {
             if (!getAllSlots(wandItem).isEmpty()) appendComponents.add(Component.empty());
         }
         return appendComponents;
+    }
+
+    static void wandItemRenderer(Consumer<GeoRenderProvider> consumer) {
+        consumer.accept(
+            new GeoRenderProvider() {
+                private WandItemRenderer renderer;
+                @Override
+                public BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
+                    if (this.renderer == null) this.renderer = new WandItemRenderer();
+                    return this.renderer;
+                }
+            }
+        );
+    }
+
+    public static JahdooRarity getRarity(Item item){
+        var wandData = item.components().get(JAHDOO_RARITY.get());
+        var getWandData = wandData == null ? 0 : wandData;
+        return JahdooRarity.getAllRarities().get(getWandData);
     }
 
     public static void attributeToolTips(ItemStack itemStack, List<Component> appendComponents, AbstractElement abstractElement) {
@@ -229,7 +275,7 @@ public class WandItemHelper {
         return true;
     }
 
-    static void validateRuneHand(
+    static void canOffhandWand(
             ItemStack itemStack,
             Player player,
             Integer interactState,

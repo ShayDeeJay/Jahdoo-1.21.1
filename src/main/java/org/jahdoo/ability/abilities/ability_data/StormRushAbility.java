@@ -61,6 +61,6 @@ public class StormRushAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.LIGHTNING.get();
+        return ElementRegistry.FROST.get();
     }
 }

@@ -37,7 +37,7 @@ public class BoltzAbility extends AbilityRegistrar {
 
         for (int i = 0; i < totalShots; i++) {
             var elementProjectile = new ElementProjectile(
-                EntitiesRegister.LIGHTNING_ELEMENT_PROJECTILE.get(),
+                EntitiesRegister.FROST_ELEMENT_PROJECTILE.get(),
                 player,
                 EntityPropertyRegister.BOLTZ.get().setAbilityId(),
                 0,
@@ -103,6 +103,6 @@ public class BoltzAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.LIGHTNING.get();
+        return ElementRegistry.FROST.get();
     }
 }

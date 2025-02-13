@@ -25,8 +25,8 @@ import static org.jahdoo.utils.ModHelpers.*;
 
 public class StormRush extends AbstractAbility {
 
-    Player player;
-    WandAbilityHolder wandAbilityHolder;
+    private final Player player;
+    private final WandAbilityHolder wandAbilityHolder;
 
     public StormRush(Player player){
         this.player = player;
@@ -57,7 +57,7 @@ public class StormRush extends AbstractAbility {
     }
 
     AbstractElement getType(){
-        return ElementRegistry.LIGHTNING.get();
+        return ElementRegistry.FROST.get();
     }
 
     @Override
