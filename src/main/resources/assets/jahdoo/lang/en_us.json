@@ -42,7 +42,6 @@
   "effect.jahdoo.ice_effect": "Augmented Frost",
   "effect.jahdoo.mystic_damage": "Augmented Mystic",
   "effect.jahdoo.fire_damage": "Augmented Inferno",
-  "effect.jahdoo.lightning_effect": "Augmented Voltage",
   "effect.jahdoo.vitality": "Augmented Vitality",
 
   "curios.identifier.relic": "Relics",
@@ -122,10 +121,6 @@
   "attribute.name.jahdoo.frost_cooldown.cooldown_reduction": "Frost Cooldown Reduction",
   "attribute.name.jahdoo.frost_damage.damage_multiplier": "Frost Damage",
   "attribute.name.jahdoo.frost_mana.cost_reduction": "Frost Mana Reduction",
-
-  "attribute.name.jahdoo.lightning_cooldown.cooldown_reduction": "Lightning Cooldown Reduction",
-  "attribute.name.jahdoo.lightning_damage.damage_multiplier": "Lightning Damage",
-  "attribute.name.jahdoo.lightning_mana.cost_reduction": "Lightning Mana Reduction",
 
   "attribute.name.jahdoo.mystic_cooldown.cooldown_reduction": "Mystic Cooldown Reduction",
   "attribute.name.jahdoo.mystic_damage.damage_multiplier": "Mystic Damage",

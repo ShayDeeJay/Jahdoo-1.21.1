@@ -10,14 +10,13 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jahdoo.client.curio_renderer.GloveRenderer;
-import org.jahdoo.client.curio_renderer.PendentRenderer;
-import org.jahdoo.client.curio_renderer.TomeRenderer;
-import org.jahdoo.loot.ModLootModifiers;
-import org.jahdoo.recipe.RecipeRegistry;
-import org.jahdoo.registers.*;
-import org.jahdoo.utils.Configuration;
-import org.jahdoo.utils.ModCreativeModTabs;
+import org.jahdoo.common.client.curio_renderer.GloveRenderer;
+import org.jahdoo.common.client.curio_renderer.PendentRenderer;
+import org.jahdoo.common.client.curio_renderer.TomeRenderer;
+import org.jahdoo.common.loot.ModLootModifiers;
+import org.jahdoo.common.registers.*;
+import org.jahdoo.ascension.utils.Configuration;
+import org.jahdoo.ascension.utils.ModCreativeModTabs;
 import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
 @Mod(JahdooMod.MOD_ID)
@@ -25,7 +24,6 @@ public class JahdooMod {
 
     public static final String MOD_ID = "jahdoo";
     public static final Logger LOGGER = LogManager.getLogger("jahdoo_mod");
-
 
     public JahdooMod(IEventBus modEventBus, ModContainer container) {
         modEventBus.addListener(this::commonSetup);
@@ -39,7 +37,6 @@ public class JahdooMod {
         container.registerConfig(ModConfig.Type.CLIENT, Configuration.CLIENT_CONFIG);
         ArmorMaterialRegistry.register(modEventBus);
         AttributesRegister.register(modEventBus);
-        RecipeRegistry.register(modEventBus);
         AttachmentRegister.register(modEventBus);
         ModCreativeModTabs.register(modEventBus);
         BlocksRegister.register(modEventBus);
@@ -62,6 +59,5 @@ public class JahdooMod {
         CuriosRendererRegistry.register(ItemsRegister.TOME_OF_UNITY.get(), TomeRenderer::new);
         CuriosRendererRegistry.register(ItemsRegister.BATTLEMAGE_GAUNTLET.get(), GloveRenderer::new);
     }
-
 
 }

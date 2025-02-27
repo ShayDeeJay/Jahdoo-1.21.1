@@ -60,12 +60,6 @@
       "predicate": {
         "minecraft:custom_model_data": 10.0
       }
-    },
-    {
-      "model": "jahdoo:item/rune11",
-      "predicate": {
-        "minecraft:custom_model_data": 11.0
-      }
     }
   ],
   "textures": {

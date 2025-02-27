@@ -1,0 +1,68 @@
+package org.jahdoo.common.entities.aoe_cloud;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
+import org.jahdoo.ascension.ability.abilities.life_siphon.LifeSiphonNova;
+import org.jahdoo.ascension.ability.abilities.mob_abilities.Barrage;
+import org.jahdoo.ascension.ability.abilities.armageddon.Armageddon;
+import org.jahdoo.ascension.ability.abilities.permafrost.Permafrost;
+import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.ascension.utils.Helpers;
+
+import java.util.Objects;
+
+import static org.jahdoo.common.client.RenderHelpers.drawTexture;
+
+public class AoeCloudRenderer extends EntityRenderer<AoeCloud> {
+
+    public AoeCloudRenderer(EntityRendererProvider.Context pContext) {
+        super(pContext);
+    }
+
+    @Override
+    public void render(AoeCloud entity, float pEntityYaw, float pPartialTick, PoseStack pose, MultiBufferSource bufferSource, int light) {
+        super.render(entity, pEntityYaw, pPartialTick, pose, bufferSource, light);
+        pose.scale(entity.getRadius(),0.2f, entity.getRadius());
+        pose.pushPose();
+        pose.translate(0,0.12,0);
+        pose.rotateAround(Axis.YN.rotationDegrees((entity.tickCount * 1.4f) + pPartialTick), 0,0,0);
+
+        if(Objects.equals(entity.getEntityType(), Armageddon.abilityId.getPath().intern())){
+            int color = ElementRegistry.INFERNO.get().textColourSecondary();
+            drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f, entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(155, color));
+        }
+
+        if(Objects.equals(entity.getEntityType(), LifeSiphonNova.abilityId.getPath().intern())){
+            int color = ElementRegistry.VITALITY.get().textColourSecondary();
+            drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f,  entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(155, color));
+        }
+
+        if(Objects.equals(entity.getEntityType(), Permafrost.abilityId.getPath().intern())){
+            int color = ElementRegistry.FROST.get().textColourSecondary();
+            drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f,  entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(155, color));
+        }
+
+        if(Objects.equals(entity.getEntityType(), Barrage.abilityId.getPath().intern())){
+            drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f,  entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(100, -1));
+        }
+
+//        drawSlash(pose.last(), bufferSource, 255, Math.min(entity.getBbWidth() + 0.2f, entity.tickCount + pPartialTick), ModHelpers.res("textures/entity/magic_circle_2.png"), FastColor.ARGB32.color(155, color));
+        pose.popPose();
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(AoeCloud pEntity) {
+        return Helpers.res("textures/entity/shield.png");
+    }
+
+    @Override
+    public boolean shouldRender(AoeCloud livingEntity, Frustum camera, double camX, double camY, double camZ) {
+        return true;
+    }
+}

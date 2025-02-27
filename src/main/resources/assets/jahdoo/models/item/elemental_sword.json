@@ -3,33 +3,27 @@
 	"texture_size": [32, 32],
 	"overrides": [
 		{
-			"model": "jahdoo:item/elemental_sword_frost",
+			"model": "jahdoo:item/elemental_sword_inferno",
 			"predicate": {
 				"minecraft:custom_model_data": 1.0
 			}
 		},
 		{
-			"model": "jahdoo:item/elemental_sword_lightning",
+			"model": "jahdoo:item/elemental_sword_mystic",
 			"predicate": {
 				"minecraft:custom_model_data": 2.0
 			}
 		},
 		{
-			"model": "jahdoo:item/elemental_sword_mystic",
-			"predicate": {
-				"minecraft:custom_model_data": 3.0
-			}
-		},
-		{
 			"model": "jahdoo:item/elemental_sword_vitality",
 			"predicate": {
-				"minecraft:custom_model_data": 4.0
+				"minecraft:custom_model_data": 3.0
 			}
 		}
 	],
 	"textures": {
-		"0": "jahdoo:item/elemental_sword_inferno",
-		"particle": "jahdoo:item/elemental_sword_inferno"
+		"0": "jahdoo:item/elemental_sword_frost",
+		"particle": "jahdoo:item/elemental_sword_frost"
 	},
 	"elements": [
 		{

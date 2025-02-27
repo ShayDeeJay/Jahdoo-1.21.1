@@ -8,7 +8,7 @@
       "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
 
       "parameters": {
-        "class": "org/jahdoo/client/StaffArmPose",
+        "class": "org/jahdoo/common/client/StaffArmPose",
         "field": "STAFF_ARM_POSE"
       }
     }
