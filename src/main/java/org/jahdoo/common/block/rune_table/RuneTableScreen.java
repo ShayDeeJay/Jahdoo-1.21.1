@@ -38,10 +38,10 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
     public RuneTableScreen(RuneTableMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
-        var element = ElementRegistry.getElementFromWand(pMenu.getRuneTableEntity().inputItemHandler.getStackInSlot(0).getItem());
+        var element = ElementRegistry.fromWand(pMenu.getRuneTableEntity().inputItemHandler.getStackInSlot(0).getItem());
         this.runeTableMenu = pMenu;
-        this.element = element.orElse(ElementRegistry.MYSTIC.get());
-        this.borderColour = element.map(AbstractElement::textColourPrimary).orElseGet(() -> FastColor.ARGB32.color(56, 157, 59));
+        this.element = element.orElse(ElementRegistry.mystic());
+        this.borderColour = element.map(AbstractElement::textColourA).orElseGet(() -> FastColor.ARGB32.color(56, 157, 59));
     }
 
     @Override

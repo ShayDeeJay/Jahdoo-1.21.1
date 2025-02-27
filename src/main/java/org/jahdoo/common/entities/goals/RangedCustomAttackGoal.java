@@ -11,6 +11,7 @@ import org.jahdoo.common.items.wand.WandItem;
 import java.util.EnumSet;
 
 public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Goal {
+
     private final T mob;
     private final double speedModifier;
     private int attackIntervalMin;
@@ -21,11 +22,11 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
     private boolean strafingBackwards;
     private int strafingTime = -1;
 
-    public RangedCustomAttackGoal(T pMob, double pSpeedModifier, int pAttackIntervalMin, float pAttackRadius) {
-        this.mob = pMob;
-        this.speedModifier = pSpeedModifier;
-        this.attackIntervalMin = pAttackIntervalMin;
-        this.attackRadiusSqr = pAttackRadius * pAttackRadius;
+    public RangedCustomAttackGoal(T mob, double speedModifier, int interval, float attackRadius) {
+        this.mob = mob;
+        this.speedModifier = speedModifier;
+        this.attackIntervalMin = interval;
+        this.attackRadiusSqr = attackRadius * attackRadius;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
@@ -39,6 +40,10 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
 
     protected boolean isHoldingWand() {
         return this.mob.isHolding(is -> is.getItem() instanceof WandItem);
+    }
+
+    public boolean requiresUpdateEveryTick() {
+        return true;
     }
 
     public boolean canContinueToUse() {
@@ -56,10 +61,6 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
         this.seeTime = 0;
         this.attackTime = -1;
         this.mob.stopUsingItem();
-    }
-
-    public boolean requiresUpdateEveryTick() {
-        return true;
     }
 
     public void tick() {

@@ -22,7 +22,10 @@ import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 
 public class RuneItemHelper {
 
-    static @NotNull InteractionResultHolder<ItemStack> rollRandomRune(Level level, Player player) {
+    static @NotNull InteractionResultHolder<ItemStack> rollRandomRune(
+        Level level,
+        Player player
+    ) {
         var stack = Helpers.getUsedItem(player);
         if(!level.isClientSide){
             var newStack = stack.copyWithCount(1);

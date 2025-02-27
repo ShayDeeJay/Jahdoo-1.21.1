@@ -156,8 +156,8 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
                 if(this.elementProjectile.tickCount % 4 != 0) return;
 
                 Helpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.getOnPos(), SoundRegister.TIMER.get());
-                var partColour = this.getElementType().particleColourPrimary();
-                var partColour2 = this.getElementType().particleColourSecondary();
+                var partColour = this.getElementType().partColourA();
+                var partColour2 = this.getElementType().partColourB();
                 var particle = new GenericParticleOptions(GENERIC_PARTICLE_SELECTION, partColour, partColour2, 10, 3, false, 1.4);
                 var position = this.elementProjectile.position().add(0,0.2,0);
 
@@ -198,9 +198,9 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         var directions = positionScrambler.subtract(this.elementProjectile.position()).normalize();
         var lifetime = (int) this.explosionRadius + 2;
         var size = 5;
-        var bakedParticle = bakedParticleOptions(this.getElementType().getTypeId(), lifetime, size, false);
-        var col1 = this.getElementType().particleColourPrimary();
-        var col2 = this.getElementType().particleColourFaded();
+        var bakedParticle = bakedParticleOptions(this.getElementType().id(), lifetime, size, false);
+        var col1 = this.getElementType().partColourA();
+        var col2 = this.getElementType().partColourFade();
         var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, size, col1, col2, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
 
@@ -273,7 +273,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.MYSTIC.get();
+        return ElementRegistry.mystic();
     }
 
     ResourceLocation abilityId = Helpers.res("mystical_semtex_property");

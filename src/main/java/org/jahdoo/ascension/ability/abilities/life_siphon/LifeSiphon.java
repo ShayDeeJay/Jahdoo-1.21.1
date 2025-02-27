@@ -152,7 +152,7 @@ public class LifeSiphon extends DefaultEntityBehaviour {
         var velocityA = Helpers.getRandomParticleVelocity(projectile, 0.1);
         var velocityB = Helpers.getRandomParticleVelocity(projectile, 0.05);
         var particleOptionsOne = genericParticleOptions(GENERIC_PARTICLE_SELECTION, this.getElementType(), 10,2.5F);
-        var particleOptionsTwo = bakedParticleOptions(this.getElementType().getTypeId(), 8, 2.5F, false);
+        var particleOptionsTwo = bakedParticleOptions(this.getElementType().id(), 8, 2.5F, false);
 
         PositionFinders.getRandomSphericalPositions(projectile, 1,  reducedPointsInRadius,
             position -> ParticleHandlers.sendParticles(
@@ -171,7 +171,7 @@ public class LifeSiphon extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.VITALITY.get();
+        return ElementRegistry.vitality();
     }
 
     @Override

@@ -13,14 +13,30 @@ import software.bernie.geckolib.util.Color;
 
 import javax.annotation.Nullable;
 
+import static net.minecraft.client.renderer.entity.EntityRendererProvider.*;
+
 public class ElementProjectileRenderer extends GeoEntityRenderer<ElementProjectile> {
-    public ElementProjectileRenderer(EntityRendererProvider.Context renderManager, ResourceLocation resourceLocation) {
+
+    public ElementProjectileRenderer(
+        Context renderManager,
+        ResourceLocation resourceLocation
+    ) {
         super(renderManager, new ElementProjectileModel(resourceLocation));
         this.addRenderLayer(new AutoGlowingGeoLayer<>(this));
     }
 
     @Override
-    public void preApplyRenderLayers(PoseStack poseStack, ElementProjectile animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+    public void preApplyRenderLayers(
+        PoseStack poseStack,
+        ElementProjectile animatable,
+        BakedGeoModel model,
+        RenderType renderType,
+        MultiBufferSource bufferSource,
+        VertexConsumer buffer,
+        float partialTick,
+        int packedLight,
+        int packedOverlay
+    ) {
         super.preApplyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
         poseStack.translate(0.0f, -0.55f, 0.0f);
         if(animatable.isInvisible()) poseStack.scale(0,0,0);
@@ -32,12 +48,21 @@ public class ElementProjectileRenderer extends GeoEntityRenderer<ElementProjecti
     }
 
     @Override
-    public RenderType getRenderType(ElementProjectile animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+    public RenderType getRenderType(
+        ElementProjectile animatable,
+        ResourceLocation texture,
+        MultiBufferSource bufferSource,
+        float partialTick
+    ) {
         return RenderType.entitySolid(texture);
     }
 
     @Override
-    public Color getRenderColor(ElementProjectile animatable, float partialTick, int packedLight) {
+    public Color getRenderColor(
+        ElementProjectile animatable,
+        float partialTick,
+        int packedLight
+    ) {
         packedLight = 255;
         return super.getRenderColor(animatable, partialTick, packedLight);
     }

@@ -24,7 +24,7 @@ import static org.jahdoo.common.registers.BlocksRegister.*;
 
 public class BlockEntitiesRegister {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
-            DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, JahdooMod.MOD_ID);
+        DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, JahdooMod.MOD_ID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WandBlockEntity>> WAND_BE =
         registerBlockEntity("wand_be", WandBlockEntity::new, WAND);

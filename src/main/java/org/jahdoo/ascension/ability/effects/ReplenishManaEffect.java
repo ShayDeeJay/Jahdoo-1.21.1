@@ -5,12 +5,13 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
+import static net.minecraft.world.effect.MobEffectCategory.BENEFICIAL;
 import static org.jahdoo.common.registers.AttachmentRegister.CASTER_DATA;
 
 public class ReplenishManaEffect extends MobEffect {
 
-    public ReplenishManaEffect(MobEffectCategory pCategory, int pColor) {
-        super(pCategory, pColor);
+    public ReplenishManaEffect() {
+        super(BENEFICIAL, 3436524);
     }
 
     @Override

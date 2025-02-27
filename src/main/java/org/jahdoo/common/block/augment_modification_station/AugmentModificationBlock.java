@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.registers.BlocksRegister.sharedBehaviour;
 import static org.jahdoo.common.registers.BlocksRegister.sharedBlockBehaviour;
 
 public class AugmentModificationBlock extends BaseEntityBlock{
@@ -54,7 +55,7 @@ public class AugmentModificationBlock extends BaseEntityBlock{
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
 
     public AugmentModificationBlock() {
-        super(sharedBlockBehaviour());
+        super(sharedBehaviour);
         this.registerDefaultState(
             this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
@@ -154,12 +155,16 @@ public class AugmentModificationBlock extends BaseEntityBlock{
         double speed,
         double radius
     ){
-        var particle = genericParticleOptions(ElementRegistry.getElementByTypeId(getType).getFirst(), lifetime, 0.8f);
-        PositionFinders.getOuterRingOfRadiusRandom(blockPos.getBottomCenter().add(0,yOffset,0), radius, 40,
-            positions -> {
-                ParticleHandlers.sendParticles(
-                    level, particle, positions.offsetRandom(RandomSource.create(), 0.2f),
-                    0, 0, Helpers.Random.nextDouble(0.02,0.2),0,speed
+        ElementRegistry.fromId(getType).ifPresent(
+            element -> {
+                var particle = genericParticleOptions(element, lifetime, 0.8f);
+                PositionFinders.getOuterRingOfRadiusRandom(blockPos.getBottomCenter().add(0,yOffset,0), radius, 40,
+                    positions -> {
+                        ParticleHandlers.sendParticles(
+                            level, particle, positions.offsetRandom(RandomSource.create(), 0.2f),
+                            0, 0, Helpers.Random.nextDouble(0.02,0.2),0,speed
+                        );
+                    }
                 );
             }
         );

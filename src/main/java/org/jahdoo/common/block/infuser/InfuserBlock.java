@@ -31,6 +31,7 @@ import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.registers.BlockEntitiesRegister;
 import org.jetbrains.annotations.Nullable;
 
+import static org.jahdoo.common.registers.BlocksRegister.sharedBehaviour;
 import static org.jahdoo.common.registers.BlocksRegister.sharedBlockBehaviour;
 
 public class InfuserBlock extends BaseEntityBlock {
@@ -43,7 +44,7 @@ public class InfuserBlock extends BaseEntityBlock {
     public static final BooleanProperty IS_INFUSING = BooleanProperty.create("is_infusing");
 
     public InfuserBlock() {
-        super(sharedBlockBehaviour());
+        super(sharedBehaviour);
         this.registerDefaultState(
             this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)

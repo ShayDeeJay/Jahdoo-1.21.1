@@ -23,13 +23,14 @@ import org.jahdoo.common.registers.BlockEntitiesRegister;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static org.jahdoo.common.registers.BlocksRegister.sharedBehaviour;
 import static org.jahdoo.common.registers.BlocksRegister.sharedBlockBehaviour;
 
 public class ModularChaosCubeBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
 
     public ModularChaosCubeBlock() {
-        super(sharedBlockBehaviour());
+        super(sharedBehaviour);
     }
 
     @Override

@@ -23,7 +23,7 @@ public class IceBombAbility extends AbilityRegistrar {
         fireProjectile(
             new ElementProjectile(
                 EntitiesRegister.FROST_ELEMENT_PROJECTILE.get(), player,
-                EntityPropertyRegister.ICE_NEEDLER.get().setAbilityId(),
+                EntityPropertyRegister.ICE_BOMB.get().setAbilityId(),
                 offsetShoot(player),
                 abilityId.getPath().intern()
             ),
@@ -69,6 +69,6 @@ public class IceBombAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.FROST.get();
+        return ElementRegistry.frost();
     }
 }

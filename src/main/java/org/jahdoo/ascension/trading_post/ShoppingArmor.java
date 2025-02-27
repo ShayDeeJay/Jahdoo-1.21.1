@@ -55,7 +55,7 @@ public class ShoppingArmor {
                 new ItemStack(ItemsRegister.MAGE_LEGGINGS),
                 new ItemStack(ItemsRegister.MAGE_BOOTS)
         );
-        return Helpers.getRandomListElement(mageArmor);
+        return Helpers.listRandom(mageArmor);
     }
 
     public static @NotNull ItemStack getWizardArmorPiece() {
@@ -65,7 +65,7 @@ public class ShoppingArmor {
                 new ItemStack(ItemsRegister.WIZARD_LEGGINGS),
                 new ItemStack(ItemsRegister.WIZARD_BOOTS)
         );
-        return Helpers.getRandomListElement(mageArmor);
+        return Helpers.listRandom(mageArmor);
     }
 
 }

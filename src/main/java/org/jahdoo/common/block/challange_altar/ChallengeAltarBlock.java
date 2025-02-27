@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import static org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData.*;
 import static org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData.nextSubRound;
 import static org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData.resetWithRound;
+import static org.jahdoo.common.registers.BlocksRegister.sharedBehaviour;
 import static org.jahdoo.common.registers.BlocksRegister.sharedBlockBehaviour;
 
 public class ChallengeAltarBlock extends BaseEntityBlock {
@@ -35,7 +36,7 @@ public class ChallengeAltarBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE_COMMON = Shapes.or(SHAPE_BASE_SECOND, SHAPE_BASE);
 
     public ChallengeAltarBlock() {
-        super(sharedBlockBehaviour().strength(-1.0F, 3600000.0F));
+        super(sharedBehaviour.strength(-1.0F, 3600000.0F));
     }
 
     @Override

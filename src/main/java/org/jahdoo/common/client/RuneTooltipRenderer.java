@@ -14,11 +14,17 @@ import org.joml.Matrix4f;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static net.minecraft.client.Minecraft.*;
+import static net.minecraft.client.gui.Font.*;
+import static net.minecraft.client.gui.Font.DisplayMode.*;
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
+import static net.minecraft.client.renderer.MultiBufferSource.*;
+import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.common.items.runes.rune_data.RuneData.RuneHelpers.standAloneAttributes;
 
 public class RuneTooltipRenderer implements ClientTooltipComponent {
-    private final int spacing = Minecraft.getInstance().font.lineHeight + 4;
+
+    private final int spacing = getInstance().font.lineHeight + 4;
     private final RuneComponent component;
 
     public RuneTooltipRenderer(RuneComponent component) {
@@ -32,7 +38,7 @@ public class RuneTooltipRenderer implements ClientTooltipComponent {
 
     @Override
     public int getWidth(Font font) {
-        int maxWidth = 0;
+        var maxWidth = 0;
         for (ItemStack inst : this.component.runes) {
             maxWidth = Math.max(maxWidth, font.width(standAloneAttributes(inst)) + 18);
         }
@@ -40,8 +46,22 @@ public class RuneTooltipRenderer implements ClientTooltipComponent {
     }
 
     @Override
+    public void renderText(Font font, int mouseX, int mouseY, Matrix4f matrix, BufferSource bufferSource) {
+        var spacer = new AtomicInteger();
+
+        for (var itemStack : this.component.runes()) {
+            var components = standAloneAttributes(itemStack);
+            var getLabel = itemStack.isEmpty() ? Component.literal("Empty Slot") : components;
+            var posY = mouseY + 3 + this.spacing * spacer.get();
+            font.drawInBatch(getLabel, mouseX + 15, posY, HEADER_COLOUR, true, matrix, bufferSource, SEE_THROUGH, 0, FULL_BRIGHT);
+            spacer.set(spacer.get() + 1);
+        }
+    }
+
+    @Override
     public void renderImage(Font font, int x, int y, GuiGraphics gfx) {
         var pose = gfx.pose();
+
         for (int i = 0; i < this.component.runes.size(); i++) {
             int size = 15;
             gfx.blit(IconLocations.GUI_GENERAL_SLOT, x-1, y + this.spacing * i - 1, 0, 0, 0, size, size, size, size);
@@ -56,18 +76,5 @@ public class RuneTooltipRenderer implements ClientTooltipComponent {
         }
     }
 
-    @Override
-    public void renderText(Font font, int mouseX, int mouseY, Matrix4f matrix, MultiBufferSource.BufferSource bufferSource) {
-        var spacer = new AtomicInteger();
-        for (ItemStack itemStack : this.component.runes()) {
-            var components = standAloneAttributes(itemStack);
-            var getLabel = itemStack.isEmpty() ? Component.literal("Empty Slot") : components;
-            var posY = mouseY + 3 + this.spacing * spacer.get();
-            font.drawInBatch(getLabel, mouseX + 15, posY, ColourStore.HEADER_COLOUR, true, matrix, bufferSource, Font.DisplayMode.SEE_THROUGH, 0, FULL_BRIGHT);
-            spacer.set(spacer.get() + 1);
-        }
-    }
-
     public record RuneComponent(ItemStack socket, List<ItemStack> runes) implements TooltipComponent {}
-
 }

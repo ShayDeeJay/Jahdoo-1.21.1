@@ -29,13 +29,16 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.BlockEntitiesRegister;
+import org.jahdoo.common.registers.BlocksRegister;
 import org.jetbrains.annotations.Nullable;
 
 import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.block.augment_modification_station.AugmentModificationBlock.*;
+import static org.jahdoo.common.registers.BlocksRegister.sharedBehaviour;
 import static org.jahdoo.common.registers.BlocksRegister.sharedBlockBehaviour;
 import static org.jahdoo.common.registers.ElementRegistry.getElementByWandType;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.common.registers.ElementRegistry.fromWand;
 
 public class WandManagerBlock extends BaseEntityBlock {
     public static VoxelShape SHAPE_COMBINED = Shapes.or(
@@ -74,7 +77,7 @@ public class WandManagerBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
 
     public WandManagerBlock() {
-        super(sharedBlockBehaviour());
+        super(sharedBehaviour);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
@@ -180,9 +183,9 @@ public class WandManagerBlock extends BaseEntityBlock {
             if(!hand.isEmpty()) getSoundWithPosition(pLevel, pPos, soundEvent, 1, 1.2f);
             swapItemsWithHand(wandManagerTable.inputItemHandler, 0, pPlayer, pHand);
             var stackInSlot = wandManagerTable.inputItemHandler.getStackInSlot(0);
-            var type = getElementByWandType(stackInSlot.getItem());
+            var type = fromWand(stackInSlot.getItem());
             wandManagerTable.privateTicks = 0;
-            if (!type.isEmpty()) setOuterRingPulse(pLevel, type.getFirst().getTypeId(), pPos, yOffset, lifetime, speed, radius);
+            type.ifPresent(getType -> setOuterRingPulse(pLevel, getType.id(), pPos, yOffset, lifetime, speed, radius));
             return ItemInteractionResult.SUCCESS;
         }
         return ItemInteractionResult.FAIL;

@@ -6,7 +6,6 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -23,11 +22,12 @@ import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.items.wand.WandItemHelper;
 import org.jahdoo.common.networking.packet.client2server.ItemInBlockC2SPacket;
 import org.jahdoo.common.networking.packet.client2server.PlayerExperienceC2SPacket;
-import org.jahdoo.common.registers.ElementRegistry;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static net.minecraft.util.FastColor.ARGB32.*;
 import static org.jahdoo.common.client.IconLocations.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
@@ -36,6 +36,7 @@ import static org.jahdoo.common.registers.AttributesRegister.replaceOrAddAttribu
 import static org.jahdoo.common.registers.DataComponentRegistry.*;
 import static org.jahdoo.ascension.utils.Helpers.filterList;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.common.registers.ElementRegistry.*;
 
 public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> {
     public static WidgetSprites WIDGET = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
@@ -49,12 +50,15 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
 
     public WandManagerScreen(WandManagerMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
-        var element = ElementRegistry.getElementByWandType(pMenu.getWandManagerEntity().getWandSlot().getItem());
-        var color = FastColor.ARGB32.color(100, element.getFirst().textColourPrimary());
+        var element = fromWand(pMenu.getWandManagerEntity().getWandSlot().getItem());
+        element.ifPresent(
+            getElement -> {
+                this.element = getElement;
+                this.borderColour =  color(100, getElement.textColourA());
+            }
+        );
         this.wandManager = pMenu;
         this.switchVisibility();
-        this.element = element.getFirst();
-        this.borderColour = element.isEmpty() ? BORDER_COLOUR : color;
     }
 
     @Override
@@ -177,10 +181,10 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         guiGraphics.enableScissor(minX, minY, maxX, minY + (!setView ? 172 : 92));
         renderItem(guiGraphics, width1, height1, getWand(), scaleItem, mouseX, mouseY, 16);
         if(this.element != null){
-            var colorFade = FastColor.ARGB32.color(100, borderColour);
+            var colorFade = color(100, borderColour);
             var heightOffset = 86 - (showInventory ? 40 : 0);
-            var color = FastColor.ARGB32.color(50, borderColour);
-            var colorA = FastColor.ARGB32.color(20, borderColour);
+            var color = color(50, borderColour);
+            var colorA = color(20, borderColour);
             boxMaker(guiGraphics, minX, minY, 30, heightOffset, getFadedColourBackground(0.4f));
             SharedUI.boxMaker(guiGraphics, minX, minY, 30, heightOffset, color, colorA, colorFade);
         }

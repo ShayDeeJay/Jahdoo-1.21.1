@@ -21,24 +21,6 @@ public class GenericOwnerHurtTargetGoal extends TargetGoal {
         this.setFlags(EnumSet.of(Flag.TARGET));
     }
 
-    /**
-     * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-     * method as well.
-     */
-    public boolean canUse() {
-        LivingEntity owner = this.owner.get();
-        if (owner == null) {
-            return false;
-        } else {
-            this.ownerLastHurt = owner.getLastHurtMob();
-            int i = owner.getLastHurtMobTimestamp();
-            return i != this.timestamp && this.canAttack(this.ownerLastHurt, TargetingConditions.DEFAULT) && DefaultEntityBehaviour.canDamageEntity(ownerLastHurt, owner);
-        }
-    }
-
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
     public void start() {
         this.mob.setTarget(this.ownerLastHurt);
 
@@ -48,5 +30,16 @@ public class GenericOwnerHurtTargetGoal extends TargetGoal {
         }
 
         super.start();
+    }
+
+    public boolean canUse() {
+        LivingEntity owner = this.owner.get();
+        if (owner == null) {
+            return false;
+        } else {
+            this.ownerLastHurt = owner.getLastHurtMob();
+            int i = owner.getLastHurtMobTimestamp();
+            return i != this.timestamp && this.canAttack(this.ownerLastHurt, TargetingConditions.DEFAULT) && DefaultEntityBehaviour.canDamageEntity(ownerLastHurt, owner);
+        }
     }
 }

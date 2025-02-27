@@ -17,6 +17,7 @@ import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
 import static org.jahdoo.common.registers.ElementRegistry.UTILITY;
+import static org.jahdoo.common.registers.ElementRegistry.utility;
 
 public class EnchantedFusion extends AbstractUtilityProjectile {
     ResourceLocation abilityId = Helpers.res("enchanted_fusion_property");
@@ -41,7 +42,7 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
                 PositionFinders.getCubeCornersAndFaceCenters(
                     pos,0.8, pos1 -> {
                         var directions = pos.getCenter().subtract(pos1).normalize();
-                        var particle = genericParticleOptions(MAGIC_PARTICLE_SELECTION, UTILITY.get(), 20, 1f);
+                        var particle = genericParticleOptions(MAGIC_PARTICLE_SELECTION, utility(), 20, 1f);
                         sendParticles(serverLevel, particle, pos1, 0, directions.x, directions.y, directions.z, 0.1);
                     }
                 );

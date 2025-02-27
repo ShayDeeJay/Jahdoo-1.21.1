@@ -79,7 +79,7 @@ public class FrostBolts  extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.FROST.get();
+        return ElementRegistry.frost();
     }
 
     @Override
@@ -129,7 +129,7 @@ public class FrostBolts  extends DefaultEntityBehaviour {
             );
 
             if (this.genericProjectile.level() instanceof ServerLevel serverLevel) {
-                var particleOptions = ParticleHandlers.bakedParticleOptions(this.getElementType().getTypeId(), 3, 1.7f, false);
+                var particleOptions = ParticleHandlers.bakedParticleOptions(this.getElementType().id(), 3, 1.7f, false);
                 ParticleHandlers.particleBurst(serverLevel, new Vec3(arrowX, arrowY, arrowZ), 1, particleOptions, 0, 0, 0, 0.1f);
             }
 
@@ -215,7 +215,7 @@ public class FrostBolts  extends DefaultEntityBehaviour {
         if (this.genericProjectile.getOwner() instanceof Player player){
             CastHelper.failedCastNotification(player);
             var value = String.valueOf(Math.round(castDistance));
-            var element = this.getElementType().particleColourPrimary();
+            var element = this.getElementType().partColourA();
             var targetDistance = Helpers.withStyleComponent(value, element);
             player.displayClientMessage(Helpers.withStyleComponentTrans("ability.jahdoo.frost_bolts.no_target", -1, targetDistance), true);
         }

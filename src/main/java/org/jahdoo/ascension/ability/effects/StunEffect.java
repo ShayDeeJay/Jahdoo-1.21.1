@@ -7,9 +7,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
+import static net.minecraft.world.effect.MobEffectCategory.HARMFUL;
+
 public class StunEffect extends MobEffect {
-    public StunEffect(MobEffectCategory pCategory, int pColor) {
-        super(pCategory, pColor);
+    public StunEffect() {
+        super(HARMFUL, 3436524);
     }
 
     @Override

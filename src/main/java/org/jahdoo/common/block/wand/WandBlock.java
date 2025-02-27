@@ -44,7 +44,7 @@ import static org.jahdoo.common.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.common.registers.DataComponentRegistry.RUNE_HOLDER;
 import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
-import static org.jahdoo.common.registers.ElementRegistry.getElementFromWand;
+import static org.jahdoo.common.registers.ElementRegistry.fromWand;
 
 public class WandBlock extends BaseEntityBlock {
     VoxelShape result = Block.box(7, 0, 7, 9, 17, 9);
@@ -82,12 +82,12 @@ public class WandBlock extends BaseEntityBlock {
     public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource) {
         if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return;
         if(wandBlock.getWandItemFromSlot().isEmpty()) return;
-        var getType = getElementFromWand(wandBlock.getWandItemFromSlot().getItem());
+        var getType = fromWand(wandBlock.getWandItemFromSlot().getItem());
         if(!level.isClientSide()) return;
 
         getType.ifPresent(
             element -> {
-                var par1 = ParticleHandlers.bakedParticleOptions(element.getTypeId(), 20, 1.5f, false);
+                var par1 = ParticleHandlers.bakedParticleOptions(element.id(), 20, 1.5f, false);
                 var par2 = ParticleHandlers.genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 20, 1.5f, false, 0.3);
 
                 PositionFinders.getInnerRingOfRadiusRandom(blockPos, 0.1, 2,

@@ -36,8 +36,12 @@ public class AugmentModificationData {
     }
 
     public static AbstractElement getAbstractElement(AugmentModificationEntity entity) {
-        int value = entity.getInteractionSlot().get(DataComponents.CUSTOM_MODEL_DATA).value();
-        return ElementRegistry.getElementByTypeId(value).getFirst();
+        var slot = entity.getInteractionSlot();
+        var value = slot.get(DataComponents.CUSTOM_MODEL_DATA);
+
+        if(value != null) return ElementRegistry.fromId(value.value()).orElseThrow();
+
+        return ElementRegistry.mystic();
     }
 
     public static String extractName(String input) {

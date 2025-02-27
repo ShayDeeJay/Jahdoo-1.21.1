@@ -21,78 +21,131 @@ import org.jahdoo.common.items.block_items.ModularChaosCubeItem;
 import org.jahdoo.common.items.block_items.InfuserBlockItem;
 import org.jahdoo.common.items.wand.subWands.*;
 
+import java.util.function.Supplier;
+
+import static net.minecraft.world.item.ArmorItem.*;
+import static net.minecraft.world.item.ArmorItem.Type.*;
+import static org.jahdoo.common.registers.BlocksRegister.*;
+
 public class ItemsRegister {
 
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, JahdooMod.MOD_ID);
+    public static final DeferredRegister<Item> ITEMS =
+        DeferredRegister.create(Registries.ITEM, JahdooMod.MOD_ID);
 
     //Basic Items
-    public static final DeferredHolder<Item, Item> AUGMENT_FRAGMENT = basicItem("augment_fragment");
-    public static final DeferredHolder<Item, Item> NEXITE_POWDER = basicItem("nexite_powder");
-    public static final DeferredHolder<Item, Item> AUGMENT_CORE = basicItem("augment_core");
-    public static final DeferredHolder<Item, Item> LOOT_KEY = ITEMS.register("key", KeyItem::new);
-    public static final DeferredHolder<Item, Item> ADVANCED_AUGMENT_CORE = ITEMS.register("advanced_augment_core", CoreItem::new);
-    public static final DeferredHolder<Item, Item> AUGMENT_HYPER_CORE = ITEMS.register("augment_hyper_core", CoreItem::new);
+    public static final DeferredHolder<Item, Item> AUGMENT_FRAGMENT =
+        basicItem("augment_fragment");
+
+    public static final DeferredHolder<Item, Item> NEXITE_POWDER =
+        basicItem("nexite_powder");
+
+    public static final DeferredHolder<Item, Item> AUGMENT_CORE =
+        basicItem("augment_core");
 
     //Complex Items
-    public static final DeferredHolder<Item, Item> AUGMENT_ITEM = ITEMS.register("unidentified_augment", Augment::new);
-    public static final DeferredHolder<Item, Item> TOME_OF_UNITY = ITEMS.register("tome_of_unity", TomeOfUnity::new);
-    public static final DeferredHolder<Item, Item> BATTLEMAGE_GAUNTLET = ITEMS.register("archmage_gauntlet", BattlemageGauntlet::new);
-    public static final DeferredHolder<Item, Item> RUNE = ITEMS.register("rune", RuneItem::new);
-    public static final DeferredHolder<Item, Item> INGMAS_SWORD = ITEMS.register("ingmas_sword", IngmasSword::new);
-    public static final DeferredHolder<Item, Item> ELEMENTAL_SWORD = ITEMS.register("elemental_sword", ElementalSword::new);
-    public static final DeferredHolder<Item, Item> ANCIENT_GLAIVE = ITEMS.register("ancient_glaive", AncientGlaive::new);
-    public static final DeferredHolder<Item, Item> PENDENT = ITEMS.register("pendent", Pendent::new);
-    public static final DeferredHolder<Item, Item> EXPERIENCE_ORB = ITEMS.register("xp_orb", ExperienceOrb::new);
-    public static final DeferredHolder<Item, Item> MAGNET = ITEMS.register("magnet", Magnet::new);
+    public static final DeferredHolder<Item, Item> LOOT_KEY =
+        complexItem("key", KeyItem::new);
+
+    public static final DeferredHolder<Item, Item> ADVANCED_AUGMENT_CORE =
+        complexItem("advanced_augment_core", CoreItem::new);
+
+    public static final DeferredHolder<Item, Item> AUGMENT_HYPER_CORE =
+        complexItem("augment_hyper_core", CoreItem::new);
+
+    public static final DeferredHolder<Item, Item> AUGMENT_ITEM =
+        complexItem("unidentified_augment", Augment::new);
+
+    public static final DeferredHolder<Item, Item> TOME_OF_UNITY =
+        complexItem("tome_of_unity", TomeOfUnity::new);
+
+    public static final DeferredHolder<Item, Item> BATTLEMAGE_GAUNTLET =
+        complexItem("archmage_gauntlet", BattlemageGauntlet::new);
+
+    public static final DeferredHolder<Item, Item> RUNE =
+        complexItem("rune", RuneItem::new);
+
+    public static final DeferredHolder<Item, Item> INGMAS_SWORD =
+        complexItem("ingmas_sword", IngmasSword::new);
+
+    public static final DeferredHolder<Item, Item> ELEMENTAL_SWORD =
+        complexItem("elemental_sword", ElementalSword::new);
+
+    public static final DeferredHolder<Item, Item> ANCIENT_GLAIVE =
+        complexItem("ancient_glaive", AncientGlaive::new);
+
+    public static final DeferredHolder<Item, Item> PENDENT =
+        complexItem("pendent", Pendent::new);
+
+    public static final DeferredHolder<Item, Item> EXPERIENCE_ORB =
+        complexItem("xp_orb", ExperienceOrb::new);
+
+    public static final DeferredHolder<Item, Item> MAGNET =
+        complexItem("magnet", Magnet::new);
 
     //Block Items
     public static final DeferredHolder<Item, Item> INFUSER_ITEM =
-        ITEMS.register("infuser", () -> new InfuserBlockItem(BlocksRegister.INFUSER.get(), new Item.Properties()));
+        complexItem("infuser", () -> new InfuserBlockItem(INFUSER.get()));
+
     public static final DeferredHolder<Item, Item> CHALLENGE_ALTAR_ITEM =
-        ITEMS.register("challenge_altar", () -> new ChallengeAltarBlockItem(BlocksRegister.CHALLENGE_ALTAR.get(), new Item.Properties()));
+        complexItem("challenge_altar", () -> new ChallengeAltarBlockItem(CHALLENGE_ALTAR.get()));
+
     public static final DeferredHolder<Item, Item> LOOT_CHEST_ITEM =
-        ITEMS.register("loot_chest", () -> new LootChestBlockItem(BlocksRegister.LOOT_CHEST.get(), new Item.Properties()));
+        complexItem("loot_chest", () -> new LootChestBlockItem(LOOT_CHEST.get()));
+
     public static final DeferredHolder<Item, Item> MODULAR_CHAOS_CUBE_ITEM =
-        ITEMS.register("modular_chaos_cube", () -> new ModularChaosCubeItem(BlocksRegister.MODULAR_CHAOS_CUBE.get(), new Item.Properties()));
+        complexItem("modular_chaos_cube", () -> new ModularChaosCubeItem(MODULAR_CHAOS_CUBE.get()));
 
     //Wands needed their own subclass as animations do not fire for all wand instances otherwise.
     public static final DeferredHolder<Item, Item> WAND_ITEM_MYSTIC =
-        ITEMS.register("wand_mystic", MysticWand::new);
-    public static final DeferredHolder<Item, Item> WAND_ITEM_FROST =
-        ITEMS.register("wand_frost", FrostWand::new);
-    public static final DeferredHolder<Item, Item> WAND_ITEM_INFERNO =
-        ITEMS.register("wand_inferno", InfernoWand::new);
-    public static final DeferredHolder<Item, Item> WAND_ITEM_VITALITY =
-        ITEMS.register("wand_vitality", VitalityWand::new);
-    public static final DeferredHolder<Item, Item> HEALTH_CONTAINER =
-        ITEMS.register("health_container", () -> new HealthContainer(new Item.Properties()));
+        complexItem("wand_mystic", MysticWand::new);
 
-    //Armor
+    public static final DeferredHolder<Item, Item> WAND_ITEM_FROST =
+        complexItem("wand_frost", FrostWand::new);
+
+    public static final DeferredHolder<Item, Item> WAND_ITEM_INFERNO =
+        complexItem("wand_inferno", InfernoWand::new);
+
+    public static final DeferredHolder<Item, Item> WAND_ITEM_VITALITY =
+        complexItem("wand_vitality", VitalityWand::new);
+
+    public static final DeferredHolder<Item, Item> HEALTH_CONTAINER =
+        complexItem("health_container", HealthContainer::new);
+
     //Wizard
     public static final DeferredHolder<Item, Item> WIZARD_HELMET =
-        ITEMS.register("wizard_helmet", () -> new WizardArmor(ArmorMaterialRegistry.WIZARD, ArmorItem.Type.HELMET, new Item.Properties()));
+        complexItem("wizard_helmet", () -> new WizardArmor(HELMET));
+
     public static final DeferredHolder<Item, Item> WIZARD_CHESTPLATE =
-        ITEMS.register("wizard_chestplate", () -> new WizardArmor(ArmorMaterialRegistry.WIZARD, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+        complexItem("wizard_chestplate", () -> new WizardArmor(CHESTPLATE));
+
     public static final DeferredHolder<Item, Item> WIZARD_LEGGINGS =
-        ITEMS.register("wizard_leggings", () -> new WizardArmor(ArmorMaterialRegistry.WIZARD, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+        complexItem("wizard_leggings", () -> new WizardArmor(LEGGINGS));
+
     public static final DeferredHolder<Item, Item> WIZARD_BOOTS =
-        ITEMS.register("wizard_boots", () -> new WizardArmor(ArmorMaterialRegistry.WIZARD, ArmorItem.Type.BOOTS, new Item.Properties()));
+        complexItem("wizard_boots", () -> new WizardArmor(BOOTS));
 
     //Mage
     public static final DeferredHolder<Item, Item> MAGE_HELMET =
-        ITEMS.register("mage_helmet", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.HELMET));
+        complexItem("mage_helmet", () -> new MageArmor(HELMET));
+
     public static final DeferredHolder<Item, Item> MAGE_CHESTPLATE =
-        ITEMS.register("mage_chestplate", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.CHESTPLATE));
+        complexItem("mage_chestplate", () -> new MageArmor(CHESTPLATE));
+
     public static final DeferredHolder<Item, Item> MAGE_LEGGINGS =
-        ITEMS.register("mage_leggings", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.LEGGINGS));
+        complexItem("mage_leggings", () -> new MageArmor(LEGGINGS));
+
     public static final DeferredHolder<Item, Item> MAGE_BOOTS =
-        ITEMS.register("mage_boots", () -> new MageArmor(ArmorMaterialRegistry.MAGE, ArmorItem.Type.BOOTS));
+        complexItem("mage_boots", () -> new MageArmor(BOOTS));
 
     //Coins
     public static final DeferredHolder<Item, Item> BRONZE_COIN = ITEMS.register("bronze_coin", CoinItem::new);
     public static final DeferredHolder<Item, Item> SILVER_COIN = ITEMS.register("silver_coin", CoinItem::new);
     public static final DeferredHolder<Item, Item> GOLD_COIN = ITEMS.register("gold_coin", CoinItem::new);
     public static final DeferredHolder<Item, Item> PLATINUM_COIN = ITEMS.register("platinum_coin", CoinItem::new);
+
+    public static DeferredHolder<Item, Item> complexItem(String name, Supplier<? extends Item> sup){
+        return ITEMS.register(name, sup);
+    }
 
     public static DeferredHolder<Item, Item> basicItem(String name){
         return ITEMS.register(name, () -> new Item(new Item.Properties()));

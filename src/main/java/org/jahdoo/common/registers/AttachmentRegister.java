@@ -16,56 +16,72 @@ import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.attachments.player_abilities.*;
 
+import java.util.function.Supplier;
+
+import static net.neoforged.neoforge.attachment.AttachmentType.*;
+
 public class AttachmentRegister {
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, JahdooMod.MOD_ID);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<CastingData>> CASTER_DATA = ATTACHMENT_TYPES.register(
-        "caster_data", () -> AttachmentType.builder(CastingData::new).serialize(new GenericProvider<>(CastingData::new)).copyOnDeath().build()
-    );
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ChallengeLevelData>> CHALLENGE_ALTAR =
+        withProvider("challenge_altar", ChallengeLevelData::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MageFlight>> MAGE_FLIGHT = ATTACHMENT_TYPES.register(
-        "mage_flight", () -> AttachmentType.builder(MageFlight::new).serialize(new GenericProvider<>(MageFlight::new)).build()
-    );
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MageFlight>> MAGE_FLIGHT =
+        withProvider("mage_flight",MageFlight::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TripleJump>> TRIPLE_JUMP = ATTACHMENT_TYPES.register(
-        "triple_jump", () -> AttachmentType.builder(TripleJump::new).serialize(new GenericProvider<>(TripleJump::new)).build()
-    );
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TripleJump>> TRIPLE_JUMP =
+        withProvider("triple_jump", TripleJump::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DimensionalRecall>> DIMENSIONAL_RECALL = ATTACHMENT_TYPES.register(
-        "dimensional_recall", () -> AttachmentType.builder(DimensionalRecall::new).serialize(new GenericProvider<>(DimensionalRecall::new)).build()
-    );
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DimensionalRecall>> DIMENSIONAL_RECALL =
+        withProvider("dimensional_recall", DimensionalRecall::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<VitalRejuvenation>> VITAL_REJUVENATION = ATTACHMENT_TYPES.register(
-        "vital_rejuvenation", () -> AttachmentType.builder(VitalRejuvenation::new).serialize(new GenericProvider<>(VitalRejuvenation::new)).build()
-    );
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<VitalRejuvenation>> VITAL_REJUVENATION =
+        withProvider("vital_rejuvenation", VitalRejuvenation::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SaveData>> SAVE_DATA = ATTACHMENT_TYPES.register(
-        "save_data", () -> AttachmentType.builder(SaveData::new).serialize(new GenericProvider<>(SaveData::new)).copyOnDeath().build()
-    );
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<NovaSmash>> NOVA_SMASH =
+        withProvider("nova_smash", NovaSmash::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<NovaSmash>> NOVA_SMASH = ATTACHMENT_TYPES.register(
-        "nova_smash", () -> AttachmentType.builder(NovaSmash::new).serialize(new GenericProvider<>(NovaSmash::new)).build()
-    );
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BouncyFoot>> BOUNCY_FOOT =
+        withProvider("bouncy_foot", BouncyFoot::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BouncyFoot>> BOUNCY_FOOT = ATTACHMENT_TYPES.register(
-        "bouncy_foot", () -> AttachmentType.builder(BouncyFoot::new).serialize(new GenericProvider<>(BouncyFoot::new)).build()
-    );
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ModularChaosCubeProperties>> MODULAR_CHAOS_CUBE =
+        withProvider("modular_chaos_cube", ModularChaosCubeProperties::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ModularChaosCubeProperties>> MODULAR_CHAOS_CUBE = ATTACHMENT_TYPES.register(
-        "modular_chaos_cube", () -> AttachmentType.builder(ModularChaosCubeProperties::new).serialize(new GenericProvider<>(ModularChaosCubeProperties::new)).build()
-    );
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> BOOL =
+        regAttachment("bool", builder(() -> false).serialize(Codec.BOOL));
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ChallengeLevelData>> CHALLENGE_ALTAR = ATTACHMENT_TYPES.register(
-        "challenge_altar", () -> AttachmentType.builder(ChallengeLevelData::new).serialize(new GenericProvider<>(ChallengeLevelData::new)).build()
-    );
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<CastingData>> CASTER_DATA =
+        withProviderCopyDeath("caster_data", CastingData::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> BOOL = ATTACHMENT_TYPES.register(
-        "bool", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build()
-    );
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SaveData>> SAVE_DATA =
+        withProviderCopyDeath("save_data", SaveData::new);
+
+    //HELPERS
+    public static  <T extends AbstractAttachment> DeferredHolder<AttachmentType<?>, AttachmentType<T>> withProvider(
+        String name,
+        Supplier<T> defaultValueSupplier
+    ){
+        var serializer = new GenericProvider<T>(defaultValueSupplier);
+        var supplier = builder(defaultValueSupplier).serialize(serializer);
+        return regAttachment(name, supplier);
+    }
+
+    public static  <T extends AbstractAttachment> DeferredHolder<AttachmentType<?>, AttachmentType<T>> withProviderCopyDeath(
+        String name,
+        Supplier<T> defaultValueSupplier
+    ){
+        var serializer = new GenericProvider<T>(defaultValueSupplier);
+        var supplier = builder(defaultValueSupplier).serialize(serializer).copyOnDeath();
+        return regAttachment(name, supplier);
+    }
+
+    public static <T> DeferredHolder<AttachmentType<?>, AttachmentType<T>> regAttachment(String name, AttachmentType.Builder<T> supplier) {
+        return ATTACHMENT_TYPES.register(name, supplier::build);
+    }
 
     public static <T extends AbstractAttachment> DeferredHolder<AttachmentType<?>, AttachmentType<T>> getHolder(T attachment, String name){
         return ATTACHMENT_TYPES.register(
-            name, () -> AttachmentType.builder(() -> attachment)
+            name, () -> builder(() -> attachment)
                 .serialize(new GenericProvider<>(() -> attachment))
                 .copyOnDeath()
                 .build()

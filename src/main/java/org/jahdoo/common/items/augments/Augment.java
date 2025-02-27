@@ -29,20 +29,18 @@ public class Augment extends Item implements MenuAccess {
     }
 
     @Override
+    public AbstractContainerMenu getMenu() {
+        return null;
+    }
+
+    @Override
     public UseAnim getUseAnimation(ItemStack pStack) {
         return UseAnim.SPYGLASS;
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand interactionHand) {
-        var itemStack = player.getItemInHand(interactionHand);
-
-        if(player instanceof LocalPlayer){
-            setAugmentModificationScreen(itemStack, null);
-        }
-
-        AugmentItemHelper.discoverUse(itemStack, player);
-        return InteractionResultHolder.fail(player.getItemInHand(interactionHand));
+    public @NotNull Component getName(ItemStack itemStack) {
+        return AugmentItemHelper.getHoverName(itemStack);
     }
 
     @Override
@@ -56,6 +54,11 @@ public class Augment extends Item implements MenuAccess {
     }
 
     @Override
+    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
+        AugmentItemHelper.getHoverText(pStack, pTooltipComponents, false, pContext.level());
+    }
+
+    @Override
     public boolean isFoil(ItemStack stack) {
         var rating = DataComponentRegistry.AUGMENT_RATING.get();
         if(stack.has(rating)) return stack.get(rating) >= 20.0;
@@ -63,17 +66,14 @@ public class Augment extends Item implements MenuAccess {
     }
 
     @Override
-    public @NotNull Component getName(ItemStack itemStack) {
-        return AugmentItemHelper.getHoverName(itemStack);
-    }
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand interactionHand) {
+        var itemStack = player.getItemInHand(interactionHand);
 
-    @Override
-    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
-        AugmentItemHelper.getHoverText(pStack, pTooltipComponents, false, pContext.level());
-    }
+        if(player instanceof LocalPlayer){
+            setAugmentModificationScreen(itemStack, null);
+        }
 
-    @Override
-    public AbstractContainerMenu getMenu() {
-        return null;
+        AugmentItemHelper.discoverUse(itemStack, player);
+        return InteractionResultHolder.fail(player.getItemInHand(interactionHand));
     }
 }

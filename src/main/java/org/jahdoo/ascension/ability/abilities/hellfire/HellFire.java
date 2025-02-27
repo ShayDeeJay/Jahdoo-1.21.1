@@ -142,10 +142,10 @@ public class HellFire extends DefaultEntityBehaviour {
         var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), 3f);
         var directions = positionScrambler.subtract(this.aoeCloud.position()).normalize();
         var lifetime = (int) (this.range/4);
-        var col1 = this.getElementType().particleColourPrimary();
-        var col2 = this.getElementType().particleColourFaded();
+        var col1 = this.getElementType().partColourA();
+        var col2 = this.getElementType().partColourFade();
         var lifeExt = Math.max(lifetime, 5);
-        var bakedParticle = bakedParticleOptions(this.getElementType().getTypeId(), lifeExt, (float) 5, false);
+        var bakedParticle = bakedParticleOptions(this.getElementType().id(), lifeExt, (float) 5, false);
         var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifeExt, (float) 5, col1, col2, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
         var level = this.aoeCloud.level();
@@ -159,7 +159,7 @@ public class HellFire extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.INFERNO.get();
+        return ElementRegistry.inferno();
     }
 
     @Override

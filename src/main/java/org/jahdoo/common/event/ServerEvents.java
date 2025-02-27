@@ -47,6 +47,54 @@ import static org.jahdoo.ascension.utils.Helpers.Random;
 public class ServerEvents {
 
     @SubscribeEvent
+    public static void effectEvent(MobEffectEvent.Applicable event) {
+        disallowEffectsInCustomDim(event);
+    }
+
+    @SubscribeEvent
+    public static void attributeEvent(ItemAttributeModifierEvent event) {
+        useRuneAttributes(event);
+    }
+
+    @SubscribeEvent
+    public static void attributeEvent(CurioAttributeModifierEvent event) {
+        useRuneAttributesCurios(event);
+    }
+
+    @SubscribeEvent
+    public static void dimChange(PlayerEvent.PlayerChangedDimensionEvent event) {
+        var player = event.getEntity();
+        setGameModeOnDimChange(event, player);
+    }
+
+    @SubscribeEvent
+    public static void totem(LivingUseTotemEvent event){
+        var entity = event.getEntity();
+        if(entity.level() instanceof CustomLevel) event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void playerCloneEvent(PlayerEvent.PlayerRespawnEvent event){
+        var player = event.getEntity();
+        player.getData(SAVE_DATA).takeAllItems(player);
+    }
+
+    @SubscribeEvent
+    public static void onEntityDamageEvent(LivingDamageEvent.Pre event){
+        var entity = event.getEntity();
+        greaterFrostEffectDamageAmplifier(event, entity);
+        greaterVitalityEffect(event, entity);
+    }
+
+    @SubscribeEvent
+    public static void leftClickBlockInteraction(PlayerInteractEvent.LeftClickBlock event) {
+        var item = event.getItemStack();
+        var pos = event.getPos();
+        var blockState = event.getLevel().getBlockState(pos);
+        saveBlockType(event, item, blockState, pos);
+    }
+
+    @SubscribeEvent
     public static void onPlayerTickEvent(PlayerTickEvent.Pre event){
         var player = event.getEntity();
 
@@ -65,6 +113,19 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
+    public static void levelTickEvent(LevelTickEvent.Pre tickEvent){
+        if(!(tickEvent.getLevel() instanceof CustomLevel level)) return;
+        for (var entity : level.getEntities().getAll()) {
+            if(entity instanceof Mob mob && mob.getTarget() == null){
+                var players = level.players();
+                if(!players.isEmpty()){
+                    mob.setTarget(Helpers.listRandom(players));
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void blockInteraction(UseItemOnBlockEvent event) {
         var item = event.getItemStack().getItem();
         var player = event.getPlayer();
@@ -78,64 +139,6 @@ public class ServerEvents {
 //        }
 
         removeWandInteractionWithBlocks(event, player, item, getBlock);
-    }
-
-    @SubscribeEvent
-    public static void dimChange(PlayerEvent.PlayerChangedDimensionEvent event) {
-        var player = event.getEntity();
-        setGameModeOnDimChange(event, player);
-    }
-
-    @SubscribeEvent
-    public static void effectEvent(MobEffectEvent.Applicable event) {
-        disallowEffectsInCustomDim(event);
-    }
-
-    @SubscribeEvent
-    public static void itemClickEvent(PlayerInteractEvent.RightClickItem event) {
-        var mainHand = event.getItemStack();
-        var player = event.getEntity();
-
-//        System.out.println(event.getLevel());
-//        System.out.println(mainHand.get(DataComponentRegistry.RUNE_HOLDER));
-
-//        if(mainHand.has(DataComponentRegistry.RUNE_HOLDER)){
-//            var rune = player.getOffhandItem();
-//            var list = new ArrayList<ItemStack>();
-//            if(rune.getItem() instanceof RuneItem){
-//                list.add(rune);
-//                RuneHolder.updateRuneSlots(mainHand, list);
-//                event.setCanceled(true);
-//            }
-//        }
-
-    }
-
-    @SubscribeEvent
-    public static void onEntityDamageEvent(LivingDamageEvent.Pre event){
-        var entity = event.getEntity();
-        greaterFrostEffectDamageAmplifier(event, entity);
-        greaterVitalityEffect(event, entity);
-    }
-
-    @SubscribeEvent
-    public static void levelTickEvent(LevelTickEvent.Pre tickEvent){
-        if(!(tickEvent.getLevel() instanceof CustomLevel level)) return;
-        for (var entity : level.getEntities().getAll()) {
-            if(entity instanceof Mob mob && mob.getTarget() == null){
-                var players = level.players();
-                if(!players.isEmpty()){
-                    mob.setTarget(Helpers.getRandomListElement(players));
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void totem(LivingUseTotemEvent event){
-        var entity = event.getEntity();
-
-        if(entity.level() instanceof CustomLevel) event.setCanceled(true);
     }
 
     @SubscribeEvent
@@ -156,21 +159,23 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public static void leftClickBlockInteraction(PlayerInteractEvent.LeftClickBlock event) {
-        var item = event.getItemStack();
-        var pos = event.getPos();
-        var blockState = event.getLevel().getBlockState(pos);
-        saveBlockType(event, item, blockState, pos);
-    }
+    public static void itemClickEvent(PlayerInteractEvent.RightClickItem event) {
+        var mainHand = event.getItemStack();
+        var player = event.getEntity();
 
-    @SubscribeEvent
-    public static void attributeEvent(ItemAttributeModifierEvent event) {
-        useRuneAttributes(event);
-    }
+//        System.out.println(event.getLevel());
+//        System.out.println(mainHand.get(DataComponentRegistry.RUNE_HOLDER));
 
-    @SubscribeEvent
-    public static void attributeEvent(CurioAttributeModifierEvent event) {
-        useRuneAttributesCurios(event);
+//        if(mainHand.has(DataComponentRegistry.RUNE_HOLDER)){
+//            var rune = player.getOffhandItem();
+//            var list = new ArrayList<ItemStack>();
+//            if(rune.getItem() instanceof RuneItem){
+//                list.add(rune);
+//                RuneHolder.updateRuneSlots(mainHand, list);
+//                event.setCanceled(true);
+//            }
+//        }
+
     }
 
     @SubscribeEvent
@@ -208,13 +213,6 @@ public class ServerEvents {
         onDeathGreaterFrostEffect(entity);
         resetGameModeOnDeath(entity);
         saveDestinyBondItems(entity);
-        entityDeathLoot(entity, source);
-    }
-
-    @SubscribeEvent
-    public static void playerCloneEvent(PlayerEvent.PlayerRespawnEvent event){
-        var player = event.getEntity();
-        player.getData(SAVE_DATA).takeAllItems(player);
     }
 
 }

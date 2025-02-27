@@ -12,6 +12,7 @@ import org.jahdoo.ascension.utils.ModTags;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static org.jahdoo.common.registers.BlocksRegister.*;
 import static org.jahdoo.common.registers.ItemsRegister.*;
 
 public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
@@ -27,24 +28,12 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput recipeOutput) {
-        tankRecipe(recipeOutput, BlocksRegister.TANK.get().asItem());
-        infuser(recipeOutput, BlocksRegister.INFUSER.get().asItem());
-        chaosCube(recipeOutput, BlocksRegister.MODULAR_CHAOS_CUBE.get().asItem());
-        nexite(recipeOutput, BlocksRegister.NEXITE_BLOCK.get().asItem());
         coinCompressor(recipeOutput);
-        augmentModificationTable(recipeOutput, BlocksRegister.AUGMENT_MODIFICATION_STATION.get().asItem());
-    }
-
-    //Vanilla Crafting
-    protected void creatorBlockRecipe(RecipeOutput output, Item result) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
-                .define('M', Items.MUD_BRICKS)
-                .define('X', Items.REDSTONE)
-                .pattern(" M ")
-                .pattern("MXM")
-                .pattern(" M ")
-                .unlockedBy("mud_bricks", has(Items.MUD_BRICKS))
-                .save(output);
+        tankRecipe(recipeOutput, TANK.get().asItem());
+        infuser(recipeOutput, INFUSER.get().asItem());
+        nexite(recipeOutput, NEXITE_BLOCK.get().asItem());
+        chaosCube(recipeOutput, MODULAR_CHAOS_CUBE.get().asItem());
+        augmentModificationTable(recipeOutput, AUGMENT_MODIFICATION_STATION.get().asItem());
     }
 
     protected void infuser(RecipeOutput output, Item result) {
@@ -103,8 +92,8 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     }
 
     protected void nexite(RecipeOutput output, Item result) {
-        nineBlockStorageRecipes(output, RecipeCategory.MISC, NEXITE_POWDER.get(), RecipeCategory.BUILDING_BLOCKS, BlocksRegister.NEXITE_BLOCK.get());
-        oreSmelting(output, List.of(BlocksRegister.RAW_NEXITE_BLOCK.get()),RecipeCategory.BUILDING_BLOCKS, result, 2.0F, 200, "nexite");
+        nineBlockStorageRecipes(output, RecipeCategory.MISC, NEXITE_POWDER.get(), RecipeCategory.BUILDING_BLOCKS, NEXITE_BLOCK.get());
+        oreSmelting(output, List.of(RAW_NEXITE_BLOCK.get()),RecipeCategory.BUILDING_BLOCKS, result, 2.0F, 200, "nexite");
     }
 
     protected void coinCompressor(RecipeOutput output) {

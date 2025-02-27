@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.common.client.armor_renderer.MageArmorRenderer;
 import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.registers.ArmorMaterialRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -26,8 +27,8 @@ import java.util.function.Consumer;
 public class MageArmor extends BaseArmor implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    public MageArmor(Holder<ArmorMaterial> material, Type type) {
-        super(material, type, getComponent());
+    public MageArmor(Type type) {
+        super(ArmorMaterialRegistry.MAGE, type, getComponent());
     }
 
     private static @NotNull Properties getComponent() {
@@ -40,36 +41,34 @@ public class MageArmor extends BaseArmor implements GeoItem, JahdooItem {
     }
 
     @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
+
+    @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 
     @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller",0, state -> PlayState.STOP));
+    }
+
+    @Override
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
         consumer.accept(
-            new GeoRenderProvider() {
-                private MageArmorRenderer renderer;
+              new GeoRenderProvider() {
+                  private MageArmorRenderer renderer;
 
-                @Override
-                public @Nullable <T extends LivingEntity> HumanoidModel<?> getGeoArmorRenderer(@Nullable T livingEntity, ItemStack itemStack, @Nullable EquipmentSlot equipmentSlot, @Nullable HumanoidModel<T> original) {
-                    if (this.renderer == null)
-                        this.renderer = new MageArmorRenderer();
+                  @Override
+                  public @Nullable <T extends LivingEntity> HumanoidModel<?> getGeoArmorRenderer(@Nullable T livingEntity, ItemStack itemStack, @Nullable EquipmentSlot equipmentSlot, @Nullable HumanoidModel<T> original) {
+                      if (this.renderer == null)
+                          this.renderer = new MageArmorRenderer();
 
-                    return this.renderer;
-                }
-            }
+                      return this.renderer;
+                  }
+              }
         );
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(
-            new AnimationController<>(this, "controller",0, state -> PlayState.STOP)
-        );
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return cache;
     }
 }

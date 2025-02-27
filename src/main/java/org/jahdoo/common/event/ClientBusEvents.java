@@ -46,6 +46,11 @@ public class ClientBusEvents {
         event.register((stack, color) -> getColour(stack), ItemsRegister.RUNE.get());
     }
 
+    @SubscribeEvent
+    public static void tooltipEvent(RegisterClientTooltipComponentFactoriesEvent event){
+        event.register(RuneTooltipRenderer.RuneComponent.class, RuneTooltipRenderer::new);
+    }
+
     public static int getColour(ItemStack stack){
         var colour = stack.get(DataComponentRegistry.RUNE_DATA.get());
         if(colour != null) return colour.colour();
@@ -53,49 +58,12 @@ public class ClientBusEvents {
     }
 
     @SubscribeEvent
-    public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
-        //Block entities
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_MANAGER_TABLE_BE.get(), WandManagerTableRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.INFUSER_BE.get(), InfuserRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.CHALLENGE_ALTAR_BE.get(), ChallengeAltarRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(), ModularChaosCubeRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.LOOT_CHEST_BE.get(), LootChestRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_BE.get(), WandBlockRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.TANK_BE.get(), NexiteTankRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.SHOPPING_TABLE_BE.get(), ShoppingTableRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.RUNE_TABLE_BE.get(), RuneTableRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.ENCHANTED_BE.get(), EnchantedBlockRenderer::new);
-
-        //Entities
-        event.registerEntityRenderer(EntitiesRegister.FROST_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.FROST.get().getAbilityProjectileTexture()));
-        event.registerEntityRenderer(EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.INFERNO.get().getAbilityProjectileTexture()));
-        event.registerEntityRenderer(EntitiesRegister.MYSTIC_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.MYSTIC.get().getAbilityProjectileTexture()));
-        event.registerEntityRenderer(EntitiesRegister.VITALITY_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.VITALITY.get().getAbilityProjectileTexture()));
-        event.registerEntityRenderer(EntitiesRegister.GENERIC_PROJECTILE.get(), GenericProjectileRenderer::new);
-        event.registerEntityRenderer(EntitiesRegister.CUSTOM_AOE_CLOUD.get(), AoeCloudRenderer::new);
-        event.registerEntityRenderer(EntitiesRegister.ETERNAL_WIZARD.get(), EternalWizardRenderer::new);
-        event.registerEntityRenderer(EntitiesRegister.DECOY.get(), DecoyRenderer::new);
-        event.registerEntityRenderer(EntitiesRegister.CUSTOM_ZOMBIE.get(), ZombieRenderer::new);
-        event.registerEntityRenderer(EntitiesRegister.CUSTOM_SKELETON.get(), SkeletonRenderer::new);
-        event.registerEntityRenderer(EntitiesRegister.ANCIENT_GOLEM.get(), AncientGolemRenderer::new);
-        event.registerEntityRenderer(EntitiesRegister.FLAMING_SKULL.get(), BurningSkullRenderer::new);
-        event.registerEntityRenderer(EntitiesRegister.VOID_SPIDER.get(), VoidSpiderRenderer::new);
-        event.registerEntityRenderer(EntitiesRegister.VOID_SPIDER_SPAWN.get(), VoidSpiderRenderer::new);
-
-    }
-
-    @SubscribeEvent
-    public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(ParticlesRegister.GENERIC.get(), GenericParticle.GenericProvider::new);
-        event.registerSpriteSet(ParticlesRegister.ELECTRIC.get(), GenericParticle.ElectricalParticle::new);
-        event.registerSpriteSet(ParticlesRegister.MAGIC.get(), GenericParticle.GenericProvider::new);
-        event.registerSpriteSet(ParticlesRegister.SOFT.get(), GenericParticle.GenericProvider::new);
-        event.registerSpriteSet(ParticlesRegister.BAKED_INFERNO.get(), GenericParticle.BakedProvider::new);
-        event.registerSpriteSet(ParticlesRegister.BAKED_FROST.get(), GenericParticle.BakedProvider::new);
-        event.registerSpriteSet(ParticlesRegister.BAKED_MYSTIC.get(), GenericParticle.BakedProvider::new);
-        event.registerSpriteSet(ParticlesRegister.BAKED_VITALITY.get(), GenericParticle.BakedProvider::new);
-        event.registerSpriteSet(ParticlesRegister.BAKED_UTILITY.get(), GenericParticle.BakedProvider::new);
-        event.registerSpriteSet(ParticlesRegister.HEAL.get(), GenericParticle.BakedProvider::new);
+    public static void onClientSetup(RegisterMenuScreensEvent event) {
+        event.register(MenusRegister.WAND_BLOCK_MENU.get(), WandBlockScreen::new);
+        event.register(MenusRegister.MODULAR_CHAOS_CUBE_MENU.get(), ModularChaosCubeScreen::new);
+        event.register(MenusRegister.AUGMENT_MODIFICATION_MENU.get(), AugmentModificationScreen::new);
+        event.register(MenusRegister.WAND_MANAGER_MENU.get(), WandManagerScreen::new);
+        event.register(MenusRegister.RUNE_TABLE_MENU.get(), RuneTableScreen::new);
     }
 
     @SubscribeEvent
@@ -115,16 +83,48 @@ public class ClientBusEvents {
     }
 
     @SubscribeEvent
-    public static void tooltipEvent(RegisterClientTooltipComponentFactoriesEvent event){
-        event.register(RuneTooltipRenderer.RuneComponent.class, RuneTooltipRenderer::new);
+    public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ParticlesRegister.GENERIC.get(), GenericParticle.GenericProvider::new);
+        event.registerSpriteSet(ParticlesRegister.ELECTRIC.get(), GenericParticle.ElectricalParticle::new);
+        event.registerSpriteSet(ParticlesRegister.MAGIC.get(), GenericParticle.GenericProvider::new);
+        event.registerSpriteSet(ParticlesRegister.SOFT.get(), GenericParticle.GenericProvider::new);
+        event.registerSpriteSet(ParticlesRegister.BAKED_INFERNO.get(), GenericParticle.BakedProvider::new);
+        event.registerSpriteSet(ParticlesRegister.BAKED_FROST.get(), GenericParticle.BakedProvider::new);
+        event.registerSpriteSet(ParticlesRegister.BAKED_MYSTIC.get(), GenericParticle.BakedProvider::new);
+        event.registerSpriteSet(ParticlesRegister.BAKED_VITALITY.get(), GenericParticle.BakedProvider::new);
+        event.registerSpriteSet(ParticlesRegister.BAKED_UTILITY.get(), GenericParticle.BakedProvider::new);
+        event.registerSpriteSet(ParticlesRegister.HEAL.get(), GenericParticle.BakedProvider::new);
     }
 
     @SubscribeEvent
-    public static void onClientSetup(RegisterMenuScreensEvent event) {
-        event.register(MenusRegister.WAND_BLOCK_MENU.get(), WandBlockScreen::new);
-        event.register(MenusRegister.MODULAR_CHAOS_CUBE_MENU.get(), ModularChaosCubeScreen::new);
-        event.register(MenusRegister.AUGMENT_MODIFICATION_MENU.get(), AugmentModificationScreen::new);
-        event.register(MenusRegister.WAND_MANAGER_MENU.get(), WandManagerScreen::new);
-        event.register(MenusRegister.RUNE_TABLE_MENU.get(), RuneTableScreen::new);
+    public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
+        //Block entities
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_MANAGER_TABLE_BE.get(), WandManagerTableRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.INFUSER_BE.get(), InfuserRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.CHALLENGE_ALTAR_BE.get(), ChallengeAltarRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(), ModularChaosCubeRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.LOOT_CHEST_BE.get(), LootChestRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_BE.get(), WandBlockRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.TANK_BE.get(), NexiteTankRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.SHOPPING_TABLE_BE.get(), ShoppingTableRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.RUNE_TABLE_BE.get(), RuneTableRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.ENCHANTED_BE.get(), EnchantedBlockRenderer::new);
+
+        //Entities
+        event.registerEntityRenderer(EntitiesRegister.FROST_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.frost().projectileTexture()));
+        event.registerEntityRenderer(EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.inferno().projectileTexture()));
+        event.registerEntityRenderer(EntitiesRegister.MYSTIC_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.mystic().projectileTexture()));
+        event.registerEntityRenderer(EntitiesRegister.VITALITY_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementRegistry.vitality().projectileTexture()));
+        event.registerEntityRenderer(EntitiesRegister.GENERIC_PROJECTILE.get(), GenericProjectileRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.CUSTOM_AOE_CLOUD.get(), AoeCloudRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.ETERNAL_WIZARD.get(), EternalWizardRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.DECOY.get(), DecoyRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.CUSTOM_ZOMBIE.get(), ZombieRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.CUSTOM_SKELETON.get(), SkeletonRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.ANCIENT_GOLEM.get(), AncientGolemRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.FLAMING_SKULL.get(), BurningSkullRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.VOID_SPIDER.get(), VoidSpiderRenderer::new);
+        event.registerEntityRenderer(EntitiesRegister.VOID_SPIDER_SPAWN.get(), VoidSpiderRenderer::new);
+
     }
 }

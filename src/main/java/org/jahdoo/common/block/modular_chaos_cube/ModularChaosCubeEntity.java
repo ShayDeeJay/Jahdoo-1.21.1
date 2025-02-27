@@ -242,7 +242,7 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
         PositionFinders.getRandomSphericalPositions(this.getBlockPos().getCenter(), radius, positions,
             pos -> {
                 var directions = this.getBlockPos().getCenter().subtract(pos).normalize();
-                var particle = ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, ElementRegistry.UTILITY.get(), (int) (radius * 5), 0.6f);
+                var particle = ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, ElementRegistry.utility(), (int) (radius * 5), 0.6f);
                 ParticleHandlers.sendParticles(pLevel, particle, pos, 0, directions.x, directions.y, directions.z, radius / 5);
             }
         );

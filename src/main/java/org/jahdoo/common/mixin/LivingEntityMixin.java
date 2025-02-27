@@ -24,13 +24,13 @@ public abstract class LivingEntityMixin extends Entity {
         int color = super.getTeamColor();
 
         if (this.hasEffect(MYSTIC_EFFECT)) {
-            color = MYSTIC.get().textColourPrimary();
+            color = mystic().textColourA();
         } else if (this.hasEffect(INFERNO_EFFECT)) {
-            color = INFERNO.get().textColourPrimary();
+            color = inferno().textColourA();
         } else if (this.hasEffect(FROST_EFFECT)) {
-            color = FROST.get().textColourPrimary();
+            color = frost().textColourA();
         }  else if (this.hasEffect(VITALITY_EFFECT)) {
-            color = VITALITY.get().textColourPrimary();
+            color = vitality().textColourA();
         }
 
         return color;

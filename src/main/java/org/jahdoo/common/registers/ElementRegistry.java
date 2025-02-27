@@ -14,6 +14,7 @@ import org.jahdoo.ascension.element.*;
 import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class ElementRegistry {
 
@@ -26,15 +27,7 @@ public class ElementRegistry {
         event.register(REGISTRY);
     }
 
-    @Deprecated
-    public static List<AbstractElement> getElementByWandType(Item wand) {
-        return REGISTRY
-            .stream()
-            .filter(a -> a.getWand() == wand)
-            .toList();
-    }
-
-    public static Optional<AbstractElement>getElementFromWand(Item wand) {
+    public static Optional<AbstractElement> fromWand(Item wand) {
         var element = REGISTRY
             .stream()
             .filter(a -> a.getWand() == wand)
@@ -42,56 +35,66 @@ public class ElementRegistry {
         return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
     }
 
-    @Deprecated
-    public static List<AbstractElement> getElementByTypeId(int typeId) {
-        return REGISTRY
-            .stream()
-            .filter(a -> a.getTypeId() == typeId)
-            .toList();
-    }
-
-    public static Optional<AbstractElement>getElementById(int typeId) {
+    public static Optional<AbstractElement> fromId(int typeId) {
         var element = REGISTRY
             .stream()
-            .filter(a -> a.getTypeId() == typeId)
+            .filter(a -> a.id() == typeId)
             .toList();
         return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
-    }
-
-    public static List<AbstractElement> getAllElements() {
-        return REGISTRY.stream()
-            .filter(e -> e != UTILITY.get())
-            .toList();
     }
 
     public static List<AbstractElement> getElementsWithout(AbstractElement...elements) {
         return REGISTRY.stream()
             .filter(e -> !Arrays.stream(elements).toList().contains(e))
-            .filter(e -> e != UTILITY.get())
+            .filter(e -> e != utility())
             .toList();
     }
 
     public static AbstractElement getRandomElement() {
         var list = REGISTRY.stream()
-            .filter(e -> e != UTILITY.get())
+            .filter(e -> e != utility())
             .toList();
-        return Helpers.getRandomListElement(list);
+        return Helpers.listRandom(list);
     }
 
-    private static DeferredHolder<AbstractElement, AbstractElement> registerElement(AbstractElement spell) {
-        return ELEMENT.register(spell.setAbilityId(), () -> spell);
+    private static DeferredHolder<AbstractElement, AbstractElement> registerElement(Supplier<AbstractElement> element) {
+        return ELEMENT.register(element.get().setAbilityId(), element);
     }
+
+    public static AbstractElement frost(){
+        return FROST.get();
+    }
+
+    public static AbstractElement mystic(){
+        return MYSTIC.get();
+    }
+
+    public static AbstractElement inferno(){
+        return INFERNO.get();
+    }
+
+    public static AbstractElement utility(){
+        return UTILITY.get();
+    }
+
+    public static AbstractElement vitality(){
+        return VITALITY.get();
+    }
+
+    public static final DeferredHolder<AbstractElement, AbstractElement> FROST =
+        registerElement(Frost::new);
+
+    public static final DeferredHolder<AbstractElement, AbstractElement> MYSTIC =
+        registerElement(Mystic::new);
 
     public static final DeferredHolder<AbstractElement, AbstractElement> INFERNO =
-        registerElement(new Inferno());
-    public static final DeferredHolder<AbstractElement, AbstractElement> FROST =
-        registerElement(new Frost());
-    public static final DeferredHolder<AbstractElement, AbstractElement> MYSTIC =
-        registerElement(new Mystic());
-    public static final DeferredHolder<AbstractElement, AbstractElement> VITALITY =
-        registerElement(new Vitality());
+        registerElement(Inferno::new);
+
     public static final DeferredHolder<AbstractElement, AbstractElement> UTILITY =
-        registerElement(new Utility());
+        registerElement(Utility::new);
+
+    public static final DeferredHolder<AbstractElement, AbstractElement> VITALITY =
+        registerElement(Vitality::new);
 
 
     public static void register(IEventBus eventBus) {

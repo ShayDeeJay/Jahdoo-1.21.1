@@ -41,6 +41,74 @@ public class GenericMeleeAttackGoal extends Goal {
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
+    protected void resetAttackCooldown() {
+        this.ticksUntilNextAttack = this.adjustedTickDelay(20);
+    }
+
+    protected boolean isTimeToAttack() {
+        return this.ticksUntilNextAttack <= 0;
+    }
+
+    public boolean requiresUpdateEveryTick() {
+        return true;
+    }
+
+    protected boolean canPerformAttack(LivingEntity entity) {
+        return this.isTimeToAttack() &&
+              this.mob.isWithinMeleeAttackRange(entity) &&
+              this.mob.getSensing().hasLineOfSight(entity);
+    }
+
+    public void start() {
+        this.mob.getNavigation().moveTo(this.path, this.speedModifier);
+        this.mob.setAggressive(true);
+        this.ticksUntilNextPathRecalculation = 0;
+        this.ticksUntilNextAttack = 0;
+    }
+
+    public void stop() {
+        LivingEntity livingentity = this.mob.getTarget();
+        if (!NO_CREATIVE_OR_SPECTATOR.test(livingentity)) {
+            this.mob.setTarget(null);
+        }
+        this.mob.setAggressive(false);
+        this.mob.getNavigation().stop();
+    }
+
+    public boolean canContinueToUse() {
+        LivingEntity livingentity = this.mob.getTarget();
+        if (livingentity == null) {
+            return false;
+        } else if (!livingentity.isAlive()) {
+            return false;
+        } else if (!this.followingTargetEvenIfNotSeen) {
+            return !this.mob.getNavigation().isDone();
+        } else {
+            return this.mob.isWithinRestriction(livingentity.blockPosition()) && (!(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player) livingentity).isCreative());
+        }
+    }
+
+    protected void checkAndPerformAttack(LivingEntity target) {
+        if (this.canPerformAttack(target)) {
+            if(this.mob instanceof AncientGolem ancientGolem){
+                DamageUtils.damageWithJahdoo(target, this.mob, ancientGolem.damage);
+                if(ancientGolem.level() instanceof ServerLevel serverLevel){
+                    serverLevel.getChunkSource().broadcast(this.mob, new ClientboundEntityEventPacket(this.mob, (byte)4));
+                }
+                new ClientboundEntityEventPacket(this.mob, (byte)9);
+                var chance = ancientGolem.effectChance;
+                var strength = ancientGolem.effectStrength;
+                var duration = ancientGolem.effectDuration;
+                var wild = chance == 0 ? 20 : chance;
+                if(Random.nextInt((int) wild) == 0){
+                    var instance = new JahdooMobEffect(VITALITY_EFFECT, (int) duration, (int) strength);
+                    target.addEffect(instance);
+                }
+            }
+            this.resetAttackCooldown();
+        }
+    }
+
     public boolean canUse() {
         var i = this.mob.level().getGameTime();
         if (i - this.lastCanUseCheck < 20L) {
@@ -65,39 +133,6 @@ public class GenericMeleeAttackGoal extends Goal {
                 return this.path != null || this.mob.isWithinMeleeAttackRange(livingentity);
             }
         }
-    }
-
-    public boolean canContinueToUse() {
-        LivingEntity livingentity = this.mob.getTarget();
-        if (livingentity == null) {
-            return false;
-        } else if (!livingentity.isAlive()) {
-            return false;
-        } else if (!this.followingTargetEvenIfNotSeen) {
-            return !this.mob.getNavigation().isDone();
-        } else {
-            return this.mob.isWithinRestriction(livingentity.blockPosition()) && (!(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player) livingentity).isCreative());
-        }
-    }
-
-    public void start() {
-        this.mob.getNavigation().moveTo(this.path, this.speedModifier);
-        this.mob.setAggressive(true);
-        this.ticksUntilNextPathRecalculation = 0;
-        this.ticksUntilNextAttack = 0;
-    }
-
-    public void stop() {
-        LivingEntity livingentity = this.mob.getTarget();
-        if (!NO_CREATIVE_OR_SPECTATOR.test(livingentity)) {
-            this.mob.setTarget(null);
-        }
-        this.mob.setAggressive(false);
-        this.mob.getNavigation().stop();
-    }
-
-    public boolean requiresUpdateEveryTick() {
-        return true;
     }
 
     public void tick() {
@@ -149,46 +184,5 @@ public class GenericMeleeAttackGoal extends Goal {
             this.checkAndPerformAttack(livingentity);
         }
 
-    }
-
-    protected void checkAndPerformAttack(LivingEntity target) {
-        if (this.canPerformAttack(target)) {
-            if(this.mob instanceof AncientGolem ancientGolem){
-                DamageUtils.damageWithJahdoo(target, this.mob, ancientGolem.damage);
-                if(ancientGolem.level() instanceof ServerLevel serverLevel){
-                    serverLevel.getChunkSource().broadcast(this.mob, new ClientboundEntityEventPacket(this.mob, (byte)4));
-                }
-                new ClientboundEntityEventPacket(this.mob, (byte)9);
-                var chance = ancientGolem.effectChance;
-                var strength = ancientGolem.effectStrength;
-                var duration = ancientGolem.effectDuration;
-                var wild = chance == 0 ? 20 : chance;
-                if(Random.nextInt((int) wild) == 0){
-                    var instance = new JahdooMobEffect(VITALITY_EFFECT, (int) duration, (int) strength);
-                    target.addEffect(instance);
-                }
-            }
-            this.resetAttackCooldown();
-        }
-    }
-
-    protected void resetAttackCooldown() {
-        this.ticksUntilNextAttack = this.adjustedTickDelay(20);
-    }
-
-    protected boolean isTimeToAttack() {
-        return this.ticksUntilNextAttack <= 0;
-    }
-
-    protected boolean canPerformAttack(LivingEntity entity) {
-        return this.isTimeToAttack() && this.mob.isWithinMeleeAttackRange(entity) && this.mob.getSensing().hasLineOfSight(entity);
-    }
-
-    protected int getTicksUntilNextAttack() {
-        return this.ticksUntilNextAttack;
-    }
-
-    protected int getAttackInterval() {
-        return this.adjustedTickDelay(20);
     }
 }

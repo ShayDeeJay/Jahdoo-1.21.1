@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.jahdoo.common.client.curio_renderer.GloveRenderer;
 import org.jahdoo.common.client.curio_renderer.PendentRenderer;
 import org.jahdoo.common.client.curio_renderer.TomeRenderer;
-import org.jahdoo.common.loot.ModLootModifiers;
+import org.jahdoo.common.datagen.loot.ModLootModifiers;
 import org.jahdoo.common.registers.*;
 import org.jahdoo.ascension.utils.Configuration;
 import org.jahdoo.ascension.utils.ModCreativeModTabs;

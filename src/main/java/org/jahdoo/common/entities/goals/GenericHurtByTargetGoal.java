@@ -18,28 +18,13 @@ import java.util.List;
 
 public class GenericHurtByTargetGoal extends TargetGoal {
     private static final TargetingConditions HURT_BY_TARGETING = TargetingConditions.forCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
-    private boolean alertSameType;
-    /** Store the previous revengeTimer value */
     private int timestamp;
-    List<LivingEntity> toIgnoreDamage = Collections.emptyList();
-    @Nullable
-    private Class<?>[] toIgnoreAlert;
-
-    public GenericHurtByTargetGoal(PathfinderMob pMob, List<LivingEntity> pToIgnoreDamage) {
-        super(pMob, true);
-        this.toIgnoreDamage = pToIgnoreDamage;
-        this.setFlags(EnumSet.of(Flag.TARGET));
-    }
 
     public GenericHurtByTargetGoal(PathfinderMob pMob) {
         super(pMob, true);
         this.setFlags(EnumSet.of(Flag.TARGET));
     }
 
-    /**
-     * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-     * method as well.
-     */
     public boolean canUse() {
         int i = this.mob.getLastHurtByMobTimestamp();
         LivingEntity livingentity = this.mob.getLastHurtByMob();
@@ -49,7 +34,6 @@ public class GenericHurtByTargetGoal extends TargetGoal {
             if (livingentity.getType() == EntityType.PLAYER && this.mob.level().getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
                 return false;
             } else {
-                if(toIgnoreDamage.contains(livingentity)) return false;
                 if(mob instanceof TamableEntity tamableEntity) if(!DefaultEntityBehaviour.canDamageEntity(livingentity, tamableEntity.getOwner())) return false;
 
                 return this.canAttack(livingentity, HURT_BY_TARGETING) &&  !(livingentity instanceof EternalWizard);
@@ -59,15 +43,6 @@ public class GenericHurtByTargetGoal extends TargetGoal {
         }
     }
 
-    public GenericHurtByTargetGoal setAlertOthers(Class<?>... pReinforcementTypes) {
-        this.alertSameType = true;
-        this.toIgnoreAlert = pReinforcementTypes;
-        return this;
-    }
-
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
     public void start() {
         this.mob.setTarget(this.mob.getLastHurtByMob());
         this.mob.getBrain().setMemoryWithExpiry(MemoryModuleType.ATTACK_TARGET, this.mob.getLastHurtByMob(), 200L);
@@ -75,10 +50,6 @@ public class GenericHurtByTargetGoal extends TargetGoal {
         this.targetMob = this.mob.getTarget();
         this.timestamp = this.mob.getLastHurtByMobTimestamp();
         this.unseenMemoryTicks = 300;
-        if (this.alertSameType) {
-            this.alertOthers();
-        }
-
         super.start();
     }
 
@@ -91,28 +62,19 @@ public class GenericHurtByTargetGoal extends TargetGoal {
         while(true) {
             Mob mob;
             while(true) {
-                if (!iterator.hasNext()) {
-                    return;
-                }
-
+                if (!iterator.hasNext()) return;
                 mob = iterator.next();
-                if (this.mob != mob && mob.getTarget() == null && (!(this.mob instanceof TamableAnimal) || ((TamableAnimal)this.mob).getOwner() == ((TamableAnimal)mob).getOwner()) && !mob.isAlliedTo(this.mob.getLastHurtByMob())) {
-                    if (this.toIgnoreAlert == null) {
-                        break;
-                    }
 
+                var isntMob = this.mob != mob;
+                var hasTarget = mob.getTarget() == null;
+                var isTamedEntity =
+                      !(this.mob instanceof TamableAnimal tamedAnimal) ||
+                      (tamedAnimal.getOwner() == ((TamableAnimal) mob).getOwner());
+                var hasAllie = !mob.isAlliedTo(this.mob.getLastHurtByMob());
+
+                if (isntMob && hasTarget && isTamedEntity && hasAllie) {
                     boolean flag = false;
-
-                    for(Class<?> oclass : this.toIgnoreAlert) {
-                        if (mob.getClass() == oclass) {
-                            flag = true;
-                            break;
-                        }
-                    }
-
-                    if (!flag) {
-                        break;
-                    }
+                    if (!flag) break;
                 }
             }
 

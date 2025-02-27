@@ -16,35 +16,49 @@ public class SoundRegister {
     }
     
     public static final DeferredHolder<SoundEvent, SoundEvent> DASH_EFFECT =
-            registerSoundEvent("dash_effect");
+        registerSoundEvent("dash_effect");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> DASH_EFFECT_INSTANT =
-            registerSoundEvent("dash_effect_instant");
+        registerSoundEvent("dash_effect_instant");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> ORB_CREATE =
-            registerSoundEvent("orb_create");
+        registerSoundEvent("orb_create");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> ORB_FIRE =
-            registerSoundEvent("orb_fire");
+        registerSoundEvent("orb_fire");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> ICE_EXPLOSION =
-            registerSoundEvent("ice_explosion");
+        registerSoundEvent("ice_explosion");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> ICE_ATTACH =
-            registerSoundEvent("ice_attach");
+        registerSoundEvent("ice_attach");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> BOLT =
-            registerSoundEvent("bolt");
+        registerSoundEvent("bolt");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> TIMER =
-            registerSoundEvent("timer");
+        registerSoundEvent("timer");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> EXPLOSION =
-            registerSoundEvent("explosion");
+        registerSoundEvent("explosion");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> MAGIC_EXPLOSION =
-            registerSoundEvent("magic_explosion");
+        registerSoundEvent("magic_explosion");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> HEAL =
-            registerSoundEvent("heal");
+        registerSoundEvent("heal");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> SELECT =
-            registerSoundEvent("select");
+        registerSoundEvent("select");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> START_TRIAL =
-            registerSoundEvent("start_trial");
+        registerSoundEvent("start_trial");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> END_TRIAL =
-            registerSoundEvent("end_trial");
+        registerSoundEvent("end_trial");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> COIN =
-            registerSoundEvent("coin_sound");
+        registerSoundEvent("coin_sound");
 
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));

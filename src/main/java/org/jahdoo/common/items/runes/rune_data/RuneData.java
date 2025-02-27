@@ -26,7 +26,7 @@ import java.util.Objects;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
 import static org.jahdoo.ascension.LocalLootBeamData.attachLootBeamComponent;
-import static org.jahdoo.common.items.runes.rune_data.RuneGenerator.RuneCategories.fromName;
+import static org.jahdoo.common.items.runes.rune_data.RuneCategories.fromName;
 import static org.jahdoo.common.items.runes.rune_data.RuneGenerator.*;
 import static org.jahdoo.common.registers.AttributesRegister.*;
 import static org.jahdoo.common.registers.DataComponentRegistry.RUNE_DATA;
@@ -76,8 +76,8 @@ public record RuneData(
     }
 
     public int getTypeColourPrimary(){
-        var element = getElementById(this.elementId);
-        return element.map(AbstractElement::textColourPrimary).orElse(colour);
+        var element = fromId(this.elementId);
+        return element.map(AbstractElement::textColourA).orElse(colour);
     }
 
     public int getTypeColourSecondary(){
@@ -180,7 +180,7 @@ public record RuneData(
             var entry = attributes.getFirst();
             var descriptionId = entry.attribute().value().getDescriptionId();
             var amount = entry.modifier().amount();
-            var typeColour = data.elementId < 1 ? data.colour : getElementById(data.elementId()).orElseThrow().textColourPrimary();
+            var typeColour = data.elementId < 1 ? data.colour : fromId(data.elementId()).orElseThrow().textColourA();
             var compName = withStyleComponentTrans(descriptionId, typeColour);
             var isAbsorption = descriptionId.contains("absorption");
             var isMaxHealth = descriptionId.contains("health");
@@ -194,13 +194,13 @@ public record RuneData(
 
         public static int getColourBy(String attributeName){
             if(attributeName.contains("mystic")){
-                return MYSTIC.get().textColourPrimary();
+                return mystic().textColourA();
             } else if (attributeName.contains("vitality")) {
-                return VITALITY.get().textColourPrimary();
+                return vitality().textColourA();
             } else if (attributeName.contains("inferno")) {
-                return INFERNO.get().textColourPrimary();
+                return inferno().textColourA();
             } else if (attributeName.contains("frost")) {
-                return FROST.get().textColourPrimary();
+                return frost().textColourA();
             } else if (attributeName.contains("mana.mana")) {
                 return ColourStore.AETHER_BLUE;
             } else if (attributeName.contains("skills")) {
@@ -263,17 +263,17 @@ public record RuneData(
                 var getList = switch (getRarity()){
                     case COMMON ->
                         List.of(
-                            generateElementalRune(getElement.getTypeManaReduction(), attributes.getRandomManaReduction(), COMMON, getElement.getTypeId(), id),
+                            generateElementalRune(getElement.manaReduction(), attributes.getRandomManaReduction(), COMMON, getElement.id(), id),
                             generatePerkRune(DESTINY_BOND.getDelegate(), NO_VALUE, COMMON, "Keep your item on death.", NO_VALUE, NO_VALUE)
                         );
                     case RARE ->
                         List.of(
-                            generateElementalRune(getElement.getDamageTypeAmplifier(), attributes.getRandomDamage(), RARE, getElement.getTypeId(), id),
+                            generateElementalRune(getElement.damageAmplifier(), attributes.getRandomDamage(), RARE, getElement.id(), id),
                             generatePerkRune(Attributes.MOVEMENT_SPEED, attributes.getRandomDamage(), RARE, NO_DESCRIPTION, id, 0.1)
                         );
                     case EPIC ->
                         List.of(
-                            generateElementalRune(getElement.getTypeCooldownReduction(), attributes.getRandomCooldown(), EPIC, getElement.getTypeId(), id),
+                            generateElementalRune(getElement.cooldownReduction(), attributes.getRandomCooldown(), EPIC, getElement.id(), id),
                             generatePerkRune(TRIPLE_JUMP, 100, RARE, "Allows player to jump up to 3 times", NO_VALUE, 100)
                         );
                     case LEGENDARY ->
@@ -298,7 +298,7 @@ public record RuneData(
                 };
 
                 attachLootBeamComponent(stack, rarity);
-                generateFullRune(stack, getRandomListElement(getList));
+                generateFullRune(stack, listRandom(getList));
             }
         }
     }

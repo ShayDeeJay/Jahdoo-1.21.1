@@ -10,6 +10,8 @@ import software.bernie.geckolib.animation.RawAnimation;
 
 import java.util.List;
 
+import static software.bernie.geckolib.animatable.GeoItem.*;
+
 public class WandAnimations {
     public static final String IDLE_ID = "idle";
     public static final String SINGLE_CAST_ID = "single_cast_1";
@@ -25,13 +27,25 @@ public class WandAnimations {
 
     public static List<String> castAnims = List.of(SINGLE_CAST_ID, ROTATION_CAST_ID, HOLD_CAST_ID);
 
-    public static void triggerAnimWithController(SingletonGeoAnimatable animate, ItemStack itemStack, ServerLevel serverLevel, Entity entity, String anim){
-        animate.stopTriggeredAnim(entity, GeoItem.getOrAssignId(itemStack, serverLevel), "Activation", anim);
-        animate.triggerAnim(entity, GeoItem.getOrAssignId(itemStack, serverLevel), "Activation", anim);
+    public static void triggerAnimWithController(
+        SingletonGeoAnimatable animate,
+        ItemStack itemStack,
+        ServerLevel serverLevel,
+        Entity entity,
+        String anim
+    ){
+        animate.stopTriggeredAnim(entity, getOrAssignId(itemStack, serverLevel), "Activation", anim);
+        animate.triggerAnim(entity, getOrAssignId(itemStack, serverLevel), "Activation", anim);
     }
 
-    public static void playRandomCastAnim(SingletonGeoAnimatable animate, ItemStack itemStack, ServerLevel serverLevel, Entity entity){
-        animate.triggerAnim(entity, GeoItem.getOrAssignId(itemStack, serverLevel), "Activation", castAnims.get(Helpers.Random.nextInt(0, castAnims.size())));
+    public static void playRandomCastAnim(
+        SingletonGeoAnimatable animate,
+        ItemStack itemStack,
+        ServerLevel serverLevel,
+        Entity entity
+    ){
+        var random = Helpers.Random.nextInt(0, castAnims.size());
+        animate.triggerAnim(entity, getOrAssignId(itemStack, serverLevel), "Activation", castAnims.get(random));
     }
 
 }

@@ -36,7 +36,7 @@ public class InfernoEffect extends MobEffect {
     }
 
     private static @NotNull AbstractElement getElement() {
-        return ElementRegistry.INFERNO.get();
+        return ElementRegistry.inferno();
     }
 
     @Override

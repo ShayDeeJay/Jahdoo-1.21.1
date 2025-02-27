@@ -11,12 +11,19 @@ import java.util.concurrent.CompletableFuture;
 
 public class JahdooCuriosProvider extends CuriosDataProvider {
 
-    public JahdooCuriosProvider(PackOutput output, ExistingFileHelper fileHelper, CompletableFuture<HolderLookup.Provider> registries) {
+    public JahdooCuriosProvider(
+        PackOutput output,
+        ExistingFileHelper fileHelper,
+        CompletableFuture<HolderLookup.Provider> registries
+    ) {
         super(JahdooMod.MOD_ID, output, fileHelper, registries);
     }
 
     @Override
-    public void generate(HolderLookup.Provider registries, ExistingFileHelper fileHelper) {
+    public void generate(
+        HolderLookup.Provider registries,
+        ExistingFileHelper fileHelper
+    ) {
         this.createSlot("relic")
             .size(1)
             .dropRule(ICurio.DropRule.ALWAYS_DROP)

@@ -7,11 +7,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import org.jahdoo.common.entities.EntityMovers;
 
+import static net.minecraft.world.effect.MobEffectCategory.BENEFICIAL;
+
 public class ItemMagnetEffect extends MobEffect {
 
 
-    public ItemMagnetEffect(MobEffectCategory pCategory, int pColor) {
-        super(pCategory, pColor);
+    public ItemMagnetEffect() {
+        super(BENEFICIAL, 3436524);
     }
 
     @Override

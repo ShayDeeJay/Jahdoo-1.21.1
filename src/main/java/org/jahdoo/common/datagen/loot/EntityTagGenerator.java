@@ -11,15 +11,24 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
+import static org.jahdoo.ascension.utils.ModTags.*;
+import static org.jahdoo.ascension.utils.ModTags.Entities.*;
+import static org.jahdoo.common.registers.EntitiesRegister.*;
+
 public class EntityTagGenerator extends EntityTypeTagsProvider {
 
-    public EntityTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, @Nullable ExistingFileHelper existingFileHelper) {
+    public EntityTagGenerator(
+        PackOutput output,
+        CompletableFuture<HolderLookup.Provider> provider,
+        ExistingFileHelper existingFileHelper
+    ) {
         super(output, provider, JahdooMod.MOD_ID, existingFileHelper);
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider pProvider) {
-        this.tag(ModTags.Entities.IGNORE_ENTITY)
-            .add(EntitiesRegister.GENERIC_PROJECTILE.get());
+    protected void addTags(HolderLookup.Provider provider) {
+        this.tag(IGNORE_ENTITY)
+            .add(GENERIC_PROJECTILE.get());
     }
+
 }

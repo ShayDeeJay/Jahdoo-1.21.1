@@ -24,11 +24,22 @@ public class GuiButton extends ImageButton {
     private final boolean showHover;
     private final String label;
 
-    public GuiButton(int pX, int pY, WidgetSprites sprites, int size, OnPress pOnPress, boolean isSelected, @Nullable ResourceLocation buttonOverlay, String label, int scaler, boolean showHover) {
+    public GuiButton(
+        int pX,
+        int pY,
+        WidgetSprites sprites,
+        int size,
+        OnPress pOnPress,
+        boolean isSelected,
+        @Nullable ResourceLocation buttonOverlay,
+        String label,
+        int scale,
+        boolean showHover
+    ) {
         super(pX, pY, size, size, sprites, pOnPress);
-        this.defaultSize = size; // Default size is the initial size of the button
-        this.sizes = size; // Initialize sizes to the default size
-        this.totalSize = size + scaler; // Increased size
+        this.defaultSize = size;
+        this.sizes = size;
+        this.totalSize = size + scale;
         this.pOnPress = pOnPress;
         this.isSelected = isSelected;
         this.buttonOverlay = buttonOverlay;
@@ -38,6 +49,22 @@ public class GuiButton extends ImageButton {
 
     public float easeInOutCubic(float t) {
         return t < 0.5f ? 4 * t * t * t : 1 - (float) Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    @Override
+    protected boolean isValidClickButton(int button) {
+        return !isSelected;
+    }
+
+    @Override
+    public void playDownSound(SoundManager handler) {
+        handler.play(SimpleSoundInstance.forUI(SoundRegister.SELECT, 1));
+    }
+
+    @Override
+    public void onPress() {
+        this.sizes = defaultSize;
+        pOnPress.onPress(this);
     }
 
     @Override
@@ -70,23 +97,5 @@ public class GuiButton extends ImageButton {
         if(buttonOverlay != null){
             pGuiGraphics.blit(buttonOverlay, this.getX() - offset, this.getY() - offset, 1, 0, 0, easedValue, easedValue, easedValue, easedValue);
         }
-    }
-
-
-
-    @Override
-    protected boolean isValidClickButton(int button) {
-        return !isSelected;
-    }
-
-    @Override
-    public void onPress() {
-        this.sizes = defaultSize;
-        pOnPress.onPress(this);
-    }
-
-    @Override
-    public void playDownSound(SoundManager handler) {
-        handler.play(SimpleSoundInstance.forUI(SoundRegister.SELECT, 1));
     }
 }

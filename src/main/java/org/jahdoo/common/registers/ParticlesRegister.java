@@ -29,8 +29,8 @@ public class ParticlesRegister {
     public static final Supplier<ParticleType<GenericParticleOptions>> SOFT =
         register("soft", GenericParticleOptions.MAP_CODEC, GenericParticleOptions.STREAM_CODEC);
 
-   public static final Supplier<ParticleType<GenericParticleOptions>> ELECTRIC =
-       register("electric", GenericParticleOptions.MAP_CODEC, GenericParticleOptions.STREAM_CODEC);
+    public static final Supplier<ParticleType<GenericParticleOptions>> ELECTRIC =
+        register("electric", GenericParticleOptions.MAP_CODEC, GenericParticleOptions.STREAM_CODEC);
 
     //Colour baked particles
     public static final Supplier<ParticleType<BakedParticleOptions>> BAKED_INFERNO =

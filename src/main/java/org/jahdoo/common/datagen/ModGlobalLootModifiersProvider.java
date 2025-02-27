@@ -10,23 +10,35 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCon
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import net.neoforged.neoforge.common.loot.LootTableIdCondition;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.loot.AddItemModifier;
+import org.jahdoo.common.datagen.loot.AddItemModifier;
 import org.jahdoo.common.registers.ItemsRegister;
 
 import java.util.concurrent.CompletableFuture;
 
+import static net.minecraft.world.level.storage.loot.BuiltInLootTables.*;
+import static org.jahdoo.common.registers.ItemsRegister.*;
+
 public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
-    public ModGlobalLootModifiersProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+
+    public ModGlobalLootModifiersProvider(
+        PackOutput output,
+        CompletableFuture<HolderLookup.Provider> registries
+    ) {
         super(output, registries, JahdooMod.MOD_ID);
     }
 
     @Override
     protected void start() {
-        var chestLoot = BuiltInLootTables.all().stream().filter(it -> it.location().getPath().intern().contains("chest")).toList();
+        var chestLoot = all().stream().filter(it -> it.location().getPath().intern().contains("chest")).toList();
         chestLoot.forEach(entries -> commonLootTables(entries.location(), chestLoot.indexOf(entries)));
     }
 
-    public static AddItemModifier addLoot(ResourceLocation resourceLocation, Item item, float chance){
+    public static AddItemModifier addLoot(
+        ResourceLocation resourceLocation,
+        Item item,
+        float chance
+    ){
+
         return new AddItemModifier(
             new LootItemCondition[] {
                 LootItemRandomChanceCondition.randomChance(chance).build(),
@@ -34,11 +46,15 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
             },
             item
         );
+
     }
 
-    private void commonLootTables(ResourceLocation resourceLocation, int additional) {
-        add("augments_chest" + additional, addLoot(resourceLocation, ItemsRegister.AUGMENT_ITEM.get(), 0.4f));
-        add("augments_core_chest" + additional, addLoot(resourceLocation, ItemsRegister.AUGMENT_CORE.get(), 0.35f));
+    private void commonLootTables(
+        ResourceLocation resourceLocation,
+        int additional
+    ) {
+        add("augments_chest" + additional, addLoot(resourceLocation, AUGMENT_ITEM.get(), 0.4f));
+        add("augments_core_chest" + additional, addLoot(resourceLocation, AUGMENT_CORE.get(), 0.35f));
     }
 
 }

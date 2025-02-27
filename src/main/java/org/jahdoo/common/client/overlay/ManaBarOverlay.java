@@ -16,7 +16,6 @@ import org.jahdoo.common.client.IconLocations;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.AbilityRegister;
-import org.jahdoo.common.registers.ElementRegistry;
 import org.jahdoo.ascension.utils.Configuration;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.ascension.utils.Helpers;
@@ -27,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.jahdoo.common.client.SharedUI.drawStringWithBackground;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.ticksToTime;
 import static org.jahdoo.common.registers.AttachmentRegister.CASTER_DATA;
+import static org.jahdoo.common.registers.ElementRegistry.*;
 
 public class ManaBarOverlay implements LayeredDraw.Layer {
     float fadeIn;
@@ -191,15 +191,12 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var height = pGuiGraphics.guiHeight();
         var manaPoolCount = Component.literal(String.valueOf(Math.round(casterData.getManaPool())));
         var colourBack = -13816531;
-        var colourText = ElementRegistry.getElementByTypeId(types);
-        if(!colourText.isEmpty()){
-            var pose = pGuiGraphics.pose();
-            pose.pushPose();
-            pose.translate(58 + this.alignedGui.shiftGuiX - 0.1, height - 16.1 - this.alignedGui.shiftGuiY, 10D);
-            pose.scale(0.5f,0.5f,0.5f);
-            drawStringWithBackground(pGuiGraphics, minecraft.font, manaPoolCount, 0, 0, colourBack,  -4276546, true);
-            pose.popPose();
-        }
+        var pose = pGuiGraphics.pose();
+        pose.pushPose();
+        pose.translate(58 + this.alignedGui.shiftGuiX - 0.1, height - 16.1 - this.alignedGui.shiftGuiY, 10D);
+        pose.scale(0.5f,0.5f,0.5f);
+        drawStringWithBackground(pGuiGraphics, minecraft.font, manaPoolCount, 0, 0, colourBack,  -4276546, true);
+        pose.popPose();
     }
 
     private void cooldownOverlay(AbilityRegistrar ability, CastingData casterData, GuiGraphics pGuiGraphics, Minecraft minecraft){
@@ -236,8 +233,9 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
 
     public void setTypeOverlay(AlignedGui alignedGui, Player player, int manaProgress){
         var type = Helpers.getUsedItem(player);
-        var element = ElementRegistry.getElementByWandType(type.getItem());
-        if(!element.isEmpty()) this.types = element.getFirst().getTypeId();
+        var element = fromWand(type.getItem());
+
+        element.ifPresent(getElement -> this.types = getElement.id());
         if(types > 0){
             int[] manaOverlay = {35, 43, 27, 11, 19, 20};
             alignedGui.displayGuiLayer(25, 18, 0, manaOverlay[types - 1], manaProgress, 8, IconLocations.MANA_LEVEL_BAR);

@@ -21,7 +21,7 @@ import org.jahdoo.ascension.utils.PositionFinders;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.common.registers.AttachmentRegister.*;
-import static org.jahdoo.common.registers.ElementRegistry.getElementFromWand;
+import static org.jahdoo.common.registers.ElementRegistry.fromWand;
 
 public class MageFlight implements AbstractAttachment {
 
@@ -116,9 +116,9 @@ public class MageFlight implements AbstractAttachment {
     }
 
     private void mageFlightAnimation(ItemStack wandItem, Player player){
-        var element = getElementFromWand(wandItem.getItem()).orElse(ElementRegistry.getRandomElement());
+        var element = fromWand(wandItem.getItem()).orElse(ElementRegistry.getRandomElement());
         var part1 = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 2, 0.2f, true);
-        var part2 = bakedParticleOptions(element.getTypeId(), 2, 1f, false);
+        var part2 = bakedParticleOptions(element.id(), 2, 1f, false);
         var getMovement = player.getDeltaMovement().y > -0.5;
 
         PositionFinders.getInnerRingOfRadiusRandom(player.position(), player.getBbWidth() - 0.3, getMovement ? 5 : 2,

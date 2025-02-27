@@ -38,7 +38,7 @@ public class MysticEffect extends MobEffect {
     }
 
     private static @NotNull AbstractElement getElement() {
-        return ElementRegistry.MYSTIC.get();
+        return ElementRegistry.mystic();
     }
 
     private void onTickApply(LivingEntity targetEntity, ServerLevel serverLevel, AbstractElement element) {
@@ -74,7 +74,7 @@ public class MysticEffect extends MobEffect {
             livingEntity.setDeltaMovement(0, 0.5, 0);
         }
 
-        livingEntity.playSound(getElement().getElementSound());
+        livingEntity.playSound(getElement().sound());
         livingEntity.playSound(SoundRegister.DASH_EFFECT_INSTANT.get(), 1, 0.6f);
         super.onEffectAdded(livingEntity, amplifier);
     }

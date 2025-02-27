@@ -39,6 +39,7 @@ import static org.jahdoo.common.items.augments.AugmentItemHelper.setAbilityToAug
 import static org.jahdoo.common.registers.DataComponentRegistry.NUMBER;
 import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
 import static org.jahdoo.common.registers.ElementRegistry.getElementByWandType;
+import static org.jahdoo.common.registers.ElementRegistry.fromWand;
 
 public class WandBlockEntity extends AbstractBEInventory implements MenuProvider, GeoBlockEntity {
     int tickCounter;
@@ -116,13 +117,11 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
     public void tick(Level level, BlockPos blockPos, BlockState pState) {
 
         var getWandItem = inputItemHandler.getStackInSlot(GET_WAND_SLOT).getItem();
-        var getType = getElementByWandType(getWandItem);
+        var getType = fromWand(getWandItem);
         if (getType.isEmpty()) return;
 
         tickCounter++;
-        if (getType.getFirst() != null) {
-            this.playIdleParticleType(level, blockPos, getType.getFirst());
-        }
+        getType.ifPresent(type -> this.playIdleParticleType(level, blockPos, type));
     }
 
     public void playIdleParticleType(Level level, BlockPos blockPos, AbstractElement getType){

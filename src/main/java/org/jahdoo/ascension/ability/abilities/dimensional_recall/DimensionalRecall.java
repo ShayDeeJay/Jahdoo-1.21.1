@@ -91,13 +91,13 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
     }
 
     private void sendNoHomeMessage(Player player){
-        player.displayClientMessage(Helpers.withStyleComponentTrans("ability.jahdoo.no_home", this.getElement().textColourPrimary()), true);
+        player.displayClientMessage(Helpers.withStyleComponentTrans("ability.jahdoo.no_home", this.getElement().textColourA()), true);
     }
 
     public void pullParticlesToCenter(Player player){
         var casterData = player.getData(CASTER_DATA);
         var manaReduction = casterData.getMaxMana(player) / 60;
-        var bakedParticleOption = bakedParticleOptions(this.getElement().getTypeId(), 6, 2f, false);
+        var bakedParticleOption = bakedParticleOptions(this.getElement().id(), 6, 2f, false);
         var genericParticleOptions = genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, this.getElement(), 10, 1.4f);
         var particleOptionsList = List.of(bakedParticleOption, genericParticleOptions);
         var getRandomParticle = particleOptionsList.get(RandomSource.create().nextInt(0, 2));
@@ -128,7 +128,7 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
     }
 
     public AbstractElement getElement(){
-        return ElementRegistry.MYSTIC.get();
+        return ElementRegistry.mystic();
     }
 
 }

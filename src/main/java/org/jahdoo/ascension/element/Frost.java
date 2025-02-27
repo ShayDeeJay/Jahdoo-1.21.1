@@ -17,37 +17,37 @@ public class Frost extends AbstractElement {
     ResourceLocation abilityId = Helpers.res("frost");
 
     @Override
-    public ResourceLocation getAbilityResource() {
+    public ResourceLocation abilityResource() {
         return abilityId;
     }
 
     @Override
-    public int getTypeId() {
+    public int id() {
         return 1;
     }
 
     @Override
-    public int textColourPrimary() {
+    public int textColourA() {
         return FastColor.ARGB32.color(160,209,243);
     }
 
     @Override
-    public int textColourSecondary() {
+    public int textColourB() {
         return FastColor.ARGB32.color(103, 200, 249);
     }
 
     @Override
-    public int particleColourPrimary() {
+    public int partColourA() {
         return FastColor.ARGB32.color(45, 169, 255);
     }
 
     @Override
-    public int particleColourSecondary() {
+    public int partColourB() {
         return FastColor.ARGB32.color(135,204,254);
     }
 
     @Override
-    public int particleColourFaded() {
+    public int partColourFade() {
         return -3479555;
     }
 
@@ -57,33 +57,33 @@ public class Frost extends AbstractElement {
     }
 
     @Override
-    public ResourceLocation getAbilityProjectileTexture() {
+    public ResourceLocation projectileTexture() {
         return Helpers.res("textures/entity/cryo_projectile.png");
     }
 
     @Override
-    public Holder<MobEffect> elementEffect() {
+    public Holder<MobEffect> effect() {
         return EffectsRegister.FROST_EFFECT.getDelegate();
     }
 
 
     @Override
-    public Holder<Attribute> getTypeCooldownReduction() {
+    public Holder<Attribute> cooldownReduction() {
         return AttributesRegister.FROST_COOLDOWN_REDUCTION;
     }
 
     @Override
-    public Holder<Attribute> getTypeManaReduction() {
+    public Holder<Attribute> manaReduction() {
         return AttributesRegister.FROST_MANA_COST_REDUCTION;
     }
 
     @Override
-    public Holder<Attribute> getDamageTypeAmplifier() {
+    public Holder<Attribute> damageAmplifier() {
         return AttributesRegister.FROST_MAGIC_DAMAGE_MULTIPLIER;
     }
 
     @Override
-    public SoundEvent getElementSound() {
+    public SoundEvent sound() {
         return SoundRegister.ICE_ATTACH.get();
     }
 }

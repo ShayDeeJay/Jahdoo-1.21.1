@@ -49,54 +49,59 @@ import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTION
 
 public class EventHelpers {
 
-    public static Entity getEntityPlayerIsLookingAt(Player player, double maxDistance) {
-        var eyePosition = player.getEyePosition(1.0F);
-        var lookVector = player.getViewVector(1.0F).scale(maxDistance);
-        var endPoint = eyePosition.add(lookVector);
-        var searchBox = player.getBoundingBox().expandTowards(lookVector).inflate(1.0D);
-        var entities = player.level().getEntities(player, searchBox, entity -> entity.isPickable());
-        Entity closestEntity = null;
-        var closestDistance = maxDistance;
-
-        for (Entity entity : entities) {
-            var entityBox = entity.getBoundingBox().inflate(0.3D);
-            var hit = entityBox.clip(eyePosition, endPoint);
-
-            if (hit.isPresent()) {
-                var distance = eyePosition.distanceTo(hit.get());
-
-                if (distance < closestDistance) {
-                    closestEntity = entity;
-                    closestDistance = distance;
-                }
-            }
-        }
-
-        return closestEntity;
+    public static void saveDestinyBondItems(LivingEntity entity) {
+        if(entity instanceof Player player) player.getData(SAVE_DATA).addAllItems(player);
     }
 
-    public static void setGameModeOnDimChange(PlayerEvent.PlayerChangedDimensionEvent event, Player player) {
-        var toMCDim = event.getTo().location().toString().contains("minecraft:");
-        var fromCustomDim = event.getFrom().location().toString().contains("jahdoo:");
-        var fromMCDim = event.getFrom().location().toString().contains("minecraft:");
-        var toCustomDim = event.getTo().location().toString().contains("jahdoo:");
-
-        // Set adventure mode on dim join
-        if(fromMCDim && toCustomDim){
-            if(player instanceof ServerPlayer serverPlayer){
-                if(serverPlayer.gameMode.isSurvival()){
-                    serverPlayer.setGameMode(GameType.ADVENTURE);
-                }
+    public static void disallowEffectsInCustomDim(MobEffectEvent.Applicable event) {
+        if(event.getEntity().level() instanceof CustomLevel){
+            if(!(event.getEffectInstance() instanceof JahdooMobEffect) && event.getEffectInstance().getEffect().value().isBeneficial()){
+                event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
             }
         }
+    }
 
-        // Reset game mode when leaving custom dim
-        if(toMCDim && fromCustomDim){
-            if(player instanceof ServerPlayer serverPlayer){
-                if(serverPlayer.gameMode.isSurvival()){
+    public static void removeWandInteractionWithBlocks(UseItemOnBlockEvent event, Player player, Item item, BlockState getBlock) {
+        if(player != null){
+            if (item instanceof WandItem && !player.isShiftKeyDown() && !getBlock.is(ALLOWED_BLOCK_INTERACTIONS)) {
+                event.cancelWithResult(SKIP_DEFAULT_BLOCK_INTERACTION);
+            }
+        }
+    }
+
+    public static void resetGameModeOnDeath(LivingEntity entity) {
+        //Reset game mode if died in custom dim
+        if(entity.level() instanceof CustomLevel){
+            if(entity instanceof ServerPlayer serverPlayer){
+                if(serverPlayer.gameMode.getGameModeForPlayer() == GameType.ADVENTURE){
                     serverPlayer.setGameMode(GameType.SURVIVAL);
                 }
             }
+        }
+    }
+
+    public static void greaterVitalityEffect(LivingDamageEvent.Pre event, LivingEntity entity) {
+        if(entity.hasEffect(EffectsRegister.GREATER_VITALITY_EFFECT)){
+            var getAttacker = event.getSource().getEntity();
+            if(Random.nextInt(4) == 0){
+                if(getAttacker instanceof Player player){
+                    VitalRejuvenation.successfulCastAnimation(player);
+                    player.heal(2);
+                }
+            }
+        }
+    }
+
+    public static void onDeathGreaterFrostEffect(LivingEntity entity) {
+        if(entity.hasEffect(EffectsRegister.GREATER_FROST_EFFECT)){
+            getSoundWithPosition(entity.level(), entity.blockPosition(), SoundEvents.GLASS_BREAK, 1, 1);
+            getAllParticleTypes(ElementRegistry.frost(), 20, 1);
+            sendParticles(
+                  entity.level(),
+                  getAllParticleTypes(ElementRegistry.frost(), 12, 1.5f),
+                  entity.position().add(0, entity.getBbHeight()/2, 0), 30,
+                  0, 1, 0, 0.2
+            );
         }
     }
 
@@ -112,6 +117,40 @@ public class EventHelpers {
                     event.setCanceled(true);
                 }
             }
+        }
+    }
+
+    public static void greaterFrostEffectDamageAmplifier(LivingDamageEvent.Pre event, LivingEntity entity) {
+        if(entity.hasEffect(EffectsRegister.GREATER_FROST_EFFECT)){
+            var origin = event.getOriginalDamage();
+            var modifiedDamage = origin * 2;
+            if(!entity.isAlive()){
+                getSoundWithPosition(entity.level(), entity.blockPosition(), SoundEvents.GLASS_BREAK, 1, 1);
+                getAllParticleTypes(ElementRegistry.frost(), 20, 1);
+                sendParticles(
+                    entity.level(),
+                    getAllParticleTypes(ElementRegistry.frost(), 12, 1.5f),
+                    entity.position().add(0, entity.getBbHeight()/2, 0), 30,
+                    0, 1, 0, 0.2
+                );
+            }
+            event.setNewDamage(modifiedDamage);
+        }
+    }
+
+    public static void mysticEffectClient(RenderLivingEvent.Pre event) {
+        var entity = event.getEntity();
+        var effect = EffectsRegister.MYSTIC_EFFECT;
+        var putEffect = entity.getEffect(effect);
+        if(entity.hasEffect(effect)){
+            var height = entity.getBbHeight() / 2;
+            var tick = entity.tickCount;
+            var anim = (tick + event.getPartialTick());
+            var pos = event.getPoseStack();
+            pos.rotateAround(Axis.XN.rotationDegrees(anim), 0, height, 0);
+            pos.rotateAround(Axis.YN.rotationDegrees(anim), 0, height, 0);
+            pos.rotateAround(Axis.ZN.rotationDegrees(anim), 0, height, 0);
+            if(putEffect.getDuration() == 0) entity.removeEffect(effect);
         }
     }
 
@@ -151,7 +190,7 @@ public class EventHelpers {
             if (mods.isEmpty()) return;
             var acMod = mods.getFirst();
             /* Would be nice if you could actually control the hand allowed. One way would be to add a component that changes
-            *  when swapped. Or just get slot context from inventory tick? */
+             *  when swapped. Or just get slot context from inventory tick? */
             var slot = item.getItem() instanceof ArmorItem ? ARMOR : hand == 0 ? MAINHAND : OFFHAND;
 
             event.addModifier(acMod.attribute(), acMod.modifier(), slot);
@@ -159,107 +198,54 @@ public class EventHelpers {
 
     }
 
-    public static void entityDeathLoot(LivingEntity entity, DamageSource source) {
-        if(!entity.level().isClientSide){
-            if(entity.shouldDropExperience()){
-//                var killedByJahdoo = Objects.equals(source.getMsgId(), DamageTypesProvider.JAHDOO_DAMAGE);
-//                var canGetAugment = Random.nextInt(40) == 0;
-//                if (killedByJahdoo && canGetAugment) {
-//                    var canGetCore = Random.nextInt(40) == 0;
-//                    if (canGetCore) throwNewItem(entity, new ItemStack(ItemsRegister.AUGMENT_CORE.get()));
-//                    throwNewItem(entity, JahdooRarity.getAbilityAugment(COMMON, RARE));
-//                }
+    public static void setGameModeOnDimChange(PlayerEvent.PlayerChangedDimensionEvent event, Player player) {
+        var toMCDim = event.getTo().location().toString().contains("minecraft:");
+        var fromCustomDim = event.getFrom().location().toString().contains("jahdoo:");
+        var fromMCDim = event.getFrom().location().toString().contains("minecraft:");
+        var toCustomDim = event.getTo().location().toString().contains("jahdoo:");
+
+        // Set adventure mode on dim join
+        if(fromMCDim && toCustomDim){
+            if(player instanceof ServerPlayer serverPlayer){
+                if(serverPlayer.gameMode.isSurvival()){
+                    serverPlayer.setGameMode(GameType.ADVENTURE);
+                }
             }
         }
-    }
 
-    public static void saveDestinyBondItems(LivingEntity entity) {
-        if(entity instanceof Player player) player.getData(SAVE_DATA).addAllItems(player);
-    }
-
-    public static void resetGameModeOnDeath(LivingEntity entity) {
-        //Reset game mode if died in custom dim
-        if(entity.level() instanceof CustomLevel){
-            if(entity instanceof ServerPlayer serverPlayer){
-                if(serverPlayer.gameMode.getGameModeForPlayer() == GameType.ADVENTURE){
+        // Reset game mode when leaving custom dim
+        if(toMCDim && fromCustomDim){
+            if(player instanceof ServerPlayer serverPlayer){
+                if(serverPlayer.gameMode.isSurvival()){
                     serverPlayer.setGameMode(GameType.SURVIVAL);
                 }
             }
         }
     }
 
-    public static void disallowEffectsInCustomDim(MobEffectEvent.Applicable event) {
-        if(event.getEntity().level() instanceof CustomLevel){
-            if(!(event.getEffectInstance() instanceof JahdooMobEffect) && event.getEffectInstance().getEffect().value().isBeneficial()){
-                event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
-            }
-        }
-    }
+    public static Entity getEntityPlayerIsLookingAt(Player player, double maxDistance) {
+        var eyePosition = player.getEyePosition(1.0F);
+        var lookVector = player.getViewVector(1.0F).scale(maxDistance);
+        var endPoint = eyePosition.add(lookVector);
+        var searchBox = player.getBoundingBox().expandTowards(lookVector).inflate(1.0D);
+        var entities = player.level().getEntities(player, searchBox, entity -> entity.isPickable());
+        Entity closestEntity = null;
+        var closestDistance = maxDistance;
 
-    public static void removeWandInteractionWithBlocks(UseItemOnBlockEvent event, Player player, Item item, BlockState getBlock) {
-        if(player != null){
-            if (item instanceof WandItem && !player.isShiftKeyDown() && !getBlock.is(ALLOWED_BLOCK_INTERACTIONS)) {
-                event.cancelWithResult(SKIP_DEFAULT_BLOCK_INTERACTION);
-            }
-        }
-    }
+        for (var entity : entities) {
+            var entityBox = entity.getBoundingBox().inflate(0.3D);
+            var hit = entityBox.clip(eyePosition, endPoint);
 
-    public static void onDeathGreaterFrostEffect(LivingEntity entity) {
-        if(entity.hasEffect(EffectsRegister.GREATER_FROST_EFFECT)){
-            getSoundWithPosition(entity.level(), entity.blockPosition(), SoundEvents.GLASS_BREAK, 1, 1);
-            getAllParticleTypes(ElementRegistry.FROST.get(), 20, 1);
-            sendParticles(
-                entity.level(),
-                getAllParticleTypes(ElementRegistry.FROST.get(), 12, 1.5f),
-                entity.position().add(0, entity.getBbHeight()/2, 0), 30,
-                0, 1, 0, 0.2
-            );
-        }
-    }
+            if (hit.isPresent()) {
+                var distance = eyePosition.distanceTo(hit.get());
 
-    public static void greaterFrostEffectDamageAmplifier(LivingDamageEvent.Pre event, LivingEntity entity) {
-        if(entity.hasEffect(EffectsRegister.GREATER_FROST_EFFECT)){
-            var origin = event.getOriginalDamage();
-            var modifiedDamage = origin * 2;
-            if(!entity.isAlive()){
-                getSoundWithPosition(entity.level(), entity.blockPosition(), SoundEvents.GLASS_BREAK, 1, 1);
-                getAllParticleTypes(ElementRegistry.FROST.get(), 20, 1);
-                sendParticles(
-                    entity.level(),
-                    getAllParticleTypes(ElementRegistry.FROST.get(), 12, 1.5f),
-                    entity.position().add(0, entity.getBbHeight()/2, 0), 30,
-                    0, 1, 0, 0.2
-                );
-            }
-            event.setNewDamage(modifiedDamage);
-        }
-    }
-
-    public static void greaterVitalityEffect(LivingDamageEvent.Pre event, LivingEntity entity) {
-        if(entity.hasEffect(EffectsRegister.GREATER_VITALITY_EFFECT)){
-            var getAttacker = event.getSource().getEntity();
-            if(Random.nextInt(4) == 0){
-                if(getAttacker instanceof Player player){
-                    VitalRejuvenation.successfulCastAnimation(player);
-                    player.heal(2);
+                if (distance < closestDistance) {
+                    closestEntity = entity;
+                    closestDistance = distance;
                 }
             }
         }
-    }
 
-    public static void mysticEffectClient(RenderLivingEvent.Pre event) {
-        var entity = event.getEntity();
-        var effect = EffectsRegister.MYSTIC_EFFECT;
-        var putEffect = entity.getEffect(effect);
-        if(entity.hasEffect(effect)){
-            var height = entity.getBbHeight() / 2;
-            var tick = entity.tickCount;
-            var anim = (tick + event.getPartialTick());
-            var pos = event.getPoseStack();
-            pos.rotateAround(Axis.XN.rotationDegrees(anim), 0, height, 0);
-            pos.rotateAround(Axis.YN.rotationDegrees(anim), 0, height, 0);
-            pos.rotateAround(Axis.ZN.rotationDegrees(anim), 0, height, 0);
-            if(putEffect.getDuration() == 0) entity.removeEffect(effect);
-        }
+        return closestEntity;
     }
 }

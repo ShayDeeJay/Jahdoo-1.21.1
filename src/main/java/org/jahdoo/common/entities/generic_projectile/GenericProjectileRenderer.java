@@ -17,7 +17,6 @@ public class GenericProjectileRenderer extends EntityRenderer<GenericProjectile>
         return null;
     }
 
-
     @Override
     public void render(GenericProjectile pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         super.render(pEntity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);

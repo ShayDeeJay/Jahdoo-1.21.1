@@ -48,20 +48,51 @@ import static org.jahdoo.common.items.wand.CastHelper.castAnimation;
 import static org.jahdoo.common.items.wand.WandAnimations.SINGLE_CAST_ID;
 
 public class EternalWizard extends AbstractSkeleton implements TamableEntity {
+
     private static final EntityDataAccessor<Boolean> SET_MODE = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> LIFETIMES = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> PRIVATE_TICKS = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.INT);
     private final RangedCustomAttackGoal<AbstractSkeleton> wandGoal = new RangedCustomAttackGoal<>(this, 1.0D, 0, 60.0F);
 
-    LivingEntity owner;
-    UUID ownerUUID;
-    double damage;
-    double effectDuration;
-    double effectStrength;
-    double effectChance;
-    int lifeTime;
-    public int privateTicks;
+    private LivingEntity owner;
+    private UUID ownerUUID;
+    private double damage;
+    private double effectDuration;
+    private double effectStrength;
+    private double effectChance;
+    private int lifeTime;
+    private int privateTicks;
+
+    public EternalWizard(EntityType<? extends AbstractSkeleton> entityType, Level level) {
+        super(entityType, level);
+        this.owner = null;
+        this.lifeTime = -1;
+        this.setLifetimes(-1);
+        this.damage = 5;
+        this.reassessWeaponGoal();
+    }
+
+    public EternalWizard(Level level, Player player, int lifeTime, double damage) {
+        super(EntitiesRegister.ETERNAL_WIZARD.get(), level);
+        this.owner = player;
+        this.lifeTime = lifeTime;
+        this.damage = damage;
+        this.reassessWeaponGoal();
+        this.setLifetimes(lifeTime);
+    }
+
+    public EternalWizard(Level level, Player player, double damage, double effectDuration, double effectStrength, int lifeTime, double effectChance) {
+        super(EntitiesRegister.ETERNAL_WIZARD.get(), level);
+        this.owner = player;
+        this.reassessWeaponGoal();
+        this.damage = damage;
+        this.effectDuration = effectDuration;
+        this.effectStrength = effectStrength;
+        this.lifeTime = lifeTime;
+        this.effectChance = effectChance;
+        this.setLifetimes(lifeTime);
+    }
 
     public float getInternalScale() {
         return this.entityData.get(SCALE);
@@ -95,55 +126,6 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
         this.entityData.set(PRIVATE_TICKS, privateTicks);
     }
 
-    public EternalWizard(EntityType<? extends AbstractSkeleton> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
-        this.owner = null;
-        this.lifeTime = -1;
-        this.setLifetimes(-1);
-        this.damage = 5;
-        this.reassessWeaponGoal();
-    }
-
-    public EternalWizard(Level pLevel, Player player, int lifeTime, double damage) {
-        super(EntitiesRegister.ETERNAL_WIZARD.get(), pLevel);
-        this.owner = player;
-        this.lifeTime = lifeTime;
-        this.damage = damage;
-        this.reassessWeaponGoal();
-        this.setLifetimes(lifeTime);
-    }
-
-    public EternalWizard(Level pLevel, Player player, double damage, double effectDuration, double effectStrength, int lifeTime, double effectChance) {
-        super(EntitiesRegister.ETERNAL_WIZARD.get(), pLevel);
-        this.owner = player;
-        this.reassessWeaponGoal();
-        this.damage = damage;
-        this.effectDuration = effectDuration;
-        this.effectStrength = effectStrength;
-        this.lifeTime = lifeTime;
-        this.effectChance = effectChance;
-        this.setLifetimes(lifeTime);
-    }
-
-    @Override
-    protected void registerGoals() {
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(5, new FollowGoal(this, 1.0D, 5.0F, 2.0F, false));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-
-//        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, false));
-        this.targetSelector.addGoal(1, new AttackNearbyMonsters<>(this, LivingEntity.class, false, 5, 100));
-        this.targetSelector.addGoal(2, new GenericHurtByTargetGoal(this));
-        this.targetSelector.addGoal(3, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
-        this.targetSelector.addGoal(3, new GenericOwnerHurtTargetGoal(this, this::getOwner));
-    }
-
-    @Override
-    public double getAttributeBaseValue(Holder<Attribute> pAttribute) {
-        return super.getAttributeBaseValue(pAttribute);
-    }
-
     public LivingEntity getOwner(){
         return this.owner;
     }
@@ -170,11 +152,28 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
     }
 
     @Override
+    protected boolean isSunBurnTick() {
+        return false;
+    }
+
+    @Override
+    protected @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if(this.owner != null) WandItemHelper.setWizardMode(this, player);
+        return InteractionResult.CONSUME;
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity target, float distanceFactor) {
+//        fireballAbility(target);
+//        this.fireProjectile(elementProjectile, player, 0.5f);
+        shooterAbility(target);
+    }
+
+    @Override
     public void tick() {
         super.tick();
         privateTicks++;
         if(!(this.level() instanceof ServerLevel serverLevel)) return;
-//        System.out.println(this.getOwner());
 //        if(this.getTarget() == this.owner) this.setTarget(null);
         this.setPrivateTicks(this.privateTicks);
         if(owner == null && this.ownerUUID != null) this.owner = serverLevel.getPlayerByUUID(this.ownerUUID);
@@ -182,29 +181,12 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
     }
 
     @Override
-    protected boolean isSunBurnTick() {
-        return false;
-    }
-
-    @Override
-    public void reassessWeaponGoal() {
-        if (this.level() instanceof ServerLevel) {
-            this.goalSelector.removeGoal(this.wandGoal);
-            ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof WandItem));
-            if (itemstack.is(ItemsRegister.WAND_ITEM_VITALITY.get())) {
-                //Set attack interval
-                int i = 10;
-                this.wandGoal.setMinAttackInterval(i);
-                this.goalSelector.addGoal(1, this.wandGoal);
-            }
-        }
-    }
-
-    @Override
-    public void performRangedAttack(LivingEntity pTarget, float pDistanceFactor) {
-//        fireballAbility(pTarget);
-//        this.fireProjectile(elementProjectile, player, 0.5f);
-        shooterAbility(pTarget);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SET_MODE, true);
+        builder.define(SCALE, 0f);
+        builder.define(LIFETIMES, this.lifeTime);
+        builder.define(PRIVATE_TICKS, this.privateTicks);
     }
 
     private void fireballAbility(LivingEntity target) {
@@ -229,23 +211,37 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
             .buildAndReturn();
     }
 
-    private void shooterAbility(LivingEntity pTarget) {
+    private void shooterAbility(LivingEntity target) {
         GenericProjectile arrow = new GenericProjectile(
             this, this.getX(), this.getY() + 2, this.getZ(),
             EntityPropertyRegister.ETHEREAL_ARROW.get().setAbilityId(),
             EtherealArrow.setArrowProperties(this.damage, this.effectDuration, this.effectStrength, this.effectChance),
-            ElementRegistry.VITALITY.get(),
+            ElementRegistry.vitality(),
             FrostboltsAbility.abilityId.getPath().intern()
         );
-        fireProjectile(pTarget, arrow, 0.9, 1.6F);
+        fireProjectile(target, arrow, 0.9, 1.6F);
     }
 
-    private void fireProjectile(LivingEntity pTarget, Projectile projectile, double offset, float velocity) {
+    @Override
+    public void reassessWeaponGoal() {
+        if (this.level() instanceof ServerLevel) {
+            this.goalSelector.removeGoal(this.wandGoal);
+            ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof WandItem));
+            if (itemstack.is(ItemsRegister.WAND_ITEM_VITALITY.get())) {
+                //Set attack interval
+                int i = 10;
+                this.wandGoal.setMinAttackInterval(i);
+                this.goalSelector.addGoal(1, this.wandGoal);
+            }
+        }
+    }
+
+    private void fireProjectile(LivingEntity target, Projectile projectile, double offset, float velocity) {
         if (this.getMainHandItem().getItem() instanceof WandItem) {
             projectile.setOwner(this);
-            double d0 = pTarget.getX() - this.getX();
-            double d1 = pTarget.getY(0.3333333333333333D) - projectile.getY() - offset;
-            double d2 = pTarget.getZ() - this.getZ();
+            double d0 = target.getX() - this.getX();
+            double d1 = target.getY(0.3333333333333333D) - projectile.getY() - offset;
+            double d2 = target.getZ() - this.getZ();
             double d3 = Math.sqrt(d0 * d0 + d2 * d2);
             projectile.shoot(d0, d1 + d3 * (double)0.2F, d2, velocity, 0);
             this.playSound(SoundRegister.ORB_CREATE.get(), 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
@@ -255,47 +251,46 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
     }
 
     @Override
-    protected @NotNull InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
-        if(this.owner != null) WandItemHelper.setWizardMode(this, pPlayer);
-        return InteractionResult.CONSUME;
+    protected void registerGoals() {
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new FollowGoal(this, 1.0D, 5.0F, 2.0F, false));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+
+//        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, false));
+        this.targetSelector.addGoal(1, new AttackNearbyMonsters<>(this, LivingEntity.class, false, 5, 100));
+        this.targetSelector.addGoal(2, new GenericHurtByTargetGoal(this));
+        this.targetSelector.addGoal(3, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
+        this.targetSelector.addGoal(3, new GenericOwnerHurtTargetGoal(this, this::getOwner));
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
-        super.defineSynchedData(pBuilder);
-        pBuilder.define(SET_MODE, true);
-        pBuilder.define(SCALE, 0f);
-        pBuilder.define(LIFETIMES, this.lifeTime);
-        pBuilder.define(PRIVATE_TICKS, this.privateTicks);
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        if(this.owner != null) tag.putUUID("owner", owner.getUUID());
+        tag.putBoolean("mode",this.getMode());
+        tag.putDouble(DAMAGE, this.damage);
+        tag.putDouble(EFFECT_DURATION, this.effectDuration);
+        tag.putDouble(EFFECT_STRENGTH, this.effectStrength);
+        tag.putDouble(EFFECT_CHANCE, this.effectChance);
+        tag.putInt(LIFETIME, this.lifeTime);
+        tag.putInt("private_ticks", this.privateTicks);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag pCompound) {
-        super.addAdditionalSaveData(pCompound);
-        if(this.owner != null) pCompound.putUUID("owner", owner.getUUID());
-        pCompound.putBoolean("mode",this.getMode());
-        pCompound.putDouble(DAMAGE, this.damage);
-        pCompound.putDouble(EFFECT_DURATION, this.effectDuration);
-        pCompound.putDouble(EFFECT_STRENGTH, this.effectStrength);
-        pCompound.putDouble(EFFECT_CHANCE, this.effectChance);
-        pCompound.putInt(LIFETIME, this.lifeTime);
-        pCompound.putInt("private_ticks", this.privateTicks);
-    }
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.ownerUUID = tag.getUUID("owner");
 
-    @Override
-    public void readAdditionalSaveData(CompoundTag pCompound) {
-        super.readAdditionalSaveData(pCompound);
-        this.ownerUUID = pCompound.getUUID("owner");
-
-        this.setMode(pCompound.getBoolean("mode"));
-        this.damage = pCompound.getDouble(DAMAGE);
-        this.effectDuration = pCompound.getDouble(EFFECT_DURATION);
-        this.effectStrength = pCompound.getDouble(EFFECT_STRENGTH);
-        this.effectChance = pCompound.getDouble(EFFECT_CHANCE);
-        this.lifeTime = pCompound.getInt(LIFETIME);
-        this.privateTicks = pCompound.getInt("private_ticks");
+        this.setMode(tag.getBoolean("mode"));
+        this.damage = tag.getDouble(DAMAGE);
+        this.effectDuration = tag.getDouble(EFFECT_DURATION);
+        this.effectStrength = tag.getDouble(EFFECT_STRENGTH);
+        this.effectChance = tag.getDouble(EFFECT_CHANCE);
+        this.lifeTime = tag.getInt(LIFETIME);
+        this.privateTicks = tag.getInt("private_ticks");
         this.setLifetimes(this.lifeTime);
         this.setScale(1);
-        this.setMode(pCompound.getBoolean("mode"));
+        this.setMode(tag.getBoolean("mode"));
     }
 }

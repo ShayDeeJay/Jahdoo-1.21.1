@@ -100,7 +100,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
                 .filter(jahdooRarity -> jahdooRarity.chanceRange <= getRandom)
                 .toList()
         );
-        return Helpers.getRandomListElement(filteredList);
+        return Helpers.listRandom(filteredList);
     }
 
     public static AbilityRegistrar getAbilityWithRarity(boolean withUtil, @Nullable JahdooRarity rarity) {
@@ -224,7 +224,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         int runeSlots,
         int abilitySlots
     ) {
-        var element = ElementRegistry.getElementFromWand(itemStack.getItem()).orElseThrow();
+        var element = ElementRegistry.fromWand(itemStack.getItem()).orElseThrow();
         attachLootBeamComponent(itemStack, rarity);
 
         WandData.createRarity(itemStack, rarity.id);
@@ -232,15 +232,15 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         RuneHolder.createNewRuneSlots(itemStack, runeSlots, rarity.attributes.getRandomRefinementPotential());
         itemStack.set(JAHDOO_RARITY, rarity.id);
 
-        var cooldownReductionType = element.getTypeCooldownReduction();
+        var cooldownReductionType = element.cooldownReduction();
         var cooldownReductionName = cooldownReductionType.getRegisteredName();
         var cooldownReductionValue = rarity.attributes.getRandomCooldown();
 
-        var manaReductionType = element.getTypeManaReduction();
+        var manaReductionType = element.manaReduction();
         var manaReductionName = manaReductionType.getRegisteredName();
         var manaReductionValue = rarity.attributes.getRandomManaReduction();
 
-        var damageAmplifierType = element.getDamageTypeAmplifier();
+        var damageAmplifierType = element.damageAmplifier();
         var damageAmplifierName = damageAmplifierType.getRegisteredName();
         var damageAmplifierValue = rarity.attributes.getRandomDamage();
 

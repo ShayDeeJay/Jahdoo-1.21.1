@@ -14,6 +14,8 @@ import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.registers.ElementRegistry;
 import org.joml.Matrix4f;
 
+import static org.jahdoo.common.items.augments.AugmentItemHelper.*;
+
 @OnlyIn(Dist.CLIENT)
 public class EternalWizardRenderer extends EternalWizardBodyRenderer {
 
@@ -22,24 +24,24 @@ public class EternalWizardRenderer extends EternalWizardBodyRenderer {
     }
 
     @Override
-    public void render(EternalWizard pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
-        pEntity.setScale(Math.min(1, (pEntity.getInternalScale() + 0.017f)));
-        pPoseStack.pushPose();
-        var scale = pEntity.getOwner() != null ? pEntity.getInternalScale() : 1;
+    public void render(EternalWizard entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        entity.setScale(Math.min(1, (entity.getInternalScale() + 0.017f)));
+        poseStack.pushPose();
+        var scale = entity.getOwner() != null ? entity.getInternalScale() : 1;
+        var lifetime = ticksToTime(String.valueOf(entity.getLifetime() - entity.getPrivateTicks()));
 
-        var lifetime = AugmentItemHelper.ticksToTime(String.valueOf(pEntity.getLifetime() - pEntity.getPrivateTicks()));
-
-        if(pEntity.getOwner() != null){
-            this.renderNameTags(pEntity, Component.literal(lifetime), pPoseStack, pBuffer, 255, 3);
+        if(entity.getOwner() != null){
+            this.renderNameTags(entity, Component.literal(lifetime), poseStack, buffer, 255, 3);
         }
 
-        pPoseStack.scale(scale, scale, scale);
-        super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
-        pPoseStack.popPose();
+        poseStack.scale(scale, scale, scale);
+        super.render(entity, yaw, partialTicks, poseStack, buffer, packedLight);
+        poseStack.popPose();
     }
 
     protected void renderNameTags(EternalWizard entity, Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource, int packedLight, float partialTick) {
-        double d0 = this.entityRenderDispatcher.distanceToSqr(entity);
+        var d0 = this.entityRenderDispatcher.distanceToSqr(entity);
+
         if (d0 < 5) {
             Vec3 vec3 = entity.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, entity.getViewYRot(partialTick));
             if (vec3 != null) {
@@ -50,7 +52,7 @@ public class EternalWizardRenderer extends EternalWizardBodyRenderer {
                 Matrix4f matrix4f = pPoseStack.last().pose();
                 Font font = this.getFont();
                 float f1 = (float)(-font.width(displayName) / 2);
-                font.drawInBatch(displayName, f1, 0, ElementRegistry.VITALITY.get().textColourSecondary(), false, matrix4f, bufferSource, Font.DisplayMode.SEE_THROUGH , 0, packedLight);
+                font.drawInBatch(displayName, f1, 0, ElementRegistry.vitality().textColourB(), false, matrix4f, bufferSource, Font.DisplayMode.SEE_THROUGH , 0, packedLight);
                 pPoseStack.popPose();
             }
         }

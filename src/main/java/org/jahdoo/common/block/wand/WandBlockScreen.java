@@ -114,12 +114,15 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         var getElement = itemStack.get(CUSTOM_MODEL_DATA);
 
         if(getElement != null){
-            var info = ElementRegistry.getElementByTypeId(Math.max(getElement.value(), 0));
-            if (itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get()) != null && !info.isEmpty()) {
-                toolTips.add(AugmentItemHelper.getAbilityName(itemStack, info.getFirst()));
-                toolTips.addAll(getAllAbilityModifiers(itemStack, itemStack1, abilityLocation, false, this.getMinecraft().level));
-                shiftForDetails(toolTips);
-            }
+            ElementRegistry.fromId(Math.max(getElement.value(), 0)).ifPresent(
+                element -> {
+                    if (itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get()) != null) {
+                        toolTips.add(AugmentItemHelper.getAbilityName(itemStack,element));
+                        toolTips.addAll(getAllAbilityModifiers(itemStack, itemStack1, abilityLocation, false, this.getMinecraft().level));
+                        shiftForDetails(toolTips);
+                    }
+                }
+            );
         }
         return toolTips;
     }
@@ -282,9 +285,9 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         var heightOffset = 115;
         var widthFrom = width - widthOffset;
         var heightFrom = height - heightOffset;
-        var element = ElementRegistry.getElementFromWand(getWandItem().getItem()).orElseThrow();
-        var color = FastColor.ARGB32.color(40, element.textColourPrimary());
-        var colorA = FastColor.ARGB32.color(0, element.textColourPrimary());
+        var element = ElementRegistry.fromWand(getWandItem().getItem()).orElseThrow();
+        var color = FastColor.ARGB32.color(40, element.textColourA());
+        var colorA = FastColor.ARGB32.color(0, element.textColourA());
         SharedUI.boxMaker(guiGraphics, widthFrom, heightFrom, 100, 115, BORDER_COLOUR, SharedUI.getFadedColourBackground(0.9f));
         SharedUI.boxMaker(guiGraphics, widthFrom, heightFrom, 100, 115, BORDER_COLOUR, colorA, color);
         SharedUI.bezelMaker(guiGraphics, widthFrom - 13, heightFrom - 13, 194, 224, 32, element);

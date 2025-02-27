@@ -30,7 +30,6 @@ import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 
 public class Magnet extends Item implements ICurioItem, JahdooItem {
-
     public Magnet() {
         super(
             new Properties()
@@ -41,20 +40,33 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
     }
 
     @Override
-    public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
-        return new ArrayList<>();
-    }
-
-    //Changed true to display durability
-    @Override
     public boolean isDamageable(ItemStack stack) {
         return true;
     }
 
-    //Changed true to display durability
     @Override
     public boolean isDamaged(ItemStack stack) {
         return true;
+    }
+
+    @Override
+    public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+    }
+
+    @Override
+    public List<Component> getSlotsTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
+        var rarity = JahdooRarity.attachRarityTooltip(stack, context.level());
+        var newComp = new ArrayList<>(tooltips);
+
+        newComp.add(rarity);
+        if(!rarity.getString().isEmpty()) newComp.add(Component.empty());
+        return newComp;
     }
 
     @Override
@@ -70,11 +82,6 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
-    }
-
-    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         var switchActive = Helpers.getUsedItem(player);
         var magnetData = switchActive.get(MAGNET_DATA);
@@ -86,16 +93,6 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
         player.displayClientMessage(!magnetData.active() ? active : deactivate, true);
         player.playSound(SoundRegister.SELECT.get());
         return super.use(level, player, usedHand);
-    }
-
-    @Override
-    public List<Component> getSlotsTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
-        var rarity = JahdooRarity.attachRarityTooltip(stack, context.level());
-        var newComp = new ArrayList<>(tooltips);
-
-        newComp.add(rarity);
-        if(!rarity.getString().isEmpty()) newComp.add(Component.empty());
-        return newComp;
     }
 
     @Override

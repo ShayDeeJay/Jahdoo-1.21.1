@@ -17,42 +17,42 @@ public class Inferno extends AbstractElement {
     ResourceLocation abilityId = Helpers.res("inferno");
 
     @Override
-    public String getElementName() {
+    public String name() {
         return abilityId.getPath().intern().substring(0,1).toUpperCase() + abilityId.getPath().intern().substring(1);
     }
 
     @Override
-    public ResourceLocation getAbilityResource() {
+    public ResourceLocation abilityResource() {
         return abilityId;
     }
 
     @Override
-    public int getTypeId() {
+    public int id() {
         return 2;
     }
 
     @Override
-    public int textColourPrimary() {
+    public int textColourA() {
         return FastColor.ARGB32.color(255, 170, 70);
     }
 
     @Override
-    public int textColourSecondary() {
+    public int textColourB() {
         return FastColor.ARGB32.color(238, 144, 45);
     }
 
     @Override
-    public int particleColourPrimary() {
+    public int partColourA() {
         return FastColor.ARGB32.color(255, 68, 0);
     }
 
     @Override
-    public int particleColourSecondary() {
+    public int partColourB() {
         return FastColor.ARGB32.color(255, 121, 73);
     }
 
     @Override
-    public int particleColourFaded() {
+    public int partColourFade() {
         return -34487;
     }
 
@@ -62,32 +62,32 @@ public class Inferno extends AbstractElement {
     }
 
     @Override
-    public ResourceLocation getAbilityProjectileTexture() {
+    public ResourceLocation projectileTexture() {
         return Helpers.res("textures/entity/fire_projectile.png");
     }
 
     @Override
-    public SoundEvent getElementSound() {
+    public SoundEvent sound() {
         return SoundEvents.FIRECHARGE_USE;
     }
 
     @Override
-    public Holder<MobEffect> elementEffect() {
+    public Holder<MobEffect> effect() {
         return EffectsRegister.INFERNO_EFFECT.getDelegate();
     }
 
     @Override
-    public Holder<Attribute> getTypeCooldownReduction() {
+    public Holder<Attribute> cooldownReduction() {
         return AttributesRegister.INFERNO_COOLDOWN_REDUCTION;
     }
 
     @Override
-    public Holder<Attribute> getTypeManaReduction() {
+    public Holder<Attribute> manaReduction() {
         return AttributesRegister.INFERNO_MANA_COST_REDUCTION;
     }
 
     @Override
-    public Holder<Attribute> getDamageTypeAmplifier() {
+    public Holder<Attribute> damageAmplifier() {
         return AttributesRegister.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
     }
 }

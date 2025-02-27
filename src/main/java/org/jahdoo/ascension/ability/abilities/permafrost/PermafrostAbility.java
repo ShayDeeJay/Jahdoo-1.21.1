@@ -68,6 +68,6 @@ public class PermafrostAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.FROST.get();
+        return ElementRegistry.frost();
     }
 }

@@ -72,7 +72,7 @@ public class SummonEternalWizardAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.VITALITY.get();
+        return ElementRegistry.vitality();
     }
 
 }

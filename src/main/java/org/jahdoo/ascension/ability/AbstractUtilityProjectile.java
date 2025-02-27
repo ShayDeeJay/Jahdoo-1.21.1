@@ -18,7 +18,7 @@ public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.UTILITY.get();
+        return ElementRegistry.utility();
     }
 
     @Override
@@ -27,7 +27,7 @@ public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
     }
 
     protected void discardParticleEffect(int lifetime) {
-        var particle = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, ElementRegistry.UTILITY.get(), lifetime, 1.5f, 0.1f);
+        var particle = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, ElementRegistry.utility(), lifetime, 1.5f, 0.1f);
         ParticleHandlers.particleBurst(this.genericProjectile.level(), this.genericProjectile.position().add(0,0.1,0), 1, particle,0,0,0,0.06f);
     }
 
@@ -57,8 +57,8 @@ public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
     }
 
     protected void utilityParticleBurst(Level level, Vec3 pPos, int lifeTime, float size, int count, float speed) {
-        int col1 = this.getElementType().particleColourPrimary();
-        int col2 = this.getElementType().particleColourFaded();
+        int col1 = this.getElementType().partColourA();
+        int col2 = this.getElementType().partColourFade();
         var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifeTime, size, col1, col2, false);
         ParticleHandlers.particleBurst(level, pPos, count, genericParticle, speed);
     }

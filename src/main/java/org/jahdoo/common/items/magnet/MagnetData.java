@@ -32,21 +32,6 @@ public record MagnetData(
         return new MagnetData(false, 15, 2);
     }
 
-    public static void setDataByType(ItemStack stack){
-        var type = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        if(type != null) {
-            var id = type.value();
-            var dataType = switch (id) {
-                case 1 -> simpleMagnet();
-                case 2 -> greaterMagnet();
-                case 3 -> perfectMagnet();
-                case 4, 5 -> ancientMagnet();
-                default -> DEFAULT;
-            };
-            stack.set(MAGNET_DATA, dataType);
-        }
-    }
-
     public MagnetData setActive(boolean active) {
         return new MagnetData(active, this.range, this.strength);
     }
@@ -67,6 +52,17 @@ public record MagnetData(
         itemStack.update(MAGNET_DATA, DEFAULT, data -> data.setActive(active));
     }
 
+    public static final StreamCodec<RegistryFriendlyByteBuf, MagnetData> STREAM_CODEC = StreamCodec.ofMember(
+        MagnetData::serialise,
+        MagnetData::deserialise
+    );
+
+    public void serialise(RegistryFriendlyByteBuf friendlyByteBuf) {
+        friendlyByteBuf.writeBoolean(active);
+        friendlyByteBuf.writeInt(range);
+        friendlyByteBuf.writeDouble(strength);
+    }
+
     public static MagnetData deserialise(RegistryFriendlyByteBuf friendlyByteBuf) {
         return new MagnetData(
             friendlyByteBuf.readBoolean(),
@@ -75,17 +71,6 @@ public record MagnetData(
         );
     }
 
-    public void serialise(RegistryFriendlyByteBuf friendlyByteBuf) {
-        friendlyByteBuf.writeBoolean(active);
-        friendlyByteBuf.writeInt(range);
-        friendlyByteBuf.writeDouble(strength);
-    }
-
-    public static final StreamCodec<RegistryFriendlyByteBuf, MagnetData> STREAM_CODEC = StreamCodec.ofMember(
-        MagnetData::serialise,
-        MagnetData::deserialise
-    );
-
     public static final Codec<MagnetData> CODEC = RecordCodecBuilder.create(
         instance -> instance.group(
             Codec.BOOL.fieldOf("active").forGetter(MagnetData::active),
@@ -93,5 +78,20 @@ public record MagnetData(
             Codec.DOUBLE.fieldOf("strength").forGetter(MagnetData::strength)
         ).apply(instance, MagnetData::new)
     );
+
+    public static void setDataByType(ItemStack stack){
+        var type = stack.get(DataComponents.CUSTOM_MODEL_DATA);
+        if(type != null) {
+            var id = type.value();
+            var dataType = switch (id) {
+                case 1 -> simpleMagnet();
+                case 2 -> greaterMagnet();
+                case 3 -> perfectMagnet();
+                case 4, 5 -> ancientMagnet();
+                default -> DEFAULT;
+            };
+            stack.set(MAGNET_DATA, dataType);
+        }
+    }
 
 }

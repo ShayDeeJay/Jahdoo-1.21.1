@@ -17,6 +17,29 @@ public class AugmentRatingSystem {
 
     public static final DecimalFormat FORMAT = new DecimalFormat("#.##");
 
+    public static String rangeString(Object min, Object max){
+        return  min + "-" + max;
+    }
+
+    public static double convertToPercentage(double max) {
+        if (max == 0) return 100.0;
+        if (max <= 0) return 0;
+        return Double.parseDouble(FORMAT.format((1.0 / max) * 100));
+    }
+
+    public static AbilityHolder.AbilityModifiers getModifier(ItemStack itemStack, String abilityLocation, String keys){
+        var holder = itemStack.get(WAND_ABILITY_HOLDER.get());
+        var ability = holder.abilityProperties().get(abilityLocation);
+        return ability.abilityProperties().get(keys);
+    }
+
+    public static Component additionalInformation(ItemStack itemStack, String keys, String abilityLocation, boolean isHigherBetter){
+        return Component.literal(" (")
+            .append(hoverTextHelper(itemStack, keys, abilityLocation, isHigherBetter))
+            .append(")")
+            .withStyle(ChatFormatting.DARK_GRAY);
+    }
+
     public static Component hoverTextHelper(ItemStack itemStack, String keys, String abilityLocation, boolean isHigherBetter) {
         if (itemStack.has(WAND_ABILITY_HOLDER.get())) {
             var modifiers = getModifier(itemStack, abilityLocation, keys);
@@ -30,30 +53,25 @@ public class AugmentRatingSystem {
         return Component.empty();
     }
 
-    public static String rangeString(Object min, Object max){
-        return  min + "-" + max;
+    public static Item calculateRatingNext(AbilityHolder.AbilityModifiers mod) {
+        double normalizedValue = getNormalizedValue(mod);
+        var rating = (int)(normalizedValue * 4) + 1;
+        var core = ItemsRegister.AUGMENT_CORE.get();
+        var advanced = ItemsRegister.ADVANCED_AUGMENT_CORE.get();
+        var hyperCore = ItemsRegister.AUGMENT_HYPER_CORE.get();
+
+        if(rating == 1) return core;
+        if(rating == 2 || rating == 3) return advanced;
+        return hyperCore;
     }
 
-    public static Component additionalInformation(ItemStack itemStack, String keys, String abilityLocation, boolean isHigherBetter){
-        return Component.literal(" (")
-            .append(hoverTextHelper(itemStack, keys, abilityLocation, isHigherBetter))
-            .append(")")
-            .withStyle(ChatFormatting.DARK_GRAY);
-    }
+    public static int calculateRating(AbilityHolder.AbilityModifiers mod) {
 
-    public static double convertToPercentage(double max) {
-        if (max == 0) return 100.0;
-        if (max <= 0) return 0;
-        return Double.parseDouble(FORMAT.format((1.0 / max) * 100));
-    }
+        boolean higherIsBetter = mod.isHigherBetter();
 
-    public static int calculateRating(AbilityHolder.AbilityModifiers aMod) {
-
-        boolean higherIsBetter = aMod.isHigherBetter();
-
-        double value = aMod.actualValue();
-        double minValue = aMod.lowestValue();
-        double maxValue = aMod.highestValue();
+        double value = mod.actualValue();
+        double minValue = mod.lowestValue();
+        double maxValue = mod.highestValue();
 
         double range = maxValue - minValue;
         double relativeValue = value - minValue;
@@ -68,18 +86,6 @@ public class AugmentRatingSystem {
 
         normalizedValue = Math.max(0, Math.min(1, normalizedValue));
         return (int)(normalizedValue * 4) + 1; // Map to 1-5 rating
-    }
-
-    public static Item calculateRatingNext(AbilityHolder.AbilityModifiers aMod) {
-        double normalizedValue = getNormalizedValue(aMod);
-        var rating = (int)(normalizedValue * 4) + 1;
-        var core = ItemsRegister.AUGMENT_CORE.get();
-        var advanced = ItemsRegister.ADVANCED_AUGMENT_CORE.get();
-        var hyperCore = ItemsRegister.AUGMENT_HYPER_CORE.get();
-
-        if(rating == 1) return core;
-        if(rating == 2 || rating == 3) return advanced;
-        return hyperCore;
     }
 
     private static double getNormalizedValue(AbilityHolder.AbilityModifiers mod) {
@@ -102,12 +108,6 @@ public class AugmentRatingSystem {
 
         normalizedValue = Math.max(0, Math.min(1, normalizedValue));
         return normalizedValue;
-    }
-
-    public static AbilityHolder.AbilityModifiers getModifier(ItemStack itemStack, String abilityLocation, String keys){
-        var holder = itemStack.get(WAND_ABILITY_HOLDER.get());
-        var ability = holder.abilityProperties().get(abilityLocation);
-        return ability.abilityProperties().get(keys);
     }
 
     public static Component displayRating(ItemStack itemStack, String keys, String abilityLocation) {

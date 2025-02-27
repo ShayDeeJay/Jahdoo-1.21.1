@@ -40,7 +40,7 @@ public class GreaterInfernoEffect extends MobEffect {
     }
 
     private static @NotNull AbstractElement getElement() {
-        return ElementRegistry.INFERNO.get();
+        return ElementRegistry.inferno();
     }
 
 
@@ -61,8 +61,8 @@ public class GreaterInfernoEffect extends MobEffect {
         var directions = positionScrambler.subtract(livingEntity.position()).normalize();
         var lifetime = 4;
         var size = Helpers.Random.nextDouble(0.2, 0.4);
-        var col1 = element.textColourPrimary();
-        var col2 = element.textColourSecondary();
+        var col1 = element.textColourA();
+        var col2 = element.textColourB();
         var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, (float) (size - 0.2), col1, col2, true);
         var randomSpeed = Helpers.Random.nextDouble(0.1, 0.3);
 

@@ -18,49 +18,65 @@ import org.jahdoo.common.registers.ItemsRegister;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.*;
+import static net.minecraft.world.flag.FeatureFlags.*;
+import static net.minecraft.world.level.storage.loot.entries.LootItem.*;
+import static net.minecraft.world.level.storage.loot.functions.SetItemCountFunction.*;
+import static net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.*;
+import static org.jahdoo.common.registers.BlocksRegister.*;
+import static org.jahdoo.common.registers.ItemsRegister.*;
+
 public class ModBlockLootTables extends BlockLootSubProvider {
-    @Override
-    protected Iterable<Block> getKnownBlocks() {
-        return BlocksRegister.BLOCKS.getEntries().stream().map(DeferredHolder::get).collect(Collectors.toList());
+
+    public ModBlockLootTables(HolderLookup.Provider pregistries) {
+        super(Set.of(), REGISTRY.allFlags(), pregistries);
     }
 
-    public ModBlockLootTables(HolderLookup.Provider pRegistries) {
-        super(Set.of(), FeatureFlags.REGISTRY.allFlags(), pRegistries);
+    protected LootTable.Builder createCopperLikeOreDrops(Block block, Item item) {
+        return createSilkTouchDispatchTable(block,
+            this.applyExplosionDecay(block, lootTableItem(item).apply(setCount(between(1.0F, 3.0F))))
+        );
+    }
+
+    @Override
+    protected Iterable<Block> getKnownBlocks() {
+        return BLOCKS.getEntries()
+            .stream()
+            .map(DeferredHolder::get)
+            .collect(toList());
     }
 
     @Override
     protected void generate() {
-        this.dropSelf(BlocksRegister.WAND_MANAGER_TABLE.get());
-        this.dropSelf(BlocksRegister.TANK.value());
-        this.dropSelf(BlocksRegister.INFUSER.get());
-        this.dropSelf(BlocksRegister.CHALLENGE_ALTAR.get());
-        this.dropSelf(BlocksRegister.LOOT_CHEST.get());
-        this.dropSelf(BlocksRegister.MODULAR_CHAOS_CUBE.get());
-        this.dropSelf(BlocksRegister.AUGMENT_MODIFICATION_STATION.get());
-        this.dropSelf(BlocksRegister.SHOPPING_TABLE.get());
-        this.dropSelf(BlocksRegister.RUNE_TABLE.get());
-        this.dropOther(BlocksRegister.WAND.get(), Items.AIR);
-        this.dropOther(BlocksRegister.LIGHTING.get(), Items.AIR);
-        this.dropOther(BlocksRegister.ENCHANTED_BLOCK.get(), Items.AIR);
-        this.dropOther(BlocksRegister.NEXITE_POWDER_BLOCK.get(), Items.AIR);
-        this.dropOther(BlocksRegister.TRAIL_PORTAL.get(), Items.AIR);
-        this.dropSelf(BlocksRegister.NEXITE_BLOCK.get());
-        this.dropSelf(BlocksRegister.RAW_NEXITE_BLOCK.get());
-        this.add(BlocksRegister.NEXITE_ORE.get(),
-            block -> createCopperLikeOreDrops(BlocksRegister.NEXITE_ORE.get(), ItemsRegister.NEXITE_POWDER.get())
-                .withPool(LootPool.lootPool().setRolls(UniformGenerator.between(0f, 1.0F)))
+
+        this.dropSelf(WAND_MANAGER_TABLE.get());
+        this.dropSelf(TANK.value());
+        this.dropSelf(INFUSER.get());
+        this.dropSelf(CHALLENGE_ALTAR.get());
+        this.dropSelf(LOOT_CHEST.get());
+        this.dropSelf(MODULAR_CHAOS_CUBE.get());
+        this.dropSelf(AUGMENT_MODIFICATION_STATION.get());
+        this.dropSelf(SHOPPING_TABLE.get());
+        this.dropSelf(RUNE_TABLE.get());
+        this.dropOther(WAND.get(), Items.AIR);
+        this.dropOther(LIGHTING.get(), Items.AIR);
+        this.dropOther(ENCHANTED_BLOCK.get(), Items.AIR);
+        this.dropOther(NEXITE_POWDER_BLOCK.get(), Items.AIR);
+        this.dropOther(TRAIL_PORTAL.get(), Items.AIR);
+        this.dropSelf(NEXITE_BLOCK.get());
+        this.dropSelf(RAW_NEXITE_BLOCK.get());
+
+        this.add(
+            NEXITE_ORE.get(),
+            block -> createCopperLikeOreDrops(NEXITE_ORE.get(), NEXITE_POWDER.get())
+                .withPool(LootPool.lootPool().setRolls(between(0f, 1.0F)))
         );
-        this.add(BlocksRegister.NEXITE_DEEPSLATE_ORE.get(),
-            block -> createCopperLikeOreDrops(BlocksRegister.NEXITE_ORE.get(), ItemsRegister.NEXITE_POWDER.get())
-                .withPool(LootPool.lootPool().setRolls(UniformGenerator.between(0f, 1.0F)))
+
+        this.add(NEXITE_DEEPSLATE_ORE.get(),
+            block -> createCopperLikeOreDrops(NEXITE_ORE.get(), NEXITE_POWDER.get())
+                .withPool(LootPool.lootPool().setRolls(between(0f, 1.0F)))
         );
+
     }
 
-    protected LootTable.Builder createCopperLikeOreDrops(Block pBlock, Item item) {
-        return createSilkTouchDispatchTable(pBlock,
-            this.applyExplosionDecay(pBlock,
-                LootItem.lootTableItem(item).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
-            )
-        );
-    }
 }

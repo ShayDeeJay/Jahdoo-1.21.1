@@ -32,6 +32,15 @@ public class StatScreen extends EffectRenderingInventoryScreen<InventoryMenu> {
     }
 
     @Override
+    protected void renderBg(GuiGraphics guiGraphics, float v, int i, int i1) {}
+
+    @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {}
+
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         return super.mouseClicked(mouseX, mouseY, button);
     }
@@ -43,8 +52,39 @@ public class StatScreen extends EffectRenderingInventoryScreen<InventoryMenu> {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-//        super.renderLabels(guiGraphics, mouseX, mouseY);
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        scrollStatScreen(mouseX, mouseY, dragY, 1);
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    private static void renderPlayer(GuiGraphics guiGraphics, int mouseX, int mouseY, int i, int j, LocalPlayer player) {
+        var trimWidth = 60;
+        var trimHeight = 18;
+        var size = 100;
+        SharedUI.boxMaker(guiGraphics, i - size + trimWidth, j - size + trimHeight, size - trimWidth, size - trimHeight - 6, -1);
+        SharedUI.renderEntityInInventoryFollowsMouse(guiGraphics, i, j - 10, i, j, 50, 0.0625F, mouseX, mouseY, player, 1500);
+    }
+
+    private void renderStatScreen(GuiGraphics guiGraphics, LocalPlayer player) {
+        var minX = statBound().getFirst();
+        var minY = statBound().get(1);
+        var maxX = statBound().get(2);
+        var maxY = statBound().get(3);
+        guiGraphics.enableScissor(minX, minY, maxX, maxY);
+
+        scrollBound = getAllStat(guiGraphics, getMinecraft(), player, minX + 4, (int) (minY + 4 + fade));
+        guiGraphics.disableScissor();
+    }
+
+    public List<Integer> statBound(){
+        var i = this.width/2;
+        var j = this.height/2;
+        var startX = i - 164;
+        var minX = startX - 4;
+        var minY = j - 82;
+        var maxX = startX + 116;
+        var maxY = j + 70;
+        return List.of(minX, minY, maxX, maxY);
     }
 
     private void scrollStatScreen(double mouseX, double mouseY, double scrollY, double setScrollSpeed) {
@@ -60,12 +100,6 @@ public class StatScreen extends EffectRenderingInventoryScreen<InventoryMenu> {
                 fade = Math.max(setMaxScroll, setScroll);
             }
         }
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        scrollStatScreen(mouseX, mouseY, dragY, 1);
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
     @Override
@@ -89,44 +123,5 @@ public class StatScreen extends EffectRenderingInventoryScreen<InventoryMenu> {
 
         SharedUI.boxMaker(guiGraphics, i - 170, j - 84, 62, 78, ColourStore.HEADER_COLOUR, SharedUI.getFadedColourBackground(0f));
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-    }
-
-    private void renderStatScreen(GuiGraphics guiGraphics, LocalPlayer player) {
-        var minX = statBound().getFirst();
-        var minY = statBound().get(1);
-        var maxX = statBound().get(2);
-        var maxY = statBound().get(3);
-        guiGraphics.enableScissor(minX, minY, maxX, maxY);
-        
-        scrollBound = getAllStat(guiGraphics, getMinecraft(), player, minX + 4, (int) (minY + 4 + fade));
-        guiGraphics.disableScissor();
-    }
-
-
-    private static void renderPlayer(GuiGraphics guiGraphics, int mouseX, int mouseY, int i, int j, LocalPlayer player) {
-        var trimWidth = 60;
-        var trimHeight = 18;
-        var size = 100;
-        SharedUI.boxMaker(guiGraphics, i - size + trimWidth, j - size + trimHeight, size - trimWidth, size - trimHeight - 6, -1);
-        SharedUI.renderEntityInInventoryFollowsMouse(guiGraphics, i, j - 10, i, j, 50, 0.0625F, mouseX, mouseY, player, 1500);
-    }
-
-    public List<Integer> statBound(){
-        var i = this.width/2;
-        var j = this.height/2;
-        var startX = i - 164;
-        var minX = startX - 4;
-        var minY = j - 82;
-        var maxX = startX + 116;
-        var maxY = j + 70;
-        return List.of(minX, minY, maxX, maxY);
-    }
-
-    @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
-
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float v, int i, int i1) {
-
     }
 }

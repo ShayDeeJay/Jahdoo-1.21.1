@@ -16,12 +16,12 @@ import java.util.function.Predicate;
 
 public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
 
-    protected final Class<T> targetType;
-    protected final int randomInterval;
     @Nullable
     protected LivingEntity target;
     protected TargetingConditions targetConditions;
     protected float trackDistance;
+    protected final Class<T> targetType;
+    protected final int randomInterval;
 
     public AttackNearbyMonsters(Mob mob, Class<T> targetType, boolean mustSee, int randomInterval, int trackDistance) {
         this(mob, targetType, randomInterval, mustSee, false, null);
@@ -36,6 +36,21 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
         this.targetConditions = TargetingConditions.forCombat().range(this.getFollowDistance()).selector(targetPredicate);
     }
 
+    public void setTarget(@Nullable LivingEntity target) {
+        this.target = target;
+    }
+
+    protected AABB getTargetSearchArea() {
+        return this.mob.getBoundingBox().inflate(60, 4.0F, 60);
+    }
+
+    public void start() {
+        if(mob instanceof TamableEntity tamableEntity){
+            handleTargeting(tamableEntity);
+        }
+        super.start();
+    }
+
     public boolean canUse() {
         if (this.mob.getRandom().nextInt(4) != 0) {
             return false;
@@ -45,23 +60,12 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
         }
     }
 
-    protected AABB getTargetSearchArea() {
-        return this.mob.getBoundingBox().inflate(60, 4.0F, 60);
-    }
-
     protected void findTarget() {
         if (this.targetType != Player.class && this.targetType != ServerPlayer.class) {
             this.target = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(this.targetType, this.getTargetSearchArea(), (t) -> true), this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ());
         } else {
             this.target = this.mob.level().getNearestPlayer(this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ());
         }
-    }
-
-    public void start() {
-        if(mob instanceof TamableEntity tamableEntity){
-            handleTargeting(tamableEntity);
-        }
-        super.start();
     }
 
     private void handleTargeting(TamableEntity tamableEntity) {
@@ -83,10 +87,6 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
                 }
             }
         }
-    }
-
-    public void setTarget(@Nullable LivingEntity target) {
-        this.target = target;
     }
 
 }

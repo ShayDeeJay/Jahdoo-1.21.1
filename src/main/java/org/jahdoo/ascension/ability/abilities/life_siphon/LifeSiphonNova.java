@@ -78,7 +78,7 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
 
     public void pullParticlesToCenter(){
         var lifetime = 5;
-        var part1 = bakedParticleOptions(getElementType().getTypeId(), lifetime, 2f, false);
+        var part1 = bakedParticleOptions(getElementType().id(), lifetime, 2f, false);
         var part2 = genericParticleOptions(GENERIC_PARTICLE_SELECTION, getElementType(), lifetime, 2f);
         var particleOptionsList = List.of(part1, part2);
         var pos = this.aoeCloud.position();
@@ -87,7 +87,7 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
             pos, aoe * 2.8, aoe * 5, positions -> {
                 if (this.aoeCloud.level() instanceof ServerLevel serverLevel) {
                     var directions = pos.subtract(positions).normalize();
-                    var randomElement = getRandomListElement(particleOptionsList);
+                    var randomElement = listRandom(particleOptionsList);
                     sendParticles(serverLevel, randomElement, positions, 0, directions.x, directions.y, directions.z, 1);
                 }
             }
@@ -108,7 +108,7 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.VITALITY.get();
+        return ElementRegistry.vitality();
     }
 
     @Override

@@ -28,7 +28,7 @@ import static org.jahdoo.common.registers.AttachmentRegister.CASTER_DATA;
 import static org.jahdoo.common.registers.AttributesRegister.COOLDOWN_REDUCTION;
 import static org.jahdoo.common.registers.AttributesRegister.MANA_COST_REDUCTION;
 import static org.jahdoo.common.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
-import static org.jahdoo.common.registers.ElementRegistry.getElementFromWand;
+import static org.jahdoo.common.registers.ElementRegistry.fromWand;
 import static org.jahdoo.ascension.utils.Maths.getFormattedFloat;
 import static org.jahdoo.ascension.utils.Helpers.*;
 
@@ -60,32 +60,6 @@ public class CastHelper {
         chargeCooldown(abilityId, cooldownCost, player);
     }
 
-    public static void chargeCooldown(String abilityId, double cooldown, Player player) {
-        var attributeValue = getAttributeValue(player, AttributesRegister.SKIP_COOLDOWN);
-        if(player.isCreative()) return;
-        if(attributeValue > 0 && Random.nextFloat(100) < attributeValue) return;
-
-        var cooldownSystem = player.getData(CASTER_DATA);
-        var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
-        var wand = Helpers.getUsedItem(player);
-        var getElement = SharedUI.getElementWithType(ability.orElseThrow(), wand);
-        var reCalculatedCooldown = Helpers.attributeModifierCalculator(player, (float) cooldown, false,  getElement.getTypeCooldownReduction(), COOLDOWN_REDUCTION);
-        cooldownSystem.addCooldown(abilityId, (int) reCalculatedCooldown);
-    }
-
-    public static void chargeMana(String abilityId, double manaCost, Player player) {
-        var attributeValue = getAttributeValue(player, AttributesRegister.SKIP_MANA);
-        if(player.isCreative()) return;
-        if(attributeValue > 0 && Random.nextFloat(100) < attributeValue) return;
-
-        var manaSystem = player.getData(CASTER_DATA);
-        var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
-        var wand = Helpers.getUsedItem(player);
-        var getElement = SharedUI.getElementWithType(ability.orElseThrow(), wand);
-        var reCalculatedMana = Helpers.attributeModifierCalculator(player, (float) manaCost, false, getElement.getTypeManaReduction(), MANA_COST_REDUCTION);
-        manaSystem.subtractMana(reCalculatedMana, player);
-    }
-
     public static void failedCastNotification(Player player) {
         var crafterFail = SoundEvents.CRAFTER_FAIL;
         var volume = 1.6f;
@@ -103,6 +77,49 @@ public class CastHelper {
         castAnimation(player, CANT_CAST_ID);
     }
 
+    public static void chargeCooldown(String abilityId, double cooldown, Player player) {
+        var attributeValue = getAttributeValue(player, AttributesRegister.SKIP_COOLDOWN);
+        if(player.isCreative()) return;
+        if(attributeValue > 0 && Random.nextFloat(100) < attributeValue) return;
+
+        var cooldownSystem = player.getData(CASTER_DATA);
+        var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
+        var wand = Helpers.getUsedItem(player);
+        var getElement = SharedUI.getElementWithType(ability.orElseThrow(), wand);
+        var reCalculatedCooldown = Helpers.attributeModifierCalculator(player, (float) cooldown, false,  getElement.cooldownReduction(), COOLDOWN_REDUCTION);
+        cooldownSystem.addCooldown(abilityId, (int) reCalculatedCooldown);
+    }
+
+    public static void chargeMana(String abilityId, double manaCost, Player player) {
+        var attributeValue = getAttributeValue(player, AttributesRegister.SKIP_MANA);
+        if(player.isCreative()) return;
+        if(attributeValue > 0 && Random.nextFloat(100) < attributeValue) return;
+
+        var manaSystem = player.getData(CASTER_DATA);
+        var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
+        var wand = Helpers.getUsedItem(player);
+        var getElement = SharedUI.getElementWithType(ability.orElseThrow(), wand);
+        var reCalculatedMana = Helpers.attributeModifierCalculator(player, (float) manaCost, false, getElement.manaReduction(), MANA_COST_REDUCTION);
+        manaSystem.subtractMana(reCalculatedMana, player);
+    }
+
+    private static void debugMessages(
+        Player player,
+        ItemStack wandItem,
+        AbstractElement getElement,
+        double cooldownCost,
+        float adjustedCooldown,
+        double getManaCost,
+        float adjustedMana
+    ) {
+        playDebugMessage(player, wandItem);
+        playDebugMessage(player, getElement.name());
+        playDebugMessage(player, "cooldown = " + cooldownCost);
+        playDebugMessage(player, "adjusted cooldown = " + adjustedCooldown);
+        playDebugMessage(player, "mana = " + getManaCost);
+        playDebugMessage(player, "adjusted mana = " + adjustedMana);
+    }
+
     public static void executeAndCharge(Player player) {
         var wandItem = Helpers.getUsedItem(player);
         var abilityName = DataComponentHelper.getAbilityTypeItemStack(wandItem);
@@ -115,8 +132,8 @@ public class CastHelper {
                 if(!ability.internallyChargeManaAndCooldown()){
                     var cooldownCost = getSpecificValue(player, wandItem, COOLDOWN);
                     var getManaCost = getSpecificValue(player, wandItem, MANA_COST);
-                    var adjustedMana = Helpers.attributeModifierCalculator(player, (float) getManaCost, false, getElement.getTypeManaReduction(), MANA_COST_REDUCTION);
-                    var adjustedCooldown = Helpers.attributeModifierCalculator(player, (float) cooldownCost, false, getElement.getTypeCooldownReduction(), COOLDOWN_REDUCTION);
+                    var adjustedMana = Helpers.attributeModifierCalculator(player, (float) getManaCost, false, getElement.manaReduction(), MANA_COST_REDUCTION);
+                    var adjustedCooldown = Helpers.attributeModifierCalculator(player, (float) cooldownCost, false, getElement.cooldownReduction(), COOLDOWN_REDUCTION);
                     chargeCooldown(abilityName, adjustedCooldown, player);
                     chargeMana(abilityName, adjustedMana, player);
                 }
@@ -126,21 +143,12 @@ public class CastHelper {
         } else onCast(player, ability);
     }
 
-    private static void debugMessages(Player player, ItemStack wandItem, AbstractElement getElement, double cooldownCost, float adjustedCooldown, double getManaCost, float adjustedMana) {
-        playDebugMessage(player, wandItem);
-        playDebugMessage(player, getElement.getElementName());
-        playDebugMessage(player, "cooldown = " + cooldownCost);
-        playDebugMessage(player, "adjusted cooldown = " + adjustedCooldown);
-        playDebugMessage(player, "mana = " + getManaCost);
-        playDebugMessage(player, "adjusted mana = " + adjustedMana);
-    }
-
     public static InteractionResultHolder<ItemStack> use(Player player) {
         var itemStack = Helpers.getUsedItem(player);
         var abilityName = DataComponentHelper.getAbilityTypeWand(player);
         var getAbility = AbilityRegister.REGISTRY.get(abilityName);
         var canUse = getCanApplyDistanceAbility(player, itemStack);
-        var cantUseInDim = player.level() instanceof CustomLevel && getAbility != null && !getAbility.isMultiType() && getAbility.getElemenType().equals(ElementRegistry.UTILITY.get());
+        var cantUseInDim = player.level() instanceof CustomLevel && getAbility != null && !getAbility.isMultiType() && getAbility.getElemenType().equals(ElementRegistry.utility());
         var cantUse = (player.onGround() && player.isShiftKeyDown()) || getAbility == null ;
         var fail = InteractionResultHolder.fail(itemStack);
 
@@ -155,41 +163,6 @@ public class CastHelper {
         return InteractionResultHolder.pass(itemStack);
     }
 
-    public static boolean validManaAndCooldown(Player player){
-        var casterData = player.getData(CASTER_DATA);
-        var wandItem = Helpers.getUsedItem(player);
-        var abilityName = DataComponentHelper.getAbilityTypeItemStack(wandItem);
-        var ability = AbilityRegister.REGISTRY.get(res(abilityName));
-        if(ability == null) return false;
-        var getElement = getElementFromWand(wandItem.getItem()).orElseThrow();
-        var getManaCost = getSpecificValue(player, wandItem, MANA_COST);
-        var typeReduction = getElement.getTypeManaReduction();
-        var adjustedMana = Helpers.attributeModifierCalculator(player, (float) getManaCost, false, MANA_COST_REDUCTION, typeReduction);
-        var manaAvailable = casterData.getManaPool();
-        var sufficientMana = casterData.getManaPool() >= adjustedMana;
-        var abilityOnCooldown = casterData.isAbilityOnCooldown(abilityName);
-
-        if(!player.isCreative()){
-            if (abilityOnCooldown) {
-                var nameComp = Helpers.withStyleComponent(ability.getAbilityName(), getElement.particleColourSecondary());
-                var messageComp = Component.translatable("casting.jahdoo.on_cooldown", nameComp);
-                player.displayClientMessage(messageComp, true);
-                return false;
-            }
-
-            if (!sufficientMana) {
-                var formattedCost = getFormattedFloat(adjustedMana);
-                var formattedAvailable = getFormattedFloat((float) manaAvailable);
-                var costComp = Helpers.withStyleComponent(String.valueOf(formattedCost), getElement.particleColourPrimary());
-                var availComp = Helpers.withStyleComponent(String.valueOf(formattedAvailable), getElement.particleColourSecondary());
-                var notEnoughManaMessage = Component.translatable("casting.jahdoo.insufficient_man", availComp, costComp);
-                player.displayClientMessage(notEnoughManaMessage, true);
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static boolean getCanApplyDistanceAbility(Player player, ItemStack itemStack){
         var isDistanceCast = AbilityRegister.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
         if(isDistanceCast != null && isDistanceCast.getCastType() == DISTANCE_CAST){
@@ -198,15 +171,50 @@ public class CastHelper {
             var allowedDistance = getAbility.get(CASTING_DISTANCE).actualValue();
             var lookAtLocation = player.pick(allowedDistance, 0, false);
             var isValidCastLocation = lookAtLocation.getType() == HitResult.Type.MISS;
-            var getWandElement = getElementFromWand(itemStack.getItem()).orElseThrow();
+            var getWandElement = fromWand(itemStack.getItem()).orElseThrow();
             var distance = String.valueOf(Math.round(allowedDistance));
-            var colour = getWandElement.particleColourSecondary();
+            var colour = getWandElement.partColourB();
             var distanceCompo = Helpers.withStyleComponent(distance, colour);
             var notAllowedDistanceMessage = Component.translatable("casting.jahdoo.distance", distanceCompo);
 
             if (isValidCastLocation) {
                 player.displayClientMessage(notAllowedDistanceMessage, true);
                 player.stopUsingItem();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean validManaAndCooldown(Player player){
+        var casterData = player.getData(CASTER_DATA);
+        var wandItem = Helpers.getUsedItem(player);
+        var abilityName = DataComponentHelper.getAbilityTypeItemStack(wandItem);
+        var ability = AbilityRegister.REGISTRY.get(res(abilityName));
+        if(ability == null) return false;
+        var getElement = fromWand(wandItem.getItem()).orElseThrow();
+        var getManaCost = getSpecificValue(player, wandItem, MANA_COST);
+        var typeReduction = getElement.manaReduction();
+        var adjustedMana = Helpers.attributeModifierCalculator(player, (float) getManaCost, false, MANA_COST_REDUCTION, typeReduction);
+        var manaAvailable = casterData.getManaPool();
+        var sufficientMana = casterData.getManaPool() >= adjustedMana;
+        var abilityOnCooldown = casterData.isAbilityOnCooldown(abilityName);
+
+        if(!player.isCreative()){
+            if (abilityOnCooldown) {
+                var nameComp = Helpers.withStyleComponent(ability.getAbilityName(), getElement.partColourB());
+                var messageComp = Component.translatable("casting.jahdoo.on_cooldown", nameComp);
+                player.displayClientMessage(messageComp, true);
+                return false;
+            }
+
+            if (!sufficientMana) {
+                var formattedCost = getFormattedFloat(adjustedMana);
+                var formattedAvailable = getFormattedFloat((float) manaAvailable);
+                var costComp = Helpers.withStyleComponent(String.valueOf(formattedCost), getElement.partColourA());
+                var availComp = Helpers.withStyleComponent(String.valueOf(formattedAvailable), getElement.partColourB());
+                var notEnoughManaMessage = Component.translatable("casting.jahdoo.insufficient_man", availComp, costComp);
+                player.displayClientMessage(notEnoughManaMessage, true);
                 return false;
             }
         }

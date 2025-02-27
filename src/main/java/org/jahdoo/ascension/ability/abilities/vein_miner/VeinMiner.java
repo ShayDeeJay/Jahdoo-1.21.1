@@ -75,8 +75,8 @@ public class VeinMiner extends AbstractUtilityProjectile {
                 .getBreakSound(),
             SoundSource.BLOCKS, 1, 1
         );
-        var part = ParticleHandlers.genericParticleOptions(SOFT_PARTICLE_SELECTION, ElementRegistry.UTILITY.get(), 6, 0.08f, true);
-        var part2 = ParticleHandlers.genericParticleOptions(GENERIC_PARTICLE_SELECTION, ElementRegistry.UTILITY.get(), 3, 4f, false);
+        var part = ParticleHandlers.genericParticleOptions(SOFT_PARTICLE_SELECTION, ElementRegistry.utility(), 6, 0.08f, true);
+        var part2 = ParticleHandlers.genericParticleOptions(GENERIC_PARTICLE_SELECTION, ElementRegistry.utility(), 3, 4f, false);
         this.forAllBlocksAroundOf(start, genericProjectile.level(), target.getBlock(), veinSize,
             (pos, state) -> {
                 UtilityHelpers.dropItemsOrBlock(genericProjectile, pos, false, false);

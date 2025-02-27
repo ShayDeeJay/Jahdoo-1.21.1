@@ -30,7 +30,7 @@ public class StormRush extends AbstractAbility {
     public void launchPlayerDirection() {
         var launchDistances = getTag(StormRushAbility.launchDistance);
         var damage = getTag(DAMAGE);
-        var damageModified = attributeModifierCalculator(player, (float) damage, true, MAGIC_DAMAGE_MULTIPLIER, getType().getDamageTypeAmplifier());
+        var damageModified = attributeModifierCalculator(player, (float) damage, true, MAGIC_DAMAGE_MULTIPLIER, getType().damageAmplifier());
         var particleOptions = genericParticleOptions(ParticleStore.ELECTRIC_PARTICLE_SELECTION, this.getType(), Random.nextInt(10,18), 1f, 0.3);
         var itemInHand = Helpers.getUsedItem(player);
 
@@ -51,7 +51,7 @@ public class StormRush extends AbstractAbility {
     }
 
     AbstractElement getType(){
-        return ElementRegistry.FROST.get();
+        return ElementRegistry.frost();
     }
 
     @Override

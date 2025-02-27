@@ -71,7 +71,7 @@ public class FarmersTouchAbility extends AbstractBlockAbility {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.UTILITY.get();
+        return ElementRegistry.utility();
     }
 
 }

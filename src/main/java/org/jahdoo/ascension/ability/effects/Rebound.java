@@ -4,10 +4,12 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 
+import static net.minecraft.world.effect.MobEffectCategory.BENEFICIAL;
+
 public class Rebound extends MobEffect {
 
-    public Rebound(MobEffectCategory pCategory, int pColor) {
-        super(pCategory, pColor);
+    public Rebound() {
+        super(BENEFICIAL, 3436524);
     }
 
     @Override
@@ -17,7 +19,7 @@ public class Rebound extends MobEffect {
 
     @Override
     public MobEffectCategory getCategory() {
-        return MobEffectCategory.BENEFICIAL;
+        return BENEFICIAL;
     }
 
 

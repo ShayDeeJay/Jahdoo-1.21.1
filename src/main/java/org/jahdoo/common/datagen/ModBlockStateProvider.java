@@ -9,54 +9,85 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.registers.BlocksRegister;
 
+import static net.neoforged.neoforge.client.model.generators.ModelFile.*;
+import static org.jahdoo.common.registers.BlocksRegister.*;
+
 public class ModBlockStateProvider extends BlockStateProvider {
-    public ModBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
-        super(output, JahdooMod.MOD_ID, exFileHelper);
+
+    public ModBlockStateProvider(
+        PackOutput output,
+        ExistingFileHelper fileHelper
+    ) {
+        super(output, JahdooMod.MOD_ID, fileHelper);
     }
 
     @Override
     protected void registerStatesAndModels() {
-        blockWithItem(BlocksRegister.NEXITE_ORE);
-        blockWithItem(BlocksRegister.NEXITE_DEEPSLATE_ORE);
-        blockWithItem(BlocksRegister.NEXITE_BLOCK);
-        blockWithItem(BlocksRegister.RAW_NEXITE_BLOCK);
-        blockWithItem(BlocksRegister.ENCHANTED_BLOCK);
+        blockWithItem(NEXITE_ORE);
+        blockWithItem(NEXITE_DEEPSLATE_ORE);
+        blockWithItem(NEXITE_BLOCK);
+        blockWithItem(RAW_NEXITE_BLOCK);
+        blockWithItem(ENCHANTED_BLOCK);
 
-        simpleBlockWithItem(BlocksRegister.WAND_MANAGER_TABLE.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/wand_manager_table")));
+        simpleBlockWithItem(
+            WAND_MANAGER_TABLE.get(),
+            new UncheckedModelFile(modLoc("block/wand_manager_table"))
+        );
 
-        simpleBlockWithItem(BlocksRegister.TANK.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/tank")));
+        simpleBlockWithItem(
+            TANK.get(),
+            new UncheckedModelFile(modLoc("block/tank"))
+        );
 
-        simpleBlockWithItem(BlocksRegister.SHOPPING_TABLE.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/shopping_table")));
+        simpleBlockWithItem(
+            SHOPPING_TABLE.get(),
+            new UncheckedModelFile(modLoc("block/shopping_table"))
+        );
 
-        simpleBlockWithItem(BlocksRegister.RUNE_TABLE.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/rune_table")));
+        simpleBlockWithItem(
+            RUNE_TABLE.get(),
+            new UncheckedModelFile(modLoc("block/rune_table"))
+        );
 
-        simpleBlockWithItem(BlocksRegister.INFUSER.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/infuser")));
+        simpleBlockWithItem(
+            INFUSER.get(),
+            new UncheckedModelFile(modLoc("block/infuser"))
+        );
 
-        simpleBlockWithItem(BlocksRegister.CHALLENGE_ALTAR.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/challenge_altar")));
+        simpleBlockWithItem(
+            CHALLENGE_ALTAR.get(),
+            new UncheckedModelFile(modLoc("block/challenge_altar"))
+        );
 
-        simpleBlockWithItem(BlocksRegister.LOOT_CHEST.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/loot_chest")));
+        simpleBlockWithItem(
+            LOOT_CHEST.get(),
+            new UncheckedModelFile(modLoc("block/loot_chest"))
+        );
 
-        simpleBlockWithItem(BlocksRegister.MODULAR_CHAOS_CUBE.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/modular_chaos_cube")));
+        simpleBlockWithItem(
+            MODULAR_CHAOS_CUBE.get(),
+            new UncheckedModelFile(modLoc("block/modular_chaos_cube"))
+        );
 
-        simpleBlockWithItem(BlocksRegister.LIGHTING.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/lighting")));
+        simpleBlockWithItem(
+            LIGHTING.get(),
+            new UncheckedModelFile(modLoc("block/lighting"))
+        );
 
-        simpleBlockWithItem(BlocksRegister.NEXITE_POWDER_BLOCK.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/nexite_powder_block")));
+        simpleBlockWithItem(
+            NEXITE_POWDER_BLOCK.get(),
+            new UncheckedModelFile(modLoc("block/nexite_powder_block"))
+        );
 
-        simpleBlock(BlocksRegister.WAND.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/wand_mystic")));
+        simpleBlock(
+            WAND.get(),
+            new UncheckedModelFile(modLoc("block/wand_mystic"))
+        );
 
-        simpleBlockWithItem(BlocksRegister.AUGMENT_MODIFICATION_STATION.get(),
-            new ModelFile.UncheckedModelFile(modLoc("block/augment_modification_station")));
+        simpleBlockWithItem(
+            AUGMENT_MODIFICATION_STATION.get(),
+            new UncheckedModelFile(modLoc("block/augment_modification_station"))
+        );
     }
 
     private void blockWithItem(DeferredHolder<Block, Block> blockRegistryObject) {

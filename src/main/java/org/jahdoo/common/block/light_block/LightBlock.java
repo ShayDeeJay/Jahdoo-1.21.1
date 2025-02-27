@@ -41,18 +41,18 @@ public class LightBlock extends Block {
     public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource) {
         AbstractElement type;
         if(level.dimension() == Level.NETHER){
-            type = ElementRegistry.INFERNO.get();
+            type = ElementRegistry.inferno();
         } else if (level.dimension() == Level.END) {
-            type = ElementRegistry.MYSTIC.get();
+            type = ElementRegistry.mystic();
         } else {
-            type = ElementRegistry.UTILITY.get();
+            type = ElementRegistry.utility();
         }
 
         var pos = blockPos.getCenter().subtract(0,0.05,0);
         var lifetime = 10;
         var size = 0.8f;
-        var bakedParticle = bakedParticleOptions(type.getTypeId(), lifetime, size + 0.2f, false);
-        var generic = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, size, type.particleColourPrimary(), type.particleColourFaded(), false);
+        var bakedParticle = bakedParticleOptions(type.id(), lifetime, size + 0.2f, false);
+        var generic = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, size, type.partColourA(), type.partColourFade(), false);
 
         ParticleHandlers.invisibleLight(level, pos, bakedParticle, 0.03, 0.04,50);
         ParticleHandlers.invisibleLight(level, pos, generic, 0.03, 0.04, 50);

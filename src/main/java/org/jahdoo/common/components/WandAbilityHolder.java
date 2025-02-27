@@ -19,25 +19,30 @@ public record WandAbilityHolder(Map<String, AbilityHolder> abilityProperties) {
 
     public static final WandAbilityHolder DEFAULT = new WandAbilityHolder(new LinkedHashMap<>());
 
+    private void serialise(FriendlyByteBuf friendlyByteBuf){
+        friendlyByteBuf.writeMap(abilityProperties, ByteBufCodecs.STRING_UTF8, AbilityHolder.STREAM_CODEC);
+    }
+
     public static final StreamCodec<FriendlyByteBuf, WandAbilityHolder> STREAM_CODEC = StreamCodec.ofMember(
         WandAbilityHolder::serialise,
         WandAbilityHolder::deserialise
     );
 
-    public static WandAbilityHolder getHolder(ItemStack itemStack){
-        var getHolder = itemStack.get(WAND_ABILITY_HOLDER);
-        if(getHolder != null) return getHolder;
-        return DEFAULT;
-    }
-
-    private void serialise(FriendlyByteBuf friendlyByteBuf){
-        friendlyByteBuf.writeMap(abilityProperties, ByteBufCodecs.STRING_UTF8, AbilityHolder.STREAM_CODEC);
+    public static WandAbilityHolder getHolderFromWand(Player player){
+        var component = WAND_ABILITY_HOLDER.get();
+        return Helpers.getUsedItem(player).get(component);
     }
 
     private static WandAbilityHolder deserialise(FriendlyByteBuf friendlyByteBuf){
         return new WandAbilityHolder(
             friendlyByteBuf.readMap(Maps::newLinkedHashMapWithExpectedSize, ByteBufCodecs.STRING_UTF8, AbilityHolder.STREAM_CODEC)
         );
+    }
+
+    public static WandAbilityHolder getHolder(ItemStack itemStack){
+        var getHolder = itemStack.get(WAND_ABILITY_HOLDER);
+        if(getHolder != null) return getHolder;
+        return DEFAULT;
     }
 
     public static final Codec<WandAbilityHolder> CODEC = RecordCodecBuilder.create(
@@ -48,8 +53,4 @@ public record WandAbilityHolder(Map<String, AbilityHolder> abilityProperties) {
         ).apply(instance, WandAbilityHolder::new)
     );
 
-    public static WandAbilityHolder getHolderFromWand(Player player){
-        var component = WAND_ABILITY_HOLDER.get();
-        return Helpers.getUsedItem(player).get(component);
-    }
 }

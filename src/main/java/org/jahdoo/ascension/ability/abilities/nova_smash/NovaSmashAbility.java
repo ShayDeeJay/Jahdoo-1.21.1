@@ -50,7 +50,7 @@ public class NovaSmashAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.MYSTIC.get();
+        return ElementRegistry.mystic();
     }
 
     @Override

@@ -28,7 +28,7 @@ public class ElementalSword extends SwordItem {
     private static AbstractElement element(ItemStack stack) {
         var elementIndex = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         var actualIndex = elementIndex != null ? (elementIndex.value() + 1) : 1;
-        return getElementById(actualIndex).orElseGet(INFERNO);
+        return fromId(actualIndex).orElseThrow();
     }
 
     @Override
@@ -42,8 +42,8 @@ public class ElementalSword extends SwordItem {
     @Override
     public Component getName(ItemStack stack) {
         var element = element(stack);
-        var name = element.getElementName() + " Twinblade";
-        var colour = element.particleColourSecondary();
+        var name = element.name() + " Twinblade";
+        var colour = element.partColourB();
 
         return withStyleComponent(name, colour);
     }
@@ -53,13 +53,13 @@ public class ElementalSword extends SwordItem {
         var canOffhand = canOffHand(attacker, InteractionHand.OFF_HAND, false);
         var getWand = attacker.getOffhandItem().getItem();
 
-        getElementFromWand(getWand).ifPresent(
+        fromWand(getWand).ifPresent(
             abstractElement -> {
                 var isMatchingType = Objects.equals(element(stack), abstractElement);
                 if(Random.nextInt(10) == 0){
                     if(canOffhand && isMatchingType){
                         var element = element(stack);
-                        var setEffect = new JahdooMobEffect(element.elementEffect(), 40, 1);
+                        var setEffect = new JahdooMobEffect(element.effect(), 40, 1);
                         target.addEffect(setEffect);
                     }
                 }

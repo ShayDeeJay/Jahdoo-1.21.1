@@ -73,7 +73,7 @@ public class SummonAncientGolemAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.VITALITY.get();
+        return ElementRegistry.vitality();
     }
 
 }

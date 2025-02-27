@@ -103,7 +103,7 @@ public class Boltz extends DefaultEntityBehaviour {
     private void dischargeEffect(){
         var projectile = this.elementProjectile;
         var owner = projectile.getOwner();
-        var instance = new JahdooMobEffect(getElementType().elementEffect(), (int) effectDuration, (int) effectStrength);
+        var instance = new JahdooMobEffect(getElementType().effect(), (int) effectDuration, (int) effectStrength);
 
         projectile.level().getNearbyEntities(
             LivingEntity.class,
@@ -151,7 +151,7 @@ public class Boltz extends DefaultEntityBehaviour {
         var level = projectile.level();
 
         var bakedParticle = bakedParticleOptions(
-            this.getElementType().getTypeId(), Random.nextInt(2,8), 1, false
+            this.getElementType().id(), Random.nextInt(2,8), 1, false
         );
 
         var particleOptions = genericParticleOptions(
@@ -199,7 +199,7 @@ public class Boltz extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.FROST.get();
+        return ElementRegistry.frost();
     }
 
     ResourceLocation abilityId = Helpers.res("boltz_property");

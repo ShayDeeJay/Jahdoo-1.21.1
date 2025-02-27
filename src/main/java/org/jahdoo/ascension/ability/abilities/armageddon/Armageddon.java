@@ -126,13 +126,13 @@ public class Armageddon extends DefaultEntityBehaviour {
 
     private void setParticleNova(Vec3 worldPosition){
         var directions = worldPosition.subtract(this.aoeCloud.position());
-        var getMysticElement = ElementRegistry.MYSTIC.get();
+        var getMysticElement = ElementRegistry.mystic();
 
         var genericParticle = genericParticleOptions(
             GENERIC_PARTICLE_SELECTION, 20,
             6f,
-            getMysticElement.particleColourPrimary(),
-            getMysticElement.particleColourSecondary(),
+            getMysticElement.partColourA(),
+            getMysticElement.partColourB(),
             false
         );
 
@@ -143,7 +143,7 @@ public class Armageddon extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.INFERNO.get();
+        return ElementRegistry.inferno();
     }
 
     public static ResourceLocation abilityId = Helpers.res("armageddon_property");

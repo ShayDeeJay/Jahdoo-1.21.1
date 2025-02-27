@@ -27,56 +27,17 @@ import static org.jahdoo.common.items.wand.WandItemHelper.getAllSlots;
 public class ClientEvents {
 
     @SubscribeEvent
-    public static void onKeyInput(InputEvent.Key event) {
-        var instance = Minecraft.getInstance();
-        var player = instance.player;
-
-        quickSelectBehaviour(player, instance);
-        toggleLockAbility(player);
-
-        if(KeyBinding.WAND_SLOT_1A.consumeClick()) WandAbilitySelector.selectWandSlot(1);
-        if(KeyBinding.WAND_SLOT_2A.consumeClick()) WandAbilitySelector.selectWandSlot(2);
-        if(KeyBinding.WAND_SLOT_3A.consumeClick()) WandAbilitySelector.selectWandSlot(3);
-        if(KeyBinding.WAND_SLOT_4A.consumeClick()) WandAbilitySelector.selectWandSlot(4);
-        if(KeyBinding.WAND_SLOT_5A.consumeClick()) WandAbilitySelector.selectWandSlot(5);
-        if(KeyBinding.WAND_SLOT_6A.consumeClick()) WandAbilitySelector.selectWandSlot(6);
-        if(KeyBinding.WAND_SLOT_7A.consumeClick()) WandAbilitySelector.selectWandSlot(7);
-        if(KeyBinding.WAND_SLOT_8A.consumeClick()) WandAbilitySelector.selectWandSlot(8);
-        if(KeyBinding.WAND_SLOT_9A.consumeClick()) WandAbilitySelector.selectWandSlot(9);
-        if(KeyBinding.WAND_SLOT_10A.consumeClick()) WandAbilitySelector.selectWandSlot(10);
-
-    }
-
-    @SubscribeEvent
     public static void entityRenderer(RenderLivingEvent.Pre event) {
         mysticEffectClient(event);
-//         else {
-//            var player = Minecraft.getInstance().player;
-//            if(player != null /*&& getEntityPlayerIsLookingAt(player, 30) == entity*/){
-//                var pose = event.getPoseStack();
-//                var buffer = event.getMultiBufferSource();
-//                var scale = Math.sin((entity.tickCount + event.getPartialTick()) / 5.0F) * 0.08F + 0.4;
-//                pose.pushPose();
-//                pose.translate(0, entity.getBbHeight() + 0.5, 0);
-//                pose.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
-//                pose.rotateAround(Axis.XN.rotationDegrees(90), 0,0,0);
-////                pose.rotateAround(Axis.YP.rotationDegrees(90), 0, 0, 0);
-////                pose.rotateAround(Axis.YP.rotationDegrees(entity.tickCount + event.getPartialTick()), 0, 0, 0);
-////                pose.rotateAround(Axis.ZN.rotationDegrees((float) scale), 0,0,0);
-////                pose.rotateAround(Axis.XP.rotationDegrees(entity.yBodyRotO + 10), 0,0,0);
-////                pose.scale(0,0,1);
-//                drawTexture(pose.last(), buffer, 255, 1, ModHelpers.res("textures/entity/shield.png"), FastColor.ARGB32.color(155, -1));
-//                pose.popPose();
-//            }
-//        }
     }
 
     @SubscribeEvent
-    public static void updateInputEvent(MovementInputUpdateEvent event) {
-        Input eInput = event.getInput();
-        if (eInput.jumping) {
-//            eInput.jumping = false;
-        }
+    public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
+        var instance = Minecraft.getInstance();
+        var player = instance.player;
+        crosshairManager(event);
+        simpleGui(event, player);
+        OverlayBlockTooltip.overlayEvent(event);
     }
 
     @SubscribeEvent
@@ -103,12 +64,24 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
+    public static void onKeyInput(InputEvent.Key event) {
         var instance = Minecraft.getInstance();
         var player = instance.player;
-        crosshairManager(event);
-        simpleGui(event, player);
-        OverlayBlockTooltip.overlayEvent(event);
+
+        quickSelectBehaviour(player, instance);
+        toggleLockAbility(player);
+
+        if(KeyBinding.WAND_SLOT_1A.consumeClick()) WandAbilitySelector.selectWandSlot(1);
+        if(KeyBinding.WAND_SLOT_2A.consumeClick()) WandAbilitySelector.selectWandSlot(2);
+        if(KeyBinding.WAND_SLOT_3A.consumeClick()) WandAbilitySelector.selectWandSlot(3);
+        if(KeyBinding.WAND_SLOT_4A.consumeClick()) WandAbilitySelector.selectWandSlot(4);
+        if(KeyBinding.WAND_SLOT_5A.consumeClick()) WandAbilitySelector.selectWandSlot(5);
+        if(KeyBinding.WAND_SLOT_6A.consumeClick()) WandAbilitySelector.selectWandSlot(6);
+        if(KeyBinding.WAND_SLOT_7A.consumeClick()) WandAbilitySelector.selectWandSlot(7);
+        if(KeyBinding.WAND_SLOT_8A.consumeClick()) WandAbilitySelector.selectWandSlot(8);
+        if(KeyBinding.WAND_SLOT_9A.consumeClick()) WandAbilitySelector.selectWandSlot(9);
+        if(KeyBinding.WAND_SLOT_10A.consumeClick()) WandAbilitySelector.selectWandSlot(10);
+
     }
 }
 

@@ -45,13 +45,17 @@ public class ElementalShooter extends DefaultEntityBehaviour {
             var player = this.genericProjectile.getOwner();
             var damage = this.getTag(DAMAGE);
             var elementId = getTag(SET_ELEMENT_TYPE);
-            var element = ElementRegistry.getElementByTypeId((int) elementId).getFirst();
-            this.damage = Helpers.attributeModifierCalculator(
-                (LivingEntity) player,
-                (float) damage,
-                true,
-                MAGIC_DAMAGE_MULTIPLIER,
-                element.getDamageTypeAmplifier()
+            var element = ElementRegistry.fromId((int) elementId);
+            element.ifPresent(
+                getElement -> {
+                    this.damage = Helpers.attributeModifierCalculator(
+                        (LivingEntity) player,
+                        (float) damage,
+                        true,
+                        MAGIC_DAMAGE_MULTIPLIER,
+                        getElement.damageAmplifier()
+                    );
+                }
             );
         }
     }
@@ -90,7 +94,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         if(blockBounce == numberOfRicochets) this.genericProjectile.discard();
 
-        Helpers.getSoundWithPosition(this.genericProjectile.level(), this.genericProjectile.blockPosition(), getElement().getElementSound(), 0.4f);
+        Helpers.getSoundWithPosition(this.genericProjectile.level(), this.genericProjectile.blockPosition(), getElement().sound(), 0.4f);
         if(!(this.genericProjectile.level() instanceof ServerLevel serverLevel)) return;
         ParticleHandlers.particleBurst(serverLevel, this.genericProjectile.position(), 1, getElement().getParticleGroup().bakedSlow());
         this.setReboundBehaviour(blockHitResult);
@@ -98,12 +102,12 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 
     private AbstractElement getElement(){
         var elementId = (int) getTag(SET_ELEMENT_TYPE);
-        return ElementRegistry.getElementById(elementId).orElseThrow();
+        return ElementRegistry.fromId(elementId).orElseThrow();
     }
 
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
-        this.applyEffect(hitEntity, getElement().elementEffect());
+        this.applyEffect(hitEntity, getElement().effect());
         if(!(this.genericProjectile.level() instanceof ServerLevel serverLevel)) return;
         ParticleHandlers.particleBurst(serverLevel, this.genericProjectile.position(), 1, getElement().getParticleGroup().bakedSlow());
         this.setDamageByOwner(hitEntity);
@@ -117,7 +121,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 
     public static void animateParticles(Projectile projectile, AbstractElement element) {
         if(projectile.tickCount > 1){
-            var baked = bakedParticleOptions(element.getTypeId(), 2, 1.5f, false);
+            var baked = bakedParticleOptions(element.id(), 2, 1.5f, false);
             var pos = projectile.position().add(0, 0.1, 0);
             genericProjPart(projectile.level(), pos, 1, baked, 0.03f);
             playParticles3(

@@ -144,7 +144,7 @@ public class AugmentItemHelper {
                 .get(SET_ELEMENT_TYPE);
             type = (int) abilityModifiers.actualValue();
         } else {
-            type = ability.getElemenType().getTypeId();
+            type = ability.getElemenType().id();
         }
 
         itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(type));
@@ -197,51 +197,6 @@ public class AugmentItemHelper {
         return getModifierContext(keys, "", 0, true, min, max);
     }
 
-    public static Component getModifierContext(String keys, String current, int getComparison, boolean isRange, String min, String max) {
-        String displayValue;
-        var time = List.of("Duration", "Speed", "Delay", "Time");
-        var probability = List.of("Chance");
-        var distance = List.of("Radius", "Distance", "Range");
-        var multiplier = List.of("Multiplier");
-        var by = List.of("Block Size");
-
-        if (time.stream().anyMatch(keys::contains)) {
-            displayValue = isRange
-                ? rangeString(ticksToTime(min), ticksToTime(max))
-                : ticksToTime(current);
-        } else if (probability.stream().anyMatch(keys::contains)) {
-            displayValue = isRange
-                ? rangeString(
-                convertToPercentage(Double.parseDouble(min)),
-                convertToPercentage(Double.parseDouble(max))
-            ) + "%"
-                : convertToPercentage(Double.parseDouble(current)) + "%";
-        } else if (distance.stream().anyMatch(keys::contains)) {
-            displayValue = isRange
-                ? rangeString(min, max) + " Blocks"
-                : current + " Blocks";
-        } else if (multiplier.stream().anyMatch(keys::contains)) {
-            displayValue = isRange
-                ? rangeString(min, max) + "x"
-                : current + "x";
-        } else if (by.stream().anyMatch(keys::contains)) {
-            displayValue = isRange
-                ? rangeString(min + "x" + min, max + "x" + max)
-                : current + " x " + current;
-        } else {
-            displayValue = isRange ? rangeString(min, max) : current;
-        }
-
-        var matchesStat = 5987164;
-        var betterThanStat = -12988840;
-        var worseThanStat = -47032;
-        var colour = isRange ? matchesStat : getComparison == 1 ? matchesStat : getComparison == 2 ? betterThanStat : worseThanStat;
-
-        return Component
-            .literal(roundNonWholeString(displayValue))
-            .withStyle(style -> style.withColor(colour));
-    }
-
     public static @NotNull String ticksToTime(String current) {
         String converter;
         var duration = singleFormattedDouble(Double.parseDouble(current) / 20);
@@ -257,105 +212,18 @@ public class AugmentItemHelper {
         return converter;
     }
 
-    public static Component getCurrentModifierRating(ItemStack itemStack, ItemStack itemStack1, String keys, String abilityLocation) {
-        var hoveredTag = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
-        var getHoveredHolder = hoveredTag.abilityProperties().get(abilityLocation);
-        var abilityModifier = getHoveredHolder.abilityProperties().get(keys);
-        if(abilityModifier == null) return Component.empty();
-        var format = FORMAT.format(abilityModifier.actualValue());
-        var type = itemStack.get(DataComponents.CUSTOM_MODEL_DATA);
-        if(type == null) return Component.empty();
-        var colour = ElementRegistry.getElementByTypeId(type.value());
-        if(!colour.isEmpty()){
-            if (itemStack1 != null) {
-                int comparisonResult;
-                var matchedTag = itemStack1.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
-                if (matchedTag != null) {
-                    var getMatchedHolder = matchedTag.abilityProperties().get(abilityLocation);
-                    var matchedModifier = getMatchedHolder.abilityProperties().get(keys);
-                    if (matchedModifier != null) {
-                        var getMatchedEntry = matchedModifier.actualValue();
-                        var getHoveredEntry = abilityModifier.actualValue();
-                        var isHigherBetter = abilityModifier.isHigherBetter();
-
-                        var isEven = getHoveredEntry == getMatchedEntry;
-                        var isBetter = getHoveredEntry > getMatchedEntry;
-                        var isWorse = getHoveredEntry < getMatchedEntry;
-
-                        var higherNumber = isBetter ? 2 : isEven ? 1 : 3;
-                        var lowerNumber = isWorse ? 2 : isEven ? 1 : 3;
-
-                        comparisonResult = isHigherBetter ? higherNumber : lowerNumber;
-
-                        return getFormattedModifiers(keys, itemStack, format, comparisonResult);
-                    }
-                }
-            } else {
-                return getFormattedModifiers(keys, itemStack, format, 1);
-            }
-        }
-        return Component.empty();
-    }
-
     public static Component getFormattedModifiers(String keys, ItemStack itemStack, String format, int comparison){
         var type = itemStack.get(DataComponents.CUSTOM_MODEL_DATA);
-        var colour = ElementRegistry.getElementByTypeId(type.value());
+        if(type == null) return Component.empty();
+        var element = ElementRegistry.fromId(type.value()).orElse(ElementRegistry.mystic());
+
         return Component.literal(keys)
-            .withStyle(style -> style.withColor(colour.getFirst().particleColourSecondary()))
+            .withStyle(style -> style.withColor(element.partColourB()))
             .append(Component.literal(" | ")
                 .withStyle(ChatFormatting.GRAY)
                 .append(getModifierContextSingle(keys, format, comparison)));
     }
 
-
-    public static List<Component> getAllAbilityModifiers(
-        ItemStack itemStack,
-        ItemStack itemStack1,
-        String abilityLocation,
-        boolean hide,
-        Level level
-    ){
-        var toolTips = new ArrayList<Component>();
-        if(itemStack.getComponents().isEmpty()) return toolTips;
-        var exceptions = List.of(COOLDOWN, MANA_COST, SET_ELEMENT_TYPE, "index", OFFSET);
-        var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
-        if(wandAbilityHolder == null) return toolTips;
-        var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityLocation);
-        var ability = AbilityRegister.getSpellsByTypeId(abilityLocation);
-        var index = itemStack.get(JAHDOO_RARITY);
-
-        if(!ability.isEmpty() && index != null){
-            toolTips.add(JahdooRarity.addRarityTooltip(JahdooRarity.getAllRarities().get(index), level));
-        }
-
-        toolTips.add(Component.empty());
-
-        int subHeaderColour = -2434342;
-        var curlyStart = String.valueOf((char) 171);
-        var curlyEnd = String.valueOf((char) 187);
-        if(abilityHolder == null) return toolTips;
-
-        List<String> filteredSuffix = abilityHolder.abilityProperties().keySet()
-            .stream()
-            .filter(abilityModifiers -> !exceptions.contains(abilityModifiers))
-            .toList();
-
-        if(abilityHolder.abilityProperties().containsKey(MANA_COST)){
-            toolTipBase(toolTips, itemStack, itemStack1, MANA_COST, abilityLocation, -6829330, hide);
-        }
-
-        if(abilityHolder.abilityProperties().containsKey(COOLDOWN)){
-            toolTipBase(toolTips, itemStack, itemStack1, COOLDOWN, abilityLocation, -7471171, hide);
-        }
-
-        if(!filteredSuffix.isEmpty()){
-            toolTips.add(Component.literal(" "));
-            toolTips.add(Helpers.withStyleComponentTrans("augmentHelper.jahdoo.attributes", subHeaderColour, curlyStart, curlyEnd));
-            filteredSuffix.forEach(keys -> toolTipBase(toolTips, itemStack, itemStack1, keys, abilityLocation, 0, hide));
-        }
-
-        return toolTips;
-    }
 
     public static boolean shiftForDetails(List<Component> toolTips){
         if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
@@ -395,7 +263,7 @@ public class AugmentItemHelper {
                     if (abilityRegistrars != null) {
                         component.set(
                             Component.literal(abilityRegistrars.getAbilityName())
-                                .withStyle((style) -> style.withColor(info.textColourPrimary()))
+                                .withStyle((style) -> style.withColor(info.textColourA()))
                         );
                     }
                 }
@@ -410,15 +278,15 @@ public class AugmentItemHelper {
         if(modelData != null){
             var abstractElement = ElementRegistry.REGISTRY
                 .stream()
-                .filter(ability -> ability.getTypeId() == modelData.value())
+                .filter(ability -> ability.id() == modelData.value())
                 .toList();
 
             if (!abstractElement.isEmpty()) {
                 if (itemStack.getComponents().has(WAND_ABILITY_HOLDER.get())) {
                     return AugmentItemHelper.getAbilityName(itemStack, abstractElement.getFirst());
                 }
-                var elementName = abstractElement.getFirst().getElementName() + " Augment";
-                var elementColour = abstractElement.getFirst().textColourPrimary();
+                var elementName = abstractElement.getFirst().name() + " Augment";
+                var elementColour = abstractElement.getFirst().textColourA();
                 return Component.literal(elementName).withStyle(style -> style.withColor(elementColour));
             }
         }
@@ -485,6 +353,139 @@ public class AugmentItemHelper {
             .filter(name -> !name.equals(MANA_COST) && !name.equals(COOLDOWN));
         return /*selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && */!filterOutBase.toList().isEmpty();
 //        return selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && !filterOutBase.toList().isEmpty();
+    }
+
+    public static Component getCurrentModifierRating(ItemStack itemStack, ItemStack itemStack1, String keys, String abilityLocation) {
+        var hoveredTag = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var getHoveredHolder = hoveredTag.abilityProperties().get(abilityLocation);
+        var abilityModifier = getHoveredHolder.abilityProperties().get(keys);
+        if(abilityModifier == null) return Component.empty();
+        var format = FORMAT.format(abilityModifier.actualValue());
+        var type = itemStack.get(DataComponents.CUSTOM_MODEL_DATA);
+        if(type == null) return Component.empty();
+
+        if (itemStack1 != null) {
+            int comparisonResult;
+            var matchedTag = itemStack1.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            if (matchedTag != null) {
+                var getMatchedHolder = matchedTag.abilityProperties().get(abilityLocation);
+                var matchedModifier = getMatchedHolder.abilityProperties().get(keys);
+                if (matchedModifier != null) {
+                    var getMatchedEntry = matchedModifier.actualValue();
+                    var getHoveredEntry = abilityModifier.actualValue();
+                    var isHigherBetter = abilityModifier.isHigherBetter();
+
+                    var isEven = getHoveredEntry == getMatchedEntry;
+                    var isBetter = getHoveredEntry > getMatchedEntry;
+                    var isWorse = getHoveredEntry < getMatchedEntry;
+
+                    var higherNumber = isBetter ? 2 : isEven ? 1 : 3;
+                    var lowerNumber = isWorse ? 2 : isEven ? 1 : 3;
+
+                    comparisonResult = isHigherBetter ? higherNumber : lowerNumber;
+
+                    return getFormattedModifiers(keys, itemStack, format, comparisonResult);
+                }
+            }
+        } else {
+            return getFormattedModifiers(keys, itemStack, format, 1);
+        }
+
+        return Component.empty();
+    }
+
+    public static Component getModifierContext(String keys, String current, int getComparison, boolean isRange, String min, String max) {
+        String displayValue;
+        var time = List.of("Duration", "Speed", "Delay", "Time");
+        var probability = List.of("Chance");
+        var distance = List.of("Radius", "Distance", "Range");
+        var multiplier = List.of("Multiplier");
+        var by = List.of("Block Size");
+
+        if (time.stream().anyMatch(keys::contains)) {
+            displayValue = isRange
+                  ? rangeString(ticksToTime(min), ticksToTime(max))
+                  : ticksToTime(current);
+        } else if (probability.stream().anyMatch(keys::contains)) {
+            displayValue = isRange
+                  ? rangeString(
+                  convertToPercentage(Double.parseDouble(min)),
+                  convertToPercentage(Double.parseDouble(max))
+            ) + "%"
+                  : convertToPercentage(Double.parseDouble(current)) + "%";
+        } else if (distance.stream().anyMatch(keys::contains)) {
+            displayValue = isRange
+                  ? rangeString(min, max) + " Blocks"
+                  : current + " Blocks";
+        } else if (multiplier.stream().anyMatch(keys::contains)) {
+            displayValue = isRange
+                  ? rangeString(min, max) + "x"
+                  : current + "x";
+        } else if (by.stream().anyMatch(keys::contains)) {
+            displayValue = isRange
+                  ? rangeString(min + "x" + min, max + "x" + max)
+                  : current + " x " + current;
+        } else {
+            displayValue = isRange ? rangeString(min, max) : current;
+        }
+
+        var matchesStat = 5987164;
+        var betterThanStat = -12988840;
+        var worseThanStat = -47032;
+        var colour = isRange ? matchesStat : getComparison == 1 ? matchesStat : getComparison == 2 ? betterThanStat : worseThanStat;
+
+        return Component
+              .literal(roundNonWholeString(displayValue))
+              .withStyle(style -> style.withColor(colour));
+    }
+
+    public static List<Component> getAllAbilityModifiers(
+          ItemStack itemStack,
+          ItemStack itemStack1,
+          String abilityLocation,
+          boolean hide,
+          Level level
+    ){
+        var toolTips = new ArrayList<Component>();
+        if(itemStack.getComponents().isEmpty()) return toolTips;
+        var exceptions = List.of(COOLDOWN, MANA_COST, SET_ELEMENT_TYPE, "index", OFFSET);
+        var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        if(wandAbilityHolder == null) return toolTips;
+        var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityLocation);
+        var ability = AbilityRegister.getSpellsByTypeId(abilityLocation);
+        var index = itemStack.get(JAHDOO_RARITY);
+
+        if(!ability.isEmpty() && index != null){
+            toolTips.add(JahdooRarity.addRarityTooltip(JahdooRarity.getAllRarities().get(index), level));
+        }
+
+        toolTips.add(Component.empty());
+
+        int subHeaderColour = -2434342;
+        var curlyStart = String.valueOf((char) 171);
+        var curlyEnd = String.valueOf((char) 187);
+        if(abilityHolder == null) return toolTips;
+
+        List<String> filteredSuffix = abilityHolder.abilityProperties().keySet()
+              .stream()
+              .filter(abilityModifiers -> !exceptions.contains(abilityModifiers))
+              .toList();
+
+        if(abilityHolder.abilityProperties().containsKey(MANA_COST)){
+            toolTipBase(toolTips, itemStack, itemStack1, MANA_COST, abilityLocation, -6829330, hide);
+        }
+
+        if(abilityHolder.abilityProperties().containsKey(COOLDOWN)){
+            toolTipBase(toolTips, itemStack, itemStack1, COOLDOWN, abilityLocation, -7471171, hide);
+        }
+
+        if(!filteredSuffix.isEmpty()){
+            toolTips.add(Component.literal(" "));
+            toolTips.add(Helpers.withStyleComponentTrans("augmentHelper.jahdoo.attributes", subHeaderColour, curlyStart, curlyEnd));
+            filteredSuffix.forEach(keys -> toolTipBase(toolTips, itemStack, itemStack1, keys, abilityLocation, 0, hide));
+        }
+
+        return toolTips;
     }
 
 }

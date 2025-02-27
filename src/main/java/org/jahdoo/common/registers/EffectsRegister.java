@@ -1,9 +1,13 @@
 package org.jahdoo.common.registers;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -18,74 +22,79 @@ import org.jahdoo.ascension.ability.effects.type_effects.mystic.MysticEffect;
 import org.jahdoo.ascension.ability.effects.type_effects.vitality.GreaterVitalityEffect;
 import org.jahdoo.ascension.ability.effects.type_effects.vitality.VitalityEffect;
 
+import java.util.function.Supplier;
+
 import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
 import static net.minecraft.world.effect.MobEffectCategory.*;
-import static net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL;
-import static net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE;
+import static net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.*;
 import static net.minecraft.world.entity.ai.attributes.Attributes.*;
 import static org.jahdoo.common.registers.AttributesRegister.*;
 
 public class EffectsRegister {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, JahdooMod.MOD_ID);
 
-    public static final DeferredHolder<MobEffect, MobEffect>  STEP_BOOST = MOB_EFFECTS.register("step_boost",
-        () -> new GenericEffect(BENEFICIAL, 3434234)
-            .addAttributeModifier(STEP_HEIGHT, withDefaultNamespace("step_height"), 1.0, ADD_VALUE)
-    );
+    //Other effects
+    public static final DeferredHolder<MobEffect, MobEffect>  STEP_BOOST =
+        mobEffectWithAttribute("step_boost", STEP_HEIGHT,  1.0, ADD_VALUE, GenericEffect::new);
 
-    public static final DeferredHolder<MobEffect, MobEffect> AMPLIFY_BLOCK_REACH = MOB_EFFECTS.register("amplify_block_reach",
-        () -> new GenericEffect(BENEFICIAL, 3436524)
-            .addAttributeModifier(BLOCK_INTERACTION_RANGE, withDefaultNamespace("player_reach"),1.0D, ADD_VALUE)
-    );
+    public static final DeferredHolder<MobEffect, MobEffect> MANA_REGENERATION =
+        mobEffectWithAttribute("mana_regeneration", MANA_REGEN,  1.0, ADD_VALUE, GenericEffect::new);
 
-    public static final DeferredHolder<MobEffect, MobEffect> MANA_REGENERATION = MOB_EFFECTS.register("mana_regeneration",
-        () -> new GenericEffect(BENEFICIAL, 3436524)
-            .addAttributeModifier(MANA_REGEN, withDefaultNamespace("man_regen"),1.0D, ADD_VALUE)
-    );
+    public static final DeferredHolder<MobEffect, MobEffect> FROST_EFFECT =
+        mobEffectWithAttribute("frost_effect", MOVEMENT_SPEED, -0.15, ADD_MULTIPLIED_BASE, FrostEffect::new);
 
-    public static final DeferredHolder<MobEffect, MobEffect> REPLENISH_MANA = MOB_EFFECTS.register("replenish_mana",
-        () -> new ReplenishManaEffect(BENEFICIAL, 3436524)
-    );
+    public static final DeferredHolder<MobEffect, MobEffect> AMPLIFY_BLOCK_REACH =
+        mobEffectWithAttribute("amplify_block_reach", BLOCK_INTERACTION_RANGE,  1.0, ADD_VALUE, GenericEffect::new);
 
-    public static final DeferredHolder<MobEffect, MobEffect> ITEM_MAGNET = MOB_EFFECTS.register("item_magnet",
-        () -> new ItemMagnetEffect(BENEFICIAL, 3436524)
-    );
+    //Standard effects
+    public static final DeferredHolder<MobEffect, MobEffect> REPLENISH_MANA =
+        mobEffect("replenish_mana", ReplenishManaEffect::new);
 
-    public static final DeferredHolder<MobEffect, MobEffect> REBOUND = MOB_EFFECTS.register("rebound",
-        () -> new Rebound(BENEFICIAL, 3436524)
-    );
+    public static final DeferredHolder<MobEffect, MobEffect> ITEM_MAGNET =
+        mobEffect("item_magnet", ItemMagnetEffect::new);
 
-    public static final DeferredHolder<MobEffect, MobEffect> STUN_EFFECT = MOB_EFFECTS.register("stun_effect",
-        () -> new StunEffect(HARMFUL, 3436524)
-    );
+    public static final DeferredHolder<MobEffect, MobEffect> REBOUND =
+        mobEffect("rebound", Rebound::new);
 
-    public static final DeferredHolder<MobEffect, MobEffect> FROST_EFFECT = MOB_EFFECTS.register("frost_effect",
-        () -> new FrostEffect()
-            .addAttributeModifier(MOVEMENT_SPEED, withDefaultNamespace("frost.speed"), -0.15F, ADD_MULTIPLIED_TOTAL)
-    );
+    public static final DeferredHolder<MobEffect, MobEffect> STUN_EFFECT =
+        mobEffect("stun_effect", StunEffect::new);
 
     public static final DeferredHolder<MobEffect, MobEffect> GREATER_FROST_EFFECT =
-        MOB_EFFECTS.register("greater_frost_effect", GreaterFrostEffect::new);
+        mobEffect("greater_frost_effect", GreaterFrostEffect::new);
 
     public static final DeferredHolder<MobEffect, MobEffect> MYSTIC_EFFECT =
-        MOB_EFFECTS.register("mystic_effect", MysticEffect::new);
+        mobEffect("mystic_effect", MysticEffect::new);
 
     public static final DeferredHolder<MobEffect, MobEffect> GREATER_MYSTIC_EFFECT =
-        MOB_EFFECTS.register("greater_mystic_effect", GreaterMysticEffect::new);
+        mobEffect("greater_mystic_effect", GreaterMysticEffect::new);
 
     public static final DeferredHolder<MobEffect, MobEffect> INFERNO_EFFECT =
-        MOB_EFFECTS.register("inferno_effect", InfernoEffect::new);
+        mobEffect("inferno_effect", InfernoEffect::new);
 
     public static final DeferredHolder<MobEffect, MobEffect> GREATER_INFERNO_EFFECT =
-        MOB_EFFECTS.register("greater_inferno_effect", GreaterInfernoEffect::new);
+        mobEffect("greater_inferno_effect", GreaterInfernoEffect::new);
 
     public static final DeferredHolder<MobEffect, MobEffect> VITALITY_EFFECT =
-        MOB_EFFECTS.register("vitality_effect", VitalityEffect::new);
+        mobEffect("vitality_effect", VitalityEffect::new);
 
     public static final DeferredHolder<MobEffect, MobEffect> GREATER_VITALITY_EFFECT =
-        MOB_EFFECTS.register("greater_vitality_effect", GreaterVitalityEffect::new);
+        mobEffect("greater_vitality_effect", GreaterVitalityEffect::new);
 
-    public static void register (IEventBus eventBus) {
-        MOB_EFFECTS.register(eventBus);
+    public static DeferredHolder<MobEffect, MobEffect> mobEffect(String name, Supplier<? extends MobEffect> sup){
+        return MOB_EFFECTS.register(name, sup);
+    }
+
+    public static void register (IEventBus eventBus) { MOB_EFFECTS.register(eventBus);
+    }
+
+    public static DeferredHolder<MobEffect, MobEffect> mobEffectWithAttribute(
+        String name,
+        Holder<Attribute> attribute,
+        Double value,
+        AttributeModifier.Operation operation,
+        Supplier<? extends MobEffect> sup
+    ){
+        sup.get().addAttributeModifier(attribute, withDefaultNamespace(name + "tag"), value, operation);
+        return MOB_EFFECTS.register(name, sup);
     }
 }

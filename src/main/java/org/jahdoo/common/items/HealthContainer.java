@@ -13,8 +13,8 @@ import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
 
 public class HealthContainer extends Item implements ItemEntityBehaviour {
 
-    public HealthContainer(Properties pProperties) {
-        super(pProperties);
+    public HealthContainer() {
+        super(new Properties());
     }
 
     @Override

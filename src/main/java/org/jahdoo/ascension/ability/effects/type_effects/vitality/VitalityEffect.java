@@ -36,7 +36,7 @@ public class VitalityEffect extends MobEffect {
                 }
                 DamageUtils.damageWithJahdoo(targetEntity, 1);
             }
-            EffectHelpers.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementRegistry.VITALITY.get(), SoundEvents.SOUL_ESCAPE.value());
+            EffectHelpers.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementRegistry.vitality(), SoundEvents.SOUL_ESCAPE.value());
         }
         return true;
     }

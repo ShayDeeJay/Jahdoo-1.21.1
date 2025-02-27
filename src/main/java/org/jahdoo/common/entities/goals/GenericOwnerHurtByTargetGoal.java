@@ -21,26 +21,11 @@ public class GenericOwnerHurtByTargetGoal extends TargetGoal {
         this.setFlags(EnumSet.of(Flag.TARGET));
     }
 
-    /**
-     * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-     * method as well.
-     */
-    public boolean canUse() {
-        LivingEntity owner = this.owner.get();
-        if (owner == null) {
-            return false;
-        } else {
-            this.ownerLastHurtBy = owner.getLastHurtByMob();
-            if (ownerLastHurtBy == null || ownerLastHurtBy.isAlliedTo(mob))
-                return false;
-            int i = owner.getLastHurtByMobTimestamp();
-            return i != this.timestamp && this.canAttack(this.ownerLastHurtBy, TargetingConditions.DEFAULT);
-        }
+    @Override
+    public void stop() {
+        super.stop();
     }
 
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
     public void start() {
         this.mob.setTarget(this.ownerLastHurtBy);
         this.mob.getBrain().setMemoryWithExpiry(MemoryModuleType.ATTACK_TARGET, this.ownerLastHurtBy, 200L);
@@ -52,8 +37,16 @@ public class GenericOwnerHurtByTargetGoal extends TargetGoal {
         super.start();
     }
 
-    @Override
-    public void stop() {
-        super.stop();
+    public boolean canUse() {
+        LivingEntity owner = this.owner.get();
+        if (owner == null) {
+            return false;
+        } else {
+            this.ownerLastHurtBy = owner.getLastHurtByMob();
+            if (ownerLastHurtBy == null || ownerLastHurtBy.isAlliedTo(mob))
+                return false;
+            int i = owner.getLastHurtByMobTimestamp();
+            return i != this.timestamp && this.canAttack(this.ownerLastHurtBy, TargetingConditions.DEFAULT);
+        }
     }
 }

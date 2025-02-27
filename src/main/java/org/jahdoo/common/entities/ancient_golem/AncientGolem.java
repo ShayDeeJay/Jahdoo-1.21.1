@@ -41,15 +41,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
+import static net.minecraft.network.syncher.EntityDataSerializers.*;
+import static net.minecraft.network.syncher.SynchedEntityData.*;
+import static net.minecraft.world.entity.ai.targeting.TargetingConditions.*;
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 
 public class AncientGolem extends IronGolem implements TamableEntity {
-    private static final EntityDataAccessor<Integer> LIFETIMES = SynchedEntityData.defineId(AncientGolem.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> PRIVATE_TICKS = SynchedEntityData.defineId(AncientGolem.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(AncientGolem.class, EntityDataSerializers.FLOAT);
+
     public static final int INFINITE_LIFE = -1;
+    private static final EntityDataAccessor<Integer> LIFETIMES = defineId(AncientGolem.class, INT);
+    private static final EntityDataAccessor<Integer> PRIVATE_TICKS = defineId(AncientGolem.class, INT);
+    private static final EntityDataAccessor<Float> SCALE = defineId(AncientGolem.class, FLOAT);
 
     private LivingEntity owner;
     private UUID ownerUUID;
@@ -63,21 +67,25 @@ public class AncientGolem extends IronGolem implements TamableEntity {
     public int lifeTime;
     public int privateTicks;
 
-    public AncientGolem(EntityType<? extends AncientGolem> entityType, Level level) {
+    public AncientGolem(
+        EntityType<? extends AncientGolem> entityType,
+        Level level
+    ) {
         super(entityType, level);
         this.lifeTime = -1;
         this.damage = 15;
     }
 
-    public AncientGolem(Level level, @Nullable LivingEntity owner) {
+    public AncientGolem(
+        Level level,
+        Player player,
+        double damage,
+        double effectDuration,
+        double effectStrength,
+        int lifeTime,
+        double effectChance
+    ) {
         super(EntitiesRegister.ANCIENT_GOLEM.get(), level);
-        this.owner = owner;
-        this.lifeTime = -1;
-        this.damage = 15;
-    }
-
-    public AncientGolem(Level pLevel, @Nullable Player player, double damage, double effectDuration, double effectStrength, int lifeTime, double effectChance) {
-        super(EntitiesRegister.ANCIENT_GOLEM.get(), pLevel);
         this.owner = player;
         this.effectDuration = effectDuration;
         this.effectStrength = effectStrength;
@@ -85,19 +93,6 @@ public class AncientGolem extends IronGolem implements TamableEntity {
         this.effectChance = effectChance;
         this.damage = damage;
         this.setLifetimes(lifeTime);
-    }
-
-    public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 100.0F)
-            .add(Attributes.MOVEMENT_SPEED, 0.25F)
-            .add(Attributes.KNOCKBACK_RESISTANCE, 1.0F)
-            .add(Attributes.STEP_HEIGHT, 1.0F)
-            .add(Attributes.ATTACK_DAMAGE, 15f);
-    }
-
-    public float getInternalScale() {
-        return this.entityData.get(SCALE);
     }
 
     public void setScale(float getSelectedAbility) {
@@ -120,6 +115,15 @@ public class AncientGolem extends IronGolem implements TamableEntity {
         this.entityData.set(PRIVATE_TICKS, privateTicks);
     }
 
+    private AbstractElement element(){
+        return ElementRegistry.vitality();
+    }
+
+    @Override
+    public LivingEntity getOwner() {
+        return this.owner;
+    }
+
     @Override
     protected SoundEvent getDeathSound() {
         this.playSound(SoundEvents.ELDER_GUARDIAN_HURT, 1, 0.8f);
@@ -134,10 +138,33 @@ public class AncientGolem extends IronGolem implements TamableEntity {
         return SoundEvents.EMPTY;
     }
 
+    private void endOfLife(){
+        if(!level().isClientSide){
+            if (this.lifeTime != -1) if (this.privateTicks >= lifeTime) this.discard();
+        }
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if(id == 4) this.normal.start(this.tickCount);
+        super.handleEntityEvent(id);
+    }
+
+    private void reassignPlayer() {
+        if(!(this.level() instanceof ServerLevel serverLevel)) return;
+        if(this.owner == null && this.ownerUUID != null) this.owner = serverLevel.getPlayerByUUID(this.ownerUUID);
+    }
+
     @Override
     protected void playAttackSound() {
         this.playSound(SoundEvents.VAULT_PLACE, 1, 1.2f);
         this.playSound(SoundEvents.IRON_GOLEM_STEP, 1, 0.6f);
+    }
+
+    public boolean isEntityMoving() {
+        var motion = this.getDeltaMovement();
+        var speed = motion.length();
+        return speed > 0.0784000015258789;
     }
 
     @Override
@@ -145,6 +172,41 @@ public class AncientGolem extends IronGolem implements TamableEntity {
         this.playSound(SoundEvents.ELDER_GUARDIAN_AMBIENT, 0.2f, 1.8f);
         this.playSound(SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 0.2f, 2f);
         return SoundEvents.EMPTY;
+    }
+
+    public boolean canDamageEntity(LivingEntity hitEntity, LivingEntity owner){
+        if(owner != null) {
+            var uuidMatched = hitEntity.getUUID() != owner.getUUID();
+            var isTamable = !(hitEntity instanceof TamableEntity tamableEntity && tamableEntity.getOwner() == owner);
+            return uuidMatched && isTamable;
+        }
+        return true;
+    }
+
+    @Override
+    public void tick() {
+        privateTicks++;
+        super.tick();
+        reassignPlayer();
+        this.resetFallDistance();
+        this.endOfLife();
+    }
+
+    @Override
+    protected void defineSynchedData(Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SCALE, 0f);
+        builder.define(LIFETIMES, this.lifeTime);
+        builder.define(PRIVATE_TICKS, this.privateTicks);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+            .add(Attributes.MAX_HEALTH, 100.0F)
+            .add(Attributes.MOVEMENT_SPEED, 0.25F)
+            .add(Attributes.KNOCKBACK_RESISTANCE, 1.0F)
+            .add(Attributes.STEP_HEIGHT, 1.0F)
+            .add(Attributes.ATTACK_DAMAGE, 15f);
     }
 
     @Override
@@ -157,80 +219,28 @@ public class AncientGolem extends IronGolem implements TamableEntity {
         this.playSound(SoundEvents.IRON_GOLEM_STEP, volume, pitch2);
     }
 
-    public void clientDiggingParticles(LivingEntity livingEntity, Level level) {
-        var randomsource = livingEntity.getRandom();
-        var blockstate = livingEntity.getBlockStateOn();
-        if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
-            for (int i = 0; i < 25; ++i) {
-                var d0 = livingEntity.getX() + (double) Mth.randomBetween(randomsource, -1F, 1F);
-                var d1 = livingEntity.getY();
-                var d2 = livingEntity.getZ() + (double) Mth.randomBetween(randomsource, -1F, 1F);
-                var blockParticle = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
-                var pos = new Vec3(d0, d1, d2);
-                ParticleHandlers.sendParticles(level, blockParticle, pos, 2, 0, 0.4,0,1.5);
-            }
-        }
-    }
-
-    private void setKnockback(LivingEntity lEntity){
-        lEntity.level().getNearbyEntities(
-            LivingEntity.class, TargetingConditions.DEFAULT, lEntity,
-            lEntity.getBoundingBox().inflate(1)
-        ).forEach(
-            livingEntity -> {
-                var deltaX = livingEntity.getX() - lEntity.getX();
-                var deltaY = livingEntity.getY() - lEntity.getY();
-                var deltaZ = livingEntity.getZ() - lEntity.getZ();
-                var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-                if(this.canDamageEntity(livingEntity, this) && livingEntity != this.getTarget()){
-                    this.knockback(livingEntity,1.4, -deltaX / length, -deltaZ / length);
-                }
-            }
-        );
-    }
-
-    public boolean canDamageEntity(LivingEntity hitEntity, LivingEntity owner){
-        if(owner != null) {
-            var uuidMatched = hitEntity.getUUID() != owner.getUUID();
-            var isTamable = !(hitEntity instanceof TamableEntity tamableEntity && tamableEntity.getOwner() == owner);
-            return uuidMatched && isTamable;
-        }
-        return true;
-    }
-
-    private void knockback(LivingEntity targetEntity, double pStrength, double pX, double pZ) {
-        var event = onLivingKnockBack(targetEntity, (float) pStrength, pX, pZ);
-        if(event.isCanceled()) return;
-        pStrength = event.getStrength();
-        pX = event.getRatioX();
-        pZ = event.getRatioZ();
-        pStrength *= 1.0D - targetEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
-        if (!(pStrength <= 0.0D)) {
-            targetEntity.hasImpulse = true;
-            var vec3 = targetEntity.getDeltaMovement();
-            var vec31 = (new Vec3(pX, 0.0D, pZ)).normalize().scale(pStrength);
-            var y = targetEntity.onGround() ? Math.min(0.8D, vec3.y / 2.0D + pStrength) : vec3.y;
-            var z = vec3.z / 2.0D - vec31.z;
-            var x = vec3.x / 2.0D - vec31.x;
-            targetEntity.setDeltaMovement(x, y, z);
-        }
-    }
-
-    @Override
-    public void tick() {
-        privateTicks++;
-        super.tick();
-        reassignPlayer();
-        this.resetFallDistance();
-        this.endOfLife();
-    }
-
     public void runningParticle(){
         if(!this.level().isClientSide){
             var isRunning = this.getSpeed() > 0.25 && isEntityMoving();
             if (isRunning) {
                 this.setKnockback(this);
                 clientDiggingParticles(this, level());
+            }
+        }
+    }
+
+    private void setKnockback(LivingEntity entity){
+        var entities = entity.level().getNearbyEntities(
+            LivingEntity.class, DEFAULT, entity, entity.getBoundingBox().inflate(1)
+        );
+
+        for (var livingEntity : entities) {
+            var deltaX = livingEntity.getX() - entity.getX();
+            var deltaY = livingEntity.getY() - entity.getY();
+            var deltaZ = livingEntity.getZ() - entity.getZ();
+            var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+            if(this.canDamageEntity(livingEntity, this) && livingEntity != this.getTarget()){
+                this.knockback(livingEntity,1.4, -deltaX / length, -deltaZ / length);
             }
         }
     }
@@ -252,23 +262,8 @@ public class AncientGolem extends IronGolem implements TamableEntity {
     }
 
     @Override
-    public void handleEntityEvent(byte id) {
-        if(id == 4) this.normal.start(this.tickCount);
-        super.handleEntityEvent(id);
-    }
-
-    @Override
-    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
-        super.defineSynchedData(pBuilder);
-        pBuilder.define(SCALE, 0f);
-        pBuilder.define(LIFETIMES, this.lifeTime);
-        pBuilder.define(PRIVATE_TICKS, this.privateTicks);
-    }
-
-    @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         var itemstack = player.getItemInHand(hand);
-//        this.smash.start(this.tickCount);
         if (!itemstack.is(ItemsRegister.AUGMENT_HYPER_CORE)) {
             return InteractionResult.PASS;
         } else {
@@ -286,21 +281,37 @@ public class AncientGolem extends IronGolem implements TamableEntity {
         }
     }
 
-    public boolean isEntityMoving() {
-        var motion = this.getDeltaMovement();
-        var speed = motion.length();
-        return speed > 0.0784000015258789;
-    }
-
-    private void endOfLife(){
-        if(!level().isClientSide){
-            if (this.lifeTime != -1) if (this.privateTicks >= lifeTime) this.discard();
+    private void knockback(LivingEntity targetEntity, double strength, double xA, double zA) {
+        var event = onLivingKnockBack(targetEntity, (float) strength, xA, zA);
+        if(event.isCanceled()) return;
+        strength = event.getStrength();
+        xA = event.getRatioX();
+        zA = event.getRatioZ();
+        strength *= 1.0D - targetEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
+        if (!(strength <= 0.0D)) {
+            targetEntity.hasImpulse = true;
+            var vec3 = targetEntity.getDeltaMovement();
+            var vec31 = (new Vec3(xA, 0.0D, zA)).normalize().scale(strength);
+            var y = targetEntity.onGround() ? Math.min(0.8D, vec3.y / 2.0D + strength) : vec3.y;
+            var z = vec3.z / 2.0D - vec31.z;
+            var x = vec3.x / 2.0D - vec31.x;
+            targetEntity.setDeltaMovement(x, y, z);
         }
     }
 
-    private void reassignPlayer() {
-        if(!(this.level() instanceof ServerLevel serverLevel)) return;
-        if(this.owner == null && this.ownerUUID != null) this.owner = serverLevel.getPlayerByUUID(this.ownerUUID);
+    public void clientDiggingParticles(LivingEntity livingEntity, Level level) {
+        var randomsource = livingEntity.getRandom();
+        var blockstate = livingEntity.getBlockStateOn();
+        if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
+            for (int i = 0; i < 25; ++i) {
+                var d0 = livingEntity.getX() + (double) Mth.randomBetween(randomsource, -1F, 1F);
+                var d1 = livingEntity.getY();
+                var d2 = livingEntity.getZ() + (double) Mth.randomBetween(randomsource, -1F, 1F);
+                var blockParticle = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
+                var pos = new Vec3(d0, d1, d2);
+                ParticleHandlers.sendParticles(level, blockParticle, pos, 2, 0, 0.4,0,1.5);
+            }
+        }
     }
 
     protected void registerGoals() {
@@ -313,11 +324,6 @@ public class AncientGolem extends IronGolem implements TamableEntity {
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(2, new AttackNearbyMonsters<>(this, LivingEntity.class, true, 10, 30));
-    }
-
-    @Override
-    public LivingEntity getOwner() {
-        return this.owner;
     }
 
     @Override
@@ -342,9 +348,5 @@ public class AncientGolem extends IronGolem implements TamableEntity {
         this.lifeTime = compound.getInt(LIFETIME);
         this.privateTicks = compound.getInt("ticks");
         if(compound.hasUUID("saveOwner")) this.ownerUUID = compound.getUUID("saveOwner");
-    }
-
-    private AbstractElement element(){
-        return ElementRegistry.VITALITY.get();
     }
 }

@@ -116,7 +116,7 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.VITALITY.get();
+        return ElementRegistry.vitality();
     }
 
     private Level level(){
@@ -182,7 +182,7 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
     }
 
     private void setSpawnParticles(Level level){
-        var bakedParticle = bakedParticleOptions(getElementType().getTypeId(), 20, 3f, false);
+        var bakedParticle = bakedParticleOptions(getElementType().id(), 20, 3f, false);
         getInnerRingOfRadiusRandom(aoeCloud.position(), this.ancientGolem.getBbWidth(), 5).forEach(
             positions -> sendParticles(level, bakedParticle, positions, 1, 0, 1,0,0.05)
         );

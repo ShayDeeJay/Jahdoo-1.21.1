@@ -25,6 +25,99 @@ import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class ParticleHandlers {
 
+    public static GenericParticleOptions genericParticleOptions(int particleType, AbstractElement element, int lifetime, float size, double speed){
+        return new GenericParticleOptions(particleType, element.partColourA(), element.partColourFade(), lifetime, size, false, speed);
+    }
+
+    public static GenericParticleOptions genericParticleOptions(AbstractElement element, int lifetime, float size){
+        return new GenericParticleOptions(MAGIC_PARTICLE_SELECTION, element.partColourA(), element.partColourFade(), lifetime,size,false,1);
+    }
+
+    public static GenericParticleOptions flamingParticle(int type, AbstractElement element, int lifetime, float size){
+        return new GenericParticleOptions(type, element.textColourB(), element.textColourB(), lifetime,size,false, 1);
+    }
+
+    public static GenericParticleOptions genericParticleOptions(int type, AbstractElement element, int lifetime, float size){
+        return new GenericParticleOptions(type, element.textColourB(), element.textColourB(), lifetime,size,false, 1);
+    }
+
+    public static BakedParticleOptions bakedParticleOptions(int type, int lifetime, float size, boolean setStaticSize){
+        return new BakedParticleOptions(type, lifetime, size,setStaticSize);
+    }
+
+    public static GenericParticleOptions genericParticleOptions(AbstractElement element, int lifetime, float size, boolean staticSize){
+        return new GenericParticleOptions(MAGIC_PARTICLE_SELECTION, element.partColourA(), element.partColourFade(), lifetime,size,staticSize, 1);
+    }
+
+    public static GenericParticleOptions genericParticleOptions(int lifetime, float size, int colourPrimary, int colourSecondary){
+        return new GenericParticleOptions(MAGIC_PARTICLE_SELECTION, colourPrimary, colourSecondary, lifetime,size,false, 1);
+    }
+
+    public static GenericParticleOptions genericParticleOptions(int particleType, AbstractElement element, int lifetime, float size, boolean staticSize){
+        return new GenericParticleOptions(particleType, element.partColourA(), element.partColourFade(), lifetime,size,staticSize, 1);
+    }
+
+    public static GenericParticleOptions genericParticleOptions(int particleType, int colourPrimary, int colourFade, int lifetime, float size, boolean staticSize, double speed){
+        return new GenericParticleOptions(particleType, colourPrimary, colourFade, lifetime,size,staticSize, speed);
+    }
+
+    public static GenericParticleOptions genericParticleOptions(int particleType, int lifetime, float size, int colourPrimary, int colourSecondary){
+        return new GenericParticleOptions(particleType, colourPrimary, colourSecondary, lifetime,size,false, 1);
+    }
+
+    public static GenericParticleOptions genericParticleOptions(int particleType, int lifetime, float size, int colourPrimary, int colourSecondary, boolean setStaticSize){
+        return new GenericParticleOptions(particleType, colourPrimary, colourSecondary, lifetime,size,setStaticSize, 1);
+    }
+
+    public static GenericParticleOptions genericParticleOptions(int particleType, AbstractElement element, int lifetime, float size, boolean staticSize, double speed){
+        return new GenericParticleOptions(particleType, element.partColourA(), element.partColourFade(), lifetime, size, staticSize, speed);
+    }
+
+    public static void particleBurst(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions, double x, double y, double z, float speed) {
+        for (int i = 0; i < 10; i++) {
+            sendParticles(world, particleOptions, pos, particleCount, x, y, z, speed);
+        }
+    }
+
+    public static void particleBurst(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions, double x, double y, double z, float speed, int totalPoofs) {
+        for (int i = 0; i < totalPoofs; i++) {
+            sendParticles(world, particleOptions, pos, particleCount, x, y, z, speed);
+        }
+    }
+
+    public static void invisibleLight(Level world, Vec3 loc, ParticleOptions particleOptions, double bound1, double bound2, int speed) {
+        for (int i = 0; i < 3; i++) {
+            sendParticles(world, particleOptions, loc, 0, 0, Random.nextDouble(bound1, bound2), 0, speed);
+        }
+    }
+
+    public static ParticleOptions getAllParticleTypes(AbstractElement element, int lifetime, float size){
+        var baked = bakedParticleOptions(element.id(), lifetime, size, false);
+        var generic = genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, lifetime, size);
+        var magic = genericParticleOptions(MAGIC_PARTICLE_SELECTION, element, lifetime, size);
+        var soft = genericParticleOptions(SOFT_PARTICLE_SELECTION, element, lifetime, size);
+        var collectTypes = List.of(baked, generic, magic, soft);
+        return collectTypes.get(Random.nextInt(collectTypes.size()));
+    }
+
+    public static ParticleOptions getAllParticleTypesAlt(AbstractElement element, int lifetime, float size){
+        var baked = bakedParticleOptions(element.id(), lifetime, size, false);
+        var generic = flamingParticle(GENERIC_PARTICLE_SELECTION, element, lifetime, size);
+        var magic = flamingParticle(MAGIC_PARTICLE_SELECTION, element, lifetime, size);
+        var soft = flamingParticle(SOFT_PARTICLE_SELECTION, element, lifetime, size);
+        var collectTypes = List.of(baked, generic, magic, soft);
+        return collectTypes.get(Random.nextInt(collectTypes.size()));
+    }
+
+    public static ParticleOptions getNonBakedParticles(int colour1, int colour2, int lifetime, float size){
+        var generic = genericParticleOptions(GENERIC_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
+        var magic = genericParticleOptions(MAGIC_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
+        var soft = genericParticleOptions(SOFT_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
+        var collectTypes = List.of(generic, magic, soft);
+        return collectTypes.get(Random.nextInt(collectTypes.size()));
+    }
+
+
     public static void particleBurst(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions) {
         for (int i = 0; i < 5; i++) {
             sendParticles(world, particleOptions, pos, particleCount,
@@ -57,88 +150,68 @@ public class ParticleHandlers {
         }
     }
 
-    public static void particleBurst(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions, double x, double y, double z, float speed) {
-        for (int i = 0; i < 10; i++) {
-            sendParticles(world, particleOptions, pos, particleCount, x, y, z, speed);
+    public static <T extends ParticleOptions> int sendParticles(Level level, T type, Vec3 positions, int pParticleCount, double xOff, double yOff, double zOff, double speed) {
+        if((level instanceof ServerLevel serverLevel)){
+            var clientboundlevelparticlespacket = new ClientboundLevelParticlesPacket(type, false, positions.x, positions.y, positions.z, (float) xOff, (float) yOff, (float) zOff, (float) speed, pParticleCount);
+            var i = 0;
+            for (int j = 0; j < serverLevel.players().size(); ++j) {
+                var serverplayer = serverLevel.players().get(j);
+                if (sendParticles(serverplayer, positions.x, positions.y, positions.z, clientboundlevelparticlespacket)) ++i;
+            }
+            return i;
+        } else {
+            level.addParticle(type, positions.x, positions.y, positions.z, xOff/100 * speed, yOff/100 * speed, zOff/100 * speed);
+            return 0;
         }
     }
 
-    public static void particleBurst(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions, double x, double y, double z, float speed, int totalPoofs) {
-        for (int i = 0; i < totalPoofs; i++) {
-            sendParticles(world, particleOptions, pos, particleCount, x, y, z, speed);
+    private static boolean sendParticles(ServerPlayer player, double posX, double posY, double posZ, Packet<?> pPacket) {
+        if (player.level().isClientSide) {
+            return false;
+        } else {
+            var blockpos = player.blockPosition();
+            if (blockpos.closerToCenterThan(new Vec3(posX, posY, posZ), 64.0D)) {
+                player.connection.send(pPacket);
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
-    public static void invisibleLight(Level world, Vec3 loc, ParticleOptions particleOptions, double bound1, double bound2, int speed) {
-        for (int i = 0; i < 3; i++) {
-            sendParticles(world, particleOptions, loc, 0, 0, Random.nextDouble(bound1, bound2), 0, speed);
+    public static void spawnElectrifiedParticles(Level level, Vec3 position, ParticleOptions particleType, int count, LivingEntity livingEntity, double speed) {
+
+        for (int i = 0; i < count; i++) {
+
+            var offsetX = (Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
+            var offsetY = Random.nextDouble() * livingEntity.getBbHeight();
+            var offsetZ = (Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
+
+            // Give the particles an electrified jittery motion
+            var speedX = (Random.nextDouble() - 0.5) * 0.1;
+            var speedY = (Random.nextDouble() - 0.5) * 0.1;
+            var speedZ = (Random.nextDouble() - 0.5) * 0.1;
+
+            sendParticles(level, particleType, position.add(offsetX, offsetY, offsetZ), 1,speedX, speedY, speedZ,speed);
         }
     }
 
-    public void pullParticlesToCenter(Player player){
-        var casterData = player.getData(CASTER_DATA);
-        var manaReduction = casterData.getMaxMana(player) / 60;
-        var bakedParticleOptions = new BakedParticleOptions(
-            ElementRegistry.VITALITY.get().getTypeId(),
-            6, 2f, false
-        );
-        var genericParticleOptions = genericParticleOptions(GENERIC_PARTICLE_SELECTION, ElementRegistry.VITALITY.get(), 6, 2f);
+    public static void spawnElectrifiedParticles(ServerLevel level, Vec3 position, ParticleOptions particleType, int count, LivingEntity livingEntity, double speed, double ySpeed) {
 
-        var particleOptionsList = List.of(
-            bakedParticleOptions,
-            genericParticleOptions
-        );
+        for (int i = 0; i < count; i++) {
 
-        if(casterData.getManaPool() >= manaReduction){
-            PositionFinders.getInnerRingOfRadiusRandom(
-                player.position()
-                    .add(0, player.getBbHeight() / 2, 0)
-                    .offsetRandom(RandomSource.create(), 1.5f), 3, (double) player.getTicksUsingItem()/10,
-                positions -> {
-                    if (player.level() instanceof ServerLevel serverLevel) {
-                        Vec3 directions = player.position().subtract(positions).normalize().add(0, player.getBbHeight() / 2, 0);
-                        sendParticles(
-                            serverLevel,
-                            particleOptionsList.get(RandomSource.create().nextInt(0, 2)),
-                            positions,
-                            0,
-                            directions.x,
-                            Random.nextDouble(-0.3, 0.3),
-                            directions.z,
-                            (double) player.getTicksUsingItem()/500
-                        );
-                    }
-                }
-            );
+            var offsetX = (Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
+            var offsetY = Random.nextDouble() * livingEntity.getBbHeight();
+            var offsetZ = (Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
+
+            // Give the particles an electrified jittery motion
+            var speedX = (Random.nextDouble() - 0.5) * 0.1;
+            var speedY = (Random.nextDouble() - 0.5) * 0.1;
+            var speedZ = (Random.nextDouble() - 0.5) * 0.1;
+
+            sendParticles(level, particleType, position.add(offsetX, offsetY, offsetZ), 1,speedX, speedY + ySpeed, speedZ,speed);
         }
     }
-
-    public static ParticleOptions getAllParticleTypes(AbstractElement element, int lifetime, float size){
-        var baked = bakedParticleOptions(element.getTypeId(), lifetime, size, false);
-        var generic = genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, lifetime, size);
-        var magic = genericParticleOptions(MAGIC_PARTICLE_SELECTION, element, lifetime, size);
-        var soft = genericParticleOptions(SOFT_PARTICLE_SELECTION, element, lifetime, size);
-        var collectTypes = List.of(baked, generic, magic, soft);
-        return collectTypes.get(Random.nextInt(collectTypes.size()));
-    }
-
-    public static ParticleOptions getAllParticleTypesAlt(AbstractElement element, int lifetime, float size){
-        var baked = bakedParticleOptions(element.getTypeId(), lifetime, size, false);
-        var generic = flamingParticle(GENERIC_PARTICLE_SELECTION, element, lifetime, size);
-        var magic = flamingParticle(MAGIC_PARTICLE_SELECTION, element, lifetime, size);
-        var soft = flamingParticle(SOFT_PARTICLE_SELECTION, element, lifetime, size);
-        var collectTypes = List.of(baked, generic, magic, soft);
-        return collectTypes.get(Random.nextInt(collectTypes.size()));
-    }
-
-    public static ParticleOptions getNonBakedParticles(int colour1, int colour2, int lifetime, float size){
-        var generic = genericParticleOptions(GENERIC_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
-        var magic = genericParticleOptions(MAGIC_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
-        var soft = genericParticleOptions(SOFT_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
-        var collectTypes = List.of(generic, magic, soft);
-        return collectTypes.get(Random.nextInt(collectTypes.size()));
-    }
-
 
     public static void playParticles(ParticleOptions particleOptions, Projectile projectile, double getX, double getY, double getZ) {
         var deltaX = getX - projectile.xOld;
@@ -225,35 +298,6 @@ public class ParticleHandlers {
         }
     }
 
-    public static <T extends ParticleOptions> int sendParticles(Level level, T pType, Vec3 positions, int pParticleCount, double pXOffset, double pYOffset, double pZOffset, double pSpeed) {
-        if((level instanceof ServerLevel serverLevel)){
-            var clientboundlevelparticlespacket = new ClientboundLevelParticlesPacket(pType, false, positions.x, positions.y, positions.z, (float) pXOffset, (float) pYOffset, (float) pZOffset, (float) pSpeed, pParticleCount);
-            var i = 0;
-            for (int j = 0; j < serverLevel.players().size(); ++j) {
-                var serverplayer = serverLevel.players().get(j);
-                if (sendParticles(serverplayer, positions.x, positions.y, positions.z, clientboundlevelparticlespacket)) ++i;
-            }
-            return i;
-        } else {
-            level.addParticle(pType, positions.x, positions.y, positions.z, pXOffset/100 * pSpeed, pYOffset/100 * pSpeed, pZOffset/100 * pSpeed);
-            return 0;
-        }
-    }
-
-    private static boolean sendParticles(ServerPlayer pPlayer, double pPosX, double pPosY, double pPosZ, Packet<?> pPacket) {
-        if (pPlayer.level().isClientSide) {
-            return false;
-        } else {
-            var blockpos = pPlayer.blockPosition();
-            if (blockpos.closerToCenterThan(new Vec3(pPosX, pPosY, pPosZ), 64.0D)) {
-                pPlayer.connection.send(pPacket);
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
     public static void entityProjectileParticles(
         Projectile projectile,
         int tickCount,
@@ -277,7 +321,7 @@ public class ParticleHandlers {
                     particleZ + Random.nextFloat(-spread, spread)
                 );
                 var genericSlow = genericParticleOptions(SOFT_PARTICLE_SELECTION, element, 3, 1.2f, false);
-                var bakedSlow = bakedParticleOptions(element.getTypeId(), 2,2.5f,false);
+                var bakedSlow = bakedParticleOptions(element.id(), 2,2.5f,false);
                 var subtract = position.subtract(0, heightOffset, 0);
                 var level = projectile.level();
                 sendParticles(level, bakedSlow, subtract, 0, 0, 0, 0,0);
@@ -318,86 +362,41 @@ public class ParticleHandlers {
         }
     }
 
-    public static GenericParticleOptions genericParticleOptions(int particleType, AbstractElement element, int lifetime, float size, double speed){
-        return new GenericParticleOptions(particleType, element.particleColourPrimary(), element.particleColourFaded(), lifetime, size, false, speed);
-    }
+    public void pullParticlesToCenter(Player player){
+        var casterData = player.getData(CASTER_DATA);
+        var manaReduction = casterData.getMaxMana(player) / 60;
+        var bakedParticleOptions = new BakedParticleOptions(
+            ElementRegistry.vitality().id(),
+            6, 2f, false
+        );
+        var genericParticleOptions = genericParticleOptions(GENERIC_PARTICLE_SELECTION, ElementRegistry.vitality(), 6, 2f);
 
-    public static GenericParticleOptions genericParticleOptions(AbstractElement element, int lifetime, float size){
-        return new GenericParticleOptions(MAGIC_PARTICLE_SELECTION, element.particleColourPrimary(), element.particleColourFaded(), lifetime,size,false,1);
-    }
+        var particleOptionsList = List.of(
+            bakedParticleOptions,
+            genericParticleOptions
+        );
 
-    public static GenericParticleOptions flamingParticle(int type, AbstractElement element, int lifetime, float size){
-        return new GenericParticleOptions(type, element.textColourSecondary(), element.textColourSecondary(), lifetime,size,false, 1);
-    }
-
-    public static GenericParticleOptions genericParticleOptions(int type, AbstractElement element, int lifetime, float size){
-        return new GenericParticleOptions(type, element.textColourSecondary(), element.textColourSecondary(), lifetime,size,false, 1);
-    }
-
-    public static BakedParticleOptions bakedParticleOptions(int type, int lifetime, float size, boolean setStaticSize){
-        return new BakedParticleOptions(type, lifetime, size,setStaticSize);
-    }
-
-    public static GenericParticleOptions genericParticleOptions(AbstractElement element, int lifetime, float size, boolean staticSize){
-        return new GenericParticleOptions(MAGIC_PARTICLE_SELECTION, element.particleColourPrimary(), element.particleColourFaded(), lifetime,size,staticSize, 1);
-    }
-
-    public static GenericParticleOptions genericParticleOptions(int lifetime, float size, int colourPrimary, int colourSecondary){
-        return new GenericParticleOptions(MAGIC_PARTICLE_SELECTION, colourPrimary, colourSecondary, lifetime,size,false, 1);
-    }
-
-    public static GenericParticleOptions genericParticleOptions(int particleType, AbstractElement element, int lifetime, float size, boolean staticSize){
-        return new GenericParticleOptions(particleType, element.particleColourPrimary(), element.particleColourFaded(), lifetime,size,staticSize, 1);
-    }
-
-    public static GenericParticleOptions genericParticleOptions(int particleType, int colourPrimary, int colourFade, int lifetime, float size, boolean staticSize, double speed){
-        return new GenericParticleOptions(particleType, colourPrimary, colourFade, lifetime,size,staticSize, speed);
-    }
-
-    public static GenericParticleOptions genericParticleOptions(int particleType, int lifetime, float size, int colourPrimary, int colourSecondary){
-        return new GenericParticleOptions(particleType, colourPrimary, colourSecondary, lifetime,size,false, 1);
-    }
-
-    public static GenericParticleOptions genericParticleOptions(int particleType, int lifetime, float size, int colourPrimary, int colourSecondary, boolean setStaticSize){
-        return new GenericParticleOptions(particleType, colourPrimary, colourSecondary, lifetime,size,setStaticSize, 1);
-    }
-
-    public static GenericParticleOptions genericParticleOptions(int particleType, AbstractElement element, int lifetime, float size, boolean staticSize, double speed){
-        return new GenericParticleOptions(particleType, element.particleColourPrimary(), element.particleColourFaded(), lifetime, size, staticSize, speed);
-    }
-
-    public static void spawnElectrifiedParticles(Level level, Vec3 position, ParticleOptions particleType, int count, LivingEntity livingEntity, double speed) {
-
-        for (int i = 0; i < count; i++) {
-
-            var offsetX = (Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
-            var offsetY = Random.nextDouble() * livingEntity.getBbHeight();
-            var offsetZ = (Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
-
-            // Give the particles an electrified jittery motion
-            var speedX = (Random.nextDouble() - 0.5) * 0.1;
-            var speedY = (Random.nextDouble() - 0.5) * 0.1;
-            var speedZ = (Random.nextDouble() - 0.5) * 0.1;
-
-            sendParticles(level, particleType, position.add(offsetX, offsetY, offsetZ), 1,speedX, speedY, speedZ,speed);
+        if(casterData.getManaPool() >= manaReduction){
+            PositionFinders.getInnerRingOfRadiusRandom(
+                player.position()
+                    .add(0, player.getBbHeight() / 2, 0)
+                    .offsetRandom(RandomSource.create(), 1.5f), 3, (double) player.getTicksUsingItem()/10,
+                positions -> {
+                    if (player.level() instanceof ServerLevel serverLevel) {
+                        Vec3 directions = player.position().subtract(positions).normalize().add(0, player.getBbHeight() / 2, 0);
+                        sendParticles(
+                            serverLevel,
+                            particleOptionsList.get(RandomSource.create().nextInt(0, 2)),
+                            positions,
+                            0,
+                            directions.x,
+                            Random.nextDouble(-0.3, 0.3),
+                            directions.z,
+                            (double) player.getTicksUsingItem()/500
+                        );
+                    }
+                }
+            );
         }
     }
-
-    public static void spawnElectrifiedParticles(ServerLevel level, Vec3 position, ParticleOptions particleType, int count, LivingEntity livingEntity, double speed, double ySpeed) {
-
-        for (int i = 0; i < count; i++) {
-
-            var offsetX = (Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
-            var offsetY = Random.nextDouble() * livingEntity.getBbHeight();
-            var offsetZ = (Random.nextDouble() - 0.5) * livingEntity.getBbWidth();
-
-            // Give the particles an electrified jittery motion
-            var speedX = (Random.nextDouble() - 0.5) * 0.1;
-            var speedY = (Random.nextDouble() - 0.5) * 0.1;
-            var speedZ = (Random.nextDouble() - 0.5) * 0.1;
-
-            sendParticles(level, particleType, position.add(offsetX, offsetY, offsetZ), 1,speedX, speedY + ySpeed, speedZ,speed);
-        }
-    }
-
 }

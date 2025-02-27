@@ -177,8 +177,8 @@ public class FireBall extends DefaultEntityBehaviour {
         var directions = positionScrambler.subtract(this.elementProjectile.position()).normalize();
         var lifetime = (int) this.novaMaxSize;
         var size = Helpers.Random.nextDouble(0.2, 0.6);
-        var bakedParticle = bakedParticleOptions(this.getElementType().getTypeId(), lifetime, (float) size, true);
-        var col1 = this.getElementType().particleColourPrimary();
+        var bakedParticle = bakedParticleOptions(this.getElementType().id(), lifetime, (float) size, true);
+        var col1 = this.getElementType().partColourA();
         var col2 =  color(51, 51, 51);
         var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, (float) (size - 0.2), col1, col2, true);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
@@ -234,7 +234,7 @@ public class FireBall extends DefaultEntityBehaviour {
             position -> {
                 var newPosition = position.add(this.elementProjectile.getDeltaMovement().scale(-1.5));
                 var size = Helpers.Random.nextFloat(2.5f, 3.5f);
-                var pType = bakedParticleOptions(this.getElementType().getTypeId(), 2, size, false);
+                var pType = bakedParticleOptions(this.getElementType().id(), 2, size, false);
                 ParticleHandlers.sendParticles(
                     level(),
                     pType,
@@ -247,7 +247,7 @@ public class FireBall extends DefaultEntityBehaviour {
             position -> {
                 var newPosition = position.add(this.elementProjectile.getDeltaMovement().scale(-1.5));
                 var size = Helpers.Random.nextFloat(2f, 3f);
-                var pType = genericParticleOptions(GENERIC_PARTICLE_SELECTION, 4, size, getElementType().particleColourPrimary(), color(51, 51, 51));
+                var pType = genericParticleOptions(GENERIC_PARTICLE_SELECTION, 4, size, getElementType().partColourA(), color(51, 51, 51));
                 ParticleHandlers.sendParticles(
                     level(),
                     pType,
@@ -293,7 +293,7 @@ public class FireBall extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.INFERNO.get();
+        return ElementRegistry.inferno();
     }
 
     ResourceLocation abilityId = Helpers.res("fireball_property");

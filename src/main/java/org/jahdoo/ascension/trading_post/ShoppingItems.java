@@ -36,7 +36,7 @@ import static org.jahdoo.common.registers.ElementRegistry.*;
 import static org.jahdoo.common.registers.ElementRegistry.getRandomElement;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.ascension.utils.Helpers.getRandomListElement;
+import static org.jahdoo.ascension.utils.Helpers.listRandom;
 
 public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
 
@@ -60,15 +60,15 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
         var rarity = JahdooRarity.UNIQUE;
         var refinementPotential = Random.nextInt(300, 500);
 
-        var cooldownReductionType = element.getTypeCooldownReduction();
+        var cooldownReductionType = element.cooldownReduction();
         var cooldownReductionName = cooldownReductionType.getRegisteredName();
         var cooldownReductionValue = rarity.getAttributes().getRandomCooldown();
 
-        var manaReductionType = element.getTypeManaReduction();
+        var manaReductionType = element.manaReduction();
         var manaReductionName = manaReductionType.getRegisteredName();
         var manaReductionValue = rarity.getAttributes().getRandomManaReduction();
 
-        var damageAmplifierType = element.getDamageTypeAmplifier();
+        var damageAmplifierType = element.damageAmplifier();
         var damageAmplifierName = damageAmplifierType.getRegisteredName();
         var damageAmplifierValue = rarity.getAttributes().getRandomDamage();
 
@@ -82,7 +82,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
         replaceOrAddAttribute(itemStack, manaReductionName, manaReductionType, manaReductionValue, MAINHAND, false);
         replaceOrAddAttribute(itemStack, damageAmplifierName, damageAmplifierType, damageAmplifierValue, MAINHAND, false);
 
-        var altElement = Helpers.getRandomListElement(getElementsWithout(element));
+        var altElement = Helpers.listRandom(getElementsWithout(element));
         addAttribute(altElement, itemStack);
         return new ShoppingItems(itemStack, ItemCosts.getPlatinumCost(200));
     }
@@ -93,7 +93,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
             .stream()
             .filter(rune -> rune.getType() != Attributes.MOVEMENT_SPEED)
             .toList();
-        var entry = Helpers.getRandomListElement(getTypeAttributes);
+        var entry = Helpers.listRandom(getTypeAttributes);
         var delegate = entry.getType();
         var registeredName = delegate.getRegisteredName();
         var second = entry.getValue();
@@ -113,7 +113,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
                 Pair.of(getEternalEliteRunes(attributes, id), ItemCosts.getPlatinumCost(300))
         );
         var stack = new ItemStack(ItemsRegister.RUNE.get());
-        var getRandomRune = getRandomListElement(getAll);
+        var getRandomRune = listRandom(getAll);
 
         generateFullRune(stack, getRandomRune.getFirst());
         return new ShoppingItems(stack, getRandomRune.getSecond());
@@ -147,7 +147,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
     }
 
     public static ShoppingItems shoppingArmorItem(ServerLevel serverLevel) {
-        var getRandomArmor = getRandomListElement(List.of(getMageArmorPiece(), getWizardArmorPiece()));
+        var getRandomArmor = listRandom(List.of(getMageArmorPiece(), getWizardArmorPiece()));
         if (getRandomArmor.getItem() instanceof ArmorItem armorItem) {
             enchantArmorItem(serverLevel, getRandomArmor, armorItem, true);
         }
@@ -159,7 +159,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
         var glaive = new ItemStack(ItemsRegister.ANCIENT_GLAIVE);
         var ingmasSword = new ItemStack(ItemsRegister.INGMAS_SWORD);
         var meleeWeapons = List.of(getElementalSword(), glaive, ingmasSword);
-        var getRandomArmor = getRandomListElement(meleeWeapons);
+        var getRandomArmor = listRandom(meleeWeapons);
 
         enchantSword(serverLevel, getRandomArmor, true);
         return new ShoppingItems(getRandomArmor, ItemCosts.getGoldCost(110));

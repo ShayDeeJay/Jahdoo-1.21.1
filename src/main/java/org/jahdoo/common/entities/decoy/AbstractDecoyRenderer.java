@@ -6,16 +6,20 @@ import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.ascension.utils.Helpers;
 
+import static net.minecraft.client.renderer.entity.EntityRendererProvider.*;
+
 public class AbstractDecoyRenderer <T extends Decoy, M extends DecoyModel<T>> extends HumanoidMobRenderer<T, M> {
+
     public static final ResourceLocation DECOY = Helpers.res("textures/entity/eternal_wizard/decoy.png");
 
-    protected AbstractDecoyRenderer(EntityRendererProvider.Context pContext, M pModel, M pInnerModel, M pOuterModel) {
-        super(pContext, pModel, 0.5F);
-        this.addLayer(new HumanoidArmorLayer<>(this, pInnerModel, pOuterModel, pContext.getModelManager()));
+    protected AbstractDecoyRenderer(Context context, M model, M innerModel, M outerModel) {
+        super(context, model, 0.5F);
+        this.addLayer(new HumanoidArmorLayer<>(this, innerModel, outerModel, context.getModelManager()));
     }
 
     @Override
-    public ResourceLocation getTextureLocation(T pEntity) {
+    public ResourceLocation getTextureLocation(T entity) {
         return DECOY;
     }
+
 }

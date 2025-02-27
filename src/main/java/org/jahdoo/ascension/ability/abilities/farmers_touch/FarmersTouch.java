@@ -111,8 +111,8 @@ public class FarmersTouch extends AbstractUtilityProjectile {
     }
 
     private void setParticleNova(Vec3 worldPosition, Level level){
-        int col1 = this.getElementType().particleColourPrimary();
-        int col2 = this.getElementType().particleColourFaded();
+        int col1 = this.getElementType().partColourA();
+        int col2 = this.getElementType().partColourFade();
         var directions = worldPosition.subtract(this.genericProjectile.position()).normalize();
         var lifetime = (int) this.range * 1.5;
         var size = 3;

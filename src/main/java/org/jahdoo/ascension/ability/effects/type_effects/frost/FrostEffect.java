@@ -20,7 +20,7 @@ public class FrostEffect extends MobEffect {
     public boolean applyEffectTick(LivingEntity targetEntity, int pAmplifier) {
         if(targetEntity.level() instanceof ServerLevel serverLevel){
             int getRandomChance = Helpers.Random.nextInt(0,20);
-            EffectHelpers.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementRegistry.FROST.get(), SoundRegister.ICE_ATTACH.get());
+            EffectHelpers.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementRegistry.frost(), SoundRegister.ICE_ATTACH.get());
         }
         return true;
     }

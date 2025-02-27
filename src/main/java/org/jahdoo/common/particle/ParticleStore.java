@@ -48,14 +48,10 @@ public record ParticleStore(int r, int g, int b){
     }
 
     public static int rgbToInt(int red, int green, int blue) {
-        // Ensure the RGB components are within the valid range
         if (red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) {
             throw new IllegalArgumentException("RGB components must be in the range 0-255");
         }
 
-        // Combine the RGB components into a single integer
-        int rgbInt = (red << 16) | (green << 8) | blue;
-
-        return rgbInt;
+        return (red << 16) | (green << 8) | blue;
     }
 }

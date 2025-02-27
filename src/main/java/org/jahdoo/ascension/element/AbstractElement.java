@@ -18,56 +18,56 @@ public abstract class AbstractElement {
 
     public final String setAbilityId() {
         if (elementId == null) {
-            var resourceLocation = Objects.requireNonNull(getAbilityResource());
+            var resourceLocation = Objects.requireNonNull(abilityResource());
             elementId = resourceLocation.getPath().intern();
         }
 
         return elementId;
     }
 
-    public abstract ResourceLocation getAbilityResource();
-
-    public String getElementName(){
+    public String name(){
         return Helpers.stringIdToName(elementId);
     }
-
-    public abstract int getTypeId();
-
-    public abstract int textColourPrimary();
-
-    public abstract int textColourSecondary();
-
-    public abstract int particleColourPrimary();
-
-    public abstract int particleColourSecondary();
-
-    public abstract int particleColourFaded();
 
     @Nullable
     public abstract Item getWand();
 
+    @Nullable
+    public abstract ResourceLocation projectileTexture();
+
+    public abstract int id();
+
+    public abstract int textColourA();
+
+    public abstract int textColourB();
+
+    public abstract int partColourA();
+
+    public abstract int partColourB();
+
+    public abstract int partColourFade();
+
+    public abstract SoundEvent sound();
+
+    public abstract Holder<MobEffect> effect();
+
+    public abstract ResourceLocation abilityResource();
+
+    public abstract Holder<Attribute> cooldownReduction();
+
+    public abstract Holder<Attribute> manaReduction();
+
+    public abstract Holder<Attribute> damageAmplifier();
+
     public ElementProperties getParticleGroup(){
         return new ElementProperties(
-            bakedParticleFast(this.getTypeId()),
-            bakedParticleSlow(this.getTypeId()),
-            genericParticleFast(this.particleColourPrimary(), this.particleColourFaded()),
-            genericParticleSlow(this.particleColourSecondary(), this.particleColourFaded()),
-            genericParticleSlow(this.particleColourPrimary(), this.particleColourFaded()),
-            genericParticleFast(this.particleColourSecondary(), this.particleColourFaded())
+            bakedParticleFast(this.id()),
+            bakedParticleSlow(this.id()),
+            genericParticleFast(this.partColourA(), this.partColourFade()),
+            genericParticleSlow(this.partColourB(), this.partColourFade()),
+            genericParticleSlow(this.partColourA(), this.partColourFade()),
+            genericParticleFast(this.partColourB(), this.partColourFade())
         );
     }
-
-    @Nullable
-    public abstract ResourceLocation getAbilityProjectileTexture();
-
-    public abstract SoundEvent getElementSound();
-
-    public abstract Holder<MobEffect> elementEffect();
-
-    public abstract Holder<Attribute> getTypeCooldownReduction();
-
-    public abstract Holder<Attribute> getTypeManaReduction();
-
-    public abstract Holder<Attribute> getDamageTypeAmplifier();
 
 }

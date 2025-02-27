@@ -15,37 +15,37 @@ public class Utility extends AbstractElement {
     ResourceLocation abilityId = Helpers.res("utility");
 
     @Override
-    public ResourceLocation getAbilityResource() {
+    public ResourceLocation abilityResource() {
         return abilityId;
     }
 
     @Override
-    public int getTypeId() {
+    public int id() {
         return 5;
     }
 
     @Override
-    public int textColourPrimary() {
+    public int textColourA() {
         return -16602009;
     }
 
     @Override
-    public int textColourSecondary() {
+    public int textColourB() {
         return -14160752;
     }
 
     @Override
-    public int particleColourPrimary() {
+    public int partColourA() {
         return FastColor.ARGB32.color(29, 172, 103);
     }
 
     @Override
-    public int particleColourSecondary() {
+    public int partColourB() {
         return FastColor.ARGB32.color(39, 236, 144);
     }
 
     @Override
-    public int particleColourFaded() {
+    public int partColourFade() {
         return -8585278;
     }
 
@@ -55,32 +55,32 @@ public class Utility extends AbstractElement {
     }
 
     @Override
-    public ResourceLocation getAbilityProjectileTexture() {
+    public ResourceLocation projectileTexture() {
         return null;
     }
 
     @Override
-    public SoundEvent getElementSound() {
+    public SoundEvent sound() {
         return SoundEvents.AXE_SCRAPE;
     }
 
     @Override
-    public Holder<MobEffect> elementEffect() {
+    public Holder<MobEffect> effect() {
         return EffectsRegister.MYSTIC_EFFECT.getDelegate();
     }
 
     @Override
-    public Holder<Attribute> getTypeCooldownReduction() {
+    public Holder<Attribute> cooldownReduction() {
         return null;
     }
 
     @Override
-    public Holder<Attribute> getTypeManaReduction() {
+    public Holder<Attribute> manaReduction() {
         return null;
     }
 
     @Override
-    public Holder<Attribute> getDamageTypeAmplifier() {
+    public Holder<Attribute> damageAmplifier() {
         return null;
     }
 }

@@ -31,11 +31,13 @@ import static net.minecraft.world.entity.projectile.ProjectileUtil.getWeaponHold
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class CustomSkeleton extends Skeleton implements TamableEntity {
-    LivingEntity owner;
-    UUID ownerUUID;
-    ItemStack arrowType;
+
+    private LivingEntity owner;
+    private UUID ownerUUID;
+    private ItemStack arrowType;
     private boolean isElite;
     private final RangedBowAttackGoal<AbstractSkeleton> bowGoal = new RangedBowAttackGoal<>(this, 1.0F, 20, 25.0F);
+
     public CustomSkeleton(EntityType<? extends Skeleton> entityType, Level level) {
         super(entityType, level);
     }
@@ -87,53 +89,6 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
         return pathNavigation;
     }
 
-    protected void registerGoals() {
-
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2, true));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0F));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, false));
-        this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
-    }
-
-    @Override
-    public void performRangedAttack(LivingEntity target, float distanceFactor) {
-        var weapon = this.getItemInHand(getWeaponHoldingHand(this, (item) -> item instanceof BowItem));
-        var itemStack = this.getProjectile(weapon);
-        var getArrow = this.getArrow(itemStack, distanceFactor, weapon);
-        var getWeapons = weapon.getItem();
-        if (getWeapons instanceof ProjectileWeaponItem weaponItem) {
-            getArrow = weaponItem.customArrow(getArrow, itemStack, weapon);
-        }
-
-        var d0 = target.getX() - this.getX();
-        var d1 = target.getY(0.3333333333333333) - getArrow.getY();
-        var d2 = target.getZ() - this.getZ();
-        var d3 = Math.sqrt(d0 * d0 + d2 * d2);
-        var velocity = isElite ? 2F : 1.6F;
-        var inaccuracy = isElite ? 0F : (14 - this.level().getDifficulty().getId() * 4);
-        getArrow.shoot(d0, d1 + d3 * (double)0.2F, d2, velocity, inaccuracy);
-        this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-        this.level().addFreshEntity(getArrow);
-    }
-
-    @Override
-    public void reassessWeaponGoal() {
-        this.level();
-        if (!this.level().isClientSide) {
-            this.goalSelector.removeGoal(this.bowGoal);
-            var itemstack = this.getItemInHand(getWeaponHoldingHand(this, (item) -> item instanceof BowItem));
-            if (itemstack.is(Items.BOW)) {
-                var i = this.getHardAttackInterval();
-                if (this.level().getDifficulty() != Difficulty.HARD) i = this.getAttackInterval();
-                this.bowGoal.setMinAttackInterval(i);
-                this.goalSelector.addGoal(1, this.bowGoal);
-            }
-        }
-    }
-
     @Override
     protected AbstractArrow getArrow(ItemStack arrow, float velocity, @Nullable ItemStack weapon) {
         var mobArrow = ProjectileUtil.getMobArrow(this, arrow, velocity, weapon);
@@ -154,6 +109,15 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
             return CommonHooks.getProjectile(this, shootable, getArrows);
         }
         return CommonHooks.getProjectile(this, shootable, ItemStack.EMPTY);
+    }
+
+    protected void registerGoals() {
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2, true));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0F));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, false));
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
     }
 
     public static AttributeSupplier.Builder createMobAttributes() {
@@ -182,5 +146,41 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
                 .ifPresent(itemStack ->  this.arrowType = itemStack);
         }
         this.isElite = compound.getBoolean("isElite");
+    }
+
+    @Override
+    public void reassessWeaponGoal() {
+        this.level();
+        if (!this.level().isClientSide) {
+            this.goalSelector.removeGoal(this.bowGoal);
+            var itemstack = this.getItemInHand(getWeaponHoldingHand(this, (item) -> item instanceof BowItem));
+            if (itemstack.is(Items.BOW)) {
+                var i = this.getHardAttackInterval();
+                if (this.level().getDifficulty() != Difficulty.HARD) i = this.getAttackInterval();
+                this.bowGoal.setMinAttackInterval(i);
+                this.goalSelector.addGoal(1, this.bowGoal);
+            }
+        }
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        var weapon = this.getItemInHand(getWeaponHoldingHand(this, (item) -> item instanceof BowItem));
+        var itemStack = this.getProjectile(weapon);
+        var getArrow = this.getArrow(itemStack, distanceFactor, weapon);
+        var getWeapons = weapon.getItem();
+        if (getWeapons instanceof ProjectileWeaponItem weaponItem) {
+            getArrow = weaponItem.customArrow(getArrow, itemStack, weapon);
+        }
+
+        var d0 = target.getX() - this.getX();
+        var d1 = target.getY(0.3333333333333333) - getArrow.getY();
+        var d2 = target.getZ() - this.getZ();
+        var d3 = Math.sqrt(d0 * d0 + d2 * d2);
+        var velocity = isElite ? 2F : 1.6F;
+        var inaccuracy = isElite ? 0F : (14 - this.level().getDifficulty().getId() * 4);
+        getArrow.shoot(d0, d1 + d3 * (double)0.2F, d2, velocity, inaccuracy);
+        this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
+        this.level().addFreshEntity(getArrow);
     }
 }

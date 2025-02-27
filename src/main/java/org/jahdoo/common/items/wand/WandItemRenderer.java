@@ -14,8 +14,32 @@ public class WandItemRenderer extends GeoItemRenderer<WandItem> {
     }
 
     @Override
-    public void actuallyRender(PoseStack poseStack, WandItem animatable, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
-        super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+    public void actuallyRender(
+        PoseStack poseStack,
+        WandItem wandItem,
+        BakedGeoModel model,
+        @Nullable RenderType renderType,
+        MultiBufferSource bufferSource,
+        @Nullable VertexConsumer buffer,
+        boolean isReRender,
+        float partialTick,
+        int packedLight,
+        int packedOverlay,
+        int colour
+    ) {
+        super.actuallyRender(
+            poseStack,
+            wandItem,
+            model,
+            renderType,
+            bufferSource,
+            buffer,
+            isReRender,
+            partialTick,
+            packedLight,
+            packedOverlay,
+            colour
+        );
     }
 }
 

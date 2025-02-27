@@ -17,52 +17,65 @@ import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.Objects;
 
+import static java.lang.Math.*;
+import static net.minecraft.util.FastColor.*;
+import static net.minecraft.util.FastColor.ARGB32.*;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
+import static org.jahdoo.common.registers.ElementRegistry.*;
 
 public class AoeCloudRenderer extends EntityRenderer<AoeCloud> {
 
-    public AoeCloudRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
+    public AoeCloudRenderer(EntityRendererProvider.Context context) {
+        super(context);
     }
 
     @Override
-    public void render(AoeCloud entity, float pEntityYaw, float pPartialTick, PoseStack pose, MultiBufferSource bufferSource, int light) {
-        super.render(entity, pEntityYaw, pPartialTick, pose, bufferSource, light);
-        pose.scale(entity.getRadius(),0.2f, entity.getRadius());
-        pose.pushPose();
-        pose.translate(0,0.12,0);
-        pose.rotateAround(Axis.YN.rotationDegrees((entity.tickCount * 1.4f) + pPartialTick), 0,0,0);
-
-        if(Objects.equals(entity.getEntityType(), Armageddon.abilityId.getPath().intern())){
-            int color = ElementRegistry.INFERNO.get().textColourSecondary();
-            drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f, entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(155, color));
-        }
-
-        if(Objects.equals(entity.getEntityType(), LifeSiphonNova.abilityId.getPath().intern())){
-            int color = ElementRegistry.VITALITY.get().textColourSecondary();
-            drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f,  entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(155, color));
-        }
-
-        if(Objects.equals(entity.getEntityType(), Permafrost.abilityId.getPath().intern())){
-            int color = ElementRegistry.FROST.get().textColourSecondary();
-            drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f,  entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(155, color));
-        }
-
-        if(Objects.equals(entity.getEntityType(), Barrage.abilityId.getPath().intern())){
-            drawTexture(pose.last(),bufferSource, 255, Math.min(entity.getBbWidth() + 0.4f,  entity.tickCount + pPartialTick), getTextureLocation(entity), FastColor.ARGB32.color(100, -1));
-        }
-
-//        drawSlash(pose.last(), bufferSource, 255, Math.min(entity.getBbWidth() + 0.2f, entity.tickCount + pPartialTick), ModHelpers.res("textures/entity/magic_circle_2.png"), FastColor.ARGB32.color(155, color));
-        pose.popPose();
-    }
-
-    @Override
-    public ResourceLocation getTextureLocation(AoeCloud pEntity) {
+    public ResourceLocation getTextureLocation(AoeCloud entity) {
         return Helpers.res("textures/entity/shield.png");
     }
 
     @Override
-    public boolean shouldRender(AoeCloud livingEntity, Frustum camera, double camX, double camY, double camZ) {
+    public boolean shouldRender(
+        AoeCloud livingEntity,
+        Frustum camera,
+        double camX,
+        double camY,
+        double camZ
+    ) {
         return true;
     }
+
+    @Override
+    public void render(AoeCloud entity, float yaw, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, int light) {
+        super.render(entity, yaw, partialTicks, pose, bufferSource, light);
+
+        pose.scale(entity.getRadius(),0.2f, entity.getRadius());
+        pose.pushPose();
+        pose.translate(0,0.12,0);
+        pose.rotateAround(Axis.YN.rotationDegrees((entity.tickCount * 1.4f) + partialTicks), 0,0,0);
+
+        type(entity, partialTicks, pose, bufferSource, Armageddon.abilityId.getPath().intern(), color(155, inferno().textColourB()));
+
+        type(entity, partialTicks, pose, bufferSource, LifeSiphonNova.abilityId.getPath().intern(), color(155, vitality().textColourB()));
+
+        type(entity, partialTicks, pose, bufferSource, Permafrost.abilityId.getPath().intern(), color(155, frost().textColourB()));
+
+        type(entity, partialTicks, pose, bufferSource, Barrage.abilityId.getPath().intern(), color(155, -1));
+
+        pose.popPose();
+
+    }
+
+    private void type(AoeCloud entity, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, String name, int color) {
+        if(Objects.equals(entity.getEntityType(), name)){
+            drawTexture(
+                pose.last(),
+                bufferSource,
+                255,
+                min(entity.getBbWidth() + 0.4f,  entity.tickCount + partialTicks),
+                getTextureLocation(entity), color
+            );
+        }
+    }
+
 }

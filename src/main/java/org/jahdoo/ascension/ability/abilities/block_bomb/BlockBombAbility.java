@@ -20,7 +20,7 @@ public class BlockBombAbility extends AbstractBlockAbility {
 
     @Override
     public void invokeAbility(Player player) {
-        GenericProjectile genericProjectile = new GenericProjectile(
+        var genericProjectile = new GenericProjectile(
             player, 0,
             projectileKey(),
             abilityId.getPath().intern()
@@ -71,6 +71,6 @@ public class BlockBombAbility extends AbstractBlockAbility {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.UTILITY.get();
+        return ElementRegistry.utility();
     }
 }

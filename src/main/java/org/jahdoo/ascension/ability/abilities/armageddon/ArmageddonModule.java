@@ -121,7 +121,7 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.INFERNO.get();
+        return ElementRegistry.inferno();
     }
 
     ResourceLocation abilityId = Helpers.res("armageddon_module_property");

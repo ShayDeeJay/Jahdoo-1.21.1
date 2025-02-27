@@ -51,18 +51,18 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     }
 
     @Override
-    public @NotNull UseAnim getUseAnimation(ItemStack pStack) {
+    public @NotNull UseAnim getUseAnimation(ItemStack stack) {
         return UseAnim.NONE;
     }
 
     @Override
-    public int getUseDuration(ItemStack pStack, LivingEntity pEntity) {
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return 72000;
     }
 
     @Override
-    public InteractionResult place(BlockPlaceContext pContext) {
-        return onPlace(pContext);
+    public InteractionResult place(BlockPlaceContext context) {
+        return onPlace(context);
     }
 
     @Override
@@ -76,8 +76,8 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     }
 
     @Override
-    public @NotNull Component getName(@NotNull ItemStack pStack) {
-        return WandItemHelper.getItemName(pStack);
+    public @NotNull Component getName(@NotNull ItemStack stack) {
+        return WandItemHelper.getItemName(stack);
     }
 
     @Override

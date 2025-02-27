@@ -118,11 +118,11 @@ public class IceBomb extends DefaultEntityBehaviour {
     private void setParticleNova(Vec3 worldPosition, double particleMultiplier){
         var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), (float) particleMultiplier/2);
         var directions = positionScrambler.subtract(this.elementProjectile.position()).normalize();
-        var part1 = this.getElementType().particleColourPrimary();
-        var part2 = this.getElementType().textColourPrimary();
+        var part1 = this.getElementType().partColourA();
+        var part2 = this.getElementType().textColourA();
         var lifetime = (int) (particleMultiplier * 10);
         var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, 5, part1, part2, false);
-        var bakedParticle = bakedParticleOptions(this.getElementType().getTypeId(), lifetime, 5, false);
+        var bakedParticle = bakedParticleOptions(this.getElementType().id(), lifetime, 5, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle).get(Helpers.Random.nextInt(2));
         var randSpeed = Helpers.Random.nextDouble(0.3, 0.5);
         var positions = worldPosition.offsetRandom(RandomSource.create(), 0.5f);
@@ -165,7 +165,7 @@ public class IceBomb extends DefaultEntityBehaviour {
 
     void iceBombIdleParticles(){
         if(hasHitBlock) return;
-        var bakedParticle = bakedParticleOptions(this.getElementType().getTypeId(), 2, Helpers.Random.nextFloat(1.5f, 2f), false);
+        var bakedParticle = bakedParticleOptions(this.getElementType().id(), 2, Helpers.Random.nextFloat(1.5f, 2f), false);
         var genericParticle = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 3, 1);
 
         PositionFinders.getRandomSphericalPositions(
@@ -250,7 +250,7 @@ public class IceBomb extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.FROST.get();
+        return ElementRegistry.frost();
     }
 
     ResourceLocation abilityId = Helpers.res("ice_bomb_property");

@@ -21,14 +21,28 @@ import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
 
 public class OverlayEvent {
 
+    private static void hideCrosshairForAbilityWheel(RenderGuiLayerEvent.Pre event) {
+        if (Minecraft.getInstance().screen instanceof AbilityWheelMenu && event.getName().equals(VanillaGuiLayers.CROSSHAIR)) {
+            event.setCanceled(true);
+        }
+    }
+
     public static void crosshairManager(RenderGuiLayerEvent.Pre event) {
         hideCrosshairForAbilityWheel(event);
         hideCrosshairForArcaneShift(event);
     }
 
-    private static void hideCrosshairForAbilityWheel(RenderGuiLayerEvent.Pre event) {
-        if (Minecraft.getInstance().screen instanceof AbilityWheelMenu && event.getName().equals(VanillaGuiLayers.CROSSHAIR)) {
-            event.setCanceled(true);
+    public static void simpleGui(RenderGuiLayerEvent.Pre event, LocalPlayer player) {
+        if(player == null) return;
+        var exceptions = List.of(
+            EXPERIENCE_LEVEL, EXPERIENCE_BAR, HOTBAR,
+            PLAYER_HEALTH, FOOD_LEVEL, SELECTED_ITEM_NAME
+        );
+
+        if(Configuration.CUSTOM_UI.get()){
+            if (exceptions.contains(event.getName())) {
+                event.setCanceled(true);
+            }
         }
     }
 
@@ -50,19 +64,4 @@ public class OverlayEvent {
             }
         }
     }
-
-    public static void simpleGui(RenderGuiLayerEvent.Pre event, LocalPlayer player) {
-        if(player == null) return;
-        var exceptions = List.of(
-            EXPERIENCE_LEVEL, EXPERIENCE_BAR, HOTBAR,
-            PLAYER_HEALTH, FOOD_LEVEL, SELECTED_ITEM_NAME
-        );
-
-        if(Configuration.CUSTOM_UI.get()){
-            if (exceptions.contains(event.getName())) {
-                event.setCanceled(true);
-            }
-        }
-    }
-
 }

@@ -21,7 +21,7 @@ import org.jahdoo.common.registers.ElementRegistry;
 public abstract class AbstractBEInventory extends SyncedBlockEntity {
 
     public static GenericParticleOptions processingParticle(int lifetime, float size, boolean staticSize, double speed){
-        var element = ElementRegistry.UTILITY.get();
+        var element = ElementRegistry.utility();
         return ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, element, lifetime, size, staticSize, speed);
     }
     protected ContainerData data;

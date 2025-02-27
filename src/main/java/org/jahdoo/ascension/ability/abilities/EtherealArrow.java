@@ -78,10 +78,10 @@ public class EtherealArrow extends DefaultEntityBehaviour {
 
         if(this.genericProjectile != null){
             var element = genericProjectile.getElementType();
-            Helpers.getSoundWithPosition(this.genericProjectile.level(), hitEntity.blockPosition(), element.getElementSound(),0.4f);
+            Helpers.getSoundWithPosition(this.genericProjectile.level(), hitEntity.blockPosition(), element.sound(),0.4f);
             if (hitEntity.isAlive()) {
                 if (!(this.genericProjectile.level() instanceof ServerLevel serverLevel)) return;
-                var type = bakedParticleOptions(element.getTypeId(), 10, 1, false);
+                var type = bakedParticleOptions(element.id(), 10, 1, false);
                 var generic = genericParticleOptions(element, 10, 1.2f);
 
                 spawnElectrifiedParticles(serverLevel, hitEntity.position(), type, 3, hitEntity, 0.2);
@@ -89,7 +89,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
             }
 
             if (Helpers.Random.nextInt(0, (int) Math.max(effectChance, 1)) == 0) {
-                var effect = new JahdooMobEffect(element.elementEffect(), (int) effectDuration, (int) effectStrength);
+                var effect = new JahdooMobEffect(element.effect(), (int) effectDuration, (int) effectStrength);
                 hitEntity.addEffect(effect);
             }
 

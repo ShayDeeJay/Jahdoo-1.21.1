@@ -89,7 +89,7 @@ public class MobManager {
         attachEquipment(entity, serverLevel, round);
         var collection = equipWeapon(entity, serverLevel, round);
         if(!collection.isEmpty()) {
-            var weapon = Helpers.getRandomListElement(collection);
+            var weapon = Helpers.listRandom(collection);
             entity.setItemSlot(EquipmentSlot.MAINHAND, weapon.is(Items.BOW) ? ItemStack.EMPTY : weapon);
         };
         return entity;
@@ -185,7 +185,7 @@ public class MobManager {
         attachEquipment(entity, serverLevel, round);
         var collection = equipWeapon(entity, serverLevel, round);
         if(!collection.isEmpty()){
-            var weapon = Helpers.getRandomListElement(collection);
+            var weapon = Helpers.listRandom(collection);
             entity.setItemSlot(EquipmentSlot.MAINHAND, weapon);
         }
         return entity;
@@ -232,7 +232,7 @@ public class MobManager {
             if(Maths.percentageChance(40)) entities.add(golem);
         }
 
-        var livingEntity = MobManager.generateMob(Helpers.getRandomListElement(entities));
+        var livingEntity = MobManager.generateMob(Helpers.listRandom(entities));
         attributeWithChance(Attributes.MAX_HEALTH, livingEntity, round, 100);
         attributeWithChance(Attributes.ARMOR, livingEntity, round * 10, 100);
         attributeWithChance(Attributes.ATTACK_DAMAGE, livingEntity, round, 100);

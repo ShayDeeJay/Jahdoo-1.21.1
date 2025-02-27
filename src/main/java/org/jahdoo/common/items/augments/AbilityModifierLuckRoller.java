@@ -4,6 +4,17 @@ import org.jahdoo.ascension.utils.Helpers;
 
 public class AbilityModifierLuckRoller {
 
+    static double probability(double x){
+        return x < 5 ? unLikely(x) : likely(x);
+    }
+
+    static double unLikely(double x) {
+        return Math.pow(2, -x + 5) + 5;
+    }
+
+    static double likely(double x){
+        return 0.8 * Math.pow(1.2, -0.6 * x + 13) + 1;
+    }
 
     public static double getWeightedRandomDouble(double high, double low, boolean isHigherBetter, double step, double boundLower){
         double boundUpper = 20.0;
@@ -24,18 +35,6 @@ public class AbilityModifierLuckRoller {
         } else {
             if(isHigherBetter) return high; else return low;
         }
-    }
-
-    static double probability(double x){
-        return x < 5 ? unLikely(x) : likely(x);
-    }
-
-    static double unLikely(double x) {
-        return Math.pow(2, -x + 5) + 5;
-    }
-
-    static double likely(double x){
-        return 0.8 * Math.pow(1.2, -0.6 * x + 13) + 1;
     }
 
 }

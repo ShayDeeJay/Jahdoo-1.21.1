@@ -32,8 +32,8 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     public double maxDistance;
     public Vec3 blockEntityPos;
 
-    public GenericProjectile(EntityType<? extends Projectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public GenericProjectile(EntityType<? extends Projectile> entityType, Level level) {
+        super(entityType, level);
     }
 
     public GenericProjectile(
@@ -56,7 +56,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     public GenericProjectile(
         Player player,
         double offset,
-        String projectileSelectionIndex,
+        String index,
         String abilityId,
         AbstractElement element
     ) {
@@ -65,9 +65,9 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.reapplyPosition();
         this.setOwner(player);
         this.wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
-        this.projectileSelectionIndex = projectileSelectionIndex;
+        this.projectileSelectionIndex = index;
         this.abilityId = abilityId;
-        this.getProjectile = EntityPropertyRegister.getProperty(projectileSelectionIndex);
+        this.getProjectile = EntityPropertyRegister.getProperty(index);
         this.getProjectile.getGenericProjectile(this);
         this.getElement = element;
     }
@@ -76,45 +76,26 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         WandAbilityHolder wandAbilityHolder,
         Vec3 direction,
         Level level,
-        String projectileSelectionIndex,
+        String index,
         String abilityId
     ) {
         super(EntitiesRegister.GENERIC_PROJECTILE.get(), level);
         this.moveTo(direction.x, direction.y, direction.z, 0, 0);
+        this.reapplyPosition();
         this.blockEntityPos = direction;
-        this.reapplyPosition();
         this.wandAbilityHolder = wandAbilityHolder;
-        this.projectileSelectionIndex = projectileSelectionIndex;
+        this.projectileSelectionIndex = index;
         this.abilityId = abilityId;
-        this.getProjectile = EntityPropertyRegister.getProperty(projectileSelectionIndex);
+        this.getProjectile = EntityPropertyRegister.getProperty(index);
         this.getProjectile.getGenericProjectile(this);
-    }
-
-    public GenericProjectile(
-        Player player,
-        double offset,
-        String projectileSelectionIndex,
-        WandAbilityHolder wandAbilityHolder,
-        double distance,
-        String abilityId,
-        AbstractElement element
-    ) {
-        super(EntitiesRegister.GENERIC_PROJECTILE.get(), player.level());
-        this.setProjectileWithOffsets(this, player, offset, distance);
-        this.reapplyPosition();
-        this.setOwner(player);
-        this.wandAbilityHolder = wandAbilityHolder;
-        this.projectileSelectionIndex = projectileSelectionIndex;
-        this.abilityId = abilityId;
-        this.getProjectile = EntityPropertyRegister.getProperty(projectileSelectionIndex);
-        this.getProjectile.getGenericProjectile(this);
-        this.getElement = element;
     }
 
     public GenericProjectile(
         Entity owner,
-        double spawnX, double spawnY, double spawnZ,
-        String projectileSelectionIndex,
+        double spawnX,
+        double spawnY,
+        double spawnZ,
+        String index,
         WandAbilityHolder wandAbilityHolder,
         AbstractElement abstractElement,
         String abilityId
@@ -126,8 +107,8 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.wandAbilityHolder = wandAbilityHolder;
         this.getElement = abstractElement;
         this.abilityId = abilityId;
-        this.projectileSelectionIndex = projectileSelectionIndex;
-        this.getProjectile = EntityPropertyRegister.getProperty(projectileSelectionIndex);
+        this.projectileSelectionIndex = index;
+        this.getProjectile = EntityPropertyRegister.getProperty(index);
         this.getProjectile.getGenericProjectile(this);
     }
 
@@ -136,12 +117,22 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     }
 
     @Override
-    protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
-        super.onHitEntity(entityHitResult);
-        var entity = entityHitResult.getEntity();
-        if(!(entity instanceof LivingEntity livingEntity)) return;
-        if(!DefaultEntityBehaviour.canDamageEntity(livingEntity, (LivingEntity) this.getOwner())) return;
-        if(this.getProjectile != null) this.getProjectile.onEntityHit(livingEntity);
+    public WandAbilityHolder getwandabilityholder() {
+        return this.wandAbilityHolder;
+    }
+
+    public void setMaxDistance(double maxDistance){
+        this.maxDistance = maxDistance;
+    }
+
+    @Override
+    public float getPickRadius() {
+        return 0;
+    }
+
+    @Override
+    public AbstractElement getElementType() {
+        return this.getElement;
     }
 
     @Override
@@ -160,54 +151,46 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         }
     }
 
-    public void setMaxDistance(double maxDistance){
-        this.maxDistance = maxDistance;
+    @Override
+    protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
+        super.onHitEntity(entityHitResult);
+        var entity = entityHitResult.getEntity();
+        if(!(entity instanceof LivingEntity livingEntity)) return;
+        if(!DefaultEntityBehaviour.canDamageEntity(livingEntity, (LivingEntity) this.getOwner())) return;
+        if(this.getProjectile != null) this.getProjectile.onEntityHit(livingEntity);
     }
 
     @Override
-    public float getPickRadius() {
-        return 0;
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putString("projectileIndex", this.projectileSelectionIndex);
+        tag.putString("abilityId", this.abilityId);
+        DefaultEntityBehaviour.writeTag(this.wandAbilityHolder, this.abilityId, tag);
+        if(this.getElement != null) tag.putInt("elementId", this.getElement.id());
+        if(this.getProjectile != null) getProjectile.addAdditionalDetails(tag);
     }
 
     @Override
-    public AbstractElement getElementType() {
-        return this.getElement;
-    }
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.projectileSelectionIndex = tag.getString("projectileIndex");
+        this.abilityId = tag.getString("abilityId");
+        this.wandAbilityHolder = DefaultEntityBehaviour.readTag(tag, abilityId);
 
-    @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
-        super.addAdditionalSaveData(pCompound);
-        pCompound.putString("projectileIndex", this.projectileSelectionIndex);
-        pCompound.putString("abilityId", this.abilityId);
-        DefaultEntityBehaviour.writeTag(this.wandAbilityHolder, this.abilityId, pCompound);
-        if(this.getElement != null) pCompound.putInt("elementId", this.getElement.getTypeId());
-        if(this.getProjectile != null) getProjectile.addAdditionalDetails(pCompound);
-    }
-
-    @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
-        super.readAdditionalSaveData(pCompound);
-        this.projectileSelectionIndex = pCompound.getString("projectileIndex");
-        this.abilityId = pCompound.getString("abilityId");
-        this.wandAbilityHolder = DefaultEntityBehaviour.readTag(pCompound, abilityId);
-
-        if(this.getElement == null && pCompound.getInt("elementId") > 0) {
-            this.getElement = ElementRegistry.getElementByTypeId(pCompound.getInt("elementId")).getFirst();
+        if(this.getElement == null && tag.getInt("elementId") > 0) {
+            ElementRegistry.fromId(tag.getInt("elementId")).ifPresent(
+                element -> this.getElement = element
+            );
         }
 
         AbstractEntityProperty abstractProjectileProperty = EntityPropertyRegister.REGISTRY.get(
-            Helpers.res(pCompound.getString("projectileIndex"))
+            Helpers.res(tag.getString("projectileIndex"))
         );
 
         if(abstractProjectileProperty != null) {
             this.getProjectile = abstractProjectileProperty.getEntityProperty();
-            this.getProjectile.readCompoundTag(pCompound);
+            this.getProjectile.readCompoundTag(tag);
             this.getProjectile.getGenericProjectile(this);
         }
-    }
-
-    @Override
-    public WandAbilityHolder getwandabilityholder() {
-        return this.wandAbilityHolder;
     }
 }

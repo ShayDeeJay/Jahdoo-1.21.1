@@ -25,11 +25,6 @@ public class VoidSpiderRenderer<T extends Spider> extends MobRenderer<T, SpiderM
         this.addLayer(new VoidSpiderEyesLayer(this));
     }
 
-    @Override
-    public void render(T entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
-    }
-
     protected float getFlipDegrees(@NotNull T livingEntity) {
         return 180.0F;
     }
@@ -38,7 +33,6 @@ public class VoidSpiderRenderer<T extends Spider> extends MobRenderer<T, SpiderM
         if(entity instanceof VoidSpider voidSpider){
             return voidSpider.getScale() == 1.5F ? SPIDER_LOCATION_SPAWN : SPIDER_LOCATION;
         }
-
         return SPIDER_LOCATION_SPAWN;
     }
 }

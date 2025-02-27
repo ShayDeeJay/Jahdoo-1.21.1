@@ -9,17 +9,17 @@ import software.bernie.geckolib.model.GeoModel;
 public class BurningSkullModel extends GeoModel<BurningSkull> {
 
     @Override
-    public ResourceLocation getModelResource(BurningSkull animatable) {
+    public ResourceLocation getModelResource(BurningSkull entity) {
         return  Helpers.res("geo/entity/flaming_skull.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureResource(BurningSkull animatable) {
+    public ResourceLocation getTextureResource(BurningSkull entity) {
         return Helpers.res("textures/entity/flaming_skull.png");
     }
 
     @Override
-    public ResourceLocation getAnimationResource(BurningSkull animatable) {
+    public ResourceLocation getAnimationResource(BurningSkull entity) {
         return Helpers.res("animations/entity/flaming_skull.animation.json");
     }
 
@@ -27,5 +27,6 @@ public class BurningSkullModel extends GeoModel<BurningSkull> {
     public void applyMolangQueries(AnimationState<BurningSkull> animationState, double animTime) {
         super.applyMolangQueries(animationState, animTime);
     }
+
 }
 

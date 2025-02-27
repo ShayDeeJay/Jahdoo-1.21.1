@@ -32,7 +32,7 @@ public class MenusRegister {
         registerMenuType(WandManagerMenu::new, "wand_manager_menu");
 
     public static final Supplier<MenuType<RuneTableMenu>> RUNE_TABLE_MENU =
-            registerMenuType(RuneTableMenu::new, "rune_table_menu");
+        registerMenuType(RuneTableMenu::new, "rune_table_menu");
 
     private static <T extends AbstractContainerMenu> Supplier<MenuType<T>> registerMenuType(
         IContainerFactory<T> factory,

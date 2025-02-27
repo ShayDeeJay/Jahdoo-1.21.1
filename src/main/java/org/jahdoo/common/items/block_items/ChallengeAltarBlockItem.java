@@ -2,6 +2,7 @@ package org.jahdoo.common.items.block_items;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import org.jahdoo.common.block.challange_altar.ChallengeAltarBlockRenderer;
 import org.jetbrains.annotations.NotNull;
@@ -18,29 +19,17 @@ import java.util.function.Consumer;
 public class ChallengeAltarBlockItem extends BlockItem implements GeoItem {
     private final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
-     public ChallengeAltarBlockItem(Block pBlock, Properties pProperties) {
-        super(pBlock, pProperties);
-         SingletonGeoAnimatable.registerSyncedAnimatable(this);
+    public ChallengeAltarBlockItem(Block pBlock) {
+        super(pBlock, new Properties());
+        SingletonGeoAnimatable.registerSyncedAnimatable(this);
     }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
 
     @Override
-    public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
-        consumer.accept(
-            new GeoRenderProvider() {
-                private ChallengeAltarBlockRenderer renderer;
-
-                @Override
-                public @NotNull BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
-                    if (this.renderer == null) this.renderer = new ChallengeAltarBlockRenderer();
-                    return this.renderer;
-                }
-
-            }
-        );
-        GeoItem.super.createGeoRenderer(consumer);
+    public double getTick(Object itemStack) {
+        return RenderUtil.getCurrentTick();
     }
 
     @Override
@@ -50,7 +39,19 @@ public class ChallengeAltarBlockItem extends BlockItem implements GeoItem {
 
 
     @Override
-    public double getTick(Object itemStack) {
-        return RenderUtil.getCurrentTick();
+    public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
+        consumer.accept(
+              new GeoRenderProvider() {
+                  private ChallengeAltarBlockRenderer renderer;
+
+                  @Override
+                  public @NotNull BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
+                      if (this.renderer == null) this.renderer = new ChallengeAltarBlockRenderer();
+                      return this.renderer;
+                  }
+
+              }
+        );
+        GeoItem.super.createGeoRenderer(consumer);
     }
 }

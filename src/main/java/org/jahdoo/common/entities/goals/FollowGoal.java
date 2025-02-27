@@ -28,46 +28,40 @@ public class FollowGoal extends Goal {
     private float oldWaterCost;
     private final boolean canFly;
 
-    public FollowGoal(Mob pTamable, double pSpeedModifier, float pStartDistance, float pStopDistance, boolean pCanFly) {
-        this.tamable = pTamable;
-        this.level = pTamable.level();
-        this.speedModifier = pSpeedModifier;
-        this.navigation = pTamable.getNavigation();
-        this.startDistance = pStartDistance;
-        this.stopDistance = pStopDistance;
-        this.canFly = pCanFly;
+    public FollowGoal(Mob tamable, double speedMod, float startDistance, float stopDistance, boolean canFly) {
+        this.tamable = tamable;
+        this.level = tamable.level();
+        this.speedModifier = speedMod;
+        this.navigation = tamable.getNavigation();
+        this.startDistance = startDistance;
+        this.stopDistance = stopDistance;
+        this.canFly = canFly;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-        if (!(pTamable.getNavigation() instanceof GroundPathNavigation) && !(pTamable.getNavigation() instanceof FlyingPathNavigation)) {
+        if (!(tamable.getNavigation() instanceof GroundPathNavigation) && !(tamable.getNavigation() instanceof FlyingPathNavigation)) {
             throw new IllegalArgumentException("Unsupported mob type for FollowOwnerGoal");
         }
     }
 
-    /**
-     * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
-     * method as well.
-     */
-    public boolean canUse() {
-        if(tamable instanceof TamableEntity tame){
-            LivingEntity livingentity = tame.getOwner();
-            if (livingentity == null) {
-                return false;
-            } else if (livingentity.isSpectator()) {
-                return false;
-            } else if (this.unableToMove()) {
-                return false;
-            } else if (this.tamable.distanceToSqr(livingentity) < (double) (this.startDistance * this.startDistance)) {
-                return false;
-            } else {
-                this.owner = livingentity;
-                return true;
-            }
-        }
-        return false;
+    private boolean unableToMove() {
+        return this.tamable.isPassenger() || this.tamable.isLeashed();
     }
 
-    /**
-     * Returns whether an in-progress EntityAIBase should continue executing
-     */
+    private int randomIntInclusive(int pMin, int pMax) {
+        return this.tamable.getRandom().nextInt(pMax - pMin + 1) + pMin;
+    }
+
+    public void start() {
+        this.timeToRecalcPath = 0;
+        this.oldWaterCost = this.tamable.getPathfindingMalus(PathType.WATER);
+        this.tamable.setPathfindingMalus(PathType.WATER, 0.0F);
+    }
+
+    public void stop() {
+        this.owner = null;
+        this.navigation.stop();
+        this.tamable.setPathfindingMalus(PathType.WATER, this.oldWaterCost);
+    }
+
     public boolean canContinueToUse() {
         if (this.navigation.isDone()) {
             return false;
@@ -78,31 +72,6 @@ public class FollowGoal extends Goal {
         }
     }
 
-    private boolean unableToMove() {
-        return this.tamable.isPassenger() || this.tamable.isLeashed();
-    }
-
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
-    public void start() {
-        this.timeToRecalcPath = 0;
-        this.oldWaterCost = this.tamable.getPathfindingMalus(PathType.WATER);
-        this.tamable.setPathfindingMalus(PathType.WATER, 0.0F);
-    }
-
-    /**
-     * Reset the task's internal state. Called when this task is interrupted by another one
-     */
-    public void stop() {
-        this.owner = null;
-        this.navigation.stop();
-        this.tamable.setPathfindingMalus(PathType.WATER, this.oldWaterCost);
-    }
-
-    /**
-     * Keep ticking a continuous task that has already been started
-     */
     public void tick() {
         this.tamable.getLookControl().setLookAt(this.owner, 10.0F, (float)this.tamable.getMaxHeadXRot());
         if (--this.timeToRecalcPath <= 0) {
@@ -128,34 +97,49 @@ public class FollowGoal extends Goal {
         }
     }
 
-    private boolean maybeTeleportTo(int pX, int pY, int pZ) {
-        if (Math.abs((double)pX - this.owner.getX()) < 2.0D && Math.abs((double)pZ - this.owner.getZ()) < 2.0D) {
+    private boolean maybeTeleportTo(int x, int y, int z) {
+        if (Math.abs((double)x - this.owner.getX()) < 2.0D && Math.abs((double)z - this.owner.getZ()) < 2.0D) {
             return false;
-        } else if (!this.canTeleportTo(new BlockPos(pX, pY, pZ))) {
+        } else if (!this.canTeleportTo(new BlockPos(x, y, z))) {
             return false;
         } else {
-            this.tamable.moveTo((double)pX + 0.5D, pY, (double)pZ + 0.5D, this.tamable.getYRot(), this.tamable.getXRot());
+            this.tamable.moveTo((double)x + 0.5D, y, (double)z + 0.5D, this.tamable.getYRot(), this.tamable.getXRot());
             this.navigation.stop();
             return true;
         }
     }
 
-    private boolean canTeleportTo(BlockPos pPos) {
-        PathType blockpathtypes = WalkNodeEvaluator.getPathTypeStatic(this.tamable, pPos);
+    private boolean canTeleportTo(BlockPos pos) {
+        PathType blockpathtypes = WalkNodeEvaluator.getPathTypeStatic(this.tamable, pos);
         if (blockpathtypes != PathType.WALKABLE) {
             return false;
         } else {
-            BlockState blockstate = this.level.getBlockState(pPos.below());
+            BlockState blockstate = this.level.getBlockState(pos.below());
             if (!this.canFly && blockstate.getBlock() instanceof LeavesBlock) {
                 return false;
             } else {
-                BlockPos blockpos = pPos.subtract(this.tamable.blockPosition());
+                BlockPos blockpos = pos.subtract(this.tamable.blockPosition());
                 return this.level.noCollision(this.tamable, this.tamable.getBoundingBox().move(blockpos));
             }
         }
     }
 
-    private int randomIntInclusive(int pMin, int pMax) {
-        return this.tamable.getRandom().nextInt(pMax - pMin + 1) + pMin;
+    public boolean canUse() {
+        if(tamable instanceof TamableEntity tame){
+            LivingEntity livingentity = tame.getOwner();
+            if (livingentity == null) {
+                return false;
+            } else if (livingentity.isSpectator()) {
+                return false;
+            } else if (this.unableToMove()) {
+                return false;
+            } else if (this.tamable.distanceToSqr(livingentity) < (double) (this.startDistance * this.startDistance)) {
+                return false;
+            } else {
+                this.owner = livingentity;
+                return true;
+            }
+        }
+        return false;
     }
 }

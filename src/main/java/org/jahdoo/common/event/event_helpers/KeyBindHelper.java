@@ -12,33 +12,37 @@ import org.jahdoo.common.networking.packet.client2server.MagnetActiveC2SPacket;
 import org.jahdoo.ascension.utils.Configuration;
 import org.jahdoo.ascension.utils.Helpers;
 
+import static com.mojang.blaze3d.platform.InputConstants.*;
+import static org.jahdoo.common.client.KeyBinding.*;
+
 public class KeyBindHelper {
+
     public static void toggleLockAbility(Player player){
-        if(KeyBinding.MAGNET.isDown()) {
+        if(MAGNET.isDown()) {
             PacketDistributor.sendToServer(new MagnetActiveC2SPacket());
-            KeyBinding.MAGNET.setDown(false);
+            MAGNET.setDown(false);
         }
     }
 
+    public static void setAbilityWheel(Minecraft instance){
+        var notAbilityWheel = !(instance.screen instanceof AbilityWheelMenu);
+        var notAugmentScreen = !(instance.screen instanceof AugmentScreen);
+        if(notAbilityWheel && notAugmentScreen) instance.setScreen(new AbilityWheelMenu());
+    }
+
     public static void quickSelectBehaviour(Player player, Minecraft instance) {
-        if(player != null && Helpers.getUsedItem(player).getItem() instanceof WandItem){
-            if(Configuration.QUICK_SELECT.get()){
-                if(KeyBinding.QUICK_SELECT.isDown()){
-                    if(!(instance.screen instanceof AbilityWheelMenu) && !(instance.screen instanceof AugmentScreen)){
-                        instance.setScreen(new AbilityWheelMenu());
-                    }
-                }
-            } else {
-                if (InputConstants.isKeyDown(instance.getWindow().getWindow(), KeyBinding.QUICK_SELECT.getKey().getValue())) {
-                    if(!(instance.screen instanceof AbilityWheelMenu) && !(instance.screen instanceof AugmentScreen)){
-                        instance.setScreen(new AbilityWheelMenu());
-                    }
-                } else {
-                    if(instance.screen instanceof AbilityWheelMenu){
-                        instance.popGuiLayer();
-                    }
-                }
-            }
+        if(player == null || !(Helpers.getUsedItem(player).getItem() instanceof WandItem)) return;
+
+        if(Configuration.QUICK_SELECT.get()){
+            if(QUICK_SELECT.isDown()) setAbilityWheel(instance);
+        } else {
+            var window = instance.getWindow().getWindow();
+            var quickSelect = QUICK_SELECT.getKey().getValue();
+            var keyDown = isKeyDown(window, quickSelect);
+            var isAbilityWheel = instance.screen instanceof AbilityWheelMenu;
+
+            if(keyDown) setAbilityWheel(instance); else if(isAbilityWheel) instance.popGuiLayer();
         }
     }
+
 }

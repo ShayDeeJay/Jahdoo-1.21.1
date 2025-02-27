@@ -77,7 +77,7 @@ public class NovaSmash implements AbstractAttachment {
     }
 
     private AbstractElement getElement(){
-        return ElementRegistry.MYSTIC.get();
+        return ElementRegistry.mystic();
     }
 
     private void onTick(Player player){
@@ -122,9 +122,9 @@ public class NovaSmash implements AbstractAttachment {
 
     public static void setParticleNova(Vec3 worldPosition, Entity entity, double speed){
         var directions = worldPosition.subtract(entity.position());
-        var getMysticElement = ElementRegistry.MYSTIC.get();
-        var colourPrimary = getMysticElement.particleColourPrimary();
-        var colourSecondary = getMysticElement.particleColourSecondary();
+        var getMysticElement = ElementRegistry.mystic();
+        var colourPrimary = getMysticElement.partColourA();
+        var colourSecondary = getMysticElement.partColourB();
         var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, colourPrimary, colourSecondary, 10, 0.1F, true, 0);
 
         ParticleHandlers.sendParticles(
@@ -186,12 +186,12 @@ public class NovaSmash implements AbstractAttachment {
         var directions = positionScrambler.subtract(player.position()).normalize();
 
         var size = Random.nextFloat(1f, 2f);
-        var colourPrimary = getElement().particleColourPrimary();
+        var colourPrimary = getElement().partColourA();
         var colourSecondary = rgbToInt(255, 255, 255);
         var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, 3, size, colourPrimary, colourSecondary, true);
 
         var size1 = Random.nextFloat(5f, 7f);
-        var bakedParticle = bakedParticleOptions(getElement().getTypeId(), (int) particleMultiplier, size1, false);
+        var bakedParticle = bakedParticleOptions(getElement().id(), (int) particleMultiplier, size1, false);
 
         var getRandomParticle = List.of(bakedParticle, genericParticle);
         var pType = getRandomParticle.get(Random.nextInt(2));

@@ -113,7 +113,7 @@ public class Permafrost extends DefaultEntityBehaviour {
     private void setBlizzard(Level level){
         var randomParticle = List.of(
             genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 5, 2.5f),
-            bakedParticleOptions(ElementRegistry.FROST.get().getTypeId(), 10, 2.5f, false)
+            bakedParticleOptions(ElementRegistry.frost().id(), 10, 2.5f, false)
         );
 
         PositionFinders.getInnerRingOfRadiusRandom(aoeCloud.position(), aoeCloud.getRadius() * 3, aoeCloud.getRadius() * 3,
@@ -151,13 +151,13 @@ public class Permafrost extends DefaultEntityBehaviour {
 
     private void setParticleNova(Vec3 worldPosition){
         var directions = worldPosition.subtract(this.aoeCloud.position());
-        var getMysticElement = ElementRegistry.FROST.get();
+        var getMysticElement = ElementRegistry.frost();
 
         var genericParticle = genericParticleOptions(
             SOFT_PARTICLE_SELECTION, 6,
             0.1f,
-            getMysticElement.particleColourPrimary(),
-            getMysticElement.particleColourSecondary(),
+            getMysticElement.partColourA(),
+            getMysticElement.partColourB(),
             true
         );
 
@@ -203,7 +203,7 @@ public class Permafrost extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.FROST.get();
+        return ElementRegistry.frost();
     }
 
     public static ResourceLocation abilityId = Helpers.res("arctic_storm_property");

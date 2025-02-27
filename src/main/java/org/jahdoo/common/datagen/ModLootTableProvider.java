@@ -10,10 +10,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import static net.minecraft.data.loot.LootTableProvider.*;
+import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.*;
+
 public class ModLootTableProvider {
-    public static LootTableProvider create(PackOutput output, CompletableFuture<HolderLookup.Provider> pRegistries) {
+
+    public static LootTableProvider create(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         return new LootTableProvider(
-            output, Set.of(), List.of(new LootTableProvider.SubProviderEntry(ModBlockLootTables::new, LootContextParamSets.BLOCK)), pRegistries
+            output,
+            Set.of(),
+            List.of(new SubProviderEntry(ModBlockLootTables::new, BLOCK)),
+            registries
         );
     }
+
 }

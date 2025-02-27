@@ -19,6 +19,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static net.minecraft.sounds.SoundEvents.*;
+import static net.minecraft.world.item.crafting.Ingredient.*;
+
 public class ArmorMaterialRegistry {
 
     private static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, JahdooMod.MOD_ID);
@@ -27,31 +30,20 @@ public class ArmorMaterialRegistry {
         ARMOR_MATERIALS.register(eventBus);
     }
 
-    public static DeferredHolder<ArmorMaterial, ArmorMaterial> WIZARD = register("wizard_armor",
-        makeArmorMap(3, 8, 6, 3),
-        15,
-        SoundEvents.ARMOR_EQUIP_DIAMOND,
-        () -> Ingredient.of(Tags.Items.INGOTS_IRON),
-        3,
-        0
-    );
+    public static DeferredHolder<ArmorMaterial, ArmorMaterial> WIZARD =
+        register("wizard_armor", makeArmorMap(3, 8, 6, 3));
 
-    public static DeferredHolder<ArmorMaterial, ArmorMaterial> MAGE = register("mage_armor",
-        makeArmorMap(3, 8, 6, 3),
-        15, SoundEvents.ARMOR_EQUIP_DIAMOND, () -> Ingredient.of(Tags.Items.INGOTS_IRON), 3, 0
-    );
+    public static DeferredHolder<ArmorMaterial, ArmorMaterial> MAGE =
+        register("mage_armor", makeArmorMap(3, 8, 6, 3));
 
     private static DeferredHolder<ArmorMaterial, ArmorMaterial> register(
         String name,
-        EnumMap<ArmorItem.Type, Integer> defense,
-        int enchantmentValue,
-        Holder<SoundEvent> equipSound,
-        Supplier<Ingredient> repairIngredient,
-        float toughness,
-        float knockbackResistance
+        EnumMap<ArmorItem.Type, Integer> defense
     ) {
-        List<ArmorMaterial.Layer> list = List.of(new ArmorMaterial.Layer(Helpers.res(name)));
-        return ARMOR_MATERIALS.register(name, ()-> new ArmorMaterial(defense, enchantmentValue, equipSound, repairIngredient, list, toughness, knockbackResistance));
+        var list = List.of(new ArmorMaterial.Layer(Helpers.res(name)));
+        var material = new ArmorMaterial(defense, 15, ARMOR_EQUIP_DIAMOND, () -> of(Tags.Items.INGOTS_IRON), list, 3F, 0F);
+
+        return ARMOR_MATERIALS.register(name, ()-> material);
     }
 
     static public EnumMap<ArmorItem.Type, Integer> makeArmorMap(int helmet, int chestplate, int leggings, int boots) {

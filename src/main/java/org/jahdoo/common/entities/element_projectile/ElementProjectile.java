@@ -155,7 +155,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         if(!(level() instanceof ServerLevel serverLevel) || getProjectile == null) return;
         getProjectile.onBlockBlockHit(blockHitResult);
         if (!blockHitResult.isInside()) {
-            var splashParticles = new BakedParticleOptions(this.getElementType().getTypeId(),5,2f, false);
+            var splashParticles = new BakedParticleOptions(this.getElementType().id(),5,2f, false);
             ParticleHandlers.particleBurst(serverLevel, blockHitResult.getLocation(), 10, splashParticles);
         }
     }

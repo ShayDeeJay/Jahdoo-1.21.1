@@ -182,7 +182,7 @@ public class Helpers {
         return ResourceLocation.fromNamespaceAndPath(JahdooMod.MOD_ID, location);
     }
 
-    public static <T> T getRandomListElement(List<T> collection){
+    public static <T> T listRandom(List<T> collection){
         var index = !collection.isEmpty() ? Random.nextInt(collection.size()) : 0 ;
         return collection.get(index);
     }

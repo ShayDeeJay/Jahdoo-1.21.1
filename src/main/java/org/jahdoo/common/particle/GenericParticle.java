@@ -11,14 +11,23 @@ import org.jetbrains.annotations.NotNull;
 
 public class GenericParticle extends SimpleAnimatedParticle {
 
-    public GenericParticle(ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, SpriteSet pSprites) {
-        super(pLevel, pX, pY, pZ, pSprites, 0.0125F);
-        this.xd = pXSpeed;
-        this.yd = pYSpeed;
-        this.zd = pZSpeed;
+    public GenericParticle(
+        ClientLevel leve,
+        double x,
+        double y,
+        double z,
+        double xSpeed,
+        double ySpeed,
+        double zSpeed,
+        SpriteSet sprite
+    ) {
+        super(leve, x, y, z, sprite, 0.0125F);
+        this.xd = xSpeed;
+        this.yd = ySpeed;
+        this.zd = zSpeed;
         this.quadSize *= 0.55F;
         this.lifetime = 10 + this.random.nextInt(10);
-        this.pickSprite(pSprites);
+        this.pickSprite(sprite);
         this.hasPhysics = false;
     }
 
@@ -41,23 +50,32 @@ public class GenericParticle extends SimpleAnimatedParticle {
             this.sprites = pSprites;
         }
 
-        public Particle createParticle(BakedParticleOptions pType, ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-            var genericParticle = new GenericParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, this.sprites){
+        public Particle createParticle(
+            BakedParticleOptions type,
+            ClientLevel level,
+            double x,
+            double y,
+            double z,
+            double xSpeed,
+            double ySpeed,
+            double zSpeed
+        ) {
+            var genericParticle = new GenericParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, this.sprites){
                 @Override
                 public void tick() {
                     super.tick();
-                    if(!pType.setStaticSize()) this.quadSize *= 0.9f;
+                    if(!type.setStaticSize()) this.quadSize *= 0.9f;
                     this.speedUpWhenYMotionIsBlocked = true;
                 }
             };
 
-            if(pType.setStaticSize()){
-                genericParticle.quadSize = pType.size();
+            if(type.setStaticSize()){
+                genericParticle.quadSize = type.size();
             } else {
-                genericParticle.quadSize *= pType.size();
+                genericParticle.quadSize *= type.size();
             }
 
-            genericParticle.lifetime = pType.lifetime() + Helpers.Random.nextInt(pType.lifetime());
+            genericParticle.lifetime = type.lifetime() + Helpers.Random.nextInt(type.lifetime());
             return genericParticle;
         }
     }
@@ -70,15 +88,24 @@ public class GenericParticle extends SimpleAnimatedParticle {
             this.sprites = pSprites;
         }
 
-        public Particle createParticle(GenericParticleOptions pType, ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-            var genericParticle = new GenericParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed,this.sprites){
+        public Particle createParticle(
+            GenericParticleOptions type,
+            ClientLevel level,
+            double x,
+            double y,
+            double z,
+            double xSpeed,
+            double ySpeed,
+            double zSpeed
+        ) {
+            var genericParticle = new GenericParticle(level, x, y, z, xSpeed, ySpeed, zSpeed,this.sprites){
                 int tick;
 
                 @Override
                 public void tick() {
                     super.tick();
                     tick++;
-                    if(!pType.setStaticSize()) this.quadSize *= 0.9f;
+                    if(!type.setStaticSize()) this.quadSize *= 0.9f;
                     this.speedUpWhenYMotionIsBlocked = true;
                     if(tick % 4 == 0) setSprite(sprites.get(random.fork()));
                 }
@@ -90,14 +117,14 @@ public class GenericParticle extends SimpleAnimatedParticle {
             };
 
 
-            if(pType.setStaticSize()){
-                genericParticle.quadSize = pType.size();
+            if(type.setStaticSize()){
+                genericParticle.quadSize = type.size();
             } else {
-                genericParticle.quadSize *= pType.size();
+                genericParticle.quadSize *= type.size();
             }
-            genericParticle.setColor(pType.colour());
-            genericParticle.setFadeColor(pType.fade());
-            genericParticle.lifetime = pType.lifetime() + Helpers.Random.nextInt(pType.lifetime());
+            genericParticle.setColor(type.colour());
+            genericParticle.setFadeColor(type.fade());
+            genericParticle.lifetime = type.lifetime() + Helpers.Random.nextInt(type.lifetime());
             return genericParticle;
         }
     }
@@ -111,8 +138,16 @@ public class GenericParticle extends SimpleAnimatedParticle {
             this.sprites = pSprites;
         }
 
-        public Particle createParticle(GenericParticleOptions pType, ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-            var genericParticle = new GenericParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed,this.sprites){
+        public Particle createParticle(
+            GenericParticleOptions type,
+            ClientLevel level,
+            double x, double y,
+            double z,
+            double xSpeed,
+            double ySpeed,
+            double zSpeed
+        ) {
+            var genericParticle = new GenericParticle(level, x, y, z, xSpeed, ySpeed, zSpeed,this.sprites){
                 @Override
                 public void tick() {
                     super.tick();
@@ -127,18 +162,18 @@ public class GenericParticle extends SimpleAnimatedParticle {
                     this.yd += (random.nextDouble() - 0.5) * 0.6;
                     this.zd += (random.nextDouble() - 0.5) * 0.6;
 
-                    this.xd *= pType.speed();
-                    this.yd *= pType.speed();
-                    this.zd *= pType.speed();
+                    this.xd *= type.speed();
+                    this.yd *= type.speed();
+                    this.zd *= type.speed();
 
                     this.speedUpWhenYMotionIsBlocked = true;
                 }
             };
 
-            if (pType.setStaticSize()) genericParticle.quadSize = pType.size(); else  genericParticle.quadSize *= pType.size();
-            genericParticle.setColor(pType.colour());
-            genericParticle.setFadeColor(pType.fade());
-            genericParticle.lifetime = pType.lifetime() + Helpers.Random.nextInt(pType.lifetime());
+            if (type.setStaticSize()) genericParticle.quadSize = type.size(); else  genericParticle.quadSize *= type.size();
+            genericParticle.setColor(type.colour());
+            genericParticle.setFadeColor(type.fade());
+            genericParticle.lifetime = type.lifetime() + Helpers.Random.nextInt(type.lifetime());
             return genericParticle;
         }
     }

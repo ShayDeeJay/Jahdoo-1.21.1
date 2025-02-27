@@ -13,78 +13,92 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
+import static net.minecraft.tags.BlockTags.*;
+import static net.minecraft.tags.BlockTags.SNOW;
+import static net.minecraft.world.level.block.Blocks.*;
+import static net.minecraft.world.level.block.Blocks.AIR;
+import static net.minecraft.world.level.block.Blocks.SAND;
+import static org.jahdoo.ascension.utils.ModTags.*;
+import static org.jahdoo.ascension.utils.ModTags.Block.*;
+import static org.jahdoo.common.registers.BlocksRegister.*;
+
 public class ModBlockTagGenerator extends BlockTagsProvider {
 
-    public ModBlockTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+    public ModBlockTagGenerator(
+        PackOutput output,
+        CompletableFuture<HolderLookup.Provider> lookupProvider,
+        ExistingFileHelper existingFileHelper
+    ) {
         super(output, lookupProvider, JahdooMod.MOD_ID, existingFileHelper);
     }
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
 
-        this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
-            .add(BlocksRegister.TANK.get())
-            .add(BlocksRegister.INFUSER.get())
-            .add(BlocksRegister.CHALLENGE_ALTAR.get())
-            .add(BlocksRegister.NEXITE_ORE.get())
-            .add(BlocksRegister.NEXITE_DEEPSLATE_ORE.get())
-            .add(BlocksRegister.NEXITE_BLOCK.get())
-            .add(BlocksRegister.RAW_NEXITE_BLOCK.get())
-            .add(BlocksRegister.WAND_MANAGER_TABLE.get());
 
-        this.tag(ModTags.Block.ALLOWED_BLOCK_INTERACTIONS)
-            .add(BlocksRegister.WAND_MANAGER_TABLE.get())
-            .add(BlocksRegister.RUNE_TABLE.value());
+        this.tag(ALLOWED_BLOCK_INTERACTIONS)
+            .add(WAND_MANAGER_TABLE.get())
+            .add(RUNE_TABLE.value());
 
-        this.tag(ModTags.Block.CAN_REPLACE_BLOCK)
-            .add(Blocks.AIR)
-            .add(Blocks.SHORT_GRASS)
-            .add(Blocks.TALL_GRASS)
-            .addTag(BlockTags.FLOWERS)
-            .addTag(BlockTags.SNOW)
-            .addTag(BlockTags.CROPS)
-            .addTag(BlockTags.LEAVES)
-            .addTag(BlockTags.REPLACEABLE);
+        this.tag(RARE_BLOCKS)
+            .add(BEACON)
+            .add(EMERALD_BLOCK)
+            .add(NETHERITE_BLOCK)
+            .add(DIAMOND_BLOCK);
 
-        this.tag(ModTags.Block.RARE_ORE)
-            .add(Blocks.NETHER_QUARTZ_ORE)
-            .add(Blocks.ANCIENT_DEBRIS)
-            .addTag(BlockTags.GOLD_ORES)
-            .addTag(BlockTags.DIAMOND_ORES)
-            .addTag(BlockTags.EMERALD_ORES);
+        this.tag(RARE_ORE)
+            .add(NETHER_QUARTZ_ORE)
+            .add(ANCIENT_DEBRIS)
+            .addTag(GOLD_ORES)
+            .addTag(DIAMOND_ORES)
+            .addTag(EMERALD_ORES);
 
-        this.tag(ModTags.Block.COMMON_ORE)
-            .add(BlocksRegister.NEXITE_DEEPSLATE_ORE.get())
-            .add(BlocksRegister.NEXITE_ORE.get())
-            .addTag(BlockTags.IRON_ORES)
-            .addTag(BlockTags.LAPIS_ORES)
-            .addTag(BlockTags.COPPER_ORES)
-            .addTag(BlockTags.REDSTONE_ORES)
-            .addTag(BlockTags.COAL_ORES);
+        this.tag(COMMON_ORE)
+            .add(NEXITE_DEEPSLATE_ORE.get())
+            .add(NEXITE_ORE.get())
+            .addTag(IRON_ORES)
+            .addTag(LAPIS_ORES)
+            .addTag(COPPER_ORES)
+            .addTag(REDSTONE_ORES)
+            .addTag(COAL_ORES);
 
-        this.tag(ModTags.Block.RARE_BLOCKS)
-            .add(Blocks.BEACON)
-            .add(Blocks.EMERALD_BLOCK)
-            .add(Blocks.NETHERITE_BLOCK)
-            .add(Blocks.DIAMOND_BLOCK);
+        this.tag(CAN_REPLACE_BLOCK)
+            .add(AIR)
+            .add(SHORT_GRASS)
+            .add(TALL_GRASS)
+            .addTag(FLOWERS)
+            .addTag(SNOW)
+            .addTag(CROPS)
+            .addTag(LEAVES)
+            .addTag(REPLACEABLE);
 
-        this.tag(ModTags.Block.GARBAGE_BLOCKS)
-            .add(Blocks.COBBLESTONE)
-            .add(Blocks.COBBLED_DEEPSLATE)
-            .add(Blocks.STONE)
-            .add(Blocks.ANDESITE)
-            .add(Blocks.TUFF)
-            .add(Blocks.DEEPSLATE)
-            .add(Blocks.DIORITE)
-            .add(Blocks.ANDESITE)
-            .add(Blocks.SAND)
-            .add(Blocks.GRAVEL)
-            .add(Blocks.BASALT)
-            .add(Blocks.BLACKSTONE)
-            .add(Blocks.CALCITE)
-            .add(Blocks.MOSS_BLOCK)
-            .add(Blocks.DRIPSTONE_BLOCK)
-            .add(Blocks.NETHERRACK)
-            .add(Blocks.GRANITE);
+        this.tag(MINEABLE_WITH_PICKAXE)
+            .add(TANK.get())
+            .add(INFUSER.get())
+            .add(CHALLENGE_ALTAR.get())
+            .add(NEXITE_ORE.get())
+            .add(NEXITE_DEEPSLATE_ORE.get())
+            .add(NEXITE_BLOCK.get())
+            .add(RAW_NEXITE_BLOCK.get())
+            .add(WAND_MANAGER_TABLE.get());
+
+        this.tag(GARBAGE_BLOCKS)
+            .add(COBBLESTONE)
+            .add(COBBLED_DEEPSLATE)
+            .add(STONE)
+            .add(ANDESITE)
+            .add(TUFF)
+            .add(DEEPSLATE)
+            .add(DIORITE)
+            .add(ANDESITE)
+            .add(SAND)
+            .add(GRAVEL)
+            .add(BASALT)
+            .add(BLACKSTONE)
+            .add(CALCITE)
+            .add(MOSS_BLOCK)
+            .add(DRIPSTONE_BLOCK)
+            .add(NETHERRACK)
+            .add(GRANITE);
     }
 }

@@ -38,68 +38,6 @@ import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
 
 public class RenderEventHelper {
 
-    public static void renderUtilityOverlay(RenderLevelStageEvent event, Player player, ItemStack stack) {
-        var pick = player.pick(15, 1, false);
-        if(stack.getItem() instanceof WandItem){
-            if (pick.getType() != HitResult.Type.MISS) {
-                if (pick instanceof BlockHitResult blockHitResult) {
-                    var getSelectedAbility = stack.get(WAND_DATA);
-                    if(getSelectedAbility == null) return;
-                    var breakerSize = Helpers.getTag(player, SIZE, getSelectedAbility.selectedAbility());
-                    var offSet = Helpers.getTag(player, OFFSET, getSelectedAbility.selectedAbility());
-                    var size = (int) ((breakerSize / 2) - offSet);
-                    var radius = (int) (breakerSize / 2);
-                    var pos = blockHitResult.getBlockPos();
-                    var pDirection = player.getDirection();
-                    var lookAngleY = player.getLookAngle().y;
-                    var isLookingUpOrDown = lookAngleY < -0.8 || lookAngleY > 0.8;
-                    var axisZ = pDirection.getAxis() == Direction.Axis.Z;
-                    var axisX = pDirection.getAxis() == Direction.Axis.X;
-
-                    pos = pos.relative(lookAngleY < -0.8 ? pDirection : pDirection.getOpposite(),
-                            !isLookingUpOrDown ? 0 : size)
-                        .above(isLookingUpOrDown ? 0 : size);
-
-                    var minPos = new BlockPos.MutableBlockPos(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
-                    var maxPos = new BlockPos.MutableBlockPos(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
-
-                    for (int x = -radius; x <= radius; x++) {
-                        for (int y = -radius; y <= radius; y++) {
-                            for (int z = -radius; z <= radius; z++) {
-                                BlockPos offsetPos = pos.offset(
-                                    x * (isLookingUpOrDown || axisZ ? 1 : 0),
-                                    y * (isLookingUpOrDown ? 0 : 1),
-                                    z * (isLookingUpOrDown || axisX ? 1 : 0)
-                                );
-
-                                minPos.set(Math.min(minPos.getX(), offsetPos.getX()),
-                                    Math.min(minPos.getY(), offsetPos.getY()),
-                                    Math.min(minPos.getZ(), offsetPos.getZ()));
-
-                                maxPos.set(Math.max(maxPos.getX(), offsetPos.getX()),
-                                    Math.max(maxPos.getY(), offsetPos.getY()),
-                                    Math.max(maxPos.getZ(), offsetPos.getZ()));
-
-                            }
-                        }
-                    }
-
-                    if(breakerSize > 0){
-                        AABB boundingBox = new AABB(
-                            minPos.getX(),
-                            minPos.getY(),
-                            minPos.getZ(),
-                            maxPos.getX() + 1,
-                            maxPos.getY() + 1,
-                            maxPos.getZ() + 1
-                        );
-                        renderSelectedBlock(event, boundingBox, new Color(113, 255, 173));
-                    }
-                }
-            }
-        }
-    }
-
     public static void renderTeleportLocationOverlay(RenderLevelStageEvent event, Player player, ItemStack stack) {
         var getSelectedAbility = stack.get(WAND_DATA);
         if(getSelectedAbility == null) return;
@@ -129,12 +67,32 @@ public class RenderEventHelper {
         matrix.popPose();
     }
 
+    public static LivingEntity getEntityInRange(Player player, double maxDistance, float maxAngle) {
+        var playerPosition = player.position();
+        var playerDirection = player.getLookAngle(); // Direction the player is looking
+
+        LivingEntity nearestEntity = player.level().getNearestEntity(
+            Mob.class,
+            TargetingConditions.DEFAULT,
+            player,
+            playerPosition.x, playerPosition.y, playerPosition.z,
+            new AABB(BlockPos.containing(playerPosition)).inflate(maxDistance, 4, maxDistance)
+        );
+
+        if (nearestEntity == null) return null;
+        var targetDirection = nearestEntity.position().subtract(playerPosition).normalize();
+
+        double angleToTarget = Math.toDegrees(Math.acos(playerDirection.dot(targetDirection)));
+
+        if (angleToTarget <= maxAngle) return nearestEntity; else return null;
+    }
+
     public static void renderAbilityOverlay(RenderLevelStageEvent event, ItemStack stack, Player player) {
         var getSelectedAbility = stack.get(WAND_DATA);
         if(getSelectedAbility == null) return;
         var filtered = List.of(
-            ArcaneShiftAbility.abilityId.getPath().intern(),
-            FrostboltsAbility.abilityId.getPath().intern()
+              ArcaneShiftAbility.abilityId.getPath().intern(),
+              FrostboltsAbility.abilityId.getPath().intern()
         );
 
         var typeId = getSelectedAbility.selectedAbility();
@@ -154,7 +112,7 @@ public class RenderEventHelper {
         var elementByWandType = SharedUI.getElementWithType(ability.get(), stack);
         if (!isWand || !hitSurface || elementByWandType == null) return;
 
-        var colour = elementByWandType.textColourSecondary();
+        var colour = elementByWandType.textColourB();
         pose.pushPose();
         pose.translate(-view.x(), -view.y(), -view.z());
         pose.pushPose();
@@ -166,7 +124,6 @@ public class RenderEventHelper {
         pose.popPose();
         pose.popPose();
     }
-
 
     public static void lockNearbyTarget(RenderLevelStageEvent event) {
         if(!Configuration.LOCK_ON_TARGET.get()) return;
@@ -203,24 +160,65 @@ public class RenderEventHelper {
         player.setXRot(player.getXRot() + (desiredPitch - player.getXRot()) * smoothFactor);
     }
 
+    public static void renderUtilityOverlay(RenderLevelStageEvent event, Player player, ItemStack stack) {
+        var pick = player.pick(15, 1, false);
+        if(stack.getItem() instanceof WandItem){
+            if (pick.getType() != HitResult.Type.MISS) {
+                if (pick instanceof BlockHitResult blockHitResult) {
+                    var getSelectedAbility = stack.get(WAND_DATA);
+                    if(getSelectedAbility == null) return;
+                    var breakerSize = Helpers.getTag(player, SIZE, getSelectedAbility.selectedAbility());
+                    var offSet = Helpers.getTag(player, OFFSET, getSelectedAbility.selectedAbility());
+                    var size = (int) ((breakerSize / 2) - offSet);
+                    var radius = (int) (breakerSize / 2);
+                    var pos = blockHitResult.getBlockPos();
+                    var pDirection = player.getDirection();
+                    var lookAngleY = player.getLookAngle().y;
+                    var isLookingUpOrDown = lookAngleY < -0.8 || lookAngleY > 0.8;
+                    var axisZ = pDirection.getAxis() == Direction.Axis.Z;
+                    var axisX = pDirection.getAxis() == Direction.Axis.X;
 
-    public static LivingEntity getEntityInRange(Player player, double maxDistance, float maxAngle) {
-        var playerPosition = player.position();
-        var playerDirection = player.getLookAngle(); // Direction the player is looking
+                    pos = pos.relative(lookAngleY < -0.8 ? pDirection : pDirection.getOpposite(),
+                                !isLookingUpOrDown ? 0 : size)
+                          .above(isLookingUpOrDown ? 0 : size);
 
-        LivingEntity nearestEntity = player.level().getNearestEntity(
-            Mob.class,
-            TargetingConditions.DEFAULT,
-            player,
-            playerPosition.x, playerPosition.y, playerPosition.z,
-            new AABB(BlockPos.containing(playerPosition)).inflate(maxDistance, 4, maxDistance)
-        );
+                    var minPos = new BlockPos.MutableBlockPos(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+                    var maxPos = new BlockPos.MutableBlockPos(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
 
-        if (nearestEntity == null) return null;
-        var targetDirection = nearestEntity.position().subtract(playerPosition).normalize();
+                    for (int x = -radius; x <= radius; x++) {
+                        for (int y = -radius; y <= radius; y++) {
+                            for (int z = -radius; z <= radius; z++) {
+                                BlockPos offsetPos = pos.offset(
+                                      x * (isLookingUpOrDown || axisZ ? 1 : 0),
+                                      y * (isLookingUpOrDown ? 0 : 1),
+                                      z * (isLookingUpOrDown || axisX ? 1 : 0)
+                                );
 
-        double angleToTarget = Math.toDegrees(Math.acos(playerDirection.dot(targetDirection)));
+                                minPos.set(Math.min(minPos.getX(), offsetPos.getX()),
+                                      Math.min(minPos.getY(), offsetPos.getY()),
+                                      Math.min(minPos.getZ(), offsetPos.getZ()));
 
-        if (angleToTarget <= maxAngle) return nearestEntity; else return null;
+                                maxPos.set(Math.max(maxPos.getX(), offsetPos.getX()),
+                                      Math.max(maxPos.getY(), offsetPos.getY()),
+                                      Math.max(maxPos.getZ(), offsetPos.getZ()));
+
+                            }
+                        }
+                    }
+
+                    if(breakerSize > 0){
+                        AABB boundingBox = new AABB(
+                              minPos.getX(),
+                              minPos.getY(),
+                              minPos.getZ(),
+                              maxPos.getX() + 1,
+                              maxPos.getY() + 1,
+                              maxPos.getZ() + 1
+                        );
+                        renderSelectedBlock(event, boundingBox, new Color(113, 255, 173));
+                    }
+                }
+            }
+        }
     }
 }

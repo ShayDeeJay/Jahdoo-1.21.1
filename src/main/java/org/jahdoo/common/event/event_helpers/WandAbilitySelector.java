@@ -19,6 +19,12 @@ import static org.jahdoo.ascension.utils.Helpers.withStyleComponentTrans;
 
 public class WandAbilitySelector {
 
+    private static void displayUnassignedKeyMessage(Player player, int keyNum){
+        var b = withStyleComponent(String.valueOf(keyNum), -13457271);
+        var a = withStyleComponentTrans("abilitySelector.jahdoo.non_assigned", -1772304, b);
+        player.displayClientMessage(a, true);
+    }
+
     public static void selectWandSlot(int keyNum){
         Player player = Minecraft.getInstance().player;
         if(player == null) return;
@@ -43,10 +49,4 @@ public class WandAbilitySelector {
         }  else displayUnassignedKeyMessage(player, keyNum);
     }
 
-
-    private static void displayUnassignedKeyMessage(Player player, int keyNum){
-        var b = withStyleComponent(String.valueOf(keyNum), -13457271);
-        var a = withStyleComponentTrans("abilitySelector.jahdoo.non_assigned", -1772304, b);
-        player.displayClientMessage(a, true);
-    }
 }

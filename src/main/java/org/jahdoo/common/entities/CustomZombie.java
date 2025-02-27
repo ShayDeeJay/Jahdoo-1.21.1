@@ -43,6 +43,11 @@ public class CustomZombie extends Zombie implements TamableEntity {
     }
 
     @Override
+    protected void registerGoals() {
+        addBehaviourGoals();
+    }
+
+    @Override
     public boolean canAttackType(EntityType<?> type) {
         return super.canAttackType(type);
     }
@@ -58,6 +63,18 @@ public class CustomZombie extends Zombie implements TamableEntity {
         if(this.owner == null && this.ownerUUID != null) this.owner = serverLevel.getPlayerByUUID(this.ownerUUID);
     }
 
+    @Override
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        if(this.owner != null) compound.putUUID("saveOwner", owner.getUUID());
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        if(compound.hasUUID("saveOwner")) this.ownerUUID = compound.getUUID("saveOwner");
+    }
+
     public PathNavigation getNavigation() {
         var controlledVehicle = this.getControlledVehicle();
         PathNavigation pathNavigation;
@@ -65,9 +82,13 @@ public class CustomZombie extends Zombie implements TamableEntity {
         return pathNavigation;
     }
 
-    @Override
-    protected void registerGoals() {
-        addBehaviourGoals();
+    public static AttributeSupplier.Builder createMobAttributes() {
+        return Mob.createLivingAttributes()
+              .add(Attributes.FOLLOW_RANGE, 35.0F)
+              .add(Attributes.MOVEMENT_SPEED, 0.23F)
+              .add(Attributes.ATTACK_DAMAGE, 3.0F)
+              .add(Attributes.ARMOR, 2.0F)
+              .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0);
     }
 
     @Override
@@ -83,27 +104,5 @@ public class CustomZombie extends Zombie implements TamableEntity {
 //        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(2, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(3, new GenericOwnerHurtTargetGoal(this, this::getOwner));
-    }
-
-
-    public static AttributeSupplier.Builder createMobAttributes() {
-        return Mob.createLivingAttributes()
-            .add(Attributes.FOLLOW_RANGE, 35.0F)
-            .add(Attributes.MOVEMENT_SPEED, 0.23F)
-            .add(Attributes.ATTACK_DAMAGE, 3.0F)
-            .add(Attributes.ARMOR, 2.0F)
-            .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0);
-    }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        if(this.owner != null) compound.putUUID("saveOwner", owner.getUUID());
-    }
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        if(compound.hasUUID("saveOwner")) this.ownerUUID = compound.getUUID("saveOwner");
     }
 }

@@ -14,22 +14,28 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class DamageTypesProvider extends DatapackBuiltinEntriesProvider {
-    public static final String JAHDOO_DAMAGE = "jahdoo_magic";
-    private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-        .add(Registries.DAMAGE_TYPE, DamageTypesProvider::bootstrap);
+import static org.jahdoo.common.registers.DamageTypeRegistry.*;
 
+public class DamageTypesProvider extends DatapackBuiltinEntriesProvider {
+
+    public static final String JAHDOO_DAMAGE = "jahdoo_magic";
+
+    private static final RegistrySetBuilder BUILDER =
+        new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, DamageTypesProvider::bootstrap);
 
     public static void bootstrap(BootstrapContext<DamageType> ctx) {
-        ctx.register(DamageTypeRegistry.JAHDOO_SOURCE, new DamageType(JAHDOO_DAMAGE, 0.1F));
+        ctx.register(JAHDOO_SOURCE, new DamageType(JAHDOO_DAMAGE, 0.1F));
     }
 
-    public DamageTypesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+    public DamageTypesProvider(
+        PackOutput output,
+        CompletableFuture<HolderLookup.Provider> registries
+    ) {
         super(output, registries, BUILDER, Set.of(JahdooMod.MOD_ID));
     }
 
     @Override
-    public @NotNull String getName() {
+    public String getName() {
         return "Jahdoo Damage Type";
     }
 }

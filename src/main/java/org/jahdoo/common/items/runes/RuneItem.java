@@ -29,12 +29,21 @@ public class RuneItem extends Item implements JahdooItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(
+        ItemStack stack,
+        TooltipContext context,
+        List<Component> tooltipComponents,
+        TooltipFlag tooltipFlag
+    ) {
         tooltipComponents.addAll(hoverToolTip(stack));
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+    public InteractionResultHolder<ItemStack> use(
+        Level level,
+        Player player,
+        InteractionHand usedHand
+    ) {
         return rollRandomRune(level, player);
     }
 

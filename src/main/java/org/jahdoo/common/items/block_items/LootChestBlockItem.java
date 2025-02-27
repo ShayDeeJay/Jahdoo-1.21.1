@@ -2,6 +2,7 @@ package org.jahdoo.common.items.block_items;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import org.jahdoo.common.block.loot_chest.LootChestBlockRenderer;
 import org.jetbrains.annotations.NotNull;
@@ -18,41 +19,39 @@ import java.util.function.Consumer;
 public class LootChestBlockItem extends BlockItem implements GeoItem {
     private final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
-     public LootChestBlockItem(Block pBlock, Properties pProperties) {
-        super(pBlock, pProperties);
-         SingletonGeoAnimatable.registerSyncedAnimatable(this);
-    }
-
-
+     public LootChestBlockItem(Block pBlock) {
+        super(pBlock,  new Properties());
+        SingletonGeoAnimatable.registerSyncedAnimatable(this);
+     }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
-
-    @Override
-    public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
-        consumer.accept(
-            new GeoRenderProvider() {
-                private LootChestBlockRenderer renderer;
-
-                @Override
-                public @NotNull BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
-                    if (this.renderer == null) this.renderer = new LootChestBlockRenderer();
-                    return this.renderer;
-                }
-
-            }
-        );
-        GeoItem.super.createGeoRenderer(consumer);
-    }
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
     }
 
-
     @Override
     public double getTick(Object itemStack) {
         return RenderUtil.getCurrentTick();
     }
+
+    @Override
+    public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
+        consumer.accept(
+              new GeoRenderProvider() {
+                  private LootChestBlockRenderer renderer;
+
+                  @Override
+                  public @NotNull BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
+                      if (this.renderer == null) this.renderer = new LootChestBlockRenderer();
+                      return this.renderer;
+                  }
+
+              }
+        );
+        GeoItem.super.createGeoRenderer(consumer);
+    }
+
 }

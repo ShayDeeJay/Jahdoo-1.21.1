@@ -72,6 +72,6 @@ public class ArmageddonAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.INFERNO.get();
+        return ElementRegistry.inferno();
     }
 }

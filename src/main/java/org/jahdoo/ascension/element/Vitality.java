@@ -17,37 +17,37 @@ public class Vitality extends AbstractElement {
     ResourceLocation abilityId = Helpers.res("vitality");
 
     @Override
-    public ResourceLocation getAbilityResource() {
+    public ResourceLocation abilityResource() {
         return abilityId;
     }
 
     @Override
-    public int getTypeId() {
+    public int id() {
         return 4;
     }
 
     @Override
-    public int textColourPrimary() {
+    public int textColourA() {
         return FastColor.ARGB32.color(226, 51, 119);
     }
 
     @Override
-    public int textColourSecondary() {
+    public int textColourB() {
         return FastColor.ARGB32.color(219, 0, 85);
     }
 
     @Override
-    public int particleColourPrimary() {
+    public int partColourA() {
         return FastColor.ARGB32.color(129, 0, 51);
     }
 
     @Override
-    public int particleColourSecondary() {
+    public int partColourB() {
         return FastColor.ARGB32.color(233, 0, 93);
     }
 
     @Override
-    public int particleColourFaded() {
+    public int partColourFade() {
         return -35155;
     }
 
@@ -57,32 +57,32 @@ public class Vitality extends AbstractElement {
     }
 
     @Override
-    public ResourceLocation getAbilityProjectileTexture() {
+    public ResourceLocation projectileTexture() {
         return Helpers.res("textures/entity/vitality_projectile.png");
     }
 
     @Override
-    public SoundEvent getElementSound() {
+    public SoundEvent sound() {
         return SoundEvents.ENDER_EYE_DEATH;
     }
 
     @Override
-    public Holder<MobEffect> elementEffect() {
+    public Holder<MobEffect> effect() {
         return EffectsRegister.VITALITY_EFFECT.getDelegate();
     }
 
     @Override
-    public Holder<Attribute> getTypeCooldownReduction() {
+    public Holder<Attribute> cooldownReduction() {
         return  AttributesRegister.VITALITY_COOLDOWN_REDUCTION;
     }
 
     @Override
-    public Holder<Attribute> getTypeManaReduction() {
+    public Holder<Attribute> manaReduction() {
         return  AttributesRegister.VITALITY_MANA_COST_REDUCTION;
     }
 
     @Override
-    public Holder<Attribute> getDamageTypeAmplifier() {
+    public Holder<Attribute> damageAmplifier() {
         return AttributesRegister.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
     }
 }

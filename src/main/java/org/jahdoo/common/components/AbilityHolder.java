@@ -14,8 +14,8 @@ public record AbilityHolder(Map<String, AbilityModifiers> abilityProperties) {
         friendlyByteBuf.writeMap(abilityProperties, ByteBufCodecs.STRING_UTF8, AbilityModifiers.STREAM_CODEC);
     }
 
-    private static AbilityHolder deserialise(FriendlyByteBuf friendlyByteBuf){
-        return new AbilityHolder(friendlyByteBuf.readMap(ByteBufCodecs.STRING_UTF8, AbilityModifiers.STREAM_CODEC));
+    private static AbilityHolder deserialise(FriendlyByteBuf byteBuf){
+        return new AbilityHolder(byteBuf.readMap(ByteBufCodecs.STRING_UTF8, AbilityModifiers.STREAM_CODEC));
     }
 
     public static final StreamCodec<FriendlyByteBuf, AbilityHolder> STREAM_CODEC = StreamCodec.ofMember(
@@ -39,6 +39,11 @@ public record AbilityHolder(Map<String, AbilityModifiers> abilityProperties) {
         double setValue,
         boolean isHigherBetter
     ){
+        private static final StreamCodec<FriendlyByteBuf, AbilityModifiers> STREAM_CODEC = StreamCodec.ofMember(
+            AbilityModifiers::serialise,
+            AbilityModifiers::deserialise
+        );
+
         private void serialise(FriendlyByteBuf friendlyByteBuf){
             friendlyByteBuf.writeDouble(actualValue);
             friendlyByteBuf.writeDouble(highestValue);
@@ -59,13 +64,8 @@ public record AbilityHolder(Map<String, AbilityModifiers> abilityProperties) {
             );
         }
 
-        private static final StreamCodec<FriendlyByteBuf, AbilityModifiers> STREAM_CODEC = StreamCodec.ofMember(
-            AbilityModifiers::serialise,
-            AbilityModifiers::deserialise
-        );
-
-        private static final Codec<AbilityModifiers> CODEC = RecordCodecBuilder.create(
-            instance -> instance.group(
+        private static final Codec<AbilityModifiers> CODEC = RecordCodecBuilder.create( instance ->
+            instance.group(
                 Codec.DOUBLE.fieldOf("actual_value").forGetter(AbilityModifiers::actualValue),
                 Codec.DOUBLE.fieldOf("highest_value").forGetter(AbilityModifiers::highestValue),
                 Codec.DOUBLE.fieldOf("lowest").forGetter(AbilityModifiers::lowestValue),

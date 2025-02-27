@@ -102,9 +102,9 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     public static void setRejuvenationSuccessEffect(Vec3 worldPosition, LivingEntity livingEntity){
         var directions = worldPosition.subtract(livingEntity.position()).normalize();
         var lifetime = 8;
-        var element = ElementRegistry.VITALITY.get();
-        var col1 = element.particleColourPrimary();
-        var col2 = element.particleColourFaded();
+        var element = ElementRegistry.vitality();
+        var col1 = element.partColourA();
+        var col2 = element.partColourFade();
         var bakedParticle = bakedParticleOptions(7, lifetime, 0.1f, true);
         var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.1f, col1, col2, true);
 
@@ -117,9 +117,9 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     private void setCastingAnimation(Vec3 worldPosition, Player player){
         var directions = worldPosition.subtract(player.position()).normalize().add(0,8, 0).offsetRandom(RandomSource.create(), 0.05f);
         var lifetime = 6;
-        var element = ElementRegistry.VITALITY.get();
-        var col1 = element.particleColourPrimary();
-        var col2 = element.particleColourFaded();
+        var element = ElementRegistry.vitality();
+        var col1 = element.partColourA();
+        var col2 = element.partColourFade();
 
         var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.1f, col1, col2, true);
         if(player.level().isClientSide){

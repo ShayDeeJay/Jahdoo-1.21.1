@@ -7,6 +7,7 @@ import net.minecraft.util.Mth;
 import static org.jahdoo.common.entities.ancient_golem.AncientGolemRenderer.*;
 
 public class AncientGolemModel<T extends AncientGolem> extends HierarchicalModel<T> {
+
     private final ModelPart body;
     private final ModelPart root;
     private final ModelPart head;
@@ -27,6 +28,22 @@ public class AncientGolemModel<T extends AncientGolem> extends HierarchicalModel
 
     public ModelPart root() { return this.root;}
 
+    private void resetArmPoses() {
+        this.leftArm.setPos(0, -6f, -1.5F);
+        this.rightArm.setPos(0,  -6F, -1.5f);
+
+        this.rightLeg.z = -2f;
+        this.rightLeg.yRot = 0.2f;
+
+        this.leftLeg.z = -2f;
+        this.leftLeg.yRot = -0.2f;
+
+        this.body.z = -1f;
+        this.body.xRot = 0.15f;
+
+        this.head.setPos(0, -7f, -4f);
+    }
+
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
         this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
@@ -35,13 +52,34 @@ public class AncientGolemModel<T extends AncientGolem> extends HierarchicalModel
         this.leftLeg.xRot = 1.5F * Mth.triangleWave(limbSwing, 13.0F) * limbSwingAmount;
         this.body.xRot = 0.0f;
         this.body.yRot = 0.0f;
-        this.animateWalk(entity, limbSwing, limbSwingAmount);
+        this.animateWalk(limbSwing, limbSwingAmount);
         this.animateIdlePose(ageInTicks);
         this.animate(entity.smash, SMASH_ANIM, ageInTicks);
         this.animate(entity.jump, MODEL_NEW_ANIMATION, ageInTicks);
         this.animate(entity.normal, NORMAL_ATTACK_ANIM, ageInTicks);
     }
 
+    private void animateWalk(float limbSwing, float limbSwingAmount) {
+        var f = Math.min(0.5F, 3.0F * limbSwingAmount);
+        var f1 = limbSwing * 0.8662F;
+        var f2 = Mth.cos(f1);
+        var f3 = Mth.sin(f1);
+        var f4 = Math.min(0.35F, f);
+
+        this.head.zRot += 0.3F * f3 * f;
+        this.body.zRot = 0.1F * f3 * f;
+        this.body.xRot = 0.1F * f2 * f4;
+
+        this.rightLeg.xRot = -1.8F * Mth.triangleWave(limbSwing, 13.0F) * limbSwingAmount;
+        this.leftLeg.xRot = 1.8F * Mth.triangleWave(limbSwing, 13.0F) * limbSwingAmount;
+
+        this.leftArm.xRot = -(1.3f * f2 * f) * (limbSwingAmount > 0.8 ? 1.5f : limbSwingAmount);
+        this.leftArm.zRot = 0.0F;
+
+        this.rightArm.xRot = (1.3f * f2 * f) * (limbSwingAmount > 0.8 ? 1.5f : limbSwingAmount);
+        this.rightArm.zRot = 0.0F;
+        this.resetArmPoses();
+    }
 
     private void animateIdlePose(float ageInTicks) {
         var f = ageInTicks * 0.1F;
@@ -67,44 +105,6 @@ public class AncientGolemModel<T extends AncientGolem> extends HierarchicalModel
 //        var10000.xRot += -0.125F * f1;
         var10000.zRot = 0.125F ;
         var10000.yRot = 0.425F ;
-    }
-
-    private void animateWalk(T entity, float limbSwing, float limbSwingAmount) {
-        var f = Math.min(0.5F, 3.0F * limbSwingAmount);
-        var f1 = limbSwing * 0.8662F;
-        var f2 = Mth.cos(f1);
-        var f3 = Mth.sin(f1);
-        var f4 = Math.min(0.35F, f);
-
-        this.head.zRot += 0.3F * f3 * f;
-        this.body.zRot = 0.1F * f3 * f;
-        this.body.xRot = 0.1F * f2 * f4;
-
-        this.rightLeg.xRot = -1.8F * Mth.triangleWave(limbSwing, 13.0F) * limbSwingAmount;
-        this.leftLeg.xRot = 1.8F * Mth.triangleWave(limbSwing, 13.0F) * limbSwingAmount;
-
-        this.leftArm.xRot = -(1.3f * f2 * f) * (limbSwingAmount > 0.8 ? 1.5f : limbSwingAmount);
-        this.leftArm.zRot = 0.0F;
-
-        this.rightArm.xRot = (1.3f * f2 * f) * (limbSwingAmount > 0.8 ? 1.5f : limbSwingAmount);
-        this.rightArm.zRot = 0.0F;
-        this.resetArmPoses();
-    }
-
-    private void resetArmPoses() {
-        this.leftArm.setPos(0, -6f, -1.5F);
-        this.rightArm.setPos(0,  -6F, -1.5f);
-
-        this.rightLeg.z = -2f;
-        this.rightLeg.yRot = 0.2f;
-
-        this.leftLeg.z = -2f;
-        this.leftLeg.yRot = -0.2f;
-
-        this.body.z = -1f;
-        this.body.xRot = 0.15f;
-
-        this.head.setPos(0, -7f, -4f);
     }
 
 }

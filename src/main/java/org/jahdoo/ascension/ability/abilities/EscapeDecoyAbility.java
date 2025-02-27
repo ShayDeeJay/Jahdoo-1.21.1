@@ -59,7 +59,7 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.VITALITY.get();
+        return ElementRegistry.utility();
     }
 
     @Override

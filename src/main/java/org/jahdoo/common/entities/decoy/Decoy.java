@@ -1,6 +1,5 @@
 package org.jahdoo.common.entities.decoy;
 
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -21,10 +20,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.abilities.EscapeDecoyAbility;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
-import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.common.registers.ElementRegistry;
 import org.jahdoo.common.registers.EntitiesRegister;
 import org.jahdoo.common.registers.SoundRegister;
 import org.jahdoo.ascension.utils.Helpers;
@@ -33,25 +28,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static net.minecraft.network.syncher.EntityDataSerializers.*;
+import static net.minecraft.network.syncher.SynchedEntityData.*;
+import static net.minecraft.util.RandomSource.*;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleStore.*;
+import static org.jahdoo.common.registers.ElementRegistry.*;
 
 public class Decoy extends Mob {
-    private static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(Decoy.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> MAX_LIFETIME = SynchedEntityData.defineId(Decoy.class, EntityDataSerializers.INT);
+
+    private static final EntityDataAccessor<Float> SCALE = defineId(Decoy.class, FLOAT);
+    private static final EntityDataAccessor<Integer> MAX_LIFETIME = defineId(Decoy.class, INT);
     private Player player;
     private int range;
-
-    BakedParticleOptions bakedParticlesOptions =
-        bakedParticleOptions(ElementRegistry.VITALITY.get().getTypeId(), 6, 2f, false);
-    GenericParticleOptions genericParticleOptions =
-        genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElement(), 6, 2f);
-
-    List<ParticleOptions> particleOptionsList = List.of(bakedParticlesOptions, genericParticleOptions);
-
-    private AbstractElement getElement(){
-        return ElementRegistry.VITALITY.get();
-    }
 
     public Decoy(EntityType<? extends Mob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -63,30 +53,32 @@ public class Decoy extends Mob {
         this.range = range;
     }
 
+    @Override
+    protected void pickUpItem(ItemEntity pItemEntity) {}
+
+    private AbstractElement getElement(){
+        return vitality();
+    }
+
     public float getScale() {
         return this.entityData.get(SCALE);
     }
+
     public void setScale(float getSelectedAbility) {
         this.entityData.set(SCALE, getSelectedAbility);
     }
 
     @Override
-    public void setHealth(float pHealth) {
+    public void setHealth(float health) {
         super.setHealth(200);
     }
 
     public int getMaxLifetime() {
         return this.entityData.get(MAX_LIFETIME);
     }
+
     public void setMaxLifetime(int getSelectedAbility) {
         this.entityData.set(MAX_LIFETIME, getSelectedAbility);
-    }
-
-    @Override
-    public boolean hurt(DamageSource pSource, float pAmount) {
-        Helpers.getSoundWithPosition(level(), this.blockPosition(), SoundEvents.ELDER_GUARDIAN_HURT, 1, 1.8f);
-        Helpers.getSoundWithPosition(level(), this.blockPosition(), SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 1, 1.8f);
-        return false;
     }
 
     @Override
@@ -100,9 +92,6 @@ public class Decoy extends Mob {
     }
 
     @Override
-    protected void pickUpItem(ItemEntity pItemEntity) {}
-
-    @Override
     public boolean shouldDropExperience() {
         return false;
     }
@@ -113,16 +102,32 @@ public class Decoy extends Mob {
     }
 
     @Override
-    protected SoundEvent getHurtSound(DamageSource pDamageSource) {
+    protected SoundEvent getHurtSound(DamageSource source) {
         return SoundEvents.AMETHYST_BLOCK_BREAK;
     }
 
 
+    private void onAttract(Mob mob) {
+        if(mob.getTarget() == player) mob.setTarget(this);
+    }
+
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
-        super.defineSynchedData(pBuilder);
-        pBuilder.define(SCALE, 0f);
-        pBuilder.define(MAX_LIFETIME, 0);
+    protected void onEffectAdded(MobEffectInstance effectInstance, @Nullable Entity entity) {
+        super.onEffectAdded(effectInstance, entity);
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        Helpers.getSoundWithPosition(level(), this.blockPosition(), SoundEvents.ELDER_GUARDIAN_HURT, 1, 1.8f);
+        Helpers.getSoundWithPosition(level(), this.blockPosition(), SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, 1, 1.8f);
+        return false;
+    }
+
+    @Override
+    protected void defineSynchedData(Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SCALE, 0f);
+        builder.define(MAX_LIFETIME, 0);
     }
 
     @Override
@@ -149,25 +154,45 @@ public class Decoy extends Mob {
         ).forEach(this::onAttract);
     }
 
-    private void onAttract(Mob mob) {
-        if(mob.getTarget() == player) mob.setTarget(this);
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.tickCount = tag.getInt("tickCounter");
+        this.setMaxLifetime(tag.getInt("maxLife"));
+        this.setScale(1);
     }
 
     @Override
-    protected void onEffectAdded(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        super.onEffectAdded(effectInstance, entity);
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("tickCounter", this.tickCount);
+        tag.putInt("maxLife", this.getMaxLifetime());
     }
 
     public void pullParticlesToCenter(){
+        var bakedParticlesOptions =
+            bakedParticleOptions(vitality().id(), 6, 2f, false);
+
+        var genericParticleOptions =
+            genericParticleOptions(GENERIC_PARTICLE_SELECTION, this.getElement(), 6, 2f);
+
+        var particleOptionsList =
+            List.of(bakedParticlesOptions, genericParticleOptions);
+
         PositionFinders.getInnerRingOfRadiusRandom(
             this.position()
                 .add(0,this.getBbHeight()/2,0)
-                .offsetRandom(RandomSource.create(), 1.5f), range, (double) range /2,
+                .offsetRandom(create(), 1.5f), range, (double) range /2,
             positions -> {
-                Vec3 directions = this.position().subtract(positions).normalize().add(0,this.getBbHeight()/2,0);
+
+                var directions = this.position()
+                    .subtract(positions)
+                    .normalize()
+                    .add(0,this.getBbHeight()/2,0);
+
                 ParticleHandlers.sendParticles(
                     this.level(),
-                    particleOptionsList.get(this.random.nextInt(0,2)),
+                    Helpers.listRandom(particleOptionsList),
                     positions,
                     0,
                     directions.x,
@@ -177,20 +202,5 @@ public class Decoy extends Mob {
                 );
             }
         );
-    }
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag pCompound) {
-        super.readAdditionalSaveData(pCompound);
-        this.tickCount = pCompound.getInt("tickCounter");
-        this.setMaxLifetime(pCompound.getInt("maxLife"));
-        this.setScale(1);
-    }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag pCompound) {
-        super.addAdditionalSaveData(pCompound);
-        pCompound.putInt("tickCounter", this.tickCount);
-        pCompound.putInt("maxLife", this.getMaxLifetime());
     }
 }

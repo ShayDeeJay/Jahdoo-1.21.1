@@ -37,7 +37,7 @@ public class ModularChaosCubeSlot extends SlotItemHandler {
         var abilityName = DataComponentHelper.getAbilityTypeItemStack(itemStack);
         AtomicBoolean isValid = new AtomicBoolean(false);
         AbilityRegister.getFirstSpellByTypeId(abilityName).ifPresent(
-            ability -> isValid.set(itemStack.is(ItemsRegister.AUGMENT_ITEM.get()) && ability.getElemenType() == ElementRegistry.UTILITY.get())
+            ability -> isValid.set(itemStack.is(ItemsRegister.AUGMENT_ITEM.get()) && ability.getElemenType() == ElementRegistry.utility())
         );
         return isValid.get();
     }

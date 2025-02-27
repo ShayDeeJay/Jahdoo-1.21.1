@@ -152,7 +152,7 @@ public class AbilityWheelMenu extends Screen  {
         var configButton = new WidgetSprites(COG, COG);
         var configButtonSize = 20;
         var itemStack = Helpers.getUsedItem(player);
-        if (selectedAbility.getElemenType() == ElementRegistry.UTILITY.get()) {
+        if (selectedAbility.getElemenType() == ElementRegistry.utility()) {
             var filterOutBase = isConfigAbility(selectedAbility, wandData.selectedAbility(), itemStack);
             if(filterOutBase){
                 this.addRenderableWidget(

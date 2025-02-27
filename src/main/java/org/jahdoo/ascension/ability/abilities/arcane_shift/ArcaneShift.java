@@ -40,7 +40,7 @@ public class ArcaneShift extends AbstractAbility {
         var lifeTimes = getTag(ArcaneShiftAbility.lifeTime);
         var position = player.pick(distances, 0, false).getLocation();
         for(int i = 0; i < 50; i++){
-            var particle = ParticleHandlers.getAllParticleTypes(ElementRegistry.MYSTIC.get(), 10, 1.5f);
+            var particle = ParticleHandlers.getAllParticleTypes(ElementRegistry.mystic(), 10, 1.5f);
             var x = player.getRandomX(1);
             var y = player.getRandomY();
             var z = player.getRandomZ(1);
@@ -57,7 +57,7 @@ public class ArcaneShift extends AbstractAbility {
 
 
         for(int i = 0; i < 50; i++){
-            var particle = ParticleHandlers.getAllParticleTypes(ElementRegistry.MYSTIC.get(), 10, 1.5f);
+            var particle = ParticleHandlers.getAllParticleTypes(ElementRegistry.mystic(), 10, 1.5f);
             var x = getRandomX(position.x, 1, 1.5);
             var y = getY(position.y + 1, Random.nextDouble(), 2);
             var z = getRandomZ(position.z, 1, 1.5);

@@ -251,7 +251,6 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         var adjustY = -27;
         var startX = this.width / 2 - 140;
         var startY = this.height/2 + 22;
-        var element = ElementRegistry.getElementByTypeId(getElementIdAugment(this.item));
         this.renderBlurredBackground(pPartialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
         SharedUI.setCustomBackground(this.height, this.width, guiGraphics);
@@ -262,7 +261,10 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         SharedUI.header(guiGraphics, this.width, this.height, this.item, this.font, this.getMinecraft().level);
         overlayInventory(guiGraphics, startX, startY);
         SharedUI.augmentCoreSlots(guiGraphics, 20, 10, BORDER_COLOUR, this.width, this.height, getFadedColourBackground(0.7f));
-        SharedUI.bezelMaker(guiGraphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element.getFirst());
+
+        ElementRegistry.fromId(getElementIdAugment(this.item)).ifPresent(
+            element ->bezelMaker(guiGraphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element)
+        );
     }
 
     private void coreSlots(@NotNull GuiGraphics guiGraphics, int adjustX, int adjustY) {
@@ -289,7 +291,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     private void selectedBox(@NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         if(!this.isInHitbox(mouseX, mouseY)) return;
         if(this.selectedY <= 0) return;
-        var colour = getAbstractElement(entity()).textColourSecondary();
+        var colour = getAbstractElement(entity()).textColourB();
         var semiTransLayer = getFadedColourBackground(0.8f);
 
         boxMaker(guiGraphics, this.width/2 - 97, (int) (this.selectedY + 8 + yScroll), 97, 14, colour, semiTransLayer);
@@ -301,7 +303,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         var startX = this.width / 2 + 102;
         var startY = this.selectedY + 8;
 
-        var colourBorder = getAbstractElement(entity()).textColourSecondary();
+        var colourBorder = getAbstractElement(entity()).textColourB();
         var semiTransLayer = getFadedColourBackground(0.8f);
         boxMaker(guiGraphics, startX , (int) (startY + yScroll), 35, 14, colourBorder, semiTransLayer);
         boxMaker(guiGraphics, startX, (int) (startY + yScroll), 35, 14, colourBorder, semiTransLayer);

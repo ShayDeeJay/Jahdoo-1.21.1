@@ -58,7 +58,7 @@ public class FetchAbility extends AbstractBlockAbility {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.UTILITY.get();
+        return ElementRegistry.utility();
     }
 
     @Override

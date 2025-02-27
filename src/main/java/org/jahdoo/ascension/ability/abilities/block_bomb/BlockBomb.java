@@ -72,7 +72,7 @@ public class BlockBomb extends AbstractUtilityProjectile {
     }
 
     private void coreParticles(Level level) {
-        var bakedParticleOption = bakedParticleOptions(getElementType().getTypeId(), 2, 3f, false);
+        var bakedParticleOption = bakedParticleOptions(getElementType().id(), 2, 3f, false);
         PositionFinders.getRandomSphericalPositions(genericProjectile, projectileSphere, projectileSphere * 10,
             radiusPosition -> explosionParticle(level, radiusPosition, bakedParticleOption)
         );
@@ -89,8 +89,8 @@ public class BlockBomb extends AbstractUtilityProjectile {
 
     private void timerTick(Level level) {
         if (explosionTimer % 10 == 0 && !(explosionTimer >= explosionTimerMax)) {
-            var colour = getElementType().particleColourPrimary();
-            var fade = getElementType().particleColourFaded();
+            var colour = getElementType().partColourA();
+            var fade = getElementType().partColourFade();
             var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, 6, 3, colour, fade, false);
             var add = genericProjectile.position().add(0, 0.2, 0);
             tickingSound();
@@ -99,7 +99,7 @@ public class BlockBomb extends AbstractUtilityProjectile {
     }
 
     private void explodingTick(Level level) {
-        var bakedParticleOptions = bakedParticleOptions(getElementType().getTypeId(), 4, 4f, false);
+        var bakedParticleOptions = bakedParticleOptions(getElementType().id(), 4, 4f, false);
         var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, getElementType(), 10, 4, 1);
         if (explosionTimer >= explosionTimerMax) {
 

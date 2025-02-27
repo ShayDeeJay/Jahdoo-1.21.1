@@ -142,8 +142,8 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
     private void pushParticlesOut(Vec3 worldPosition){
         var directions = worldPosition.subtract(this.elementProjectile.position()).normalize();
         var lifetime = 6;
-        var col1 = this.getElementType().particleColourPrimary();
-        var col2 = this.getElementType().particleColourFaded();
+        var col1 = this.getElementType().partColourA();
+        var col2 = this.getElementType().partColourFade();
         var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 3f, col1, col2, false);
 
         ParticleHandlers.sendParticles(
@@ -154,8 +154,8 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
     private void pullParticlesIn(Vec3 worldPosition){
         var directions = worldPosition.subtract(this.elementProjectile.position()).normalize();
         var lifetime = 2;
-        var col1 = this.getElementType().particleColourPrimary();
-        var col2 = this.getElementType().particleColourFaded();
+        var col1 = this.getElementType().partColourA();
+        var col2 = this.getElementType().partColourFade();
         var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.2f, col1, col2, true);
 
         ParticleHandlers.sendParticles(
@@ -181,7 +181,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
 
         ParticleHandlers.particleBurst(
             level, this.elementProjectile.position(), particleCount,
-            bakedParticleOptions(this.getElementType().getTypeId(), 4,2,false),
+            bakedParticleOptions(this.getElementType().id(), 4,2,false),
             0,0,0,speed
         );
         ParticleHandlers.particleBurst(
@@ -216,7 +216,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         var explode = privateTicks > lifetime;
         var rando = List.of(
             genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 5, Random.nextInt(6,8)),
-            bakedParticleOptions(this.getElementType().getTypeId(), 5, Random.nextInt(5,8), false)
+            bakedParticleOptions(this.getElementType().id(), 5, Random.nextInt(5,8), false)
         );
 
         PositionFinders.getRandomSphericalPositions(this.elementProjectile, counter, Math.min(radius * 6, 20),
@@ -271,7 +271,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.MYSTIC.get();
+        return ElementRegistry.mystic();
     }
 
     ResourceLocation abilityId = Helpers.res("quantum_destroyer_property");

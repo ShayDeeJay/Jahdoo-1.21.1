@@ -14,13 +14,16 @@ import java.util.concurrent.CompletableFuture;
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class DataGenerators {
+
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
-        DataGenerator generator = event.getGenerator();
-        PackOutput packOutput = generator.getPackOutput();
-        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-        ModBlockTagGenerator blockTagGenerator = generator.addProvider(event.includeServer(),new ModBlockTagGenerator(packOutput, lookupProvider, existingFileHelper));
+
+        var generator = event.getGenerator();
+        var packOutput = generator.getPackOutput();
+        var existingFileHelper = event.getExistingFileHelper();
+        var lookupProvider = event.getLookupProvider();
+        var blockTagGenerator = generator.addProvider(event.includeServer(),new ModBlockTagGenerator(packOutput, lookupProvider, existingFileHelper));
+
         generator.addProvider(event.includeServer(), ModLootTableProvider.create(packOutput, lookupProvider));
         generator.addProvider(event.includeClient(), new ModBlockStateProvider(packOutput, existingFileHelper));
         generator.addProvider(event.includeClient(), new ModItemModelProvider(packOutput, existingFileHelper));
@@ -31,5 +34,7 @@ public class DataGenerators {
         generator.addProvider(event.includeClient(), new RecipeProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new JahdooCuriosProvider(packOutput, event.getExistingFileHelper(), lookupProvider));
         generator.addProvider(event.includeClient(), new DamageTypesProvider(packOutput, lookupProvider));
+
     }
+
 }

@@ -113,7 +113,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.VITALITY.get();
+        return ElementRegistry.vitality();
     }
 
     private Level level(){
@@ -180,7 +180,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     }
 
     private void setSpawnParticles(Level level){
-        var bakedParticle = new BakedParticleOptions(ElementRegistry.VITALITY.get().getTypeId(), 20, 3f, false);
+        var bakedParticle = new BakedParticleOptions(ElementRegistry.vitality().id(), 20, 3f, false);
         PositionFinders.getInnerRingOfRadiusRandom(aoeCloud.position(), 0.8, 5).forEach(
             positions -> ParticleHandlers.sendParticles(level, bakedParticle, positions, 1, 0, 1,0,0.05)
         );

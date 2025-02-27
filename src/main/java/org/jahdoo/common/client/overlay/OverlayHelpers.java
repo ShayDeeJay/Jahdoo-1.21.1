@@ -20,6 +20,61 @@ import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 
 public class OverlayHelpers {
 
+    public static int getAllStat(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player, int startX, int startY){
+        var getMod = getModStat(pGuiGraphics, minecraft, player, startX, startY, "Jahdoo");
+        var getMC = getModStat(pGuiGraphics, minecraft, player, startX, startY + getMod + 30, "Minecraft");
+        return getMod + getMC;
+    }
+
+    public static int getColour(String parse){
+        return switch (parse){
+            case String s when s.contains("vitality") -> vitality().textColourA();
+            case String s when s.contains("inferno") -> inferno().textColourA();
+            case String s when s.contains("frost") -> frost().textColourA();
+            case String s when s.contains("mystic") -> mystic().textColourA();
+            case String s when s.contains("mana") -> AETHER_BLUE;
+            default -> HEADER_COLOUR;
+        };
+    }
+
+    static int getModStat(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player, int startX, int startY, String getName) {
+        var attSpacer = new AtomicInteger();
+        var syncableAttributes = player.getAttributes().getSyncableAttributes();
+        var adjustForHeader = startY + 10;
+
+        pGuiGraphics.drawCenteredString(minecraft.font, getName, startX + 55, startY + 2, SUB_HEADER_COLOUR);
+        SharedUI.boxMaker(pGuiGraphics, startX - 4, startY - 4, 60, 10, SUB_HEADER_COLOUR, BORDER_COLOUR);
+
+        for (AttributeInstance syncableAttribute : syncableAttributes) {
+            var modName = syncableAttribute.getAttribute().getRegisteredName().split(":", 2)[0];
+            if (syncableAttribute.getValue() > 0) {
+                if(modName.equals(getName.toLowerCase())){
+                    var text = syncableAttribute.getAttribute().value().getDescriptionId();
+                    var colour = getColour(text);
+                    var prefix = Helpers.withStyleComponentTrans(text, colour);
+                    var readableValues = roundNonWholeString(tripleFormattedDouble(syncableAttribute.getValue()));
+                    var suffix = withStyleComponent(" " + readableValues, -9882);
+                    var string = prefix.copy().append(suffix);
+                    var splitText = minecraft.font.split(string, 90);
+                    var spacer = 0;
+
+                    for (var formattedCharSequence : splitText) {
+                        pGuiGraphics.drawCenteredString(minecraft.font, formattedCharSequence, startX + 56, adjustForHeader + 13 + attSpacer.get() + spacer, HEADER_COLOUR);
+                        spacer += 10;
+                    }
+
+                    var startY1 = startY + 18 + attSpacer.get();
+                    var heightOffset = 4 + spacer / 2;
+
+                    SharedUI.boxMaker(pGuiGraphics, startX - 4, startY1, 60, heightOffset, BORDER_COLOUR, SharedUI.getFadedColourBackground(0.7F));
+                    attSpacer.addAndGet(spacer == 10 ? 20 : 30);
+                }
+            }
+        }
+
+        return attSpacer.get();
+    }
+
     static void attributeStats(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player, int startX, int startY) {
         var attSpacer = new AtomicInteger();
         var syncableAttributes = player.getAttributes().getSyncableAttributes();
@@ -66,60 +121,4 @@ public class OverlayHelpers {
         SharedUI.boxMaker(pGuiGraphics, startX - 4, startY - 4, maxWidth/2 + 4, attSpacer.get()/2 + adjustForHeader/2 - 40, BORDER_COLOUR);
     }
 
-
-
-    static int getModStat(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player, int startX, int startY, String getName, int setNameColour) {
-        var attSpacer = new AtomicInteger();
-        var syncableAttributes = player.getAttributes().getSyncableAttributes();
-        var adjustForHeader = startY + 10;
-
-        pGuiGraphics.drawCenteredString(minecraft.font, getName, startX + 55, startY + 2, setNameColour);
-        SharedUI.boxMaker(pGuiGraphics, startX - 4, startY - 4, 60, 10, SUB_HEADER_COLOUR, BORDER_COLOUR);
-
-        for (AttributeInstance syncableAttribute : syncableAttributes) {
-            var modName = syncableAttribute.getAttribute().getRegisteredName().split(":", 2)[0];
-            if (syncableAttribute.getValue() > 0) {
-                if(modName.equals(getName.toLowerCase())){
-                    var text = syncableAttribute.getAttribute().value().getDescriptionId();
-                    var colour = getColour(text);
-                    var prefix = Helpers.withStyleComponentTrans(text, colour);
-                    var readableValues = roundNonWholeString(tripleFormattedDouble(syncableAttribute.getValue()));
-                    var suffix = withStyleComponent(" " + readableValues, -9882);
-                    var string = prefix.copy().append(suffix);
-                    var splitText = minecraft.font.split(string, 90);
-                    var spacer = 0;
-
-                    for (var formattedCharSequence : splitText) {
-                        pGuiGraphics.drawCenteredString(minecraft.font, formattedCharSequence, startX + 56, adjustForHeader + 13 + attSpacer.get() + spacer, HEADER_COLOUR);
-                        spacer += 10;
-                    }
-
-                    var startY1 = startY + 18 + attSpacer.get();
-                    var heightOffset = 4 + spacer / 2;
-
-                    SharedUI.boxMaker(pGuiGraphics, startX - 4, startY1, 60, heightOffset, BORDER_COLOUR, SharedUI.getFadedColourBackground(0.7F));
-                    attSpacer.addAndGet(spacer == 10 ? 20 : 30);
-                }
-            }
-        }
-
-        return attSpacer.get();
-    }
-
-    public static int getColour(String parse){
-        return switch (parse){
-            case String s when s.contains("vitality") -> VITALITY.get().textColourPrimary();
-            case String s when s.contains("inferno") -> INFERNO.get().textColourPrimary();
-            case String s when s.contains("frost") -> FROST.get().textColourPrimary();
-            case String s when s.contains("mystic") -> MYSTIC.get().textColourPrimary();
-            case String s when s.contains("mana") -> AETHER_BLUE;
-            default -> HEADER_COLOUR;
-        };
-    }
-
-    public static int getAllStat(@NotNull GuiGraphics pGuiGraphics, Minecraft minecraft, LocalPlayer player, int startX, int startY){
-        var getMod = getModStat(pGuiGraphics, minecraft, player, startX, startY, "Jahdoo", SUB_HEADER_COLOUR);
-        var getMC = getModStat(pGuiGraphics, minecraft, player, startX, startY + getMod + 30, "Minecraft", SUB_HEADER_COLOUR);
-        return getMod + getMC;
-    }
 }

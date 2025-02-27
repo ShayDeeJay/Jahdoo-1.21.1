@@ -53,7 +53,7 @@ public class GreaterMysticEffect extends MobEffect {
     }
 
     private static @NotNull AbstractElement getElement() {
-        return ElementRegistry.MYSTIC.get();
+        return ElementRegistry.mystic();
     }
 
     private void onTickApply(LivingEntity targetEntity, int pAmplifier, ServerLevel serverLevel, AbstractElement element) {
@@ -104,9 +104,9 @@ public class GreaterMysticEffect extends MobEffect {
     private void setParticleNova(LivingEntity livingEntity, Vec3 worldPosition, AbstractElement element){
         var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), (float) 4);
         var directions = positionScrambler.subtract(livingEntity.position()).normalize();
-        var colourPrimary = element.particleColourPrimary();
-        var colourSecondary = element.particleColourSecondary();
-        var bakedParticle = bakedParticleOptions(element.getTypeId(), 6, 8, false);
+        var colourPrimary = element.partColourA();
+        var colourSecondary = element.partColourB();
+        var bakedParticle = bakedParticleOptions(element.id(), 6, 8, false);
         var genericParticle = genericParticleOptions(MAGIC_PARTICLE_SELECTION, 6, 4, colourPrimary, colourSecondary, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
 
@@ -127,7 +127,7 @@ public class GreaterMysticEffect extends MobEffect {
             livingEntity.setDeltaMovement(0, 0.5, 0);
         }
 
-        livingEntity.playSound(getElement().getElementSound());
+        livingEntity.playSound(getElement().sound());
         livingEntity.playSound(SoundRegister.DASH_EFFECT_INSTANT.get(), 1, 0.6f);
         super.onEffectAdded(livingEntity, amplifier);
     }

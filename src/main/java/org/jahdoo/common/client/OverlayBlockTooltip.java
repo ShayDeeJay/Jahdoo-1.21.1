@@ -9,13 +9,13 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 
+import static net.neoforged.neoforge.client.event.RenderGuiLayerEvent.*;
 import static org.jahdoo.common.event.event_helpers.OverlayEvent.crosshairManager;
 import static org.jahdoo.common.event.event_helpers.OverlayEvent.simpleGui;
 
 public class OverlayBlockTooltip {
-    public static int renderHeight;
 
-    public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
+    public static void overlayEvent(Pre event) {
         var instance = Minecraft.getInstance();
         var player = instance.player;
 
@@ -32,7 +32,11 @@ public class OverlayBlockTooltip {
         renderShoppingTableTooltip(event, player, containing.below());
     }
 
-    private static void renderShoppingTableTooltip(RenderGuiLayerEvent.Pre event, Player player, BlockPos pos) {
+    private static void renderShoppingTableTooltip(
+        Pre event,
+        Player player,
+        BlockPos pos
+    ) {
         var instance = Minecraft.getInstance();
         var entity = player.level().getBlockEntity(pos);
 
@@ -50,8 +54,6 @@ public class OverlayBlockTooltip {
                 guiGraphics.renderTooltip(instance.font, itemStack, width + 60, mouseY);
             }
         }
-
-
     }
 
 }
