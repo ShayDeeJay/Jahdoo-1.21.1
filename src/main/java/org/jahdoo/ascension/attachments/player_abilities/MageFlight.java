@@ -13,15 +13,15 @@ import org.jahdoo.common.items.runes.rune_data.RuneData;
 import org.jahdoo.common.networking.packet.client2server.MageFlightPacketS2CPacket;
 import org.jahdoo.common.networking.packet.server2client.MageFlightDataSyncS2CPacket;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.AttributesRegister;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.AttributeReg;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.registers.AttachmentRegister.*;
-import static org.jahdoo.common.registers.ElementRegistry.fromWand;
+import static org.jahdoo.common.registers.AttachmentReg.*;
+import static org.jahdoo.common.registers.ElementReg.fromWand;
 
 public class MageFlight implements AbstractAttachment {
 
@@ -30,6 +30,22 @@ public class MageFlight implements AbstractAttachment {
     public boolean isFlying;
     public boolean jumpKeyDown;
     public static double manaCost = 0.5;
+
+    public void setJumpTickCounter(int jumpTickCounter) {
+        this.jumpTickCounter = jumpTickCounter;
+    }
+
+    public void setLastJumped(boolean lastJumped) {
+        this.lastJumped = lastJumped;
+    }
+
+    public void setIsFlying(boolean playerFlying) {
+        this.isFlying = playerFlying;
+    }
+
+    public void setJumpKeyDown(boolean jumpKeyDown) {
+        this.jumpKeyDown = jumpKeyDown;
+    }
 
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putInt("jumpTickCounter", jumpTickCounter);
@@ -51,20 +67,46 @@ public class MageFlight implements AbstractAttachment {
         }
     }
 
-    public void setJumpTickCounter(int jumpTickCounter) {
-        this.jumpTickCounter = jumpTickCounter;
+    private boolean cancelAttempt(Player player, ItemStack wandItem) {
+        if(!RuneData.RuneHelpers.canMageFlight(player) || player.onGround() || player.isFallFlying()) {
+            player.getAbilities().mayfly = false;
+            this.isFlying = false;
+            return true;
+        }
+        return false;
     }
 
-    public void setLastJumped(boolean lastJumped) {
-        this.lastJumped = lastJumped;
+    private void flying(Player player, CastingData manaSystem, ItemStack wandItem) {
+        if (manaSystem.getManaPool() > manaCost) {
+            player.getAbilities().mayfly = true;
+            var getPool = player.getAttribute(AttributeReg.MANA_POOL);
+            var manaCost = (getPool != null ? getPool.getValue() : 1) / 150;
+            manaSystem.subtractMana(Math.min(manaCost, 2), player);
+            var getDelta = player.getDeltaMovement();
+            var speedModifier = 0.02;
+            player.setDeltaMovement(player.getDeltaMovement().add(getDelta.x * speedModifier, 0.09, getDelta.z * speedModifier));
+            mageFlightAnimation(wandItem, player);
+        }
     }
 
-    public void setIsFlying(boolean playerFlying) {
-        this.isFlying = playerFlying;
-    }
+    private void mageFlightAnimation(ItemStack wandItem, Player player){
+        var element = fromWand(wandItem.getItem()).orElse(ElementReg.getRandomElement());
+        var part1 = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 2, 0.2f, true);
+        var part2 = bakedParticleOptions(element.id(), 2, 1f, false);
+        var getMovement = player.getDeltaMovement().y > -0.5;
 
-    public void setJumpKeyDown(boolean jumpKeyDown) {
-        this.jumpKeyDown = jumpKeyDown;
+        PositionFinders.getInnerRingOfRadiusRandom(player.position(), player.getBbWidth() - 0.3, getMovement ? 5 : 2,
+            positions -> {
+                player.level().addParticle(part1, positions.x, positions.y, positions.z, 0, -0.2, 0);
+                player.level().addParticle(part2, positions.x, positions.y, positions.z, 0, -0.2, 0);
+            }
+        );
+
+        if (player.tickCount % 3 == 0) {
+            Helpers.getSoundWithPosition(
+                player.level(), player.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE, 0.03f, (float) player.getDeltaMovement().y
+            );
+        }
     }
 
     public void serverFlight(Player player){
@@ -89,49 +131,6 @@ public class MageFlight implements AbstractAttachment {
 
         if(player instanceof ServerPlayer serverPlayer){
             PacketDistributor.sendToPlayer(serverPlayer, new MageFlightDataSyncS2CPacket(jumpTickCounter, lastJumped, isFlying, jumpKeyDown));
-        }
-    }
-
-    private void flying(Player player, CastingData manaSystem, ItemStack wandItem) {
-        if (manaSystem.getManaPool() > manaCost) {
-//            player.getData(BOUNCY_FOOT).setEffectTimer(160);
-            player.getAbilities().mayfly = true;
-            var getPool = player.getAttribute(AttributesRegister.MANA_POOL);
-            var manaCost = (getPool != null ? getPool.getValue() : 1) / 150;
-            manaSystem.subtractMana(Math.min(manaCost, 2), player);
-            var getDelta = player.getDeltaMovement();
-            var speedModifier = 0.02;
-            player.setDeltaMovement(player.getDeltaMovement().add(getDelta.x * speedModifier, 0.09, getDelta.z * speedModifier));
-            mageFlightAnimation(wandItem, player);
-        }
-    }
-
-    private boolean cancelAttempt(Player player, ItemStack wandItem) {
-        if(!RuneData.RuneHelpers.canMageFlight(player) || player.onGround() || player.isFallFlying()) {
-            player.getAbilities().mayfly = false;
-            this.isFlying = false;
-            return true;
-        }
-        return false;
-    }
-
-    private void mageFlightAnimation(ItemStack wandItem, Player player){
-        var element = fromWand(wandItem.getItem()).orElse(ElementRegistry.getRandomElement());
-        var part1 = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 2, 0.2f, true);
-        var part2 = bakedParticleOptions(element.id(), 2, 1f, false);
-        var getMovement = player.getDeltaMovement().y > -0.5;
-
-        PositionFinders.getInnerRingOfRadiusRandom(player.position(), player.getBbWidth() - 0.3, getMovement ? 5 : 2,
-            positions -> {
-                player.level().addParticle(part1, positions.x, positions.y, positions.z, 0, -0.2, 0);
-                player.level().addParticle(part2, positions.x, positions.y, positions.z, 0, -0.2, 0);
-            }
-        );
-
-        if (player.tickCount % 3 == 0) {
-            Helpers.getSoundWithPosition(
-                player.level(), player.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE, 0.03f, (float) player.getDeltaMovement().y
-            );
         }
     }
 

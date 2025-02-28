@@ -12,8 +12,8 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.registers.BlocksRegister;
-import org.jahdoo.common.registers.DataComponentRegistry;
+import org.jahdoo.common.registers.BlockReg;
+import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -29,8 +29,7 @@ import java.util.function.Consumer;
 
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.items.wand.WandItemHelper.*;
-import static org.jahdoo.common.registers.DataComponentRegistry.INTERACTION_HAND;
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
+import static org.jahdoo.common.registers.ComponentReg.*;
 
 public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -39,13 +38,13 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     public static Properties wandProperties(){
         return new Item.Properties()
             .stacksTo(1)
-            .component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
+            .component(ComponentReg.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
             .component(WAND_DATA.get(), WandData.DEFAULT)
             .fireResistant();
     }
 
     public WandItem(String location) {
-        super(BlocksRegister.WAND.get(), wandProperties());
+        super(BlockReg.WAND.get(), wandProperties());
         SingletonGeoAnimatable.registerSyncedAnimatable(this);
         this.location = location;
     }
@@ -92,6 +91,17 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     }
 
     @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, 0, state -> state.setAndContinue(IDLE_ANIMATION)));
+        controllers.add(new AnimationController<>(this, "Activation", 0, state -> PlayState.CONTINUE)
+            .triggerableAnim(SINGLE_CAST_ID, SINGLE_CAST)
+            .triggerableAnim(CANT_CAST_ID, CANT_CAST)
+            .triggerableAnim(HOLD_CAST_ID, HOLD_CAST)
+            .triggerableAnim(ROTATION_CAST_ID, ROTATION_CAST)
+        );
+    }
+
+    @Override
     public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int slotId, boolean isSoltSelected) {
         if(!(entity instanceof Player player)) return;
         var itemInMain = player.getMainHandItem();
@@ -101,17 +111,6 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         var interactState = itemStack.get(INTERACTION_HAND);
 
         canOffhandWand(itemStack, player, interactState, isItemInMain, isItemInOff);
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, 0, state -> state.setAndContinue(IDLE_ANIMATION)));
-        controllers.add(new AnimationController<>(this, "Activation", 0, state -> PlayState.CONTINUE)
-            .triggerableAnim(SINGLE_CAST_ID, SINGLE_CAST)
-            .triggerableAnim(CANT_CAST_ID, CANT_CAST)
-            .triggerableAnim(HOLD_CAST_ID, HOLD_CAST)
-            .triggerableAnim(ROTATION_CAST_ID, ROTATION_CAST)
-        );
     }
 
     @Override
@@ -128,7 +127,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
             return InteractionResultHolder.pass(item);
         }
 
-        return InteractionResultHolder.fail(player.getOffhandItem());
+        return InteractionResultHolder.fail(item);
     }
 
 }

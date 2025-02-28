@@ -5,13 +5,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.registers.ItemsRegister;
+import org.jahdoo.common.registers.ItemReg;
 
 import java.text.DecimalFormat;
 
 import static net.minecraft.util.FastColor.ARGB32.*;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextRange;
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
 
 public class AugmentRatingSystem {
 
@@ -56,9 +56,9 @@ public class AugmentRatingSystem {
     public static Item calculateRatingNext(AbilityHolder.AbilityModifiers mod) {
         double normalizedValue = getNormalizedValue(mod);
         var rating = (int)(normalizedValue * 4) + 1;
-        var core = ItemsRegister.AUGMENT_CORE.get();
-        var advanced = ItemsRegister.ADVANCED_AUGMENT_CORE.get();
-        var hyperCore = ItemsRegister.AUGMENT_HYPER_CORE.get();
+        var core = ItemReg.AUGMENT_CORE.get();
+        var advanced = ItemReg.ADVANCED_AUGMENT_CORE.get();
+        var hyperCore = ItemReg.AUGMENT_HYPER_CORE.get();
 
         if(rating == 1) return core;
         if(rating == 2 || rating == 3) return advanced;

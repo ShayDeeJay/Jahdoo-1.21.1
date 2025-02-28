@@ -10,11 +10,11 @@ import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import net.neoforged.neoforge.common.loot.LootTableIdCondition;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.datagen.loot.AddItemModifier;
+import org.jahdoo.common.registers.ItemReg;
 
 import java.util.concurrent.CompletableFuture;
 
-import static net.minecraft.world.level.storage.loot.BuiltInLootTables.*;
-import static org.jahdoo.common.registers.ItemsRegister.*;
+import static net.minecraft.world.level.storage.loot.BuiltInLootTables.all;
 
 public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
 
@@ -31,11 +31,7 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
         chestLoot.forEach(entries -> commonLootTables(entries.location(), chestLoot.indexOf(entries)));
     }
 
-    public static AddItemModifier addLoot(
-        ResourceLocation resourceLocation,
-        Item item,
-        float chance
-    ){
+    public static AddItemModifier addLoot(ResourceLocation resourceLocation, Item item, float chance){
 
         return new AddItemModifier(
             new LootItemCondition[] {
@@ -51,8 +47,8 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
         ResourceLocation resourceLocation,
         int additional
     ) {
-        add("augments_chest" + additional, addLoot(resourceLocation, AUGMENT.get(), 0.4f));
-        add("augments_core_chest" + additional, addLoot(resourceLocation, AUGMENT_CORE.get(), 0.35f));
+        add("augments_chest" + additional, addLoot(resourceLocation, ItemReg.AUGMENT.get(), 0.4f));
+        add("augments_core_chest" + additional, addLoot(resourceLocation, ItemReg.AUGMENT_CORE.get(), 0.35f));
     }
 
 }

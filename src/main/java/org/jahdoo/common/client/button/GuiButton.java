@@ -7,7 +7,7 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.common.registers.SoundRegister;
+import org.jahdoo.common.registers.SoundReg;
 
 import javax.annotation.Nullable;
 
@@ -59,7 +59,7 @@ public class GuiButton extends ImageButton {
 
     @Override
     public void playDownSound(SoundManager handler) {
-        handler.play(SimpleSoundInstance.forUI(SoundRegister.SELECT, 1));
+        handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT, 1));
     }
 
     @Override

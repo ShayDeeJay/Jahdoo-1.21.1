@@ -2,14 +2,9 @@ package org.jahdoo.common.datagen;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.registers.BlocksRegister;
-import org.jahdoo.ascension.utils.ModTags;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -18,9 +13,8 @@ import static net.minecraft.tags.BlockTags.SNOW;
 import static net.minecraft.world.level.block.Blocks.*;
 import static net.minecraft.world.level.block.Blocks.AIR;
 import static net.minecraft.world.level.block.Blocks.SAND;
-import static org.jahdoo.ascension.utils.ModTags.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.*;
-import static org.jahdoo.common.registers.BlocksRegister.*;
+import static org.jahdoo.common.registers.BlockReg.*;
 
 public class ModBlockTagGenerator extends BlockTagsProvider {
 
@@ -34,7 +28,6 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
-
 
         this.tag(ALLOWED_BLOCK_INTERACTIONS)
             .add(WAND_MANAGER_TABLE.get())

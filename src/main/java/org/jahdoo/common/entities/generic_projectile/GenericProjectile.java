@@ -16,9 +16,9 @@ import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.ProjectileProperties;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.EntitiesRegister;
-import org.jahdoo.common.registers.EntityPropertyRegister;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.EntityDataReg;
+import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,14 +42,14 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         String projectileSelectionIndex,
         String abilityId
     ) {
-        super(EntitiesRegister.GENERIC_PROJECTILE.get(), player.level());
+        super(EntityReg.GENERIC_PROJECTILE.get(), player.level());
         this.setProjectileWithOffsets(this, player, offset, 1);
         this.reapplyPosition();
         this.setOwner(player);
         this.wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
         this.projectileSelectionIndex = projectileSelectionIndex;
         this.abilityId = abilityId;
-        this.getProjectile = EntityPropertyRegister.getProperty(projectileSelectionIndex);
+        this.getProjectile = EntityDataReg.getProperty(projectileSelectionIndex);
         this.getProjectile.getGenericProjectile(this);
     }
 
@@ -60,14 +60,14 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         String abilityId,
         AbstractElement element
     ) {
-        super(EntitiesRegister.GENERIC_PROJECTILE.get(), player.level());
+        super(EntityReg.GENERIC_PROJECTILE.get(), player.level());
         this.setProjectileWithOffsets(this, player, offset, 1);
         this.reapplyPosition();
         this.setOwner(player);
         this.wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
         this.projectileSelectionIndex = index;
         this.abilityId = abilityId;
-        this.getProjectile = EntityPropertyRegister.getProperty(index);
+        this.getProjectile = EntityDataReg.getProperty(index);
         this.getProjectile.getGenericProjectile(this);
         this.getElement = element;
     }
@@ -79,14 +79,14 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         String index,
         String abilityId
     ) {
-        super(EntitiesRegister.GENERIC_PROJECTILE.get(), level);
+        super(EntityReg.GENERIC_PROJECTILE.get(), level);
         this.moveTo(direction.x, direction.y, direction.z, 0, 0);
         this.reapplyPosition();
         this.blockEntityPos = direction;
         this.wandAbilityHolder = wandAbilityHolder;
         this.projectileSelectionIndex = index;
         this.abilityId = abilityId;
-        this.getProjectile = EntityPropertyRegister.getProperty(index);
+        this.getProjectile = EntityDataReg.getProperty(index);
         this.getProjectile.getGenericProjectile(this);
     }
 
@@ -100,7 +100,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         AbstractElement abstractElement,
         String abilityId
     ) {
-        super(EntitiesRegister.GENERIC_PROJECTILE.get(), owner.level());
+        super(EntityReg.GENERIC_PROJECTILE.get(), owner.level());
         this.moveTo(spawnX, spawnY, spawnZ, this.getYRot(), this.getXRot());
         this.reapplyPosition();
         this.setOwner(owner);
@@ -108,7 +108,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.getElement = abstractElement;
         this.abilityId = abilityId;
         this.projectileSelectionIndex = index;
-        this.getProjectile = EntityPropertyRegister.getProperty(index);
+        this.getProjectile = EntityDataReg.getProperty(index);
         this.getProjectile.getGenericProjectile(this);
     }
 
@@ -178,12 +178,12 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.wandAbilityHolder = DefaultEntityBehaviour.readTag(tag, abilityId);
 
         if(this.getElement == null && tag.getInt("elementId") > 0) {
-            ElementRegistry.fromId(tag.getInt("elementId")).ifPresent(
+            ElementReg.fromId(tag.getInt("elementId")).ifPresent(
                 element -> this.getElement = element
             );
         }
 
-        AbstractEntityProperty abstractProjectileProperty = EntityPropertyRegister.REGISTRY.get(
+        AbstractEntityProperty abstractProjectileProperty = EntityDataReg.REGISTRY.get(
             Helpers.res(tag.getString("projectileIndex"))
         );
 

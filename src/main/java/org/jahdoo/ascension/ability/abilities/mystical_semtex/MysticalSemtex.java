@@ -10,26 +10,30 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
-import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.common.entities.element_projectile.ElementProjectile;
-import org.jahdoo.common.entities.EntityMovers;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.common.registers.*;
+import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.entities.EntityMovers;
+import org.jahdoo.common.entities.element_projectile.ElementProjectile;
+import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.EntityDataReg;
+import org.jahdoo.common.registers.EntityReg;
+import org.jahdoo.common.registers.SoundReg;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.DAMAGE;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
-import static org.jahdoo.common.particle.ParticleStore.*;
-import static org.jahdoo.common.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.AttributesRegister.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
+import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.AttributeReg.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
 
 public class MysticalSemtex extends DefaultEntityBehaviour {
 
@@ -40,16 +44,16 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
     private Vec3 localOffset;
     private UUID targetId;
 
-    double setExplosionDelay;
-    double additionalProjectiles;
-    double additionalProjectileChance;
-    double explosionRadius;
-    double damage;
+    private double setExplosionDelay;
+    private double additionalProjectiles;
+    private double additionalProjectileChance;
+    private double explosionRadius;
+    private double damage;
 
     @Override
     public void getElementProjectile(ElementProjectile elementProjectile) {
         super.getElementProjectile(elementProjectile);
-        var player = this.elementProjectile.getOwner();
+        var player = this.element.getOwner();
         if(player != null && !(player instanceof Player)){
             var damage = this.getTag(DAMAGE);
             this.damage = Helpers.attributeModifierCalculator(
@@ -66,6 +70,99 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         this.additionalProjectiles = this.getTag(MysticalSemtexAbility.additionalProjectile);
         this.additionalProjectileChance = this.getTag(MysticalSemtexAbility.clusterChance);
         this.explosionRadius = this.getTag(MysticalSemtexAbility.explosionRadius);
+    }
+
+    @Override
+    public WandAbilityHolder getWandAbilityHolder() {
+        return this.element.getwandabilityholder();
+    }
+
+    @Override
+    public String abilityId() {
+        return MysticalSemtexAbility.abilityId.getPath().intern();
+    }
+
+    @Override
+    public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        this.element.discard();
+    }
+
+    @Override
+    public void onEntityHit(LivingEntity hitEntity) {
+        targetHit(hitEntity);
+    }
+
+    @Override
+    public void discardCondition() {
+        if (this.element.tickCount > 300) this.element.discard();
+    }
+
+    private void adjustProjectileArc() {
+        if (target == null) this.element.setDeltaMovement(this.element.getDeltaMovement().subtract(0, 0.01, 0));
+    }
+
+    private boolean isOpp(LivingEntity livingEntity) {
+        return canDamageEntity(livingEntity, (LivingEntity) this.element.getOwner());
+    }
+
+    @Override
+    public AbstractElement getElementType() {
+        return ElementReg.mystic();
+    }
+
+    ResourceLocation abilityId = Helpers.res("mystical_semtex_property");
+
+    @Override
+    public ResourceLocation getAbilityResource() {
+        return abilityId;
+    }
+
+    @Override
+    public DefaultEntityBehaviour getEntityProperty() {
+        return new MysticalSemtex();
+    }
+
+    private void targetHit(LivingEntity hitTarget) {
+        if(isOpp(hitTarget)){
+            explosionDelay = (int) setExplosionDelay;
+            target = hitTarget;
+            element.setAnimation(6);
+            Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundEvents.SLIME_BLOCK_BREAK);
+        }
+    }
+
+    private void novaDamageBehaviour(){
+        var owner = this.element.getOwner();
+        this.element.level().getNearbyEntities(
+            LivingEntity.class,
+            TargetingConditions.DEFAULT,
+            (LivingEntity) owner,
+            this.element
+                .getBoundingBox()
+                .inflate(aoe,0, aoe)
+                .deflate(0,1,0 )
+        ).forEach(
+            livingEntity -> {
+                if(!isOpp(livingEntity)) return;
+                DamageUtils.damageWithJahdoo(livingEntity, this.element.getOwner(), Math.max(damage - aoe, 1));
+            }
+        );
+    }
+
+    @Override
+    public void onTickMethod() {
+        if(!(this.element.level() instanceof ServerLevel serverLevel)) return;
+        if(target == null) element.setShowTrailParticles(true);
+
+        if(this.target == null && this.targetId != null ){
+            var living = serverLevel.getEntity(this.targetId);
+            if(living instanceof LivingEntity livingEntity) this.target = livingEntity;
+        }
+
+        if (explosionDelay > 0) explosionDelay--;
+        adjustProjectileArc();
+        attachBombAndFollow();
+        onExplosion();
     }
 
     @Override
@@ -100,102 +197,9 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         }
     }
 
-    @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.elementProjectile.getwandabilityholder();
-    }
-
-    @Override
-    public String abilityId() {
-        return MysticalSemtexAbility.abilityId.getPath().intern();
-    }
-
-    @Override
-    public void onBlockBlockHit(BlockHitResult blockHitResult) {
-        this.elementProjectile.discard();
-    }
-
-    @Override
-    public void onEntityHit(LivingEntity hitEntity) {
-        targetHit(hitEntity);
-    }
-
-    @Override
-    public void onTickMethod() {
-        if(!(this.elementProjectile.level() instanceof ServerLevel serverLevel)) return;
-        if(target == null) elementProjectile.setShowTrailParticles(true);
-
-        if(this.target == null && this.targetId != null ){
-            var living = serverLevel.getEntity(this.targetId);
-            if(living instanceof LivingEntity livingEntity) this.target = livingEntity;
-        }
-
-        if (explosionDelay > 0) explosionDelay--;
-        adjustProjectileArc();
-        attachBombAndFollow();
-        onExplosion();
-    }
-
-    @Override
-    public void discardCondition() {
-        if (this.elementProjectile.tickCount > 300) this.elementProjectile.discard();
-    }
-
-    private void attachBombAndFollow() {
-        if (target != null && isOpp(target)) {
-            if (!isAttached) {
-                this.elementProjectile.setDeltaMovement(0, 0, 0);
-                localOffset = this.elementProjectile.position().subtract(target.position());
-                isAttached = true;
-            } else {
-                if(!(this.elementProjectile.level() instanceof ServerLevel serverLevel)) return;
-                this.elementProjectile.setShowTrailParticles(false);
-                if(aoe != 0.1) return;
-                var newPosition = target.position().add(localOffset);
-                this.elementProjectile.moveTo(newPosition.x, newPosition.y, newPosition.z);
-                if(this.elementProjectile.tickCount % 4 != 0) return;
-
-                Helpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.getOnPos(), SoundRegister.TIMER.get());
-                var partColour = this.getElementType().partColourA();
-                var partColour2 = this.getElementType().partColourB();
-                var particle = new GenericParticleOptions(GENERIC_PARTICLE_SELECTION, partColour, partColour2, 10, 3, false, 1.4);
-                var position = this.elementProjectile.position().add(0,0.2,0);
-
-                particleBurst(serverLevel, position, 1, particle);
-            }
-        }
-    }
-
-    private void onExplosion() {
-        if (target != null && (explosionDelay == 0 || !target.isAlive())) {
-            if(aoe == 0.1) {
-                elementProjectile.setShowTrailParticles(false);
-                this.elementProjectile.setInvisible(true);
-                Helpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.getOnPos(), SoundRegister.EXPLOSION.get(),2F, 0.8F);
-                Helpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.getOnPos(), SoundEvents.AMETHYST_BLOCK_BREAK, 2F, 0.6f);
-                additionalProjectileSpread();
-                if(this.elementProjectile.level() instanceof ServerLevel serverLevel){
-                    particleBurst(
-                        serverLevel, this.elementProjectile.position().add(0,0.2,0), 15,
-                        genericParticleOptions(SOFT_PARTICLE_SELECTION, this.getElementType(), 5, 1.4f),
-                        0, 1.5, 0, 0.1f
-                    );
-                }
-            }
-
-            if(aoe < explosionRadius) aoe *= 1.5; else aoe += 0.1;
-            if(aoe >= explosionRadius) this.elementProjectile.discard();
-
-            novaDamageBehaviour();
-            if(aoe < 1.5){
-                PositionFinders.getOuterRingOfRadiusRandom(this.elementProjectile.position(), 1.5, explosionRadius * 4, this::setParticleNova);
-            }
-        }
-    }
-
     private void setParticleNova(Vec3 worldPosition){
         var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), (float) Math.min((float) this.aoe, 0.8));
-        var directions = positionScrambler.subtract(this.elementProjectile.position()).normalize();
+        var directions = positionScrambler.subtract(this.element.position()).normalize();
         var lifetime = (int) this.explosionRadius + 2;
         var size = 5;
         var bakedParticle = bakedParticleOptions(this.getElementType().id(), lifetime, size, false);
@@ -205,42 +209,68 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         var getRandomParticle = List.of(bakedParticle, genericParticle);
 
         ParticleHandlers.sendParticles(
-            elementProjectile.level(), getRandomParticle.get(Helpers.Random.nextInt(2)), worldPosition, 0, directions.x, directions.y, directions.z, Math.min(this.aoe, 2)
+            element.level(), getRandomParticle.get(Helpers.Random.nextInt(2)), worldPosition, 0, directions.x, directions.y, directions.z, Math.min(this.aoe, 2)
         );
     }
 
-    private void adjustProjectileArc() {
-        if (target == null) this.elementProjectile.setDeltaMovement(this.elementProjectile.getDeltaMovement().subtract(0, 0.01, 0));
-    }
+    private void attachBombAndFollow() {
+        if (target != null && isOpp(target)) {
+            if (!isAttached) {
+                this.element.setDeltaMovement(0, 0, 0);
+                localOffset = this.element.position().subtract(target.position());
+                isAttached = true;
+            } else {
+                if(!(this.element.level() instanceof ServerLevel serverLevel)) return;
+                this.element.setShowTrailParticles(false);
+                if(aoe != 0.1) return;
+                var newPosition = target.position().add(localOffset);
+                this.element.moveTo(newPosition.x, newPosition.y, newPosition.z);
+                if(this.element.tickCount % 4 != 0) return;
 
-    private void novaDamageBehaviour(){
-        var owner = this.elementProjectile.getOwner();
-        this.elementProjectile.level().getNearbyEntities(
-            LivingEntity.class,
-            TargetingConditions.DEFAULT,
-            (LivingEntity) owner,
-            this.elementProjectile
-                .getBoundingBox()
-                .inflate(aoe,0, aoe)
-                .deflate(0,1,0 )
-        ).forEach(
-            livingEntity -> {
-                if(!isOpp(livingEntity)) return;
-                DamageUtils.damageWithJahdoo(livingEntity, this.elementProjectile.getOwner(), Math.max(damage - aoe, 1));
+                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundReg.TIMER.get());
+                var partColour = this.getElementType().partColourA();
+                var partColour2 = this.getElementType().partColourB();
+                var particle = new GenericParticleOptions(GENERIC_PARTICLE_SELECTION, partColour, partColour2, 10, 3, false, 1.4);
+                var position = this.element.position().add(0,0.2,0);
+
+                particleBurst(serverLevel, position, 1, particle);
             }
-        );
+        }
     }
 
-    private boolean isOpp(LivingEntity livingEntity) {
-        return canDamageEntity(livingEntity, (LivingEntity) this.elementProjectile.getOwner());
+    private void onExplosion() {
+        if (target != null && (explosionDelay == 0 || !target.isAlive())) {
+            if(aoe == 0.1) {
+                element.setShowTrailParticles(false);
+                this.element.setInvisible(true);
+                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundReg.EXPLOSION.get(),2F, 0.8F);
+                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundEvents.AMETHYST_BLOCK_BREAK, 2F, 0.6f);
+                additionalProjectileSpread();
+                if(this.element.level() instanceof ServerLevel serverLevel){
+                    particleBurst(
+                        serverLevel, this.element.position().add(0,0.2,0), 15,
+                        genericParticleOptions(SOFT_PARTICLE_SELECTION, this.getElementType(), 5, 1.4f),
+                        0, 1.5, 0, 0.1f
+                    );
+                }
+            }
+
+            if(aoe < explosionRadius) aoe *= 1.5; else aoe += 0.1;
+            if(aoe >= explosionRadius) this.element.discard();
+
+            novaDamageBehaviour();
+            if(aoe < 1.5){
+                PositionFinders.getOuterRingOfRadiusRandom(this.element.position(), 1.5, explosionRadius * 4, this::setParticleNova);
+            }
+        }
     }
 
     private void additionalProjectileSpread() {
-        var projectile = this.elementProjectile;
+        var projectile = this.element;
         if(projectile.getAdditionalRestriction()) return;
         if (Helpers.Random.nextInt(0, (int) this.additionalProjectileChance) != 0) return;
-        var getType = EntitiesRegister.MYSTIC_ELEMENT_PROJECTILE.get();
-        var abilityId = EntityPropertyRegister.MYSTICAL_SEMTEX.get().setAbilityId();
+        var getType = EntityReg.MYSTIC_ELEMENT_PROJECTILE.get();
+        var abilityId = EntityDataReg.MYSTICAL_SEMTEX.get().setAbilityId();
         var abilityHolder = projectile.getwandabilityholder();
         var abilityName = MysticalSemtexAbility.abilityId.getPath().intern();
 
@@ -259,32 +289,6 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
                 this.target.level().addFreshEntity(newElementProjectile);
             }
         );
-        Helpers.getSoundWithPosition(projectile.level(), this.target.blockPosition(), SoundRegister.ORB_FIRE.get(), 0.05f);
-    }
-
-    private void targetHit(LivingEntity hitTarget) {
-        if(isOpp(hitTarget)){
-            explosionDelay = (int) setExplosionDelay;
-            target = hitTarget;
-            elementProjectile.setAnimation(6);
-            Helpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.getOnPos(), SoundEvents.SLIME_BLOCK_BREAK);
-        }
-    }
-
-    @Override
-    public AbstractElement getElementType() {
-        return ElementRegistry.mystic();
-    }
-
-    ResourceLocation abilityId = Helpers.res("mystical_semtex_property");
-
-    @Override
-    public ResourceLocation getAbilityResource() {
-        return abilityId;
-    }
-
-    @Override
-    public DefaultEntityBehaviour getEntityProperty() {
-        return new MysticalSemtex();
+        Helpers.getSoundWithPosition(projectile.level(), this.target.blockPosition(), SoundReg.ORB_FIRE.get(), 0.05f);
     }
 }

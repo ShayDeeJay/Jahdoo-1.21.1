@@ -5,7 +5,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.items.CoinItem;
-import org.jahdoo.common.registers.SoundRegister;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.ascension.utils.ItemEntityBehaviour;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -54,7 +54,7 @@ public abstract class ItemEntityMixin {
     private void onTick(CallbackInfo ci) {
         ItemEntity itemEntity = (ItemEntity) (Object) this;
         if (!lootBeams$hasPlayedSound && (itemEntity.onGround() || (itemEntity.onGround() && (itemEntity.tickCount < 10 && itemEntity.tickCount > 3)))) {
-            if (itemEntity.getItem().getItem() instanceof CoinItem) itemEntity.playSound(SoundRegister.COIN.get());
+            if (itemEntity.getItem().getItem() instanceof CoinItem) itemEntity.playSound(SoundReg.COIN.get());
             lootBeams$hasPlayedSound = true;
         }
 

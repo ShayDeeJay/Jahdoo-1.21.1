@@ -18,14 +18,14 @@ import java.util.HashMap;
 
 public abstract class DefaultEntityBehaviour extends AbstractEntityProperty {
 
-    protected AoeCloud aoeCloud;
-    protected ElementProjectile elementProjectile;
-    public GenericProjectile genericProjectile;
+    protected AoeCloud cloud;
+    protected ElementProjectile element;
+    public GenericProjectile generic;
 
     public AbstractElement getElementType(){return null;}
-    public void getElementProjectile(ElementProjectile elementProjectile) { this.elementProjectile = elementProjectile; }
-    public void getGenericProjectile(GenericProjectile genericProjectile) { this.genericProjectile = genericProjectile; }
-    public void getAoeCloud(AoeCloud aoeCloud) { this.aoeCloud = aoeCloud; }
+    public void getElementProjectile(ElementProjectile elementProjectile) { this.element = elementProjectile; }
+    public void getGenericProjectile(GenericProjectile genericProjectile) { this.generic = genericProjectile; }
+    public void getAoeCloud(AoeCloud aoeCloud) { this.cloud = aoeCloud; }
     public void onBlockBlockHit(BlockHitResult blockHitResult) { }
     public void onEntityHit(LivingEntity hitEntity) { }
     public void onTickMethod() { }
@@ -46,19 +46,12 @@ public abstract class DefaultEntityBehaviour extends AbstractEntityProperty {
         return true;
     }
 
-    public static WandAbilityHolder readTag(CompoundTag compoundTag, String abilityId){
-        var holder = new HashMap<String, AbilityHolder.AbilityModifiers>();
-        compoundTag.getCompound("wandAbilities").getAllKeys().forEach(
-            keys -> {
-                var actualValue = compoundTag.getCompound("wandAbilities").getDouble(keys);
-                var modifier = new AbilityHolder.AbilityModifiers(actualValue, 0,0,0,actualValue,true);
-                holder.put(keys, modifier);
-            }
-        );
-        var abilityHolder = new AbilityHolder(holder);
-        var newHolder = new HashMap<String, AbilityHolder>();
-        newHolder.put(abilityId, abilityHolder);
-        return new WandAbilityHolder(newHolder);
+    public static void applyInertia(Projectile projectile, float inertiaFactor) {
+        var currentVelocity = projectile.getDeltaMovement();
+        var newVelocityX = currentVelocity.x * inertiaFactor;
+        var newVelocityY = currentVelocity.y * inertiaFactor;
+        var newVelocityZ = currentVelocity.z * inertiaFactor;
+        projectile.setDeltaMovement(newVelocityX, newVelocityY, newVelocityZ);
     }
 
     public static void writeTag(
@@ -75,12 +68,21 @@ public abstract class DefaultEntityBehaviour extends AbstractEntityProperty {
         compoundTag.put("wandAbilities", storedAbility);
     }
 
-    public static void applyInertia(Projectile projectile, float inertiaFactor) {
-        var currentVelocity = projectile.getDeltaMovement();
-        var newVelocityX = currentVelocity.x * inertiaFactor;
-        var newVelocityY = currentVelocity.y * inertiaFactor;
-        var newVelocityZ = currentVelocity.z * inertiaFactor;
-        projectile.setDeltaMovement(newVelocityX, newVelocityY, newVelocityZ);
+    public static WandAbilityHolder readTag(CompoundTag compoundTag, String abilityId){
+
+        var holder = new HashMap<String, AbilityHolder.AbilityModifiers>();
+        compoundTag.getCompound("wandAbilities").getAllKeys().forEach(
+            keys -> {
+                var actualValue = compoundTag.getCompound("wandAbilities").getDouble(keys);
+                var modifier = new AbilityHolder.AbilityModifiers(actualValue, 0,0,0,actualValue,true);
+                holder.put(keys, modifier);
+            }
+        );
+        var abilityHolder = new AbilityHolder(holder);
+        var newHolder = new HashMap<String, AbilityHolder>();
+
+        newHolder.put(abilityId, abilityHolder);
+        return new WandAbilityHolder(newHolder);
     }
 
 }

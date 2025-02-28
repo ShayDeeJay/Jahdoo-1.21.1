@@ -7,10 +7,10 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.attachments.AbstractAttachment;
 import org.jahdoo.common.networking.packet.server2client.BouncyFootDataSyncS2CPacket;
-import org.jahdoo.common.registers.EffectsRegister;
+import org.jahdoo.common.registers.EffectReg;
 
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.registers.AttachmentRegister.*;
+import static org.jahdoo.common.registers.AttachmentReg.*;
 
 public class BouncyFoot implements AbstractAttachment {
 
@@ -40,7 +40,7 @@ public class BouncyFoot implements AbstractAttachment {
     }
 
     public void onTick(Player player){
-        if(/*effectTimer > 0*/ player.hasEffect(EffectsRegister.REBOUND.getDelegate())){
+        if(/*effectTimer > 0*/ player.hasEffect(EffectReg.REBOUND.getDelegate())){
             if(player instanceof ServerPlayer serverPlayer){
                 var payload = new BouncyFootDataSyncS2CPacket(effectTimer, previousDelta, currentDelta, setHighestFallPoint);
                 PacketDistributor.sendToPlayer(serverPlayer, payload);

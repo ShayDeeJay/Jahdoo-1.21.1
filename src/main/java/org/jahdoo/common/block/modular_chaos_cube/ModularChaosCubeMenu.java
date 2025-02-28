@@ -7,8 +7,8 @@ import net.minecraft.world.level.block.Block;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.gui.AbstractInternalContainer;
 import org.jahdoo.common.client.slots.ModularChaosCubeSlot;
-import org.jahdoo.common.registers.BlocksRegister;
-import org.jahdoo.common.registers.MenusRegister;
+import org.jahdoo.common.registers.BlockReg;
+import org.jahdoo.common.registers.MenuReg;
 
 import static org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity.*;
 
@@ -20,12 +20,12 @@ public class ModularChaosCubeMenu extends AbstractInternalContainer {
     public int offSetY = 30;
 
     public ModularChaosCubeMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
-        super(MenusRegister.MODULAR_CHAOS_CUBE_MENU.get(), id, inv, extraData);
+        super(MenuReg.MODULAR_CHAOS_CUBE_MENU.get(), id, inv, extraData);
         this.setSlot();
     }
 
     public ModularChaosCubeMenu(int id, Inventory inv, AbstractBEInventory entity, ContainerData data) {
-        super(MenusRegister.MODULAR_CHAOS_CUBE_MENU.get(), id, inv, entity, data);
+        super(MenuReg.MODULAR_CHAOS_CUBE_MENU.get(), id, inv, entity, data);
         this.setSlot();
     }
 
@@ -36,7 +36,7 @@ public class ModularChaosCubeMenu extends AbstractInternalContainer {
 
     @Override
     protected Block getAssociatedBlock() {
-        return BlocksRegister.MODULAR_CHAOS_CUBE.get();
+        return BlockReg.MODULAR_CHAOS_CUBE.get();
     }
 
     private void setSlot(){

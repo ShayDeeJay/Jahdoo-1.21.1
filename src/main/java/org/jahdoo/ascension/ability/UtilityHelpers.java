@@ -28,39 +28,30 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import static net.minecraft.world.level.block.Blocks.AIR;
 
 public class UtilityHelpers {
+
     public static Range<Float> range = Range.of(0.0f, 10.0f);
 
-    public static void dropItemsOrBlock(Projectile newProjectile, BlockPos pos, boolean isSilkTouch, boolean voidBlocks){
-        var fluidState = newProjectile.level().getFluidState(pos);
-        if(UtilityHelpers.range.contains(UtilityHelpers.destroySpeed(pos, newProjectile.level())) || !fluidState.isEmpty()){
-            var blockstate = newProjectile.level().getBlockState(pos);
-            var level = newProjectile.level();
-            newProjectile.level().setBlock(pos, AIR.defaultBlockState(), 3);
-            if(!voidBlocks){
-                var centre = pos.getCenter();
-                if (isSilkTouch) {
-                    var getBlock = new ItemStack(blockstate.getBlock());
-                    var itementity = new ItemEntity(level, centre.x, centre.y, centre.z, getBlock);
-                    level.addFreshEntity(itementity);
-                } else {
-                    if(!(level instanceof ServerLevel serverLevel)) return;
-                    var lootBuilder = new LootParams
-                        .Builder(serverLevel)
-                        .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
-                        .withParameter(LootContextParams.TOOL, new ItemStack(Items.DIAMOND_PICKAXE))
-                        .withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
+    public static float destroySpeed(BlockPos blockPos, Level level){
+        return level.getBlockState(blockPos).getDestroySpeed(level, blockPos);
+    }
 
-                    var drops = blockstate.getDrops(lootBuilder);
-                    for (ItemStack itemStack : drops) {
-                        ItemEntity item;
-                        item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
-                        level.addFreshEntity(item);
-                    }
-                }
+    public static void lavaWaterInteractionBehaviour(Entity entity){
+        BlockPos blockPos = entity.blockPosition();
+        FluidState fluidState = entity.level().getFluidState(blockPos);
+
+        if(fluidState.is(FluidTags.LAVA)){
+
+            BlockState obsidian = Blocks.OBSIDIAN.defaultBlockState();
+            BlockState cobblestone = Blocks.COBBLESTONE.defaultBlockState();
+
+            if (fluidState.is(Fluids.LAVA)) {
+                entity.level().setBlockAndUpdate(blockPos, obsidian);
             }
-            var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
-            ParticleHandlers.sendParticles(level, blockPart,  pos.getCenter(), 5,0, 0, 0, 1);
-            level.removeBlock(pos, false);
+            if (fluidState.is(Fluids.FLOWING_LAVA)) {
+                entity.level().setBlockAndUpdate(blockPos, cobblestone);
+            }
+            entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1, 1);
+            entity.discard();
         }
     }
 
@@ -97,27 +88,38 @@ public class UtilityHelpers {
         level.removeBlock(pos, false);
     }
 
-    public static void lavaWaterInteractionBehaviour(Entity entity){
-        BlockPos blockPos = entity.blockPosition();
-        FluidState fluidState = entity.level().getFluidState(blockPos);
+    public static void dropItemsOrBlock(Projectile newProjectile, BlockPos pos, boolean isSilkTouch, boolean voidBlocks){
+        var fluidState = newProjectile.level().getFluidState(pos);
+        if(UtilityHelpers.range.contains(UtilityHelpers.destroySpeed(pos, newProjectile.level())) || !fluidState.isEmpty()){
+            var blockstate = newProjectile.level().getBlockState(pos);
+            var level = newProjectile.level();
+            newProjectile.level().setBlock(pos, AIR.defaultBlockState(), 3);
+            if(!voidBlocks){
+                var centre = pos.getCenter();
+                if (isSilkTouch) {
+                    var getBlock = new ItemStack(blockstate.getBlock());
+                    var itementity = new ItemEntity(level, centre.x, centre.y, centre.z, getBlock);
+                    level.addFreshEntity(itementity);
+                } else {
+                    if(!(level instanceof ServerLevel serverLevel)) return;
+                    var lootBuilder = new LootParams
+                        .Builder(serverLevel)
+                        .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                        .withParameter(LootContextParams.TOOL, new ItemStack(Items.DIAMOND_PICKAXE))
+                        .withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
 
-        if(fluidState.is(FluidTags.LAVA)){
-
-            BlockState obsidian = Blocks.OBSIDIAN.defaultBlockState();
-            BlockState cobblestone = Blocks.COBBLESTONE.defaultBlockState();
-
-            if (fluidState.is(Fluids.LAVA)) {
-                entity.level().setBlockAndUpdate(blockPos, obsidian);
+                    var drops = blockstate.getDrops(lootBuilder);
+                    for (ItemStack itemStack : drops) {
+                        ItemEntity item;
+                        item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
+                        level.addFreshEntity(item);
+                    }
+                }
             }
-            if (fluidState.is(Fluids.FLOWING_LAVA)) {
-                entity.level().setBlockAndUpdate(blockPos, cobblestone);
-            }
-            entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1, 1);
-            entity.discard();
+            var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
+            ParticleHandlers.sendParticles(level, blockPart,  pos.getCenter(), 5,0, 0, 0, 1);
+            level.removeBlock(pos, false);
         }
     }
 
-    public static float destroySpeed(BlockPos blockPos, Level level){
-        return level.getBlockState(blockPos).getDestroySpeed(level, blockPos);
-    }
 }

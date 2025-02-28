@@ -2,10 +2,6 @@ package org.jahdoo.common.block.wand;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.registers.ItemsRegister;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.model.GeoModel;
@@ -16,7 +12,7 @@ import java.util.Map;
 import static net.minecraft.client.renderer.RenderType.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.block.wand.WandBlockEntity.GET_WAND_SLOT;
-import static org.jahdoo.common.registers.ItemsRegister.*;
+import static org.jahdoo.common.registers.ItemReg.*;
 
 public class WandBlockModel extends GeoModel<WandBlockEntity> {
 

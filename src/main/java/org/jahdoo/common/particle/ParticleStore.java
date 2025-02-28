@@ -3,7 +3,7 @@ package org.jahdoo.common.particle;
 import net.minecraft.core.particles.ParticleType;
 import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.common.registers.ParticlesRegister;
+import org.jahdoo.common.registers.ParticleReg;
 
 import java.util.List;
 
@@ -16,19 +16,19 @@ public record ParticleStore(int r, int g, int b){
     public static final int ELECTRIC_PARTICLE_SELECTION = 3;
 
     public static final List<ParticleType<?>> getBakedByType = List.of(
-        ParticlesRegister.BAKED_FROST.get(),
-        ParticlesRegister.BAKED_INFERNO.get(),
-        ParticlesRegister.BAKED_MYSTIC.get(),
-        ParticlesRegister.BAKED_VITALITY.get(),
-        ParticlesRegister.BAKED_UTILITY.get(),
-        ParticlesRegister.HEAL.get()
+        ParticleReg.BAKED_FROST.get(),
+        ParticleReg.BAKED_INFERNO.get(),
+        ParticleReg.BAKED_MYSTIC.get(),
+        ParticleReg.BAKED_VITALITY.get(),
+        ParticleReg.BAKED_UTILITY.get(),
+        ParticleReg.HEAL.get()
     );
 
     public static final List<ParticleType<?>> getColouredParticle = List.of(
-        ParticlesRegister.GENERIC.get(),
-        ParticlesRegister.MAGIC.get(),
-        ParticlesRegister.SOFT.get(),
-        ParticlesRegister.ELECTRIC.get()
+        ParticleReg.GENERIC.get(),
+        ParticleReg.MAGIC.get(),
+        ParticleReg.SOFT.get(),
+        ParticleReg.ELECTRIC.get()
     );
 
     public static GenericParticleOptions genericParticleFast(int colour, int fade){

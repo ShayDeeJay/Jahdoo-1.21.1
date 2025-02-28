@@ -26,40 +26,6 @@ public class PositionFinders {
         }
     }
 
-    public static void getOuterSquareOfRadius(Vec3 positions, double radius, double points, Consumer<Vec3> method) {
-        // Determine how many points per side of the square
-        double pointsPerSide = points / 4.0;
-        double stepSize = (2 * radius) / pointsPerSide;
-
-        // Left edge (moving up)
-        for (int i = 0; i < pointsPerSide; i++) {
-            double posZ = positions.z - radius + i * stepSize;
-            Vec3 pos = new Vec3(positions.x - radius, positions.y, posZ);
-            method.accept(pos);
-        }
-
-        // Top edge (moving right)
-        for (int i = 0; i < pointsPerSide; i++) {
-            double posX = positions.x - radius + i * stepSize;
-            Vec3 pos = new Vec3(posX, positions.y, positions.z + radius);
-            method.accept(pos);
-        }
-
-        // Right edge (moving down)
-        for (int i = 0; i < pointsPerSide; i++) {
-            double posZ = positions.z + radius - i * stepSize;
-            Vec3 pos = new Vec3(positions.x + radius, positions.y, posZ);
-            method.accept(pos);
-        }
-
-        // Bottom edge (moving left)
-        for (int i = 0; i < pointsPerSide; i++) {
-            double posX = positions.x + radius - i * stepSize;
-            Vec3 pos = new Vec3(posX, positions.y, positions.z - radius);
-            method.accept(pos);
-        }
-    }
-
     public static void getInnerRingOfRadiusRandom(Vec3 position, double radius, double numPoints, Consumer<Vec3> method) {
         double sectorAngle = 2 * Math.PI / numPoints;
 
@@ -91,7 +57,6 @@ public class PositionFinders {
         }
         return positions;
     }
-
 
     public static void getInnerRingOfRadiusRandom(BlockPos blockPos, double radius, int numPoints, Consumer<Vec3> method) {
         Vec3 playerPos = blockPos.getCenter();
@@ -152,6 +117,119 @@ public class PositionFinders {
             Vec3 pos = new Vec3(posX, position.y, posZ);
             method.accept(pos);
         }
+    }
+
+    public static void getSphericalPositions(Entity entity, double radius, double numPoints, Consumer<Vec3> method) {
+        Vec3 entityPos = entity.position();
+
+        // Calculate the angle between each point
+        double phiIncrement = Math.PI * (3.0 - Math.sqrt(5.0)); // Golden angle
+
+        // Generate points on the sphere using spherical coordinates
+        for (int i = 0; i < numPoints; i++) {
+            double y = 1 - (i / (numPoints - 1)) * 2; // Range from -1 to 1
+            double radiusAtHeight = Math.sqrt(1 - y * y) * radius;
+
+            double phi = i * phiIncrement; // Angle around the y-axis
+
+            double x = Math.cos(phi) * radiusAtHeight;
+            double z = Math.sin(phi) * radiusAtHeight;
+
+            Vec3 pos = new Vec3(entityPos.x + x, entityPos.y + y * radius, entityPos.z + z);
+            method.accept(pos);
+        }
+    }
+
+    public static void getSphericalBlockPositions(Entity entity, double radius, Consumer<BlockPos> method) {
+        Vec3 entityPos = entity.position();
+        int radiusCeil = (int) Math.ceil(radius);
+
+        for (int x = -radiusCeil; x <= radiusCeil; x++) {
+            for (int y = -radiusCeil; y <= radiusCeil; y++) {
+                for (int z = -radiusCeil; z <= radiusCeil; z++) {
+                    BlockPos currentPos = entity.blockPosition().offset(x, y, z);
+                    double distanceSquared = entityPos.distanceToSqr(Vec3.atCenterOf(currentPos));
+
+                    if (distanceSquared <= radius * radius) {
+                        if (Random.nextDouble() < 0.90) { // 70% chance to break the block
+                            method.accept(currentPos);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static void getRandomSphericalPositions(Entity entity, double radius, double numPoints, Consumer<Vec3> method) {
+        Vec3 entityPos = entity.position();
+
+        for (int i = 0; i < numPoints; i++) {
+            // Generate random spherical coordinates
+            double theta = 2 * Math.PI * Random.nextDouble(); // Random angle in the xy-plane
+            double phi = Math.acos(2 * Random.nextDouble() - 1); // Random angle from z-axis
+
+            // Convert spherical coordinates to Cartesian coordinates
+            double x = radius * Math.sin(phi) * Math.cos(theta);
+            double y = radius * Math.sin(phi) * Math.sin(theta);
+            double z = radius * Math.cos(phi);
+
+            Vec3 pos = new Vec3(entityPos.x + x, entityPos.y + y, entityPos.z + z);
+            method.accept(pos);
+        }
+    }
+
+    public static void getRandomSphericalPositions(Vec3 positions, double radius, double numPoints, Consumer<Vec3> method) {
+        for (int i = 0; i < numPoints; i++) {
+            // Generate random spherical coordinates
+            double theta = 2 * Math.PI * Random.nextDouble(); // Random angle in the xy-plane
+            double phi = Math.acos(2 * Random.nextDouble() - 1); // Random angle from z-axis
+
+            // Convert spherical coordinates to Cartesian coordinates
+            double x = radius * Math.sin(phi) * Math.cos(theta);
+            double y = radius * Math.sin(phi) * Math.sin(theta);
+            double z = radius * Math.cos(phi);
+
+            Vec3 pos = new Vec3(positions.x + x, positions.y + y, positions.z + z);
+            method.accept(pos);
+        }
+    }
+
+    public static List<Vec3> getRandomSphericalPositions(Vec3 positions, double radius, double numPoints) {
+        var vec3s = new ArrayList<Vec3>();
+        for (int i = 0; i < numPoints; i++) {
+            // Generate random spherical coordinates
+            double theta = 2 * Math.PI * Random.nextDouble(); // Random angle in the xy-plane
+            double phi = Math.acos(2 * Random.nextDouble() - 1); // Random angle from z-axis
+
+            // Convert spherical coordinates to Cartesian coordinates
+            double x = radius * Math.sin(phi) * Math.cos(theta);
+            double y = radius * Math.sin(phi) * Math.sin(theta);
+            double z = radius * Math.cos(phi);
+
+            vec3s.add(new Vec3(positions.x + x, positions.y + y, positions.z + z));
+        }
+        return vec3s;
+    }
+
+    public static List<BlockPos> getRandomSphericalBlockPositions(BlockPos center, double radius, int numPoints) {
+        List<BlockPos> blockPositions = new ArrayList<>();
+
+        for (int i = 0; i < numPoints; i++) {
+            double theta = 2 * Math.PI * Random.nextDouble(); // Random angle in the xy-plane
+            double phi = Math.acos(2 * Random.nextDouble() - 1); // Random angle from the z-axis
+
+            double x = radius * Math.sin(phi) * Math.cos(theta);
+            double y = radius * Math.sin(phi) * Math.sin(theta);
+            double z = radius * Math.cos(phi);
+
+            int blockX = center.getX() + (int) Math.round(x);
+            int blockY = center.getY() + (int) Math.round(y);
+            int blockZ = center.getZ() + (int) Math.round(z);
+
+            blockPositions.add(new BlockPos(blockX, blockY, blockZ));
+        }
+
+        return blockPositions;
     }
 
     public static List<Vec3> getSemicircle(Vec3 position, double radius, double points, float yaw, int range) {
@@ -258,117 +336,37 @@ public class PositionFinders {
         }
     }
 
-    public static void getSphericalPositions(Entity entity, double radius, double numPoints, Consumer<Vec3> method) {
-        Vec3 entityPos = entity.position();
+    public static void getOuterSquareOfRadius(Vec3 positions, double radius, double points, Consumer<Vec3> method) {
+        // Determine how many points per side of the square
+        double pointsPerSide = points / 4.0;
+        double stepSize = (2 * radius) / pointsPerSide;
 
-        // Calculate the angle between each point
-        double phiIncrement = Math.PI * (3.0 - Math.sqrt(5.0)); // Golden angle
-
-        // Generate points on the sphere using spherical coordinates
-        for (int i = 0; i < numPoints; i++) {
-            double y = 1 - (i / (numPoints - 1)) * 2; // Range from -1 to 1
-            double radiusAtHeight = Math.sqrt(1 - y * y) * radius;
-
-            double phi = i * phiIncrement; // Angle around the y-axis
-
-            double x = Math.cos(phi) * radiusAtHeight;
-            double z = Math.sin(phi) * radiusAtHeight;
-
-            Vec3 pos = new Vec3(entityPos.x + x, entityPos.y + y * radius, entityPos.z + z);
+        // Left edge (moving up)
+        for (int i = 0; i < pointsPerSide; i++) {
+            double posZ = positions.z - radius + i * stepSize;
+            Vec3 pos = new Vec3(positions.x - radius, positions.y, posZ);
             method.accept(pos);
         }
-    }
 
-    public static void getSphericalBlockPositions(Entity entity, double radius, Consumer<BlockPos> method) {
-        Vec3 entityPos = entity.position();
-        int radiusCeil = (int) Math.ceil(radius);
-
-        for (int x = -radiusCeil; x <= radiusCeil; x++) {
-            for (int y = -radiusCeil; y <= radiusCeil; y++) {
-                for (int z = -radiusCeil; z <= radiusCeil; z++) {
-                    BlockPos currentPos = entity.blockPosition().offset(x, y, z);
-                    double distanceSquared = entityPos.distanceToSqr(Vec3.atCenterOf(currentPos));
-
-                    if (distanceSquared <= radius * radius) {
-                        if (Random.nextDouble() < 0.90) { // 70% chance to break the block
-                            method.accept(currentPos);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public static void getRandomSphericalPositions(Entity entity, double radius, double numPoints, Consumer<Vec3> method) {
-        Vec3 entityPos = entity.position();
-
-        for (int i = 0; i < numPoints; i++) {
-            // Generate random spherical coordinates
-            double theta = 2 * Math.PI * Random.nextDouble(); // Random angle in the xy-plane
-            double phi = Math.acos(2 * Random.nextDouble() - 1); // Random angle from z-axis
-
-            // Convert spherical coordinates to Cartesian coordinates
-            double x = radius * Math.sin(phi) * Math.cos(theta);
-            double y = radius * Math.sin(phi) * Math.sin(theta);
-            double z = radius * Math.cos(phi);
-
-            Vec3 pos = new Vec3(entityPos.x + x, entityPos.y + y, entityPos.z + z);
+        // Top edge (moving right)
+        for (int i = 0; i < pointsPerSide; i++) {
+            double posX = positions.x - radius + i * stepSize;
+            Vec3 pos = new Vec3(posX, positions.y, positions.z + radius);
             method.accept(pos);
         }
-    }
 
-    public static void getRandomSphericalPositions(Vec3 positions, double radius, double numPoints, Consumer<Vec3> method) {
-        for (int i = 0; i < numPoints; i++) {
-            // Generate random spherical coordinates
-            double theta = 2 * Math.PI * Random.nextDouble(); // Random angle in the xy-plane
-            double phi = Math.acos(2 * Random.nextDouble() - 1); // Random angle from z-axis
-
-            // Convert spherical coordinates to Cartesian coordinates
-            double x = radius * Math.sin(phi) * Math.cos(theta);
-            double y = radius * Math.sin(phi) * Math.sin(theta);
-            double z = radius * Math.cos(phi);
-
-            Vec3 pos = new Vec3(positions.x + x, positions.y + y, positions.z + z);
+        // Right edge (moving down)
+        for (int i = 0; i < pointsPerSide; i++) {
+            double posZ = positions.z + radius - i * stepSize;
+            Vec3 pos = new Vec3(positions.x + radius, positions.y, posZ);
             method.accept(pos);
         }
-    }
 
-
-    public static List<Vec3> getRandomSphericalPositions(Vec3 positions, double radius, double numPoints) {
-        var vec3s = new ArrayList<Vec3>();
-        for (int i = 0; i < numPoints; i++) {
-            // Generate random spherical coordinates
-            double theta = 2 * Math.PI * Random.nextDouble(); // Random angle in the xy-plane
-            double phi = Math.acos(2 * Random.nextDouble() - 1); // Random angle from z-axis
-
-            // Convert spherical coordinates to Cartesian coordinates
-            double x = radius * Math.sin(phi) * Math.cos(theta);
-            double y = radius * Math.sin(phi) * Math.sin(theta);
-            double z = radius * Math.cos(phi);
-
-            vec3s.add(new Vec3(positions.x + x, positions.y + y, positions.z + z));
+        // Bottom edge (moving left)
+        for (int i = 0; i < pointsPerSide; i++) {
+            double posX = positions.x + radius - i * stepSize;
+            Vec3 pos = new Vec3(posX, positions.y, positions.z - radius);
+            method.accept(pos);
         }
-        return vec3s;
-    }
-
-    public static List<BlockPos> getRandomSphericalBlockPositions(BlockPos center, double radius, int numPoints) {
-        List<BlockPos> blockPositions = new ArrayList<>();
-
-        for (int i = 0; i < numPoints; i++) {
-            double theta = 2 * Math.PI * Random.nextDouble(); // Random angle in the xy-plane
-            double phi = Math.acos(2 * Random.nextDouble() - 1); // Random angle from the z-axis
-
-            double x = radius * Math.sin(phi) * Math.cos(theta);
-            double y = radius * Math.sin(phi) * Math.sin(theta);
-            double z = radius * Math.cos(phi);
-
-            int blockX = center.getX() + (int) Math.round(x);
-            int blockY = center.getY() + (int) Math.round(y);
-            int blockZ = center.getZ() + (int) Math.round(z);
-
-            blockPositions.add(new BlockPos(blockX, blockY, blockZ));
-        }
-
-        return blockPositions;
     }
 }

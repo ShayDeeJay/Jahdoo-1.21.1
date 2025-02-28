@@ -14,7 +14,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.registers.SoundRegister;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import top.theillusivec4.curios.api.SlotContext;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import static org.jahdoo.common.entities.EntityMovers.entityMover;
 import static org.jahdoo.common.items.runes.rune_data.RuneData.RuneHelpers;
-import static org.jahdoo.common.registers.DataComponentRegistry.MAGNET_DATA;
+import static org.jahdoo.common.registers.ComponentReg.MAGNET_DATA;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 
@@ -91,7 +91,7 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
         var active = Helpers.withStyleComponent("Active", ColourStore.MAGNET_RANGE_GREEN);
         var deactivate = Helpers.withStyleComponent("Deactivated", ColourStore.MAGNET_STRENGTH_RED);
         player.displayClientMessage(!magnetData.active() ? active : deactivate, true);
-        player.playSound(SoundRegister.SELECT.get());
+        player.playSound(SoundReg.SELECT.get());
         return super.use(level, player, usedHand);
     }
 

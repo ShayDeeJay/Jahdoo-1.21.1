@@ -2,11 +2,8 @@ package org.jahdoo.common.entities.decoy;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -16,12 +13,11 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.abilities.EscapeDecoyAbility;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.EntitiesRegister;
-import org.jahdoo.common.registers.SoundRegister;
+import org.jahdoo.common.registers.EntityReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +30,7 @@ import static net.minecraft.util.RandomSource.*;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.common.particle.ParticleStore.*;
-import static org.jahdoo.common.registers.ElementRegistry.*;
+import static org.jahdoo.common.registers.ElementReg.*;
 
 public class Decoy extends Mob {
 
@@ -48,7 +44,7 @@ public class Decoy extends Mob {
     }
 
     public Decoy(Level pLevel, Player player, int range) {
-        super(EntitiesRegister.DECOY.get(), pLevel);
+        super(EntityReg.DECOY.get(), pLevel);
         this.player = player;
         this.range = range;
     }
@@ -141,7 +137,7 @@ public class Decoy extends Mob {
 
     private void onDiscard() {
         if(this.tickCount >= this.getMaxLifetime()) {
-            Helpers.getSoundWithPosition(level(), this.blockPosition(), SoundRegister.ORB_FIRE.get(), 2, 2f);
+            Helpers.getSoundWithPosition(level(), this.blockPosition(), SoundReg.ORB_FIRE.get(), 2, 2f);
             EscapeDecoyAbility.onExistenceChange(this, getElement());
             this.discard();
         }

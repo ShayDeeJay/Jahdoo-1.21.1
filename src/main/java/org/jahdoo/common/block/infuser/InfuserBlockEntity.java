@@ -6,15 +6,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jahdoo.common.registers.ItemsRegister;
+import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -22,9 +19,8 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
-import static org.jahdoo.common.registers.ItemsRegister.*;
+import static org.jahdoo.common.registers.ItemReg.*;
 import static software.bernie.geckolib.util.GeckoLibUtil.*;
 
 
@@ -35,7 +31,7 @@ public class InfuserBlockEntity extends AbstractTankUser implements GeoBlockEnti
     private int maxProgress = 200;
 
     public InfuserBlockEntity(BlockPos pos, BlockState state) {
-        super(BlockEntitiesRegister.INFUSER_BE.get(), pos, state, 5);
+        super(BlockEntityReg.INFUSER_BE.get(), pos, state, 5);
         this.data = new ContainerData() {
             @Override
             public int get(int pIndex) {

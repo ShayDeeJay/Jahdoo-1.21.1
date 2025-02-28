@@ -13,7 +13,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
 
 public record WandAbilityHolder(Map<String, AbilityHolder> abilityProperties) {
 

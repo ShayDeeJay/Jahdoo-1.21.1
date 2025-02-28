@@ -14,20 +14,21 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
-import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.common.items.augments.AugmentItemHelper;
-import org.jahdoo.common.registers.AbilityRegister;
-import org.jahdoo.common.registers.DataComponentRegistry;
-import org.jahdoo.common.registers.ElementRegistry;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.DataComponentHelper;
+import org.jahdoo.common.items.augments.AugmentItemHelper;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -37,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
-import static org.jahdoo.ascension.ability.AbilityBuilder.*;
+import static org.jahdoo.ascension.ability.AbilityBuilder.SET_ELEMENT_TYPE;
 import static org.jahdoo.common.client.IconLocations.*;
 
 public class SharedUI {
@@ -46,7 +47,7 @@ public class SharedUI {
     public static final int BORDER_COLOUR =  -12434878;
 
     public static List<ResourceLocation> getOverlays(){
-        return List.of(CORE, ADVANCED_AUGMENT_CORE, AUGMENT_HYPER_CORE);
+        return List.of(IconLocations.AUGMENT_CORE, IconLocations.ADVANCED_AUGMENT_CORE, IconLocations.AUGMENT_HYPER_CORE);
     }
 
     public static List<Component> getComponents(ItemStack item, Level level){
@@ -103,6 +104,14 @@ public class SharedUI {
         var f2 = (float)Math.atan((f - mouseX) / rotationSmoothing);
         var f3 = (float)Math.atan((f1 - mouseY) / rotationSmoothing);
         renderEntityInInventoryFollowsAngle(guiGraphics, x1, y1, x2, y2, scale, yOffset, f2, f3, entity);
+    }
+
+    public static List<Item> getCore(){
+        return List.of(
+            ItemReg.AUGMENT_CORE.get(),
+            ItemReg.ADVANCED_AUGMENT_CORE.get(),
+            ItemReg.AUGMENT_HYPER_CORE.get()
+        );
     }
 
     public static void renderInventoryBackground(GuiGraphics guiGraphics, Screen screen, int IMAGE_SIZE, int yOffset, boolean show){
@@ -184,13 +193,20 @@ public class SharedUI {
         guiGraphics.enableScissor(0, heightFrom + 50, width, heightTo - 5);
     }
 
-    public static void bezelMaker(GuiGraphics guiGraphics, int posX, int posY, int offsetX, int offsetY, int size, @Nullable AbstractElement element) {
+    public static void bezelMaker(GuiGraphics guiGraphics, int posX, int posY, int offsetX, int offsetY, int size, AbstractElement element) {
         guiGraphics.blit(BEZEL_1, posX + offsetX, posY, 0, 0, size, size, size, size);
         guiGraphics.blit(BEZEL_2, posX, posY, 0, 0, size, size, size, size);
         guiGraphics.blit(BEZEL_3, posX + 1 , posY + offsetY, 0, 0, size, size, size, size);
         guiGraphics.blit(BEZEL_4, posX + offsetX, posY + offsetY, 0, 0, size, size, size, size);
         if(element != null){
-            int[] manaOverlay = {150, 125, 100, 75, 50, 25, 0};
+            int[] manaOverlay = {
+                125,
+                100,
+                125,
+                50,
+                25,
+                0
+            };
             var index = element.id();
             var blitOffsetX = manaOverlay[index];
             var blitOffsetY = blitOffsetX + 17;
@@ -209,10 +225,10 @@ public class SharedUI {
     ){
         var element = new AtomicInteger();
         if (abilityRegistrars.isMultiType()) {
-            var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            var wandAbilityHolder = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
             var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityRegistrars.setAbilityId());
             var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
-            ElementRegistry.fromId((int) abilityModifiers.actualValue()).ifPresent(
+            ElementReg.fromId((int) abilityModifiers.actualValue()).ifPresent(
                 getElement -> element.set(getElement.textColourA())
             );
         } else {
@@ -226,13 +242,13 @@ public class SharedUI {
         ItemStack itemStack
     ){
         var key = DataComponentHelper.getKeyFromAugment(itemStack);
-        var abilityRegistrars = AbilityRegister.getFirstSpellByTypeId(key).orElseThrow();
+        var abilityRegistrars = AbilityReg.getFirstSpellByTypeId(key).orElseThrow();
         var element = new AtomicInteger();
         if (abilityRegistrars.isMultiType()) {
-            var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            var wandAbilityHolder = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
             var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityRegistrars.setAbilityId());
             var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
-            ElementRegistry.fromId((int) abilityModifiers.actualValue()).ifPresent(
+            ElementReg.fromId((int) abilityModifiers.actualValue()).ifPresent(
                 getElement -> element.set(getElement.textColourA())
             );
         } else {
@@ -292,14 +308,14 @@ public class SharedUI {
         AbilityRegistrar abilityRegistrars,
         ItemStack itemStack
     ){
-        AtomicReference<AbstractElement> element = new AtomicReference<>(ElementRegistry.mystic());
+        AtomicReference<AbstractElement> element = new AtomicReference<>(ElementReg.mystic());
 
         if (abilityRegistrars.isMultiType()) {
 
-            var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            var wandAbilityHolder = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
             var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityRegistrars.setAbilityId());
             var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
-            ElementRegistry.fromId((int) abilityModifiers.actualValue()).ifPresent(element::set);
+            ElementReg.fromId((int) abilityModifiers.actualValue()).ifPresent(element::set);
         } else {
             element.set(abilityRegistrars.getElemenType());
         }
@@ -318,7 +334,7 @@ public class SharedUI {
         guiGraphics.blit(GUI_GENERAL_SLOT, posX, posY, 0, 0, localImageSize, localImageSize, localImageSize, localImageSize);
 
         if(cachedItem == null) return;
-        var abilityRegistrars = AbilityRegister.getSpellsByTypeId(DataComponentHelper.getAbilityTypeItemStack(cachedItem));
+        var abilityRegistrars = AbilityReg.getSpellsByTypeId(DataComponentHelper.getAbilityTypeItemStack(cachedItem));
 
         if(!abilityRegistrars.isEmpty()){
             if (!abilityRegistrars.getFirst().getAbilityIconLocation().getPath().isEmpty()) {

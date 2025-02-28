@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.AbstractAbility;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
@@ -15,8 +15,8 @@ import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class ArcaneShift extends AbstractAbility {
 
-    Player player;
-    WandAbilityHolder wandAbilityHolder;
+    private final Player player;
+    private final WandAbilityHolder wandAbilityHolder;
 
     public ArcaneShift(Player player) {
         this.player = player;
@@ -31,38 +31,6 @@ public class ArcaneShift extends AbstractAbility {
     @Override
     public String abilityId() {
         return ArcaneShiftAbility.abilityId.getPath().intern();
-    }
-
-    public void teleportToHome(){
-        var damages = getTag(DAMAGE);
-        var distances = getTag(CASTING_DISTANCE);
-        var maxEntity = getTag(ArcaneShiftAbility.maxEntities);
-        var lifeTimes = getTag(ArcaneShiftAbility.lifeTime);
-        var position = player.pick(distances, 0, false).getLocation();
-        for(int i = 0; i < 50; i++){
-            var particle = ParticleHandlers.getAllParticleTypes(ElementRegistry.mystic(), 10, 1.5f);
-            var x = player.getRandomX(1);
-            var y = player.getRandomY();
-            var z = player.getRandomZ(1);
-            player.level().addParticle(particle, x, y, z, Random.nextDouble(0.1, 0.3) - 0.2, Random.nextDouble(0.2, 0.5), Random.nextDouble(0.1, 0.3)- 0.2);
-        }
-
-        if(!player.level().isClientSide) {
-            var blockPos = BlockPos.containing(position).getCenter();
-            player.teleportTo(blockPos.x, blockPos.y + 0.5, blockPos.z);
-            Helpers.getSoundWithPositionV(player.level(), position, SoundEvents.ENDERMAN_TELEPORT, 0.5f, 0.8f);
-            Helpers.getSoundWithPositionV(player.level(), position, SoundEvents.ILLUSIONER_PREPARE_MIRROR, 0.5f, 2f);
-            player.resetFallDistance();
-        }
-
-
-        for(int i = 0; i < 50; i++){
-            var particle = ParticleHandlers.getAllParticleTypes(ElementRegistry.mystic(), 10, 1.5f);
-            var x = getRandomX(position.x, 1, 1.5);
-            var y = getY(position.y + 1, Random.nextDouble(), 2);
-            var z = getRandomZ(position.z, 1, 1.5);
-            player.level().addParticle(particle, x, y, z, Random.nextDouble(0.1, 0.3) - 0.2, Random.nextDouble(0.2, 0.5), Random.nextDouble(0.1, 0.3)- 0.2);
-        }
     }
 
     public double getX(double posX, double scale, double width) {
@@ -85,6 +53,7 @@ public class ArcaneShift extends AbstractAbility {
         return this.getZ(posZ, ((double)2.0F * Random.nextDouble() - (double)1.0F) * scale, width);
     }
 
+
 //    private void shootSpikesRandomly(Player player, int maxEntities, double velocity, int discardTime){
 //        double centerY = player.getY() + player.getBbHeight() / 2;
 //        double angleIncrement = 2 * Math.PI / maxEntities;
@@ -105,5 +74,37 @@ public class ArcaneShift extends AbstractAbility {
 //            player.level().addFreshEntity(genericProjectile);
 //        }
 //    }
+
+    public void teleportToHome(){
+        var damages = getTag(DAMAGE);
+        var distances = getTag(CASTING_DISTANCE);
+        var maxEntity = getTag(ArcaneShiftAbility.maxEntities);
+        var lifeTimes = getTag(ArcaneShiftAbility.lifeTime);
+        var position = player.pick(distances, 0, false).getLocation();
+        for(int i = 0; i < 50; i++){
+            var particle = ParticleHandlers.getAllParticleTypes(ElementReg.mystic(), 10, 1.5f);
+            var x = player.getRandomX(1);
+            var y = player.getRandomY();
+            var z = player.getRandomZ(1);
+            player.level().addParticle(particle, x, y, z, Random.nextDouble(0.1, 0.3) - 0.2, Random.nextDouble(0.2, 0.5), Random.nextDouble(0.1, 0.3)- 0.2);
+        }
+
+        if(!player.level().isClientSide) {
+            var blockPos = BlockPos.containing(position).getCenter();
+            player.teleportTo(blockPos.x, blockPos.y + 0.5, blockPos.z);
+            Helpers.getSoundWithPositionV(player.level(), position, SoundEvents.ENDERMAN_TELEPORT, 0.5f, 0.8f);
+            Helpers.getSoundWithPositionV(player.level(), position, SoundEvents.ILLUSIONER_PREPARE_MIRROR, 0.5f, 2f);
+            player.resetFallDistance();
+        }
+
+
+        for(int i = 0; i < 50; i++){
+            var particle = ParticleHandlers.getAllParticleTypes(ElementReg.mystic(), 10, 1.5f);
+            var x = getRandomX(position.x, 1, 1.5);
+            var y = getY(position.y + 1, Random.nextDouble(), 2);
+            var z = getRandomZ(position.z, 1, 1.5);
+            player.level().addParticle(particle, x, y, z, Random.nextDouble(0.1, 0.3) - 0.2, Random.nextDouble(0.2, 0.5), Random.nextDouble(0.1, 0.3)- 0.2);
+        }
+    }
 
 }

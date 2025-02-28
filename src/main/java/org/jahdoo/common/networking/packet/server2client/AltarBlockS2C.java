@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.common.block.challange_altar.ChallengeAltarBlockEntity;
-import org.jahdoo.common.registers.AttachmentRegister;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.ascension.utils.Helpers;
 
 public class AltarBlockS2C implements CustomPacketPayload{
@@ -43,7 +43,7 @@ public class AltarBlockS2C implements CustomPacketPayload{
                 if(level.isClientSide){
                     var blockE = level.getBlockEntity(blockPos);
                     if(blockE instanceof ChallengeAltarBlockEntity entity){
-                        entity.setData(AttachmentRegister.CHALLENGE_ALTAR, properties);
+                        entity.setData(AttachmentReg.CHALLENGE_ALTAR, properties);
                         entity.setChanged();
                         entity.privateTicks = privateTicks;
                     }

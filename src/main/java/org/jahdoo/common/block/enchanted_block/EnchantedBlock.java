@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
+import org.jahdoo.common.registers.BlockEntityReg;
 import org.jetbrains.annotations.Nullable;
 
 public class EnchantedBlock extends BaseEntityBlock {
@@ -64,7 +64,7 @@ public class EnchantedBlock extends BaseEntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
         return createTickerHelper(
             pBlockEntityType,
-            BlockEntitiesRegister.ENCHANTED_BE.get(),
+            BlockEntityReg.ENCHANTED_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }

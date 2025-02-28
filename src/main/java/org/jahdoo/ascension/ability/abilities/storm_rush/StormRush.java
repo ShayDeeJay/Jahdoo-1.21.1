@@ -7,14 +7,14 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.SoundRegister;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.DAMAGE;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.common.particle.ParticleHandlers.spawnElectrifiedParticles;
-import static org.jahdoo.common.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.ascension.utils.Helpers.*;
 
 public class StormRush extends AbstractAbility {
@@ -27,6 +27,20 @@ public class StormRush extends AbstractAbility {
         this.wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
     }
 
+    AbstractElement getType(){
+        return ElementReg.frost();
+    }
+
+    @Override
+    public WandAbilityHolder getWandAbilityHolder() {
+        return wandAbilityHolder;
+    }
+
+    @Override
+    public String abilityId() {
+        return StormRushAbility.abilityId.getPath().intern();
+    }
+
     public void launchPlayerDirection() {
         var launchDistances = getTag(StormRushAbility.launchDistance);
         var damage = getTag(DAMAGE);
@@ -35,8 +49,8 @@ public class StormRush extends AbstractAbility {
         var itemInHand = Helpers.getUsedItem(player);
 
         if(player instanceof ServerPlayer serverPlayer) serverPlayer.getAbilities().mayfly = true;
-        player.playSound(SoundRegister.DASH_EFFECT_INSTANT.get(),0.5f,1.5F);
-        player.playSound(SoundRegister.ICE_ATTACH.get(), 0.5f,0.8f);
+        player.playSound(SoundReg.DASH_EFFECT_INSTANT.get(),0.5f,1.5F);
+        player.playSound(SoundReg.ICE_ATTACH.get(), 0.5f,0.8f);
         player.startAutoSpinAttack(10, damageModified, itemInHand);
 
         if(player.level().isClientSide){
@@ -50,17 +64,4 @@ public class StormRush extends AbstractAbility {
         BouncyFoot.setBouncyFoot(player, 320);
     }
 
-    AbstractElement getType(){
-        return ElementRegistry.frost();
-    }
-
-    @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return wandAbilityHolder;
-    }
-
-    @Override
-    public String abilityId() {
-        return StormRushAbility.abilityId.getPath().intern();
-    }
 }

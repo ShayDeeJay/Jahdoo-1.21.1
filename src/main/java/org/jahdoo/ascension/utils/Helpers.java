@@ -41,8 +41,8 @@ import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.AbilityRegister;
-import org.jahdoo.common.registers.DataComponentRegistry;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -83,35 +83,28 @@ public class Helpers {
 //        }
     }
 
-    public static @NotNull MutableComponent highlightTextComponent(
-        Level level,
-        String text,
-        int c1,
-        int c2,
-        double speed,
-        double dura
-    ) {
-        var component = Component.empty();
-        var split = text.split("");
-        var nonSpaceIndices = new ArrayList<Integer>();
+    public static String capitaliseFirst(String name){
+        return name.substring(0,1).toUpperCase() + name.substring(1);
+    }
 
-        for (var i = 0; i < split.length; i++) {
-            if (!split[i].equals(" ")) nonSpaceIndices.add(i);
-        }
+    public static void getSoundWithPosition(Level level, BlockPos position, SoundEvent audio){
+        level.playSound(null, position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,1,1) ;
+    }
 
-        var totalCycleLength = (nonSpaceIndices.size() * speed) + dura;
-        if (level != null) {
-            var cyclePosition = level.getGameTime() % totalCycleLength;
-            var isHighlighting = cyclePosition < (long) nonSpaceIndices.size() * speed;
-            var highlightNonSpaceIndex = isHighlighting ? (int) Math.floor(cyclePosition / speed) : -1;
-            var highlightIndex = highlightNonSpaceIndex >= 0 ? nonSpaceIndices.get(highlightNonSpaceIndex) : -1;
+    public static void getSoundWithPosition(Level level, BlockPos position, SoundEvent audio, float volume){
+        level.playSound(null, position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume,1) ;
+    }
 
-            for (var i = 0; i < split.length; i++) {
-                var colour = i == highlightIndex ? c2 : c1;
-                component.append(withStyleComponent(split[i], colour));
-            }
-        }
-        return component;
+    public static void  getSoundWithPosition(Level level, BlockPos position, SoundEvent audio, float volume, float pitch){
+        level.playSound(null, position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume, pitch) ;
+    }
+
+    public static void  getSoundWithPositionV(Level level, Vec3 position, SoundEvent audio, float volume, float pitch){
+        level.playSound(null, position.x, position.y, position.z, audio, SoundSource.PLAYERS, volume, pitch) ;
+    }
+
+    public static void getLocalSound(Level level, BlockPos position, SoundEvent audio, float volume, float pitch){
+        level.playLocalSound(position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume, pitch, false); ;
     }
 
     public static ItemStack getUsedItem(LivingEntity player){
@@ -129,34 +122,6 @@ public class Helpers {
         int variantBlue = (int) Math.min(Math.max(blue + phase * range, 0.0), 255.0);
 
         return new Color(variantRed, variantGreen, variantBlue);
-    }
-
-    public static int getColorTransition(int startColor, int endColor, int ticker, double transitionDelay) {
-        // Extract RGB components from the start color
-        int startRed = (startColor >> 16) & 0xFF;
-        int startGreen = (startColor >> 8) & 0xFF;
-        int startBlue = startColor & 0xFF;
-
-        // Extract RGB components from the end color
-        int endRed = (endColor >> 16) & 0xFF;
-        int endGreen = (endColor >> 8) & 0xFF;
-        int endBlue = endColor & 0xFF;
-
-        // Calculate progress using a sinusoidal function
-        double progress = 0.5 * (1.0 + Math.sin(2 * Math.PI * ticker / transitionDelay));
-
-        // Interpolate each RGB component
-        int red = (int) (startRed + (endRed - startRed) * progress);
-        int green = (int) (startGreen + (endGreen - startGreen) * progress);
-        int blue = (int) (startBlue + (endBlue - startBlue) * progress);
-
-        // Ensure the values are within the valid range [0, 255]
-        red = Math.min(Math.max(red, 0), 255);
-        green = Math.min(Math.max(green, 0), 255);
-        blue = Math.min(Math.max(blue, 0), 255);
-
-        // Pack the interpolated RGB components into an integer
-        return (red << 16) | (green << 8) | blue;
     }
 
     public static double getAttributeValue(Player player, Holder<Attribute> attribute){
@@ -276,26 +241,6 @@ public class Helpers {
         }
     }
 
-    public static void getSoundWithPosition(Level level, BlockPos position, SoundEvent audio){
-        level.playSound(null, position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,1,1) ;
-    }
-
-    public static void getSoundWithPosition(Level level, BlockPos position, SoundEvent audio, float volume){
-        level.playSound(null, position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume,1) ;
-    }
-
-    public static void  getSoundWithPosition(Level level, BlockPos position, SoundEvent audio, float volume, float pitch){
-        level.playSound(null, position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume, pitch) ;
-    }
-
-    public static void  getSoundWithPositionV(Level level, Vec3 position, SoundEvent audio, float volume, float pitch){
-        level.playSound(null, position.x, position.y, position.z, audio, SoundSource.PLAYERS, volume, pitch) ;
-    }
-
-    public static void getLocalSound(Level level, BlockPos position, SoundEvent audio, float volume, float pitch){
-        level.playLocalSound(position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume, pitch, false); ;
-    }
-
     public static void sendPacketsToPlayer(Level level, CustomPacketPayload payloads) {
         if((level instanceof ServerLevel serverLevel)){
             for (int j = 0; j < serverLevel.players().size(); ++j) {
@@ -350,34 +295,6 @@ public class Helpers {
         return itemStack.getItem().getMaxDamage(itemStack) - itemStack.getItem().getDamage(itemStack);
     }
 
-    public static void hurtAndKeepItem(ItemStack itemStack, int damage, Level level, LivingEntity livingEntity) {
-        var damageChance = Random.nextInt(10) == 0;
-        if (damageChance && itemStack.isDamageableItem()) {
-            damage = itemStack.getItem().damageItem(itemStack, damage, livingEntity, (item) -> { });
-
-            if (damage > 0) {
-                if(level instanceof ServerLevel serverLevel){
-                    damage = EnchantmentHelper.processDurabilityChange(serverLevel, itemStack, damage);
-                }
-
-                if (damage <= 0) return;
-            }
-
-            if (livingEntity instanceof ServerPlayer sp) {
-                if (damage != 0) {
-                    CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger(sp, itemStack, itemStack.getDamageValue() + damage);
-                }
-            }
-
-            var i = itemStack.getDamageValue() + damage;
-            itemStack.setDamageValue(i);
-
-            if (stackDurability(itemStack) == 0) {
-                livingEntity.playSound(SoundEvents.ITEM_BREAK);
-            }
-        }
-    }
-
     public static void setDurability (ItemStack itemStack, int maxDamage) {
         itemStack.set(DataComponents.MAX_DAMAGE, maxDamage);
         itemStack.set(DataComponents.MAX_STACK_SIZE, 1);
@@ -406,6 +323,121 @@ public class Helpers {
         }
     }
 
+    public static Vec3 getRandomParticleVelocity(Entity entity, double speed) {
+        var theta = Random.nextDouble() * 2 * Math.PI; // Angle around the y-axis
+        var phi = Random.nextDouble() * Math.PI; // Angle from the y-axis
+
+        // Convert spherical coordinates to Cartesian coordinates
+        var x = Math.sin(phi) * Math.cos(theta);
+        var y = Math.cos(phi);
+        var z = Math.sin(phi) * Math.sin(theta);
+
+        // Scale the velocity vector by the desired speed
+        return new Vec3(x, y, z).normalize().scale(speed);
+    }
+
+    public static String stringIdToName(String input) {
+        if(input == null) return "";
+        var words = input.split("_");
+        var result = new StringBuilder();
+        for (String word : words) {
+            word = word.trim();
+            if (!word.isEmpty()) {
+                result.append(Character.toUpperCase(word.charAt(0)))
+                    .append(word.substring(1).toLowerCase())
+                    .append(" ");
+            }
+        }
+        return result.toString().trim();
+    }
+
+    public static @NotNull MutableComponent highlightTextComponent(
+        Level level,
+        String text,
+        int c1,
+        int c2,
+        double speed,
+        double dura
+    ) {
+        var component = Component.empty();
+        var split = text.split("");
+        var nonSpaceIndices = new ArrayList<Integer>();
+
+        for (var i = 0; i < split.length; i++) {
+            if (!split[i].equals(" ")) nonSpaceIndices.add(i);
+        }
+
+        var totalCycleLength = (nonSpaceIndices.size() * speed) + dura;
+        if (level != null) {
+            var cyclePosition = level.getGameTime() % totalCycleLength;
+            var isHighlighting = cyclePosition < (long) nonSpaceIndices.size() * speed;
+            var highlightNonSpaceIndex = isHighlighting ? (int) Math.floor(cyclePosition / speed) : -1;
+            var highlightIndex = highlightNonSpaceIndex >= 0 ? nonSpaceIndices.get(highlightNonSpaceIndex) : -1;
+
+            for (var i = 0; i < split.length; i++) {
+                var colour = i == highlightIndex ? c2 : c1;
+                component.append(withStyleComponent(split[i], colour));
+            }
+        }
+        return component;
+    }
+
+    public static void hurtAndKeepItem(ItemStack itemStack, int damage, Level level, LivingEntity livingEntity) {
+        var damageChance = Random.nextInt(10) == 0;
+        if (damageChance && itemStack.isDamageableItem()) {
+            damage = itemStack.getItem().damageItem(itemStack, damage, livingEntity, (item) -> { });
+
+            if (damage > 0) {
+                if(level instanceof ServerLevel serverLevel){
+                    damage = EnchantmentHelper.processDurabilityChange(serverLevel, itemStack, damage);
+                }
+
+                if (damage <= 0) return;
+            }
+
+            if (livingEntity instanceof ServerPlayer sp) {
+                if (damage != 0) {
+                    CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger(sp, itemStack, itemStack.getDamageValue() + damage);
+                }
+            }
+
+            var i = itemStack.getDamageValue() + damage;
+            itemStack.setDamageValue(i);
+
+            if (stackDurability(itemStack) == 0) {
+                livingEntity.playSound(SoundEvents.ITEM_BREAK);
+            }
+        }
+    }
+
+    public static int getColorTransition(int startColor, int endColor, int ticker, double transitionDelay) {
+        // Extract RGB components from the start color
+        int startRed = (startColor >> 16) & 0xFF;
+        int startGreen = (startColor >> 8) & 0xFF;
+        int startBlue = startColor & 0xFF;
+
+        // Extract RGB components from the end color
+        int endRed = (endColor >> 16) & 0xFF;
+        int endGreen = (endColor >> 8) & 0xFF;
+        int endBlue = endColor & 0xFF;
+
+        // Calculate progress using a sinusoidal function
+        double progress = 0.5 * (1.0 + Math.sin(2 * Math.PI * ticker / transitionDelay));
+
+        // Interpolate each RGB component
+        int red = (int) (startRed + (endRed - startRed) * progress);
+        int green = (int) (startGreen + (endGreen - startGreen) * progress);
+        int blue = (int) (startBlue + (endBlue - startBlue) * progress);
+
+        // Ensure the values are within the valid range [0, 255]
+        red = Math.min(Math.max(red, 0), 255);
+        green = Math.min(Math.max(green, 0), 255);
+        blue = Math.min(Math.max(blue, 0), 255);
+
+        // Pack the interpolated RGB components into an integer
+        return (red << 16) | (green << 8) | blue;
+    }
+
     @SafeVarargs
     public static float attributeModifierCalculator(
         LivingEntity player,
@@ -414,10 +446,10 @@ public class Helpers {
         Holder<Attribute> ... attribute
     ){
         var wandItem = Helpers.getUsedItem(player);
-        var abilityName = wandItem.get(DataComponentRegistry.WAND_DATA.get());
+        var abilityName = wandItem.get(ComponentReg.WAND_DATA.get());
         if(abilityName == null) return initialValue;
         float getAttribute = 0;
-        var getAbility = AbilityRegister.getFirstSpellByTypeId(abilityName.selectedAbility());
+        var getAbility = AbilityReg.getFirstSpellByTypeId(abilityName.selectedAbility());
         if(getAbility.isEmpty()) return initialValue;
 
         var reCalculatedDamage = initialValue;
@@ -438,33 +470,6 @@ public class Helpers {
         }
 
         return reCalculatedDamage;
-    }
-
-    public static Vec3 getRandomParticleVelocity(Entity entity, double speed) {
-        var theta = Random.nextDouble() * 2 * Math.PI; // Angle around the y-axis
-        var phi = Random.nextDouble() * Math.PI; // Angle from the y-axis
-
-        // Convert spherical coordinates to Cartesian coordinates
-        var x = Math.sin(phi) * Math.cos(theta);
-        var y = Math.cos(phi);
-        var z = Math.sin(phi) * Math.sin(theta);
-
-        // Scale the velocity vector by the desired speed
-        return new Vec3(x, y, z).normalize().scale(speed);
-    }
-
-    public static String stringIdToName(String input) {
-        var words = input.split("_");
-        var result = new StringBuilder();
-        for (String word : words) {
-            word = word.trim();
-            if (!word.isEmpty()) {
-                result.append(Character.toUpperCase(word.charAt(0)))
-                    .append(word.substring(1).toLowerCase())
-                    .append(" ");
-            }
-        }
-        return result.toString().trim();
     }
 
 }

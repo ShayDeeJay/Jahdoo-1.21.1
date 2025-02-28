@@ -29,7 +29,7 @@ import static org.jahdoo.common.client.IconLocations.*;
 import static org.jahdoo.common.client.SharedUI.BORDER_COLOUR;
 import static org.jahdoo.common.client.gui.ToggleComponent.textWithBackgroundLarge;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 
 public class AugmentScreen extends Screen  {

@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.networking.packet.client2server.FlyingPacketC2SPacket;
 
-import static org.jahdoo.common.registers.AttachmentRegister.MAGE_FLIGHT;
+import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
 
 public class MageFlightClient {
     public static void mageFlightClient(Player player){

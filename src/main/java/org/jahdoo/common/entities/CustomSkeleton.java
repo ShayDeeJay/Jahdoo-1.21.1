@@ -21,8 +21,8 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.CommonHooks;
-import org.jahdoo.common.registers.AttachmentRegister;
-import org.jahdoo.common.registers.EntitiesRegister;
+import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.EntityReg;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -43,7 +43,7 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
     }
 
     public CustomSkeleton(Level level, LivingEntity owner, @Nullable ItemStack arrowType) {
-        super(EntitiesRegister.CUSTOM_SKELETON.get(), level);
+        super(EntityReg.CUSTOM_SKELETON.get(), level);
         this.owner = owner;
         this.arrowType = arrowType;
     }
@@ -94,7 +94,7 @@ public class CustomSkeleton extends Skeleton implements TamableEntity {
         var mobArrow = ProjectileUtil.getMobArrow(this, arrow, velocity, weapon);
         if(isElite){
             if (Random.nextInt(2) == 0) {
-                mobArrow.setData(AttachmentRegister.BOOL.get(), true);
+                mobArrow.setData(AttachmentReg.BOOL.get(), true);
                 mobArrow.setBaseDamage(20);
             }
         }

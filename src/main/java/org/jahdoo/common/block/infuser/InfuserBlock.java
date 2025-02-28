@@ -28,8 +28,9 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationBlock;
 import org.jahdoo.common.items.augments.AugmentItemHelper;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import static org.jahdoo.common.registers.BlocksRegister.sharedBehaviour;
+import org.jahdoo.common.registers.BlockEntityReg;
+
+import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 
 public class InfuserBlock extends BaseEntityBlock {
 
@@ -93,7 +94,7 @@ public class InfuserBlock extends BaseEntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
         return createTickerHelper(
             entityType,
-            BlockEntitiesRegister.INFUSER_BE.get(),
+            BlockEntityReg.INFUSER_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }

@@ -10,7 +10,7 @@ import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.Map;
 
-import static org.jahdoo.common.registers.AttachmentRegister.CASTER_DATA;
+import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
 public class CooldownsDataSyncS2CPacket implements CustomPacketPayload {
     public static final Type<CooldownsDataSyncS2CPacket> TYPE = new Type<>(Helpers.res("player_cooldowns"));

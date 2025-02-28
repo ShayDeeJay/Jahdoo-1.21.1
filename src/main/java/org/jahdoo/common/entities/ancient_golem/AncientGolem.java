@@ -5,8 +5,6 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -22,7 +20,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -33,9 +30,9 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.entities.TamableEntity;
 import org.jahdoo.common.entities.goals.*;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.EntitiesRegister;
-import org.jahdoo.common.registers.ItemsRegister;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.EntityReg;
+import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,7 +82,7 @@ public class AncientGolem extends IronGolem implements TamableEntity {
         int lifeTime,
         double effectChance
     ) {
-        super(EntitiesRegister.ANCIENT_GOLEM.get(), level);
+        super(EntityReg.ANCIENT_GOLEM.get(), level);
         this.owner = player;
         this.effectDuration = effectDuration;
         this.effectStrength = effectStrength;
@@ -116,7 +113,7 @@ public class AncientGolem extends IronGolem implements TamableEntity {
     }
 
     private AbstractElement element(){
-        return ElementRegistry.vitality();
+        return ElementReg.vitality();
     }
 
     @Override
@@ -264,7 +261,7 @@ public class AncientGolem extends IronGolem implements TamableEntity {
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         var itemstack = player.getItemInHand(hand);
-        if (!itemstack.is(ItemsRegister.AUGMENT_HYPER_CORE)) {
+        if (!itemstack.is(ItemReg.AUGMENT_HYPER_CORE)) {
             return InteractionResult.PASS;
         } else {
             var health = this.getHealth();

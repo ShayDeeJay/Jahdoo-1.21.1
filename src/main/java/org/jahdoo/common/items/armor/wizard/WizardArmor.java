@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static org.jahdoo.common.items.runes.rune_data.RuneHolder.*;
-import static org.jahdoo.common.registers.ArmorMaterialRegistry.*;
-import static org.jahdoo.common.registers.DataComponentRegistry.*;
+import static org.jahdoo.common.registers.ArmorMaterialReg.*;
+import static org.jahdoo.common.registers.ComponentReg.*;
 
 public class WizardArmor extends BaseArmor implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);

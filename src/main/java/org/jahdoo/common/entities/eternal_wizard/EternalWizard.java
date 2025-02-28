@@ -1,6 +1,5 @@
 package org.jahdoo.common.entities.eternal_wizard;
 
-import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -13,7 +12,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
@@ -74,7 +72,7 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
     }
 
     public EternalWizard(Level level, Player player, int lifeTime, double damage) {
-        super(EntitiesRegister.ETERNAL_WIZARD.get(), level);
+        super(EntityReg.ETERNAL_WIZARD.get(), level);
         this.owner = player;
         this.lifeTime = lifeTime;
         this.damage = damage;
@@ -83,7 +81,7 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
     }
 
     public EternalWizard(Level level, Player player, double damage, double effectDuration, double effectStrength, int lifeTime, double effectChance) {
-        super(EntitiesRegister.ETERNAL_WIZARD.get(), level);
+        super(EntityReg.ETERNAL_WIZARD.get(), level);
         this.owner = player;
         this.reassessWeaponGoal();
         this.damage = damage;
@@ -191,8 +189,8 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
 
     private void fireballAbility(LivingEntity target) {
         ElementProjectile elementProjectile = new ElementProjectile(
-            EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(), this,
-            EntityPropertyRegister.FIRE_BALL.get().setAbilityId(), -0.3,
+            EntityReg.INFERNO_ELEMENT_PROJECTILE.get(), this,
+            EntityDataReg.FIRE_BALL.get().setAbilityId(), -0.3,
             fireballModule(),
             abilityId.getPath().intern()
         );
@@ -206,7 +204,7 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
             .setEffectDurationWithValue(0,0,this.effectDuration)
             .setEffectChanceWithValue(0,0, this.effectChance)
             .setEffectStrengthWithValue(0,0,this.effectStrength)
-            .setModifier(FireballAbility.novaRange, 0,0,true, Helpers.Random.nextInt(4,6))
+            .setModifier(FireballAbility.NOVA_RANGE, 0,0,true, Helpers.Random.nextInt(4,6))
             .setModifierWithoutBounds(buddy, 0)
             .buildAndReturn();
     }
@@ -214,9 +212,9 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
     private void shooterAbility(LivingEntity target) {
         GenericProjectile arrow = new GenericProjectile(
             this, this.getX(), this.getY() + 2, this.getZ(),
-            EntityPropertyRegister.ETHEREAL_ARROW.get().setAbilityId(),
+            EntityDataReg.ETHEREAL_ARROW.get().setAbilityId(),
             EtherealArrow.setArrowProperties(this.damage, this.effectDuration, this.effectStrength, this.effectChance),
-            ElementRegistry.vitality(),
+            ElementReg.vitality(),
             FrostboltsAbility.abilityId.getPath().intern()
         );
         fireProjectile(target, arrow, 0.9, 1.6F);
@@ -227,7 +225,7 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
         if (this.level() instanceof ServerLevel) {
             this.goalSelector.removeGoal(this.wandGoal);
             ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof WandItem));
-            if (itemstack.is(ItemsRegister.WAND_ITEM_VITALITY.get())) {
+            if (itemstack.is(ItemReg.WAND_ITEM_VITALITY.get())) {
                 //Set attack interval
                 int i = 10;
                 this.wandGoal.setMinAttackInterval(i);
@@ -244,7 +242,7 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
             double d2 = target.getZ() - this.getZ();
             double d3 = Math.sqrt(d0 * d0 + d2 * d2);
             projectile.shoot(d0, d1 + d3 * (double)0.2F, d2, velocity, 0);
-            this.playSound(SoundRegister.ORB_CREATE.get(), 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
+            this.playSound(SoundReg.ORB_CREATE.get(), 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
             castAnimation(this, SINGLE_CAST_ID);
             this.level().addFreshEntity(projectile);
         }

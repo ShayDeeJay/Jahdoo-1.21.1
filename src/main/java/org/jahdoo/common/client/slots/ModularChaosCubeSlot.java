@@ -4,13 +4,13 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jahdoo.common.components.DataComponentHelper;
-import org.jahdoo.common.registers.AbilityRegister;
+import org.jahdoo.common.registers.AbilityReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.jahdoo.common.registers.ElementRegistry.*;
-import static org.jahdoo.common.registers.ItemsRegister.*;
+import static org.jahdoo.common.registers.ElementReg.*;
+import static org.jahdoo.common.registers.ItemReg.*;
 
 public class ModularChaosCubeSlot extends SlotItemHandler {
 
@@ -43,7 +43,7 @@ public class ModularChaosCubeSlot extends SlotItemHandler {
         var abilityName = DataComponentHelper.getAbilityTypeItemStack(itemStack);
         var isValid = new AtomicBoolean(false);
 
-        AbilityRegister.getFirstSpellByTypeId(abilityName)
+        AbilityReg.getFirstSpellByTypeId(abilityName)
             .ifPresent(ability -> isValid.set(itemStack.is(AUGMENT.get()) && ability.getElemenType() == utility()));
 
         return isValid.get();

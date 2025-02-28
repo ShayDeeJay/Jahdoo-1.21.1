@@ -22,8 +22,8 @@ import org.jahdoo.ascension.ability.abilities.frostbolts.FrostboltsAbility;
 import org.jahdoo.common.client.RenderHelpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.registers.AbilityRegister;
-import org.jahdoo.common.registers.AttachmentRegister;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.ascension.utils.Configuration;
 import org.jahdoo.ascension.utils.Helpers;
 
@@ -34,7 +34,7 @@ import java.util.Objects;
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
+import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
 
 public class RenderEventHelper {
 
@@ -96,11 +96,11 @@ public class RenderEventHelper {
         );
 
         var typeId = getSelectedAbility.selectedAbility();
-        var ability = AbilityRegister.getFirstSpellByTypeId(typeId);
+        var ability = AbilityReg.getFirstSpellByTypeId(typeId);
         var view = event.getCamera().getPosition();
         var pose = event.getPoseStack();
         var buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        if(ability.isEmpty() || filtered.contains(typeId) || player.getData(AttachmentRegister.CASTER_DATA.get()).isAbilityOnCooldown(typeId)) return;
+        if(ability.isEmpty() || filtered.contains(typeId) || player.getData(AttachmentReg.CASTER_DATA.get()).isAbilityOnCooldown(typeId)) return;
 
         var pickDistance = Helpers.getTag(player, CASTING_DISTANCE, typeId);
         var radius = Helpers.getTag(player, AOE, typeId) * 3;

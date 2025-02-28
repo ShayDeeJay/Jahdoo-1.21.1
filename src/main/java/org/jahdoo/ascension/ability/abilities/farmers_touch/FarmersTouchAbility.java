@@ -7,31 +7,22 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.EntityPropertyRegister;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 
 
 public class FarmersTouchAbility extends AbstractBlockAbility {
+
     public static final ResourceLocation abilityId = Helpers.res("farmers_touch");
     public static final String GROWTH_CHANCE = "Growth Chance";
     public static final String HARVEST_CHANCE = "Harvest Chance";
 
     @Override
-    public void invokeAbility(Player player) {
-        GenericProjectile genericProjectile = new GenericProjectile(
-            player, 0,
-            projectileKey(),
-            abilityId.getPath().intern()
-        );
-        fireUtilityProjectile(genericProjectile, player);
-    }
-
-    @Override
     public String projectileKey() {
-        return EntityPropertyRegister.BONE_MEAL.get().setAbilityId();
+        return EntityDataReg.BONE_MEAL.get().setAbilityId();
     }
 
     @Override
@@ -42,16 +33,6 @@ public class FarmersTouchAbility extends AbstractBlockAbility {
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
-    }
-
-    @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(30, 15, 5)
-            .setRange(10, 1, 1)
-            .setAbilityTagModifiersRandom(GROWTH_CHANCE, 30, 5, false, 5)
-            .setAbilityTagModifiersRandom(HARVEST_CHANCE, 30, 5, false, 5)
-            .build();
     }
 
     @Override
@@ -71,7 +52,27 @@ public class FarmersTouchAbility extends AbstractBlockAbility {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.utility();
+        return ElementReg.utility();
+    }
+
+    @Override
+    public void invokeAbility(Player player) {
+        GenericProjectile genericProjectile = new GenericProjectile(
+            player, 0,
+            projectileKey(),
+            abilityId.getPath().intern()
+        );
+        fireUtilityProjectile(genericProjectile, player);
+    }
+
+    @Override
+    public void setModifiers(ItemStack itemStack) {
+        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+            .setMana(30, 15, 5)
+            .setRange(10, 1, 1)
+            .setAbilityTagModifiersRandom(GROWTH_CHANCE, 30, 5, false, 5)
+            .setAbilityTagModifiersRandom(HARVEST_CHANCE, 30, 5, false, 5)
+            .build();
     }
 
 }

@@ -27,7 +27,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.trading_post.ItemCosts;
 import org.jahdoo.common.items.augments.AugmentItemHelper;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
+import org.jahdoo.common.registers.BlockEntityReg;
 import org.jetbrains.annotations.Nullable;
 
 public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
@@ -89,7 +89,7 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
         BlockEntityType<T> entityType
     ) {
         return createTickerHelper(
-            entityType, BlockEntitiesRegister.SHOPPING_TABLE_BE.get(),
+            entityType, BlockEntityReg.SHOPPING_TABLE_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }

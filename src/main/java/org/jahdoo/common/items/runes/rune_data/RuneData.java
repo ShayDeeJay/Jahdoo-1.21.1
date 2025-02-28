@@ -15,7 +15,7 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.common.registers.DataComponentRegistry;
+import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,9 +28,9 @@ import static org.jahdoo.ascension.rarity.JahdooRarity.*;
 import static org.jahdoo.ascension.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.common.items.runes.rune_data.RuneCategories.fromName;
 import static org.jahdoo.common.items.runes.rune_data.RuneGenerator.*;
-import static org.jahdoo.common.registers.AttributesRegister.*;
-import static org.jahdoo.common.registers.DataComponentRegistry.RUNE_DATA;
-import static org.jahdoo.common.registers.ElementRegistry.*;
+import static org.jahdoo.common.registers.AttributeReg.*;
+import static org.jahdoo.common.registers.ComponentReg.RUNE_DATA;
+import static org.jahdoo.common.registers.ElementReg.*;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.ascension.utils.Helpers.*;
@@ -149,7 +149,7 @@ public record RuneData(
         }
 
         public static boolean hasDestinyBond(ItemStack itemStack){
-            var getHolder = itemStack.get(DataComponentRegistry.RUNE_HOLDER);
+            var getHolder = itemStack.get(ComponentReg.RUNE_HOLDER);
             if(getHolder == null) return false;
 
             for (var runeSlot : getHolder.runeSlots()) {
@@ -239,7 +239,6 @@ public record RuneData(
 
             return withStyleComponent("+" + value + "%" + " ", colourPre).copy().append(compName);
         }
-
 
         public static RuneData getRuneData(ItemStack stack){
             return stack.getOrDefault(RUNE_DATA, DEFAULT);

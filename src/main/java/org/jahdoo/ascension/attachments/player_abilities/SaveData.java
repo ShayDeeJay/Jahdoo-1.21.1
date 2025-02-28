@@ -30,10 +30,25 @@ public class SaveData implements AbstractAttachment {
 
     public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         var allKeys = nbt.getCompound("itemStacks");
-        for (String keys : allKeys.getAllKeys()) {
+        for (var keys : allKeys.getAllKeys()) {
             Optional<ItemStack> itemStack = ItemStack.parse(provider, allKeys.get(keys));
             this.itemStacks.add(itemStack.orElse(ItemStack.EMPTY));
         }
+    }
+
+    public void takeAllItems(Player player){
+        for (ItemStack itemStack : this.itemStacks) {
+            var item = itemStack.getItem();
+            if (item instanceof ArmorItem armorItem) {
+                var slot = armorItem.getEquipmentSlot();
+                var isSlotEmpty = !player.hasItemInSlot(slot);
+
+                if(isSlotEmpty) player.setItemSlot(slot, itemStack); else player.addItem(itemStack);
+            } else {
+                player.addItem(itemStack);
+            }
+        }
+        this.itemStacks.clear();
     }
 
     public void addAllItems(Player player) {
@@ -77,21 +92,6 @@ public class SaveData implements AbstractAttachment {
 
         this.itemStacks.addAll(wandItems);
         allFilteredItems.forEach(player.getInventory()::removeItem);
-    }
-
-    public void takeAllItems(Player player){
-        for (ItemStack itemStack : this.itemStacks) {
-            var item = itemStack.getItem();
-            if (item instanceof ArmorItem armorItem) {
-                var slot = armorItem.getEquipmentSlot();
-                var isSlotEmpty = !player.hasItemInSlot(slot);
-
-                if(isSlotEmpty) player.setItemSlot(slot, itemStack); else player.addItem(itemStack);
-            } else {
-                player.addItem(itemStack);
-            }
-        }
-        this.itemStacks.clear();
     }
 
 }

@@ -9,40 +9,41 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
-import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.common.entities.element_projectile.ElementProjectile;
-import org.jahdoo.common.entities.EntityMovers;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.SoundRegister;
+import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.entities.EntityMovers;
+import org.jahdoo.common.entities.element_projectile.ElementProjectile;
+import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.particle.ParticleStore;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.SoundReg;
 
 import java.util.List;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
+import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
-import static org.jahdoo.common.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.AttributesRegister.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.AttributeReg.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
 
 
 public class QuantumDestroyer extends DefaultEntityBehaviour {
+
     private double counter = 1;
     private int privateTicks;
     private boolean isFullForm;
 
-    double radius;
-    double damage;
-    double lifetime;
-    double gravitationalPull;
+    private double radius;
+    private double damage;
+    private double lifetime;
+    private double gravitationalPull;
 
     @Override
     public void getElementProjectile(ElementProjectile elementProjectile) {
@@ -50,8 +51,8 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         this.radius = this.getTag(QuantumDestroyerAbility.radius);
         this.gravitationalPull = this.getTag(GRAVITATIONAL_PULL);
         this.lifetime = this.getTag(LIFETIME);
-        if(this.elementProjectile.getOwner() != null){
-            var player = this.elementProjectile.getOwner();
+        if(this.element.getOwner() != null){
+            var player = this.element.getOwner();
             var damage = this.getTag(DAMAGE);
             this.damage = Helpers.attributeModifierCalculator(
                 (LivingEntity) player,
@@ -61,6 +62,85 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
                 MYSTIC_MAGIC_DAMAGE_MULTIPLIER
             );
         }
+    }
+
+    @Override
+    public WandAbilityHolder getWandAbilityHolder() {
+        return this.element.getwandabilityholder();
+    }
+
+    @Override
+    public String abilityId() {
+        return QuantumDestroyerAbility.abilityId.getPath().intern();
+    }
+
+    @Override
+    public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        this.element.discard();
+    }
+
+    private boolean isImmune(LivingEntity entities) {
+        return DefaultEntityBehaviour.canDamageEntity(entities, (LivingEntity) this.element.getOwner());
+    }
+
+    @Override
+    public AbstractElement getElementType() {
+        return ElementReg.mystic();
+    }
+
+    ResourceLocation abilityId = Helpers.res("quantum_destroyer_property");
+
+    @Override
+    public ResourceLocation getAbilityResource() {
+        return abilityId;
+    }
+
+    @Override
+    public DefaultEntityBehaviour getEntityProperty() {
+        return new QuantumDestroyer();
+    }
+
+    private void ambientSound() {
+        Helpers.getSoundWithPosition(
+            this.element.level(), this.element.blockPosition(),
+            SoundEvents.ELDER_GUARDIAN_AMBIENT, 1.5f, 0.6f
+        );
+    }
+
+    @Override
+    public void discardCondition() {
+        if (privateTicks > lifetime) {
+            if (this.element.tickCount == lifetime + 1) {
+                element.setAnimation(5);
+                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundEvents.ENDER_EYE_DEATH, 2.5F, 0.8F);
+            }
+
+            if(privateTicks > lifetime + 6) this.element.discard();
+        }
+    }
+
+    private void pullParticlesIn(Vec3 worldPosition){
+        var directions = worldPosition.subtract(this.element.position()).normalize();
+        var lifetime = 2;
+        var col1 = this.getElementType().partColourA();
+        var col2 = this.getElementType().partColourFade();
+        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.2f, col1, col2, true);
+
+        ParticleHandlers.sendParticles(
+            this.element.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.6
+        );
+    }
+
+    private void pushParticlesOut(Vec3 worldPosition){
+        var directions = worldPosition.subtract(this.element.position()).normalize();
+        var lifetime = 6;
+        var col1 = this.getElementType().partColourA();
+        var col2 = this.getElementType().partColourFade();
+        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 3f, col1, col2, false);
+
+        ParticleHandlers.sendParticles(
+            this.element.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.6
+        );
     }
 
     @Override
@@ -85,94 +165,33 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         this.gravitationalPull = compoundTag.getDouble(GRAVITATIONAL_PULL);
     }
 
-    @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.elementProjectile.getwandabilityholder();
-    }
-
-    @Override
-    public String abilityId() {
-        return QuantumDestroyerAbility.abilityId.getPath().intern();
-    }
-
-    @Override
-    public void onBlockBlockHit(BlockHitResult blockHitResult) {
-        this.elementProjectile.discard();
-    }
-
-    @Override
-    public void onTickMethod() {
-        privateTicks++;
-        if (privateTicks < 20) {
-            elementProjectile.setShowTrailParticles(true);
-            if(privateTicks == 1) this.entitySpawnParticles(elementProjectile.level());
-            if(this.elementProjectile.tickCount % 2 == 0) {
-                PositionFinders.getOuterRingOfRadius(this.elementProjectile.position(), 0.05, 100, this::pullParticlesIn);
-                Helpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.blockPosition(), SoundRegister.TIMER.get(), 1.5f, 1.5f);
-                this.entitySpawnParticles(elementProjectile.level());
-            }
-            this.elementProjectile.setDeltaMovement(0, 0.5, 0);
-
-        } else {
-            if(!isFullForm){
-                isFullForm = true;
-                Helpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.blockPosition(), SoundRegister.ORB_CREATE.get(), 1.5f, 0.8f);
-                ParticleHandlers.particleBurst(
-                    elementProjectile.level(), this.elementProjectile.position(), 20,
-                    genericParticleOptions(MAGIC_PARTICLE_SELECTION, this.getElementType(), 15,4),
-                    0,0,0,1f
-                );
-                this.elementProjectile.setDeltaMovement(0, 0, 0);
-            }
-
-            if(privateTicks <= lifetime){
-                if(counter < radius) counter *= 1.6;
-                elementProjectile.setAnimation(4);
-                playAmbientSound();
-                gravityEffect();
-            }
-            if(this.elementProjectile.tickCount % 2 == 0){
-                damageCalculator();
-                PositionFinders.getRandomSphericalPositions(this.elementProjectile.position(), radius / 2 - 0.5, 25, this::pushParticlesOut);
-            }
-            particle();
+    private void playAmbientSound(){
+        if (privateTicks == 21) ambientSound();
+        if(privateTicks < this.lifetime - 30){
+            if(this.element.tickCount % 40 == 0) ambientSound();
+        }
+        if(Random.nextInt(0, 20) == 0){
+            Helpers.getSoundWithPosition(
+                this.element.level(), this.element.blockPosition(),
+                SoundEvents.AMETHYST_BLOCK_RESONATE, 1.5f, 0.1f
+            );
         }
     }
 
-    private void pushParticlesOut(Vec3 worldPosition){
-        var directions = worldPosition.subtract(this.elementProjectile.position()).normalize();
-        var lifetime = 6;
-        var col1 = this.getElementType().partColourA();
-        var col2 = this.getElementType().partColourFade();
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 3f, col1, col2, false);
-
-        ParticleHandlers.sendParticles(
-            this.elementProjectile.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.6
-        );
-    }
-
-    private void pullParticlesIn(Vec3 worldPosition){
-        var directions = worldPosition.subtract(this.elementProjectile.position()).normalize();
-        var lifetime = 2;
-        var col1 = this.getElementType().partColourA();
-        var col2 = this.getElementType().partColourFade();
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.2f, col1, col2, true);
-
-        ParticleHandlers.sendParticles(
-            this.elementProjectile.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.6
-        );
-    }
-
-    @Override
-    public void discardCondition() {
-        if (privateTicks > lifetime) {
-            if (this.elementProjectile.tickCount == lifetime + 1) {
-                elementProjectile.setAnimation(5);
-                Helpers.getSoundWithPosition(this.elementProjectile.level(), this.elementProjectile.getOnPos(), SoundEvents.ENDER_EYE_DEATH, 2.5F, 0.8F);
+    private void damageCalculator(){
+        if(this.element.getOwner() == null) return;
+        this.element.level().getNearbyEntities(
+            LivingEntity.class,
+            TargetingConditions.DEFAULT,
+            (LivingEntity) this.element.getOwner(),
+            this.element.getBoundingBox().inflate(0.8)
+        ).forEach(
+            livingEntity -> {
+                if (this.isImmune(livingEntity)) {
+                    DamageUtils.damageWithJahdoo(livingEntity, this.element.getOwner(), (float) this.damage);
+                }
             }
-
-            if(privateTicks > lifetime + 6) this.elementProjectile.discard();
-        }
+        );
     }
 
     private void entitySpawnParticles(Level level){
@@ -180,48 +199,45 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         var speed = 0.05f;
 
         ParticleHandlers.particleBurst(
-            level, this.elementProjectile.position(), particleCount,
+            level, this.element.position(), particleCount,
             bakedParticleOptions(this.getElementType().id(), 4,2,false),
             0,0,0,speed
         );
         ParticleHandlers.particleBurst(
-            level, this.elementProjectile.position(), particleCount,
+            level, this.element.position(), particleCount,
             genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 4,2),
             0,0,0,speed
         );
     }
 
-    private void playAmbientSound(){
-        if (privateTicks == 21) ambientSound();
-        if(privateTicks < this.lifetime - 30){
-            if(this.elementProjectile.tickCount % 40 == 0) ambientSound();
-        }
-        if(Random.nextInt(0, 20) == 0){
-            Helpers.getSoundWithPosition(
-                this.elementProjectile.level(), this.elementProjectile.blockPosition(),
-                SoundEvents.AMETHYST_BLOCK_RESONATE, 1.5f, 0.1f
-            );
-        }
-    }
-
-    private void ambientSound() {
-        Helpers.getSoundWithPosition(
-            this.elementProjectile.level(), this.elementProjectile.blockPosition(),
-            SoundEvents.ELDER_GUARDIAN_AMBIENT, 1.5f, 0.6f
+    private void gravityEffect(){
+        var nearbyEntities = this.element.level().getEntitiesOfClass(
+            LivingEntity.class,
+            this.element.getBoundingBox().inflate(radius * 3),
+            entity -> true
         );
+
+        for (LivingEntity entities : nearbyEntities) {
+            if(isImmune(entities)){
+                var knockBackRes = entities.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
+                var resistance = knockBackRes != null ? knockBackRes.getValue() : 0;
+                var velocity = (gravitationalPull) - resistance;
+                EntityMovers.entityMover(this.element, entities, velocity);
+            }
+        }
     }
 
     private void particle(){
-        var level = this.elementProjectile.level();
+        var level = this.element.level();
         var explode = privateTicks > lifetime;
         var rando = List.of(
             genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 5, Random.nextInt(6,8)),
             bakedParticleOptions(this.getElementType().id(), 5, Random.nextInt(5,8), false)
         );
 
-        PositionFinders.getRandomSphericalPositions(this.elementProjectile, counter, Math.min(radius * 6, 20),
+        PositionFinders.getRandomSphericalPositions(this.element, counter, Math.min(radius * 6, 20),
             position -> {
-                var directions = this.elementProjectile.position().subtract(position).normalize();
+                var directions = this.element.position().subtract(position).normalize();
                 ParticleHandlers.sendParticles(
                     level,
                     rando.get(Random.nextInt(2)),
@@ -232,57 +248,42 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         );
     }
 
-    private void gravityEffect(){
-        var nearbyEntities = this.elementProjectile.level().getEntitiesOfClass(
-            LivingEntity.class,
-            this.elementProjectile.getBoundingBox().inflate(radius * 3),
-            entity -> true
-        );
-
-        for (LivingEntity entities : nearbyEntities) {
-            if(isImmune(entities)){
-                var knockBackRes = entities.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
-                var resistance = knockBackRes != null ? knockBackRes.getValue() : 0;
-                var velocity = (gravitationalPull) - resistance;
-                EntityMovers.entityMover(this.elementProjectile, entities, velocity);
+    @Override
+    public void onTickMethod() {
+        privateTicks++;
+        if (privateTicks < 20) {
+            element.setShowTrailParticles(true);
+            if(privateTicks == 1) this.entitySpawnParticles(element.level());
+            if(this.element.tickCount % 2 == 0) {
+                PositionFinders.getOuterRingOfRadius(this.element.position(), 0.05, 100, this::pullParticlesIn);
+                Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.TIMER.get(), 1.5f, 1.5f);
+                this.entitySpawnParticles(element.level());
             }
+            this.element.setDeltaMovement(0, 0.5, 0);
+
+        } else {
+            if(!isFullForm){
+                isFullForm = true;
+                Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.ORB_CREATE.get(), 1.5f, 0.8f);
+                ParticleHandlers.particleBurst(
+                    element.level(), this.element.position(), 20,
+                    genericParticleOptions(MAGIC_PARTICLE_SELECTION, this.getElementType(), 15,4),
+                    0,0,0,1f
+                );
+                this.element.setDeltaMovement(0, 0, 0);
+            }
+
+            if(privateTicks <= lifetime){
+                if(counter < radius) counter *= 1.6;
+                element.setAnimation(4);
+                playAmbientSound();
+                gravityEffect();
+            }
+            if(this.element.tickCount % 2 == 0){
+                damageCalculator();
+                PositionFinders.getRandomSphericalPositions(this.element.position(), radius / 2 - 0.5, 25, this::pushParticlesOut);
+            }
+            particle();
         }
-    }
-
-    private boolean isImmune(LivingEntity entities) {
-        return DefaultEntityBehaviour.canDamageEntity(entities, (LivingEntity) this.elementProjectile.getOwner());
-    }
-
-    private void damageCalculator(){
-        if(this.elementProjectile.getOwner() == null) return;
-        this.elementProjectile.level().getNearbyEntities(
-            LivingEntity.class,
-            TargetingConditions.DEFAULT,
-            (LivingEntity) this.elementProjectile.getOwner(),
-            this.elementProjectile.getBoundingBox().inflate(0.8)
-        ).forEach(
-            livingEntity -> {
-                if (this.isImmune(livingEntity)) {
-                    DamageUtils.damageWithJahdoo(livingEntity, this.elementProjectile.getOwner(), (float) this.damage);
-                }
-            }
-        );
-    }
-
-    @Override
-    public AbstractElement getElementType() {
-        return ElementRegistry.mystic();
-    }
-
-    ResourceLocation abilityId = Helpers.res("quantum_destroyer_property");
-
-    @Override
-    public ResourceLocation getAbilityResource() {
-        return abilityId;
-    }
-
-    @Override
-    public DefaultEntityBehaviour getEntityProperty() {
-        return new QuantumDestroyer();
     }
 }

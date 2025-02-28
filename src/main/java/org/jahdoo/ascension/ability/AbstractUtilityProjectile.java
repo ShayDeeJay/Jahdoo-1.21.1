@@ -9,7 +9,7 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
@@ -18,7 +18,7 @@ public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.utility();
+        return ElementReg.utility();
     }
 
     @Override
@@ -26,21 +26,37 @@ public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
         discardParticleEffect(5);
     }
 
-    protected void discardParticleEffect(int lifetime) {
-        var particle = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, ElementRegistry.utility(), lifetime, 1.5f, 0.1f);
-        ParticleHandlers.particleBurst(this.genericProjectile.level(), this.genericProjectile.position().add(0,0.1,0), 1, particle,0,0,0,0.06f);
+    @Override
+    public ResourceLocation getAbilityResource() {
+        return null;
+    }
+
+    public Level getLevel(){
+        return this.generic.level();
     }
 
     @Override
     public WandAbilityHolder getWandAbilityHolder() {
-        return this.genericProjectile.wandAbilityHolder();
+        return this.generic.wandAbilityHolder();
+    }
+
+    protected void discardParticleEffect(int lifetime) {
+        var particle = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, ElementReg.utility(), lifetime, 1.5f, 0.1f);
+        ParticleHandlers.particleBurst(this.generic.level(), this.generic.position().add(0,0.1,0), 1, particle,0,0,0,0.06f);
     }
 
     @Override
     public void onTickMethod() {
-        if(this.genericProjectile != null){
-            animateParticles(this.genericProjectile, getElementType());
+        if(this.generic != null){
+            animateParticles(this.generic, getElementType());
         }
+    }
+
+    protected void utilityParticleBurst(Level level, Vec3 pPos, int lifeTime, float size, int count, float speed) {
+        int col1 = this.getElementType().partColourA();
+        int col2 = this.getElementType().partColourFade();
+        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifeTime, size, col1, col2, false);
+        ParticleHandlers.particleBurst(level, pPos, count, genericParticle, speed);
     }
 
     public static void animateParticles(Projectile projectile, AbstractElement element) {
@@ -52,22 +68,11 @@ public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
         }
     }
 
-    public Level getLevel(){
-        return this.genericProjectile.level();
-    }
-
-    protected void utilityParticleBurst(Level level, Vec3 pPos, int lifeTime, float size, int count, float speed) {
-        int col1 = this.getElementType().partColourA();
-        int col2 = this.getElementType().partColourFade();
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifeTime, size, col1, col2, false);
-        ParticleHandlers.particleBurst(level, pPos, count, genericParticle, speed);
-    }
-
     @Override
     public void discardCondition() {
-        if(this.genericProjectile != null){
-            if (this.genericProjectile.tickCount > 300) {
-                this.genericProjectile.discard();
+        if(this.generic != null){
+            if (this.generic.tickCount > 300) {
+                this.generic.discard();
                 this.discardParticleEffect(5);
             }
 //            var maxDis = this.genericProjectile.maxDistance;
@@ -77,13 +82,6 @@ public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
 //                this.discardParticleEffect(5);
 //            }
         }
-    }
-
-
-
-    @Override
-    public ResourceLocation getAbilityResource() {
-        return null;
     }
 
 }

@@ -2,8 +2,6 @@ package org.jahdoo.common.entities.aoe_cloud;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -14,17 +12,15 @@ import net.minecraft.world.level.Level;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.common.entities.IEntityProperties;
-import org.jahdoo.common.registers.DataComponentRegistry;
-import org.jahdoo.common.registers.EntitiesRegister;
-import org.jahdoo.common.registers.EntityPropertyRegister;
+import org.jahdoo.common.registers.EntityDataReg;
+import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 import static net.minecraft.network.syncher.EntityDataSerializers.*;
 import static net.minecraft.network.syncher.SynchedEntityData.*;
-import static org.jahdoo.common.registers.DataComponentRegistry.*;
+import static org.jahdoo.common.registers.ComponentReg.*;
 
 public class AoeCloud extends Entity implements TraceableEntity, IEntityProperties {
 
@@ -50,14 +46,14 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         String selectedAbility,
         String abilityId
     )  {
-        super(EntitiesRegister.CUSTOM_AOE_CLOUD.get(), level);
+        super(EntityReg.CUSTOM_AOE_CLOUD.get(), level);
         this.reapplyPosition();
         this.setRadius(setWidth);
         this.owner = livingEntity;
         this.wandAbilityHolder = livingEntity.getItemInHand(livingEntity.getUsedItemHand()).get(WAND_ABILITY_HOLDER.get());
         this.setEntityType(selectedAbility);
         this.abilityId = abilityId;
-        this.getAoe = EntityPropertyRegister.getProperty(selectedAbility);
+        this.getAoe = EntityDataReg.getProperty(selectedAbility);
         this.getAoe.getAoeCloud(this);
         this.getRandomCloudRadius = Helpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
     }
@@ -70,14 +66,14 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         WandAbilityHolder wandAbilityHolder,
         String abilityId
     )  {
-        super(EntitiesRegister.CUSTOM_AOE_CLOUD.get(), level);
+        super(EntityReg.CUSTOM_AOE_CLOUD.get(), level);
         this.reapplyPosition();
         this.setRadius(setWidth);
         this.owner = livingEntity;
         this.wandAbilityHolder = wandAbilityHolder;
         this.setEntityType(selectedAbility);
         this.abilityId = abilityId;
-        this.getAoe = EntityPropertyRegister.getProperty(selectedAbility);
+        this.getAoe = EntityDataReg.getProperty(selectedAbility);
         this.getAoe.getAoeCloud(this);
         this.getRandomCloudRadius = Helpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
     }
@@ -161,7 +157,7 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         }
         this.setRadius(tag.getFloat("radius"));
         if(getAoe == null){
-            this.getAoe = EntityPropertyRegister.REGISTRY
+            this.getAoe = EntityDataReg.REGISTRY
                 .get(Helpers.res(tag.getString("get_selection")))
                 .getEntityProperty();
             getAoe.getAoeCloud(this);

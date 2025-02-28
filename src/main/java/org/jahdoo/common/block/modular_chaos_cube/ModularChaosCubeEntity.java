@@ -25,10 +25,10 @@ import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.AbilityRegister;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jahdoo.common.registers.DataComponentRegistry;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +45,7 @@ import static org.jahdoo.ascension.attachments.player_abilities.ModularChaosCube
 import static org.jahdoo.common.components.DataComponentHelper.getKeyFromAugment;
 import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.common.entities.EntityAnimations.*;
-import static org.jahdoo.common.registers.AttachmentRegister.*;
+import static org.jahdoo.common.registers.AttachmentReg.*;
 
 
 public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProvider, GeoBlockEntity {
@@ -56,7 +56,7 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
     private int entityTicker;
 
     public ModularChaosCubeEntity(BlockPos pos, BlockState state) {
-        super(BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(), pos, state, 1);
+        super(BlockEntityReg.MODULAR_CHAOS_CUBE_BE.get(), pos, state, 1);
         this.setData(MODULAR_CHAOS_CUBE, ModularChaosCubeProperties.initData(this.getBlockPos()));
     }
 
@@ -123,7 +123,7 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
 
     @Override
     public int setCraftingCost() {
-        var getHolder = this.augmentSlot().get(DataComponentRegistry.WAND_ABILITY_HOLDER);
+        var getHolder = this.augmentSlot().get(ComponentReg.WAND_ABILITY_HOLDER);
         if(getHolder == null) return -1;
         return (int) getSpecificValue(getKeyFromAugment(this.augmentSlot()),  getHolder, AbilityBuilder.MANA_COST);
     }
@@ -133,7 +133,7 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
         PositionFinders.getRandomSphericalPositions(this.getBlockPos().getCenter(), radius, positions,
             pos -> {
                 var directions = this.getBlockPos().getCenter().subtract(pos).normalize();
-                var particle = ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, ElementRegistry.utility(), (int) (radius * 5), 0.6f);
+                var particle = ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, ElementReg.utility(), (int) (radius * 5), 0.6f);
                 ParticleHandlers.sendParticles(level, particle, pos, 0, directions.x, directions.y, directions.z, radius / 5);
             }
         );
@@ -249,7 +249,7 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
                 positionalParticles(level, 30, 0.7);
                 useSound(0.05f,1.4f, level);
                 var getAbilityId = DataComponentHelper.getAbilityTypeItemStack(augmentSlot);
-                var getAbility = AbilityRegister.getFirstSpellByTypeId(getAbilityId);
+                var getAbility = AbilityReg.getFirstSpellByTypeId(getAbilityId);
                 if(getAbility.isPresent()){
                     if(getAbility.get() instanceof AbstractBlockAbility abstractBlockAbility){
                         abstractBlockAbility.invokeAbilityBlock(getActionDirection(this), this);

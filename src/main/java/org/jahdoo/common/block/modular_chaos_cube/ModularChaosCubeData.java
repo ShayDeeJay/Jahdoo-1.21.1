@@ -3,7 +3,7 @@ package org.jahdoo.common.block.modular_chaos_cube;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.common.networking.packet.client2server.ModularChaosCubeC2SPacket;
-import static org.jahdoo.common.registers.AttachmentRegister.MODULAR_CHAOS_CUBE;
+import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 public class ModularChaosCubeData {
 
     // Toggle the power state

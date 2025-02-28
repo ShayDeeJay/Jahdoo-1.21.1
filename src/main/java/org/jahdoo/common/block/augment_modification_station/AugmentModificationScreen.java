@@ -16,8 +16,8 @@ import org.jahdoo.common.client.slots.InventorySlots;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.networking.packet.client2server.AugmentModificationChargeC2S;
-import org.jahdoo.common.registers.DataComponentRegistry;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +33,7 @@ import static org.jahdoo.common.block.augment_modification_station.AugmentModifi
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
 import static org.jahdoo.common.items.augments.AugmentRatingSystem.calculateRatingNext;
 import static org.jahdoo.common.networking.packet.client2server.AugmentModificationChargeC2S.chargeCoreSides;
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 
@@ -76,7 +76,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         if(item.isEmpty()) return;
         var spacer = new AtomicInteger();
         int width = this.width / 2;
-        var getTag = this.item.get(DataComponentRegistry.WAND_ABILITY_HOLDER);
+        var getTag = this.item.get(ComponentReg.WAND_ABILITY_HOLDER);
         if (getTag == null) return;
         var components = componentsWithBounds(item, this.getMinecraft().level);
 
@@ -100,7 +100,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
 
     public static List<Component> componentsWithBounds(ItemStack item, Level level){
         var components = getComponents(item, level);
-        var getTag =item.get(DataComponentRegistry.WAND_ABILITY_HOLDER);
+        var getTag =item.get(ComponentReg.WAND_ABILITY_HOLDER);
         var compNew = components
             .subList(1, components.size()-2).stream().filter(component -> getAbilityModifiers(component, getTag).highestValue() != -1)
             .filter(component -> !component.equals(Component.literal(" ")) && !component.getString().contains("Unique"));
@@ -153,14 +153,14 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
 
     private void doOnClick(Component component, ItemStack itemStack, boolean correctAdjustment, int posX, int posY){
         if(this.isInHitbox(posX, posY)){
-            var getTag = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER);
+            var getTag = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER);
             if(getTag == null) return;
             var abilityKey = getTag.abilityProperties().keySet().stream().findFirst().get();
             if(component == null) return;
             var localHolder = getAbilityModifiers(component, getTag);
             this.chargeCoreType(this.getChargeableCore());
             updateAugmentConfig(
-                extractName(component.getString()), localHolder, 0, abilityKey, getTag,
+                extractName(component.getString()), localHolder, abilityKey, getTag,
                 (myHolder) ->  this.item.set(WAND_ABILITY_HOLDER, myHolder),entity()
             );
             var level = getMinecraft().level;
@@ -262,7 +262,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         overlayInventory(guiGraphics, startX, startY);
         SharedUI.augmentCoreSlots(guiGraphics, 20, 10, BORDER_COLOUR, this.width, this.height, getFadedColourBackground(0.7f));
 
-        ElementRegistry.fromId(getElementIdAugment(this.item)).ifPresent(
+        ElementReg.fromId(getElementIdAugment(this.item)).ifPresent(
             element ->bezelMaker(guiGraphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element)
         );
     }

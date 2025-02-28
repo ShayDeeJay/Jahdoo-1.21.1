@@ -1,7 +1,6 @@
 package org.jahdoo.ascension.ability.effects;
 
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -11,9 +10,18 @@ import static net.minecraft.world.effect.MobEffectCategory.BENEFICIAL;
 
 public class ItemMagnetEffect extends MobEffect {
 
-
     public ItemMagnetEffect() {
         super(BENEFICIAL, 3436524);
+    }
+
+    @Override
+    public boolean isBeneficial() {
+        return true;
+    }
+
+    @Override
+    public boolean shouldApplyEffectTickThisTick(int pDuration, int pAmplifier) {
+        return true;
     }
 
     @Override
@@ -42,13 +50,4 @@ public class ItemMagnetEffect extends MobEffect {
         return true;
     }
 
-    @Override
-    public boolean shouldApplyEffectTickThisTick(int pDuration, int pAmplifier) {
-        return true;
-    }
-
-    @Override
-    public boolean isBeneficial() {
-        return true;
-    }
 }

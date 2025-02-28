@@ -7,21 +7,18 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
 import org.jahdoo.ascension.ability.abilities.life_siphon.LifeSiphonNova;
 import org.jahdoo.ascension.ability.abilities.mob_abilities.Barrage;
 import org.jahdoo.ascension.ability.abilities.armageddon.Armageddon;
 import org.jahdoo.ascension.ability.abilities.permafrost.Permafrost;
-import org.jahdoo.common.registers.ElementRegistry;
 import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.Objects;
 
 import static java.lang.Math.*;
-import static net.minecraft.util.FastColor.*;
 import static net.minecraft.util.FastColor.ARGB32.*;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
-import static org.jahdoo.common.registers.ElementRegistry.*;
+import static org.jahdoo.common.registers.ElementReg.*;
 
 public class AoeCloudRenderer extends EntityRenderer<AoeCloud> {
 

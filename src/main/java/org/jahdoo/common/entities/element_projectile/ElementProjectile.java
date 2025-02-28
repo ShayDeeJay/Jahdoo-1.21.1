@@ -19,8 +19,8 @@ import org.jahdoo.ascension.ability.ProjectileProperties;
 import org.jahdoo.common.entities.IEntityProperties;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
-import org.jahdoo.common.registers.DataComponentRegistry;
-import org.jahdoo.common.registers.EntityPropertyRegister;
+import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.ascension.utils.Helpers;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -80,10 +80,10 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         this.setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
-        this.wandAbilityHolder = owner.getItemInHand(owner.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        this.wandAbilityHolder = owner.getItemInHand(owner.getUsedItemHand()).get(ComponentReg.WAND_ABILITY_HOLDER.get());
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
-        this.getProjectile = EntityPropertyRegister.getProperty(selectedAbility);
+        this.getProjectile = EntityDataReg.getProperty(selectedAbility);
         this.getProjectile.getElementProjectile(this);
     }
 
@@ -100,7 +100,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         this.reapplyPosition();
         this.setOwner(owner);
         this.wandAbilityHolder = wandAbilityHolder;
-        this.getProjectile =  EntityPropertyRegister.getProperty(selectedAbility);
+        this.getProjectile =  EntityDataReg.getProperty(selectedAbility);
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
         this.getProjectile.getElementProjectile(this);
@@ -121,13 +121,13 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         this.wandAbilityHolder = wandAbilityHolder;
         this.selectedAbility = selection;
         this.abilityId = abilityId;
-        this.getProjectile = EntityPropertyRegister.getProperty(selection);
+        this.getProjectile = EntityDataReg.getProperty(selection);
         this.getProjectile.getElementProjectile(this);
         this.isChildObject = true;
     }
 
     public DefaultEntityBehaviour getCurrentProjectile(){
-        return EntityPropertyRegister.getProperty(selectedAbility);
+        return EntityDataReg.getProperty(selectedAbility);
     }
 
 
@@ -223,7 +223,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         this.abilityId = pCompound.getString("abilityId");
         this.wandAbilityHolder = DefaultEntityBehaviour.readTag(pCompound, this.abilityId);
         if(this.getProjectile == null && !selectedAbility.isEmpty()){
-            this.getProjectile = EntityPropertyRegister.REGISTRY
+            this.getProjectile = EntityDataReg.REGISTRY
                 .get(Helpers.res(selectedAbility))
                 .getEntityProperty();
             this.getProjectile.readCompoundTag(pCompound);

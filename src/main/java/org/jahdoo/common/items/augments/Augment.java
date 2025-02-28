@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import org.jahdoo.common.registers.DataComponentRegistry;
+import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -60,7 +60,7 @@ public class Augment extends Item implements MenuAccess {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        var rating = DataComponentRegistry.AUGMENT_RATING.get();
+        var rating = ComponentReg.AUGMENT_RATING.get();
         if(stack.has(rating)) return stack.get(rating) >= 20.0;
         return false;
     }

@@ -2,8 +2,6 @@ package org.jahdoo.common.entities.burning_skull;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
@@ -18,16 +16,14 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.ProjectileProperties;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.EntitiesRegister;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 
@@ -40,10 +36,10 @@ import static org.jahdoo.ascension.ability.DefaultEntityBehaviour.*;
 import static org.jahdoo.common.entities.EntityAnimations.*;
 import static org.jahdoo.common.entities.EntityMovers.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
-import static org.jahdoo.common.registers.AttributesRegister.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.DataComponentRegistry.*;
-import static org.jahdoo.common.registers.EffectsRegister.*;
+import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.ComponentReg.*;
+import static org.jahdoo.common.registers.EffectReg.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static software.bernie.geckolib.animation.AnimatableManager.*;
 import static software.bernie.geckolib.util.GeckoLibUtil.*;
@@ -69,7 +65,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         double spacing,
         @Nullable LivingEntity target
     ) {
-        super(EntitiesRegister.FLAMING_SKULL.get(), owner.level());
+        super(EntityReg.FLAMING_SKULL.get(), owner.level());
         if(target != null && hasLineOfSight(this, target)) this.target = target;
         this.setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
@@ -111,7 +107,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
 
     @Override
     public AbstractElement getElementType() {
-        return ElementRegistry.inferno();
+        return ElementReg.inferno();
     }
 
     @Override

@@ -16,7 +16,7 @@ import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import java.util.Objects;
 
 import static org.jahdoo.common.items.wand.WandItemHelper.canOffHand;
-import static org.jahdoo.common.registers.ElementRegistry.*;
+import static org.jahdoo.common.registers.ElementReg.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 
 public class ElementalSword extends SwordItem {

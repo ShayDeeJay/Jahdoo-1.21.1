@@ -3,10 +3,9 @@ package org.jahdoo.ascension.trading_post;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
-import org.jahdoo.common.registers.ItemsRegister;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jetbrains.annotations.NotNull;
+import org.jahdoo.common.items.runes.rune_data.RuneHolder;
+import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;
 
@@ -17,7 +16,32 @@ import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class ShoppingArmor {
 
-    public static void enchantArmorItem(ServerLevel serverLevel, ItemStack itemStack, ArmorItem armorItem, boolean isSpecial) {
+    public static ItemStack getMageArmorPiece() {
+        var mageArmor = List.of(
+                new ItemStack(ItemReg.MAGE_HELMET),
+                new ItemStack(ItemReg.MAGE_CHESTPLATE),
+                new ItemStack(ItemReg.MAGE_LEGGINGS),
+                new ItemStack(ItemReg.MAGE_BOOTS)
+        );
+        return Helpers.listRandom(mageArmor);
+    }
+
+    public static ItemStack getWizardArmorPiece() {
+        var mageArmor = List.of(
+                new ItemStack(ItemReg.WIZARD_HELMET),
+                new ItemStack(ItemReg.WIZARD_CHESTPLATE),
+                new ItemStack(ItemReg.WIZARD_LEGGINGS),
+                new ItemStack(ItemReg.WIZARD_BOOTS)
+        );
+        return Helpers.listRandom(mageArmor);
+    }
+
+    public static void enchantArmorItem(
+        ServerLevel serverLevel,
+        ItemStack itemStack,
+        ArmorItem armorItem,
+        boolean isSpecial
+    ) {
         var runeSlots = Random.nextInt(3);
         var slot = armorItem.getEquipmentSlot();
 
@@ -38,34 +62,8 @@ public class ShoppingArmor {
             attachEnchantment(itemStack, serverLevel, DEPTH_STRIDER, 4, 9, isSpecial);
             attachEnchantment(itemStack, serverLevel, FEATHER_FALLING, 5, 10, isSpecial);
         }
-
-        if(slot == LEGS){
-            attachEnchantment(itemStack, serverLevel, SWIFT_SNEAK, 4, 9, isSpecial);
-        }
-
-        if(slot == HEAD){
-            attachEnchantment(itemStack, serverLevel, RESPIRATION, 4, 9, isSpecial);
-        }
-    }
-
-    public static @NotNull ItemStack getMageArmorPiece() {
-        var mageArmor = List.of(
-                new ItemStack(ItemsRegister.MAGE_HELMET),
-                new ItemStack(ItemsRegister.MAGE_CHESTPLATE),
-                new ItemStack(ItemsRegister.MAGE_LEGGINGS),
-                new ItemStack(ItemsRegister.MAGE_BOOTS)
-        );
-        return Helpers.listRandom(mageArmor);
-    }
-
-    public static @NotNull ItemStack getWizardArmorPiece() {
-        var mageArmor = List.of(
-                new ItemStack(ItemsRegister.WIZARD_HELMET),
-                new ItemStack(ItemsRegister.WIZARD_CHESTPLATE),
-                new ItemStack(ItemsRegister.WIZARD_LEGGINGS),
-                new ItemStack(ItemsRegister.WIZARD_BOOTS)
-        );
-        return Helpers.listRandom(mageArmor);
+        if(slot == LEGS) attachEnchantment(itemStack, serverLevel, SWIFT_SNEAK, 4, 9, isSpecial);
+        if(slot == HEAD) attachEnchantment(itemStack, serverLevel, RESPIRATION, 4, 9, isSpecial);
     }
 
 }

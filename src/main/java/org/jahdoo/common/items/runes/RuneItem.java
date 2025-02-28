@@ -10,7 +10,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.registers.DataComponentRegistry;
+import org.jahdoo.common.registers.ComponentReg;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import static org.jahdoo.common.items.runes.RuneItemHelper.rollRandomRune;
 
 public class RuneItem extends Item implements JahdooItem {
     public RuneItem() {
-        super(new Properties().component(DataComponentRegistry.RUNE_DATA.get(), RuneData.DEFAULT));
+        super(new Properties().component(ComponentReg.RUNE_DATA.get(), RuneData.DEFAULT));
     }
 
     @Override

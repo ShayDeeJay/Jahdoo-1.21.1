@@ -9,8 +9,8 @@ import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.Map;
 
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
+import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
 
 public class DataComponentHelper {
 

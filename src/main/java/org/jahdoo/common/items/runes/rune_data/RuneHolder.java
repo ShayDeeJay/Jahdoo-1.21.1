@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.common.registers.DataComponentRegistry.RUNE_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
 
 public record RuneHolder(
     List<ItemStack> runeSlots,

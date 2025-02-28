@@ -6,28 +6,16 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
-import org.jahdoo.ascension.utils.Helpers;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+import static org.jahdoo.ascension.utils.Helpers.capitaliseFirst;
 import static org.jahdoo.common.particle.ParticleStore.*;
 
 public abstract class AbstractElement {
+
     private String elementId = null;
-
-    public final String setAbilityId() {
-        if (elementId == null) {
-            var resourceLocation = Objects.requireNonNull(abilityResource());
-            elementId = resourceLocation.getPath().intern();
-        }
-
-        return elementId;
-    }
-
-    public String name(){
-        return Helpers.stringIdToName(elementId);
-    }
 
     @Nullable
     public abstract Item getWand();
@@ -58,6 +46,19 @@ public abstract class AbstractElement {
     public abstract Holder<Attribute> manaReduction();
 
     public abstract Holder<Attribute> damageAmplifier();
+
+    public String name(){
+        return capitaliseFirst(abilityResource().getPath().intern());
+    }
+
+    public final String setAbilityId() {
+        if (elementId == null) {
+            var resourceLocation = Objects.requireNonNull(abilityResource());
+            elementId = resourceLocation.getPath().intern();
+        }
+
+        return elementId;
+    }
 
     public ElementProperties getParticleGroup(){
         return new ElementProperties(

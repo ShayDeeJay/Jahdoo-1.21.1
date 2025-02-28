@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ascension.ability.abilities.storm_rush.StormRushAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.common.registers.DataComponentRegistry;
+import org.jahdoo.common.registers.ComponentReg;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
-import static org.jahdoo.common.registers.EffectsRegister.FROST_EFFECT;
+import static org.jahdoo.common.registers.EffectReg.FROST_EFFECT;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 @Mixin(Player.class)
@@ -39,7 +39,7 @@ public abstract class PlayerSpinAttackMixin extends LivingEntity {
     )
     private void attackEvent(Entity target, CallbackInfo ci){
         if(this.isAutoSpinAttack()){
-            var wandAbilityHolder = this.getItemInHand(this.getUsedItemHand()).get(DataComponentRegistry.WAND_ABILITY_HOLDER);
+            var wandAbilityHolder = this.getItemInHand(this.getUsedItemHand()).get(ComponentReg.WAND_ABILITY_HOLDER);
             if(wandAbilityHolder != null){
                 var ability = StormRushAbility.abilityId.getPath().intern();
                 if(wandAbilityHolder.abilityProperties().containsKey(ability)){

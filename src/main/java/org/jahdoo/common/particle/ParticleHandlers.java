@@ -14,13 +14,13 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.PositionFinders;
 
 import java.util.List;
 
 import static org.jahdoo.common.particle.ParticleStore.*;
-import static org.jahdoo.common.registers.AttachmentRegister.CASTER_DATA;
+import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class ParticleHandlers {
@@ -366,10 +366,10 @@ public class ParticleHandlers {
         var casterData = player.getData(CASTER_DATA);
         var manaReduction = casterData.getMaxMana(player) / 60;
         var bakedParticleOptions = new BakedParticleOptions(
-            ElementRegistry.vitality().id(),
+            ElementReg.vitality().id(),
             6, 2f, false
         );
-        var genericParticleOptions = genericParticleOptions(GENERIC_PARTICLE_SELECTION, ElementRegistry.vitality(), 6, 2f);
+        var genericParticleOptions = genericParticleOptions(GENERIC_PARTICLE_SELECTION, ElementReg.vitality(), 6, 2f);
 
         var particleOptionsList = List.of(
             bakedParticleOptions,

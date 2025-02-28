@@ -8,14 +8,15 @@ import org.jahdoo.ascension.element.AbstractElement;
 //import org.assets.jahdoo.attachments.player_abilities.NovaSmash;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.items.wand.CastHelper;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 
-import static org.jahdoo.common.registers.AttachmentRegister.NOVA_SMASH;
+import static org.jahdoo.common.registers.AttachmentReg.NOVA_SMASH;
 
 public class NovaSmashAbility extends AbilityRegistrar {
+
     public static final ResourceLocation abilityId = Helpers.res("nova_smash");
 
     @Override
@@ -29,7 +30,7 @@ public class NovaSmashAbility extends AbilityRegistrar {
     }
 
     @Override
-    public boolean internallyChargeManaAndCooldown() {
+    public boolean selfChargeAbility() {
         return true;
     }
 
@@ -50,7 +51,7 @@ public class NovaSmashAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.mystic();
+        return ElementReg.mystic();
     }
 
     @Override
@@ -70,4 +71,5 @@ public class NovaSmashAbility extends AbilityRegistrar {
             .setDamage(12, 4, 2)
             .build();
     }
+
 }

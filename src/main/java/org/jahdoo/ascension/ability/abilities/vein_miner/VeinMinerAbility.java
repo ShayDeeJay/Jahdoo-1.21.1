@@ -8,29 +8,20 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.EntityPropertyRegister;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 
 
 public class VeinMinerAbility extends AbstractBlockAbility {
+
     public static final ResourceLocation abilityId = Helpers.res("vein_miner");
     public static final String VEIN_MINE_SIZE = "Total Vein Size";
 
     @Override
-    public void invokeAbility(Player player) {
-        GenericProjectile genericProjectile = new GenericProjectile(
-            player, 0,
-            projectileKey(),
-            abilityId.getPath().intern()
-        );
-        fireUtilityProjectile(genericProjectile, player);
-    }
-
-    @Override
     public String projectileKey() {
-        return EntityPropertyRegister.VEIN_MINER.get().setAbilityId();
+        return EntityDataReg.VEIN_MINER.get().setAbilityId();
     }
 
     @Override
@@ -41,14 +32,6 @@ public class VeinMinerAbility extends AbstractBlockAbility {
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
-    }
-
-    @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(30, 20, 2)
-            .setAbilityTagModifiersRandom(VEIN_MINE_SIZE, 256,32, true, 32)
-            .build();
     }
 
     @Override
@@ -68,6 +51,25 @@ public class VeinMinerAbility extends AbstractBlockAbility {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.utility();
+        return ElementReg.utility();
     }
+
+    @Override
+    public void setModifiers(ItemStack itemStack) {
+        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+            .setMana(30, 20, 2)
+            .setAbilityTagModifiersRandom(VEIN_MINE_SIZE, 256,32, true, 32)
+            .build();
+    }
+
+    @Override
+    public void invokeAbility(Player player) {
+        GenericProjectile genericProjectile = new GenericProjectile(
+            player, 0,
+            projectileKey(),
+            abilityId.getPath().intern()
+        );
+        fireUtilityProjectile(genericProjectile, player);
+    }
+
 }

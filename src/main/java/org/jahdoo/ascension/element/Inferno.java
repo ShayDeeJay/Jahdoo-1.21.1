@@ -3,23 +3,19 @@ package org.jahdoo.ascension.element;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
-import org.jahdoo.common.registers.AttributesRegister;
-import org.jahdoo.common.registers.EffectsRegister;
-import org.jahdoo.common.registers.ItemsRegister;
-import org.jahdoo.ascension.utils.Helpers;
+
+import static net.minecraft.sounds.SoundEvents.FIRECHARGE_USE;
+import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.jahdoo.ascension.utils.Helpers.res;
+import static org.jahdoo.common.registers.AttributeReg.*;
+import static org.jahdoo.common.registers.EffectReg.INFERNO_EFFECT;
+import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_INFERNO;
 
 public class Inferno extends AbstractElement {
-    ResourceLocation abilityId = Helpers.res("inferno");
-
-    @Override
-    public String name() {
-        return abilityId.getPath().intern().substring(0,1).toUpperCase() + abilityId.getPath().intern().substring(1);
-    }
+    private ResourceLocation abilityId = res("inferno");
 
     @Override
     public ResourceLocation abilityResource() {
@@ -33,22 +29,22 @@ public class Inferno extends AbstractElement {
 
     @Override
     public int textColourA() {
-        return FastColor.ARGB32.color(255, 170, 70);
+        return color(255, 170, 70);
     }
 
     @Override
     public int textColourB() {
-        return FastColor.ARGB32.color(238, 144, 45);
+        return color(238, 144, 45);
     }
 
     @Override
     public int partColourA() {
-        return FastColor.ARGB32.color(255, 68, 0);
+        return color(255, 68, 0);
     }
 
     @Override
     public int partColourB() {
-        return FastColor.ARGB32.color(255, 121, 73);
+        return color(255, 121, 73);
     }
 
     @Override
@@ -58,36 +54,36 @@ public class Inferno extends AbstractElement {
 
     @Override
     public Item getWand() {
-        return ItemsRegister.WAND_ITEM_INFERNO.get();
-    }
-
-    @Override
-    public ResourceLocation projectileTexture() {
-        return Helpers.res("textures/entity/fire_projectile.png");
+        return WAND_ITEM_INFERNO.get();
     }
 
     @Override
     public SoundEvent sound() {
-        return SoundEvents.FIRECHARGE_USE;
+        return FIRECHARGE_USE;
     }
 
     @Override
     public Holder<MobEffect> effect() {
-        return EffectsRegister.INFERNO_EFFECT.getDelegate();
+        return INFERNO_EFFECT.getDelegate();
     }
 
     @Override
     public Holder<Attribute> cooldownReduction() {
-        return AttributesRegister.INFERNO_COOLDOWN_REDUCTION;
+        return INFERNO_COOLDOWN_REDUCTION;
     }
 
     @Override
     public Holder<Attribute> manaReduction() {
-        return AttributesRegister.INFERNO_MANA_COST_REDUCTION;
+        return INFERNO_MANA_COST_REDUCTION;
     }
 
     @Override
     public Holder<Attribute> damageAmplifier() {
-        return AttributesRegister.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
+        return INFERNO_MAGIC_DAMAGE_MULTIPLIER;
+    }
+
+    @Override
+    public ResourceLocation projectileTexture() {
+        return res("textures/entity/fire_projectile.png");
     }
 }

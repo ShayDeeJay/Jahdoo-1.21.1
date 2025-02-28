@@ -6,18 +6,22 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.ascension.ability.AbstractUtilityProjectile;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.UtilityHelpers;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
 
 public class BlockBreaker extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = Helpers.res("block_breaker_property");
+
+    private static final ResourceLocation abilityId = Helpers.res("block_breaker_property");
+
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
-        genericProjectile.level().playSound(null, genericProjectile.getX(), genericProjectile.getY(), genericProjectile.getZ(), genericProjectile.level().getBlockState(blockHitResult.getBlockPos()).getSoundType().getBreakSound(), SoundSource.BLOCKS, 1,1);
-        UtilityHelpers.dropItemsOrBlock(genericProjectile, blockHitResult.getBlockPos(), false, false);
-        genericProjectile.discard();
+        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        var breakSound = generic.level().getBlockState(blockHitResult.getBlockPos()).getSoundType().getBreakSound();
+
+        generic.level().playSound(null, generic.getX(), generic.getY(), generic.getZ(), breakSound, SoundSource.BLOCKS, 1,1);
+        UtilityHelpers.dropItemsOrBlock(generic, blockHitResult.getBlockPos(), false, false);
+        generic.discard();
     }
 
     @Override
@@ -34,4 +38,5 @@ public class BlockBreaker extends AbstractUtilityProjectile {
     public String abilityId() {
         return BlockBreakerAbility.abilityId.getPath().intern();
     }
+
 }

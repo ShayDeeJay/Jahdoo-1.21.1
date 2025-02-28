@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.items.KeyItem;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
+import org.jahdoo.common.registers.BlockEntityReg;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -35,7 +35,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
     public int getRarity;
 
     public LootChestEntity(BlockPos pos, BlockState state) {
-        super(BlockEntitiesRegister.LOOT_CHEST_BE.get(), pos, state);
+        super(BlockEntityReg.LOOT_CHEST_BE.get(), pos, state);
         getRarity = Random.nextInt(4);
         getTexture = List.of("loot_chest.png", "loot_chest_1.png", "loot_chest_2.png", "loot_chest_3.png").get(getRarity);
     }

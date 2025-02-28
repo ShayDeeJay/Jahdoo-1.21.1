@@ -3,18 +3,15 @@ package org.jahdoo.common.datagen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.registers.ItemsRegister;
 import org.jahdoo.ascension.utils.ModTags;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
 import static net.minecraft.tags.ItemTags.*;
-import static org.jahdoo.common.registers.ItemsRegister.*;
+import static org.jahdoo.common.registers.ItemReg.*;
 
 public class ModItemTagGenerator extends ItemTagsProvider {
 

@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.ability.AbilityBuilder;
@@ -30,22 +30,12 @@ public class ArcaneShiftAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.mystic();
+        return ElementReg.mystic();
     }
 
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
-    }
-
-    @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setStaticMana(80)
-            .setStaticCooldown(800)
-            .setDamage(20, 5, 3)
-            .setCastingDistance(50, 25, 5)
-            .build();
     }
 
     @Override
@@ -61,6 +51,16 @@ public class ArcaneShiftAbility extends AbilityRegistrar {
     @Override
     public JahdooRarity rarity() {
         return JahdooRarity.RARE;
+    }
+
+    @Override
+    public void setModifiers(ItemStack itemStack) {
+        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+            .setStaticMana(80)
+            .setStaticCooldown(800)
+            .setDamage(20, 5, 3)
+            .setCastingDistance(50, 25, 5)
+            .build();
     }
 
 }

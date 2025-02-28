@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.registers.AbilityRegister;
+import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.DataComponentHelper;
 
@@ -22,7 +22,7 @@ public class UseAbilityC2SPacket implements CustomPacketPayload {
     public void toBytes(FriendlyByteBuf bug) {}
 
     private void invokeSelectedAbility(Player player){
-        AbilityRegistrar ability = AbilityRegister.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
+        AbilityRegistrar ability = AbilityReg.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
         if(ability != null) ability.invokeAbility(player);
     }
 

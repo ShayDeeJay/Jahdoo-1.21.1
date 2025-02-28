@@ -3,25 +3,25 @@ package org.jahdoo.ascension.ability.abilities.armageddon;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
+import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.EntityPropertyRegister;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.EntityDataReg;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
+import static org.jahdoo.ascension.utils.PositionFinders.getInnerRingOfRadiusRandom;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
-import static org.jahdoo.common.registers.AttributesRegister.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 
 
 public class Armageddon extends DefaultEntityBehaviour {
@@ -36,8 +36,8 @@ public class Armageddon extends DefaultEntityBehaviour {
         super.getAoeCloud(aoeCloud);
         this.aoe = this.getTag(AOE);
         this.spawnSpeed = this.getTag(ArmageddonAbility.SPAWNING_SPEED);
-        if(this.aoeCloud.getOwner() != null){
-            var player = this.aoeCloud.getOwner();
+        if(this.cloud.getOwner() != null){
+            var player = this.cloud.getOwner();
             var damage = this.getTag(DAMAGE);
             this.damage = Helpers.attributeModifierCalculator(
                 player,
@@ -52,7 +52,7 @@ public class Armageddon extends DefaultEntityBehaviour {
 
     @Override
     public WandAbilityHolder getWandAbilityHolder() {
-        return this.aoeCloud.getwandabilityholder();
+        return this.cloud.getwandabilityholder();
     }
 
     @Override
@@ -61,27 +61,31 @@ public class Armageddon extends DefaultEntityBehaviour {
     }
 
     @Override
-    public void onTickMethod() {
-        if(aoeCloud.tickCount == 1) {
-//            PositionGetters.getOuterRingOfRadiusRandom(this.aoeCloud.position(), this.aoe, 200, this::setParticleNova);
-            this.createModules();
-        }
-
-        aoeCloud.setRadius((float) aoe / 2);
-
-        if(aoeCloud.tickCount % spawnSpeed == 0 || aoeCloud.tickCount == 0){
-            this.createModules();
-        }
+    public void discardCondition() {
+        if(cloud.tickCount > lifetime) cloud.discard();
     }
 
-    private void createModules(){
-        var getPositionInRadius = PositionFinders.getInnerRingOfRadiusRandom(aoeCloud.position(), this.aoeCloud.getRadius() * 2, 100);
-        this.createModule(getPositionInRadius.get(Helpers.Random.nextInt(0, getPositionInRadius.size())));
+
+    @Override
+    public AbstractElement getElementType() {
+        return ElementReg.inferno();
+    }
+
+    public static ResourceLocation abilityId = Helpers.res("armageddon_property");
+
+    @Override
+    public ResourceLocation getAbilityResource() {
+        return abilityId;
     }
 
     @Override
-    public void discardCondition() {
-        if(aoeCloud.tickCount > lifetime) aoeCloud.discard();
+    public DefaultEntityBehaviour getEntityProperty() {
+        return new Armageddon();
+    }
+
+    private void createModules(){
+        var getPositionInRadius = getInnerRingOfRadiusRandom(cloud.position(), this.cloud.getRadius() * 2, 100);
+        this.createModule(getPositionInRadius.get(Helpers.Random.nextInt(0, getPositionInRadius.size())));
     }
 
     public AbilityHolder setAbilityModifiers(String name, double value){
@@ -89,23 +93,10 @@ public class Armageddon extends DefaultEntityBehaviour {
         return new AbilityHolder(Map.of(name, abilityModifiers));
     }
 
-
     public WandAbilityHolder armageddonModule() {
         var wandAbilityHolder = new LinkedHashMap<String, AbilityHolder>();
         wandAbilityHolder.put(ArmageddonModule.name, this.setAbilityModifiers(DAMAGE, this.damage));
         return new WandAbilityHolder(wandAbilityHolder);
-    }
-
-    private void createModule(Vec3 location){
-        var aoeCloud = new AoeCloud(
-            this.aoeCloud.level(),
-            this.aoeCloud.getOwner(), 0.2f,
-            EntityPropertyRegister.ARMAGEDDON_MODULE.get().setAbilityId(),
-            armageddonModule(),
-            ArmageddonAbility.abilityId.getPath().intern()
-        );
-        aoeCloud.setPos(location.x, location.y + Helpers.Random.nextInt(6, 12), location.z);
-        aoeCloud.level().addFreshEntity(aoeCloud);
     }
 
     @Override
@@ -124,9 +115,34 @@ public class Armageddon extends DefaultEntityBehaviour {
         this.lifetime = compoundTag.getDouble(LIFETIME);
     }
 
+    private void createModule(Vec3 location){
+        var aoeCloud = new AoeCloud(
+            this.cloud.level(),
+            this.cloud.getOwner(), 0.2f,
+            EntityDataReg.ARMAGEDDON_MODULE.get().setAbilityId(),
+            armageddonModule(),
+            ArmageddonAbility.abilityId.getPath().intern()
+        );
+        aoeCloud.setPos(location.x, location.y + Helpers.Random.nextInt(6, 12), location.z);
+        aoeCloud.level().addFreshEntity(aoeCloud);
+    }
+
+    @Override
+    public void onTickMethod() {
+
+        if(cloud.tickCount == 1) this.createModules();
+
+        cloud.setRadius((float) aoe / 2);
+
+        if(cloud.tickCount % spawnSpeed == 0 || cloud.tickCount == 0){
+            this.createModules();
+        }
+
+    }
+
     private void setParticleNova(Vec3 worldPosition){
-        var directions = worldPosition.subtract(this.aoeCloud.position());
-        var getMysticElement = ElementRegistry.mystic();
+        var directions = worldPosition.subtract(this.cloud.position());
+        var getMysticElement = ElementReg.mystic();
 
         var genericParticle = genericParticleOptions(
             GENERIC_PARTICLE_SELECTION, 20,
@@ -137,24 +153,8 @@ public class Armageddon extends DefaultEntityBehaviour {
         );
 
         ParticleHandlers.sendParticles(
-            aoeCloud.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.2
+            cloud.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.2
         );
     }
 
-    @Override
-    public AbstractElement getElementType() {
-        return ElementRegistry.inferno();
-    }
-
-    public static ResourceLocation abilityId = Helpers.res("armageddon_property");
-
-    @Override
-    public ResourceLocation getAbilityResource() {
-        return abilityId;
-    }
-
-    @Override
-    public DefaultEntityBehaviour getEntityProperty() {
-        return new Armageddon();
-    }
 }

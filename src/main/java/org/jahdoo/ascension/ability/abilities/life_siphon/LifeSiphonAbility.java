@@ -7,27 +7,19 @@ import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 
-import static org.jahdoo.common.registers.EntitiesRegister.*;
-import static org.jahdoo.common.registers.EntityPropertyRegister.*;
+import static org.jahdoo.common.registers.EntityReg.*;
+import static org.jahdoo.common.registers.EntityDataReg.*;
 
 public class LifeSiphonAbility extends AbilityRegistrar {
+
     public static final ResourceLocation abilityId = Helpers.res("life_siphon");
     public static final String HEAL_VALUE = "Heal Value";
     public static final String PULSES = "Pulse Multiplier";
-
-    @Override
-    public void invokeAbility(Player player) {
-        var projectile = new ElementProjectile(
-            VITALITY_ELEMENT_PROJECTILE.get(), player, OVERCHARGED.get().setAbilityId(),
-            offsetShoot(player), abilityId.getPath().intern()
-        );
-        fireProjectile(projectile, player, 0.8f);
-    }
 
     @Override
     public JahdooRarity rarity() {
@@ -37,18 +29,6 @@ public class LifeSiphonAbility extends AbilityRegistrar {
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
-    }
-
-    @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setStaticMana(100)
-            .setStaticCooldown(1200)
-            .setDamage(20, 10, 2)
-            .setRange(2.5, 1.5, 0.2)
-            .setAbilityTagModifiersRandom(HEAL_VALUE, 1.5,0.5, true, 0.2)
-            .setAbilityTagModifiersRandom(PULSES, 5,1, true, 1)
-            .build();
     }
 
     @Override
@@ -68,6 +48,28 @@ public class LifeSiphonAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.vitality();
+        return ElementReg.vitality();
     }
+
+    @Override
+    public void invokeAbility(Player player) {
+        var projectile = new ElementProjectile(
+            VITALITY_ELEMENT_PROJECTILE.get(), player, OVERCHARGED.get().setAbilityId(),
+            offsetShoot(player), abilityId.getPath().intern()
+        );
+        fireProjectile(projectile, player, 0.8f);
+    }
+
+    @Override
+    public void setModifiers(ItemStack itemStack) {
+        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+            .setStaticMana(100)
+            .setStaticCooldown(1200)
+            .setDamage(20, 10, 2)
+            .setRange(2.5, 1.5, 0.2)
+            .setAbilityTagModifiersRandom(HEAL_VALUE, 1.5,0.5, true, 0.2)
+            .setAbilityTagModifiersRandom(PULSES, 5,1, true, 1)
+            .build();
+    }
+
 }

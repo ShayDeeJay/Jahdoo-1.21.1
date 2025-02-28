@@ -8,61 +8,63 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.ascension.utils.DamageUtils;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.ascension.utils.PositionFinders;
+
+import static java.lang.Math.*;
+import static org.jahdoo.ascension.utils.DamageUtils.damageWithJahdoo;
+import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.ascension.utils.PositionFinders.getRandomSphericalPositions;
+import static org.jahdoo.common.particle.ParticleHandlers.particleBurst;
 
 public class EntityBarrier {
-    int radius = 6;
-    double expandRadius = 0;
+
+    private double expandRadius = 0;
 
     public void entityBarrier(
         Level level,
         BlockPos blockPos,
         AbstractElement getType
     ){
-        Vec3 blockPosAdjusted = blockPos.getCenter();
+
+        int radius = 6;
         if(expandRadius < radius) expandRadius += 0.5;
-        PositionFinders.getRandomSphericalPositions(blockPosAdjusted, expandRadius, expandRadius * 20,
-            positions -> {
-                level.addParticle(getType.getParticleGroup().magicSlow(), positions.x, positions.y, positions.z, 0,0,0);
-//                    GeneralHelpers.generalHelpers.sendParticles(serverLevel, getType.getParticleGroup().magicSlow(), positions, 0, 0, 0, 0, 0.4);
-            }
+        if (!(level instanceof ServerLevel serverLevel)) return;
+
+        var blockPosAdjusted = blockPos.getCenter();
+        var pPosX = blockPosAdjusted.x;
+        var pPosZ = blockPosAdjusted.z;
+        var entities = level.getEntities(null, new AABB(blockPos).inflate(expandRadius - 1));
+
+        getRandomSphericalPositions(blockPosAdjusted, expandRadius, expandRadius * 20,
+            positions -> level.addParticle(getType.getParticleGroup().magicSlow(), positions.x, positions.y, positions.z, 0,0,0)
         );
-        if (level instanceof ServerLevel serverLevel) {
-            //projection bubble
-            double pPosX = blockPosAdjusted.x;
-            double pPosZ = blockPosAdjusted.z;
 
+        for (var entity : entities) {
+            var filterOutItem = !(entity instanceof ItemEntity);
+            var filterOutProjectile = !(entity instanceof GenericProjectile);
+            var filterOutPlays = !(entity instanceof Player);
 
-            level.getEntities(null, new AABB(blockPos).inflate(expandRadius - 1)).forEach(
-                entity -> {
-                    if (!(entity instanceof ItemEntity) && !(entity instanceof GenericProjectile) && !(entity instanceof Player) ) {// Calculate direction vector from entity to projectile
-                        double deltaX = entity.getX() - pPosX;
-                        double deltaZ = entity.getZ() - pPosZ;
+            if (filterOutItem && filterOutProjectile && filterOutPlays) {
+                var deltaX = entity.getX() - pPosX;
+                var deltaZ = entity.getZ() - pPosZ;
+                var distance = sqrt(deltaX * deltaX + deltaZ * deltaZ);
 
-                        double distance = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-                        if (distance > 0.0D) {
-                            deltaX /= distance;
-                            deltaZ /= distance;
-                        }
-                        if (entity instanceof Projectile) {
-                            entity.setDeltaMovement(deltaX * 3, 0, deltaZ * 3);
-                        } else {
-                            entity.setDeltaMovement(deltaX * 1, 0, deltaZ * 1);
-                        }
-
-                        // add force field push back sound
-                        Helpers.getSoundWithPosition(level, entity.blockPosition(), SoundEvents.BEACON_POWER_SELECT, 0.1f, 1.5f);
-                        DamageUtils.damageWithJahdoo(entity, 1);
-                        ParticleHandlers.particleBurst(serverLevel, entity.position().add(0, entity.getBbHeight() / 2, 0), 5, getType.getParticleGroup().bakedSlow(), 0, 0, 0, 0.2f);
-                    }
+                if (distance > 0.0D) {
+                    deltaX /= distance;
+                    deltaZ /= distance;
                 }
-            );
+
+                if (entity instanceof Projectile) {
+                    entity.setDeltaMovement(deltaX * 3, 0, deltaZ * 3);
+                } else {
+                    entity.setDeltaMovement(deltaX * 1, 0, deltaZ * 1);
+                }
+
+                getSoundWithPosition(level, entity.blockPosition(), SoundEvents.BEACON_POWER_SELECT, 0.1f, 1.5f);
+                damageWithJahdoo(entity, 1);
+                particleBurst(serverLevel, entity.position().add(0, entity.getBbHeight() / 2, 0), 5, getType.getParticleGroup().bakedSlow(), 0, 0, 0, 0.2f);
+            }
         }
     }
 

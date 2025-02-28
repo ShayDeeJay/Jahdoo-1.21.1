@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.attachments.AbstractAttachment;
 
 import static org.jahdoo.common.items.runes.rune_data.RuneData.RuneHelpers.*;
-import static org.jahdoo.common.registers.AttachmentRegister.*;
+import static org.jahdoo.common.registers.AttachmentReg.*;
 
 public class TripleJump implements AbstractAttachment {
 
@@ -32,6 +32,7 @@ public class TripleJump implements AbstractAttachment {
 
     private void onClientTick(Player player) {
         if(!(player instanceof LocalPlayer localPlayer) || !canTripleJump(player)) return;
+
         if(player.verticalCollisionBelow) {
             clientJumpCount = 0;
         } else if (localPlayer.input.jumping){
@@ -44,6 +45,5 @@ public class TripleJump implements AbstractAttachment {
         } else {
             clientIsJumpHeld = false;
         }
-
     }
 }

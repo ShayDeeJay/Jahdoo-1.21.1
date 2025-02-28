@@ -11,7 +11,7 @@ import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.entities.goals.*;
-import org.jahdoo.common.registers.EntitiesRegister;
+import org.jahdoo.common.registers.EntityReg;
 
 import java.util.UUID;
 
@@ -24,7 +24,7 @@ public class CustomZombie extends Zombie implements TamableEntity {
     }
 
     public CustomZombie(Level level, LivingEntity owner) {
-        super(EntitiesRegister.CUSTOM_ZOMBIE.get(), level);
+        super(EntityReg.CUSTOM_ZOMBIE.get(), level);
         this.owner = owner;
     }
 

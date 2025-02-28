@@ -6,6 +6,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 
 public class ChallengeAltarModel extends DefaultedBlockGeoModel<ChallengeAltarBlockEntity> {
+
     public ChallengeAltarModel() {
         super(Helpers.res("challenge_altar"));
     }
@@ -14,4 +15,5 @@ public class ChallengeAltarModel extends DefaultedBlockGeoModel<ChallengeAltarBl
     public RenderType getRenderType(ChallengeAltarBlockEntity animatable, ResourceLocation texture) {
         return RenderType.entityTranslucent(getTextureResource(animatable));
     }
+
 }

@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "jahdoo:block/rune_table",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "jahdoo:block/rune_table",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "jahdoo:block/rune_table",
+      "y": 0
+    },
+    "facing=west": {
+      "model": "jahdoo:block/rune_table",
+      "y": 90
+    }
+  }
+}

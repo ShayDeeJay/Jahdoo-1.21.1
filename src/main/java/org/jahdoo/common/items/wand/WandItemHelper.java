@@ -29,7 +29,10 @@ import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
-import org.jahdoo.common.registers.*;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.BlockReg;
+import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -43,19 +46,19 @@ import static net.minecraft.sounds.SoundEvents.EVOKER_PREPARE_SUMMON;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.InteractionHand.OFF_HAND;
 import static org.jahdoo.ascension.rarity.JahdooRarity.attachRarityTooltip;
+import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
+import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
+import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
+import static org.jahdoo.ascension.utils.PositionFinders.getInnerRingOfRadiusRandom;
 import static org.jahdoo.common.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
 import static org.jahdoo.common.particle.ParticleStore.rgbToInt;
-import static org.jahdoo.common.registers.DataComponentRegistry.*;
-import static org.jahdoo.common.registers.ElementRegistry.fromWand;
-import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
-import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
-import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
-import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.ascension.utils.PositionFinders.getInnerRingOfRadiusRandom;
+import static org.jahdoo.common.registers.ComponentReg.*;
+import static org.jahdoo.common.registers.ElementReg.fromWand;
 
 
 public class WandItemHelper {
@@ -117,7 +120,7 @@ public class WandItemHelper {
     static @NotNull Item.Properties wandInit() {
         return new Item.Properties()
             .stacksTo(1)
-            .component(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
+            .component(ComponentReg.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
             .component(WAND_DATA.get(), WandData.DEFAULT)
             .fireResistant();
     }
@@ -193,7 +196,7 @@ public class WandItemHelper {
     private static void appendSelectedAbility(ItemStack wandItem, ArrayList<Component> appendComponents) {
         var abilityId = wandItem.get(WAND_DATA).selectedAbility();
         if(wandItem.has(WAND_DATA) && !abilityId.isEmpty()){
-            var getFullName = AbilityRegister.getFirstSpellByTypeId(abilityId);
+            var getFullName = AbilityReg.getFirstSpellByTypeId(abilityId);
             getFullName.ifPresent(
                 abilityRegistrar -> {
                     var prefix = withStyleComponent("Selected: ", HEADER_COLOUR);
@@ -255,7 +258,7 @@ public class WandItemHelper {
         if(interactionHand == OFF_HAND){
             if(curio.isEmpty()) return false;
 
-            var isGauntletEquipped = curio.get().isEquipped(ItemsRegister.BATTLEMAGE_GAUNTLET.get());
+            var isGauntletEquipped = curio.get().isEquipped(ItemReg.BATTLEMAGE_GAUNTLET.get());
             if(isGauntletEquipped) return true;
 
             if(shouldSendMessage){
@@ -297,7 +300,7 @@ public class WandItemHelper {
         if (player == null || !player.isShiftKeyDown() || !player.onGround()) return InteractionResult.PASS;
         if(!context.getLevel().getBlockState(clickedPos).isEmpty()) return InteractionResult.FAIL;
 
-        level.setBlockAndUpdate(clickedPos, BlocksRegister.WAND.get().defaultBlockState());
+        level.setBlockAndUpdate(clickedPos, BlockReg.WAND.get().defaultBlockState());
         var blockEntity = level.getBlockEntity(clickedPos);
         if (!(blockEntity instanceof WandBlockEntity wandBlockEntity)) return InteractionResult.FAIL;
         var copiedWand = itemStack.copyWithCount(1);

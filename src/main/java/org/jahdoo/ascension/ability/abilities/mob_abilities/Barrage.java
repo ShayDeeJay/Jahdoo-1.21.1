@@ -7,21 +7,24 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.abilities.permafrost.PermafrostAbility;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
+import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.PositionFinders.getInnerRingOfRadius;
+import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
-import static org.jahdoo.ascension.utils.Helpers.Random;
 
 
 public class Barrage extends DefaultEntityBehaviour {
-    boolean interacted;
-    int trackCounter;
+
+    public final static ResourceLocation abilityId = Helpers.res("barrage_property");
+    private boolean interacted;
+    private int trackCounter;
     private double effectDuration;
     private double effectStrength;
     private double lifetime;
@@ -35,6 +38,66 @@ public class Barrage extends DefaultEntityBehaviour {
         this.effectDuration = this.getTag(EFFECT_DURATION);
         this.effectStrength = this.getTag(EFFECT_STRENGTH);
         this.lifetime = this.getTag(LIFETIME);
+    }
+
+    @Override
+    public WandAbilityHolder getWandAbilityHolder() {
+        return this.cloud.getwandabilityholder();
+    }
+
+    private Level level(){
+        return this.cloud.level();
+    }
+
+    @Override
+    public void discardCondition() {
+        if (cloud.tickCount > lifetime) cloud.discard();
+    }
+
+    @Override
+    public ResourceLocation getAbilityResource() {
+        return abilityId;
+    }
+
+    @Override
+    public DefaultEntityBehaviour getEntityProperty() {
+        return new Barrage();
+    }
+
+    @Override
+    public String abilityId() {
+        return PermafrostAbility.abilityId.getPath().intern();
+    }
+
+    private void setArrowsInRadius(AoeCloud entity){
+        getInnerRingOfRadius(entity, entity.getRadius() * 3).forEach(this::setNovaDamage);
+    }
+
+    private void setParticleNova(Vec3 worldPosition){
+        var directions = worldPosition.subtract(this.cloud.position());
+        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, 10, 1, -1, -1, false);
+        ParticleHandlers.sendParticles(level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.5);
+    }
+
+    @Override
+    public void onTickMethod() {
+        trackCounter++;
+        if(this.cloud.tickCount == 1){
+            getOuterRingOfRadiusRandom(this.cloud.position().add(0,0,0), this.aoe, this.aoe*50, this::setParticleNova);
+        }
+        if(this.cloud.tickCount > 3) this.setArrowsInRadius(cloud);
+    }
+
+    private void setNovaDamage(Vec3 vec3){
+        if(this.trackCounter % 10 == 0 && Random.nextInt(30) == 0){
+            var arrow = EntityType.ARROW.create(level());
+            if (arrow == null) return;
+            arrow.moveTo(vec3.x, vec3.y + 5, vec3.z);
+
+            arrow.setBaseDamage(5);
+            arrow.shoot(0, -1, 0, 1, 0);
+            level().addFreshEntity(arrow);
+        }
     }
 
     @Override
@@ -57,68 +120,4 @@ public class Barrage extends DefaultEntityBehaviour {
         this.lifetime = compoundTag.getDouble(LIFETIME);
     }
 
-    @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.aoeCloud.getwandabilityholder();
-    }
-
-    @Override
-    public String abilityId() {
-        return PermafrostAbility.abilityId.getPath().intern();
-    }
-
-    @Override
-    public void onTickMethod() {
-        trackCounter++;
-
-        if(this.aoeCloud.tickCount == 1){
-            PositionFinders.getOuterRingOfRadiusRandom(this.aoeCloud.position().add(0,0,0), this.aoe, this.aoe*50, this::setParticleNova);
-        }
-
-        if(this.aoeCloud.tickCount > 3) this.setArrowsInRadius(aoeCloud);
-    }
-
-
-    private void setArrowsInRadius(AoeCloud entity){
-        PositionFinders.getInnerRingOfRadius(entity, entity.getRadius() * 3).forEach(this::setNovaDamage);
-    }
-
-    private void setNovaDamage(Vec3 vec3){
-        if(this.trackCounter % 10 == 0 && Random.nextInt(30) == 0){
-            var arrow = EntityType.ARROW.create(level());
-            if (arrow == null) return;
-            arrow.moveTo(vec3.x, vec3.y + 5, vec3.z);
-
-            arrow.setBaseDamage(5);
-            arrow.shoot(0, -1, 0, 1, 0);
-            level().addFreshEntity(arrow);
-        }
-    }
-
-    private void setParticleNova(Vec3 worldPosition){
-        var directions = worldPosition.subtract(this.aoeCloud.position());
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, 10, 1, -1, -1, false);
-        ParticleHandlers.sendParticles(level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.5);
-    }
-
-    private Level level(){
-        return this.aoeCloud.level();
-    }
-
-    @Override
-    public void discardCondition() {
-        if (aoeCloud.tickCount > lifetime) aoeCloud.discard();
-    }
-
-    public static ResourceLocation abilityId = Helpers.res("barrage_property");
-
-    @Override
-    public ResourceLocation getAbilityResource() {
-        return abilityId;
-    }
-
-    @Override
-    public DefaultEntityBehaviour getEntityProperty() {
-        return new Barrage();
-    }
 }

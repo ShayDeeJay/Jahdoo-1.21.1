@@ -26,9 +26,9 @@ import org.jahdoo.common.client.gui.AugmentScreen;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.AbilityRegister;
-import org.jahdoo.common.registers.DataComponentRegistry;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.items.augments.AugmentRatingSystem.*;
-import static org.jahdoo.common.registers.DataComponentRegistry.*;
+import static org.jahdoo.common.registers.ComponentReg.*;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 
@@ -102,10 +102,10 @@ public class AugmentItemHelper {
     }
 
     public static void augmentIdentifierShared(ItemStack itemStack, @Nullable Player player){
-        var abstractAbilities = AbilityRegister.REGISTRY.stream().toList();
+        var abstractAbilities = AbilityReg.REGISTRY.stream().toList();
         var ability = abstractAbilities.get(Helpers.Random.nextInt(0, abstractAbilities.size()));
         ability.setModifiers(itemStack);
-        var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var wandAbilityHolder = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
         if(player != null){
             if(!player.level().isClientSide) setAbilityToAugment(itemStack, ability, wandAbilityHolder);
         } else {
@@ -119,7 +119,7 @@ public class AugmentItemHelper {
 
         LocalLootBeamData.attachLootBeamComponent(itemStack, ability.rarity());
         ability.setModifiers(itemStack);
-        var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var wandAbilityHolder = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
         setAbilityToAugment(itemStack, ability, wandAbilityHolder);
     }
 
@@ -127,7 +127,7 @@ public class AugmentItemHelper {
         var ability = JahdooRarity.getAbilityUtil(rarity);
         LocalLootBeamData.attachLootBeamComponent(itemStack, ability.rarity());
         ability.setModifiers(itemStack);
-        var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var wandAbilityHolder = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
         setAbilityToAugment(itemStack, ability, wandAbilityHolder);
     }
 
@@ -215,7 +215,7 @@ public class AugmentItemHelper {
     public static Component getFormattedModifiers(String keys, ItemStack itemStack, String format, int comparison){
         var type = itemStack.get(DataComponents.CUSTOM_MODEL_DATA);
         if(type == null) return Component.empty();
-        var element = ElementRegistry.fromId(type.value()).orElse(ElementRegistry.mystic());
+        var element = ElementReg.fromId(type.value()).orElse(ElementReg.mystic());
 
         return Component.literal(keys)
             .withStyle(style -> style.withColor(element.partColourB()))
@@ -237,8 +237,8 @@ public class AugmentItemHelper {
     }
 
     public static void getHoverText(ItemStack itemStack, List<Component> toolTips, boolean hide, Level level){
-        if(itemStack.getComponents().has(DataComponentRegistry.WAND_ABILITY_HOLDER.get())){
-            var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        if(itemStack.getComponents().has(ComponentReg.WAND_ABILITY_HOLDER.get())){
+            var wandAbilityHolder = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
             if(wandAbilityHolder == null) return;
             var abilityLocation = wandAbilityHolder.abilityProperties().keySet().stream().findAny().get();
             toolTips.addAll(getAllAbilityModifiers(itemStack, null, abilityLocation, hide, level));
@@ -259,7 +259,7 @@ public class AugmentItemHelper {
                 s -> {
                     var location = Helpers.res(s);
                     if (location.getPath().isEmpty()) return;
-                    var abilityRegistrars = AbilityRegister.REGISTRY.get(Helpers.res(s));
+                    var abilityRegistrars = AbilityReg.REGISTRY.get(Helpers.res(s));
                     if (abilityRegistrars != null) {
                         component.set(
                             Component.literal(abilityRegistrars.getAbilityName())
@@ -276,7 +276,7 @@ public class AugmentItemHelper {
     public static Component getHoverName(ItemStack itemStack){
         var modelData = itemStack.getComponents().get(CUSTOM_MODEL_DATA);
         if(modelData != null){
-            var abstractElement = ElementRegistry.REGISTRY
+            var abstractElement = ElementReg.REGISTRY
                 .stream()
                 .filter(ability -> ability.id() == modelData.value())
                 .toList();
@@ -298,11 +298,11 @@ public class AugmentItemHelper {
     }
 
     public static Screen getAugmentModificationScreen(ItemStack itemStack, @Nullable Screen previousScreen) {
-        var itemStacks = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var itemStacks = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
         if(itemStacks != null){
             var item = itemStacks.abilityProperties().keySet().stream().findFirst();
             if(item.isPresent()){
-                var ability = AbilityRegister.getFirstSpellByTypeId(item.get());
+                var ability = AbilityReg.getFirstSpellByTypeId(item.get());
                 if(ability.isPresent()){
                     if (isConfigAbility(ability.get(), item.get(), itemStack)) {
                         return new AugmentScreen(itemStack, item.get(), previousScreen);
@@ -314,11 +314,11 @@ public class AugmentItemHelper {
     }
 
     public static Screen getAugmentModificationScreenWand(ItemStack itemStack, @org.jetbrains.annotations.Nullable Screen previousScreen) {
-        var itemStacks = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var itemStacks = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
         var selected = itemStack.get(WAND_DATA);
         if(itemStacks != null && selected != null){
             var item = selected.selectedAbility();
-            var ability = AbilityRegister.getFirstSpellByTypeId(item);
+            var ability = AbilityReg.getFirstSpellByTypeId(item);
             if(ability.isPresent()){
                 if (isConfigAbility(ability.get(), item, itemStack)) {
                     return new AugmentScreen(itemStack, item, previousScreen);
@@ -329,11 +329,11 @@ public class AugmentItemHelper {
     }
 
     public static Optional<String> isValidAugmentUtil(ItemStack itemStack) {
-        var itemStacks = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var itemStacks = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
         if(itemStacks == null) return Optional.empty();
         var item = itemStacks.abilityProperties().keySet().stream().findFirst();
         if(item.isPresent()){
-            var ability = AbilityRegister.getFirstSpellByTypeId(item.get());
+            var ability = AbilityReg.getFirstSpellByTypeId(item.get());
             if(ability.isPresent()){
                 if (isConfigAbility(ability.get(), item.get(), itemStack)) {
                     return item;
@@ -356,7 +356,7 @@ public class AugmentItemHelper {
     }
 
     public static Component getCurrentModifierRating(ItemStack itemStack, ItemStack itemStack1, String keys, String abilityLocation) {
-        var hoveredTag = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var hoveredTag = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
         var getHoveredHolder = hoveredTag.abilityProperties().get(abilityLocation);
         var abilityModifier = getHoveredHolder.abilityProperties().get(keys);
         if(abilityModifier == null) return Component.empty();
@@ -366,7 +366,7 @@ public class AugmentItemHelper {
 
         if (itemStack1 != null) {
             int comparisonResult;
-            var matchedTag = itemStack1.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            var matchedTag = itemStack1.get(ComponentReg.WAND_ABILITY_HOLDER.get());
             if (matchedTag != null) {
                 var getMatchedHolder = matchedTag.abilityProperties().get(abilityLocation);
                 var matchedModifier = getMatchedHolder.abilityProperties().get(keys);
@@ -449,10 +449,10 @@ public class AugmentItemHelper {
         var toolTips = new ArrayList<Component>();
         if(itemStack.getComponents().isEmpty()) return toolTips;
         var exceptions = List.of(COOLDOWN, MANA_COST, SET_ELEMENT_TYPE, "index", OFFSET);
-        var wandAbilityHolder = itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+        var wandAbilityHolder = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
         if(wandAbilityHolder == null) return toolTips;
         var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityLocation);
-        var ability = AbilityRegister.getSpellsByTypeId(abilityLocation);
+        var ability = AbilityReg.getSpellsByTypeId(abilityLocation);
         var index = itemStack.get(JAHDOO_RARITY);
 
         if(!ability.isEmpty() && index != null){

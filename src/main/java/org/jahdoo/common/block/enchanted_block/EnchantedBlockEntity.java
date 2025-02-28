@@ -6,18 +6,14 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.common.client.IconLocations;
 import org.jahdoo.common.networking.packet.server2client.EnchantedBlockS2C;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jahdoo.common.registers.BlocksRegister;
+import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.ModTags;
 
 import java.util.List;
 
@@ -37,7 +33,7 @@ public class EnchantedBlockEntity extends BlockEntity {
     private int counter;
 
     public EnchantedBlockEntity(BlockPos pos, BlockState state) {
-        super(BlockEntitiesRegister.ENCHANTED_BE.get(), pos, state);
+        super(BlockEntityReg.ENCHANTED_BE.get(), pos, state);
     }
 
     private void onStageProgression() {
@@ -52,7 +48,7 @@ public class EnchantedBlockEntity extends BlockEntity {
 
     private void updateState(BlockPos pos, ServerLevel serverLevel){
         serverLevel.destroyBlock(pos, false);
-        serverLevel.setBlock(pos, BlocksRegister.RAW_NEXITE_BLOCK.get().defaultBlockState(), 2);
+        serverLevel.setBlock(pos, BlockReg.RAW_NEXITE_BLOCK.get().defaultBlockState(), 2);
     }
 
     public void setBlockType(Block block, int spreadChance){
@@ -93,26 +89,13 @@ public class EnchantedBlockEntity extends BlockEntity {
     }
 
     private void convertAndInfest(BlockPos pos, ServerLevel serverLevel) {
-        var newState = BlocksRegister.ENCHANTED_BLOCK.get().defaultBlockState();
+        var newState = BlockReg.ENCHANTED_BLOCK.get().defaultBlockState();
         if(this.block != null){
             var state = serverLevel.getBlockState(pos).getBlock();
             serverLevel.setBlock(pos, newState, 2);
 
             if (serverLevel.getBlockEntity(pos) instanceof EnchantedBlockEntity entity) {
                 if (this.block != null) entity.setBlockType(state, this.spreadChance);
-            }
-        }
-    }
-
-    private void onNeighbourSpread(Level level, ServerLevel serverLevel) {
-        for(var block : direction()){
-            var nPos = block.getSecond();
-            var comparison = level.getBlockState(nPos);
-            var current = this.block.defaultBlockState();
-            if(spreadChance == 0 || Random.nextInt(0, spreadChance) == 0){
-                if(ConverterValues.isMatching(comparison, current)){
-                    convertAndInfest(nPos, serverLevel);
-                }
             }
         }
     }
@@ -126,6 +109,19 @@ public class EnchantedBlockEntity extends BlockEntity {
             } else {
                 updateState(pos, serverLevel);
                 onNeighbourSpread(level, serverLevel);
+            }
+        }
+    }
+
+    private void onNeighbourSpread(Level level, ServerLevel serverLevel) {
+        for(var block : direction()){
+            var nPos = block.getSecond();
+            var comparison = level.getBlockState(nPos);
+            var current = this.block.defaultBlockState();
+            if(spreadChance == 0 || Random.nextInt(0, spreadChance) == 0){
+                if(ConverterValues.isMatching(comparison, current)){
+                    convertAndInfest(nPos, serverLevel);
+                }
             }
         }
     }

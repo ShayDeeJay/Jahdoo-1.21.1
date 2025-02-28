@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
-import org.jahdoo.common.registers.BlocksRegister;
+import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.ascension.utils.Helpers;
 
 public class EnchantedBlockS2C implements CustomPacketPayload{
@@ -49,7 +49,7 @@ public class EnchantedBlockS2C implements CustomPacketPayload{
         ctx.enqueueWork(
             () -> {
                 if(ctx.player().level().isClientSide){
-                    ctx.player().level().setBlockAndUpdate(blockPos, BlocksRegister.ENCHANTED_BLOCK.get().defaultBlockState());
+                    ctx.player().level().setBlockAndUpdate(blockPos, BlockReg.ENCHANTED_BLOCK.get().defaultBlockState());
                     var blockE = ctx.player().level().getBlockEntity(blockPos);
                     if(blockE instanceof EnchantedBlockEntity entity){
                         entity.stage = stage;

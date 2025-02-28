@@ -2,15 +2,26 @@ package org.jahdoo.ascension;
 
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.utils.ColourStore;
 import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 
 import java.awt.*;
 
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
+import static org.jahdoo.ascension.utils.ColourStore.UNIQUE_A;
+import static org.jahdoo.ascension.utils.ColourStore.UNIQUE_B;
 
 public class LocalLootBeamData {
+
+    public static final LootBeamComponent SPECIALLY_ENCHANTED_BOOK = lootBeamWithColour(Color.YELLOW.getRGB());
+    public static final LootBeamComponent ENCHANTED_VANILLA_SWORD = lootBeamWithColour(Color.PINK.getRGB());
+
+    private static final LootBeamComponent COMMON_ITEM = rarityLootBeam(COMMON);
+    private static final LootBeamComponent RARE_ITEM = rarityLootBeam(RARE);
+    private static final LootBeamComponent EPIC_ITEM = rarityLootBeam(EPIC);
+    private static final LootBeamComponent LEGENDARY_ITEM = rarityLootBeam(LEGENDARY);
+    private static final LootBeamComponent ETERNAL_ITEM = rarityLootBeam(ETERNAL);
+    private static final LootBeamComponent UNIQUE_ITEM = uniqueLootBeam(UNIQUE);
 
     public static LootBeamComponent rarityLootBeam(JahdooRarity rarity){
         var beamHeight = 0.5F + ((float) rarity.getId() / 4);
@@ -33,7 +44,7 @@ public class LocalLootBeamData {
         var beamRadius = 0.35F + ((float) rarity.getId() / 10);
         var shadowRadius = 0.4f + ((float) rarity.getId() / 10);
         var renderDistance = 250;
-        return new LootBeamComponent(ColourStore.UNIQUE_B, ColourStore.UNIQUE_A, beamHeight, 0.8F,  0.2F, true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  true, 5, 0.25, 1.5, true);
+        return new LootBeamComponent(UNIQUE_B, UNIQUE_A, beamHeight, 0.8F,  0.2F, true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  true, 5, 0.25, 1.5, true);
     }
 
     public static void attachLootBeamComponent(ItemStack itemStack, JahdooRarity rarity) {
@@ -47,14 +58,5 @@ public class LocalLootBeamData {
         };
         itemStack.set(DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA(), component);
     }
-
-    public static LootBeamComponent SPECIALLY_ENCHANTED_BOOK = lootBeamWithColour(Color.YELLOW.getRGB());
-    public static LootBeamComponent ENCHANTED_VANILLA_SWORD = lootBeamWithColour(Color.PINK.getRGB());
-    public static LootBeamComponent COMMON_ITEM = rarityLootBeam(COMMON);
-    public static LootBeamComponent RARE_ITEM = rarityLootBeam(RARE);
-    public static LootBeamComponent EPIC_ITEM = rarityLootBeam(EPIC);
-    public static LootBeamComponent LEGENDARY_ITEM = rarityLootBeam(LEGENDARY);
-    public static LootBeamComponent ETERNAL_ITEM = rarityLootBeam(ETERNAL);
-    public static LootBeamComponent UNIQUE_ITEM = uniqueLootBeam(UNIQUE);
 
 }

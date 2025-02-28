@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.common.registers.EffectsRegister;
+import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.ascension.utils.Helpers;
 
 public class EffectSyncS2CPacket implements CustomPacketPayload {
@@ -47,7 +47,7 @@ public class EffectSyncS2CPacket implements CustomPacketPayload {
                     if(level != null) {
                         var entity = level.getEntity(id);
                         if(entity instanceof LivingEntity livingEntity) {
-                            livingEntity.addEffect(new JahdooMobEffect(EffectsRegister.MYSTIC_EFFECT, duration, amp));
+                            livingEntity.addEffect(new JahdooMobEffect(EffectReg.MYSTIC_EFFECT, duration, amp));
                         }
                     }
                 }

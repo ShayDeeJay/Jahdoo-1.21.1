@@ -11,12 +11,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.registers.ItemsRegister;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.jahdoo.common.client.StaffArmPose.STAFF_ARM_POSE;
-import static org.jahdoo.common.registers.ItemsRegister.*;
+import static org.jahdoo.common.registers.ItemReg.*;
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class StaffArmPose {

@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.utils.Helpers;
 
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
+import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
 
 public abstract class AbstractHoldUseAttachment implements AbstractAttachment{
 

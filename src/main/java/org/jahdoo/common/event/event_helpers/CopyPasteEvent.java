@@ -1,7 +1,5 @@
 package org.jahdoo.common.event.event_helpers;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -15,7 +13,7 @@ import static com.mojang.blaze3d.platform.InputConstants.*;
 import static net.minecraft.client.Minecraft.*;
 import static org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties.getRelativePosition;
 import static org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties.updateAll;
-import static org.jahdoo.common.registers.AttachmentRegister.MODULAR_CHAOS_CUBE;
+import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 
 public class CopyPasteEvent {
 

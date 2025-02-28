@@ -6,32 +6,50 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.ascension.ability.AbstractUtilityProjectile;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.abilities.block_breaker.BlockBreakerAbility;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.block.enchanted_block.ConverterValues;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.common.networking.packet.server2client.EnchantedBlockS2C;
-import org.jahdoo.common.registers.BlocksRegister;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.registers.BlockReg;
 
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
-import static org.jahdoo.common.registers.ElementRegistry.UTILITY;
-import static org.jahdoo.common.registers.ElementRegistry.utility;
+import static org.jahdoo.common.registers.ElementReg.utility;
 
 public class EnchantedFusion extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = Helpers.res("enchanted_fusion_property");
+
+    private static final ResourceLocation abilityId = Helpers.res("enchanted_fusion_property");
+
+    @Override
+    public ResourceLocation getAbilityResource() {
+        return abilityId;
+    }
+
+    @Override
+    public DefaultEntityBehaviour getEntityProperty() {
+        return new EnchantedFusion();
+    }
+
+    @Override
+    public String abilityId() {
+        return BlockBreakerAbility.abilityId.getPath().intern();
+    }
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
+
         var level = getLevel();
         if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         var pos = blockHitResult.getBlockPos();
         var state = level.getBlockState(pos);
+
         if(level instanceof ServerLevel serverLevel){
-            if(EnchantedBlockEntity.ConverterValues.isConvertibleBlock(state.getBlock())){
-                level.setBlockAndUpdate(pos, BlocksRegister.ENCHANTED_BLOCK.get().defaultBlockState());
+            if(ConverterValues.isConvertibleBlock(state.getBlock())){
+                level.setBlockAndUpdate(pos, BlockReg.ENCHANTED_BLOCK.get().defaultBlockState());
                 if (level.getBlockEntity(pos) instanceof EnchantedBlockEntity enchantedBlockEntity) {
                     if (!state.isAir()) {
                         Helpers.sendPacketsToPlayer(serverLevel, new EnchantedBlockS2C(pos, state, 0, 1000, 0));
@@ -48,26 +66,8 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
                 );
             }
         }
-        genericProjectile.discard();
+
+        generic.discard();
     }
 
-    @Override
-    public void onTickMethod() {
-        super.onTickMethod();
-    }
-
-    @Override
-    public ResourceLocation getAbilityResource() {
-        return abilityId;
-    }
-
-    @Override
-    public DefaultEntityBehaviour getEntityProperty() {
-        return new EnchantedFusion();
-    }
-
-    @Override
-    public String abilityId() {
-        return BlockBreakerAbility.abilityId.getPath().intern();
-    }
 }

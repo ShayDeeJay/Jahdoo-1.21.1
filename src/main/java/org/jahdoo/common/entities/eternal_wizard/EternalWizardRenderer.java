@@ -10,8 +10,7 @@ import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jahdoo.common.items.augments.AugmentItemHelper;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 import org.joml.Matrix4f;
 
 import static org.jahdoo.common.items.augments.AugmentItemHelper.*;
@@ -52,7 +51,7 @@ public class EternalWizardRenderer extends EternalWizardBodyRenderer {
                 Matrix4f matrix4f = pPoseStack.last().pose();
                 Font font = this.getFont();
                 float f1 = (float)(-font.width(displayName) / 2);
-                font.drawInBatch(displayName, f1, 0, ElementRegistry.vitality().textColourB(), false, matrix4f, bufferSource, Font.DisplayMode.SEE_THROUGH , 0, packedLight);
+                font.drawInBatch(displayName, f1, 0, ElementReg.vitality().textColourB(), false, matrix4f, bufferSource, Font.DisplayMode.SEE_THROUGH , 0, packedLight);
                 pPoseStack.popPose();
             }
         }

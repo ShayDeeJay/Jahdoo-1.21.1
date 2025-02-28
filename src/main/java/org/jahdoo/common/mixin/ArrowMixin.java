@@ -6,7 +6,7 @@ import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import org.jahdoo.common.registers.AttachmentRegister;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.ascension.utils.MixinMethods;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -19,7 +19,7 @@ public abstract class ArrowMixin extends AbstractArrow {
 
     @Override
     protected void onHitBlock(BlockHitResult result) {
-        if(this.getData(AttachmentRegister.BOOL.get())){
+        if(this.getData(AttachmentReg.BOOL.get())){
             MixinMethods.onTargetHit(result.getLocation(), this.level());
         }
         super.onHitBlock(result);
@@ -27,7 +27,7 @@ public abstract class ArrowMixin extends AbstractArrow {
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
-        if(this.getData(AttachmentRegister.BOOL.get())){
+        if(this.getData(AttachmentReg.BOOL.get())){
             MixinMethods.onTargetHit(result.getLocation(), this.level());
         }
         super.onHitEntity(result);

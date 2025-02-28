@@ -13,14 +13,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.common.registers.ElementRegistry;
 
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.*;
-import static org.jahdoo.common.registers.ElementRegistry.*;
+import static org.jahdoo.common.registers.ElementReg.*;
 
 public abstract class AbstractBEInventory extends SyncedBlockEntity {
 

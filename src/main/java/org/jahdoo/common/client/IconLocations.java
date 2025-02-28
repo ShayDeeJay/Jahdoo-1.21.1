@@ -1,7 +1,6 @@
 package org.jahdoo.common.client;
 
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.ascension.utils.Helpers.*;
 
@@ -87,7 +86,7 @@ public class IconLocations {
     public static final ResourceLocation GUI_ITEM_SLOT =
         res(SLOTS_PREFIX + "gui_item_slot.png");
 
-    public static final ResourceLocation CORE =
+    public static final ResourceLocation AUGMENT_CORE =
         res(SLOTS_PREFIX + "augment_core_slot.png");
 
     public static final ResourceLocation ADVANCED_AUGMENT_CORE =

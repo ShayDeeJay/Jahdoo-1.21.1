@@ -7,7 +7,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 
-import static org.jahdoo.common.registers.DataComponentRegistry.MAGNET_DATA;
+import static org.jahdoo.common.registers.ComponentReg.MAGNET_DATA;
 
 public record MagnetData(
         boolean active,

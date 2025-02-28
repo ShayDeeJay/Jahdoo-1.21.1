@@ -2,29 +2,22 @@ package org.jahdoo.common.datagen.loot;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
-import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.jahdoo.common.registers.BlocksRegister;
-import org.jahdoo.common.registers.ItemsRegister;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 import static net.minecraft.world.flag.FeatureFlags.*;
 import static net.minecraft.world.level.storage.loot.entries.LootItem.*;
 import static net.minecraft.world.level.storage.loot.functions.SetItemCountFunction.*;
 import static net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.*;
-import static org.jahdoo.common.registers.BlocksRegister.*;
-import static org.jahdoo.common.registers.ItemsRegister.*;
+import static org.jahdoo.common.registers.BlockReg.*;
+import static org.jahdoo.common.registers.ItemReg.*;
 
 public class ModBlockLootTables extends BlockLootSubProvider {
 

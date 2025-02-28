@@ -27,17 +27,14 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jahdoo.common.registers.BlocksRegister;
-import org.jetbrains.annotations.Nullable;
+import org.jahdoo.common.registers.BlockEntityReg;
 
 import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.block.augment_modification_station.AugmentModificationBlock.*;
-import static org.jahdoo.common.registers.BlocksRegister.sharedBehaviour;
+import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.common.registers.ElementRegistry.fromWand;
+import static org.jahdoo.common.registers.ElementReg.fromWand;
 
 public class WandManagerBlock extends BaseEntityBlock {
 
@@ -127,7 +124,7 @@ public class WandManagerBlock extends BaseEntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
         return createTickerHelper(
             pBlockEntityType,
-            BlockEntitiesRegister.WAND_MANAGER_TABLE_BE.get(),
+            BlockEntityReg.WAND_MANAGER_TABLE_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }

@@ -17,10 +17,10 @@ import org.jahdoo.common.client.slots.InventorySlots;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.items.augments.AugmentItemHelper;
-import org.jahdoo.common.registers.AbilityRegister;
-import org.jahdoo.common.registers.DataComponentRegistry;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.ItemsRegister;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +64,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
     }
 
     private List<AbilityRegistrar> getAbilityFromRegistry(ItemStack comparable){
-        return AbilityRegister.getSpellsByTypeId(DataComponentHelper.getAbilityTypeItemStack(comparable));
+        return AbilityReg.getSpellsByTypeId(DataComponentHelper.getAbilityTypeItemStack(comparable));
     }
 
     private ItemStack getMatchingItem(ItemStack comparable){
@@ -72,7 +72,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
             var currentAugment = this.wandBlockMenu.getWandBlockEntity().inputItemHandler.getStackInSlot(i);
             var selectedAbility = this.getAbilityFromRegistry(comparable);
             if(selectedAbility.isEmpty()) return ItemStack.EMPTY;
-            var wandAbilityHolder = currentAugment.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            var wandAbilityHolder = currentAugment.get(ComponentReg.WAND_ABILITY_HOLDER.get());
             if (wandAbilityHolder != null && wandAbilityHolder.abilityProperties().containsKey(selectedAbility.getFirst().setAbilityId())) {
                 return currentAugment;
             }
@@ -81,14 +81,14 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
     }
 
     private int getMatchingIndex(ItemStack comparable){
-        if(comparable.is(ItemsRegister.AUGMENT.get()) && DataComponentHelper.hasWandAbilitiesTag(comparable)){
+        if(comparable.is(ItemReg.AUGMENT.get()) && DataComponentHelper.hasWandAbilitiesTag(comparable)){
             for (int i = 1; i < this.wandBlockMenu.getWandBlockEntity().inputItemHandler.getSlots(); i++) {
                 var currentAugment = this.wandBlockMenu.getWandBlockEntity().inputItemHandler.getStackInSlot(i);
                 var ability = this.getAbilityFromRegistry(comparable);
                 var currentAbility = this.getAbilityFromRegistry(currentAugment);
 
                 if(!ability.isEmpty() && !currentAbility.isEmpty()){
-                    var wandAbilityHolder = currentAugment.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+                    var wandAbilityHolder = currentAugment.get(ComponentReg.WAND_ABILITY_HOLDER.get());
                     if (wandAbilityHolder.abilityProperties().containsKey(ability.getFirst().setAbilityId())) {
                         return i - 1;
                     }
@@ -114,9 +114,9 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         var getElement = itemStack.get(CUSTOM_MODEL_DATA);
 
         if(getElement != null){
-            ElementRegistry.fromId(Math.max(getElement.value(), 0)).ifPresent(
+            ElementReg.fromId(Math.max(getElement.value(), 0)).ifPresent(
                 element -> {
-                    if (itemStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get()) != null) {
+                    if (itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get()) != null) {
                         toolTips.add(AugmentItemHelper.getAbilityName(itemStack,element));
                         toolTips.addAll(getAllAbilityModifiers(itemStack, itemStack1, abilityLocation, false, this.getMinecraft().level));
                         shiftForDetails(toolTips);
@@ -161,7 +161,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
             pY + 20
         );
 
-        var isValidItem = this.hoveredSlot.getItem().is(ItemsRegister.AUGMENT.get());
+        var isValidItem = this.hoveredSlot.getItem().is(ItemReg.AUGMENT.get());
         var isValidSlot = this.hoveredSlot.index < 36;
         if (!isValidItem || !isValidSlot) return;
 
@@ -285,7 +285,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         var heightOffset = 115;
         var widthFrom = width - widthOffset;
         var heightFrom = height - heightOffset;
-        var element = ElementRegistry.fromWand(getWandItem().getItem()).orElseThrow();
+        var element = ElementReg.fromWand(getWandItem().getItem()).orElseThrow();
         var color = FastColor.ARGB32.color(40, element.textColourA());
         var colorA = FastColor.ARGB32.color(0, element.textColourA());
         SharedUI.boxMaker(guiGraphics, widthFrom, heightFrom, 100, 115, BORDER_COLOUR, SharedUI.getFadedColourBackground(0.9f));

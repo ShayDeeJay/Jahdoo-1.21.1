@@ -5,11 +5,17 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
-import org.jahdoo.common.registers.EntityPropertyRegister;
+import org.jahdoo.common.registers.EntityDataReg;
 
 import static org.jahdoo.ascension.ability.abilities.permafrost.PermafrostAbility.abilityId;
 
 public class MixinMethods {
+
+    public static void onTargetHit(Vec3 pos, Level level){
+        var aoeCloud = new AoeCloud(level, null, 0f, EntityDataReg.BARRAGE.get().setAbilityId(), WAND_ABILITY_HOLDER_BARRAGE, abilityId.getPath().intern());
+        aoeCloud.setPos(pos.x, pos.y, pos.z);
+        level.addFreshEntity(aoeCloud);
+    }
 
     private static final WandAbilityHolder WAND_ABILITY_HOLDER_BARRAGE =
         new AbilityBuilder(null, abilityId.getPath().intern())
@@ -20,13 +26,5 @@ public class MixinMethods {
             .setModifierWithoutBounds(AbilityBuilder.LIFETIME, 100)
             .setModifierWithoutBounds(AbilityBuilder.AOE, 2)
             .buildAndReturn();
-
-
-    public static void onTargetHit(Vec3 pos, Level level){
-        var aoeCloud = new AoeCloud(level, null, 0f, EntityPropertyRegister.BARRAGE.get().setAbilityId(), WAND_ABILITY_HOLDER_BARRAGE, abilityId.getPath().intern());
-        aoeCloud.setPos(pos.x, pos.y, pos.z);
-        level.addFreshEntity(aoeCloud);
-    }
-
 
 }

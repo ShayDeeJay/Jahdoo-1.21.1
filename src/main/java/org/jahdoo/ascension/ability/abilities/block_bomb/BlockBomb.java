@@ -14,7 +14,7 @@ import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.UtilityHelpers;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.registers.SoundRegister;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.ascension.utils.PositionFinders;
@@ -27,14 +27,15 @@ import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTIO
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class BlockBomb extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = Helpers.res("block_bomb_property");
-    boolean hasHitBlock;
-    int totalRadius;
-    int explosionTimer;
-    private final int explosionTimerMax = 50;
-    int totalRadiusMax;
-    int blockDropChance;
-    double projectileSphere;
+
+    private static final ResourceLocation abilityId = Helpers.res("block_bomb_property");
+    private static final int explosionTimerMax = 50;
+    private double projectileSphere;
+    private boolean hasHitBlock;
+    private int totalRadius;
+    private int explosionTimer;
+    private int totalRadiusMax;
+    private int blockDropChance;
 
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
@@ -43,13 +44,71 @@ public class BlockBomb extends AbstractUtilityProjectile {
         this.blockDropChance = (int) this.getTagUtility(BLOCK_DROP_CHANCE);
     }
 
+    private Level level(){
+        return this.generic.level();
+    }
+
+    private void tickingSound() {
+        Helpers.getSoundWithPosition(generic.level(), generic.blockPosition(), SoundReg.TIMER.get(), 1f, 1.5f);
+    }
+
+    @Override
+    public String abilityId() {
+        return BlockBombAbility.abilityId.getPath().intern();
+    }
+
+    @Override
+    public ResourceLocation getAbilityResource() {
+        return abilityId;
+    }
+
+    @Override
+    public DefaultEntityBehaviour getEntityProperty() {
+        return new BlockBomb();
+    }
+
+    private void coreParticles(Level level) {
+        var bakedParticleOption = bakedParticleOptions(getElementType().id(), 2, 3f, false);
+        PositionFinders.getRandomSphericalPositions(generic, projectileSphere, projectileSphere * 10,
+            radiusPosition -> explosionParticle(level, radiusPosition, bakedParticleOption)
+        );
+    }
+
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         this.hasHitBlock = true;
-        Helpers.getSoundWithPosition(genericProjectile.level(), genericProjectile.blockPosition(), SoundEvents.SLIME_BLOCK_PLACE, 1.5f);
-        genericProjectile.setDeltaMovement(0, 0, 0);
+        Helpers.getSoundWithPosition(generic.level(), generic.blockPosition(), SoundEvents.SLIME_BLOCK_PLACE, 1.5f);
+        generic.setDeltaMovement(0, 0, 0);
+    }
+
+    private void isMoving() {
+        var x = generic.getDeltaMovement().x;
+        var y = generic.getDeltaMovement().y - projectileSphere / 50;
+        var z = generic.getDeltaMovement().z;
+        generic.setDeltaMovement(x, y, z);
+        if (generic.tickCount % 12 == 0) tickingSound();
+    }
+
+    private static void explosionParticle(Level level, Vec3 radiusPosition, ParticleOptions genericParticleOptions) {
+        ParticleHandlers.sendParticles(level, genericParticleOptions, radiusPosition.add(0, 0.1, 0), 1,
+            Random.nextDouble(0.1, 0.2),
+            Random.nextDouble(0.1, 0.2),
+            Random.nextDouble(0.1, 0.2),
+            Random.nextDouble(0.05, 0.1)
+        );
+    }
+
+    private void timerTick(Level level) {
+        if (explosionTimer % 10 == 0 && !(explosionTimer >= explosionTimerMax)) {
+            var colour = getElementType().partColourA();
+            var fade = getElementType().partColourFade();
+            var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, 6, 3, colour, fade, false);
+            var add = generic.position().add(0, 0.2, 0);
+            tickingSound();
+            particleBurst(level, add, totalRadiusMax / 3, genericParticle, 0, -0.1, 0, Random.nextFloat(0.1f, 0.3f));
+        }
     }
 
     @Override
@@ -67,76 +126,37 @@ public class BlockBomb extends AbstractUtilityProjectile {
         } else this.isMoving();
     }
 
-    private Level level(){
-        return this.genericProjectile.level();
-    }
-
-    private void coreParticles(Level level) {
-        var bakedParticleOption = bakedParticleOptions(getElementType().id(), 2, 3f, false);
-        PositionFinders.getRandomSphericalPositions(genericProjectile, projectileSphere, projectileSphere * 10,
-            radiusPosition -> explosionParticle(level, radiusPosition, bakedParticleOption)
-        );
-    }
-
-    private static void explosionParticle(Level level, Vec3 radiusPosition, ParticleOptions genericParticleOptions) {
-        ParticleHandlers.sendParticles(level, genericParticleOptions, radiusPosition.add(0, 0.1, 0), 1,
-            Random.nextDouble(0.1, 0.2),
-            Random.nextDouble(0.1, 0.2),
-            Random.nextDouble(0.1, 0.2),
-            Random.nextDouble(0.05, 0.1)
-        );
-    }
-
-    private void timerTick(Level level) {
-        if (explosionTimer % 10 == 0 && !(explosionTimer >= explosionTimerMax)) {
-            var colour = getElementType().partColourA();
-            var fade = getElementType().partColourFade();
-            var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, 6, 3, colour, fade, false);
-            var add = genericProjectile.position().add(0, 0.2, 0);
-            tickingSound();
-            particleBurst(level, add, totalRadiusMax / 3, genericParticle, 0, -0.1, 0, Random.nextFloat(0.1f, 0.3f));
-        }
-    }
-
     private void explodingTick(Level level) {
         var bakedParticleOptions = bakedParticleOptions(getElementType().id(), 4, 4f, false);
         var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, getElementType(), 10, 4, 1);
         if (explosionTimer >= explosionTimerMax) {
 
             ParticleHandlers.sendParticles(
-                level, bakedParticleOptions, genericProjectile.position().add(0, 0.2, 0),
+                level, bakedParticleOptions, generic.position().add(0, 0.2, 0),
                 totalRadiusMax, 0.05, 0.05, 0.05, (double) totalRadiusMax / 15
             );
 
             ParticleHandlers.sendParticles(
-                level, genericParticle, genericProjectile.position().add(0, 0.2, 0),
+                level, genericParticle, generic.position().add(0, 0.2, 0),
                 totalRadiusMax, 0.05, 0.05, 0.05, (double) totalRadiusMax / 15
             );
 
-            Helpers.getSoundWithPosition(genericProjectile.level(), genericProjectile.blockPosition(), SoundRegister.EXPLOSION.get(), 2f);
+            Helpers.getSoundWithPosition(generic.level(), generic.blockPosition(), SoundReg.EXPLOSION.get(), 2f);
             handleItemsAndExplosion(level);
             if (totalRadius <= totalRadiusMax) totalRadius++;
         }
     }
 
-    private void isMoving() {
-        var x = genericProjectile.getDeltaMovement().x;
-        var y = genericProjectile.getDeltaMovement().y - projectileSphere / 50;
-        var z = genericProjectile.getDeltaMovement().z;
-        genericProjectile.setDeltaMovement(x, y, z);
-        if (genericProjectile.tickCount % 12 == 0) tickingSound();
-    }
-
     private void handleItemsAndExplosion(Level level) {
-        PositionFinders.getSphericalBlockPositions(genericProjectile, totalRadius,
+        PositionFinders.getSphericalBlockPositions(generic, totalRadius,
             radiusPosition -> {
-                BlockState blockstate = genericProjectile.level().getBlockState(radiusPosition);
+                BlockState blockstate = generic.level().getBlockState(radiusPosition);
                 if (blockstate.isAir()) return;
-                var range = destroySpeed(radiusPosition, genericProjectile.level());
+                var range = destroySpeed(radiusPosition, generic.level());
                 if (!UtilityHelpers.range.contains(range)) return;
 
                 if (Random.nextInt(0, this.blockDropChance) == 0) {
-                    dropItemsOrBlock(genericProjectile, radiusPosition, false, false);
+                    dropItemsOrBlock(generic, radiusPosition, false, false);
                 }
 
                 var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
@@ -144,27 +164,9 @@ public class BlockBomb extends AbstractUtilityProjectile {
                     level, blockPart, radiusPosition.getCenter(), 1, 0, 0, 0, 0.1
                 );
 
-                genericProjectile.level().removeBlock(radiusPosition, false);
+                generic.level().removeBlock(radiusPosition, false);
             }
         );
     }
 
-    private void tickingSound() {
-        Helpers.getSoundWithPosition(genericProjectile.level(), genericProjectile.blockPosition(), SoundRegister.TIMER.get(), 1f, 1.5f);
-    }
-
-    @Override
-    public String abilityId() {
-        return BlockBombAbility.abilityId.getPath().intern();
-    }
-
-    @Override
-    public ResourceLocation getAbilityResource() {
-        return abilityId;
-    }
-
-    @Override
-    public DefaultEntityBehaviour getEntityProperty() {
-        return new BlockBomb();
-    }
 }

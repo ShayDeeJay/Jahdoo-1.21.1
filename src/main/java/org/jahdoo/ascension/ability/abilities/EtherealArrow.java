@@ -40,12 +40,37 @@ public class EtherealArrow extends DefaultEntityBehaviour {
 
     @Override
     public WandAbilityHolder getWandAbilityHolder() {
-        return this.genericProjectile.wandAbilityHolder();
+        return this.generic.wandAbilityHolder();
     }
 
     @Override
     public String abilityId() {
         return abilityId.getPath().intern();
+    }
+
+    @Override
+    public ResourceLocation getAbilityResource() {
+        return abilityId;
+    }
+
+    @Override
+    public DefaultEntityBehaviour getEntityProperty() {
+        return new EtherealArrow();
+    }
+
+    @Override
+    public void onTickMethod() {
+        if(this.generic != null){
+            generic.setDeltaMovement(generic.getDeltaMovement().subtract(0, 0.02, 0));
+            arrowPartEffect(this.generic, this.generic.getElementType());
+        }
+    }
+
+    @Override
+    public void discardCondition() {
+        if(this.generic != null){
+            if (this.generic.tickCount > 30) this.generic.discard();
+        }
     }
 
     @Override
@@ -64,6 +89,17 @@ public class EtherealArrow extends DefaultEntityBehaviour {
         this.damage = compoundTag.getDouble(DAMAGE);
     }
 
+    public static void arrowPartEffect(Projectile projectile, AbstractElement element) {
+        ParticleHandlers.sendParticles(
+            projectile.level(), ParticleTypes.INSTANT_EFFECT, projectile.position(), 1,
+            0, 0, 0, 0
+        );
+        playParticles3(
+            genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 4, 1f, false),
+            projectile, 20, 0.01
+        );
+    }
+
     public static WandAbilityHolder setArrowProperties(double damage, double effectDuration, double effectStrength, double effectChance){
         return new AbilityBuilder(null, EtherealArrow.abilityId.getPath().intern())
             .setModifierWithoutBounds(DAMAGE, damage)
@@ -75,12 +111,11 @@ public class EtherealArrow extends DefaultEntityBehaviour {
 
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
-
-        if(this.genericProjectile != null){
-            var element = genericProjectile.getElementType();
-            Helpers.getSoundWithPosition(this.genericProjectile.level(), hitEntity.blockPosition(), element.sound(),0.4f);
+        if(this.generic != null){
+            var element = generic.getElementType();
+            Helpers.getSoundWithPosition(this.generic.level(), hitEntity.blockPosition(), element.sound(),0.4f);
             if (hitEntity.isAlive()) {
-                if (!(this.genericProjectile.level() instanceof ServerLevel serverLevel)) return;
+                if (!(this.generic.level() instanceof ServerLevel serverLevel)) return;
                 var type = bakedParticleOptions(element.id(), 10, 1, false);
                 var generic = genericParticleOptions(element, 10, 1.2f);
 
@@ -93,44 +128,9 @@ public class EtherealArrow extends DefaultEntityBehaviour {
                 hitEntity.addEffect(effect);
             }
 
-            DamageUtils.damageWithJahdoo(hitEntity, this.genericProjectile.getOwner(), (float) damage);
-            this.genericProjectile.discard();
+            DamageUtils.damageWithJahdoo(hitEntity, this.generic.getOwner(), (float) damage);
+            this.generic.discard();
         }
     }
 
-    @Override
-    public void onTickMethod() {
-        if(this.genericProjectile != null){
-            genericProjectile.setDeltaMovement(genericProjectile.getDeltaMovement().subtract(0, 0.02, 0));
-            arrowPartEffect(this.genericProjectile, this.genericProjectile.getElementType());
-        }
-    }
-
-    public static void arrowPartEffect(Projectile projectile, AbstractElement element) {
-        ParticleHandlers.sendParticles(
-            projectile.level(), ParticleTypes.INSTANT_EFFECT, projectile.position(), 1,
-            0, 0, 0, 0
-        );
-        playParticles3(
-            genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 4, 1f, false),
-            projectile, 20, 0.01
-        );
-    }
-
-    @Override
-    public void discardCondition() {
-        if(this.genericProjectile != null){
-            if (this.genericProjectile.tickCount > 30) this.genericProjectile.discard();
-        }
-    }
-
-    @Override
-    public ResourceLocation getAbilityResource() {
-        return abilityId;
-    }
-
-    @Override
-    public DefaultEntityBehaviour getEntityProperty() {
-        return new EtherealArrow();
-    }
 }

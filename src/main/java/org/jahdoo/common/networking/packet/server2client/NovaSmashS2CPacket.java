@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.utils.Helpers;
 
-import static org.jahdoo.common.registers.AttachmentRegister.NOVA_SMASH;
+import static org.jahdoo.common.registers.AttachmentReg.NOVA_SMASH;
 
 public class NovaSmashS2CPacket implements CustomPacketPayload {
 

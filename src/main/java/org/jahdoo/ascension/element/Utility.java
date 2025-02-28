@@ -3,13 +3,14 @@ package org.jahdoo.ascension.element;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
-import org.jahdoo.common.registers.EffectsRegister;
 import org.jahdoo.ascension.utils.Helpers;
+
+import static net.minecraft.sounds.SoundEvents.AXE_SCRAPE;
+import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.jahdoo.common.registers.EffectReg.MYSTIC_EFFECT;
 
 public class Utility extends AbstractElement {
     ResourceLocation abilityId = Helpers.res("utility");
@@ -36,12 +37,12 @@ public class Utility extends AbstractElement {
 
     @Override
     public int partColourA() {
-        return FastColor.ARGB32.color(29, 172, 103);
+        return color(29, 172, 103);
     }
 
     @Override
     public int partColourB() {
-        return FastColor.ARGB32.color(39, 236, 144);
+        return color(39, 236, 144);
     }
 
     @Override
@@ -50,23 +51,18 @@ public class Utility extends AbstractElement {
     }
 
     @Override
-    public Item getWand() {
-        return null;
-    }
-
-    @Override
-    public ResourceLocation projectileTexture() {
-        return null;
-    }
-
-    @Override
     public SoundEvent sound() {
-        return SoundEvents.AXE_SCRAPE;
+        return AXE_SCRAPE;
     }
 
     @Override
     public Holder<MobEffect> effect() {
-        return EffectsRegister.MYSTIC_EFFECT.getDelegate();
+        return MYSTIC_EFFECT.getDelegate();
+    }
+
+    @Override
+    public Item getWand() {
+        return null;
     }
 
     @Override
@@ -81,6 +77,11 @@ public class Utility extends AbstractElement {
 
     @Override
     public Holder<Attribute> damageAmplifier() {
+        return null;
+    }
+
+    @Override
+    public ResourceLocation projectileTexture() {
         return null;
     }
 }

@@ -11,8 +11,8 @@ import org.jahdoo.ascension.utils.ModTags;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static org.jahdoo.common.registers.BlocksRegister.*;
-import static org.jahdoo.common.registers.ItemsRegister.*;
+import static org.jahdoo.common.registers.BlockReg.*;
+import static org.jahdoo.common.registers.ItemReg.*;
 
 public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 

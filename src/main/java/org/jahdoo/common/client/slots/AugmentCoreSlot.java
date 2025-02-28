@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.common.items.runes.rune_data.RuneHolder.*;
-import static org.jahdoo.common.registers.DataComponentRegistry.*;
+import static org.jahdoo.common.registers.ComponentReg.*;
 
 public class AugmentCoreSlot extends SlotItemHandler {
     Item item;

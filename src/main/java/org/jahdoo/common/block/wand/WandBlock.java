@@ -26,25 +26,23 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.wand.WandData;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jahdoo.common.registers.ItemsRegister;
+import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
 import static org.jahdoo.common.block.wand.WandBlockEntity.GET_WAND_SLOT;
 //import static org.jahdoo.common.registers.DataComponentRegistry.ABILITY_SLOTS;
 import static org.jahdoo.common.particle.ParticleStore.*;
-import static org.jahdoo.common.registers.DataComponentRegistry.RUNE_HOLDER;
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
-import static org.jahdoo.common.registers.ElementRegistry.fromWand;
+import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
+import static org.jahdoo.common.registers.ElementReg.fromWand;
 
 public class WandBlock extends BaseEntityBlock {
 
@@ -94,7 +92,7 @@ public class WandBlock extends BaseEntityBlock {
 
         return createTickerHelper(
             pBlockEntityType,
-            BlockEntitiesRegister.WAND_BE.get(),
+            BlockEntityReg.WAND_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }
@@ -137,7 +135,7 @@ public class WandBlock extends BaseEntityBlock {
     private static ItemInteractionResult getItemInteractionResult(ItemStack heldItem, WandBlockEntity wandBlock) {
         var internalWand = wandBlock.getWandItemFromSlot();
         var wandData = internalWand.get(WAND_DATA);
-        if (heldItem.getItem() == ItemsRegister.AUGMENT_CORE.get()) {
+        if (heldItem.getItem() == ItemReg.AUGMENT_CORE.get()) {
             if(wandData != null && wandData.abilitySlots() < 10){
                 heldItem.shrink(1);
                 var index = wandData.abilitySlots() + 1;

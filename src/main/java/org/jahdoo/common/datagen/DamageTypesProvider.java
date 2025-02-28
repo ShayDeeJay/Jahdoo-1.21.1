@@ -8,13 +8,11 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.registers.DamageTypeRegistry;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-import static org.jahdoo.common.registers.DamageTypeRegistry.*;
+import static org.jahdoo.common.registers.DamageTypeReg.*;
 
 public class DamageTypesProvider extends DatapackBuiltinEntriesProvider {
 

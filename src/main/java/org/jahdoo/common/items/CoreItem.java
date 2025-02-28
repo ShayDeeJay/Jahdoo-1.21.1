@@ -8,11 +8,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jahdoo.common.registers.BlocksRegister;
+import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.ascension.LevelGenerator;
 
 import static org.jahdoo.common.block.TrialPortalBlock.*;
-import static org.jahdoo.common.registers.ItemsRegister.*;
+import static org.jahdoo.common.registers.ItemReg.*;
 
 public class CoreItem extends Item  {
     public CoreItem() {
@@ -23,7 +23,7 @@ public class CoreItem extends Item  {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         var hand = player.getItemInHand(usedHand);
         if(level instanceof ServerLevel serverLevel){
-            var block = BlocksRegister.TRAIL_PORTAL.get();
+            var block = BlockReg.TRAIL_PORTAL.get();
 
 
             var item = hand.getItem();

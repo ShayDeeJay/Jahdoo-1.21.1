@@ -26,8 +26,8 @@ import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.networking.packet.server2client.NovaSmashS2CPacket;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.SoundRegister;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.List;
@@ -37,9 +37,9 @@ import static org.jahdoo.common.components.DataComponentHelper.*;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.common.particle.ParticleStore.*;
-import static org.jahdoo.common.registers.AttachmentRegister.NOVA_SMASH;
-import static org.jahdoo.common.registers.AttributesRegister.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.AttributesRegister.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.AttachmentReg.NOVA_SMASH;
+import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.AttributeReg.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.ascension.utils.DamageUtils.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.*;
@@ -77,79 +77,18 @@ public class NovaSmash implements AbstractAttachment {
     }
 
     private AbstractElement getElement(){
-        return ElementRegistry.mystic();
-    }
-
-    private void onTick(Player player){
-        var getCurrentDelta = (int) Math.abs(Math.round(player.getDeltaMovement().y));
-        this.highestDelta = Math.max(this.highestDelta, getCurrentDelta);
-
-        if (this.canSmash){
-            var getHolder = WandAbilityHolder.getHolderFromWand(player);
-            var getValue = (float) getSpecificValue(NovaSmashAbility.abilityId.getPath().intern(), getHolder,AbilityBuilder.DAMAGE);
-            this.getDamage = Helpers.attributeModifierCalculator(player, getValue, false, MAGIC_DAMAGE_MULTIPLIER, MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
-            player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
-            if(player.onGround()){
-                this.setAbilityEffects(player);
-                this.setKnockbackAndDamage(player);
-                this.highestDelta = 0;
-                this.canSmash = false;
-                BouncyFoot.setBouncyFoot(player, 160);
-            }
-        }
-
-        if(player instanceof ServerPlayer serverPlayer){
-            PacketDistributor.sendToPlayer(serverPlayer, new NovaSmashS2CPacket(highestDelta, canSmash, getDamage));
-        }
-    }
-
-    private void setAbilityEffects(Player player){
-        getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.PLAYER_BIG_FALL);
-        getSoundWithPosition(player.level(), player.blockPosition(), SoundRegister.EXPLOSION.get(), 1,0.6f);
-        this.clientDiggingParticles(player, player.level());
-
-        if(player.level() instanceof ServerLevel){
-            var position = player.position();
-            var knockback = Math.max( Math.min((double) this.highestDelta / 4, 1), 0.2);
-
-            getOuterRingOfRadiusRandom(position, 1, 100, (pos) -> setParticleNova(pos, player, knockback));
-            getOuterRingOfRadiusRandom(position, 0.5, Math.max(this.getDamage * 20, 20),
-                    worldPosition -> this.setParticleNova(player, worldPosition, 5, player.level())
-            );
-        }
-
+        return ElementReg.mystic();
     }
 
     public static void setParticleNova(Vec3 worldPosition, Entity entity, double speed){
         var directions = worldPosition.subtract(entity.position());
-        var getMysticElement = ElementRegistry.mystic();
+        var getMysticElement = ElementReg.mystic();
         var colourPrimary = getMysticElement.partColourA();
         var colourSecondary = getMysticElement.partColourB();
         var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, colourPrimary, colourSecondary, 10, 0.1F, true, 0);
 
         ParticleHandlers.sendParticles(
             entity.level(), genericParticle, worldPosition, 0, directions.x, directions.y + 0.1, directions.z, speed
-        );
-    }
-
-    private void setKnockbackAndDamage(Player player){
-        player.level().getNearbyEntities(
-            LivingEntity.class, TargetingConditions.DEFAULT, player,
-            player.getBoundingBox().inflate(6, 2, 6)
-        ).forEach(
-            livingEntity -> {
-                if(DefaultEntityBehaviour.canDamageEntity(livingEntity, player)){
-                    var deltaX = livingEntity.getX() - player.getX();
-                    var deltaY = livingEntity.getY() - player.getY();
-                    var deltaZ = livingEntity.getZ() - player.getZ();
-                    var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-                    if (livingEntity != player) {
-                        var knockback = (double) this.highestDelta / 2;
-                        this.knockback(livingEntity, Math.max(knockback, 0.3), -deltaX / length, -deltaZ / length);
-                        damageWithJahdoo(livingEntity, player, this.getDamage);
-                    }
-                }
-            }
         );
     }
 
@@ -181,6 +120,44 @@ public class NovaSmash implements AbstractAttachment {
         }
     }
 
+    private void setAbilityEffects(Player player){
+        getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.PLAYER_BIG_FALL);
+        getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.EXPLOSION.get(), 1,0.6f);
+        this.clientDiggingParticles(player, player.level());
+
+        if(player.level() instanceof ServerLevel){
+            var position = player.position();
+            var knockback = Math.max( Math.min((double) this.highestDelta / 4, 1), 0.2);
+
+            getOuterRingOfRadiusRandom(position, 1, 100, (pos) -> setParticleNova(pos, player, knockback));
+            getOuterRingOfRadiusRandom(position, 0.5, Math.max(this.getDamage * 20, 20),
+                worldPosition -> this.setParticleNova(player, worldPosition, 5, player.level())
+            );
+        }
+
+    }
+
+    private void setKnockbackAndDamage(Player player){
+        player.level().getNearbyEntities(
+            LivingEntity.class, TargetingConditions.DEFAULT, player,
+            player.getBoundingBox().inflate(6, 2, 6)
+        ).forEach(
+            livingEntity -> {
+                if(DefaultEntityBehaviour.canDamageEntity(livingEntity, player)){
+                    var deltaX = livingEntity.getX() - player.getX();
+                    var deltaY = livingEntity.getY() - player.getY();
+                    var deltaZ = livingEntity.getZ() - player.getZ();
+                    var length = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+                    if (livingEntity != player) {
+                        var knockback = (double) this.highestDelta / 2;
+                        this.knockback(livingEntity, Math.max(knockback, 0.3), -deltaX / length, -deltaZ / length);
+                        damageWithJahdoo(livingEntity, player, this.getDamage);
+                    }
+                }
+            }
+        );
+    }
+
     private void setParticleNova(Player player, Vec3 worldPosition, double particleMultiplier, Level level){
         var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), 0.1f);
         var directions = positionScrambler.subtract(player.position()).normalize();
@@ -198,6 +175,29 @@ public class NovaSmash implements AbstractAttachment {
         var pSpeed = Random.nextDouble(0.3, 1.0);
 
         ParticleHandlers.sendParticles(level, pType, worldPosition, 0, directions.x, directions.y, directions.z, pSpeed);
+    }
+
+    private void onTick(Player player){
+        var getCurrentDelta = (int) Math.abs(Math.round(player.getDeltaMovement().y));
+        this.highestDelta = Math.max(this.highestDelta, getCurrentDelta);
+
+        if (this.canSmash){
+            var getHolder = WandAbilityHolder.getHolderFromWand(player);
+            var getValue = (float) getSpecificValue(NovaSmashAbility.abilityId.getPath().intern(), getHolder,AbilityBuilder.DAMAGE);
+            this.getDamage = Helpers.attributeModifierCalculator(player, getValue, false, MAGIC_DAMAGE_MULTIPLIER, MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
+            player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
+            if(player.onGround()){
+                this.setAbilityEffects(player);
+                this.setKnockbackAndDamage(player);
+                this.highestDelta = 0;
+                this.canSmash = false;
+                BouncyFoot.setBouncyFoot(player, 160);
+            }
+        }
+
+        if(player instanceof ServerPlayer serverPlayer){
+            PacketDistributor.sendToPlayer(serverPlayer, new NovaSmashS2CPacket(highestDelta, canSmash, getDamage));
+        }
     }
 
 }

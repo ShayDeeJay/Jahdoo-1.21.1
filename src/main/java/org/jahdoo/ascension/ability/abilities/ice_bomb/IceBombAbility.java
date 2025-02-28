@@ -7,9 +7,9 @@ import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.EntitiesRegister;
-import org.jahdoo.common.registers.EntityPropertyRegister;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.EntityDataReg;
+import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.ability.AbilityBuilder;
@@ -19,19 +19,6 @@ public class IceBombAbility extends AbilityRegistrar {
     public static final ResourceLocation abilityId = Helpers.res("ice_bomb");
 
     @Override
-    public void invokeAbility(Player player) {
-        fireProjectile(
-            new ElementProjectile(
-                EntitiesRegister.FROST_ELEMENT_PROJECTILE.get(), player,
-                EntityPropertyRegister.ICE_BOMB.get().setAbilityId(),
-                offsetShoot(player),
-                abilityId.getPath().intern()
-            ),
-            player, 0.35f
-        );
-    }
-
-    @Override
     public JahdooRarity rarity() {
         return JahdooRarity.RARE;
     }
@@ -39,17 +26,6 @@ public class IceBombAbility extends AbilityRegistrar {
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
-    }
-
-    @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setStaticMana(45)
-            .setStaticCooldown(400)
-            .setDamage(20, 10, 2)
-            .setEffectStrength(10, 5,1)
-            .setEffectDuration(600,200,100)
-            .build();
     }
 
     @Override
@@ -69,6 +45,31 @@ public class IceBombAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.frost();
+        return ElementReg.frost();
     }
+
+    @Override
+    public void invokeAbility(Player player) {
+        fireProjectile(
+            new ElementProjectile(
+                EntityReg.FROST_ELEMENT_PROJECTILE.get(), player,
+                EntityDataReg.ICE_BOMB.get().setAbilityId(),
+                offsetShoot(player),
+                abilityId.getPath().intern()
+            ),
+            player, 0.35f
+        );
+    }
+
+    @Override
+    public void setModifiers(ItemStack itemStack) {
+        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+            .setStaticMana(45)
+            .setStaticCooldown(400)
+            .setDamage(20, 10, 2)
+            .setEffectStrength(10, 5,1)
+            .setEffectDuration(600,200,100)
+            .build();
+    }
+
 }

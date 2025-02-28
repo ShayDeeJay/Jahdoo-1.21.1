@@ -16,7 +16,7 @@ import org.jahdoo.common.items.tome.TomeRenderer;
 import org.jahdoo.common.datagen.loot.ModLootModifiers;
 import org.jahdoo.common.registers.*;
 import org.jahdoo.ascension.utils.Configuration;
-import org.jahdoo.ascension.utils.ModCreativeModTabs;
+import org.jahdoo.ascension.utils.CreativeTab;
 import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
 @Mod(JahdooMod.MOD_ID)
@@ -27,37 +27,37 @@ public class JahdooMod {
 
     public JahdooMod(IEventBus modEventBus, ModContainer container) {
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(AbilityRegister::registerRegistry);
-        modEventBus.addListener(ElementRegistry::registerRegistry);
-        modEventBus.addListener(EntityPropertyRegister::registerRegistry);
+        modEventBus.addListener(AbilityReg::registerRegistry);
+        modEventBus.addListener(ElementReg::registerRegistry);
+        modEventBus.addListener(EntityDataReg::registerRegistry);
 
         // Register the config
         // This will use NeoForge's ConfigurationScreen to display this mod's configs
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         container.registerConfig(ModConfig.Type.CLIENT, Configuration.CLIENT_CONFIG);
-        ArmorMaterialRegistry.register(modEventBus);
-        AttributesRegister.register(modEventBus);
-        AttachmentRegister.register(modEventBus);
-        ModCreativeModTabs.register(modEventBus);
-        BlocksRegister.register(modEventBus);
-        BlockEntitiesRegister.register(modEventBus);
-        MenusRegister.register(modEventBus);
-        EntitiesRegister.register(modEventBus);
-        EffectsRegister.register(modEventBus);
-        ParticlesRegister.register(modEventBus);
-        SoundRegister.register(modEventBus);
-        ItemsRegister.register(modEventBus);
+        ArmorMaterialReg.register(modEventBus);
+        AttributeReg.register(modEventBus);
+        AttachmentReg.register(modEventBus);
+        CreativeTab.register(modEventBus);
+        BlockReg.register(modEventBus);
+        BlockEntityReg.register(modEventBus);
+        MenuReg.register(modEventBus);
+        EntityReg.register(modEventBus);
+        EffectReg.register(modEventBus);
+        ParticleReg.register(modEventBus);
+        SoundReg.register(modEventBus);
+        ItemReg.register(modEventBus);
         ModLootModifiers.register(modEventBus);
-        DataComponentRegistry.register(modEventBus);
-        EntityPropertyRegister.register(modEventBus);
-        AbilityRegister.register(modEventBus);
-        ElementRegistry.register(modEventBus);
+        ComponentReg.register(modEventBus);
+        EntityDataReg.register(modEventBus);
+        AbilityReg.register(modEventBus);
+        ElementReg.register(modEventBus);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        CuriosRendererRegistry.register(ItemsRegister.PENDENT.get(), PendentRenderer::new);
-        CuriosRendererRegistry.register(ItemsRegister.TOME_OF_UNITY.get(), TomeRenderer::new);
-        CuriosRendererRegistry.register(ItemsRegister.BATTLEMAGE_GAUNTLET.get(), GloveRenderer::new);
+        CuriosRendererRegistry.register(ItemReg.PENDENT.get(), PendentRenderer::new);
+        CuriosRendererRegistry.register(ItemReg.TOME_OF_UNITY.get(), TomeRenderer::new);
+        CuriosRendererRegistry.register(ItemReg.BATTLEMAGE_GAUNTLET.get(), GloveRenderer::new);
     }
 
 }

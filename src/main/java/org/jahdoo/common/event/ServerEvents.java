@@ -20,27 +20,30 @@ import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.ascension.LevelGenerator;
 import org.jahdoo.ascension.ability.abilities.dimensional_recall.DimensionalRecall;
 import org.jahdoo.ascension.ability.abilities.nova_smash.NovaSmash;
 import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.ascension.attachments.CastingData;
-import org.jahdoo.ascension.attachments.player_abilities.*;
-import org.jahdoo.ascension.LevelGenerator;
+import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
+import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
+import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
+import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
-import org.jahdoo.common.registers.ItemsRegister;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.registers.ItemReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
 import java.util.Objects;
 
-import static org.jahdoo.ascension.LevelGenerator.DimHandler.TRADING_POST;
-import static org.jahdoo.ascension.LevelGenerator.DimHandler.TRIAL;
+import static org.jahdoo.ascension.DimHandler.TRADING_POST;
+import static org.jahdoo.ascension.DimHandler.TRIAL;
+import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
-import static org.jahdoo.common.registers.AttachmentRegister.SAVE_DATA;
-import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.common.registers.AttachmentReg.SAVE_DATA;
 
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID)
@@ -188,14 +191,14 @@ public class ServerEvents {
             var max = Math.max(1, bonus);
             if(entity instanceof CustomZombie){
                 if(Random.nextInt(0, Math.min(10, max)) == 0){
-                    var stack = new ItemStack(ItemsRegister.BRONZE_COIN).copyWithCount(Math.max(1, 10 - bonus));
+                    var stack = new ItemStack(ItemReg.BRONZE_COIN).copyWithCount(Math.max(1, 10 - bonus));
                     BehaviorUtils.throwItem(entity, stack, entity.position());
                 }
             }
 
             if(entity instanceof CustomSkeleton){
                 if(Random.nextInt(0,Math.min(5, max)) == 0){
-                    var stack = new ItemStack(ItemsRegister.BRONZE_COIN).copyWithCount(Math.max(1, 20 - bonus));
+                    var stack = new ItemStack(ItemReg.BRONZE_COIN).copyWithCount(Math.max(1, 20 - bonus));
                     BehaviorUtils.throwItem(entity, stack, entity.position());
                 }
             }
@@ -203,7 +206,7 @@ public class ServerEvents {
             if(entity instanceof EternalWizard wizard){
                 if(wizard.getOwner() == null){
                     if (Random.nextInt(0,Math.min(10 , max)) == 0) {
-                        var stack = new ItemStack(ItemsRegister.SILVER_COIN).copyWithCount(Math.max(1, 10 - bonus));
+                        var stack = new ItemStack(ItemReg.SILVER_COIN).copyWithCount(Math.max(1, 10 - bonus));
                         BehaviorUtils.throwItem(entity, stack, entity.position());
                     }
                 }

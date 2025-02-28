@@ -2,8 +2,6 @@ package org.jahdoo.common.block.tank;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -26,18 +24,15 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.common.block.BlockInteractionHandler;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jahdoo.common.registers.ItemsRegister;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.sounds.SoundEvents.*;
 import static net.minecraft.sounds.SoundSource.*;
 import static org.jahdoo.common.block.BlockInteractionHandler.*;
-import static org.jahdoo.common.registers.AttachmentRegister.BOOL;
-import static org.jahdoo.common.registers.BlockEntitiesRegister.*;
-import static org.jahdoo.common.registers.ItemsRegister.*;
+import static org.jahdoo.common.registers.AttachmentReg.BOOL;
+import static org.jahdoo.common.registers.BlockEntityReg.*;
+import static org.jahdoo.common.registers.ItemReg.*;
 
 public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 

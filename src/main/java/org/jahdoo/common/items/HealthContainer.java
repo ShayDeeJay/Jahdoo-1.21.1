@@ -5,7 +5,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
-import org.jahdoo.common.registers.DataComponentRegistry;
+import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.ascension.utils.ItemEntityBehaviour;
 import org.jahdoo.common.particle.ParticleHandlers;
 
@@ -21,7 +21,7 @@ public class HealthContainer extends Item implements ItemEntityBehaviour {
     public boolean onItemInteraction(ItemEntity itemEntity, LivingEntity livingEntity) {
         if(livingEntity.level() instanceof ServerLevel serverLevel){
             var itemStack = itemEntity.getItem();
-            var getDamage = itemStack.get(DataComponentRegistry.HEART_CONTAINER.get());
+            var getDamage = itemStack.get(ComponentReg.HEART_CONTAINER.get());
             livingEntity.heal((getDamage != null ? getDamage : 0.1f) * itemStack.getCount());
             itemStack.shrink(itemStack.getCount());
             ParticleHandlers.spawnElectrifiedParticles(

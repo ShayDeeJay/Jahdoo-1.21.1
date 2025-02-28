@@ -12,7 +12,7 @@ import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.ascension.utils.Helpers;
 
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
 
 public class SyncComponentBlockC2S implements CustomPacketPayload{
     public static final Type<SyncComponentBlockC2S> TYPE = new Type<>(Helpers.res("sync_item_block_update"));

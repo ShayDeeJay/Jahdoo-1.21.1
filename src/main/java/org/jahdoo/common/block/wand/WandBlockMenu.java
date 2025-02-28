@@ -10,8 +10,8 @@ import net.minecraft.world.level.block.Block;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.gui.AbstractInternalContainer;
 import org.jahdoo.common.client.slots.AugmentSlot;
-import org.jahdoo.common.registers.BlocksRegister;
-import org.jahdoo.common.registers.MenusRegister;
+import org.jahdoo.common.registers.BlockReg;
+import org.jahdoo.common.registers.MenuReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +19,7 @@ import java.util.Objects;
 
 import static org.jahdoo.common.client.SharedUI.handleSlotsInGridLayout;
 import static org.jahdoo.common.components.DataComponentHelper.*;
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
+import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
 
 public class WandBlockMenu extends AbstractInternalContainer {
     public int slotsY = -10;
@@ -29,13 +29,13 @@ public class WandBlockMenu extends AbstractInternalContainer {
     public int ySpacing = 56;
 
     public WandBlockMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
-        super(MenusRegister.WAND_BLOCK_MENU.get(), id, inv, extraData);
+        super(MenuReg.WAND_BLOCK_MENU.get(), id, inv, extraData);
         this.addSlotsInGridLayout();
 
     }
 
     public WandBlockMenu(int id, Inventory inv, AbstractBEInventory entity, ContainerData data) {
-        super(MenusRegister.WAND_BLOCK_MENU.get(), id, inv, entity, data);
+        super(MenuReg.WAND_BLOCK_MENU.get(), id, inv, entity, data);
         this.addSlotsInGridLayout();
     }
 
@@ -46,7 +46,7 @@ public class WandBlockMenu extends AbstractInternalContainer {
 
     @Override
     protected Block getAssociatedBlock() {
-        return BlocksRegister.WAND.get();
+        return BlockReg.WAND.get();
     }
 
     public WandBlockEntity getWandBlockEntity(){

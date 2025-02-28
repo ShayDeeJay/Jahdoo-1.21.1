@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.armor.BaseArmor;
-import org.jahdoo.common.registers.ArmorMaterialRegistry;
+import org.jahdoo.common.registers.ArmorMaterialReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -26,7 +26,7 @@ public class MageArmor extends BaseArmor implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public MageArmor(Type type) {
-        super(ArmorMaterialRegistry.MAGE, type, getComponent());
+        super(ArmorMaterialReg.MAGE, type, getComponent());
     }
 
     private static @NotNull Properties getComponent() {

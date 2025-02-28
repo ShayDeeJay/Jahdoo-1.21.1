@@ -3,17 +3,18 @@ package org.jahdoo.ascension.ability;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.common.registers.DataComponentRegistry;
+import org.jahdoo.common.registers.ComponentReg;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 
-import static org.jahdoo.common.registers.DataComponentRegistry.AUGMENT_RATING;
+import static org.jahdoo.common.registers.ComponentReg.AUGMENT_RATING;
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
 
 public class AbilityBuilder {
+
     //Mandatory mods
     public static final String MANA_COST = "Mana Cost";
     public static final String COOLDOWN = "Cooldown Duration";
@@ -44,69 +45,6 @@ public class AbilityBuilder {
     public AbilityBuilder(@Nullable ItemStack itemStack, String abilityId) {
         this.item = itemStack;
         this.abilityId = abilityId;
-    }
-
-//    private double getLuckModifier(){
-//        if(item != null && item.getItem() instanceof Augment){
-//            var rating = item.get(AUGMENT_RATING.get());
-//            if(rating != null) return Math.max(1, rating); else return 1;
-//        }
-//        return 1;
-//    }
-
-    public AbilityBuilder setAbilityTagModifiersRandom(String name, double high, double low, boolean isHigherBetter, double step) {
-//        var getModifier = getLuckModifier();
-//        var weightedDouble = getWeightedRandomDouble(high, low, (getModifier == 0) != isHigherBetter, step, getModifier);
-        var getValue = isHigherBetter ? low : high;
-        var chooseValue = this.item != null && this.item.has(AUGMENT_RATING.get()) ? getRandomWeightedDouble(low, high, step) : getValue;
-        var chosenR = doubleFormattedDouble(chooseValue);
-        var highR = doubleFormattedDouble(high);
-        var lowR = doubleFormattedDouble(low);
-        var stepR = doubleFormattedDouble(step);
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(chosenR, highR, lowR, stepR, chosenR, isHigherBetter);
-        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
-        return this;
-    }
-
-    private double getRandomWeightedDouble(double min, double max, double step){
-        var allowed = new ArrayList<Double>();
-        for(double i = min; i < max; i += step) allowed.add(i);
-        Collections.shuffle(allowed);
-        return allowed.getFirst();
-    }
-
-    public AbilityBuilder setModifier(String name, double high, double low, boolean isHigherBetter, double actualValue) {
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(
-            actualValue, high, low, 0, actualValue, isHigherBetter
-        );
-
-        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
-        return this;
-    }
-
-    public AbilityBuilder setModifierWithStep(String name, double high, double low, boolean isHigherBetter, double actualValue, double step) {
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(
-            actualValue, high, low, step, actualValue, isHigherBetter
-        );
-
-        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
-        return this;
-    }
-    public AbilityBuilder setModifierWithStepSet(String name, double high, double low, boolean isHigherBetter, double actualValue, double setValue, double step) {
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(
-            actualValue, high, low, step, setValue, isHigherBetter
-        );
-
-        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
-        return this;
-    }
-
-    public AbilityBuilder setModifierWithoutBounds(String name, double actualValue) {
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(
-            actualValue, -1, -1, 0, actualValue, true
-        );
-        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
-        return this;
     }
 
     public double getPropertyFromHolder(String getSelection){
@@ -223,16 +161,71 @@ public class AbilityBuilder {
         return this;
     }
 
-    public void build() {
-        this.wandAbilityHolder.abilityProperties().put(abilityId, this.abilityHolder);
-        if(this.item != null){
-            this.item.set(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), this.wandAbilityHolder);
-        }
-    }
-
     public WandAbilityHolder buildAndReturn(){
         this.wandAbilityHolder.abilityProperties().put(abilityId, this.abilityHolder);
         return this.wandAbilityHolder;
+    }
+
+    public void build() {
+        this.wandAbilityHolder.abilityProperties().put(abilityId, this.abilityHolder);
+        if(this.item != null){
+            this.item.set(ComponentReg.WAND_ABILITY_HOLDER.get(), this.wandAbilityHolder);
+        }
+    }
+
+    private double getRandomWeightedDouble(double min, double max, double step){
+        var allowed = new ArrayList<Double>();
+        for(double i = min; i < max; i += step) allowed.add(i);
+        Collections.shuffle(allowed);
+        return allowed.getFirst();
+    }
+
+    public AbilityBuilder setModifier(String name, double high, double low, boolean isHigherBetter, double actualValue) {
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(
+            actualValue, high, low, 0, actualValue, isHigherBetter
+        );
+
+        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
+        return this;
+    }
+
+    public AbilityBuilder setModifierWithStep(String name, double high, double low, boolean isHigherBetter, double actualValue, double step) {
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(
+            actualValue, high, low, step, actualValue, isHigherBetter
+        );
+
+        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
+        return this;
+    }
+
+    public AbilityBuilder setModifierWithStepSet(String name, double high, double low, boolean isHigherBetter, double actualValue, double setValue, double step) {
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(
+            actualValue, high, low, step, setValue, isHigherBetter
+        );
+
+        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
+        return this;
+    }
+    public AbilityBuilder setModifierWithoutBounds(String name, double actualValue) {
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(
+            actualValue, -1, -1, 0, actualValue, true
+        );
+        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
+        return this;
+    }
+
+    public AbilityBuilder setAbilityTagModifiersRandom(String name, double high, double low, boolean isHigherBetter, double step) {
+//        var getModifier = getLuckModifier();
+//        var weightedDouble = getWeightedRandomDouble(high, low, (getModifier == 0) != isHigherBetter, step, getModifier);
+        var getValue = isHigherBetter ? low : high;
+        var chooseValue = this.item != null && this.item.has(AUGMENT_RATING.get()) ? getRandomWeightedDouble(low, high, step) : getValue;
+        var chosenR = doubleFormattedDouble(chooseValue);
+        var highR = doubleFormattedDouble(high);
+        var lowR = doubleFormattedDouble(low);
+        var stepR = doubleFormattedDouble(step);
+        var abilityModifiers = new AbilityHolder.AbilityModifiers(chosenR, highR, lowR, stepR, chosenR, isHigherBetter);
+        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
+        return this;
     }
 
 

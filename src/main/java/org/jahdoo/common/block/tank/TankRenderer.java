@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.registers.BlocksRegister;
+import org.jahdoo.common.registers.BlockReg;
 
 public class TankRenderer implements BlockEntityRenderer<TankBlockEntity>{
 
@@ -28,7 +28,7 @@ public class TankRenderer implements BlockEntityRenderer<TankBlockEntity>{
         var mc = Minecraft.getInstance();
         var itemRenderer = mc.getItemRenderer();
 
-        var itemStack1 = new ItemStack(BlocksRegister.NEXITE_POWDER_BLOCK.get());
+        var itemStack1 = new ItemStack(BlockReg.NEXITE_POWDER_BLOCK.get());
         var itemStack = entity.getRenderer();
         float number = 0.63f;
         int rotation = 0;

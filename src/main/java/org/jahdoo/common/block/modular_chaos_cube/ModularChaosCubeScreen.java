@@ -10,10 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
-import org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.client.gui.ToggleComponent;
-import org.jahdoo.common.registers.AbilityRegister;
+import org.jahdoo.common.registers.AbilityReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -29,7 +27,7 @@ import static org.jahdoo.common.client.IconLocations.*;
 import static org.jahdoo.common.client.gui.ToggleComponent.*;
 import static org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeData.selectDirection;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.*;
-import static org.jahdoo.common.registers.AttachmentRegister.MODULAR_CHAOS_CUBE;
+import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 
 public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaosCubeMenu> {
 
@@ -87,7 +85,7 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
     }
 
     public static Optional<AbstractBlockAbility> isContainerAccessor(ItemStack itemStack){
-        var get = AbilityRegister.getFirstSpellFromAugment(itemStack);
+        var get = AbilityReg.getFirstSpellFromAugment(itemStack);
         if(get.isPresent() && get.get() instanceof AbstractBlockAbility accessor){
             return Optional.of(accessor);
         }

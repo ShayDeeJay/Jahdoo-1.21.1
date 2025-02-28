@@ -24,57 +24,56 @@ import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class ChallengeAltarAnim {
 
-    public static void idleParticleAnim(BlockPos pPos, int privateTicks, Level level) {
-        PositionFinders.getInnerRingOfRadiusRandom(pPos, 0.25, 2,
-            positions -> {
-                var colourDarker = Helpers.getColourDarker(ColourStore.PERK_GREEN, 0.5f);
-                var randomColouredParticle = Helpers.getRandomColouredParticle(ColourStore.PERK_GREEN, colourDarker, 10, 1, false);
-                ChallengeAltarAnim.placeParticle(positions, randomColouredParticle, level, privateTicks);
-            }
-        );
-
-        if(privateTicks > 100){
-            if (Random.nextInt(20) == 0) {
-                var randomSound = List.of(TRIAL_SPAWNER_AMBIENT, TRIAL_SPAWNER_AMBIENT_OMINOUS).get(Random.nextInt(2));
-                Helpers.getSoundWithPosition(level, pPos, randomSound, 1, 2f);
-            }
-        }
-    }
-
-    static @NotNull BiConsumer<BlockPos, ServerLevel> getBlockPosServerLevelBiConsumer(Level pLevel, BlockState mossyStoneBricks) {
-        return (targetPos, level1) -> {
-            var breakSound = mossyStoneBricks.getSoundType(pLevel, targetPos, null).getBreakSound();
-            if (!level1.getBlockState(targetPos).is(mossyStoneBricks.getBlock())) {
-                Helpers.getSoundWithPosition(pLevel, targetPos, breakSound);
-                level1.setBlockAndUpdate(targetPos, mossyStoneBricks);
-            }
-        };
-    }
-
-    public static void onActivationAnim(Level pLevel, BlockPos pPos, int privateTicks) {
-        PositionFinders.getOuterRingOfRadius(
-            pPos.getCenter().subtract(0,0.03,0), 0.1, 50, pos -> setShockwaveNova(pos.subtract(0, 0,0), pPos, pLevel)
-        );
-        Helpers.getSoundWithPosition(pLevel, pPos, SoundEvents.DEEPSLATE_BREAK, 0.4f, 0.6f);
-        Helpers.getSoundWithPosition(pLevel, pPos, SoundEvents.VAULT_OPEN_SHUTTER, 0.4f, 0f);
-    }
-
-
     public static void placeParticle(Vec3 pos, ParticleOptions par1, Level level, int privateTicks){
         double randomY = Helpers.Random.nextDouble(0.0, 0.4);
         ParticleHandlers.sendParticles(level, par1, pos.subtract(0,0.4,0), privateTicks <= 100 ? 5 : 0, 0, randomY,0, privateTicks == 94 ? 1.4 : privateTicks > 90 ? 0.4 : 0.1);
     }
 
-    private static void setShockwaveNova(Vec3 worldPosition, BlockPos pos, Level level){
-        var directions = worldPosition.subtract(pos.getCenter()).normalize();
+    public static void onActivationAnim(Level level, BlockPos posA, int privateTicks) {
+        PositionFinders.getOuterRingOfRadius(
+            posA.getCenter().subtract(0,0.03,0), 0.1, 50, posB -> setShockwaveNova(posB.subtract(0, 0,0), posA, level)
+        );
+        Helpers.getSoundWithPosition(level, posA, SoundEvents.DEEPSLATE_BREAK, 0.4f, 0.6f);
+        Helpers.getSoundWithPosition(level, posA, SoundEvents.VAULT_OPEN_SHUTTER, 0.4f, 0f);
+    }
+
+    static @NotNull BiConsumer<BlockPos, ServerLevel> getBlockPosServerLevelBiConsumer(Level level, BlockState state) {
+        return (targetPos, levelA) -> {
+            var breakSound = state.getSoundType(level, targetPos, null).getBreakSound();
+            if (!levelA.getBlockState(targetPos).is(state.getBlock())) {
+                Helpers.getSoundWithPosition(level, targetPos, breakSound);
+                levelA.setBlockAndUpdate(targetPos, state);
+            }
+        };
+    }
+
+    private static void setShockwaveNova(Vec3 pos, BlockPos blockPos, Level level){
+        var directions = pos.subtract(blockPos.getCenter()).normalize();
         var lifetime = 3;
         var col1 = -8487298;
         var col2 = -13355980;
         var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.06f, col1, col2, true);
 
         ParticleHandlers.sendParticles(
-            level, genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, Random.nextDouble(0.2, 0.6)
+            level, genericParticle, pos, 0, directions.x, directions.y, directions.z, Random.nextDouble(0.2, 0.6)
         );
+    }
+
+    public static void idleParticleAnim(BlockPos pos, int ticks, Level level) {
+        PositionFinders.getInnerRingOfRadiusRandom(pos, 0.25, 2,
+            positions -> {
+                var colourDarker = Helpers.getColourDarker(ColourStore.PERK_GREEN, 0.5f);
+                var randomColouredParticle = Helpers.getRandomColouredParticle(ColourStore.PERK_GREEN, colourDarker, 10, 1, false);
+                ChallengeAltarAnim.placeParticle(positions, randomColouredParticle, level, ticks);
+            }
+        );
+
+        if(ticks > 100){
+            if (Random.nextInt(20) == 0) {
+                var randomSound = List.of(TRIAL_SPAWNER_AMBIENT, TRIAL_SPAWNER_AMBIENT_OMINOUS).get(Random.nextInt(2));
+                Helpers.getSoundWithPosition(level, pos, randomSound, 1, 2f);
+            }
+        }
     }
 
 }

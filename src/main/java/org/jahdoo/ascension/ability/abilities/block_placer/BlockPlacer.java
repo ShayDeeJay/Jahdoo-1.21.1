@@ -9,20 +9,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbstractUtilityProjectile;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.common.items.wand.WandItemHelper.getStoredBlock;
 
 public class BlockPlacer extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = Helpers.res("block_placer_property");
-    Level level;
+
+    private static final ResourceLocation abilityId = Helpers.res("block_placer_property");
+    private Level level;
 
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
@@ -41,11 +41,54 @@ public class BlockPlacer extends AbstractUtilityProjectile {
     }
 
     @Override
+    public String abilityId() {
+        return BlockPlacerAbility.abilityId.getPath().intern();
+    }
+
+    private static void placeSound(BlockPos blockPos, Direction side, Block replaceBlock, Level level, boolean playSound) {
+        var state = replaceBlock.defaultBlockState();
+//        level.setBlockAndUpdate(blockPos.relative(side), state);
+        if(playSound){
+            Helpers.getSoundWithPosition(level, blockPos, state.getSoundType().getBreakSound());
+        }
+    }
+
+    public static void removeItemsFromInv(
+        Projectile projectile,
+        BlockPos blockPos,
+        Direction side,
+        Block replaceBlock,
+        Player player,
+        ItemStack targetBlock,
+        Vec3 pos,
+        boolean playSound
+    ) {
+        var level = projectile.level();
+        if (level.getBlockState(blockPos.relative(side)).canBeReplaced() && replaceBlock != Blocks.AIR) {
+            if(player != null ){
+                for (ItemStack itemStack : player.getInventory().items) {
+                    if (itemStack.is(targetBlock.getItem()) && player.getInventory().selected != player.getInventory().items.indexOf(itemStack)) {
+                        if(!player.isCreative()) itemStack.shrink(1);
+                        placeSound(blockPos, side, replaceBlock, level, playSound);
+                        break;
+                    }
+                }
+            } else {
+                if(level.getBlockEntity(BlockPos.containing(pos)) instanceof ModularChaosCubeEntity entity){
+                    var localStack = entity.externalInputInventory(level);
+                    if(!localStack.isEmpty()) entity.externalInputInventory(level).shrink(1);
+                    placeSound(blockPos, side, Block.byItem(localStack.getItem()), level, playSound);
+                }
+            }
+        }
+    }
+
+    @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
         if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
-        var player = (Player) genericProjectile.getOwner();
-        var pos = this.genericProjectile.blockEntityPos;
+        var player = (Player) generic.getOwner();
+        var pos = this.generic.blockEntityPos;
         var blockPos = blockHitResult.getBlockPos();
         var side = blockHitResult.getDirection();
         if (level.isClientSide) return;
@@ -67,41 +110,8 @@ public class BlockPlacer extends AbstractUtilityProjectile {
             }
         }
 
-        removeItemsFromInv(this.genericProjectile, blockPos, side, replaceBlock, player, targetBlock, pos, true);
-        genericProjectile.discard();
+        removeItemsFromInv(this.generic, blockPos, side, replaceBlock, player, targetBlock, pos, true);
+        generic.discard();
     }
 
-    public static void removeItemsFromInv(Projectile projectile, BlockPos blockPos, Direction side, Block replaceBlock, Player player, ItemStack targetBlock, Vec3 pos, boolean playSound) {
-        var level = projectile.level();
-        if (level.getBlockState(blockPos.relative(side)).canBeReplaced() && replaceBlock != Blocks.AIR) {
-            if(player != null ){
-                for (ItemStack itemStack : player.getInventory().items) {
-                    if (itemStack.is(targetBlock.getItem()) && player.getInventory().selected != player.getInventory().items.indexOf(itemStack)) {
-                        if(!player.isCreative()) itemStack.shrink(1);
-                        placeSound(blockPos, side, replaceBlock, level, playSound);
-                        break;
-                    }
-                }
-            } else {
-                if(level.getBlockEntity(BlockPos.containing(pos)) instanceof ModularChaosCubeEntity entity){
-                    var localStack = entity.externalInputInventory(level);
-                    if(!localStack.isEmpty()) entity.externalInputInventory(level).shrink(1);
-                    placeSound(blockPos, side, Block.byItem(localStack.getItem()), level, playSound);
-                }
-            }
-        }
-    }
-
-    private static void placeSound(BlockPos blockPos, Direction side, Block replaceBlock, Level level, boolean playSound) {
-        BlockState state = replaceBlock.defaultBlockState();
-//        level.setBlockAndUpdate(blockPos.relative(side), state);
-        if(playSound){
-            Helpers.getSoundWithPosition(level, blockPos, state.getSoundType().getBreakSound());
-        }
-    }
-
-    @Override
-    public String abilityId() {
-        return BlockPlacerAbility.abilityId.getPath().intern();
-    }
 }

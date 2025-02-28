@@ -1,4 +1,4 @@
-package org.jahdoo.common.client.block_renderer;
+package org.jahdoo.common.block.augment_modification_station;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -16,11 +16,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.block.augment_modification_station.AugmentModificationEntity;
 import org.jahdoo.common.components.DataComponentHelper;
-import org.jahdoo.common.registers.AbilityRegister;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jetbrains.annotations.NotNull;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.ElementReg;
 
 import static org.jahdoo.common.block.infuser.InfuserBlock.FACING;
 
@@ -33,65 +31,70 @@ public class AugmentModificationRenderer implements BlockEntityRenderer<AugmentM
         this.entityRenderDispatcher = context.getBlockEntityRenderDispatcher();
     }
 
+    protected void renderNameTag(AugmentModificationEntity entity, Component name, PoseStack postStack, MultiBufferSource source, int textColour) {
+        var getEntity = this.entityRenderDispatcher.camera.getEntity();
+        var distance = entity.getBlockPos().getCenter().closerThan(getEntity.position(), 10);
+
+        if (getEntity instanceof Player player && player.isCreative() && distance) {
+            postStack.pushPose();
+            postStack.translate(0.5, 1.2, 0.2);
+            postStack.mulPose(Axis.XP.rotationDegrees(180));
+            postStack.scale(0.01f, 0.01f, 0.01f);
+            var matrix4f = postStack.last().pose();
+            var font = Minecraft.getInstance().font;
+            var f1 = (float) -font.width(name) / 2;
+            font.drawInBatch(name, f1, 0, textColour, false, matrix4f, source, Font.DisplayMode.NORMAL  , 0, 255);
+            postStack.popPose();
+        }
+    }
+
     @Override
     public void render(
         AugmentModificationEntity augmentStation,
-        float pPartialTick,
-        @NotNull PoseStack pPoseStack,
-        @NotNull MultiBufferSource pBuffer,
-        int pPackedLight,
-        int pPackedOverlay
+        float partial,
+        PoseStack poseStack,
+        MultiBufferSource source,
+        int packedLight,
+        int packedOverlay
     ){
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
         var keyFromAugment = DataComponentHelper.getKeyFromAugment(augmentStation.getInteractionSlot());
-        var ability = AbilityRegister.getFirstSpellByTypeId(keyFromAugment);
+        var ability = AbilityReg.getFirstSpellByTypeId(keyFromAugment);
         if(ability.isPresent()){
-            var getElement = ElementRegistry.fromId(augmentStation.getInteractionSlot().get(DataComponents.CUSTOM_MODEL_DATA).value());
-//            var name = Component.literal("");
+            var getElement = ElementReg.fromId(augmentStation.getInteractionSlot().get(DataComponents.CUSTOM_MODEL_DATA).value());
             var name = Component.literal(ability.get().getAbilityName());
-            getElement.ifPresent(element -> renderNameTag(augmentStation, name, pPoseStack, pBuffer, element.textColourA()));
+            getElement.ifPresent(element -> renderNameTag(augmentStation, name, poseStack, source, element.textColourA()));
         }
-        focusedItem(pPoseStack, augmentStation, itemRenderer, pBuffer, pPackedLight);
+        focusedItem(poseStack, augmentStation, itemRenderer, source, packedLight);
     }
 
-    private void focusedItem(PoseStack pPoseStack, AugmentModificationEntity pBlockEntity, ItemRenderer itemRenderer, MultiBufferSource pBuffer, int packedLight){
-        pPoseStack.pushPose();
+    private void focusedItem(
+        PoseStack poseStack,
+        AugmentModificationEntity entity,
+        ItemRenderer renderer,
+        MultiBufferSource source,
+        int packedLight
+    ){
+        poseStack.pushPose();
         var scaleItem = 0.40f;
-        var getState = pBlockEntity.getBlockState().getValue(FACING).getOpposite();
+        var getState = entity.getBlockState().getValue(FACING).getOpposite();
         var N = getState == Direction.NORTH;
         var S = getState == Direction.SOUTH;
         var E = getState == Direction.EAST;
         var W = getState == Direction.WEST;
 
-        pPoseStack.translate(W ? 0.53f : E ? 0.47f : 0.5f, 0.88f, N ? 0.53f : S ? 0.47 : 0.5f);
-        pPoseStack.scale(scaleItem, scaleItem, scaleItem);
-        pPoseStack.mulPose(getState.getRotation());
-        pPoseStack.mulPose(Axis.XP.rotationDegrees(-23));
+        poseStack.translate(W ? 0.53f : E ? 0.47f : 0.5f, 0.88f, N ? 0.53f : S ? 0.47 : 0.5f);
+        poseStack.scale(scaleItem, scaleItem, scaleItem);
+        poseStack.mulPose(getState.getRotation());
+        poseStack.mulPose(Axis.XP.rotationDegrees(-23));
 
-        ItemStack itemStack = pBlockEntity.inputItemHandler.getStackInSlot(0);
-        itemRenderer.renderStatic(
+        ItemStack itemStack = entity.inputItemHandler.getStackInSlot(0);
+        renderer.renderStatic(
             itemStack, ItemDisplayContext.FIXED, packedLight,
-            OverlayTexture.NO_OVERLAY, pPoseStack, pBuffer, pBlockEntity.getLevel(), 1
+            OverlayTexture.NO_OVERLAY, poseStack, source, entity.getLevel(), 1
         );
 
-        pPoseStack.popPose();
-    }
-
-    protected void renderNameTag(AugmentModificationEntity bEntity, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int textColour) {
-        var entity = this.entityRenderDispatcher.camera.getEntity();
-        var d0 = bEntity.getBlockPos().getCenter().closerThan(entity.position(), 10);
-
-        if (entity instanceof Player player && player.isCreative() && d0) {
-            pPoseStack.pushPose();
-            pPoseStack.translate(0.5, 1.2, 0.2);
-            pPoseStack.mulPose(Axis.XP.rotationDegrees(180));
-            pPoseStack.scale(0.01f, 0.01f, 0.01f);
-            var matrix4f = pPoseStack.last().pose();
-            var font = Minecraft.getInstance().font;
-            var f1 = (float) -font.width(pDisplayName) / 2;
-            font.drawInBatch(pDisplayName, f1, 0, textColour, false, matrix4f, pBuffer, Font.DisplayMode.NORMAL  , 0, 255);
-            pPoseStack.popPose();
-        }
+        poseStack.popPose();
     }
 
 }

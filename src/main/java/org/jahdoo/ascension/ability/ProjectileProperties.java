@@ -15,9 +15,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
 import org.jahdoo.ascension.ability.abilities.BurningSkullsAbility;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jetbrains.annotations.NotNull;
+import org.jahdoo.common.components.WandAbilityHolder;
 
 public abstract class ProjectileProperties extends Projectile {
     private static final EntityDataAccessor<Integer> ANIMATION_TYPE = SynchedEntityData.defineId(ProjectileProperties.class, EntityDataSerializers.INT);
@@ -28,6 +27,12 @@ public abstract class ProjectileProperties extends Projectile {
     protected double lerpZ;
     protected double lerpYRot;
     protected double lerpXRot;
+
+    protected ProjectileProperties(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+        super(pEntityType, pLevel);
+    }
+
+    public abstract AbstractElement getElementType();
 
     public int animationType() {
         return this.entityData.get(ANIMATION_TYPE);
@@ -42,82 +47,13 @@ public abstract class ProjectileProperties extends Projectile {
         pBuilder.define(ANIMATION_TYPE, 0);
     }
 
-    protected ProjectileProperties(EntityType<? extends Projectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
-    }
-
-    @Override
-    public void lerpTo(double pX, double pY, double pZ, float pYRot, float pXRot, int pSteps) {
-        this.lerpX = pX;
-        this.lerpY = pY;
-        this.lerpZ = pZ;
-        this.lerpYRot = pYRot;
-        this.lerpXRot = pXRot;
-        this.lerpSteps = 2;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        Entity entity = this.getOwner();
-        if (this.level().isClientSide || (entity == null || !entity.isRemoved()) && this.level().hasChunk(this.chunkPosition().x, this.chunkPosition().z)) {
-            HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-            if (hitresult.getType() != HitResult.Type.MISS && !EventHooks.onProjectileImpact(this, hitresult)) {
-                this.onHit(hitresult);
-            }
-
-            this.checkInsideBlocks();
-            Vec3 vec3 = this.getDeltaMovement();
-            double d0 = this.getX() + vec3.x;
-            double d1 = this.getY() + vec3.y;
-            double d2 = this.getZ() + vec3.z;
-            this.setPos(d0, d1, d2);
-
-        }
-
-        if(this.level().isClientSide){
-            if (this.lerpSteps > 0) {
-                double d = this.getX() + (this.lerpX - this.getX()) / (double) this.lerpSteps;
-                double e = this.getY() + (this.lerpY - this.getY()) / (double) this.lerpSteps;
-                double y = this.getZ() + (this.lerpZ - this.getZ()) / (double) this.lerpSteps;
-                double g = Mth.wrapDegrees(this.lerpYRot - (double) this.getYRot());
-                this.setYRot(this.getYRot() + (float) g / (float) this.lerpSteps);
-                this.setXRot(this.getXRot() + (float) (this.lerpXRot - (double) this.getXRot()) / (float) this.lerpSteps);
-                --this.lerpSteps;
-                this.setPos(d, e, y);
-                this.setRot(this.getYRot(), this.getXRot());
-            }
-        }
-    }
-
-    public void setProjectileWithOffsets(Projectile projectile, LivingEntity owner, double spacing, double distance){
-        double forwardHorizontalOffset = -Math.sin(Math.toRadians(owner.yRotO)) * Math.cos(Math.toRadians(owner.xRotO)) * distance;
-        double forwardVerticalOffset = Math.sin(-Math.toRadians(owner.xRotO)) * distance;
-        double forwardOffsetX = owner.getX() + forwardHorizontalOffset;
-        double forwardOffsetY = owner.getY() + owner.getEyeHeight() + forwardVerticalOffset - 0.05;
-        double forwardOffsetZ = owner.getZ() + Math.cos(Math.toRadians(owner.yRotO)) * Math.cos(Math.toRadians(owner.xRotO)) * distance;
-        double rightOffsetX = Math.cos(Math.toRadians(owner.yRotO)) * spacing;
-        double rightOffsetZ = Math.sin(Math.toRadians(owner.yRotO)) * spacing;
-        double spawnX = forwardOffsetX + rightOffsetX;
-        double spawnZ = forwardOffsetZ + rightOffsetZ;
-        projectile.moveTo(spawnX, forwardOffsetY, spawnZ, projectile.getYRot(), projectile.getXRot());
-    }
-
-    public static double getTag(String name, WandAbilityHolder wandAbilityHolder) {
-        var abName = BurningSkullsAbility.abilityId.getPath().intern();
-        if(Helpers.getModifierValue(wandAbilityHolder, abName).get(name) != null){
-            return Helpers.getModifierValue(wandAbilityHolder,abName).get(name).setValue();
-        }
-        return 0;
-    }
-
     @Override
     public boolean isAttackable() {
         return false;
     }
 
     @Override
-    public float distanceTo(@NotNull Entity pEntity) {
+    public float distanceTo(Entity pEntity) {
         return super.distanceTo(pEntity);
     }
 
@@ -133,5 +69,71 @@ public abstract class ProjectileProperties extends Projectile {
         return 1.0F;
     }
 
-    public abstract AbstractElement getElementType();
+    public static double getTag(String name, WandAbilityHolder wandAbilityHolder) {
+        var abName = BurningSkullsAbility.abilityId.getPath().intern();
+        var modifier = Helpers.getModifierValue(wandAbilityHolder, abName).get(name);
+
+        if(modifier != null) return modifier.setValue();
+
+        return 0;
+    }
+
+    @Override
+    public void lerpTo(double pX, double pY, double pZ, float pYRot, float pXRot, int pSteps) {
+        this.lerpX = pX;
+        this.lerpY = pY;
+        this.lerpZ = pZ;
+        this.lerpYRot = pYRot;
+        this.lerpXRot = pXRot;
+        this.lerpSteps = 2;
+    }
+
+    public void setProjectileWithOffsets(Projectile projectile, LivingEntity owner, double spacing, double distance){
+        var forwardHorizontalOffset = -Math.sin(Math.toRadians(owner.yRotO)) * Math.cos(Math.toRadians(owner.xRotO)) * distance;
+        var forwardVerticalOffset = Math.sin(-Math.toRadians(owner.xRotO)) * distance;
+        var forwardOffsetX = owner.getX() + forwardHorizontalOffset;
+        var forwardOffsetY = owner.getY() + owner.getEyeHeight() + forwardVerticalOffset - 0.05;
+        var forwardOffsetZ = owner.getZ() + Math.cos(Math.toRadians(owner.yRotO)) * Math.cos(Math.toRadians(owner.xRotO)) * distance;
+        var rightOffsetX = Math.cos(Math.toRadians(owner.yRotO)) * spacing;
+        var rightOffsetZ = Math.sin(Math.toRadians(owner.yRotO)) * spacing;
+        var spawnX = forwardOffsetX + rightOffsetX;
+        var spawnZ = forwardOffsetZ + rightOffsetZ;
+
+        projectile.moveTo(spawnX, forwardOffsetY, spawnZ, projectile.getYRot(), projectile.getXRot());
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        var entity = this.getOwner();
+        if (this.level().isClientSide || (entity == null || !entity.isRemoved()) && this.level().hasChunk(this.chunkPosition().x, this.chunkPosition().z)) {
+
+            var hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+            if (hitresult.getType() != HitResult.Type.MISS && !EventHooks.onProjectileImpact(this, hitresult)) {
+                this.onHit(hitresult);
+            }
+
+            this.checkInsideBlocks();
+            Vec3 vec3 = this.getDeltaMovement();
+            var d0 = this.getX() + vec3.x;
+            var d1 = this.getY() + vec3.y;
+            var d2 = this.getZ() + vec3.z;
+            this.setPos(d0, d1, d2);
+
+        }
+
+        if(this.level().isClientSide){
+            if (this.lerpSteps > 0) {
+                var d = this.getX() + (this.lerpX - this.getX()) / (double) this.lerpSteps;
+                var e = this.getY() + (this.lerpY - this.getY()) / (double) this.lerpSteps;
+                var y = this.getZ() + (this.lerpZ - this.getZ()) / (double) this.lerpSteps;
+                var g = Mth.wrapDegrees(this.lerpYRot - (double) this.getYRot());
+                this.setYRot(this.getYRot() + (float) g / (float) this.lerpSteps);
+                this.setXRot(this.getXRot() + (float) (this.lerpXRot - (double) this.getXRot()) / (float) this.lerpSteps);
+                --this.lerpSteps;
+                this.setPos(d, e, y);
+                this.setRot(this.getYRot(), this.getXRot());
+            }
+        }
+    }
 }

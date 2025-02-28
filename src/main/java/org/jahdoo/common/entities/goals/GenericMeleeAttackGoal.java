@@ -15,7 +15,7 @@ import org.jahdoo.ascension.utils.DamageUtils;
 import java.util.EnumSet;
 
 import static net.minecraft.world.entity.EntitySelector.NO_CREATIVE_OR_SPECTATOR;
-import static org.jahdoo.common.registers.EffectsRegister.*;
+import static org.jahdoo.common.registers.EffectReg.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class GenericMeleeAttackGoal extends Goal {

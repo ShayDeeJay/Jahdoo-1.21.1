@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.utils.Helpers;
 
-import static org.jahdoo.common.registers.AttachmentRegister.CASTER_DATA;
+import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
 public class ManaDataSyncS2CPacket implements CustomPacketPayload {
     public static final Type<ManaDataSyncS2CPacket> TYPE = new Type<>(Helpers.res("sync_client_mana"));

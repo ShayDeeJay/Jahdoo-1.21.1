@@ -9,7 +9,7 @@ import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.gui.AbilityWheelMenu;
 import org.jahdoo.common.networking.packet.client2server.SelectedAbilityC2SPacket;
 import org.jahdoo.common.networking.packet.client2server.StopUsingC2SPacket;
-import org.jahdoo.common.registers.AbilityRegister;
+import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.ascension.utils.ModTags;
 
 import java.util.List;
@@ -37,7 +37,7 @@ public class WandAbilitySelector {
         boolean condition2 = !arrangedAbilities.isEmpty() && arrangedAbilities.size() > keyNum - 1;
 
         if(condition1 || condition2){
-            List<AbilityRegistrar> getAbility = AbilityRegister.getSpellsByTypeId(arrangedAbilities.get(keyNum - 1));
+            List<AbilityRegistrar> getAbility = AbilityReg.getSpellsByTypeId(arrangedAbilities.get(keyNum - 1));
             if(!getAbility.isEmpty()){
                 var a1 = getAbility.getFirst();
                 var a = withStyleComponent(a1.getAbilityName(),SharedUI.getElementColour(a1, playerHandItem));

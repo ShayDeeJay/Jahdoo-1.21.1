@@ -13,32 +13,78 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.ability.effects.EffectHelpers;
 import org.jahdoo.common.networking.packet.server2client.MoveClientEntitySyncS2CPacket;
-import org.jahdoo.common.registers.EffectsRegister;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.SoundRegister;
+import org.jahdoo.common.registers.EffectReg;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 
 import static org.jahdoo.ascension.utils.Helpers.*;
 
 public class MysticEffect extends MobEffect {
+
     public MysticEffect() {
         super(MobEffectCategory.HARMFUL, FastColor.ARGB32.color(151, 77, 178));
     }
 
+    private static @NotNull AbstractElement getElement() {
+        return ElementReg.mystic();
+    }
+
     @Override
-    public boolean applyEffectTick(LivingEntity targetEntity, int pAmplifier) {
+    public MobEffectCategory getCategory() {
+        return MobEffectCategory.HARMFUL;
+    }
+
+    @Override
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
+        return true;
+    }
+
+    @Override
+    public boolean isBeneficial() {
+        return false;
+    }
+
+    private static void removeThis(LivingEntity targetEntity) {
+        targetEntity.removeEffect(MobEffects.GLOWING);
+        targetEntity.removeEffect(EffectReg.MYSTIC_EFFECT);
+    }
+
+    private static void idleAnim(LivingEntity targetEntity, ServerLevel serverLevel, AbstractElement element) {
+        var getRandomChance = Random.nextInt(0, 10);
+        var sound = SoundEvents.SOUL_ESCAPE.value();
+        EffectHelpers.setEffectParticle(getRandomChance, targetEntity, serverLevel, element, sound);
+    }
+
+    @Override
+    public boolean applyEffectTick(LivingEntity targetEntity, int amplifier) {
         if(targetEntity.isAlive()){
             if (targetEntity.level() instanceof ServerLevel serverLevel) {
                 onTickApply(targetEntity, serverLevel, getElement());
-                sendEffectPacketsToPlayerDistance(targetEntity.position(), 50, serverLevel, targetEntity.getId(), new JahdooMobEffect(EffectsRegister.MYSTIC_EFFECT, 10, pAmplifier));
+                sendEffectPacketsToPlayerDistance(
+                    targetEntity.position(),
+                    50,
+                    serverLevel,
+                    targetEntity.getId(),
+                    new JahdooMobEffect(EffectReg.MYSTIC_EFFECT, 10, amplifier)
+                );
             }
         } else removeThis(targetEntity);
 
         return true;
     }
 
-    private static @NotNull AbstractElement getElement() {
-        return ElementRegistry.mystic();
+    @Override
+    public void onEffectAdded(LivingEntity livingEntity, int amplifier) {
+        if(livingEntity instanceof ServerPlayer serverPlayer){
+            PacketDistributor.sendToPlayer(serverPlayer, new MoveClientEntitySyncS2CPacket(0, 0.7, 0, serverPlayer.getId()));
+        } else {
+            livingEntity.setDeltaMovement(0, 0.5, 0);
+        }
+
+        livingEntity.playSound(getElement().sound());
+        livingEntity.playSound(SoundReg.DASH_EFFECT_INSTANT.get(), 1, 0.6f);
+        super.onEffectAdded(livingEntity, amplifier);
     }
 
     private void onTickApply(LivingEntity targetEntity, ServerLevel serverLevel, AbstractElement element) {
@@ -55,42 +101,4 @@ public class MysticEffect extends MobEffect {
         idleAnim(targetEntity, serverLevel, element);
     }
 
-    private static void removeThis(LivingEntity targetEntity) {
-        targetEntity.removeEffect(MobEffects.GLOWING);
-        targetEntity.removeEffect(EffectsRegister.MYSTIC_EFFECT);
-    }
-
-    private static void idleAnim(LivingEntity targetEntity, ServerLevel serverLevel, AbstractElement element) {
-        var getRandomChance = Random.nextInt(0, 10);
-        var sound = SoundEvents.SOUL_ESCAPE.value();
-        EffectHelpers.setEffectParticle(getRandomChance, targetEntity, serverLevel, element, sound);
-    }
-
-    @Override
-    public void onEffectAdded(@NotNull LivingEntity livingEntity, int amplifier) {
-        if(livingEntity instanceof ServerPlayer serverPlayer){
-            PacketDistributor.sendToPlayer(serverPlayer, new MoveClientEntitySyncS2CPacket(0, 0.7, 0, serverPlayer.getId()));
-        } else {
-            livingEntity.setDeltaMovement(0, 0.5, 0);
-        }
-
-        livingEntity.playSound(getElement().sound());
-        livingEntity.playSound(SoundRegister.DASH_EFFECT_INSTANT.get(), 1, 0.6f);
-        super.onEffectAdded(livingEntity, amplifier);
-    }
-
-    @Override
-    public MobEffectCategory getCategory() {
-        return MobEffectCategory.HARMFUL;
-    }
-
-    @Override
-    public boolean shouldApplyEffectTickThisTick(int pDuration, int pAmplifier) {
-        return true;
-    }
-
-    @Override
-    public boolean isBeneficial() {
-        return false;
-    }
 }

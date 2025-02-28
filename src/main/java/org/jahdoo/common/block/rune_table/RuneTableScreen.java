@@ -12,7 +12,7 @@ import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,10 +35,10 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
     public RuneTableScreen(RuneTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
-        var element = ElementRegistry.fromWand(menu.tableEntity().itemSlot().getItem());
+        var element = ElementReg.fromWand(menu.tableEntity().itemSlot().getItem());
 
         this.runeTableMenu = menu;
-        this.element = element.orElse(ElementRegistry.mystic());
+        this.element = element.orElse(ElementReg.mystic());
         this.borderColour = element.map(AbstractElement::textColourA).orElseGet(() -> color(56, 157, 59));
     }
 

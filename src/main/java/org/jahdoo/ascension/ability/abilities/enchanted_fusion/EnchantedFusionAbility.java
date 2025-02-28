@@ -8,23 +8,14 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.EntityPropertyRegister;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 
 public class EnchantedFusionAbility extends AbstractBlockAbility {
-    public static final ResourceLocation abilityId = Helpers.res("enchanted_fusion");
 
-    @Override
-    public void invokeAbility(Player player) {
-        GenericProjectile genericProjectile = new GenericProjectile(
-            player, 0,
-            projectileKey(),
-            abilityId.getPath().intern()
-        );
-        fireUtilityProjectile(genericProjectile, player);
-    }
+    public static final ResourceLocation abilityId = Helpers.res("enchanted_fusion");
 
     @Override
     public JahdooRarity rarity() {
@@ -34,13 +25,6 @@ public class EnchantedFusionAbility extends AbstractBlockAbility {
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
-    }
-
-    @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(10, 5, 1)
-            .build();
     }
 
     @Override
@@ -60,7 +44,7 @@ public class EnchantedFusionAbility extends AbstractBlockAbility {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.utility();
+        return ElementReg.utility();
     }
 
     @Override
@@ -70,6 +54,24 @@ public class EnchantedFusionAbility extends AbstractBlockAbility {
 
     @Override
     public String projectileKey() {
-        return EntityPropertyRegister.ENCHANTED_FUSION.get().setAbilityId();
+        return EntityDataReg.ENCHANTED_FUSION.get().setAbilityId();
     }
+
+    @Override
+    public void setModifiers(ItemStack itemStack) {
+        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+            .setMana(10, 5, 1)
+            .build();
+    }
+
+    @Override
+    public void invokeAbility(Player player) {
+        GenericProjectile genericProjectile = new GenericProjectile(
+            player, 0,
+            projectileKey(),
+            abilityId.getPath().intern()
+        );
+        fireUtilityProjectile(genericProjectile, player);
+    }
+
 }

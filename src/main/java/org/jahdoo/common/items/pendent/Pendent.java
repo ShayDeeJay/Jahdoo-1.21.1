@@ -8,7 +8,7 @@ import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.wand.WandItemHelper;
-import org.jahdoo.common.registers.DataComponentRegistry;
+import org.jahdoo.common.registers.ComponentReg;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class Pendent extends Item implements ICurioItem, JahdooItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        var data = stack.get(DataComponentRegistry.RUNE_HOLDER);
+        var data = stack.get(ComponentReg.RUNE_HOLDER);
         if(data != null){
             WandItemHelper.appendRefinementPotential(tooltipComponents, stack);
         }

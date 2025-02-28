@@ -8,20 +8,15 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 
-import static org.jahdoo.common.registers.EntityPropertyRegister.FETCH;
+import static org.jahdoo.common.registers.EntityDataReg.FETCH;
 
 public class FetchAbility extends AbstractBlockAbility {
-    public static final ResourceLocation abilityId = Helpers.res("fetch");
 
-    @Override
-    public void invokeAbility(Player player) {
-        var genericProjectile = new GenericProjectile(player, 0, projectileKey(), abilityId.getPath().intern());
-        fireUtilityProjectile(genericProjectile, player);
-    }
+    public static final ResourceLocation abilityId = Helpers.res("fetch");
 
     @Override
     public JahdooRarity rarity() {
@@ -31,14 +26,6 @@ public class FetchAbility extends AbstractBlockAbility {
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
-    }
-
-    @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setMana(20, 10, 2)
-            .setRange(10,  3, 1)
-            .build();
     }
 
     @Override
@@ -58,7 +45,7 @@ public class FetchAbility extends AbstractBlockAbility {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.utility();
+        return ElementReg.utility();
     }
 
     @Override
@@ -70,4 +57,19 @@ public class FetchAbility extends AbstractBlockAbility {
     public String projectileKey() {
         return FETCH.get().setAbilityId();
     }
+
+    @Override
+    public void invokeAbility(Player player) {
+        var genericProjectile = new GenericProjectile(player, 0, projectileKey(), abilityId.getPath().intern());
+        fireUtilityProjectile(genericProjectile, player);
+    }
+
+    @Override
+    public void setModifiers(ItemStack itemStack) {
+        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+            .setMana(20, 10, 2)
+            .setRange(10,  3, 1)
+            .build();
+    }
+
 }

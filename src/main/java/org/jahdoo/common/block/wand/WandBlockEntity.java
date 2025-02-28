@@ -17,14 +17,13 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.items.wand.WandData;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.AbilityRegister;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jahdoo.common.registers.DataComponentRegistry;
-import org.jahdoo.common.registers.ItemsRegister;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.ascension.utils.PositionFinders;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -36,9 +35,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.common.items.augments.AugmentItemHelper.setAbilityToAugment;
-import static org.jahdoo.common.registers.DataComponentRegistry.NUMBER;
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
-import static org.jahdoo.common.registers.ElementRegistry.fromWand;
+import static org.jahdoo.common.registers.ComponentReg.NUMBER;
+import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
+import static org.jahdoo.common.registers.ElementReg.fromWand;
 
 public class WandBlockEntity extends AbstractBEInventory implements MenuProvider, GeoBlockEntity {
 
@@ -48,7 +47,7 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
     private int tickCounter;
 
     public WandBlockEntity(BlockPos pos, BlockState state) {
-        super(BlockEntitiesRegister.WAND_BE.get(), pos, state, 1);
+        super(BlockEntityReg.WAND_BE.get(), pos, state, 1);
     }
 
     public ItemStack getWandItemFromSlot(){
@@ -155,10 +154,10 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
 
         for(int i = 0; i < this.getAllowedSlots(); i++){
             var augmentItem = this.inputItemHandler.getStackInSlot(i+1);
-            var hasAbility = augmentItem.has(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+            var hasAbility = augmentItem.has(ComponentReg.WAND_ABILITY_HOLDER.get());
             if(hasAbility){
                 var getKeyFromAugment = DataComponentHelper.getAbilityTypeItemStack(augmentItem);
-                var abilityHolder = augmentItem.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get()).abilityProperties().get(getKeyFromAugment);
+                var abilityHolder = augmentItem.get(ComponentReg.WAND_ABILITY_HOLDER.get()).abilityProperties().get(getKeyFromAugment);
                 positions.add(getKeyFromAugment);
                 wandAbilityHolder.abilityProperties().put(getKeyFromAugment, abilityHolder);
             } else {
@@ -171,7 +170,7 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
             wandItem.update(WAND_DATA, WandData.DEFAULT, data -> data.setSelectedAbility(""));
         }
         wandItem.update(WAND_DATA, WandData.DEFAULT, data -> data.setAbilityOrder(positions));
-        wandItem.set(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), wandAbilityHolder);
+        wandItem.set(ComponentReg.WAND_ABILITY_HOLDER.get(), wandAbilityHolder);
         this.inputItemHandler.setStackInSlot(GET_WAND_SLOT, wandItem);
     }
 
@@ -182,7 +181,7 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
 
         var actualAbilities =
             this.inputItemHandler.getStackInSlot(GET_WAND_SLOT)
-                .get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
+                .get(ComponentReg.WAND_ABILITY_HOLDER.get());
 
         var storedAbilities = this.inputItemHandler
             .getStackInSlot(GET_WAND_SLOT)
@@ -191,17 +190,17 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
         AtomicInteger integer = new AtomicInteger(1);
 
         for (String key : storedAbilities.abilitySet()) {
-            var abilityRegistrars = AbilityRegister.getSpellsByTypeId(key);
+            var abilityRegistrars = AbilityReg.getSpellsByTypeId(key);
             if (!abilityRegistrars.isEmpty()) {
                 var ability = abilityRegistrars.getFirst();
-                var itemStack = new ItemStack(ItemsRegister.AUGMENT.get());
+                var itemStack = new ItemStack(ItemReg.AUGMENT.get());
                 itemStack.set(NUMBER, 4);
                 var abilityHolder = actualAbilities.abilityProperties().get(key);
                 setAbilityToAugment(itemStack, ability, actualAbilities);
                 var newHolder = new WandAbilityHolder(new LinkedHashMap<>());
                 newHolder.abilityProperties().put(key, abilityHolder);
-                itemStack.set(DataComponentRegistry.WAND_ABILITY_HOLDER.get(), newHolder);
-                itemStack.set(DataComponentRegistry.JAHDOO_RARITY, ability.rarity().getId());
+                itemStack.set(ComponentReg.WAND_ABILITY_HOLDER.get(), newHolder);
+                itemStack.set(ComponentReg.JAHDOO_RARITY, ability.rarity().getId());
                 this.inputItemHandler.setStackInSlot(integer.get(), itemStack);
 
             } else {

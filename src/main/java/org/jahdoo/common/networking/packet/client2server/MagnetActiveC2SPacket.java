@@ -7,9 +7,9 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.items.magnet.MagnetData;
-import org.jahdoo.common.registers.DataComponentRegistry;
-import org.jahdoo.common.registers.ItemsRegister;
-import org.jahdoo.common.registers.SoundRegister;
+import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -31,17 +31,17 @@ public class MagnetActiveC2SPacket implements CustomPacketPayload {
                 var player = ctx.player();
                 var curio = CuriosApi.getCuriosInventory(player);
                 if(curio.isPresent()){
-                    var curios = curio.get().findCurios(ItemsRegister.MAGNET.get());
+                    var curios = curio.get().findCurios(ItemReg.MAGNET.get());
                     if(!curios.isEmpty()){
                         var magnet = curios.getFirst().stack();
-                        var magnetData = magnet.get(DataComponentRegistry.MAGNET_DATA);
+                        var magnetData = magnet.get(ComponentReg.MAGNET_DATA);
                         if(magnetData != null){
                             MagnetData.updateActive(magnet, !magnetData.active());
                             var active = Helpers.withStyleComponent("Active", ColourStore.MAGNET_RANGE_GREEN);
                             var deactivate = Helpers.withStyleComponent("Deactivated", ColourStore.MAGNET_STRENGTH_RED);
                             player.displayClientMessage(!magnetData.active() ? active : deactivate, true);
                             if(player instanceof ServerPlayer serverPlayer){
-                                Helpers.sendClientSound(serverPlayer, SoundRegister.SELECT.get(), 1, 1);
+                                Helpers.sendClientSound(serverPlayer, SoundReg.SELECT.get(), 1, 1);
                             }
                         }
                     }

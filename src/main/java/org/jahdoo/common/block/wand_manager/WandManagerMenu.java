@@ -3,7 +3,6 @@ package org.jahdoo.common.block.wand_manager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.apache.logging.log4j.Level;
@@ -13,14 +12,14 @@ import org.jahdoo.common.client.gui.AbstractInternalContainer;
 import org.jahdoo.common.client.slots.AugmentCoreSlot;
 import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
-import org.jahdoo.common.registers.BlocksRegister;
-import org.jahdoo.common.registers.ItemsRegister;
-import org.jahdoo.common.registers.MenusRegister;
+import org.jahdoo.common.registers.BlockReg;
+import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.MenuReg;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLOTS;
+import static org.jahdoo.common.client.SharedUI.getCore;
 import static org.jahdoo.common.client.SharedUI.handleSlotsInGridLayout;
 
 public class WandManagerMenu extends AbstractInternalContainer {
@@ -32,22 +31,22 @@ public class WandManagerMenu extends AbstractInternalContainer {
     public int runeYSpacer = 33;
 
     public WandManagerMenu(int containerId, Inventory inv, FriendlyByteBuf extraData) {
-        super(MenusRegister.WAND_MANAGER_MENU.get(), containerId, inv, extraData);
+        super(MenuReg.WAND_MANAGER_MENU.get(), containerId, inv, extraData);
         this.addSlots();
     }
 
     public WandManagerMenu(int containerId, Inventory inv, AbstractBEInventory entity, ContainerData data) {
-        super(MenusRegister.WAND_MANAGER_MENU.get(), containerId, inv, entity, data);
+        super(MenuReg.WAND_MANAGER_MENU.get(), containerId, inv, entity, data);
         this.addSlots();
     }
 
     private void insertWandSlot() {
-        this.addSlot(new AugmentCoreSlot(getWandManagerEntity().inputItemHandler, 0, -1000, -1000, ItemsRegister.AUGMENT_CORE.get()));
+        this.addSlot(new AugmentCoreSlot(getWandManagerEntity().inputItemHandler, 0, -1000, -1000, ItemReg.AUGMENT_CORE.get()));
     }
 
     @Override
     protected Block getAssociatedBlock() {
-        return BlocksRegister.WAND_MANAGER_TABLE.get();
+        return BlockReg.WAND_MANAGER_TABLE.get();
     }
 
     public WandManagerEntity getWandManagerEntity(){
@@ -75,14 +74,6 @@ public class WandManagerMenu extends AbstractInternalContainer {
         insertWandSlot();
         insertAugmentSlots();
         insertRuneSlots();
-    }
-
-    public List<Item> getCore(){
-        return List.of(
-            ItemsRegister.AUGMENT_CORE.get(),
-            ItemsRegister.ADVANCED_AUGMENT_CORE.get(),
-            ItemsRegister.AUGMENT_HYPER_CORE.get()
-        );
     }
 
     private void insertAugmentSlots() {

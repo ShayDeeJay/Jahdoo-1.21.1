@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.network.chat.Component.translatable;
 import static org.jahdoo.common.client.SharedUI.BORDER_COLOUR;
-import static org.jahdoo.common.registers.ElementRegistry.*;
+import static org.jahdoo.common.registers.ElementReg.*;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.ascension.utils.Maths.tripleFormattedDouble;

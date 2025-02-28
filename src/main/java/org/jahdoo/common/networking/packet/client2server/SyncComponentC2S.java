@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.ascension.utils.Helpers;
 
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
 
 public class SyncComponentC2S implements CustomPacketPayload{
     public static final Type<SyncComponentC2S> TYPE = new Type<>(Helpers.res("sync_item_update"));

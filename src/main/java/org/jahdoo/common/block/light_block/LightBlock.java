@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.particle.ParticleHandlers;
 
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
@@ -42,11 +42,11 @@ public class LightBlock extends Block {
         AbstractElement type;
 
         if(level.dimension() == Level.NETHER){
-            type = ElementRegistry.inferno();
+            type = ElementReg.inferno();
         } else if (level.dimension() == Level.END) {
-            type = ElementRegistry.mystic();
+            type = ElementReg.mystic();
         } else {
-            type = ElementRegistry.utility();
+            type = ElementReg.utility();
         }
 
         var pos = blockPos.getCenter().subtract(0,0.05,0);

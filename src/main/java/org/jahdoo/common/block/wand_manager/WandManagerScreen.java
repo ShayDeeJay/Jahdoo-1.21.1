@@ -13,30 +13,30 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.client.slots.RuneSlot;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.client.slots.InventorySlots;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
+import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.runes.RuneItem;
+import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.items.wand.WandItemHelper;
 import org.jahdoo.common.networking.packet.client2server.ItemInBlockC2SPacket;
 import org.jahdoo.common.networking.packet.client2server.PlayerExperienceC2SPacket;
-import org.jahdoo.ascension.utils.ColourStore;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.minecraft.util.FastColor.ARGB32.*;
-import static org.jahdoo.common.client.IconLocations.*;
-import static org.jahdoo.common.client.SharedUI.*;
-import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
-import static org.jahdoo.common.client.gui.ToggleComponent.*;
-import static org.jahdoo.common.registers.AttributesRegister.replaceOrAddAttribute;
-import static org.jahdoo.common.registers.DataComponentRegistry.*;
+import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.utils.Helpers.filterList;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.common.registers.ElementRegistry.*;
+import static org.jahdoo.common.client.IconLocations.*;
+import static org.jahdoo.common.client.SharedUI.*;
+import static org.jahdoo.common.client.gui.ToggleComponent.menuButton;
+import static org.jahdoo.common.client.gui.ToggleComponent.menuButtonSound;
+import static org.jahdoo.common.registers.AttributeReg.replaceOrAddAttribute;
+import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
+import static org.jahdoo.common.registers.ElementReg.fromWand;
 
 public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> {
 
@@ -255,6 +255,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     }
 
     private void experienceCost(GuiGraphics guiGraphics, int mouseX, int mouseY, int i, int startY) {
+
         var player = this.getMinecraft().player;
         if(player == null) return;
         var exp = player.experienceLevel;
@@ -266,16 +267,18 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         var offsetY = -27;
         var potential = getPotential();
         if(!showInventory && isHovering && potential > 0){
-            SharedUI.boxMaker(guiGraphics, mouseX - 26 + offsetX, mouseY + offsetY, 26, 13, BORDER_COLOUR, getFadedColourBackground(0.6f));
-            SharedUI.drawStringWithBackground(guiGraphics, this.font, refinementPotential, mouseX + offsetX, mouseY + 15 + offsetY, 0, expColour, true);
+            boxMaker(guiGraphics, mouseX - 26 + offsetX, mouseY + offsetY, 26, 13, BORDER_COLOUR, getFadedColourBackground(0.6f));
+            drawStringWithBackground(guiGraphics, this.font, refinementPotential, mouseX + offsetX, mouseY + 15 + offsetY, 0, expColour, true);
             guiGraphics.drawCenteredString(font, "Exp Cost", mouseX + offsetX, mouseY + 4 + offsetY, -1);
-            SharedUI.drawStringWithBackground(guiGraphics, this.font, expLvl, i, startY + 69, 0, 8453920, true);
+            drawStringWithBackground(guiGraphics, this.font, expLvl, i, startY + 69, 0, 8453920, true);
             renderExperienceBar(guiGraphics, i - 91, startY + 78, this.getMinecraft());
         }
+
     }
 
 
     public void reRollBaseModifiers(){
+
         var wandItemCopy = getWand().copy();
 
         for (var modifier : wandItemCopy.getAttributeModifiers().modifiers()) {
@@ -289,9 +292,6 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
                     case String s when s.contains("mana.cost_reduction") -> ranges.getRandomManaReduction();
                     default -> ranges.getRandomDamage();
                 };
-//                System.out.println(value);
-//                System.out.println(attribute);
-//                System.out.println(attribute.getRegisteredName());
                 replaceOrAddAttribute(wandItemCopy, attribute.getRegisteredName(), attribute, value, EquipmentSlot.MAINHAND, false);
             }
         }
@@ -305,9 +305,11 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
             PacketDistributor.sendToServer(new PlayerExperienceC2SPacket(player.experienceLevel - getExperienceCost()));
         }
+
     }
 
     private void renderWand(GuiGraphics guiGraphics, int mouseX, int mouseY, int startX, int startY) {
+
         var i = 40;
         var i1 = -17;
         var shiftX1 = 75;
@@ -327,14 +329,16 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         guiGraphics.pose().translate(0,0,-10);
         guiGraphics.enableScissor(minX, minY, maxX, minY + (!setView ? 172 : 92));
         renderItem(guiGraphics, width1, height1, getWand(), scaleItem, mouseX, mouseY, 16);
+
         if(this.element != null){
             var colorFade = color(100, borderColour);
             var heightOffset = 86 - (showInventory ? 40 : 0);
             var color = color(50, borderColour);
             var colorA = color(20, borderColour);
             boxMaker(guiGraphics, minX, minY, 30, heightOffset, getFadedColourBackground(0.4f));
-            SharedUI.boxMaker(guiGraphics, minX, minY, 30, heightOffset, color, colorA, colorFade);
+            boxMaker(guiGraphics, minX, minY, 30, heightOffset, color, colorA, colorFade);
         }
+
         guiGraphics.disableScissor();
         guiGraphics.pose().popPose();
         wandProperties(guiGraphics, startX, i, startY, i1);

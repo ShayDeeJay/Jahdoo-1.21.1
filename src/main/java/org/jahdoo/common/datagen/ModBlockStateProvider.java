@@ -3,14 +3,12 @@ package org.jahdoo.common.datagen;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.registers.BlocksRegister;
 
 import static net.neoforged.neoforge.client.model.generators.ModelFile.*;
-import static org.jahdoo.common.registers.BlocksRegister.*;
+import static org.jahdoo.common.registers.BlockReg.*;
 
 public class ModBlockStateProvider extends BlockStateProvider {
 

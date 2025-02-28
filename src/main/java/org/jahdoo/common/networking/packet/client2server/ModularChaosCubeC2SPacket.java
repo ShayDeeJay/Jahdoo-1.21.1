@@ -11,7 +11,7 @@ import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.ascension.utils.Helpers;
 
-import static org.jahdoo.common.registers.AttachmentRegister.MODULAR_CHAOS_CUBE;
+import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 
 public class ModularChaosCubeC2SPacket implements CustomPacketPayload {
     public static final Type<ModularChaosCubeC2SPacket> TYPE = new Type<>(Helpers.res("modular_chaos_data_sync"));

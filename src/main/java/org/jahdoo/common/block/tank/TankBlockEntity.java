@@ -11,10 +11,10 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.AttachmentRegister;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jahdoo.common.registers.BlocksRegister;
-import org.jahdoo.common.registers.ItemsRegister;
+import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.BlockReg;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 
@@ -34,8 +34,8 @@ public class TankBlockEntity extends AbstractBEInventory {
     private static final int INPUT = 0;
 
     public TankBlockEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntitiesRegister.TANK_BE.get(), pPos, pBlockState, 64);
-        this.setData(AttachmentRegister.BOOL, false);
+        super(BlockEntityReg.TANK_BE.get(), pPos, pBlockState, 64);
+        this.setData(AttachmentReg.BOOL, false);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class TankBlockEntity extends AbstractBEInventory {
     }
 
     public void chargeTankFuel(int craftingFuelCost){
-        if(this.getData(AttachmentRegister.BOOL)) return;
+        if(this.getData(AttachmentReg.BOOL)) return;
         if(this.getLevel() == null) return;
         this.inputItemHandler.getStackInSlot(0).shrink(craftingFuelCost);
         var blockstate = getLevel().getBlockState(this.getBlockPos());
@@ -128,7 +128,7 @@ public class TankBlockEntity extends AbstractBEInventory {
 
     private void harvestOreBelow(ServerLevel serverLevel, BlockPos pos, int tankSlotSize){
         var blockState = serverLevel.getBlockState(pos.below());
-        var harvestBlock = BlocksRegister.NEXITE_ORE.get();
+        var harvestBlock = BlockReg.NEXITE_ORE.get();
 
         if(!(blockState.is(harvestBlock))) {
             if(this.counter > 0) this.counter = 0;
@@ -137,7 +137,7 @@ public class TankBlockEntity extends AbstractBEInventory {
 
         if(counter >= 200){
             if(tankSlotSize <= 64){
-                var powderItem = new ItemStack(ItemsRegister.NEXITE_POWDER.get());
+                var powderItem = new ItemStack(ItemReg.NEXITE_POWDER.get());
                 var amountToCopy = Math.min(6 + tankSlotSize, 64);
                 serverLevel.destroyBlock(pos.below(), false);
                 this.inputItemHandler.setStackInSlot(INPUT, powderItem.copyWithCount(amountToCopy));

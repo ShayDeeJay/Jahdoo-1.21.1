@@ -18,18 +18,18 @@ public class Rebound extends MobEffect {
     }
 
     @Override
-    public MobEffectCategory getCategory() {
-        return BENEFICIAL;
-    }
-
-
-    @Override
     public boolean shouldApplyEffectTickThisTick(int pDuration, int pAmplifier) {
         return true;
+    }
+
+    @Override
+    public MobEffectCategory getCategory() {
+        return BENEFICIAL;
     }
 
     @Override
     public boolean isBeneficial() {
         return true;
     }
+
 }

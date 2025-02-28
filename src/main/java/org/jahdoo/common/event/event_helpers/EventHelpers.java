@@ -5,7 +5,6 @@ import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -24,28 +23,28 @@ import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.ability.abilities.block_placer.BlockPlacerAbility;
+import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.ascension.ability.abilities.wall_placer.WallPlacerAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
+import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.registers.EffectsRegister;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.ascension.utils.ModTags;
+import org.jahdoo.common.registers.EffectReg;
+import org.jahdoo.common.registers.ElementReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
-import static org.jahdoo.common.items.wand.WandItemHelper.storeBlockType;
-import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
-import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
-import static org.jahdoo.common.registers.AttachmentRegister.SAVE_DATA;
-import static org.jahdoo.common.registers.DataComponentRegistry.INTERACTION_HAND;
-import static org.jahdoo.common.registers.DataComponentRegistry.RUNE_HOLDER;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
+import static org.jahdoo.common.items.wand.WandItemHelper.storeBlockType;
+import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
+import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
+import static org.jahdoo.common.registers.AttachmentReg.SAVE_DATA;
+import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
+import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
 
 public class EventHelpers {
 
@@ -63,7 +62,11 @@ public class EventHelpers {
 
     public static void removeWandInteractionWithBlocks(UseItemOnBlockEvent event, Player player, Item item, BlockState getBlock) {
         if(player != null){
-            if (item instanceof WandItem && !player.isShiftKeyDown() && !getBlock.is(ALLOWED_BLOCK_INTERACTIONS)) {
+            var isAllowed = !getBlock.is(ALLOWED_BLOCK_INTERACTIONS);
+            var isShift = !player.isShiftKeyDown();
+            var isWand = item instanceof WandItem;
+
+            if (isWand && isShift && isAllowed) {
                 event.cancelWithResult(SKIP_DEFAULT_BLOCK_INTERACTION);
             }
         }
@@ -81,7 +84,7 @@ public class EventHelpers {
     }
 
     public static void greaterVitalityEffect(LivingDamageEvent.Pre event, LivingEntity entity) {
-        if(entity.hasEffect(EffectsRegister.GREATER_VITALITY_EFFECT)){
+        if(entity.hasEffect(EffectReg.GREATER_VITALITY_EFFECT)){
             var getAttacker = event.getSource().getEntity();
             if(Random.nextInt(4) == 0){
                 if(getAttacker instanceof Player player){
@@ -93,12 +96,12 @@ public class EventHelpers {
     }
 
     public static void onDeathGreaterFrostEffect(LivingEntity entity) {
-        if(entity.hasEffect(EffectsRegister.GREATER_FROST_EFFECT)){
+        if(entity.hasEffect(EffectReg.GREATER_FROST_EFFECT)){
             getSoundWithPosition(entity.level(), entity.blockPosition(), SoundEvents.GLASS_BREAK, 1, 1);
-            getAllParticleTypes(ElementRegistry.frost(), 20, 1);
+            getAllParticleTypes(ElementReg.frost(), 20, 1);
             sendParticles(
                   entity.level(),
-                  getAllParticleTypes(ElementRegistry.frost(), 12, 1.5f),
+                  getAllParticleTypes(ElementReg.frost(), 12, 1.5f),
                   entity.position().add(0, entity.getBbHeight()/2, 0), 30,
                   0, 1, 0, 0.2
             );
@@ -121,15 +124,15 @@ public class EventHelpers {
     }
 
     public static void greaterFrostEffectDamageAmplifier(LivingDamageEvent.Pre event, LivingEntity entity) {
-        if(entity.hasEffect(EffectsRegister.GREATER_FROST_EFFECT)){
+        if(entity.hasEffect(EffectReg.GREATER_FROST_EFFECT)){
             var origin = event.getOriginalDamage();
             var modifiedDamage = origin * 2;
             if(!entity.isAlive()){
                 getSoundWithPosition(entity.level(), entity.blockPosition(), SoundEvents.GLASS_BREAK, 1, 1);
-                getAllParticleTypes(ElementRegistry.frost(), 20, 1);
+                getAllParticleTypes(ElementReg.frost(), 20, 1);
                 sendParticles(
                     entity.level(),
-                    getAllParticleTypes(ElementRegistry.frost(), 12, 1.5f),
+                    getAllParticleTypes(ElementReg.frost(), 12, 1.5f),
                     entity.position().add(0, entity.getBbHeight()/2, 0), 30,
                     0, 1, 0, 0.2
                 );
@@ -140,7 +143,7 @@ public class EventHelpers {
 
     public static void mysticEffectClient(RenderLivingEvent.Pre event) {
         var entity = event.getEntity();
-        var effect = EffectsRegister.MYSTIC_EFFECT;
+        var effect = EffectReg.MYSTIC_EFFECT;
         var putEffect = entity.getEffect(effect);
         if(entity.hasEffect(effect)){
             var height = entity.getBbHeight() / 2;

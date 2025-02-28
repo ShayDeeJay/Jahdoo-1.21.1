@@ -11,7 +11,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jahdoo.ascension.attachments.AbstractAttachment;
-import org.jahdoo.common.registers.AttachmentRegister;
+import org.jahdoo.common.registers.AttachmentReg;
 
 public class ModularChaosCubeProperties implements AbstractAttachment {
     BlockPos actionDirection;
@@ -41,6 +41,51 @@ public class ModularChaosCubeProperties implements AbstractAttachment {
         this.worldPosition = worldPosition;
         this.chained = chained;
     }
+
+    public BlockPos worldPosition(){
+        return this.worldPosition;
+    }
+
+    public BlockPos action(){
+        return this.actionDirection;
+    }
+
+    public BlockPos input(){
+        return this.inputInvDirection;
+    }
+
+    public BlockPos output(){
+        return this.outputInvDirection;
+    }
+
+    public boolean active(){
+        return this.active;
+    }
+
+    public boolean chained(){
+        return this.chained;
+    }
+
+    public int speed(){
+        return this.speed;
+    }
+
+    public static BlockPos getActionDirection(BlockEntity entity){
+        return entity.getData(AttachmentReg.MODULAR_CHAOS_CUBE).actionDirection;
+    }
+
+    public static boolean getActive(BlockEntity entity){
+        return entity.getData(AttachmentReg.MODULAR_CHAOS_CUBE).active;
+    }
+
+    public static boolean getChained(BlockEntity entity){
+        return entity.getData(AttachmentReg.MODULAR_CHAOS_CUBE).chained;
+    }
+
+    public static int getSpeed(BlockEntity entity){
+        return entity.getData(AttachmentReg.MODULAR_CHAOS_CUBE).speed;
+    }
+
 
     public static ModularChaosCubeProperties initData(BlockPos blockPos){
         return new ModularChaosCubeProperties(blockPos.north(), blockPos.above(), blockPos.below(), false, 100, blockPos, true);
@@ -74,26 +119,15 @@ public class ModularChaosCubeProperties implements AbstractAttachment {
         return new ModularChaosCubeProperties(action, input, output, active, speed, worldPosition, chained);
     }
 
+    public static final StreamCodec<FriendlyByteBuf, ModularChaosCubeProperties> STREAM_CODEC = StreamCodec.ofMember(
+        ModularChaosCubeProperties::serialise,
+        ModularChaosCubeProperties::deserialise
+    );
+
     public static void setActionDirection(BlockEntity entity, BlockPos actionDirection){
-        var auto = entity.getData(AttachmentRegister.MODULAR_CHAOS_CUBE);
+        var auto = entity.getData(AttachmentReg.MODULAR_CHAOS_CUBE);
         auto.updateActionDirection(actionDirection);
         entity.setChanged();
-    }
-
-    public Direction getDirection(BlockPos blockPos) {
-        if (blockPos.equals(this.worldPosition.north())) {
-            return Direction.NORTH;
-        } else if (blockPos.equals(this.worldPosition.south())) {
-            return Direction.SOUTH;
-        } else if (blockPos.equals(this.worldPosition.east())) {
-            return Direction.EAST;
-        } else if (blockPos.equals(this.worldPosition.west())) {
-            return Direction.WEST;
-        } else if (blockPos.equals(this.worldPosition.above())) {
-            return Direction.UP;
-        } else  {
-            return Direction.DOWN;
-        }
     }
 
     public static BlockPos getRelativePosition(Direction direction, BlockPos blockPos) {
@@ -129,67 +163,6 @@ public class ModularChaosCubeProperties implements AbstractAttachment {
         );
     }
 
-    public static final StreamCodec<FriendlyByteBuf, ModularChaosCubeProperties> STREAM_CODEC = StreamCodec.ofMember(
-        ModularChaosCubeProperties::serialise,
-        ModularChaosCubeProperties::deserialise
-    );
-
-    public BlockPos worldPosition(){
-        return this.worldPosition;
-    }
-
-    public BlockPos action(){
-        return this.actionDirection;
-    }
-
-    public BlockPos input(){
-        return this.inputInvDirection;
-    }
-
-    public BlockPos output(){
-        return this.outputInvDirection;
-    }
-
-    public boolean active(){
-        return this.active;
-    }
-
-    public boolean chained(){
-        return this.chained;
-    }
-
-    public int speed(){
-        return this.speed;
-    }
-
-    public static final Codec<ModularChaosCubeProperties> CODEC = RecordCodecBuilder.create(
-        instance -> instance.group(
-            BlockPos.CODEC.fieldOf("action_direction").forGetter(ModularChaosCubeProperties::action),
-            BlockPos.CODEC.fieldOf("input_direction").forGetter(ModularChaosCubeProperties::input),
-            BlockPos.CODEC.fieldOf("output_direction").forGetter(ModularChaosCubeProperties::output),
-            Codec.BOOL.fieldOf("active").forGetter(ModularChaosCubeProperties::active),
-            Codec.INT.fieldOf("speed").forGetter(ModularChaosCubeProperties::speed),
-            BlockPos.CODEC.fieldOf("world_pos").forGetter(ModularChaosCubeProperties::worldPosition),
-            Codec.BOOL.fieldOf("chained").forGetter(ModularChaosCubeProperties::chained)
-        ).apply(instance, ModularChaosCubeProperties::new)
-    );
-
-    public static BlockPos getActionDirection(BlockEntity entity){
-        return entity.getData(AttachmentRegister.MODULAR_CHAOS_CUBE).actionDirection;
-    }
-
-    public static boolean getActive(BlockEntity entity){
-        return entity.getData(AttachmentRegister.MODULAR_CHAOS_CUBE).active;
-    }
-
-    public static boolean getChained(BlockEntity entity){
-        return entity.getData(AttachmentRegister.MODULAR_CHAOS_CUBE).chained;
-    }
-
-    public static int getSpeed(BlockEntity entity){
-        return entity.getData(AttachmentRegister.MODULAR_CHAOS_CUBE).speed;
-    }
-
     @Override
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.put("world_pos", NbtUtils.writeBlockPos(worldPosition));
@@ -210,5 +183,33 @@ public class ModularChaosCubeProperties implements AbstractAttachment {
         chained = nbt.getBoolean("chained");
         active = nbt.getBoolean("active");
         this.speed = nbt.getInt("speed");
+    }
+
+    public static final Codec<ModularChaosCubeProperties> CODEC = RecordCodecBuilder.create(
+        instance -> instance.group(
+            BlockPos.CODEC.fieldOf("action_direction").forGetter(ModularChaosCubeProperties::action),
+            BlockPos.CODEC.fieldOf("input_direction").forGetter(ModularChaosCubeProperties::input),
+            BlockPos.CODEC.fieldOf("output_direction").forGetter(ModularChaosCubeProperties::output),
+            Codec.BOOL.fieldOf("active").forGetter(ModularChaosCubeProperties::active),
+            Codec.INT.fieldOf("speed").forGetter(ModularChaosCubeProperties::speed),
+            BlockPos.CODEC.fieldOf("world_pos").forGetter(ModularChaosCubeProperties::worldPosition),
+            Codec.BOOL.fieldOf("chained").forGetter(ModularChaosCubeProperties::chained)
+        ).apply(instance, ModularChaosCubeProperties::new)
+    );
+
+    public Direction getDirection(BlockPos blockPos) {
+        if (blockPos.equals(this.worldPosition.north())) {
+            return Direction.NORTH;
+        } else if (blockPos.equals(this.worldPosition.south())) {
+            return Direction.SOUTH;
+        } else if (blockPos.equals(this.worldPosition.east())) {
+            return Direction.EAST;
+        } else if (blockPos.equals(this.worldPosition.west())) {
+            return Direction.WEST;
+        } else if (blockPos.equals(this.worldPosition.above())) {
+            return Direction.UP;
+        } else  {
+            return Direction.DOWN;
+        }
     }
 }

@@ -12,8 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jetbrains.annotations.Nullable;
+import org.jahdoo.common.registers.BlockEntityReg;
 
 public class WandManagerEntity extends AbstractBEInventory implements MenuProvider {
 
@@ -23,7 +22,7 @@ public class WandManagerEntity extends AbstractBEInventory implements MenuProvid
     public ItemStack itemStack;
 
     public WandManagerEntity(BlockPos pos, BlockState state) {
-        super(BlockEntitiesRegister.WAND_MANAGER_TABLE_BE.get(), pos, state, 1);
+        super(BlockEntityReg.WAND_MANAGER_TABLE_BE.get(), pos, state, 1);
     }
 
     public void tick(Level level, BlockPos blockPos, BlockState pState) {

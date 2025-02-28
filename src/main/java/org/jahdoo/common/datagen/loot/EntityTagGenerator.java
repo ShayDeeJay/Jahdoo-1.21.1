@@ -5,15 +5,11 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.registers.EntitiesRegister;
-import org.jahdoo.ascension.utils.ModTags;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-import static org.jahdoo.ascension.utils.ModTags.*;
 import static org.jahdoo.ascension.utils.ModTags.Entities.*;
-import static org.jahdoo.common.registers.EntitiesRegister.*;
+import static org.jahdoo.common.registers.EntityReg.*;
 
 public class EntityTagGenerator extends EntityTypeTagsProvider {
 

@@ -17,7 +17,7 @@ import java.util.Objects;
 import static net.neoforged.neoforge.client.gui.VanillaGuiLayers.*;
 import static org.jahdoo.ascension.ability.AbilityBuilder.CASTING_DISTANCE;
 import static org.jahdoo.ascension.ability.abilities.arcane_shift.ArcaneShiftAbility.*;
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
+import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
 
 public class OverlayEvent {
 

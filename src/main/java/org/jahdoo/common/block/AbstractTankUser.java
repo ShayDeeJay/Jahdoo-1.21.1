@@ -2,17 +2,15 @@ package org.jahdoo.common.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.block.tank.TankBlockEntity;
-import org.jahdoo.common.registers.BlocksRegister;
+import org.jahdoo.common.registers.BlockReg;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
-import static java.util.Comparator.*;
+import static java.util.Comparator.comparingInt;
 
 
 public abstract class AbstractTankUser extends AbstractBEInventory {
@@ -59,7 +57,7 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
 
         for (BlockPos adjacentPos : findInRange(pos)) {
             var adjacentState = level.getBlockState(adjacentPos);
-            if (adjacentState.is(BlocksRegister.TANK.get())) allBlocks.add(adjacentPos);
+            if (adjacentState.is(BlockReg.TANK.get())) allBlocks.add(adjacentPos);
         }
 
         return allBlocks;
@@ -121,7 +119,10 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
             )
             .toList();
 
-        if (blockPos.isEmpty()) this.progress = 0;
+        if (blockPos.isEmpty()) {
+            this.progress = 0;
+            return;
+        }
 
         if (tankPosition != null) {
             if (level.getBlockEntity(tankPosition) instanceof TankBlockEntity tankEntity) {

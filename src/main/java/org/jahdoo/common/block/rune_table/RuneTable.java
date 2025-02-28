@@ -24,12 +24,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jahdoo.common.registers.DataComponentRegistry;
-import org.jetbrains.annotations.Nullable;
+import org.jahdoo.common.registers.BlockEntityReg;
 
-import static org.jahdoo.common.block.BlockInteractionHandler.*;
+import static net.minecraft.world.ItemInteractionResult.FAIL;
+import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static org.jahdoo.common.block.BlockInteractionHandler.removeItemsFromSlotToHand;
 import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
+import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
 
 public class RuneTable extends BaseEntityBlock {
 
@@ -106,7 +107,7 @@ public class RuneTable extends BaseEntityBlock {
         BlockEntityType<T> entityType
     ) {
         return createTickerHelper(
-            entityType, BlockEntitiesRegister.RUNE_TABLE_BE.get(),
+            entityType, BlockEntityReg.RUNE_TABLE_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }
@@ -120,13 +121,12 @@ public class RuneTable extends BaseEntityBlock {
         boolean movedByPiston
     ) {
         if (state.getBlock() != newState.getBlock()) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
+            var blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof RuneTableEntity runeTable) {
-                SimpleContainer inputInventory = new SimpleContainer(1);
-
+                var inputInventory = new SimpleContainer(1);
                 var stackInSlot = runeTable.inputItemHandler.getStackInSlot(0);
-                inputInventory.setItem(0, stackInSlot);
 
+                inputInventory.setItem(0, stackInSlot);
                 Containers.dropContents(level, pos, inputInventory);
             }
         }
@@ -143,22 +143,23 @@ public class RuneTable extends BaseEntityBlock {
         InteractionHand hand,
         BlockHitResult result
     ) {
-        var fail = ItemInteractionResult.FAIL;
-        var entity = level.getBlockEntity(pos);
-        if(!(entity instanceof RuneTableEntity runeTable)) return fail;
 
+        var entity = level.getBlockEntity(pos);
+        if(!(entity instanceof RuneTableEntity runeTable)) return FAIL;
         var hasItem = runeTable.getItem().getStackInSlot(0).isEmpty();
+
         if(!hasItem && player.isShiftKeyDown()){
             removeItemsFromSlotToHand(runeTable.inputItemHandler, 0, player, hand);
-            return ItemInteractionResult.SUCCESS;
-        } else if (stack.has(DataComponentRegistry.RUNE_HOLDER) && hasItem) {
+            return SUCCESS;
+        } else if (stack.has(RUNE_HOLDER) && hasItem) {
             swapItemsWithHand(runeTable.inputItemHandler, 0, player, hand);
-            return ItemInteractionResult.SUCCESS;
+            return SUCCESS;
         } else {
-            if(!(player instanceof ServerPlayer serverPlayer)) return ItemInteractionResult.SUCCESS;
+            if(!(player instanceof ServerPlayer serverPlayer)) return SUCCESS;
             serverPlayer.openMenu(runeTable, pos);
-            return ItemInteractionResult.SUCCESS;
+            return SUCCESS;
         }
+
     }
 
 }

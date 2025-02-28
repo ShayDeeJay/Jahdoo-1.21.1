@@ -7,13 +7,14 @@ import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 
-import static org.jahdoo.common.registers.AttachmentRegister.VITAL_REJUVENATION;
+import static org.jahdoo.common.registers.AttachmentReg.VITAL_REJUVENATION;
 
 public class VitalRejuvenationAbility extends AbilityRegistrar {
+
     public static final ResourceLocation abilityId = Helpers.res("vital_rejuvenation");
     public static final String MAX_ABSORPTION = "Max Absorption hearts";
     public static final String CAST_DELAY = "Cast Charge Delay";
@@ -30,21 +31,12 @@ public class VitalRejuvenationAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.vitality();
+        return ElementReg.vitality();
     }
 
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
-    }
-
-    @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setStaticMana(80)
-            .setAbilityTagModifiersRandom(MAX_ABSORPTION, 10, 2, true, 1)
-            .setAbilityTagModifiersRandom(CAST_DELAY, 15, 5, false, 2)
-            .build();
     }
 
     @Override
@@ -58,13 +50,22 @@ public class VitalRejuvenationAbility extends AbilityRegistrar {
     }
 
     @Override
-    public boolean internallyChargeManaAndCooldown() {
+    public boolean selfChargeAbility() {
         return true;
     }
 
     @Override
     public JahdooRarity rarity() {
         return JahdooRarity.EPIC;
+    }
+
+    @Override
+    public void setModifiers(ItemStack itemStack) {
+        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+            .setStaticMana(80)
+            .setAbilityTagModifiersRandom(MAX_ABSORPTION, 10, 2, true, 1)
+            .setAbilityTagModifiersRandom(CAST_DELAY, 15, 5, false, 2)
+            .build();
     }
 
 }

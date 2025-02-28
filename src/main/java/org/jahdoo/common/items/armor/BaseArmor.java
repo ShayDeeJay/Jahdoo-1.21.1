@@ -7,7 +7,7 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.common.items.wand.WandItemHelper;
-import org.jahdoo.common.registers.DataComponentRegistry;
+import org.jahdoo.common.registers.ComponentReg;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class BaseArmor extends ArmorItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        var data = stack.get(DataComponentRegistry.RUNE_HOLDER);
+        var data = stack.get(ComponentReg.RUNE_HOLDER);
         if(data != null){
             WandItemHelper.appendRefinementPotential(tooltipComponents, stack);
         }

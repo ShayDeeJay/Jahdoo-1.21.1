@@ -6,9 +6,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.registers.ItemsRegister;
-import org.jahdoo.common.registers.SoundRegister;
+import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.ascension.utils.ColourStore;
 
 import java.util.ArrayList;
@@ -86,7 +85,7 @@ public class ChoiceSelectionScreen extends Screen  {
         var player = minecraft.player;
 
         if (player == null) return;
-        player.playSound(SoundRegister.SELECT.get(),2,1);
+        player.playSound(SoundReg.SELECT.get(),2,1);
         minecraft.setScreen(null);
     }
 
@@ -116,7 +115,7 @@ public class ChoiceSelectionScreen extends Screen  {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         var font = getMinecraft().font;
-        var itemStack = new ItemStack(ItemsRegister.WAND_ITEM_FROST.get());
+        var itemStack = new ItemStack(ItemReg.WAND_ITEM_FROST.get());
         var tooltip = new ArrayList<>(getTooltipFromItem(getMinecraft(), itemStack));
         var fadedColourBackground = FastColor.ARGB32.color((int) Math.max(0, fade), ColourStore.SYMPATHISER_ORANGE);
         var i = this.height / 2;
@@ -141,7 +140,7 @@ public class ChoiceSelectionScreen extends Screen  {
         var spaceBy = getSize() * 2;
         if(mouseX > pos2 - 1 &&  mouseX < pos2 + spaceBy) {
             doOn0.accept(pos2);
-            getMinecraft().player.playSound(SoundRegister.SELECT.get());
+            getMinecraft().player.playSound(SoundReg.SELECT.get());
         } else if (mouseX > pos1 - 1  &&  mouseX < pos1 + spaceBy) {
             doOn1.accept(pos1);
         } else if (mouseX > pos3 - 1 &&  mouseX < pos3 + spaceBy) {

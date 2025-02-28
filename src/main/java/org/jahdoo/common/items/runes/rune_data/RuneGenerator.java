@@ -5,9 +5,9 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
-import static org.jahdoo.common.items.runes.rune_data.RuneData.*;
-import static org.jahdoo.common.items.runes.rune_data.RuneGenerator.RuneCategories.*;
 import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.common.items.runes.rune_data.RuneCategories.*;
+import static org.jahdoo.common.items.runes.rune_data.RuneData.*;
 
 public class RuneGenerator {
 

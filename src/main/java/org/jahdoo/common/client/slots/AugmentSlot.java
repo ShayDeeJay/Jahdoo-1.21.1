@@ -6,7 +6,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jahdoo.common.block.wand.WandBlockMenu;
 import org.jahdoo.common.items.augments.Augment;
-import org.jahdoo.common.registers.ItemsRegister;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,7 @@ import java.util.Objects;
 
 import static net.minecraft.sounds.SoundEvents.*;
 import static org.jahdoo.common.components.DataComponentHelper.*;
-import static org.jahdoo.common.registers.DataComponentRegistry.*;
+import static org.jahdoo.common.registers.ComponentReg.*;
 
 public class AugmentSlot extends SlotItemHandler {
 
@@ -43,7 +43,7 @@ public class AugmentSlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(ItemStack itemStack) {
-        return itemStack.is(ItemsRegister.AUGMENT.get()) &&
+        return itemStack.is(ItemReg.AUGMENT.get()) &&
             itemStack.getComponents().has(WAND_ABILITY_HOLDER.get()) &&
             doesWandHaveAbility(getAbilityTypeItemStack(itemStack)) ||
             canSwapCarried();
@@ -58,7 +58,7 @@ public class AugmentSlot extends SlotItemHandler {
     }
 
     public boolean canSwapCarried(){
-        if(this.wandBlockMenu.getCarried().is(ItemsRegister.AUGMENT.get())){
+        if(this.wandBlockMenu.getCarried().is(ItemReg.AUGMENT.get())){
             var storedID = getAbilityTypeItemStack(this.getItem());
             var carriedID = getAbilityTypeItemStack(wandBlockMenu.getCarried());
             return Objects.equals(storedID, carriedID) ;

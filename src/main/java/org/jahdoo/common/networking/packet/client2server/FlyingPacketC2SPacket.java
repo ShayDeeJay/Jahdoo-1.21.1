@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.utils.Helpers;
 
-import static org.jahdoo.common.registers.AttachmentRegister.MAGE_FLIGHT;
+import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
 
 public class FlyingPacketC2SPacket implements CustomPacketPayload{
     public static final Type<FlyingPacketC2SPacket> TYPE = new Type<>(Helpers.res("send_flying_update"));

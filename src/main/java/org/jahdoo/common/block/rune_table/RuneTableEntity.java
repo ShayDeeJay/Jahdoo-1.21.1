@@ -1,8 +1,6 @@
 package org.jahdoo.common.block.rune_table;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
@@ -14,7 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
+import org.jahdoo.common.registers.BlockEntityReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +22,7 @@ import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLO
 public class RuneTableEntity extends AbstractBEInventory implements MenuProvider {
 
     public RuneTableEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntitiesRegister.RUNE_TABLE_BE.get(), pPos, pBlockState, 64);
+        super(BlockEntityReg.RUNE_TABLE_BE.get(), pPos, pBlockState, 64);
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {}

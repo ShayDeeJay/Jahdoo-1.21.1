@@ -7,32 +7,20 @@ import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.EntitiesRegister;
-import org.jahdoo.common.registers.EntityPropertyRegister;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.EntityReg;
+import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 
 public class MysticalSemtexAbility extends AbilityRegistrar {
+
     public static final ResourceLocation abilityId = Helpers.res("mystical_semtex");
     public static final String additionalProjectile = "Additional Projectiles";
     public static final String explosionDelays = "Explosion Delay";
     public static final String clusterChance = "Cluster Chance";
     public static final String explosionRadius = "Explosion Radius";
-
-    @Override
-    public void invokeAbility(Player player) {
-        var elementProjectile = new ElementProjectile(
-            EntitiesRegister.MYSTIC_ELEMENT_PROJECTILE.get(),
-            player,
-            EntityPropertyRegister.MYSTICAL_SEMTEX.get().setAbilityId(),
-            offsetShoot(player),
-            abilityId.getPath().intern()
-        );
-        elementProjectile.setPredicate(1);
-        fireProjectile(elementProjectile, player, 0.8f);
-    }
 
     @Override
     public JahdooRarity rarity() {
@@ -42,19 +30,6 @@ public class MysticalSemtexAbility extends AbilityRegistrar {
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
-    }
-
-    @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setStaticMana(60)
-            .setStaticCooldown(500)
-            .setDamage(45, 20, 5)
-            .setAbilityTagModifiersRandom(additionalProjectile, 10,4, true, 1)
-            .setAbilityTagModifiersRandom(explosionDelays, 50,20, false, 5)
-            .setAbilityTagModifiersRandom(clusterChance, 10,1, false, 1)
-            .setAbilityTagModifiersRandom(explosionRadius, 8,3, true, 1)
-            .build();
     }
 
     @Override
@@ -74,6 +49,33 @@ public class MysticalSemtexAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.mystic();
+        return ElementReg.mystic();
     }
+
+    @Override
+    public void invokeAbility(Player player) {
+        var elementProjectile = new ElementProjectile(
+            EntityReg.MYSTIC_ELEMENT_PROJECTILE.get(),
+            player,
+            EntityDataReg.MYSTICAL_SEMTEX.get().setAbilityId(),
+            offsetShoot(player),
+            abilityId.getPath().intern()
+        );
+        elementProjectile.setPredicate(1);
+        fireProjectile(elementProjectile, player, 0.8f);
+    }
+
+    @Override
+    public void setModifiers(ItemStack itemStack) {
+        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+            .setStaticMana(60)
+            .setStaticCooldown(500)
+            .setDamage(45, 20, 5)
+            .setAbilityTagModifiersRandom(additionalProjectile, 10,4, true, 1)
+            .setAbilityTagModifiersRandom(explosionDelays, 50,20, false, 5)
+            .setAbilityTagModifiersRandom(clusterChance, 10,1, false, 1)
+            .setAbilityTagModifiersRandom(explosionRadius, 8,3, true, 1)
+            .build();
+    }
+
 }

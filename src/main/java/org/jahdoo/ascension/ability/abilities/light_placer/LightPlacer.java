@@ -10,12 +10,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.ascension.ability.AbstractUtilityProjectile;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
-import org.jahdoo.common.registers.BlocksRegister;
+import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.ModTags;
 
 public class LightPlacer extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = Helpers.res("light_placer_property");
+
+    private final ResourceLocation abilityId = Helpers.res("light_placer_property");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -28,11 +29,26 @@ public class LightPlacer extends AbstractUtilityProjectile {
     }
 
     @Override
+    public void onTickMethod() {
+        super.onTickMethod();
+    }
+
+    @Override
+    public void discardCondition() {
+        if(generic.tickCount > 500) generic.discard();
+    }
+
+    @Override
+    public String abilityId() {
+        return LightPlacerAbility.abilityId.getPath().intern();
+    }
+
+    @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
-        Level level = genericProjectile.level();
-        BlockState replaceBlock = BlocksRegister.LIGHTING.get().defaultBlockState();
+        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        Level level = generic.level();
+        BlockState replaceBlock = BlockReg.LIGHTING.get().defaultBlockState();
         BlockPos blockPos = blockHitResult.getBlockPos();
         Direction side = blockHitResult.getDirection();
         BlockPos blockPoseRelative = blockPos.relative(side);
@@ -43,22 +59,7 @@ public class LightPlacer extends AbstractUtilityProjectile {
             }
         }
         level.playSound(null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), level.getBlockState(blockHitResult.getBlockPos()).getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1,1);
-        genericProjectile.discard();
+        generic.discard();
     }
 
-    @Override
-    public void onTickMethod() {
-        super.onTickMethod();
-    }
-
-    @Override
-    public void discardCondition() {
-        if(genericProjectile.tickCount > 500) genericProjectile.discard();
-    }
-
-
-    @Override
-    public String abilityId() {
-        return LightPlacerAbility.abilityId.getPath().intern();
-    }
 }

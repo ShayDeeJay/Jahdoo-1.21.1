@@ -31,13 +31,14 @@ import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class FarmersTouch extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = Helpers.res("farmers_touch_property");
-    boolean hasHitBlock;
-    double counter = 0.05;
-    double range;
-    double growthChance;
-    private double harvestChance;
+
+    private static final ResourceLocation abilityId = Helpers.res("farmers_touch_property");
     private final List<BlockPos> effectedPos = new ArrayList<>();
+    private double counter = 0.05;
+    private double harvestChance;
+    private double growthChance;
+    private double range;
+    private boolean hasHitBlock;
 
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
@@ -63,37 +64,36 @@ public class FarmersTouch extends AbstractUtilityProjectile {
     }
 
     @Override
+    public void onTickMethod() {
+        super.onTickMethod();
+        if (!(generic.level() instanceof ServerLevel)) return;
+        if(this.hasHitBlock) this.nova(generic, this.range);
+    }
+
+    @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
         this.hasHitBlock = true;
-        this.genericProjectile.setInvisible(true);
-        this.genericProjectile.setDeltaMovement(0,0,0);
-        PositionFinders.getOuterSquareOfRadius(this.genericProjectile.position(), counter + 0.5, this.range * 20,
-            positions -> this.setParticleNova(positions, this.genericProjectile.level())
+        this.generic.setInvisible(true);
+        this.generic.setDeltaMovement(0,0,0);
+        PositionFinders.getOuterSquareOfRadius(this.generic.position(), counter + 0.5, this.range * 20,
+            positions -> this.setParticleNova(positions, this.generic.level())
         );
     }
 
-    public void applyBoneMeal(Level level, BlockPos pPos) {
-        var blockstate = level.getBlockState(pPos);
-        if (level instanceof ServerLevel && !this.effectedPos.contains(pPos)) {
-            if(Random.nextInt(0, (int) harvestChance) == 0) {
-                if(blockstate.getBlock() instanceof CropBlock cropBlock && cropBlock.isMaxAge(blockstate)){
-                    UtilityHelpers.harvestBreaker(genericProjectile, pPos, false);
-                    level.setBlockAndUpdate(pPos, cropBlock.getStateForAge(0));
-                    utilityParticleBurst(level, pPos.getCenter().add(0, 0.4, 0), 8, 1, 3, 0.1f);
-                    Helpers.getSoundWithPosition(genericProjectile.level(), pPos, blockstate.getSoundType(level, pPos, null).getBreakSound());
-                }
-            } else {
-                if (!(blockstate.getBlock() instanceof BonemealableBlock bonemealableblock)) return;
-                if (!(bonemealableblock.isValidBonemealTarget(level, pPos, blockstate))) return;
-                if(growthChance == 0 || Random.nextInt(0, (int) growthChance) == 0){
-                    BoneMealItem.applyBonemeal(ItemStack.EMPTY, level, pPos, null);
-                    Helpers.getSoundWithPosition(level, pPos, SoundEvents.BONE_MEAL_USE);
-                }
-            }
-            this.effectedPos.add(pPos);
-        }
+    private void setParticleNova(Vec3 worldPosition, Level level){
+        int col1 = this.getElementType().partColourA();
+        int col2 = this.getElementType().partColourFade();
+        var directions = worldPosition.subtract(this.generic.position()).normalize();
+        var lifetime = (int) this.range * 1.5;
+        var size = 3;
+
+        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, Math.min(Math.max((int) lifetime, 3), 10), (float) (size - 0.2), col1, col2, false);
+        var speedRange = Random.nextDouble(this.range / 10, this.range / 8);
+        ParticleHandlers.sendParticles(
+            level, genericParticle, worldPosition, 0, directions.x, directions.y+0.05, directions.z, speedRange
+        );
     }
 
     void nova(Projectile projectile, double novaMaxSize){
@@ -110,25 +110,26 @@ public class FarmersTouch extends AbstractUtilityProjectile {
         }
     }
 
-    private void setParticleNova(Vec3 worldPosition, Level level){
-        int col1 = this.getElementType().partColourA();
-        int col2 = this.getElementType().partColourFade();
-        var directions = worldPosition.subtract(this.genericProjectile.position()).normalize();
-        var lifetime = (int) this.range * 1.5;
-        var size = 3;
-
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, Math.min(Math.max((int) lifetime, 3), 10), (float) (size - 0.2), col1, col2, false);
-        var speedRange = Random.nextDouble(this.range / 10, this.range / 8);
-        ParticleHandlers.sendParticles(
-            level, genericParticle, worldPosition, 0, directions.x, directions.y+0.05, directions.z, speedRange
-        );
-    }
-
-    @Override
-    public void onTickMethod() {
-        super.onTickMethod();
-        if (!(genericProjectile.level() instanceof ServerLevel)) return;
-        if(this.hasHitBlock) this.nova(genericProjectile, this.range);
+    public void applyBoneMeal(Level level, BlockPos pos) {
+        var blockstate = level.getBlockState(pos);
+        if (level instanceof ServerLevel && !this.effectedPos.contains(pos)) {
+            if(Random.nextInt(0, (int) harvestChance) == 0) {
+                if(blockstate.getBlock() instanceof CropBlock cropBlock && cropBlock.isMaxAge(blockstate)){
+                    UtilityHelpers.harvestBreaker(generic, pos, false);
+                    level.setBlockAndUpdate(pos, cropBlock.getStateForAge(0));
+                    utilityParticleBurst(level, pos.getCenter().add(0, 0.4, 0), 8, 1, 3, 0.1f);
+                    Helpers.getSoundWithPosition(generic.level(), pos, blockstate.getSoundType(level, pos, null).getBreakSound());
+                }
+            } else {
+                if (!(blockstate.getBlock() instanceof BonemealableBlock bonemealableblock)) return;
+                if (!(bonemealableblock.isValidBonemealTarget(level, pos, blockstate))) return;
+                if(growthChance == 0 || Random.nextInt(0, (int) growthChance) == 0){
+                    BoneMealItem.applyBonemeal(ItemStack.EMPTY, level, pos, null);
+                    Helpers.getSoundWithPosition(level, pos, SoundEvents.BONE_MEAL_USE);
+                }
+            }
+            this.effectedPos.add(pos);
+        }
     }
 
 }

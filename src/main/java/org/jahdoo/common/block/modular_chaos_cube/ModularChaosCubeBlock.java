@@ -19,11 +19,11 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
+import org.jahdoo.common.registers.BlockEntityReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.jahdoo.common.registers.BlocksRegister.sharedBehaviour;
+import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 
 public class ModularChaosCubeBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
@@ -69,7 +69,7 @@ public class ModularChaosCubeBlock extends BaseEntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
         return createTickerHelper(
             entityType,
-            BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(),
+            BlockEntityReg.MODULAR_CHAOS_CUBE_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }

@@ -14,6 +14,18 @@ import static org.jahdoo.ascension.utils.Helpers.sendEffectPacketsToPlayerDistan
 
 public class EffectHelpers {
 
+    public static int getGetRandomChance(int amplifier) {
+        return Helpers.Random.nextInt(0, Math.max((20 - amplifier), 1));
+    }
+
+    public static void GreaterGlowSync(LivingEntity targetEntity, int pAmplifier, ServerLevel serverLevel, Holder<MobEffect> effectsHolder) {
+        targetEntity.addEffect(new JahdooMobEffect(MobEffects.GLOWING.getDelegate(), 2, 1));
+        targetEntity.addEffect(new JahdooMobEffect(effectsHolder, 10, pAmplifier));
+        var effectInstance = new JahdooMobEffect(effectsHolder, 10, pAmplifier);
+
+        sendEffectPacketsToPlayerDistance(targetEntity.position(), 50, serverLevel, targetEntity.getId(), effectInstance);
+    }
+
     public static void setEffectParticle(
         int getRandomChance,
         LivingEntity targetEntity,
@@ -32,14 +44,4 @@ public class EffectHelpers {
         }
     }
 
-    public static void GreaterGlowSync(LivingEntity targetEntity, int pAmplifier, ServerLevel serverLevel, Holder<MobEffect> effectsHolder) {
-        targetEntity.addEffect(new JahdooMobEffect(MobEffects.GLOWING.getDelegate(), 2, 1));
-        targetEntity.addEffect(new JahdooMobEffect(effectsHolder, 10, pAmplifier));
-        var effectInstance = new JahdooMobEffect(effectsHolder, 10, pAmplifier);
-        sendEffectPacketsToPlayerDistance(targetEntity.position(), 50, serverLevel, targetEntity.getId(), effectInstance);
-    }
-
-    public static int getGetRandomChance(int amplifier) {
-        return Helpers.Random.nextInt(0, Math.max((20 - amplifier), 1));
-    }
 }

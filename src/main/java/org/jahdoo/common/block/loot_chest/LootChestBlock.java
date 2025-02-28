@@ -92,7 +92,7 @@ public class LootChestBlock extends BaseEntityBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
         return createTickerHelper
-            (entityType, BlockEntitiesRegister.LOOT_CHEST_BE.get(), (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
+            (entityType, BlockEntityReg.LOOT_CHEST_BE.get(), (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }
 
@@ -117,14 +117,14 @@ public class LootChestBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof LootChestEntity lootChestEntity)) return ItemInteractionResult.FAIL;
 
         if(!lootChestEntity.isOpen){
-            var isKey = stack.is(ItemsRegister.LOOT_KEY);
+            var isKey = stack.is(ItemReg.LOOT_KEY);
             if (level instanceof ServerLevel serverLevel && isKey) {
                 var value = stack.get(DataComponents.CUSTOM_MODEL_DATA).value();
                 var isValid = value == lootChestEntity.getRarity;
                 if (isValid) {
                     lootChestEntity.setOpen(true);
-                    var hasData = lootChestEntity.hasData(AttachmentRegister.CHALLENGE_ALTAR);
-                    var getData = lootChestEntity.getData(AttachmentRegister.CHALLENGE_ALTAR).maxRound() - 1;
+                    var hasData = lootChestEntity.hasData(AttachmentReg.CHALLENGE_ALTAR);
+                    var getData = lootChestEntity.getData(AttachmentReg.CHALLENGE_ALTAR).maxRound() - 1;
                     var lootLevel = hasData ? getData : 1;
                     var getId = new CustomModelData(lootChestEntity.getRarity);
                     var colour = KeyItem.getJahdooRarity(getId).getColour();
@@ -163,7 +163,7 @@ public class LootChestBlock extends BaseEntityBlock {
             itemEntity.setDeltaMovement(velocity);
             itemEntity.setPickUpDelay(30);
             if(shouldDropExperience && Random.nextInt(10) == 0) {
-                var exp = ItemsRegister.EXPERIENCE_ORB.get();
+                var exp = ItemReg.EXPERIENCE_ORB.get();
                 var itemStack = new ItemStack(exp);
 
                 switch (JahdooRarity.getRarity()) {
@@ -186,7 +186,7 @@ public class LootChestBlock extends BaseEntityBlock {
 
         Helpers.getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_OPEN_SHUTTER, 1f, 1.8f);
         Helpers.getSoundWithPosition(serverLevel, pos, SoundEvents.ILLUSIONER_CAST_SPELL, 1f, 1f);
-        Helpers.getSoundWithPosition(serverLevel, pos, SoundRegister.EXPLOSION.get(), 0.8f, 0.9f);
+        Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.EXPLOSION.get(), 0.8f, 0.9f);
     }
 }
 

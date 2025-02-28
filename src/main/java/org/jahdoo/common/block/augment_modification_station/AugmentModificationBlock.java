@@ -3,10 +3,8 @@ package org.jahdoo.common.block.augment_modification_station;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -30,16 +28,15 @@ import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.block.BlockInteractionHandler;
 import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import static net.minecraft.core.component.DataComponents.*;
+import static net.minecraft.sounds.SoundEvents.*;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.registers.BlocksRegister.sharedBehaviour;
-import static org.jahdoo.common.registers.BlocksRegister.sharedBlockBehaviour;
+import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 
 public class AugmentModificationBlock extends BaseEntityBlock{
 
@@ -63,87 +60,83 @@ public class AugmentModificationBlock extends BaseEntityBlock{
     }
 
     @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec((t) -> new AugmentModificationBlock());
-    }
-
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
-    }
-
-    public BlockState rotate(BlockState pState, Rotation pRotation) {
-        return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
-    }
-
-    public BlockState mirror(BlockState pState, Mirror pMirror) {
-        return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
-    }
-
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACING);
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return SHAPE_COMBINED;
-    }
-
-    @Override
-    public RenderShape getRenderShape(BlockState pState) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
-        if (pState.getBlock() != pNewState.getBlock()) {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof AugmentModificationEntity augmentStation) {
-                augmentStation.dropsAllInventory(pLevel);
-            }
-        }
-        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return simpleCodec((t) -> new AugmentModificationBlock());
+    }
+
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+    }
+
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        ItemInteractionResult fail = ItemInteractionResult.FAIL;
-        ItemInteractionResult success = ItemInteractionResult.SUCCESS;
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE_COMBINED;
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new AugmentModificationEntity(pos,state);
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
+        return createTickerHelper(
+            entityType,
+            BlockEntityReg.AUGMENT_MODIFICATION_STATION_BE.get(),
+            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
+        );
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (state.getBlock() != newState.getBlock()) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof AugmentModificationEntity augmentStation) {
+                augmentStation.dropsAllInventory(level);
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(
+        ItemStack itemStack,
+        BlockState state,
+        Level level,
+        BlockPos pos,
+        Player player,
+        InteractionHand hand,
+        BlockHitResult hitResult
+    ) {
+        var fail = ItemInteractionResult.FAIL;
+        var success = ItemInteractionResult.SUCCESS;
 
         if(!(level.getBlockEntity(pos) instanceof AugmentModificationEntity augmentStation)) return fail;
         var hands = player.getItemInHand(hand);
-        var result = augmentBlockInteraction(level, pos, player, hand, augmentStation, hands, SoundEvents.VAULT_ACTIVATE, 0.05, 10, 0.9, 0.15);
-        if(result == fail && !augmentStation.getInteractionSlot().isEmpty() && augmentStation.getInteractionSlot().has(DataComponents.CUSTOM_MODEL_DATA)){
+        var result = augmentBlockInteraction(level, pos, player, hand, augmentStation, hands, VAULT_ACTIVATE, 0.05, 10, 0.9, 0.15);
+        if(result == fail && !augmentStation.getInteractionSlot().isEmpty() && augmentStation.getInteractionSlot().has(CUSTOM_MODEL_DATA)){
             if(!(player instanceof ServerPlayer serverPlayer)) return fail;
             serverPlayer.openMenu(augmentStation, pos);
             return success;
         }
         return success;
-    }
-
-    public static ItemInteractionResult augmentBlockInteraction(
-        Level pLevel,
-        BlockPos pPos,
-        Player pPlayer,
-        InteractionHand pHand,
-        AbstractBEInventory augmentStation,
-        ItemStack hand,
-        SoundEvent soundEvent,
-        double yOffset,
-        int lifetime,
-        double speed,
-        double radius
-    ) {
-        if (hand.getItem() instanceof Augment || hand.isEmpty() && pPlayer.isShiftKeyDown()) {
-            if(!hand.isEmpty()) Helpers.getSoundWithPosition(pLevel, pPos, soundEvent, 1, 1.2f);
-            BlockInteractionHandler.swapItemsWithHand(augmentStation.inputItemHandler, 0, pPlayer, pHand);
-            var stackInSlot = augmentStation.inputItemHandler.getStackInSlot(0);
-            var type = stackInSlot.get(DataComponents.CUSTOM_MODEL_DATA);
-            if (type != null) {
-                setOuterRingPulse(pLevel, type.value(), pPos, yOffset, lifetime, speed, radius);
-            }
-            return ItemInteractionResult.SUCCESS;
-        }
-        return ItemInteractionResult.FAIL;
     }
 
     public static void setOuterRingPulse(
@@ -155,7 +148,7 @@ public class AugmentModificationBlock extends BaseEntityBlock{
         double speed,
         double radius
     ){
-        ElementRegistry.fromId(getType).ifPresent(
+        ElementReg.fromId(getType).ifPresent(
             element -> {
                 var particle = genericParticleOptions(element, lifetime, 0.8f);
                 PositionFinders.getOuterRingOfRadiusRandom(blockPos.getBottomCenter().add(0,yOffset,0), radius, 40,
@@ -170,20 +163,30 @@ public class AugmentModificationBlock extends BaseEntityBlock{
         );
     }
 
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new AugmentModificationEntity(pPos,pState);
-    }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return createTickerHelper(
-            pBlockEntityType,
-            BlockEntitiesRegister.AUGMENT_MODIFICATION_STATION_BE.get(),
-            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
-        );
+    public static ItemInteractionResult augmentBlockInteraction(
+        Level level,
+        BlockPos pos,
+        Player player,
+        InteractionHand hand,
+        AbstractBEInventory augmentStation,
+        ItemStack stack,
+        SoundEvent soundEvent,
+        double yOffset,
+        int lifetime,
+        double speed,
+        double radius
+    ) {
+        if (stack.getItem() instanceof Augment || stack.isEmpty() && player.isShiftKeyDown()) {
+            if(!stack.isEmpty()) Helpers.getSoundWithPosition(level, pos, soundEvent, 1, 1.2f);
+            BlockInteractionHandler.swapItemsWithHand(augmentStation.inputItemHandler, 0, player, hand);
+            var stackInSlot = augmentStation.inputItemHandler.getStackInSlot(0);
+            var type = stackInSlot.get(CUSTOM_MODEL_DATA);
+            if (type != null) {
+                setOuterRingPulse(level, type.value(), pos, yOffset, lifetime, speed, radius);
+            }
+            return ItemInteractionResult.SUCCESS;
+        }
+        return ItemInteractionResult.FAIL;
     }
 
 }

@@ -7,19 +7,65 @@ import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.EntityPropertyRegister;
-import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.jahdoo.common.registers.EntityDataReg;
+
+import static org.jahdoo.ascension.utils.GlobalStrings.BLOCK_MINER_DESCRIPTION;
+import static org.jahdoo.common.registers.ElementReg.frost;
 
 public class FrostboltsAbility extends AbilityRegistrar {
+
     public static final ResourceLocation abilityId = Helpers.res("frostbolts");
     public static final String NUMBER_OF_PROJECTILES = "Total Arrows";
 
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
+    }
+
+    @Override
+    public String getDescription() {
+        return BLOCK_MINER_DESCRIPTION;
+    }
+
+    @Override
+    public int getCastType() {
+        return PROJECTILE_CAST;
+    }
+
+    @Override
+    public int getCastDuration(Player player) {
+        return 0;
+    }
+
+    @Override
+    public AbstractElement getElemenType() {
+        return frost();
+    }
+
+    @Override
+    public boolean selfChargeAbility() {
+        return true;
+    }
+
+    @Override
+    public JahdooRarity rarity() {
+        return JahdooRarity.EPIC;
+    }
+
+    @Override
+    public void invokeAbility(Player player) {
+        if(player != null){
+            var projSelect = EntityDataReg.FROST_BOLT.get().setAbilityId();
+            var id = abilityId.getPath().intern();
+            var elementProjectile = new GenericProjectile(player, 0, projSelect, id, this.getElemenType());
+
+            elementProjectile.setOwner(player);
+            elementProjectile.setInvisible(true);
+            fireProjectileNoSound(elementProjectile, player, 100f);
+            player.level().addFreshEntity(elementProjectile);
+        }
     }
 
     @Override
@@ -36,47 +82,4 @@ public class FrostboltsAbility extends AbilityRegistrar {
             .build();
     }
 
-    @Override
-    public String getDescription() {
-        return GlobalStrings.BLOCK_MINER_DESCRIPTION;
-    }
-
-    @Override
-    public int getCastType() {
-        return PROJECTILE_CAST;
-    }
-
-    @Override
-    public int getCastDuration(Player player) {
-        return 0;
-    }
-
-    @Override
-    public AbstractElement getElemenType() {
-        return ElementRegistry.frost();
-    }
-
-    @Override
-    public boolean internallyChargeManaAndCooldown() {
-        return true;
-    }
-
-    @Override
-    public void invokeAbility(Player player) {
-        if(player != null){
-            var projSelect = EntityPropertyRegister.FROST_BOLT.get().setAbilityId();
-            var id = abilityId.getPath().intern();
-            var elementProjectile = new GenericProjectile(player, 0, projSelect, id, this.getElemenType());
-
-            elementProjectile.setOwner(player);
-            elementProjectile.setInvisible(true);
-            fireProjectileNoSound(elementProjectile, player, 100f);
-            player.level().addFreshEntity(elementProjectile);
-        }
-    }
-
-    @Override
-    public JahdooRarity rarity() {
-        return JahdooRarity.EPIC;
-    }
 }

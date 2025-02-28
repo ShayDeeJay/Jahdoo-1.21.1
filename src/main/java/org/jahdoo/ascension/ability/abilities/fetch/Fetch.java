@@ -22,14 +22,9 @@ import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
 
 public class Fetch extends AbstractUtilityProjectile {
-     ResourceLocation abilityId = Helpers.res("fetch_property");
-    private int range;
 
-    @Override
-    public void getGenericProjectile(GenericProjectile genericProjectile) {
-        super.getGenericProjectile(genericProjectile);
-        this.range = (int) this.getTagUtility(RANGE);
-    }
+     private static final ResourceLocation abilityId = Helpers.res("fetch_property");
+     private int range;
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -42,45 +37,14 @@ public class Fetch extends AbstractUtilityProjectile {
     }
 
     @Override
-    public void onBlockBlockHit(BlockHitResult blockHitResult) {
-        super.onBlockBlockHit(blockHitResult);
-        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
-        var player = (Player) genericProjectile.getOwner();
-        var pickedUpItem = false;
+    public String abilityId() {
+        return FetchAbility.abilityId.getPath().intern();
+    }
 
-        List<ItemEntity> items = this.genericProjectile.level().getEntitiesOfClass(
-            ItemEntity.class,
-            this.genericProjectile.getBoundingBox().inflate(range, range, range),
-            entity -> true
-        );
-
-        for(ItemEntity itemEntity : items){
-            int col1 = this.getElementType().partColourA();
-            int col2 = this.getElementType().partColourFade();
-            var genericParticle = genericParticleOptions(MAGIC_PARTICLE_SELECTION, 8,2f, col1, col2, false);
-
-            ParticleHandlers.invisibleLight(genericProjectile.level(), itemEntity.position().add(0,0.5,0), genericParticle, 0.03, 0.04, 8);
-            if (player != null) {
-                var isPicked = handlePlayerPickup(itemEntity, player.getInventory(), player);
-                if(isPicked){
-                    if(!pickedUpItem) pickedUpItem = true;
-                }
-            } else {
-                var entity = this.genericProjectile;
-                var pos = entity.blockEntityPos;
-                if(pos == null) return;
-                var level = entity.level();
-                var bE = level.getBlockEntity(BlockPos.containing(pos));
-                if(bE instanceof ModularChaosCubeEntity autoEntity){
-                    autoEntity.externalOutputInventory(level, itemEntity);
-                }
-            }
-        };
-
-        if(pickedUpItem && player instanceof ServerPlayer player1) {
-            Helpers.sendClientSound(player1, SoundEvents.ITEM_PICKUP, 1.15f, 1);
-        }
-        genericProjectile.discard();
+    @Override
+    public void getGenericProjectile(GenericProjectile genericProjectile) {
+        super.getGenericProjectile(genericProjectile);
+        this.range = (int) this.getTagUtility(RANGE);
     }
 
     private static boolean handlePlayerPickup(ItemEntity itemEntity, Container inv, Player player) {
@@ -119,7 +83,45 @@ public class Fetch extends AbstractUtilityProjectile {
     }
 
     @Override
-    public String abilityId() {
-        return FetchAbility.abilityId.getPath().intern();
+    public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockBlockHit(blockHitResult);
+        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        var player = (Player) generic.getOwner();
+        var pickedUpItem = false;
+
+        List<ItemEntity> items = this.generic.level().getEntitiesOfClass(
+            ItemEntity.class,
+            this.generic.getBoundingBox().inflate(range, range, range),
+            entity -> true
+        );
+
+        for(ItemEntity itemEntity : items){
+            int col1 = this.getElementType().partColourA();
+            int col2 = this.getElementType().partColourFade();
+            var genericParticle = genericParticleOptions(MAGIC_PARTICLE_SELECTION, 8,2f, col1, col2, false);
+
+            ParticleHandlers.invisibleLight(generic.level(), itemEntity.position().add(0,0.5,0), genericParticle, 0.03, 0.04, 8);
+            if (player != null) {
+                var isPicked = handlePlayerPickup(itemEntity, player.getInventory(), player);
+                if(isPicked){
+                    if(!pickedUpItem) pickedUpItem = true;
+                }
+            } else {
+                var entity = this.generic;
+                var pos = entity.blockEntityPos;
+                if(pos == null) return;
+                var level = entity.level();
+                var bE = level.getBlockEntity(BlockPos.containing(pos));
+                if(bE instanceof ModularChaosCubeEntity autoEntity){
+                    autoEntity.externalOutputInventory(level, itemEntity);
+                }
+            }
+        };
+
+        if(pickedUpItem && player instanceof ServerPlayer player1) {
+            Helpers.sendClientSound(player1, SoundEvents.ITEM_PICKUP, 1.15f, 1);
+        }
+        generic.discard();
     }
+
 }

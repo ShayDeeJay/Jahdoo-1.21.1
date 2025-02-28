@@ -14,10 +14,10 @@ import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.wand.WandData;
-import org.jahdoo.common.registers.AbilityRegister;
-import org.jahdoo.common.registers.DataComponentRegistry;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.ItemsRegister;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
@@ -34,14 +34,14 @@ import static org.jahdoo.ascension.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.ascension.rarity.RarityAttributes.*;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.setAbilityToAugment;
 import static org.jahdoo.common.items.runes.rune_data.RuneData.RuneHelpers.getRuneData;
-import static org.jahdoo.common.registers.AttributesRegister.*;
-import static org.jahdoo.common.registers.DataComponentRegistry.JAHDOO_RARITY;
+import static org.jahdoo.common.registers.AttributeReg.*;
+import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.ascension.utils.Helpers.*;
 
 @IndexedEnum
 public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
-    // Enum Definitions
+
     COMMON(0, "Common", color(120, 203, 83), 1, COMMON_ATTRIBUTES),
     RARE(1, "Rare", color(67, 164, 222), 1500, RARE_ATTRIBUTES),
     EPIC(2, "Epic", color(222, 136, 255), 4500, EPIC_ATTRIBUTES),
@@ -55,7 +55,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     private final UnaryOperator<Style> styleModifier;
     private final int chanceRange;
     private final RarityAttributes attributes;
-
     private static final List<JahdooRarity> getAllRarities = List.of(COMMON, RARE, EPIC, LEGENDARY, ETERNAL, UNIQUE);
 
     JahdooRarity(int id, String name, int color, int chanceRange, RarityAttributes attributes) {
@@ -92,6 +91,51 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return getAllRarities;
     }
 
+    private static JahdooRarity getJahdooRarity(@Nullable JahdooRarity rarity) {
+        var correctRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
+        return correctRarity == JahdooRarity.UNIQUE ? JahdooRarity.EPIC : correctRarity;
+    }
+
+    public static AbilityRegistrar getAbilityUtil(@Nullable JahdooRarity rarity) {
+        var listAll = AbilityReg.getMatchingRarityUtilOnly(getJahdooRarity(rarity));
+        return listAll.get(Helpers.Random.nextInt(0, listAll.size()));
+    }
+
+    public static Component addRarityTooltip(int id){
+        var rarity = JahdooRarity.getAllRarities().get(id);
+        return withStyleComponentTrans("rarity.jahdoo.current_rarity", -9013642)
+                .copy()
+                .append(withStyleComponent(rarity.getSerializedName(), rarity.getColour()));
+    }
+
+    public static ItemStack setGeneratedAugment(Item item){
+        var itemStack = new ItemStack(item);
+        itemStack.set(ComponentReg.NUMBER, 5);
+        AugmentItemHelper.augmentIdentifierSharedUtil(itemStack,  null);
+        return itemStack;
+    }
+
+    public static void setGeneratedAugment(ItemStack itemStack, JahdooRarity rarity){
+        itemStack.set(ComponentReg.NUMBER, 5);
+        AugmentItemHelper.augmentIdentifierSharedRarity(itemStack, false, rarity);
+        itemStack.set(JAHDOO_RARITY, rarity.id);
+    }
+
+    public static ItemStack setGeneratedTome(JahdooRarity rarity, Item item){
+        var itemStack = new ItemStack(item);
+        createTomeAttributes(rarity, itemStack);
+        return itemStack;
+    }
+
+    public static Component attachRarityTooltip(ItemStack wandItem, Level level) {
+        var getRarityId = wandItem.get(JAHDOO_RARITY);
+        if(getRarityId != null && level != null) {
+            var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(getRarityId, 0, 5));
+            return JahdooRarity.addRarityTooltip(getRarity, level);
+        }
+        return Component.empty();
+    }
+
     public static JahdooRarity getRarity() {
         var getRandom = Helpers.Random.nextInt(1, 6020);
         var filteredList = new ArrayList<>(
@@ -105,32 +149,10 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
 
     public static AbilityRegistrar getAbilityWithRarity(boolean withUtil, @Nullable JahdooRarity rarity) {
         var removeRarity = getJahdooRarity(rarity);
-        var listAll = AbilityRegister.getMatchingRarity(removeRarity);
-        var listNoUtil = AbilityRegister.getMatchingRarityNoUtil(removeRarity);
+        var listAll = AbilityReg.getMatchingRarity(removeRarity);
+        var listNoUtil = AbilityReg.getMatchingRarityNoUtil(removeRarity);
         var list = withUtil ? listAll : listNoUtil;
         return list.get(Helpers.Random.nextInt(0, list.size()));
-    }
-
-    private static JahdooRarity getJahdooRarity(@Nullable JahdooRarity rarity) {
-        var correctRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
-        return correctRarity == JahdooRarity.UNIQUE ? JahdooRarity.EPIC : correctRarity;
-    }
-
-    public static AbilityRegistrar getAbilityUtil(@Nullable JahdooRarity rarity) {
-        var listAll = AbilityRegister.getMatchingRarityUtilOnly(getJahdooRarity(rarity));
-        return listAll.get(Helpers.Random.nextInt(0, listAll.size()));
-    }
-
-    public static ItemStack getAbilityAugment(JahdooRarity...jahdooRarities){
-        var allRarities = Arrays.stream(jahdooRarities).toList();
-        var list = AbilityRegister.getMatchingRarity(allRarities.get(Helpers.Random.nextInt(0, allRarities.size())));
-        var ability = list.get(Helpers.Random.nextInt(0, list.size()));
-        var emptyStack = new ItemStack(ItemsRegister.AUGMENT.get());
-        ability.setModifiers(emptyStack);
-        emptyStack.set(DataComponentRegistry.NUMBER, 5);
-        var wandAbilityHolder = emptyStack.get(DataComponentRegistry.WAND_ABILITY_HOLDER.get());
-        setAbilityToAugment(emptyStack, ability, wandAbilityHolder);
-        return emptyStack;
     }
 
     public static Component addRarityTooltip(JahdooRarity rarity, Level level){
@@ -143,47 +165,27 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return withStyleComponentTrans(id, -9013642).copy().append(sibling);
     }
 
-    public static Component addRarityTooltip(int id){
-        var rarity = JahdooRarity.getAllRarities().get(id);
-        return withStyleComponentTrans("rarity.jahdoo.current_rarity", -9013642)
-                .copy()
-                .append(withStyleComponent(rarity.getSerializedName(), rarity.getColour()));
-    }
-
-    public static Component attachRarityTooltip(ItemStack wandItem, Level level) {
-        var getRarityId = wandItem.get(JAHDOO_RARITY);
-        if(getRarityId != null && level != null) {
-            var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(getRarityId, 0, 5));
-            return JahdooRarity.addRarityTooltip(getRarity, level);
+    public static void setGeneratedWand(JahdooRarity rarity, ItemStack item) {
+        var totalSlots = 3;
+        switch (rarity) {
+            case RARE -> totalSlots = Random.nextInt(4, 7);
+            case EPIC -> totalSlots = Random.nextInt(5, 8);
+            case LEGENDARY -> totalSlots = Random.nextInt(6, 9);
+            case ETERNAL -> totalSlots = Random.nextInt(8, 11);
         }
-        return Component.empty();
+        createWandAttributes(rarity, item, rarity.id, totalSlots);
     }
 
-    public static Component attachRuneTierTooltip(ItemStack wandItem) {
-        var data = getRuneData(wandItem);
-        var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(data.tier(), 0, 5));
-        var getTier = switch (getRarity.id){
-            case 1 -> "II";
-            case 2 -> "III";
-            case 3 -> "IV";
-            case 4 -> "V";
-            case 5 -> "VI";
-            default -> "I";
-        };
-        return withStyleComponent("Tier " + getTier, ColourStore.HEADER_COLOUR);
-    }
-
-    public static ItemStack setGeneratedAugment(Item item){
-        var itemStack = new ItemStack(item);
-        itemStack.set(DataComponentRegistry.NUMBER, 5);
-        AugmentItemHelper.augmentIdentifierSharedUtil(itemStack,  null);
-        return itemStack;
-    }
-
-    public static void setGeneratedAugment(ItemStack itemStack, JahdooRarity rarity){
-        itemStack.set(DataComponentRegistry.NUMBER, 5);
-        AugmentItemHelper.augmentIdentifierSharedRarity(itemStack, false, rarity);
-        itemStack.set(JAHDOO_RARITY, rarity.id);
+    public static ItemStack getAbilityAugment(JahdooRarity...jahdooRarities){
+        var allRarities = Arrays.stream(jahdooRarities).toList();
+        var list = AbilityReg.getMatchingRarity(allRarities.get(Helpers.Random.nextInt(0, allRarities.size())));
+        var ability = list.get(Helpers.Random.nextInt(0, list.size()));
+        var emptyStack = new ItemStack(ItemReg.AUGMENT.get());
+        ability.setModifiers(emptyStack);
+        emptyStack.set(ComponentReg.NUMBER, 5);
+        var wandAbilityHolder = emptyStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
+        setAbilityToAugment(emptyStack, ability, wandAbilityHolder);
+        return emptyStack;
     }
 
     public static ItemStack setGeneratedWand(JahdooRarity rarity, Item item) {
@@ -201,21 +203,42 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return itemStack;
     }
 
-    public static void setGeneratedWand(JahdooRarity rarity, ItemStack item) {
-        var totalSlots = 3;
-        switch (rarity) {
-            case RARE -> totalSlots = Random.nextInt(4, 7);
-            case EPIC -> totalSlots = Random.nextInt(5, 8);
-            case LEGENDARY -> totalSlots = Random.nextInt(6, 9);
-            case ETERNAL -> totalSlots = Random.nextInt(8, 11);
-        }
-        createWandAttributes(rarity, item, rarity.id, totalSlots);
+    public static Component attachRuneTierTooltip(ItemStack wandItem) {
+        var data = getRuneData(wandItem);
+        var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(data.tier(), 0, 5));
+        var getTier = switch (getRarity.id){
+            case 1 -> "II";
+            case 2 -> "III";
+            case 3 -> "IV";
+            case 4 -> "V";
+            case 5 -> "VI";
+            default -> "I";
+        };
+        return withStyleComponent("Tier " + getTier, ColourStore.HEADER_COLOUR);
     }
 
-    public static ItemStack setGeneratedTome(JahdooRarity rarity, Item item){
-        var itemStack = new ItemStack(item);
-        createTomeAttributes(rarity, itemStack);
-        return itemStack;
+    public static void createTomeAttributes(JahdooRarity rarity, ItemStack itemStack){
+        var randomRegenValue = singleFormattedDouble(rarity.attributes.getRandomManaRegen());
+        var randomManaPool = singleFormattedDouble(rarity.attributes.getRandomManaPool());
+        var manaRegen = MANA_REGEN;
+        var manaPool = MANA_POOL;
+
+        attachLootBeamComponent(itemStack, rarity);
+        itemStack.set(ComponentReg.JAHDOO_RARITY.get(), rarity.getId());
+
+        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue, EquipmentSlot.MAINHAND, false);
+        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, randomManaPool, EquipmentSlot.OFFHAND, false);
+
+//        CuriosApi.addModifier(
+//            itemStack, manaRegen, manaRegen.getId(),
+//            randomRegenValue, AttributeModifier.Operation.ADD_VALUE, "relic"
+//        );
+
+//        CuriosApi.addModifier(
+//            itemStack, manaPool, manaPool.getId(),
+//            randomManaPool, AttributeModifier.Operation.ADD_VALUE, "relic"
+//        );
+
     }
 
     public static void createWandAttributes(
@@ -224,7 +247,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         int runeSlots,
         int abilitySlots
     ) {
-        var element = ElementRegistry.fromWand(itemStack.getItem()).orElseThrow();
+        var element = ElementReg.fromWand(itemStack.getItem()).orElseThrow();
         attachLootBeamComponent(itemStack, rarity);
 
         WandData.createRarity(itemStack, rarity.id);
@@ -247,30 +270,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         replaceOrAddAttribute(itemStack, cooldownReductionName, cooldownReductionType, cooldownReductionValue, EquipmentSlot.MAINHAND, false);
         replaceOrAddAttribute(itemStack, manaReductionName, manaReductionType, manaReductionValue, EquipmentSlot.MAINHAND, false);
         replaceOrAddAttribute(itemStack, damageAmplifierName, damageAmplifierType, damageAmplifierValue, EquipmentSlot.MAINHAND, false);
-    }
-
-    public static void createTomeAttributes(JahdooRarity rarity, ItemStack itemStack){
-        var randomRegenValue = singleFormattedDouble(rarity.attributes.getRandomManaRegen());
-        var randomManaPool = singleFormattedDouble(rarity.attributes.getRandomManaPool());
-        var manaRegen = MANA_REGEN;
-        var manaPool = MANA_POOL;
-
-        attachLootBeamComponent(itemStack, rarity);
-        itemStack.set(DataComponentRegistry.JAHDOO_RARITY.get(), rarity.getId());
-
-        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue, EquipmentSlot.MAINHAND, false);
-        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, randomManaPool, EquipmentSlot.OFFHAND, false);
-
-//        CuriosApi.addModifier(
-//            itemStack, manaRegen, manaRegen.getId(),
-//            randomRegenValue, AttributeModifier.Operation.ADD_VALUE, "relic"
-//        );
-
-//        CuriosApi.addModifier(
-//            itemStack, manaPool, manaPool.getId(),
-//            randomManaPool, AttributeModifier.Operation.ADD_VALUE, "relic"
-//        );
-
     }
 
     //Debug using use on item

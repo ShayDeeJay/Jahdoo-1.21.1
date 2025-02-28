@@ -14,9 +14,9 @@ import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.components.DataComponentHelper;
-import org.jahdoo.common.registers.AbilityRegister;
-import org.jahdoo.common.registers.AttributesRegister;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.AttributeReg;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
@@ -24,11 +24,11 @@ import static org.jahdoo.ascension.ability.AbilityRegistrar.DISTANCE_CAST;
 import static org.jahdoo.ascension.ability.AbilityRegistrar.HOLD_CAST;
 import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.common.items.wand.WandAnimations.*;
-import static org.jahdoo.common.registers.AttachmentRegister.CASTER_DATA;
-import static org.jahdoo.common.registers.AttributesRegister.COOLDOWN_REDUCTION;
-import static org.jahdoo.common.registers.AttributesRegister.MANA_COST_REDUCTION;
-import static org.jahdoo.common.registers.DataComponentRegistry.WAND_ABILITY_HOLDER;
-import static org.jahdoo.common.registers.ElementRegistry.fromWand;
+import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
+import static org.jahdoo.common.registers.AttributeReg.COOLDOWN_REDUCTION;
+import static org.jahdoo.common.registers.AttributeReg.MANA_COST_REDUCTION;
+import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
+import static org.jahdoo.common.registers.ElementReg.fromWand;
 import static org.jahdoo.ascension.utils.Maths.getFormattedFloat;
 import static org.jahdoo.ascension.utils.Helpers.*;
 
@@ -36,7 +36,7 @@ import static org.jahdoo.ascension.utils.Helpers.*;
 public class CastHelper {
 
     public static void onCast(Player player, AbilityRegistrar ability){
-        if(!ability.internallyChargeManaAndCooldown()){
+        if(!ability.selfChargeAbility()){
             castAnimation(player, SINGLE_CAST_ID);
         }
         ability.invokeAbility(player);
@@ -78,12 +78,12 @@ public class CastHelper {
     }
 
     public static void chargeCooldown(String abilityId, double cooldown, Player player) {
-        var attributeValue = getAttributeValue(player, AttributesRegister.SKIP_COOLDOWN);
+        var attributeValue = getAttributeValue(player, AttributeReg.SKIP_COOLDOWN);
         if(player.isCreative()) return;
         if(attributeValue > 0 && Random.nextFloat(100) < attributeValue) return;
 
         var cooldownSystem = player.getData(CASTER_DATA);
-        var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
+        var ability = AbilityReg.getFirstSpellByTypeId(abilityId);
         var wand = Helpers.getUsedItem(player);
         var getElement = SharedUI.getElementWithType(ability.orElseThrow(), wand);
         var reCalculatedCooldown = Helpers.attributeModifierCalculator(player, (float) cooldown, false,  getElement.cooldownReduction(), COOLDOWN_REDUCTION);
@@ -91,12 +91,12 @@ public class CastHelper {
     }
 
     public static void chargeMana(String abilityId, double manaCost, Player player) {
-        var attributeValue = getAttributeValue(player, AttributesRegister.SKIP_MANA);
+        var attributeValue = getAttributeValue(player, AttributeReg.SKIP_MANA);
         if(player.isCreative()) return;
         if(attributeValue > 0 && Random.nextFloat(100) < attributeValue) return;
 
         var manaSystem = player.getData(CASTER_DATA);
-        var ability = AbilityRegister.getFirstSpellByTypeId(abilityId);
+        var ability = AbilityReg.getFirstSpellByTypeId(abilityId);
         var wand = Helpers.getUsedItem(player);
         var getElement = SharedUI.getElementWithType(ability.orElseThrow(), wand);
         var reCalculatedMana = Helpers.attributeModifierCalculator(player, (float) manaCost, false, getElement.manaReduction(), MANA_COST_REDUCTION);
@@ -123,13 +123,13 @@ public class CastHelper {
     public static void executeAndCharge(Player player) {
         var wandItem = Helpers.getUsedItem(player);
         var abilityName = DataComponentHelper.getAbilityTypeItemStack(wandItem);
-        var ability = AbilityRegister.REGISTRY.get(res(abilityName));
+        var ability = AbilityReg.REGISTRY.get(res(abilityName));
         if (ability == null) return;
         var getElement = SharedUI.getElementWithType(ability, wandItem);
 
         if(!player.isCreative()){
             if(validManaAndCooldown(player)){
-                if(!ability.internallyChargeManaAndCooldown()){
+                if(!ability.selfChargeAbility()){
                     var cooldownCost = getSpecificValue(player, wandItem, COOLDOWN);
                     var getManaCost = getSpecificValue(player, wandItem, MANA_COST);
                     var adjustedMana = Helpers.attributeModifierCalculator(player, (float) getManaCost, false, getElement.manaReduction(), MANA_COST_REDUCTION);
@@ -146,9 +146,9 @@ public class CastHelper {
     public static InteractionResultHolder<ItemStack> use(Player player) {
         var itemStack = Helpers.getUsedItem(player);
         var abilityName = DataComponentHelper.getAbilityTypeWand(player);
-        var getAbility = AbilityRegister.REGISTRY.get(abilityName);
+        var getAbility = AbilityReg.REGISTRY.get(abilityName);
         var canUse = getCanApplyDistanceAbility(player, itemStack);
-        var cantUseInDim = player.level() instanceof CustomLevel && getAbility != null && !getAbility.isMultiType() && getAbility.getElemenType().equals(ElementRegistry.utility());
+        var cantUseInDim = player.level() instanceof CustomLevel && getAbility != null && !getAbility.isMultiType() && getAbility.getElemenType().equals(ElementReg.utility());
         var cantUse = (player.onGround() && player.isShiftKeyDown()) || getAbility == null ;
         var fail = InteractionResultHolder.fail(itemStack);
 
@@ -164,7 +164,7 @@ public class CastHelper {
     }
 
     public static boolean getCanApplyDistanceAbility(Player player, ItemStack itemStack){
-        var isDistanceCast = AbilityRegister.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
+        var isDistanceCast = AbilityReg.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
         if(isDistanceCast != null && isDistanceCast.getCastType() == DISTANCE_CAST){
             var getCurrentAbility = DataComponentHelper.getAbilityTypeItemStack(itemStack);
             var getAbility = Helpers.getModifierValue(itemStack.get(WAND_ABILITY_HOLDER.get()), getCurrentAbility);
@@ -190,7 +190,7 @@ public class CastHelper {
         var casterData = player.getData(CASTER_DATA);
         var wandItem = Helpers.getUsedItem(player);
         var abilityName = DataComponentHelper.getAbilityTypeItemStack(wandItem);
-        var ability = AbilityRegister.REGISTRY.get(res(abilityName));
+        var ability = AbilityReg.REGISTRY.get(res(abilityName));
         if(ability == null) return false;
         var getElement = fromWand(wandItem.getItem()).orElseThrow();
         var getManaCost = getSpecificValue(player, wandItem, MANA_COST);

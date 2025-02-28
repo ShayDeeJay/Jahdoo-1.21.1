@@ -10,7 +10,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
-import org.jahdoo.common.registers.BlocksRegister;
+import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class ModConfiguredFeatures {
         RuleTest deepslateReplaceables = new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
 
         List<OreConfiguration.TargetBlockState> overworldCrystalOres = List.of(
-            OreConfiguration.target(stoneReplaceable, BlocksRegister.NEXITE_ORE.get().defaultBlockState()),
-            OreConfiguration.target(deepslateReplaceables, BlocksRegister.NEXITE_DEEPSLATE_ORE.get().defaultBlockState())
+            OreConfiguration.target(stoneReplaceable, BlockReg.NEXITE_ORE.get().defaultBlockState()),
+            OreConfiguration.target(deepslateReplaceables, BlockReg.NEXITE_DEEPSLATE_ORE.get().defaultBlockState())
         );
 
         register(context, OVERWORLD_CRYSTAL_ORE_KEY, Feature.ORE, new OreConfiguration(overworldCrystalOres, 16));

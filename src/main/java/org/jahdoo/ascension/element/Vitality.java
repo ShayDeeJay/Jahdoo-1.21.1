@@ -3,18 +3,20 @@ package org.jahdoo.ascension.element;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
-import org.jahdoo.common.registers.AttributesRegister;
-import org.jahdoo.common.registers.EffectsRegister;
-import org.jahdoo.common.registers.ItemsRegister;
-import org.jahdoo.ascension.utils.Helpers;
+
+import static net.minecraft.sounds.SoundEvents.ENDER_EYE_DEATH;
+import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.jahdoo.ascension.utils.Helpers.res;
+import static org.jahdoo.common.registers.AttributeReg.*;
+import static org.jahdoo.common.registers.EffectReg.VITALITY_EFFECT;
+import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_VITALITY;
 
 public class Vitality extends AbstractElement {
-    ResourceLocation abilityId = Helpers.res("vitality");
+
+    ResourceLocation abilityId = res("vitality");
 
     @Override
     public ResourceLocation abilityResource() {
@@ -28,22 +30,22 @@ public class Vitality extends AbstractElement {
 
     @Override
     public int textColourA() {
-        return FastColor.ARGB32.color(226, 51, 119);
+        return color(226, 51, 119);
     }
 
     @Override
     public int textColourB() {
-        return FastColor.ARGB32.color(219, 0, 85);
+        return color(219, 0, 85);
     }
 
     @Override
     public int partColourA() {
-        return FastColor.ARGB32.color(129, 0, 51);
+        return color(129, 0, 51);
     }
 
     @Override
     public int partColourB() {
-        return FastColor.ARGB32.color(233, 0, 93);
+        return color(233, 0, 93);
     }
 
     @Override
@@ -53,36 +55,37 @@ public class Vitality extends AbstractElement {
 
     @Override
     public Item getWand() {
-        return ItemsRegister.WAND_ITEM_VITALITY.get();
-    }
-
-    @Override
-    public ResourceLocation projectileTexture() {
-        return Helpers.res("textures/entity/vitality_projectile.png");
+        return WAND_ITEM_VITALITY.get();
     }
 
     @Override
     public SoundEvent sound() {
-        return SoundEvents.ENDER_EYE_DEATH;
+        return ENDER_EYE_DEATH;
     }
 
     @Override
     public Holder<MobEffect> effect() {
-        return EffectsRegister.VITALITY_EFFECT.getDelegate();
+        return VITALITY_EFFECT.getDelegate();
     }
 
     @Override
     public Holder<Attribute> cooldownReduction() {
-        return  AttributesRegister.VITALITY_COOLDOWN_REDUCTION;
+        return VITALITY_COOLDOWN_REDUCTION;
     }
 
     @Override
     public Holder<Attribute> manaReduction() {
-        return  AttributesRegister.VITALITY_MANA_COST_REDUCTION;
+        return VITALITY_MANA_COST_REDUCTION;
     }
 
     @Override
     public Holder<Attribute> damageAmplifier() {
-        return AttributesRegister.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
+        return VITALITY_MAGIC_DAMAGE_MULTIPLIER;
+    }
+
+    @Override
+    public ResourceLocation projectileTexture() {
+
+        return res("textures/entity/vitality_projectile.png");
     }
 }

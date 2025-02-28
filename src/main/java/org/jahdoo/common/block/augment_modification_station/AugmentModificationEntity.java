@@ -12,30 +12,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jahdoo.common.registers.BlockEntityReg;
 
 public class AugmentModificationEntity extends AbstractBEInventory implements MenuProvider {
-    int tickCounter;
+    
+    private int tickCounter;
 
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.tickCounter = tag.getInt("tick_counter");
+    public AugmentModificationEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityReg.AUGMENT_MODIFICATION_STATION_BE.get(), pos, state, 1);
     }
 
-    @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putInt("tick_counter", this.tickCounter);
-    }
-
-    public AugmentModificationEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntitiesRegister.AUGMENT_MODIFICATION_STATION_BE.get(), pPos, pBlockState, 1);
-    }
-
-    public void tick(Level level, BlockPos blockPos, BlockState pState) {
+    public void tick(Level level, BlockPos blockPos, BlockState state) {
         tickCounter++;
     }
 
@@ -59,12 +46,25 @@ public class AugmentModificationEntity extends AbstractBEInventory implements Me
     }
 
     @Override
-    public @NotNull Component getDisplayName() {
+    public Component getDisplayName() {
         return Component.literal("");
     }
 
     @Override
-    public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+    public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
         return new AugmentModificationMenu(i, inventory,this, this.data);
     }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.tickCounter = tag.getInt("tick_counter");
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putInt("tick_counter", this.tickCounter);
+    }
+    
 }

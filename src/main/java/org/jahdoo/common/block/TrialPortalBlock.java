@@ -19,19 +19,20 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.portal.DimensionTransition;
-import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.LevelGenerator;
-import org.jahdoo.common.registers.AttachmentRegister;
+import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
-import static org.jahdoo.ascension.LevelGenerator.*;
-import static org.jahdoo.ascension.LevelGenerator.DimHandler.*;
-import static org.jahdoo.common.particle.ParticleHandlers.*;
-import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
+import static org.jahdoo.ascension.DimHandler.tradingPost;
+import static org.jahdoo.ascension.DimHandler.trial;
+import static org.jahdoo.ascension.LevelGenerator.createNewWorld;
 import static org.jahdoo.ascension.utils.ColourStore.COSMIC_PURPLE;
 import static org.jahdoo.ascension.utils.ColourStore.PERK_GREEN;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
 
 public class TrialPortalBlock extends NetherPortalBlock {
 
@@ -76,7 +77,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
     public @Nullable DimensionTransition getPortalDestination(ServerLevel level, Entity entity, BlockPos pos) {
         if(!(entity instanceof Player player)) return null;
         var isContinueInstance = level instanceof CustomLevel customLevel;
-        var getData = level.getData(AttachmentRegister.CHALLENGE_ALTAR);
+        var getData = level.getData(AttachmentReg.CHALLENGE_ALTAR);
         int dimId = level.getBlockState(pos).getValue(DIMENSION_KEY);
 
 

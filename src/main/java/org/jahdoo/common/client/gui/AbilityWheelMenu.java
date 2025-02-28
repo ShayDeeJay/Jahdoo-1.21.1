@@ -25,10 +25,10 @@ import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.wand.WandData;
 import org.jahdoo.common.networking.packet.client2server.SelectedAbilityC2SPacket;
 import org.jahdoo.common.networking.packet.client2server.StopUsingC2SPacket;
-import org.jahdoo.common.registers.AbilityRegister;
-import org.jahdoo.common.registers.DataComponentRegistry;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.SoundRegister;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.DataComponentHelper;
@@ -54,7 +54,7 @@ public class AbilityWheelMenu extends Screen  {
     }
 
     public static List<String> getAllAbilities(ItemStack wand){
-        var wandData = DataComponentRegistry.WAND_DATA.get();
+        var wandData = ComponentReg.WAND_DATA.get();
         if(wand.has(wandData)) return wand.get(wandData).abilitySet();
         return new ArrayList<>();
     }
@@ -65,7 +65,7 @@ public class AbilityWheelMenu extends Screen  {
         this.buttons.clear();
         if(player == null) return;
         var wand = Helpers.getUsedItem(player);
-        var wandData = wand.get(DataComponentRegistry.WAND_DATA.get());
+        var wandData = wand.get(ComponentReg.WAND_DATA.get());
         var abilityHolder = getAllAbilities(wand);
         var totalSlots = abilityHolder.size();
         int centerX = this.width / 2 + 2;
@@ -80,7 +80,7 @@ public class AbilityWheelMenu extends Screen  {
             int buttonX = (int) (centerX + RADIUS * Math.cos(angle)) - buttonSize / 2;
             int buttonY = (int) (centerY + RADIUS * Math.sin(angle)) - buttonSize / 2;
 
-            if (!abilityHolder.isEmpty() && !AbilityRegister.getSpellsByTypeId(abilityHolder.get(i)).isEmpty()) {
+            if (!abilityHolder.isEmpty() && !AbilityReg.getSpellsByTypeId(abilityHolder.get(i)).isEmpty()) {
                 abilityButton(abilityHolder, i, buttonX, buttonY, i, wandData, player);
             } else {
                 showSlotIndex(i, buttonX, buttonY);
@@ -118,8 +118,8 @@ public class AbilityWheelMenu extends Screen  {
         WandData wandData,
         Player player
     ) {
-        var selectedAbility = AbilityRegister.getFirstSpellByTypeId(wandData.selectedAbility());
-        var ability = AbilityRegister.getSpellsByTypeId(abilityHolder.get(i)).getFirst();
+        var selectedAbility = AbilityReg.getFirstSpellByTypeId(wandData.selectedAbility());
+        var ability = AbilityReg.getSpellsByTypeId(abilityHolder.get(i)).getFirst();
         var iconResource = ability.getAbilityIconLocation();
         var abilityButton = new WidgetSprites(iconResource, iconResource);
         var isSelected = Objects.equals(selectedAbility.isPresent() ? selectedAbility.get().getAbilityName() : "", ability.getAbilityName());
@@ -136,7 +136,7 @@ public class AbilityWheelMenu extends Screen  {
 
     private void onHoverClick(List<String> abilityHolder, int finalI, Player player) {
         if(!switchState){
-            player.playSound(SoundRegister.SELECT.get(), 1f, 1.4f);
+            player.playSound(SoundReg.SELECT.get(), 1f, 1.4f);
             switchState = true;
             onClick(abilityHolder, finalI, player);
         }
@@ -153,7 +153,7 @@ public class AbilityWheelMenu extends Screen  {
         var configButton = new WidgetSprites(COG, COG);
         var configButtonSize = 20;
         var itemStack = Helpers.getUsedItem(player);
-        if (selectedAbility.getElemenType() == ElementRegistry.utility()) {
+        if (selectedAbility.getElemenType() == ElementReg.utility()) {
             var filterOutBase = isConfigAbility(selectedAbility, wandData.selectedAbility(), itemStack);
             if(filterOutBase){
                 this.addRenderableWidget(
@@ -225,7 +225,7 @@ public class AbilityWheelMenu extends Screen  {
         int y = (this.height / 2) - 5;
         if (localTick >= (RADIAL_SIZE - 20)) {
             var getAbilityId = DataComponentHelper.getAbilityTypeWand(getMinecraft().player);
-            var getAbility = AbilityRegister.getSpellsByTypeId(getAbilityId.getPath().intern());
+            var getAbility = AbilityReg.getSpellsByTypeId(getAbilityId.getPath().intern());
            if(!getAbility.isEmpty()){
                 SharedUI.getAbilityNameWithColour(getAbility.getFirst(), guiGraphics, x, y - 90, true);
                int width = (int) (getAbilityId.getPath().intern().length() * 3.5);

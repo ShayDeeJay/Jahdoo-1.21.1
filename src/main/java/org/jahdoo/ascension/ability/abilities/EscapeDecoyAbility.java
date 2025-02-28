@@ -11,8 +11,8 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.decoy.Decoy;
-import org.jahdoo.common.registers.EffectsRegister;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.EffectReg;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -32,17 +32,6 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
     }
 
     @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setStaticMana(50)
-            .setStaticCooldown(1200)
-            .setLifetime(300, 100, 50)
-            .setEffectDuration(200, 50, 50)
-            .setRange(15, 5, 2)
-            .build();
-    }
-
-    @Override
     public String getDescription() {
         return GlobalStrings.BLOCK_PLACER;
     }
@@ -59,7 +48,29 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.utility();
+        return ElementReg.vitality();
+    }
+
+    @Override
+    public JahdooRarity rarity() {
+        return JahdooRarity.RARE;
+    }
+
+    public static void onExistenceChange(LivingEntity livingEntity, AbstractElement element) {
+        for (int i = 0; i < 10; i++) {
+            sendParticles(livingEntity.level(), getAllParticleTypes(element, 10, 1.6f), livingEntity.position().add(0, 1f, 0), 5, 0, 0.5, 0, 0.15f);
+        }
+    }
+
+    @Override
+    public void setModifiers(ItemStack itemStack) {
+        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+            .setStaticMana(50)
+            .setStaticCooldown(1200)
+            .setLifetime(300, 100, 50)
+            .setEffectDuration(200, 50, 50)
+            .setRange(15, 5, 2)
+            .build();
     }
 
     @Override
@@ -74,7 +85,7 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
             var lookVector = player.getLookAngle();
             player.addEffect(new JahdooMobEffect(MobEffects.MOVEMENT_SPEED, duration, 6));
             player.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, duration, 0));
-            player.addEffect(new JahdooMobEffect(EffectsRegister.STEP_BOOST, duration, 1));
+            player.addEffect(new JahdooMobEffect(EffectReg.STEP_BOOST, duration, 1));
 
             Helpers.getSoundWithPositionV(player.level(), player.position(), SoundEvents.WARDEN_ATTACK_IMPACT, 1,0.6f);
             Helpers.getSoundWithPositionV(player.level(), player.position(), SoundEvents.CAMEL_DASH, 1,1.6f);
@@ -92,16 +103,5 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
 
             onExistenceChange(decoy, getElemenType());
         }
-    }
-
-    public static void onExistenceChange(LivingEntity livingEntity, AbstractElement element) {
-        for (int i = 0; i < 10; i++) {
-            sendParticles(livingEntity.level(), getAllParticleTypes(element, 10, 1.6f), livingEntity.position().add(0, 1f, 0), 5, 0, 0.5, 0, 0.15f);
-        }
-    }
-
-    @Override
-    public JahdooRarity rarity() {
-        return JahdooRarity.RARE;
     }
 }

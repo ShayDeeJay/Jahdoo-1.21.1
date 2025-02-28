@@ -4,7 +4,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
-import org.jahdoo.common.registers.ItemsRegister;
+import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.world.item.enchantment.Enchantments.*;
@@ -15,7 +15,7 @@ import static org.jahdoo.ascension.utils.Helpers.Random;
 public class ShoppingWeapon {
 
     public static @NotNull ItemStack getElementalSword() {
-        var sword = new ItemStack(ItemsRegister.ELEMENTAL_SWORD);
+        var sword = new ItemStack(ItemReg.ELEMENTAL_SWORD);
         sword.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(Random.nextInt(1,5)));
         return sword;
     }
@@ -27,4 +27,5 @@ public class ShoppingWeapon {
         attachEnchantment(itemStack, serverLevel, LOOTING, 4, 8, isSpecial);
         attachEnchantment(itemStack, serverLevel, UNBREAKING, 4, 8, isSpecial);
     }
+
 }

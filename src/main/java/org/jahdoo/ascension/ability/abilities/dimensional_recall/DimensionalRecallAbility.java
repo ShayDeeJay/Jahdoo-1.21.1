@@ -7,13 +7,14 @@ import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.GlobalStrings;
 
-import static org.jahdoo.common.registers.AttachmentRegister.DIMENSIONAL_RECALL;
+import static org.jahdoo.common.registers.AttachmentReg.DIMENSIONAL_RECALL;
 
 public class DimensionalRecallAbility extends AbilityRegistrar {
+
     public static final ResourceLocation abilityId = Helpers.res("dimensional_recall");
     public static final String CASTING_TIME = "Cast Time";
 
@@ -29,12 +30,32 @@ public class DimensionalRecallAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.mystic();
+        return ElementReg.mystic();
     }
 
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
+    }
+
+    @Override
+    public String getDescription() {
+        return GlobalStrings.BLOCK_MINER_DESCRIPTION;
+    }
+
+    @Override
+    public boolean selfChargeAbility() {
+        return true;
+    }
+
+    @Override
+    public JahdooRarity rarity() {
+        return JahdooRarity.EPIC;
+    }
+
+    @Override
+    public void invokeAbility(Player player) {
+        player.getData(DIMENSIONAL_RECALL).setStartedUsing(true);
     }
 
     @Override
@@ -44,26 +65,6 @@ public class DimensionalRecallAbility extends AbilityRegistrar {
             .setStaticCooldown(7200)
             .setAbilityTagModifiersRandom(CASTING_TIME, 400, 100, false, 100)
             .build();
-    }
-
-    @Override
-    public String getDescription() {
-        return GlobalStrings.BLOCK_MINER_DESCRIPTION;
-    }
-
-    @Override
-    public void invokeAbility(Player player) {
-        player.getData(DIMENSIONAL_RECALL).setStartedUsing(true);
-    }
-
-    @Override
-    public boolean internallyChargeManaAndCooldown() {
-        return true;
-    }
-
-    @Override
-    public JahdooRarity rarity() {
-        return JahdooRarity.EPIC;
     }
 
 }

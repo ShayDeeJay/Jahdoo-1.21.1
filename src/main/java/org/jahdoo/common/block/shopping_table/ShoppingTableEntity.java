@@ -15,12 +15,11 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.ascension.RewardLootTables;
 import org.jahdoo.ascension.trading_post.ItemCosts;
-import org.jahdoo.common.registers.BlockEntitiesRegister;
 import org.jahdoo.ascension.utils.Helpers;
 
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static org.jahdoo.ascension.trading_post.ItemCosts.*;
-import static org.jahdoo.common.registers.BlockEntitiesRegister.*;
+import static org.jahdoo.common.registers.BlockEntityReg.*;
 
 public class ShoppingTableEntity extends AbstractBEInventory {
 

@@ -1,17 +1,26 @@
 package org.jahdoo.ascension.ability.effects;
 
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 import static net.minecraft.world.effect.MobEffectCategory.BENEFICIAL;
-import static org.jahdoo.common.registers.AttachmentRegister.CASTER_DATA;
+import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
 public class ReplenishManaEffect extends MobEffect {
 
     public ReplenishManaEffect() {
         super(BENEFICIAL, 3436524);
+    }
+
+    @Override
+    public boolean isInstantenous() {
+        return true;
+    }
+
+    @Override
+    public boolean isBeneficial() {
+        return true;
     }
 
     @Override
@@ -26,16 +35,5 @@ public class ReplenishManaEffect extends MobEffect {
             casterData.refillMana(player);
         }
     }
-
-    @Override
-    public boolean isInstantenous() {
-        return true;
-    }
-
-    @Override
-    public boolean isBeneficial() {
-        return true;
-    }
-
 
 }

@@ -8,29 +8,17 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.abilities.BurningSkullsAbility;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
-import org.jahdoo.common.registers.ElementRegistry;
-import org.jahdoo.common.registers.EntitiesRegister;
-import org.jahdoo.common.registers.EntityPropertyRegister;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.EntityDataReg;
+import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 
 public class FireballAbility extends AbilityRegistrar {
-    public static final ResourceLocation abilityId = Helpers.res("fireball");
-    public static final String novaRange = "Explosion Radius";
 
-    @Override
-    public void invokeAbility(Player player) {
-        var projCount = 1;
-        fireMultiShotProjectile(projCount, 0.5f, player, 0.4,
-            () -> new ElementProjectile(
-                EntitiesRegister.INFERNO_ELEMENT_PROJECTILE.get(), player,
-                EntityPropertyRegister.FIRE_BALL.get().setAbilityId(), projCount == 1 ? offsetShoot(player) : 0,
-                abilityId.getPath().intern()
-            )
-        );
-        BurningSkullsAbility.infernoSoundEffect(player);
-    }
+    public static final ResourceLocation abilityId = Helpers.res("fireball");
+    public static final String NOVA_RANGE = "Explosion Radius";
 
     @Override
     public JahdooRarity rarity() {
@@ -40,19 +28,6 @@ public class FireballAbility extends AbilityRegistrar {
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
-    }
-
-    @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
-            .setStaticMana(60)
-            .setStaticCooldown(600)
-            .setDamage(45, 20, 5)
-            .setEffectDuration(300, 100, 20)
-            .setEffectStrength(10, 0, 1)
-            .setEffectChance(50, 10, 10)
-            .setAbilityTagModifiersRandom(novaRange, 6, 3, true, 1)
-            .build();
     }
 
     @Override
@@ -72,7 +47,33 @@ public class FireballAbility extends AbilityRegistrar {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementRegistry.inferno();
+        return ElementReg.inferno();
+    }
+
+    @Override
+    public void invokeAbility(Player player) {
+        var projCount = 1;
+        fireMultiShotProjectile(projCount, 0.5f, player, 0.4,
+            () -> new ElementProjectile(
+                EntityReg.INFERNO_ELEMENT_PROJECTILE.get(), player,
+                EntityDataReg.FIRE_BALL.get().setAbilityId(), projCount == 1 ? offsetShoot(player) : 0,
+                abilityId.getPath().intern()
+            )
+        );
+        BurningSkullsAbility.infernoSoundEffect(player);
+    }
+
+    @Override
+    public void setModifiers(ItemStack itemStack) {
+        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+            .setStaticMana(60)
+            .setStaticCooldown(600)
+            .setDamage(45, 20, 5)
+            .setEffectDuration(300, 100, 20)
+            .setEffectStrength(10, 0, 1)
+            .setEffectChance(50, 10, 10)
+            .setAbilityTagModifiersRandom(NOVA_RANGE, 6, 3, true, 1)
+            .build();
     }
 
 }

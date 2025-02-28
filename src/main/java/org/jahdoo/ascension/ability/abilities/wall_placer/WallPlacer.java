@@ -22,19 +22,11 @@ import static org.jahdoo.ascension.ability.abilities.block_placer.BlockPlacer.re
 import static org.jahdoo.common.items.wand.WandItemHelper.getStoredBlock;
 
 public class WallPlacer extends AbstractUtilityProjectile {
-    ResourceLocation abilityId = Helpers.res("wall_placer_property");
-    Level level;
-    double breakerSize;
-    int size;
 
-    @Override
-    public void getGenericProjectile(GenericProjectile genericProjectile) {
-        super.getGenericProjectile(genericProjectile);
-        this.breakerSize = this.getTagUtility(SIZE);
-        var offset = (int) this.getTagUtility(OFFSET);
-        this.size = (int) ((breakerSize/2) - offset);
-        this.level = genericProjectile.level();
-    }
+    ResourceLocation abilityId = Helpers.res("wall_placer_property");
+    private Level level;
+    private double breakerSize;
+    private int size;
 
     @Override
     public String abilityId() {
@@ -52,21 +44,30 @@ public class WallPlacer extends AbstractUtilityProjectile {
     }
 
     @Override
+    public void getGenericProjectile(GenericProjectile genericProjectile) {
+        super.getGenericProjectile(genericProjectile);
+        this.breakerSize = this.getTagUtility(SIZE);
+        var offset = (int) this.getTagUtility(OFFSET);
+        this.size = (int) ((breakerSize/2) - offset);
+        this.level = genericProjectile.level();
+    }
+
+    @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
-        var owner = (LivingEntity) genericProjectile.getOwner();
-        if(owner == null && genericProjectile.blockEntityPos == null) return;
+        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        var owner = (LivingEntity) generic.getOwner();
+        if(owner == null && generic.blockEntityPos == null) return;
 
         var radius = (int) (this.breakerSize / 2);
         var pos = blockHitResult.getBlockPos();
-        var pDirection = owner == null ? genericProjectile.getDirection() : owner.getDirection();
-        var lookAngleY = genericProjectile.getLookAngle().y;
+        var pDirection = owner == null ? generic.getDirection() : owner.getDirection();
+        var lookAngleY = generic.getLookAngle().y;
         var isLookingUpOrDown = lookAngleY < -0.8 || lookAngleY > 0.8;
         var axisZ = pDirection.getAxis() == Direction.Axis.Z;
         var axisX = pDirection.getAxis() == Direction.Axis.X;
-        var player = (Player) genericProjectile.getOwner();
-        var pos1 = this.genericProjectile.blockEntityPos;
+        var player = (Player) generic.getOwner();
+        var pos1 = this.generic.blockEntityPos;
         var side = blockHitResult.getDirection();
         var targetBlock = ItemStack.EMPTY;
         var replaceBlock = Blocks.AIR;
@@ -86,7 +87,7 @@ public class WallPlacer extends AbstractUtilityProjectile {
             }
         }
 
-        var isPos = this.genericProjectile.blockEntityPos != null;
+        var isPos = this.generic.blockEntityPos != null;
         pos = pos.relative(lookAngleY < -0.8 ? pDirection.getOpposite() : pDirection, !isLookingUpOrDown || isPos ? 0 : size).above(isLookingUpOrDown || isPos ? 0 : size);
 
         for (int x = -radius; x <= radius; x++) {
@@ -97,13 +98,12 @@ public class WallPlacer extends AbstractUtilityProjectile {
                         y * (isLookingUpOrDown ? 0 : 1),
                         z * (isLookingUpOrDown || axisX ? 1 : 0)
                     );
-                    removeItemsFromInv(genericProjectile, offsetPos, side, replaceBlock, player, targetBlock, pos1, false);
+                    removeItemsFromInv(generic, offsetPos, side, replaceBlock, player, targetBlock, pos1, false);
                 }
             }
         }
         Helpers.getSoundWithPosition(level, pos, replaceBlock.getSoundType(replaceBlock.defaultBlockState(), level, pos, null).getPlaceSound(), 1, 1);
-        genericProjectile.discard();
+        generic.discard();
     }
-
 
 }

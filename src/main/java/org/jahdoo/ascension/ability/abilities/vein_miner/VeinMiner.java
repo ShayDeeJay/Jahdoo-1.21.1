@@ -15,7 +15,7 @@ import org.jahdoo.ascension.ability.UtilityHelpers;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.ElementRegistry;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.ArrayDeque;
@@ -29,16 +29,11 @@ import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTIO
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
 
 public class VeinMiner extends AbstractUtilityProjectile {
-    private static final Direction[] ALL_DIRECTIONS = Direction.values();
-    private static final Direction[] HORIZONTAL_DIRECTIONS = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
-    ResourceLocation abilityId = Helpers.res("vein_miner_property");
-    private int veinSize;
 
-    @Override
-    public void getGenericProjectile(GenericProjectile genericProjectile) {
-        super.getGenericProjectile(genericProjectile);
-        this.veinSize = (int) this.getTagUtility(VEIN_MINE_SIZE);
-    }
+    private static final Direction[] ALL_DIRECTIONS = Direction.values();
+    private static final Direction[] HORIZONTAL_DIRECTIONS = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
+    private final ResourceLocation abilityId = Helpers.res("vein_miner_property");
+    private int veinSize;
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -56,35 +51,9 @@ public class VeinMiner extends AbstractUtilityProjectile {
     }
 
     @Override
-    public void onBlockBlockHit(BlockHitResult blockHitResult) {
-        super.onBlockBlockHit(blockHitResult);
-        if(this.genericProjectile.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
-        if (genericProjectile.level().isClientSide) return;
-        BlockPos start = blockHitResult.getBlockPos();
-        BlockState target = genericProjectile.level().getBlockState(start);
-        if (target.isAir()) return;
-
-        double x = genericProjectile.getX();
-        double y = genericProjectile.getY();
-        double z = genericProjectile.getZ();
-        genericProjectile.level().playSound(
-            null, x, y, z,
-            genericProjectile.level()
-                .getBlockState(start)
-                .getSoundType(genericProjectile.level(), genericProjectile.blockPosition(), genericProjectile)
-                .getBreakSound(),
-            SoundSource.BLOCKS, 1, 1
-        );
-        var part = ParticleHandlers.genericParticleOptions(SOFT_PARTICLE_SELECTION, ElementRegistry.utility(), 6, 0.08f, true);
-        var part2 = ParticleHandlers.genericParticleOptions(GENERIC_PARTICLE_SELECTION, ElementRegistry.utility(), 3, 4f, false);
-        this.forAllBlocksAroundOf(start, genericProjectile.level(), target.getBlock(), veinSize,
-            (pos, state) -> {
-                UtilityHelpers.dropItemsOrBlock(genericProjectile, pos, false, false);
-                ParticleHandlers.particleBurst(genericProjectile.level(), pos.getCenter(), 1, part, 0, 0, 0, 0.005f, 1);
-                ParticleHandlers.particleBurst(genericProjectile.level(), pos.getCenter(), 1, part2, 0, 0, 0, 0.05f, 2);
-            }
-        );
-        genericProjectile.discard();
+    public void getGenericProjectile(GenericProjectile genericProjectile) {
+        super.getGenericProjectile(genericProjectile);
+        this.veinSize = (int) this.getTagUtility(VEIN_MINE_SIZE);
     }
 
     private void forAllBlocksAroundOf(
@@ -104,6 +73,38 @@ public class VeinMiner extends AbstractUtilityProjectile {
                 next, access, target, checked, deque, found, limit, consumer
             );
         }
+    }
+
+    @Override
+    public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockBlockHit(blockHitResult);
+        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        if (generic.level().isClientSide) return;
+        BlockPos start = blockHitResult.getBlockPos();
+        BlockState target = generic.level().getBlockState(start);
+        if (target.isAir()) return;
+
+        double x = generic.getX();
+        double y = generic.getY();
+        double z = generic.getZ();
+        generic.level().playSound(
+            null, x, y, z,
+            generic.level()
+                .getBlockState(start)
+                .getSoundType(generic.level(), generic.blockPosition(), generic)
+                .getBreakSound(),
+            SoundSource.BLOCKS, 1, 1
+        );
+        var part = ParticleHandlers.genericParticleOptions(SOFT_PARTICLE_SELECTION, ElementReg.utility(), 6, 0.08f, true);
+        var part2 = ParticleHandlers.genericParticleOptions(GENERIC_PARTICLE_SELECTION, ElementReg.utility(), 3, 4f, false);
+        this.forAllBlocksAroundOf(start, generic.level(), target.getBlock(), veinSize,
+            (pos, state) -> {
+                UtilityHelpers.dropItemsOrBlock(generic, pos, false, false);
+                ParticleHandlers.particleBurst(generic.level(), pos.getCenter(), 1, part, 0, 0, 0, 0.005f, 1);
+                ParticleHandlers.particleBurst(generic.level(), pos.getCenter(), 1, part2, 0, 0, 0, 0.05f, 2);
+            }
+        );
+        generic.discard();
     }
 
     private void forAllBlocksAroundOf(
@@ -141,4 +142,5 @@ public class VeinMiner extends AbstractUtilityProjectile {
             }
         }
     }
+
 }

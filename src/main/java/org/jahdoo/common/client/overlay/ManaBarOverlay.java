@@ -1,6 +1,5 @@
 package org.jahdoo.common.client.overlay;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -13,9 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.common.client.IconLocations;
-import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.registers.AbilityRegister;
+import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.ascension.utils.Configuration;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.ascension.utils.Helpers;
@@ -27,8 +25,8 @@ import static com.mojang.blaze3d.systems.RenderSystem.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.SharedUI.drawStringWithBackground;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.ticksToTime;
-import static org.jahdoo.common.registers.AttachmentRegister.CASTER_DATA;
-import static org.jahdoo.common.registers.ElementRegistry.*;
+import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
+import static org.jahdoo.common.registers.ElementReg.*;
 
 public class ManaBarOverlay implements LayeredDraw.Layer {
 
@@ -234,7 +232,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         if(player == null || minecraft.options.hideGui) return;
 
         var manaBarWidth = 57;
-        var abilityRegistrars = AbilityRegister.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
+        var abilityRegistrars = AbilityReg.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
         var casterData = player.getData(CASTER_DATA);
         var manaPool = casterData.getManaPool();
         var maxMana = casterData.getMaxMana(player);
