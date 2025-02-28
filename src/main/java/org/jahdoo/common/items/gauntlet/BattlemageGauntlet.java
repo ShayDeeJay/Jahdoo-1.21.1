@@ -1,9 +1,10 @@
-package org.jahdoo.common.items;
+package org.jahdoo.common.items.gauntlet;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.registers.DataComponentRegistry;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;

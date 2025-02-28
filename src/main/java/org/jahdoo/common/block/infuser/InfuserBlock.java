@@ -29,19 +29,16 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationBlock;
 import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.registers.BlockEntitiesRegister;
-import org.jetbrains.annotations.Nullable;
-
 import static org.jahdoo.common.registers.BlocksRegister.sharedBehaviour;
-import static org.jahdoo.common.registers.BlocksRegister.sharedBlockBehaviour;
 
 public class InfuserBlock extends BaseEntityBlock {
-    public static final VoxelShape SHAPE_BASE = Block.box(0, 8, 0, 16, 11, 16);
-    public static final VoxelShape SHAPE_BASE_SECOND = Block.box(3, 2, 3, 13, 8, 13);
-    public static final VoxelShape SHAPE_BASE_THIRD = Block.box(2, 0, 2, 14, 2, 14);
-    public static final VoxelShape SHAPE_COMMON = Shapes.or(SHAPE_BASE_THIRD,SHAPE_BASE_SECOND, SHAPE_BASE);
 
+    private static final VoxelShape SHAPE_BASE = Block.box(0, 8, 0, 16, 11, 16);
+    private static final VoxelShape SHAPE_BASE_SECOND = Block.box(3, 2, 3, 13, 8, 13);
+    private static final VoxelShape SHAPE_BASE_THIRD = Block.box(2, 0, 2, 14, 2, 14);
+    private static final VoxelShape SHAPE_COMMON = Shapes.or(SHAPE_BASE_THIRD,SHAPE_BASE_SECOND, SHAPE_BASE);
+    private static final BooleanProperty IS_INFUSING = BooleanProperty.create("is_infusing");
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
-    public static final BooleanProperty IS_INFUSING = BooleanProperty.create("is_infusing");
 
     public InfuserBlock() {
         super(sharedBehaviour);
@@ -55,6 +52,75 @@ public class InfuserBlock extends BaseEntityBlock {
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return simpleCodec((x) -> new InfuserBlock());
+    }
+
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+    }
+
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE_COMMON;
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new InfuserBlockEntity(pos,state);
+    }
+
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+        builder.add(IS_INFUSING);
+    }
+
+    private void addItemToHand(
+        Player player,
+        ItemStack slotItem
+    ){
+        AugmentItemHelper.throwOrAddItem(player, slotItem.copyWithCount(1));
+        slotItem.shrink(1);
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
+        return createTickerHelper(
+            entityType,
+            BlockEntitiesRegister.INFUSER_BE.get(),
+            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
+        );
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (state.getBlock() != newState.getBlock()) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof InfuserBlockEntity) {
+                ((InfuserBlockEntity) blockEntity).dropsAllInventory(level);
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (!(level.getBlockEntity(pos) instanceof InfuserBlockEntity tableEntity)) return ItemInteractionResult.FAIL;
+        var hands = player.getItemInHand(hand);
+        ItemStack getOutputSlot = tableEntity.outputItemHandler.getStackInSlot(0);
+        if(!getOutputSlot.isEmpty()){
+            this.addItemToHand(player, getOutputSlot);
+            return ItemInteractionResult.SUCCESS;
+        } else {
+            AugmentModificationBlock.augmentBlockInteraction(level, pos, player, hand, tableEntity, hands, SoundEvents.VAULT_DEACTIVATE, 0.64, 8, 0.4, 0.3);
+        }
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override
@@ -74,78 +140,6 @@ public class InfuserBlock extends BaseEntityBlock {
                     f15 * 0.02F);
             }
         }
-    }
-
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACING);
-        pBuilder.add(IS_INFUSING);
-    }
-
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
-    }
-
-    public BlockState rotate(BlockState pState, Rotation pRotation) {
-        return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
-    }
-
-    public BlockState mirror(BlockState pState, Mirror pMirror) {
-        return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return SHAPE_COMMON;
-    }
-
-    @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
-        if (pState.getBlock() != pNewState.getBlock()) {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof InfuserBlockEntity) {
-                ((InfuserBlockEntity) blockEntity).dropsAllInventory(pLevel);
-            }
-        }
-        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
-    }
-
-    @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (!(level.getBlockEntity(pos) instanceof InfuserBlockEntity tableEntity)) return ItemInteractionResult.FAIL;
-        var hands = player.getItemInHand(hand);
-        ItemStack getOutputSlot = tableEntity.outputItemHandler.getStackInSlot(0);
-        if(!getOutputSlot.isEmpty()){
-            this.addItemToHand(player, getOutputSlot);
-            return ItemInteractionResult.SUCCESS;
-        } else {
-            AugmentModificationBlock.augmentBlockInteraction(level, pos, player, hand, tableEntity, hands, SoundEvents.VAULT_DEACTIVATE, 0.64, 8, 0.4, 0.3);
-        }
-        return ItemInteractionResult.SUCCESS;
-    }
-
-    private void addItemToHand(
-        Player player,
-        ItemStack slotItem
-    ){
-        AugmentItemHelper.throwOrAddItem(player, slotItem.copyWithCount(1));
-        slotItem.shrink(1);
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new InfuserBlockEntity(pPos,pState);
-    }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-
-        return createTickerHelper(
-            pBlockEntityType,
-            BlockEntitiesRegister.INFUSER_BE.get(),
-            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
-        );
     }
 }
 

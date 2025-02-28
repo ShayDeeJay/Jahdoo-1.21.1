@@ -8,71 +8,60 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.common.client.gui.slots.InventorySlots;
+import org.jahdoo.common.client.slots.InventorySlots;
 import org.jetbrains.annotations.NotNull;
-import java.util.List;
 
 public abstract class AbstractInternalContainer extends AbstractContainerMenu {
 
     protected static final int SLOTS_IN_ROW = 9;
-    protected static final int PLAYER_INVENTORY_ROW_COUNT = 3;
-    protected static final int PLAYER_INVENTORY_SLOT_COUNT = SLOTS_IN_ROW * PLAYER_INVENTORY_ROW_COUNT;
-    protected static final int VANILLA_SLOT_COUNT = SLOTS_IN_ROW + PLAYER_INVENTORY_SLOT_COUNT;
-    protected static final int VANILLA_FIRST_SLOT_INDEX = 0;
-    protected static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
+    protected static final int INV_ROWS = 3;
+    protected static final int INV_SIZE = SLOTS_IN_ROW * INV_ROWS;
+    protected static final int SLOT_SIZE = SLOTS_IN_ROW + INV_SIZE;
+    protected static final int SLOT_A = 0;
+    protected static final int INV_SLOT_A = SLOT_A + SLOT_SIZE;
+
     protected final AbstractBEInventory blockEntity;
     protected final Level level;
 
-    public AbstractInternalContainer(MenuType<?> menuType, int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(menuType, pContainerId, inv, (AbstractBEInventory) inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(0));
+    public AbstractInternalContainer(MenuType<?> menuType, int containerId, Inventory inv, FriendlyByteBuf extraData) {
+        this(
+            menuType, containerId, inv, (AbstractBEInventory) inv.player.level().getBlockEntity(extraData.readBlockPos()),
+            new SimpleContainerData(0)
+        );
     }
 
-    public AbstractInternalContainer(MenuType<?> menuType, int pContainerId, Inventory inv, AbstractBEInventory entity, ContainerData data) {
-        super(menuType, pContainerId);
+    public AbstractInternalContainer(MenuType<?> menuType, int containerId, Inventory inv, AbstractBEInventory entity, ContainerData data) {
+        super(menuType, containerId);
+        int heightDiff = 55;
+
         this.blockEntity = entity;
         this.level = inv.player.level();
-        int heightDiff = 55;
+        this.addDataSlots(data);
         this.addPlayerInventory(inv, heightDiff);
         this.addPlayerHotbar(inv, heightDiff);
-        this.addDataSlots(data);
     }
+
+    protected abstract int getAllSlots();
+
+    protected abstract Block getAssociatedBlock();
 
     public int adjustInventoryY() {
         return  - 33;
     }
 
-    public int adjustInventoryX() {return 0;}
-
-    @Override
-    public void initializeContents(int pStateId, List<ItemStack> pItems, ItemStack pCarried) {
-        super.initializeContents(pStateId, pItems, pCarried);
+    public int adjustInventoryX() {
+        return 0;
     }
 
     @Override
-    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int slotIndex) {
-        var sourceSlot = slots.get(slotIndex);
-        var sourceStack = sourceSlot.getItem();
-        var copyOfSourceStack = sourceStack.copy();
-        if (!sourceSlot.hasItem()) return ItemStack.EMPTY;
+    public boolean stillValid(Player player) {
+        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()), player, getAssociatedBlock());
+    }
 
-        var vanilla = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
-        var beInventory = TE_INVENTORY_FIRST_SLOT_INDEX + getAllSlots();
-
-        if (slotIndex < vanilla) {
-            if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, beInventory, false)) {
-                return ItemStack.EMPTY;
-            }
-        } else if (slotIndex < beInventory) {
-            if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, vanilla, false)) {
-                return ItemStack.EMPTY;
-            }
-        } else {
-            return ItemStack.EMPTY;
+    public void addPlayerHotbar(Inventory playerInventory, int heightDiff) {
+        for (int hotbarX = 0; hotbarX < 9; hotbarX++) {
+            this.addSlot(new InventorySlots(playerInventory, hotbarX, 8 + hotbarX * 18 + this.adjustInventoryX(), 142 + heightDiff + this.adjustInventoryY()));
         }
-
-        if (sourceStack.getCount() == 0) sourceSlot.set(ItemStack.EMPTY); else sourceSlot.setChanged();
-        sourceSlot.onTake(player, sourceStack);
-        return copyOfSourceStack;
     }
 
     public void addPlayerInventory(Inventory playerInventory, int heightDiff) {
@@ -83,18 +72,27 @@ public abstract class AbstractInternalContainer extends AbstractContainerMenu {
         }
     }
 
-    public void addPlayerHotbar(Inventory playerInventory, int heightDiff) {
-        for (int hotbarX = 0; hotbarX < 9; hotbarX++) {
-            this.addSlot(new InventorySlots(playerInventory, hotbarX, 8 + hotbarX * 18 + this.adjustInventoryX(), 142 + heightDiff + this.adjustInventoryY()));
-        }
-    }
-
     @Override
-    public boolean stillValid(Player player) {
-        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()), player, getAssociatedBlock());
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int slotIndex) {
+        var vanilla = SLOT_A + SLOT_SIZE;
+        var beInventory = INV_SLOT_A + getAllSlots();
+        var sourceSlot = slots.get(slotIndex);
+        var sourceStack = sourceSlot.getItem();
+        var copyOfSourceStack = sourceStack.copy();
+        var empty = ItemStack.EMPTY;
+
+        if(!sourceSlot.hasItem()){
+            return empty;
+        } else if (slotIndex < vanilla) {
+            if (!moveItemStackTo(sourceStack, INV_SLOT_A, beInventory, false)) return empty;
+        } else if (slotIndex < beInventory) {
+            if (!moveItemStackTo(sourceStack, SLOT_A, vanilla, false)) return empty;
+        } else {
+            return empty;
+        }
+
+        if (sourceStack.getCount() == 0) sourceSlot.set(empty); else sourceSlot.setChanged();
+        sourceSlot.onTake(player, sourceStack);
+        return copyOfSourceStack;
     }
-
-    protected abstract int getAllSlots();
-
-    protected abstract Block getAssociatedBlock();
 }

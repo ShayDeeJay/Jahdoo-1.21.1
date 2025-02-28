@@ -34,6 +34,7 @@ import static org.jahdoo.ascension.utils.ColourStore.COSMIC_PURPLE;
 import static org.jahdoo.ascension.utils.ColourStore.PERK_GREEN;
 
 public class TrialPortalBlock extends NetherPortalBlock {
+
     public static final IntegerProperty DIMENSION_KEY = BlockStateProperties.LEVEL;
     public static final int KEY_HOME = 0;
     public static final int KEY_TRADING_POST = 1;
@@ -50,7 +51,19 @@ public class TrialPortalBlock extends NetherPortalBlock {
                 .pushReaction(PushReaction.BLOCK)
         );
         this.registerDefaultState(this.defaultBlockState().setValue(DIMENSION_KEY, 0));
+    }
 
+    @Override
+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {}
+
+    @Override
+    public Transition getLocalTransition() {
+        return Transition.NONE;
+    }
+
+    @Override
+    public int getPortalTransitionTime(ServerLevel level, Entity entity) {
+        return 0;
     }
 
     @Override
@@ -60,13 +73,30 @@ public class TrialPortalBlock extends NetherPortalBlock {
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {}
+    public @Nullable DimensionTransition getPortalDestination(ServerLevel level, Entity entity, BlockPos pos) {
+        if(!(entity instanceof Player player)) return null;
+        var isContinueInstance = level instanceof CustomLevel customLevel;
+        var getData = level.getData(AttachmentRegister.CHALLENGE_ALTAR);
+        int dimId = level.getBlockState(pos).getValue(DIMENSION_KEY);
+
+
+        if(dimId == KEY_HOME && player instanceof ServerPlayer serverPlayer){
+            return serverPlayer.findRespawnPositionAndUseSpawnBlock(true, DO_NOTHING);
+        }
+
+        //Delete old level on leave.
+        if(level instanceof CustomLevel cLevel) LevelGenerator.removeLevel(cLevel);
+        level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+
+        var getDim = dimId == KEY_TRADING_POST ? tradingPost() : trial();
+        var challengeLevelData = ChallengeLevelData.newRound(1, getDim.id());
+        return createNewWorld(player, level, isContinueInstance ? getData : challengeLevelData, getDim);
+    }
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
 
         for(int i = 0; i < 4; ++i) {
-
             var d0 = (double)pos.getX() + random.nextDouble();
             var d1 = (double)pos.getY() + random.nextDouble();
             var d2 = (double)pos.getZ() + random.nextDouble();
@@ -84,38 +114,8 @@ public class TrialPortalBlock extends NetherPortalBlock {
             var colourDarker = Helpers.getColourDarker(particleColour, 0.5F);
             var particleData = genericParticleOptions(MAGIC_PARTICLE_SELECTION, particleColour, colourDarker, 10, 1, false, 0);
             level.addParticle(particleData, d0, d1, d2, 0, d4, 0);
-
         }
 
     }
 
-    @Override
-    public @Nullable DimensionTransition getPortalDestination(ServerLevel level, Entity entity, BlockPos pos) {
-        if(!(entity instanceof Player player)) return null;
-        var isContinueInstance = level instanceof CustomLevel customLevel;
-        var getData = level.getData(AttachmentRegister.CHALLENGE_ALTAR);
-        int dimId = level.getBlockState(pos).getValue(DIMENSION_KEY);
-
-
-        if(dimId == KEY_HOME && player instanceof ServerPlayer serverPlayer){
-            return serverPlayer.findRespawnPositionAndUseSpawnBlock(true, DO_NOTHING);
-        }
-
-        //Delete old level on leave.
-        if(level instanceof CustomLevel customLevel) LevelGenerator.removeLevel(customLevel);
-        level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-        var getDim = dimId == KEY_TRADING_POST ? tradingPost() : trial();
-        var challengeLevelData = ChallengeLevelData.newRound(1, getDim.id());
-        return createNewWorld(player, level, isContinueInstance ? getData : challengeLevelData, getDim);
-    }
-
-    @Override
-    public Transition getLocalTransition() {
-        return Transition.NONE;
-    }
-
-    @Override
-    public int getPortalTransitionTime(ServerLevel level, Entity entity) {
-        return 0;
-    }
 }

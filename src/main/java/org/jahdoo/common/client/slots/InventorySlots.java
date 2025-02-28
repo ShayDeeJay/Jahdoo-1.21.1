@@ -1,10 +1,11 @@
-package org.jahdoo.common.client.gui.slots;
+package org.jahdoo.common.client.slots;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public class InventorySlots extends Slot {
+
     boolean isActive = true;
 
     public InventorySlots(Container container, int slot, int x, int y) {

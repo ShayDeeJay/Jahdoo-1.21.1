@@ -60,13 +60,19 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
     }
 
     @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE_COMBINED;
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState pState) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new ShoppingTableEntity(pos,state);
     }
 
     @Override
@@ -75,81 +81,84 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
         builder.add(FACING);
     }
 
+    @Nullable
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
-        var entity = level.getBlockEntity(pos);
-        if(!(entity instanceof ShoppingTableEntity shoppingTable)) return ItemInteractionResult.FAIL;
-
-        if(shoppingTable.canPurchase()){
-            var enoughToBuy = hasEnoughToBuy(player, shoppingTable.getCurrencyType().getItem(), shoppingTable.getCost());
-
-            if(enoughToBuy){
-                var isRandomisedTable = state.getValue(TEXTURE) == 3;
-                if (isRandomisedTable) {
-                    shoppingTable.insertRandomItem();
-                }
-
-                var item = shoppingTable.getItem();
-                var stackInSlot = item.extractItem(0, item.getStackInSlot(0).getCount(), false);
-                if (!stackInSlot.isEmpty()) {
-                    player.playSound(SoundEvents.ITEM_PICKUP, 0.5F, 0.8F);
-                    AugmentItemHelper.throwOrAddItem(player, stackInSlot);
-                    item.setStackInSlot(1, ItemStack.EMPTY);
-                    shoppingTable.itemCosts = ItemCosts.EMPTY_COST;
-                    return ItemInteractionResult.SUCCESS;
-                }
-            } else {
-                if(level.isClientSide) player.displayClientMessage(Component.literal("Insufficient Funds"), true);
-                return ItemInteractionResult.SUCCESS;
-            }
-        }
-
-        return ItemInteractionResult.SUCCESS;
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+        Level level,
+        BlockState state,
+        BlockEntityType<T> entityType
+    ) {
+        return createTickerHelper(
+            entityType, BlockEntitiesRegister.SHOPPING_TABLE_BE.get(),
+            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
+        );
     }
 
     public static boolean hasEnoughToBuy(Player player, Item item, int quantity) {
-        int count = 0;
-        for (ItemStack stack : player.getInventory().items) {
+        var count = 0;
+        for (var stack : player.getInventory().items) {
             if (stack.getItem() == item) count += stack.getCount();
             if (count >= quantity) break;
         }
 
-        if (count >= quantity) {
-            int remaining = quantity;
-            for (ItemStack stack : player.getInventory().items) {
-                if (stack.getItem() == item) {
-                    int stackSize = stack.getCount();
+        if (count < quantity) return false;
+        var remaining = quantity;
 
-                    if (stackSize <= remaining) {
-                        remaining -= stackSize;
-                        stack.setCount(0);
-                    } else {
-                        stack.shrink(remaining);
-                        remaining = 0;
-                    }
+        for (ItemStack stack : player.getInventory().items) {
+            if (stack.getItem() == item) {
+                var stackSize = stack.getCount();
 
-                    if (remaining <= 0) break;
+                if (stackSize <= remaining) {
+                    stack.setCount(0);
+                    remaining -= stackSize;
+                } else {
+                    stack.shrink(remaining);
+                    remaining = 0;
                 }
+
+                if (remaining <= 0) break;
             }
-            return true;
         }
 
-        return false; // Not enough items
+        return true;
     }
 
-    @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new ShoppingTableEntity(pPos,pState);
-    }
+    protected ItemInteractionResult useItemOn(
+        ItemStack stack,
+        BlockState state,
+        Level level,
+        BlockPos pos,
+        Player player,
+        InteractionHand hand,
+        BlockHitResult result
+    ) {
+        var entity = level.getBlockEntity(pos);
+        if(!(entity instanceof ShoppingTableEntity shoppingTable)) return ItemInteractionResult.FAIL;
+        var success = ItemInteractionResult.SUCCESS;
 
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return createTickerHelper(
-            pBlockEntityType, BlockEntitiesRegister.SHOPPING_TABLE_BE.get(),
-            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
-        );
+        if(!shoppingTable.canPurchase()) return success;
+        var enoughToBuy = hasEnoughToBuy(player, shoppingTable.getCurrencyType().getItem(), shoppingTable.getCost());
+
+        if(enoughToBuy){
+            var isRandomisedTable = state.getValue(TEXTURE) == 3;
+            if (isRandomisedTable) {
+                shoppingTable.insertRandomItem();
+            }
+
+            var item = shoppingTable.getItem();
+            var stackInSlot = item.extractItem(0, item.getStackInSlot(0).getCount(), false);
+            if (!stackInSlot.isEmpty()) {
+                player.playSound(SoundEvents.ITEM_PICKUP, 0.5F, 0.8F);
+                AugmentItemHelper.throwOrAddItem(player, stackInSlot);
+                item.setStackInSlot(1, ItemStack.EMPTY);
+                shoppingTable.itemCosts = ItemCosts.EMPTY_COST;
+            }
+        } else {
+            if(level.isClientSide) player.displayClientMessage(Component.literal("Insufficient Funds"), true);
+        }
+
+        return success;
     }
 
 }

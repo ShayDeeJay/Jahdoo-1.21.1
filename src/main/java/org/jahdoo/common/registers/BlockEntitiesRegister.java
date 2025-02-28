@@ -16,7 +16,7 @@ import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.common.block.infuser.InfuserBlockEntity;
 import org.jahdoo.common.block.rune_table.RuneTableEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
-import org.jahdoo.common.block.tank.NexiteTankBlockEntity;
+import org.jahdoo.common.block.tank.TankBlockEntity;
 import org.jahdoo.common.block.wand.WandBlockEntity;
 import org.jahdoo.common.block.wand_manager.WandManagerEntity;
 
@@ -29,8 +29,8 @@ public class BlockEntitiesRegister {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WandBlockEntity>> WAND_BE =
         registerBlockEntity("wand_be", WandBlockEntity::new, WAND);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NexiteTankBlockEntity>> TANK_BE =
-        registerBlockEntity("tank_be", NexiteTankBlockEntity::new, TANK);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TankBlockEntity>> TANK_BE =
+        registerBlockEntity("tank_be", TankBlockEntity::new, TANK);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnchantedBlockEntity>> ENCHANTED_BE =
         registerBlockEntity("enchanted_be", EnchantedBlockEntity::new, ENCHANTED_BLOCK);

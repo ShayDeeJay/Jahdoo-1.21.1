@@ -18,16 +18,85 @@ import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.ElementRegistry;
 
+import static org.jahdoo.common.particle.ParticleHandlers.*;
+import static org.jahdoo.common.particle.ParticleStore.*;
+import static org.jahdoo.common.registers.ElementRegistry.*;
+
 public abstract class AbstractBEInventory extends SyncedBlockEntity {
 
-    public static GenericParticleOptions processingParticle(int lifetime, float size, boolean staticSize, double speed){
-        var element = ElementRegistry.utility();
-        return ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, element, lifetime, size, staticSize, speed);
-    }
     protected ContainerData data;
 
-    public AbstractBEInventory(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState, int stackSize) {
-        super(pType, pPos, pBlockState);
+    public final ItemStackHandler inputItemHandler =
+        this.setStackHandler(this.setInputSlots(), this.getMaxSlotSize());
+
+    public final ItemStackHandler outputItemHandler =
+        this.setStackHandler(this.setOutputSlots(), this.getMaxSlotSize());
+
+    public abstract int setInputSlots();
+
+    public abstract int setOutputSlots();
+
+    public abstract int getMaxSlotSize();
+
+    public ContainerData getData() {
+        return data;
+    }
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput componentInput) {
+        super.applyImplicitComponents(componentInput);
+    }
+
+    public static GenericParticleOptions processingParticle(int lifetime, float size, boolean staticSize, double speed){
+        return genericParticleOptions(SOFT_PARTICLE_SELECTION, utility(), lifetime, size, staticSize, speed);
+    }
+
+    @Override
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider provider) {
+        super.onDataPacket(net, pkt, provider);
+        if(level == null) return;
+
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+    }
+
+    public static void sendBlockUpdate(Level level, Runnable setChanged, BlockPos blockPos, BlockState blockState){
+        if(level == null) return;
+
+        setChanged.run();
+        level.sendBlockUpdated(blockPos, blockState, blockState,3);
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+
+        tag.put("inputInventory", inputItemHandler.serializeNBT(registries));
+        tag.put("outputInventory", outputItemHandler.serializeNBT(registries));
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+
+        inputItemHandler.deserializeNBT(registries, tag.getCompound("inputInventory"));
+        outputItemHandler.deserializeNBT(registries, tag.getCompound("outputInventory"));
+    }
+
+    public ItemStackHandler setStackHandler(int slots, int slotStackLimit){
+        return new ItemStackHandler(slots) {
+            protected void onContentsChanged(int slot) {
+                sendBlockUpdate(level, () -> setChanged(), getBlockPos(), getBlockState());
+            }
+
+            @Override
+            public int getSlotLimit(int slot) {
+                return getMaxSlotSize();
+            }
+        };
+    }
+
+    public AbstractBEInventory(BlockEntityType<?> type, BlockPos pos, BlockState state, int stackSize) {
+        super(type, pos, state);
         this.data = new ContainerData() {
             @Override
             public int get(int pIndex) {
@@ -44,47 +113,9 @@ public abstract class AbstractBEInventory extends SyncedBlockEntity {
         };
     }
 
-    @Override
-    protected void applyImplicitComponents(DataComponentInput componentInput) {
-        super.applyImplicitComponents(componentInput);
-    }
-
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider pRegistries) {
-        super.onDataPacket(net, pkt, pRegistries);
-        if(level == null) return;
-        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-    }
-
-    public ItemStackHandler setStackHandler(int slots, int slotStackLimit){
-        return new ItemStackHandler(slots) {
-            protected void onContentsChanged(int slot) {
-                sendBlockUpdate(level, () -> setChanged(), getBlockPos(), getBlockState());
-            }
-
-            @Override
-            public int getSlotLimit(int slot) {
-                return getMaxSlotSize();
-            }
-        };
-    }
-
-    public final ItemStackHandler inputItemHandler = this.setStackHandler(this.setInputSlots(), this.getMaxSlotSize());
-    public final ItemStackHandler outputItemHandler = this.setStackHandler(this.setOutputSlots(), this.getMaxSlotSize());
-
-    public abstract int setInputSlots();
-
-    public abstract int setOutputSlots();
-
-    public abstract int getMaxSlotSize();
-
-    public ContainerData getData() {
-        return data;
-    }
-
     public void dropsAllInventory(Level level) {
-        SimpleContainer inputInventory = new SimpleContainer(setInputSlots());
-        SimpleContainer outputInventory = new SimpleContainer(setOutputSlots());
+        var inputInventory = new SimpleContainer(setInputSlots());
+        var outputInventory = new SimpleContainer(setOutputSlots());
 
         for (int i = 0; i < this.inputItemHandler.getSlots(); i++) {
             if (i < inputInventory.getContainerSize()) {
@@ -102,25 +133,5 @@ public abstract class AbstractBEInventory extends SyncedBlockEntity {
 
         Containers.dropContents(level, this.worldPosition, inputInventory);
         Containers.dropContents(level, this.worldPosition, outputInventory);
-    }
-
-    public static void sendBlockUpdate(Level level, Runnable setChanged, BlockPos blockPos, BlockState blockState){
-        if(level == null) return;
-        setChanged.run();
-        level.sendBlockUpdated(blockPos, blockState, blockState,3);
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.saveAdditional(pTag, pRegistries);
-        pTag.put("inputInventory", inputItemHandler.serializeNBT(pRegistries));
-        pTag.put("outputInventory", outputItemHandler.serializeNBT(pRegistries));
-    }
-
-    @Override
-    protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.loadAdditional(pTag, pRegistries);
-        inputItemHandler.deserializeNBT(pRegistries, pTag.getCompound("inputInventory"));
-        outputItemHandler.deserializeNBT(pRegistries, pTag.getCompound("outputInventory"));
     }
 }

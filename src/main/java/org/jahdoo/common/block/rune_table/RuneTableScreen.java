@@ -1,10 +1,8 @@
 package org.jahdoo.common.block.rune_table;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ArmorItem;
@@ -21,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.jahdoo.common.client.IconLocations.GUI_BUTTON;
+import static net.minecraft.util.FastColor.ARGB32.*;
 import static org.jahdoo.common.client.IconLocations.GUI_GENERAL_SLOT;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
@@ -29,20 +27,29 @@ import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 
 public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
-    public static WidgetSprites WIDGET = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
-    private final RuneTableMenu runeTableMenu;
-    int scaleItem = 60;
-    AbstractElement element;
-    int borderColour;
-    boolean isHovering;
 
-    public RuneTableScreen(RuneTableMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
-        super(pMenu, pPlayerInventory, pTitle);
-        var element = ElementRegistry.fromWand(pMenu.getRuneTableEntity().inputItemHandler.getStackInSlot(0).getItem());
-        this.runeTableMenu = pMenu;
+    private final RuneTableMenu runeTableMenu;
+    private final AbstractElement element;
+    private final int borderColour;
+    private int scaleItem = 60;
+
+    public RuneTableScreen(RuneTableMenu menu, Inventory inventory, Component title) {
+        super(menu, inventory, title);
+        var element = ElementRegistry.fromWand(menu.tableEntity().itemSlot().getItem());
+
+        this.runeTableMenu = menu;
         this.element = element.orElse(ElementRegistry.mystic());
-        this.borderColour = element.map(AbstractElement::textColourA).orElseGet(() -> FastColor.ARGB32.color(56, 157, 59));
+        this.borderColour = element.map(AbstractElement::textColourA).orElseGet(() -> color(56, 157, 59));
     }
+
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
+
+    @Override
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {}
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partial, int mouseX, int mouseY) {}
 
     @Override
     protected void containerTick() {
@@ -50,19 +57,96 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     }
 
     public RuneTableEntity entity(){
-        return this.runeTableMenu.getRuneTableEntity();
+        return this.runeTableMenu.tableEntity();
+    }
+
+    private void scaleItem() {
+        this.scaleItem = Math.min(140, scaleItem + 8);
+    }
+
+    private int getPotential() {
+        return RuneHolder.potential(getItem());
+    }
+
+    public ItemStack getItem(){
+        return entity().inputItemHandler.getStackInSlot(0);
+    }
+
+    private static int groupFade() {
+        return getFadedColourBackground(0.7f);
+    }
+
+    private int getExperienceCost() {
+        var potential = getPotential();
+        return Math.max(10, 100 - potential);
+    }
+
+    private void remainingPotential(GuiGraphics guiGraphics, int shiftX, AtomicInteger spacer, int shiftY) {
+        var slot = Helpers.withStyleComponent(String.valueOf(getPotential()), SUB_HEADER_COLOUR);
+        var component = withStyleComponent("Potential: ", HEADER_COLOUR).copy().append(slot);
+        var sharedX = this.width / 2 - 30 + shiftX;
+        var posY = this.height / 2 - 85 + spacer.get() + shiftY;
+
+        guiGraphics.drawString(this.font, component, sharedX -1, posY + 2, 0);
+    }
+
+    private void hoverCarried(GuiGraphics guiGraphics, int x, int y){
+        var carried = this.hoveredSlot == null || hoveredSlot.getItem().isEmpty() ? runeTableMenu.getCarried() : hoveredSlot.getItem();
+        if(carried.getItem() instanceof RuneItem){
+            var getTooltip = this.getTooltipFromContainerItem(carried);
+            if (!carried.isEmpty()) {
+                guiGraphics.renderTooltip(font, getTooltip, Optional.empty(), x, y);
+            }
+        }
+    }
+
+    private void overlayInventory(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
+        guiGraphics.pose().popPose();
+        var i = 40;
+        var i1 = -17;
+
+        guiGraphics.pose().translate(0,0,20);
+        var startX1 = startX + i - 5;
+
+        boxMaker(guiGraphics, startX1, startY + i1, 105, 55, borderColour, groupFade());
+        renderInventoryBackground(guiGraphics, this, 256, 24, true);
+        guiGraphics.pose().pushPose();
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
+        this.renderBlurredBackground(pPartialTick);
+        var adjustX = 18;
+        var adjustY = -27;
+        var i = this.width / 2;
+        var i1 = this.height / 2;
+        var startX = i - 140;
+        var startY = i1 + 22;
 
-    private void wandProperties(@NotNull GuiGraphics guiGraphics) {
+        scaleItem();
+        augmentCoreSlots(guiGraphics, adjustX, adjustY, borderColour, this.width, this.height, groupFade());
+        renderItem(guiGraphics, mouseX, mouseY, startX, startY);
+        wandProperties(guiGraphics);
+
+        super.render(guiGraphics, mouseX, mouseY, pPartialTick);
+        var hSlot = this.hoveredSlot;
+
+        if(hSlot != null && !(hSlot.getItem().getItem() instanceof RuneItem)){
+            this.renderTooltip(guiGraphics, mouseX, mouseY);
+        }
+
+        overlayInventory(guiGraphics, startX, startY);
+        hoverCarried(guiGraphics, mouseX, mouseY);
+    }
+
+    private void wandProperties(GuiGraphics guiGraphics) {
         var shiftY = 0;
         var shiftX = -5;
         var spacer = new AtomicInteger();
 
         remainingPotential(guiGraphics, shiftX, spacer, shiftY);
         var getRunes = RuneHolder.getRuneholder(getItem());
+
         handleSlotsInGridLayout(
             (slotX, slotY, index) -> {
                 for (ItemStack ignored : getRunes.runeSlots()) {
@@ -102,22 +186,23 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         guiGraphics.drawString(this.font, header, x, y1, SUB_HEADER_COLOUR);
     }
 
-    private void renderItem(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, int startX, int startY) {
-        // Define constants for positioning and sizing
-        final int ITEM_OFFSET_X = 40;
-        final int ITEM_OFFSET_Y = -17;
-        final int SHIFT_X = 75;
-        final int WAND_ITEM_OFFSET = getItem().getItem() instanceof WandItem ? 80 : 90;
-        final int SCALED_ITEM = scaleItem - WAND_ITEM_OFFSET;
-        final int OFFSET_Y = 164 - 80;
 
-        int minX = startX + ITEM_OFFSET_X + 70 - SHIFT_X;
-        int minY = startY + ITEM_OFFSET_Y - 94;
-        int maxX = startX + ITEM_OFFSET_X + 55;
-        int width = this.width - SHIFT_X * 2;
-        int height = this.height - (144 - SCALED_ITEM);
-        int posX = startX + 23;
-        int posY = startY + ITEM_OFFSET_Y - 106;
+    private void renderItem(GuiGraphics guiGraphics, int mouseX, int mouseY, int startX, int startY) {
+        // Define constants for positioning and sizing
+        final var ITEM_OFFSET_X = 40;
+        final var ITEM_OFFSET_Y = -17;
+        final var SHIFT_X = 75;
+        final var WAND_ITEM_OFFSET = getItem().getItem() instanceof WandItem ? 80 : 90;
+        final var SCALED_ITEM = scaleItem - WAND_ITEM_OFFSET;
+        final var OFFSET_Y = 164 - 80;
+
+        var minX = startX + ITEM_OFFSET_X + 70 - SHIFT_X;
+        var minY = startY + ITEM_OFFSET_Y - 94;
+        var maxX = startX + ITEM_OFFSET_X + 55;
+        var width = this.width - SHIFT_X * 2;
+        var height = this.height - (144 - SCALED_ITEM);
+        var posX = startX + 23;
+        var posY = startY + ITEM_OFFSET_Y - 106;
 
         guiGraphics.pose().pushPose();
         bezelMaker(guiGraphics, posX, posY, 52, OFFSET_Y, 32, null);
@@ -132,7 +217,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
             stand.setItemSlot(armorItem.getEquipmentSlot(), getItem());
             stand.setInvisible(true);
 
-            int yOffset = switch (armorItem.getEquipmentSlot()) {
+            var yOffset = switch (armorItem.getEquipmentSlot()) {
                 case HEAD -> 70;
                 case CHEST -> 8;
                 case LEGS -> -30;
@@ -146,10 +231,10 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         }
 
         if (this.element != null) {
-            int colorFade = FastColor.ARGB32.color(100, borderColour);
-            int heightOffset = 86 - 40;
-            int color = FastColor.ARGB32.color(50, borderColour);
-            int colorA = FastColor.ARGB32.color(20, borderColour);
+            var colorFade = color(100, borderColour);
+            var heightOffset = 86 - 40;
+            var color = color(50, borderColour);
+            var colorA = color(20, borderColour);
 
             boxMaker(guiGraphics, minX, minY, 30, heightOffset, getFadedColourBackground(0.4f));
             SharedUI.boxMaker(guiGraphics, minX, minY, 30, heightOffset, color, colorA, colorFade);
@@ -158,85 +243,4 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         guiGraphics.disableScissor();
         guiGraphics.pose().popPose();
     }
-
-    public ItemStack getItem(){
-        return entity().inputItemHandler.getStackInSlot(0);
-    }
-
-    private void remainingPotential(@NotNull GuiGraphics guiGraphics, int shiftX, AtomicInteger spacer, int shiftY) {
-        var slot = Helpers.withStyleComponent(String.valueOf(getPotential()), SUB_HEADER_COLOUR);
-        var component = withStyleComponent("Potential: ", HEADER_COLOUR).copy().append(slot);
-        var sharedX = this.width / 2 - 30 + shiftX;
-        var posY = this.height / 2 - 85 + spacer.get() + shiftY;
-        guiGraphics.drawString(this.font, component, sharedX -1, posY + 2, 0);
-    }
-
-    private static int groupFade() {
-        return getFadedColourBackground(0.7f);
-    }
-
-    private void hoverCarried(GuiGraphics guiGraphics, int x, int y){
-        var carried = this.hoveredSlot == null || hoveredSlot.getItem().isEmpty() ? runeTableMenu.getCarried() : hoveredSlot.getItem();
-        if(carried.getItem() instanceof RuneItem){
-            var getTooltip = this.getTooltipFromContainerItem(carried);
-            if (!carried.isEmpty()) {
-                guiGraphics.renderTooltip(font, getTooltip, Optional.empty(), x, y);
-            }
-        }
-    }
-
-    private void overlayInventory(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
-        guiGraphics.pose().popPose();
-        var i = 40;
-        var i1 = -17;
-        guiGraphics.pose().translate(0,0,20);
-        var startX1 = startX + i - 5;
-        boxMaker(guiGraphics, startX1, startY + i1, 105, 55, borderColour, groupFade());
-        renderInventoryBackground(guiGraphics, this, 256, 24, true);
-        guiGraphics.pose().pushPose();
-    }
-
-    @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
-        this.renderBlurredBackground(pPartialTick);
-        var adjustX = 18;
-        var adjustY = -27;
-        var i = this.width / 2;
-        var i1 = this.height / 2;
-        var startX = i - 140;
-        var startY = i1 + 22;
-
-        scaleItem();
-        augmentCoreSlots(guiGraphics, adjustX, adjustY, borderColour, this.width, this.height, groupFade());
-        renderItem(guiGraphics, mouseX, mouseY, startX, startY);
-        wandProperties(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, pPartialTick);
-        var hSlot = this.hoveredSlot;
-        if(hSlot != null && !(hSlot.getItem().getItem() instanceof RuneItem)){
-            this.renderTooltip(guiGraphics, mouseX, mouseY);
-        }
-        overlayInventory(guiGraphics, startX, startY);
-
-        hoverCarried(guiGraphics, mouseX, mouseY);
-        this.isHovering = false;
-    }
-
-    private int getPotential() {
-        return RuneHolder.potential(getItem());
-    }
-
-    private int getExperienceCost() {
-        var potential = getPotential();
-        return Math.max(10, 100 - potential);
-    }
-
-    private void scaleItem() {
-        this.scaleItem = Math.min(140, scaleItem + 8);
-    }
-
-    @Override
-    protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {}
-
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {}
 }

@@ -27,6 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.BlockEntitiesRegister;
 import org.jahdoo.common.registers.BlocksRegister;
@@ -35,12 +36,11 @@ import org.jetbrains.annotations.Nullable;
 import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.block.augment_modification_station.AugmentModificationBlock.*;
 import static org.jahdoo.common.registers.BlocksRegister.sharedBehaviour;
-import static org.jahdoo.common.registers.BlocksRegister.sharedBlockBehaviour;
-import static org.jahdoo.common.registers.ElementRegistry.getElementByWandType;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.common.registers.ElementRegistry.fromWand;
 
 public class WandManagerBlock extends BaseEntityBlock {
+
     public static VoxelShape SHAPE_COMBINED = Shapes.or(
         Block.box(5, 0, 11.125, 11, 2, 13.125),
         Block.box(5, 0, 2.875, 11, 2, 4.875),
@@ -103,9 +103,13 @@ public class WandManagerBlock extends BaseEntityBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        Direction facing = pState.getValue(FACING);
-        return SHAPE_COMBINED;
+    public RenderShape getRenderShape(BlockState pState) {
+        return RenderShape.MODEL;
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
+        return new WandManagerEntity(pPos,pState);
     }
 
     @Override
@@ -114,44 +118,24 @@ public class WandManagerBlock extends BaseEntityBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState pState) {
-        return RenderShape.MODEL;
+    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        Direction facing = pState.getValue(FACING);
+        return SHAPE_COMBINED;
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
-        if (pState.getBlock() != pNewState.getBlock()) {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof WandManagerEntity wandManagerTable) {
-                SimpleContainer inputInventory = new SimpleContainer(wandManagerTable.setInputSlots());
-                SimpleContainer outputInventory = new SimpleContainer(wandManagerTable.setOutputSlots());
-
-                for (int i = 0; i < 4; i++) {
-                    if (i < inputInventory.getContainerSize()) {
-                        wandManagerTable.inputItemHandler.getStackInSlot(i);
-                        inputInventory.setItem(i, wandManagerTable.inputItemHandler.getStackInSlot(i));
-                    }
-                }
-
-                for (int i = 0; i < wandManagerTable.outputItemHandler.getSlots(); i++) {
-                    if (i < outputInventory.getContainerSize()) {
-                        wandManagerTable.outputItemHandler.getStackInSlot(i);
-                        outputInventory.setItem(i, wandManagerTable.outputItemHandler.getStackInSlot(i));
-                    }
-                }
-
-                Containers.dropContents(pLevel, pPos, inputInventory);
-                Containers.dropContents(pLevel, pPos, outputInventory);
-            }
-        }
-
-        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
+        return createTickerHelper(
+            pBlockEntityType,
+            BlockEntitiesRegister.WAND_MANAGER_TABLE_BE.get(),
+            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
+        );
     }
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos pos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        ItemInteractionResult fail = ItemInteractionResult.FAIL;
-        ItemInteractionResult success = ItemInteractionResult.SUCCESS;
+        var fail = ItemInteractionResult.FAIL;
+        var success = ItemInteractionResult.SUCCESS;
 
         if(!(level.getBlockEntity(pos) instanceof WandManagerEntity wandManager)) return fail;
         var hands = player.getItemInHand(interactionHand);
@@ -182,8 +166,10 @@ public class WandManagerBlock extends BaseEntityBlock {
         if (hand.getItem() instanceof WandItem || hand.isEmpty() && pPlayer.isShiftKeyDown()) {
             if(!hand.isEmpty()) getSoundWithPosition(pLevel, pPos, soundEvent, 1, 1.2f);
             swapItemsWithHand(wandManagerTable.inputItemHandler, 0, pPlayer, pHand);
+
             var stackInSlot = wandManagerTable.inputItemHandler.getStackInSlot(0);
             var type = fromWand(stackInSlot.getItem());
+
             wandManagerTable.privateTicks = 0;
             type.ifPresent(getType -> setOuterRingPulse(pLevel, getType.id(), pPos, yOffset, lifetime, speed, radius));
             return ItemInteractionResult.SUCCESS;
@@ -191,20 +177,35 @@ public class WandManagerBlock extends BaseEntityBlock {
         return ItemInteractionResult.FAIL;
     }
 
-    @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new WandManagerEntity(pPos,pState);
-    }
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
+    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
+        if (pState.getBlock() != pNewState.getBlock()) {
+            var blockEntity = pLevel.getBlockEntity(pPos);
 
-        return createTickerHelper(
-            pBlockEntityType,
-            BlockEntitiesRegister.WAND_MANAGER_TABLE_BE.get(),
-            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
-        );
+            if (blockEntity instanceof WandManagerEntity wandManagerTable) {
+                var inputInventory = new SimpleContainer(wandManagerTable.setInputSlots());
+                var outputInventory = new SimpleContainer(wandManagerTable.setOutputSlots());
+                var outHandler = wandManagerTable.outputItemHandler;
+
+                for (int i = 0; i < 4; i++) {
+                    if (i < inputInventory.getContainerSize()) {
+                        inputInventory.setItem(i, wandManagerTable.inputItemHandler.getStackInSlot(i));
+                    }
+                }
+
+                for (int i = 0; i < outHandler.getSlots(); i++) {
+                    if (i < outputInventory.getContainerSize()) {
+                        outputInventory.setItem(i, outHandler.getStackInSlot(i));
+                    }
+                }
+
+                Containers.dropContents(pLevel, pPos, inputInventory);
+                Containers.dropContents(pLevel, pPos, outputInventory);
+            }
+
+        }
+
+        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
     }
 
 }

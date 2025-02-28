@@ -43,9 +43,10 @@ import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.getRandomColouredParticle;
 
 public class LootChestBlock extends BaseEntityBlock {
+
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
-    public static final VoxelShape SHAPE = Block.box(0.5, 0.475, 1.475, 15.5, 9.225, 14.475);
-    public static final VoxelShape SHAPE2 = Block.box(1.5, 0.475, 0.475, 14.5, 9.225, 15.475);
+    private static final VoxelShape SHAPE = Block.box(0.5, 0.475, 1.475, 15.5, 9.225, 14.475);
+    private static final VoxelShape SHAPE2 = Block.box(1.5, 0.475, 0.475, 14.5, 9.225, 15.475);
 
     public LootChestBlock() {
         super(
@@ -63,26 +64,56 @@ public class LootChestBlock extends BaseEntityBlock {
         return simpleCodec((x) -> new LootChestBlock());
     }
 
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection());
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection());
     }
 
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACING);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
     @Override
-    public @NotNull RenderShape getRenderShape(BlockState pState) {
+    public @NotNull RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return pState.getValue(FACING).getAxis() == Direction.Axis.X ? SHAPE2 : SHAPE;
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return state.getValue(FACING).getAxis() == Direction.Axis.X ? SHAPE2 : SHAPE;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
+        return new LootChestEntity(pPos,pState);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
+        return createTickerHelper
+            (entityType, BlockEntitiesRegister.LOOT_CHEST_BE.get(), (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
+        );
+    }
+
+    public static void particleBurst(ServerLevel serverLevel, Vec3 center, int colour, int multiplier) {
+        var fade = Helpers.getColourDarker(colour, 0.5);
+        var randomColouredParticle = getRandomColouredParticle(colour, fade, Random.nextInt(10, 20), 1f, false);
+        var pos = center.add(0, 0.3f, 0);
+
+        ParticleHandlers.particleBurst(serverLevel, pos, 2 * multiplier, randomColouredParticle, 0, 0.3, 0, 0.2f, 3);
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected @NotNull ItemInteractionResult useItemOn(
+        ItemStack stack,
+        BlockState state,
+        Level level,
+        BlockPos pos,
+        Player player,
+        InteractionHand hand,
+        BlockHitResult hitResult
+    ) {
         if (!(level.getBlockEntity(pos) instanceof LootChestEntity lootChestEntity)) return ItemInteractionResult.FAIL;
 
         if(!lootChestEntity.isOpen){
@@ -113,7 +144,14 @@ public class LootChestBlock extends BaseEntityBlock {
         return ItemInteractionResult.SUCCESS;
     }
 
-    public static void lootsplosian(BlockPos pos, ServerLevel serverLevel, int level, int colour, List<ItemStack> rewards, boolean shouldDropExperience) {
+    public static void lootsplosian(
+        BlockPos pos,
+        ServerLevel serverLevel,
+        int level,
+        int colour,
+        List<ItemStack> rewards,
+        boolean shouldDropExperience
+    ) {
         for (var reward : rewards) {
             var pCenter = pos.getCenter();
             var itemEntity = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() + 0.2, pCenter.z(), reward);
@@ -149,28 +187,6 @@ public class LootChestBlock extends BaseEntityBlock {
         Helpers.getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_OPEN_SHUTTER, 1f, 1.8f);
         Helpers.getSoundWithPosition(serverLevel, pos, SoundEvents.ILLUSIONER_CAST_SPELL, 1f, 1f);
         Helpers.getSoundWithPosition(serverLevel, pos, SoundRegister.EXPLOSION.get(), 0.8f, 0.9f);
-    }
-
-    public static void particleBurst(ServerLevel serverLevel, Vec3 pCenter, int colour, int multiplier) {
-        var fade = Helpers.getColourDarker(colour, 0.5);
-        var randomColouredParticle = getRandomColouredParticle(colour, fade, Random.nextInt(10, 20), 1f, false);
-        var pos = pCenter.add(0, 0.3f, 0);
-
-        ParticleHandlers.particleBurst(serverLevel, pos, 2 * multiplier, randomColouredParticle, 0, 0.3, 0, 0.2f, 3);
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new LootChestEntity(pPos,pState);
-    }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return createTickerHelper
-            (pBlockEntityType, BlockEntitiesRegister.LOOT_CHEST_BE.get(), (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
-        );
     }
 }
 

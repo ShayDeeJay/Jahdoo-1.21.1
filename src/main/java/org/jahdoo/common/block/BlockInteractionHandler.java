@@ -24,64 +24,9 @@ import org.jahdoo.ascension.utils.Helpers;
 import java.util.Collections;
 import java.util.Optional;
 
+import static net.minecraft.world.entity.EntitySelector.*;
+
 public class BlockInteractionHandler {
-
-    public static boolean stackHandler(
-        ItemStackHandler itemHandler,
-        ItemStack itemStack,
-        Item item,
-        int inputSlotNumber,
-        Player player
-    ) {
-        ItemStack inputSlot = itemHandler.getStackInSlot(inputSlotNumber);
-
-        if (!itemStack.isEmpty() && itemStack.is(item)) {
-            if (inputSlot.isEmpty() || itemStack.is(inputSlot.getItem())) {
-                int remainingSpace = inputSlot.getMaxStackSize() - inputSlot.getCount();
-                if (remainingSpace > 0) {
-                    int amountToAdd = Math.min(remainingSpace, itemStack.getCount());
-                    ItemStack itemStackCopy = itemStack.copyWithCount(amountToAdd);
-
-                    if (!player.getAbilities().instabuild) {
-                        itemStack.shrink(amountToAdd);
-                    }
-
-                    itemHandler.insertItem(inputSlotNumber, itemStackCopy, false);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public static boolean stackHandlerWithFeedBack(
-        ItemStackHandler itemHandler,
-        ItemStack itemStack,
-        Item item,
-        int inputSlotNumber,
-        int maxSize,
-        Player player
-    ) {
-        ItemStack inputSlot = itemHandler.getStackInSlot(inputSlotNumber);
-
-
-        if (!itemStack.isEmpty() && itemStack.is(item)) {
-            if (inputSlot.isEmpty() || itemStack.is(inputSlot.getItem())) {
-                int remainingSpace = maxSize - inputSlot.getCount();
-                if (remainingSpace > 0) {
-                    int amountToAdd = Math.min(remainingSpace, itemStack.getCount());
-                    ItemStack itemStackCopy = itemStack.copyWithCount(amountToAdd);
-                    if (!player.getAbilities().instabuild) {
-                        itemStack.shrink(amountToAdd);
-                    }
-                    itemHandler.insertItem(inputSlotNumber, itemStackCopy, false);
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
 
     public static boolean removeItemsFromHandToSlot(
         ItemStackHandler itemStackHandler,
@@ -89,8 +34,9 @@ public class BlockInteractionHandler {
         Player player,
         int itemCount
     ){
-        ItemStack mainHandItems = Helpers.getUsedItem(player);
+        var mainHandItems = Helpers.getUsedItem(player);
         if(mainHandItems.isEmpty()) return false;
+
         itemStackHandler.setStackInSlot(outputSlot, mainHandItems.copyWithCount(itemCount));
         /*if(!player.isCreative())*/ mainHandItems.shrink(itemCount);
         return true;
@@ -105,6 +51,7 @@ public class BlockInteractionHandler {
         var count = 1;
         var playerItem = player.getItemInHand(hand);
         var inventoryItem = itemStackHandler.getStackInSlot(outputSlot);
+
         itemStackHandler.setStackInSlot(outputSlot, playerItem.copyWithCount(count));
         if(playerItem.getCount() > 1){
             AugmentItemHelper.throwOrAddItem(player, inventoryItem.copyWithCount(count));
@@ -114,6 +61,34 @@ public class BlockInteractionHandler {
         }
     }
 
+    public static boolean stackHandler(
+        ItemStackHandler itemHandler,
+        ItemStack itemStack,
+        Item item,
+        int inputSlotNumber,
+        Player player
+    ) {
+        ItemStack inputSlot = itemHandler.getStackInSlot(inputSlotNumber);
+
+        if (!itemStack.isEmpty() && itemStack.is(item)) {
+            if (inputSlot.isEmpty() || itemStack.is(inputSlot.getItem())) {
+                var remainingSpace = inputSlot.getMaxStackSize() - inputSlot.getCount();
+                if (remainingSpace > 0) {
+                    var amountToAdd = Math.min(remainingSpace, itemStack.getCount());
+                    ItemStack itemStackCopy = itemStack.copyWithCount(amountToAdd);
+
+                    if (!player.getAbilities().instabuild) {
+                        itemStack.shrink(amountToAdd);
+                    }
+
+                    itemHandler.insertItem(inputSlotNumber, itemStackCopy, false);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static boolean removeItemsFromSlotToHand(
         ItemStackHandler itemStackHandler,
         int outputSlot,
@@ -121,7 +96,6 @@ public class BlockInteractionHandler {
         InteractionHand interactionHand
     ) {
         var outputSlotTotal = itemStackHandler.getStackInSlot(outputSlot);
-        var playInventory = player.getInventory();
         if(outputSlotTotal.isEmpty()) return false;
 
         // Removes all items from slot to empty hand
@@ -149,7 +123,7 @@ public class BlockInteractionHandler {
         float volume,
         float pitch
     ) {
-        ItemStack outputSlotTotal = itemStackHandler.getStackInSlot(outputSlot);
+        var outputSlotTotal = itemStackHandler.getStackInSlot(outputSlot);
 
         if(!itemStackHandler.getStackInSlot(outputSlot).isEmpty()){
             if (Helpers.getUsedItem(player).isEmpty() && player.isShiftKeyDown()) {
@@ -168,20 +142,48 @@ public class BlockInteractionHandler {
         var state = worldIn.getBlockState(blockpos);
         var blockEntity = state.hasBlockEntity() ? worldIn.getBlockEntity(blockpos) : null;
         var blockCap = worldIn.getCapability(Capabilities.ItemHandler.BLOCK, blockpos, state, blockEntity, side);
-        if (blockCap != null) {
-            return Optional.of(ImmutablePair.of(blockCap, blockEntity));
-        } else {
-            var list = worldIn.getEntities((Entity)null, new AABB(x - 0.5, y - 0.5, z - 0.5, x + 0.5, y + 0.5, z + 0.5), EntitySelector.ENTITY_STILL_ALIVE);
-            if (!list.isEmpty()) {
-                Collections.shuffle(list);
-                for (Entity entity : list) {
-                    IItemHandler entityCap = entity.getCapability(Capabilities.ItemHandler.ENTITY_AUTOMATION, side);
-                    if (entityCap != null) {
-                        return Optional.of(ImmutablePair.of(entityCap, entity));
-                    }
+
+        if(blockCap != null) return Optional.of(ImmutablePair.of(blockCap, blockEntity));
+
+        var getBounding = new AABB(x - 0.5, y - 0.5, z - 0.5, x + 0.5, y + 0.5, z + 0.5);
+        var list = worldIn.getEntities((Entity)null, getBounding, ENTITY_STILL_ALIVE);
+
+        if (!list.isEmpty()) {
+            Collections.shuffle(list);
+            for (Entity entity : list) {
+                IItemHandler entityCap = entity.getCapability(Capabilities.ItemHandler.ENTITY_AUTOMATION, side);
+                if (entityCap != null) {
+                    return Optional.of(ImmutablePair.of(entityCap, entity));
                 }
             }
-            return Optional.empty();
         }
+        return Optional.empty();
+    }
+
+    public static boolean stackHandlerWithFeedBack(
+        ItemStackHandler itemHandler,
+        ItemStack itemStack,
+        Item item,
+        int inputSlotNumber,
+        int maxSize,
+        Player player
+    ) {
+        var inputSlot = itemHandler.getStackInSlot(inputSlotNumber);
+
+        if (!itemStack.isEmpty() && itemStack.is(item)) {
+            if (inputSlot.isEmpty() || itemStack.is(inputSlot.getItem())) {
+                int remainingSpace = maxSize - inputSlot.getCount();
+                if (remainingSpace > 0) {
+                    var amountToAdd = Math.min(remainingSpace, itemStack.getCount());
+                    var itemStackCopy = itemStack.copyWithCount(amountToAdd);
+
+                    if (!player.getAbilities().instabuild) itemStack.shrink(amountToAdd);
+                    itemHandler.insertItem(inputSlotNumber, itemStackCopy, false);
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

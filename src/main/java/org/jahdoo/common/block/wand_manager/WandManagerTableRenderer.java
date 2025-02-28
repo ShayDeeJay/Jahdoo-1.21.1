@@ -16,110 +16,125 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 
+import static net.minecraft.core.Direction.*;
+
 public class WandManagerTableRenderer implements BlockEntityRenderer<WandManagerEntity> {
+
     private final BlockEntityRenderDispatcher entityRenderDispatcher;
+
     public WandManagerTableRenderer(BlockEntityRendererProvider.Context context) {
         this.entityRenderDispatcher = context.getBlockEntityRenderDispatcher();
     }
 
     private int direction(BlockEntity blockEntity){
         var direction = blockEntity.getBlockState().getValue(WandManagerBlock.FACING);
-        if(direction == Direction.SOUTH ) return 90;
-        if(direction == Direction.WEST ) return 0;
-        if(direction == Direction.NORTH ) return 90;
+        if(direction == SOUTH || direction == NORTH) return 90;
         return 0;
+    }
+
+    private void rotateAllItems(PoseStack poseStack, WandManagerEntity entity, Runnable stuff, int index, int totalItems, float partialTicks) {
+        poseStack.pushPose();
+
+        var angleOffset = 360.0f / totalItems;
+        var itemAngle = angleOffset * index;
+
+        poseStack.translate(0.5, 0.5, 0.5);
+        poseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (entity.privateTicks + partialTicks) ));
+        stuff.run();
+        poseStack.popPose();
     }
 
     @Override
     public void render(
         WandManagerEntity wandManagerTable,
-        float pPartialTick,
-        PoseStack pPoseStack,
-        MultiBufferSource pBuffer,
-        int pPackedLight,
-        int pPackedOverlay
+        float partialTick,
+        PoseStack poseStack,
+        MultiBufferSource source,
+        int packedLight,
+        int overlay
     ){
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
         var outputSlot = RuneHolder.getRuneholder(wandManagerTable.getWandSlot()).runeSlots();
         var newSlots = outputSlot.stream().filter(itemStack -> !itemStack.isEmpty()).toList();
         var spacer = new AtomicDouble();
-
-        focusedItem(pPoseStack, wandManagerTable, itemRenderer, pBuffer, pPackedLight, pPartialTick);
         var size = newSlots.size();
+
+        focusedItem(poseStack, wandManagerTable, itemRenderer, source, packedLight, partialTick);
         for (int i = 0; i < size; i++) {
             var slot = newSlots.get(i);
-            pPoseStack.pushPose();
-            rotateAllItems(pPoseStack, wandManagerTable, () -> rotateItem(pPoseStack, wandManagerTable, itemRenderer, slot, pBuffer, pPartialTick, pPackedLight, size), i, size, pPartialTick);
-            pPoseStack.popPose();
+            poseStack.pushPose();
+            rotateAllItems(poseStack, wandManagerTable, () -> rotateItem(poseStack, wandManagerTable, itemRenderer, slot, source, partialTick, packedLight, size), i, size, partialTick);
+            poseStack.popPose();
             spacer.set(spacer.get() + 0.12);
         }
     }
 
-    private void focusedItem(PoseStack pPoseStack, WandManagerEntity pBlockEntity, ItemRenderer itemRenderer, MultiBufferSource pBuffer, int packedLight, float partialTicks){
-        pPoseStack.pushPose();
-        var scaleItem = 0.80f;
-        var outputSlot = pBlockEntity.getWandSlot();
-        var getItem = outputSlot.isEmpty() ? ItemStack.EMPTY : outputSlot;
-        var ticks = ((pBlockEntity.privateTicks + partialTicks) / 18) ;
-        var animatePlace = Math.max(1.1, 1.4 - ticks) ;
-        pPoseStack.translate(0.5f, animatePlace, 0.5f);
-        pPoseStack.scale(scaleItem, scaleItem, scaleItem);
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(direction(pBlockEntity)));
+    private void focusedItem(
+        PoseStack poseStack,
+        WandManagerEntity entity,
+        ItemRenderer renderer,
+        MultiBufferSource source,
+        int packedLight,
+        float partialTicks
+    ){
+        poseStack.pushPose();
 
-        itemRenderer.renderStatic(
+        var scaleItem = 0.80f;
+        var outputSlot = entity.getWandSlot();
+        var getItem = outputSlot.isEmpty() ? ItemStack.EMPTY : outputSlot;
+        var ticks = ((entity.privateTicks + partialTicks) / 18) ;
+        var animatePlace = Math.max(1.1, 1.4 - ticks) ;
+
+        poseStack.translate(0.5f, animatePlace, 0.5f);
+        poseStack.scale(scaleItem, scaleItem, scaleItem);
+        poseStack.mulPose(Axis.YP.rotationDegrees(direction(entity)));
+
+        renderer.renderStatic(
             getItem,
             ItemDisplayContext.FIXED,
             packedLight,
             OverlayTexture.NO_OVERLAY,
-            pPoseStack,
-            pBuffer,
-            pBlockEntity.getLevel(),
+            poseStack,
+            source,
+            entity.getLevel(),
             1
         );
 
-        pPoseStack.popPose();
-    }
-
-    private void rotateAllItems(PoseStack pPoseStack, WandManagerEntity pBlockEntity, Runnable stuff, int index, int totalItems, float partialTicks) {
-        pPoseStack.pushPose();
-        var angleOffset = 360.0f / totalItems;
-        var itemAngle = angleOffset * index;
-        pPoseStack.translate(0.5, 0.5, 0.5);
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (pBlockEntity.privateTicks + partialTicks) ));
-        stuff.run();
-        pPoseStack.popPose();
+        poseStack.popPose();
     }
 
     private void rotateItem(
-        PoseStack pPoseStack,
-        WandManagerEntity pBlockEntity,
-        ItemRenderer itemRenderer,
+        PoseStack poseStack,
+        WandManagerEntity entity,
+        ItemRenderer renderer,
         ItemStack itemStack,
-        MultiBufferSource pBuffer,
+        MultiBufferSource source,
         float partialTicks,
         int light,
         int distance
     ){
-        pPoseStack.pushPose();
-        var getCurrentTime = pBlockEntity.privateTicks + partialTicks;
-        var scaleItem = 0.1f;
-        var bobOff = Math.sin((pBlockEntity.privateTicks + partialTicks) / 20.0F) * 0.02F + 1.15f - 0.51;
-        var animateRunes = Math.min(Math.max((double) distance / 44, 0.1), getCurrentTime / 20);
-        pPoseStack.translate(0, bobOff, animateRunes);
-        pPoseStack.scale(scaleItem, scaleItem, scaleItem);
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(180));
+        poseStack.pushPose();
 
-        itemRenderer.renderStatic(
+        var getCurrentTime = entity.privateTicks + partialTicks;
+        var scaleItem = 0.1f;
+        var bobOff = Math.sin((entity.privateTicks + partialTicks) / 20.0F) * 0.02F + 1.15f - 0.51;
+        var animateRunes = Math.min(Math.max((double) distance / 44, 0.1), getCurrentTime / 20);
+
+        poseStack.translate(0, bobOff, animateRunes);
+        poseStack.scale(scaleItem, scaleItem, scaleItem);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180));
+
+        renderer.renderStatic(
             itemStack, ItemDisplayContext.FIXED,
             light,
             OverlayTexture.NO_OVERLAY,
-            pPoseStack,
-            pBuffer,
-            pBlockEntity.getLevel(),
+            poseStack,
+            source,
+            entity.getLevel(),
             1
         );
 
-        pPoseStack.popPose();
+        poseStack.popPose();
     }
 
 }

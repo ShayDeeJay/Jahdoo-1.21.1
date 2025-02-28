@@ -11,7 +11,7 @@ public class InfuserModel extends DefaultedBlockGeoModel<InfuserBlockEntity> {
     }
 
     @Override
-    public RenderType getRenderType(InfuserBlockEntity animatable, ResourceLocation texture) {
-        return RenderType.entityTranslucent(getTextureResource(animatable));
+    public RenderType getRenderType(InfuserBlockEntity entity, ResourceLocation texture) {
+        return RenderType.entityTranslucent(getTextureResource(entity));
     }
 }

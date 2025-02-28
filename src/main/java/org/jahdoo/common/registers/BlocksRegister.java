@@ -19,7 +19,7 @@ import org.jahdoo.common.block.infuser.InfuserBlock;
 import org.jahdoo.common.block.light_block.LightBlock;
 import org.jahdoo.common.block.rune_table.RuneTable;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
-import org.jahdoo.common.block.tank.NexiteTankBlock;
+import org.jahdoo.common.block.tank.TankBlock;
 import org.jahdoo.common.block.wand.WandBlock;
 import org.jahdoo.common.block.wand_manager.WandManagerBlock;
 
@@ -61,7 +61,7 @@ public class BlocksRegister {
         registerBlockWithItem("enchanted_block", EnchantedBlock::new);
 
     public static DeferredHolder<Block, Block> TANK =
-        registerBlockWithItem("tank", NexiteTankBlock::new);
+        registerBlockWithItem("tank", TankBlock::new);
 
     public static DeferredHolder<Block, Block> SHOPPING_TABLE =
         registerBlockWithItem("shopping_table", ShoppingTableBlock::new);

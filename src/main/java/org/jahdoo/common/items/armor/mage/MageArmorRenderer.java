@@ -1,7 +1,7 @@
-package org.jahdoo.common.client.armor_renderer;
+package org.jahdoo.common.items.armor.mage;
 
-import org.jahdoo.common.items.armor.WizardArmor;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.items.armor.wizard.WizardArmor;
 import software.bernie.geckolib.model.DefaultedItemGeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 

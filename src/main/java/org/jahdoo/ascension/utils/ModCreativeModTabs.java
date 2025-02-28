@@ -25,7 +25,7 @@ public class ModCreativeModTabs {
     }
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB = CREATIVE_MODE_TAB.register(
-        "jahdoo_tab", () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemsRegister.AUGMENT_ITEM.get()))
+        "jahdoo_tab", () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemsRegister.AUGMENT.get()))
             .title(Component.translatable("creative_tab.jahdoo_tab"))
             .displayItems((pParameters, pOutput) -> {
                 pOutput.accept(BlocksRegister.NEXITE_ORE.get());
@@ -46,7 +46,7 @@ public class ModCreativeModTabs {
                     registerMagnets(pOutput);
 
                     pOutput.accept(ItemsRegister.ANCIENT_GLAIVE.get());
-                    pOutput.accept(ItemsRegister.AUGMENT_ITEM.get());
+                    pOutput.accept(ItemsRegister.AUGMENT.get());
                     pOutput.accept(ItemsRegister.RUNE.get());
                     pOutput.accept(ItemsRegister.AUGMENT_CORE.get());
                     pOutput.accept(ItemsRegister.ADVANCED_AUGMENT_CORE.get());

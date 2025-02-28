@@ -20,74 +20,14 @@ import org.jahdoo.ascension.utils.Helpers;
 
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static org.jahdoo.ascension.trading_post.ItemCosts.*;
+import static org.jahdoo.common.registers.BlockEntitiesRegister.*;
 
 public class ShoppingTableEntity extends AbstractBEInventory {
 
-    ItemCosts itemCosts;
+    public ItemCosts itemCosts;
 
-    public ShoppingTableEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntitiesRegister.SHOPPING_TABLE_BE.get(), pPos, pBlockState, 64);
-    }
-
-    public ItemStackHandler getItem(){
-        return this.inputItemHandler;
-    }
-
-    public void setCost(ItemCosts cost) {
-        this.itemCosts = cost;
-    }
-
-    public int getCost(){
-        return itemCosts.value();
-    }
-
-    public ItemStack getCurrencyType() {
-        return getItemStack(itemCosts.CurrencyType());
-    }
-
-    public boolean canPurchase(){
-        return !getItem().getStackInSlot(0).isEmpty();
-    }
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-    }
-
-    public void setItem(ItemStack randomLootItem){
-        var stackInSlot = getItem().getStackInSlot(0);
-        if(!stackInSlot.isEmpty()) return;
-        if(this.getLevel() instanceof ServerLevel){
-            getItem().setStackInSlot(0, randomLootItem);
-        }
-    }
-
-    public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
-        if(!(pLevel instanceof ServerLevel serverLevel)) return;
-        for (var player : serverLevel.players()) {
-            if(level instanceof CustomLevel){
-                if(!player.hasEffect(REGENERATION)){
-                    player.addEffect(new JahdooMobEffect(REGENERATION, 20, 3));
-                    player.addEffect(new JahdooMobEffect(MobEffects.SATURATION, 20, 3));
-                }
-            }
-        }
-
-        if(pState.getValue(ShoppingTableBlock.TEXTURE) == 3){
-            if(serverLevel.getGameTime() % 30 != 0) return;
-            if(getCurrencyType().isEmpty()) return;
-            insertRandomItem();
-        }
-    }
-
-    public void insertRandomItem() {
-        if(!(this.getLevel() instanceof ServerLevel serverLevel)) return;
-        var rewards = RewardLootTables.getCompletionLoot(serverLevel, this.worldPosition.getCenter(), 0);
-        if(!rewards.isEmpty()){
-            var randomListElement = Helpers.listRandom(rewards);
-            RewardLootTables.attachItemData(serverLevel, JahdooRarity.getRarity(), randomListElement, false, null);
-            getItem().setStackInSlot(0, randomListElement);
-        }
+    public ShoppingTableEntity(BlockPos pos, BlockState state) {
+        super(SHOPPING_TABLE_BE.get(), pos, state, 64);
     }
 
     @Override
@@ -105,16 +45,75 @@ public class ShoppingTableEntity extends AbstractBEInventory {
         return 64;
     }
 
-    @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.saveAdditional(pTag, pRegistries);
-        saveData(pTag, itemCosts);
+    public int getCost(){
+        return itemCosts.value();
+    }
+
+    public void setCost(ItemCosts cost) {
+        this.itemCosts = cost;
+    }
+
+    public ItemStackHandler getItem(){
+        return this.inputItemHandler;
+    }
+
+    public boolean canPurchase(){
+        return !getItem().getStackInSlot(0).isEmpty();
+    }
+
+    public ItemStack getCurrencyType() {
+        return getItemStack(itemCosts.CurrencyType());
     }
 
     @Override
-    protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.loadAdditional(pTag, pRegistries);
-        this.itemCosts = loadData(pTag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        saveData(tag, itemCosts);
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.itemCosts = loadData(tag);
+    }
+
+    public void setItem(ItemStack randomLootItem){
+        var stackInSlot = getItem().getStackInSlot(0);
+        if(!stackInSlot.isEmpty()) return;
+
+        if(this.getLevel() instanceof ServerLevel){
+            getItem().setStackInSlot(0, randomLootItem);
+        }
+    }
+
+    public void insertRandomItem() {
+        if(!(this.getLevel() instanceof ServerLevel serverLevel)) return;
+        var rewards = RewardLootTables.getCompletionLoot(serverLevel, this.worldPosition.getCenter(), 0);
+
+        if(!rewards.isEmpty()){
+            var randomListElement = Helpers.listRandom(rewards);
+            RewardLootTables.attachItemData(serverLevel, JahdooRarity.getRarity(), randomListElement, false, null);
+            getItem().setStackInSlot(0, randomListElement);
+        }
+    }
+
+    public void tick(Level level, BlockPos pos, BlockState state) {
+        if(!(level instanceof ServerLevel serverLevel)) return;
+
+        for (var player : serverLevel.players()) {
+            if(this.level instanceof CustomLevel){
+                if(!player.hasEffect(REGENERATION)){
+                    player.addEffect(new JahdooMobEffect(REGENERATION, 20, 3));
+                    player.addEffect(new JahdooMobEffect(MobEffects.SATURATION, 20, 3));
+                }
+            }
+        }
+
+        if(state.getValue(ShoppingTableBlock.TEXTURE) == 3){
+            if(serverLevel.getGameTime() % 30 != 0) return;
+            if(getCurrencyType().isEmpty()) return;
+            insertRandomItem();
+        }
     }
 
 }

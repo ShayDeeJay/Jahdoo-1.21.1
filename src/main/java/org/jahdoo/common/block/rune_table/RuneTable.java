@@ -68,41 +68,17 @@ public class RuneTable extends BaseEntityBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE_COMBINED;
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
-        if (pState.getBlock() != pNewState.getBlock()) {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof RuneTableEntity runeTable) {
-                SimpleContainer inputInventory = new SimpleContainer(1);
-
-                var stackInSlot = runeTable.inputItemHandler.getStackInSlot(0);
-                inputInventory.setItem(0, stackInSlot);
-
-                Containers.dropContents(pLevel, pPos, inputInventory);
-            }
-        }
-        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
-    }
-
-
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection());
-    }
-
-    public BlockState rotate(BlockState pState, Rotation pRotation) {
-        return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
-    }
-
-    public BlockState mirror(BlockState pState, Mirror pMirror) {
-        return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new RuneTableEntity(pos,state);
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState pState) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
@@ -111,8 +87,62 @@ public class RuneTable extends BaseEntityBlock {
         builder.add(FACING);
     }
 
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection());
+    }
+
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+        Level level,
+        BlockState state,
+        BlockEntityType<T> entityType
+    ) {
+        return createTickerHelper(
+            entityType, BlockEntitiesRegister.RUNE_TABLE_BE.get(),
+            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
+        );
+    }
+
+    @Override
+    public void onRemove(
+        BlockState state,
+        Level level,
+        BlockPos pos,
+        BlockState newState,
+        boolean movedByPiston
+    ) {
+        if (state.getBlock() != newState.getBlock()) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof RuneTableEntity runeTable) {
+                SimpleContainer inputInventory = new SimpleContainer(1);
+
+                var stackInSlot = runeTable.inputItemHandler.getStackInSlot(0);
+                inputInventory.setItem(0, stackInSlot);
+
+                Containers.dropContents(level, pos, inputInventory);
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(
+        ItemStack stack,
+        BlockState state,
+        Level level,
+        BlockPos pos,
+        Player player,
+        InteractionHand hand,
+        BlockHitResult result
+    ) {
         var fail = ItemInteractionResult.FAIL;
         var entity = level.getBlockEntity(pos);
         if(!(entity instanceof RuneTableEntity runeTable)) return fail;
@@ -129,21 +159,6 @@ public class RuneTable extends BaseEntityBlock {
             serverPlayer.openMenu(runeTable, pos);
             return ItemInteractionResult.SUCCESS;
         }
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new RuneTableEntity(pPos,pState);
-    }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return createTickerHelper(
-            pBlockEntityType, BlockEntitiesRegister.RUNE_TABLE_BE.get(),
-            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
-        );
     }
 
 }

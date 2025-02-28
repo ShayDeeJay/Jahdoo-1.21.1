@@ -1,12 +1,10 @@
 package org.jahdoo.common.event.event_helpers;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.common.client.KeyBinding;
-import org.jahdoo.common.client.gui.ability_and_utility_menus.AbilityWheelMenu;
-import org.jahdoo.common.client.gui.augment_menu.AugmentScreen;
+import org.jahdoo.common.client.gui.AbilityWheelMenu;
+import org.jahdoo.common.client.gui.AugmentScreen;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.networking.packet.client2server.MagnetActiveC2SPacket;
 import org.jahdoo.ascension.utils.Configuration;

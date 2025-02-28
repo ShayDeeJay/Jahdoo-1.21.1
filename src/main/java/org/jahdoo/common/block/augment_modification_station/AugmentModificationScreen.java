@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.client.gui.slots.InventorySlots;
+import org.jahdoo.common.client.slots.InventorySlots;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.networking.packet.client2server.AugmentModificationChargeC2S;

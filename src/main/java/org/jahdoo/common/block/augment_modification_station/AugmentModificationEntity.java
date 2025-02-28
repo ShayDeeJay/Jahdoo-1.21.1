@@ -20,15 +20,15 @@ public class AugmentModificationEntity extends AbstractBEInventory implements Me
     int tickCounter;
 
     @Override
-    protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.loadAdditional(pTag, pRegistries);
-        this.tickCounter = pTag.getInt("tick_counter");
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.tickCounter = tag.getInt("tick_counter");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.saveAdditional(pTag, pRegistries);
-        pTag.putInt("tick_counter", this.tickCounter);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putInt("tick_counter", this.tickCounter);
     }
 
     public AugmentModificationEntity(BlockPos pPos, BlockState pBlockState) {

@@ -1,11 +1,12 @@
-package org.jahdoo.common.client.gui.ability_and_utility_menus;
+package org.jahdoo.common.client.button;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 
-public class AbilityIconButton extends ImageButton {
+public class
+AbilityIconButton extends ImageButton {
     private float sizes;
     private final int defaultSize;
     private final int totalSize;

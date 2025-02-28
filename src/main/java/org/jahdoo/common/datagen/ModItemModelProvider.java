@@ -96,7 +96,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private void createAugmentOverride(String augment, int index) {
-        var item = ItemsRegister.AUGMENT_ITEM;
+        var item = ItemsRegister.AUGMENT;
         getWithParent(item, "item/augments/" + item.getId().getPath())
                 .override()
                 .predicate(MODEL_DATA, index)

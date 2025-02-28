@@ -13,18 +13,17 @@ public class LootChestModel extends DefaultedBlockGeoModel<LootChestEntity> {
     }
 
     @Override
-    public RenderType getRenderType(LootChestEntity animatable, ResourceLocation texture) {
-        return RenderType.entityTranslucent(getTextureResource(animatable));
+    public RenderType getRenderType(LootChestEntity entity, ResourceLocation texture) {
+        return RenderType.entityTranslucent(getTextureResource(entity));
     }
 
     @Override
-    public ResourceLocation getTextureResource(LootChestEntity animatable) {
-//        System.out.println(ModHelpers.res("textures/block/loot_chest_1"));
-        return Helpers.res("textures/block/"+animatable.getTexture);
+    public ResourceLocation getTextureResource(LootChestEntity entity) {
+        return Helpers.res("textures/block/"+entity.getTexture);
     }
 
     @Override
-    public ResourceLocation getModelResource(LootChestEntity animatable, @Nullable GeoRenderer<LootChestEntity> renderer) {
-        return super.getModelResource(animatable, renderer);
+    public ResourceLocation getModelResource(LootChestEntity entity, GeoRenderer<LootChestEntity> renderer) {
+        return super.getModelResource(entity, renderer);
     }
 }

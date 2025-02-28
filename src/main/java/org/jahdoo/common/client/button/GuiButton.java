@@ -1,4 +1,4 @@
-package org.jahdoo.common.client;
+package org.jahdoo.common.client.button;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,6 +15,7 @@ import static org.jahdoo.common.client.IconLocations.GUI_BUTTON_SELECTED;
 import static org.jahdoo.common.client.IconLocations.SELECTED_GUI_BUTTON_OVERLAY;
 
 public class GuiButton extends ImageButton {
+
     private float sizes;
     private final int defaultSize;
     private final int totalSize;
@@ -98,4 +99,5 @@ public class GuiButton extends ImageButton {
             pGuiGraphics.blit(buttonOverlay, this.getX() - offset, this.getY() - offset, 1, 0, 0, easedValue, easedValue, easedValue, easedValue);
         }
     }
+
 }

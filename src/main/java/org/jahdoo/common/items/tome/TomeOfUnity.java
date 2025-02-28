@@ -1,10 +1,11 @@
-package org.jahdoo.common.items;
+package org.jahdoo.common.items.tome;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.common.items.RelicItem;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;

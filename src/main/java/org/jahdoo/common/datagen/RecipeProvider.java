@@ -6,7 +6,6 @@ import net.minecraft.data.recipes.*;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import org.jahdoo.common.registers.BlocksRegister;
 import org.jahdoo.ascension.utils.ModTags;
 
 import java.util.List;
@@ -39,7 +38,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     protected void infuser(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
             .define('M', Items.MUD_BRICKS)
-            .define('X', AUGMENT_ITEM.get())
+            .define('X', AUGMENT.get())
             .pattern(" M ")
             .pattern("MXM")
             .pattern(" M ")
@@ -82,12 +81,12 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     protected void augmentModificationTable(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
-            .define('X', AUGMENT_ITEM.get())
+            .define('X', AUGMENT.get())
             .define('M', Items.MUD_BRICKS)
             .pattern(" X ")
             .pattern(" M ")
             .pattern(" M ")
-            .unlockedBy("augment_item", has(AUGMENT_ITEM.get()))
+            .unlockedBy("augment_item", has(AUGMENT.get()))
             .save(output);
     }
 

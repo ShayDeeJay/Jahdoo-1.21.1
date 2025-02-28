@@ -1,20 +1,14 @@
-package org.jahdoo.common.items.armor;
+package org.jahdoo.common.items.armor.mage;
 
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import org.jahdoo.common.client.armor_renderer.WizardArmorRenderer;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.items.armor.BaseArmor;
 import org.jahdoo.common.registers.ArmorMaterialRegistry;
-import org.jahdoo.common.registers.DataComponentRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -28,33 +22,20 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static org.jahdoo.common.items.runes.rune_data.RuneHolder.*;
-import static org.jahdoo.common.registers.ArmorMaterialRegistry.*;
-import static org.jahdoo.common.registers.DataComponentRegistry.*;
-
-public class WizardArmor extends BaseArmor implements GeoItem, JahdooItem {
+public class MageArmor extends BaseArmor implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    public WizardArmor(Type type) {
-        super(WIZARD, type, new Properties()
-              .durability(37)
-              .component(RUNE_HOLDER.get(), makeRuneSlots(1, 100))
-        );
+    public MageArmor(Type type) {
+        super(ArmorMaterialRegistry.MAGE, type, getComponent());
     }
 
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return true;
+    private static @NotNull Properties getComponent() {
+        return new Properties().durability(28);
     }
 
     @Override
     public Component getName(ItemStack stack) {
         return super.getName(stack);
-    }
-
-    @Override
-    public EquipmentSlot getEquipmentSlot() {
-        return super.getEquipmentSlot();
     }
 
     @Override
@@ -68,11 +49,6 @@ public class WizardArmor extends BaseArmor implements GeoItem, JahdooItem {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
-    }
-
-    @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller",0, state -> PlayState.STOP));
     }
@@ -81,11 +57,13 @@ public class WizardArmor extends BaseArmor implements GeoItem, JahdooItem {
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
         consumer.accept(
               new GeoRenderProvider() {
-                  private WizardArmorRenderer renderer;
+                  private MageArmorRenderer renderer;
 
                   @Override
                   public @Nullable <T extends LivingEntity> HumanoidModel<?> getGeoArmorRenderer(@Nullable T livingEntity, ItemStack itemStack, @Nullable EquipmentSlot equipmentSlot, @Nullable HumanoidModel<T> original) {
-                      if (this.renderer == null) this.renderer = new WizardArmorRenderer();
+                      if (this.renderer == null)
+                          this.renderer = new MageArmorRenderer();
+
                       return this.renderer;
                   }
               }

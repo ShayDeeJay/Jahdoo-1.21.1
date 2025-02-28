@@ -20,6 +20,8 @@ import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTIO
 
 public class LightBlock extends Block {
 
+    private static final VoxelShape RESULT = Block.box(6, 6, 6, 10, 10, 10);
+
     public LightBlock() {
         super(
             BlockBehaviour.Properties
@@ -30,16 +32,15 @@ public class LightBlock extends Block {
         );
     }
 
-    VoxelShape result = Block.box(6, 6, 6, 10, 10, 10);
-
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return result;
+        return RESULT;
     }
 
     @Override
     public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource) {
         AbstractElement type;
+
         if(level.dimension() == Level.NETHER){
             type = ElementRegistry.inferno();
         } else if (level.dimension() == Level.END) {

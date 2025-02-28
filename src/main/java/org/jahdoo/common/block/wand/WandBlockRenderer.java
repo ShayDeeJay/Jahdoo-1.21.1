@@ -9,10 +9,5 @@ public class WandBlockRenderer extends GeoBlockRenderer<WandBlockEntity>{
     public WandBlockRenderer(BlockEntityRendererProvider.Context context) {
         super(new WandBlockModel());
     }
-
-    @Override
-    public void render(WandBlockEntity animatable, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        super.render(animatable, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
-    }
 }
 

@@ -2,7 +2,6 @@ package org.jahdoo.common.registers;
 
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 
 import net.neoforged.bus.api.IEventBus;
@@ -10,20 +9,22 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.items.*;
-import org.jahdoo.common.items.armor.MageArmor;
-import org.jahdoo.common.items.armor.WizardArmor;
+import org.jahdoo.common.items.armor.mage.MageArmor;
+import org.jahdoo.common.items.armor.wizard.WizardArmor;
 import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.items.block_items.ChallengeAltarBlockItem;
 import org.jahdoo.common.items.block_items.LootChestBlockItem;
+import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
 import org.jahdoo.common.items.magnet.Magnet;
+import org.jahdoo.common.items.pendent.Pendent;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.block_items.ModularChaosCubeItem;
 import org.jahdoo.common.items.block_items.InfuserBlockItem;
+import org.jahdoo.common.items.tome.TomeOfUnity;
 import org.jahdoo.common.items.wand.subWands.*;
 
 import java.util.function.Supplier;
 
-import static net.minecraft.world.item.ArmorItem.*;
 import static net.minecraft.world.item.ArmorItem.Type.*;
 import static org.jahdoo.common.registers.BlocksRegister.*;
 
@@ -52,7 +53,7 @@ public class ItemsRegister {
     public static final DeferredHolder<Item, Item> AUGMENT_HYPER_CORE =
         complexItem("augment_hyper_core", CoreItem::new);
 
-    public static final DeferredHolder<Item, Item> AUGMENT_ITEM =
+    public static final DeferredHolder<Item, Item> AUGMENT =
         complexItem("unidentified_augment", Augment::new);
 
     public static final DeferredHolder<Item, Item> TOME_OF_UNITY =
@@ -96,6 +97,7 @@ public class ItemsRegister {
         complexItem("modular_chaos_cube", () -> new ModularChaosCubeItem(MODULAR_CHAOS_CUBE.get()));
 
     //Wands needed their own subclass as animations do not fire for all wand instances otherwise.
+    //UPDATE: Above should now be fixed in latest update, should now be able
     public static final DeferredHolder<Item, Item> WAND_ITEM_MYSTIC =
         complexItem("wand_mystic", MysticWand::new);
 

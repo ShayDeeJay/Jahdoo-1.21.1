@@ -1,4 +1,4 @@
-package org.jahdoo.common.client.curio_renderer;
+package org.jahdoo.common.items.tome;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;

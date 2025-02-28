@@ -1,4 +1,4 @@
-package org.jahdoo.common.client.gui.ability_and_utility_menus;
+package org.jahdoo.common.client.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -20,6 +20,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.common.client.button.AbilityIconButton;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.wand.WandData;
 import org.jahdoo.common.networking.packet.client2server.SelectedAbilityC2SPacket;

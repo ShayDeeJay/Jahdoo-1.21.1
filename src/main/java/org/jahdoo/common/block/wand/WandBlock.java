@@ -47,6 +47,7 @@ import static org.jahdoo.common.registers.DataComponentRegistry.WAND_DATA;
 import static org.jahdoo.common.registers.ElementRegistry.fromWand;
 
 public class WandBlock extends BaseEntityBlock {
+
     VoxelShape result = Block.box(7, 0, 7, 9, 17, 9);
 
     public WandBlock() {
@@ -65,12 +66,46 @@ public class WandBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @NotNull ItemStack getCloneItemStack(
-        @NotNull BlockState state,
-        @NotNull HitResult target,
+    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        return result;
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
+        return new WandBlockEntity(pPos,pState);
+    }
+
+    public void placeParticle(Level level, Vec3 pos, ParticleOptions par1){
+        double randomY = Helpers.Random.nextDouble(0.0, 0.2);
+        level.addParticle(par1, pos.x, pos.y - 0.3, pos.z, 0, randomY, 0);
+    }
+
+    private void pickUpWand(Player player, BlockPos blockPos, Level level){
+        if (level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock) {
+            player.setItemInHand(player.getUsedItemHand(), wandBlock.getWandItemFromSlot().copy());
+            wandBlock.getWandItemFromSlot().shrink(1);
+            level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+        }
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
+        if(pLevel.isClientSide())  return null;
+
+        return createTickerHelper(
+            pBlockEntityType,
+            BlockEntitiesRegister.WAND_BE.get(),
+            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
+        );
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(
+        BlockState state,
+        HitResult target,
         LevelReader level,
-        @NotNull BlockPos pos,
-        @NotNull Player player
+        BlockPos pos,
+        Player player
     ) {
         if (level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock) {
             return wandBlock.inputItemHandler.getStackInSlot(GET_WAND_SLOT);
@@ -78,34 +113,13 @@ public class WandBlock extends BaseEntityBlock {
         return ItemStack.EMPTY;
     }
 
-    @Override
-    public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource) {
-        if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return;
-        if(wandBlock.getWandItemFromSlot().isEmpty()) return;
-        var getType = fromWand(wandBlock.getWandItemFromSlot().getItem());
-        if(!level.isClientSide()) return;
-
-        getType.ifPresent(
-            element -> {
-                var par1 = ParticleHandlers.bakedParticleOptions(element.id(), 20, 1.5f, false);
-                var par2 = ParticleHandlers.genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 20, 1.5f, false, 0.3);
-
-                PositionFinders.getInnerRingOfRadiusRandom(blockPos, 0.1, 2,
-                    positions -> this.placeParticle(level, positions, element, randomSource.nextInt(0,3) == 0 ? par1 : par2)
-                );
-            }
-        );
-
-    }
-
-    public void placeParticle(Level level, Vec3 pos, AbstractElement element, ParticleOptions par1){
-        double randomY = Helpers.Random.nextDouble(0.0, 0.2);
-        level.addParticle(par1, pos.x, pos.y - 0.3, pos.z, 0, randomY, 0);
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return result;
+    public static ItemInteractionResult openWandGUI(Player player, BlockPos blockPos, Level level){
+        var success = ItemInteractionResult.SUCCESS;
+        var fail = ItemInteractionResult.FAIL;
+        if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return fail;
+        if(!(player instanceof ServerPlayer serverPlayer)) return fail;
+        serverPlayer.openMenu(wandBlock, blockPos);
+        return success;
     }
 
     @Override
@@ -118,19 +132,6 @@ public class WandBlock extends BaseEntityBlock {
         }
         Helpers.getSoundWithPosition(pLevel, pPos, SoundEvents.CHISELED_BOOKSHELF_PICKUP_ENCHANTED, 0.8f, 1.2f);
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
-    }
-
-    @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (!(level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock)) return ItemInteractionResult.FAIL;
-        getItemInteractionResult(stack, wandBlock);
-
-        if (stack.isEmpty() && player.isShiftKeyDown()) {
-            this.pickUpWand(player, pos, level);
-            return ItemInteractionResult.CONSUME;
-        }
-
-        return openWandGUI(player, pos, level);
     }
 
     private static ItemInteractionResult getItemInteractionResult(ItemStack heldItem, WandBlockEntity wandBlock) {
@@ -147,6 +148,47 @@ public class WandBlock extends BaseEntityBlock {
             }
         }
         return ItemInteractionResult.FAIL;
+    }
+
+    @Override
+    public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource) {
+        if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return;
+        if(wandBlock.getWandItemFromSlot().isEmpty()) return;
+        var getType = fromWand(wandBlock.getWandItemFromSlot().getItem());
+        if(!level.isClientSide()) return;
+
+        getType.ifPresent(
+            element -> {
+                var par1 = ParticleHandlers.bakedParticleOptions(element.id(), 20, 1.5f, false);
+                var par2 = ParticleHandlers.genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 20, 1.5f, false, 0.3);
+
+                PositionFinders.getInnerRingOfRadiusRandom(blockPos, 0.1, 2,
+                    positions -> this.placeParticle(level, positions, randomSource.nextInt(0,3) == 0 ? par1 : par2)
+                );
+            }
+        );
+
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(
+        ItemStack stack,
+        BlockState state,
+        Level level,
+        BlockPos pos,
+        Player player,
+        InteractionHand hand,
+        BlockHitResult hitResult
+    ) {
+        if (!(level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock)) return ItemInteractionResult.FAIL;
+        getItemInteractionResult(stack, wandBlock);
+
+        if (stack.isEmpty() && player.isShiftKeyDown()) {
+            this.pickUpWand(player, pos, level);
+            return ItemInteractionResult.CONSUME;
+        }
+
+        return openWandGUI(player, pos, level);
     }
 
     private static ItemInteractionResult slotTesting(Player player, ItemStack heldItem, WandBlockEntity wandBlock, BlockPos blockPos) {
@@ -178,41 +220,6 @@ public class WandBlock extends BaseEntityBlock {
             }
         }
         return ItemInteractionResult.FAIL;
-    }
-
-    public static ItemInteractionResult openWandGUI(Player player, BlockPos blockPos, Level level){
-        var success = ItemInteractionResult.SUCCESS;
-        var fail = ItemInteractionResult.FAIL;
-        if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return fail;
-        if(!(player instanceof ServerPlayer serverPlayer)) return fail;
-        serverPlayer.openMenu(wandBlock, blockPos);
-        return success;
-    }
-
-    private void pickUpWand(Player player, BlockPos blockPos, Level level){
-        if (level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock) {
-            player.setItemInHand(player.getUsedItemHand(), wandBlock.getWandItemFromSlot().copy());
-            wandBlock.getWandItemFromSlot().shrink(1);
-            level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
-        }
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new WandBlockEntity(pPos,pState);
-    }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        if(pLevel.isClientSide())  return null;
-
-        return createTickerHelper(
-            pBlockEntityType,
-            BlockEntitiesRegister.WAND_BE.get(),
-            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
-        );
     }
 }
 

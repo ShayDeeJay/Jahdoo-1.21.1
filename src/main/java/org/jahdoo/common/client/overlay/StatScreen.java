@@ -104,13 +104,10 @@ public class StatScreen extends EffectRenderingInventoryScreen<InventoryMenu> {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-
         this.renderBlurredBackground(partialTick);
         int i = this.width/2;
         int j = this.height/2;
         var player = getMinecraft().player;
-
-//        SharedUI.boxMaker(guiGraphics, i - 200, j - 105, 200, 100, -1);
 
         var x = ( this.width - IMAGE_SIZE) / 2;
         var y = ( this.height - IMAGE_SIZE) / 2;

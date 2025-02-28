@@ -11,6 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
+import static net.minecraft.client.renderer.texture.OverlayTexture.*;
+import static net.minecraft.world.item.ItemDisplayContext.*;
 import static org.jahdoo.common.block.infuser.InfuserBlock.FACING;
 
 public class InfuserRenderer extends GeoBlockRenderer<InfuserBlockEntity>{
@@ -20,41 +22,40 @@ public class InfuserRenderer extends GeoBlockRenderer<InfuserBlockEntity>{
     }
 
     @Override
-    public void render(InfuserBlockEntity animatable, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-        this.focusedItem(poseStack, animatable, itemRenderer, bufferSource, packedLight, animatable.getInputAndOutputRenderer(), new Vec3(0.5f, 0.7f, 0.5f), 0.3f);
+    public void render(
+        InfuserBlockEntity entity,
+        float partial,
+        PoseStack poseStack,
+        MultiBufferSource bufferSource,
+        int packedLight,
+        int packedOverlay
+    ) {
+        var itemRenderer = Minecraft.getInstance().getItemRenderer();
+        var item = entity.getInputAndOutputRenderer();
+        var pos = new Vec3(0.5f, 0.7f, 0.5f);
+        this.focusedItem(poseStack, entity, itemRenderer, bufferSource, packedLight, item, pos, 0.3f);
 
-        super.render(animatable, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
+        super.render(entity, partial, poseStack, bufferSource, packedLight, packedOverlay);
     }
 
     private void focusedItem(
-        PoseStack pPoseStack,
-        InfuserBlockEntity pBlockEntity,
+        PoseStack poseStack,
+        InfuserBlockEntity entity,
         ItemRenderer itemRenderer,
-        MultiBufferSource pBuffer,
+        MultiBufferSource source,
         int packedLight,
         ItemStack itemStack,
         Vec3 pos,
         float scaleItem
     ){
-        pPoseStack.pushPose();
-        pPoseStack.translate(pos.x, pos.y, pos.z);
-        pPoseStack.scale(scaleItem, scaleItem, scaleItem);
-        var getState = pBlockEntity.getBlockState().getValue(FACING).getOpposite();
-        pPoseStack.mulPose(getState.getRotation());
+        poseStack.pushPose();
+        poseStack.translate(pos.x, pos.y, pos.z);
+        poseStack.scale(scaleItem, scaleItem, scaleItem);
+        var getState = entity.getBlockState().getValue(FACING).getOpposite();
 
-        itemRenderer.renderStatic(
-            itemStack,
-            ItemDisplayContext.FIXED,
-            packedLight,
-            OverlayTexture.NO_OVERLAY,
-            pPoseStack,
-            pBuffer,
-            pBlockEntity.getLevel(),
-            1
-        );
-
-        pPoseStack.popPose();
+        poseStack.mulPose(getState.getRotation());
+        itemRenderer.renderStatic(itemStack, FIXED, packedLight, NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
+        poseStack.popPose();
     }
 }
 

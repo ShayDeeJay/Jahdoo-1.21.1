@@ -25,9 +25,10 @@ public class SyncedBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void onDataPacket(@NotNull Connection net, @NotNull ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider lookupProvider) {
-        super.onDataPacket(net, pkt, lookupProvider);
-        handleUpdateTag(pkt.getTag(), lookupProvider);
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        this.saveAdditional(tag, registries);
+        return tag;
     }
 
     public void updateBlock() {
@@ -39,10 +40,13 @@ public class SyncedBlockEntity extends BlockEntity {
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider pRegistries) {
-        CompoundTag tag = new CompoundTag();
-        this.saveAdditional(tag, pRegistries);
-        return tag;
+    public void onDataPacket(
+        Connection net,
+        ClientboundBlockEntityDataPacket pkt,
+        HolderLookup.Provider lookupProvider
+    ) {
+        super.onDataPacket(net, pkt, lookupProvider);
+        handleUpdateTag(pkt.getTag(), lookupProvider);
     }
 
 }

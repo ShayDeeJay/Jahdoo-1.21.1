@@ -7,11 +7,9 @@ import static org.jahdoo.common.registers.AttachmentRegister.MODULAR_CHAOS_CUBE;
 public class ModularChaosCubeData {
 
     // Toggle the power state
-    public static void togglePower(ModularChaosCubeEntity entity) {
-        var autoBlock = entity.getData(MODULAR_CHAOS_CUBE);
-        var switched = autoBlock.updateActive(!autoBlock.active());
-        PacketDistributor.sendToServer(new ModularChaosCubeC2SPacket(entity.getBlockPos(), switched));
-        entity.setData(MODULAR_CHAOS_CUBE, switched);
+    public static void selectDirection(ModularChaosCubeEntity entity, ModularChaosCubeProperties newDirection) {
+        PacketDistributor.sendToServer(new ModularChaosCubeC2SPacket(entity.getBlockPos(), newDirection));
+        entity.setData(MODULAR_CHAOS_CUBE, newDirection);
         entity.setChanged();
     }
 
@@ -23,9 +21,12 @@ public class ModularChaosCubeData {
         entity.setChanged();
     }
 
-    public static void selectDirection(ModularChaosCubeEntity entity, ModularChaosCubeProperties newDirection) {
-        PacketDistributor.sendToServer(new ModularChaosCubeC2SPacket(entity.getBlockPos(), newDirection));
-        entity.setData(MODULAR_CHAOS_CUBE, newDirection);
+    public static void togglePower(ModularChaosCubeEntity entity) {
+        var autoBlock = entity.getData(MODULAR_CHAOS_CUBE);
+        var switched = autoBlock.updateActive(!autoBlock.active());
+        PacketDistributor.sendToServer(new ModularChaosCubeC2SPacket(entity.getBlockPos(), switched));
+        entity.setData(MODULAR_CHAOS_CUBE, switched);
         entity.setChanged();
     }
+
 }

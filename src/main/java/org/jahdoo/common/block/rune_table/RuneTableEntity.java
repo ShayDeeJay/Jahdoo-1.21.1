@@ -27,23 +27,14 @@ public class RuneTableEntity extends AbstractBEInventory implements MenuProvider
         super(BlockEntitiesRegister.RUNE_TABLE_BE.get(), pPos, pBlockState, 64);
     }
 
+    public void tick(Level pLevel, BlockPos pPos, BlockState pState) {}
+
     public ItemStackHandler getItem(){
         return this.inputItemHandler;
     }
 
-    @Override
-    public void onLoad() {
-        super.onLoad();
-    }
-
-    public void setItem(ItemStack item){
-        if(this.getLevel() instanceof ServerLevel){
-            getItem().setStackInSlot(0, item);
-        }
-    }
-
-    public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
-        if(!(pLevel instanceof ServerLevel serverLevel)) return;
+    public ItemStack itemSlot(){
+        return this.inputItemHandler.getStackInSlot(0);
     }
 
     @Override
@@ -62,16 +53,6 @@ public class RuneTableEntity extends AbstractBEInventory implements MenuProvider
     }
 
     @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.saveAdditional(pTag, pRegistries);
-    }
-
-    @Override
-    protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.loadAdditional(pTag, pRegistries);
-    }
-
-    @Override
     public @NotNull Component getDisplayName() {
         return Component.literal("");
     }
@@ -79,5 +60,11 @@ public class RuneTableEntity extends AbstractBEInventory implements MenuProvider
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
         return new RuneTableMenu(i, inventory,this, this.data);
+    }
+
+    public void setItem(ItemStack item){
+        if(this.getLevel() instanceof ServerLevel){
+            getItem().setStackInSlot(0, item);
+        }
     }
 }

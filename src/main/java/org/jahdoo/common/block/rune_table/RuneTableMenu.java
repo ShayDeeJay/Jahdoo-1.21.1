@@ -10,8 +10,8 @@ import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.gui.AbstractInternalContainer;
-import org.jahdoo.common.client.gui.slots.AugmentCoreSlot;
-import org.jahdoo.common.client.gui.slots.RuneSlot;
+import org.jahdoo.common.client.slots.AugmentCoreSlot;
+import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.registers.BlocksRegister;
 import org.jahdoo.common.registers.ItemsRegister;
@@ -31,53 +31,40 @@ public class RuneTableMenu extends AbstractInternalContainer  {
     public int offSetY = 34;
     public int runeYSpacer = 33;
 
-    public RuneTableMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        super(MenusRegister.RUNE_TABLE_MENU.get(), pContainerId, inv, extraData);
+    public RuneTableMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
+        super(MenusRegister.RUNE_TABLE_MENU.get(), id, inv, extraData);
         this.addSlots();
     }
 
-    public RuneTableMenu(int pContainerId, Inventory inv, AbstractBEInventory entity, ContainerData data) {
-        super(MenusRegister.RUNE_TABLE_MENU.get(), pContainerId, inv, entity, data);
+    public RuneTableMenu(int id, Inventory inv, AbstractBEInventory entity, ContainerData data) {
+        super(MenusRegister.RUNE_TABLE_MENU.get(), id, inv, entity, data);
         this.addSlots();
+    }
+
+    @Override
+    protected Block getAssociatedBlock() {
+        return BlocksRegister.RUNE_TABLE.get();
+    }
+
+    private void insertWandSlot() {
+        this.addSlot(new AugmentCoreSlot(tableEntity().inputItemHandler, 0, -1000, -1000, ItemsRegister.AUGMENT_CORE.get()));
+    }
+
+    public RuneTableEntity tableEntity(){
+        if(this.blockEntity instanceof RuneTableEntity runeTable) return runeTable;
+        return null;
+    }
+
+    @Override
+    protected int getAllSlots() {
+        int size = RuneHolder.getRuneholder(tableEntity().getItem().getStackInSlot(0)).runeSlots().size();
+        return size + DEFAULT_SLOTS;
     }
 
     public void addSlots() {
         insertWandSlot();
         insertAugmentSlots();
         insertRuneSlots();
-    }
-
-    private void insertWandSlot() {
-        this.addSlot(new AugmentCoreSlot(getRuneTableEntity().inputItemHandler, 0, -1000, -1000, ItemsRegister.AUGMENT_CORE.get()));
-    }
-
-    private void insertAugmentSlots() {
-        var spacer = new AtomicInteger();
-        for (int i = 1; i < 4; i ++){
-            this.addSlot(new AugmentCoreSlot(getRuneTableEntity().inputItemHandler, i, posX - 75, posY + spacer.get() - 96, getCore().get(i-1)));
-            spacer.set(spacer.get() + 28);
-        }
-    }
-
-    private void insertRuneSlots() {
-        try{
-            var getAllSlots = this.getRuneTableEntity().getItem().getStackInSlot(0);
-            var getData = RuneHolder.getRuneholder(getAllSlots);
-            var iHandler = getRuneTableEntity().inputItemHandler;
-            var item = ItemsRegister.RUNE.get();
-            var indexOne = new AtomicInteger(4);
-            for (ItemStack itemStack : getData.runeSlots()) {
-                iHandler.setStackInSlot(indexOne.get(), itemStack);
-                indexOne.set(indexOne.get() + 1);
-            }
-
-            handleSlotsInGridLayout(
-                (slotX, slotY, index) -> this.addSlot(new RuneSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, item, this.getRuneTableEntity(), 1)),
-                getData.runeSlots().size(), 0,0, offSetX, offSetY
-            );
-        } catch (Exception e) {
-            JahdooMod.LOGGER.log(Level.DEBUG, e);
-        }
     }
 
     public List<Item> getCore(){
@@ -88,30 +75,32 @@ public class RuneTableMenu extends AbstractInternalContainer  {
         );
     }
 
-    public RuneTableEntity getRuneTableEntity(){
-        if(this.blockEntity instanceof RuneTableEntity augmentModification) return augmentModification;
-        return null;
+    private void insertAugmentSlots() {
+        var spacer = new AtomicInteger();
+        for (int i = 1; i < 4; i ++){
+            this.addSlot(new AugmentCoreSlot(tableEntity().inputItemHandler, i, posX - 75, posY + spacer.get() - 96, getCore().get(i-1)));
+            spacer.set(spacer.get() + 28);
+        }
     }
 
-    @Override
-    protected int getAllSlots() {
-        int size = RuneHolder.getRuneholder(getRuneTableEntity().getItem().getStackInSlot(0)).runeSlots().size();
-        return size + DEFAULT_SLOTS;
-    }
+    private void insertRuneSlots() {
+        try{
+            var getAllSlots = this.tableEntity().getItem().getStackInSlot(0);
+            var getData = RuneHolder.getRuneholder(getAllSlots);
+            var iHandler = tableEntity().inputItemHandler;
+            var indexOne = new AtomicInteger(4);
+            for (ItemStack itemStack : getData.runeSlots()) {
+                iHandler.setStackInSlot(indexOne.get(), itemStack);
+                indexOne.set(indexOne.get() + 1);
+            }
 
-    @Override
-    public void addPlayerInventory(Inventory playerInventory, int heightDiff) {
-        super.addPlayerInventory(playerInventory, heightDiff);
-    }
-
-    @Override
-    public void addPlayerHotbar(Inventory playerInventory, int heightDiff) {
-        super.addPlayerHotbar(playerInventory, heightDiff);
-    }
-
-    @Override
-    protected Block getAssociatedBlock() {
-        return BlocksRegister.RUNE_TABLE.get();
+            handleSlotsInGridLayout(
+                (slotX, slotY, index) -> this.addSlot(new RuneSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, this.tableEntity(), 1)),
+                getData.runeSlots().size(), 0,0, offSetX, offSetY
+            );
+        } catch (Exception e) {
+            JahdooMod.LOGGER.log(Level.DEBUG, e);
+        }
     }
 
 }

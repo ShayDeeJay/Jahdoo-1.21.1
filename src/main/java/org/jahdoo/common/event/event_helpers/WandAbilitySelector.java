@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.client.gui.ability_and_utility_menus.AbilityWheelMenu;
+import org.jahdoo.common.client.gui.AbilityWheelMenu;
 import org.jahdoo.common.networking.packet.client2server.SelectedAbilityC2SPacket;
 import org.jahdoo.common.networking.packet.client2server.StopUsingC2SPacket;
 import org.jahdoo.common.registers.AbilityRegister;

@@ -15,7 +15,7 @@ import org.jahdoo.common.block.loot_chest.LootChestRenderer;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeRenderer;
 import org.jahdoo.common.block.rune_table.RuneTableRenderer;
 import org.jahdoo.common.block.shopping_table.ShoppingTableRenderer;
-import org.jahdoo.common.block.tank.NexiteTankRenderer;
+import org.jahdoo.common.block.tank.TankRenderer;
 import org.jahdoo.common.block.wand.WandBlockRenderer;
 import org.jahdoo.common.block.wand_manager.WandManagerTableRenderer;
 import org.jahdoo.common.client.KeyBinding;
@@ -105,7 +105,7 @@ public class ClientBusEvents {
         event.registerBlockEntityRenderer(BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(), ModularChaosCubeRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.LOOT_CHEST_BE.get(), LootChestRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.WAND_BE.get(), WandBlockRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntitiesRegister.TANK_BE.get(), NexiteTankRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntitiesRegister.TANK_BE.get(), TankRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.SHOPPING_TABLE_BE.get(), ShoppingTableRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.RUNE_TABLE_BE.get(), RuneTableRenderer::new);
         event.registerBlockEntityRenderer(BlockEntitiesRegister.ENCHANTED_BE.get(), EnchantedBlockRenderer::new);

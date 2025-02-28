@@ -4,14 +4,12 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import net.neoforged.neoforge.common.loot.LootTableIdCondition;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.datagen.loot.AddItemModifier;
-import org.jahdoo.common.registers.ItemsRegister;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -53,7 +51,7 @@ public class ModGlobalLootModifiersProvider extends GlobalLootModifierProvider {
         ResourceLocation resourceLocation,
         int additional
     ) {
-        add("augments_chest" + additional, addLoot(resourceLocation, AUGMENT_ITEM.get(), 0.4f));
+        add("augments_chest" + additional, addLoot(resourceLocation, AUGMENT.get(), 0.4f));
         add("augments_core_chest" + additional, addLoot(resourceLocation, AUGMENT_CORE.get(), 0.35f));
     }
 

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.component.CustomModelData;
+import org.jahdoo.common.block.shopping_table.DisplayDirection;
 import org.jahdoo.common.block.shopping_table.ShoppingTableRenderer;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.ascension.utils.ColourStore;
@@ -32,7 +33,7 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
     @Override
     public void actuallyRender(PoseStack poseStack, LootChestEntity animatable, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
         var blockState = animatable.getBlockState();
-        var direction = ShoppingTableRenderer.DisplayDirection.fromMCDirection(blockState.getValue(LootChestBlock.FACING));
+        var direction = DisplayDirection.fromMCDirection(blockState.getValue(LootChestBlock.FACING));
         var jahdooRarity = KeyItem.getJahdooRarity(new CustomModelData(animatable.getRarity));
         var displayName = Helpers.withStyleComponent(jahdooRarity.getSerializedName(), jahdooRarity.getColour());
 
@@ -43,7 +44,7 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
         super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
     }
 
-    protected void renderName(LootChestEntity entity, Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource, int packedLight, ShoppingTableRenderer.DisplayDirection direction, float partialTicks) {
+    protected void renderName(LootChestEntity entity, Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource, int packedLight, DisplayDirection direction, float partialTicks) {
         pPoseStack.pushPose();
         var uniqueOffset = (entity.getRarity ) * 0.5 ; // Or another unique value per entity
         var scale = Math.sin(((entity.privateTicks + partialTicks) / 10.0F) + uniqueOffset) * 0.08F + 1.4;
@@ -60,7 +61,7 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
 
     }
 
-    protected void renderNameReverse(LootChestEntity entity, Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource, int packedLight, ShoppingTableRenderer.DisplayDirection direction, float partialTicks) {
+    protected void renderNameReverse(LootChestEntity entity, Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource, int packedLight, DisplayDirection direction, float partialTicks) {
         pPoseStack.pushPose();
         var uniqueOffset = (entity.getRarity ) * 0.5 ; // Or another unique value per entity
         var scale = Math.sin(((entity.privateTicks + partialTicks) / 10.0F) + uniqueOffset) * 0.08F + 1.4;

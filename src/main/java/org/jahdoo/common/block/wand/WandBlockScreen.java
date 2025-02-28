@@ -13,7 +13,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.client.gui.slots.InventorySlots;
+import org.jahdoo.common.client.slots.InventorySlots;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.items.augments.AugmentItemHelper;
@@ -81,7 +81,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
     }
 
     private int getMatchingIndex(ItemStack comparable){
-        if(comparable.is(ItemsRegister.AUGMENT_ITEM.get()) && DataComponentHelper.hasWandAbilitiesTag(comparable)){
+        if(comparable.is(ItemsRegister.AUGMENT.get()) && DataComponentHelper.hasWandAbilitiesTag(comparable)){
             for (int i = 1; i < this.wandBlockMenu.getWandBlockEntity().inputItemHandler.getSlots(); i++) {
                 var currentAugment = this.wandBlockMenu.getWandBlockEntity().inputItemHandler.getStackInSlot(i);
                 var ability = this.getAbilityFromRegistry(comparable);
@@ -161,7 +161,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
             pY + 20
         );
 
-        var isValidItem = this.hoveredSlot.getItem().is(ItemsRegister.AUGMENT_ITEM.get());
+        var isValidItem = this.hoveredSlot.getItem().is(ItemsRegister.AUGMENT.get());
         var isValidSlot = this.hoveredSlot.index < 36;
         if (!isValidItem || !isValidSlot) return;
 

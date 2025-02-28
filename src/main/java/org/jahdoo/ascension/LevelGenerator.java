@@ -52,7 +52,6 @@ import static org.jahdoo.common.block.loot_chest.LootChestBlock.FACING;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.ascension.LevelGenerator.DimHandler.TRADING_POST;
 import static org.jahdoo.ascension.LevelGenerator.DimHandler.TRIAL;
-import static org.jahdoo.ascension.trading_post.ShoppingItems.getEliteShoppingItem;
 import static org.jahdoo.common.registers.AttachmentRegister.CHALLENGE_ALTAR;
 import static org.jahdoo.common.registers.ItemsRegister.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
@@ -206,7 +205,7 @@ public class LevelGenerator {
                 switch (i){
                     case 0 -> entity.setCost(ItemCosts.getGoldCost(1));
                     case 3 -> {
-                        entity.setItem(new ItemStack(AUGMENT_ITEM));
+                        entity.setItem(new ItemStack(AUGMENT));
                         entity.setCost(ItemCosts.getGoldCost(20));
                     }
                     case 6 -> {

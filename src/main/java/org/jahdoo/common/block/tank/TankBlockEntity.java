@@ -22,18 +22,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jahdoo.common.block.AbstractTankUser.findInRange;
-import static org.jahdoo.common.block.tank.NexiteTankBlock.LIT;
+import static org.jahdoo.common.block.tank.TankBlock.LIT;
 
 
-public class NexiteTankBlockEntity extends AbstractBEInventory {
-    int counter;
+public class TankBlockEntity extends AbstractBEInventory {
+
     public int glowStrength = 150;
-    private static final int INPUT = 0;
     public List<AbstractTankUser> usingThisTank = new ArrayList<>();
 
-    public NexiteTankBlockEntity(BlockPos pPos, BlockState pBlockState) {
+    private int counter;
+    private static final int INPUT = 0;
+
+    public TankBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntitiesRegister.TANK_BE.get(), pPos, pBlockState, 64);
         this.setData(AttachmentRegister.BOOL, false);
+    }
+
+    @Override
+    public int setInputSlots() {
+        return 1;
+    }
+
+    @Override
+    public int setOutputSlots() {
+        return 1;
+    }
+
+    @Override
+    public int getMaxSlotSize() {
+        return 64;
+    }
+
+    public int getCount(){
+        return this.inputItemHandler.getStackInSlot(0).getCount();
     }
 
     public ItemStack getRenderer() {
@@ -41,44 +62,20 @@ public class NexiteTankBlockEntity extends AbstractBEInventory {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        pTag.putInt("counter", this.counter);
-        super.saveAdditional(pTag, pRegistries);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        tag.putInt("counter", this.counter);
+        super.saveAdditional(tag, registries);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        this.counter = pTag.getInt("counter");
-        super.loadAdditional(pTag, pRegistries);
-    }
-
-    public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
-        getTankBlockInRange(pLevel, pPos);
-        this.setState(pLevel, pPos, pState);
-
-        if(!(pLevel instanceof ServerLevel serverLevel)) return;
-        int tankSlotSize = this.inputItemHandler.getStackInSlot(INPUT).getCount();
-        this.beamParticlesToUser(serverLevel, pPos, tankSlotSize);
-        this.harvestOreBelow(serverLevel, pPos, tankSlotSize);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        this.counter = tag.getInt("counter");
+        super.loadAdditional(tag, registries);
     }
 
     private void setState(Level level, BlockPos pos, BlockState state){
         var using = this.usingThisTank.isEmpty();
         level.setBlock(pos, state.setValue(LIT, !using), 2);
-    }
-
-    private List<BlockPos> getTankBlockInRange(Level pLevel, BlockPos pos) {
-        List<BlockPos> allBlocks = new ArrayList<>();
-        List<AbstractTankUser> localList = new ArrayList<>();
-
-        for (BlockPos adjacentPos : findInRange(pos)) {
-            if(pLevel.getBlockEntity(adjacentPos) instanceof AbstractTankUser abstractTankUser){
-                localList.add(abstractTankUser);
-            }
-        }
-
-        this.usingThisTank.removeIf(abstractTankUser -> !localList.contains(abstractTankUser));
-        return allBlocks;
     }
 
     public void chargeTankFuel(int craftingFuelCost){
@@ -87,6 +84,30 @@ public class NexiteTankBlockEntity extends AbstractBEInventory {
         this.inputItemHandler.getStackInSlot(0).shrink(craftingFuelCost);
         var blockstate = getLevel().getBlockState(this.getBlockPos());
         this.getLevel().sendBlockUpdated(this.getBlockPos(), blockstate, blockstate,1);
+    }
+
+    public void tick(Level level, BlockPos pos, BlockState state) {
+        getTankBlockInRange(level, pos);
+        this.setState(level, pos, state);
+
+        if(!(level instanceof ServerLevel serverLevel)) return;
+        int tankSlotSize = this.inputItemHandler.getStackInSlot(INPUT).getCount();
+        this.beamParticlesToUser(serverLevel, pos, tankSlotSize);
+        this.harvestOreBelow(serverLevel, pos, tankSlotSize);
+    }
+
+    private List<BlockPos> getTankBlockInRange(Level pLevel, BlockPos pos) {
+        var allBlocks = new ArrayList<BlockPos>();
+        var localList = new ArrayList<>();
+
+        for (var adjacentPos : findInRange(pos)) {
+            if(pLevel.getBlockEntity(adjacentPos) instanceof AbstractTankUser abstractTankUser){
+                localList.add(abstractTankUser);
+            }
+        }
+
+        this.usingThisTank.removeIf(abstractTankUser -> !localList.contains(abstractTankUser));
+        return allBlocks;
     }
 
     private void beamParticlesToUser(ServerLevel serverLevel, BlockPos pos, int tankSlotSize){
@@ -106,7 +127,7 @@ public class NexiteTankBlockEntity extends AbstractBEInventory {
     }
 
     private void harvestOreBelow(ServerLevel serverLevel, BlockPos pos, int tankSlotSize){
-        BlockState blockState = serverLevel.getBlockState(pos.below());
+        var blockState = serverLevel.getBlockState(pos.below());
         var harvestBlock = BlocksRegister.NEXITE_ORE.get();
 
         if(!(blockState.is(harvestBlock))) {
@@ -126,22 +147,6 @@ public class NexiteTankBlockEntity extends AbstractBEInventory {
 
         if(tankSlotSize < this.getMaxSlotSize()) counter++;
     }
-
-    @Override
-    public int setInputSlots() {
-        return 1;
-    }
-
-    @Override
-    public int setOutputSlots() {
-        return 1;
-    }
-
-    @Override
-    public int getMaxSlotSize() {
-        return 64;
-    }
-
 
 }
 

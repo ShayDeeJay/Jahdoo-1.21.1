@@ -10,8 +10,8 @@ import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.gui.AbstractInternalContainer;
-import org.jahdoo.common.client.gui.slots.AugmentCoreSlot;
-import org.jahdoo.common.client.gui.slots.RuneSlot;
+import org.jahdoo.common.client.slots.AugmentCoreSlot;
+import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.registers.BlocksRegister;
 import org.jahdoo.common.registers.ItemsRegister;
@@ -24,61 +24,57 @@ import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLO
 import static org.jahdoo.common.client.SharedUI.handleSlotsInGridLayout;
 
 public class WandManagerMenu extends AbstractInternalContainer {
+
     public int posX = 31;
     public int posY = 100;
     public int offSetX = 34;
     public int offSetY = 34;
     public int runeYSpacer = 33;
 
-    public WandManagerMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        super(MenusRegister.WAND_MANAGER_MENU.get(), pContainerId, inv, extraData);
+    public WandManagerMenu(int containerId, Inventory inv, FriendlyByteBuf extraData) {
+        super(MenusRegister.WAND_MANAGER_MENU.get(), containerId, inv, extraData);
         this.addSlots();
     }
 
-    public WandManagerMenu(int pContainerId, Inventory inv, AbstractBEInventory entity, ContainerData data) {
-        super(MenusRegister.WAND_MANAGER_MENU.get(), pContainerId, inv, entity, data);
+    public WandManagerMenu(int containerId, Inventory inv, AbstractBEInventory entity, ContainerData data) {
+        super(MenusRegister.WAND_MANAGER_MENU.get(), containerId, inv, entity, data);
         this.addSlots();
-    }
-
-    public void addSlots() {
-        insertWandSlot();
-        insertAugmentSlots();
-        insertRuneSlots();
     }
 
     private void insertWandSlot() {
         this.addSlot(new AugmentCoreSlot(getWandManagerEntity().inputItemHandler, 0, -1000, -1000, ItemsRegister.AUGMENT_CORE.get()));
     }
 
-    private void insertAugmentSlots() {
-        var spacer = new AtomicInteger();
-        for (int i = 1; i < 4; i ++){
-            this.addSlot(new AugmentCoreSlot(getWandManagerEntity().inputItemHandler, i, posX - 75, posY + spacer.get() - 96, getCore().get(i-1)));
-            spacer.set(spacer.get() + 28);
-        }
+    @Override
+    protected Block getAssociatedBlock() {
+        return BlocksRegister.WAND_MANAGER_TABLE.get();
     }
 
-    private void insertRuneSlots() {
-        try{
+    public WandManagerEntity getWandManagerEntity(){
+        if(this.blockEntity instanceof WandManagerEntity augmentModification) return augmentModification;
+        return null;
+    }
 
-            var getAllSlots = this.getWandManagerEntity().getWandSlot();
-            var getData = RuneHolder.getRuneholder(getAllSlots);
-            var iHandler = getWandManagerEntity().inputItemHandler;
-            var item = ItemsRegister.RUNE.get();
-            var indexOne = new AtomicInteger(4);
-            for (ItemStack itemStack : getData.runeSlots()) {
-                iHandler.setStackInSlot(indexOne.get(), itemStack);
-                indexOne.set(indexOne.get() + 1);
-            }
+    @Override
+    public void addPlayerInventory(Inventory inventory, int heightDiff) {
+        super.addPlayerInventory(inventory, heightDiff);
+    }
 
-            handleSlotsInGridLayout(
-                (slotX, slotY, index) -> this.addSlot(new RuneSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, item, this.getWandManagerEntity(), 1)),
-                getData.runeSlots().size(), 0,0, offSetX, offSetY
-            );
+    @Override
+    public void addPlayerHotbar(Inventory inventory, int heightDiff) {
+        super.addPlayerHotbar(inventory, heightDiff);
+    }
 
-        } catch (Exception e){
-            JahdooMod.LOGGER.log(Level.DEBUG, e);
-        }
+    @Override
+    protected int getAllSlots() {
+        int size = RuneHolder.getRuneholder(getWandManagerEntity().getWandSlot()).runeSlots().size();
+        return size + DEFAULT_SLOTS;
+    }
+
+    public void addSlots() {
+        insertWandSlot();
+        insertAugmentSlots();
+        insertRuneSlots();
     }
 
     public List<Item> getCore(){
@@ -89,30 +85,34 @@ public class WandManagerMenu extends AbstractInternalContainer {
         );
     }
 
-    public WandManagerEntity getWandManagerEntity(){
-        if(this.blockEntity instanceof WandManagerEntity augmentModification) return augmentModification;
-        return null;
+    private void insertAugmentSlots() {
+        var spacer = new AtomicInteger();
+
+        for (int i = 1; i < 4; i ++){
+            this.addSlot(new AugmentCoreSlot(getWandManagerEntity().inputItemHandler, i, posX - 75, posY + spacer.get() - 96, getCore().get(i-1)));
+            spacer.set(spacer.get() + 28);
+        }
     }
 
-    @Override
-    protected int getAllSlots() {
-        int size = RuneHolder.getRuneholder(getWandManagerEntity().getWandSlot()).runeSlots().size();
-        return size + DEFAULT_SLOTS;
-    }
+    private void insertRuneSlots() {
+        try{
+            var getAllSlots = this.getWandManagerEntity().getWandSlot();
+            var getData = RuneHolder.getRuneholder(getAllSlots);
+            var iHandler = getWandManagerEntity().inputItemHandler;
+            var indexOne = new AtomicInteger(4);
+            for (ItemStack itemStack : getData.runeSlots()) {
+                iHandler.setStackInSlot(indexOne.get(), itemStack);
+                indexOne.set(indexOne.get() + 1);
+            }
 
-    @Override
-    public void addPlayerInventory(Inventory playerInventory, int heightDiff) {
-        super.addPlayerInventory(playerInventory, heightDiff);
-    }
+            handleSlotsInGridLayout(
+                (slotX, slotY, index) -> this.addSlot(new RuneSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, this.getWandManagerEntity(), 1)),
+                getData.runeSlots().size(), 0,0, offSetX, offSetY
+            );
 
-    @Override
-    public void addPlayerHotbar(Inventory playerInventory, int heightDiff) {
-        super.addPlayerHotbar(playerInventory, heightDiff);
-    }
-
-    @Override
-    protected Block getAssociatedBlock() {
-        return BlocksRegister.WAND_MANAGER_TABLE.get();
+        } catch (Exception e){
+            JahdooMod.LOGGER.log(Level.DEBUG, e);
+        }
     }
 
 }

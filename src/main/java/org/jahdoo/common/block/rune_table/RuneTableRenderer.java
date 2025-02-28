@@ -13,9 +13,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
+import static net.minecraft.client.renderer.texture.OverlayTexture.*;
+import static net.minecraft.core.Direction.*;
+import static net.minecraft.world.item.ItemDisplayContext.*;
 import static org.jahdoo.common.block.rune_table.RuneTable.FACING;
 
 public class RuneTableRenderer implements BlockEntityRenderer<RuneTableEntity>{
+
     private final BlockEntityRenderDispatcher entityRenderDispatcher;
 
     public RuneTableRenderer(BlockEntityRendererProvider.Context context) {
@@ -23,46 +27,26 @@ public class RuneTableRenderer implements BlockEntityRenderer<RuneTableEntity>{
     }
 
     @Override
-    public void render(RuneTableEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
+    public void render(
+        RuneTableEntity entity,
+        float partial,
+        PoseStack poseStack,
+        MultiBufferSource source,
+        int packedLight,
+        int packedOverlay
+    ) {
         var mc = Minecraft.getInstance();
         var itemRenderer = mc.getItemRenderer();
 
-        renderPrimaryItem(pBlockEntity, pPoseStack, pBuffer, pPackedLight, itemRenderer);
-//        renderBlockItems(new ItemStack(ItemsRegister.RUNE.get()), pBlockEntity, pPoseStack, pBuffer, pPackedLight, itemRenderer, 0.8F, 0.8F, 0.005F, 34);
-//        renderBlockItems(new ItemStack(ItemsRegister.RUNE.get()), pBlockEntity, pPoseStack, pBuffer, pPackedLight, itemRenderer, 0.7F, 0.82F, 0F, 12);
-//        renderBlockItems(new ItemStack(ItemsRegister.RUNE.get()), pBlockEntity, pPoseStack, pBuffer, pPackedLight, itemRenderer, 0.8F, 0.7F, -0.005F, 65);
-    }
-
-    private void renderPrimaryItem(
-            RuneTableEntity pBlockEntity,
-            PoseStack pPoseStack,
-            MultiBufferSource pBuffer,
-            int pPackedLight,
-            ItemRenderer itemRenderer
-    ) {
-        var renderItem = pBlockEntity.getItem().getStackInSlot(0);
-        if(!renderItem.isEmpty()){
-            var height = 0.83F;
-            var scale = 0.5f;
-            var direction = pBlockEntity.getBlockState().getValue(FACING);
-            pPoseStack.pushPose();
-            pPoseStack.translate(0.5, height, 0.5);
-            pPoseStack.scale(scale, scale, scale);
-            var directionAd = direction == Direction.EAST ? 90 : direction == Direction.WEST ? 270 : direction == Direction.NORTH ? 180 : 0;
-            pPoseStack.mulPose(Axis.YP.rotationDegrees(directionAd));
-            pPoseStack.mulPose(Axis.XP.rotationDegrees(90));
-            pPoseStack.mulPose(Axis.ZP.rotationDegrees(0));
-            itemRenderer.renderStatic(renderItem, ItemDisplayContext.FIXED, pPackedLight, OverlayTexture.NO_OVERLAY, pPoseStack, pBuffer, pBlockEntity.getLevel(), 1);
-            pPoseStack.popPose();
-        }
+        renderPrimaryItem(entity, poseStack, source, packedLight, itemRenderer);
     }
 
     private void renderBlockItems(
             ItemStack renderItem,
-            RuneTableEntity pBlockEntity,
-            PoseStack pPoseStack,
-            MultiBufferSource pBuffer,
-            int pPackedLight,
+            RuneTableEntity entity,
+            PoseStack poseStack,
+            MultiBufferSource source,
+            int packedLight,
             ItemRenderer itemRenderer,
             float adjustX,
             float adjustZ,
@@ -72,16 +56,42 @@ public class RuneTableRenderer implements BlockEntityRenderer<RuneTableEntity>{
         if(!renderItem.isEmpty()){
             var height = 0.76F + adjustY;
             var scale = 0.3f;
-            var direction = pBlockEntity.getBlockState().getValue(FACING);
-            pPoseStack.pushPose();
-            pPoseStack.translate(adjustX, height, adjustZ);
-            pPoseStack.scale(scale, scale, scale);
-            var directionAd = direction == Direction.EAST || direction == Direction.WEST ? 90 : 0;
-            pPoseStack.mulPose(Axis.YP.rotationDegrees(directionAd));
-            pPoseStack.mulPose(Axis.XP.rotationDegrees(90));
-            pPoseStack.mulPose(Axis.ZP.rotationDegrees(rotateItem));
-            itemRenderer.renderStatic(renderItem, ItemDisplayContext.FIXED, pPackedLight, OverlayTexture.NO_OVERLAY, pPoseStack, pBuffer, pBlockEntity.getLevel(), 1);
-            pPoseStack.popPose();
+            var direction = entity.getBlockState().getValue(FACING);
+            var directionAd = direction == EAST || direction == WEST ? 90 : 0;
+
+            poseStack.pushPose();
+            poseStack.translate(adjustX, height, adjustZ);
+            poseStack.scale(scale, scale, scale);
+            poseStack.mulPose(Axis.YP.rotationDegrees(directionAd));
+            poseStack.mulPose(Axis.XP.rotationDegrees(90));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(rotateItem));
+            itemRenderer.renderStatic(renderItem, FIXED, packedLight, NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
+            poseStack.popPose();
+        }
+    }
+
+    private void renderPrimaryItem(
+        RuneTableEntity entity,
+        PoseStack poseStack,
+        MultiBufferSource source,
+        int packedLight,
+        ItemRenderer itemRenderer
+    ) {
+        var renderItem = entity.getItem().getStackInSlot(0);
+        if(!renderItem.isEmpty()){
+            var height = 0.83F;
+            var scale = 0.5f;
+            var direction = entity.getBlockState().getValue(FACING);
+            var directionAd = direction == EAST ? 90 : direction == WEST ? 270 : direction == NORTH ? 180 : 0;
+
+            poseStack.pushPose();
+            poseStack.translate(0.5, height, 0.5);
+            poseStack.scale(scale, scale, scale);
+            poseStack.mulPose(Axis.YP.rotationDegrees(directionAd));
+            poseStack.mulPose(Axis.XP.rotationDegrees(90));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(0));
+            itemRenderer.renderStatic(renderItem, FIXED, packedLight, NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
+            poseStack.popPose();
         }
     }
 }

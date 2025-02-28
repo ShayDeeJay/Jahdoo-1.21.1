@@ -16,13 +16,14 @@ import org.jahdoo.common.registers.BlockEntitiesRegister;
 import org.jetbrains.annotations.Nullable;
 
 public class WandManagerEntity extends AbstractBEInventory implements MenuProvider {
+
     public static final int DEFAULT_SLOTS = 4;
     public static final int ADDITIONAL_RUNE_SLOTS = 12;
     public int privateTicks;
     public ItemStack itemStack;
 
-    public WandManagerEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntitiesRegister.WAND_MANAGER_TABLE_BE.get(), pPos, pBlockState, 1);
+    public WandManagerEntity(BlockPos pos, BlockState state) {
+        super(BlockEntitiesRegister.WAND_MANAGER_TABLE_BE.get(), pos, state, 1);
     }
 
     public void tick(Level level, BlockPos blockPos, BlockState pState) {
@@ -54,22 +55,20 @@ public class WandManagerEntity extends AbstractBEInventory implements MenuProvid
     }
 
     @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.saveAdditional(pTag, pRegistries);
-        pTag.putInt("ticks", this.privateTicks);
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        return new WandManagerMenu(id, inventory, this, this.data);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.loadAdditional(pTag, pRegistries);
-        this.privateTicks = pTag.getInt("ticks");
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putInt("ticks", this.privateTicks);
     }
 
-    @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
-        return new WandManagerMenu(pContainerId, pPlayerInventory, this, this.data);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.privateTicks = tag.getInt("ticks");
     }
-
 }
 

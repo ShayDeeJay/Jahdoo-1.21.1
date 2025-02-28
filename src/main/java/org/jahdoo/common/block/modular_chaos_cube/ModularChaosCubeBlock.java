@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.jahdoo.common.registers.BlocksRegister.sharedBehaviour;
-import static org.jahdoo.common.registers.BlocksRegister.sharedBlockBehaviour;
 
 public class ModularChaosCubeBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
@@ -39,18 +38,7 @@ public class ModularChaosCubeBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
-        if (pState.getBlock() != pNewState.getBlock()) {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof ModularChaosCubeEntity automationBlock) {
-                automationBlock.dropsAllInventory(pLevel);
-            }
-        }
-        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
-    }
-
-    @Override
-    public @NotNull VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
@@ -61,8 +49,8 @@ public class ModularChaosCubeBlock extends BaseEntityBlock {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new ModularChaosCubeEntity(pPos,pState);
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new ModularChaosCubeEntity(pos,state);
     }
 
     @Override
@@ -76,22 +64,34 @@ public class ModularChaosCubeBlock extends BaseEntityBlock {
         return ItemInteractionResult.SUCCESS;
     }
 
-    private InteractionResult openWandGUI(Player player, BlockPos blockPos, Level level){
-        var fail = InteractionResult.FAIL;
-        if (!(level.getBlockEntity(blockPos) instanceof ModularChaosCubeEntity modularChaosCubeEntity)) return fail;
-        if(!(player instanceof ServerPlayer serverPlayer)) return fail;
-        serverPlayer.openMenu(modularChaosCubeEntity, blockPos);
-        return InteractionResult.SUCCESS;
-    }
-
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
         return createTickerHelper(
-            pBlockEntityType,
+            entityType,
             BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
+    }
+
+    private InteractionResult openWandGUI(Player player, BlockPos blockPos, Level level){
+        var fail = InteractionResult.FAIL;
+        if (!(level.getBlockEntity(blockPos) instanceof ModularChaosCubeEntity cubeEntity)) return fail;
+        if(!(player instanceof ServerPlayer serverPlayer)) return fail;
+
+        serverPlayer.openMenu(cubeEntity, blockPos);
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (state.getBlock() != newState.getBlock()) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ModularChaosCubeEntity automationBlock) {
+                automationBlock.dropsAllInventory(level);
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 }
 

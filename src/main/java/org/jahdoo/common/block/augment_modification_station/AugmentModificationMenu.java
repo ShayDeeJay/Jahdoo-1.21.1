@@ -7,7 +7,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.gui.AbstractInternalContainer;
-import org.jahdoo.common.client.gui.slots.AugmentCoreSlot;
+import org.jahdoo.common.client.slots.AugmentCoreSlot;
 import org.jahdoo.common.registers.BlocksRegister;
 import org.jahdoo.common.registers.ItemsRegister;
 import org.jahdoo.common.registers.MenusRegister;

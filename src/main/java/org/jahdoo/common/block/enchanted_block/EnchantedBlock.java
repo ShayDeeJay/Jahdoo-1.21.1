@@ -23,8 +23,9 @@ import org.jahdoo.common.registers.BlockEntitiesRegister;
 import org.jetbrains.annotations.Nullable;
 
 public class EnchantedBlock extends BaseEntityBlock {
+
     public static final IntegerProperty ENCHANTMENT_STAGE = BlockStateProperties.LEVEL;
-    public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
+    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
 
     public EnchantedBlock() {
         super(BlockBehaviour.Properties.of().noOcclusion());

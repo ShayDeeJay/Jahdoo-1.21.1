@@ -22,7 +22,7 @@ import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.LocalLootBeamData;
-import org.jahdoo.common.client.gui.augment_menu.AugmentScreen;
+import org.jahdoo.common.client.gui.AugmentScreen;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;

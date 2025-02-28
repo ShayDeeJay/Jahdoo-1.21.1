@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.gui.AbstractInternalContainer;
-import org.jahdoo.common.client.gui.slots.AugmentSlot;
+import org.jahdoo.common.client.slots.AugmentSlot;
 import org.jahdoo.common.registers.BlocksRegister;
 import org.jahdoo.common.registers.MenusRegister;
 import org.jahdoo.ascension.utils.Helpers;
@@ -28,20 +28,15 @@ public class WandBlockMenu extends AbstractInternalContainer {
     public int xSpacing = 37;
     public int ySpacing = 56;
 
-    public WandBlockMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        super(MenusRegister.WAND_BLOCK_MENU.get(), pContainerId, inv, extraData);
+    public WandBlockMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
+        super(MenusRegister.WAND_BLOCK_MENU.get(), id, inv, extraData);
         this.addSlotsInGridLayout();
 
     }
 
-    public WandBlockMenu(int pContainerId, Inventory inv, AbstractBEInventory entity, ContainerData data) {
-        super(MenusRegister.WAND_BLOCK_MENU.get(), pContainerId, inv, entity, data);
+    public WandBlockMenu(int id, Inventory inv, AbstractBEInventory entity, ContainerData data) {
+        super(MenusRegister.WAND_BLOCK_MENU.get(), id, inv, entity, data);
         this.addSlotsInGridLayout();
-    }
-
-    public WandBlockEntity getWandBlockEntity(){
-        if(this.blockEntity instanceof WandBlockEntity wandBlockEntity) return wandBlockEntity;
-        return null;
     }
 
     @Override
@@ -52,6 +47,11 @@ public class WandBlockMenu extends AbstractInternalContainer {
     @Override
     protected Block getAssociatedBlock() {
         return BlocksRegister.WAND.get();
+    }
+
+    public WandBlockEntity getWandBlockEntity(){
+        if(this.blockEntity instanceof WandBlockEntity wandBlockEntity) return wandBlockEntity;
+        return null;
     }
 
     public void addSlotsInGridLayout() {
@@ -73,7 +73,7 @@ public class WandBlockMenu extends AbstractInternalContainer {
         if(!sourceStack.has(WAND_DATA)) return ItemStack.EMPTY;
         var sourceStackIndex = getAbilityTypeItemStack(copyOfSourceStack);
         for(int i = 1; i < totalSlotsInWand; i++){
-            if(slotIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT){
+            if(slotIndex < SLOT_A + SLOT_SIZE){
                 var targetSlots = getWandBlockEntity().inputItemHandler;
                 if (!targetSlots.getStackInSlot(i).isEmpty()) {
                     var abilityIndex = getAbilityTypeItemStack(targetSlots.getStackInSlot(i));

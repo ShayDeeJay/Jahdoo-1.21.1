@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties.*;
 import static org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity.AUGMENT_SLOT;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.IconLocations.*;
@@ -31,30 +32,26 @@ import static org.jahdoo.common.items.augments.AugmentItemHelper.*;
 import static org.jahdoo.common.registers.AttachmentRegister.MODULAR_CHAOS_CUBE;
 
 public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaosCubeMenu> {
+
     private static final int IMAGE_SIZE = 256;
     private final ModularChaosCubeMenu modularChaosCubeMenu;
     private boolean input;
     private boolean output;
 
-
-    public ModularChaosCubeScreen(ModularChaosCubeMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
-        super(pMenu, pPlayerInventory, pTitle);
-        this.modularChaosCubeMenu = pMenu;
+    public ModularChaosCubeScreen(ModularChaosCubeMenu menu, Inventory inventory, Component title) {
+        super(menu, inventory, title);
+        this.modularChaosCubeMenu = menu;
     }
 
     @Override
-    protected void init() {
-        super.init();
-        int posX = this.width / 2;
-        int posY = this.height / 2 ;
-        this.modifyAugmentProperties(posX, posY);
-        buildCarouselComponent(posX - 70, posY - 100, "Speed");
-        var autoBlock = entity().getData(MODULAR_CHAOS_CUBE);
-        direction(posX, posY, this.input, "Insert", (button) -> selectDirection(entity(), autoBlock.updateInput(button)), () -> this.input = !input, entity().getData(MODULAR_CHAOS_CUBE).input());
-        direction(posX, posY, this.output, "Eject", (button) -> selectDirection(entity(), autoBlock.updateOutput(button)), () -> this.output = !output, entity().getData(MODULAR_CHAOS_CUBE).output());
-        selectDirectionActive(posX, posY);
-        entity().setChanged();
-    }
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
+
+
+    @Override
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {}
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partial, int mouseX, int mouseY) {}
 
     @Override
     protected void containerTick() {
@@ -65,22 +62,8 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
         return this.modularChaosCubeMenu.getAutomationEntity();
     }
 
-    private void modifyAugmentProperties(int posX, int posY){
-        var currentPower = ModularChaosCubeProperties.getActive(entity());
-        var chained = ModularChaosCubeProperties.getChained(entity());
-        int size = 16;
-        this.addRenderableWidget(ToggleComponent.menuButton(posX + 76, posY - 112, (press) -> togglePower(entity()), currentPower ? POWER_OFF : POWER_ON, 20, 0));
-        this.addRenderableWidget(ToggleComponent.menuButton(posX + 56, posY - 112, (press) -> toggleChained(entity()), chained ? CHAINED : UNCHAINED, 20, 0));
-
-        if(!this.entity().inputItemHandler.getStackInSlot(0).isEmpty() && isValidAugmentUtil(entity().inputItemHandler.getStackInSlot(AUGMENT_SLOT)).isPresent()){
-            this.addRenderableWidget(ToggleComponent.menuButton(posX + 14, posY - 23, (press) -> setModifyAugmentScreen(entity().inputItemHandler.getStackInSlot(0).copy()), COG, "", size));
-        }
-    }
-
-    private void togglePower(ModularChaosCubeEntity entity){
-        ModularChaosCubeData.togglePower(entity);
-        entity.activateConnectedBlocks();
-        this.rebuildWidgets();
+    private void setModifyAugmentScreen(ItemStack itemStack){
+        setAugmentModificationScreen(itemStack, this);
     }
 
     private void toggleChained(ModularChaosCubeEntity entity){
@@ -93,22 +76,13 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
         buildDirectionWidgets(posX - 109, posY - 100, "Direction", entity().direction(), (button) -> selectDirection(entity(), autoBlock.updateActionDirection(button)),autoBlock.action());
     }
 
-    private void direction(int posX, int posY, boolean isInput, String label, Consumer<BlockPos> buttons, Runnable switchB, BlockPos blockPos) {
-        isContainerAccessor(entity().augmentSlot()).ifPresent(
-            accessor -> {
-                var isInsert = Objects.equals(label, "Insert");
-                if(isInsert ? accessor.isInputUser() : accessor.isOutputUser()){
-                    if(isInput) buildDirectionWidgets(posX + 94, posY - 68, label, entity().direction(), buttons, blockPos);
-                    this.addRenderableWidget(
-                        menuButton(posX + 87, posY - 85, (press) -> extendMenu(switchB), isInsert ? DIRECTION_ARROW_BACK : DIRECTION_ARROW_FORWARD, "", 26)
-                    );
-                }
-            }
-        );
-     }
-
     private void extendMenu(Runnable switchB){
         switchB.run();
+        this.rebuildWidgets();
+    }
+
+    private void directionWidget(Consumer<BlockPos> posConsumer, Pair<ResourceLocation, BlockPos> button) {
+        posConsumer.accept(button.getSecond());
         this.rebuildWidgets();
     }
 
@@ -120,48 +94,10 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
         return Optional.empty();
     }
 
-    public void buildDirectionWidgets(
-        int posX, int posY,
-        String label,
-        List<Pair<ResourceLocation, BlockPos>> copy,
-        Consumer<BlockPos> posConsumer,
-        BlockPos isThis
-    ) {
-        this.addRenderableOnly(textWithBackground(posX-10, posY, this.getMinecraft(), Component.literal(label)));
-        var modifiableCopy = new ArrayList<>(copy);
-
-        int[][] layoutPositions = {
-                {28},
-            {14, 28, 42},
-                {28, 42}
-        };
-
-        int[] rowOffsets = {0, 14, 28};
-        for (int i = 0; i < modifiableCopy.size(); i++) {
-            int row = (i == 0) ? 0 : (i < 4 ? 1 : 2);
-            int column = (row == 0) ? 0 : (i - (row == 1 ? 1 : 4));
-
-            int buttonX = posX + layoutPositions[row][column];
-            int buttonY = posY + 4 + rowOffsets[row];
-
-            var button = modifiableCopy.get(i);
-
-            this.addRenderableWidget(
-                menuButton(
-                    buttonX, buttonY, (press) -> directionWidget(posConsumer, button), button.getFirst(), 18,
-                    isThis.equals(button.getSecond()), 0, new WidgetSprites(GUI_BUTTON, GUI_BUTTON)
-                )
-            );
-        }
-    }
-
-    private void directionWidget(Consumer<BlockPos> posConsumer, Pair<ResourceLocation, BlockPos> button) {
-        posConsumer.accept(button.getSecond());
+    private void togglePower(ModularChaosCubeEntity entity){
+        ModularChaosCubeData.togglePower(entity);
+        entity.activateConnectedBlocks();
         this.rebuildWidgets();
-    }
-
-    private void setModifyAugmentScreen(ItemStack itemStack){
-        setAugmentModificationScreen(itemStack, this);
     }
 
     private void increaseSpeed(){
@@ -182,9 +118,35 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
 
     public void buildCarouselComponent(int posX, int posY, String label){
         var widget = new WidgetSprites(BLANK, BLANK);
-        this.addRenderableOnly(textWithBackground(posX + 22, posY, Component.literal(String.valueOf(ModularChaosCubeProperties.getSpeed(entity()))), this.getMinecraft(), Component.literal(label)));
+        this.addRenderableOnly(textWithBackground(posX + 22, posY, Component.literal(String.valueOf(getSpeed(entity()))), this.getMinecraft(), Component.literal(label)));
         this.addRenderableWidget(menuButton(posX + 41, posY + 6, (press) -> decreaseSpeed(), DIRECTION_ARROW_BACK, 20, false,8, widget, false));
         this.addRenderableWidget(menuButton(posX + 79, posY + 6, (press) -> increaseSpeed(), DIRECTION_ARROW_FORWARD,  20,  false, 8, widget, false));
+    }
+
+    private void modifyAugmentProperties(int posX, int posY){
+        var currentPower = getActive(entity());
+        var chained = getChained(entity());
+        int size = 16;
+        this.addRenderableWidget(menuButton(posX + 76, posY - 112, (press) -> togglePower(entity()), currentPower ? POWER_OFF : POWER_ON, 20, 0));
+        this.addRenderableWidget(menuButton(posX + 56, posY - 112, (press) -> toggleChained(entity()), chained ? CHAINED : UNCHAINED, 20, 0));
+
+        if(!this.entity().inputItemHandler.getStackInSlot(0).isEmpty() && isValidAugmentUtil(entity().inputItemHandler.getStackInSlot(AUGMENT_SLOT)).isPresent()){
+            this.addRenderableWidget(menuButton(posX + 14, posY - 23, (press) -> setModifyAugmentScreen(entity().inputItemHandler.getStackInSlot(0).copy()), COG, "", size));
+        }
+    }
+
+    private void direction(int posX, int posY, boolean isInput, String label, Consumer<BlockPos> buttons, Runnable switchB, BlockPos blockPos) {
+        isContainerAccessor(entity().augmentSlot()).ifPresent(
+            accessor -> {
+                var isInsert = Objects.equals(label, "Insert");
+                if(isInsert ? accessor.isInputUser() : accessor.isOutputUser()){
+                    if(isInput) buildDirectionWidgets(posX + 94, posY - 68, label, entity().direction(), buttons, blockPos);
+                    this.addRenderableWidget(
+                        menuButton(posX + 87, posY - 85, (press) -> extendMenu(switchB), isInsert ? DIRECTION_ARROW_BACK : DIRECTION_ARROW_FORWARD, "", 26)
+                    );
+                }
+            }
+        );
     }
 
     private void setCustomBackground(GuiGraphics guiGraphics){
@@ -205,7 +167,27 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
+    protected void init() {
+        super.init();
+        var posX = this.width / 2;
+        var posY = this.height / 2 ;
+        this.modifyAugmentProperties(posX, posY);
+        buildCarouselComponent(posX - 70, posY - 100, "Speed");
+        var autoBlock = entity().getData(MODULAR_CHAOS_CUBE);
+
+        direction(posX, posY, this.input, "Insert",
+            (button) -> selectDirection(entity(), autoBlock.updateInput(button)),
+            () -> this.input = !input, entity().getData(MODULAR_CHAOS_CUBE).input()
+        );
+
+        direction(posX, posY, this.output, "Eject",
+            (button) -> selectDirection(entity(), autoBlock.updateOutput(button)),
+            () -> this.output = !output, entity().getData(MODULAR_CHAOS_CUBE).output()
+        );
+
+        selectDirectionActive(posX, posY);
+        entity().setChanged();
+    }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
@@ -234,10 +216,39 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
         setSlotTexture(guiGraphics, i - 16, i1 - 61, 32, "");
     }
 
+    public void buildDirectionWidgets(
+        int posX,
+        int posY,
+        String label,
+        List<Pair<ResourceLocation, BlockPos>> copy,
+        Consumer<BlockPos> posConsumer,
+        BlockPos isThis
+    ) {
+        this.addRenderableOnly(textWithBackground(posX-10, posY, this.getMinecraft(), Component.literal(label)));
+        var modifiableCopy = new ArrayList<>(copy);
 
-    @Override
-    protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {}
+        int[][] layoutPositions = {
+            {28},
+            {14, 28, 42},
+            {28, 42}
+        };
 
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {}
+        int[] rowOffsets = {0, 14, 28};
+        for (int i = 0; i < modifiableCopy.size(); i++) {
+            int row = (i == 0) ? 0 : (i < 4 ? 1 : 2);
+            int column = (row == 0) ? 0 : (i - (row == 1 ? 1 : 4));
+
+            int buttonX = posX + layoutPositions[row][column];
+            int buttonY = posY + 4 + rowOffsets[row];
+
+            var button = modifiableCopy.get(i);
+
+            this.addRenderableWidget(
+                menuButton(
+                    buttonX, buttonY, (press) -> directionWidget(posConsumer, button), button.getFirst(), 18,
+                    isThis.equals(button.getSecond()), 0, new WidgetSprites(GUI_BUTTON, GUI_BUTTON)
+                )
+            );
+        }
+    }
 }

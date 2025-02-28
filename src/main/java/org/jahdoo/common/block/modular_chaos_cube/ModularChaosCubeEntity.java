@@ -49,10 +49,16 @@ import static org.jahdoo.common.registers.AttachmentRegister.*;
 
 
 public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProvider, GeoBlockEntity {
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
     public static final int AUGMENT_SLOT = 0;
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private int ticker;
     private int entityTicker;
+
+    public ModularChaosCubeEntity(BlockPos pos, BlockState state) {
+        super(BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(), pos, state, 1);
+        this.setData(MODULAR_CHAOS_CUBE, ModularChaosCubeProperties.initData(this.getBlockPos()));
+    }
 
     @Override
     public int setInputSlots() {
@@ -73,26 +79,64 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
         return this.inputItemHandler.getStackInSlot(AUGMENT_SLOT);
     }
 
-    public ModularChaosCubeEntity(BlockPos pPos, BlockState pBlockState) {
-        super(BlockEntitiesRegister.MODULAR_CHAOS_CUBE_BE.get(), pPos, pBlockState, 1);
-        this.setData(MODULAR_CHAOS_CUBE, ModularChaosCubeProperties.initData(this.getBlockPos()));
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
     }
 
     @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.saveAdditional(pTag, pRegistries);
-        pTag.putInt("infuser.progress", progress);
+    public Component getDisplayName() {
+        return Component.empty();
+    }
+
+    private void useSound(float volume, float pitch, Level level) {
+        Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BREEZE_CHARGE, volume, pitch);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        super.loadAdditional(pTag, pRegistries);
-        progress = pTag.getInt("infuser.progress");
+    public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        return new ModularChaosCubeMenu(i, inventory, this, this.data);
+    }
+
+    private void particleAnimation(Level level, boolean hasTank) {
+        if (entityTicker % 10 != 0 || level.isClientSide) return;
+        positionalParticles(level, (hasTank ? 5 : 1), 0.45);
     }
 
     @Override
-    public void dropsAllInventory(Level level) {
-        super.dropsAllInventory(level);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putInt("infuser.progress", progress);
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        progress = tag.getInt("infuser.progress");
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "idle", 10, state -> state.setAndContinue(IDLE_BLOCK)));
+        controllers.add(new AnimationController<>(this, "side_anim", 10, this::getPlayState));
+    }
+
+    @Override
+    public int setCraftingCost() {
+        var getHolder = this.augmentSlot().get(DataComponentRegistry.WAND_ABILITY_HOLDER);
+        if(getHolder == null) return -1;
+        return (int) getSpecificValue(getKeyFromAugment(this.augmentSlot()),  getHolder, AbilityBuilder.MANA_COST);
+    }
+
+    private void positionalParticles(Level level, int positions, double radius) {
+        if(level.isClientSide) return;
+        PositionFinders.getRandomSphericalPositions(this.getBlockPos().getCenter(), radius, positions,
+            pos -> {
+                var directions = this.getBlockPos().getCenter().subtract(pos).normalize();
+                var particle = ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, ElementRegistry.utility(), (int) (radius * 5), 0.6f);
+                ParticleHandlers.sendParticles(level, particle, pos, 0, directions.x, directions.y, directions.z, radius / 5);
+            }
+        );
     }
 
     public List<Pair<ResourceLocation, BlockPos>> direction(){
@@ -106,10 +150,40 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
         );
     }
 
-    public void tick(Level pLevel, BlockPos pPos, BlockState blockState) {
+    public void activateConnectedBlocks() {
+        if (this.getLevel() == null) return;
+        var visited = new HashSet<BlockPos>();
+        for (Pair<ResourceLocation, BlockPos> posPair : this.direction()) {
+            BlockPos blockPos = posPair.getSecond();
+            if (!this.getData(MODULAR_CHAOS_CUBE).chained()) return;
+            if (!visited.contains(blockPos) && this.getLevel().getBlockEntity(blockPos) instanceof ModularChaosCubeEntity blockE) {
+                if(!blockE.getData(MODULAR_CHAOS_CUBE).chained()) continue;
+                visited.add(blockPos);
+                triggerBlock(blockE, visited);
+            }
+        }
+    }
+
+    private void triggerBlock(ModularChaosCubeEntity blockE, Set<BlockPos> visited) {
+        var active = this.getData(MODULAR_CHAOS_CUBE).active();
+        var active1 = blockE.getData(MODULAR_CHAOS_CUBE).active();
+        if (active != active1) ModularChaosCubeData.togglePower(blockE);
+        if (blockE.getLevel() == null) return;
+
+        for (Pair<ResourceLocation, BlockPos> posPair : blockE.direction()) {
+            BlockPos blockPos = posPair.getSecond();
+            if (!visited.contains(blockPos) && blockE.getLevel().getBlockEntity(blockPos) instanceof ModularChaosCubeEntity blockD) {
+                if(!blockD.getData(MODULAR_CHAOS_CUBE).chained()) continue;
+                visited.add(blockPos);
+                triggerBlock(blockD, visited);
+            }
+        }
+    }
+
+    public void tick(Level level, BlockPos pos, BlockState blockState) {
         if(this.augmentSlot().isEmpty() && this.ticker > 0) this.ticker = 0; this.progress = 0;
         this.entityTicker ++;
-        useAugment(pLevel, hasTankAndFuel(), augmentSlot());
+        useAugment(level, hasTankAndFuel(), augmentSlot());
         if(this.getData(MODULAR_CHAOS_CUBE).active()){
             var speed = this.getData(MODULAR_CHAOS_CUBE).speed();
             if (this.ticker >= (speed == 0 ? 100 : speed)) this.ticker = 0;
@@ -117,8 +191,49 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
         } else {
             if (this.ticker > 0) this.ticker = 0;
         }
-        this.assignTankBlockInRange(pLevel, pPos, 1);
-        particleAnimation(pLevel, hasTankAndFuel());
+        this.assignTankBlockInRange(level, pos, 1);
+        particleAnimation(level, hasTankAndFuel());
+    }
+
+    public ItemStack externalInputInventory(Level level){
+        var getPos = this.getData(MODULAR_CHAOS_CUBE).input();
+        var handler = getItemHandlerAt(level, getPos.getX(), getPos.getY(), getPos.getZ(), Direction.DOWN);
+        AtomicReference<ItemStack> itemStack = new AtomicReference<>(ItemStack.EMPTY);
+        handler.ifPresent(
+            iItemHandlerObjectPair -> {
+                var itemHandler = iItemHandlerObjectPair.getKey();
+                for(int i = 0; i < itemHandler.getSlots(); i++){
+                    var slotStack = itemHandler.getStackInSlot(i);
+                    if(!slotStack.isEmpty()) {
+                        itemStack.set(slotStack);
+                        return;
+                    };
+                }
+            }
+        );
+        return itemStack.get();
+    }
+
+    private PlayState getPlayState(AnimationState<ModularChaosCubeEntity> state) {
+        var getPos = this.getData(MODULAR_CHAOS_CUBE);
+        if(getPos.active()){
+            float speed = (float) getPos.speed() /50;
+            state.setControllerSpeed(2.1f - speed);
+            if (getPos.action().equals(this.getBlockPos().north())) {
+                return state.setAndContinue(NORTH);
+            } else if (getPos.action().equals(this.getBlockPos().south())) {
+                return state.setAndContinue(SOUTH);
+            } else if (getPos.action().equals(this.getBlockPos().east())) {
+                return state.setAndContinue(EAST);
+            } else if (getPos.action().equals(this.getBlockPos().west())) {
+                return state.setAndContinue(WEST);
+            } else if (getPos.action().equals(this.getBlockPos().above())) {
+                return state.setAndContinue(UP);
+            } else if(getPos.action().equals(this.getBlockPos().below())){
+                return state.setAndContinue(DOWN);
+            }
+        }
+        return PlayState.STOP;
     }
 
     private void useAugment(Level level, boolean hasTank, ItemStack augmentSlot) {
@@ -177,125 +292,6 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
                 }
             }
         );
-    }
-
-    public ItemStack externalInputInventory(Level level){
-        var getPos = this.getData(MODULAR_CHAOS_CUBE).input();
-        var handler = getItemHandlerAt(level, getPos.getX(), getPos.getY(), getPos.getZ(), Direction.DOWN);
-        AtomicReference<ItemStack> itemStack = new AtomicReference<>(ItemStack.EMPTY);
-        handler.ifPresent(
-            iItemHandlerObjectPair -> {
-                var itemHandler = iItemHandlerObjectPair.getKey();
-                for(int i = 0; i < itemHandler.getSlots(); i++){
-                    var slotStack = itemHandler.getStackInSlot(i);
-                    if(!slotStack.isEmpty()) {
-                        itemStack.set(slotStack);
-                        return;
-                    };
-                }
-            }
-        );
-        return itemStack.get();
-    }
-
-    public void activateConnectedBlocks() {
-        if (this.getLevel() == null) return;
-        var visited = new HashSet<BlockPos>();
-        for (Pair<ResourceLocation, BlockPos> posPair : this.direction()) {
-            BlockPos blockPos = posPair.getSecond();
-            if (!this.getData(MODULAR_CHAOS_CUBE).chained()) return;
-            if (!visited.contains(blockPos) && this.getLevel().getBlockEntity(blockPos) instanceof ModularChaosCubeEntity blockE) {
-                if(!blockE.getData(MODULAR_CHAOS_CUBE).chained()) continue;
-                visited.add(blockPos);
-                triggerBlock(blockE, visited);
-            }
-        }
-    }
-
-    private void triggerBlock(ModularChaosCubeEntity blockE, Set<BlockPos> visited) {
-        var active = this.getData(MODULAR_CHAOS_CUBE).active();
-        var active1 = blockE.getData(MODULAR_CHAOS_CUBE).active();
-        if (active != active1) ModularChaosCubeData.togglePower(blockE);
-        if (blockE.getLevel() == null) return;
-
-        for (Pair<ResourceLocation, BlockPos> posPair : blockE.direction()) {
-            BlockPos blockPos = posPair.getSecond();
-            if (!visited.contains(blockPos) && blockE.getLevel().getBlockEntity(blockPos) instanceof ModularChaosCubeEntity blockD) {
-                if(!blockD.getData(MODULAR_CHAOS_CUBE).chained()) continue;
-                visited.add(blockPos);
-                triggerBlock(blockD, visited);
-            }
-        }
-    }
-
-    private void useSound(float volume, float pitch, Level level) {
-        Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BREEZE_CHARGE, volume, pitch);
-    }
-
-    private void particleAnimation(Level pLevel, boolean hasTank) {
-        if (entityTicker % 10 != 0 || pLevel.isClientSide) return;
-        positionalParticles(pLevel, (hasTank ? 5 : 1), 0.45);
-    }
-    
-    private void positionalParticles(Level pLevel,int positions, double radius) {
-        if(pLevel.isClientSide) return;
-        PositionFinders.getRandomSphericalPositions(this.getBlockPos().getCenter(), radius, positions,
-            pos -> {
-                var directions = this.getBlockPos().getCenter().subtract(pos).normalize();
-                var particle = ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, ElementRegistry.utility(), (int) (radius * 5), 0.6f);
-                ParticleHandlers.sendParticles(pLevel, particle, pos, 0, directions.x, directions.y, directions.z, radius / 5);
-            }
-        );
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "idle", 10, state -> state.setAndContinue(IDLE_BLOCK)));
-        controllers.add(new AnimationController<>(this, "side_anim", 10, this::getPlayState));
-    }
-
-    private PlayState getPlayState(AnimationState<ModularChaosCubeEntity> state) {
-        var getPos = this.getData(MODULAR_CHAOS_CUBE);
-        if(getPos.active()){
-            float speed = (float) getPos.speed() /50;
-            state.setControllerSpeed(2.1f - speed);
-            if (getPos.action().equals(this.getBlockPos().north())) {
-                return state.setAndContinue(NORTH);
-            } else if (getPos.action().equals(this.getBlockPos().south())) {
-                return state.setAndContinue(SOUTH);
-            } else if (getPos.action().equals(this.getBlockPos().east())) {
-                return state.setAndContinue(EAST);
-            } else if (getPos.action().equals(this.getBlockPos().west())) {
-                return state.setAndContinue(WEST);
-            } else if (getPos.action().equals(this.getBlockPos().above())) {
-                return state.setAndContinue(UP);
-            } else if(getPos.action().equals(this.getBlockPos().below())){
-                return state.setAndContinue(DOWN);
-            }
-        }
-        return PlayState.STOP;
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return cache;
-    }
-
-    @Override
-    public Component getDisplayName() {
-        return Component.empty();
-    }
-
-    @Override
-    public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        return new ModularChaosCubeMenu(i, inventory, this, this.data);
-    }
-
-    @Override
-    public int setCraftingCost() {
-        var getHolder = this.augmentSlot().get(DataComponentRegistry.WAND_ABILITY_HOLDER);
-        if(getHolder == null) return -1;
-        return (int) getSpecificValue(getKeyFromAugment(this.augmentSlot()),  getHolder, AbilityBuilder.MANA_COST);
     }
 }
 

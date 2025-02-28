@@ -1,4 +1,4 @@
-package org.jahdoo.common.items;
+package org.jahdoo.common.items.pendent;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -6,6 +6,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.wand.WandItemHelper;
 import org.jahdoo.common.registers.DataComponentRegistry;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
