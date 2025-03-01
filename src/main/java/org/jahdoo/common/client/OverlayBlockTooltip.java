@@ -1,15 +1,14 @@
 package org.jahdoo.common.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 
-import static net.neoforged.neoforge.client.event.RenderGuiLayerEvent.*;
+import static net.minecraft.client.gui.screens.Screen.getTooltipFromItem;
+import static net.neoforged.neoforge.client.event.RenderGuiLayerEvent.Pre;
 import static org.jahdoo.common.event.event_helpers.OverlayEvent.crosshairManager;
 import static org.jahdoo.common.event.event_helpers.OverlayEvent.simpleGui;
 
@@ -45,9 +44,9 @@ public class OverlayBlockTooltip {
             var width = guiGraphics.guiWidth() / 2;
             var height = guiGraphics.guiHeight() / 2;
             var itemStack = tableEntity.getItem().getStackInSlot(0);
-            var tooltip = Screen.getTooltipFromItem(instance, itemStack);
+            var tooltip = getTooltipFromItem(instance, itemStack);
             var getState = tableEntity.getBlockState().getValue(ShoppingTableBlock.TEXTURE);
-            var canRender = instance.screen == null && tooltip.size() > 1 && getState != 3;
+            var canRender = instance.screen == null && tooltip.size() > 1 && getState != 3 && !itemStack.isEmpty();
 
             if (canRender) {
                 var mouseY = height - (tooltip.size() * 5);

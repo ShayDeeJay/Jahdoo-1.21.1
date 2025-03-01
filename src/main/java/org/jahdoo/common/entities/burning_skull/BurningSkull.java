@@ -15,6 +15,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.ProjectileProperties;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityReg;
@@ -238,7 +239,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
             livingEntity.addEffect(effectInstance);
         }
 
-        entity.hurt(this.damageSources().generic(), (float) damage);
+        DamageUtils.damageWithJahdoo(entity, this.getOwner(), damage);
         discardTask();
     }
 

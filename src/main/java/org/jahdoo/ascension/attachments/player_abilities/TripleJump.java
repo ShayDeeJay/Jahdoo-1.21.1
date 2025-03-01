@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.attachments.AbstractAttachment;
 
-import static org.jahdoo.common.items.runes.rune_data.RuneData.RuneHelpers.*;
+import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.*;
 
 public class TripleJump implements AbstractAttachment {
@@ -46,4 +46,5 @@ public class TripleJump implements AbstractAttachment {
             clientIsJumpHeld = false;
         }
     }
+
 }

@@ -97,9 +97,9 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     protected void coinCompressor(RecipeOutput output) {
         var misc = RecipeCategory.MISC;
-        nineBlockStorageRecipes(output, misc, BRONZE_COIN.get(), misc, SILVER_COIN.get(), "packed_silver", null, "unpacked_bronze", null);
-        nineBlockStorageRecipes(output, misc, SILVER_COIN.get(), misc, GOLD_COIN.get(),"packed_gold", null, "unpacked_silver", null);
-        nineBlockStorageRecipes(output, misc, GOLD_COIN.get(), misc, PLATINUM_COIN.get(), "packed_platinum", null, "unpacked_gold", null);
+//        nineBlockStorageRecipes(output, misc, COIN.get(), misc, SILVER_COIN.get(), "packed_silver", null, "unpacked_bronze", null);
+//        nineBlockStorageRecipes(output, misc, SILVER_COIN.get(), misc, GOLD_COIN.get(),"packed_gold", null, "unpacked_silver", null);
+//        nineBlockStorageRecipes(output, misc, GOLD_COIN.get(), misc, PLATINUM_COIN.get(), "packed_platinum", null, "unpacked_gold", null);
     }
 
 }

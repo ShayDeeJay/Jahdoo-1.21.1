@@ -33,7 +33,7 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.ascension.rarity.RarityAttributes.*;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.setAbilityToAugment;
-import static org.jahdoo.common.items.runes.rune_data.RuneData.RuneHelpers.getRuneData;
+import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getRuneData;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
@@ -176,18 +176,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         createWandAttributes(rarity, item, rarity.id, totalSlots);
     }
 
-    public static ItemStack getAbilityAugment(JahdooRarity...jahdooRarities){
-        var allRarities = Arrays.stream(jahdooRarities).toList();
-        var list = AbilityReg.getMatchingRarity(allRarities.get(Helpers.Random.nextInt(0, allRarities.size())));
-        var ability = list.get(Helpers.Random.nextInt(0, list.size()));
-        var emptyStack = new ItemStack(ItemReg.AUGMENT.get());
-        ability.setModifiers(emptyStack);
-        emptyStack.set(ComponentReg.NUMBER, 5);
-        var wandAbilityHolder = emptyStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
-        setAbilityToAugment(emptyStack, ability, wandAbilityHolder);
-        return emptyStack;
-    }
-
     public static ItemStack setGeneratedWand(JahdooRarity rarity, Item item) {
         var itemStack = new ItemStack(item);
         var totalSlots = 3;
@@ -215,6 +203,18 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             default -> "I";
         };
         return withStyleComponent("Tier " + getTier, ColourStore.HEADER_COLOUR);
+    }
+
+    public static ItemStack getAbilityAugment(JahdooRarity...jahdooRarities){
+        var allRarities = Arrays.stream(jahdooRarities).toList();
+        var list = AbilityReg.getMatchingRarity(allRarities.get(Helpers.Random.nextInt(0, allRarities.size())));
+        var ability = list.get(Helpers.Random.nextInt(0, list.size()));
+        var emptyStack = new ItemStack(ItemReg.AUGMENT.get());
+        ability.setModifiers(emptyStack);
+        emptyStack.set(ComponentReg.NUMBER, 5);
+        var wandAbilityHolder = emptyStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
+        setAbilityToAugment(emptyStack, ability, wandAbilityHolder);
+        return emptyStack;
     }
 
     public static void createTomeAttributes(JahdooRarity rarity, ItemStack itemStack){

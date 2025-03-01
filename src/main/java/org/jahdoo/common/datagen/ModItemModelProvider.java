@@ -31,6 +31,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         registerSimpleItems();
         registerArmorModels();
         registerMagnets();
+        registerCoins();
     }
 
     private void registerAugmentModels() {
@@ -72,13 +73,18 @@ public class ModItemModelProvider extends ItemModelProvider {
         }
     }
 
+    private void registerCoins() {
+        for (int i = 1; i < 4; i++) {
+            createModel("coin" + i, "item/coins/coin" + i);
+            createOverride(i, ItemReg.COIN, "item/coin");
+        }
+    }
+
     private void registerSimpleItems() {
         var simpleItems = List.of(
             ItemReg.NEXITE_POWDER, ItemReg.HEALTH_CONTAINER,
             ItemReg.AUGMENT_CORE, ItemReg.AUGMENT_FRAGMENT,
-            ItemReg.ADVANCED_AUGMENT_CORE, ItemReg.AUGMENT_HYPER_CORE,
-            ItemReg.BRONZE_COIN, ItemReg.SILVER_COIN,
-            ItemReg.GOLD_COIN, ItemReg.PLATINUM_COIN
+            ItemReg.ADVANCED_AUGMENT_CORE, ItemReg.AUGMENT_HYPER_CORE
         );
 
         simpleItems.forEach(this::createSimpleItemModel);

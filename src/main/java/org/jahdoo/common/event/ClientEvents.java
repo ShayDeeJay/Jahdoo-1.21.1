@@ -2,25 +2,24 @@ package org.jahdoo.common.event;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.Input;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.client.KeyBinding;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.OverlayBlockTooltip;
 import org.jahdoo.common.client.RuneTooltipRenderer;
-import org.jahdoo.common.event.event_helpers.WandAbilitySelector;
-import org.jahdoo.ascension.utils.Helpers;
 
+import static org.jahdoo.common.client.KeyBinding.*;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.mysticEffectClient;
 import static org.jahdoo.common.event.event_helpers.KeyBindHelper.quickSelectBehaviour;
 import static org.jahdoo.common.event.event_helpers.KeyBindHelper.toggleLockAbility;
 import static org.jahdoo.common.event.event_helpers.OverlayEvent.crosshairManager;
 import static org.jahdoo.common.event.event_helpers.OverlayEvent.simpleGui;
 import static org.jahdoo.common.event.event_helpers.RenderEventHelper.*;
+import static org.jahdoo.common.event.event_helpers.WandAbilitySelector.selectWandSlot;
 import static org.jahdoo.common.items.wand.WandItemHelper.getAllSlots;
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, value = Dist.CLIENT)
@@ -35,6 +34,7 @@ public class ClientEvents {
     public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
         var instance = Minecraft.getInstance();
         var player = instance.player;
+
         crosshairManager(event);
         simpleGui(event, player);
         OverlayBlockTooltip.overlayEvent(event);
@@ -46,21 +46,21 @@ public class ClientEvents {
         var itemStack = e.getItemStack();
         var allSlots = getAllSlots(itemStack);
         if(allSlots.isEmpty()) return;
-        var runeSockets = new RuneTooltipRenderer.RuneComponent(itemStack, allSlots);
 
+        var runeSockets = new RuneTooltipRenderer.RuneComponent(itemStack, allSlots);
         current.add(current.size(), Either.right(runeSockets));
     }
 
     @SubscribeEvent
-    public static void PlayerRenderer(RenderLevelStageEvent event) {
+    public static void playerRenderer(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) return;
         var player = (Player) event.getCamera().getEntity();
         var stack = Helpers.getUsedItem(player);
 
         renderUtilityOverlay(event, player, stack);
         renderTeleportLocationOverlay(event, player, stack);
-        lockNearbyTarget(event);
         renderAbilityOverlay(event,stack, player);
+        lockNearbyTarget(event);
     }
 
     @SubscribeEvent
@@ -71,18 +71,18 @@ public class ClientEvents {
         quickSelectBehaviour(player, instance);
         toggleLockAbility(player);
 
-        if(KeyBinding.WAND_SLOT_1A.consumeClick()) WandAbilitySelector.selectWandSlot(1);
-        if(KeyBinding.WAND_SLOT_2A.consumeClick()) WandAbilitySelector.selectWandSlot(2);
-        if(KeyBinding.WAND_SLOT_3A.consumeClick()) WandAbilitySelector.selectWandSlot(3);
-        if(KeyBinding.WAND_SLOT_4A.consumeClick()) WandAbilitySelector.selectWandSlot(4);
-        if(KeyBinding.WAND_SLOT_5A.consumeClick()) WandAbilitySelector.selectWandSlot(5);
-        if(KeyBinding.WAND_SLOT_6A.consumeClick()) WandAbilitySelector.selectWandSlot(6);
-        if(KeyBinding.WAND_SLOT_7A.consumeClick()) WandAbilitySelector.selectWandSlot(7);
-        if(KeyBinding.WAND_SLOT_8A.consumeClick()) WandAbilitySelector.selectWandSlot(8);
-        if(KeyBinding.WAND_SLOT_9A.consumeClick()) WandAbilitySelector.selectWandSlot(9);
-        if(KeyBinding.WAND_SLOT_10A.consumeClick()) WandAbilitySelector.selectWandSlot(10);
-
+        if(WAND_SLOT_1A.consumeClick()) selectWandSlot(1);
+        if(WAND_SLOT_2A.consumeClick()) selectWandSlot(2);
+        if(WAND_SLOT_3A.consumeClick()) selectWandSlot(3);
+        if(WAND_SLOT_4A.consumeClick()) selectWandSlot(4);
+        if(WAND_SLOT_5A.consumeClick()) selectWandSlot(5);
+        if(WAND_SLOT_6A.consumeClick()) selectWandSlot(6);
+        if(WAND_SLOT_7A.consumeClick()) selectWandSlot(7);
+        if(WAND_SLOT_8A.consumeClick()) selectWandSlot(8);
+        if(WAND_SLOT_9A.consumeClick()) selectWandSlot(9);
+        if(WAND_SLOT_10A.consumeClick()) selectWandSlot(10);
     }
+
 }
 
 

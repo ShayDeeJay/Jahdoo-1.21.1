@@ -18,7 +18,7 @@ public record WandData(
     List<String> abilitySet,
     String selectedAbility
 ){
-    public static final int INIT_SLOTS = 3;
+    private static final int INIT_SLOTS = 3;
     public static final WandData DEFAULT = new WandData(INIT_SLOTS, populatedList(INIT_SLOTS),"");
 
     public static WandData wandData(ItemStack itemStack){
@@ -45,6 +45,11 @@ public record WandData(
         itemStack.update(WAND_DATA, WandData.DEFAULT, data -> data.setRarity(rarityId));
     }
 
+    public static final StreamCodec<RegistryFriendlyByteBuf, WandData> STREAM_CODEC = StreamCodec.ofMember(
+        WandData::serialise,
+        WandData::deserialise
+    );
+
     public static List<String> populatedList(int initValue){
         var list = new ArrayList<String>();
         for(int i =0; i < initValue; i++) list.add("empty" + i);
@@ -62,11 +67,6 @@ public record WandData(
         friendlyByteBuf.writeCollection(abilitySet, FriendlyByteBuf::writeUtf);
         friendlyByteBuf.writeUtf(selectedAbility);
     }
-
-    public static final StreamCodec<RegistryFriendlyByteBuf, WandData> STREAM_CODEC = StreamCodec.ofMember(
-        WandData::serialise,
-        WandData::deserialise
-    );
 
     public static WandData deserialise(RegistryFriendlyByteBuf friendlyByteBuf){
         return new WandData(

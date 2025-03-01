@@ -39,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static net.minecraft.world.effect.MobEffects.*;
 import static net.minecraft.world.entity.EquipmentSlot.*;
@@ -195,14 +196,30 @@ public class MobManager {
         var radius = Random.nextInt(4, 9);
         var points = 200;
 
+        spawnAroundEntity(entity.getLevel(), maxSpawn, spawnPos, radius, points, counter,
+            blockPos -> {
+                MobManager.addAndPositionEntity(entity, blockPos.above(), entity.altarData().round());
+                counter.incrementAndGet();
+            }
+        );
+    }
+
+    public static void spawnAroundEntity(
+        Level level,
+        int maxSpawn,
+        BlockPos spawnPos,
+        int radius,
+        int points,
+        AtomicInteger counter,
+        Consumer<BlockPos> spawn
+    ) {
         for (var blockPos : getRandomSphericalBlockPositions(spawnPos, radius, points)) {
             if(counter.get() < maxSpawn){
-                var above = entity.getLevel().getBlockState(blockPos.above(2));
-                var main = entity.getLevel().getBlockState(blockPos.above());
-                var below = entity.getLevel().getBlockState(blockPos);
+                var above = level.getBlockState(blockPos.above(2));
+                var main = level.getBlockState(blockPos.above());
+                var below = level.getBlockState(blockPos);
                 if (above.isAir() && main.isAir() && !below.isAir()) {
-                    MobManager.addAndPositionEntity(entity, blockPos.above(), entity.altarData().round());
-                    counter.incrementAndGet();
+                    spawn.accept(blockPos);
                 }
             }
         }

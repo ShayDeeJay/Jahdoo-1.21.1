@@ -39,7 +39,7 @@ import static org.jahdoo.ascension.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.randomApplicableEnchantment;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.setDurability;
-import static org.jahdoo.common.items.runes.rune_data.RuneData.RuneHelpers.generateRandomTypAttribute;
+import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.generateRandomTypAttribute;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 
 public class RewardLootTables {
@@ -125,14 +125,8 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> ELYTRA_BUILDER = 
         lootTableItem(Items.ELYTRA);
     
-    public static final LootPoolSingletonContainer.Builder<?> GOLD_COIN = 
-        lootTableItem(ItemReg.GOLD_COIN.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> SILVER_COIN = 
-        lootTableItem(ItemReg.SILVER_COIN.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> BRONZE_COIN = 
-        lootTableItem(ItemReg.BRONZE_COIN.get());
+    public static final LootPoolSingletonContainer.Builder<?> COIN =
+        lootTableItem(ItemReg.COIN.get());
     
     public static final LootPoolSingletonContainer.Builder<?> XP = 
         lootTableItem(ItemReg.EXPERIENCE_ORB.get());
@@ -243,9 +237,8 @@ public class RewardLootTables {
         var builder = LootPool.lootPool().setRolls(between(level/2, level));
 
         return builder
-            .add(BRONZE_COIN.setWeight(40))
-            .add(SILVER_COIN.setWeight(5))
-            .add(GOLD_COIN.setWeight(1));
+            .add(COIN.setWeight(40));
+
     }
 
     private static LootPool.Builder rarePool(ServerLevel serverLevel) {
@@ -265,8 +258,7 @@ public class RewardLootTables {
             .add(WIZARD_HELM_BUILDER.setWeight(1))
             .add(WIZARD_CHEST_BUILDER.setWeight(1))
             .add(WIZARD_LEGGINGS_BUILDER.setWeight(1))
-            .add(WIZARD_BOOTS_BUILDER.setWeight(1))
-            .add(GOLD_COIN.setWeight(1));
+            .add(WIZARD_BOOTS_BUILDER.setWeight(1));
     }
 
     private static LootPool.Builder epicPool(ServerLevel serverLevel) {
@@ -287,7 +279,6 @@ public class RewardLootTables {
         return builder
             .add(RUNE.setWeight(5))
             .add(AUGMENT_ITEM_BUILDER.setWeight(5))
-            .add(SILVER_COIN.setWeight(1))
             .add(getRandomWand().setWeight(2))
             .add(MAGNET.setWeight(5))
             .add(IRON_SWORD_BUILDER.setWeight(20))
@@ -305,7 +296,7 @@ public class RewardLootTables {
             .add(GOLD_BUILDER.setWeight(25))
             .add(EMERALD_BUILDER.setWeight(20))
             .add(DIAMOND_BUILDER.setWeight(10))
-            .add(BRONZE_COIN.setWeight(10))
+            .add(COIN.setWeight(10))
             .add(ENCHANTED_BOTTLES_BUILDER.setWeight(8))
             .add(SHULKER_SHELLS_BUILDER.setWeight(5))
             .add(NETHERITE_BUILDER.setWeight(2))

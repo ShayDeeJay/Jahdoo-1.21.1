@@ -1,10 +1,8 @@
 package org.jahdoo.common.entities.void_spider;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.SpiderModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -13,7 +11,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
 public class VoidSpiderRenderer<T extends Spider> extends MobRenderer<T, SpiderModel<T>> {
-    private static final ResourceLocation SPIDER_LOCATION = Helpers.res("textures/entity/void_spider.png");
+    private static final ResourceLocation SPIDER_MOTHER = Helpers.res("textures/entity/void_spider.png");
     private static final ResourceLocation SPIDER_LOCATION_SPAWN = Helpers.res("textures/entity/void_spider_next.png");
 
     public VoidSpiderRenderer(EntityRendererProvider.Context p_174401_) {
@@ -30,9 +28,6 @@ public class VoidSpiderRenderer<T extends Spider> extends MobRenderer<T, SpiderM
     }
 
     public ResourceLocation getTextureLocation(T entity) {
-        if(entity instanceof VoidSpider voidSpider){
-            return voidSpider.getScale() == 1.5F ? SPIDER_LOCATION_SPAWN : SPIDER_LOCATION;
-        }
-        return SPIDER_LOCATION_SPAWN;
+        return entity.getScale() == 1.5F ? SPIDER_LOCATION_SPAWN : SPIDER_MOTHER;
     }
 }

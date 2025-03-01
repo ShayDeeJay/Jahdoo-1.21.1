@@ -48,7 +48,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
     @Override
     public void getElementProjectile(ElementProjectile elementProjectile) {
         super.getElementProjectile(elementProjectile);
-        this.radius = this.getTag(QuantumDestroyerAbility.radius);
+        this.radius = this.getTag(QuantumDestroyerAbility.ENERGY_RADIUS);
         this.gravitationalPull = this.getTag(GRAVITATIONAL_PULL);
         this.lifetime = this.getTag(LIFETIME);
         if(this.element.getOwner() != null){
@@ -150,7 +150,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         compoundTag.putBoolean("full_form", this.isFullForm);
         compoundTag.putDouble(DAMAGE, this.damage);
         compoundTag.putDouble(LIFETIME, this.lifetime);
-        compoundTag.putDouble(QuantumDestroyerAbility.radius, this.radius);
+        compoundTag.putDouble(QuantumDestroyerAbility.ENERGY_RADIUS, this.radius);
         compoundTag.putDouble(GRAVITATIONAL_PULL, this.gravitationalPull);
     }
 
@@ -161,7 +161,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         this.isFullForm = compoundTag.getBoolean("full_form");
         this.damage = compoundTag.getDouble(DAMAGE);
         this.lifetime = compoundTag.getDouble(LIFETIME);
-        this.radius = compoundTag.getDouble(QuantumDestroyerAbility.radius);
+        this.radius = compoundTag.getDouble(QuantumDestroyerAbility.ENERGY_RADIUS);
         this.gravitationalPull = compoundTag.getDouble(GRAVITATIONAL_PULL);
     }
 
@@ -222,7 +222,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
                 var knockBackRes = entities.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
                 var resistance = knockBackRes != null ? knockBackRes.getValue() : 0;
                 var velocity = (gravitationalPull) - resistance;
-                EntityMovers.entityMover(this.element, entities, velocity);
+                EntityMovers.entityMoverCenter(this.element, entities, velocity);
             }
         }
     }

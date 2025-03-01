@@ -5,16 +5,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.common.items.RelicItem;
-import org.jahdoo.common.items.runes.rune_data.RuneData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.items.RelicItem;
+import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import top.theillusivec4.curios.api.SlotContext;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static net.minecraft.util.FastColor.ARGB32.color;
 
 public class TomeOfUnity extends RelicItem {
 
@@ -49,7 +47,7 @@ public class TomeOfUnity extends RelicItem {
         var lists = stack.getAttributeModifiers().modifiers().stream().toList();
         if(!lists.isEmpty()){
             for (var entry : lists) {
-                tooltips.add(RuneData.RuneHelpers.standAloneAttributes(entry));
+                tooltips.add(RuneHelpers.standAloneAttributes(entry));
             }
         }
         return list;
@@ -62,8 +60,9 @@ public class TomeOfUnity extends RelicItem {
         var list = stack.getAttributeModifiers().modifiers().stream().toList();
         if(!list.isEmpty()){
             for (var entry : list) {
-                tooltips.add(RuneData.RuneHelpers.standAloneAttributes(entry));
+                tooltips.add(RuneHelpers.standAloneAttributes(entry));
             }
         }
     }
+
 }

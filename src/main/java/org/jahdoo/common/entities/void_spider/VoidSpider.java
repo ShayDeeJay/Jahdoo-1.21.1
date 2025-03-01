@@ -1,5 +1,6 @@
 package org.jahdoo.common.entities.void_spider;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -13,7 +14,9 @@ import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.ascension.MobManager;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.abilities.frostbolts.FrostboltsAbility;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
@@ -21,6 +24,9 @@ import org.jahdoo.common.entities.TamableEntity;
 import org.jahdoo.common.registers.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.jahdoo.ascension.MobManager.spawnAroundEntity;
 import static org.jahdoo.ascension.ability.abilities.EtherealArrow.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.registers.ElementReg.*;
@@ -49,6 +55,22 @@ public class VoidSpider extends Spider implements TamableEntity {
         return mystic();
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+        onDeath();
+    }
+
+    private void onDeath() {
+        var onDeath = !this.level().isClientSide && !this.isAlive() && !triggerDeathSpawn;
+
+        if(onDeath) {
+            spawnBabies();
+            this.triggerDeathSpawn = true;
+            if(this.getScale() != 1.5F) level().setBlockAndUpdate(this.blockPosition(), Blocks.COBWEB.defaultBlockState());
+        }
+    }
+
     public static AttributeSupplier.Builder createMain() {
         return Monster.createMonsterAttributes()
             .add(Attributes.MAX_HEALTH, 22.0F)
@@ -63,15 +85,7 @@ public class VoidSpider extends Spider implements TamableEntity {
             .add(Attributes.SCALE, 0.5f);
     }
 
-    private void shooterAbility(LivingEntity target) {
-        var properties = setArrowProperties(10, 20, 1, 1);
-        var type = FrostboltsAbility.abilityId.getPath().intern();
-        var projSelect = ETHEREAL_ARROW.get().setAbilityId();
-        var arrow = new GenericProjectile(this, getX(), getY() + 1, getZ(), projSelect, properties, getElement(), type);
-        fireProjectile(target, arrow, 0.9, 1.6F);
-    }
-
-    public @NotNull Vec3 getRiddenInput(Player player, Vec3 travelVector) {
+    public Vec3 getRiddenInput(Player player, Vec3 travelVector) {
         if (this.onGround()) {
             return Vec3.ZERO;
         } else {
@@ -84,37 +98,12 @@ public class VoidSpider extends Spider implements TamableEntity {
 
     private void setParticleNova(Vec3 worldPosition){
         var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), 0.3f);
-        var directions = positionScrambler.subtract(this.position()).normalize();
+        var directions = positionScrambler.subtract(worldPosition).normalize();
         var size = Random.nextDouble(1, 3);
         var getRandomParticle = getAllParticleTypes(getElement(), 10, (float) size);
         var randomSpeed = Random.nextDouble(0.3, 0.9);
 
         sendParticles(level(), getRandomParticle, worldPosition, 0, directions.x, directions.y , directions.z, randomSpeed);
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        var nearestPlayer = this.getTarget();
-        var canShoot = isAdult && nearestPlayer != null && random.nextInt(40) == 0;
-
-        if(canShoot) shooterAbility(nearestPlayer);
-
-        if(!this.level().isClientSide && !this.isAlive() && !triggerDeathSpawn) {
-            spawnBabies();
-            this.triggerDeathSpawn = true;
-        }
-    }
-
-    private void fireProjectile(LivingEntity target, Projectile projectile, double offset, float velocity) {
-        projectile.setOwner(this);
-        double d0 = target.getX() - this.getX();
-        double d1 = target.getY(0.3333333333333333D) - projectile.getY() - offset;
-        double d2 = target.getZ() - this.getZ();
-        double d3 = Math.sqrt(d0 * d0 + d2 * d2);
-        projectile.shoot(d0, d1 + d3 * (double)0.2F, d2, velocity, 0);
-        this.playSound(SoundReg.ORB_CREATE.get(), 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-        this.level().addFreshEntity(projectile);
     }
 
     @Override
@@ -131,10 +120,30 @@ public class VoidSpider extends Spider implements TamableEntity {
 
     private void spawnBabies() {
         if(this.level().isClientSide || !isAdult) return;
-        getOuterRingOfRadiusRandom(this.position(), 1, 300, this::setParticleNova);
+
+        var credit = getKillCredit();
+        var counter = new AtomicInteger();
+
         this.playSound(SoundEvents.EVOKER_PREPARE_ATTACK, 1.5F, 1.7F);
         this.playSound(SoundReg.HEAL.get(), 1.5F, 1);
-        for (var i = 0; i < 5; i++) {
+
+        getOuterRingOfRadiusRandom(credit == null ? this.position() : credit.position(), 1, 300, this::setParticleNova);
+        spawnAroundEntity(level(), 5, BlockPos.containing(credit == null ? this.position() : credit.position()), 4, 200, counter,
+            blockPos -> {
+                var newSpider = EntityReg.VOID_SPIDER_SPAWN.get().create(level());
+                if(newSpider != null){
+                    newSpider.moveTo(blockPos.above().getCenter());
+                    level().addFreshEntity(newSpider);
+                    if(credit != null) newSpider.setTarget(credit);
+                    counter.incrementAndGet();
+                }
+            }
+        );
+
+        //If there was not enought space to spawn around the player, remainder will spawn by mother
+        if(counter.get() >= 5) return;
+        getOuterRingOfRadiusRandom(this.position(), 1, 300, this::setParticleNova);
+        for (var i = 0; i < (5 - counter.get()); i++) {
             var newSpider = EntityReg.VOID_SPIDER_SPAWN.get().create(level());
             if (newSpider != null) {
                 //Removed random spawn as to not have entities to get stuck in adjacent blocks
@@ -148,23 +157,18 @@ public class VoidSpider extends Spider implements TamableEntity {
     }
 
     static class SpiderTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
-        public SpiderTargetGoal(Spider spider, Class<T> entityTypeToTarget) {
-            super(spider, entityTypeToTarget, true);
-        }
-        public boolean canUse() {
-            return super.canUse();
-        }
+
+        public SpiderTargetGoal(Spider spider, Class<T> entityTypeToTarget) { super(spider, entityTypeToTarget, true); }
+
+        public boolean canUse() { return super.canUse(); }
+
     }
 
     static class SpiderAttackGoal extends MeleeAttackGoal {
 
-        public SpiderAttackGoal(Spider spider) {
-            super(spider, 1.0F, true);
-        }
+        public SpiderAttackGoal(Spider spider) { super(spider, 1.0F, true); }
 
-        public boolean canUse() {
-            return super.canUse() && !this.mob.isVehicle();
-        }
+        public boolean canUse() { return super.canUse() && !this.mob.isVehicle();}
 
         public boolean canContinueToUse() {
             if (Random.nextInt(100) == 0) {

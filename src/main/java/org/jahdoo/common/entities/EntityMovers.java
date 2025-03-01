@@ -21,26 +21,30 @@ public class EntityMovers {
         }
     }
 
-    public static void entityMoverNoVertical(Entity receiver, Entity target, double velocity) {
-        double resistance = 0.9;
+    public static void entityMoverCenter(Entity receiver, Entity target, double velocity) {
+        double resistance = 0.86 ;
         double directionX = receiver.getX() - target.getX();
-        double directionY = receiver.getY() - target.getY();
+        double directionY = receiver.getY() - target.getY() - 0.4;
         double directionZ = receiver.getZ() - target.getZ();
 
         double directionLength = Math.sqrt(directionX * directionX + directionY * directionY + directionZ * directionZ);
         directionX /= directionLength;
+        directionY /= directionLength;
         directionZ /= directionLength;
 
         directionX *= velocity;
+        directionY *= velocity;
         directionZ *= velocity;
 
         double currentSpeedX = target.getDeltaMovement().x;
+        double currentSpeedY = target.getDeltaMovement().y;
         double currentSpeedZ = target.getDeltaMovement().z;
 
         double newSpeedX = directionX * (1 - resistance) + currentSpeedX * resistance;
+        double newSpeedY = directionY * (1 - resistance) + currentSpeedY * resistance;
         double newSpeedZ = directionZ * (1 - resistance) + currentSpeedZ * resistance;
 
-        target.setDeltaMovement(newSpeedX, target.getDeltaMovement().y, newSpeedZ);
+        target.setDeltaMovement(newSpeedX, newSpeedY, newSpeedZ);
     }
 
     public static void entityMover(Entity receiver, Entity target, double velocity) {

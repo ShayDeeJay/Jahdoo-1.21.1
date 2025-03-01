@@ -22,6 +22,7 @@ import static org.jahdoo.common.components.DataComponentHelper.*;
 import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
 
 public class WandBlockMenu extends AbstractInternalContainer {
+
     public int slotsY = -10;
     public int yOffset = 24;
     public int xOffset = 0;
@@ -31,7 +32,6 @@ public class WandBlockMenu extends AbstractInternalContainer {
     public WandBlockMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
         super(MenuReg.WAND_BLOCK_MENU.get(), id, inv, extraData);
         this.addSlotsInGridLayout();
-
     }
 
     public WandBlockMenu(int id, Inventory inv, AbstractBEInventory entity, ContainerData data) {

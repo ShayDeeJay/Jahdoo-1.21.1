@@ -14,7 +14,7 @@ import org.jahdoo.common.registers.ComponentReg;
 
 import java.util.List;
 
-import static org.jahdoo.common.items.runes.rune_data.RuneData.RuneHelpers.getNameWithStyle;
+import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getNameWithStyle;
 import static org.jahdoo.common.items.runes.RuneItemHelper.hoverToolTip;
 import static org.jahdoo.common.items.runes.RuneItemHelper.rollRandomRune;
 

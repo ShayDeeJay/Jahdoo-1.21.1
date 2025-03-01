@@ -28,7 +28,7 @@ import org.jahdoo.common.block.wand.WandBlockEntity;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
-import org.jahdoo.common.items.runes.rune_data.RuneData;
+import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ComponentReg;
@@ -242,7 +242,7 @@ public class WandItemHelper {
             var runeHolder = stack.get(RUNE_HOLDER);
             var maxSize = runeHolder != null ? runeHolder.runeSlots().size() : list.size();
             for (var entry : list.subList(3, Math.max(maxSize, 4))) {
-                toolTip.add(RuneData.RuneHelpers.standAloneAttributes(entry));
+                toolTip.add(RuneHelpers.standAloneAttributes(entry));
             }
             toolTip.add(Component.empty());
         }

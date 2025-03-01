@@ -9,18 +9,19 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.attachments.AbstractAttachment;
 import org.jahdoo.ascension.attachments.CastingData;
-import org.jahdoo.common.items.runes.rune_data.RuneData;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.networking.packet.client2server.MageFlightPacketS2CPacket;
 import org.jahdoo.common.networking.packet.server2client.MageFlightDataSyncS2CPacket;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
 
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.registers.AttachmentReg.*;
+import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
+import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
 import static org.jahdoo.common.registers.ElementReg.fromWand;
 
 public class MageFlight implements AbstractAttachment {
@@ -68,7 +69,7 @@ public class MageFlight implements AbstractAttachment {
     }
 
     private boolean cancelAttempt(Player player, ItemStack wandItem) {
-        if(!RuneData.RuneHelpers.canMageFlight(player) || player.onGround() || player.isFallFlying()) {
+        if(!RuneHelpers.canMageFlight(player) || player.onGround() || player.isFallFlying()) {
             player.getAbilities().mayfly = false;
             this.isFlying = false;
             return true;

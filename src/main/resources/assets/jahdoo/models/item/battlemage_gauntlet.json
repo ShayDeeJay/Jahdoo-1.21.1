@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"2": "jahdoo:item/archmage_gauntlet",
-		"particle": "jahdoo:item/archmage_gauntlet"
+		"2": "jahdoo:item/battlemage_gauntlet",
+		"particle": "jahdoo:item/battlemage_gauntlet"
 	},
 	"elements": [
 		{

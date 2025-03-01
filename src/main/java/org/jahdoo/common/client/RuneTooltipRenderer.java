@@ -1,29 +1,26 @@
 package org.jahdoo.common.client;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.ascension.utils.ColourStore;
 import org.joml.Matrix4f;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.minecraft.client.Minecraft.*;
-import static net.minecraft.client.gui.Font.*;
-import static net.minecraft.client.gui.Font.DisplayMode.*;
+import static net.minecraft.client.Minecraft.getInstance;
+import static net.minecraft.client.gui.Font.DisplayMode.SEE_THROUGH;
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
-import static net.minecraft.client.renderer.MultiBufferSource.*;
-import static org.jahdoo.ascension.utils.ColourStore.*;
-import static org.jahdoo.common.items.runes.rune_data.RuneData.RuneHelpers.standAloneAttributes;
+import static net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
+import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.standAloneAttributes;
 
 public class RuneTooltipRenderer implements ClientTooltipComponent {
 
+    public record RuneComponent(ItemStack socket, List<ItemStack> runes) implements TooltipComponent {}
     private final int spacing = getInstance().font.lineHeight + 4;
     private final RuneComponent component;
 
@@ -76,5 +73,4 @@ public class RuneTooltipRenderer implements ClientTooltipComponent {
         }
     }
 
-    public record RuneComponent(ItemStack socket, List<ItemStack> runes) implements TooltipComponent {}
 }

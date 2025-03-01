@@ -29,7 +29,7 @@ import static org.jahdoo.ascension.trading_post.ShoppingRunes.*;
 import static org.jahdoo.ascension.trading_post.ShoppingRunes.getEternalEliteRunes;
 import static org.jahdoo.ascension.trading_post.ShoppingWeapon.enchantSword;
 import static org.jahdoo.ascension.trading_post.ShoppingWeapon.getElementalSword;
-import static org.jahdoo.common.items.runes.rune_data.RuneData.RuneHelpers.generateFullRune;
+import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.generateFullRune;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 import static org.jahdoo.common.registers.ElementReg.*;

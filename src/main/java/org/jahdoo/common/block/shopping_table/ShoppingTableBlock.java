@@ -3,12 +3,11 @@ package org.jahdoo.common.block.shopping_table;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -26,9 +25,11 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.trading_post.ItemCosts;
-import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jetbrains.annotations.Nullable;
+
+import static net.minecraft.network.chat.Component.literal;
+import static org.jahdoo.common.items.augments.AugmentItemHelper.throwOrAddItem;
 
 public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -94,29 +95,37 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
         );
     }
 
-    public static boolean hasEnoughToBuy(Player player, Item item, int quantity) {
+    public static boolean hasEnoughToBuy(Player player, ItemStack item, int quantity) {
         var count = 0;
+        var compItem = item.get(DataComponents.CUSTOM_MODEL_DATA);
+
         for (var stack : player.getInventory().items) {
-            if (stack.getItem() == item) count += stack.getCount();
+            var invItem = stack.get(DataComponents.CUSTOM_MODEL_DATA);
+            if(invItem != null && compItem != null) {
+                if (stack.getItem() == item.getItem() && invItem.value() == compItem.value()) count += stack.getCount();
+            }
             if (count >= quantity) break;
         }
 
         if (count < quantity) return false;
         var remaining = quantity;
 
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() == item) {
-                var stackSize = stack.getCount();
+        for (var stack : player.getInventory().items) {
+            var invItem = stack.get(DataComponents.CUSTOM_MODEL_DATA);
+            if(invItem != null && compItem != null){
+                if (stack.getItem() == item.getItem() &&  invItem.value() == compItem.value()) {
+                    var stackSize = stack.getCount();
 
-                if (stackSize <= remaining) {
-                    stack.setCount(0);
-                    remaining -= stackSize;
-                } else {
-                    stack.shrink(remaining);
-                    remaining = 0;
+                    if (stackSize <= remaining) {
+                        stack.setCount(0);
+                        remaining -= stackSize;
+                    } else {
+                        stack.shrink(remaining);
+                        remaining = 0;
+                    }
+
+                    if (remaining <= 0) break;
                 }
-
-                if (remaining <= 0) break;
             }
         }
 
@@ -138,28 +147,28 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
         var success = ItemInteractionResult.SUCCESS;
 
         if(!shoppingTable.canPurchase()) return success;
-        var enoughToBuy = hasEnoughToBuy(player, shoppingTable.getCurrencyType().getItem(), shoppingTable.getCost());
+        var enoughToBuy = hasEnoughToBuy(player, shoppingTable.getCurrencyType(), shoppingTable.getCost());
 
         if(enoughToBuy){
             var isRandomisedTable = state.getValue(TEXTURE) == 3;
-            if (isRandomisedTable) {
-                shoppingTable.insertRandomItem();
-            }
+            if (isRandomisedTable) shoppingTable.insertRandomItem();
 
             var item = shoppingTable.getItem();
             var stackInSlot = item.extractItem(0, item.getStackInSlot(0).getCount(), false);
             if (!stackInSlot.isEmpty()) {
                 player.playSound(SoundEvents.ITEM_PICKUP, 0.5F, 0.8F);
-                AugmentItemHelper.throwOrAddItem(player, stackInSlot);
+                throwOrAddItem(player, stackInSlot);
                 item.setStackInSlot(1, ItemStack.EMPTY);
                 shoppingTable.itemCosts = ItemCosts.EMPTY_COST;
             }
+
         } else {
-            if(level.isClientSide) player.displayClientMessage(Component.literal("Insufficient Funds"), true);
+            if(level.isClientSide) player.displayClientMessage(literal("Insufficient Funds"), true);
         }
 
         return success;
     }
 
 }
+
 

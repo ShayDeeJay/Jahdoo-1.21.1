@@ -128,7 +128,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
     }
 
     @Override
-    protected void renderTooltip(@NotNull GuiGraphics guiGraphics, int pX, int pY) {
+    protected void renderTooltip(GuiGraphics guiGraphics, int pX, int pY) {
         if(this.hoveredSlot == null) return;
         if(this.hoveredSlot.getItem().getItem() instanceof Augment) {
             if(this.wandBlockMenu.getCarried().isEmpty()){
@@ -248,7 +248,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
                 guiGraphics.pose().translate(0,0,280);
 
                 guiGraphics.blit(
-                    IN_WAND, slotX1 - 80, slotY1 - 80 , 0, 0,
+                    IN_WAND, slotX1 - 80, slotY1 - 74 , 0, 0,
                     imageWidth, imageHeight, imageWidth, imageHeight
                 );
 

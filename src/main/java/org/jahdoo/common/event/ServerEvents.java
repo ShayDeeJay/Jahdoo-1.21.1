@@ -1,11 +1,13 @@
 package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomModelData;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -29,6 +31,7 @@ import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
 import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
+import org.jahdoo.ascension.trading_post.ItemCosts;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
@@ -191,14 +194,14 @@ public class ServerEvents {
             var max = Math.max(1, bonus);
             if(entity instanceof CustomZombie){
                 if(Random.nextInt(0, Math.min(10, max)) == 0){
-                    var stack = new ItemStack(ItemReg.BRONZE_COIN).copyWithCount(Math.max(1, 10 - bonus));
+                    var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
                     BehaviorUtils.throwItem(entity, stack, entity.position());
                 }
             }
 
             if(entity instanceof CustomSkeleton){
                 if(Random.nextInt(0,Math.min(5, max)) == 0){
-                    var stack = new ItemStack(ItemReg.BRONZE_COIN).copyWithCount(Math.max(1, 20 - bonus));
+                    var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 20 - bonus));
                     BehaviorUtils.throwItem(entity, stack, entity.position());
                 }
             }
@@ -206,7 +209,8 @@ public class ServerEvents {
             if(entity instanceof EternalWizard wizard){
                 if(wizard.getOwner() == null){
                     if (Random.nextInt(0,Math.min(10 , max)) == 0) {
-                        var stack = new ItemStack(ItemReg.SILVER_COIN).copyWithCount(Math.max(1, 10 - bonus));
+                        var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
+                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(ItemCosts.SILVER_COIN));
                         BehaviorUtils.throwItem(entity, stack, entity.position());
                     }
                 }

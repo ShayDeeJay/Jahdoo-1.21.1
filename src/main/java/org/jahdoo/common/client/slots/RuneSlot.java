@@ -14,7 +14,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.jahdoo.common.items.runes.rune_data.RuneData.RuneHelpers.getCostFromRune;
+import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getCostFromRune;
 import static org.jahdoo.common.registers.ComponentReg.*;
 
 public class RuneSlot extends SlotItemHandler {

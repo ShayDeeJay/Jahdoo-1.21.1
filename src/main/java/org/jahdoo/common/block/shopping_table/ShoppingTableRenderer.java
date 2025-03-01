@@ -3,27 +3,24 @@ package org.jahdoo.common.block.shopping_table;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.ascension.utils.ColourStore;
 import org.joml.Matrix4f;
 
-import static net.minecraft.client.gui.Font.*;
-import static net.minecraft.client.gui.Font.DisplayMode.*;
-import static org.jahdoo.ascension.utils.ColourStore.*;
+import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
+import static net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
+import static net.minecraft.client.renderer.texture.OverlayTexture.*;
+import static net.minecraft.world.item.ItemDisplayContext.*;
+import static org.jahdoo.ascension.utils.ColourStore.OFF_WHITE;
 import static org.jahdoo.common.block.shopping_table.DisplayDirection.*;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 
@@ -31,7 +28,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
 
     private final BlockEntityRenderDispatcher entityRenderDispatcher;
 
-    public ShoppingTableRenderer(BlockEntityRendererProvider.Context context) {
+    public ShoppingTableRenderer(Context context) {
         this.entityRenderDispatcher = context.getBlockEntityRenderDispatcher();
     }
 
@@ -42,12 +39,13 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
         var direction = DisplayDirection.fromMCDirection(entity.getBlockState().getValue(ShoppingTableBlock.FACING));
 
         if(entity.getBlockState().getValue(TEXTURE) == 2/*Set bool as render case, made for better items*/){
-            poseStack.pushPose();
             var scale = 1.99F;
+            var stack = new ItemStack(Blocks.TINTED_GLASS.asItem());
+
+            poseStack.pushPose();
             poseStack.translate(0.5, 1.31, 0.5);
             poseStack.scale(scale, scale, scale);
-            var stack = new ItemStack(Blocks.TINTED_GLASS.asItem());
-            itemRenderer.renderStatic(stack, ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
+            itemRenderer.renderStatic(stack, FIXED, packedLight, NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
             poseStack.popPose();
         }
 
@@ -57,17 +55,18 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
     }
 
     private void renderPrice(ShoppingTableEntity entity, PoseStack poseStack, MultiBufferSource source, int packedLight, ItemRenderer renderer, DisplayDirection direction) {
-        var itemStack1 = entity.getCurrencyType() == null ? ItemStack.EMPTY : entity.getCurrencyType();
+        var itemStack1 = entity.getCurrencyType() == null || entity.getItem().getStackInSlot(0).isEmpty() ? ItemStack.EMPTY : entity.getCurrencyType();
         var number = 0.5f;
 
         if(!itemStack1.isEmpty()){
             poseStack.pushPose();
             renderCostText(Component.literal(String.valueOf(entity.getCost())), poseStack, source, -1, direction);
             poseStack.translate(direction.x(), number, direction.z());
+
             var x = 0.6f;
             poseStack.scale(x, x, x);
             poseStack.mulPose(Axis.YP.rotationDegrees(direction.direction()));
-            renderer.renderStatic(itemStack1, ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
+            renderer.renderStatic(itemStack1, FIXED, packedLight, NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
             poseStack.popPose();
         }
 
@@ -84,7 +83,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
             poseStack.translate(0.5f, height, 0.5f);
             poseStack.scale(scale, scale, scale);
             poseStack.mulPose(Axis.YP.rotationDegrees(direction.direction()).invert());
-            renderer.renderStatic(itemStack1, ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
+            renderer.renderStatic(itemStack1, FIXED, packedLight, NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
             poseStack.popPose();
         }
     }

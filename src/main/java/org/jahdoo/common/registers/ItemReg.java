@@ -140,10 +140,10 @@ public class ItemReg {
         complexItem("mage_boots", () -> new MageArmor(BOOTS));
 
     //Coins
-    public static final DeferredHolder<Item, Item> BRONZE_COIN = ITEMS.register("bronze_coin", CoinItem::new);
-    public static final DeferredHolder<Item, Item> SILVER_COIN = ITEMS.register("silver_coin", CoinItem::new);
-    public static final DeferredHolder<Item, Item> GOLD_COIN = ITEMS.register("gold_coin", CoinItem::new);
-    public static final DeferredHolder<Item, Item> PLATINUM_COIN = ITEMS.register("platinum_coin", CoinItem::new);
+    public static final DeferredHolder<Item, Item> COIN = ITEMS.register("coin", CoinItem::new);
+//    public static final DeferredHolder<Item, Item> SILVER_COIN = ITEMS.register("silver_coin", CoinItem::new);
+//    public static final DeferredHolder<Item, Item> GOLD_COIN = ITEMS.register("gold_coin", CoinItem::new);
+//    public static final DeferredHolder<Item, Item> PLATINUM_COIN = ITEMS.register("platinum_coin", CoinItem::new);
 
     public static DeferredHolder<Item, Item> complexItem(String name, Supplier<? extends Item> sup){
         return ITEMS.register(name, sup);

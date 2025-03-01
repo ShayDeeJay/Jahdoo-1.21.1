@@ -19,7 +19,7 @@ import static org.jahdoo.common.registers.EntityDataReg.*;
 public class QuantumDestroyerAbility extends AbilityRegistrar {
 
     public static final ResourceLocation abilityId = Helpers.res("quantum_destroyer");
-    public static final String radius = "Energy Radius";
+    public static final String ENERGY_RADIUS = "Energy Radius";
 
     @Override
     public JahdooRarity rarity() {
@@ -69,10 +69,10 @@ public class QuantumDestroyerAbility extends AbilityRegistrar {
             .setStaticMana(160)
             .setStaticCooldown(6000)
             .setDamage(20, 10, 2)
-            .setCastingDistance(30,10,5)
+            .setCastingDistance(30, 10, 5)
             .setLifetime(200, 100, 20)
-            .setGravitationalPull(2,1, 0.2)
-            .setAbilityTagModifiersRandom(radius, 6,3, true, 1)
+            .setGravitationalPull(2, 1, 0.2)
+            .setAbilityTagModifiersRandom(ENERGY_RADIUS, 6, 3, true, 1)
             .build();
     }
 

@@ -1,4 +1,4 @@
-package org.jahdoo.ascension.utils;
+package org.jahdoo.common;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -50,6 +50,7 @@ public class CreativeTab {
                 registerAmulets(outPut);
                 registerXpOrbs(outPut);
                 registerMagnets(outPut);
+                registerCoins(outPut);
 
                 outPut.accept(ANCIENT_GLAIVE.get());
                 outPut.accept(AUGMENT.get());
@@ -59,10 +60,6 @@ public class CreativeTab {
                 outPut.accept(AUGMENT_HYPER_CORE.get());
                 outPut.accept(TOME_OF_UNITY.get());
                 outPut.accept(BATTLEMAGE_GAUNTLET.get());
-                outPut.accept(BRONZE_COIN.get());
-                outPut.accept(SILVER_COIN.get());
-                outPut.accept(GOLD_COIN.get());
-                outPut.accept(PLATINUM_COIN.get());
                 outPut.accept(WIZARD_HELMET.get());
                 outPut.accept(WIZARD_CHESTPLATE.get());
                 outPut.accept(WIZARD_LEGGINGS.get());
@@ -92,12 +89,25 @@ public class CreativeTab {
         }
     }
 
+    private static void registerCoins(CreativeModeTab.Output pOutput) {
+        pOutput.accept(COIN.get());
+
+        for(int i = 1; i < 4; i++) {
+            var xpOrb = new ItemStack(COIN.get());
+            var customModelData = new CustomModelData(i);
+
+            xpOrb.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
+            pOutput.accept(xpOrb);
+        }
+    }
+
     private static void registerXpOrbs(CreativeModeTab.Output pOutput) {
         pOutput.accept(EXPERIENCE_ORB.get());
 
         for(int i = 1; i < 3; i++) {
             var xpOrb = new ItemStack(EXPERIENCE_ORB.get());
             var customModelData = new CustomModelData(i);
+
             xpOrb.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
             pOutput.accept(xpOrb);
         }
@@ -109,6 +119,7 @@ public class CreativeTab {
         for(int i = 1; i < 5; i++) {
             var magnet = new ItemStack(MAGNET.get());
             var customModelData = new CustomModelData(i);
+
             magnet.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
             MagnetData.setDataByType(magnet);
             pOutput.accept(magnet);
@@ -123,6 +134,7 @@ public class CreativeTab {
         for (int i = 1; i < 4; i++){
             var basePendent = new ItemStack(PENDENT.get());
             var customModelData = new CustomModelData(i);
+
             basePendent.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
             RuneHolder.createNewRuneSlots(basePendent, i+1, 0);
             pOutput.accept(basePendent);

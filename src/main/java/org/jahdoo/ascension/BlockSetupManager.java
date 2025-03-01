@@ -12,7 +12,7 @@ import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.trading_post.ItemCosts;
 import org.jahdoo.common.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
-import org.jahdoo.common.items.runes.rune_data.RuneData;
+import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 
@@ -131,7 +131,7 @@ public class BlockSetupManager {
                     }
                     case 6 -> {
                         var randomLootItem = new ItemStack(RUNE);
-                        RuneData.RuneHelpers.generateRandomTypAttribute(randomLootItem, null);
+                        RuneHelpers.generateRandomTypAttribute(randomLootItem, null);
                         entity.setItem(randomLootItem);
                         entity.setCost(ItemCosts.getGoldCost(10));
                     }

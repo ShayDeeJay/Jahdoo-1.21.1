@@ -7,14 +7,13 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.attachments.AbstractAttachment;
 import org.jahdoo.common.items.runes.RuneItem;
+import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
-
-import static org.jahdoo.common.items.runes.rune_data.RuneData.*;
 
 public class SaveData implements AbstractAttachment {
 

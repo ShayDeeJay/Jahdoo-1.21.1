@@ -13,21 +13,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
+import org.jahdoo.common.registers.SoundReg;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jahdoo.common.entities.EntityMovers.entityMover;
-import static org.jahdoo.common.items.runes.rune_data.RuneData.RuneHelpers;
-import static org.jahdoo.common.registers.ComponentReg.MAGNET_DATA;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.common.entities.EntityMovers.entityMover;
+import static org.jahdoo.common.registers.ComponentReg.MAGNET_DATA;
 
 public class Magnet extends Item implements ICurioItem, JahdooItem {
     public Magnet() {

@@ -190,8 +190,8 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
     private void spawnEternalWizard(){
         if (this.ancientGolem == null && cloud.getOwner() != null) {
             var ancientGolemLocal = new AncientGolem(cloud.level(), (Player) cloud.getOwner(), damage, effectDuration, effectStrength, (int) lifeTime, effectChance);
-
             var spawnPosition = cloud.position().add(0, -1.5, 0);
+
             ancientGolemLocal.setInvulnerable(true);
             ancientGolemLocal.moveTo(spawnPosition);
             ancientGolemLocal.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemReg.WAND_ITEM_VITALITY.get()));
