@@ -33,7 +33,7 @@ import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.AttributeReg.CAST_HEAL;
 import static org.jahdoo.common.registers.ComponentReg.RUNE_DATA;
 import static org.jahdoo.common.registers.ElementReg.*;
-import static org.jahdoo.common.registers.ElementReg.getRandomElement;
+import static org.jahdoo.common.registers.ElementReg.random;
 
 public class RuneHelpers {
 
@@ -114,6 +114,10 @@ public class RuneHelpers {
             return ColourStore.AETHER_BLUE;
         } else if (attributeName.contains("skills")) {
             return ColourStore.PERK_GREEN;
+        }else if (attributeName.contains("max_health")){
+            return ColourStore.MAGNET_STRENGTH_RED;
+        }else if (attributeName.contains("max_absorption")){
+            return ColourStore.ABSORPTION_YELLOW;
         }
 
         return -1;
@@ -172,7 +176,7 @@ public class RuneHelpers {
 
     public static void generateRandomTypAttribute(ItemStack stack, @Nullable JahdooRarity withRarity) {
         if(stack.getAttributeModifiers().modifiers().isEmpty()){
-            var getElement = getRandomElement();
+            var getElement = random();
             var rarity = withRarity != null ? withRarity : JahdooRarity.getRarity();
             var attributes = rarity.getAttributes();
             var id = rarity.getId();

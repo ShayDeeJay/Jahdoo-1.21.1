@@ -138,7 +138,7 @@ public class WandItemHelper {
         var getElement = fromWand(wandType.getItem());
         return getElement.map(
             element -> withStyleComponentTrans(
-                "wandHelper.jahdoo.type",
+                "wandHelper.jahdoo.colour",
                 element.partColourB(),
                 element.name()
             )

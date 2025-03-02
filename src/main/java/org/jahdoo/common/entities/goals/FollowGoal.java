@@ -38,7 +38,7 @@ public class FollowGoal extends Goal {
         this.canFly = canFly;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         if (!(tamable.getNavigation() instanceof GroundPathNavigation) && !(tamable.getNavigation() instanceof FlyingPathNavigation)) {
-            throw new IllegalArgumentException("Unsupported mob type for FollowOwnerGoal");
+            throw new IllegalArgumentException("Unsupported mob colour for FollowOwnerGoal");
         }
     }
 

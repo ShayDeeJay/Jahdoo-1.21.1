@@ -43,14 +43,14 @@ public class ElementReg {
         return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
     }
 
-    public static List<AbstractElement> getElementsWithout(AbstractElement...elements) {
+    public static List<AbstractElement> getWithout(AbstractElement...elements) {
         return REGISTRY.stream()
             .filter(e -> !Arrays.stream(elements).toList().contains(e))
             .filter(e -> e != utility())
             .toList();
     }
 
-    public static AbstractElement getRandomElement() {
+    public static AbstractElement random() {
         var list = REGISTRY.stream()
             .filter(e -> e != utility())
             .toList();
@@ -95,7 +95,6 @@ public class ElementReg {
 
     public static final DeferredHolder<AbstractElement, AbstractElement> VITALITY =
         registerElement(Vitality::new);
-
 
     public static void register(IEventBus eventBus) {
         ELEMENT.register(eventBus);

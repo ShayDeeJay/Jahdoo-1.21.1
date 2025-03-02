@@ -91,7 +91,7 @@ public class MageFlight implements AbstractAttachment {
     }
 
     private void mageFlightAnimation(ItemStack wandItem, Player player){
-        var element = fromWand(wandItem.getItem()).orElse(ElementReg.getRandomElement());
+        var element = fromWand(wandItem.getItem()).orElse(ElementReg.random());
         var part1 = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 2, 0.2f, true);
         var part2 = bakedParticleOptions(element.id(), 2, 1f, false);
         var getMovement = player.getDeltaMovement().y > -0.5;

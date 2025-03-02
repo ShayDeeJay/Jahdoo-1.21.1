@@ -1,5 +1,6 @@
 package org.jahdoo.common.items.wand;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -10,6 +11,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import org.jahdoo.common.client.overlay.ChoiceSelectionScreen;
+import org.jahdoo.common.client.overlay.StatScreen;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.registers.BlockReg;
@@ -32,16 +35,9 @@ import static org.jahdoo.common.items.wand.WandItemHelper.*;
 import static org.jahdoo.common.registers.ComponentReg.*;
 
 public class WandItem extends BlockItem implements GeoItem, JahdooItem {
+
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public String location;
-
-    public static Properties wandProperties(){
-        return new Item.Properties()
-            .stacksTo(1)
-            .component(ComponentReg.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
-            .component(WAND_DATA.get(), WandData.DEFAULT)
-            .fireResistant();
-    }
 
     public WandItem(String location) {
         super(BlockReg.WAND.get(), wandProperties());
@@ -90,6 +86,14 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         bonusModifierTooltip(stack, toolTip, context);
     }
 
+    public static Properties wandProperties(){
+        return new Item.Properties()
+            .stacksTo(1)
+            .component(ComponentReg.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
+            .component(WAND_DATA.get(), WandData.DEFAULT)
+            .fireResistant();
+    }
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, 0, state -> state.setAndContinue(IDLE_ANIMATION)));
@@ -118,7 +122,11 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         var item = player.getItemInHand(interactionHand);
 
         if(level.isClientSide){
-//            Minecraft.getInstance().setScreen(new ChoiceSelectionScreen());
+            if(player.isShiftKeyDown()){
+                Minecraft.getInstance().setScreen(new StatScreen(player));
+            } else {
+                Minecraft.getInstance().setScreen(new ChoiceSelectionScreen());
+            }
         }
 
         if (canOffHand(player, interactionHand, true)) {

@@ -33,7 +33,7 @@ import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.generateFullRu
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 import static org.jahdoo.common.registers.ElementReg.*;
-import static org.jahdoo.common.registers.ElementReg.getRandomElement;
+import static org.jahdoo.common.registers.ElementReg.random;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.listRandom;
@@ -54,7 +54,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
         var magnetStack = new ItemStack(ItemReg.MAGNET.get());
         var getMagnet = magnetItem(getRarity, magnetStack);
 
-        addAttribute(ElementReg.getRandomElement(), getMagnet);
+        addAttribute(ElementReg.random(), getMagnet);
         return new ShoppingItems(getMagnet, ItemCosts.getGoldCost(110));
     }
 
@@ -104,7 +104,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
 
     public static ShoppingItems shoppingRuneItem(){
 
-        var getElement = getRandomElement();
+        var getElement = random();
         var rarity = JahdooRarity.UNIQUE;
         var attributes = rarity.getAttributes();
         var id = JahdooRarity.ETERNAL.getId();
@@ -140,7 +140,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
     }
 
     public static ShoppingItems shoppingWandItem(){
-        var element = getRandomElement();
+        var element = random();
         var randomWand = element.getWand();
         var wand = randomWand != null ? randomWand : ItemReg.WAND_ITEM_FROST.get();
         var itemStack = new ItemStack(wand);
@@ -169,7 +169,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
         replaceOrAddAttribute(itemStack, manaReductionName, manaReductionType, manaReductionValue, MAINHAND, false);
         replaceOrAddAttribute(itemStack, damageAmplifierName, damageAmplifierType, damageAmplifierValue, MAINHAND, false);
 
-        var altElement = Helpers.listRandom(getElementsWithout(element));
+        var altElement = Helpers.listRandom(getWithout(element));
         addAttribute(altElement, itemStack);
         return new ShoppingItems(itemStack, ItemCosts.getPlatinumCost(200));
     }

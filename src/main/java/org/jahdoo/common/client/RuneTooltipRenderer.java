@@ -50,6 +50,7 @@ public class RuneTooltipRenderer implements ClientTooltipComponent {
             var components = standAloneAttributes(itemStack);
             var getLabel = itemStack.isEmpty() ? Component.literal("Empty Slot") : components;
             var posY = mouseY + 3 + this.spacing * spacer.get();
+
             font.drawInBatch(getLabel, mouseX + 15, posY, HEADER_COLOUR, true, matrix, bufferSource, SEE_THROUGH, 0, FULL_BRIGHT);
             spacer.set(spacer.get() + 1);
         }

@@ -14,7 +14,7 @@ import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class ShoppingWeapon {
 
-    public static @NotNull ItemStack getElementalSword() {
+    public static ItemStack getElementalSword() {
         var sword = new ItemStack(ItemReg.ELEMENTAL_SWORD);
         sword.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(Random.nextInt(1,5)));
         return sword;
