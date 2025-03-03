@@ -7,8 +7,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.gui.AbilityWheelMenu;
-import org.jahdoo.common.networking.packet.client2server.SelectedAbilityC2SPacket;
-import org.jahdoo.common.networking.packet.client2server.StopUsingC2SPacket;
+import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
+import org.jahdoo.common.networking.client2server.StopUsingC2SP;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.ascension.utils.ModTags;
 
@@ -42,8 +42,8 @@ public class WandAbilitySelector {
                 var a1 = getAbility.getFirst();
                 var a = withStyleComponent(a1.getAbilityName(),SharedUI.getElementColour(a1, playerHandItem));
                 player.displayClientMessage(a, true);
-                PacketDistributor.sendToServer(new StopUsingC2SPacket());
-                PacketDistributor.sendToServer(new SelectedAbilityC2SPacket(arrangedAbilities.get(keyNum - 1)));
+                PacketDistributor.sendToServer(new StopUsingC2SP());
+                PacketDistributor.sendToServer(new SelectAbilityC2SP(arrangedAbilities.get(keyNum - 1)));
 
             } else displayUnassignedKeyMessage(player, keyNum);
         }  else displayUnassignedKeyMessage(player, keyNum);

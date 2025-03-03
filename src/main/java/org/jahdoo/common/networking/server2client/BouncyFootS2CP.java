@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.server2client;
+package org.jahdoo.common.networking.server2client;
 
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,16 +12,16 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 
-public class BouncyFootDataSyncS2CPacket implements CustomPacketPayload {
-    public static final Type<BouncyFootDataSyncS2CPacket> TYPE = new Type<>(Helpers.res("sync_bouncy_foot"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, BouncyFootDataSyncS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(BouncyFootDataSyncS2CPacket::toBytes, BouncyFootDataSyncS2CPacket::new);
+public class BouncyFootS2CP implements CustomPacketPayload {
+    public static final Type<BouncyFootS2CP> TYPE = new Type<>(Helpers.res("sync_bouncy_foot"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, BouncyFootS2CP> STREAM_CODEC = CustomPacketPayload.codec(BouncyFootS2CP::toBytes, BouncyFootS2CP::new);
 
     private final int effectTimer;
     private final double previousDelta;
     private final double currentDelta;
     private final float maxFall;
 
-    public BouncyFootDataSyncS2CPacket(
+    public BouncyFootS2CP(
         int effectTimer,
         double previousDelta,
         double currentDelta,
@@ -33,7 +33,7 @@ public class BouncyFootDataSyncS2CPacket implements CustomPacketPayload {
         this.maxFall = maxFall;
     }
 
-    public BouncyFootDataSyncS2CPacket(FriendlyByteBuf buf) {
+    public BouncyFootS2CP(FriendlyByteBuf buf) {
         this.effectTimer = buf.readInt();
         this.previousDelta = buf.readDouble();
         this.currentDelta = buf.readDouble();

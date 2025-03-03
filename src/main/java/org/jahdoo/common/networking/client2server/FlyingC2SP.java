@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.client2server;
+package org.jahdoo.common.networking.client2server;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -10,16 +10,16 @@ import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
 
-public class FlyingPacketC2SPacket implements CustomPacketPayload{
-    public static final Type<FlyingPacketC2SPacket> TYPE = new Type<>(Helpers.res("send_flying_update"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, FlyingPacketC2SPacket> STREAM_CODEC = CustomPacketPayload.codec(FlyingPacketC2SPacket::toBytes, FlyingPacketC2SPacket::new);
-    private boolean isJumpKeyDown;
+public class FlyingC2SP implements CustomPacketPayload{
+    public static final Type<FlyingC2SP> TYPE = new Type<>(Helpers.res("send_flying_update"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, FlyingC2SP> STREAM_CODEC = CustomPacketPayload.codec(FlyingC2SP::toBytes, FlyingC2SP::new);
+    private final boolean isJumpKeyDown;
 
-    public FlyingPacketC2SPacket(boolean isJumpKeyDown) {
+    public FlyingC2SP(boolean isJumpKeyDown) {
         this.isJumpKeyDown = isJumpKeyDown;
     }
 
-    public FlyingPacketC2SPacket(FriendlyByteBuf buf) {
+    public FlyingC2SP(FriendlyByteBuf buf) {
         this.isJumpKeyDown = buf.readBoolean();
     }
 

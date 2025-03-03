@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.server2client;
+package org.jahdoo.common.networking.server2client;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,20 +11,20 @@ import org.jahdoo.common.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.ascension.utils.Helpers;
 
-public class AltarBlockS2C implements CustomPacketPayload{
-    public static final Type<AltarBlockS2C> TYPE = new Type<>(Helpers.res("altar_sync"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, AltarBlockS2C> STREAM_CODEC = CustomPacketPayload.codec(AltarBlockS2C::toBytes, AltarBlockS2C::new);
+public class AltarBlockS2CP implements CustomPacketPayload{
+    public static final Type<AltarBlockS2CP> TYPE = new Type<>(Helpers.res("altar_sync"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, AltarBlockS2CP> STREAM_CODEC = CustomPacketPayload.codec(AltarBlockS2CP::toBytes, AltarBlockS2CP::new);
     BlockPos blockPos;
     ChallengeLevelData properties;
     int privateTicks;
 
-    public AltarBlockS2C(BlockPos blockPos, ChallengeLevelData properties, int privateTicks) {
+    public AltarBlockS2CP(BlockPos blockPos, ChallengeLevelData properties, int privateTicks) {
         this.blockPos = blockPos;
         this.properties = properties;
         this.privateTicks = privateTicks;
     }
 
-    public AltarBlockS2C(FriendlyByteBuf buf) {
+    public AltarBlockS2CP(FriendlyByteBuf buf) {
         this.blockPos = buf.readBlockPos();
         this.properties = buf.readJsonWithCodec(ChallengeLevelData.CODEC);
         this.privateTicks = buf.readInt();

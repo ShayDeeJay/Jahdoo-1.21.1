@@ -7,7 +7,7 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.common.networking.packet.client2server.SyncComponentBlockC2S;
+import org.jahdoo.common.networking.client2server.SyncComponentBlockC2S;
 
 import java.util.HashMap;
 import java.util.function.Consumer;

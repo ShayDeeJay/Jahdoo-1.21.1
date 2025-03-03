@@ -22,9 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.mojang.blaze3d.systems.RenderSystem.*;
+import static org.jahdoo.ascension.utils.Maths.ticksToTime;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.SharedUI.drawStringWithBackground;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.ticksToTime;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.ElementReg.*;
 

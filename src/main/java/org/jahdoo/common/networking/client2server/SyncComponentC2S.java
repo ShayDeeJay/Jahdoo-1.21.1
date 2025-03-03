@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.client2server;
+package org.jahdoo.common.networking.client2server;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;

@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.client2server;
+package org.jahdoo.common.networking.client2server;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -14,14 +14,14 @@ import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import top.theillusivec4.curios.api.CuriosApi;
 
-public class MagnetActiveC2SPacket implements CustomPacketPayload {
-    public static final Type<MagnetActiveC2SPacket> TYPE = new Type<>(Helpers.res("active_magnet"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, MagnetActiveC2SPacket> STREAM_CODEC =
-            CustomPacketPayload.codec(MagnetActiveC2SPacket::toBytes, MagnetActiveC2SPacket::new);
+public class MagnetActiveC2SP implements CustomPacketPayload {
+    public static final Type<MagnetActiveC2SP> TYPE = new Type<>(Helpers.res("active_magnet"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, MagnetActiveC2SP> STREAM_CODEC =
+            CustomPacketPayload.codec(MagnetActiveC2SP::toBytes, MagnetActiveC2SP::new);
 
-    public MagnetActiveC2SPacket() {}
+    public MagnetActiveC2SP() {}
 
-    public MagnetActiveC2SPacket(FriendlyByteBuf buf) {}
+    public MagnetActiveC2SP(FriendlyByteBuf buf) {}
 
     public void toBytes(FriendlyByteBuf buf) {}
 

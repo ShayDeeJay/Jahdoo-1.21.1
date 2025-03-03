@@ -20,8 +20,8 @@ import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.items.wand.WandItemHelper;
-import org.jahdoo.common.networking.packet.client2server.ItemInBlockC2SPacket;
-import org.jahdoo.common.networking.packet.client2server.PlayerExperienceC2SPacket;
+import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
+import org.jahdoo.common.networking.client2server.PlayerExpC2SP;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -298,12 +298,12 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
 
         var max = Math.max(0, RuneHolder.potential(wandItemCopy) - 20);
         RuneHolder.createRefinementPotential(wandItemCopy, max);
-        PacketDistributor.sendToServer(new ItemInBlockC2SPacket(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos()));
+        PacketDistributor.sendToServer(new ItemInBlockC2SP(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos()));
 
         var player = Minecraft.getInstance().player;
         if(player != null){
             player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
-            PacketDistributor.sendToServer(new PlayerExperienceC2SPacket(player.experienceLevel - getExperienceCost()));
+            PacketDistributor.sendToServer(new PlayerExpC2SP(player.experienceLevel - getExperienceCost()));
         }
 
     }

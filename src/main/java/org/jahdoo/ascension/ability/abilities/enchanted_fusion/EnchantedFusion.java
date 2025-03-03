@@ -11,7 +11,7 @@ import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.enchanted_block.ConverterValues;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
-import org.jahdoo.common.networking.packet.server2client.EnchantedBlockS2C;
+import org.jahdoo.common.networking.server2client.EnchantedBlockS2CP;
 import org.jahdoo.common.registers.BlockReg;
 
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
@@ -52,7 +52,7 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
                 level.setBlockAndUpdate(pos, BlockReg.ENCHANTED_BLOCK.get().defaultBlockState());
                 if (level.getBlockEntity(pos) instanceof EnchantedBlockEntity enchantedBlockEntity) {
                     if (!state.isAir()) {
-                        Helpers.sendPacketsToPlayer(serverLevel, new EnchantedBlockS2C(pos, state, 0, 1000, 0));
+                        Helpers.sendPacketsToPlayer(serverLevel, new EnchantedBlockS2CP(pos, state, 0, 1000, 0));
                         enchantedBlockEntity.setBlockType(state.getBlock(), 0);
                     }
                 }

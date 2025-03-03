@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.client2server;
+package org.jahdoo.common.networking.client2server;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,20 +11,20 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.ascension.utils.Helpers;
 
-public class ItemInBlockC2SPacket implements CustomPacketPayload {
-    public static final Type<ItemInBlockC2SPacket> TYPE = new Type<>(Helpers.res("wand_data_sync"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, ItemInBlockC2SPacket> STREAM_CODEC =
-            CustomPacketPayload.codec(ItemInBlockC2SPacket::toBytes, ItemInBlockC2SPacket::new);
+public class ItemInBlockC2SP implements CustomPacketPayload {
+    public static final Type<ItemInBlockC2SP> TYPE = new Type<>(Helpers.res("wand_data_sync"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ItemInBlockC2SP> STREAM_CODEC =
+            CustomPacketPayload.codec(ItemInBlockC2SP::toBytes, ItemInBlockC2SP::new);
 
     BlockPos blockPos;
     ItemStack itemStack;
 
-    public ItemInBlockC2SPacket(ItemStack itemStack, BlockPos blockPos) {
+    public ItemInBlockC2SP(ItemStack itemStack, BlockPos blockPos) {
         this.itemStack = itemStack;
         this.blockPos = blockPos;
     }
 
-    public ItemInBlockC2SPacket(FriendlyByteBuf buf) {
+    public ItemInBlockC2SP(FriendlyByteBuf buf) {
         this.blockPos = buf.readBlockPos();
         this.itemStack = buf.readJsonWithCodec(ItemStack.OPTIONAL_CODEC);
     }

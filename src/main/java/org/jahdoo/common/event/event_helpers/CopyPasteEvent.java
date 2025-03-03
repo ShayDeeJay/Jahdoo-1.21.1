@@ -7,7 +7,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
-import org.jahdoo.common.networking.packet.client2server.ModularChaosCubeC2SPacket;
+import org.jahdoo.common.networking.client2server.ChaosCubeC2SP;
 
 import static com.mojang.blaze3d.platform.InputConstants.*;
 import static net.minecraft.client.Minecraft.*;
@@ -28,7 +28,7 @@ public class CopyPasteEvent {
         var outputNew = getRelativePosition(output, modEntity.getBlockPos());
         var update = updateAll(actionNew, inputNew, outputNew, chaosCubeProperties.active(), chaosCubeProperties.speed(), modEntity.getBlockPos(), chaosCubeProperties.chained());
 
-        PacketDistributor.sendToServer(new ModularChaosCubeC2SPacket(modEntity.getBlockPos(), update));
+        PacketDistributor.sendToServer(new ChaosCubeC2SP(modEntity.getBlockPos(), update));
         modEntity.setData(MODULAR_CHAOS_CUBE, update);
         modEntity.setChanged();
     }

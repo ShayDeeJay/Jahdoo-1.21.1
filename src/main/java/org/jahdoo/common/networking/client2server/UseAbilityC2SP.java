@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.client2server;
+package org.jahdoo.common.networking.client2server;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -13,11 +13,14 @@ import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.DataComponentHelper;
 
-public class UseAbilityC2SPacket implements CustomPacketPayload {
-    public static final Type<UseAbilityC2SPacket> TYPE = new Type<>(Helpers.res("use_ability"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, UseAbilityC2SPacket> STREAM_CODEC = CustomPacketPayload.codec(UseAbilityC2SPacket::toBytes, UseAbilityC2SPacket::new);
+public class UseAbilityC2SP implements CustomPacketPayload {
 
-    public UseAbilityC2SPacket(FriendlyByteBuf buf) {}
+    public static final Type<UseAbilityC2SP> TYPE = new Type<>(Helpers.res("use_ability"));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, UseAbilityC2SP> STREAM_CODEC =
+        CustomPacketPayload.codec(UseAbilityC2SP::toBytes, UseAbilityC2SP::new);
+
+    public UseAbilityC2SP(FriendlyByteBuf buf) {}
 
     public void toBytes(FriendlyByteBuf bug) {}
 
@@ -39,7 +42,6 @@ public class UseAbilityC2SPacket implements CustomPacketPayload {
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return null;
-    }
+    public Type<? extends CustomPacketPayload> type() { return TYPE; }
+
 }

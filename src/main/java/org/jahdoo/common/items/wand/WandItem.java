@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import org.jahdoo.common.client.overlay.ChoiceSelectionScreen;
+import org.jahdoo.common.client.overlay.BoonSelectionScreen;
 import org.jahdoo.common.client.overlay.StatScreen;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.JahdooItem;
@@ -125,7 +125,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
             if(player.isShiftKeyDown()){
                 Minecraft.getInstance().setScreen(new StatScreen(player));
             } else {
-                Minecraft.getInstance().setScreen(new ChoiceSelectionScreen());
+                Minecraft.getInstance().setScreen(new BoonSelectionScreen());
             }
         }
 

@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.server2client;
+package org.jahdoo.common.networking.server2client;
 
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
@@ -10,23 +10,23 @@ import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.utils.Helpers;
 
-public class PlayClientSoundSyncS2CPacket implements CustomPacketPayload {
-    public static final Type<PlayClientSoundSyncS2CPacket> TYPE = new Type<>(Helpers.res("play_local_sound"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, PlayClientSoundSyncS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(PlayClientSoundSyncS2CPacket::toBytes, PlayClientSoundSyncS2CPacket::new);
+public class ClientSoundS2CP implements CustomPacketPayload {
+    public static final Type<ClientSoundS2CP> TYPE = new Type<>(Helpers.res("play_local_sound"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientSoundS2CP> STREAM_CODEC = CustomPacketPayload.codec(ClientSoundS2CP::toBytes, ClientSoundS2CP::new);
 
     SoundEvent soundEvents;
     float volume;
     float pitch;
     boolean isBatched;
 
-    public PlayClientSoundSyncS2CPacket(SoundEvent soundEvents, float volume, float pitch, boolean isBatched) {
+    public ClientSoundS2CP(SoundEvent soundEvents, float volume, float pitch, boolean isBatched) {
         this.soundEvents = soundEvents;
         this.volume = volume;
         this.pitch = pitch;
         this.isBatched = isBatched;
     }
 
-    public PlayClientSoundSyncS2CPacket(FriendlyByteBuf buf) {
+    public ClientSoundS2CP(FriendlyByteBuf buf) {
         this.soundEvents = buf.readJsonWithCodec(SoundEvent.CODEC).value();
         this.volume = buf.readFloat();
         this.pitch = buf.readFloat();

@@ -5,8 +5,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.networking.packet.client2server.*;
-import org.jahdoo.common.networking.packet.server2client.*;
+import org.jahdoo.common.networking.client2server.*;
+import org.jahdoo.common.networking.server2client.*;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = JahdooMod.MOD_ID)
 public class Network {
@@ -16,27 +16,27 @@ public class Network {
         final PayloadRegistrar payloadRegistrar = event.registrar(JahdooMod.MOD_ID).versioned("1.0.0").optional();
         //C2S
         payloadRegistrar.playToServer(
-            UseAbilityC2SPacket.TYPE,
-            UseAbilityC2SPacket.STREAM_CODEC,
-            UseAbilityC2SPacket::handle
+            UseAbilityC2SP.TYPE,
+            UseAbilityC2SP.STREAM_CODEC,
+            UseAbilityC2SP::handle
         );
 
         payloadRegistrar.playToServer(
-            SelectedAbilityC2SPacket.TYPE,
-            SelectedAbilityC2SPacket.STREAM_CODEC,
-            SelectedAbilityC2SPacket::handle
+            SelectAbilityC2SP.TYPE,
+            SelectAbilityC2SP.STREAM_CODEC,
+            SelectAbilityC2SP::handle
         );
 
         payloadRegistrar.playToServer(
-            StopUsingC2SPacket.TYPE,
-            StopUsingC2SPacket.STREAM_CODEC,
-            StopUsingC2SPacket::handle
+            StopUsingC2SP.TYPE,
+            StopUsingC2SP.STREAM_CODEC,
+            StopUsingC2SP::handle
         );
 
         payloadRegistrar.playToServer(
-            FlyingPacketC2SPacket.TYPE,
-            FlyingPacketC2SPacket.STREAM_CODEC,
-            FlyingPacketC2SPacket::handle
+            FlyingC2SP.TYPE,
+            FlyingC2SP.STREAM_CODEC,
+            FlyingC2SP::handle
         );
 
         payloadRegistrar.playToServer(
@@ -46,9 +46,9 @@ public class Network {
         );
 
         payloadRegistrar.playToServer(
-            FallDistanceSyncC2SPacket.TYPE,
-            FallDistanceSyncC2SPacket.STREAM_CODEC,
-            FallDistanceSyncC2SPacket::handle
+            FallDistanceS2CP.TYPE,
+            FallDistanceS2CP.STREAM_CODEC,
+            FallDistanceS2CP::handle
         );
 
         payloadRegistrar.playToServer(
@@ -58,100 +58,112 @@ public class Network {
         );
 
         payloadRegistrar.playToServer(
-            ModularChaosCubeC2SPacket.TYPE,
-            ModularChaosCubeC2SPacket.STREAM_CODEC,
-            ModularChaosCubeC2SPacket::handle
+            ChaosCubeC2SP.TYPE,
+            ChaosCubeC2SP.STREAM_CODEC,
+            ChaosCubeC2SP::handle
         );
 
         payloadRegistrar.playToServer(
-            AugmentModificationChargeC2S.TYPE,
-            AugmentModificationChargeC2S.STREAM_CODEC,
-            AugmentModificationChargeC2S::handle
+            ChargeCoreC2SP.TYPE,
+            ChargeCoreC2SP.STREAM_CODEC,
+            ChargeCoreC2SP::handle
         );
 
         payloadRegistrar.playToServer(
-            ItemInBlockC2SPacket.TYPE,
-            ItemInBlockC2SPacket.STREAM_CODEC,
-            ItemInBlockC2SPacket::handle
+            ItemInBlockC2SP.TYPE,
+            ItemInBlockC2SP.STREAM_CODEC,
+            ItemInBlockC2SP::handle
         );
 
         payloadRegistrar.playToServer(
-            PlayerExperienceC2SPacket.TYPE,
-            PlayerExperienceC2SPacket.STREAM_CODEC,
-            PlayerExperienceC2SPacket::handle
+            PlayerExpC2SP.TYPE,
+            PlayerExpC2SP.STREAM_CODEC,
+            PlayerExpC2SP::handle
         );
 
         payloadRegistrar.playToServer(
-            MagnetActiveC2SPacket.TYPE,
-            MagnetActiveC2SPacket.STREAM_CODEC,
-            MagnetActiveC2SPacket::handle
+            MagnetActiveC2SP.TYPE,
+            MagnetActiveC2SP.STREAM_CODEC,
+            MagnetActiveC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
+            AttributeC2SP.TYPE,
+            AttributeC2SP.STREAM_CODEC,
+            AttributeC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
+            EffectC2SP.TYPE,
+            EffectC2SP.STREAM_CODEC,
+            EffectC2SP::handle
         );
 
         //S2C
         payloadRegistrar.playToClient(
-            ManaDataSyncS2CPacket.TYPE,
-            ManaDataSyncS2CPacket.STREAM_CODEC,
-            ManaDataSyncS2CPacket::handle
+            ManaSyncS2CP.TYPE,
+            ManaSyncS2CP.STREAM_CODEC,
+            ManaSyncS2CP::handle
         );
 
         payloadRegistrar.playToClient(
-            CooldownsDataSyncS2CPacket.TYPE,
-            CooldownsDataSyncS2CPacket.STREAM_CODEC,
-            CooldownsDataSyncS2CPacket::handle
+            CooldownsSyncS2CP.TYPE,
+            CooldownsSyncS2CP.STREAM_CODEC,
+            CooldownsSyncS2CP::handle
         );
 
         payloadRegistrar.playToClient(
-            MageFlightPacketS2CPacket.TYPE,
-            MageFlightPacketS2CPacket.STREAM_CODEC,
-            MageFlightPacketS2CPacket::handle
+            MageFlightC2SP.TYPE,
+            MageFlightC2SP.STREAM_CODEC,
+            MageFlightC2SP::handle
         );
 
         payloadRegistrar.playToClient(
-            MageFlightDataSyncS2CPacket.TYPE,
-            MageFlightDataSyncS2CPacket.STREAM_CODEC,
-            MageFlightDataSyncS2CPacket::handle
+            MageFlightSyncS2CP.TYPE,
+            MageFlightSyncS2CP.STREAM_CODEC,
+            MageFlightSyncS2CP::handle
         );
 
         payloadRegistrar.playToClient(
-            BouncyFootDataSyncS2CPacket.TYPE,
-            BouncyFootDataSyncS2CPacket.STREAM_CODEC,
-            BouncyFootDataSyncS2CPacket::handle
+            BouncyFootS2CP.TYPE,
+            BouncyFootS2CP.STREAM_CODEC,
+            BouncyFootS2CP::handle
         );
 
         payloadRegistrar.playToClient(
-            NovaSmashS2CPacket.TYPE,
-            NovaSmashS2CPacket.STREAM_CODEC,
-            NovaSmashS2CPacket::handle
+            NovaSmashS2CP.TYPE,
+            NovaSmashS2CP.STREAM_CODEC,
+            NovaSmashS2CP::handle
         );
 
         payloadRegistrar.playToClient(
-            PlayClientSoundSyncS2CPacket.TYPE,
-            PlayClientSoundSyncS2CPacket.STREAM_CODEC,
-            PlayClientSoundSyncS2CPacket::handle
+            ClientSoundS2CP.TYPE,
+            ClientSoundS2CP.STREAM_CODEC,
+            ClientSoundS2CP::handle
         );
 
         payloadRegistrar.playToClient(
-            EffectSyncS2CPacket.TYPE,
-            EffectSyncS2CPacket.STREAM_CODEC,
-            EffectSyncS2CPacket::handle
+            EffectSyncS2CP.TYPE,
+            EffectSyncS2CP.STREAM_CODEC,
+            EffectSyncS2CP::handle
         );
 
         payloadRegistrar.playToClient(
-            EnchantedBlockS2C.TYPE,
-            EnchantedBlockS2C.STREAM_CODEC,
-            EnchantedBlockS2C::handle
+            EnchantedBlockS2CP.TYPE,
+            EnchantedBlockS2CP.STREAM_CODEC,
+            EnchantedBlockS2CP::handle
         );
 
         payloadRegistrar.playToClient(
-            MoveClientEntitySyncS2CPacket.TYPE,
-            MoveClientEntitySyncS2CPacket.STREAM_CODEC,
-            MoveClientEntitySyncS2CPacket::handle
+            MoveClientEntityS2CP.TYPE,
+            MoveClientEntityS2CP.STREAM_CODEC,
+            MoveClientEntityS2CP::handle
         );
 
         payloadRegistrar.playToClient(
-            AltarBlockS2C.TYPE,
-            AltarBlockS2C.STREAM_CODEC,
-            AltarBlockS2C::handle
+            AltarBlockS2CP.TYPE,
+            AltarBlockS2CP.STREAM_CODEC,
+            AltarBlockS2CP::handle
         );
     }
 

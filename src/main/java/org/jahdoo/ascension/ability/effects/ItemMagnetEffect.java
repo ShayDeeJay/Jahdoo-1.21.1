@@ -50,4 +50,6 @@ public class ItemMagnetEffect extends MobEffect {
         return true;
     }
 
+
+
 }

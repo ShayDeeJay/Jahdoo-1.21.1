@@ -21,7 +21,7 @@ import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.SyncedBlockEntity;
-import org.jahdoo.common.networking.packet.server2client.AltarBlockS2C;
+import org.jahdoo.common.networking.server2client.AltarBlockS2CP;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -105,7 +105,7 @@ public class ChallengeAltarBlockEntity extends SyncedBlockEntity implements GeoB
     private void updatePacket(){
         if(getLevel() instanceof ServerLevel getLevel){
             var pos = this.getBlockPos();
-            var payloads = new AltarBlockS2C(pos, altarData(), privateTicks);
+            var payloads = new AltarBlockS2CP(pos, altarData(), privateTicks);
             Helpers.sendPacketsToPlayerDistance(pos.getCenter(), 64, getLevel, payloads);
         }
     }

@@ -24,7 +24,7 @@ import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.attachments.AbstractAttachment;
 import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
 import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.common.networking.packet.server2client.NovaSmashS2CPacket;
+import org.jahdoo.common.networking.server2client.NovaSmashS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -196,7 +196,7 @@ public class NovaSmash implements AbstractAttachment {
         }
 
         if(player instanceof ServerPlayer serverPlayer){
-            PacketDistributor.sendToPlayer(serverPlayer, new NovaSmashS2CPacket(highestDelta, canSmash, getDamage));
+            PacketDistributor.sendToPlayer(serverPlayer, new NovaSmashS2CP(highestDelta, canSmash, getDamage));
         }
     }
 

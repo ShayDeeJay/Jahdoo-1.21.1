@@ -6,6 +6,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.utils.Helpers.res;
@@ -85,5 +87,10 @@ public class Frost extends AbstractElement {
     @Override
     public ResourceLocation projectileTexture() {
         return res("textures/entity/cryo_projectile.png");
+    }
+
+    @Override
+    public @Nullable ResourceLocation iconTexture() {
+        return Helpers.res("textures/element_icons/frost_icon.png");
     }
 }

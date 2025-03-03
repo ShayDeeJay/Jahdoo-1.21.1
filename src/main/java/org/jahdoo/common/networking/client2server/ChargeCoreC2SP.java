@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.client2server;
+package org.jahdoo.common.networking.client2server;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,18 +11,23 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationEntity;
 import org.jahdoo.ascension.utils.Helpers;
 
-public class AugmentModificationChargeC2S implements CustomPacketPayload{
-    public static final Type<AugmentModificationChargeC2S> TYPE = new Type<>(Helpers.res("augment_modification_packets"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, AugmentModificationChargeC2S> STREAM_CODEC = CustomPacketPayload.codec(AugmentModificationChargeC2S::toBytes, AugmentModificationChargeC2S::new);
+public class ChargeCoreC2SP implements CustomPacketPayload{
+
+    public static final Type<ChargeCoreC2SP> TYPE =
+        new Type<>(Helpers.res("augment_modification_packets"));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, ChargeCoreC2SP> STREAM_CODEC =
+        CustomPacketPayload.codec(ChargeCoreC2SP::toBytes, ChargeCoreC2SP::new);
+
     private final BlockPos blockPos;
     private final ItemStack itemStack;
 
-    public AugmentModificationChargeC2S(BlockPos blockPos, ItemStack itemStack) {
+    public ChargeCoreC2SP(BlockPos blockPos, ItemStack itemStack) {
         this.blockPos = blockPos;
         this.itemStack = itemStack;
     }
 
-    public AugmentModificationChargeC2S(FriendlyByteBuf buf) {
+    public ChargeCoreC2SP(FriendlyByteBuf buf) {
         this.blockPos = buf.readBlockPos();
         this.itemStack = buf.readJsonWithCodec(ItemStack.CODEC);
     }
@@ -35,8 +40,9 @@ public class AugmentModificationChargeC2S implements CustomPacketPayload{
     public boolean handle(IPayloadContext ctx) {
         ctx.enqueueWork(
             () -> {
-                if(ctx.player().level() instanceof ServerLevel serverLevel){
-                    var entity = serverLevel.getBlockEntity(this.blockPos);
+                if(ctx.player().level() instanceof ServerLevel level){
+                    var entity = level.getBlockEntity(this.blockPos);
+
                     if(entity instanceof AugmentModificationEntity entity1){
                         chargeCoreSides(entity1, this.itemStack);
                     }

@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.client2server;
+package org.jahdoo.common.networking.client2server;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -8,16 +8,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.utils.Helpers;
 
-public class PlayerExperienceC2SPacket implements CustomPacketPayload {
-    public static final Type<PlayerExperienceC2SPacket> TYPE = new Type<>(Helpers.res("experience_sync"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, PlayerExperienceC2SPacket> STREAM_CODEC = CustomPacketPayload.codec(PlayerExperienceC2SPacket::toBytes, PlayerExperienceC2SPacket::new);
+public class PlayerExpC2SP implements CustomPacketPayload {
+    public static final Type<PlayerExpC2SP> TYPE = new Type<>(Helpers.res("experience_sync"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, PlayerExpC2SP> STREAM_CODEC = CustomPacketPayload.codec(PlayerExpC2SP::toBytes, PlayerExpC2SP::new);
     int level;
 
-    public PlayerExperienceC2SPacket(int level) {
+    public PlayerExpC2SP(int level) {
         this.level = level;
     }
 
-    public PlayerExperienceC2SPacket(FriendlyByteBuf buf) {
+    public PlayerExpC2SP(FriendlyByteBuf buf) {
         this.level = buf.readInt();
     }
 

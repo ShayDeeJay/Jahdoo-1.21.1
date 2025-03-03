@@ -15,7 +15,7 @@ import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.slots.InventorySlots;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.common.networking.packet.client2server.AugmentModificationChargeC2S;
+import org.jahdoo.common.networking.client2server.ChargeCoreC2SP;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
@@ -32,7 +32,7 @@ import static org.jahdoo.common.client.gui.ToggleComponent.*;
 import static org.jahdoo.common.block.augment_modification_station.AugmentModificationData.*;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
 import static org.jahdoo.common.items.augments.AugmentRatingSystem.calculateRatingNext;
-import static org.jahdoo.common.networking.packet.client2server.AugmentModificationChargeC2S.chargeCoreSides;
+import static org.jahdoo.common.networking.client2server.ChargeCoreC2SP.chargeCoreSides;
 import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
@@ -230,7 +230,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
 
     private void chargeCoreType(Item item){
         ItemStack itemStack1 = new ItemStack(item);
-        PacketDistributor.sendToServer(new AugmentModificationChargeC2S(entity().getBlockPos(), itemStack1));
+        PacketDistributor.sendToServer(new ChargeCoreC2SP(entity().getBlockPos(), itemStack1));
         chargeCoreSides(entity(), itemStack1);
     }
 

@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.common.networking.packet.server2client.EnchantedBlockS2C;
+import org.jahdoo.common.networking.server2client.EnchantedBlockS2CP;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.ascension.utils.Helpers;
@@ -42,7 +42,7 @@ public class EnchantedBlockEntity extends BlockEntity {
     }
 
     private void updatePacket(ServerLevel serverLevel, BlockPos pos){
-        var payload = new EnchantedBlockS2C(pos, this.block.defaultBlockState(), stage, growthChance, spreadChance);
+        var payload = new EnchantedBlockS2CP(pos, this.block.defaultBlockState(), stage, growthChance, spreadChance);
         Helpers.sendPacketsToPlayerDistance(pos.getCenter(), 64, serverLevel, payload);
     }
 

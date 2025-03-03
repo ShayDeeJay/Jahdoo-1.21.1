@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.server2client;
+package org.jahdoo.common.networking.server2client;
 
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,19 +12,19 @@ import java.util.Map;
 
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
-public class CooldownsDataSyncS2CPacket implements CustomPacketPayload {
-    public static final Type<CooldownsDataSyncS2CPacket> TYPE = new Type<>(Helpers.res("player_cooldowns"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, CooldownsDataSyncS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(CooldownsDataSyncS2CPacket::toBytes, CooldownsDataSyncS2CPacket::new);
+public class CooldownsSyncS2CP implements CustomPacketPayload {
+    public static final Type<CooldownsSyncS2CP> TYPE = new Type<>(Helpers.res("player_cooldowns"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, CooldownsSyncS2CP> STREAM_CODEC = CustomPacketPayload.codec(CooldownsSyncS2CP::toBytes, CooldownsSyncS2CP::new);
 
     private final Map<String, Integer> abilityCooldowns;
     private final Map<String, Integer> abilityCooldownsStatic;
 
-    public CooldownsDataSyncS2CPacket(Map<String, Integer> abilityCooldowns, Map<String, Integer> abilityCooldownsStatic) {
+    public CooldownsSyncS2CP(Map<String, Integer> abilityCooldowns, Map<String, Integer> abilityCooldownsStatic) {
         this.abilityCooldowns = abilityCooldowns;
         this.abilityCooldownsStatic = abilityCooldownsStatic;
     }
 
-    public CooldownsDataSyncS2CPacket(FriendlyByteBuf buf) {
+    public CooldownsSyncS2CP(FriendlyByteBuf buf) {
         this.abilityCooldowns = buf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readInt);
         this.abilityCooldownsStatic = buf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readInt);
     }

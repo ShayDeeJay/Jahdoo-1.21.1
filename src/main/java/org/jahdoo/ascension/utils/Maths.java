@@ -70,6 +70,21 @@ public class Maths {
         }
     }
 
+    public static String ticksToTime(String current) {
+        String converter;
+        var duration = singleFormattedDouble(Double.parseDouble(current) / 20);
+        var minutes = (int) (duration / 60);
+        var seconds = (int) (duration % 60);
+        if (minutes > 0 && seconds == 0) {
+            converter = roundNonWholeString(minutes) + "m";
+        } else if (minutes > 0) {
+            converter = minutes + "m " + seconds + "s";
+        } else {
+            converter = roundNonWholeString(duration) + "s";
+        }
+        return converter;
+    }
+
     public static String roundNonWholeString(String input) {
         StringBuilder result = new StringBuilder();
         StringBuilder numberBuffer = new StringBuilder();
@@ -90,5 +105,6 @@ public class Maths {
         }
         return result.toString();
     }
+
 
 }

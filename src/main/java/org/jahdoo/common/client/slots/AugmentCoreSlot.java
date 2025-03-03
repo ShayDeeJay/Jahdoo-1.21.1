@@ -7,7 +7,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.block.wand_manager.WandManagerEntity;
-import org.jahdoo.common.networking.packet.client2server.ItemInBlockC2SPacket;
+import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,6 +92,6 @@ public class AugmentCoreSlot extends SlotItemHandler {
 
         getAllSlots.update(RUNE_HOLDER.get(), DEFAULT, data -> data.insertNewHolder(list));
         getAllSlots.set(WAND_DATA, getAllSlots.get(WAND_DATA));
-        PacketDistributor.sendToServer(new ItemInBlockC2SPacket(getAllSlots, entity.getBlockPos()));
+        PacketDistributor.sendToServer(new ItemInBlockC2SP(getAllSlots, entity.getBlockPos()));
     }
 }

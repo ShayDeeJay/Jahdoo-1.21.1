@@ -63,14 +63,15 @@ import static org.jahdoo.common.registers.ElementReg.fromWand;
 
 public class WandItemHelper {
 
-    public static Component defence = withStyleComponentTrans("wandHelper.jahdoo.set_wizard_mode.defence", rgbToInt(102, 178, 255));
-    public static Component attack = withStyleComponentTrans("wandHelper.jahdoo.set_wizard_mode.attack", rgbToInt(255, 102, 102));
+    public static final String PREFIX = "wandHelper.jahdoo.";
+    public static Component defence = withStyleComponentTrans(PREFIX + "set_wizard_mode.defence", rgbToInt(102, 178, 255));
+    public static Component attack = withStyleComponentTrans(PREFIX + "set_wizard_mode.attack", rgbToInt(255, 102, 102));
 
     public static void totalSlots(List<Component> toolTips, ItemStack wandItem, int colour){
         var wandData = wandItem.get(WAND_DATA);
         if(wandData == null) return;
         var slot = withStyleComponent(String.valueOf(wandData.abilitySlots()), colour);
-        toolTips.add(withStyleComponentTrans("wandHelper.jahdoo.ability_slots", HEADER_COLOUR, slot));
+        toolTips.add(withStyleComponentTrans(PREFIX + "ability_slots", HEADER_COLOUR, slot));
     }
 
     public static void appendRefinementPotential(List<Component> toolTips, ItemStack wandItem){
@@ -117,14 +118,6 @@ public class WandItemHelper {
         player.displayClientMessage(Component.literal("Assigned: ").append(state.getBlock().getName()), true);
     }
 
-    static @NotNull Item.Properties wandInit() {
-        return new Item.Properties()
-            .stacksTo(1)
-            .component(ComponentReg.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
-            .component(WAND_DATA.get(), WandData.DEFAULT)
-            .fireResistant();
-    }
-
     public static Block getStoredBlock(Level level, ItemStack itemStack){
         var holder = level.holderLookup(Registries.BLOCK);
         var component = itemStack.get(DataComponents.CUSTOM_DATA);
@@ -134,25 +127,25 @@ public class WandItemHelper {
         return state.getBlock();
     }
 
-    public static Component getItemName(ItemStack wandType){
-        var getElement = fromWand(wandType.getItem());
-        return getElement.map(
-            element -> withStyleComponentTrans(
-                "wandHelper.jahdoo.colour",
-                element.partColourB(),
-                element.name()
-            )
-        ).orElseGet(Component::empty);
-    }
-
     public static void setWizardMode(LivingEntity target, Player player){
         if(target instanceof EternalWizard eternalWizard){
             var mode = eternalWizard.getMode();
             eternalWizard.setMode(!eternalWizard.getMode());
             var getType = mode ? defence : attack;
-            player.displayClientMessage(Component.translatable("wandHelper.jahdoo.set_wizard_mode", getType), true);
+            player.displayClientMessage(Component.translatable(PREFIX + "set_wizard_mode", getType), true);
 
         }
+    }
+
+    public static Component getItemName(ItemStack wandType){
+        var getElement = fromWand(wandType.getItem());
+        return getElement.map(
+            element -> withStyleComponentTrans(
+                PREFIX + "type",
+                element.partColourB(),
+                element.name()
+            )
+        ).orElseGet(Component::empty);
     }
 
     public static void attributeToolTips(ItemStack itemStack, List<Component> appendComponents, AbstractElement abstractElement) {
@@ -161,7 +154,7 @@ public class WandItemHelper {
         var attributes = itemStack.getAttributeModifiers().modifiers().stream().toList();
         if(!attributes.isEmpty()){
             appendComponents.add(Component.empty());
-            appendComponents.add(withStyleComponentTrans("wandHelper.jahdoo.get_modifiers", colourPre, type));
+            appendComponents.add(withStyleComponentTrans(PREFIX + "get_modifiers", colourPre, type));
             appendComponents.addAll(standAloneAttributes(itemStack, abstractElement));
         }
     }
@@ -274,7 +267,13 @@ public class WandItemHelper {
 
     public static List<Component> standAloneAttributes(ItemStack itemStack, AbstractElement element) {
         var appendComponents = new ArrayList<Component>();
-        var wandOnlyAttributes = itemStack.getAttributeModifiers().modifiers().stream().toList().subList(0,3);
+        var wandOnlyAttributes = itemStack
+            .getAttributeModifiers()
+            .modifiers()
+            .stream()
+            .toList()
+            .subList(0,3);
+
         if(!wandOnlyAttributes.isEmpty()){
             var colourSuf = rgbToInt(145, 145, 145);
             for (ItemAttributeModifiers.Entry entry : wandOnlyAttributes) {
@@ -291,7 +290,7 @@ public class WandItemHelper {
         return appendComponents;
     }
 
-    public static @NotNull InteractionResult onPlace(BlockPlaceContext context) {
+    public static InteractionResult onPlace(BlockPlaceContext context) {
         var clickedPos = context.getClickedPos();
         var player = context.getPlayer();
         var level = context.getLevel();

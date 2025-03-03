@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.server2client;
+package org.jahdoo.common.networking.server2client;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,16 +11,16 @@ import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.ascension.utils.Helpers;
 
-public class EnchantedBlockS2C implements CustomPacketPayload{
-    public static final Type<EnchantedBlockS2C> TYPE = new Type<>(Helpers.res("block_sync"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, EnchantedBlockS2C> STREAM_CODEC = CustomPacketPayload.codec(EnchantedBlockS2C::toBytes, EnchantedBlockS2C::new);
+public class EnchantedBlockS2CP implements CustomPacketPayload{
+    public static final Type<EnchantedBlockS2CP> TYPE = new Type<>(Helpers.res("block_sync"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, EnchantedBlockS2CP> STREAM_CODEC = CustomPacketPayload.codec(EnchantedBlockS2CP::toBytes, EnchantedBlockS2CP::new);
     private BlockPos blockPos;
     private BlockState block;
     private int stage;
     private int chance;
     private int spreadChance;
 
-    public EnchantedBlockS2C(BlockPos blockPos, BlockState block, int stage, int chance, int spreadChance) {
+    public EnchantedBlockS2CP(BlockPos blockPos, BlockState block, int stage, int chance, int spreadChance) {
         this.blockPos = blockPos;
         this.block = block;
         this.stage = stage;
@@ -28,7 +28,7 @@ public class EnchantedBlockS2C implements CustomPacketPayload{
         this.spreadChance = spreadChance;
     }
 
-    public EnchantedBlockS2C(FriendlyByteBuf buf) {
+    public EnchantedBlockS2CP(FriendlyByteBuf buf) {
         this.blockPos = buf.readBlockPos();
         this.block = buf.readJsonWithCodec(BlockState.CODEC);
         this.stage = buf.readInt();

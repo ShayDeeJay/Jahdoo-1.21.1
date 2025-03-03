@@ -6,7 +6,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.client.gui.AbilityWheelMenu;
 import org.jahdoo.common.client.gui.AugmentScreen;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.networking.packet.client2server.MagnetActiveC2SPacket;
+import org.jahdoo.common.networking.client2server.MagnetActiveC2SP;
 import org.jahdoo.ascension.utils.Configuration;
 import org.jahdoo.ascension.utils.Helpers;
 
@@ -17,7 +17,7 @@ public class KeyBindHelper {
 
     public static void toggleLockAbility(Player player){
         if(MAGNET.isDown()) {
-            PacketDistributor.sendToServer(new MagnetActiveC2SPacket());
+            PacketDistributor.sendToServer(new MagnetActiveC2SP());
             MAGNET.setDown(false);
         }
     }

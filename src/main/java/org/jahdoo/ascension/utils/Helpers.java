@@ -38,7 +38,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.common.networking.packet.server2client.PlayClientSoundSyncS2CPacket;
+import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AbilityReg;
@@ -153,11 +153,11 @@ public class Helpers {
     }
 
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch){
-        PacketDistributor.sendToPlayer(serverPlayer, new PlayClientSoundSyncS2CPacket(soundEvent, volume, pitch, true));
+        PacketDistributor.sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, true));
     }
 
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch, boolean isBatched){
-        PacketDistributor.sendToPlayer(serverPlayer, new PlayClientSoundSyncS2CPacket(soundEvent, volume, pitch, isBatched));
+        PacketDistributor.sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, isBatched));
     }
 
     public static double getTag(Player player, String name, String abilityName) {
@@ -351,7 +351,7 @@ public class Helpers {
         return result.toString().trim();
     }
 
-    public static @NotNull MutableComponent highlightTextComponent(
+    public static MutableComponent highlightTextComponent(
         Level level,
         String text,
         int c1,

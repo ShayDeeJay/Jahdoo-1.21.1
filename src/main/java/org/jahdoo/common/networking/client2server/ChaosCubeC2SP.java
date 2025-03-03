@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.client2server;
+package org.jahdoo.common.networking.client2server;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,19 +13,19 @@ import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 
-public class ModularChaosCubeC2SPacket implements CustomPacketPayload {
-    public static final Type<ModularChaosCubeC2SPacket> TYPE = new Type<>(Helpers.res("modular_chaos_data_sync"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, ModularChaosCubeC2SPacket> STREAM_CODEC = CustomPacketPayload.codec(ModularChaosCubeC2SPacket::toBytes, ModularChaosCubeC2SPacket::new);
+public class ChaosCubeC2SP implements CustomPacketPayload {
+    public static final Type<ChaosCubeC2SP> TYPE = new Type<>(Helpers.res("modular_chaos_data_sync"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ChaosCubeC2SP> STREAM_CODEC = CustomPacketPayload.codec(ChaosCubeC2SP::toBytes, ChaosCubeC2SP::new);
 
     BlockPos blockPos;
     ModularChaosCubeProperties autoBlock;
 
-    public ModularChaosCubeC2SPacket(BlockPos blockPos, ModularChaosCubeProperties autoBlock) {
+    public ChaosCubeC2SP(BlockPos blockPos, ModularChaosCubeProperties autoBlock) {
         this.blockPos = blockPos;
         this.autoBlock = autoBlock;
     }
 
-    public ModularChaosCubeC2SPacket(FriendlyByteBuf buf) {
+    public ChaosCubeC2SP(FriendlyByteBuf buf) {
         this.blockPos = buf.readBlockPos();
         this.autoBlock = buf.readJsonWithCodec(ModularChaosCubeProperties.CODEC);
     }

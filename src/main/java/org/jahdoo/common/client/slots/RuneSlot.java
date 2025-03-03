@@ -8,7 +8,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.runes.RuneItem;
-import org.jahdoo.common.networking.packet.client2server.ItemInBlockC2SPacket;
+import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
 import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class RuneSlot extends SlotItemHandler {
     }
 
     private void serverBoundPacket(ItemStack getAllSlots) {
-        PacketDistributor.sendToServer(new ItemInBlockC2SPacket(getAllSlots, this.entity.getBlockPos()));
+        PacketDistributor.sendToServer(new ItemInBlockC2SP(getAllSlots, this.entity.getBlockPos()));
     }
 
     @Override

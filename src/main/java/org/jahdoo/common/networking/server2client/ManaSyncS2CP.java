@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.server2client;
+package org.jahdoo.common.networking.server2client;
 
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,17 +10,17 @@ import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
-public class ManaDataSyncS2CPacket implements CustomPacketPayload {
-    public static final Type<ManaDataSyncS2CPacket> TYPE = new Type<>(Helpers.res("sync_client_mana"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, ManaDataSyncS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(ManaDataSyncS2CPacket::toBytes, ManaDataSyncS2CPacket::new);
+public class ManaSyncS2CP implements CustomPacketPayload {
+    public static final Type<ManaSyncS2CP> TYPE = new Type<>(Helpers.res("sync_client_mana"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ManaSyncS2CP> STREAM_CODEC = CustomPacketPayload.codec(ManaSyncS2CP::toBytes, ManaSyncS2CP::new);
 
     private final double mana;
 
-    public ManaDataSyncS2CPacket(double mana) {
+    public ManaSyncS2CP(double mana) {
         this.mana = mana;
     }
 
-    public ManaDataSyncS2CPacket(FriendlyByteBuf buf) {
+    public ManaSyncS2CP(FriendlyByteBuf buf) {
         this.mana = buf.readDouble();
     }
 

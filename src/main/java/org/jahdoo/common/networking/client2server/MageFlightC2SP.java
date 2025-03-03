@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.client2server;
+package org.jahdoo.common.networking.client2server;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -8,12 +8,16 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.ability.wand_perks.mage_flight.MageFlightClient;
 import org.jahdoo.ascension.utils.Helpers;
 
-public class MageFlightPacketS2CPacket implements CustomPacketPayload {
-    public static final Type<MageFlightPacketS2CPacket> TYPE = new Type<>(Helpers.res("mage_flight_sync"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, MageFlightPacketS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(MageFlightPacketS2CPacket::toBytes, MageFlightPacketS2CPacket::new);
+public class MageFlightC2SP implements CustomPacketPayload {
 
-    public MageFlightPacketS2CPacket() {}
-    public MageFlightPacketS2CPacket(FriendlyByteBuf buf) {}
+    public static final Type<MageFlightC2SP> TYPE = new Type<>(Helpers.res("mage_flight_sync"));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, MageFlightC2SP> STREAM_CODEC =
+        CustomPacketPayload.codec(MageFlightC2SP::toBytes, MageFlightC2SP::new);
+
+    public MageFlightC2SP() {}
+
+    public MageFlightC2SP(FriendlyByteBuf buf) {}
 
     public void toBytes(FriendlyByteBuf bug) {}
 
@@ -26,4 +30,5 @@ public class MageFlightPacketS2CPacket implements CustomPacketPayload {
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
+
 }

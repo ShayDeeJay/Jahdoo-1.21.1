@@ -16,6 +16,7 @@ public class ColourStore {
     public static final int PENDENT_NAME = color(91, 174, 252);
     public static final int MAGNET_RANGE_GREEN = color(209, 227, 163);
     public static final int MAGNET_STRENGTH_RED = color(227, 163, 174);
+    public static final int NEGATIVE_RED = color(235, 88, 77);
     public static final int ABSORPTION_YELLOW = color(224, 219, 88);
     public static final int UNIQUE_A = color(166, 255, 125);
     public static final int UNIQUE_B = color(104, 243, 252);

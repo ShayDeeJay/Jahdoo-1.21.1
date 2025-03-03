@@ -40,10 +40,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
+import static org.jahdoo.ascension.utils.Maths.*;
 import static org.jahdoo.common.items.augments.AugmentRatingSystem.*;
 import static org.jahdoo.common.registers.ComponentReg.*;
-import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
-import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 
 public class AugmentItemHelper {
 
@@ -195,21 +194,6 @@ public class AugmentItemHelper {
 
     public static Component getModifierContextRange(String keys, String min, String max){
         return getModifierContext(keys, "", 0, true, min, max);
-    }
-
-    public static @NotNull String ticksToTime(String current) {
-        String converter;
-        var duration = singleFormattedDouble(Double.parseDouble(current) / 20);
-        var minutes = (int) (duration / 60);
-        var seconds = (int) (duration % 60);
-        if (minutes > 0 && seconds == 0) {
-            converter = minutes + "m";
-        } else if (minutes > 0) {
-            converter = minutes + "m " + seconds + "s";
-        } else {
-            converter = duration + "s";
-        }
-        return converter;
     }
 
     public static Component getFormattedModifiers(String keys, ItemStack itemStack, String format, int comparison){

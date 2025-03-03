@@ -7,6 +7,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.sounds.SoundEvents.AXE_SCRAPE;
 import static net.minecraft.util.FastColor.ARGB32.color;
@@ -82,6 +83,11 @@ public class Utility extends AbstractElement {
 
     @Override
     public ResourceLocation projectileTexture() {
+        return null;
+    }
+
+    @Override
+    public @Nullable ResourceLocation iconTexture() {
         return null;
     }
 }

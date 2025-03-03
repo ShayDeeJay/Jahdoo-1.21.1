@@ -13,8 +13,8 @@ import org.jahdoo.common.client.button.AbilityIconButton;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeScreen;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.common.networking.packet.client2server.SyncComponentBlockC2S;
-import org.jahdoo.common.networking.packet.client2server.SyncComponentC2S;
+import org.jahdoo.common.networking.client2server.SyncComponentBlockC2S;
+import org.jahdoo.common.networking.client2server.SyncComponentC2S;
 import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.HashMap;

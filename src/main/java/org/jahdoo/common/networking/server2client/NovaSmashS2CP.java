@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.server2client;
+package org.jahdoo.common.networking.server2client;
 
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,22 +10,22 @@ import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.NOVA_SMASH;
 
-public class NovaSmashS2CPacket implements CustomPacketPayload {
+public class NovaSmashS2CP implements CustomPacketPayload {
 
-    public static final Type<NovaSmashS2CPacket> TYPE = new Type<>(Helpers.res("nova_smash_sync"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, NovaSmashS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(NovaSmashS2CPacket::toBytes, NovaSmashS2CPacket::new);
+    public static final Type<NovaSmashS2CP> TYPE = new Type<>(Helpers.res("nova_smash_sync"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, NovaSmashS2CP> STREAM_CODEC = CustomPacketPayload.codec(NovaSmashS2CP::toBytes, NovaSmashS2CP::new);
 
     int highestDelta;
     boolean canSmash;
     float damage;
 
-    public NovaSmashS2CPacket(int highestDelta, boolean canSmash, float damage) {
+    public NovaSmashS2CP(int highestDelta, boolean canSmash, float damage) {
         this.canSmash = canSmash;
         this.highestDelta = highestDelta;
         this.damage = damage;
     }
 
-    public NovaSmashS2CPacket(FriendlyByteBuf buf) {
+    public NovaSmashS2CP(FriendlyByteBuf buf) {
         this.highestDelta = buf.readInt();
         this.canSmash = buf.readBoolean();
         this.damage = buf.readFloat();

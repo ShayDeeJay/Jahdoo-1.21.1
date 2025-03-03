@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.server2client;
+package org.jahdoo.common.networking.server2client;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -8,13 +8,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.utils.Helpers;
 
-public class FallDistanceSyncC2SPacket implements CustomPacketPayload {
-        public static final Type<FallDistanceSyncC2SPacket> TYPE = new Type<>(Helpers.res("reset_fall"));
-        public static final StreamCodec<RegistryFriendlyByteBuf, FallDistanceSyncC2SPacket> STREAM_CODEC = CustomPacketPayload.codec(FallDistanceSyncC2SPacket::toBytes, FallDistanceSyncC2SPacket::new);
+public class FallDistanceS2CP implements CustomPacketPayload {
+        public static final Type<FallDistanceS2CP> TYPE = new Type<>(Helpers.res("reset_fall"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, FallDistanceS2CP> STREAM_CODEC = CustomPacketPayload.codec(FallDistanceS2CP::toBytes, FallDistanceS2CP::new);
 
-        public FallDistanceSyncC2SPacket() {}
+        public FallDistanceS2CP() {}
 
-        public FallDistanceSyncC2SPacket(FriendlyByteBuf buf) {}
+        public FallDistanceS2CP(FriendlyByteBuf buf) {}
 
         public void toBytes(FriendlyByteBuf buf) {}
 

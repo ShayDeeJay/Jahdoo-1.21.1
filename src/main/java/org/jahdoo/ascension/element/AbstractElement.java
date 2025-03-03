@@ -20,9 +20,6 @@ public abstract class AbstractElement {
     @Nullable
     public abstract Item getWand();
 
-    @Nullable
-    public abstract ResourceLocation projectileTexture();
-
     public abstract int id();
 
     public abstract int textColourA();
@@ -38,6 +35,12 @@ public abstract class AbstractElement {
     public abstract SoundEvent sound();
 
     public abstract Holder<MobEffect> effect();
+
+    @Nullable
+    public abstract ResourceLocation projectileTexture();
+
+    @Nullable
+    public abstract ResourceLocation iconTexture();
 
     public abstract ResourceLocation abilityResource();
 

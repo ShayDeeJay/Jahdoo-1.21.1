@@ -13,6 +13,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jahdoo.common.registers.ElementReg;
 import org.joml.Matrix4f;
 
+import static org.jahdoo.ascension.utils.Maths.ticksToTime;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.*;
 
 @OnlyIn(Dist.CLIENT)

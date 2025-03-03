@@ -1,31 +1,23 @@
 package org.jahdoo.common.client.overlay;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
-import net.minecraft.sounds.SoundEvent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.FastColor;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.boon.Boon;
-import org.jahdoo.ascension.boon.BoonSelection;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.client.IconLocations;
+import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.ColourStore;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static net.minecraft.client.Minecraft.*;
 import static net.minecraft.network.chat.Component.*;
-import static net.minecraft.util.FastColor.*;
 import static net.minecraft.util.FastColor.ARGB32.*;
 import static org.jahdoo.ascension.boon.BoonSelection.*;
 import static org.jahdoo.ascension.utils.ColourStore.*;
@@ -33,22 +25,24 @@ import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.registers.ItemReg.*;
 
-public class ChoiceSelectionScreen extends Screen  {
+public class BoonSelectionScreen extends Screen  {
 
     private int selection;
     private float fade;
     private float fadeEntryBack;
     private int selectionOffset;
-    private final List<Boon> boons = new ArrayList<>();
+    private final List<Boon> boonsPositive = new ArrayList<>();
+    private final List<Boon> boonsNegative = new ArrayList<>();
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
-    public ChoiceSelectionScreen() {
+    public BoonSelectionScreen() {
         super(literal("Choice Selection Screen"));
 
         for (var i = 0; i < 3; i++){
-            boons.add(Helpers.listRandom(addAttribute(getInstance().player)));
+            boonsPositive.add(listRandom(positiveBoons()));
+            boonsNegative.add(listRandom(negativeBoons()));
         }
     }
 
@@ -68,28 +62,31 @@ public class ChoiceSelectionScreen extends Screen  {
 
     private void doOnFirst(int first){
         sharedPress();
-        boons.get(1).execute().run();
+        boonsPositive.get(1).execute().run();
+        boonsNegative.get(1).execute().run();
     }
 
     private void doOnSecond(int second){
         sharedPress();
-        boons.getFirst().execute().run();
+        boonsPositive.getFirst().execute().run();
+        boonsNegative.getFirst().execute().run();
     }
 
     private void doOnThird(int third){
         sharedPress();
-        boons.get(2).execute().run();
+        boonsPositive.get(2).execute().run();
+        boonsNegative.get(2).execute().run();
     }
 
     private void increaseAlpha(int offset) {
-        if(fade < 120) fade += 10;
+        if(fade < 90) fade += 10;
         this.selectionOffset = offset;
     }
 
     private void selectionBox(GuiGraphics guiGraphics, int xPos, int color, int colour2) {
         var border = getFadedColourBackground(0f);
-        boxMaker(guiGraphics, selectionOffset, 0, xPos, this.height/2, border, color);
-//        boxMaker(guiGraphics, selectionOffset, this.height/2, xPos, this.height/4, border, colour2);
+        boxMaker(guiGraphics, selectionOffset, 0, xPos, this.height/4, border, color);
+        boxMaker(guiGraphics, selectionOffset, this.height/2, xPos, this.height/4, border, colour2);
     }
 
     @Override
@@ -135,24 +132,73 @@ public class ChoiceSelectionScreen extends Screen  {
     private void textSelection(GuiGraphics guiGraphics, ArrayList<Component> tooltip, int i, Font font) {
         if(this.fadeEntryBack <= 0.4) return;
         var index = 0;
+        var index2 = 0;
 
         for (var position : getPositions()) {
-            var spacer = 0;
             var x = position + 71;
-            var y = Math.min((i - (float) tooltip.size() / 2) + spacer, fadeEntryBack * 1200) + 4;
-            var boon = boons.get(index);
-            var label = boon.label();
-            var splitText = font.getSplitter().splitLines(label, 120, Style.EMPTY);
-            var height = 0;
+            var y = Math.min((i - (float) tooltip.size() / 2) , fadeEntryBack * 1200) - 44;
 
-            for (var splitLine : splitText) {
-                centeredStringNoShadow(guiGraphics, font, withStyleComponent(splitLine.getString(), boon.colour()), x, (int) y + height - (splitText.size() * 5), -1, true);
+            var height = 0;
+            var boon = boonsPositive.get(index);
+            var boonNeg = boonsNegative.get(index);
+            var labels = boon.label();
+            var isHovered = this.selectionOffset == position;
+            var scale = 20;
+
+            SharedUI.boxMaker(guiGraphics, x - 71, (int) y + 47, 70, -this.height, isHovered ? MAGNET_RANGE_GREEN : getFadedColourBackground(0.6f) , 0);
+            SharedUI.boxMaker(guiGraphics, x - 71, (int) y + 47, 70, this.height, isHovered ? MAGNET_STRENGTH_RED : getFadedColourBackground(0.6f), 0);
+
+
+//            SharedUI.boxMaker(guiGraphics, x - 71, (int) y + 47, 70, 0, isHovered ? OFF_WHITE : getFadedColourBackground(0.8f), HEADER_COLOUR);
+            guiGraphics.blit(boon.icon(), position + 60, (int) y - 55, 0, 0, scale, scale, scale, scale);
+            guiGraphics.blit(boonNeg.icon(), position + 60, (int) y - 55 + 134, 0, 0, scale, scale, scale, scale);
+
+            for (var component : labels) {
+                centeredStringNoShadow(guiGraphics, font, component, x, (int) y + height - (labels.size() * 5), -1, isHovered);
+
+                if(boonNeg != Boon.EMPTY){
+                    centeredStringNoShadow(guiGraphics, font, component, x, (int) y + height - (labels.size() * 5) + 134, -1, isHovered);
+                }
+
+
                 height += 10;
             }
 
+//            if(boonNeg != Boon.EMPTY){
+//                guiGraphics.blit(boonNeg.icon(), position + 60, (int) y - 55 + 134, 0, 0, scale, scale, scale, scale);
+//
+//                for (var component : labels) {
+//                    centeredStringNoShadow(guiGraphics, font, component, x, (int) y + height - (labels.size() * 5)+ 134, -1, isHovered);
+//                    height += 10;
+//                }
+//            }
+
             index++;
         }
+
+
+//        for (var position : getPositions()) {
+//            var x = position + 71;
+//            var y = Math.min((i - (float) tooltip.size() / 2) , fadeEntryBack * 1200) + 90;
+//            var height = 0;
+//            var boon = boonsNegative.get(index2);
+//            var labels = boon.label();
+//            var isHovered = this.selectionOffset == position;
+//
+//
+//            if(boon != Boon.EMPTY){
+//                var scale = 20;
+//                guiGraphics.blit(boon.icon(), position + 60, (int) y - 55, 0, 0, scale, scale, scale, scale);
+//
+//                for (var component : labels) {
+//                    centeredStringNoShadow(guiGraphics, font, component, x, (int) y + height - (labels.size() * 5), -1, isHovered);
+//                    height += 10;
+//                }
+//            }
+//            index2++;
+//        }
     }
+
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -168,8 +214,8 @@ public class ChoiceSelectionScreen extends Screen  {
         sectionHighlight(mouseX, this::increaseAlpha, this::increaseAlpha, this::increaseAlpha);
         selectionSections(guiGraphics);
         selectionBox(guiGraphics, getSize(), fadedColourBackground, fadedColourBackgroundA);
-        textSelection(guiGraphics, tooltip, i, font);
 
+        textSelection(guiGraphics, tooltip, i, font);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
@@ -195,6 +241,7 @@ public class ChoiceSelectionScreen extends Screen  {
         } else {
             if(fade > 0) fade -= 10;
             this.selection = 0;
+            this.selectionOffset = -1000;
         }
     }
 

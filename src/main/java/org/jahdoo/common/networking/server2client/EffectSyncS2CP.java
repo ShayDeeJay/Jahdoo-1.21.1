@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.server2client;
+package org.jahdoo.common.networking.server2client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,21 +11,21 @@ import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.ascension.utils.Helpers;
 
-public class EffectSyncS2CPacket implements CustomPacketPayload {
-    public static final Type<EffectSyncS2CPacket> TYPE = new Type<>(Helpers.res("get_entity"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, EffectSyncS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(EffectSyncS2CPacket::toBytes, EffectSyncS2CPacket::new);
+public class EffectSyncS2CP implements CustomPacketPayload {
+    public static final Type<EffectSyncS2CP> TYPE = new Type<>(Helpers.res("get_entity"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, EffectSyncS2CP> STREAM_CODEC = CustomPacketPayload.codec(EffectSyncS2CP::toBytes, EffectSyncS2CP::new);
 
     int id;
     int duration;
     int amp;
 
-    public EffectSyncS2CPacket(int id, int duration, int amp) {
+    public EffectSyncS2CP(int id, int duration, int amp) {
         this.id = id;
         this.duration = duration;
         this.amp = amp;
     }
 
-    public EffectSyncS2CPacket(FriendlyByteBuf buf) {
+    public EffectSyncS2CP(FriendlyByteBuf buf) {
         this.id = buf.readInt();
         this.duration = buf.readInt();
         this.amp = buf.readInt();

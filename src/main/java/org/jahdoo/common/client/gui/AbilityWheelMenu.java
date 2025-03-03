@@ -23,8 +23,8 @@ import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.common.client.button.AbilityIconButton;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.wand.WandData;
-import org.jahdoo.common.networking.packet.client2server.SelectedAbilityC2SPacket;
-import org.jahdoo.common.networking.packet.client2server.StopUsingC2SPacket;
+import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
+import org.jahdoo.common.networking.client2server.StopUsingC2SP;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
@@ -145,8 +145,8 @@ public class AbilityWheelMenu extends Screen  {
     private void onClick(List<String> abilityHolder, int finalI, Player player) {
         var updateAbility = abilityHolder.get(finalI);
         DataComponentHelper.setAbilityTypeWand(player, updateAbility);
-        PacketDistributor.sendToServer(new StopUsingC2SPacket());
-        PacketDistributor.sendToServer(new SelectedAbilityC2SPacket(updateAbility));
+        PacketDistributor.sendToServer(new StopUsingC2SP());
+        PacketDistributor.sendToServer(new SelectAbilityC2SP(updateAbility));
     }
 
     private void showConfig(WandData wandData, Player player, AbilityRegistrar selectedAbility, int posX, int posY) {

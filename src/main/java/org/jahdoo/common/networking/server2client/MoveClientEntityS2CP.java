@@ -1,4 +1,4 @@
-package org.jahdoo.common.networking.packet.server2client;
+package org.jahdoo.common.networking.server2client;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
@@ -9,16 +9,16 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
-public class MoveClientEntitySyncS2CPacket implements CustomPacketPayload {
-    public static final Type<MoveClientEntitySyncS2CPacket> TYPE = new Type<>(Helpers.res("move_client_entity"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, MoveClientEntitySyncS2CPacket> STREAM_CODEC = CustomPacketPayload.codec(MoveClientEntitySyncS2CPacket::toBytes, MoveClientEntitySyncS2CPacket::new);
+public class MoveClientEntityS2CP implements CustomPacketPayload {
+    public static final Type<MoveClientEntityS2CP> TYPE = new Type<>(Helpers.res("move_client_entity"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, MoveClientEntityS2CP> STREAM_CODEC = CustomPacketPayload.codec(MoveClientEntityS2CP::toBytes, MoveClientEntityS2CP::new);
 
     private final double x;
     private final double y;
     private final double z;
     private final int id;
 
-    public MoveClientEntitySyncS2CPacket(
+    public MoveClientEntityS2CP(
         double x,
         double y,
         double z,
@@ -30,7 +30,7 @@ public class MoveClientEntitySyncS2CPacket implements CustomPacketPayload {
         this.id = id;
     }
 
-    public MoveClientEntitySyncS2CPacket(FriendlyByteBuf buf) {
+    public MoveClientEntityS2CP(FriendlyByteBuf buf) {
         this.x = buf.readDouble();
         this.y = buf.readDouble();
         this.z = buf.readDouble();

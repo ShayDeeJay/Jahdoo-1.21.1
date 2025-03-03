@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.ability.effects.EffectHelpers;
-import org.jahdoo.common.networking.packet.server2client.MoveClientEntitySyncS2CPacket;
+import org.jahdoo.common.networking.server2client.MoveClientEntityS2CP;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -77,7 +77,7 @@ public class MysticEffect extends MobEffect {
     @Override
     public void onEffectAdded(LivingEntity livingEntity, int amplifier) {
         if(livingEntity instanceof ServerPlayer serverPlayer){
-            PacketDistributor.sendToPlayer(serverPlayer, new MoveClientEntitySyncS2CPacket(0, 0.7, 0, serverPlayer.getId()));
+            PacketDistributor.sendToPlayer(serverPlayer, new MoveClientEntityS2CP(0, 0.7, 0, serverPlayer.getId()));
         } else {
             livingEntity.setDeltaMovement(0, 0.5, 0);
         }
@@ -93,7 +93,7 @@ public class MysticEffect extends MobEffect {
         var newYVelocity = Math.max(currentYVelocity, 0.01);
 
         if(targetEntity instanceof ServerPlayer serverPlayer){
-            PacketDistributor.sendToPlayer(serverPlayer, new MoveClientEntitySyncS2CPacket(0, newYVelocity, 0, serverPlayer.getId()));
+            PacketDistributor.sendToPlayer(serverPlayer, new MoveClientEntityS2CP(0, newYVelocity, 0, serverPlayer.getId()));
         } else {
             targetEntity.setDeltaMovement(0, newYVelocity, 0);
         }

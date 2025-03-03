@@ -5,8 +5,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.networking.packet.server2client.CooldownsDataSyncS2CPacket;
-import org.jahdoo.common.networking.packet.server2client.ManaDataSyncS2CPacket;
+import org.jahdoo.common.networking.server2client.CooldownsSyncS2CP;
+import org.jahdoo.common.networking.server2client.ManaSyncS2CP;
 import org.jahdoo.common.registers.AttributeReg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,13 +93,13 @@ public class CastingData implements AbstractAttachment{
 
     public void subtractMana(double regenMana, Player player) {
         this.manaPool = Math.max(manaPool - regenMana, 0);
-        if(player instanceof ServerPlayer serverPlayer) sendToPlayer(serverPlayer, new ManaDataSyncS2CPacket(manaPool));
+        if(player instanceof ServerPlayer serverPlayer) sendToPlayer(serverPlayer, new ManaSyncS2CP(manaPool));
     }
 
     public static void manaTickEvent(ServerPlayer serverPlayer) {
         var magicData = serverPlayer.getData(CASTER_DATA);
         magicData.manaRegen(serverPlayer);
-        sendToPlayer(serverPlayer, new ManaDataSyncS2CPacket(magicData.getManaPool()));
+        sendToPlayer(serverPlayer, new ManaSyncS2CP(magicData.getManaPool()));
     }
 
     public static void cooldownTickEvent(ServerPlayer serverPlayer){
@@ -109,7 +109,7 @@ public class CastingData implements AbstractAttachment{
         } catch (Exception e){
             JahdooMod.LOGGER.error("e: ", e);
         }
-        sendToPlayer(serverPlayer, new CooldownsDataSyncS2CPacket(cooldowns.getAllCooldowns(), cooldowns.getAllCooldownsStatic()));
+        sendToPlayer(serverPlayer, new CooldownsSyncS2CP(cooldowns.getAllCooldowns(), cooldowns.getAllCooldownsStatic()));
     }
 
     @Override

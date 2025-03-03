@@ -12,8 +12,8 @@ import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
-import org.jahdoo.common.networking.packet.client2server.MageFlightPacketS2CPacket;
-import org.jahdoo.common.networking.packet.server2client.MageFlightDataSyncS2CPacket;
+import org.jahdoo.common.networking.client2server.MageFlightC2SP;
+import org.jahdoo.common.networking.server2client.MageFlightSyncS2CP;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.ElementReg;
@@ -64,7 +64,7 @@ public class MageFlight implements AbstractAttachment {
         var mageFlight = player.getData(MAGE_FLIGHT);
         mageFlight.serverFlight(player);
         if(player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new MageFlightPacketS2CPacket());
+            PacketDistributor.sendToPlayer(serverPlayer, new MageFlightC2SP());
         }
     }
 
@@ -131,7 +131,7 @@ public class MageFlight implements AbstractAttachment {
         }
 
         if(player instanceof ServerPlayer serverPlayer){
-            PacketDistributor.sendToPlayer(serverPlayer, new MageFlightDataSyncS2CPacket(jumpTickCounter, lastJumped, isFlying, jumpKeyDown));
+            PacketDistributor.sendToPlayer(serverPlayer, new MageFlightSyncS2CP(jumpTickCounter, lastJumped, isFlying, jumpKeyDown));
         }
     }
 
