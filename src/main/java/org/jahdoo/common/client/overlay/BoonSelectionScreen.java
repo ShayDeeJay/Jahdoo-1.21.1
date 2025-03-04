@@ -4,13 +4,9 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.boon.Boon;
-import org.jahdoo.common.client.IconLocations;
-import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.registers.SoundReg;
 
 import java.util.ArrayList;
@@ -41,8 +37,8 @@ public class BoonSelectionScreen extends Screen  {
         super(literal("Choice Selection Screen"));
 
         for (var i = 0; i < 3; i++){
-            boonsPositive.add(listRandom(positiveBoons()));
-            boonsNegative.add(listRandom(negativeBoons()));
+            boonsPositive.add(getPositiveBoon());
+            boonsNegative.add(getNegativeBoon());
         }
     }
 
@@ -62,14 +58,14 @@ public class BoonSelectionScreen extends Screen  {
 
     private void doOnFirst(int first){
         sharedPress();
-        boonsPositive.get(1).execute().run();
-        boonsNegative.get(1).execute().run();
+        boonsPositive.getFirst().execute().run();
+        boonsNegative.getFirst().execute().run();
     }
 
     private void doOnSecond(int second){
         sharedPress();
-        boonsPositive.getFirst().execute().run();
-        boonsNegative.getFirst().execute().run();
+        boonsPositive.get(1).execute().run();
+        boonsNegative.get(1).execute().run();
     }
 
     private void doOnThird(int third){
@@ -79,14 +75,8 @@ public class BoonSelectionScreen extends Screen  {
     }
 
     private void increaseAlpha(int offset) {
-        if(fade < 90) fade += 10;
+        if(fade < 150) fade += 10;
         this.selectionOffset = offset;
-    }
-
-    private void selectionBox(GuiGraphics guiGraphics, int xPos, int color, int colour2) {
-        var border = getFadedColourBackground(0f);
-        boxMaker(guiGraphics, selectionOffset, 0, xPos, this.height/4, border, color);
-        boxMaker(guiGraphics, selectionOffset, this.height/2, xPos, this.height/4, border, colour2);
     }
 
     @Override
@@ -129,110 +119,60 @@ public class BoonSelectionScreen extends Screen  {
         return List.of(posFirst, posSecond, posThird);
     }
 
-    private void textSelection(GuiGraphics guiGraphics, ArrayList<Component> tooltip, int i, Font font) {
-        if(this.fadeEntryBack <= 0.4) return;
-        var index = 0;
-        var index2 = 0;
+    private void selectionBox(GuiGraphics guiGraphics, int xPos) {
+        if(selection <= 0) return;
+        var border = getFadedColourBackground(0f);
+        var index = this.selection - 1;
+        var hasNegativeBoon = boonsNegative.get(index) != Boon.EMPTY;
+        var hasPositiveBoon = boonsPositive.get(index) != Boon.EMPTY;
 
-        for (var position : getPositions()) {
-            var x = position + 71;
-            var y = Math.min((i - (float) tooltip.size() / 2) , fadeEntryBack * 1200) - 44;
-
-            var height = 0;
-            var boon = boonsPositive.get(index);
-            var boonNeg = boonsNegative.get(index);
-            var labels = boon.label();
-            var isHovered = this.selectionOffset == position;
-            var scale = 20;
-
-            SharedUI.boxMaker(guiGraphics, x - 71, (int) y + 47, 70, -this.height, isHovered ? MAGNET_RANGE_GREEN : getFadedColourBackground(0.6f) , 0);
-            SharedUI.boxMaker(guiGraphics, x - 71, (int) y + 47, 70, this.height, isHovered ? MAGNET_STRENGTH_RED : getFadedColourBackground(0.6f), 0);
-
-
-//            SharedUI.boxMaker(guiGraphics, x - 71, (int) y + 47, 70, 0, isHovered ? OFF_WHITE : getFadedColourBackground(0.8f), HEADER_COLOUR);
-            guiGraphics.blit(boon.icon(), position + 60, (int) y - 55, 0, 0, scale, scale, scale, scale);
-            guiGraphics.blit(boonNeg.icon(), position + 60, (int) y - 55 + 134, 0, 0, scale, scale, scale, scale);
-
-            for (var component : labels) {
-                centeredStringNoShadow(guiGraphics, font, component, x, (int) y + height - (labels.size() * 5), -1, isHovered);
-
-                if(boonNeg != Boon.EMPTY){
-                    centeredStringNoShadow(guiGraphics, font, component, x, (int) y + height - (labels.size() * 5) + 134, -1, isHovered);
-                }
-
-
-                height += 10;
-            }
-
-//            if(boonNeg != Boon.EMPTY){
-//                guiGraphics.blit(boonNeg.icon(), position + 60, (int) y - 55 + 134, 0, 0, scale, scale, scale, scale);
-//
-//                for (var component : labels) {
-//                    centeredStringNoShadow(guiGraphics, font, component, x, (int) y + height - (labels.size() * 5)+ 134, -1, isHovered);
-//                    height += 10;
-//                }
-//            }
-
-            index++;
+        if(hasPositiveBoon){
+            var posColour = color((int) Math.max(0, fade), MAGNET_RANGE_GREEN);
+            boxMaker(guiGraphics, selectionOffset, 0, xPos, this.height / (hasNegativeBoon ? 4 : 2), border, posColour);
         }
 
-
-//        for (var position : getPositions()) {
-//            var x = position + 71;
-//            var y = Math.min((i - (float) tooltip.size() / 2) , fadeEntryBack * 1200) + 90;
-//            var height = 0;
-//            var boon = boonsNegative.get(index2);
-//            var labels = boon.label();
-//            var isHovered = this.selectionOffset == position;
-//
-//
-//            if(boon != Boon.EMPTY){
-//                var scale = 20;
-//                guiGraphics.blit(boon.icon(), position + 60, (int) y - 55, 0, 0, scale, scale, scale, scale);
-//
-//                for (var component : labels) {
-//                    centeredStringNoShadow(guiGraphics, font, component, x, (int) y + height - (labels.size() * 5), -1, isHovered);
-//                    height += 10;
-//                }
-//            }
-//            index2++;
-//        }
+        if (hasNegativeBoon) {
+            var negColour = color((int) Math.max(0, fade), MAGNET_STRENGTH_RED);
+            boxMaker(guiGraphics, selectionOffset, this.height, xPos, -this.height / (hasPositiveBoon ? 4 : 2), border, negColour);
+        }
     }
-
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         var itemStack = new ItemStack(WAND_ITEM_FROST.get());
         var tooltip = new ArrayList<>(getTooltipFromItem(getMinecraft(), itemStack));
-        var fadedColourBackground = color((int) Math.max(0, fade), MAGNET_RANGE_GREEN);
-        var fadedColourBackgroundA = color((int) Math.max(0, fade), MAGNET_STRENGTH_RED);
         var i = this.height / 2;
 
-        this.renderBlurredBackground(partialTick);
-        this.fadeEntryBack = Math.min(0.6F, this.fadeEntryBack + 0.03F);
+        renderBlurredBackground(partialTick);
+        fadeEntryBack = Math.min(0.9F, fadeEntryBack + 0.03F);
 
         sectionHighlight(mouseX, this::increaseAlpha, this::increaseAlpha, this::increaseAlpha);
         selectionSections(guiGraphics);
-        selectionBox(guiGraphics, getSize(), fadedColourBackground, fadedColourBackgroundA);
+        selectionBox(guiGraphics, getSize());
 
         textSelection(guiGraphics, tooltip, i, font);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
-    private void sectionHighlight(int mouseX, Consumer<Integer> doOn0, Consumer<Integer> doOn1, Consumer<Integer> doOn2) {
+    private void sectionHighlight(
+        int mouseX,
+        Consumer<Integer> doOn0,
+        Consumer<Integer> doOn1,
+        Consumer<Integer> doOn2
+    ) {
         var pos = getPositions();
         var pos1 = pos.getFirst();
         var pos2 = pos.get(1);
         var pos3 = pos.get(2);
         var spaceBy = getSize() * 2;
 
-        if(mouseX > pos2 - 1 &&  mouseX < pos2 + spaceBy) {
+        if(mouseX > pos1 - 1 &&  mouseX < pos1 + spaceBy) {
             playSound(1);
-            doOn0.accept(pos2);
+            doOn0.accept(pos1);
             this.selection = 1;
-        } else if (mouseX > pos1 - 1  &&  mouseX < pos1 + spaceBy) {
+        } else if (mouseX > pos2 - 1  &&  mouseX < pos2 + spaceBy) {
             playSound(2);
-            doOn1.accept(pos1);
+            doOn1.accept(pos2);
             this.selection = 2;
         } else if (mouseX > pos3 - 1 &&  mouseX < pos3 + spaceBy) {
             playSound(3);
@@ -245,4 +185,53 @@ public class BoonSelectionScreen extends Screen  {
         }
     }
 
+    private void textSelection(GuiGraphics guiGraphics, ArrayList<Component> tooltip, int i, Font font) {
+        if(this.fadeEntryBack <= 0.4) return;
+        var index = 0;
+
+        for (var position : getPositions()) {
+            var boon = boonsPositive.get(index);
+            var boonNeg = boonsNegative.get(index);
+
+            var labelPositive = boon.label();
+            var labelNegative = boonNeg.label();
+
+            var hasNegativeBoon = boonNeg != Boon.EMPTY;
+            var hasPositiveBoon = boon != Boon.EMPTY;
+
+            var x = position + 71;
+            var y = Math.min((i - (float) tooltip.size() / 2) , fadeEntryBack * 1200) -44;
+            var height = 0;
+            var isHovered = this.selectionOffset == position;
+            var scale = 20;
+
+            if(hasPositiveBoon){
+                var adjustHeight = this.height / (hasNegativeBoon ? 4 : 1);
+                var adjustY = hasNegativeBoon ? 0 : 70;
+
+                boxMaker(guiGraphics, x - 71, -1, 70, adjustHeight + 1, MAGNET_RANGE_GREEN, 0);
+                guiGraphics.blit(boon.icon(), position + 60, (int) y - 55 + adjustY, 0, 0, scale, scale, scale, scale);
+                for (var component : labelPositive) {
+                    centeredStringNoShadow(guiGraphics, font, component, x, (int) y + height - (labelPositive.size() * 5) + adjustY, -1, isHovered);
+                    height += 10;
+                }
+            }
+
+            height = 0;
+
+            if(hasNegativeBoon){
+                var adjustHeight = hasPositiveBoon ? (int) y + 47 : -1;
+                var adjustY = hasPositiveBoon ? 0 : -70;
+
+                boxMaker(guiGraphics, x - 71, adjustHeight, 70, this.height, MAGNET_STRENGTH_RED, 0);
+                guiGraphics.blit(boonNeg.icon(), position + 60, (int) y + (79) + adjustY, 0, 0, scale, scale, scale, scale);
+                for(var component : labelNegative){
+                    centeredStringNoShadow(guiGraphics, font, component, x, (int) y + height - (labelPositive.size() * 5) + 134 + adjustY, -1, isHovered);
+                    height += 10;
+                }
+            }
+
+            index++;
+        }
+    }
 }

@@ -66,7 +66,7 @@ public class StructureManager {
         var registry = level.registryAccess().registry(Registries.STRUCTURE);
         if(registry.isEmpty()) return;
 
-        var structure = registry.get().get(Helpers.res("trading_post"));
+        var structure = registry.get().get(Helpers.res("room"));
         if(structure == null) return;
 
         var chunkgenerator = level.getChunkSource().getGenerator();
