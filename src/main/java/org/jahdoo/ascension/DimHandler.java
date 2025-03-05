@@ -12,7 +12,7 @@ public record DimHandler(Vec3 spawn, String id) {
     }
 
     public static DimHandler tradingPost(){
-        return new DimHandler(new Vec3(-22.5, 51, -42.5), TRADING_POST);
+        return new DimHandler(new Vec3(0, 40, 0), TRADING_POST);
     }
 
 }

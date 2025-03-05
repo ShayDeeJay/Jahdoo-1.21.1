@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.trading_post.ItemCosts;
@@ -16,6 +17,10 @@ import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+
+import static net.minecraft.core.BlockPos.*;
 import static org.jahdoo.ascension.trading_post.ShoppingItems.getEliteShoppingItem;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.block.TrialPortalBlock.*;
@@ -28,13 +33,6 @@ import static org.jahdoo.common.registers.ItemReg.RUNE;
 
 public class BlockSetupManager {
 
-    private static void setLootChests(ServerLevel level) {
-        var chestState = LOOT_CHEST.get().defaultBlockState().setValue(FACING, Direction.SOUTH);
-        var chestPositions = new BlockPos(-21, 55, -25);
-
-        for(int i = 0; i <= 4; i += 2) level.setBlockAndUpdate(chestPositions.west(i), chestState);
-    }
-
     static void setTrialDim(ServerLevel level, ChallengeLevelData data) {
         var pos = new BlockPos(-25, 67, -72);
         level.setBlockAndUpdate(pos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
@@ -44,42 +42,48 @@ public class BlockSetupManager {
         }
     }
 
-    static void generateTradingPost(ServerLevel level) {
+    static void generateTradingPost(ServerLevel level, BlockPos pos, Rotation rotation) {
         var shoppingTableState = SHOPPING_TABLE.get().defaultBlockState();
-
-        setLootChests(level);
-        uniqueItems(level, shoppingTableState);
-        otherShopping(level, shoppingTableState);
-        keyTable(level, shoppingTableState);
-        generateEntranceAndExit(level);
-    }
-
-    private static void generateEntranceAndExit(ServerLevel level) {
-        //Entrance and exit portals
-        var portalBlock = TRAIL_PORTAL.get().defaultBlockState();
-        var portalExit = new BlockPos(-4, 51, -17);
-        var portalNextLevel = new BlockPos(-40, 51, -17);
-
-        for(int i = 0; i < 3; i++) {
-            var pos = portalExit.west(i);
-            var pos1 = portalNextLevel.west(i);
-            for(int x = 0; x < 5; x++){
-                level.setBlockAndUpdate(pos.above(x), portalBlock.setValue(DIMENSION_KEY, KEY_HOME));
-                level.setBlockAndUpdate(pos1.above(x), portalBlock.setValue(DIMENSION_KEY, KEY_TRIAL));
-            }
+        for (var blockPos : betweenClosed(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 44, pos.getY() + 44, pos.getZ() + 44)) {
+            setLootChests(level, blockPos, rotation);
+            uniqueItems(level, shoppingTableState, blockPos);
+            otherShopping(level, shoppingTableState, blockPos);
+            keyTable(level, shoppingTableState, blockPos);
+            generateEntranceAndExit(level, blockPos);
         }
     }
 
-    private static void uniqueItems(ServerLevel level, BlockState shoppingTableState) {
-        var eliteItemPosition = new BlockPos(-16, 54, -15);
-        var eliteState = shoppingTableState.setValue(FACING, Direction.NORTH).setValue(TEXTURE, 2);
+    private static void setLootChests(ServerLevel level, BlockPos pos, Rotation rotation) {
+        var direction = Direction.NORTH;
+        direction.isFacingAngle(rotation.rotation().transformation().determinant());
+        var chestState = LOOT_CHEST.get().defaultBlockState().setValue(FACING, direction);
+        if(level.getBlockState(pos).is(Blocks.MAGENTA_CONCRETE)){
+            level.setBlockAndUpdate(pos, chestState);
+        }
+    }
 
-        for(int i = 0; i <= 14; i += 7){
-            var pos = eliteItemPosition.west(i);
+    private static void generateEntranceAndExit(ServerLevel level, BlockPos pos) {
+        var portalBlock = TRAIL_PORTAL.get().defaultBlockState();
+
+        if(level.getBlockState(pos).is(Blocks.BLUE_CONCRETE)){
+            for(int x = 0; x < 5; x++) {
+                level.setBlockAndUpdate(pos.above(x), portalBlock.setValue(DIMENSION_KEY, KEY_TRIAL));
+            }
+        }
+
+        if(level.getBlockState(pos).is(Blocks.WHITE_CONCRETE)) {
+            level.setBlockAndUpdate(pos, portalBlock.setValue(DIMENSION_KEY, KEY_HOME));
+        }
+    }
+
+    private static void uniqueItems(ServerLevel level, BlockState shoppingTableState, BlockPos pos) {
+        var eliteState = shoppingTableState.setValue(FACING, Direction.SOUTH).setValue(TEXTURE, 2);
+
+        if(level.getBlockState(pos).is(Blocks.ORANGE_CONCRETE)){
             level.setBlockAndUpdate(pos.above(), Blocks.BARRIER.defaultBlockState());
             level.setBlockAndUpdate(pos, eliteState);
             var blockEntity = level.getBlockEntity(pos);
-            if(blockEntity instanceof ShoppingTableEntity entity){
+            if (blockEntity instanceof ShoppingTableEntity entity) {
                 var shoppingItem = getEliteShoppingItem(level);
                 entity.setItem(shoppingItem.ShoppingItem());
                 entity.setCost(shoppingItem.itemCosts());
@@ -87,21 +91,19 @@ public class BlockSetupManager {
         }
     }
 
-    private static void keyTable(ServerLevel level, BlockState shoppingTableState) {
-        var keyItemPosition = new BlockPos(-32, 53, -28);
-        var keyState = shoppingTableState.setValue(FACING, Direction.EAST).setValue(TEXTURE, 1);
+    private static void keyTable(ServerLevel level, BlockState shoppingTableState, BlockPos pos) {
+        var keyState = shoppingTableState.setValue(FACING, Direction.WEST).setValue(TEXTURE, 1);
 
-        for(int i = 6; i >= 0; i -= 3) {
-            var pos = keyItemPosition.south(i);
+        if(level.getBlockState(pos).is(Blocks.YELLOW_CONCRETE)){
             level.setBlockAndUpdate(pos, keyState);
             var blockEntity = level.getBlockEntity(pos);
-            if(blockEntity instanceof ShoppingTableEntity entity){
+            if (blockEntity instanceof ShoppingTableEntity entity) {
                 var itemStack = new ItemStack(ItemReg.LOOT_KEY);
                 var value = Random.nextInt(4);
                 itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(value));
                 entity.setItem(itemStack);
 
-                var cost = switch (value){
+                var cost = switch (value) {
                     case 1 -> ItemCosts.getBronzeCost(40);
                     case 2 -> ItemCosts.getSilverCost(40);
                     case 3 -> ItemCosts.getPlatinumCost(3);
@@ -113,29 +115,32 @@ public class BlockSetupManager {
         }
     }
 
-    private static void otherShopping(ServerLevel level, BlockState shoppingTableState) {
-        var normalItemPosition = new BlockPos(-14, 53, -28);
-        var normalState = shoppingTableState.setValue(FACING, Direction.WEST);
+    private static void otherShopping(ServerLevel level, BlockState shoppingTableState, BlockPos pos) {
+        var normalState = shoppingTableState.setValue(FACING, Direction.EAST);
+        var purple = new AtomicInteger();
 
-        for(int i = 0; i <= 6; i += 3) {
-            var isRandomTable = i == 0;
-            var pos = normalItemPosition.south(i);
-            level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, isRandomTable ? 3 : 0));
+        if(level.getBlockState(pos).is(Blocks.PURPLE_CONCRETE)){
+            level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, 0));
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
-                switch (i){
-                    case 0 -> entity.setCost(ItemCosts.getGoldCost(1));
-                    case 3 -> {
-                        entity.setItem(new ItemStack(AUGMENT));
-                        entity.setCost(ItemCosts.getGoldCost(20));
-                    }
-                    case 6 -> {
-                        var randomLootItem = new ItemStack(RUNE);
-                        RuneHelpers.generateRandomTypAttribute(randomLootItem, null);
-                        entity.setItem(randomLootItem);
-                        entity.setCost(ItemCosts.getGoldCost(10));
-                    }
+                if(purple.get() == 0){
+                    entity.setItem(new ItemStack(AUGMENT));
+                    entity.setCost(ItemCosts.getGoldCost(20));
+                } else {
+                    var randomLootItem = new ItemStack(RUNE);
+                    RuneHelpers.generateRandomTypAttribute(randomLootItem, null);
+                    entity.setItem(randomLootItem);
+                    entity.setCost(ItemCosts.getGoldCost(10));
                 }
+            }
+            purple.getAndIncrement();
+        }
+
+        if(level.getBlockState(pos).is(Blocks.LIGHT_BLUE_CONCRETE)){
+            level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, 3));
+            var blockEntity = level.getBlockEntity(pos);
+            if(blockEntity instanceof ShoppingTableEntity entity){
+                entity.setCost(ItemCosts.getGoldCost(1));
             }
         }
     }

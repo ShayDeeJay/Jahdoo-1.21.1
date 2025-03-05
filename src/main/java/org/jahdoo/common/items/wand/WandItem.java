@@ -1,7 +1,11 @@
 package org.jahdoo.common.items.wand;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -11,6 +15,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import org.jahdoo.ascension.StructureManager;
 import org.jahdoo.common.client.overlay.BoonSelectionScreen;
 import org.jahdoo.common.client.overlay.StatScreen;
 import org.jahdoo.common.components.WandAbilityHolder;
@@ -121,13 +128,23 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
 
-        if(level.isClientSide){
-            if(player.isShiftKeyDown()){
-                Minecraft.getInstance().setScreen(new StatScreen(player));
-            } else {
-                Minecraft.getInstance().setScreen(new BoonSelectionScreen());
+        if(level instanceof ServerLevel serverLevel){
+            try {
+                var settings = new StructurePlaceSettings();
+                settings.setRotation(Rotation.CLOCKWISE_90);
+                StructureManager.placeStructure(serverLevel, player.blockPosition(), settings);
+            } catch (CommandSyntaxException e) {
+                throw new RuntimeException(e);
             }
         }
+
+//        if(level.isClientSide){
+//            if(player.isShiftKeyDown()){
+//                Minecraft.getInstance().setScreen(new StatScreen(player));
+//            } else {
+//                Minecraft.getInstance().setScreen(new BoonSelectionScreen());
+//            }
+//        }
 
         if (canOffHand(player, interactionHand, true)) {
             player.startUsingItem(interactionHand);
