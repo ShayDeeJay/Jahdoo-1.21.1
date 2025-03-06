@@ -23,7 +23,7 @@ import static org.jahdoo.common.registers.BlockEntityReg.*;
 
 public class ShoppingTableEntity extends AbstractBEInventory {
 
-    public ItemCosts itemCosts;
+    public ItemCosts itemCosts = EMPTY_COST;
 
     public ShoppingTableEntity(BlockPos pos, BlockState state) {
         super(SHOPPING_TABLE_BE.get(), pos, state, 64);

@@ -12,6 +12,8 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.OverlayBlockTooltip;
 import org.jahdoo.common.client.RuneTooltipRenderer;
 
+import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.*;
+import static net.neoforged.neoforge.client.event.RenderLivingEvent.*;
 import static org.jahdoo.common.client.KeyBinding.*;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.mysticEffectClient;
 import static org.jahdoo.common.event.event_helpers.KeyBindHelper.quickSelectBehaviour;
@@ -26,7 +28,7 @@ import static org.jahdoo.common.items.wand.WandItemHelper.getAllSlots;
 public class ClientEvents {
 
     @SubscribeEvent
-    public static void entityRenderer(RenderLivingEvent.Pre event) {
+    public static void entityRenderer(Pre event) {
         mysticEffectClient(event);
     }
 
@@ -53,7 +55,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void playerRenderer(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) return;
+        if (event.getStage() != Stage.AFTER_BLOCK_ENTITIES) return;
         var player = (Player) event.getCamera().getEntity();
         var stack = Helpers.getUsedItem(player);
 

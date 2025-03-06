@@ -1,13 +1,19 @@
 package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -36,16 +42,22 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
+import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.SoundReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
 import java.util.Objects;
 
+import static net.minecraft.core.BlockPos.betweenClosed;
+import static net.minecraft.world.level.block.HorizontalDirectionalBlock.*;
 import static org.jahdoo.ascension.DimHandler.TRADING_POST;
 import static org.jahdoo.ascension.DimHandler.TRIAL;
+import static org.jahdoo.ascension.StructureManager.placeNewSide;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
+import static org.jahdoo.common.items.wand.WandItem.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_DATA;
 
 
@@ -138,14 +150,29 @@ public class ServerEvents {
         var pos = event.getPos();
         var getBlock = event.getLevel().getBlockState(pos);
 
-//        if(item instanceof WandItem){
-//            var block = BlocksRegister.TRAIL_PORTAL.get();
-//            var setBlockState = block.defaultBlockState().setValue(DIMENSION_KEY, KEY_TRADING_POST);
-//            event.getLevel().setBlockAndUpdate(pos.above(), setBlockState);
-//        }
+        if(event.getLevel() instanceof CustomLevel level){
+            var button = Blocks.CHERRY_BUTTON;
+            if(getBlock.is(button) && player != null){
+                var direction = level.getBlockState(pos).getOptionalValue(FACING).get().getOpposite();
+                placeNewSide(level, direction, pos.relative(direction, 1));
+
+                var range = betweenClosed(
+                    pos.getX() - 10, pos.getY() - 10, pos.getZ() - 10,
+                    pos.getX() + 10, pos.getY() + 10, pos.getZ() + 10
+                );
+
+                for (var blockPos : range) {
+                    var bedrock = level.getBlockState(blockPos).is(Blocks.BEDROCK);
+                    var netherite = level.getBlockState(blockPos).is(Blocks.NETHERITE_BLOCK);
+
+                    if(bedrock || netherite) level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+                }
+            }
+        }
 
         removeWandInteractionWithBlocks(event, player, item, getBlock);
     }
+
 
     @SubscribeEvent
     public static void levelTickEvent(EntityJoinLevelEvent event){
