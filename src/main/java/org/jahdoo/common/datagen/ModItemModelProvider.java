@@ -34,15 +34,22 @@ public class ModItemModelProvider extends ItemModelProvider {
         registerCoins();
     }
 
-    private void registerAugmentModels() {
-        var augmentFiles = List.of("ice_augment", "fire_augment", "mystic_augment", "vitalis_augment", "utility_augment");
-        augmentFiles.forEach(
-            location -> {
-                createModel(location, "item/augments/" + location);
-                createAugmentOverride(location, augmentFiles.indexOf(location) + 1);
-            }
-        );
-//        augmentFiles.forEach(this::createAugmentOverride);
+    private void createSimpleItemModel(DeferredHolder<Item, Item> item) {
+        getWithParent(item, "item/" + item.getId().getPath());
+    }
+
+    private ModelFile modelFile(String location) {
+        return new ModelFile.ExistingModelFile(Helpers.res(location), this.existingFileHelper);
+    }
+
+    private void createModel(String augment, String model) {
+        withExistingParent(augment, ResourceLocation.withDefaultNamespace("item/generated"))
+            .texture("layer0", Helpers.res(model));
+    }
+
+    private ItemModelBuilder getWithParent(DeferredHolder<Item, Item> item, String path) {
+        return withExistingParent(item.getId().getPath(), ResourceLocation.withDefaultNamespace("item/generated"))
+            .texture("layer0", Helpers.res(path));
     }
 
     private void registerRuneModels() {
@@ -80,6 +87,33 @@ public class ModItemModelProvider extends ItemModelProvider {
         }
     }
 
+    private void createOverride(int runeId, DeferredHolder<Item, Item> item, String prefix) {
+        getWithParent(item, prefix + "s/" + item.getId().getPath())
+            .override()
+            .predicate(MODEL_DATA, runeId)
+            .model(modelFile(prefix + runeId))
+            .end();
+    }
+
+    private void createAugmentOverride(String augment, int index) {
+        var item = ItemReg.AUGMENT;
+        getWithParent(item, "item/augments/" + item.getId().getPath())
+            .override()
+            .predicate(MODEL_DATA, index)
+            .model(modelFile("item/" + augment))
+            .end();
+    }
+
+    private void registerAugmentModels() {
+        var augmentFiles = List.of("ice_augment", "fire_augment", "mystic_augment", "vitalis_augment", "utility_augment");
+        augmentFiles.forEach(
+            location -> {
+                createModel(location, "item/augments/" + location);
+                createAugmentOverride(location, augmentFiles.indexOf(location) + 1);
+            }
+        );
+    }
+
     private void registerSimpleItems() {
         var simpleItems = List.of(
             ItemReg.NEXITE_POWDER, ItemReg.HEALTH_CONTAINER,
@@ -99,40 +133,5 @@ public class ModItemModelProvider extends ItemModelProvider {
         );
 
         armorItems.forEach(this::createSimpleItemModel);
-    }
-
-    private void createAugmentOverride(String augment, int index) {
-        var item = ItemReg.AUGMENT;
-        getWithParent(item, "item/augments/" + item.getId().getPath())
-                .override()
-                .predicate(MODEL_DATA, index)
-                .model(modelFile("item/" + augment))
-                .end();
-    }
-
-    private void createOverride(int runeId, DeferredHolder<Item, Item> item, String prefix) {
-        getWithParent(item, prefix + "s/" + item.getId().getPath())
-                .override()
-                .predicate(MODEL_DATA, runeId)
-                .model(modelFile(prefix + runeId))
-                .end();
-    }
-
-    private void createModel(String augment, String model) {
-        withExistingParent(augment, ResourceLocation.withDefaultNamespace("item/generated"))
-                .texture("layer0", Helpers.res(model));
-    }
-
-    private void createSimpleItemModel(DeferredHolder<Item, Item> item) {
-        getWithParent(item, "item/" + item.getId().getPath());
-    }
-
-    private ItemModelBuilder getWithParent(DeferredHolder<Item, Item> item, String path) {
-        return withExistingParent(item.getId().getPath(), ResourceLocation.withDefaultNamespace("item/generated"))
-                .texture("layer0", Helpers.res(path));
-    }
-
-    private ModelFile modelFile(String location) {
-        return new ModelFile.ExistingModelFile(Helpers.res(location), this.existingFileHelper);
     }
 }

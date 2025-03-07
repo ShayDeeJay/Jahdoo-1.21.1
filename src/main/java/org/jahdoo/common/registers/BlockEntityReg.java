@@ -11,6 +11,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationEntity;
 import org.jahdoo.common.block.challange_altar.ChallengeAltarBlockEntity;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
+import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.common.block.infuser.InfuserBlockEntity;
@@ -31,6 +32,9 @@ public class BlockEntityReg {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TankBlockEntity>> TANK_BE =
         registerBlockEntity("tank_be", TankBlockEntity::new, TANK);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LockBlockEntity>> LOCK_BE =
+        registerBlockEntity("lock_be", LockBlockEntity::new, LOCK);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnchantedBlockEntity>> ENCHANTED_BE =
         registerBlockEntity("enchanted_be", EnchantedBlockEntity::new, ENCHANTED_BLOCK);

@@ -7,9 +7,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class CoinItem extends Item {
 
-    public CoinItem() {
-        super(new Properties());
-    }
+    public CoinItem() { super(new Properties()); }
 
     @Override
     public Component getName(ItemStack stack) {
@@ -17,7 +15,7 @@ public class CoinItem extends Item {
         if(data == null) return Component.literal("Bronze Coin");
 
         return Component.literal(
-            switch (data.value()){
+            switch (data.value()) {
                 case 1 -> "Silver";
                 case 2 -> "Gold";
                 default -> "Platinum";

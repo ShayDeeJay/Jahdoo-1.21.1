@@ -18,9 +18,6 @@ import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-
-import static net.minecraft.core.BlockPos.*;
 import static net.minecraft.core.component.DataComponents.*;
 import static org.jahdoo.ascension.trading_post.ShoppingItems.getEliteShoppingItem;
 import static org.jahdoo.ascension.utils.Helpers.Random;
@@ -46,6 +43,7 @@ public class BlockSetupManager {
     static void generateTradingPost(ServerLevel level, Iterable<BlockPos> pos, Direction direction) {
         var shoppingTableState = SHOPPING_TABLE.get().defaultBlockState();
         for (var blockPos : pos) {
+            setLocks(level, blockPos);
             setLootChests(level, blockPos, direction);
             uniqueItems(level, shoppingTableState, blockPos, direction);
             otherShopping(level, shoppingTableState, blockPos, direction);
@@ -54,8 +52,14 @@ public class BlockSetupManager {
         }
     }
 
+    private static void setLocks(ServerLevel level, BlockPos blockPos) {
+        var blockState = level.getBlockState(blockPos);
+        if(blockState.is(Blocks.OBSERVER)){
+            level.setBlockAndUpdate(blockPos, BlockReg.LOCK.get().defaultBlockState().setValue(FACING,blockState.getValue(FACING)));
+        }
+    }
+
     private static void setLootChests(ServerLevel level, BlockPos pos, Direction direction) {
-//        var direction = Direction.NORTH;
         var chestState = LOOT_CHEST.get().defaultBlockState().setValue(FACING, direction);
         if(level.getBlockState(pos).is(Blocks.MAGENTA_CONCRETE)){
             level.setBlockAndUpdate(pos, chestState);

@@ -16,6 +16,7 @@ import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.BlockReg;
 
+import java.util.List;
 import java.util.Objects;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
@@ -65,13 +66,15 @@ public class StructureManager {
     }
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings) {
-        var templates = level.getStructureManager().get(Helpers.res("trading_post"));
+        var getRoom = List.of("trading_post", "room");
+        var templates = level.getStructureManager().get(Helpers.res(Helpers.listRandom(getRoom)));
 
         templates.ifPresent(template -> template.placeInWorld(level, pos, new BlockPos(-22, 0, -22), settings, level.random, 2));
     }
 
     public static void placeNewSide(Level level, Direction direction, BlockPos pos) {
         if(level instanceof ServerLevel serverLevel){
+
             var settings = new StructurePlaceSettings();
             var newPos = new BlockPos(0, 0, 0);
 

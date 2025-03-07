@@ -150,26 +150,6 @@ public class ServerEvents {
         var pos = event.getPos();
         var getBlock = event.getLevel().getBlockState(pos);
 
-        if(event.getLevel() instanceof CustomLevel level){
-            var button = Blocks.CHERRY_BUTTON;
-            if(getBlock.is(button) && player != null){
-                var direction = level.getBlockState(pos).getOptionalValue(FACING).get().getOpposite();
-                placeNewSide(level, direction, pos.relative(direction, 1));
-
-                var range = betweenClosed(
-                    pos.getX() - 10, pos.getY() - 10, pos.getZ() - 10,
-                    pos.getX() + 10, pos.getY() + 10, pos.getZ() + 10
-                );
-
-                for (var blockPos : range) {
-                    var bedrock = level.getBlockState(blockPos).is(Blocks.BEDROCK);
-                    var netherite = level.getBlockState(blockPos).is(Blocks.NETHERITE_BLOCK);
-
-                    if(bedrock || netherite) level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
-                }
-            }
-        }
-
         removeWandInteractionWithBlocks(event, player, item, getBlock);
     }
 

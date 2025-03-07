@@ -323,6 +323,13 @@ public class Helpers {
         }
     }
 
+    public static boolean hasLineOfSightPos(Entity pathfinder, Vec3 target) {
+        var vec3 = new Vec3(pathfinder.getX(), pathfinder.getEyeY(), pathfinder.getZ());
+        var vec31 = new Vec3(target.x, target.y, target.z);
+        var context = new ClipContext(vec3, vec31, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, pathfinder);
+        return !(vec31.distanceTo(vec3) > (double) 128.0F) && pathfinder.level().clip(context).getType() == HitResult.Type.MISS;
+    }
+
     public static Vec3 getRandomParticleVelocity(Entity entity, double speed) {
         var theta = Random.nextDouble() * 2 * Math.PI; // Angle around the y-axis
         var phi = Random.nextDouble() * Math.PI; // Angle from the y-axis

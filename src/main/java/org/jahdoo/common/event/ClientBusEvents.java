@@ -12,6 +12,7 @@ import org.jahdoo.common.block.augment_modification_station.AugmentModificationR
 import org.jahdoo.common.block.challange_altar.ChallengeAltarRenderer;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockRenderer;
 import org.jahdoo.common.block.infuser.InfuserRenderer;
+import org.jahdoo.common.block.lock.LockRenderer;
 import org.jahdoo.common.block.loot_chest.LootChestRenderer;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeRenderer;
 import org.jahdoo.common.block.rune_table.RuneTableRenderer;
@@ -113,6 +114,7 @@ public class ClientBusEvents {
         event.registerBlockEntityRenderer(LOOT_CHEST_BE.get(), LootChestRenderer::new);
         event.registerBlockEntityRenderer(WAND_BE.get(), WandBlockRenderer::new);
         event.registerBlockEntityRenderer(TANK_BE.get(), TankRenderer::new);
+        event.registerBlockEntityRenderer(LOCK_BE.get(), LockRenderer::new);
         event.registerBlockEntityRenderer(SHOPPING_TABLE_BE.get(), ShoppingTableRenderer::new);
         event.registerBlockEntityRenderer(RUNE_TABLE_BE.get(), RuneTableRenderer::new);
         event.registerBlockEntityRenderer(ENCHANTED_BE.get(), EnchantedBlockRenderer::new);

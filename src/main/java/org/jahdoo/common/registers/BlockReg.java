@@ -13,6 +13,7 @@ import org.jahdoo.common.block.TrialPortalBlock;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationBlock;
 import org.jahdoo.common.block.challange_altar.ChallengeAltarBlock;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlock;
+import org.jahdoo.common.block.lock.LockBlock;
 import org.jahdoo.common.block.loot_chest.LootChestBlock;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeBlock;
 import org.jahdoo.common.block.infuser.InfuserBlock;
@@ -62,6 +63,9 @@ public class BlockReg {
 
     public static DeferredHolder<Block, Block> TANK =
         registerBlockWithItem("tank", TankBlock::new);
+
+    public static DeferredHolder<Block, Block> LOCK =
+        registerBlockWithItem("lock", LockBlock::new);
 
     public static DeferredHolder<Block, Block> SHOPPING_TABLE =
         registerBlockWithItem("shopping_table", ShoppingTableBlock::new);

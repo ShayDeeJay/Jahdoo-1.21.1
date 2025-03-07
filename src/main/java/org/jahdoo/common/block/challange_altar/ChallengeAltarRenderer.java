@@ -53,15 +53,15 @@ public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlock
         renderBeaconBeam(poseStack, source, BEAM_LOCATION, partialTick, textureScale, i, 0, height, colourLight, rad, rad * 6);
     }
 
-    private static void renderTextOverBlock(
+    public static void renderTextOverBlock(
         PoseStack poseStack,
         MultiBufferSource buffer,
         String text,
         BlockPos pos,
-        double offset
+        double offset,
+        float scale
     ) {
         poseStack.pushPose();
-        var scale = 0.02F;
         renderFloatingText(poseStack, buffer, text, pos, -1, scale, true, scale, true, offset);
         poseStack.popPose();
     }
@@ -73,14 +73,16 @@ public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlock
         boolean isComplete,
         ChallengeLevelData data
     ) {
+        var scale = 0.02F;
+
         if(!isComplete){
-            renderTextOverBlock(poseStack, source, "Round: " + data.round, entity.getBlockPos(), 0);
-            renderTextOverBlock(poseStack, source, "Allowed Total " + data.maxMobs(), entity.getBlockPos(), 0.2);
-            renderTextOverBlock(poseStack, source, "Allowed Map " + data.maxMobsOnMap(), entity.getBlockPos(), 0.4);
-            renderTextOverBlock(poseStack, source, "Killed " + data.killedMobs, entity.getBlockPos(), 0.6);
-            renderTextOverBlock(poseStack, source, "On Map " + data.activeMobs.size(), entity.getBlockPos(), 0.8);
+            renderTextOverBlock(poseStack, source, "Round: " + data.round, entity.getBlockPos(), 0, scale);
+            renderTextOverBlock(poseStack, source, "Allowed Total " + data.maxMobs(), entity.getBlockPos(), 0.2, scale);
+            renderTextOverBlock(poseStack, source, "Allowed Map " + data.maxMobsOnMap(), entity.getBlockPos(), 0.4, scale);
+            renderTextOverBlock(poseStack, source, "Killed " + data.killedMobs, entity.getBlockPos(), 0.6, scale);
+            renderTextOverBlock(poseStack, source, "On Map " + data.activeMobs.size(), entity.getBlockPos(), 0.8, scale);
         } else {
-            renderTextOverBlock(poseStack, source, "Complete!", entity.getBlockPos(), 0.8);
+            renderTextOverBlock(poseStack, source, "Complete!", entity.getBlockPos(), 0.8, scale);
         }
     }
 
@@ -129,7 +131,6 @@ public class ChallengeAltarRenderer extends GeoBlockRenderer<ChallengeAltarBlock
             font.drawInBatch(text, f, 0.0F, color, false, poseStack.last().pose(), source, mode, 0, light);
             poseStack.popPose();
         }
-
     }
 
     @Override
