@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.attachments.CastingData;
-import org.jahdoo.common.client.IconLocations;
+import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.ascension.utils.Configuration;
@@ -65,7 +65,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         element.ifPresent(getElement -> this.types = getElement.id());
         if(types > 0){
             int[] manaOverlay = {35, 43, 27, 11, 19, 20};
-            alignedGui.displayGuiLayer(25, 18, 0, manaOverlay[types - 1], manaProgress, 8, IconLocations.MANA_LEVEL_BAR);
+            alignedGui.displayGuiLayer(25, 18, 0, manaOverlay[types - 1], manaProgress, 8, Icons.MANA_LEVEL_BAR);
         }
     }
 
@@ -187,12 +187,12 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var y = graphics.guiHeight() - 60;
         var x = graphics.guiWidth() / 2 - 9;
 
-        var unSelected = IconLocations.GUI_ITEM_SLOT;
+        var unSelected = Icons.GUI_ITEM_SLOT;
         var alpha = 0.6f;
         var textColour = -7303024;
 
         renderSlot(graphics, next, x + 20, y, unSelected, nextIndex + 1, textColour, alpha);
-        renderSlot(graphics, current, x , y, IconLocations.GUI_GENERAL_SLOT, selectedIndex + 1, -12698050, 1f);
+        renderSlot(graphics, current, x , y, Icons.GUI_GENERAL_SLOT, selectedIndex + 1, -12698050, 1f);
         renderSlot(graphics, previous, x - 20, y, unSelected, prevIndex + 1, textColour, alpha);
     }
 
@@ -286,7 +286,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         public void displayGuiLayer(int xA, int yA, int offsetY, int barSizeXb, int barSizeYb){
             int positionX = xA + shiftGuiX;
             int positionY = screenHeight - yA - shiftGuiY;
-            guiGraphics.blit(IconLocations.MANA_CONTAINER, positionX, positionY, 77, offsetY, barSizeXb, barSizeYb);
+            guiGraphics.blit(Icons.MANA_CONTAINER, positionX, positionY, 77, offsetY, barSizeXb, barSizeYb);
         }
 
         public void displayGuiLayer(int xA, int yA, int offsetX, int offsetY, int iconSize, ResourceLocation resourceLocation){

@@ -4,7 +4,10 @@ import com.mojang.serialization.MapCodec;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -38,8 +41,10 @@ import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
 import static net.minecraft.sounds.SoundEvents.SAND_PLACE;
 import static net.minecraft.sounds.SoundSource.BLOCKS;
+import static net.minecraft.world.ItemInteractionResult.*;
 import static net.minecraft.world.level.block.Blocks.*;
 import static org.jahdoo.ascension.StructureManager.placeNewSide;
+import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.block.BlockInteractionHandler.RemoveItemsFromSlotToHand;
 import static org.jahdoo.common.block.BlockInteractionHandler.stackHandlerWithFeedBack;
 import static org.jahdoo.common.registers.AttachmentReg.BOOL;
@@ -62,7 +67,12 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
 
     public LockBlock() {
-        super(Properties.of().strength(1f).noOcclusion());
+        super(
+            Properties.of()
+                .strength(1f)
+                .noOcclusion()
+                .lightLevel((blockState) -> 4)
+        );
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.SOUTH));
     }
 
@@ -113,11 +123,17 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if(!(level.getBlockEntity(pos) instanceof LockBlockEntity lockBlockEntity)) return FAIL;
+        if(!lockBlockEntity.canPlace()) {
+            player.displayClientMessage(Component.literal("Invalid Location"), true);
+            return FAIL;
+        }
 
         if(level instanceof ServerLevel serverLevel){
             var getState = state.getValue(FACING);
-
-            placeNewSide(serverLevel, getState, pos.relative(getState, 0));
+            getSoundWithPosition(serverLevel, pos, SoundEvents.LODESTONE_COMPASS_LOCK, 1, 1.4F);
+            getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_ACTIVATE, 1, 0.6F);
+            placeNewSide(serverLevel, getState, pos.relative(getState, 0), Helpers.nameToStringId(lockBlockEntity.roomId.getString()));
 
             var range = betweenClosed(
                 pos.getX() - 10, pos.getY() - 10, pos.getZ() - 10,
@@ -128,14 +144,14 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
                 var bedrock = serverLevel.getBlockState(blockPos).is(BEDROCK);
                 var netherite = serverLevel.getBlockState(blockPos).is(NETHERITE_BLOCK);
 
-                if (bedrock || netherite) serverLevel.setBlockAndUpdate(blockPos, AIR.defaultBlockState());
+                if (bedrock || netherite) serverLevel.destroyBlock(blockPos, false);
             }
 
-            serverLevel.setBlockAndUpdate(pos, AIR.defaultBlockState());
+            serverLevel.destroyBlock(pos, false);
+            return SUCCESS;
         }
 
-        return ItemInteractionResult.SUCCESS;
-
+        return FAIL;
     }
 }
 

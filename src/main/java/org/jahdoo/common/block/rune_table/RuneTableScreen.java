@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.util.FastColor.ARGB32.*;
-import static org.jahdoo.common.client.IconLocations.GUI_GENERAL_SLOT;
+import static org.jahdoo.common.client.Icons.GUI_GENERAL_SLOT;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
 import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;

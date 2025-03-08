@@ -32,8 +32,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.common.client.SharedUI.*;
-import static org.jahdoo.common.client.IconLocations.*;
-import static org.jahdoo.common.client.IconLocations.INFORMATION;
+import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.common.client.Icons.INFORMATION;
 import static org.jahdoo.common.client.gui.ToggleComponent.menuButton;
 import static org.jahdoo.common.client.gui.ToggleComponent.textRenderable;
 import static org.jahdoo.common.block.augment_modification_station.AugmentModificationScreen.WIDGET;

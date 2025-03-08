@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 import static org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties.*;
 import static org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity.AUGMENT_SLOT;
 import static org.jahdoo.common.client.SharedUI.*;
-import static org.jahdoo.common.client.IconLocations.*;
+import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.gui.ToggleComponent.*;
 import static org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeData.selectDirection;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.*;

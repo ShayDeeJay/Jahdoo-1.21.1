@@ -4,8 +4,10 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -43,7 +45,7 @@ public class StructureManager {
 
         try {
             if(isTrial) placeStructureJigsaw(level, pos);
-            if(isTrading) placeStructure(level, pos, settings);
+            if(isTrading) placeStructure(level, pos, settings, "room");
         } catch (CommandSyntaxException e) {
             JahdooMod.LOGGER.log(org.apache.logging.log4j.Level.ALL, e);
             throw new RuntimeException(e);
@@ -65,20 +67,20 @@ public class StructureManager {
         generateJigsaw(level, holder, withDefaultNamespace("empty"), 10, pos, true);
     }
 
-    public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings) {
-        var getRoom = List.of("trading_post", "room");
-        var templates = level.getStructureManager().get(Helpers.res(Helpers.listRandom(getRoom)));
+    public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
+        var templates = level.getStructureManager().get(Helpers.res(roomId));
 
         templates.ifPresent(template -> template.placeInWorld(level, pos, new BlockPos(-22, 0, -22), settings, level.random, 2));
     }
 
-    public static void placeNewSide(Level level, Direction direction, BlockPos pos) {
-        if(level instanceof ServerLevel serverLevel){
+    public static void placeNewSide(Level level, Direction direction, BlockPos pos, String roomId) {
+
+        if (level instanceof ServerLevel serverLevel) {
 
             var settings = new StructurePlaceSettings();
             var newPos = new BlockPos(0, 0, 0);
 
-            switch (direction){
+            switch (direction) {
                 case Direction.SOUTH -> newPos = new BlockPos(pos.getX() - 25, 40, pos.getZ());
                 case Direction.NORTH -> {
                     settings.setRotation(Rotation.CLOCKWISE_180);
@@ -94,7 +96,7 @@ public class StructureManager {
                 }
             }
 
-            placeStructure(serverLevel, newPos, settings);
+            placeStructure(serverLevel, newPos, settings, roomId);
             var findBlock = betweenClosed(
                 newPos.getX() - 50, newPos.getY() - 1, newPos.getZ() - 50,
                 newPos.getX() + 50, newPos.getY() + 30, newPos.getZ() + 50
@@ -103,7 +105,7 @@ public class StructureManager {
             generateTradingPost(serverLevel, findBlock, direction);
 
             for (var blockPos : findBlock) {
-                if(level.getBlockState(blockPos).is(Blocks.DIAMOND_BLOCK)){
+                if (level.getBlockState(blockPos).is(Blocks.DIAMOND_BLOCK)) {
                     level.setBlockAndUpdate(blockPos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
                 }
             }

@@ -11,8 +11,8 @@ import org.jahdoo.common.registers.SoundReg;
 
 import javax.annotation.Nullable;
 
-import static org.jahdoo.common.client.IconLocations.GUI_BUTTON_SELECTED;
-import static org.jahdoo.common.client.IconLocations.SELECTED_GUI_BUTTON_OVERLAY;
+import static org.jahdoo.common.client.Icons.GUI_BUTTON_SELECTED;
+import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
 
 public class GuiButton extends ImageButton {
 

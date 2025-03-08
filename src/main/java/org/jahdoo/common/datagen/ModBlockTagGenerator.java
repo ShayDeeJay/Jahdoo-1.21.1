@@ -31,7 +31,8 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
 
         this.tag(ALLOWED_BLOCK_INTERACTIONS)
             .add(WAND_MANAGER_TABLE.get())
-            .add(RUNE_TABLE.value());
+            .add(RUNE_TABLE.value())
+            .add(LOCK.value());
 
         this.tag(RARE_BLOCKS)
             .add(BEACON)

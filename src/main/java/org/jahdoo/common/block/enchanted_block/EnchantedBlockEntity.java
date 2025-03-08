@@ -18,7 +18,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import java.util.List;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.common.client.IconLocations.*;
+import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 

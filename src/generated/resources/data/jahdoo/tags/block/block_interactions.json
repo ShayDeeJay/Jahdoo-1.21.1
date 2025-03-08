@@ -1,6 +1,7 @@
 {
   "values": [
     "jahdoo:wand_manager_table",
-    "jahdoo:rune_table"
+    "jahdoo:rune_table",
+    "jahdoo:lock"
   ]
 }

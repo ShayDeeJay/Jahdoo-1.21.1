@@ -4,12 +4,13 @@ import net.minecraft.resources.ResourceLocation;
 
 import static org.jahdoo.ascension.utils.Helpers.*;
 
-public class IconLocations {
+public class Icons {
     
     public static final String PREFIX = "textures/gui/";
     public static final String BUTTON_PREFIX = PREFIX + "gui_buttons/";
     public static final String SLOTS_PREFIX = PREFIX + "slots/";
-    
+    public static final String ITEMS_PREFIX = "textures/item/";
+
 
     public static final ResourceLocation GUI_BUTTON =
         res(BUTTON_PREFIX + "gui_button.png");
@@ -136,6 +137,18 @@ public class IconLocations {
 
     public static final ResourceLocation IN_INVENTORY =
         res(PREFIX + "in_inventory.png");
+
+    public static final ResourceLocation BRONZE_COIN =
+        res(ITEMS_PREFIX + "coins/coin.png");
+
+    public static final ResourceLocation SILVER_COIN =
+        res(ITEMS_PREFIX + "coins/coin1.png");
+
+    public static final ResourceLocation GOLD_COIN =
+        res(ITEMS_PREFIX + "coins/coin2.png");
+
+    public static final ResourceLocation PLATINUM_COIN =
+        res(ITEMS_PREFIX + "coins/coin3.png");
     
 }
 

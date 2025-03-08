@@ -9,7 +9,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.ascension.utils.ColourStore;
 import java.util.List;
-import static org.jahdoo.common.client.IconLocations.WAND_GUI;
+import static org.jahdoo.common.client.Icons.WAND_GUI;
 import static org.jahdoo.common.client.overlay.OverlayHelpers.getAllStat;
 
 public class StatScreen extends EffectRenderingInventoryScreen<InventoryMenu> {

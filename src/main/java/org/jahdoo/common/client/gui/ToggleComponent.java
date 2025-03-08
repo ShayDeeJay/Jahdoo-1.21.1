@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import org.jahdoo.common.client.button.GuiButton;
 
-import static org.jahdoo.common.client.IconLocations.*;
+import static org.jahdoo.common.client.Icons.*;
 
 public class ToggleComponent  {
 

@@ -53,7 +53,9 @@ public class EventHelpers {
     }
 
     public static void disallowEffectsInCustomDim(MobEffectEvent.Applicable event) {
-        if(event.getEntity().level() instanceof CustomLevel){
+        if(!(event.getEntity() instanceof Player player)) return;
+
+        if(event.getEntity().level() instanceof CustomLevel && !player.isCreative()){
             if(!(event.getEffectInstance() instanceof JahdooMobEffect) && event.getEffectInstance().getEffect().value().isBeneficial()){
                 event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
             }

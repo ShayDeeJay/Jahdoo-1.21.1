@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
 import static org.jahdoo.ascension.ability.AbilityBuilder.SET_ELEMENT_TYPE;
-import static org.jahdoo.common.client.IconLocations.*;
+import static org.jahdoo.common.client.Icons.*;
 
 public class SharedUI {
 
@@ -47,7 +47,7 @@ public class SharedUI {
     public static final int BORDER_COLOUR =  -12434878;
 
     public static List<ResourceLocation> getOverlays(){
-        return List.of(IconLocations.AUGMENT_CORE, IconLocations.ADVANCED_AUGMENT_CORE, IconLocations.AUGMENT_HYPER_CORE);
+        return List.of(Icons.AUGMENT_CORE, Icons.ADVANCED_AUGMENT_CORE, Icons.AUGMENT_HYPER_CORE);
     }
 
     public static List<Component> getComponents(ItemStack item, Level level){

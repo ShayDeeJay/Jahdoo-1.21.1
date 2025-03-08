@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.ascension.ability.AbilityBuilder.MANA_COST;
-import static org.jahdoo.common.client.IconLocations.*;
+import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.BORDER_COLOUR;
 import static org.jahdoo.common.client.gui.ToggleComponent.textWithBackgroundLarge;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;

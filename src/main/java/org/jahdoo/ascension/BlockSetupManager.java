@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.trading_post.ItemCosts;
 import org.jahdoo.common.block.challange_altar.ChallengeAltarBlockEntity;
+import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.BlockReg;
@@ -30,6 +31,13 @@ import static org.jahdoo.common.registers.ItemReg.AUGMENT;
 import static org.jahdoo.common.registers.ItemReg.RUNE;
 
 public class BlockSetupManager {
+
+    private static void setLootChests(ServerLevel level, BlockPos pos, Direction direction) {
+        var chestState = LOOT_CHEST.get().defaultBlockState().setValue(FACING, direction);
+        if(level.getBlockState(pos).is(Blocks.MAGENTA_CONCRETE)){
+            level.setBlockAndUpdate(pos, chestState);
+        }
+    }
 
     static void setTrialDim(ServerLevel level, ChallengeLevelData data) {
         var pos = new BlockPos(-25, 67, -72);
@@ -56,13 +64,12 @@ public class BlockSetupManager {
         var blockState = level.getBlockState(blockPos);
         if(blockState.is(Blocks.OBSERVER)){
             level.setBlockAndUpdate(blockPos, BlockReg.LOCK.get().defaultBlockState().setValue(FACING,blockState.getValue(FACING)));
-        }
-    }
 
-    private static void setLootChests(ServerLevel level, BlockPos pos, Direction direction) {
-        var chestState = LOOT_CHEST.get().defaultBlockState().setValue(FACING, direction);
-        if(level.getBlockState(pos).is(Blocks.MAGENTA_CONCRETE)){
-            level.setBlockAndUpdate(pos, chestState);
+            if(level.getBlockEntity(blockPos) instanceof LockBlockEntity lockBlockEntity){
+                if(!lockBlockEntity.canPlace()){
+                    level.setBlockAndUpdate(blockPos, Blocks.NETHERITE_BLOCK.defaultBlockState());
+                }
+            }
         }
     }
 
@@ -81,7 +88,7 @@ public class BlockSetupManager {
     }
 
     private static void uniqueItems(ServerLevel level, BlockState shoppingTableState, BlockPos pos, Direction direction) {
-        var eliteState = shoppingTableState.setValue(FACING, direction.getOpposite()).setValue(TEXTURE, 2);
+        var eliteState = shoppingTableState.setValue(FACING, direction).setValue(TEXTURE, 2);
 
         if(level.getBlockState(pos).is(Blocks.ORANGE_CONCRETE)){
             level.setBlockAndUpdate(pos.above(), Blocks.BARRIER.defaultBlockState());

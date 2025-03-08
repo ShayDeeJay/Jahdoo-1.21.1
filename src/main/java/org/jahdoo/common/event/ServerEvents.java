@@ -50,6 +50,7 @@ import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import java.util.Objects;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
+import static net.minecraft.world.entity.ai.behavior.BehaviorUtils.*;
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.*;
 import static org.jahdoo.ascension.DimHandler.TRADING_POST;
 import static org.jahdoo.ascension.DimHandler.TRIAL;
@@ -194,7 +195,6 @@ public class ServerEvents {
     @SubscribeEvent
     public static void livingDeathEvent(LivingDeathEvent event){
         var entity = event.getEntity();
-        var source = event.getSource();
         var bonus = entity.tickCount / 10;
 
         if(entity.level() instanceof CustomLevel){
@@ -202,14 +202,14 @@ public class ServerEvents {
             if(entity instanceof CustomZombie){
                 if(Random.nextInt(0, Math.min(10, max)) == 0){
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
-                    BehaviorUtils.throwItem(entity, stack, entity.position());
+                    throwItem(entity, stack, entity.position());
                 }
             }
 
             if(entity instanceof CustomSkeleton){
                 if(Random.nextInt(0,Math.min(5, max)) == 0){
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 20 - bonus));
-                    BehaviorUtils.throwItem(entity, stack, entity.position());
+                    throwItem(entity, stack, entity.position());
                 }
             }
 
@@ -218,7 +218,7 @@ public class ServerEvents {
                     if (Random.nextInt(0,Math.min(10 , max)) == 0) {
                         var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
                         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(ItemCosts.SILVER_COIN));
-                        BehaviorUtils.throwItem(entity, stack, entity.position());
+                        throwItem(entity, stack, entity.position());
                     }
                 }
             }

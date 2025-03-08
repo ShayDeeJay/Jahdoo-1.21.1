@@ -358,6 +358,15 @@ public class Helpers {
         return result.toString().trim();
     }
 
+    public static String nameToStringId(String input) {
+        var lowercaseId = new StringBuilder();
+        for (var s : input.split(" ")) {
+            lowercaseId.append(s.toLowerCase()).append("_");
+        }
+        lowercaseId.deleteCharAt(lowercaseId.length()-1);
+        return lowercaseId.toString();
+    }
+
     public static MutableComponent highlightTextComponent(
         Level level,
         String text,

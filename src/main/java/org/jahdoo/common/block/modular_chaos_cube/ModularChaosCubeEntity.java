@@ -20,7 +20,7 @@ import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties;
-import org.jahdoo.common.client.IconLocations;
+import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -141,12 +141,12 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
 
     public List<Pair<ResourceLocation, BlockPos>> direction(){
         return List.of(
-            Pair.of(IconLocations.NORTH, this.getBlockPos().north()),
-            Pair.of(IconLocations.WEST, this.getBlockPos().west()),
-            Pair.of(IconLocations.UP, this.getBlockPos().above()),
-            Pair.of(IconLocations.EAST, this.getBlockPos().east()),
-            Pair.of(IconLocations.SOUTH, this.getBlockPos().south()),
-            Pair.of(IconLocations.DOWN, this.getBlockPos().below())
+            Pair.of(Icons.NORTH, this.getBlockPos().north()),
+            Pair.of(Icons.WEST, this.getBlockPos().west()),
+            Pair.of(Icons.UP, this.getBlockPos().above()),
+            Pair.of(Icons.EAST, this.getBlockPos().east()),
+            Pair.of(Icons.SOUTH, this.getBlockPos().south()),
+            Pair.of(Icons.DOWN, this.getBlockPos().below())
         );
     }
 

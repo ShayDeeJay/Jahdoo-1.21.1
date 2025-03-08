@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static org.jahdoo.common.client.IconLocations.COG;
+import static org.jahdoo.common.client.Icons.COG;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.*;
 
 @EventBusSubscriber(Dist.CLIENT)
