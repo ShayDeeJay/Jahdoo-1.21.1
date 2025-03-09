@@ -47,6 +47,9 @@ public class AttachmentReg {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ModularChaosCubeProperties>> MODULAR_CHAOS_CUBE =
         withProvider("modular_chaos_cube", ModularChaosCubeProperties::new);
 
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<InstanceData>> INSTANCE_DATA =
+        withProvider("instance_data", InstanceData::new);
+
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> BOOL =
         regAttachment("bool", builder(() -> false).serialize(Codec.BOOL));
 

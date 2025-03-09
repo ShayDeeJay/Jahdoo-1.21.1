@@ -18,6 +18,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.portal.DimensionTransition;
 import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
+import org.jahdoo.ascension.attachments.player_abilities.InstanceData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.registers.SoundReg;
 
@@ -32,6 +33,7 @@ import static org.jahdoo.ascension.StructureManager.generateStructure;
 import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.registers.AttachmentReg.CHALLENGE_ALTAR;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class LevelGenerator {
 
@@ -115,6 +117,7 @@ public class LevelGenerator {
         findLevel(testKey, serverLevel).ifPresent(
             level -> {
                 generateStructure(level, altarData, handler.id());
+                level.setData(INSTANCE_DATA, new InstanceData());
                 level.setData(CHALLENGE_ALTAR, altarData);
                 getLevel.set(level);
             }

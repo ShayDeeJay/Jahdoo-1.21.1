@@ -16,6 +16,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import org.jahdoo.ascension.StructureManager;
@@ -38,6 +39,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static net.minecraft.core.BlockPos.betweenClosed;
+import static net.minecraft.core.BlockPos.withinManhattan;
 import static org.jahdoo.ascension.StructureManager.*;
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.items.wand.WandItemHelper.*;

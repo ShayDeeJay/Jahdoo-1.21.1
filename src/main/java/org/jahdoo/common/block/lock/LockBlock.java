@@ -30,8 +30,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.ascension.attachments.player_abilities.InstanceData;
+import org.jahdoo.ascension.boon.LevelBoon;
+import org.jahdoo.ascension.boon.LevelBoonSelection;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.tank.TankBlockEntity;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -122,7 +126,15 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected ItemInteractionResult useItemOn(
+        ItemStack stack,
+        BlockState state,
+        Level level,
+        BlockPos pos,
+        Player player,
+        InteractionHand hand,
+        BlockHitResult hitResult
+    ) {
         if(!(level.getBlockEntity(pos) instanceof LockBlockEntity lockBlockEntity)) return FAIL;
         if(!lockBlockEntity.canPlace()) {
             player.displayClientMessage(Component.literal("Invalid Location"), true);
@@ -148,6 +160,10 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
             }
 
             serverLevel.destroyBlock(pos, false);
+
+            LevelBoonSelection.getRun(level, lockBlockEntity.value, lockBlockEntity.getBoon.executeIndex());
+            var data = level.getData(AttachmentReg.INSTANCE_DATA);
+            player.sendSystemMessage(Component.literal(data.toString()));
             return SUCCESS;
         }
 

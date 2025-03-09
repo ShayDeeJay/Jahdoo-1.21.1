@@ -11,6 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
+import org.jahdoo.ascension.boon.Boon;
 import org.jahdoo.ascension.boon.BoonSelection;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
@@ -48,9 +49,10 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         var font = mc.font;
 
         if(player != null && player.distanceToSqr(entity.getBlockPos().getCenter()) < 2500){
+            var getBoon = entity.getBoon;
             renderName(entity.roomId, pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction);
-            renderNewLine(font, pose, source, Helpers.withStyleComponent("+2 Mob Health", MAGNET_STRENGTH_RED), BoonSelection.iconFromEffect(MobEffects.HEAL), x, facing, direction, 0.3F, light);
-            renderNewLine(font, pose, source, Helpers.withStyleComponent("+10% Coin Drops", MAGNET_RANGE_GREEN), SILVER_COIN, -0.4F + x, facing, direction, 0.4F, light);
+            renderNewLine(font, pose, source, getBoon.label(), getBoon.icon(), x, facing, direction, 0.3F, light);
+//            renderNewLine(font, pose, source, Helpers.withStyleComponent("+10% Coin Drops", MAGNET_RANGE_GREEN), SILVER_COIN, -0.4F + x, facing, direction, 0.4F, light);
 //            renderNewLine(font, pose, source, literal("+50% Mob"), GOLD_COIN, -0.8F + x, facing, direction);
         }
     }

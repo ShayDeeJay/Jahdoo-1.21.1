@@ -23,6 +23,18 @@ public class LevelStageModifiers {
         }
     }
 
+    public static void addBaseAttribute(
+        Holder<Attribute> attributes,
+        LivingEntity getEntity,
+        int multiplier
+    ){
+        if(getEntity.getAttributes().hasAttribute(attributes)){
+            var attributeInstance = getEntity.getAttributes().getInstance(attributes);
+            if (attributeInstance == null) return;
+            attributeInstance.setBaseValue(Maths.getPercentageTotal(multiplier, attributeInstance.getValue()));
+        }
+    }
+
     public static void effectWithChance(LivingEntity livingEntity, Holder<MobEffect> effect, int amplifier, int chance) {
         if(Maths.percentageChance(chance)){
             if(!livingEntity.hasEffect(effect)){

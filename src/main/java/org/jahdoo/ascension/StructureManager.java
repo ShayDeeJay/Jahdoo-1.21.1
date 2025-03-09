@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
+import static net.minecraft.core.BlockPos.withinManhattan;
 import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
 import static net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement.*;
 import static org.jahdoo.ascension.BlockSetupManager.generateTradingPost;
@@ -33,7 +34,7 @@ public class StructureManager {
 
     static void generateStructure(ServerLevel level, ChallengeLevelData data, String id){
         var pos = new BlockPos(0, 40, 0);
-        var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 3).toList();
+        var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 1).toList();
         var settings = new StructurePlaceSettings();
         var isTrial = Objects.equals(id, TRIAL);
         var isTrading = Objects.equals(id, TRADING_POST);
@@ -97,10 +98,14 @@ public class StructureManager {
             }
 
             placeStructure(serverLevel, newPos, settings, roomId);
-            var findBlock = betweenClosed(
-                newPos.getX() - 50, newPos.getY() - 1, newPos.getZ() - 50,
-                newPos.getX() + 50, newPos.getY() + 30, newPos.getZ() + 50
-            );
+
+            var relative = newPos.relative(direction, 26).above(19);
+            var findBlock = switch (direction){
+                case Direction.NORTH -> withinManhattan(relative.west(25), 25, 19, 25);
+                case Direction.SOUTH -> withinManhattan(relative.east(25), 25, 19, 25);
+                case Direction.EAST -> withinManhattan(relative.north(25), 25, 19, 25);
+                default -> withinManhattan(relative.south(25), 25, 19, 25);
+            };
 
             generateTradingPost(serverLevel, findBlock, direction);
 

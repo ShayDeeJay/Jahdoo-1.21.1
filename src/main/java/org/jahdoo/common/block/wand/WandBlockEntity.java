@@ -166,7 +166,7 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
             }
         }
 
-        if(!wandAbilityHolder.abilityProperties().containsKey(wandItem.get(WAND_DATA).selectedAbility())){
+        if(!wandAbilityHolder.abilityProperties().containsKey(  wandItem.get(WAND_DATA).selectedAbility())){
             wandItem.update(WAND_DATA, WandData.DEFAULT, data -> data.setSelectedAbility(""));
         }
         wandItem.update(WAND_DATA, WandData.DEFAULT, data -> data.setAbilityOrder(positions));
