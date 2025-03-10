@@ -10,16 +10,28 @@ public class InstanceData implements AbstractAttachment {
     private double health;
     private double speed;
 
+    public InstanceData(){}
+
+    public InstanceData(int mobs){
+        this.mobs = mobs;
+    }
+
+    public static final InstanceData DEFAULT = new InstanceData(5);
+
     public void incrementMobs(int mobs){
         this.mobs += mobs;
     }
 
+    public int getMobs() {
+        return mobs;
+    }
+
     public void incrementHealth(double health){
-        this.health = this.health + health;
+        this.health += health;
     }
 
     public void incrementSpeed(double speed){
-        this.speed = this.speed + speed;
+        this.speed += speed;
     }
 
     @Override

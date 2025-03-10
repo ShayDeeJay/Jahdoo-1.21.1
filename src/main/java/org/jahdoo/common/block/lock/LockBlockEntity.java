@@ -23,16 +23,12 @@ import static org.jahdoo.common.block.lock.LockBlock.FACING;
 
 public class LockBlockEntity extends SyncedBlockEntity {
 
-    public Component roomId;
-    public LevelBoon getBoon;
+    public Component roomId = Component.literal("");
+    public LevelBoon getBoon = LevelBoon.EMPTY;
     public double value;
 
     public LockBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.LOCK_BE.get(), pPos, pBlockState);
-        this.roomId = getRandomRoomId();
-        this.value = Maths.doubleFormattedDouble(Random.nextDouble(1, 10));
-        this.getBoon = LevelBoonSelection.getRandomBoon(value);
-
     }
 
     @Override
@@ -51,13 +47,27 @@ public class LockBlockEntity extends SyncedBlockEntity {
         this.getBoon = LevelBoon.loadData(tag, registries);
     }
 
-    public void tick(Level level, BlockPos pos, BlockState state) {}
+    public void tick(Level level, BlockPos pos, BlockState state) {
+
+    }
+
+    public boolean isInitialized(){
+        return !this.roomId.getString().isEmpty() && this.getBoon != LevelBoon.EMPTY;
+    }
 
     public boolean canPlace(){
         var level = getLevel();
         if(level == null) return false;
 
-        return level.getBlockState(getBlockPos().relative(getBlockState().getValue(FACING),1).below(2)).isAir();
+        var floorBlock = getBlockPos().relative(getBlockState().getValue(FACING), 1).below(2);
+        return level.getBlockState(floorBlock).isAir();
+    }
+
+    public void setRoomData(){
+        this.roomId = getRandomRoomId();
+        this.value = Maths.doubleFormattedDouble(Random.nextDouble(1, 10));
+        this.getBoon = LevelBoonSelection.getRandomBoon(value);
+        this.updateBlock();
     }
 
     public static Component getRandomRoomId(){

@@ -128,14 +128,16 @@ public class VoidSpider extends Spider implements TamableEntity {
         this.playSound(SoundReg.HEAL.get(), 1.5F, 1);
 
         getOuterRingOfRadiusRandom(credit == null ? this.position() : credit.position(), 1, 300, this::setParticleNova);
-        spawnAroundEntity(level(), 5, BlockPos.containing(credit == null ? this.position() : credit.position()), 4, 200, counter,
+        spawnAroundEntity(level(), BlockPos.containing(credit == null ? this.position() : credit.position()), 4, 200,
             blockPos -> {
-                var newSpider = EntityReg.VOID_SPIDER_SPAWN.get().create(level());
-                if(newSpider != null){
-                    newSpider.moveTo(blockPos.above().getCenter());
-                    level().addFreshEntity(newSpider);
-                    if(credit != null) newSpider.setTarget(credit);
-                    counter.incrementAndGet();
+                if(counter.get() < 5){
+                    var newSpider = EntityReg.VOID_SPIDER_SPAWN.get().create(level());
+                    if (newSpider != null) {
+                        newSpider.moveTo(blockPos.above().getCenter());
+                        level().addFreshEntity(newSpider);
+                        if (credit != null) newSpider.setTarget(credit);
+                        counter.incrementAndGet();
+                    }
                 }
             }
         );

@@ -11,7 +11,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.TrialPortalBlock;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationBlock;
-import org.jahdoo.common.block.challange_altar.ChallengeAltarBlock;
+import org.jahdoo.common.block.altar.AltarBlock;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlock;
 import org.jahdoo.common.block.lock.LockBlock;
 import org.jahdoo.common.block.loot_chest.LootChestBlock;
@@ -38,7 +38,7 @@ public class BlockReg {
         registerBlock("lighting", LightBlock::new);
 
     public static DeferredHolder<Block, Block> CHALLENGE_ALTAR =
-        registerBlock("challenge_altar", ChallengeAltarBlock::new);
+        registerBlock("challenge_altar", AltarBlock::new);
 
     public static DeferredHolder<Block, Block> LOOT_CHEST =
         registerBlock("loot_chest", LootChestBlock::new);

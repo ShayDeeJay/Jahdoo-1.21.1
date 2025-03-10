@@ -10,7 +10,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -24,7 +23,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.Maths;
-import org.jahdoo.common.block.challange_altar.ChallengeAltarBlockEntity;
+import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
@@ -34,7 +33,6 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +55,7 @@ import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions
 
 public class MobManager {
 
-    private static @NotNull LivingEntity getVoidSpider(ServerLevel serverLevel) {
+    private static LivingEntity getVoidSpider(ServerLevel serverLevel) {
         return new VoidSpider(serverLevel);
     }
 
@@ -155,7 +153,7 @@ public class MobManager {
         }
     }
 
-    public static void addAndPositionEntity(ChallengeAltarBlockEntity entity, BlockPos pos, int round){
+    public static void addAndPositionEntity(AltarBlockEntity entity, BlockPos pos){
         if(entity.getLevel() instanceof ServerLevel serverLevel){
             var actualEntity = getSelectedMethod(entity, serverLevel);
             var level = actualEntity.level();
@@ -164,7 +162,7 @@ public class MobManager {
             getSoundWithPosition(level, pos, SoundEvents.WITHER_SPAWN, 0.05f, 3f);
             getSoundWithPosition(level, pos, SoundReg.HEAL.get(), 1f, 2f);
             actualEntity.moveTo(pos.getCenter().subtract(0,0.5,0));
-            ChallengeLevelData.addEntity(entity, actualEntity.getUUID());
+            entity.spawnedMobs.add(actualEntity.getUUID());
             serverLevel.addFreshEntity(actualEntity);
         }
     }
@@ -188,40 +186,34 @@ public class MobManager {
         return skeleton;
     }
 
-    public static void summonEntities(ChallengeAltarBlockEntity entity, int maxSpawn){
+    public static void summonEntities(AltarBlockEntity entity, int maxSpawn){
         var pos = entity.getBlockPos();
-        var player = entity.getLevel().getNearestPlayer(TargetingConditions.DEFAULT, pos.getX(), pos.getY(), pos.getZ());
         var counter = new AtomicInteger();
-        var spawnPos =  player != null ? player.blockPosition() : pos;
-        var radius = Random.nextInt(4, 9);
         var points = 200;
 
-        spawnAroundEntity(entity.getLevel(), maxSpawn, spawnPos, radius, points, counter,
+        spawnAroundEntity(entity.getLevel(), pos, 9, points,
             blockPos -> {
-                MobManager.addAndPositionEntity(entity, blockPos.above(), entity.altarData().round());
-                counter.incrementAndGet();
+                if(counter.get() < maxSpawn){
+                    System.out.println(counter.get());
+                    MobManager.addAndPositionEntity(entity, blockPos.above());
+                    counter.getAndIncrement();
+                }
             }
         );
     }
 
     public static void spawnAroundEntity(
         Level level,
-        int maxSpawn,
         BlockPos spawnPos,
         int radius,
         int points,
-        AtomicInteger counter,
         Consumer<BlockPos> spawn
     ) {
         for (var blockPos : getRandomSphericalBlockPositions(spawnPos, radius, points)) {
-            if(counter.get() < maxSpawn){
-                var above = level.getBlockState(blockPos.above(2));
-                var main = level.getBlockState(blockPos.above());
-                var below = level.getBlockState(blockPos);
-                if (above.isAir() && main.isAir() && !below.isAir()) {
-                    spawn.accept(blockPos);
-                }
-            }
+            var above = level.getBlockState(blockPos.above(2));
+            var main = level.getBlockState(blockPos.above());
+            var below = level.getBlockState(blockPos);
+            if (above.isAir() && main.isAir() && !below.isAir()) spawn.accept(blockPos);
         }
     }
 
@@ -275,7 +267,7 @@ public class MobManager {
         return List.of(stack, stack1, stack2, stack3, bow);
     }
 
-    private static LivingEntity getSelectedMethod(ChallengeAltarBlockEntity entity, ServerLevel serverLevel) {
+    private static LivingEntity getSelectedMethod(AltarBlockEntity entity, ServerLevel serverLevel) {
         var entities = new ArrayList<LivingEntity>();
         var round = ChallengeLevelData.getRound(entity);
         var readyZombie = getReadyZombie(serverLevel, round);

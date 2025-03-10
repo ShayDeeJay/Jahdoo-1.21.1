@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.challange_altar;
+package org.jahdoo.common.block.altar;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -22,11 +22,11 @@ import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
-public class ChallengeAltarAnim {
+public class AltarAnim {
 
     public static void placeParticle(Vec3 pos, ParticleOptions par1, Level level, int privateTicks){
         double randomY = Helpers.Random.nextDouble(0.0, 0.4);
-        ParticleHandlers.sendParticles(level, par1, pos.subtract(0,0.4,0), privateTicks <= 100 ? 5 : 0, 0, randomY,0, privateTicks == 94 ? 1.4 : privateTicks > 90 ? 0.4 : 0.1);
+        ParticleHandlers.sendParticles(level, par1, pos.subtract(0,0.4,0), 5, 0, randomY,0, 0.1);
     }
 
     public static void onActivationAnim(Level level, BlockPos posA, int privateTicks) {
@@ -64,7 +64,7 @@ public class ChallengeAltarAnim {
             positions -> {
                 var colourDarker = Helpers.getColourDarker(ColourStore.PERK_GREEN, 0.5f);
                 var randomColouredParticle = Helpers.getRandomColouredParticle(ColourStore.PERK_GREEN, colourDarker, 10, 1, false);
-                ChallengeAltarAnim.placeParticle(positions, randomColouredParticle, level, ticks);
+                AltarAnim.placeParticle(positions, randomColouredParticle, level, ticks);
             }
         );
 

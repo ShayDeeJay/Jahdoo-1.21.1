@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jahdoo.ascension.DimHandler;
 import org.jahdoo.ascension.attachments.AbstractAttachment;
-import org.jahdoo.common.block.challange_altar.ChallengeAltarBlockEntity;
+import org.jahdoo.common.block.altar.AltarBlockEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -256,13 +256,13 @@ public class ChallengeLevelData implements AbstractAttachment {
         entity.setChanged();
     }
 
-    public static void altarClickToStart(ChallengeAltarBlockEntity altarE) {
+    public static void altarClickToStart(AltarBlockEntity altarE) {
         ChallengeLevelData.setMaxMobs(altarE);
         ChallengeLevelData.setMaxMapMobs(altarE);
         ChallengeLevelData.flipActive(altarE);
     }
 
-    public static void nextSubRound(ChallengeAltarBlockEntity altarE, int round) {
+    public static void nextSubRound(AltarBlockEntity altarE, int round) {
         ChallengeLevelData.setMaxMobs(altarE);
         ChallengeLevelData.setMaxMapMobs(altarE);
         ChallengeLevelData.setRound(altarE, round);
@@ -284,7 +284,7 @@ public class ChallengeLevelData implements AbstractAttachment {
         entity.setChanged();
     }
 
-    public static void resetWithRound(ChallengeAltarBlockEntity altarE, int round, int maxRound) {
+    public static void resetWithRound(AltarBlockEntity altarE, int round, int maxRound) {
         ChallengeLevelData.setMaxMobs(altarE);
         ChallengeLevelData.setMaxMapMobs(altarE);
         ChallengeLevelData.flipActive(altarE);

@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import org.jahdoo.ascension.boon.Boon;
 import org.jahdoo.ascension.boon.BoonSelection;
+import org.jahdoo.ascension.boon.LevelBoon;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.shopping_table.DisplayDirection;
@@ -48,7 +49,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         var player = mc.player;
         var font = mc.font;
 
-        if(player != null && player.distanceToSqr(entity.getBlockPos().getCenter()) < 2500){
+        if(entity.isInitialized() && player != null && player.distanceToSqr(entity.getBlockPos().getCenter()) < 2500){
             var getBoon = entity.getBoon;
             renderName(entity.roomId, pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction);
             renderNewLine(font, pose, source, getBoon.label(), getBoon.icon(), x, facing, direction, 0.3F, light);

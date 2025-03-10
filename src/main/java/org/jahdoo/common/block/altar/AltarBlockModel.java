@@ -1,12 +1,12 @@
-package org.jahdoo.common.block.challange_altar;
+package org.jahdoo.common.block.altar;
 
 import org.jahdoo.common.items.block_items.ChallengeAltarBlockItem;
 import org.jahdoo.ascension.utils.Helpers;
 import software.bernie.geckolib.model.DefaultedItemGeoModel;
 
-public class ChallengeAltarBlockModel extends DefaultedItemGeoModel<ChallengeAltarBlockItem> {
+public class AltarBlockModel extends DefaultedItemGeoModel<ChallengeAltarBlockItem> {
 
-    public ChallengeAltarBlockModel() {
+    public AltarBlockModel() {
         super(Helpers.res("challenge_altar"));
     }
 

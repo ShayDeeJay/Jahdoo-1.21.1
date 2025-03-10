@@ -135,35 +135,40 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if(!(level.getBlockEntity(pos) instanceof LockBlockEntity lockBlockEntity)) return FAIL;
-        if(!lockBlockEntity.canPlace()) {
-            player.displayClientMessage(Component.literal("Invalid Location"), true);
-            return FAIL;
-        }
-
-        if(level instanceof ServerLevel serverLevel){
-            var getState = state.getValue(FACING);
-            getSoundWithPosition(serverLevel, pos, SoundEvents.LODESTONE_COMPASS_LOCK, 1, 1.4F);
-            getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_ACTIVATE, 1, 0.6F);
-            placeNewSide(serverLevel, getState, pos.relative(getState, 0), Helpers.nameToStringId(lockBlockEntity.roomId.getString()));
-
-            var range = betweenClosed(
-                pos.getX() - 10, pos.getY() - 10, pos.getZ() - 10,
-                pos.getX() + 10, pos.getY() + 10, pos.getZ() + 10
-            );
-
-            for (var blockPos : range) {
-                var bedrock = serverLevel.getBlockState(blockPos).is(BEDROCK);
-                var netherite = serverLevel.getBlockState(blockPos).is(NETHERITE_BLOCK);
-
-                if (bedrock || netherite) serverLevel.destroyBlock(blockPos, false);
+        if(!(level.getBlockEntity(pos) instanceof LockBlockEntity entity)) return FAIL;
+        if(entity.isInitialized()){
+            if (!entity.canPlace()) {
+                player.displayClientMessage(Component.literal("Invalid Location"), true);
+                return FAIL;
             }
 
-            serverLevel.destroyBlock(pos, false);
+            if (level instanceof ServerLevel serverLevel) {
+                var getState = state.getValue(FACING);
+                getSoundWithPosition(serverLevel, pos, SoundEvents.LODESTONE_COMPASS_LOCK, 1, 1.4F);
+                getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_ACTIVATE, 1, 0.6F);
+                placeNewSide(serverLevel, getState, pos.relative(getState, 0), Helpers.nameToStringId(entity.roomId.getString()));
 
-            LevelBoonSelection.getRun(level, lockBlockEntity.value, lockBlockEntity.getBoon.executeIndex());
-            var data = level.getData(AttachmentReg.INSTANCE_DATA);
-            player.sendSystemMessage(Component.literal(data.toString()));
+                var range = betweenClosed(
+                    pos.getX() - 10, pos.getY() - 10, pos.getZ() - 10,
+                    pos.getX() + 10, pos.getY() + 10, pos.getZ() + 10
+                );
+
+                for (var blockPos : range) {
+                    var bedrock = serverLevel.getBlockState(blockPos).is(BEDROCK);
+                    var netherite = serverLevel.getBlockState(blockPos).is(NETHERITE_BLOCK);
+
+                    if (bedrock || netherite) serverLevel.destroyBlock(blockPos, false);
+                }
+
+                serverLevel.destroyBlock(pos, false);
+
+                LevelBoonSelection.getRun(level, entity.value, entity.getBoon.executeIndex());
+                var data = level.getData(AttachmentReg.INSTANCE_DATA);
+                player.sendSystemMessage(Component.literal(data.toString()));
+                return SUCCESS;
+            }
+        } else {
+            entity.setRoomData();
             return SUCCESS;
         }
 

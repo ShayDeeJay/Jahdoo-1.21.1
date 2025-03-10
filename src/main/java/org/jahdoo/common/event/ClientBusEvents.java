@@ -9,7 +9,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationRenderer;
-import org.jahdoo.common.block.challange_altar.ChallengeAltarRenderer;
+import org.jahdoo.common.block.altar.AltarRenderer;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockRenderer;
 import org.jahdoo.common.block.infuser.InfuserRenderer;
 import org.jahdoo.common.block.lock.LockRenderer;
@@ -109,7 +109,7 @@ public class ClientBusEvents {
         event.registerBlockEntityRenderer(AUGMENT_MODIFICATION_STATION_BE.get(), AugmentModificationRenderer::new);
         event.registerBlockEntityRenderer(WAND_MANAGER_TABLE_BE.get(), WandManagerRenderer::new);
         event.registerBlockEntityRenderer(INFUSER_BE.get(), InfuserRenderer::new);
-        event.registerBlockEntityRenderer(CHALLENGE_ALTAR_BE.get(), ChallengeAltarRenderer::new);
+        event.registerBlockEntityRenderer(CHALLENGE_ALTAR_BE.get(), AltarRenderer::new);
         event.registerBlockEntityRenderer(MODULAR_CHAOS_CUBE_BE.get(), ModularChaosCubeRenderer::new);
         event.registerBlockEntityRenderer(LOOT_CHEST_BE.get(), LootChestRenderer::new);
         event.registerBlockEntityRenderer(WAND_BE.get(), WandBlockRenderer::new);

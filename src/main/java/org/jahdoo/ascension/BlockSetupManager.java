@@ -2,16 +2,14 @@ package org.jahdoo.ascension;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.trading_post.ItemCosts;
-import org.jahdoo.common.block.challange_altar.ChallengeAltarBlockEntity;
+import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
@@ -42,7 +40,7 @@ public class BlockSetupManager {
     static void setTrialDim(ServerLevel level, ChallengeLevelData data) {
         var pos = new BlockPos(-25, 67, -72);
         level.setBlockAndUpdate(pos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
-        if(level.getBlockEntity(pos) instanceof ChallengeAltarBlockEntity altar){
+        if(level.getBlockEntity(pos) instanceof AltarBlockEntity altar){
             altar.setData(CHALLENGE_ALTAR, data);
             altar.setChanged();
         }

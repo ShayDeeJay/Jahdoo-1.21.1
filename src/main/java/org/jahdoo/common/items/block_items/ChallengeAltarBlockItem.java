@@ -2,9 +2,8 @@ package org.jahdoo.common.items.block_items;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import org.jahdoo.common.block.challange_altar.ChallengeAltarBlockRenderer;
+import org.jahdoo.common.block.altar.AltarBlockRenderer;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -42,11 +41,11 @@ public class ChallengeAltarBlockItem extends BlockItem implements GeoItem {
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
         consumer.accept(
               new GeoRenderProvider() {
-                  private ChallengeAltarBlockRenderer renderer;
+                  private AltarBlockRenderer renderer;
 
                   @Override
                   public @NotNull BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
-                      if (this.renderer == null) this.renderer = new ChallengeAltarBlockRenderer();
+                      if (this.renderer == null) this.renderer = new AltarBlockRenderer();
                       return this.renderer;
                   }
 

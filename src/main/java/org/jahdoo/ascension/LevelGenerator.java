@@ -117,7 +117,7 @@ public class LevelGenerator {
         findLevel(testKey, serverLevel).ifPresent(
             level -> {
                 generateStructure(level, altarData, handler.id());
-                level.setData(INSTANCE_DATA, new InstanceData());
+                level.setData(INSTANCE_DATA, InstanceData.DEFAULT);
                 level.setData(CHALLENGE_ALTAR, altarData);
                 getLevel.set(level);
             }
