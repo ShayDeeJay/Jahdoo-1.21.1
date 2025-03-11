@@ -26,7 +26,7 @@ public class LevelStageModifiers {
     public static void addBaseAttribute(
         Holder<Attribute> attributes,
         LivingEntity getEntity,
-        int multiplier
+        double multiplier
     ){
         if(getEntity.getAttributes().hasAttribute(attributes)){
             var attributeInstance = getEntity.getAttributes().getInstance(attributes);

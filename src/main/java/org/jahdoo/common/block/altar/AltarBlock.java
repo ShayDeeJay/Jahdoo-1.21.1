@@ -2,6 +2,7 @@ package org.jahdoo.common.block.altar;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -20,8 +21,10 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
 
-import static net.minecraft.core.BlockPos.betweenClosed;
-import static net.minecraft.world.ItemInteractionResult.*;
+import static net.minecraft.world.ItemInteractionResult.FAIL;
+import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static org.jahdoo.ascension.BlockSetupManager.blockExitBarrier;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 
 public class AltarBlock extends BaseEntityBlock {
@@ -69,15 +72,21 @@ public class AltarBlock extends BaseEntityBlock {
         BlockHitResult hitResult
     ) {
         if (!(level.getBlockEntity(pos) instanceof AltarBlockEntity altarE)) return FAIL;
-//        if (!(level instanceof ServerLevel)) return FAIL;
+        if (!(level instanceof ServerLevel)) return FAIL;
+
+        blockExitBarrier(level, pos);
+
+        altarE.setData(INSTANCE_DATA, level.getData(INSTANCE_DATA));
 
         if(!altarE.started){
-            var mobs = altarE.getInstanceData().getMobs();
-            altarE.summonMobs(mobs);
+//            var mobs = altarE.getInstanceData().getZombies();
+            altarE.summonMobs();
             return SUCCESS;
         }
 
         return FAIL;
     }
+
+
 }
 

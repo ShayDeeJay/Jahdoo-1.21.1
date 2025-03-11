@@ -10,7 +10,16 @@ public class Icons {
     public static final String BUTTON_PREFIX = PREFIX + "gui_buttons/";
     public static final String SLOTS_PREFIX = PREFIX + "slots/";
     public static final String ITEMS_PREFIX = "textures/item/";
+    public static final String ABILITY_PREFIX = "textures/ability_icons/";
 
+    public static final ResourceLocation ETERNAL_WIZARD =
+        res(ABILITY_PREFIX + "eternal_wizard.png");
+
+    public static final ResourceLocation SKELETON =
+        res(ABILITY_PREFIX + "skeleton.png");
+
+    public static final ResourceLocation ZOMBIE =
+        res(ABILITY_PREFIX + "zombie.png");
 
     public static final ResourceLocation GUI_BUTTON =
         res(BUTTON_PREFIX + "gui_button.png");

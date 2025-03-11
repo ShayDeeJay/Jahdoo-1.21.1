@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
@@ -16,6 +17,8 @@ import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import static net.minecraft.core.component.DataComponents.*;
 import static org.jahdoo.ascension.trading_post.ShoppingItems.getEliteShoppingItem;
@@ -58,7 +61,7 @@ public class BlockSetupManager {
         }
     }
 
-    private static void setLocks(ServerLevel level, BlockPos blockPos) {
+    public static void setLocks(ServerLevel level, BlockPos blockPos) {
         var blockState = level.getBlockState(blockPos);
         if(blockState.is(Blocks.OBSERVER)){
             level.setBlockAndUpdate(blockPos, BlockReg.LOCK.get().defaultBlockState().setValue(FACING,blockState.getValue(FACING)));
@@ -73,7 +76,6 @@ public class BlockSetupManager {
 
     private static void generateEntranceAndExit(ServerLevel level, BlockPos pos, Direction direction) {
         var portalBlock = TRAIL_PORTAL.get().defaultBlockState();
-
         if(level.getBlockState(pos).is(Blocks.BLUE_CONCRETE)){
             for(int x = 0; x < 5; x++) {
                 level.setBlockAndUpdate(pos.above(x), portalBlock.setValue(DIMENSION_KEY, KEY_TRIAL));
@@ -151,6 +153,41 @@ public class BlockSetupManager {
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
                 entity.setCost(ItemCosts.getGoldCost(1));
+            }
+        }
+    }
+
+    public static void blockExitBarrier(Level level, BlockPos pos) {
+        for (var blockPos : StructureManager.roomBoundingFromCenter(pos)) {
+            if(level.getBlockState(blockPos).is(Blocks.REDSTONE_BLOCK)){
+                var startPlace = blockPos.below(2);
+                if(level.getBlockState(startPlace).isAir()){
+                    var list = new ArrayList<>(Direction.stream().toList());
+                    list.remove(Direction.DOWN);
+                    list.remove(Direction.UP);
+                    for(int i = 0; i < 5; i++){
+                        for (var direction : list) {
+                            var blocker = Blocks.TINTED_GLASS;
+                            var relative = startPlace.below(i).relative(direction);
+                            var canPlaceHere = new AtomicBoolean(false);
+
+                            level.setBlockAndUpdate(startPlace.below(i), blocker.defaultBlockState());
+
+                            for (var direction1 : list) {
+                                var adjacentBlocks = relative.relative(direction1);
+                                var adjacentNotAir = !level.getBlockState(adjacentBlocks).isAir();
+                                var adjacentNotBlocker = level.getBlockState(adjacentBlocks).is(blocker);
+                                if(adjacentNotAir && !adjacentNotBlocker){
+                                    canPlaceHere.set(true);
+                                }
+                            }
+
+                            if(canPlaceHere.get()){
+                                level.setBlockAndUpdate(relative, blocker.defaultBlockState());
+                            }
+                        }
+                    }
+                }
             }
         }
     }

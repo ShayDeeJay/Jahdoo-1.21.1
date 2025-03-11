@@ -3,14 +3,13 @@ package org.jahdoo.ascension.ability.abilities.arcane_shift;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import org.jahdoo.ascension.ability.AbstractAbility;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.ascension.utils.Helpers;
 
-import static org.jahdoo.ascension.ability.AbilityBuilder.*;
+import static org.jahdoo.ascension.ability.AbilityBuilder.CASTING_DISTANCE;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 
@@ -34,24 +33,24 @@ public class ArcaneShift extends AbstractAbility {
         return ArcaneShiftAbility.abilityId.getPath().intern();
     }
 
-    public double getX(double posX, double scale, double width) {
+    public static double getX(double posX, double scale, double width) {
         return posX + width * scale;
     }
 
-    public double getRandomX(double posX, double scale, double width) {
-        return this.getX(posX, ((double)2.0F * Random.nextDouble() - (double)1.0F) * scale, width);
+    public static double getRandomX(double posX, double scale, double width) {
+        return getX(posX, ((double)2.0F * Random.nextDouble() - (double)1.0F) * scale, width);
     }
 
-    public double getY(double posY, double scale, double width) {
+    public static double getY(double posY, double scale, double width) {
         return posY + width * scale;
     }
 
-    public double getZ(double posZ, double scale, double width) {
+    public static double getZ(double posZ, double scale, double width) {
         return posZ + width * scale;
     }
 
-    public double getRandomZ(double posZ, double scale, double width) {
-        return this.getZ(posZ, ((double)2.0F * Random.nextDouble() - (double)1.0F) * scale, width);
+    public static double getRandomZ(double posZ, double scale, double width) {
+        return getZ(posZ, ((double)2.0F * Random.nextDouble() - (double)1.0F) * scale, width);
     }
 
     public void teleportToHome(){

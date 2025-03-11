@@ -12,16 +12,15 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.ProjectileProperties;
+import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.EntityDataReg;
-import org.jahdoo.ascension.utils.Helpers;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -29,6 +28,7 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import static org.jahdoo.common.entities.EntityAnimations.*;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
 
 public class ElementProjectile extends ProjectileProperties implements IEntityProperties, GeoEntity {
 
@@ -155,7 +155,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         if(!(level() instanceof ServerLevel serverLevel) || getProjectile == null) return;
         getProjectile.onBlockBlockHit(blockHitResult);
         if (!blockHitResult.isInside()) {
-            var splashParticles = new BakedParticleOptions(this.getElementType().id(),5,2f, false);
+            var splashParticles = bakedParticleOptions(this.getElementType().id(),5,2f, false);
             ParticleHandlers.particleBurst(serverLevel, blockHitResult.getLocation(), 10, splashParticles);
         }
     }

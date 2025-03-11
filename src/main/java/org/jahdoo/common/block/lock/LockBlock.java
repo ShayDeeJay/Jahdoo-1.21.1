@@ -1,12 +1,10 @@
 package org.jahdoo.common.block.lock;
 
 import com.mojang.serialization.MapCodec;
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -21,41 +19,23 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.attachments.player_abilities.InstanceData;
-import org.jahdoo.ascension.boon.LevelBoon;
 import org.jahdoo.ascension.boon.LevelBoonSelection;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.block.tank.TankBlockEntity;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.stream.Stream;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
-import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
-import static net.minecraft.sounds.SoundEvents.SAND_PLACE;
-import static net.minecraft.sounds.SoundSource.BLOCKS;
-import static net.minecraft.world.ItemInteractionResult.*;
-import static net.minecraft.world.level.block.Blocks.*;
+import static net.minecraft.world.ItemInteractionResult.FAIL;
+import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static net.minecraft.world.level.block.Blocks.BEDROCK;
+import static net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK;
 import static org.jahdoo.ascension.StructureManager.placeNewSide;
-import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.common.block.BlockInteractionHandler.RemoveItemsFromSlotToHand;
-import static org.jahdoo.common.block.BlockInteractionHandler.stackHandlerWithFeedBack;
-import static org.jahdoo.common.registers.AttachmentReg.BOOL;
+import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
-import static org.jahdoo.common.registers.BlockEntityReg.TANK_BE;
-import static org.jahdoo.common.registers.ItemReg.AUGMENT_CORE;
-import static org.jahdoo.common.registers.ItemReg.NEXITE_POWDER;
 
 public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -144,6 +124,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
             if (level instanceof ServerLevel serverLevel) {
                 var getState = state.getValue(FACING);
+                var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
                 getSoundWithPosition(serverLevel, pos, SoundEvents.LODESTONE_COMPASS_LOCK, 1, 1.4F);
                 getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_ACTIVATE, 1, 0.6F);
                 placeNewSide(serverLevel, getState, pos.relative(getState, 0), Helpers.nameToStringId(entity.roomId.getString()));
@@ -161,15 +142,14 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
                 }
 
                 serverLevel.destroyBlock(pos, false);
-
-                LevelBoonSelection.getRun(level, entity.value, entity.getBoon.executeIndex());
-                var data = level.getData(AttachmentReg.INSTANCE_DATA);
+                var getBoon = entity.getBoon;
+                LevelBoonSelection.getRun(level, getBoon.value(), getBoon.executeIndex());
                 player.sendSystemMessage(Component.literal(data.toString()));
                 return SUCCESS;
             }
         } else {
-            entity.setRoomData();
-            return SUCCESS;
+//            entity.setRoomData();
+//            return SUCCESS;
         }
 
         return FAIL;

@@ -20,13 +20,10 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.portal.DimensionTransition;
 import org.jahdoo.ascension.LevelGenerator;
-import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
-import static org.jahdoo.ascension.DimHandler.tradingPost;
 import static org.jahdoo.ascension.DimHandler.trial;
 import static org.jahdoo.ascension.LevelGenerator.createNewWorld;
 import static org.jahdoo.ascension.utils.ColourStore.COSMIC_PURPLE;
@@ -77,7 +74,6 @@ public class TrialPortalBlock extends NetherPortalBlock {
     public @Nullable DimensionTransition getPortalDestination(ServerLevel level, Entity entity, BlockPos pos) {
         if(!(entity instanceof Player player)) return null;
         var isContinueInstance = level instanceof CustomLevel customLevel;
-        var getData = level.getData(AttachmentReg.CHALLENGE_ALTAR);
         int dimId = level.getBlockState(pos).getValue(DIMENSION_KEY);
 
 
@@ -89,9 +85,8 @@ public class TrialPortalBlock extends NetherPortalBlock {
         if(level instanceof CustomLevel cLevel) LevelGenerator.removeLevel(cLevel);
         level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 
-        var getDim = dimId == KEY_TRADING_POST ? tradingPost() : trial();
-        var challengeLevelData = ChallengeLevelData.newRound(1, getDim.id());
-        return createNewWorld(player, level, isContinueInstance ? getData : challengeLevelData, getDim);
+        var getDim = trial();
+        return createNewWorld(player, level, getDim);
     }
 
     @Override

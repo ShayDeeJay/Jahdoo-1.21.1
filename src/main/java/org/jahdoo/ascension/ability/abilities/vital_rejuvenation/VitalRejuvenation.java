@@ -92,7 +92,7 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
         var element = ElementReg.vitality();
         var col1 = element.partColourA();
         var col2 = element.partColourFade();
-        var bakedParticle = bakedParticleOptions(7, lifetime, 0.1f, true);
+        var bakedParticle = bakedParticleOptions(element.id(), lifetime, 0.1f, true);
         var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.1f, col1, col2, true);
 
         if(livingEntity.level().isClientSide){

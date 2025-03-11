@@ -1,11 +1,6 @@
 package org.jahdoo.common.items.wand;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -15,13 +10,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
-import org.jahdoo.ascension.StructureManager;
-import org.jahdoo.common.client.overlay.BoonSelectionScreen;
-import org.jahdoo.common.client.overlay.StatScreen;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.registers.BlockReg;
@@ -39,12 +27,10 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static net.minecraft.core.BlockPos.betweenClosed;
-import static net.minecraft.core.BlockPos.withinManhattan;
-import static org.jahdoo.ascension.StructureManager.*;
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.items.wand.WandItemHelper.*;
-import static org.jahdoo.common.registers.ComponentReg.*;
+import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
+import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
 
 public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 

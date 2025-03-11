@@ -6,14 +6,17 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.OverlayBlockTooltip;
 import org.jahdoo.common.client.RuneTooltipRenderer;
 
-import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.*;
-import static net.neoforged.neoforge.client.event.RenderLivingEvent.*;
+import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
+import static net.neoforged.neoforge.client.event.RenderLivingEvent.Pre;
 import static org.jahdoo.common.client.KeyBinding.*;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.mysticEffectClient;
 import static org.jahdoo.common.event.event_helpers.KeyBindHelper.quickSelectBehaviour;
@@ -56,8 +59,12 @@ public class ClientEvents {
     @SubscribeEvent
     public static void playerRenderer(RenderLevelStageEvent event) {
         if (event.getStage() != Stage.AFTER_BLOCK_ENTITIES) return;
+
         var player = (Player) event.getCamera().getEntity();
         var stack = Helpers.getUsedItem(player);
+
+//        var beamRadius = 0.03f;
+//        renderBeaconBeam(event.getPoseStack(), Minecraft.getInstance().renderBuffers().bufferSource(), BEAM_LOCATION, event.getCamera().getPartialTickTime(), 0.2F, event.getLevelRenderer().getTicks(), 0, 1, ColourStore.HEADER_COLOUR, beamRadius, beamRadius * 6);
 
         renderUtilityOverlay(event, player, stack);
         renderTeleportLocationOverlay(event, player, stack);

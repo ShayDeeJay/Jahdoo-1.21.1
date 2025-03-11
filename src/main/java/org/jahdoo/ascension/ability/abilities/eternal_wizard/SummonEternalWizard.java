@@ -20,7 +20,6 @@ import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 
@@ -30,6 +29,7 @@ import static net.minecraft.world.entity.EquipmentSlot.*;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.attributeModifierCalculator;
 import static org.jahdoo.ascension.utils.Helpers.res;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
@@ -96,7 +96,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     }
 
     private void setSpawnParticles(Level level){
-        var bakedParticle = new BakedParticleOptions(ElementReg.vitality().id(), 20, 3f, false);
+        var bakedParticle = bakedParticleOptions(ElementReg.vitality().id(), 20, 3f, false);
         PositionFinders.getInnerRingOfRadiusRandom(cloud.position(), 0.8, 5).forEach(
             positions -> ParticleHandlers.sendParticles(level, bakedParticle, positions, 1, 0, 1,0,0.05)
         );

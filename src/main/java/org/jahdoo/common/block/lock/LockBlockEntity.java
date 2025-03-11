@@ -6,9 +6,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.ascension.boon.LevelBoonSelection;
 import org.jahdoo.ascension.boon.LevelBoon;
-import org.jahdoo.ascension.utils.Maths;
+import org.jahdoo.ascension.boon.LevelBoonSelection;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.registers.BlockEntityReg;
 
@@ -17,7 +16,6 @@ import java.util.List;
 
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.block.lock.LockBlock.FACING;
 
 
@@ -25,7 +23,6 @@ public class LockBlockEntity extends SyncedBlockEntity {
 
     public Component roomId = Component.literal("");
     public LevelBoon getBoon = LevelBoon.EMPTY;
-    public double value;
 
     public LockBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.LOCK_BE.get(), pPos, pBlockState);
@@ -35,7 +32,6 @@ public class LockBlockEntity extends SyncedBlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putString("component", Component.Serializer.toJson(this.roomId, registries));
-        tag.putDouble("value", value);
         LevelBoon.saveData(getBoon, tag, registries);
     }
 
@@ -43,13 +39,10 @@ public class LockBlockEntity extends SyncedBlockEntity {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.roomId = Component.Serializer.fromJson(tag.getString("component"), registries);
-        this.value = tag.getDouble("value");
         this.getBoon = LevelBoon.loadData(tag, registries);
     }
 
-    public void tick(Level level, BlockPos pos, BlockState state) {
-
-    }
+    public void tick(Level level, BlockPos pos, BlockState state) {}
 
     public boolean isInitialized(){
         return !this.roomId.getString().isEmpty() && this.getBoon != LevelBoon.EMPTY;
@@ -65,8 +58,7 @@ public class LockBlockEntity extends SyncedBlockEntity {
 
     public void setRoomData(){
         this.roomId = getRandomRoomId();
-        this.value = Maths.doubleFormattedDouble(Random.nextDouble(1, 10));
-        this.getBoon = LevelBoonSelection.getRandomBoon(value);
+        this.getBoon = LevelBoonSelection.getRandomBoon();
         this.updateBlock();
     }
 

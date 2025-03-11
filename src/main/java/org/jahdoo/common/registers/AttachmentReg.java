@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 import static net.neoforged.neoforge.attachment.AttachmentType.*;
 
 public class AttachmentReg {
+
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, JahdooMod.MOD_ID);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ChallengeLevelData>> CHALLENGE_ALTAR =
@@ -60,6 +61,14 @@ public class AttachmentReg {
         withProviderCopyDeath("save_data", SaveData::new);
 
     //HELPERS
+    public static void register(IEventBus eventBus) {
+        ATTACHMENT_TYPES.register(eventBus);
+    }
+
+    public static <T> DeferredHolder<AttachmentType<?>, AttachmentType<T>> regAttachment(String name, AttachmentType.Builder<T> supplier) {
+        return ATTACHMENT_TYPES.register(name, supplier::build);
+    }
+
     public static  <T extends AbstractAttachment> DeferredHolder<AttachmentType<?>, AttachmentType<T>> withProvider(
         String name,
         Supplier<T> defaultValueSupplier
@@ -78,10 +87,6 @@ public class AttachmentReg {
         return regAttachment(name, supplier);
     }
 
-    public static <T> DeferredHolder<AttachmentType<?>, AttachmentType<T>> regAttachment(String name, AttachmentType.Builder<T> supplier) {
-        return ATTACHMENT_TYPES.register(name, supplier::build);
-    }
-
     public static <T extends AbstractAttachment> DeferredHolder<AttachmentType<?>, AttachmentType<T>> getHolder(T attachment, String name){
         return ATTACHMENT_TYPES.register(
             name, () -> builder(() -> attachment)
@@ -91,7 +96,4 @@ public class AttachmentReg {
         );
     }
 
-    public static void register(IEventBus eventBus) {
-        ATTACHMENT_TYPES.register(eventBus);
-    }
 }

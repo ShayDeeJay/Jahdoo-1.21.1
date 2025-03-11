@@ -17,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.portal.DimensionTransition;
-import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.attachments.player_abilities.InstanceData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.registers.SoundReg;
@@ -32,7 +31,6 @@ import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
 import static org.jahdoo.ascension.StructureManager.generateStructure;
 import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.common.registers.AttachmentReg.CHALLENGE_ALTAR;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class LevelGenerator {
@@ -108,7 +106,7 @@ public class LevelGenerator {
         ArcadeDimensions.add(serverLevel.getServer(), builder);
     }
 
-    public static DimensionTransition createNewWorld(Player player, ServerLevel serverLevel, ChallengeLevelData altarData, DimHandler handler) {
+    public static DimensionTransition createNewWorld(Player player, ServerLevel serverLevel, DimHandler handler) {
         var testKey = handler.id() + "-" + UUID.randomUUID();
         var getLevel = new AtomicReference<ServerLevel>();
 
@@ -116,9 +114,8 @@ public class LevelGenerator {
 
         findLevel(testKey, serverLevel).ifPresent(
             level -> {
-                generateStructure(level, altarData, handler.id());
-                level.setData(INSTANCE_DATA, InstanceData.DEFAULT);
-                level.setData(CHALLENGE_ALTAR, altarData);
+                generateStructure(level);
+                level.setData(INSTANCE_DATA, new InstanceData(5));
                 getLevel.set(level);
             }
         );

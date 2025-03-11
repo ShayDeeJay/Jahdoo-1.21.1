@@ -9,7 +9,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.registers.BlockReg;
-import org.jahdoo.ascension.LevelGenerator;
 
 import static org.jahdoo.common.block.TrialPortalBlock.*;
 import static org.jahdoo.common.registers.ItemReg.*;
@@ -24,8 +23,6 @@ public class CoreItem extends Item  {
         var hand = player.getItemInHand(usedHand);
         if(level instanceof ServerLevel serverLevel){
             var block = BlockReg.TRAIL_PORTAL.get();
-
-
             var item = hand.getItem();
             if(item == AUGMENT_HYPER_CORE.get()){
                 var setBlockState = block.defaultBlockState().setValue(DIMENSION_KEY, KEY_TRADING_POST);
@@ -36,17 +33,17 @@ public class CoreItem extends Item  {
 //                        allEntity.kill();
 //                    }
 //                }
-//                System.out.println(level.getData());
-//                System.out.println(level.getData(AttachmentRegister.CHALLENGE_ALTAR.get()));
-//                LevelGenerator.createNewWorld(player, serverLevel, ChallengeAltarData.DEFAULT);
                 return InteractionResultHolder.success(hand);
             } else if (item == ADVANCED_AUGMENT_CORE.get()){
-                var setBlockState = block.defaultBlockState().setValue(DIMENSION_KEY, KEY_TRIAL);
-                level.setBlockAndUpdate(BlockPos.containing(player.position()), setBlockState);
+                for (var allEntity : serverLevel.getAllEntities()) {
+                    if(!(allEntity instanceof Player)){
+                        allEntity.kill();
+                    }
+                }
                 return InteractionResultHolder.success(hand);
 
             } else if (item == AUGMENT_CORE.get()){
-                LevelGenerator.removeCustomLevels(serverLevel);
+
                 return InteractionResultHolder.success(hand);
             }
         }

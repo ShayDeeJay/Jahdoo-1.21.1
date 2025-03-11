@@ -2,7 +2,6 @@ package org.jahdoo.common.event.event_helpers;
 
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.FastColor;
@@ -19,13 +18,13 @@ import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.jahdoo.ascension.ability.abilities.arcane_shift.ArcaneShiftAbility;
 import org.jahdoo.ascension.ability.abilities.frostbolts.FrostboltsAbility;
+import org.jahdoo.ascension.utils.Configuration;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.RenderHelpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.ascension.utils.Configuration;
-import org.jahdoo.ascension.utils.Helpers;
 
 import java.awt.*;
 import java.util.List;
@@ -56,7 +55,7 @@ public class RenderEventHelper {
 
     public static void renderSelectedBlock(RenderLevelStageEvent event, AABB aabb, Color color) {
         final Minecraft mc = Minecraft.getInstance();
-        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+        var buffer = mc.renderBuffers().bufferSource();
         var view = mc.gameRenderer.getMainCamera().getPosition();
         var matrix = event.getPoseStack();
         matrix.pushPose();

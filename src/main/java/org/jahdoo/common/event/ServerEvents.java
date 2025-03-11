@@ -1,19 +1,12 @@
 package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -28,7 +21,6 @@ import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.LevelGenerator;
 import org.jahdoo.ascension.ability.abilities.dimensional_recall.DimensionalRecall;
 import org.jahdoo.ascension.ability.abilities.nova_smash.NovaSmash;
 import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
@@ -42,23 +34,13 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
-import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.ItemReg;
-import org.jahdoo.common.registers.SoundReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
-import java.util.Objects;
-
-import static net.minecraft.core.BlockPos.betweenClosed;
-import static net.minecraft.world.entity.ai.behavior.BehaviorUtils.*;
-import static net.minecraft.world.level.block.HorizontalDirectionalBlock.*;
-import static org.jahdoo.ascension.DimHandler.TRADING_POST;
-import static org.jahdoo.ascension.DimHandler.TRIAL;
-import static org.jahdoo.ascension.StructureManager.placeNewSide;
+import static net.minecraft.world.entity.ai.behavior.BehaviorUtils.throwItem;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
-import static org.jahdoo.common.items.wand.WandItem.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_DATA;
 
 
@@ -162,13 +144,13 @@ public class ServerEvents {
 
         if(level instanceof CustomLevel customLevel && entity instanceof Player player){
             var getData = ChallengeLevelData.getProperties(customLevel);
-            if(!customLevel.getDescriptionKey().contains(TRADING_POST)){
-                LevelGenerator.playerSetup(player, getData.round());
-            }
-
-            if(Objects.equals(getData.dimType, TRADING_POST)){
-                ChallengeLevelData.setDimension(customLevel, TRIAL);
-            }
+//            if(!customLevel.getDescriptionKey().contains(TRADING_POST)){
+//                LevelGenerator.playerSetup(player, getData.round());
+//            }
+//
+//            if(Objects.equals(getData.dimType, TRADING_POST)){
+//                ChallengeLevelData.setDimension(customLevel, TRIAL);
+//            }
         }
     }
 

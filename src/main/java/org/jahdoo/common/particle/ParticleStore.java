@@ -44,7 +44,7 @@ public record ParticleStore(int r, int g, int b){
     }
 
     public static BakedParticleOptions bakedParticleFast(int type){
-        return new BakedParticleOptions(type,6,0.55f, false);
+        return new BakedParticleOptions(type, 6, 0.55f, false);
     }
 
     public static int rgbToInt(int red, int green, int blue) {

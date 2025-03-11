@@ -7,9 +7,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -20,8 +20,8 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.ability.abilities.arcane_shift.ArcaneShift;
+import org.jahdoo.ascension.attachments.player_abilities.InstanceData;
 import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.entities.CustomSkeleton;
@@ -31,20 +31,22 @@ import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static net.minecraft.world.effect.MobEffects.*;
+import static net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE;
+import static net.minecraft.world.effect.MobEffects.HEALTH_BOOST;
 import static net.minecraft.world.entity.EquipmentSlot.*;
+import static net.minecraft.world.entity.ai.attributes.Attributes.*;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.THIS_ENTITY;
-import static org.jahdoo.ascension.LevelStageModifiers.attributeWithChance;
+import static org.jahdoo.ascension.LevelStageModifiers.addBaseAttribute;
 import static org.jahdoo.ascension.LevelStageModifiers.effectWithChance;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.ascension.utils.Helpers.*;
@@ -71,9 +73,12 @@ public class MobManager {
         return new AncientGolem(serverLevel, null, damage, 100, 1, INFINITE_LIFE, 20);
     }
 
-    public static LivingEntity generateMob(LivingEntity livingEntity){
+    public static LivingEntity generateMob(LivingEntity livingEntity, InstanceData getData){
         var getEntity = livingEntity.level().getNearestPlayer(livingEntity, 200);
-
+        addBaseAttribute(MAX_HEALTH, livingEntity, getData.getHealthMultiplier());
+        addBaseAttribute(ARMOR, livingEntity, getData.getArmorMultiplier());
+        addBaseAttribute(ATTACK_DAMAGE, livingEntity, getData.getAttackDamageMultiplier());
+        addBaseAttribute(MOVEMENT_SPEED, livingEntity, getData.getSpeedMultiplier());
         if (livingEntity instanceof Mob mob) mob.setTarget(getEntity);
         return livingEntity;
     }
@@ -109,31 +114,30 @@ public class MobManager {
         );
     }
 
-    public static LivingEntity getReadyZombie(ServerLevel serverLevel, int round){
+    public static LivingEntity getReadyZombie(ServerLevel serverLevel){
         var entity = new CustomZombie(serverLevel, null);
         entity.setPersistenceRequired();
-        attachEquipment(entity, serverLevel, round);
+//        attachEquipment(entity, serverLevel, round);
 
-        var collection = equipWeapon(entity, serverLevel, round);
-        if(!collection.isEmpty()) {
-            var weapon = Helpers.listRandom(collection);
-            entity.setItemSlot(MAINHAND, weapon.is(Items.BOW) ? ItemStack.EMPTY : weapon);
-        };
+//        var collection = equipWeapon(entity, serverLevel, round);
+//        if(!collection.isEmpty()) {
+//            var weapon = Helpers.listRandom(collection);
+//            entity.setItemSlot(MAINHAND, weapon.is(Items.BOW) ? ItemStack.EMPTY : weapon);
+//        };
 
         return entity;
     }
 
-    public static LivingEntity getReadySkeleton(ServerLevel serverLevel, int round){
-        var arrow = MobItemHandler.getAllowedArrow(round);
+    public static LivingEntity getReadySkeleton(ServerLevel serverLevel){
+        var arrow = MobItemHandler.getAllowedArrow(0);
         var entity = new CustomSkeleton(serverLevel, null, arrow);
 
         entity.setPersistenceRequired();
-        attachEquipment(entity, serverLevel, round);
-        var collection = equipWeapon(entity, serverLevel, round);
+        attachEquipment(entity, serverLevel, 10);
+        var collection = equipWeapon(entity, serverLevel, 50);
 
         if(!collection.isEmpty()){
-            var weapon = Helpers.listRandom(collection);
-            entity.setItemSlot(MAINHAND, weapon);
+            entity.setItemSlot(MAINHAND, listRandom(collection));
         }
         return entity;
     }
@@ -153,27 +157,21 @@ public class MobManager {
         }
     }
 
-    public static void addAndPositionEntity(AltarBlockEntity entity, BlockPos pos){
-        if(entity.getLevel() instanceof ServerLevel serverLevel){
-            var actualEntity = getSelectedMethod(entity, serverLevel);
-            var level = actualEntity.level();
-
-            setOuterRingPulses(level, pos.getCenter(), actualEntity.getBbWidth());
-            getSoundWithPosition(level, pos, SoundEvents.WITHER_SPAWN, 0.05f, 3f);
-            getSoundWithPosition(level, pos, SoundReg.HEAL.get(), 1f, 2f);
-            actualEntity.moveTo(pos.getCenter().subtract(0,0.5,0));
-            entity.spawnedMobs.add(actualEntity.getUUID());
-            serverLevel.addFreshEntity(actualEntity);
-        }
+    public static void addAndPositionEntity(ServerLevel serverLevel, BlockPos pos, LivingEntity entity){
+        setOuterRingPulses(serverLevel, pos.getCenter(), entity.getBbWidth());
+        getSoundWithPosition(serverLevel, pos, SoundEvents.WITHER_SPAWN, 0.05f, 3f);
+        getSoundWithPosition(serverLevel, pos, SoundReg.HEAL.get(), 1f, 2f);
+        entity.moveTo(pos.getCenter());
+        serverLevel.addFreshEntity(entity);
     }
 
-    public static LivingEntity getEliteSkeleton(ServerLevel serverLevel, int round){
+    public static LivingEntity getEliteSkeleton(ServerLevel serverLevel){
         var skeleton = new CustomSkeleton(serverLevel, null, new ItemStack(Items.ARROW));
         skeleton.setElite();
-        var getEliteArmor = getEliteArmor(serverLevel, round);
+        var getEliteArmor = getEliteArmor(serverLevel, 100);
 
         effectWithChance(skeleton, HEALTH_BOOST, 5, 100);
-        effectWithChance(skeleton, MOVEMENT_SPEED, 0, 100);
+        effectWithChance(skeleton, MobEffects.MOVEMENT_SPEED, 0, 100);
         effectWithChance(skeleton, DAMAGE_RESISTANCE, 3, 100);
 
         skeleton.setCustomName(Component.literal("Master Archer"));
@@ -186,20 +184,33 @@ public class MobManager {
         return skeleton;
     }
 
-    public static void summonEntities(AltarBlockEntity entity, int maxSpawn){
-        var pos = entity.getBlockPos();
-        var counter = new AtomicInteger();
-        var points = 200;
+    public static void summonEntities(AltarBlockEntity entity){
+//        var pos = entity.getBlockPos();
+//        var counter = new AtomicInteger();
+//        var points = 200;
 
-        spawnAroundEntity(entity.getLevel(), pos, 9, points,
-            blockPos -> {
-                if(counter.get() < maxSpawn){
-                    System.out.println(counter.get());
-                    MobManager.addAndPositionEntity(entity, blockPos.above());
-                    counter.getAndIncrement();
-                }
+        if(entity.getLevel() instanceof ServerLevel serverLevel){
+            var actualEntity = buildMobs(entity, serverLevel);
+
+            for (var livingEntity : actualEntity) {
+                var pos = entity.getBlockPos();
+                var x = (int) ArcaneShift.getRandomX(pos.getX(), 2, 8);
+                var z = (int) ArcaneShift.getRandomZ(pos.getZ(), 2, 8);
+
+                MobManager.addAndPositionEntity(serverLevel, new BlockPos(x, pos.getY(), z), livingEntity);
+                entity.spawnedMobs.add(livingEntity.getUUID());
             }
-        );
+        }
+//
+//        spawnAroundEntity(entity.getLevel(), pos, 9, points,
+//            blockPos -> {
+//                if(counter.get() < maxSpawn){
+//                    System.out.println(counter.get());
+//                    MobManager.addAndPositionEntity(entity, blockPos.above());
+//                    counter.getAndIncrement();
+//                }
+//            }
+//        );
     }
 
     public static void spawnAroundEntity(
@@ -217,8 +228,8 @@ public class MobManager {
         }
     }
 
-    public static LivingEntity getReadyEternalWizard(ServerLevel serverLevel, int round){
-        var entity = new EternalWizard(serverLevel, null, Maths.getPercentageTotal(round, 12), 100, 2, -1, 30);
+    public static LivingEntity getReadyEternalWizard(ServerLevel serverLevel, double damage){
+        var entity = new EternalWizard(serverLevel, null, damage, 100, 2, -1, 30);
         var wand = new ItemStack(ItemReg.WAND_ITEM_VITALITY.get());
         entity.setPersistenceRequired();
         entity.setItemSlot(MAINHAND, wand);
@@ -227,10 +238,10 @@ public class MobManager {
         var leggings = new ItemStack(ItemReg.MAGE_LEGGINGS.get());
         var boots = new ItemStack(ItemReg.MAGE_BOOTS.get());
 
-        addProtection(serverLevel, helm, round);
-        addProtection(serverLevel, chestplate, round);
-        addProtection(serverLevel, leggings, round);
-        addProtection(serverLevel, boots, round);
+        addProtection(serverLevel, helm, 1);
+        addProtection(serverLevel, chestplate, 1);
+        addProtection(serverLevel, leggings, 1);
+        addProtection(serverLevel, boots, 1);
         entity.setItemSlot(HEAD, helm);
         entity.setItemSlot(CHEST, chestplate);
         entity.setItemSlot(LEGS, leggings);
@@ -267,39 +278,41 @@ public class MobManager {
         return List.of(stack, stack1, stack2, stack3, bow);
     }
 
-    private static LivingEntity getSelectedMethod(AltarBlockEntity entity, ServerLevel serverLevel) {
+    private static List<LivingEntity> buildMobs(AltarBlockEntity entity, ServerLevel serverLevel) {
         var entities = new ArrayList<LivingEntity>();
-        var round = ChallengeLevelData.getRound(entity);
-        var readyZombie = getReadyZombie(serverLevel, round);
-        var readySkeleton = getReadySkeleton(serverLevel, round);
-        var readyWizard = getReadyEternalWizard(serverLevel, round);
-        var readyEliteSkeleton = getEliteSkeleton(serverLevel, round);
-        var golem = getAncienGolem(serverLevel, round);
         var voidSpider = getVoidSpider(serverLevel);
-        entities.add(readyZombie);
+        var getInstanceData = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
 
-        if(round > 5) {
-            entities.add(readySkeleton);
-            if(Maths.percentageChance(40)) entities.add(readyWizard);
+        for (var i = 0; i < getInstanceData.getZombies(); i++){
+            entities.add(MobManager.generateMob(getReadyZombie(serverLevel), getInstanceData));
         }
 
-        if(round > 10) {
-            if(Maths.percentageChance(40)) entities.add(voidSpider);
+        for (var i = 0; i < getInstanceData.getSkeleton(); i++){
+            entities.add(MobManager.generateMob(getReadySkeleton(serverLevel), getInstanceData));
         }
 
-        if(round > 20 && Maths.percentageChance(10)) {
-            entities.add(readyEliteSkeleton);
+        for (var i = 0; i < getInstanceData.getEternalWizard(); i++){
+            entities.add(MobManager.generateMob( getReadyEternalWizard(serverLevel, 10), getInstanceData));
         }
 
-        if(round > 40) {
-            if(Maths.percentageChance(40)) entities.add(golem);
-        }
+//        if(round > 5) {
+//            entities.add(readySkeleton);
+//            if(Maths.percentageChance(40)) entities.add(readyWizard);
+//        }
+//
+//        if(round > 10) {
+//            if(Maths.percentageChance(40)) entities.add(voidSpider);
+//        }
+//
+//        if(round > 20 && Maths.percentageChance(10)) {
+//            entities.add(readyEliteSkeleton);
+//        }
+//
+//        if(round > 40) {
+//            if(Maths.percentageChance(40)) entities.add(golem);
+//        }
 
-        var livingEntity = MobManager.generateMob(Helpers.listRandom(entities));
-        attributeWithChance(Attributes.MAX_HEALTH, livingEntity, round, 100);
-        attributeWithChance(Attributes.ARMOR, livingEntity, round * 10, 100);
-        attributeWithChance(Attributes.ATTACK_DAMAGE, livingEntity, round, 100);
-        attributeWithChance(Attributes.MOVEMENT_SPEED, livingEntity, round, 20);
-        return livingEntity;
+
+        return entities;
     }
 }

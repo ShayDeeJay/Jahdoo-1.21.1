@@ -13,7 +13,6 @@ import org.jahdoo.ascension.MobManager;
 import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.attachments.player_abilities.InstanceData;
 import org.jahdoo.common.block.SyncedBlockEntity;
-import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -28,9 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static net.minecraft.core.BlockPos.betweenClosed;
-import static org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData.*;
-import static org.jahdoo.common.block.altar.AltarAnim.*;
+import static org.jahdoo.ascension.StructureManager.placeLocksWithData;
+import static org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData.getProperties;
+import static org.jahdoo.common.block.altar.AltarAnim.idleParticleAnim;
+import static org.jahdoo.common.block.altar.AltarAnim.onActivationAnim;
 import static org.jahdoo.common.entities.EntityAnimations.ALTAR_IDLE;
 
 
@@ -68,16 +68,22 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         controllers.add(new AnimationController<>(this, this::eAnimation));
     }
 
+    private PlayState eAnimation(AnimationState<AltarBlockEntity> state) {
+        if(started) return state.setAndContinue(ALTAR_IDLE);
+        return PlayState.STOP;
+    }
+
     @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
         this.bossEvent.removeAllPlayers();
     }
 
-    public void summonMobs(int maxSpawn) {
-        MobManager.summonEntities(this, maxSpawn);
+    public void summonMobs() {
+        MobManager.summonEntities(this);
         this.beginSpawning = false;
         this.started = true;
+        this.updateBlock();
     }
 
     private void tickBossEvent() {
@@ -87,13 +93,6 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         bossEvent.setVisible(!spawnedMobs.isEmpty());
         bossEvent.setProgress(progress);
         bossEvent.setName(Component.nullToEmpty(spawnedMobs.size() + " / " + data.maxSpawnableMobs()));
-    }
-
-    private PlayState eAnimation(AnimationState<AltarBlockEntity> state) {
-        if(started) {
-            return state.setAndContinue(ALTAR_IDLE);
-        }
-        return PlayState.STOP;
     }
 
     @Override
@@ -130,12 +129,9 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     private void removeKilledMobs(ServerLevel serverLevel) {
         for (var activeMob : this.spawnedMobs) {
             var entity = serverLevel.getEntity(activeMob);
-            if(entity != null && !entity.isAlive()){
+            if(entity == null || !entity.isAlive()){
                 this.spawnedMobs.remove(activeMob);
                 this.mobsSpawned++;
-                if(this.started && this.spawnedMobs.size() + this.mobsSpawned < this.getInstanceData().getMobs()){
-                    summonMobs(1);
-                }
                 return;
             }
         }
@@ -148,20 +144,13 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
                 idleParticleAnim(pos, privateTicks, level);
             }
 
+            System.out.println(this.spawnedMobs);
             removeKilledMobs(serverLevel);
             tickBossEvent();
 
             if (privateTicks == 1) onActivationAnim(level, pos, privateTicks);
             if (started && this.spawnedMobs.isEmpty()) {
-                var range = betweenClosed(
-                    pos.getX() - 25, pos.getY(), pos.getZ() - 25,
-                    pos.getX() + 25, pos.getY() + 10, pos.getZ() + 25
-                );
-
-                for (var blockPos : range) {
-                    var getLock = level.getBlockEntity(blockPos);
-                    if(getLock instanceof LockBlockEntity lock) lock.setRoomData();
-                }
+                placeLocksWithData(serverLevel, pos);
                 level.destroyBlock(pos, false);
             }
         }
