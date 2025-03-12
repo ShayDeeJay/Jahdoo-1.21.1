@@ -1,12 +1,18 @@
 package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -31,9 +37,11 @@ import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
 import org.jahdoo.ascension.trading_post.ItemCosts;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
+import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
@@ -131,11 +139,12 @@ public class ServerEvents {
         var item = event.getItemStack().getItem();
         var player = event.getPlayer();
         var pos = event.getPos();
-        var getBlock = event.getLevel().getBlockState(pos);
+        var level = event.getLevel();
+        var getBlock = level.getBlockState(pos);
 
+        perkTableInteraction(getBlock, level, pos);
         removeWandInteractionWithBlocks(event, player, item, getBlock);
     }
-
 
     @SubscribeEvent
     public static void levelTickEvent(EntityJoinLevelEvent event){
@@ -179,36 +188,11 @@ public class ServerEvents {
         var entity = event.getEntity();
         var bonus = entity.tickCount / 10;
 
-        if(entity.level() instanceof CustomLevel){
-            var max = Math.max(1, bonus);
-            if(entity instanceof CustomZombie){
-                if(Random.nextInt(0, Math.min(10, max)) == 0){
-                    var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
-                    throwItem(entity, stack, entity.position());
-                }
-            }
-
-            if(entity instanceof CustomSkeleton){
-                if(Random.nextInt(0,Math.min(5, max)) == 0){
-                    var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 20 - bonus));
-                    throwItem(entity, stack, entity.position());
-                }
-            }
-
-            if(entity instanceof EternalWizard wizard){
-                if(wizard.getOwner() == null){
-                    if (Random.nextInt(0,Math.min(10 , max)) == 0) {
-                        var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
-                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(ItemCosts.SILVER_COIN));
-                        throwItem(entity, stack, entity.position());
-                    }
-                }
-            }
-        }
-
+        coinDropCalc(entity, bonus);
         onDeathGreaterFrostEffect(entity);
         resetGameModeOnDeath(entity);
         saveDestinyBondItems(entity);
     }
+
 
 }

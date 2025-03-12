@@ -15,6 +15,7 @@ import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.common.block.infuser.InfuserBlockEntity;
+import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.block.rune_table.RuneTableEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.block.tank.TankBlockEntity;
@@ -32,6 +33,9 @@ public class BlockEntityReg {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TankBlockEntity>> TANK_BE =
         registerBlockEntity("tank_be", TankBlockEntity::new, TANK);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PerkTableEntity>> PERK_TABLE_BE =
+        registerBlockEntity("perk_table_be", PerkTableEntity::new, PERK_TABLE);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LockBlockEntity>> LOCK_BE =
         registerBlockEntity("lock_be", LockBlockEntity::new, LOCK);

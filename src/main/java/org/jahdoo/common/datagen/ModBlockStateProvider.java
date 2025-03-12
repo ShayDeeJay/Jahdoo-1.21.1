@@ -78,6 +78,11 @@ public class ModBlockStateProvider extends BlockStateProvider {
         );
 
         simpleBlockWithItem(
+            PERK_TABLE.get(),
+            new UncheckedModelFile(modLoc("block/perk_table"))
+        );
+
+        simpleBlockWithItem(
             NEXITE_POWDER_BLOCK.get(),
             new UncheckedModelFile(modLoc("block/nexite_powder_block"))
         );

@@ -9,12 +9,12 @@ public class InstanceData implements AbstractAttachment {
     private int zombies;
     private int skeleton;
     private int eternalWizard;
+    private int voidSpider;
     private double health;
     private double speed;
     private double armor;
     private double attackDamage;
-
-    public static final InstanceData DEFAULT = new InstanceData(5);
+    public static InstanceData DEFAULT = new InstanceData(5);
 
     public InstanceData(){}
 
@@ -34,6 +34,10 @@ public class InstanceData implements AbstractAttachment {
         return zombies;
     }
 
+    public int getVoidSpiders() {
+        return voidSpider;
+    }
+
     public double getHealthMultiplier(){
         return health;
     }
@@ -50,16 +54,20 @@ public class InstanceData implements AbstractAttachment {
         return attackDamage;
     }
 
-    public void incrementSkeleton(int mobs){
-        this.skeleton += mobs;
+    public void incrementSkeleton(double mobs){
+        this.skeleton += (int) mobs;
     }
 
-    public void incrementZombie(int mobs){
-        this.zombies += mobs;
+    public void incrementZombie(double mobs){
+        this.zombies += (int) mobs;
     }
 
-    public void incrementEternalWizard(int mobs){
-        this.eternalWizard += mobs;
+    public void incrementEternalWizard(double mobs){
+        this.eternalWizard += (int) mobs;
+    }
+
+    public void incrementVoidSpider(double mobs){
+        this.voidSpider += (int) mobs;
     }
 
     public void incrementHealth(double health){
@@ -87,6 +95,7 @@ public class InstanceData implements AbstractAttachment {
         nbt.putInt("zombies", zombies);
         nbt.putInt("skeleton", zombies);
         nbt.putInt("eternal_wizard", eternalWizard);
+        nbt.putInt("void_spider", voidSpider);
     }
 
     @Override
@@ -98,15 +107,17 @@ public class InstanceData implements AbstractAttachment {
         zombies = nbt.getInt("zombies");
         skeleton = nbt.getInt("skeleton");
         eternalWizard = nbt.getInt("eternal_wizard");
+        voidSpider = nbt.getInt("void_spider");
     }
 
     @Override
     public String toString() {
         return
         "Level Data: " + "\n" +
-        "Zombie Count = " + zombies + "\n" +
-        "Skeleton Count = " + skeleton + "\n" +
-        "Eternal Wizard Count = " + eternalWizard + "\n" +
+        "Zombies = " + zombies + "\n" +
+        "Skeletons = " + skeleton + "\n" +
+        "Eternal Wizard = " + eternalWizard + "\n" +
+        "Void Spider = " + voidSpider + "\n" +
         "Mob Health = " + health + "\n" +
         "Mob Speed = " + speed + "\n" +
         "Mob Attack Damage = " + attackDamage + "\n" +

@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "jahdoo:block/lock",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "jahdoo:block/lock",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "jahdoo:block/lock",
+      "y": 0
+    },
+    "facing=west": {
+      "model": "jahdoo:block/lock",
+      "y": 90
+    }
+  }
+}

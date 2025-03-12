@@ -54,10 +54,6 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         return getProperties(this);
     }
 
-    public InstanceData getInstanceData(){
-       return this.getLevel().getData(AttachmentReg.INSTANCE_DATA);
-    }
-
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
@@ -144,7 +140,6 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
                 idleParticleAnim(pos, privateTicks, level);
             }
 
-            System.out.println(this.spawnedMobs);
             removeKilledMobs(serverLevel);
             tickBossEvent();
 

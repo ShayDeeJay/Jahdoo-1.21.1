@@ -56,6 +56,16 @@ public class VoidSpider extends Spider implements TamableEntity {
     }
 
     @Override
+    public boolean shouldDropExperience() {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldDropLoot() {
+        return false;
+    }
+
+    @Override
     public void tick() {
         super.tick();
         onDeath();

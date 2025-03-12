@@ -56,6 +56,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropOther(ENCHANTED_BLOCK.get(), Items.AIR);
         this.dropOther(NEXITE_POWDER_BLOCK.get(), Items.AIR);
         this.dropOther(TRAIL_PORTAL.get(), Items.AIR);
+        this.dropOther(PERK_TABLE.get(), Items.AIR);
         this.dropOther(LOCK.get(), Items.AIR);
         this.dropSelf(NEXITE_BLOCK.get());
         this.dropSelf(RAW_NEXITE_BLOCK.get());

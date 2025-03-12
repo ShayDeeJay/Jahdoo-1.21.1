@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -75,11 +76,8 @@ public class AltarBlock extends BaseEntityBlock {
         if (!(level instanceof ServerLevel)) return FAIL;
 
         blockExitBarrier(level, pos);
-
         altarE.setData(INSTANCE_DATA, level.getData(INSTANCE_DATA));
-
         if(!altarE.started){
-//            var mobs = altarE.getInstanceData().getZombies();
             altarE.summonMobs();
             return SUCCESS;
         }

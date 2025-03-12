@@ -18,6 +18,7 @@ import org.jahdoo.common.block.loot_chest.LootChestBlock;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeBlock;
 import org.jahdoo.common.block.infuser.InfuserBlock;
 import org.jahdoo.common.block.light_block.LightBlock;
+import org.jahdoo.common.block.perk_table.PerkTable;
 import org.jahdoo.common.block.rune_table.RuneTable;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.common.block.tank.TankBlock;
@@ -69,6 +70,9 @@ public class BlockReg {
 
     public static DeferredHolder<Block, Block> SHOPPING_TABLE =
         registerBlockWithItem("shopping_table", ShoppingTableBlock::new);
+
+    public static DeferredHolder<Block, Block> PERK_TABLE =
+        registerBlockWithItem("perk_table", PerkTable::new);
 
     public static DeferredHolder<Block, Block> RUNE_TABLE =
         registerBlockWithItem("rune_table", RuneTable::new);

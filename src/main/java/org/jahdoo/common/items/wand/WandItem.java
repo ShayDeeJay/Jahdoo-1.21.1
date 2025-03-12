@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.registers.BlockReg;
@@ -27,6 +28,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.items.wand.WandItemHelper.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
@@ -118,6 +121,9 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
+
+        level.setBlockAndUpdate(player.blockPosition(), BlockReg.PERK_TABLE.get().defaultBlockState().setValue(TEXTURE, Random.nextInt(2)));
+        level.setBlockAndUpdate(player.blockPosition().above(1), Blocks.BARRIER.defaultBlockState());
 
         if (canOffHand(player, interactionHand, true)) {
             player.startUsingItem(interactionHand);

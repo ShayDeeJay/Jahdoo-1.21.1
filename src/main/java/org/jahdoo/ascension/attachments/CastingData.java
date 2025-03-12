@@ -27,7 +27,6 @@ public class CastingData implements AbstractAttachment{
     private Map<String, Integer> abilityCooldowns = new Object2IntOpenHashMap<>();
     private Map<String, Integer> abilityCooldownsStatic = new Object2IntOpenHashMap<>();
 
-
     public double getManaPool() {
         return manaPool;
     }
@@ -70,6 +69,10 @@ public class CastingData implements AbstractAttachment{
 
     public void setLocalCooldownsStatic(Map<String, Integer> abilityCooldowns){
         this.abilityCooldownsStatic = abilityCooldowns;
+    }
+
+    public void addMana(double manaPool, Player player) {
+        this.manaPool = Math.min(manaPool + manaPool, getMaxMana(player));
     }
 
     public void regenMana(Player player) {

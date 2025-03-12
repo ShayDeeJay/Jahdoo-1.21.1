@@ -3,6 +3,7 @@ package org.jahdoo.common.event.event_helpers;
 import com.mojang.math.Axis;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
@@ -11,7 +12,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -26,16 +29,23 @@ import org.jahdoo.ascension.ability.abilities.block_placer.BlockPlacerAbility;
 import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.ascension.ability.abilities.wall_placer.WallPlacerAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.ascension.trading_post.ItemCosts;
 import org.jahdoo.ascension.utils.ModTags;
+import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.components.DataComponentHelper;
+import org.jahdoo.common.entities.CustomSkeleton;
+import org.jahdoo.common.entities.CustomZombie;
+import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.ItemReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
+import static net.minecraft.world.entity.ai.behavior.BehaviorUtils.throwItem;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
@@ -50,6 +60,15 @@ public class EventHelpers {
 
     public static void saveDestinyBondItems(LivingEntity entity) {
         if(entity instanceof Player player) player.getData(SAVE_DATA).addAllItems(player);
+    }
+
+    public static void perkTableInteraction(BlockState getBlock, net.minecraft.world.level.Level level, BlockPos pos) {
+        if(getBlock.is(Blocks.BARRIER)){
+            if(level.getBlockEntity(pos.below(1)) instanceof PerkTableEntity entity){
+                entity.setUsed();
+                level.destroyBlock(pos, false);
+            }
+        }
     }
 
     public static void disallowEffectsInCustomDim(MobEffectEvent.Applicable event) {
@@ -252,5 +271,34 @@ public class EventHelpers {
         }
 
         return closestEntity;
+    }
+
+    public static void coinDropCalc(LivingEntity entity, int bonus) {
+        if(entity.level() instanceof CustomLevel){
+            var max = Math.max(1, bonus);
+            if(entity instanceof CustomZombie){
+                if(Random.nextInt(0, Math.min(10, max)) == 0){
+                    var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
+                    throwItem(entity, stack, entity.position());
+                }
+            }
+
+            if(entity instanceof CustomSkeleton){
+                if(Random.nextInt(0,Math.min(5, max)) == 0){
+                    var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 20 - bonus));
+                    throwItem(entity, stack, entity.position());
+                }
+            }
+
+            if(entity instanceof EternalWizard wizard){
+                if(wizard.getOwner() == null){
+                    if (Random.nextInt(0,Math.min(10 , max)) == 0) {
+                        var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
+                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(ItemCosts.SILVER_COIN));
+                        throwItem(entity, stack, entity.position());
+                    }
+                }
+            }
+        }
     }
 }

@@ -118,7 +118,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         var simpleItems = List.of(
             ItemReg.NEXITE_POWDER, ItemReg.HEALTH_CONTAINER,
             ItemReg.AUGMENT_CORE, ItemReg.AUGMENT_FRAGMENT,
-            ItemReg.ADVANCED_AUGMENT_CORE, ItemReg.AUGMENT_HYPER_CORE
+            ItemReg.ADVANCED_AUGMENT_CORE, ItemReg.AUGMENT_HYPER_CORE,
+            ItemReg.MANA_CONTAINER
         );
 
         simpleItems.forEach(this::createSimpleItemModel);

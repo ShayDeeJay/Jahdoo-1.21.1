@@ -155,6 +155,16 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
     }
 
     @Override
+    public boolean shouldDropExperience() {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldDropLoot() {
+        return false;
+    }
+
+    @Override
     protected @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         if(this.owner != null) WandItemHelper.setWizardMode(this, player);
         return InteractionResult.CONSUME;
@@ -163,7 +173,6 @@ public class EternalWizard extends AbstractSkeleton implements TamableEntity {
     @Override
     public void performRangedAttack(LivingEntity target, float distanceFactor) {
 //        fireballAbility(target);
-//        this.fireProjectile(elementProjectile, player, 0.5f);
         shooterAbility(target);
     }
 
