@@ -9,6 +9,8 @@ import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
+import static org.jahdoo.ascension.utils.Helpers.*;
+
 public class GenericParticle extends SimpleAnimatedParticle {
 
     public GenericParticle(
@@ -75,7 +77,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
                 genericParticle.quadSize *= type.size();
             }
 
-            genericParticle.lifetime = type.lifetime() + Helpers.Random.nextInt(type.lifetime());
+            genericParticle.lifetime = type.lifetime() + Random.nextInt(type.lifetime());
             return genericParticle;
         }
     }
@@ -124,11 +126,53 @@ public class GenericParticle extends SimpleAnimatedParticle {
             }
             genericParticle.setColor(type.colour());
             genericParticle.setFadeColor(type.fade());
-            genericParticle.lifetime = type.lifetime() + Helpers.Random.nextInt(type.lifetime());
+            genericParticle.lifetime = type.lifetime() + Random.nextInt(type.lifetime());
             return genericParticle;
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
+    public static class PlusParticle implements ParticleProvider<GenericParticleOptions> {
+        private final SpriteSet sprites;
+
+        public PlusParticle(SpriteSet pSprites) {
+            this.sprites = pSprites;
+        }
+
+        public Particle createParticle(
+            GenericParticleOptions type,
+            ClientLevel level,
+            double x,
+            double y,
+            double z,
+            double xSpeed,
+            double ySpeed,
+            double zSpeed
+        ) {
+            var genericParticle = new GenericParticle(level, x, y, z, xSpeed, ySpeed, zSpeed,this.sprites){
+                int tick;
+
+                @Override
+                public void tick() {
+                    super.tick();
+                    tick++;
+                    if(!type.setStaticSize()) this.quadSize *= 0.96f;
+                    this.speedUpWhenYMotionIsBlocked = true;
+                }
+
+                @Override
+                public void setPos(double x, double y, double z) {
+                    super.setPos(x, y, z);
+                }
+            };
+
+            genericParticle.gravity = 0;
+            genericParticle.setColor(type.colour());
+            genericParticle.setFadeColor(type.fade());
+            genericParticle.lifetime = type.lifetime() + Random.nextInt(type.lifetime());
+            return genericParticle;
+        }
+    }
 
     @OnlyIn(Dist.CLIENT)
     public static class ElectricalParticle implements ParticleProvider<GenericParticleOptions> {
@@ -173,7 +217,7 @@ public class GenericParticle extends SimpleAnimatedParticle {
             if (type.setStaticSize()) genericParticle.quadSize = type.size(); else  genericParticle.quadSize *= type.size();
             genericParticle.setColor(type.colour());
             genericParticle.setFadeColor(type.fade());
-            genericParticle.lifetime = type.lifetime() + Helpers.Random.nextInt(type.lifetime());
+            genericParticle.lifetime = type.lifetime() + Random.nextInt(type.lifetime());
             return genericParticle;
         }
     }

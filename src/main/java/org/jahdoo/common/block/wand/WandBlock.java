@@ -157,10 +157,10 @@ public class WandBlock extends BaseEntityBlock {
 
         getType.ifPresent(
             element -> {
-                var par1 = ParticleHandlers.bakedParticleOptions(element.id(), 20, 1.5f, false);
-                var par2 = ParticleHandlers.genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 20, 1.5f, false, 0.3);
+                var par1 = ParticleHandlers.bakedParticle(element.id(), 20, 1.5f, false);
+                var par2 = ParticleHandlers.genericParticle(GENERIC_PARTICLE, element, 20, 1.5f, false, 0.3);
 
-                PositionFinders.getInnerRingOfRadiusRandom(blockPos, 0.1, 2,
+                PositionFinders.innerRadiusRandom(blockPos, 0.1, 2,
                     positions -> this.placeParticle(level, positions, randomSource.nextInt(0,3) == 0 ? par1 : par2)
                 );
             }

@@ -3,40 +3,33 @@ package org.jahdoo.common.particle;
 import net.minecraft.core.particles.ParticleType;
 import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.common.registers.ParticleReg;
 
 import java.util.List;
 
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.registers.ParticleReg.*;
 
 public record ParticleStore(int r, int g, int b){
-    public static final int GENERIC_PARTICLE_SELECTION = 0;
-    public static final int MAGIC_PARTICLE_SELECTION = 1;
-    public static final int SOFT_PARTICLE_SELECTION = 2;
-    public static final int ELECTRIC_PARTICLE_SELECTION = 3;
+    public static final int GENERIC_PARTICLE = 0;
+    public static final int MAGIC_PARTICLE = 1;
+    public static final int SOFT_PARTICLE = 2;
+    public static final int ELECTRIC_PARTICLE = 3;
+    public static final int PLUS_PARTICLE = 4;
 
     public static final List<ParticleType<?>> getBakedByType = List.of(
-        ParticleReg.BAKED_FROST.get(),
-        ParticleReg.BAKED_INFERNO.get(),
-        ParticleReg.BAKED_MYSTIC.get(),
-        ParticleReg.BAKED_VITALITY.get(),
-        ParticleReg.BAKED_UTILITY.get(),
-        ParticleReg.HEAL.get()
+        BAKED_FROST.get(), BAKED_INFERNO.get(), BAKED_MYSTIC.get(), BAKED_VITALITY.get(), BAKED_UTILITY.get(), HEAL.get()
     );
 
     public static final List<ParticleType<?>> getColouredParticle = List.of(
-        ParticleReg.GENERIC.get(),
-        ParticleReg.MAGIC.get(),
-        ParticleReg.SOFT.get(),
-        ParticleReg.ELECTRIC.get()
+        GENERIC.get(), MAGIC.get(), SOFT.get(), ELECTRIC.get(), PLUS.get()
     );
 
     public static GenericParticleOptions genericParticleFast(int colour, int fade){
-        return genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION,6, 0.55f, colour, fade);
+        return ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE,6, 0.55f, colour, fade);
     }
 
     public static GenericParticleOptions genericParticleSlow(int colour, int fade){
-        return genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, 20, 1f, colour, fade);
+        return ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, 20, 1f, colour, fade);
     }
 
     public static BakedParticleOptions bakedParticleSlow(int type){

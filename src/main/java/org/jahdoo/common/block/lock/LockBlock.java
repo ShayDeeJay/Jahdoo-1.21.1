@@ -127,7 +127,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
                 var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
                 getSoundWithPosition(serverLevel, pos, SoundEvents.LODESTONE_COMPASS_LOCK, 1, 1.4F);
                 getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_ACTIVATE, 1, 0.6F);
-                placeNewSide(serverLevel, getState, pos.relative(getState, 0), Helpers.nameToStringId(entity.roomId.getString()));
+                placeNewSide(serverLevel, getState, pos.relative(getState, 0), Helpers.nameToId(entity.roomId.getString()));
 
                 var range = betweenClosed(
                     pos.getX() - 10, pos.getY() - 10, pos.getZ() - 10,

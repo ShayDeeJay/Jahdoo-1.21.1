@@ -14,9 +14,9 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.particle.ParticleHandlers;
 
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 
 public class LightBlock extends Block {
 
@@ -52,8 +52,8 @@ public class LightBlock extends Block {
         var pos = blockPos.getCenter().subtract(0,0.05,0);
         var lifetime = 10;
         var size = 0.8f;
-        var bakedParticle = bakedParticleOptions(type.id(), lifetime, size + 0.2f, false);
-        var generic = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, size, type.partColourA(), type.partColourFade(), false);
+        var bakedParticle = bakedParticle(type.id(), lifetime, size + 0.2f, false);
+        var generic = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, size, type.partColourA(), type.partColourFade(), false);
 
         ParticleHandlers.invisibleLight(level, pos, bakedParticle, 0.03, 0.04,50);
         ParticleHandlers.invisibleLight(level, pos, generic, 0.03, 0.04, 50);

@@ -29,8 +29,8 @@ import static net.minecraft.world.entity.EquipmentSlot.*;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.attributeModifierCalculator;
 import static org.jahdoo.ascension.utils.Helpers.res;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
 
@@ -96,8 +96,8 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     }
 
     private void setSpawnParticles(Level level){
-        var bakedParticle = bakedParticleOptions(ElementReg.vitality().id(), 20, 3f, false);
-        PositionFinders.getInnerRingOfRadiusRandom(cloud.position(), 0.8, 5).forEach(
+        var bakedParticle = bakedParticle(ElementReg.vitality().id(), 20, 3f, false);
+        PositionFinders.innerRadiusRandom(cloud.position(), 0.8, 5).forEach(
             positions -> ParticleHandlers.sendParticles(level, bakedParticle, positions, 1, 0, 1,0,0.05)
         );
     }
@@ -172,7 +172,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
 
     private void setOuterRingPulses(Level level){
         var positions = PositionFinders.getOuterRingOfRadiusList(cloud.position(), 0.8, 20);
-        var particleOptions = genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, this.getElementType(), 10, 0.1f, true);
+        var particleOptions = ParticleHandlers.genericParticle(ParticleStore.MAGIC_PARTICLE, this.getElementType(), 10, 0.1f, true);
         if(this.height < 1) this.height += 0.05; else this.height = 0;
 
         if(position < positions.size()){

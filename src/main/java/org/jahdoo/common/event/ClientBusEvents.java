@@ -22,6 +22,7 @@ import org.jahdoo.common.block.tank.TankRenderer;
 import org.jahdoo.common.block.wand.WandBlockRenderer;
 import org.jahdoo.common.block.wand_manager.WandManagerRenderer;
 import org.jahdoo.common.client.RuneTooltipRenderer;
+import org.jahdoo.common.client.overlay.StatScreen;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloudRenderer;
 import org.jahdoo.common.entities.burning_skull.BurningSkullRenderer;
 import org.jahdoo.common.entities.element_projectile.ElementProjectileRenderer;
@@ -40,6 +41,7 @@ import org.jahdoo.common.particle.GenericParticle;
 import org.jahdoo.common.registers.*;
 
 import static org.jahdoo.common.client.KeyBinding.*;
+import static org.jahdoo.common.particle.GenericParticle.*;
 import static org.jahdoo.common.registers.BlockEntityReg.*;
 import static org.jahdoo.common.registers.EntityReg.*;
 import static org.jahdoo.common.registers.MenuReg.*;
@@ -76,8 +78,6 @@ public class ClientBusEvents {
 
     @SubscribeEvent
     public static void onKeyRegister(RegisterKeyMappingsEvent event) {
-        event.register(QUICK_SELECT);
-        event.register(MAGNET);
         event.register(WAND_SLOT_1A);
         event.register(WAND_SLOT_2A);
         event.register(WAND_SLOT_3A);
@@ -88,38 +88,42 @@ public class ClientBusEvents {
         event.register(WAND_SLOT_8A);
         event.register(WAND_SLOT_9A);
         event.register(WAND_SLOT_10A);
+        event.register(QUICK_SELECT);
+        event.register(STAT_SCREEN);
+        event.register(MAGNET);
     }
 
     @SubscribeEvent
     public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(GENERIC.get(), GenericParticle.GenericProvider::new);
-        event.registerSpriteSet(ELECTRIC.get(), GenericParticle.ElectricalParticle::new);
-        event.registerSpriteSet(MAGIC.get(), GenericParticle.GenericProvider::new);
-        event.registerSpriteSet(SOFT.get(), GenericParticle.GenericProvider::new);
-        event.registerSpriteSet(BAKED_INFERNO.get(), GenericParticle.BakedProvider::new);
-        event.registerSpriteSet(BAKED_FROST.get(), GenericParticle.BakedProvider::new);
-        event.registerSpriteSet(BAKED_MYSTIC.get(), GenericParticle.BakedProvider::new);
-        event.registerSpriteSet(BAKED_VITALITY.get(), GenericParticle.BakedProvider::new);
-        event.registerSpriteSet(BAKED_UTILITY.get(), GenericParticle.BakedProvider::new);
-        event.registerSpriteSet(HEAL.get(), GenericParticle.BakedProvider::new);
+        event.registerSpriteSet(SOFT.get(), GenericProvider::new);
+        event.registerSpriteSet(PLUS.get(), PlusParticle::new);
+        event.registerSpriteSet(HEAL.get(), BakedProvider::new);
+        event.registerSpriteSet(MAGIC.get(), GenericProvider::new);
+        event.registerSpriteSet(GENERIC.get(), GenericProvider::new);
+        event.registerSpriteSet(ELECTRIC.get(), ElectricalParticle::new);
+        event.registerSpriteSet(BAKED_INFERNO.get(), BakedProvider::new);
+        event.registerSpriteSet(BAKED_FROST.get(), BakedProvider::new);
+        event.registerSpriteSet(BAKED_MYSTIC.get(), BakedProvider::new);
+        event.registerSpriteSet(BAKED_VITALITY.get(), BakedProvider::new);
+        event.registerSpriteSet(BAKED_UTILITY.get(), BakedProvider::new);
     }
 
     @SubscribeEvent
     public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
         //Block entities
-        event.registerBlockEntityRenderer(AUGMENT_MODIFICATION_STATION_BE.get(), AugmentModificationRenderer::new);
-        event.registerBlockEntityRenderer(WAND_MANAGER_TABLE_BE.get(), WandManagerRenderer::new);
-        event.registerBlockEntityRenderer(INFUSER_BE.get(), InfuserRenderer::new);
-        event.registerBlockEntityRenderer(CHALLENGE_ALTAR_BE.get(), AltarRenderer::new);
-        event.registerBlockEntityRenderer(MODULAR_CHAOS_CUBE_BE.get(), ModularChaosCubeRenderer::new);
-        event.registerBlockEntityRenderer(LOOT_CHEST_BE.get(), LootChestRenderer::new);
-        event.registerBlockEntityRenderer(WAND_BE.get(), WandBlockRenderer::new);
         event.registerBlockEntityRenderer(TANK_BE.get(), TankRenderer::new);
-        event.registerBlockEntityRenderer(PERK_TABLE_BE.get(), PerkTableRenderer::new);
         event.registerBlockEntityRenderer(LOCK_BE.get(), LockRenderer::new);
-        event.registerBlockEntityRenderer(SHOPPING_TABLE_BE.get(), ShoppingTableRenderer::new);
+        event.registerBlockEntityRenderer(WAND_BE.get(), WandBlockRenderer::new);
+        event.registerBlockEntityRenderer(INFUSER_BE.get(), InfuserRenderer::new);
+        event.registerBlockEntityRenderer(LOOT_CHEST_BE.get(), LootChestRenderer::new);
         event.registerBlockEntityRenderer(RUNE_TABLE_BE.get(), RuneTableRenderer::new);
+        event.registerBlockEntityRenderer(PERK_TABLE_BE.get(), PerkTableRenderer::new);
+        event.registerBlockEntityRenderer(CHALLENGE_ALTAR_BE.get(), AltarRenderer::new);
         event.registerBlockEntityRenderer(ENCHANTED_BE.get(), EnchantedBlockRenderer::new);
+        event.registerBlockEntityRenderer(SHOPPING_TABLE_BE.get(), ShoppingTableRenderer::new);
+        event.registerBlockEntityRenderer(WAND_MANAGER_TABLE_BE.get(), WandManagerRenderer::new);
+        event.registerBlockEntityRenderer(MODULAR_CHAOS_CUBE_BE.get(), ModularChaosCubeRenderer::new);
+        event.registerBlockEntityRenderer(AUGMENT_MODIFICATION_STATION_BE.get(), AugmentModificationRenderer::new);
 
         //Entities
         event.registerEntityRenderer(FROST_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementReg.frost().projectileTexture()));
@@ -136,6 +140,5 @@ public class ClientBusEvents {
         event.registerEntityRenderer(FLAMING_SKULL.get(), BurningSkullRenderer::new);
         event.registerEntityRenderer(VOID_SPIDER.get(), VoidSpiderRenderer::new);
         event.registerEntityRenderer(VOID_SPIDER_SPAWN.get(), VoidSpiderRenderer::new);
-
     }
 }

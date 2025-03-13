@@ -30,8 +30,8 @@ import java.util.UUID;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.DAMAGE;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
-import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
 
@@ -202,10 +202,10 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         var directions = positionScrambler.subtract(this.element.position()).normalize();
         var lifetime = (int) this.explosionRadius + 2;
         var size = 5;
-        var bakedParticle = bakedParticleOptions(this.getElementType().id(), lifetime, size, false);
+        var bakedParticle = bakedParticle(this.getElementType().id(), lifetime, size, false);
         var col1 = this.getElementType().partColourA();
         var col2 = this.getElementType().partColourFade();
-        var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, size, col1, col2, false);
+        var genericParticle = genericParticle(GENERIC_PARTICLE, lifetime, size, col1, col2, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
 
         ParticleHandlers.sendParticles(
@@ -230,7 +230,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
                 Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundReg.TIMER.get());
                 var partColour = this.getElementType().partColourA();
                 var partColour2 = this.getElementType().partColourB();
-                var particle = new GenericParticleOptions(GENERIC_PARTICLE_SELECTION, partColour, partColour2, 10, 3, false, 1.4);
+                var particle = new GenericParticleOptions(GENERIC_PARTICLE, partColour, partColour2, 10, 3, false, 1.4);
                 var position = this.element.position().add(0,0.2,0);
 
                 particleBurst(serverLevel, position, 1, particle);
@@ -249,7 +249,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
                 if(this.element.level() instanceof ServerLevel serverLevel){
                     particleBurst(
                         serverLevel, this.element.position().add(0,0.2,0), 15,
-                        genericParticleOptions(SOFT_PARTICLE_SELECTION, this.getElementType(), 5, 1.4f),
+                        genericParticle(SOFT_PARTICLE, this.getElementType(), 5, 1.4f),
                         0, 1.5, 0, 0.1f
                     );
                 }

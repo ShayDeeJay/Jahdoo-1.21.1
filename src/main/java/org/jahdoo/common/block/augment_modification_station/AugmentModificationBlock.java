@@ -35,7 +35,7 @@ import org.jahdoo.ascension.utils.PositionFinders;
 
 import static net.minecraft.core.component.DataComponents.*;
 import static net.minecraft.sounds.SoundEvents.*;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 
 public class AugmentModificationBlock extends BaseEntityBlock{
@@ -150,7 +150,7 @@ public class AugmentModificationBlock extends BaseEntityBlock{
     ){
         ElementReg.fromId(getType).ifPresent(
             element -> {
-                var particle = genericParticleOptions(element, lifetime, 0.8f);
+                var particle = ParticleHandlers.genericParticle(element, lifetime, 0.8f);
                 PositionFinders.getOuterRingOfRadiusRandom(blockPos.getBottomCenter().add(0,yOffset,0), radius, 40,
                     positions -> {
                         ParticleHandlers.sendParticles(

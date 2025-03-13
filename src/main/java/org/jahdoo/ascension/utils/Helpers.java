@@ -43,7 +43,6 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.List;
@@ -284,9 +283,9 @@ public class Helpers {
     }
 
     public static ParticleOptions getRandomColouredParticle(int colourA, int colourB, int lifetime, float size, boolean staticSize){
-        var generic = ParticleHandlers.genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, colourA, colourB,lifetime,size, staticSize, size);
-        var magic = ParticleHandlers.genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, colourA, colourB,lifetime,size, staticSize, size);
-        var soft = ParticleHandlers.genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, colourA, colourB,lifetime,size, staticSize, size);
+        var generic = ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, colourA, colourB,lifetime,size, staticSize, size);
+        var magic = ParticleHandlers.genericParticle(ParticleStore.MAGIC_PARTICLE, colourA, colourB,lifetime,size, staticSize, size);
+        var soft = ParticleHandlers.genericParticle(ParticleStore.SOFT_PARTICLE, colourA, colourB,lifetime,size, staticSize, size);
         var collectTypes = List.of(generic, magic, soft);
         return collectTypes.get(Random.nextInt(collectTypes.size()));
     }
@@ -358,7 +357,7 @@ public class Helpers {
         return result.toString().trim();
     }
 
-    public static String nameToStringId(String input) {
+    public static String nameToId(String input) {
         var lowercaseId = new StringBuilder();
         for (var s : input.split(" ")) {
             lowercaseId.append(s.toLowerCase()).append("_");

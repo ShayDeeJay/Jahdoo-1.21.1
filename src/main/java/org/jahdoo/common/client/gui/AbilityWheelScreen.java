@@ -40,7 +40,7 @@ import static org.jahdoo.common.client.Icons.COG;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.*;
 
 @EventBusSubscriber(Dist.CLIENT)
-public class AbilityWheelMenu extends Screen  {
+public class AbilityWheelScreen extends Screen  {
     private static final int RADIAL_SIZE = 150;
     private final int buttonSize = RADIAL_SIZE / 7 + 3 + 6;
     private float localTick = 60;
@@ -49,7 +49,7 @@ public class AbilityWheelMenu extends Screen  {
     private int slots;
     private static final int RADIUS = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 4);
 
-    public AbilityWheelMenu() {
+    public AbilityWheelScreen() {
         super(Component.literal("Ability Menu"));
     }
 
@@ -189,7 +189,7 @@ public class AbilityWheelMenu extends Screen  {
 //    Yoinked from Ars Nouveau
     @SubscribeEvent
     public static void updateInputEvent(MovementInputUpdateEvent event) {
-        if (Minecraft.getInstance().screen instanceof AbilityWheelMenu) {
+        if (Minecraft.getInstance().screen instanceof AbilityWheelScreen) {
             Options settings = Minecraft.getInstance().options;
             Input eInput = event.getInput();
             long window = Minecraft.getInstance().getWindow().getWindow();

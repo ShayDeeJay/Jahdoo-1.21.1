@@ -99,6 +99,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
         var delegate = entry.getType();
         var registeredName = delegate.getRegisteredName();
         var second = entry.getValue();
+
         replaceOrAddAttribute(itemStack, registeredName, delegate, second, MAINHAND, false);
     }
 

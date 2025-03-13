@@ -40,6 +40,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
+import org.jahdoo.common.entities.TamableEntity;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
@@ -126,9 +127,11 @@ public class ServerEvents {
         if(!(tickEvent.getLevel() instanceof CustomLevel level)) return;
         for (var entity : level.getEntities().getAll()) {
             if(entity instanceof Mob mob && mob.getTarget() == null){
-                var players = level.players();
-                if(!players.isEmpty()){
-                    mob.setTarget(Helpers.listRandom(players));
+                if(entity instanceof TamableEntity tEntity && tEntity.getOwner() == null){
+                    var players = level.players();
+                    if(!players.isEmpty()){
+                        mob.setTarget(Helpers.listRandom(players));
+                    }
                 }
             }
         }
@@ -142,7 +145,7 @@ public class ServerEvents {
         var level = event.getLevel();
         var getBlock = level.getBlockState(pos);
 
-        perkTableInteraction(getBlock, level, pos);
+        perkTableInteraction(getBlock, level, pos, player);
         removeWandInteractionWithBlocks(event, player, item, getBlock);
     }
 

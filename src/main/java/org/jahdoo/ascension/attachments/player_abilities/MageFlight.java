@@ -14,12 +14,13 @@ import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.networking.client2server.MageFlightC2SP;
 import org.jahdoo.common.networking.server2client.MageFlightSyncS2CP;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.ElementReg;
 
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
 import static org.jahdoo.common.registers.ElementReg.fromWand;
@@ -92,11 +93,11 @@ public class MageFlight implements AbstractAttachment {
 
     private void mageFlightAnimation(ItemStack wandItem, Player player){
         var element = fromWand(wandItem.getItem()).orElse(ElementReg.random());
-        var part1 = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, element, 2, 0.2f, true);
-        var part2 = bakedParticleOptions(element.id(), 2, 1f, false);
+        var part1 = ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, element, 2, 0.2f, true);
+        var part2 = bakedParticle(element.id(), 2, 1f, false);
         var getMovement = player.getDeltaMovement().y > -0.5;
 
-        PositionFinders.getInnerRingOfRadiusRandom(player.position(), player.getBbWidth() - 0.3, getMovement ? 5 : 2,
+        PositionFinders.innerRadiusRandom(player.position(), player.getBbWidth() - 0.3, getMovement ? 5 : 2,
             positions -> {
                 player.level().addParticle(part1, positions.x, positions.y, positions.z, 0, -0.2, 0);
                 player.level().addParticle(part2, positions.x, positions.y, positions.z, 0, -0.2, 0);

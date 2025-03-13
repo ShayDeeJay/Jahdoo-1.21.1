@@ -240,7 +240,7 @@ public class FrostBolts  extends DefaultEntityBehaviour {
             );
 
             if (this.generic.level() instanceof ServerLevel serverLevel) {
-                var particleOptions = ParticleHandlers.bakedParticleOptions(this.getElementType().id(), 3, 1.7f, false);
+                var particleOptions = ParticleHandlers.bakedParticle(this.getElementType().id(), 3, 1.7f, false);
                 ParticleHandlers.particleBurst(serverLevel, new Vec3(arrowX, arrowY, arrowZ), 1, particleOptions, 0, 0, 0, 0.1f);
             }
 

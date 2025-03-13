@@ -16,8 +16,8 @@ import org.jahdoo.common.registers.EffectReg;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffectCategory.HARMFUL;
 import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.ElementReg.inferno;
 
 public class GreaterInfernoEffect extends MobEffect {
@@ -76,7 +76,7 @@ public class GreaterInfernoEffect extends MobEffect {
         var size = Helpers.Random.nextDouble(0.2, 0.4);
         var col1 = element.textColourA();
         var col2 = element.textColourB();
-        var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, (float) (size - 0.2), col1, col2, true);
+        var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, (float) (size - 0.2), col1, col2, true);
         var randomSpeed = Helpers.Random.nextDouble(0.1, 0.3);
 
         ParticleHandlers.sendParticles(

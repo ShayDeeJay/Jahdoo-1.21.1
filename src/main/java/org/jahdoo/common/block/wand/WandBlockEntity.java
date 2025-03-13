@@ -123,7 +123,7 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
         double difference = Helpers.Random.nextDouble(0.3,0.4);
 
         if(tickCounter % 4 == 0){
-            PositionFinders.getInnerRingOfRadiusRandom(blockPos, 0.2, 2,
+            PositionFinders.innerRadiusRandom(blockPos, 0.2, 2,
                 positions -> {
                     ParticleHandlers.sendParticles(
                         level,

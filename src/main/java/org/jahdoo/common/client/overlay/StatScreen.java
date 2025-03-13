@@ -1,26 +1,32 @@
 package org.jahdoo.common.client.overlay;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
-import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.ascension.utils.ColourStore;
+
 import java.util.List;
+
+import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.common.client.Icons.WAND_GUI;
+import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.overlay.OverlayHelpers.getAllStat;
 
-public class StatScreen extends EffectRenderingInventoryScreen<InventoryMenu> {
+public class StatScreen extends Screen {
 
     private static final int IMAGE_SIZE = 256;
     private float fade;
     private int scrollBound;
+    private double scrollSpeed;
 
-    public StatScreen(Player player) {
-        super(player.inventoryMenu, player.getInventory(), Component.translatable("stat_screen"));
-    }
+    public StatScreen() { super(Component.empty()); }
+
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
     public Component getTitle() {
@@ -31,15 +37,6 @@ public class StatScreen extends EffectRenderingInventoryScreen<InventoryMenu> {
     public boolean isPauseScreen() {
         return false;
     }
-
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float v, int i, int i1) {}
-
-    @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {}
-
-    @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -62,8 +59,8 @@ public class StatScreen extends EffectRenderingInventoryScreen<InventoryMenu> {
         var trimWidth = 60;
         var trimHeight = 18;
         var size = 100;
-        SharedUI.boxMaker(guiGraphics, i - size + trimWidth, j - size + trimHeight, size - trimWidth, size - trimHeight - 6, -1);
-        SharedUI.renderEntityInInventoryFollowsMouse(guiGraphics, i, j - 10, i, j, 50, 0.0625F, mouseX, mouseY, player, 1500);
+        boxMaker(guiGraphics, i - size + trimWidth, j - size + trimHeight, size - trimWidth, size - trimHeight - 6, -1);
+        renderEntityInInventoryFollowsMouse(guiGraphics, i, j - 10, i, j, 50, 0.0625F, mouseX, mouseY, player, 1500);
     }
 
     private void renderStatScreen(GuiGraphics guiGraphics, LocalPlayer player) {
@@ -72,6 +69,7 @@ public class StatScreen extends EffectRenderingInventoryScreen<InventoryMenu> {
         var maxX = statBound().get(2);
         var maxY = statBound().get(3);
         guiGraphics.enableScissor(minX, minY, maxX, maxY);
+
 
         scrollBound = getAllStat(guiGraphics, getMinecraft(), player, minX + 4, (int) (minY + 4 + fade));
         guiGraphics.disableScissor();
@@ -96,6 +94,7 @@ public class StatScreen extends EffectRenderingInventoryScreen<InventoryMenu> {
         var minY = statBound().get(1);
         var maxX = statBound().get(2);
         var maxY = statBound().get(3);
+
         if(mouseX > minX && mouseX < maxX && mouseY > minY && mouseY < maxY ){
             if(scrollBound > setNonScrollBound){
                 fade = Math.max(setMaxScroll, setScroll);
@@ -119,7 +118,8 @@ public class StatScreen extends EffectRenderingInventoryScreen<InventoryMenu> {
             renderPlayer(guiGraphics, mouseX, mouseY, i, j, player);
         }
 
-        SharedUI.boxMaker(guiGraphics, i - 170, j - 84, 62, 78, ColourStore.HEADER_COLOUR, SharedUI.getFadedColourBackground(0f));
+        System.out.println(fade);
+        boxMaker(guiGraphics, i - 170, j - 84, 62, 78, HEADER_COLOUR, getFadedColourBackground(0f));
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 

@@ -88,7 +88,7 @@ public class Hammer extends AbstractUtilityProjectile {
                         dropItemsOrBlock(projectile, offsetPos, false, false);
 
                         var particle = new GenericParticleOptions(
-                            ParticleStore.SOFT_PARTICLE_SELECTION,
+                            ParticleStore.SOFT_PARTICLE,
                             this.getElementType().partColourA(),
                             this.getElementType().partColourFade(),
                             3, 1, false, 0

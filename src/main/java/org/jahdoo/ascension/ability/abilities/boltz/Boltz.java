@@ -22,9 +22,9 @@ import org.jahdoo.common.registers.SoundReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 
 public class Boltz extends DefaultEntityBehaviour {
 
@@ -170,8 +170,8 @@ public class Boltz extends DefaultEntityBehaviour {
         }
 
         if(projectile.level() instanceof ServerLevel serverLevel){
-            var particleOptions = genericParticleOptions(
-                GENERIC_PARTICLE_SELECTION, this.getElementType(), Random.nextInt(2,8), 1.4f, 0
+            var particleOptions = ParticleHandlers.genericParticle(
+                GENERIC_PARTICLE, this.getElementType(), Random.nextInt(2,8), 1.4f, 0
             );
             ParticleHandlers.particleBurst(serverLevel, projectile.position(), 1, particleOptions, 0, 0, 0, (float) dischargeRadius / 15);
         }
@@ -182,12 +182,12 @@ public class Boltz extends DefaultEntityBehaviour {
     void orbEnergyParticles(Projectile projectile, double numberOfPoints, double radius){
         var level = projectile.level();
 
-        var bakedParticle = bakedParticleOptions(
+        var bakedParticle = bakedParticle(
             this.getElementType().id(), Random.nextInt(2,8), 1, false
         );
 
-        var particleOptions = genericParticleOptions(
-            ParticleStore.ELECTRIC_PARTICLE_SELECTION, this.getElementType(), Random.nextInt(2,8), 1.2f, this.dischargeRadius/10
+        var particleOptions = ParticleHandlers.genericParticle(
+            ParticleStore.ELECTRIC_PARTICLE, this.getElementType(), Random.nextInt(2,8), 1.2f, this.dischargeRadius/10
         );
 
         var velocityA = Helpers.getRandomParticleVelocity(projectile, 0.1);

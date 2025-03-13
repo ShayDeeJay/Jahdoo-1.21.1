@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.FROST_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.ascension.utils.Helpers.getRandomParticleVelocity;
@@ -205,8 +205,8 @@ public class IceBomb extends DefaultEntityBehaviour {
 
     void iceBombIdleParticles(){
         if(hasHitBlock) return;
-        var bakedParticle = bakedParticleOptions(this.getElementType().id(), 2, Helpers.Random.nextFloat(1.5f, 2f), false);
-        var genericParticle = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 3, 1);
+        var bakedParticle = bakedParticle(this.getElementType().id(), 2, Helpers.Random.nextFloat(1.5f, 2f), false);
+        var genericParticle = ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, this.getElementType(), 3, 1);
 
         PositionFinders.getRandomSphericalPositions(
             this.element,
@@ -227,8 +227,8 @@ public class IceBomb extends DefaultEntityBehaviour {
         var part1 = this.getElementType().partColourA();
         var part2 = this.getElementType().textColourA();
         var lifetime = (int) (particleMultiplier * 10);
-        var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, 5, part1, part2, false);
-        var bakedParticle = bakedParticleOptions(this.getElementType().id(), lifetime, 5, false);
+        var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, 5, part1, part2, false);
+        var bakedParticle = bakedParticle(this.getElementType().id(), lifetime, 5, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle).get(Helpers.Random.nextInt(2));
         var randSpeed = Helpers.Random.nextDouble(0.3, 0.5);
         var positions = worldPosition.offsetRandom(RandomSource.create(), 0.5f);

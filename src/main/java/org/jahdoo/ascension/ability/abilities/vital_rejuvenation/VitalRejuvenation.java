@@ -25,9 +25,9 @@ import static org.jahdoo.ascension.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenationAbility.CAST_DELAY;
 import static org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenationAbility.MAX_ABSORPTION;
 import static org.jahdoo.common.items.wand.CastHelper.validManaAndCooldown;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttachmentReg.VITAL_REJUVENATION;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.addTransientAttribute;
@@ -78,7 +78,7 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
         var col1 = element.partColourA();
         var col2 = element.partColourFade();
 
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.1f, col1, col2, true);
+        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 0.1f, col1, col2, true);
         if(player.level().isClientSide){
             ParticleHandlers.sendParticles(
                 player.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 3.5
@@ -92,8 +92,8 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
         var element = ElementReg.vitality();
         var col1 = element.partColourA();
         var col2 = element.partColourFade();
-        var bakedParticle = bakedParticleOptions(element.id(), lifetime, 0.1f, true);
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.1f, col1, col2, true);
+        var bakedParticle = bakedParticle(element.id(), lifetime, 0.1f, true);
+        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 0.1f, col1, col2, true);
 
         if(livingEntity.level().isClientSide){
             ParticleHandlers.sendParticles(livingEntity.level(), bakedParticle, worldPosition, 0, directions.x, directions.y + 4, directions.z, Random.nextDouble(3, 6));

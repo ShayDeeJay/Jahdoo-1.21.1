@@ -14,6 +14,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.OverlayBlockTooltip;
 import org.jahdoo.common.client.RuneTooltipRenderer;
+import org.jahdoo.common.client.overlay.StatScreen;
 
 import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import static net.neoforged.neoforge.client.event.RenderLivingEvent.Pre;
@@ -63,9 +64,6 @@ public class ClientEvents {
         var player = (Player) event.getCamera().getEntity();
         var stack = Helpers.getUsedItem(player);
 
-//        var beamRadius = 0.03f;
-//        renderBeaconBeam(event.getPoseStack(), Minecraft.getInstance().renderBuffers().bufferSource(), BEAM_LOCATION, event.getCamera().getPartialTickTime(), 0.2F, event.getLevelRenderer().getTicks(), 0, 1, ColourStore.HEADER_COLOUR, beamRadius, beamRadius * 6);
-
         renderUtilityOverlay(event, player, stack);
         renderTeleportLocationOverlay(event, player, stack);
         renderAbilityOverlay(event,stack, player);
@@ -76,6 +74,7 @@ public class ClientEvents {
     public static void onKeyInput(InputEvent.Key event) {
         var instance = Minecraft.getInstance();
         var player = instance.player;
+        if(player == null) return;
 
         quickSelectBehaviour(player, instance);
         toggleLockAbility(player);
@@ -90,6 +89,7 @@ public class ClientEvents {
         if(WAND_SLOT_8A.consumeClick()) selectWandSlot(8);
         if(WAND_SLOT_9A.consumeClick()) selectWandSlot(9);
         if(WAND_SLOT_10A.consumeClick()) selectWandSlot(10);
+        if(STAT_SCREEN.consumeClick()) instance.setScreen(new StatScreen());
     }
 
 }

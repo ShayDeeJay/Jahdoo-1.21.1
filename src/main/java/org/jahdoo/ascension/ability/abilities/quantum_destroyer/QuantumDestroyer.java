@@ -26,10 +26,10 @@ import java.util.List;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
 
@@ -124,7 +124,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         var lifetime = 2;
         var col1 = this.getElementType().partColourA();
         var col2 = this.getElementType().partColourFade();
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.2f, col1, col2, true);
+        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 0.2f, col1, col2, true);
 
         ParticleHandlers.sendParticles(
             this.element.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.6
@@ -136,7 +136,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         var lifetime = 6;
         var col1 = this.getElementType().partColourA();
         var col2 = this.getElementType().partColourFade();
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 3f, col1, col2, false);
+        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 3f, col1, col2, false);
 
         ParticleHandlers.sendParticles(
             this.element.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.6
@@ -200,12 +200,12 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
 
         ParticleHandlers.particleBurst(
             level, this.element.position(), particleCount,
-            bakedParticleOptions(this.getElementType().id(), 4,2,false),
+            bakedParticle(this.getElementType().id(), 4,2,false),
             0,0,0,speed
         );
         ParticleHandlers.particleBurst(
             level, this.element.position(), particleCount,
-            genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 4,2),
+            ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, this.getElementType(), 4,2),
             0,0,0,speed
         );
     }
@@ -231,8 +231,8 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         var level = this.element.level();
         var explode = privateTicks > lifetime;
         var rando = List.of(
-            genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 5, Random.nextInt(6,8)),
-            bakedParticleOptions(this.getElementType().id(), 5, Random.nextInt(5,8), false)
+            ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, this.getElementType(), 5, Random.nextInt(6,8)),
+            bakedParticle(this.getElementType().id(), 5, Random.nextInt(5,8), false)
         );
 
         PositionFinders.getRandomSphericalPositions(this.element, counter, Math.min(radius * 6, 20),
@@ -267,7 +267,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
                 Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.ORB_CREATE.get(), 1.5f, 0.8f);
                 ParticleHandlers.particleBurst(
                     element.level(), this.element.position(), 20,
-                    genericParticleOptions(MAGIC_PARTICLE_SELECTION, this.getElementType(), 15,4),
+                    ParticleHandlers.genericParticle(MAGIC_PARTICLE, this.getElementType(), 15,4),
                     0,0,0,1f
                 );
                 this.element.setDeltaMovement(0, 0, 0);

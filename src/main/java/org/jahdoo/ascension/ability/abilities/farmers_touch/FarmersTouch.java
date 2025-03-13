@@ -26,8 +26,8 @@ import java.util.List;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.ability.abilities.farmers_touch.FarmersTouchAbility.*;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class FarmersTouch extends AbstractUtilityProjectile {
@@ -89,7 +89,7 @@ public class FarmersTouch extends AbstractUtilityProjectile {
         var lifetime = (int) this.range * 1.5;
         var size = 3;
 
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, Math.min(Math.max((int) lifetime, 3), 10), (float) (size - 0.2), col1, col2, false);
+        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, Math.min(Math.max((int) lifetime, 3), 10), (float) (size - 0.2), col1, col2, false);
         var speedRange = Random.nextDouble(this.range / 10, this.range / 8);
         ParticleHandlers.sendParticles(
             level, genericParticle, worldPosition, 0, directions.x, directions.y+0.05, directions.z, speedRange

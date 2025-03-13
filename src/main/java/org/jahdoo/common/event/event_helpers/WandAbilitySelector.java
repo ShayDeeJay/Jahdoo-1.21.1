@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.client.gui.AbilityWheelMenu;
+import org.jahdoo.common.client.gui.AbilityWheelScreen;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.client2server.StopUsingC2SP;
 import org.jahdoo.common.registers.AbilityReg;
@@ -31,7 +31,7 @@ public class WandAbilitySelector {
         ItemStack playerHandItem = player.getItemInHand(player.getUsedItemHand());
         if(!playerHandItem.is(ModTags.Items.WAND_TAGS)) return;
 
-        List<String> arrangedAbilities = AbilityWheelMenu.getAllAbilities(playerHandItem);
+        List<String> arrangedAbilities = AbilityWheelScreen.getAllAbilities(playerHandItem);
 
         boolean condition1 = keyNum < arrangedAbilities.size();
         boolean condition2 = !arrangedAbilities.isEmpty() && arrangedAbilities.size() > keyNum - 1;

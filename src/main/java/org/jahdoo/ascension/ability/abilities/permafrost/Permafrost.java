@@ -25,9 +25,9 @@ import java.util.List;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.EffectReg.FROST_EFFECT;
 
 
@@ -128,7 +128,7 @@ public class Permafrost extends DefaultEntityBehaviour {
         if (trackCounter == 10) {
             PositionFinders.getOuterRingOfRadiusRandom(cloud.position(), cloud.getRadius() * 3, Math.max(cloud.getRadius() * 1.4, 3),
                 positions -> ParticleHandlers.sendParticles(
-                    level, genericParticleOptions(this.getElementType(), 20, 2f), positions,
+                    level, ParticleHandlers.genericParticle(this.getElementType(), 20, 2f), positions,
                     0, 0, Random.nextDouble(0.02,0.2),0,1.5
                 )
             );
@@ -160,8 +160,8 @@ public class Permafrost extends DefaultEntityBehaviour {
         var directions = worldPosition.subtract(this.cloud.position());
         var getMysticElement = ElementReg.frost();
 
-        var genericParticle = genericParticleOptions(
-            SOFT_PARTICLE_SELECTION, 6,
+        var genericParticle = ParticleHandlers.genericParticle(
+            SOFT_PARTICLE, 6,
             0.1f,
             getMysticElement.partColourA(),
             getMysticElement.partColourB(),
@@ -192,11 +192,11 @@ public class Permafrost extends DefaultEntityBehaviour {
 
     private void setBlizzard(Level level){
         var randomParticle = List.of(
-            genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, this.getElementType(), 5, 2.5f),
-            bakedParticleOptions(ElementReg.frost().id(), 10, 2.5f, false)
+            ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, this.getElementType(), 5, 2.5f),
+            bakedParticle(ElementReg.frost().id(), 10, 2.5f, false)
         );
 
-        PositionFinders.getInnerRingOfRadiusRandom(cloud.position(), cloud.getRadius() * 3, cloud.getRadius() * 3,
+        PositionFinders.innerRadiusRandom(cloud.position(), cloud.getRadius() * 3, cloud.getRadius() * 3,
             positions -> {
                 var randomType = randomParticle.get(Random.nextInt(0, 2));
                 var adjustedPos = positions.add(0, 0.5, 0);

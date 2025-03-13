@@ -18,8 +18,8 @@ import java.util.function.BiConsumer;
 
 import static net.minecraft.sounds.SoundEvents.TRIAL_SPAWNER_AMBIENT;
 import static net.minecraft.sounds.SoundEvents.TRIAL_SPAWNER_AMBIENT_OMINOUS;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class AltarAnim {
@@ -52,7 +52,7 @@ public class AltarAnim {
         var lifetime = 3;
         var col1 = -8487298;
         var col2 = -13355980;
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.06f, col1, col2, true);
+        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 0.06f, col1, col2, true);
 
         ParticleHandlers.sendParticles(
             level, genericParticle, pos, 0, directions.x, directions.y, directions.z, Random.nextDouble(0.2, 0.6)
@@ -60,7 +60,7 @@ public class AltarAnim {
     }
 
     public static void idleParticleAnim(BlockPos pos, int ticks, Level level) {
-        PositionFinders.getInnerRingOfRadiusRandom(pos, 0.25, 2,
+        PositionFinders.innerRadiusRandom(pos, 0.25, 2,
             positions -> {
                 var colourDarker = Helpers.getColourDarker(ColourStore.PERK_GREEN, 0.5f);
                 var randomColouredParticle = Helpers.getRandomColouredParticle(ColourStore.PERK_GREEN, colourDarker, 10, 1, false);

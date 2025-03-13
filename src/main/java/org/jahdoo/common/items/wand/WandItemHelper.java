@@ -26,14 +26,11 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.block.wand.WandBlockEntity;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.BlockReg;
-import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
-import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import top.theillusivec4.curios.api.CuriosApi;
 
@@ -51,11 +48,11 @@ import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
-import static org.jahdoo.ascension.utils.PositionFinders.getInnerRingOfRadiusRandom;
+import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
 import static org.jahdoo.common.block.wand.WandBlockEntity.GET_WAND_SLOT;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.particle.ParticleStore.rgbToInt;
 import static org.jahdoo.common.registers.ComponentReg.*;
 import static org.jahdoo.common.registers.ElementReg.fromWand;
@@ -312,9 +309,9 @@ public class WandItemHelper {
 
         if(getType.isPresent()){
             var element = getType.get();
-            var par1 = bakedParticleOptions(element.id(), 10, 1f, false);
-            var par2 = genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 10, 1f, false, 0.3);
-            getInnerRingOfRadiusRandom(clickedPos, 0.1, 20,
+            var par1 = bakedParticle(element.id(), 10, 1f, false);
+            var par2 = genericParticle(GENERIC_PARTICLE, element, 10, 1f, false, 0.3);
+            innerRadiusRandom(clickedPos, 0.1, 20,
                 positions -> placeParticle(level, positions, Random.nextInt(0, 3) == 0 ? par1 : par2)
             );
         }

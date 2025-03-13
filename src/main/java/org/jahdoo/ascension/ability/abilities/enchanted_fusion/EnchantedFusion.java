@@ -12,11 +12,12 @@ import org.jahdoo.common.block.enchanted_block.ConverterValues;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.common.networking.server2client.EnchantedBlockS2CP;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockReg;
 
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
-import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 import static org.jahdoo.common.registers.ElementReg.utility;
 
 public class EnchantedFusion extends AbstractUtilityProjectile {
@@ -60,7 +61,7 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
                 PositionFinders.getCubeCornersAndFaceCenters(
                     pos,0.8, pos1 -> {
                         var directions = pos.getCenter().subtract(pos1).normalize();
-                        var particle = genericParticleOptions(MAGIC_PARTICLE_SELECTION, utility(), 20, 1f);
+                        var particle = ParticleHandlers.genericParticle(MAGIC_PARTICLE, utility(), 20, 1f);
                         sendParticles(serverLevel, particle, pos1, 0, directions.x, directions.y, directions.z, 0.1);
                     }
                 );

@@ -97,16 +97,8 @@ public class PerkTable extends BaseEntityBlock {
     ) {
         if (!(level instanceof ServerLevel)) return FAIL;
         if(!(level.getBlockEntity(pos) instanceof PerkTableEntity entity)) return FAIL;
-        int value = state.getValue(TEXTURE);
 
-        if(value == 0){
-            player.heal(player.getMaxHealth());
-        } else {
-            var data = player.getData(AttachmentReg.CASTER_DATA.get());
-            data.refillMana(player);
-        }
-
-        entity.setUsed();
+        entity.setUsed(state, player);
         return SUCCESS;
     }
 

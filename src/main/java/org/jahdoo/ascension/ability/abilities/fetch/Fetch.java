@@ -18,8 +18,8 @@ import org.jahdoo.ascension.utils.Helpers;
 import java.util.List;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 
 public class Fetch extends AbstractUtilityProjectile {
 
@@ -98,7 +98,7 @@ public class Fetch extends AbstractUtilityProjectile {
         for(ItemEntity itemEntity : items){
             int col1 = this.getElementType().partColourA();
             int col2 = this.getElementType().partColourFade();
-            var genericParticle = genericParticleOptions(MAGIC_PARTICLE_SELECTION, 8,2f, col1, col2, false);
+            var genericParticle = ParticleHandlers.genericParticle(MAGIC_PARTICLE, 8,2f, col1, col2, false);
 
             ParticleHandlers.invisibleLight(generic.level(), itemEntity.position().add(0,0.5,0), genericParticle, 0.03, 0.04, 8);
             if (player != null) {

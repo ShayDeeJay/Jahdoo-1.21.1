@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
+import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
@@ -29,7 +30,7 @@ import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.ascension.utils.PositionFinders.getInnerRingOfRadiusRandom;
+import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
 import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusList;
 
 public class SummonAncientGolem extends DefaultEntityBehaviour {
@@ -94,8 +95,8 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
     }
 
     private void setSpawnParticles(Level level){
-        var bakedParticle = bakedParticleOptions(getElementType().id(), 20, 3f, false);
-        getInnerRingOfRadiusRandom(cloud.position(), this.ancientGolem.getBbWidth(), 5).forEach(
+        var bakedParticle = bakedParticle(getElementType().id(), 20, 3f, false);
+        PositionFinders.innerRadiusRandom(cloud.position(), this.ancientGolem.getBbWidth(), 5).forEach(
             positions -> sendParticles(level, bakedParticle, positions, 1, 0, 1,0,0.05)
         );
     }
@@ -145,7 +146,7 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
 
     private void setOuterRingPulses(Level level){
         var positions = getOuterRingOfRadiusList(cloud.position(), this.ancientGolem.getBbWidth(), 20);
-        var particleOptions = genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, this.getElementType(), 10, 0.1f, true);
+        var particleOptions = genericParticle(ParticleStore.MAGIC_PARTICLE, this.getElementType(), 10, 0.1f, true);
         if(this.height < 1) this.height += 0.05; else this.height = 0;
 
         if(position < positions.size()){

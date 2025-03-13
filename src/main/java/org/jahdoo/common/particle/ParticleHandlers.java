@@ -19,57 +19,58 @@ import org.jahdoo.ascension.utils.PositionFinders;
 
 import java.util.List;
 
+import static net.minecraft.util.RandomSource.*;
 import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class ParticleHandlers {
 
-    public static GenericParticleOptions genericParticleOptions(int particleType, AbstractElement element, int lifetime, float size, double speed){
+    public static GenericParticleOptions genericParticle(int particleType, AbstractElement element, int lifetime, float size, double speed){
         return new GenericParticleOptions(particleType, element.partColourA(), element.partColourFade(), lifetime, size, false, speed);
     }
 
-    public static GenericParticleOptions genericParticleOptions(AbstractElement element, int lifetime, float size){
-        return new GenericParticleOptions(MAGIC_PARTICLE_SELECTION, element.partColourA(), element.partColourFade(), lifetime,size,false,1);
+    public static GenericParticleOptions genericParticle(AbstractElement element, int lifetime, float size){
+        return new GenericParticleOptions(MAGIC_PARTICLE, element.partColourA(), element.partColourFade(), lifetime,size,false,1);
     }
 
     public static GenericParticleOptions flamingParticle(int type, AbstractElement element, int lifetime, float size){
         return new GenericParticleOptions(type, element.textColourB(), element.textColourB(), lifetime,size,false, 1);
     }
 
-    public static GenericParticleOptions genericParticleOptions(int type, AbstractElement element, int lifetime, float size){
+    public static GenericParticleOptions genericParticle(int type, AbstractElement element, int lifetime, float size){
         return new GenericParticleOptions(type, element.textColourB(), element.textColourB(), lifetime,size,false, 1);
     }
 
-    public static BakedParticleOptions bakedParticleOptions(int type, int lifetime, float size, boolean setStaticSize){
+    public static BakedParticleOptions bakedParticle(int type, int lifetime, float size, boolean setStaticSize){
         return new BakedParticleOptions(type, lifetime, size,setStaticSize);
     }
 
-    public static GenericParticleOptions genericParticleOptions(AbstractElement element, int lifetime, float size, boolean staticSize){
-        return new GenericParticleOptions(MAGIC_PARTICLE_SELECTION, element.partColourA(), element.partColourFade(), lifetime,size,staticSize, 1);
+    public static GenericParticleOptions genericParticle(AbstractElement element, int lifetime, float size, boolean staticSize){
+        return new GenericParticleOptions(MAGIC_PARTICLE, element.partColourA(), element.partColourFade(), lifetime,size,staticSize, 1);
     }
 
-    public static GenericParticleOptions genericParticleOptions(int lifetime, float size, int colourPrimary, int colourSecondary){
-        return new GenericParticleOptions(MAGIC_PARTICLE_SELECTION, colourPrimary, colourSecondary, lifetime,size,false, 1);
+    public static GenericParticleOptions genericParticle(int lifetime, float size, int colourPrimary, int colourSecondary){
+        return new GenericParticleOptions(MAGIC_PARTICLE, colourPrimary, colourSecondary, lifetime,size,false, 1);
     }
 
-    public static GenericParticleOptions genericParticleOptions(int particleType, AbstractElement element, int lifetime, float size, boolean staticSize){
+    public static GenericParticleOptions genericParticle(int particleType, AbstractElement element, int lifetime, float size, boolean staticSize){
         return new GenericParticleOptions(particleType, element.partColourA(), element.partColourFade(), lifetime,size,staticSize, 1);
     }
 
-    public static GenericParticleOptions genericParticleOptions(int particleType, int colourPrimary, int colourFade, int lifetime, float size, boolean staticSize, double speed){
+    public static GenericParticleOptions genericParticle(int particleType, int colourPrimary, int colourFade, int lifetime, float size, boolean staticSize, double speed){
         return new GenericParticleOptions(particleType, colourPrimary, colourFade, lifetime,size,staticSize, speed);
     }
 
-    public static GenericParticleOptions genericParticleOptions(int particleType, int lifetime, float size, int colourPrimary, int colourSecondary){
-        return new GenericParticleOptions(particleType, colourPrimary, colourSecondary, lifetime,size,false, 1);
+    public static GenericParticleOptions genericParticle(int particleType, int lifetime, float size, int colourPrimary, int colourSecondary){
+        return new GenericParticleOptions(particleType, colourPrimary, colourSecondary, lifetime, size, false, 1);
     }
 
-    public static GenericParticleOptions genericParticleOptions(int particleType, int lifetime, float size, int colourPrimary, int colourSecondary, boolean setStaticSize){
+    public static GenericParticleOptions genericParticle(int particleType, int lifetime, float size, int colourPrimary, int colourSecondary, boolean setStaticSize){
         return new GenericParticleOptions(particleType, colourPrimary, colourSecondary, lifetime,size,setStaticSize, 1);
     }
 
-    public static GenericParticleOptions genericParticleOptions(int particleType, AbstractElement element, int lifetime, float size, boolean staticSize, double speed){
+    public static GenericParticleOptions genericParticle(int particleType, AbstractElement element, int lifetime, float size, boolean staticSize, double speed){
         return new GenericParticleOptions(particleType, element.partColourA(), element.partColourFade(), lifetime, size, staticSize, speed);
     }
 
@@ -92,31 +93,30 @@ public class ParticleHandlers {
     }
 
     public static ParticleOptions getAllParticleTypes(AbstractElement element, int lifetime, float size){
-        var baked = bakedParticleOptions(element.id(), lifetime, size, false);
-        var generic = genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, lifetime, size);
-        var magic = genericParticleOptions(MAGIC_PARTICLE_SELECTION, element, lifetime, size);
-        var soft = genericParticleOptions(SOFT_PARTICLE_SELECTION, element, lifetime, size);
+        var baked = bakedParticle(element.id(), lifetime, size, false);
+        var generic = genericParticle(GENERIC_PARTICLE, element, lifetime, size);
+        var magic = genericParticle(MAGIC_PARTICLE, element, lifetime, size);
+        var soft = genericParticle(SOFT_PARTICLE, element, lifetime, size);
         var collectTypes = List.of(baked, generic, magic, soft);
         return collectTypes.get(Random.nextInt(collectTypes.size()));
     }
 
     public static ParticleOptions getAllParticleTypesAlt(AbstractElement element, int lifetime, float size){
-        var baked = bakedParticleOptions(element.id(), lifetime, size, false);
-        var generic = flamingParticle(GENERIC_PARTICLE_SELECTION, element, lifetime, size);
-        var magic = flamingParticle(MAGIC_PARTICLE_SELECTION, element, lifetime, size);
-        var soft = flamingParticle(SOFT_PARTICLE_SELECTION, element, lifetime, size);
+        var baked = bakedParticle(element.id(), lifetime, size, false);
+        var generic = flamingParticle(GENERIC_PARTICLE, element, lifetime, size);
+        var magic = flamingParticle(MAGIC_PARTICLE, element, lifetime, size);
+        var soft = flamingParticle(SOFT_PARTICLE, element, lifetime, size);
         var collectTypes = List.of(baked, generic, magic, soft);
         return collectTypes.get(Random.nextInt(collectTypes.size()));
     }
 
     public static ParticleOptions getNonBakedParticles(int colour1, int colour2, int lifetime, float size){
-        var generic = genericParticleOptions(GENERIC_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
-        var magic = genericParticleOptions(MAGIC_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
-        var soft = genericParticleOptions(SOFT_PARTICLE_SELECTION, colour1, colour2, lifetime, size, false, 1);
+        var generic = genericParticle(GENERIC_PARTICLE, colour1, colour2, lifetime, size, false, 1);
+        var magic = genericParticle(MAGIC_PARTICLE, colour1, colour2, lifetime, size, false, 1);
+        var soft = genericParticle(SOFT_PARTICLE, colour1, colour2, lifetime, size, false, 1);
         var collectTypes = List.of(generic, magic, soft);
         return collectTypes.get(Random.nextInt(collectTypes.size()));
     }
-
 
     public static void particleBurst(Level world, Vec3 pos, int particleCount, ParticleOptions particleOptions) {
         for (int i = 0; i < 5; i++) {
@@ -320,8 +320,8 @@ public class ParticleHandlers {
                     particleY + Random.nextFloat(-spread, spread),
                     particleZ + Random.nextFloat(-spread, spread)
                 );
-                var genericSlow = genericParticleOptions(SOFT_PARTICLE_SELECTION, element, 3, 1.2f, false);
-                var bakedSlow = bakedParticleOptions(element.id(), 2,2.5f,false);
+                var genericSlow = genericParticle(SOFT_PARTICLE, element, 3, 1.2f, false);
+                var bakedSlow = bakedParticle(element.id(), 2,2.5f,false);
                 var subtract = position.subtract(0, heightOffset, 0);
                 var level = projectile.level();
                 sendParticles(level, bakedSlow, subtract, 0, 0, 0, 0,0);
@@ -352,8 +352,8 @@ public class ParticleHandlers {
                     particleY + Random.nextFloat(-spread, spread),
                     particleZ + Random.nextFloat(-spread, spread)
                 );
-                var genericSlow = flamingParticle(GENERIC_PARTICLE_SELECTION, element, 3, 1.8f);
-                var bakedSlow = flamingParticle(MAGIC_PARTICLE_SELECTION, element, 3, 0.8f);
+                var genericSlow = flamingParticle(GENERIC_PARTICLE, element, 3, 1.8f);
+                var bakedSlow = flamingParticle(MAGIC_PARTICLE, element, 3, 0.8f);
                 var subtract = position.subtract(0, heightOffset, 0);
                 var level = projectile.level();
                 sendParticles(level, bakedSlow, subtract, 0, 0, 0, 0,0);
@@ -369,7 +369,7 @@ public class ParticleHandlers {
             ElementReg.vitality().id(),
             6, 2f, false
         );
-        var genericParticleOptions = genericParticleOptions(GENERIC_PARTICLE_SELECTION, ElementReg.vitality(), 6, 2f);
+        var genericParticleOptions = genericParticle(GENERIC_PARTICLE, ElementReg.vitality(), 6, 2f);
 
         var particleOptionsList = List.of(
             bakedParticleOptions,
@@ -377,22 +377,24 @@ public class ParticleHandlers {
         );
 
         if(casterData.getManaPool() >= manaReduction){
-            PositionFinders.getInnerRingOfRadiusRandom(
+            var height = player.getBbHeight();
+            var ticksUsing = player.getTicksUsingItem();
+            PositionFinders.innerRadiusRandom(
                 player.position()
-                    .add(0, player.getBbHeight() / 2, 0)
-                    .offsetRandom(RandomSource.create(), 1.5f), 3, (double) player.getTicksUsingItem()/10,
+                    .add(0, height / 2, 0)
+                    .offsetRandom(create(), 1.5f), 3, (double) ticksUsing /10,
                 positions -> {
                     if (player.level() instanceof ServerLevel serverLevel) {
-                        Vec3 directions = player.position().subtract(positions).normalize().add(0, player.getBbHeight() / 2, 0);
+                        var directions = player.position().subtract(positions).normalize().add(0, height / 2, 0);
                         sendParticles(
                             serverLevel,
-                            particleOptionsList.get(RandomSource.create().nextInt(0, 2)),
+                            particleOptionsList.get(create().nextInt(0, 2)),
                             positions,
                             0,
                             directions.x,
                             Random.nextDouble(-0.3, 0.3),
                             directions.z,
-                            (double) player.getTicksUsingItem()/500
+                            (double) ticksUsing /500
                         );
                     }
                 }

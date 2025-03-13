@@ -7,6 +7,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.registers.BlockEntityReg;
@@ -24,7 +25,7 @@ import static org.jahdoo.common.entities.EntityAnimations.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.ascension.utils.PositionFinders.getInnerRingOfRadiusRandom;
+import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
 
 public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity {
 
@@ -84,7 +85,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
 
         if(!this.isOpen){
             if(this.privateTicks % (6 - getRarity) == 0){
-                for (var vec3 : getInnerRingOfRadiusRandom(pos.getCenter().subtract(0, 0.35, 0), 0.55, Math.max(3, 5 * id))) {
+                for (var vec3 : PositionFinders.innerRadiusRandom(pos.getCenter().subtract(0, 0.35, 0), 0.55, Math.max(3, 5 * id))) {
                     var colour1 = KeyItem.getJahdooRarity(new CustomModelData(id));
                     var darker = getColourDarker(colour1.getColour(), 0.5f);
                     var size = Random.nextFloat(1.2f, 1.6f) - ((float) getRarity / 30);

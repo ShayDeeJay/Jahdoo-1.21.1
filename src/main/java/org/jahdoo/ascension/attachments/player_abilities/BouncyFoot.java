@@ -9,7 +9,7 @@ import org.jahdoo.ascension.attachments.AbstractAttachment;
 import org.jahdoo.common.networking.server2client.BouncyFootS2CP;
 import org.jahdoo.common.registers.EffectReg;
 
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.registers.AttachmentReg.*;
 
 public class BouncyFoot implements AbstractAttachment {

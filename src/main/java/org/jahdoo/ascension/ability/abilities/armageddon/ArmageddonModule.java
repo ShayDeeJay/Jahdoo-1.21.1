@@ -19,7 +19,7 @@ import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.EntityReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.DAMAGE;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.rgbToInt;
 
 public class ArmageddonModule extends DefaultEntityBehaviour {
@@ -120,12 +120,12 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
 
             var colour1 = rgbToInt(160,160,160);
             var colour2 = rgbToInt(61,61,61);
-            var type = ParticleStore.GENERIC_PARTICLE_SELECTION;
+            var type = ParticleStore.GENERIC_PARTICLE;
 
-            PositionFinders.getInnerRingOfRadiusRandom(cloud.position(), aoe , 10,
+            PositionFinders.innerRadiusRandom(cloud.position(), aoe , 10,
                 positions -> {
                     var size = Helpers.Random.nextFloat(0.8f, 1.2f);
-                    var particle = genericParticleOptions(type, 6, size, colour1, colour2, true);
+                    var particle = ParticleHandlers.genericParticle(type, 6, size, colour1, colour2, true);
                     var yOff = Helpers.Random.nextDouble(1, 1.5);
 
                     ParticleHandlers.sendParticles(

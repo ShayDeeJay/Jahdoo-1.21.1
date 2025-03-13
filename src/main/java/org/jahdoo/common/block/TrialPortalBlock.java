@@ -21,6 +21,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.portal.DimensionTransition;
 import org.jahdoo.ascension.LevelGenerator;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
@@ -28,8 +29,8 @@ import static org.jahdoo.ascension.DimHandler.trial;
 import static org.jahdoo.ascension.LevelGenerator.createNewWorld;
 import static org.jahdoo.ascension.utils.ColourStore.COSMIC_PURPLE;
 import static org.jahdoo.ascension.utils.ColourStore.PERK_GREEN;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 
 public class TrialPortalBlock extends NetherPortalBlock {
 
@@ -108,7 +109,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
 
             var particleColour = state.getValue(DIMENSION_KEY) == 0 ? PERK_GREEN : COSMIC_PURPLE;
             var colourDarker = Helpers.getColourDarker(particleColour, 0.5F);
-            var particleData = genericParticleOptions(MAGIC_PARTICLE_SELECTION, particleColour, colourDarker, 10, 1, false, 0);
+            var particleData = ParticleHandlers.genericParticle(MAGIC_PARTICLE, particleColour, colourDarker, 10, 1, false, 0);
             level.addParticle(particleData, d0, d1, d2, 0, d4, 0);
         }
 

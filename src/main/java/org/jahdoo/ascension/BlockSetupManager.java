@@ -8,9 +8,7 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.trading_post.ItemCosts;
-import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
@@ -18,15 +16,19 @@ import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import static net.minecraft.core.component.DataComponents.*;
+import static net.minecraft.world.level.block.Blocks.*;
+import static net.minecraft.world.level.block.Blocks.BARRIER;
+import static org.jahdoo.ascension.StructureManager.*;
 import static org.jahdoo.ascension.trading_post.ShoppingItems.getEliteShoppingItem;
+import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.block.TrialPortalBlock.*;
 import static org.jahdoo.common.block.loot_chest.LootChestBlock.FACING;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
-import static org.jahdoo.common.registers.AttachmentReg.CHALLENGE_ALTAR;
 import static org.jahdoo.common.registers.BlockReg.*;
 import static org.jahdoo.common.registers.ItemReg.AUGMENT;
 import static org.jahdoo.common.registers.ItemReg.RUNE;
@@ -35,63 +37,73 @@ public class BlockSetupManager {
 
     private static void setLootChests(ServerLevel level, BlockPos pos, Direction direction) {
         var chestState = LOOT_CHEST.get().defaultBlockState().setValue(FACING, direction);
-        if(level.getBlockState(pos).is(Blocks.MAGENTA_CONCRETE)){
+        if(level.getBlockState(pos).is(MAGENTA_CONCRETE)){
             level.setBlockAndUpdate(pos, chestState);
         }
     }
 
-    static void setTrialDim(ServerLevel level, ChallengeLevelData data) {
-        var pos = new BlockPos(-25, 67, -72);
-        level.setBlockAndUpdate(pos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
-        if(level.getBlockEntity(pos) instanceof AltarBlockEntity altar){
-            altar.setData(CHALLENGE_ALTAR, data);
-            altar.setChanged();
-        }
+    public static void placePerkTables(ServerLevel level, BlockPos blockPos) {
+        var blockState = level.getBlockState(blockPos);
+
+        if(blockState.is(WHITE_CONCRETE)) setPerkTable(level, blockPos, 0);
+        if(blockState.is(LIGHT_GRAY_CONCRETE)) setPerkTable(level, blockPos, 1);
     }
 
-    static void generateTradingPost(ServerLevel level, Iterable<BlockPos> pos, Direction direction) {
-        var shoppingTableState = SHOPPING_TABLE.get().defaultBlockState();
+    private static void setPerkTable(ServerLevel level, BlockPos blockPos, int state) {
+        level.setBlockAndUpdate(blockPos, PERK_TABLE.get().defaultBlockState().setValue(TEXTURE, state));
+        level.setBlockAndUpdate(blockPos.above(1), BARRIER.defaultBlockState());
+    }
+
+    static void setBlockGenerator(ServerLevel level, Iterable<BlockPos> pos, Direction direction, String id) {
         for (var blockPos : pos) {
-            setLocks(level, blockPos);
-            setLootChests(level, blockPos, direction);
-            uniqueItems(level, shoppingTableState, blockPos, direction);
-            otherShopping(level, shoppingTableState, blockPos, direction);
-            keyTable(level, shoppingTableState, blockPos, direction);
-            generateEntranceAndExit(level, blockPos, direction);
+            if(Objects.equals(id, nameToId(POWER_UP))) placePerkTables(level, blockPos);
+            if(Objects.equals(id, nameToId(ROOM))) setLocks(level, blockPos);
+            if(Objects.equals(id, nameToId(TRADING_POST))){
+                var table = SHOPPING_TABLE.get().defaultBlockState();
+                setLootChests(level, blockPos, direction);
+                uniqueItems(level, table, blockPos, direction);
+                otherShopping(level, table, blockPos, direction);
+                keyTable(level, table, blockPos, direction);
+            }
         }
     }
 
     public static void setLocks(ServerLevel level, BlockPos blockPos) {
         var blockState = level.getBlockState(blockPos);
-        if(blockState.is(Blocks.OBSERVER)){
+        if(blockState.is(OBSERVER)){
             level.setBlockAndUpdate(blockPos, BlockReg.LOCK.get().defaultBlockState().setValue(FACING,blockState.getValue(FACING)));
 
             if(level.getBlockEntity(blockPos) instanceof LockBlockEntity lockBlockEntity){
                 if(!lockBlockEntity.canPlace()){
-                    level.setBlockAndUpdate(blockPos, Blocks.NETHERITE_BLOCK.defaultBlockState());
+                    level.setBlockAndUpdate(blockPos, NETHERITE_BLOCK.defaultBlockState());
                 }
             }
         }
     }
 
+    //Don't delete as useful for generating exit in entry room
     private static void generateEntranceAndExit(ServerLevel level, BlockPos pos, Direction direction) {
-        var portalBlock = TRAIL_PORTAL.get().defaultBlockState();
-        if(level.getBlockState(pos).is(Blocks.BLUE_CONCRETE)){
+        var portal = TRAIL_PORTAL.get().defaultBlockState();
+        var state = level.getBlockState(pos);
+        if(state.is(BLUE_CONCRETE)){
             for(int x = 0; x < 5; x++) {
-                level.setBlockAndUpdate(pos.above(x), portalBlock.setValue(DIMENSION_KEY, KEY_TRIAL));
+                level.setBlockAndUpdate(pos.above(x), portal.setValue(DIMENSION_KEY, KEY_TRIAL));
             }
         }
 
-        if(level.getBlockState(pos).is(Blocks.WHITE_CONCRETE)) {
-            level.setBlockAndUpdate(pos, portalBlock.setValue(DIMENSION_KEY, KEY_HOME));
+        if(state.is(WHITE_CONCRETE)) {
+            level.setBlockAndUpdate(pos, portal.setValue(DIMENSION_KEY, KEY_HOME));
         }
     }
 
     private static void uniqueItems(ServerLevel level, BlockState shoppingTableState, BlockPos pos, Direction direction) {
-        var eliteState = shoppingTableState.setValue(FACING, direction).setValue(TEXTURE, 2);
+        var state = level.getBlockState(pos);
+        var orange = state.is(ORANGE_CONCRETE);
+        var green = state.is(GREEN_CONCRETE);
+        var eliteState = shoppingTableState.setValue(FACING, orange ? direction.getCounterClockWise() : direction.getClockWise()).setValue(TEXTURE, 2);
 
-        if(level.getBlockState(pos).is(Blocks.ORANGE_CONCRETE)){
-            level.setBlockAndUpdate(pos.above(), Blocks.BARRIER.defaultBlockState());
+        if(orange || green){
+            level.setBlockAndUpdate(pos.above(), BARRIER.defaultBlockState());
             level.setBlockAndUpdate(pos, eliteState);
 
             var blockEntity = level.getBlockEntity(pos);
@@ -106,7 +118,7 @@ public class BlockSetupManager {
     private static void keyTable(ServerLevel level, BlockState shoppingTableState, BlockPos pos, Direction direction) {
         var keyState = shoppingTableState.setValue(FACING, direction.getCounterClockWise()).setValue(TEXTURE, 1);
 
-        if(level.getBlockState(pos).is(Blocks.YELLOW_CONCRETE)){
+        if(level.getBlockState(pos).is(YELLOW_CONCRETE)){
             level.setBlockAndUpdate(pos, keyState);
             var blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ShoppingTableEntity entity) {
@@ -131,7 +143,7 @@ public class BlockSetupManager {
         var normalState = shoppingTableState.setValue(FACING, direction.getClockWise());
         var purple = new AtomicInteger();
 
-        if(level.getBlockState(pos).is(Blocks.PURPLE_CONCRETE)){
+        if(level.getBlockState(pos).is(PURPLE_CONCRETE)){
             level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, 0));
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
@@ -148,7 +160,7 @@ public class BlockSetupManager {
             purple.getAndIncrement();
         }
 
-        if(level.getBlockState(pos).is(Blocks.LIGHT_BLUE_CONCRETE)){
+        if(level.getBlockState(pos).is(LIGHT_BLUE_CONCRETE)){
             level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, 3));
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
@@ -158,8 +170,8 @@ public class BlockSetupManager {
     }
 
     public static void blockExitBarrier(Level level, BlockPos pos) {
-        for (var blockPos : StructureManager.roomBoundingFromCenter(pos)) {
-            if(level.getBlockState(blockPos).is(Blocks.REDSTONE_BLOCK)){
+        for (var blockPos : roomBoundingFromCenter(pos)) {
+            if(level.getBlockState(blockPos).is(REDSTONE_BLOCK)){
                 var startPlace = blockPos.below(2);
                 if(level.getBlockState(startPlace).isAir()){
                     var list = new ArrayList<>(Direction.stream().toList());
@@ -167,7 +179,7 @@ public class BlockSetupManager {
                     list.remove(Direction.UP);
                     for(int i = 0; i < 5; i++){
                         for (var direction : list) {
-                            var blocker = Blocks.TINTED_GLASS;
+                            var blocker = TINTED_GLASS;
                             var relative = startPlace.below(i).relative(direction);
                             var canPlaceHere = new AtomicBoolean(false);
 

@@ -12,7 +12,7 @@ import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.ElementReg;
 
 import static org.jahdoo.common.particle.ParticleHandlers.*;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 
 public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
 
@@ -41,7 +41,7 @@ public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
     }
 
     protected void discardParticleEffect(int lifetime) {
-        var particle = genericParticleOptions(ParticleStore.GENERIC_PARTICLE_SELECTION, ElementReg.utility(), lifetime, 1.5f, 0.1f);
+        var particle = genericParticle(ParticleStore.GENERIC_PARTICLE, ElementReg.utility(), lifetime, 1.5f, 0.1f);
         ParticleHandlers.particleBurst(this.generic.level(), this.generic.position().add(0,0.1,0), 1, particle,0,0,0,0.06f);
     }
 
@@ -55,14 +55,14 @@ public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
     protected void utilityParticleBurst(Level level, Vec3 pPos, int lifeTime, float size, int count, float speed) {
         int col1 = this.getElementType().partColourA();
         int col2 = this.getElementType().partColourFade();
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifeTime, size, col1, col2, false);
+        var genericParticle = genericParticle(SOFT_PARTICLE, lifeTime, size, col1, col2, false);
         ParticleHandlers.particleBurst(level, pPos, count, genericParticle, speed);
     }
 
     public static void animateParticles(Projectile projectile, AbstractElement element) {
         if(projectile.tickCount > 1){
             playParticles3(
-                genericParticleOptions(SOFT_PARTICLE_SELECTION, element, 2, 0.9f, false),
+                genericParticle(SOFT_PARTICLE, element, 2, 0.9f, false),
                 projectile, 8, 0.01
             );
         }

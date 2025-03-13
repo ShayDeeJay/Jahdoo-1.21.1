@@ -19,9 +19,9 @@ import org.jahdoo.ascension.utils.PositionFinders;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.ability.abilities.life_siphon.LifeSiphonAbility.*;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.EntityDataReg.*;
 
@@ -197,8 +197,8 @@ public class LifeSiphon extends DefaultEntityBehaviour {
         var projectile = this.element;
         var velocityA = Helpers.getRandomParticleVelocity(projectile, 0.1);
         var velocityB = Helpers.getRandomParticleVelocity(projectile, 0.05);
-        var particleOptionsOne = genericParticleOptions(GENERIC_PARTICLE_SELECTION, this.getElementType(), 10,2.5F);
-        var particleOptionsTwo = bakedParticleOptions(this.getElementType().id(), 8, 2.5F, false);
+        var particleOptionsOne = ParticleHandlers.genericParticle(GENERIC_PARTICLE, this.getElementType(), 10,2.5F);
+        var particleOptionsTwo = bakedParticle(this.getElementType().id(), 8, 2.5F, false);
 
         PositionFinders.getRandomSphericalPositions(projectile, 1,  reducedPointsInRadius,
             position -> ParticleHandlers.sendParticles(

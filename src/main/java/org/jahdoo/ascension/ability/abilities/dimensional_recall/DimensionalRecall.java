@@ -22,8 +22,8 @@ import static org.jahdoo.ascension.ability.abilities.dimensional_recall.Dimensio
 import static org.jahdoo.ascension.ability.abilities.dimensional_recall.DimensionalRecallAbility.abilityId;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.items.wand.CastHelper.validManaAndCooldown;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttachmentReg.DIMENSIONAL_RECALL;
 
@@ -100,8 +100,8 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
     public void pullParticlesToCenter(Player player){
         var casterData = player.getData(CASTER_DATA);
         var manaReduction = casterData.getMaxMana(player) / 60;
-        var bakedParticleOption = bakedParticleOptions(this.getElement().id(), 6, 2f, false);
-        var genericParticleOptions = genericParticleOptions(ParticleStore.SOFT_PARTICLE_SELECTION, this.getElement(), 10, 1.4f);
+        var bakedParticleOption = bakedParticle(this.getElement().id(), 6, 2f, false);
+        var genericParticleOptions = ParticleHandlers.genericParticle(ParticleStore.SOFT_PARTICLE, this.getElement(), 10, 1.4f);
         var particleOptionsList = List.of(bakedParticleOption, genericParticleOptions);
         var getRandomParticle = particleOptionsList.get(RandomSource.create().nextInt(0, 2));
 
@@ -111,7 +111,7 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
                 .add(0, player.getBbHeight() / 2, 0)
                 .offsetRandom(RandomSource.create(), 1f);
 
-            PositionFinders.getInnerRingOfRadiusRandom(pos, 2, Math.min(numOfPoints, 10),
+            PositionFinders.innerRadiusRandom(pos, 2, Math.min(numOfPoints, 10),
                 positions -> {
                     var directions = player.position()
                         .subtract(positions)

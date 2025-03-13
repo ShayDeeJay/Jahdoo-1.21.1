@@ -53,7 +53,7 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
         super(Properties.of().strength(1f).noOcclusion());
         this.registerDefaultState(
             this.defaultBlockState()
-                .setValue(TEXTURE, 2)
+                .setValue(TEXTURE, 0)
                 .setValue(FACING, Direction.SOUTH)
         );
     }

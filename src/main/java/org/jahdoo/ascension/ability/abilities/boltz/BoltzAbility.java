@@ -8,6 +8,7 @@ import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityDataReg;
@@ -18,7 +19,7 @@ import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 
 import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 
@@ -77,7 +78,7 @@ public class BoltzAbility extends AbilityRegistrar {
         var amplifier = 1;
         var totalShots = (int) getSpecificValue(player, Helpers.getUsedItem(player), totalBolts) * amplifier;
         var direction = player.getLookAngle();
-        var particleOptions = genericParticleOptions(ParticleStore.ELECTRIC_PARTICLE_SELECTION, this.getElemenType(), 5, 1.2f, 0.5);
+        var particleOptions = ParticleHandlers.genericParticle(ParticleStore.ELECTRIC_PARTICLE, this.getElemenType(), 5, 1.2f, 0.5);
 
         for (int i = 0; i < totalShots; i++) {
             var elementProjectile = new ElementProjectile(

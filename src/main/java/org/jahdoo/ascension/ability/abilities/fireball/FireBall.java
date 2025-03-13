@@ -34,8 +34,8 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.DamageUtils.damageWithJahdoo;
 import static org.jahdoo.ascension.utils.PositionFinders.*;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
@@ -141,7 +141,7 @@ public class FireBall extends DefaultEntityBehaviour {
         var lifetime = 3;
         var col1 = -8487298;
         var col2 = -13355980;
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, lifetime, 0.1f, col1, col2, true);
+        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 0.1f, col1, col2, true);
 
         ParticleHandlers.sendParticles(
             level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 1.5
@@ -240,10 +240,10 @@ public class FireBall extends DefaultEntityBehaviour {
         var directions = positionScrambler.subtract(this.element.position()).normalize();
         var lifetime = (int) this.novaMaxSize;
         var size = Helpers.Random.nextDouble(0.2, 0.6);
-        var bakedParticle = bakedParticleOptions(this.getElementType().id(), lifetime, (float) size, true);
+        var bakedParticle = bakedParticle(this.getElementType().id(), lifetime, (float) size, true);
         var col1 = this.getElementType().partColourA();
         var col2 =  color(51, 51, 51);
-        var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, lifetime, (float) (size - 0.2), col1, col2, true);
+        var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, (float) (size - 0.2), col1, col2, true);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
         var randomSpeed = Helpers.Random.nextDouble(this.novaMaxSize/12, this.novaMaxSize/8);
         var randomType = getRandomParticle.get(Helpers.Random.nextInt(2));
@@ -263,12 +263,12 @@ public class FireBall extends DefaultEntityBehaviour {
 
         if(this.element.level() instanceof ServerLevel serverLevel){
             ParticleHandlers.particleBurst(serverLevel, this.element.position(), maxPart,
-                genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, this.getElementType(), 40, 3f)
+                ParticleHandlers.genericParticle(ParticleStore.MAGIC_PARTICLE, this.getElementType(), 40, 3f)
                 ,0,0,0,speed
             );
 
             ParticleHandlers.particleBurst(serverLevel, this.element.position(), maxPart,
-                genericParticleOptions(ParticleStore.MAGIC_PARTICLE_SELECTION, 40, 3f, rgbToInt(61,61,61), rgbToInt(218,218,218))
+                ParticleHandlers.genericParticle(ParticleStore.MAGIC_PARTICLE, 40, 3f, rgbToInt(61,61,61), rgbToInt(218,218,218))
                 ,0,0,0,speed
             );
         }
@@ -290,7 +290,7 @@ public class FireBall extends DefaultEntityBehaviour {
             position -> {
                 var newPosition = position.add(this.element.getDeltaMovement().scale(-1.5));
                 var size = Helpers.Random.nextFloat(2.5f, 3.5f);
-                var pType = bakedParticleOptions(this.getElementType().id(), 2, size, false);
+                var pType = bakedParticle(this.getElementType().id(), 2, size, false);
                 ParticleHandlers.sendParticles(
                     level(),
                     pType,
@@ -303,7 +303,7 @@ public class FireBall extends DefaultEntityBehaviour {
             position -> {
                 var newPosition = position.add(this.element.getDeltaMovement().scale(-1.5));
                 var size = Helpers.Random.nextFloat(2f, 3f);
-                var pType = genericParticleOptions(GENERIC_PARTICLE_SELECTION, 4, size, getElementType().partColourA(), color(51, 51, 51));
+                var pType = ParticleHandlers.genericParticle(GENERIC_PARTICLE, 4, size, getElementType().partColourA(), color(51, 51, 51));
                 ParticleHandlers.sendParticles(
                     level(),
                     pType,

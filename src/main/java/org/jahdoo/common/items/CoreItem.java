@@ -1,5 +1,7 @@
 package org.jahdoo.common.items;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -8,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jahdoo.common.client.overlay.BoonSelectionScreen;
 import org.jahdoo.common.registers.BlockReg;
 
 import static org.jahdoo.common.block.TrialPortalBlock.*;
@@ -43,7 +46,6 @@ public class CoreItem extends Item  {
                 return InteractionResultHolder.success(hand);
 
             } else if (item == AUGMENT_CORE.get()){
-
                 return InteractionResultHolder.success(hand);
             }
         }

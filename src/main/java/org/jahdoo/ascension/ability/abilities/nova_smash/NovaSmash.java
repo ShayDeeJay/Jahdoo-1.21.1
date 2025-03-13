@@ -34,8 +34,8 @@ import java.util.List;
 
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
 import static org.jahdoo.common.components.DataComponentHelper.*;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.common.registers.AttachmentReg.NOVA_SMASH;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
@@ -85,7 +85,7 @@ public class NovaSmash implements AbstractAttachment {
         var getMysticElement = ElementReg.mystic();
         var colourPrimary = getMysticElement.partColourA();
         var colourSecondary = getMysticElement.partColourB();
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, colourPrimary, colourSecondary, 10, 0.1F, true, 0);
+        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, colourPrimary, colourSecondary, 10, 0.1F, true, 0);
 
         ParticleHandlers.sendParticles(
             entity.level(), genericParticle, worldPosition, 0, directions.x, directions.y + 0.1, directions.z, speed
@@ -165,10 +165,10 @@ public class NovaSmash implements AbstractAttachment {
         var size = Random.nextFloat(1f, 2f);
         var colourPrimary = getElement().partColourA();
         var colourSecondary = rgbToInt(255, 255, 255);
-        var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, 3, size, colourPrimary, colourSecondary, true);
+        var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, 3, size, colourPrimary, colourSecondary, true);
 
         var size1 = Random.nextFloat(5f, 7f);
-        var bakedParticle = bakedParticleOptions(getElement().id(), (int) particleMultiplier, size1, false);
+        var bakedParticle = bakedParticle(getElement().id(), (int) particleMultiplier, size1, false);
 
         var getRandomParticle = List.of(bakedParticle, genericParticle);
         var pType = getRandomParticle.get(Random.nextInt(2));

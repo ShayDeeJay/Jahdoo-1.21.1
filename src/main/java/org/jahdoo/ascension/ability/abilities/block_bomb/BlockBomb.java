@@ -23,7 +23,7 @@ import static org.jahdoo.ascension.ability.UtilityHelpers.*;
 import static org.jahdoo.ascension.ability.abilities.block_bomb.BlockBombAbility.BLOCK_DROP_CHANCE;
 import static org.jahdoo.ascension.ability.abilities.block_bomb.BlockBombAbility.EXPLOSION_RANGE;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
-import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class BlockBomb extends AbstractUtilityProjectile {
@@ -68,7 +68,7 @@ public class BlockBomb extends AbstractUtilityProjectile {
     }
 
     private void coreParticles(Level level) {
-        var bakedParticleOption = bakedParticleOptions(getElementType().id(), 2, 3f, false);
+        var bakedParticleOption = bakedParticle(getElementType().id(), 2, 3f, false);
         PositionFinders.getRandomSphericalPositions(generic, projectileSphere, projectileSphere * 10,
             radiusPosition -> explosionParticle(level, radiusPosition, bakedParticleOption)
         );
@@ -104,7 +104,7 @@ public class BlockBomb extends AbstractUtilityProjectile {
         if (explosionTimer % 10 == 0 && !(explosionTimer >= explosionTimerMax)) {
             var colour = getElementType().partColourA();
             var fade = getElementType().partColourFade();
-            var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, 6, 3, colour, fade, false);
+            var genericParticle = genericParticle(GENERIC_PARTICLE, 6, 3, colour, fade, false);
             var add = generic.position().add(0, 0.2, 0);
             tickingSound();
             particleBurst(level, add, totalRadiusMax / 3, genericParticle, 0, -0.1, 0, Random.nextFloat(0.1f, 0.3f));
@@ -127,8 +127,8 @@ public class BlockBomb extends AbstractUtilityProjectile {
     }
 
     private void explodingTick(Level level) {
-        var bakedParticleOptions = bakedParticleOptions(getElementType().id(), 4, 4f, false);
-        var genericParticle = genericParticleOptions(GENERIC_PARTICLE_SELECTION, getElementType(), 10, 4, 1);
+        var bakedParticleOptions = bakedParticle(getElementType().id(), 4, 4f, false);
+        var genericParticle = genericParticle(GENERIC_PARTICLE, getElementType(), 10, 4, 1);
         if (explosionTimer >= explosionTimerMax) {
 
             ParticleHandlers.sendParticles(

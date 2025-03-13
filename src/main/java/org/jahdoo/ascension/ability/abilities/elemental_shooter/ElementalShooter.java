@@ -21,7 +21,7 @@ import org.jahdoo.common.registers.ElementReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 
 public class ElementalShooter extends DefaultEntityBehaviour {
@@ -162,11 +162,11 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 
     public static void animateParticles(Projectile projectile, AbstractElement element) {
         if(projectile.tickCount > 1){
-            var baked = bakedParticleOptions(element.id(), 2, 1.5f, false);
+            var baked = bakedParticle(element.id(), 2, 1.5f, false);
             var pos = projectile.position().add(0, 0.1, 0);
             genericProjPart(projectile.level(), pos, 1, baked, 0.03f);
             playParticles3(
-                genericParticleOptions(SOFT_PARTICLE_SELECTION, element, 2, 1f, false),
+                genericParticle(SOFT_PARTICLE, element, 2, 1f, false),
                 projectile, 10, 0.01
             );
         }

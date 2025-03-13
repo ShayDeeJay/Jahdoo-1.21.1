@@ -16,8 +16,8 @@ import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.PositionFinders.getInnerRingOfRadius;
 import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 
 
 public class Barrage extends DefaultEntityBehaviour {
@@ -75,7 +75,7 @@ public class Barrage extends DefaultEntityBehaviour {
 
     private void setParticleNova(Vec3 worldPosition){
         var directions = worldPosition.subtract(this.cloud.position());
-        var genericParticle = genericParticleOptions(SOFT_PARTICLE_SELECTION, 10, 1, -1, -1, false);
+        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, 10, 1, -1, -1, false);
         ParticleHandlers.sendParticles(level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.5);
     }
 

@@ -9,6 +9,7 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.effects.type_effects.vitality.VitalityEffect;
 import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Maths;
@@ -22,7 +23,7 @@ import static org.jahdoo.ascension.ability.AbilityBuilder.RANGE;
 import static org.jahdoo.ascension.ability.abilities.life_siphon.LifeSiphonAbility.HEAL_VALUE;
 import static org.jahdoo.common.components.DataComponentHelper.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
@@ -100,8 +101,8 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
 
     public void pullParticlesToCenter(){
         var lifetime = 5;
-        var part1 = bakedParticleOptions(getElementType().id(), lifetime, 2f, false);
-        var part2 = genericParticleOptions(GENERIC_PARTICLE_SELECTION, getElementType(), lifetime, 2f);
+        var part1 = bakedParticle(getElementType().id(), lifetime, 2f, false);
+        var part2 = ParticleHandlers.genericParticle(GENERIC_PARTICLE, getElementType(), lifetime, 2f);
         var particleOptionsList = List.of(part1, part2);
         var pos = this.cloud.position();
 

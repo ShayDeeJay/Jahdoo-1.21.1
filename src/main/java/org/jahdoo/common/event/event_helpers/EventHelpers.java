@@ -14,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
@@ -23,7 +24,6 @@ import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
-import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.ability.abilities.block_placer.BlockPlacerAbility;
 import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
@@ -62,10 +62,15 @@ public class EventHelpers {
         if(entity instanceof Player player) player.getData(SAVE_DATA).addAllItems(player);
     }
 
-    public static void perkTableInteraction(BlockState getBlock, net.minecraft.world.level.Level level, BlockPos pos) {
+    public static void perkTableInteraction(
+        BlockState getBlock,
+        Level level,
+        BlockPos pos,
+        Player player
+    ){
         if(getBlock.is(Blocks.BARRIER)){
             if(level.getBlockEntity(pos.below(1)) instanceof PerkTableEntity entity){
-                entity.setUsed();
+                entity.setUsed(entity.getBlockState(), player);
                 level.destroyBlock(pos, false);
             }
         }
@@ -189,7 +194,7 @@ public class EventHelpers {
                 try {
                     event.addModifier(acMod.attribute(), acMod.modifier());
                 } catch (Exception e){
-                    JahdooMod.LOGGER.log(Level.ALL, e);
+                    JahdooMod.LOGGER.log(org.apache.logging.log4j.Level.ALL, e);
                 }
             }
 

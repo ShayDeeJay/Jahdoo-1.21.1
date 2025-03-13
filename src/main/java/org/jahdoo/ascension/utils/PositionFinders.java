@@ -26,7 +26,7 @@ public class PositionFinders {
         }
     }
 
-    public static void getInnerRingOfRadiusRandom(Vec3 position, double radius, double numPoints, Consumer<Vec3> method) {
+    public static void innerRadiusRandom(Vec3 position, double radius, double numPoints, Consumer<Vec3> method) {
         double sectorAngle = 2 * Math.PI / numPoints;
 
         for (int i = 0; i < numPoints; i++) {
@@ -58,7 +58,7 @@ public class PositionFinders {
         return positions;
     }
 
-    public static void getInnerRingOfRadiusRandom(BlockPos blockPos, double radius, int numPoints, Consumer<Vec3> method) {
+    public static void innerRadiusRandom(BlockPos blockPos, double radius, int numPoints, Consumer<Vec3> method) {
         Vec3 playerPos = blockPos.getCenter();
         double playerX = playerPos.x;
         double playerZ = playerPos.z;
@@ -91,7 +91,7 @@ public class PositionFinders {
         return positions1;
     }
 
-    public static List<Vec3> getInnerRingOfRadiusRandom(Vec3 position, double radius, double numPoints) {
+    public static List<Vec3> innerRadiusRandom(Vec3 position, double radius, double numPoints) {
         double sectorAngle = 2 * Math.PI / numPoints;
         List<Vec3> list = new ArrayList<>();
         for (int i = 0; i < numPoints; i++) {

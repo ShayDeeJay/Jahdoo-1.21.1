@@ -2,9 +2,6 @@ package org.jahdoo.ascension;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -13,19 +10,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.armortrim.ArmorTrim;
-import net.minecraft.world.item.armortrim.TrimMaterials;
-import net.minecraft.world.item.armortrim.TrimPatterns;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.ability.abilities.arcane_shift.ArcaneShift;
 import org.jahdoo.ascension.attachments.player_abilities.InstanceData;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.Maths;
-import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
@@ -60,14 +50,13 @@ import static net.minecraft.world.level.storage.loot.parameters.LootContextParam
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.THIS_ENTITY;
 import static org.jahdoo.ascension.LevelStageModifiers.addBaseAttribute;
 import static org.jahdoo.ascension.LevelStageModifiers.effectWithChance;
-import static org.jahdoo.ascension.ability.abilities.arcane_shift.ArcaneShift.*;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.*;
 import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
 import static org.jahdoo.ascension.utils.PositionFinders.getRandomSphericalBlockPositions;
 import static org.jahdoo.common.entities.ancient_golem.AncientGolem.INFINITE_LIFE;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 
 public class MobManager {
 
@@ -118,8 +107,8 @@ public class MobManager {
 
     public static void setOuterRingPulses(Level level, Vec3 position, double radius){
         var lifetime = Random.nextInt(7, 10);
-        var parType = ParticleStore.MAGIC_PARTICLE_SELECTION;
-        var particleOptions = genericParticleOptions(parType, getRgb(), getRgb(), lifetime, 0.1f, true, 1);
+        var parType = ParticleStore.MAGIC_PARTICLE;
+        var particleOptions = ParticleHandlers.genericParticle(parType, getRgb(), getRgb(), lifetime, 0.1f, true, 1);
 
         getOuterRingOfRadiusRandom(position, radius, radius * 40,
             pos -> ParticleHandlers.sendParticles(
@@ -200,7 +189,7 @@ public class MobManager {
     public static void summonEntities(AltarBlockEntity entity){
         if(!(entity.getLevel() instanceof ServerLevel level)) return;
         var actualEntity = buildMobs(level);
-        var randomPoses = getInnerRingOfRadiusRandom(entity.getBlockPos().getCenter(), 12, 200)
+        var randomPoses = innerRadiusRandom(entity.getBlockPos().getCenter(), 12, 200)
             .stream()
             .filter(pos -> level.getBlockState(containing(pos)).isAir() && level.getBlockState(containing(pos).above()).isAir())
             .toList();

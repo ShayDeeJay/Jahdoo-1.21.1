@@ -27,8 +27,8 @@ import java.util.List;
 import static net.minecraft.network.syncher.EntityDataSerializers.*;
 import static net.minecraft.network.syncher.SynchedEntityData.*;
 import static net.minecraft.util.RandomSource.*;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.common.registers.ElementReg.*;
 
@@ -167,15 +167,15 @@ public class Decoy extends Mob {
 
     public void pullParticlesToCenter(){
         var bakedParticlesOptions =
-            bakedParticleOptions(vitality().id(), 6, 2f, false);
+            bakedParticle(vitality().id(), 6, 2f, false);
 
         var genericParticleOptions =
-            genericParticleOptions(GENERIC_PARTICLE_SELECTION, this.getElement(), 6, 2f);
+            ParticleHandlers.genericParticle(GENERIC_PARTICLE, this.getElement(), 6, 2f);
 
         var particleOptionsList =
             List.of(bakedParticlesOptions, genericParticleOptions);
 
-        PositionFinders.getInnerRingOfRadiusRandom(
+        PositionFinders.innerRadiusRandom(
             this.position()
                 .add(0,this.getBbHeight()/2,0)
                 .offsetRandom(create(), 1.5f), range, (double) range /2,

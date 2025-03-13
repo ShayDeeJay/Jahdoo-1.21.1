@@ -25,12 +25,14 @@ public class PerkTableRenderer implements BlockEntityRenderer<PerkTableEntity>{
         var mc = getInstance();
         var itemRenderer = mc.getItemRenderer();
         var render = new ItemStack(entity.getBlockState().getValue(TEXTURE) == 0 ? HEALTH_CONTAINER : MANA_CONTAINER);
-        var scale = 1.2F;
         var rotate = entity.counter + partialTick;
+        var animate = rotate / 12;
+        var scale = Math.min(1.2F, animate);
+        var bobOff = Math.sin(rotate / 10.0F) * 0.08F + 2F - 0.51;
 
         if(!entity.getUsed()){
             stack.pushPose();
-            stack.translate(0.5f, 1.5, 0.5F);
+            stack.translate(0.5f, Math.min(bobOff, animate), 0.5F);
             stack.scale(scale, scale, scale);
             stack.mulPose(Axis.YP.rotationDegrees(rotate * 2));
             itemRenderer.renderStatic(

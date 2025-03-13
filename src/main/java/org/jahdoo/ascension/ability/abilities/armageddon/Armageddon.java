@@ -6,6 +6,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
@@ -17,9 +18,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.ascension.utils.PositionFinders.getInnerRingOfRadiusRandom;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE_SELECTION;
+import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 
@@ -84,7 +85,7 @@ public class Armageddon extends DefaultEntityBehaviour {
     }
 
     private void createModules(){
-        var getPositionInRadius = getInnerRingOfRadiusRandom(cloud.position(), this.cloud.getRadius() * 2, 100);
+        var getPositionInRadius = PositionFinders.innerRadiusRandom(cloud.position(), this.cloud.getRadius() * 2, 100);
         this.createModule(getPositionInRadius.get(Helpers.Random.nextInt(0, getPositionInRadius.size())));
     }
 
@@ -144,8 +145,8 @@ public class Armageddon extends DefaultEntityBehaviour {
         var directions = worldPosition.subtract(this.cloud.position());
         var getMysticElement = ElementReg.mystic();
 
-        var genericParticle = genericParticleOptions(
-            GENERIC_PARTICLE_SELECTION, 20,
+        var genericParticle = ParticleHandlers.genericParticle(
+            GENERIC_PARTICLE, 20,
             6f,
             getMysticElement.partColourA(),
             getMysticElement.partColourB(),

@@ -116,7 +116,7 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
 
         var getCurrentTime = entity.privateTicks + partialTicks;
         var scaleItem = 0.1f;
-        var bobOff = Math.sin((entity.privateTicks + partialTicks) / 20.0F) * 0.02F + 1.15f - 0.51;
+        var bobOff = Math.sin(getCurrentTime / 20.0F) * 0.02F + 1.15f - 0.51;
         var animateRunes = Math.min(Math.max((double) distance / 44, 0.1), getCurrentTime / 20);
 
         poseStack.translate(0, bobOff, animateRunes);

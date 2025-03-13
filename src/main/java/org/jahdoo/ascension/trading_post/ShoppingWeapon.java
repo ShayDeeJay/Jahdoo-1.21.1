@@ -16,12 +16,12 @@ public class ShoppingWeapon {
 
     public static ItemStack getElementalSword() {
         var sword = new ItemStack(ItemReg.ELEMENTAL_SWORD);
-        sword.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(Random.nextInt(1,5)));
+        sword.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(Random.nextInt(0,4)));
         return sword;
     }
 
     public static void enchantSword(ServerLevel serverLevel, ItemStack itemStack, boolean isSpecial) {
-        if(!isSpecial) if(Random.nextInt(50) != 0) return;
+        if(!isSpecial) if(Random.nextInt(10) != 0) return;
         attachEnchantment(itemStack, serverLevel, SHARPNESS, 6, 11, isSpecial);
         attachEnchantment(itemStack, serverLevel, SWEEPING_EDGE, 4, 8, isSpecial);
         attachEnchantment(itemStack, serverLevel, LOOTING, 4, 8, isSpecial);

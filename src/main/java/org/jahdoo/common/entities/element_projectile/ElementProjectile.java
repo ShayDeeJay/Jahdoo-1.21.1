@@ -28,7 +28,7 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import static org.jahdoo.common.entities.EntityAnimations.*;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 
 public class ElementProjectile extends ProjectileProperties implements IEntityProperties, GeoEntity {
 
@@ -155,7 +155,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         if(!(level() instanceof ServerLevel serverLevel) || getProjectile == null) return;
         getProjectile.onBlockBlockHit(blockHitResult);
         if (!blockHitResult.isInside()) {
-            var splashParticles = bakedParticleOptions(this.getElementType().id(),5,2f, false);
+            var splashParticles = bakedParticle(this.getElementType().id(),5,2f, false);
             ParticleHandlers.particleBurst(serverLevel, blockHitResult.getLocation(), 10, splashParticles);
         }
     }

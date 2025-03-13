@@ -14,14 +14,17 @@ import org.jahdoo.common.registers.BlockReg;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.core.BlockPos.withinManhattan;
-import static org.jahdoo.ascension.BlockSetupManager.generateTradingPost;
+import static org.jahdoo.ascension.BlockSetupManager.setBlockGenerator;
 import static org.jahdoo.ascension.BlockSetupManager.setLocks;
 
 public class StructureManager {
 
+    public static final String TRADING_POST = "Trading Post";
+    public static final String POWER_UP = "Power Up";
+    public static final String ROOM = "Room";
+
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
-
         templates.ifPresent(template -> template.placeInWorld(level, pos, new BlockPos(-22, 0, -22), settings, level.random, 2));
     }
 
@@ -94,7 +97,7 @@ public class StructureManager {
                 default -> withinManhattan(relative.south(25), 25, 19, 25);
             };
 
-            generateTradingPost(serverLevel, findBlock, direction);
+            setBlockGenerator(serverLevel, findBlock, direction, roomId);
 
             for (var blockPos : findBlock) {
                 if (level.getBlockState(blockPos).is(Blocks.DIAMOND_BLOCK)) {

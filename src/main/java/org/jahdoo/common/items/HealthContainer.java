@@ -10,7 +10,7 @@ import org.jahdoo.ascension.utils.ItemEntityBehaviour;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ElementReg;
 
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 
 public class HealthContainer extends Item implements ItemEntityBehaviour {
 
@@ -27,7 +27,7 @@ public class HealthContainer extends Item implements ItemEntityBehaviour {
             itemStack.shrink(itemStack.getCount());
             ParticleHandlers.spawnElectrifiedParticles(
                 serverLevel, livingEntity.position(),
-                bakedParticleOptions(ElementReg.vitality().id(), 5,  2, false),
+                bakedParticle(ElementReg.vitality().id(), 5,  2, false),
                 20, livingEntity, 0.1
             );
             VitalRejuvenation.successfulCastAnimation(livingEntity);

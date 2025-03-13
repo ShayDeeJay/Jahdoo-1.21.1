@@ -95,7 +95,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
             0, 0, 0, 0
         );
         playParticles3(
-            genericParticleOptions(GENERIC_PARTICLE_SELECTION, element, 4, 1f, false),
+            genericParticle(GENERIC_PARTICLE, element, 4, 1f, false),
             projectile, 20, 0.01
         );
     }
@@ -116,8 +116,8 @@ public class EtherealArrow extends DefaultEntityBehaviour {
             Helpers.getSoundWithPosition(this.generic.level(), hitEntity.blockPosition(), element.sound(),0.4f);
             if (hitEntity.isAlive()) {
                 if (!(this.generic.level() instanceof ServerLevel serverLevel)) return;
-                var type = bakedParticleOptions(element.id(), 10, 1, false);
-                var generic = genericParticleOptions(element, 10, 1.2f);
+                var type = bakedParticle(element.id(), 10, 1, false);
+                var generic = genericParticle(element, 10, 1.2f);
 
                 spawnElectrifiedParticles(serverLevel, hitEntity.position(), type, 3, hitEntity, 0.2);
                 spawnElectrifiedParticles(serverLevel, hitEntity.position(), generic,3, hitEntity, 0.2);

@@ -45,7 +45,7 @@ public abstract class AbstractBEInventory extends SyncedBlockEntity {
     }
 
     public static GenericParticleOptions processingParticle(int lifetime, float size, boolean staticSize, double speed){
-        return genericParticleOptions(SOFT_PARTICLE_SELECTION, utility(), lifetime, size, staticSize, speed);
+        return genericParticle(SOFT_PARTICLE, utility(), lifetime, size, staticSize, speed);
     }
 
     @Override

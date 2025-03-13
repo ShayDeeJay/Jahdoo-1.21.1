@@ -28,9 +28,9 @@ import org.jahdoo.common.registers.SoundReg;
 import java.util.List;
 
 import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticleOptions;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticleOptions;
-import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE_SELECTION;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 
 public class GreaterMysticEffect extends MobEffect {
 
@@ -112,8 +112,8 @@ public class GreaterMysticEffect extends MobEffect {
         var directions = positionScrambler.subtract(livingEntity.position()).normalize();
         var colourPrimary = element.partColourA();
         var colourSecondary = element.partColourB();
-        var bakedParticle = bakedParticleOptions(element.id(), 6, 8, false);
-        var genericParticle = genericParticleOptions(MAGIC_PARTICLE_SELECTION, 6, 4, colourPrimary, colourSecondary, false);
+        var bakedParticle = bakedParticle(element.id(), 6, 8, false);
+        var genericParticle = ParticleHandlers.genericParticle(MAGIC_PARTICLE, 6, 4, colourPrimary, colourSecondary, false);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
 
         ParticleHandlers.sendParticles(
