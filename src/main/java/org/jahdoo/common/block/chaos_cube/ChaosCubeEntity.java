@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.modular_chaos_cube;
+package org.jahdoo.common.block.chaos_cube;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
 import org.jahdoo.common.block.AbstractTankUser;
-import org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.augments.Augment;
@@ -41,23 +40,23 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.jahdoo.common.block.BlockInteractionHandler.getItemHandlerAt;
-import static org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties.*;
+import static org.jahdoo.ascension.attachments.ChaosCubeData.*;
 import static org.jahdoo.common.components.DataComponentHelper.getKeyFromAugment;
 import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.common.entities.EntityAnimations.*;
 import static org.jahdoo.common.registers.AttachmentReg.*;
 
 
-public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProvider, GeoBlockEntity {
+public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, GeoBlockEntity {
 
     public static final int AUGMENT_SLOT = 0;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private int ticker;
     private int entityTicker;
 
-    public ModularChaosCubeEntity(BlockPos pos, BlockState state) {
+    public ChaosCubeEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.MODULAR_CHAOS_CUBE_BE.get(), pos, state, 1);
-        this.setData(MODULAR_CHAOS_CUBE, ModularChaosCubeProperties.initData(this.getBlockPos()));
+        this.setData(MODULAR_CHAOS_CUBE, org.jahdoo.ascension.attachments.ChaosCubeData.initData(this.getBlockPos()));
     }
 
     @Override
@@ -95,7 +94,7 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        return new ModularChaosCubeMenu(i, inventory, this, this.data);
+        return new ChaosCubeMenu(i, inventory, this, this.data);
     }
 
     private void particleAnimation(Level level, boolean hasTank) {
@@ -156,7 +155,7 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
         for (Pair<ResourceLocation, BlockPos> posPair : this.direction()) {
             BlockPos blockPos = posPair.getSecond();
             if (!this.getData(MODULAR_CHAOS_CUBE).chained()) return;
-            if (!visited.contains(blockPos) && this.getLevel().getBlockEntity(blockPos) instanceof ModularChaosCubeEntity blockE) {
+            if (!visited.contains(blockPos) && this.getLevel().getBlockEntity(blockPos) instanceof ChaosCubeEntity blockE) {
                 if(!blockE.getData(MODULAR_CHAOS_CUBE).chained()) continue;
                 visited.add(blockPos);
                 triggerBlock(blockE, visited);
@@ -164,15 +163,15 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
         }
     }
 
-    private void triggerBlock(ModularChaosCubeEntity blockE, Set<BlockPos> visited) {
+    private void triggerBlock(ChaosCubeEntity blockE, Set<BlockPos> visited) {
         var active = this.getData(MODULAR_CHAOS_CUBE).active();
         var active1 = blockE.getData(MODULAR_CHAOS_CUBE).active();
-        if (active != active1) ModularChaosCubeData.togglePower(blockE);
+        if (active != active1) ChaosCubeData.togglePower(blockE);
         if (blockE.getLevel() == null) return;
 
         for (Pair<ResourceLocation, BlockPos> posPair : blockE.direction()) {
             BlockPos blockPos = posPair.getSecond();
-            if (!visited.contains(blockPos) && blockE.getLevel().getBlockEntity(blockPos) instanceof ModularChaosCubeEntity blockD) {
+            if (!visited.contains(blockPos) && blockE.getLevel().getBlockEntity(blockPos) instanceof ChaosCubeEntity blockD) {
                 if(!blockD.getData(MODULAR_CHAOS_CUBE).chained()) continue;
                 visited.add(blockPos);
                 triggerBlock(blockD, visited);
@@ -214,7 +213,7 @@ public class ModularChaosCubeEntity extends AbstractTankUser implements MenuProv
         return itemStack.get();
     }
 
-    private PlayState getPlayState(AnimationState<ModularChaosCubeEntity> state) {
+    private PlayState getPlayState(AnimationState<ChaosCubeEntity> state) {
         var getPos = this.getData(MODULAR_CHAOS_CUBE);
         if(getPos.active()){
             float speed = (float) getPos.speed() /50;

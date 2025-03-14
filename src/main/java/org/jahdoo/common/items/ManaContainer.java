@@ -5,14 +5,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
-import org.jahdoo.ascension.utils.ItemEntityBehaviour;
+import org.jahdoo.ascension.utils.IItemEntityBehaviour;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
 
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 
-public class ManaContainer extends Item implements ItemEntityBehaviour {
+public class ManaContainer extends Item implements IItemEntityBehaviour {
 
     public ManaContainer() {
         super(new Properties());

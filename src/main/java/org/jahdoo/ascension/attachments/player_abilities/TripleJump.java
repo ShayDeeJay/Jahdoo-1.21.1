@@ -4,12 +4,12 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.ascension.attachments.AbstractAttachment;
+import org.jahdoo.ascension.attachments.IAttachment;
 
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.*;
 
-public class TripleJump implements AbstractAttachment {
+public class TripleJump implements IAttachment {
 
     public static final int MAX_JUMPS = 2;
     private int clientJumpCount = 0;

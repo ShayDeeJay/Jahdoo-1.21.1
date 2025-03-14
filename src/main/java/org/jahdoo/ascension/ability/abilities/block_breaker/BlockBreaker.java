@@ -7,7 +7,7 @@ import org.jahdoo.ascension.ability.AbstractUtilityProjectile;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.UtilityHelpers;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 
 public class BlockBreaker extends AbstractUtilityProjectile {
 
@@ -16,7 +16,7 @@ public class BlockBreaker extends AbstractUtilityProjectile {
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         var breakSound = generic.level().getBlockState(blockHitResult.getBlockPos()).getSoundType().getBreakSound();
 
         generic.level().playSound(null, generic.getX(), generic.getY(), generic.getZ(), breakSound, SoundSource.BLOCKS, 1,1);

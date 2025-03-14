@@ -39,7 +39,7 @@ public abstract class DefaultEntityBehaviour extends AbstractEntityProperty {
 
     public static boolean canDamageEntity(LivingEntity hitEntity, LivingEntity owner){
         if(owner != null) {
-            var isPlayerTamed = !(hitEntity instanceof TamableEntity tamableEntity && tamableEntity.getOwner() == owner);
+            var isPlayerTamed = !(hitEntity instanceof ITamableEntity tamableEntity && tamableEntity.getOwner() == owner);
             var isOwner = hitEntity.getUUID() != owner.getUUID();
             return isOwner && isPlayerTamed;
         }

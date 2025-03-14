@@ -14,13 +14,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.SoundReg;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
@@ -73,11 +74,12 @@ public class AltarBlock extends BaseEntityBlock {
         BlockHitResult hitResult
     ) {
         if (!(level.getBlockEntity(pos) instanceof AltarBlockEntity altarE)) return FAIL;
-        if (!(level instanceof ServerLevel)) return FAIL;
+        if (!(level instanceof ServerLevel serverLevel)) return FAIL;
 
-        blockExitBarrier(level, pos);
-        altarE.setData(INSTANCE_DATA, level.getData(INSTANCE_DATA));
+        blockExitBarrier(serverLevel, pos);
+        altarE.setData(INSTANCE_DATA, serverLevel.getData(INSTANCE_DATA));
         if(!altarE.started){
+            Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.START_TRIAL.get(), 2);
             altarE.summonMobs();
             return SUCCESS;
         }

@@ -10,11 +10,12 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.MobManager;
-import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
-import org.jahdoo.ascension.attachments.player_abilities.InstanceData;
+import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.SoundReg;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -28,9 +29,9 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.jahdoo.ascension.StructureManager.placeLocksWithData;
-import static org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData.getProperties;
 import static org.jahdoo.common.block.altar.AltarAnim.idleParticleAnim;
 import static org.jahdoo.common.block.altar.AltarAnim.onActivationAnim;
+import static org.jahdoo.common.block.loot_chest.LootChestBlock.particleBurst;
 import static org.jahdoo.common.entities.EntityAnimations.ALTAR_IDLE;
 
 
@@ -48,10 +49,6 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     public AltarBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.CHALLENGE_ALTAR_BE.get(), pos, state);
         this.bossEvent = new ServerBossEvent(Component.literal(""), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.NOTCHED_20);
-    }
-
-    public ChallengeLevelData altarData(){
-        return getProperties(this);
     }
 
     @Override
@@ -76,19 +73,28 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     }
 
     public void summonMobs() {
-        MobManager.summonEntities(this);
-        this.beginSpawning = false;
         this.started = true;
         this.updateBlock();
     }
 
     private void tickBossEvent() {
-        var data = this.altarData();
-        var progress = data.maxMobs > 0 ? (float) data.activeMobs().size() / data.maxSpawnableMobs() : 0.0f;
+//        var data = this.altarData();
+//        var progress = data.maxMobs > 0 ? (float) data.activeMobs().size() / data.maxSpawnableMobs() : 0.0f;
 
-        bossEvent.setVisible(!spawnedMobs.isEmpty());
-        bossEvent.setProgress(progress);
-        bossEvent.setName(Component.nullToEmpty(spawnedMobs.size() + " / " + data.maxSpawnableMobs()));
+//        bossEvent.setVisible(!spawnedMobs.isEmpty());
+//        bossEvent.setProgress(progress);
+//        bossEvent.setName(Component.nullToEmpty(spawnedMobs.size() + " / " + data.maxSpawnableMobs()));
+    }
+
+    private void removeKilledMobs(ServerLevel serverLevel) {
+        for (var activeMob : this.spawnedMobs) {
+            var entity = serverLevel.getEntity(activeMob);
+            if(entity == null || !entity.isAlive()){
+                this.spawnedMobs.remove(activeMob);
+                this.mobsSpawned++;
+                return;
+            }
+        }
     }
 
     @Override
@@ -122,17 +128,6 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         }
     }
 
-    private void removeKilledMobs(ServerLevel serverLevel) {
-        for (var activeMob : this.spawnedMobs) {
-            var entity = serverLevel.getEntity(activeMob);
-            if(entity == null || !entity.isAlive()){
-                this.spawnedMobs.remove(activeMob);
-                this.mobsSpawned++;
-                return;
-            }
-        }
-    }
-
     public void tick(Level level, BlockPos pos, BlockState state) {
         if(level instanceof ServerLevel serverLevel){
             if(this.started) {
@@ -143,10 +138,19 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
             removeKilledMobs(serverLevel);
             tickBossEvent();
 
+            if(privateTicks == 30){
+                MobManager.summonEntities(this);
+                this.beginSpawning = false;
+            }
+
             if (privateTicks == 1) onActivationAnim(level, pos, privateTicks);
-            if (started && this.spawnedMobs.isEmpty()) {
+            if (privateTicks > 30 && started && this.spawnedMobs.isEmpty()) {
                 placeLocksWithData(serverLevel, pos);
                 level.destroyBlock(pos, false);
+                Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.END_TRIAL.get(), 2, 1.5F);
+                particleBurst(serverLevel, pos.getCenter(), ColourStore.PERK_GREEN, 100);
+                var getInstanceData = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
+                getInstanceData.incrementClearedRooms();
             }
         }
     }

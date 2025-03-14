@@ -15,7 +15,7 @@ import org.jahdoo.common.registers.EntityReg;
 
 import java.util.UUID;
 
-public class CustomZombie extends Zombie implements TamableEntity {
+public class CustomZombie extends Zombie implements ITamableEntity {
     LivingEntity owner;
     UUID ownerUUID;
 

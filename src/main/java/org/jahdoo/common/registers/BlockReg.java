@@ -12,10 +12,10 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.TrialPortalBlock;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationBlock;
 import org.jahdoo.common.block.altar.AltarBlock;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeBlock;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlock;
 import org.jahdoo.common.block.lock.LockBlock;
 import org.jahdoo.common.block.loot_chest.LootChestBlock;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeBlock;
 import org.jahdoo.common.block.infuser.InfuserBlock;
 import org.jahdoo.common.block.light_block.LightBlock;
 import org.jahdoo.common.block.perk_table.PerkTable;
@@ -48,7 +48,7 @@ public class BlockReg {
         registerBlock("infuser", InfuserBlock::new);
 
     public static DeferredHolder<Block, Block> MODULAR_CHAOS_CUBE =
-        registerBlock("modular_chaos_cube", ModularChaosCubeBlock::new);
+        registerBlock("modular_chaos_cube", ChaosCubeBlock::new);
 
     public static DeferredHolder<Block, Block> WAND =
         registerBlock("wand_mystic", WandBlock::new);

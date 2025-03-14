@@ -1,20 +1,19 @@
-package org.jahdoo.common.block.modular_chaos_cube;
+package org.jahdoo.common.block.chaos_cube;
 
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties;
 import org.jahdoo.common.networking.client2server.ChaosCubeC2SP;
 
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
-public class ModularChaosCubeData {
+public class ChaosCubeData {
 
     // Toggle the power state
-    public static void selectDirection(ModularChaosCubeEntity entity, ModularChaosCubeProperties newDirection) {
+    public static void selectDirection(ChaosCubeEntity entity, org.jahdoo.ascension.attachments.ChaosCubeData newDirection) {
         PacketDistributor.sendToServer(new ChaosCubeC2SP(entity.getBlockPos(), newDirection));
         entity.setData(MODULAR_CHAOS_CUBE, newDirection);
         entity.setChanged();
     }
 
-    public static void toggleChained(ModularChaosCubeEntity entity) {
+    public static void toggleChained(ChaosCubeEntity entity) {
         var autoBlock = entity.getData(MODULAR_CHAOS_CUBE);
         var switched = autoBlock.updateChained(!autoBlock.chained());
         PacketDistributor.sendToServer(new ChaosCubeC2SP(entity.getBlockPos(), switched));
@@ -22,7 +21,7 @@ public class ModularChaosCubeData {
         entity.setChanged();
     }
 
-    public static void togglePower(ModularChaosCubeEntity entity) {
+    public static void togglePower(ChaosCubeEntity entity) {
         var autoBlock = entity.getData(MODULAR_CHAOS_CUBE);
         var switched = autoBlock.updateActive(!autoBlock.active());
         PacketDistributor.sendToServer(new ChaosCubeC2SP(entity.getBlockPos(), switched));

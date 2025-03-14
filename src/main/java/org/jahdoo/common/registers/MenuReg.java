@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.IContainerFactory;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationMenu;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeMenu;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeMenu;
 import org.jahdoo.common.block.rune_table.RuneTableMenu;
 import org.jahdoo.common.block.wand.WandBlockMenu;
 import org.jahdoo.common.block.wand_manager.WandManagerMenu;
@@ -22,8 +22,8 @@ public class MenuReg {
     public static final Supplier<MenuType<WandBlockMenu>> WAND_BLOCK_MENU =
         registerMenuType(WandBlockMenu::new, "wand_block_menu");
 
-    public static final Supplier<MenuType<ModularChaosCubeMenu>> MODULAR_CHAOS_CUBE_MENU =
-        registerMenuType(ModularChaosCubeMenu::new, "modular_chaos_cube");
+    public static final Supplier<MenuType<ChaosCubeMenu>> MODULAR_CHAOS_CUBE_MENU =
+        registerMenuType(ChaosCubeMenu::new, "modular_chaos_cube");
 
     public static final Supplier<MenuType<AugmentModificationMenu>> AUGMENT_MODIFICATION_MENU =
         registerMenuType(AugmentModificationMenu::new, "augment_modification_menu");

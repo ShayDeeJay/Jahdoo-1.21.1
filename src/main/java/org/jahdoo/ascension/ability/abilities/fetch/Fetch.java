@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.ascension.ability.AbstractUtilityProjectile;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.ascension.utils.Helpers;
@@ -85,7 +85,7 @@ public class Fetch extends AbstractUtilityProjectile {
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         var player = (Player) generic.getOwner();
         var pickedUpItem = false;
 
@@ -112,7 +112,7 @@ public class Fetch extends AbstractUtilityProjectile {
                 if(pos == null) return;
                 var level = entity.level();
                 var bE = level.getBlockEntity(BlockPos.containing(pos));
-                if(bE instanceof ModularChaosCubeEntity autoEntity){
+                if(bE instanceof ChaosCubeEntity autoEntity){
                     autoEntity.externalOutputInventory(level, itemEntity);
                 }
             }

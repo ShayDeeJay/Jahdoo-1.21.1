@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.portal.DimensionTransition;
-import org.jahdoo.ascension.attachments.player_abilities.InstanceData;
+import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.registers.SoundReg;
 

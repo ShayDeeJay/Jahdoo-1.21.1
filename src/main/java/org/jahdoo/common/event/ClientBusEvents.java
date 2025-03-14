@@ -14,7 +14,7 @@ import org.jahdoo.common.block.enchanted_block.EnchantedBlockRenderer;
 import org.jahdoo.common.block.infuser.InfuserRenderer;
 import org.jahdoo.common.block.lock.LockRenderer;
 import org.jahdoo.common.block.loot_chest.LootChestRenderer;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeRenderer;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeRenderer;
 import org.jahdoo.common.block.perk_table.PerkTableRenderer;
 import org.jahdoo.common.block.rune_table.RuneTableRenderer;
 import org.jahdoo.common.block.shopping_table.ShoppingTableRenderer;
@@ -22,7 +22,6 @@ import org.jahdoo.common.block.tank.TankRenderer;
 import org.jahdoo.common.block.wand.WandBlockRenderer;
 import org.jahdoo.common.block.wand_manager.WandManagerRenderer;
 import org.jahdoo.common.client.RuneTooltipRenderer;
-import org.jahdoo.common.client.overlay.StatScreen;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloudRenderer;
 import org.jahdoo.common.entities.burning_skull.BurningSkullRenderer;
 import org.jahdoo.common.entities.element_projectile.ElementProjectileRenderer;
@@ -33,11 +32,10 @@ import org.jahdoo.common.entities.eternal_wizard.EternalWizardRenderer;
 import org.jahdoo.common.entities.void_spider.VoidSpiderRenderer;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationScreen;
 
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeScreen;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
 import org.jahdoo.common.block.rune_table.RuneTableScreen;
 import org.jahdoo.common.block.wand.WandBlockScreen;
 import org.jahdoo.common.block.wand_manager.WandManagerScreen;
-import org.jahdoo.common.particle.GenericParticle;
 import org.jahdoo.common.registers.*;
 
 import static org.jahdoo.common.client.KeyBinding.*;
@@ -70,7 +68,7 @@ public class ClientBusEvents {
     @SubscribeEvent
     public static void onClientSetup(RegisterMenuScreensEvent event) {
         event.register(WAND_BLOCK_MENU.get(), WandBlockScreen::new);
-        event.register(MODULAR_CHAOS_CUBE_MENU.get(), ModularChaosCubeScreen::new);
+        event.register(MODULAR_CHAOS_CUBE_MENU.get(), ChaosCubeScreen::new);
         event.register(AUGMENT_MODIFICATION_MENU.get(), AugmentModificationScreen::new);
         event.register(WAND_MANAGER_MENU.get(), WandManagerScreen::new);
         event.register(RUNE_TABLE_MENU.get(), RuneTableScreen::new);
@@ -122,7 +120,7 @@ public class ClientBusEvents {
         event.registerBlockEntityRenderer(ENCHANTED_BE.get(), EnchantedBlockRenderer::new);
         event.registerBlockEntityRenderer(SHOPPING_TABLE_BE.get(), ShoppingTableRenderer::new);
         event.registerBlockEntityRenderer(WAND_MANAGER_TABLE_BE.get(), WandManagerRenderer::new);
-        event.registerBlockEntityRenderer(MODULAR_CHAOS_CUBE_BE.get(), ModularChaosCubeRenderer::new);
+        event.registerBlockEntityRenderer(MODULAR_CHAOS_CUBE_BE.get(), ChaosCubeRenderer::new);
         event.registerBlockEntityRenderer(AUGMENT_MODIFICATION_STATION_BE.get(), AugmentModificationRenderer::new);
 
         //Entities

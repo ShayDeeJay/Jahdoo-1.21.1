@@ -16,7 +16,7 @@ import java.util.Map;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
-public class CastingData implements AbstractAttachment{
+public class CastingData implements IAttachment {
 
     private static final String MANA = "jahdoo_magic_data_mana";
     private static final String COOLDOWNS = "jahdoo_magic_data_cooldowns";

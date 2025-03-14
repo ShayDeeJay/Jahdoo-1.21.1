@@ -3,7 +3,7 @@ package org.jahdoo.ascension.attachments;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
-public interface AbstractAttachment {
+public interface IAttachment {
 
     void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider);
 

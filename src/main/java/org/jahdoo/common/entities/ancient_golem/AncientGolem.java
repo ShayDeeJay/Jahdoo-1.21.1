@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.common.entities.TamableEntity;
+import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.goals.*;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ElementReg;
@@ -45,7 +45,7 @@ import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 
-public class AncientGolem extends IronGolem implements TamableEntity {
+public class AncientGolem extends IronGolem implements ITamableEntity {
 
     public static final int INFINITE_LIFE = -1;
     private static final EntityDataAccessor<Integer> LIFETIMES = defineId(AncientGolem.class, INT);
@@ -174,7 +174,7 @@ public class AncientGolem extends IronGolem implements TamableEntity {
     public boolean canDamageEntity(LivingEntity hitEntity, LivingEntity owner){
         if(owner != null) {
             var uuidMatched = hitEntity.getUUID() != owner.getUUID();
-            var isTamable = !(hitEntity instanceof TamableEntity tamableEntity && tamableEntity.getOwner() == owner);
+            var isTamable = !(hitEntity instanceof ITamableEntity tamableEntity && tamableEntity.getOwner() == owner);
             return uuidMatched && isTamable;
         }
         return true;

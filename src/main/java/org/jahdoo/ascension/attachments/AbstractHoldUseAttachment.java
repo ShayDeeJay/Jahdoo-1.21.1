@@ -7,7 +7,7 @@ import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
 
-public abstract class AbstractHoldUseAttachment implements AbstractAttachment{
+public abstract class AbstractHoldUseAttachment implements IAttachment {
 
     protected boolean startedUsing;
 
@@ -30,8 +30,6 @@ public abstract class AbstractHoldUseAttachment implements AbstractAttachment{
 
         if(!player.isUsingItem() || getValue == null) {
             startedUsing = false;
-            return;
         }
-
     }
 }

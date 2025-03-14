@@ -161,9 +161,9 @@ public class Network {
         );
 
         payloadRegistrar.playToClient(
-            AltarBlockS2CP.TYPE,
-            AltarBlockS2CP.STREAM_CODEC,
-            AltarBlockS2CP::handle
+            WalletSyncS2CP.TYPE,
+            WalletSyncS2CP.STREAM_CODEC,
+            WalletSyncS2CP::handle
         );
     }
 

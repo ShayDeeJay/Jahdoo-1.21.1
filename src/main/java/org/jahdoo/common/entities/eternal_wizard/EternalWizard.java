@@ -28,7 +28,7 @@ import org.jahdoo.ascension.ability.abilities.EtherealArrow;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.entities.TamableEntity;
+import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.goals.*;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.items.wand.WandItemHelper;
@@ -45,7 +45,7 @@ import static org.jahdoo.ascension.ability.abilities.armageddon.ArmageddonModule
 import static org.jahdoo.common.items.wand.CastHelper.castAnimation;
 import static org.jahdoo.common.items.wand.WandAnimations.SINGLE_CAST_ID;
 
-public class EternalWizard extends AbstractSkeleton implements TamableEntity {
+public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
 
     private static final EntityDataAccessor<Boolean> SET_MODE = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.FLOAT);

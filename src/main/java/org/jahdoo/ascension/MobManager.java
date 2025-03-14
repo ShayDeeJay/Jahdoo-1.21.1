@@ -14,7 +14,7 @@ import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.attachments.player_abilities.InstanceData;
+import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.entities.CustomSkeleton;

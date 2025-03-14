@@ -1,15 +1,15 @@
-package org.jahdoo.ascension.attachments.player_abilities;
+package org.jahdoo.ascension.attachments;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import org.jahdoo.ascension.attachments.AbstractAttachment;
 
-public class InstanceData implements AbstractAttachment {
+public class InstanceData implements IAttachment {
 
     private int zombies;
     private int skeleton;
     private int eternalWizard;
     private int voidSpider;
+    private int clearedRooms;
     private double health;
     private double speed;
     private double armor;
@@ -54,6 +54,10 @@ public class InstanceData implements AbstractAttachment {
         return attackDamage;
     }
 
+    public int getClearedRooms(){
+        return this.clearedRooms;
+    }
+
     public void incrementSkeleton(double mobs){
         this.skeleton += (int) mobs;
     }
@@ -86,6 +90,10 @@ public class InstanceData implements AbstractAttachment {
         this.attackDamage += attackDamage;
     }
 
+    public void incrementClearedRooms(){
+        this.clearedRooms ++;
+    }
+
     @Override
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putDouble("health", health);
@@ -96,24 +104,27 @@ public class InstanceData implements AbstractAttachment {
         nbt.putInt("skeleton", zombies);
         nbt.putInt("eternal_wizard", eternalWizard);
         nbt.putInt("void_spider", voidSpider);
+        nbt.putInt("cleared_rooms", clearedRooms);
     }
 
     @Override
     public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
-        health = nbt.getDouble("health");
         speed = nbt.getDouble("speed");
         armor = nbt.getDouble("armor");
+        health = nbt.getDouble("health");
         attackDamage = nbt.getDouble("damage");
         zombies = nbt.getInt("zombies");
         skeleton = nbt.getInt("skeleton");
-        eternalWizard = nbt.getInt("eternal_wizard");
         voidSpider = nbt.getInt("void_spider");
+        eternalWizard = nbt.getInt("eternal_wizard");
+        clearedRooms = nbt.getInt("cleared_rooms");
     }
 
     @Override
     public String toString() {
         return
         "Level Data: " + "\n" +
+        "Completed Rooms = " + clearedRooms + "\n" +
         "Zombies = " + zombies + "\n" +
         "Skeletons = " + skeleton + "\n" +
         "Eternal Wizard = " + eternalWizard + "\n" +

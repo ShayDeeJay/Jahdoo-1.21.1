@@ -8,10 +8,8 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.phys.AABB;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
-import org.jahdoo.common.entities.TamableEntity;
+import org.jahdoo.common.entities.ITamableEntity;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +32,7 @@ public class GenericHurtByTargetGoal extends TargetGoal {
             if (livingentity.getType() == EntityType.PLAYER && this.mob.level().getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
                 return false;
             } else {
-                if(mob instanceof TamableEntity tamableEntity) if(!DefaultEntityBehaviour.canDamageEntity(livingentity, tamableEntity.getOwner())) return false;
+                if(mob instanceof ITamableEntity tamableEntity) if(!DefaultEntityBehaviour.canDamageEntity(livingentity, tamableEntity.getOwner())) return false;
 
                 return this.canAttack(livingentity, HURT_BY_TARGETING) &&  !(livingentity instanceof EternalWizard);
             }

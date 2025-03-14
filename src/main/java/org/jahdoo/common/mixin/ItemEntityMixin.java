@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.items.CoinItem;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.ItemEntityBehaviour;
+import org.jahdoo.ascension.utils.IItemEntityBehaviour;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -38,7 +38,7 @@ public abstract class ItemEntityMixin {
     private void onItemInteraction(Player player, CallbackInfo ci){
         ItemStack item = this.getItem();
         if(this.pickupDelay == 0 && (this.target == null || this.target.equals(player.getUUID()))){
-            if (item.getItem() instanceof ItemEntityBehaviour itemEntityBehaviour) {
+            if (item.getItem() instanceof IItemEntityBehaviour itemEntityBehaviour) {
                 if (itemEntityBehaviour.onItemInteraction((ItemEntity) ((Object) this), player)) {
                     ci.cancel();
                 }

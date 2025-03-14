@@ -3,7 +3,6 @@ package org.jahdoo.common.block.shopping_table;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -24,7 +23,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.trading_post.ItemCosts;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.Nullable;
@@ -173,8 +171,8 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
             if (!stackInSlot.isEmpty()) {
                 player.playSound(SoundEvents.ITEM_PICKUP, 0.5F, 0.8F);
                 throwOrAddItem(player, stackInSlot);
-                item.setStackInSlot(1, ItemStack.EMPTY);
-                table.itemCosts = ItemCosts.EMPTY_COST;
+//                item.setStackInSlot(1, ItemStack.EMPTY);
+//                table.itemCosts = ItemCosts.EMPTY_COST;
             }
 
         } else {

@@ -4,8 +4,11 @@ import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.animal.frog.Frog;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
@@ -13,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.Path;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -26,28 +30,19 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.ability.abilities.dimensional_recall.DimensionalRecall;
 import org.jahdoo.ascension.ability.abilities.nova_smash.NovaSmash;
 import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
-import org.jahdoo.ascension.attachments.player_abilities.ChallengeLevelData;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
-import org.jahdoo.ascension.trading_post.ItemCosts;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.block.perk_table.PerkTableEntity;
-import org.jahdoo.common.entities.CustomSkeleton;
-import org.jahdoo.common.entities.CustomZombie;
-import org.jahdoo.common.entities.TamableEntity;
-import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
-import org.jahdoo.common.registers.BlockReg;
-import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.networking.server2client.MoveClientEntityS2CP;
+import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
+import org.jahdoo.common.registers.AttachmentReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
-
-import static net.minecraft.world.entity.ai.behavior.BehaviorUtils.throwItem;
-import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_DATA;
@@ -124,17 +119,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void levelTickEvent(LevelTickEvent.Pre tickEvent){
-        if(!(tickEvent.getLevel() instanceof CustomLevel level)) return;
-        for (var entity : level.getEntities().getAll()) {
-            if(entity instanceof Mob mob && mob.getTarget() == null){
-                if(entity instanceof TamableEntity tEntity && tEntity.getOwner() == null){
-                    var players = level.players();
-                    if(!players.isEmpty()){
-                        mob.setTarget(Helpers.listRandom(players));
-                    }
-                }
-            }
-        }
+        assignTarget(tickEvent);
     }
 
     @SubscribeEvent
@@ -151,11 +136,12 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void levelTickEvent(EntityJoinLevelEvent event){
-        var level = event.getLevel();
         var entity = event.getEntity();
 
-        if(level instanceof CustomLevel customLevel && entity instanceof Player player){
-            var getData = ChallengeLevelData.getProperties(customLevel);
+        if(entity instanceof ServerPlayer player){
+            var wallet = player.getData(AttachmentReg.PLAYER_WALLET).getWallet();
+            PacketDistributor.sendToPlayer(player, new WalletSyncS2CP(wallet));
+
 //            if(!customLevel.getDescriptionKey().contains(TRADING_POST)){
 //                LevelGenerator.playerSetup(player, getData.round());
 //            }
@@ -170,9 +156,6 @@ public class ServerEvents {
     public static void itemClickEvent(PlayerInteractEvent.RightClickItem event) {
         var mainHand = event.getItemStack();
         var player = event.getEntity();
-
-//        System.out.println(event.getLevel());
-//        System.out.println(mainHand.get(DataComponentRegistry.RUNE_HOLDER));
 
 //        if(mainHand.has(DataComponentRegistry.RUNE_HOLDER)){
 //            var rune = player.getOffhandItem();

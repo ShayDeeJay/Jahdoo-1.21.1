@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbstractUtilityProjectile;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.UtilityHelpers;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.ascension.utils.Helpers;
@@ -77,7 +77,7 @@ public class BlockBomb extends AbstractUtilityProjectile {
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         this.hasHitBlock = true;
         Helpers.getSoundWithPosition(generic.level(), generic.blockPosition(), SoundEvents.SLIME_BLOCK_PLACE, 1.5f);
         generic.setDeltaMovement(0, 0, 0);

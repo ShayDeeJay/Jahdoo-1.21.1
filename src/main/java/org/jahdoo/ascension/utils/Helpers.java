@@ -24,14 +24,17 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.animal.frog.Frog;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -238,6 +241,11 @@ public class Helpers {
         for (String o : Arrays.stream(info).toList()) {
             player.sendSystemMessage(withStyleComponentTrans(o,randomColour));
         }
+    }
+
+    public static boolean canPathfindToTarget(Mob finder, LivingEntity target) {
+        Path path = finder.getNavigation().createPath(target, 0);
+        return path != null /*&& path.getDistToTarget() < distance*/;
     }
 
     public static void sendPacketsToPlayer(Level level, CustomPacketPayload payloads) {

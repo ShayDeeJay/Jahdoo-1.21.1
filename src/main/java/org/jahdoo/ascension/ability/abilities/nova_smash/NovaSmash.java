@@ -21,7 +21,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
-import org.jahdoo.ascension.attachments.AbstractAttachment;
+import org.jahdoo.ascension.attachments.IAttachment;
 import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.networking.server2client.NovaSmashS2CP;
@@ -44,7 +44,7 @@ import static org.jahdoo.ascension.utils.DamageUtils.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.*;
 
-public class NovaSmash implements AbstractAttachment {
+public class NovaSmash implements IAttachment {
 
     private int highestDelta;
     private boolean canSmash;

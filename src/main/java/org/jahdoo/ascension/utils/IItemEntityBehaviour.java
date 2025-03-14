@@ -3,6 +3,6 @@ package org.jahdoo.ascension.utils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 
-public interface ItemEntityBehaviour {
+public interface IItemEntityBehaviour {
     boolean onItemInteraction(ItemEntity itemEntity, LivingEntity livingEntity);
 }

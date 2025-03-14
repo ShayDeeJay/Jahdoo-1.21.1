@@ -6,18 +6,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.networking.client2server.ChaosCubeC2SP;
 
 import static com.mojang.blaze3d.platform.InputConstants.*;
 import static net.minecraft.client.Minecraft.*;
-import static org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties.getRelativePosition;
-import static org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties.updateAll;
+import static org.jahdoo.ascension.attachments.ChaosCubeData.getRelativePosition;
+import static org.jahdoo.ascension.attachments.ChaosCubeData.updateAll;
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 
 public class CopyPasteEvent {
 
-    private static void convertSavedData(ModularChaosCubeEntity modEntity, Player player) {
+    private static void convertSavedData(ChaosCubeEntity modEntity, Player player) {
         var chaosCubeProperties = player.getData(MODULAR_CHAOS_CUBE);
         var action = chaosCubeProperties.getDirection(chaosCubeProperties.action());
         var input = chaosCubeProperties.getDirection(chaosCubeProperties.input());
@@ -41,7 +41,7 @@ public class CopyPasteEvent {
 
         var be = player.level().getBlockEntity(blockHitResult.getBlockPos());
 
-        if(!(be instanceof ModularChaosCubeEntity modEntity)) return;
+        if(!(be instanceof ChaosCubeEntity modEntity)) return;
         if(!(player instanceof LocalPlayer)) return;
 
         var window = getInstance().getWindow().getWindow();

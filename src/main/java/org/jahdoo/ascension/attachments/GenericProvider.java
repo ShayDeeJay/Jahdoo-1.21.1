@@ -7,7 +7,7 @@ import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 
 import java.util.function.Supplier;
 
-public class GenericProvider<T extends AbstractAttachment> implements IAttachmentSerializer<CompoundTag, T> {
+public class GenericProvider<T extends IAttachment> implements IAttachmentSerializer<CompoundTag, T> {
 
     private final Supplier<T> factory;
 

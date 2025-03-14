@@ -10,7 +10,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.enchanted_block.ConverterValues;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.networking.server2client.EnchantedBlockS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockReg;
@@ -44,7 +44,7 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
         super.onBlockBlockHit(blockHitResult);
 
         var level = getLevel();
-        if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         var pos = blockHitResult.getBlockPos();
         var state = level.getBlockState(pos);
 

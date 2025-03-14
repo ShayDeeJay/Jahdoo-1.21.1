@@ -30,7 +30,7 @@ import java.util.UUID;
 import static net.minecraft.world.entity.projectile.ProjectileUtil.getWeaponHoldingHand;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
-public class CustomSkeleton extends Skeleton implements TamableEntity {
+public class CustomSkeleton extends Skeleton implements ITamableEntity {
 
     private LivingEntity owner;
     private UUID ownerUUID;

@@ -1,29 +1,25 @@
 package org.jahdoo.common.block.shopping_table;
 
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.ascension.RewardLootTables;
-import org.jahdoo.ascension.trading_post.ItemCosts;
 import org.jahdoo.ascension.utils.Helpers;
 
-import static net.minecraft.world.effect.MobEffects.REGENERATION;
-import static org.jahdoo.ascension.trading_post.ItemCosts.*;
+import static org.jahdoo.ascension.attachments.PlayerWallet.*;
+import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.*;
 import static org.jahdoo.common.registers.BlockEntityReg.*;
 
 public class ShoppingTableEntity extends AbstractBEInventory {
 
-    public ItemCosts itemCosts = EMPTY_COST;
+    public CurrencyConverter itemCosts = EMPTY;
 
     public ShoppingTableEntity(BlockPos pos, BlockState state) {
         super(SHOPPING_TABLE_BE.get(), pos, state, 64);
@@ -45,10 +41,10 @@ public class ShoppingTableEntity extends AbstractBEInventory {
     }
 
     public int getCost(){
-        return itemCosts.value();
+        return CurrencyConverter.convertToWallet(itemCosts);
     }
 
-    public void setCost(ItemCosts cost) {
+    public void setCost(CurrencyConverter cost) {
         this.itemCosts = cost;
     }
 
@@ -61,7 +57,9 @@ public class ShoppingTableEntity extends AbstractBEInventory {
     }
 
     public ItemStack getCurrencyType() {
-        return getItemStack(itemCosts.CurrencyType());
+        var coins = this.itemCosts.coins();
+        var index = coins.stream().filter(i -> i > 0).findFirst();
+        return index.map(CurrencyConverter::getItemStack).orElse(ItemStack.EMPTY);
     }
 
     @Override

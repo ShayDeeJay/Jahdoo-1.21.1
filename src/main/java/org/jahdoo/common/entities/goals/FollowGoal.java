@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-import org.jahdoo.common.entities.TamableEntity;
+import org.jahdoo.common.entities.ITamableEntity;
 
 import java.util.EnumSet;
 
@@ -125,7 +125,7 @@ public class FollowGoal extends Goal {
     }
 
     public boolean canUse() {
-        if(tamable instanceof TamableEntity tame){
+        if(tamable instanceof ITamableEntity tame){
             LivingEntity livingentity = tame.getOwner();
             if (livingentity == null) {
                 return false;

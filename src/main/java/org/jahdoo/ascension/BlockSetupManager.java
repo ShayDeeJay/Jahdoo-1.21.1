@@ -6,9 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.ascension.trading_post.ItemCosts;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
@@ -19,13 +17,14 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import static net.minecraft.core.component.DataComponents.*;
+
+import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.world.level.block.Blocks.*;
-import static net.minecraft.world.level.block.Blocks.BARRIER;
 import static org.jahdoo.ascension.StructureManager.*;
+import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.*;
 import static org.jahdoo.ascension.trading_post.ShoppingItems.getEliteShoppingItem;
-import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.Helpers.nameToId;
 import static org.jahdoo.common.block.TrialPortalBlock.*;
 import static org.jahdoo.common.block.loot_chest.LootChestBlock.FACING;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
@@ -128,10 +127,10 @@ public class BlockSetupManager {
                 entity.setItem(itemStack);
 
                 var cost = switch (value) {
-                    case 1 -> ItemCosts.getBronzeCost(40);
-                    case 2 -> ItemCosts.getSilverCost(40);
-                    case 3 -> ItemCosts.getPlatinumCost(3);
-                    default -> ItemCosts.getBronzeCost(20);
+                    case 1 -> setBronzeCost(40);
+                    case 2 -> setSilverCost(40);
+                    case 3 -> setPlatinumCost(3);
+                    default -> setBronzeCost(20);
                 };
 
                 entity.setCost(cost);
@@ -149,12 +148,12 @@ public class BlockSetupManager {
             if(blockEntity instanceof ShoppingTableEntity entity){
                 if(purple.get() == 0){
                     entity.setItem(new ItemStack(AUGMENT));
-                    entity.setCost(ItemCosts.getGoldCost(20));
+                    entity.setCost(setGoldCost(20));
                 } else {
                     var randomLootItem = new ItemStack(RUNE);
                     RuneHelpers.generateRandomTypAttribute(randomLootItem, null);
                     entity.setItem(randomLootItem);
-                    entity.setCost(ItemCosts.getGoldCost(10));
+                    entity.setCost(setGoldCost(10));
                 }
             }
             purple.getAndIncrement();
@@ -164,7 +163,7 @@ public class BlockSetupManager {
             level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, 3));
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
-                entity.setCost(ItemCosts.getGoldCost(1));
+                entity.setCost(setGoldCost(1));
             }
         }
     }

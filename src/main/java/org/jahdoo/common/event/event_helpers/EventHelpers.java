@@ -8,6 +8,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
@@ -24,17 +26,19 @@ import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.ability.abilities.block_placer.BlockPlacerAbility;
 import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.ascension.ability.abilities.wall_placer.WallPlacerAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.trading_post.ItemCosts;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
+import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.EffectReg;
@@ -42,6 +46,8 @@ import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
+
+import java.util.ArrayList;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
@@ -282,25 +288,56 @@ public class EventHelpers {
         if(entity.level() instanceof CustomLevel){
             var max = Math.max(1, bonus);
             if(entity instanceof CustomZombie){
-                if(Random.nextInt(0, Math.min(10, max)) == 0){
+                if(Random.nextInt(0, Math.min(3, max)) == 0){
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
                     throwItem(entity, stack, entity.position());
                 }
             }
 
             if(entity instanceof CustomSkeleton){
-                if(Random.nextInt(0,Math.min(5, max)) == 0){
-                    var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 20 - bonus));
-                    throwItem(entity, stack, entity.position());
-                }
+                var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 20 - bonus));
+                throwItem(entity, stack, entity.position());
             }
 
             if(entity instanceof EternalWizard wizard){
                 if(wizard.getOwner() == null){
-                    if (Random.nextInt(0,Math.min(10 , max)) == 0) {
+                    if (Random.nextInt(0,Math.min(3 , max)) == 0) {
                         var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
-                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(ItemCosts.SILVER_COIN));
+                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
                         throwItem(entity, stack, entity.position());
+                    }
+                }
+            }
+        }
+    }
+
+    public static void assignTarget(LevelTickEvent.Pre tickEvent) {
+        if(!(tickEvent.getLevel() instanceof CustomLevel level)) return;
+        var asList = new ArrayList<Mob>();
+        level.getEntities().getAll().forEach(e -> { if (e instanceof Mob mob) asList.add(mob); });
+        var filtered = asList
+            .stream()
+            .filter(m -> m instanceof ITamableEntity t && t.getOwner() == null)
+            .toList();
+
+        for (var entity : filtered) {
+            if(entity.getTarget() == null){
+                var getNearby = level.getNearbyEntities(
+                    LivingEntity.class,
+                    TargetingConditions.DEFAULT,
+                    entity,
+                    entity.getBoundingBox().inflate(500)
+                );
+
+                for (var livingEntity : getNearby) {
+                    if(livingEntity instanceof ITamableEntity t && t.getOwner() != null){
+                        if(Helpers.canPathfindToTarget(entity, livingEntity)){
+                            entity.setTarget(livingEntity);
+                        }
+                    } else if (livingEntity instanceof Player) {
+                        if(Helpers.canPathfindToTarget(entity, livingEntity)){
+                            entity.setTarget(livingEntity);
+                        }
                     }
                 }
             }

@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeScreen;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.networking.client2server.SyncComponentBlockC2S;
@@ -162,7 +162,7 @@ public class AugmentScreen extends Screen  {
         newHolder.abilityProperties().put(e, abilityModifier);
         newWandHolder.abilityProperties().put(abilityName, newHolder);
 
-        if(this.previousScreen != null && this.previousScreen instanceof ModularChaosCubeScreen screen){
+        if(this.previousScreen != null && this.previousScreen instanceof ChaosCubeScreen screen){
             var pos = screen.entity().getBlockPos();
             PacketDistributor.sendToServer(new SyncComponentBlockC2S(newWandHolder, pos));
         } else {

@@ -7,8 +7,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
-import org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties;
+import org.jahdoo.ascension.attachments.ChaosCubeData;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
@@ -18,28 +18,28 @@ public class ChaosCubeC2SP implements CustomPacketPayload {
     public static final StreamCodec<RegistryFriendlyByteBuf, ChaosCubeC2SP> STREAM_CODEC = CustomPacketPayload.codec(ChaosCubeC2SP::toBytes, ChaosCubeC2SP::new);
 
     BlockPos blockPos;
-    ModularChaosCubeProperties autoBlock;
+    ChaosCubeData autoBlock;
 
-    public ChaosCubeC2SP(BlockPos blockPos, ModularChaosCubeProperties autoBlock) {
+    public ChaosCubeC2SP(BlockPos blockPos, ChaosCubeData autoBlock) {
         this.blockPos = blockPos;
         this.autoBlock = autoBlock;
     }
 
     public ChaosCubeC2SP(FriendlyByteBuf buf) {
         this.blockPos = buf.readBlockPos();
-        this.autoBlock = buf.readJsonWithCodec(ModularChaosCubeProperties.CODEC);
+        this.autoBlock = buf.readJsonWithCodec(ChaosCubeData.CODEC);
     }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeBlockPos(blockPos);
-        buf.writeJsonWithCodec(ModularChaosCubeProperties.CODEC, autoBlock);
+        buf.writeJsonWithCodec(ChaosCubeData.CODEC, autoBlock);
     }
 
     public void handle(IPayloadContext ctx) {
         ctx.enqueueWork( () -> {
                 if(ctx.player().level() instanceof ServerLevel serverLevel){
                     var bEntity = serverLevel.getBlockEntity(blockPos);
-                    if(bEntity instanceof ModularChaosCubeEntity entity){
+                    if(bEntity instanceof ChaosCubeEntity entity){
                         entity.setData(MODULAR_CHAOS_CUBE, this.autoBlock);
                     }
                 }

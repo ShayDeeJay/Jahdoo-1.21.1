@@ -12,29 +12,22 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.MobManager;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.ascension.ability.abilities.frostbolts.FrostboltsAbility;
-import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.entities.TamableEntity;
+import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.registers.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.ascension.MobManager.spawnAroundEntity;
-import static org.jahdoo.ascension.ability.abilities.EtherealArrow.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.registers.ElementReg.*;
-import static org.jahdoo.common.registers.EntityDataReg.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
 
-public class VoidSpider extends Spider implements TamableEntity {
+public class VoidSpider extends Spider implements ITamableEntity {
     protected boolean triggerDeathSpawn;
     boolean isAdult = this.getScale() == 1.5F;
 

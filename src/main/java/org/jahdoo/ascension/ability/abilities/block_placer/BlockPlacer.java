@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbstractUtilityProjectile;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 
 import static org.jahdoo.common.items.wand.WandItemHelper.getStoredBlock;
@@ -74,7 +74,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
                     }
                 }
             } else {
-                if(level.getBlockEntity(BlockPos.containing(pos)) instanceof ModularChaosCubeEntity entity){
+                if(level.getBlockEntity(BlockPos.containing(pos)) instanceof ChaosCubeEntity entity){
                     var localStack = entity.externalInputInventory(level);
                     if(!localStack.isEmpty()) entity.externalInputInventory(level).shrink(1);
                     placeSound(blockPos, side, Block.byItem(localStack.getItem()), level, playSound);
@@ -86,7 +86,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         var player = (Player) generic.getOwner();
         var pos = this.generic.blockEntityPos;
         var blockPos = blockHitResult.getBlockPos();
@@ -101,7 +101,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
             replaceBlock = getStoredBlock(level, mainHandItem);
         } else {
             if(pos != null) {
-                if(this.level.getBlockEntity(BlockPos.containing(pos)) instanceof ModularChaosCubeEntity entity){
+                if(this.level.getBlockEntity(BlockPos.containing(pos)) instanceof ChaosCubeEntity entity){
                     if(!entity.externalInputInventory(level).isEmpty()){
                         targetBlock = entity.externalInputInventory(level);
                         replaceBlock = Block.byItem(targetBlock.getItem());

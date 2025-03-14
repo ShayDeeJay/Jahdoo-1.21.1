@@ -3,42 +3,42 @@ package org.jahdoo.ascension.trading_post;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.wand.WandData;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
-import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.List;
 
-import static net.minecraft.world.entity.EquipmentSlot.*;
+import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
+import static net.minecraft.world.entity.EquipmentSlot.OFFHAND;
 import static org.jahdoo.ascension.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.ascension.RewardLootTables.magnetItem;
-import static org.jahdoo.ascension.trading_post.ShoppingArmor.enchantArmorItem;
-import static org.jahdoo.ascension.trading_post.ShoppingArmor.getMageArmorPiece;
-import static org.jahdoo.ascension.trading_post.ShoppingArmor.getWizardArmorPiece;
+import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter;
+import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.setGoldCost;
+import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.setPlatinumCost;
+import static org.jahdoo.ascension.trading_post.ShoppingArmor.*;
 import static org.jahdoo.ascension.trading_post.ShoppingRunes.*;
-import static org.jahdoo.ascension.trading_post.ShoppingRunes.getEternalEliteRunes;
 import static org.jahdoo.ascension.trading_post.ShoppingWeapon.enchantSword;
 import static org.jahdoo.ascension.trading_post.ShoppingWeapon.getElementalSword;
+import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.Helpers.listRandom;
+import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.generateFullRune;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
-import static org.jahdoo.common.registers.ElementReg.*;
+import static org.jahdoo.common.registers.ElementReg.getWithout;
 import static org.jahdoo.common.registers.ElementReg.random;
-import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
-import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.ascension.utils.Helpers.listRandom;
 
-public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
+public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts){
 
     public static ShoppingItems shoppingArmorItem(ServerLevel serverLevel) {
         var getRandomArmor = listRandom(List.of(getMageArmorPiece(), getWizardArmorPiece()));
@@ -46,7 +46,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
             enchantArmorItem(serverLevel, getRandomArmor, armorItem, true);
         }
 
-        return new ShoppingItems(getRandomArmor, ItemCosts.getGoldCost(110));
+        return new ShoppingItems(getRandomArmor, setGoldCost(110));
     }
 
     public static ShoppingItems shoppingMagnetItem() {
@@ -55,7 +55,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
         var getMagnet = magnetItem(getRarity, magnetStack);
 
         addAttribute(ElementReg.random(), getMagnet);
-        return new ShoppingItems(getMagnet, ItemCosts.getGoldCost(110));
+        return new ShoppingItems(getMagnet, setGoldCost(110));
     }
 
     public static ShoppingItems shoppingAmuletItem(){
@@ -64,7 +64,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
 
         itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(3));
         itemStack.set(ComponentReg.RUNE_HOLDER, RuneHolder.makeRuneSlots(4, refinement));
-        return new ShoppingItems(itemStack, ItemCosts.getGoldCost(100));
+        return new ShoppingItems(itemStack, setGoldCost(100));
     }
 
     public static ShoppingItems shoppingSwordItem(ServerLevel serverLevel) {
@@ -74,7 +74,7 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
         var getRandomArmor = listRandom(meleeWeapons);
 
         enchantSword(serverLevel, getRandomArmor, true);
-        return new ShoppingItems(getRandomArmor, ItemCosts.getGoldCost(110));
+        return new ShoppingItems(getRandomArmor, setGoldCost(110));
     }
 
     public static ShoppingItems getEliteShoppingItem(ServerLevel serverLevel){
@@ -110,10 +110,10 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
         var attributes = rarity.getAttributes();
         var id = JahdooRarity.ETERNAL.getId();
         var getAll = List.of(
-            Pair.of(getMidRangeEliteRunes(getElement, attributes, id), ItemCosts.getGoldCost(150)),
-            Pair.of(getBetterRangeEliteRunes(attributes, id), ItemCosts.getGoldCost(300)),
-            Pair.of(getLegendaryRangeEliteRunes(attributes, id), ItemCosts.getPlatinumCost(150)),
-            Pair.of(getEternalEliteRunes(attributes, id), ItemCosts.getPlatinumCost(300))
+            Pair.of(getMidRangeEliteRunes(getElement, attributes, id), setGoldCost(150)),
+            Pair.of(getBetterRangeEliteRunes(attributes, id), setGoldCost(300)),
+            Pair.of(getLegendaryRangeEliteRunes(attributes, id), setPlatinumCost(150)),
+            Pair.of(getEternalEliteRunes(attributes, id), setPlatinumCost((300)))
         );
         var stack = new ItemStack(ItemReg.RUNE.get());
         var getRandomRune = listRandom(getAll);
@@ -135,9 +135,9 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
 
         attachLootBeamComponent(itemStack, rarity);
         itemStack.set(JAHDOO_RARITY.get(), rarity.getId());
-        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, getRegen, EquipmentSlot.MAINHAND, false);
-        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, getMana, EquipmentSlot.OFFHAND, false);
-        return new ShoppingItems(itemStack, ItemCosts.getGoldCost(180));
+        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, getRegen, MAINHAND, false);
+        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, getMana, OFFHAND, false);
+        return new ShoppingItems(itemStack, setGoldCost(180));
     }
 
     public static ShoppingItems shoppingWandItem(){
@@ -172,6 +172,6 @@ public record ShoppingItems(ItemStack ShoppingItem, ItemCosts itemCosts){
 
         var altElement = Helpers.listRandom(getWithout(element));
         addAttribute(altElement, itemStack);
-        return new ShoppingItems(itemStack, ItemCosts.getPlatinumCost(200));
+        return new ShoppingItems(itemStack, setPlatinumCost(200));
     }
 }

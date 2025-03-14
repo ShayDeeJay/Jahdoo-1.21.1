@@ -5,14 +5,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.ascension.attachments.AbstractAttachment;
+import org.jahdoo.ascension.attachments.IAttachment;
 import org.jahdoo.common.networking.server2client.BouncyFootS2CP;
 import org.jahdoo.common.registers.EffectReg;
 
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.registers.AttachmentReg.*;
 
-public class BouncyFoot implements AbstractAttachment {
+public class BouncyFoot implements IAttachment {
 
     private double currentDelta;
     private double previousDelta;

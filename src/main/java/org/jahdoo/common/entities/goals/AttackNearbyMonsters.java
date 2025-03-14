@@ -8,7 +8,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
-import org.jahdoo.common.entities.TamableEntity;
+import org.jahdoo.common.entities.ITamableEntity;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -45,7 +45,7 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
     }
 
     public void start() {
-        if(mob instanceof TamableEntity tamableEntity){
+        if(mob instanceof ITamableEntity tamableEntity){
             handleTargeting(tamableEntity);
         }
         super.start();
@@ -68,11 +68,11 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
         }
     }
 
-    private void handleTargeting(TamableEntity tamableEntity) {
+    private void handleTargeting(ITamableEntity tamableEntity) {
         if(mob.getTarget() == null){
             if (target == null) return;
 
-            var isTargetFriend = this.target instanceof TamableEntity tamableTarget && tamableTarget.getOwner() == tamableEntity.getOwner();
+            var isTargetFriend = this.target instanceof ITamableEntity tamableTarget && tamableTarget.getOwner() == tamableEntity.getOwner();
             var isOwner = this.target.equals(tamableEntity.getOwner());
 
             if (tamableEntity.getOwner() == null) {

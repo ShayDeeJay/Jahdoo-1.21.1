@@ -10,12 +10,16 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.lock.LockBlockEntity;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockReg;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.core.BlockPos.withinManhattan;
 import static org.jahdoo.ascension.BlockSetupManager.setBlockGenerator;
 import static org.jahdoo.ascension.BlockSetupManager.setLocks;
+import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
+import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 
 public class StructureManager {
 
@@ -44,7 +48,16 @@ public class StructureManager {
                 level.destroyBlock(blockPos, false);
             }
             var getLock = level.getBlockEntity(blockPos);
-            if(getLock instanceof LockBlockEntity lock) lock.setRoomData();
+            if(getLock instanceof LockBlockEntity lock) {
+                lock.setRoomData();
+                var getPositions = innerRadiusRandom(blockPos.getCenter().subtract(0, 0.45, 0), 2.3, 350);
+
+                for (var vec3 : getPositions) {
+                    var colour = lock.roomId.getStyle().getColor().getValue();
+                    var particle = ParticleHandlers.getNonBakedParticles(colour, colour, 16, Random.nextInt(2, 4));
+                    sendParticles(level, particle, vec3, 0, 0, 0.5, 0, Random.nextDouble(0.3, 1.2));
+                }
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.modular_chaos_cube;
+package org.jahdoo.common.block.chaos_cube;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,23 +20,23 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static org.jahdoo.ascension.attachments.player_abilities.ModularChaosCubeProperties.*;
-import static org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity.AUGMENT_SLOT;
+import static org.jahdoo.ascension.attachments.ChaosCubeData.*;
+import static org.jahdoo.common.block.chaos_cube.ChaosCubeEntity.AUGMENT_SLOT;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.gui.ToggleComponent.*;
-import static org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeData.selectDirection;
+import static org.jahdoo.common.block.chaos_cube.ChaosCubeData.selectDirection;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.*;
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 
-public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaosCubeMenu> {
+public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
 
     private static final int IMAGE_SIZE = 256;
-    private final ModularChaosCubeMenu modularChaosCubeMenu;
+    private final ChaosCubeMenu modularChaosCubeMenu;
     private boolean input;
     private boolean output;
 
-    public ModularChaosCubeScreen(ModularChaosCubeMenu menu, Inventory inventory, Component title) {
+    public ChaosCubeScreen(ChaosCubeMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         this.modularChaosCubeMenu = menu;
     }
@@ -56,7 +56,7 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
         if(this.hoveredSlot != null) rebuildWidgets();
     }
 
-    public ModularChaosCubeEntity entity(){
+    public ChaosCubeEntity entity(){
         return this.modularChaosCubeMenu.getAutomationEntity();
     }
 
@@ -64,8 +64,8 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
         setAugmentModificationScreen(itemStack, this);
     }
 
-    private void toggleChained(ModularChaosCubeEntity entity){
-        ModularChaosCubeData.toggleChained(entity);
+    private void toggleChained(ChaosCubeEntity entity){
+        ChaosCubeData.toggleChained(entity);
         this.rebuildWidgets();
     }
 
@@ -92,8 +92,8 @@ public class ModularChaosCubeScreen extends AbstractContainerScreen<ModularChaos
         return Optional.empty();
     }
 
-    private void togglePower(ModularChaosCubeEntity entity){
-        ModularChaosCubeData.togglePower(entity);
+    private void togglePower(ChaosCubeEntity entity){
+        ChaosCubeData.togglePower(entity);
         entity.activateConnectedBlocks();
         this.rebuildWidgets();
     }

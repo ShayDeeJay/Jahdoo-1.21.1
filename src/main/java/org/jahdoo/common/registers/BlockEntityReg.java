@@ -10,10 +10,10 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationEntity;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
 import org.jahdoo.common.block.infuser.InfuserBlockEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.block.rune_table.RuneTableEntity;
@@ -49,8 +49,8 @@ public class BlockEntityReg {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AltarBlockEntity>> CHALLENGE_ALTAR_BE =
         registerBlockEntity("challenge_altar_be", AltarBlockEntity::new, CHALLENGE_ALTAR);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ModularChaosCubeEntity>> MODULAR_CHAOS_CUBE_BE =
-        registerBlockEntity("modular_chaos_cube_be", ModularChaosCubeEntity::new, MODULAR_CHAOS_CUBE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ChaosCubeEntity>> MODULAR_CHAOS_CUBE_BE =
+        registerBlockEntity("modular_chaos_cube_be", ChaosCubeEntity::new, MODULAR_CHAOS_CUBE);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LootChestEntity>> LOOT_CHEST_BE =
         registerBlockEntity("loot_chest_be", LootChestEntity::new, LOOT_CHEST);

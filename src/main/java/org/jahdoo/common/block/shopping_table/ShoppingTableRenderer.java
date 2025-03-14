@@ -7,9 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,8 +16,8 @@ import org.joml.Matrix4f;
 
 import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 import static net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
-import static net.minecraft.client.renderer.texture.OverlayTexture.*;
-import static net.minecraft.world.item.ItemDisplayContext.*;
+import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
+import static net.minecraft.world.item.ItemDisplayContext.FIXED;
 import static org.jahdoo.ascension.utils.ColourStore.OFF_WHITE;
 import static org.jahdoo.common.block.shopping_table.DisplayDirection.*;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
@@ -60,7 +58,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
 
         if(!itemStack1.isEmpty()){
             poseStack.pushPose();
-            renderCostText(Component.literal(String.valueOf(entity.getCost())), poseStack, source, -1, direction);
+            renderCostText(Component.literal(String.valueOf(entity.itemCosts)), poseStack, source, -1, direction);
             poseStack.translate(direction.x(), number, direction.z());
 
             var x = 0.6f;

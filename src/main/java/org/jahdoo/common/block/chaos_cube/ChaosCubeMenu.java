@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.modular_chaos_cube;
+package org.jahdoo.common.block.chaos_cube;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -10,21 +10,21 @@ import org.jahdoo.common.client.slots.ModularChaosCubeSlot;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.MenuReg;
 
-import static org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity.*;
+import static org.jahdoo.common.block.chaos_cube.ChaosCubeEntity.*;
 
-public class ModularChaosCubeMenu extends AbstractInternalContainer {
+public class ChaosCubeMenu extends AbstractInternalContainer {
 
     public static final int posX = 80;
     public static final int posY = 30;
     public int offSetX = 0;
     public int offSetY = 30;
 
-    public ModularChaosCubeMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
+    public ChaosCubeMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
         super(MenuReg.MODULAR_CHAOS_CUBE_MENU.get(), id, inv, extraData);
         this.setSlot();
     }
 
-    public ModularChaosCubeMenu(int id, Inventory inv, AbstractBEInventory entity, ContainerData data) {
+    public ChaosCubeMenu(int id, Inventory inv, AbstractBEInventory entity, ContainerData data) {
         super(MenuReg.MODULAR_CHAOS_CUBE_MENU.get(), id, inv, entity, data);
         this.setSlot();
     }
@@ -43,8 +43,8 @@ public class ModularChaosCubeMenu extends AbstractInternalContainer {
         this.addSlot(new ModularChaosCubeSlot(this.getAutomationEntity().inputItemHandler,AUGMENT_SLOT, posX, posY));
     }
 
-    public ModularChaosCubeEntity getAutomationEntity(){
-        if(this.blockEntity instanceof ModularChaosCubeEntity modularChaosCubeEntity) return modularChaosCubeEntity;
+    public ChaosCubeEntity getAutomationEntity(){
+        if(this.blockEntity instanceof ChaosCubeEntity modularChaosCubeEntity) return modularChaosCubeEntity;
         return null;
     }
 

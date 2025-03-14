@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.ascension.ability.AbstractUtilityProjectile;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeEntity;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.ascension.utils.Helpers;
 
@@ -55,7 +55,7 @@ public class WallPlacer extends AbstractUtilityProjectile {
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ModularChaosCubeEntity) return;
+        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         var owner = (LivingEntity) generic.getOwner();
         if(owner == null && generic.blockEntityPos == null) return;
 
@@ -78,7 +78,7 @@ public class WallPlacer extends AbstractUtilityProjectile {
             replaceBlock = getStoredBlock(level, mainHandItem);
         } else {
             if(pos1 != null) {
-                if(this.level.getBlockEntity(BlockPos.containing(pos1)) instanceof ModularChaosCubeEntity entity){
+                if(this.level.getBlockEntity(BlockPos.containing(pos1)) instanceof ChaosCubeEntity entity){
                     if(!entity.externalInputInventory(level).isEmpty()){
                         targetBlock = entity.externalInputInventory(level);
                         replaceBlock = Block.byItem(targetBlock.getItem());

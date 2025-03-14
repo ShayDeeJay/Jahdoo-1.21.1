@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.modular_chaos_cube;
+package org.jahdoo.common.block.chaos_cube;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -25,16 +25,16 @@ import org.jetbrains.annotations.Nullable;
 
 import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 
-public class ModularChaosCubeBlock extends BaseEntityBlock {
+public class ChaosCubeBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
 
-    public ModularChaosCubeBlock() {
+    public ChaosCubeBlock() {
         super(sharedBehaviour);
     }
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec((x) -> new ModularChaosCubeBlock());
+        return simpleCodec((x) -> new ChaosCubeBlock());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ModularChaosCubeBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new ModularChaosCubeEntity(pos,state);
+        return new ChaosCubeEntity(pos,state);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ModularChaosCubeBlock extends BaseEntityBlock {
 
     private InteractionResult openWandGUI(Player player, BlockPos blockPos, Level level){
         var fail = InteractionResult.FAIL;
-        if (!(level.getBlockEntity(blockPos) instanceof ModularChaosCubeEntity cubeEntity)) return fail;
+        if (!(level.getBlockEntity(blockPos) instanceof ChaosCubeEntity cubeEntity)) return fail;
         if(!(player instanceof ServerPlayer serverPlayer)) return fail;
 
         serverPlayer.openMenu(cubeEntity, blockPos);
@@ -87,7 +87,7 @@ public class ModularChaosCubeBlock extends BaseEntityBlock {
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof ModularChaosCubeEntity automationBlock) {
+            if (blockEntity instanceof ChaosCubeEntity automationBlock) {
                 automationBlock.dropsAllInventory(level);
             }
         }

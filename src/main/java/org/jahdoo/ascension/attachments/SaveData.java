@@ -1,21 +1,19 @@
-package org.jahdoo.ascension.attachments.player_abilities;
+package org.jahdoo.ascension.attachments;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.ascension.attachments.AbstractAttachment;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.StreamSupport;
 
-public class SaveData implements AbstractAttachment {
+public class SaveData implements IAttachment {
 
     private final List<ItemStack> itemStacks = new ArrayList<>();
 
@@ -30,7 +28,7 @@ public class SaveData implements AbstractAttachment {
     public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         var allKeys = nbt.getCompound("itemStacks");
         for (var keys : allKeys.getAllKeys()) {
-            Optional<ItemStack> itemStack = ItemStack.parse(provider, allKeys.get(keys));
+            var itemStack = ItemStack.parse(provider, allKeys.get(keys));
             this.itemStacks.add(itemStack.orElse(ItemStack.EMPTY));
         }
     }

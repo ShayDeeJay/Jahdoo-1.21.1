@@ -2,9 +2,8 @@ package org.jahdoo.common.items.block_items;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import org.jahdoo.common.block.modular_chaos_cube.ModularChaosCubeBlockRenderer;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeBlockRenderer;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -41,10 +40,10 @@ public class ModularChaosCubeItem extends BlockItem implements GeoItem {
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
         consumer.accept(
               new GeoRenderProvider() {
-                  private ModularChaosCubeBlockRenderer renderer;
+                  private ChaosCubeBlockRenderer renderer;
                   @Override
                   public @NotNull BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
-                      if (this.renderer == null) this.renderer = new ModularChaosCubeBlockRenderer();
+                      if (this.renderer == null) this.renderer = new ChaosCubeBlockRenderer();
                       return this.renderer;
                   }
 
