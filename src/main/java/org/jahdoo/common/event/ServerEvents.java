@@ -21,10 +21,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.living.LivingUseTotemEvent;
-import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
+import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
@@ -135,20 +132,12 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public static void levelTickEvent(EntityJoinLevelEvent event){
+    public static void joinEvent(EntityJoinLevelEvent event){
         var entity = event.getEntity();
 
         if(entity instanceof ServerPlayer player){
             var wallet = player.getData(AttachmentReg.PLAYER_WALLET).getWallet();
             PacketDistributor.sendToPlayer(player, new WalletSyncS2CP(wallet));
-
-//            if(!customLevel.getDescriptionKey().contains(TRADING_POST)){
-//                LevelGenerator.playerSetup(player, getData.round());
-//            }
-//
-//            if(Objects.equals(getData.dimType, TRADING_POST)){
-//                ChallengeLevelData.setDimension(customLevel, TRIAL);
-//            }
         }
     }
 
@@ -167,6 +156,15 @@ public class ServerEvents {
 //            }
 //        }
 
+    }
+
+    @SubscribeEvent
+    public static void livingDeathEvent(LivingDropsEvent event){
+        var entity = event.getEntity();
+
+        if(entity.level() instanceof CustomLevel){
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent

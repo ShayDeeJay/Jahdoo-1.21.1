@@ -1,6 +1,7 @@
 package org.jahdoo.common.block.shopping_table;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -11,6 +12,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jahdoo.ascension.attachments.PlayerWallet;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.wand.WandItem;
 import org.joml.Matrix4f;
 
@@ -18,6 +21,7 @@ import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 import static net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 import static net.minecraft.world.item.ItemDisplayContext.FIXED;
+import static org.jahdoo.ascension.attachments.PlayerWallet.*;
 import static org.jahdoo.ascension.utils.ColourStore.OFF_WHITE;
 import static org.jahdoo.common.block.shopping_table.DisplayDirection.*;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
@@ -53,18 +57,18 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
     }
 
     private void renderPrice(ShoppingTableEntity entity, PoseStack poseStack, MultiBufferSource source, int packedLight, ItemRenderer renderer, DisplayDirection direction) {
-        var itemStack1 = entity.getCurrencyType() == null || entity.getItem().getStackInSlot(0).isEmpty() ? ItemStack.EMPTY : entity.getCurrencyType();
         var number = 0.5f;
 
-        if(!itemStack1.isEmpty()){
+        if(!entity.getItem().getStackInSlot(0).isEmpty()){
             poseStack.pushPose();
-            renderCostText(Component.literal(String.valueOf(entity.itemCosts)), poseStack, source, -1, direction);
+            var coin = CurrencyConverter.getCoin(entity.itemCosts);
+            renderCostText(Helpers.withStyleComponent(String.valueOf(coin.getSecond()), coin.getFirst().getTextColour()), poseStack, source, -1, direction);
             poseStack.translate(direction.x(), number, direction.z());
 
             var x = 0.6f;
             poseStack.scale(x, x, x);
             poseStack.mulPose(Axis.YP.rotationDegrees(direction.direction()));
-            renderer.renderStatic(itemStack1, FIXED, packedLight, NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
+            renderer.renderStatic(entity.getCurrencyType(), FIXED, packedLight, NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
             poseStack.popPose();
         }
 

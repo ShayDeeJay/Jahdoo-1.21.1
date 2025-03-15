@@ -42,6 +42,7 @@ import java.util.UUID;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.ability.abilities.fireball.FireballAbility.abilityId;
 import static org.jahdoo.ascension.ability.abilities.armageddon.ArmageddonModule.buddy;
+import static org.jahdoo.common.entities.SharedEntityBehaviours.canTarget;
 import static org.jahdoo.common.items.wand.CastHelper.castAnimation;
 import static org.jahdoo.common.items.wand.WandAnimations.SINGLE_CAST_ID;
 
@@ -174,6 +175,13 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
     public void performRangedAttack(LivingEntity target, float distanceFactor) {
 //        fireballAbility(target);
         shooterAbility(target);
+    }
+
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        if(canTarget(target, owner)){
+            super.setTarget(target);
+        }
     }
 
     @Override

@@ -25,14 +25,14 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.boon.LevelBoonSelection;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.AttachmentReg;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
-import static net.minecraft.world.level.block.Blocks.BEDROCK;
-import static net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK;
+import static net.minecraft.world.level.block.Blocks.*;
 import static org.jahdoo.ascension.StructureManager.placeNewSide;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
@@ -118,7 +118,8 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         if(!(level.getBlockEntity(pos) instanceof LockBlockEntity entity)) return FAIL;
         if(entity.isInitialized()){
             if (!entity.canPlace()) {
-                player.displayClientMessage(Component.literal("Invalid Location"), true);
+                player.displayClientMessage(Helpers.withStyleComponent("Can't place, room already generated", ColourStore.NEGATIVE_RED), true);
+                Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_REJECT_REWARDED_PLAYER, 0.3F , 2F);
                 return FAIL;
             }
 
@@ -127,7 +128,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
                 var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
                 getSoundWithPosition(serverLevel, pos, SoundEvents.LODESTONE_COMPASS_LOCK, 1, 1.4F);
                 getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_ACTIVATE, 1, 0.6F);
-                placeNewSide(serverLevel, getState, pos.relative(getState, 0), Helpers.nameToId(entity.roomId.getString()));
+                placeNewSide(serverLevel, getState, pos.relative(getState, 1), Helpers.nameToId(entity.roomId.getString()));
 
                 var range = betweenClosed(
                     pos.getX() - 10, pos.getY() - 10, pos.getZ() - 10,
@@ -135,10 +136,10 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
                 );
 
                 for (var blockPos : range) {
-                    var bedrock = serverLevel.getBlockState(blockPos).is(BEDROCK);
                     var netherite = serverLevel.getBlockState(blockPos).is(NETHERITE_BLOCK);
+                    var observer = serverLevel.getBlockState(blockPos).is(OBSERVER);
 
-                    if (bedrock || netherite) serverLevel.destroyBlock(blockPos, false);
+                    if (observer || netherite) serverLevel.destroyBlock(blockPos, false);
                 }
 
                 serverLevel.destroyBlock(pos, false);

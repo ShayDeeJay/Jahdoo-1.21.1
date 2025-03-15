@@ -7,9 +7,13 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Husk;
+import net.minecraft.world.entity.monster.Vindicator;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
@@ -19,6 +23,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -39,11 +44,14 @@ import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
 import org.jahdoo.common.entities.ITamableEntity;
+import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
+import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.SoundReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -285,9 +293,13 @@ public class EventHelpers {
     }
 
     public static void coinDropCalc(LivingEntity entity, int bonus) {
-        if(entity.level() instanceof CustomLevel){
+        if(entity.level() instanceof CustomLevel customLevel){
             var max = Math.max(1, bonus);
-            if(entity instanceof CustomZombie){
+            var isZombie = entity instanceof CustomZombie;
+            var isHusk = entity instanceof Husk;
+            var isVindicator = entity instanceof Vindicator;
+
+            if(isZombie || isHusk || isVindicator){
                 if(Random.nextInt(0, Math.min(3, max)) == 0){
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
                     throwItem(entity, stack, entity.position());
@@ -299,28 +311,48 @@ public class EventHelpers {
                 throwItem(entity, stack, entity.position());
             }
 
+            if(entity instanceof VoidSpider spider){
+                if(spider.getOwner() == null){
+                    var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
+                    stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
+                    throwItem(entity, stack, entity.position());
+                }
+            }
+
             if(entity instanceof EternalWizard wizard){
                 if(wizard.getOwner() == null){
-                    if (Random.nextInt(0,Math.min(3 , max)) == 0) {
-                        var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
-                        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
-                        throwItem(entity, stack, entity.position());
-                    }
+                    var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(4, 10 - bonus));
+                    var canDropGold = Random.nextInt(10) == 0;
+
+                    stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(canDropGold ? 2 : 1));
+                    throwItem(entity, stack, entity.position());
                 }
             }
         }
+    }
+
+    public static void throwItem(LivingEntity livingEntity, ItemStack stack, Vec3 offset) {
+        Vec3 vec3 = new Vec3(0.3F, 0.3F, 0.3F);
+        throwItem(livingEntity, stack, offset, vec3, 0.3F);
+    }
+
+    public static void throwItem(LivingEntity entity, ItemStack stack, Vec3 offset, Vec3 speedMultiplier, float yOffset) {
+        double d0 = entity.getEyeY() - (double)yOffset;
+        var itementity = new ItemEntity(entity.level(), entity.getX(), d0, entity.getZ(), stack);
+        itementity.setPickUpDelay(0);
+        itementity.setThrower(entity);
+        var vec3 = offset.subtract(entity.position());
+        vec3 = vec3.normalize().multiply(speedMultiplier.x, speedMultiplier.y, speedMultiplier.z);
+        itementity.setDeltaMovement(vec3);
+        entity.level().addFreshEntity(itementity);
     }
 
     public static void assignTarget(LevelTickEvent.Pre tickEvent) {
         if(!(tickEvent.getLevel() instanceof CustomLevel level)) return;
         var asList = new ArrayList<Mob>();
         level.getEntities().getAll().forEach(e -> { if (e instanceof Mob mob) asList.add(mob); });
-        var filtered = asList
-            .stream()
-            .filter(m -> m instanceof ITamableEntity t && t.getOwner() == null)
-            .toList();
 
-        for (var entity : filtered) {
+        for (var entity : asList) {
             if(entity.getTarget() == null){
                 var getNearby = level.getNearbyEntities(
                     LivingEntity.class,
@@ -328,14 +360,20 @@ public class EventHelpers {
                     entity,
                     entity.getBoundingBox().inflate(500)
                 );
+                System.out.println(entity);
 
                 for (var livingEntity : getNearby) {
+
                     if(livingEntity instanceof ITamableEntity t && t.getOwner() != null){
                         if(Helpers.canPathfindToTarget(entity, livingEntity)){
                             entity.setTarget(livingEntity);
                         }
                     } else if (livingEntity instanceof Player) {
                         if(Helpers.canPathfindToTarget(entity, livingEntity)){
+                            entity.setTarget(livingEntity);
+                        }
+                    } else if (entity instanceof ITamableEntity t && t.getOwner() != null) {
+                        if(SharedEntityBehaviours.canTarget(livingEntity, t.getOwner())){
                             entity.setTarget(livingEntity);
                         }
                     }

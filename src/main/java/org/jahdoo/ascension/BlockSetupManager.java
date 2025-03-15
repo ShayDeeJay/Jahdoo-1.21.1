@@ -56,7 +56,7 @@ public class BlockSetupManager {
     static void setBlockGenerator(ServerLevel level, Iterable<BlockPos> pos, Direction direction, String id) {
         for (var blockPos : pos) {
             if(Objects.equals(id, nameToId(POWER_UP))) placePerkTables(level, blockPos);
-            if(Objects.equals(id, nameToId(ROOM))) setLocks(level, blockPos);
+            if(id.contains("room")) setLocks(level, blockPos);
             if(Objects.equals(id, nameToId(TRADING_POST))){
                 var table = SHOPPING_TABLE.get().defaultBlockState();
                 setLootChests(level, blockPos, direction);
@@ -70,11 +70,12 @@ public class BlockSetupManager {
     public static void setLocks(ServerLevel level, BlockPos blockPos) {
         var blockState = level.getBlockState(blockPos);
         if(blockState.is(OBSERVER)){
-            level.setBlockAndUpdate(blockPos, BlockReg.LOCK.get().defaultBlockState().setValue(FACING,blockState.getValue(FACING)));
+            level.setBlockAndUpdate(blockPos, BlockReg.LOCK.get().defaultBlockState().setValue(FACING, blockState.getValue(FACING)));
 
             if(level.getBlockEntity(blockPos) instanceof LockBlockEntity lockBlockEntity){
                 if(!lockBlockEntity.canPlace()){
                     level.setBlockAndUpdate(blockPos, NETHERITE_BLOCK.defaultBlockState());
+                    level.setBlockAndUpdate(blockPos.relative(blockState.getValue(FACING), 1), NETHERITE_BLOCK.defaultBlockState());
                 }
             }
         }

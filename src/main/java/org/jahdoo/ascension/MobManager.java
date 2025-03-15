@@ -6,15 +6,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Husk;
+import net.minecraft.world.entity.monster.Vindicator;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.attachments.InstanceData;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.entities.CustomSkeleton;
@@ -87,12 +92,14 @@ public class MobManager {
     }
 
     private static int calculateEnchantmentLevel(int round) {
-        if (round > 70) return 10;
-        if (round > 60) return 9;
-        if (round > 50) return 8;
-        if (round > 40) return 7;
-        if (round > 30) return 6;
-        return 5;
+        if (round > 200) return 10;
+        if (round > 140) return 9;
+        if (round > 120) return 8;
+        if (round > 100) return 5;
+        if (round > 80) return 4;
+        if (round > 60) return 3;
+        if (round > 40) return 2;
+        return 1;
     }
 
     public static ObjectArrayList<ItemStack> equipWeapon(LivingEntity livingEntity, ServerLevel serverLevel, int round){
@@ -117,17 +124,23 @@ public class MobManager {
         );
     }
 
-    public static LivingEntity getReadyZombie(ServerLevel serverLevel){
-        var entity = new CustomZombie(serverLevel, null);
+    public static LivingEntity getReadyZombie(ServerLevel serverLevel, String id){
+        var entity = switch (id){
+            case "room" -> new CustomZombie(serverLevel, null);
+            case "room_1" -> new Vindicator(EntityType.VINDICATOR, serverLevel)  ;
+            default -> new Husk(EntityType.HUSK, serverLevel);
+        };
+
+        var round = serverLevel.getData(AttachmentReg.INSTANCE_DATA).getClearedRooms();
+        attachEquipment(entity, serverLevel, round);
+
+        var collection = equipWeapon(entity, serverLevel, round);
+        if(!collection.isEmpty()) {
+            var weapon = Helpers.listRandom(collection);
+            entity.setItemSlot(MAINHAND, weapon.is(Items.BOW) ? ItemStack.EMPTY : weapon);
+        };
+
         entity.setPersistenceRequired();
-//        attachEquipment(entity, serverLevel, round);
-
-//        var collection = equipWeapon(entity, serverLevel, round);
-//        if(!collection.isEmpty()) {
-//            var weapon = Helpers.listRandom(collection);
-//            entity.setItemSlot(MAINHAND, weapon.is(Items.BOW) ? ItemStack.EMPTY : weapon);
-//        };
-
         return entity;
     }
 
@@ -162,8 +175,8 @@ public class MobManager {
 
     public static void addAndPositionEntity(ServerLevel serverLevel, BlockPos pos, LivingEntity entity){
         setOuterRingPulses(serverLevel, pos.getCenter(), entity.getBbWidth());
-        getSoundWithPosition(serverLevel, pos, SoundEvents.WITHER_SPAWN, 0.05f, 3f);
-        getSoundWithPosition(serverLevel, pos, SoundReg.HEAL.get(), 1f, 2f);
+        getSoundWithPosition(serverLevel, pos, SoundReg.ORB_CREATE.get(), 0.4F, 1.8F);
+        getSoundWithPosition(serverLevel, pos, SoundEvents.ALLAY_HURT, 0.3F, 0.8F);
         entity.moveTo(pos.getCenter());
         serverLevel.addFreshEntity(entity);
     }
@@ -186,9 +199,9 @@ public class MobManager {
         return skeleton;
     }
 
-    public static void summonEntities(AltarBlockEntity entity){
+    public static void summonEntities(AltarBlockEntity entity, String roomId){
         if(!(entity.getLevel() instanceof ServerLevel level)) return;
-        var actualEntity = buildMobs(level);
+        var actualEntity = buildMobs(level, roomId);
         var randomPoses = innerRadiusRandom(entity.getBlockPos().getCenter(), 12, 200)
             .stream()
             .filter(pos -> level.getBlockState(containing(pos)).isAir() && level.getBlockState(containing(pos).above()).isAir())
@@ -222,13 +235,14 @@ public class MobManager {
         var chestplate = new ItemStack(ItemReg.MAGE_CHESTPLATE.get());
         var leggings = new ItemStack(ItemReg.MAGE_LEGGINGS.get());
         var boots = new ItemStack(ItemReg.MAGE_BOOTS.get());
+        var multipliers = serverLevel.getData(AttachmentReg.INSTANCE_DATA).getClearedRooms();
 
         entity.setPersistenceRequired();
         entity.setItemSlot(MAINHAND, wand);
-        addProtection(serverLevel, helm, 1);
-        addProtection(serverLevel, chestplate, 1);
-        addProtection(serverLevel, leggings, 1);
-        addProtection(serverLevel, boots, 1);
+        addProtection(serverLevel, helm, multipliers);
+        addProtection(serverLevel, chestplate, multipliers);
+        addProtection(serverLevel, leggings, multipliers);
+        addProtection(serverLevel, boots, multipliers);
         entity.setItemSlot(HEAD, helm);
         entity.setItemSlot(CHEST, chestplate);
         entity.setItemSlot(LEGS, leggings);
@@ -267,12 +281,12 @@ public class MobManager {
         return List.of(stack, stack1, stack2, stack3, bow);
     }
 
-    private static List<LivingEntity> buildMobs(ServerLevel serverLevel) {
+    private static List<LivingEntity> buildMobs(ServerLevel serverLevel, String roomId) {
         var entities = new ArrayList<LivingEntity>();
         var getInstanceData = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
 
-        for (var i = 0; i < getInstanceData.getZombies(); i++){
-            entities.add(generateMob(getReadyZombie(serverLevel), getInstanceData));
+        for (var i = 0; i < getInstanceData.getHorde(); i++){
+            entities.add(generateMob(getReadyZombie(serverLevel, roomId), getInstanceData));
         }
 
         for (var i = 0; i < getInstanceData.getSkeleton(); i++){
@@ -280,7 +294,7 @@ public class MobManager {
         }
 
         for (var i = 0; i < getInstanceData.getEternalWizard(); i++){
-            entities.add(generateMob( getReadyEternalWizard(serverLevel, 10), getInstanceData));
+            entities.add(generateMob(getReadyEternalWizard(serverLevel, 10), getInstanceData));
         }
 
         for (var i = 0; i < getInstanceData.getVoidSpiders(); i++){

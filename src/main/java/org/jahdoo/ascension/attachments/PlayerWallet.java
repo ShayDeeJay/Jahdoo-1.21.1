@@ -1,5 +1,6 @@
 package org.jahdoo.ascension.attachments;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -12,6 +13,7 @@ import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ItemReg;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
@@ -28,6 +30,11 @@ public class PlayerWallet implements IAttachment{
     public void addPlatinum(int multi) { wallet += (1000000 * multi); }
     public void setWallet(int newWallet) { wallet = newWallet; }
     public int getWallet() { return wallet; }
+
+    public static void updateWallet(Player player, CurrencyConverter converter){
+        var getWallet = player.getData(AttachmentReg.PLAYER_WALLET);
+        getWallet.setWallet(CurrencyConverter.convertToWallet(converter));
+    }
 
     public static void updateWallet(Player player, int newWallet){
         var getWallet = player.getData(AttachmentReg.PLAYER_WALLET);
@@ -58,7 +65,7 @@ public class PlayerWallet implements IAttachment{
         public static final CurrencyConverter EMPTY = new CurrencyConverter(0, 0, 0, 0);
 
         public static CurrencyConverter loadData(CompoundTag tag){
-            return new CurrencyConverter(tag.getInt("b"), tag.getInt("s"), tag.getInt("g"), tag.getInt("p"));
+            return new CurrencyConverter(tag.getInt("p"), tag.getInt("g"), tag.getInt("s"), tag.getInt("b"));
         }
 
         public static void saveData(CompoundTag compoundTag, CurrencyConverter currency){
@@ -66,6 +73,18 @@ public class PlayerWallet implements IAttachment{
             compoundTag.putInt("s", currency.silver());
             compoundTag.putInt("g", currency.gold());
             compoundTag.putInt("p", currency.platinum());
+        }
+
+        public static Pair<CoinProperties, Integer> getCoin(CurrencyConverter converter){
+            var index = 0;
+            for (var coin : converter.coins()) {
+                if(coin > 0){
+                    var getProp = Arrays.stream(CoinProperties.values()).toList().get(index);
+                    return Pair.of(getProp, coin);
+                }
+                index++;
+            }
+            return Pair.of(CoinProperties.BRONZE, 0);
         }
 
         public List<Integer> coins(){
@@ -88,7 +107,8 @@ public class PlayerWallet implements IAttachment{
             return new CurrencyConverter(0, 0, 0, bronze);
         }
 
-        public static boolean checkAndPurchase(CurrencyConverter converter, int wallet, Player player) {
+        public static boolean checkAndPurchase(CurrencyConverter converter, Player player) {
+            var wallet = PlayerWallet.getWalletValue(player);
             if (canPurchase(converter, wallet)) {
                 int walletAfterPurchase = wallet - convertToWallet(converter);
                 updateWallet(player, walletAfterPurchase);
@@ -121,13 +141,15 @@ public class PlayerWallet implements IAttachment{
         }
 
         public static int convertToWallet(CurrencyConverter converter) {
-            return converter.platinum() * 10000
-                + converter.gold() * 1000
+            return converter.platinum() * 1000000
+                + converter.gold() * 10000
                 + converter.silver() * 100
                 + converter.bronze();
         }
 
-        public static ItemStack getItemStack(int type){
+        public static ItemStack getItemStack(CurrencyConverter converter){
+            var type = CurrencyConverter.getCoin(converter).getFirst().ordinal();
+//            System.out.println(type);
             var itemStack = new ItemStack(ItemReg.COIN);
             if(type == 0) return itemStack;
 
@@ -145,10 +167,10 @@ public class PlayerWallet implements IAttachment{
     }
 
     public enum CoinProperties implements StringRepresentable, IExtensibleEnum {
-        BRONZE(Icons.BRONZE_COIN, "Bronze Coin", color(193, 108, 51)),
-        SILVER(Icons.SILVER_COIN, "Silver Coin", color(129, 129, 129)),
-        GOLD(Icons.GOLD_COIN, "Gold Coin", color(225, 155, 50)),
-        PLATINUM(Icons.PLATINUM_COIN, "Platinum Coin", color(194, 194, 194));
+        BRONZE(Icons.BRONZE_COIN, "Bronze", color(193, 108, 51)),
+        SILVER(Icons.SILVER_COIN, "Silver", color(129, 129, 129)),
+        GOLD(Icons.GOLD_COIN, "Gold", color(225, 155, 50)),
+        PLATINUM(Icons.PLATINUM_COIN, "Platinum", color(194, 194, 194));
 
         private final ResourceLocation location;
         private final String name;

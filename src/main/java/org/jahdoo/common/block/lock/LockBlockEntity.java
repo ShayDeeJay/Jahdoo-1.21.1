@@ -12,6 +12,7 @@ import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.registers.BlockEntityReg;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.jahdoo.ascension.StructureManager.*;
 import static org.jahdoo.ascension.utils.ColourStore.*;
@@ -61,23 +62,6 @@ public class LockBlockEntity extends SyncedBlockEntity {
         this.roomId = getRandomRoomId();
         this.getBoon = LevelBoonSelection.getRandomBoon();
         this.updateBlock();
-    }
-
-    public static Component getRandomRoomId(){
-        var roomGen = new ArrayList<Component>();
-        roomGen.add(withStyleComponent(ROOM, SYMPATHISER_ORANGE));
-        roomGen.add(withStyleComponent(TRADING_POST, AETHER_BLUE));
-        roomGen.add(withStyleComponent(POWER_UP, COSMIC_PURPLE));
-
-//        if (Random.nextInt(3) == 0){
-//            withStyleComponent(POWER_UP, COSMIC_PURPLE);
-//        }
-//
-//        if(Random.nextInt(5) == 0){
-//            withStyleComponent(TRADING_POST, AETHER_BLUE);
-//        }
-
-        return listRandom(roomGen);
     }
 
 }

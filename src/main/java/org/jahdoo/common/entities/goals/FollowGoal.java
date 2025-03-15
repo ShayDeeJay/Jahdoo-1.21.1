@@ -76,7 +76,7 @@ public class FollowGoal extends Goal {
         this.tamable.getLookControl().setLookAt(this.owner, 10.0F, (float)this.tamable.getMaxHeadXRot());
         if (--this.timeToRecalcPath <= 0) {
             this.timeToRecalcPath = this.adjustedTickDelay(10);
-            if (this.tamable.distanceToSqr(this.owner) >= 300.0D) {
+            if (this.tamable.distanceToSqr(this.owner) >= 300.0D && this.tamable.getTarget() == null) {
                 this.teleportToOwner();
             } else {
                 this.navigation.moveTo(this.owner, this.speedModifier);

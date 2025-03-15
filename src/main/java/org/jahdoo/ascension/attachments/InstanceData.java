@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class InstanceData implements IAttachment {
 
-    private int zombies;
+    private int horde;
     private int skeleton;
     private int eternalWizard;
     private int voidSpider;
@@ -19,7 +19,7 @@ public class InstanceData implements IAttachment {
     public InstanceData(){}
 
     public InstanceData(int zombie){
-        this.zombies = zombie;
+        this.horde = zombie;
     }
 
     public int getEternalWizard(){
@@ -30,8 +30,8 @@ public class InstanceData implements IAttachment {
         return skeleton;
     }
 
-    public int getZombies() {
-        return zombies;
+    public int getHorde() {
+        return horde;
     }
 
     public int getVoidSpiders() {
@@ -62,8 +62,8 @@ public class InstanceData implements IAttachment {
         this.skeleton += (int) mobs;
     }
 
-    public void incrementZombie(double mobs){
-        this.zombies += (int) mobs;
+    public void incrementHorde(double mobs){
+        this.horde += (int) mobs;
     }
 
     public void incrementEternalWizard(double mobs){
@@ -100,8 +100,8 @@ public class InstanceData implements IAttachment {
         nbt.putDouble("speed", speed);
         nbt.putDouble("armor", armor);
         nbt.putDouble("damage", attackDamage);
-        nbt.putInt("zombies", zombies);
-        nbt.putInt("skeleton", zombies);
+        nbt.putInt("horde", horde);
+        nbt.putInt("skeleton", horde);
         nbt.putInt("eternal_wizard", eternalWizard);
         nbt.putInt("void_spider", voidSpider);
         nbt.putInt("cleared_rooms", clearedRooms);
@@ -113,7 +113,7 @@ public class InstanceData implements IAttachment {
         armor = nbt.getDouble("armor");
         health = nbt.getDouble("health");
         attackDamage = nbt.getDouble("damage");
-        zombies = nbt.getInt("zombies");
+        horde = nbt.getInt("horde");
         skeleton = nbt.getInt("skeleton");
         voidSpider = nbt.getInt("void_spider");
         eternalWizard = nbt.getInt("eternal_wizard");
@@ -125,7 +125,7 @@ public class InstanceData implements IAttachment {
         return
         "Level Data: " + "\n" +
         "Completed Rooms = " + clearedRooms + "\n" +
-        "Zombies = " + zombies + "\n" +
+        "Horde = " + horde + "\n" +
         "Skeletons = " + skeleton + "\n" +
         "Eternal Wizard = " + eternalWizard + "\n" +
         "Void Spider = " + voidSpider + "\n" +

@@ -18,7 +18,7 @@ public class Icons {
     public static final ResourceLocation SKELETON =
         res(ABILITY_PREFIX + "skeleton.png");
 
-    public static final ResourceLocation ZOMBIE =
+    public static final ResourceLocation HORDE =
         res(ABILITY_PREFIX + "zombie.png");
 
     public static final ResourceLocation VOID_SPIDER =

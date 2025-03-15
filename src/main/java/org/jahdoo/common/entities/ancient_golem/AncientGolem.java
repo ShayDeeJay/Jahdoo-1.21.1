@@ -43,6 +43,7 @@ import static net.minecraft.network.syncher.SynchedEntityData.*;
 import static net.minecraft.world.entity.ai.targeting.TargetingConditions.*;
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
+import static org.jahdoo.common.entities.SharedEntityBehaviours.canTarget;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 
 public class AncientGolem extends IronGolem implements ITamableEntity {
@@ -119,6 +120,14 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
     @Override
     public LivingEntity getOwner() {
         return this.owner;
+    }
+
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        System.out.println(owner);
+        if(canTarget(target, owner)){
+            super.setTarget(target);
+        }
     }
 
     @Override

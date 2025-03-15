@@ -19,6 +19,8 @@ public class ModTags {
 
     public static class Entities{
         public static final TagKey<EntityType<?>> IGNORE_ENTITY = create("ignore_entity_collision");
+        public static final TagKey<EntityType<?>> HORDE_MOBS = create("horde_mobs");
+
         private static TagKey<EntityType<?>> create(String pName) {
             return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.withDefaultNamespace(pName));
         }

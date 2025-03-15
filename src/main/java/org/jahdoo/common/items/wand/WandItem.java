@@ -137,6 +137,8 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 
         System.out.println(PlayerWallet.getWalletCoins(player));
 
+        PlayerWallet.updateWallet(player, new PlayerWallet.CurrencyConverter(1, 1, 0, 5));
+
         if (canOffHand(player, interactionHand, true)) {
             player.startUsingItem(interactionHand);
             CastHelper.use(player);

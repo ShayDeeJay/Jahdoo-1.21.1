@@ -4,13 +4,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.AttachmentReg;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +46,7 @@ public class LevelBoonSelection {
 
     public static void incrementZombies(Level level, double percentageMultiplier){
         var data = level.getData(AttachmentReg.INSTANCE_DATA);
-        data.incrementZombie(percentageMultiplier);
+        data.incrementHorde(percentageMultiplier);
     }
 
     public static void incrementSkeleton(Level level, double percentageMultiplier){
@@ -90,7 +87,7 @@ public class LevelBoonSelection {
         boonCollection.add(attributeTemplate(2, getRarity.getRandomMaxHealth(), "Mob Damage", DAMAGE_BOOST));
         boonCollection.add(attributeTemplate(3, getRarity.getRandomManaRegen(), "Mob Armor", DAMAGE_RESISTANCE));
 
-        boonCollection.add(mobTemplate(4, "Zombie", Icons.ZOMBIE));
+        boonCollection.add(mobTemplate(4, "Horde", Icons.HORDE));
 
         if(Random.nextInt(2) == 0){
             boonCollection.add(mobTemplate(5, "Skeleton", Icons.SKELETON));
@@ -101,8 +98,8 @@ public class LevelBoonSelection {
         }
 
         if(Random.nextInt(7) == 0){
-            boonCollection.add(mobTemplate(7, "Eternal Wizard", Icons.ETERNAL_WIZARD));
         }
+        boonCollection.add(mobTemplate(7, "Eternal Wizard", Icons.ETERNAL_WIZARD));
 
         return listRandom(boonCollection);
     }

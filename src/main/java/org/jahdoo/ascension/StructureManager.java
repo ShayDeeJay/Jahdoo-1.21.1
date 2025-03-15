@@ -2,6 +2,7 @@ package org.jahdoo.ascension;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -9,15 +10,20 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockReg;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.core.BlockPos.withinManhattan;
 import static org.jahdoo.ascension.BlockSetupManager.setBlockGenerator;
 import static org.jahdoo.ascension.BlockSetupManager.setLocks;
-import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 
@@ -26,6 +32,8 @@ public class StructureManager {
     public static final String TRADING_POST = "Trading Post";
     public static final String POWER_UP = "Power Up";
     public static final String ROOM = "Room";
+    public static final String ROOM_1 = "Room 1";
+    public static final String ROOM_2 = "Room 2";
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
@@ -39,6 +47,23 @@ public class StructureManager {
         );
     }
 
+    public static Component getRandomRoomId(){
+        var roomGen = new ArrayList<Component>();
+        roomGen.add(withStyleComponent(listRandom(List.of(ROOM, ROOM_1, ROOM_2)), SYMPATHISER_ORANGE));
+//        roomGen.add(withStyleComponent(TRADING_POST, AETHER_BLUE));
+//        roomGen.add(withStyleComponent(POWER_UP, COSMIC_PURPLE));
+
+        if (Random.nextInt(3) == 0){
+          roomGen.add(withStyleComponent(POWER_UP, COSMIC_PURPLE));
+        }
+
+        if(Random.nextInt(5) == 0){
+          roomGen.add(withStyleComponent(TRADING_POST, AETHER_BLUE));
+        }
+
+        return listRandom(roomGen);
+    }
+
     public static void placeLocksWithData(ServerLevel level, BlockPos pos) {
         var range = roomBoundingFromCenter(pos);
 
@@ -50,7 +75,7 @@ public class StructureManager {
             var getLock = level.getBlockEntity(blockPos);
             if(getLock instanceof LockBlockEntity lock) {
                 lock.setRoomData();
-                var getPositions = innerRadiusRandom(blockPos.getCenter().subtract(0, 0.45, 0), 2.3, 350);
+                var getPositions = innerRadiusRandom(blockPos.getCenter().subtract(0,   1, 0), 2.3, 350);
 
                 for (var vec3 : getPositions) {
                     var colour = lock.roomId.getStyle().getColor().getValue();
@@ -71,7 +96,7 @@ public class StructureManager {
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
 
-        placeStructure(level, pos, settings, "room");
+        placeStructure(level, pos, settings, nameToId(ROOM));
         placeLocksWithData(level, BlockPos.containing(DimHandler.trial().spawn()));
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
@@ -115,6 +140,9 @@ public class StructureManager {
             for (var blockPos : findBlock) {
                 if (level.getBlockState(blockPos).is(Blocks.DIAMOND_BLOCK)) {
                     level.setBlockAndUpdate(blockPos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
+                    if(level.getBlockEntity(blockPos) instanceof AltarBlockEntity e){
+                        e.roomId = roomId;
+                    }
                 }
             }
         }

@@ -44,6 +44,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     public double animateTick;
     public boolean started;
     public boolean beginSpawning;
+    public String roomId;
     public List<UUID> spawnedMobs = new ArrayList<>();
 
     public AltarBlockEntity(BlockPos pos, BlockState state) {
@@ -105,6 +106,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         tag.putDouble("animate", this.animateTick);
         tag.putBoolean("started", this.started);
         tag.putInt("spawned", this.mobsSpawned);
+        tag.putString("roomId", this.roomId);
 
         var uuids = new CompoundTag();
         for (var spawnedMob : this.spawnedMobs) {
@@ -121,6 +123,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         animateTick = tag.getDouble("animate");
         started = tag.getBoolean("started");
         mobsSpawned = tag.getInt("spawned");
+        roomId = tag.getString("roomId");
 
         var uuids = tag.getCompound("uuid");
         for (var uuid : uuids.getAllKeys()) {
@@ -139,7 +142,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
             tickBossEvent();
 
             if(privateTicks == 30){
-                MobManager.summonEntities(this);
+                MobManager.summonEntities(this, roomId);
                 this.beginSpawning = false;
             }
 

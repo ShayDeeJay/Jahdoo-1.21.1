@@ -57,9 +57,7 @@ public class ShoppingTableEntity extends AbstractBEInventory {
     }
 
     public ItemStack getCurrencyType() {
-        var coins = this.itemCosts.coins();
-        var index = coins.stream().filter(i -> i > 0).findFirst();
-        return index.map(CurrencyConverter::getItemStack).orElse(ItemStack.EMPTY);
+        return CurrencyConverter.getItemStack(this.itemCosts);
     }
 
     @Override
@@ -97,18 +95,9 @@ public class ShoppingTableEntity extends AbstractBEInventory {
     public void tick(Level level, BlockPos pos, BlockState state) {
         if(!(level instanceof ServerLevel serverLevel)) return;
 
-//        for (var player : serverLevel.players()) {
-//            if(this.level instanceof CustomLevel){
-//                if(!player.hasEffect(REGENERATION)){
-//                    player.addEffect(new JahdooMobEffect(REGENERATION, 20, 3));
-//                    player.addEffect(new JahdooMobEffect(MobEffects.SATURATION, 20, 3));
-//                }
-//            }
-//        }
-
         if(state.getValue(ShoppingTableBlock.TEXTURE) == 3){
             if(serverLevel.getGameTime() % 30 != 0) return;
-            if(getCurrencyType().isEmpty()) return;
+            if(itemCosts == EMPTY) return;
             insertRandomItem();
         }
     }
