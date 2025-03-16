@@ -42,7 +42,6 @@ public class ElementalSword extends SwordItem {
     @Override
     public Component getName(ItemStack stack) {
         var element = element(stack);
-        System.out.println(stack.get(DataComponents.CUSTOM_MODEL_DATA));
         var name = element.name() + " Twinblade";
         var colour = element.partColourB();
 

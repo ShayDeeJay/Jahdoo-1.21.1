@@ -2,11 +2,13 @@ package org.jahdoo.common.block;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -16,9 +18,12 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.LevelGenerator;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -34,7 +39,7 @@ import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 
 public class TrialPortalBlock extends NetherPortalBlock {
 
-    public static final IntegerProperty DIMENSION_KEY = BlockStateProperties.LEVEL;
+    public static final IntegerProperty DIMENSION_KEY = BlockStateProperties.LEVEL;;
     public static final int KEY_HOME = 0;
     public static final int KEY_TRADING_POST = 1;
     public static final int KEY_TRIAL = 2;
@@ -49,7 +54,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
                 .lightLevel(state -> 11)
                 .pushReaction(PushReaction.BLOCK)
         );
-        this.registerDefaultState(this.defaultBlockState().setValue(DIMENSION_KEY, 0));
+        this.registerDefaultState(this.defaultBlockState().setValue(DIMENSION_KEY, 0).setValue(AXIS, Direction.Axis.X));
     }
 
     @Override
@@ -74,9 +79,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
     @Override
     public @Nullable DimensionTransition getPortalDestination(ServerLevel level, Entity entity, BlockPos pos) {
         if(!(entity instanceof Player player)) return null;
-        var isContinueInstance = level instanceof CustomLevel customLevel;
         int dimId = level.getBlockState(pos).getValue(DIMENSION_KEY);
-
 
         if(dimId == KEY_HOME && player instanceof ServerPlayer serverPlayer){
             return serverPlayer.findRespawnPositionAndUseSpawnBlock(true, DO_NOTHING);

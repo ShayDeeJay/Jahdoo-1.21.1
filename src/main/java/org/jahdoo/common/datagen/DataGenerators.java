@@ -4,6 +4,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.common.datagen.loot.BiomeProvider;
 import org.jahdoo.common.datagen.loot.EntityTagGenerator;
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
@@ -28,6 +29,7 @@ public class DataGenerators {
         generator.addProvider(event.includeClient(), new RecipeProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new JahdooCuriosProvider(packOutput, event.getExistingFileHelper(), lookupProvider));
         generator.addProvider(event.includeClient(), new DamageTypesProvider(packOutput, lookupProvider));
+        generator.addProvider(event.includeClient(), new BiomeProvider(packOutput, lookupProvider));
 
     }
 

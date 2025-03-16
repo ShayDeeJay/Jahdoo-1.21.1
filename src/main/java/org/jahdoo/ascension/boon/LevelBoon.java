@@ -16,7 +16,6 @@ public record LevelBoon(Component label, int colour, int executeIndex, ResourceL
         tag.putString("label", Component.Serializer.toJson(levelBoon.label, registries));
         tag.putInt("colour", levelBoon.colour);
         tag.putInt("index", levelBoon.executeIndex);
-        System.out.println(levelBoon.icon.getPath());
         tag.putString("icon", levelBoon.icon.getPath());
         tag.putDouble("value", levelBoon.value);
     }

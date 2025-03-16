@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.frog.Frog;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
@@ -17,14 +18,18 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.HitResult;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
+import net.neoforged.neoforge.event.entity.EntityEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -36,10 +41,15 @@ import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
+import org.jahdoo.common.entities.ITamableEntity;
+import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.networking.server2client.MoveClientEntityS2CP;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
+
+import static net.minecraft.world.phys.HitResult.*;
+import static net.minecraft.world.phys.HitResult.Type.*;
 import static org.jahdoo.common.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_DATA;
@@ -159,6 +169,17 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
+    public static void hitEvent(ProjectileImpactEvent event) {
+        var projectile = event.getProjectile();
+        if(projectile.level() instanceof CustomLevel){
+            if (projectile instanceof Arrow) {
+                var type = event.getRayTraceResult().getType();
+                if(type == BLOCK) projectile.discard();
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void livingDeathEvent(LivingDropsEvent event){
         var entity = event.getEntity();
 
@@ -177,6 +198,5 @@ public class ServerEvents {
         resetGameModeOnDeath(entity);
         saveDestinyBondItems(entity);
     }
-
 
 }

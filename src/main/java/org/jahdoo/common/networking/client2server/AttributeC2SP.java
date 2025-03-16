@@ -44,7 +44,6 @@ public class AttributeC2SP implements CustomPacketPayload {
         ctx.enqueueWork(
             () -> {
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
-                    System.out.println(value);
                     Helpers.addTransientAttribute(serverPlayer, value, UUID.randomUUID().toString(), attribute);
                 }
             }

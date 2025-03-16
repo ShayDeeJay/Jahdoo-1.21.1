@@ -20,6 +20,7 @@ import static org.jahdoo.common.registers.BlockEntityReg.*;
 public class ShoppingTableEntity extends AbstractBEInventory {
 
     public CurrencyConverter itemCosts = EMPTY;
+    public int ticks;
 
     public ShoppingTableEntity(BlockPos pos, BlockState state) {
         super(SHOPPING_TABLE_BE.get(), pos, state, 64);
@@ -64,12 +65,14 @@ public class ShoppingTableEntity extends AbstractBEInventory {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         saveData(tag, itemCosts);
+        tag.putInt("ticks", ticks);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.itemCosts = loadData(tag);
+        this.ticks = tag.getInt("ticks");
     }
 
     public void setItem(ItemStack randomLootItem){
@@ -94,6 +97,8 @@ public class ShoppingTableEntity extends AbstractBEInventory {
 
     public void tick(Level level, BlockPos pos, BlockState state) {
         if(!(level instanceof ServerLevel serverLevel)) return;
+        ticks++;
+        this.updateBlock();
 
         if(state.getValue(ShoppingTableBlock.TEXTURE) == 3){
             if(serverLevel.getGameTime() % 30 != 0) return;

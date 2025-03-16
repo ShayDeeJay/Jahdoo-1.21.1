@@ -9,6 +9,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.data.worldgen.Carvers;
+import net.minecraft.data.worldgen.biome.OverworldBiomes;
+import net.minecraft.data.worldgen.placement.MiscOverworldPlacements;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -18,9 +22,12 @@ import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.Musics;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,6 +41,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.*;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -495,4 +505,29 @@ public class Helpers {
         return reCalculatedDamage;
     }
 
+
+    public static Biome newBiome(){
+        return new Biome.BiomeBuilder()
+            .hasPrecipitation(false)
+            .temperature(12.0F)
+            .downfall(0.0F)
+            .specialEffects(
+                new BiomeSpecialEffects.Builder()
+                    .waterColor(4159204)
+                    .waterFogColor(329011)
+                    .fogColor(ColourStore.PERK_GREEN)
+                    .skyColor(calculateSkyColor(8.0F))
+                    .ambientParticle(new AmbientParticleSettings(ParticleTypes.SPORE_BLOSSOM_AIR, 1.118093334F))
+                    .build()
+            )
+            .mobSpawnSettings(MobSpawnSettings.EMPTY)
+            .generationSettings(BiomeGenerationSettings.EMPTY)
+            .build();
+    }
+
+    static int calculateSkyColor(float temperature) {
+        float $$1 = temperature / 3.0F;
+        $$1 = Mth.clamp($$1, -1.0F, 1.0F);
+        return Mth.hsvToRgb(0.62222224F - $$1 * 0.05F, 0.5F + $$1 * 0.1F, 1.0F);
+    }
 }

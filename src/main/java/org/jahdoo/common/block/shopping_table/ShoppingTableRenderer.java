@@ -52,7 +52,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
         }
 
         renderPrice(entity, poseStack, source, packedLight, itemRenderer, direction);
-        renderSaleItem(entity, poseStack, source, packedLight, itemRenderer, direction);
+        renderSaleItem(entity, poseStack, source, packedLight, itemRenderer, direction, partial);
 
     }
 
@@ -74,17 +74,22 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
 
     }
 
-    private void renderSaleItem(ShoppingTableEntity entity, PoseStack poseStack, MultiBufferSource source, int packedLight, ItemRenderer renderer, DisplayDirection direction) {
+    private void renderSaleItem(ShoppingTableEntity entity, PoseStack poseStack, MultiBufferSource source, int packedLight, ItemRenderer renderer, DisplayDirection direction, float partialTick) {
         var itemStack1 = entity.inputItemHandler.getStackInSlot(0);
         if(!itemStack1.isEmpty()){
-            var height = 1.3f;
+
+            var rotate = entity.ticks + partialTick;
+            var animate = rotate / 12;
+            var bobOff = Math.sin(rotate / 20.0F) * 0.02F + 1.9F - 0.51;
             var scale = itemStack1.getItem() instanceof WandItem ? 0.75F : 0.5f;
 
             renderName(entity, itemStack1.getHoverName(), poseStack, source, direction);
             poseStack.pushPose();
-            poseStack.translate(0.5f, height, 0.5f);
+            poseStack.translate(0.5f,  Math.min(bobOff, animate), 0.5f);
             poseStack.scale(scale, scale, scale);
-            poseStack.mulPose(Axis.YP.rotationDegrees(direction.direction()).invert());
+            poseStack.mulPose(Axis.YP.rotationDegrees(rotate));
+
+//            poseStack.mulPose(Axis.YP.rotationDegrees(direction.direction()).invert());
             renderer.renderStatic(itemStack1, FIXED, packedLight, NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
             poseStack.popPose();
         }

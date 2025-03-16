@@ -34,6 +34,8 @@ public class StructureManager {
     public static final String ROOM = "Room";
     public static final String ROOM_1 = "Room 1";
     public static final String ROOM_2 = "Room 2";
+    public static final String STARTING_ROOM = "Starting Room";
+
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
@@ -50,7 +52,7 @@ public class StructureManager {
     public static Component getRandomRoomId(){
         var roomGen = new ArrayList<Component>();
         roomGen.add(withStyleComponent(listRandom(List.of(ROOM, ROOM_1, ROOM_2)), SYMPATHISER_ORANGE));
-//        roomGen.add(withStyleComponent(TRADING_POST, AETHER_BLUE));
+        roomGen.add(withStyleComponent(TRADING_POST, AETHER_BLUE));
 //        roomGen.add(withStyleComponent(POWER_UP, COSMIC_PURPLE));
 
         if (Random.nextInt(3) == 0){
@@ -58,7 +60,7 @@ public class StructureManager {
         }
 
         if(Random.nextInt(5) == 0){
-          roomGen.add(withStyleComponent(TRADING_POST, AETHER_BLUE));
+//          roomGen.add(withStyleComponent(TRADING_POST, AETHER_BLUE));
         }
 
         return listRandom(roomGen);
@@ -68,6 +70,7 @@ public class StructureManager {
         var range = roomBoundingFromCenter(pos);
 
         for (var blockPos : range) {
+            BlockSetupManager.generateExit(level, blockPos);
             setLocks(level, blockPos);
             if(level.getBlockState(blockPos).is(Blocks.TINTED_GLASS)){
                 level.destroyBlock(blockPos, false);
@@ -96,7 +99,7 @@ public class StructureManager {
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
 
-        placeStructure(level, pos, settings, nameToId(ROOM));
+        placeStructure(level, pos, settings, nameToId(STARTING_ROOM));
         placeLocksWithData(level, BlockPos.containing(DimHandler.trial().spawn()));
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);

@@ -118,7 +118,6 @@ public class StatScreen extends Screen {
             renderPlayer(guiGraphics, mouseX, mouseY, i, j, player);
         }
 
-        System.out.println(fade);
         boxMaker(guiGraphics, i - 170, j - 84, 62, 78, HEADER_COLOUR, getFadedColourBackground(0f));
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }

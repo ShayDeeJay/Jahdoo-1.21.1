@@ -15,6 +15,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import org.jahdoo.ascension.MobManager;
 import org.jahdoo.ascension.attachments.PlayerWallet;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.client.overlay.BoonSelectionScreen;
@@ -135,9 +136,13 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
 
-        System.out.println(PlayerWallet.getWalletCoins(player));
+        if(level instanceof ServerLevel serverLevel){
+            var eliteSkeleton = MobManager.getEliteSkeleton(serverLevel);
+            serverLevel.addFreshEntity(eliteSkeleton);
+            eliteSkeleton.moveTo(player.position());
+        }
 
-        PlayerWallet.updateWallet(player, new PlayerWallet.CurrencyConverter(1, 1, 0, 5));
+//        PlayerWallet.updateWallet(player, new PlayerWallet.CurrencyConverter(1, 1, 0, 5));
 
         if (canOffHand(player, interactionHand, true)) {
             player.startUsingItem(interactionHand);

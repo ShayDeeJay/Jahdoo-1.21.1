@@ -110,8 +110,8 @@ public class FollowGoal extends Goal {
     }
 
     private boolean canTeleportTo(BlockPos pos) {
-        PathType blockpathtypes = WalkNodeEvaluator.getPathTypeStatic(this.tamable, pos);
-        if (blockpathtypes != PathType.WALKABLE) {
+        var path = WalkNodeEvaluator.getPathTypeStatic(this.tamable, pos);
+        if (path != PathType.WALKABLE) {
             return false;
         } else {
             BlockState blockstate = this.level.getBlockState(pos.below());

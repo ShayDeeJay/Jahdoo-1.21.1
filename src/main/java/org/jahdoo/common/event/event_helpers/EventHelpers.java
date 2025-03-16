@@ -293,14 +293,15 @@ public class EventHelpers {
     }
 
     public static void coinDropCalc(LivingEntity entity, int bonus) {
-        if(entity.level() instanceof CustomLevel customLevel){
+        if(entity.level() instanceof CustomLevel){
+            entity.skipDropExperience();
             var max = Math.max(1, bonus);
             var isZombie = entity instanceof CustomZombie;
             var isHusk = entity instanceof Husk;
             var isVindicator = entity instanceof Vindicator;
 
             if(isZombie || isHusk || isVindicator){
-                if(Random.nextInt(0, Math.min(3, max)) == 0){
+                if(Random.nextInt(0, Math.min(2, max)) == 0){
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
                     throwItem(entity, stack, entity.position());
                 }
@@ -360,7 +361,6 @@ public class EventHelpers {
                     entity,
                     entity.getBoundingBox().inflate(500)
                 );
-                System.out.println(entity);
 
                 for (var livingEntity : getNearby) {
 

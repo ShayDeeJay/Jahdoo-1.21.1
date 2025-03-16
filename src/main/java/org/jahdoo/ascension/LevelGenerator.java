@@ -26,12 +26,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static net.minecraft.world.level.biome.Biomes.THE_VOID;
+import static net.minecraft.world.level.biome.Biomes.*;
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
 import static org.jahdoo.ascension.StructureManager.generateStructure;
 import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.common.registers.DamageTypeReg.BIOME_SOURCE;
 
 public class LevelGenerator {
 
@@ -97,12 +98,11 @@ public class LevelGenerator {
         var builder = new CustomLevelBuilder()
             .timeOfDay(18000)
             .dimensionType(BuiltinDimensionTypes.OVERWORLD)
-            .chunkGenerator(new VoidChunkGenerator(serverLevel.getServer(), THE_VOID))
+            .chunkGenerator(new VoidChunkGenerator(serverLevel.getServer(), BIOME_SOURCE))
             .dimensionKey(res(key == null ? UUID.randomUUID().toString() : key))
             .difficulty(LevelGenerator::setDifficulty)
             .weather(LevelGenerator::wetWeather)
             .gameRules(LevelGenerator::setGameRules);
-
         ArcadeDimensions.add(serverLevel.getServer(), builder);
     }
 
