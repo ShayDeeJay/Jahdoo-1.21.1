@@ -1,7 +1,6 @@
 package org.jahdoo.common.block.shopping_table;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -12,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jahdoo.ascension.attachments.PlayerWallet;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.wand.WandItem;
 import org.joml.Matrix4f;
@@ -21,7 +19,7 @@ import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 import static net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 import static net.minecraft.world.item.ItemDisplayContext.FIXED;
-import static org.jahdoo.ascension.attachments.PlayerWallet.*;
+import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter;
 import static org.jahdoo.ascension.utils.ColourStore.OFF_WHITE;
 import static org.jahdoo.common.block.shopping_table.DisplayDirection.*;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
@@ -53,7 +51,6 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
 
         renderPrice(entity, poseStack, source, packedLight, itemRenderer, direction);
         renderSaleItem(entity, poseStack, source, packedLight, itemRenderer, direction, partial);
-
     }
 
     private void renderPrice(ShoppingTableEntity entity, PoseStack poseStack, MultiBufferSource source, int packedLight, ItemRenderer renderer, DisplayDirection direction) {

@@ -48,10 +48,7 @@ import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.common.registers.ItemReg;
-import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.*;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -74,6 +71,12 @@ public class EventHelpers {
 
     public static void saveDestinyBondItems(LivingEntity entity) {
         if(entity instanceof Player player) player.getData(SAVE_DATA).addAllItems(player);
+    }
+
+    public static int getColour(ItemStack stack){
+        var colour = stack.get(ComponentReg.RUNE_DATA.get());
+        if(colour != null) return colour.colour();
+        return -1;
     }
 
     public static void perkTableInteraction(
@@ -296,11 +299,8 @@ public class EventHelpers {
         if(entity.level() instanceof CustomLevel){
             entity.skipDropExperience();
             var max = Math.max(1, bonus);
-            var isZombie = entity instanceof CustomZombie;
-            var isHusk = entity instanceof Husk;
-            var isVindicator = entity instanceof Vindicator;
 
-            if(isZombie || isHusk || isVindicator){
+            if(entity.getType().is(ModTags.Entities.HORDE_MOBS)){
                 if(Random.nextInt(0, Math.min(2, max)) == 0){
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
                     throwItem(entity, stack, entity.position());

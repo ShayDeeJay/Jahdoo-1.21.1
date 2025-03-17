@@ -2,13 +2,13 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [64, 64],
     "textures": {
-      "3": "jahdoo:block/mana_table",
-      "particle": "jahdoo:block/mana_table"
+      "3": "jahdoo:block/lighting",
+      "particle": "jahdoo:block/lighting"
     },
 	"elements": [
 		{
-			"from": [2, 0, 2],
-			"to": [14, 3, 14],
+			"from": [0, 0, 0],
+			"to": [0, 0, 0],
 			"rotation": {"angle": 0, "axis": "y", "origin": [14, 0, 0]},
 			"faces": {
 				"north": {"uv": [7, 1.75, 10, 2.5], "texture": "#3"},

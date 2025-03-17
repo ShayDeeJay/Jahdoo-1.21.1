@@ -13,24 +13,25 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.abilities.EscapeDecoyAbility;
+import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static net.minecraft.network.syncher.EntityDataSerializers.*;
-import static net.minecraft.network.syncher.SynchedEntityData.*;
-import static net.minecraft.util.RandomSource.*;
+import static net.minecraft.network.syncher.EntityDataSerializers.FLOAT;
+import static net.minecraft.network.syncher.EntityDataSerializers.INT;
+import static net.minecraft.network.syncher.SynchedEntityData.Builder;
+import static net.minecraft.network.syncher.SynchedEntityData.defineId;
+import static net.minecraft.util.RandomSource.create;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
-import static org.jahdoo.common.particle.ParticleStore.*;
-import static org.jahdoo.common.registers.ElementReg.*;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
+import static org.jahdoo.common.registers.ElementReg.vitality;
 
 public class Decoy extends Mob {
 
@@ -104,7 +105,7 @@ public class Decoy extends Mob {
 
 
     private void onAttract(Mob mob) {
-        if(mob.getTarget() == player) mob.setTarget(this);
+        mob.setTarget(this);
     }
 
     @Override

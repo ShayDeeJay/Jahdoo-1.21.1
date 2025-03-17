@@ -11,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Husk;
 import net.minecraft.world.entity.monster.Vindicator;
+import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -35,20 +36,23 @@ import org.jahdoo.common.registers.SoundReg;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
-import static net.minecraft.core.BlockPos.*;
-import static net.minecraft.core.component.DataComponents.*;
-import static net.minecraft.core.registries.Registries.*;
+import static net.minecraft.core.BlockPos.containing;
+import static net.minecraft.core.component.DataComponents.TRIM;
+import static net.minecraft.core.registries.Registries.TRIM_MATERIAL;
+import static net.minecraft.core.registries.Registries.TRIM_PATTERN;
 import static net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE;
 import static net.minecraft.world.effect.MobEffects.HEALTH_BOOST;
 import static net.minecraft.world.entity.EquipmentSlot.*;
 import static net.minecraft.world.entity.EquipmentSlot.CHEST;
 import static net.minecraft.world.entity.ai.attributes.Attributes.*;
 import static net.minecraft.world.item.Items.*;
-import static net.minecraft.world.item.armortrim.TrimMaterials.*;
+import static net.minecraft.world.item.armortrim.TrimMaterials.GOLD;
 import static net.minecraft.world.item.armortrim.TrimMaterials.REDSTONE;
-import static net.minecraft.world.item.armortrim.TrimPatterns.*;
+import static net.minecraft.world.item.armortrim.TrimPatterns.RIB;
+import static net.minecraft.world.item.armortrim.TrimPatterns.SILENCE;
 import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
@@ -58,10 +62,7 @@ import static org.jahdoo.ascension.LevelStageModifiers.effectWithChance;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.*;
-import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
-import static org.jahdoo.ascension.utils.PositionFinders.getRandomSphericalBlockPositions;
 import static org.jahdoo.common.entities.ancient_golem.AncientGolem.INFINITE_LIFE;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 
 public class MobManager {
 
@@ -128,7 +129,8 @@ public class MobManager {
         var entity = switch (id){
             case "room" -> new CustomZombie(serverLevel, null);
             case "room_1" -> new Vindicator(EntityType.VINDICATOR, serverLevel)  ;
-            default -> new Husk(EntityType.HUSK, serverLevel);
+            case "room_2" -> new Husk(EntityType.HUSK, serverLevel);
+            default -> new ZombifiedPiglin(EntityType.ZOMBIFIED_PIGLIN, serverLevel);
         };
 
         var round = serverLevel.getData(AttachmentReg.INSTANCE_DATA).getClearedRooms();
@@ -181,7 +183,7 @@ public class MobManager {
         serverLevel.addFreshEntity(entity);
     }
 
-    public static LivingEntity getEliteSkeleton(ServerLevel serverLevel){
+    public static LivingEntity getEliteSkeleton(ServerLevel serverLevel, int level){
         var skeleton = new CustomSkeleton(serverLevel, null, new ItemStack(ARROW));
         var getEliteArmor = getEliteArmor(serverLevel, 100);
         skeleton.setElite();
@@ -201,15 +203,27 @@ public class MobManager {
 
     public static void summonEntities(AltarBlockEntity entity, String roomId){
         if(!(entity.getLevel() instanceof ServerLevel level)) return;
-        var actualEntity = buildMobs(level, roomId);
+
         var randomPoses = innerRadiusRandom(entity.getBlockPos().getCenter(), 12, 200)
             .stream()
             .filter(pos -> level.getBlockState(containing(pos)).isAir() && level.getBlockState(containing(pos).above()).isAir())
             .toList();
 
-        for (var livingEntity : actualEntity) {
-            addAndPositionEntity(level, containing(listRandom(randomPoses)), livingEntity);
-            entity.spawnedMobs.add(livingEntity.getUUID());
+        if(!Objects.equals(roomId, "boss")){
+            var actualEntity = buildMobs(level, roomId);
+
+            for (var livingEntity : actualEntity) {
+                addAndPositionEntity(level, containing(listRandom(randomPoses)), livingEntity);
+                entity.spawnedMobs.add(livingEntity.getUUID());
+            }
+        } else {
+            var round = entity.getData(AttachmentReg.INSTANCE_DATA).getClearedRooms();
+            var ancienGolem = getAncienGolem(level, round);
+            var eliteSkeleton = getEliteSkeleton(level, round);
+            var boss = Helpers.listRandom(List.of(ancienGolem, eliteSkeleton));
+
+            addAndPositionEntity(level, containing(listRandom(randomPoses)), boss);
+            entity.spawnedMobs.add(boss.getUUID());
         }
     }
 

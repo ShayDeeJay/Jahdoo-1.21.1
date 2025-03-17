@@ -8,9 +8,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.block.tank.TankBlockEntity;
-import org.jahdoo.common.registers.BlockReg;
-import org.jahdoo.common.registers.ItemReg;
 
 import static net.minecraft.client.Minecraft.getInstance;
 import static org.jahdoo.common.block.perk_table.PerkTable.TEXTURE;
@@ -24,7 +21,8 @@ public class PerkTableRenderer implements BlockEntityRenderer<PerkTableEntity>{
     public void render(PerkTableEntity entity, float partialTick, PoseStack stack, MultiBufferSource source, int packedLight, int packed) {
         var mc = getInstance();
         var itemRenderer = mc.getItemRenderer();
-        var render = new ItemStack(entity.getBlockState().getValue(TEXTURE) == 0 ? HEALTH_CONTAINER : MANA_CONTAINER);
+        var state = entity.getBlockState().getValue(TEXTURE);
+        var render = new ItemStack(state == 0 ? HEALTH_CONTAINER : state == 1 ? MANA_CONTAINER : BOON_CONTAINER);
         var rotate = entity.counter + partialTick;
         var animate = rotate / 12;
         var scale = Math.min(1.2F, animate);

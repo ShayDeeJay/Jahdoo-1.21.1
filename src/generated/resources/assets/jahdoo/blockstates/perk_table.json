@@ -1,10 +1,7 @@
 {
   "variants": {
-    "level=0": {
+    "": {
       "model": "jahdoo:block/perk_table"
-    },
-    "level=1": {
-      "model": "jahdoo:block/perk_table_1"
     }
   }
 }

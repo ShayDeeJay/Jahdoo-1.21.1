@@ -1,5 +1,6 @@
 package org.jahdoo.common.block.perk_table;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -8,18 +9,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.block.SyncedBlockEntity;
+import org.jahdoo.common.client.overlay.BoonSelectionScreen;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 
-import static net.minecraft.sounds.SoundEvents.*;
-import static net.minecraft.util.FastColor.ARGB32.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.ascension.utils.PositionFinders.*;
+import static net.minecraft.sounds.SoundEvents.PLAYER_LEVELUP;
+import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
 import static org.jahdoo.common.block.perk_table.PerkTable.TEXTURE;
-import static org.jahdoo.common.particle.ParticleHandlers.*;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.particle.ParticleStore.PLUS_PARTICLE;
-import static org.jahdoo.common.registers.AttachmentReg.*;
+import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
 
 public class PerkTableEntity extends SyncedBlockEntity {
@@ -35,21 +36,9 @@ public class PerkTableEntity extends SyncedBlockEntity {
         return this.hasUsed;
     }
 
-    public void setUsed(BlockState state, Player player){
-        if(!getUsed() && level != null){
-            this.hasUsed = true;
-            int value = state.getValue(TEXTURE);
-
-            if(value == 0){
-                player.heal(player.getMaxHealth());
-            } else {
-                player.getData(CASTER_DATA.get()).refillMana(player);
-            }
-
-            idleEffect(player.level(), player.position(), state);
-            getSoundWithPosition(level, getBlockPos(), PLAYER_LEVELUP, 1, 0.8F);
-            this.updateBlock();
-        }
+    public void tick(Level level, BlockPos pos, BlockState state) {
+        idleEffect(level, pos.getCenter(), state);
+        counter++;
     }
 
     @Override
@@ -66,21 +55,39 @@ public class PerkTableEntity extends SyncedBlockEntity {
         super.loadAdditional(tag, registries);
     }
 
-    public void tick(Level level, BlockPos pos, BlockState state) {
-        idleEffect(level, pos.getCenter(), state);
-        counter++;
-    }
-
     private void idleEffect(Level level, Vec3 pos, BlockState state) {
         if(!level.isClientSide || getUsed() || counter % 4 != 0) return;
         var getPositions = innerRadiusRandom(pos.subtract(0, 0.45, 0), 0.38, 3);
 
         for (var vec3 : getPositions) {
-            var byState = state.getValue(TEXTURE) == 0 ? color(207, 62, 62) : color(43, 193, 252);
+            var bState = state.getValue(TEXTURE);
+            var byState = bState == 0 ? color(207, 62, 62) : bState == 1 ? color(43, 193, 252) : color(59, 173, 80) ;
             var genericParticle = ParticleHandlers.genericParticle(PLUS_PARTICLE, 16, 3, byState, byState, false);
             sendParticles(level, genericParticle, vec3, 0, 0, 0.5, 0, 35);
         }
     }
 
+    public void setUsed(BlockState state, Player player){
+        if(!getUsed() && level != null){
+            this.hasUsed = true;
+            int value = state.getValue(TEXTURE);
+
+            switch (value){
+                case 0 -> player.heal(player.getMaxHealth());
+                case 1 -> player.getData(CASTER_DATA.get()).refillMana(player);
+                default -> {
+                    if(level.isClientSide){
+                        Minecraft.getInstance().setScreen(new BoonSelectionScreen());
+                    }
+                }
+            }
+
+            this.updateBlock();
+            idleEffect(player.level(), player.position(), state);
+            getSoundWithPosition(level, getBlockPos(), PLAYER_LEVELUP, 1, 0.8F);
+            level.destroyBlock(getBlockPos().above(), false);
+            level.destroyBlock(getBlockPos(), false);
+        }
+    }
 }
 

@@ -29,11 +29,12 @@ public class AltarRenderer extends GeoBlockRenderer<AltarBlockEntity>{
         float partialTick,
         long i
     ) {
-        var rad =  0.1F;
+        var rad =  Math.min(0.1f, (float) entity.privateTicks / 300);
         var height = 500;
         var colourLight = getColourLight(PERK_GREEN, 1.2);
 
-        renderBeaconBeam(poseStack, source, BEAM_LOCATION, partialTick, 0.2F, i, 0, height, colourLight, rad, rad * 6);
+        renderBeaconBeam(poseStack, source, BEAM_LOCATION, partialTick, 0.2F, i, 2, height, colourLight, rad, 0);
+        renderBeaconBeam(poseStack, source, BEAM_LOCATION, partialTick, 0.2F, i, 0, height, colourLight, 0, rad * 6);
     }
 
     @Override
@@ -45,8 +46,6 @@ public class AltarRenderer extends GeoBlockRenderer<AltarBlockEntity>{
     public boolean shouldRender(AltarBlockEntity blockEntity, Vec3 cameraPos) {
         return true;
     }
-
-
 
     @Override
     public void actuallyRender(

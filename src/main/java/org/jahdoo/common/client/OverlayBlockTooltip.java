@@ -3,6 +3,7 @@ package org.jahdoo.common.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
@@ -24,11 +25,12 @@ public class OverlayBlockTooltip {
         simpleGui(event, player);
 
         var partialTicks = event.getPartialTick().getGameTimeDeltaTicks();
-        HitResult pick = player.pick(3, partialTicks, false);
-        BlockPos containing = BlockPos.containing(pick.getLocation());
-
-        renderShoppingTableTooltip(event, player, containing);
-        renderShoppingTableTooltip(event, player, containing.below());
+        var pick = player.pick(player.blockInteractionRange(), partialTicks, false);
+        if(pick instanceof BlockHitResult result){
+            var pos = result.getBlockPos();
+            renderShoppingTableTooltip(event, player, pos);
+            renderShoppingTableTooltip(event, player, pos.below());
+        }
     }
 
     private static void renderShoppingTableTooltip(
@@ -46,7 +48,7 @@ public class OverlayBlockTooltip {
             var itemStack = tableEntity.getItem().getStackInSlot(0);
             var tooltip = getTooltipFromItem(instance, itemStack);
             var getState = tableEntity.getBlockState().getValue(ShoppingTableBlock.TEXTURE);
-            var canRender = instance.screen == null && tooltip.size() > 1 && getState != 3 && !itemStack.isEmpty();
+            var canRender = /*instance.screen == null && */tooltip.size() > 1 && getState != 3 && !itemStack.isEmpty();
 
             if (canRender) {
                 var mouseY = height - (tooltip.size() * 5);

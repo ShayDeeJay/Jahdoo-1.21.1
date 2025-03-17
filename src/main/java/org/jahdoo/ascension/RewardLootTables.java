@@ -148,7 +148,8 @@ public class RewardLootTables {
     
     public static ObjectArrayList<ItemStack> getCoinItems(ServerLevel serverLevel, Vec3 pos, int level) {
         var loot = LootTable.lootTable().withPool(coinLoot(level));
-        
+        var getCoin = new ItemStack(ItemReg.COIN);
+
         return createLootParams(serverLevel, pos, loot);
     }
 
@@ -236,9 +237,7 @@ public class RewardLootTables {
     private static LootPool.Builder coinLoot(float level) {
         var builder = LootPool.lootPool().setRolls(between(level/2, level));
 
-        return builder
-            .add(COIN.setWeight(40));
-
+        return builder.add(COIN.setWeight(40));
     }
 
     private static LootPool.Builder rarePool(ServerLevel serverLevel) {

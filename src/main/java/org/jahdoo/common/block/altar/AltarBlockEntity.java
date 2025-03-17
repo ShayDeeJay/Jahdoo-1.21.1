@@ -4,15 +4,23 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.MobManager;
+import org.jahdoo.ascension.RewardLootTables;
+import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.SyncedBlockEntity;
+import org.jahdoo.common.networking.server2client.InstanceSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -28,10 +36,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.jahdoo.ascension.BlockSetupManager.setPerkTable;
 import static org.jahdoo.ascension.StructureManager.placeLocksWithData;
+import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.block.altar.AltarAnim.idleParticleAnim;
 import static org.jahdoo.common.block.altar.AltarAnim.onActivationAnim;
-import static org.jahdoo.common.block.loot_chest.LootChestBlock.particleBurst;
+import static org.jahdoo.common.block.loot_chest.LootChestBlock.lootsplosian;
 import static org.jahdoo.common.entities.EntityAnimations.ALTAR_IDLE;
 
 
@@ -98,6 +109,32 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         }
     }
 
+    private static void onCompleteAltar(BlockPos pos, ServerLevel serverLevel) {
+        var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
+        var clearedRooms = data.getClearedRooms();
+
+        lootsplosian(pos, serverLevel, clearedRooms, ColourStore.PERK_GREEN, RewardLootTables.getCoinItems(serverLevel, pos.getCenter(), clearedRooms), false);
+        placeLocksWithData(serverLevel, pos.below(2));
+        serverLevel.destroyBlock(pos, false);
+        getSoundWithPosition(serverLevel, pos, SoundReg.END_TRIAL.get(), 2, 1.5F);
+        data.incrementClearedRooms();
+
+        Helpers.sendPacketsToPlayerDistance(pos.getCenter(), 400, serverLevel, serverPlayer -> serverPacket(serverPlayer, data));
+
+        if(clearedRooms % 2 == 0) setPerkTable(serverLevel, pos, 2);
+    }
+
+    private static void serverPacket(ServerPlayer serverPlayer, InstanceData data) {
+        var cleared = data.getClearedRooms();
+        PacketDistributor.sendToPlayer(serverPlayer, new InstanceSyncS2CP(data));
+
+        if(cleared % 5 == 0){
+            serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(40, 50, 30));
+            serverPlayer.connection.send(new ClientboundSetTitleTextPacket(withStyleComponent("Current Run", ColourStore.PERK_GREEN)));
+            serverPlayer.connection.send(new ClientboundSetSubtitleTextPacket(withStyleComponent("Rooms Completed: " + cleared, ColourStore.PERK_GREEN)));
+        }
+    }
+
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
@@ -135,6 +172,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         if(level instanceof ServerLevel serverLevel){
             if(this.started) {
                 this.privateTicks++;
+                this.updateBlock();
                 idleParticleAnim(pos, privateTicks, level);
             }
 
@@ -148,12 +186,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
 
             if (privateTicks == 1) onActivationAnim(level, pos, privateTicks);
             if (privateTicks > 30 && started && this.spawnedMobs.isEmpty()) {
-                placeLocksWithData(serverLevel, pos);
-                level.destroyBlock(pos, false);
-                Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.END_TRIAL.get(), 2, 1.5F);
-                particleBurst(serverLevel, pos.getCenter(), ColourStore.PERK_GREEN, 100);
-                var getInstanceData = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
-                getInstanceData.incrementClearedRooms();
+                onCompleteAltar(pos, serverLevel);
             }
         }
     }

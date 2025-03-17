@@ -79,21 +79,22 @@
 				}
 			}
 		},
-		"idle": {
-			"loop": true,
-			"bones": {
-				"pillar": {
-					"rotation": {
-						"vector": ["math.sin(query.anim_time * 80) * 1", "query.anim_time * 80", "math.cos(query.anim_time * 60) * 0.5"],
-						"easing": "linear"
-					},
-					"position": {
-						"vector": [0, "3.6+math.sin(query.anim_time * 100) * 0.4", 0],
-						"easing": "linear"
-					}
-				}
-			}
-		}
+        "idle": {
+            "loop": true,
+            "animation_length": 1000000000,
+            "bones": {
+                "pillar": {
+                    "rotation": ["math.sin(query.anim_time * 80) * 1", "query.anim_time * 80", "math.cos(query.anim_time * 60) * 0.5"],
+                    "position": {
+                      "0.0": {
+                        "post": [0, 0, 0],
+                        "lerp_mode": "catmullrom"
+                      },
+                      "0.5": [0, "23.6+math.sin(query.anim_time * 100) * 3", 0]
+                    }
+                }
+            }
+        }
 	},
 	"geckolib_format_version": 2
 }

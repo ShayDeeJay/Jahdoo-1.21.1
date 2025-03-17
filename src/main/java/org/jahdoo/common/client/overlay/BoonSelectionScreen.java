@@ -13,13 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static net.minecraft.network.chat.Component.*;
-import static net.minecraft.util.FastColor.ARGB32.*;
-import static org.jahdoo.ascension.boon.BoonSelection.*;
-import static org.jahdoo.ascension.utils.ColourStore.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.jahdoo.ascension.boon.BoonSelection.getNegativeBoon;
+import static org.jahdoo.ascension.boon.BoonSelection.getPositiveBoon;
+import static org.jahdoo.ascension.utils.ColourStore.MAGNET_RANGE_GREEN;
+import static org.jahdoo.ascension.utils.ColourStore.MAGNET_STRENGTH_RED;
 import static org.jahdoo.common.client.SharedUI.*;
-import static org.jahdoo.common.registers.ItemReg.*;
+import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_FROST;
 
 public class BoonSelectionScreen extends Screen  {
 

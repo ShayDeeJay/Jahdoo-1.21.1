@@ -3,7 +3,6 @@ package org.jahdoo.common.block.lock;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -30,9 +29,11 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.AttachmentReg;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
+import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
-import static net.minecraft.world.level.block.Blocks.*;
+import static net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK;
+import static net.minecraft.world.level.block.Blocks.OBSERVER;
 import static org.jahdoo.ascension.StructureManager.placeNewSide;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
@@ -145,9 +146,10 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
                 serverLevel.destroyBlock(pos, false);
                 var getBoon = entity.getBoon;
                 LevelBoonSelection.getRun(level, getBoon.value(), getBoon.executeIndex());
-                player.sendSystemMessage(Component.literal(data.toString()));
+                player.sendSystemMessage(literal(data.toString()));
                 return SUCCESS;
             }
+
         } else {
 //            entity.setRoomData();
 //            return SUCCESS;

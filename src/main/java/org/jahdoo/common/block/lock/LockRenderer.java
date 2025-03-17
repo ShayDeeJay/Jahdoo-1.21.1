@@ -10,12 +10,14 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.shopping_table.DisplayDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 import static net.minecraft.core.Direction.*;
+import static org.jahdoo.ascension.StructureManager.*;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 
 public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
@@ -26,7 +28,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
 
     @Override
     public void render(LockBlockEntity entity, float v, PoseStack pose, MultiBufferSource source, int light, int overlay) {
-        var adjustY = -0.2F;
+        var adjustY = 0.6F;
         var x = 0.5F - adjustY;
         var facing = entity.getBlockState().getValue(LockBlock.FACING);
         var direction = DisplayDirection.fromMCDirection(facing.getOpposite());
@@ -36,6 +38,9 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
 
         if(entity.isInitialized() && player != null && player.distanceToSqr(entity.getBlockPos().getCenter()) < 2500){
             var getBoon = entity.getBoon;
+            var id = entity.roomId.getString();
+            var getIcon = id.contains(BOSS) ? "☠" : id.contains(ROOM) ? "⚔" : id.contains(POWER_UP) ? "\uD83E\uDDEA" : "⇵" ;
+            renderName(Helpers.withStyleComponent(getIcon, entity.roomId.getStyle().getColor().getValue()), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction);
             renderName(entity.roomId, pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction);
             renderNewLine(font, pose, source, getBoon.label(), getBoon.icon(), x, facing, direction, 0.2F, light);
 //            renderNewLine(font, pose, source, Helpers.withStyleComponent("+10% Coin Drops", MAGNET_RANGE_GREEN), SILVER_COIN, -0.4F + x, facing, direction, 0.4F, light);

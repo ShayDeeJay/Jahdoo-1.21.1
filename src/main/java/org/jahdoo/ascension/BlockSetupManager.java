@@ -7,7 +7,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
@@ -17,7 +16,6 @@ import org.jahdoo.common.registers.ItemReg;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.world.level.block.Blocks.*;
@@ -49,7 +47,7 @@ public class BlockSetupManager {
         if(blockState.is(LIGHT_GRAY_CONCRETE)) setPerkTable(level, blockPos, 1);
     }
 
-    private static void setPerkTable(ServerLevel level, BlockPos blockPos, int state) {
+    public static void setPerkTable(ServerLevel level, BlockPos blockPos, int state) {
         level.setBlockAndUpdate(blockPos, PERK_TABLE.get().defaultBlockState().setValue(TEXTURE, state));
         level.setBlockAndUpdate(blockPos.above(1), BARRIER.defaultBlockState());
     }
@@ -57,7 +55,7 @@ public class BlockSetupManager {
     static void setBlockGenerator(ServerLevel level, Iterable<BlockPos> pos, Direction direction, String id) {
         for (var blockPos : pos) {
             if(Objects.equals(id, nameToId(POWER_UP))) placePerkTables(level, blockPos);
-            if(id.contains("room")) setLocks(level, blockPos);
+            if(id.contains("room") || id.contains("boss")) setLocks(level, blockPos);
             if(Objects.equals(id, nameToId(TRADING_POST))){
                 var table = SHOPPING_TABLE.get().defaultBlockState();
                 setLootChests(level, blockPos, direction);

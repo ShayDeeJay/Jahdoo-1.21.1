@@ -41,6 +41,7 @@ public class ClientEvents {
         var instance = Minecraft.getInstance();
         var player = instance.player;
 
+
         crosshairManager(event);
         simpleGui(event, player);
         OverlayBlockTooltip.overlayEvent(event);

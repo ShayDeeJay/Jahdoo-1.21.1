@@ -165,6 +165,12 @@ public class Network {
             WalletSyncS2CP.STREAM_CODEC,
             WalletSyncS2CP::handle
         );
+
+        payloadRegistrar.playToClient(
+            InstanceSyncS2CP.TYPE,
+            InstanceSyncS2CP.STREAM_CODEC,
+            InstanceSyncS2CP::handle
+        );
     }
 
 }

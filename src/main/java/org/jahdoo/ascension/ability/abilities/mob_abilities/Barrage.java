@@ -89,7 +89,7 @@ public class Barrage extends DefaultEntityBehaviour {
     }
 
     private void setNovaDamage(Vec3 vec3){
-        if(this.trackCounter % 10 == 0 && Random.nextInt(30) == 0){
+        if(this.trackCounter % 5 == 0 && Random.nextInt(10) == 0){
             var arrow = EntityType.ARROW.create(level());
             if (arrow == null) return;
             arrow.moveTo(vec3.x, vec3.y + 5, vec3.z);

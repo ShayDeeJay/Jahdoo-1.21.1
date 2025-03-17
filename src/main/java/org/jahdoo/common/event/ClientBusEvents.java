@@ -7,7 +7,9 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationRenderer;
 import org.jahdoo.common.block.altar.AltarRenderer;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockRenderer;
@@ -22,6 +24,8 @@ import org.jahdoo.common.block.tank.TankRenderer;
 import org.jahdoo.common.block.wand.WandBlockRenderer;
 import org.jahdoo.common.block.wand_manager.WandManagerRenderer;
 import org.jahdoo.common.client.RuneTooltipRenderer;
+import org.jahdoo.common.client.overlay.ManaBarOverlay;
+import org.jahdoo.common.client.overlay.WalletOverlay;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloudRenderer;
 import org.jahdoo.common.entities.burning_skull.BurningSkullRenderer;
 import org.jahdoo.common.entities.element_projectile.ElementProjectileRenderer;
@@ -39,6 +43,7 @@ import org.jahdoo.common.block.wand_manager.WandManagerScreen;
 import org.jahdoo.common.registers.*;
 
 import static org.jahdoo.common.client.KeyBinding.*;
+import static org.jahdoo.common.event.event_helpers.EventHelpers.getColour;
 import static org.jahdoo.common.particle.GenericParticle.*;
 import static org.jahdoo.common.registers.BlockEntityReg.*;
 import static org.jahdoo.common.registers.EntityReg.*;
@@ -59,10 +64,10 @@ public class ClientBusEvents {
         event.register(RuneTooltipRenderer.RuneComponent.class, RuneTooltipRenderer::new);
     }
 
-    public static int getColour(ItemStack stack){
-        var colour = stack.get(ComponentReg.RUNE_DATA.get());
-        if(colour != null) return colour.colour();
-        return -1;
+    @SubscribeEvent
+    public static void onRegisterOverlays(RegisterGuiLayersEvent event) {
+        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, Helpers.res("mana_bar"), new ManaBarOverlay());
+        event.registerAboveAll(Helpers.res("wallet"), new WalletOverlay());
     }
 
     @SubscribeEvent

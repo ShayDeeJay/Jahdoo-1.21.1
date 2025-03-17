@@ -116,6 +116,9 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> MANA_CONTAINER =
         complexItem("mana_container", ManaContainer::new);
 
+    public static final DeferredHolder<Item, Item> BOON_CONTAINER =
+        complexItem("boon_container", ManaContainer::new);
+
     //Wizard
     public static final DeferredHolder<Item, Item> WIZARD_HELMET =
         complexItem("wizard_helmet", () -> new WizardArmor(HELMET));

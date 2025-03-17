@@ -1,5 +1,7 @@
 package org.jahdoo.ascension.attachments;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
@@ -20,6 +22,18 @@ public class InstanceData implements IAttachment {
 
     public InstanceData(int zombie){
         this.horde = zombie;
+    }
+
+    public InstanceData(int horde, int skeleton, int eternalWizard, int voidSpider, int clearedRooms, double health, double speed, double armor, double attackDamage) {
+        this.horde = horde;
+        this.skeleton = skeleton;
+        this.eternalWizard = eternalWizard;
+        this.voidSpider = voidSpider;
+        this.clearedRooms = clearedRooms;
+        this.health = health;
+        this.speed = speed;
+        this.armor = armor;
+        this.attackDamage = attackDamage;
     }
 
     public int getEternalWizard(){
@@ -58,6 +72,26 @@ public class InstanceData implements IAttachment {
         return this.clearedRooms;
     }
 
+    public int getVoidSpider() {
+        return voidSpider;
+    }
+
+    public double getHealth() {
+        return health;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public double getAttackDamage() {
+        return attackDamage;
+    }
+
+    public double getArmor() {
+        return armor;
+    }
+
     public void incrementSkeleton(double mobs){
         this.skeleton += (int) mobs;
     }
@@ -93,6 +127,21 @@ public class InstanceData implements IAttachment {
     public void incrementClearedRooms(){
         this.clearedRooms ++;
     }
+
+
+    public static final Codec<InstanceData> CODEC = RecordCodecBuilder.create(
+        instance -> instance.group(
+            Codec.INT.fieldOf("horde").forGetter(InstanceData::getHorde),
+            Codec.INT.fieldOf("skeleton").forGetter(InstanceData::getSkeleton),
+            Codec.INT.fieldOf("eternal_wizard").forGetter(InstanceData::getEternalWizard),
+            Codec.INT.fieldOf("void_spider").forGetter(InstanceData::getVoidSpider),
+            Codec.INT.fieldOf("cleared_rooms").forGetter(InstanceData::getClearedRooms),
+            Codec.DOUBLE.fieldOf("health").forGetter(InstanceData::getHealth),
+            Codec.DOUBLE.fieldOf("speed").forGetter(InstanceData::getSpeed),
+            Codec.DOUBLE.fieldOf("armor").forGetter(InstanceData::getArmor),
+            Codec.DOUBLE.fieldOf("attack_damage").forGetter(InstanceData::getAttackDamage)
+        ).apply(instance, InstanceData::new)
+    );
 
     @Override
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {

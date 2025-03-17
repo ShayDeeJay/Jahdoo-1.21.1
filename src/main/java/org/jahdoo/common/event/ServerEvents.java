@@ -1,35 +1,20 @@
 package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.animal.frog.Frog;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomModelData;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
-import net.neoforged.neoforge.event.entity.EntityEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -42,14 +27,10 @@ import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
 import org.jahdoo.common.entities.ITamableEntity;
-import org.jahdoo.common.entities.SharedEntityBehaviours;
-import org.jahdoo.common.networking.server2client.MoveClientEntityS2CP;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
-import static net.minecraft.world.phys.HitResult.*;
-import static net.minecraft.world.phys.HitResult.Type.*;
 import static org.jahdoo.common.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_DATA;
@@ -148,7 +129,11 @@ public class ServerEvents {
         if(entity instanceof ServerPlayer player){
             var wallet = player.getData(AttachmentReg.PLAYER_WALLET).getWallet();
             PacketDistributor.sendToPlayer(player, new WalletSyncS2CP(wallet));
+            if(event.getLevel() instanceof CustomLevel){
+                player.removeAllEffects();
+            }
         }
+
     }
 
     @SubscribeEvent
@@ -171,19 +156,33 @@ public class ServerEvents {
     @SubscribeEvent
     public static void hitEvent(ProjectileImpactEvent event) {
         var projectile = event.getProjectile();
+        var type = event.getRayTraceResult();
         if(projectile.level() instanceof CustomLevel){
             if (projectile instanceof Arrow) {
-                var type = event.getRayTraceResult().getType();
-                if(type == BLOCK) projectile.discard();
+                if(type instanceof BlockHitResult) projectile.discard();
+            }
+
+            if (event.getRayTraceResult() instanceof EntityHitResult result) {
+                var owner = projectile.getOwner();
+                var entity = result.getEntity();
+
+                var nonFriendlyProjectile = !(owner instanceof Player) && !(owner instanceof ITamableEntity t && t.getOwner() != null);
+
+                if(nonFriendlyProjectile){
+                    var isNotTarget = !(entity instanceof Player) && !(entity instanceof ITamableEntity t && t.getOwner() != null);
+                    if(isNotTarget){
+                        event.setCanceled(true);
+                    }
+                }
             }
         }
     }
 
     @SubscribeEvent
-    public static void livingDeathEvent(LivingDropsEvent event){
+    public static void livingDropsEvent(LivingDropsEvent event){
         var entity = event.getEntity();
 
-        if(entity.level() instanceof CustomLevel){
+        if(entity.level() instanceof CustomLevel) {
             event.setCanceled(true);
         }
     }

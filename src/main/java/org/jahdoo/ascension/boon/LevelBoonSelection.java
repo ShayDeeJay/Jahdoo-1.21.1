@@ -98,8 +98,8 @@ public class LevelBoonSelection {
         }
 
         if(Random.nextInt(7) == 0){
+            boonCollection.add(mobTemplate(7, "Eternal Wizard", Icons.ETERNAL_WIZARD));
         }
-        boonCollection.add(mobTemplate(7, "Eternal Wizard", Icons.ETERNAL_WIZARD));
 
         return listRandom(boonCollection);
     }

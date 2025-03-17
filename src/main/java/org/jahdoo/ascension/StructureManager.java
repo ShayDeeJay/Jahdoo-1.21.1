@@ -34,8 +34,11 @@ public class StructureManager {
     public static final String ROOM = "Room";
     public static final String ROOM_1 = "Room 1";
     public static final String ROOM_2 = "Room 2";
-    public static final String STARTING_ROOM = "Starting Room";
+    public static final String ROOM_3 = "Room 3";
 
+    public static final String STARTING_ROOM = "Starting Room";
+    public static final String BOSS = "Boss";
+    public static final int GLOBAL_Y = 60;
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
@@ -51,16 +54,18 @@ public class StructureManager {
 
     public static Component getRandomRoomId(){
         var roomGen = new ArrayList<Component>();
-        roomGen.add(withStyleComponent(listRandom(List.of(ROOM, ROOM_1, ROOM_2)), SYMPATHISER_ORANGE));
-        roomGen.add(withStyleComponent(TRADING_POST, AETHER_BLUE));
-//        roomGen.add(withStyleComponent(POWER_UP, COSMIC_PURPLE));
+        roomGen.add(withStyleComponent(listRandom(List.of(ROOM, ROOM_1, ROOM_2, ROOM_3)), SYMPATHISER_ORANGE));
 
         if (Random.nextInt(3) == 0){
           roomGen.add(withStyleComponent(POWER_UP, COSMIC_PURPLE));
         }
 
         if(Random.nextInt(5) == 0){
-//          roomGen.add(withStyleComponent(TRADING_POST, AETHER_BLUE));
+          roomGen.add(withStyleComponent(TRADING_POST, AETHER_BLUE));
+        }
+
+        if(Random.nextInt(10) == 0) {
+            roomGen.add(withStyleComponent(BOSS, NEGATIVE_RED));
         }
 
         return listRandom(roomGen);
@@ -90,7 +95,7 @@ public class StructureManager {
     }
 
     static void generateStructure(ServerLevel level){
-        var pos = new BlockPos(0, 40, 0);
+        var pos = new BlockPos(0, GLOBAL_Y, 0);
         var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 1).toList();
         var settings = new StructurePlaceSettings();
 
@@ -100,7 +105,7 @@ public class StructureManager {
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
 
         placeStructure(level, pos, settings, nameToId(STARTING_ROOM));
-        placeLocksWithData(level, BlockPos.containing(DimHandler.trial().spawn()));
+        placeLocksWithData(level, BlockPos.containing(DimHandler.trial().spawn().subtract(10,0,0)));
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
         //Here we can pass the data from the previous altar to set up the next challenge stack.
@@ -113,18 +118,18 @@ public class StructureManager {
             var newPos = new BlockPos(0, 0, 0);
 
             switch (direction) {
-                case Direction.SOUTH -> newPos = new BlockPos(pos.getX() - 25, 40, pos.getZ());
+                case Direction.SOUTH -> newPos = new BlockPos(pos.getX() - 25, GLOBAL_Y, pos.getZ());
                 case Direction.NORTH -> {
                     settings.setRotation(Rotation.CLOCKWISE_180);
-                    newPos = new BlockPos(pos.getX() + 25, 40, pos.getZ());
+                    newPos = new BlockPos(pos.getX() + 25, GLOBAL_Y, pos.getZ());
                 }
                 case Direction.EAST -> {
                     settings.setRotation(Rotation.COUNTERCLOCKWISE_90);
-                    newPos = new BlockPos(pos.getX(), 40, pos.getZ() + 25);
+                    newPos = new BlockPos(pos.getX(), GLOBAL_Y, pos.getZ() + 25);
                 }
                 case Direction.WEST -> {
                     settings.setRotation(Rotation.CLOCKWISE_90);
-                    newPos = new BlockPos(pos.getX(), 40, pos.getZ() - 25);
+                    newPos = new BlockPos(pos.getX(), GLOBAL_Y, pos.getZ() - 25);
                 }
             }
 

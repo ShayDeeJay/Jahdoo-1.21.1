@@ -1,10 +1,6 @@
 package org.jahdoo.common.items.wand;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -14,15 +10,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import org.jahdoo.ascension.MobManager;
-import org.jahdoo.ascension.attachments.PlayerWallet;
-import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
-import org.jahdoo.common.client.overlay.BoonSelectionScreen;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -37,15 +26,9 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static net.minecraft.world.level.block.Blocks.*;
-import static org.jahdoo.ascension.BlockSetupManager.placePerkTables;
-import static org.jahdoo.ascension.trading_post.ShoppingItems.getEliteShoppingItem;
-import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.common.block.loot_chest.LootChestBlock.FACING;
-import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.items.wand.WandItemHelper.*;
-import static org.jahdoo.common.registers.BlockReg.*;
+import static org.jahdoo.common.registers.BlockReg.WAND;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
 import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
 
@@ -136,11 +119,11 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
 
-        if(level instanceof ServerLevel serverLevel){
-            var eliteSkeleton = MobManager.getEliteSkeleton(serverLevel);
-            serverLevel.addFreshEntity(eliteSkeleton);
-            eliteSkeleton.moveTo(player.position());
-        }
+//        if(level instanceof ServerLevel serverLevel){
+//            var eliteSkeleton = MobManager.getEliteSkeleton(serverLevel);
+//            serverLevel.addFreshEntity(eliteSkeleton);
+//            eliteSkeleton.moveTo(player.position());
+//        }
 
 //        PlayerWallet.updateWallet(player, new PlayerWallet.CurrencyConverter(1, 1, 0, 5));
 

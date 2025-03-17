@@ -30,7 +30,9 @@ public class EntityTagGenerator extends EntityTypeTagsProvider {
         this.tag(HORDE_MOBS)
             .add(CUSTOM_ZOMBIE.get())
             .add(EntityType.HUSK)
-            .add(EntityType.VINDICATOR);
+            .add(EntityType.VINDICATOR)
+            .add(EntityType.ZOMBIFIED_PIGLIN);
+
     }
 
 }

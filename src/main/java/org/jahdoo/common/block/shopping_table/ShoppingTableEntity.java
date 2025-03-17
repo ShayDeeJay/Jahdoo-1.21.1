@@ -41,10 +41,6 @@ public class ShoppingTableEntity extends AbstractBEInventory {
         return 64;
     }
 
-    public int getCost(){
-        return CurrencyConverter.convertToWallet(itemCosts);
-    }
-
     public void setCost(CurrencyConverter cost) {
         this.itemCosts = cost;
     }

@@ -38,9 +38,10 @@ public class BoonSelection {
         return withDefaultNamespace("textures/mob_effect/" + name + ".png");
     }
 
-    public static Boon effectBoon(Holder<MobEffect> effect, int value, int duration){
+    public static Boon effectBoon(Holder<MobEffect> effect, int value){
         var colour = !effect.value().isBeneficial() ? NEGATIVE_RED : UNIQUE_A;
         var name = translatable(effect.value().getDescriptionId()).getString();
+        var duration = Random.nextInt(1200, 3600);
         var instance = new JahdooMobEffect(effect, duration, value);
         var durationComp = withStyleComponent("Duration: ", colour);
         var amplifierComp = withStyleComponent("Amplifier: ", colour);
@@ -57,32 +58,33 @@ public class BoonSelection {
 
     public static Boon getPositiveBoon(){
         var boonCollection = new ArrayList<Boon>();
+        var level = JahdooRarity.getRarity().getId();
 
         sharedBoons(boonCollection, false);
-        boonCollection.add(effectBoon(MobEffects.REGENERATION, 1, 200));
-        boonCollection.add(effectBoon(MobEffects.MOVEMENT_SPEED, 1, 200));
-        boonCollection.add(effectBoon(MobEffects.DAMAGE_BOOST, 1, 200));
-        boonCollection.add(effectBoon(MobEffects.DAMAGE_RESISTANCE, 1, 200));
-        boonCollection.add(effectBoon(MobEffects.HEAL, 1, 200));
-        boonCollection.add(effectBoon(MobEffects.ABSORPTION, 1, 200));
-
-        if(Random.nextInt(20) == 0) boonCollection.add(Boon.EMPTY);
+        boonCollection.add(effectBoon(MobEffects.REGENERATION, Math.min(level, 2)));
+        boonCollection.add(effectBoon(MobEffects.MOVEMENT_SPEED, Math.min(level, 2)));
+        boonCollection.add(effectBoon(MobEffects.DAMAGE_BOOST, level));
+        boonCollection.add(effectBoon(MobEffects.DAMAGE_RESISTANCE, level));
+        boonCollection.add(effectBoon(MobEffects.HEAL, level));
+        boonCollection.add(effectBoon(MobEffects.ABSORPTION, level));
 
         return Helpers.listRandom(boonCollection);
     }
 
     public static Boon getNegativeBoon(){
         var boonCollection = new ArrayList<Boon>();
+        var level = JahdooRarity.getRarity().getId();
 
         sharedBoons(boonCollection, true);
-        boonCollection.add(effectBoon(MobEffects.MOVEMENT_SLOWDOWN, 1, 200));
-        boonCollection.add(effectBoon(MobEffects.CONFUSION, 1, 200));
-        boonCollection.add(effectBoon(MobEffects.POISON, 1, 200));
-        boonCollection.add(effectBoon(MobEffects.WITHER, 1, 200));
-        boonCollection.add(effectBoon(MobEffects.HUNGER, 1, 200));
-        boonCollection.add(effectBoon(MobEffects.BLINDNESS, 1, 200));
-
-        if(Random.nextInt(20) == 0) boonCollection.add(Boon.EMPTY);
+        boonCollection.add(effectBoon(MobEffects.MOVEMENT_SLOWDOWN, level));
+        boonCollection.add(effectBoon(MobEffects.CONFUSION, level));
+        boonCollection.add(effectBoon(MobEffects.POISON, level));
+        boonCollection.add(effectBoon(MobEffects.WITHER, level));
+        boonCollection.add(effectBoon(MobEffects.HUNGER, level));
+        boonCollection.add(effectBoon(MobEffects.BLINDNESS, level));
+        for (int i = 0; i < 4; i++){
+            boonCollection.add(Boon.EMPTY);
+        }
 
         return Helpers.listRandom(boonCollection);
     }

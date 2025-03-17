@@ -6,31 +6,22 @@ import net.casual.arcade.dimensions.level.CustomLevel;
 import net.casual.arcade.dimensions.level.LevelProperties;
 import net.casual.arcade.dimensions.level.builder.CustomLevelBuilder;
 import net.casual.arcade.dimensions.utils.impl.VoidChunkGenerator;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.portal.DimensionTransition;
 import org.jahdoo.ascension.attachments.InstanceData;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.common.registers.SoundReg;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static net.minecraft.world.level.biome.Biomes.*;
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
 import static org.jahdoo.ascension.StructureManager.generateStructure;
 import static org.jahdoo.ascension.utils.Helpers.res;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.DamageTypeReg.BIOME_SOURCE;
 
@@ -84,14 +75,6 @@ public class LevelGenerator {
 
     public static void playerSetup(Player player, int stage) {
         //Remove all effects as should only have ones allowed, which should only be ones on trinkets items etc/
-        player.removeAllEffects();
-
-        if(player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(40, 50, 30));
-            serverPlayer.connection.send(new ClientboundSetTitleTextPacket(withStyleComponent("Trial Of Strength", ColourStore.PERK_GREEN)));
-            serverPlayer.connection.send(new ClientboundSetSubtitleTextPacket(withStyleComponent("Stage " + stage, ColourStore.PERK_GREEN)));
-            serverPlayer.playNotifySound(SoundReg.START_TRIAL.get(), SoundSource.BLOCKS, 1, 1);
-        }
     }
 
     private static void generateNewLevel(ServerLevel serverLevel, String key) {
@@ -120,7 +103,7 @@ public class LevelGenerator {
             }
         );
 
-        return new DimensionTransition(getLevel.get(), handler.spawn(), player.getDeltaMovement(), 0, 0, DO_NOTHING);
+        return new DimensionTransition(getLevel.get(), handler.spawn(), player.getDeltaMovement(), 90, 0, DO_NOTHING);
     }
 
 }
