@@ -38,8 +38,8 @@ import java.util.List;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.sounds.SoundEvents.*;
-import static org.jahdoo.ascension.RewardLootTables.attachItemData;
-import static org.jahdoo.ascension.RewardLootTables.getCompletionLoot;
+import static org.jahdoo.ascension.trading_post.RewardLootTables.attachItemData;
+import static org.jahdoo.ascension.trading_post.RewardLootTables.getCompletionLoot;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.registers.SoundReg.EXPLOSION;
 

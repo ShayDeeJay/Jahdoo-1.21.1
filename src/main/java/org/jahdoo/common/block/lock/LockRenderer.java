@@ -15,9 +15,11 @@ import org.jahdoo.common.block.shopping_table.DisplayDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 import static net.minecraft.core.Direction.*;
-import static org.jahdoo.ascension.StructureManager.*;
+import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 
 public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
@@ -28,8 +30,8 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
 
     @Override
     public void render(LockBlockEntity entity, float v, PoseStack pose, MultiBufferSource source, int light, int overlay) {
-        var adjustY = 0.6F;
-        var x = 0.5F - adjustY;
+        var adjustY = 0.3F;
+        var x = 0.35F - adjustY;
         var facing = entity.getBlockState().getValue(LockBlock.FACING);
         var direction = DisplayDirection.fromMCDirection(facing.getOpposite());
         var mc = Minecraft.getInstance();
@@ -37,14 +39,17 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         var font = mc.font;
 
         if(entity.isInitialized() && player != null && player.distanceToSqr(entity.getBlockPos().getCenter()) < 2500){
-            var getBoon = entity.getBoon;
             var id = entity.roomId.getString();
-            var getIcon = id.contains(BOSS) ? "☠" : id.contains(ROOM) ? "⚔" : id.contains(POWER_UP) ? "\uD83E\uDDEA" : "⇵" ;
-            renderName(Helpers.withStyleComponent(getIcon, entity.roomId.getStyle().getColor().getValue()), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction);
+            var getIcon = id.contains("Boss") ? "☠" : id.contains("The") ? "⚔" : id.contains("Sanctuary") ? "\uD83E\uDDEA" : "⇵" ;
+            var textColour = entity.roomId.getStyle().getColor().getValue();
+
+            renderName(Helpers.withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction);
             renderName(entity.roomId, pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction);
-            renderNewLine(font, pose, source, getBoon.label(), getBoon.icon(), x, facing, direction, 0.2F, light);
-//            renderNewLine(font, pose, source, Helpers.withStyleComponent("+10% Coin Drops", MAGNET_RANGE_GREEN), SILVER_COIN, -0.4F + x, facing, direction, 0.4F, light);
-//            renderNewLine(font, pose, source, literal("+50% Mob"), GOLD_COIN, -0.8F + x, facing, direction);
+            renderNewLine(font, pose, source, entity.negativeBoon.label(), entity.negativeBoon.icon(), x, facing, direction, 0.2F, light);
+
+            if(!Objects.equals(entity.positiveBoon, EMPTY)){
+                renderNewLine(font, pose, source, entity.positiveBoon.label(), entity.positiveBoon.icon(), x - 0.6F, facing, direction, 0.2F, light);
+            }
         }
     }
 
@@ -97,7 +102,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         poseStack.mulPose(Axis.YP.rotationDegrees(direction.toYRot()).invert());
         poseStack.mulPose(Axis.ZP.rotationDegrees(180));
         poseStack.scale(scale, scale, scale);
-        var center = (float) -font.width(name) / 2;
+        var center = (float) -font.width(name) / 2 + 0.6F;
 
         font.drawInBatch(name, centre ? center : -42, 0, textColour, false, poseStack.last().pose(), source, NORMAL, 0, 255);
         poseStack.popPose();

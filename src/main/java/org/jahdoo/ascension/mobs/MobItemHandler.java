@@ -1,4 +1,4 @@
-package org.jahdoo.ascension;
+package org.jahdoo.ascension.mobs;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;

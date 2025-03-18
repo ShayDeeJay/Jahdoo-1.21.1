@@ -1,4 +1,4 @@
-package org.jahdoo.ascension;
+package org.jahdoo.ascension.trading_post;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.ResourceKey;
@@ -13,6 +13,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.utils.LocalLootBeamData;
 import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.items.magnet.Magnet;
 import org.jahdoo.common.items.magnet.MagnetData;

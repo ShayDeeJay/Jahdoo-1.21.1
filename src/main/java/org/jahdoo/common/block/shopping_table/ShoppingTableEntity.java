@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.ascension.RewardLootTables;
+import org.jahdoo.ascension.trading_post.RewardLootTables;
 import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.ascension.attachments.PlayerWallet.*;

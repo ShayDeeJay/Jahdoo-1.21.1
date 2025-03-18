@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.LocalLootBeamData.attachLootBeamComponent;
+import static org.jahdoo.ascension.utils.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
 import static org.jahdoo.ascension.rarity.JahdooRarity.LEGENDARY;
 import static org.jahdoo.ascension.utils.Helpers.*;

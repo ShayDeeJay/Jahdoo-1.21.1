@@ -21,7 +21,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.LocalLootBeamData;
+import org.jahdoo.ascension.utils.LocalLootBeamData;
 import org.jahdoo.common.client.gui.AugmentScreen;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.components.WandAbilityHolder;
@@ -30,7 +30,6 @@ import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

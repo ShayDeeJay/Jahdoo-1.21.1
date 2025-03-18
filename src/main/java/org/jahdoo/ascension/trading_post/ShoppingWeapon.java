@@ -5,11 +5,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.common.registers.ItemReg;
-import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static net.minecraft.world.item.enchantment.Enchantments.UNBREAKING;
-import static org.jahdoo.ascension.RewardLootTables.attachEnchantment;
+import static org.jahdoo.ascension.trading_post.RewardLootTables.attachEnchantment;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class ShoppingWeapon {

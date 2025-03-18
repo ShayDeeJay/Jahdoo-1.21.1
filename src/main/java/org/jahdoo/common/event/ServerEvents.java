@@ -2,6 +2,8 @@ package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.phys.BlockHitResult;
@@ -27,12 +29,16 @@ import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
 import org.jahdoo.common.entities.ITamableEntity;
+import org.jahdoo.common.networking.server2client.InstanceSyncS2CP;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
+import static net.minecraft.sounds.SoundSource.*;
+import static net.neoforged.neoforge.network.PacketDistributor.*;
 import static org.jahdoo.common.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
+import static org.jahdoo.common.registers.AttachmentReg.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_DATA;
 
 
@@ -108,6 +114,35 @@ public class ServerEvents {
     @SubscribeEvent
     public static void levelTickEvent(LevelTickEvent.Pre tickEvent){
         assignTarget(tickEvent);
+
+        if(tickEvent.getLevel() instanceof CustomLevel cLevel){
+            if(!cLevel.hasData(INSTANCE_DATA)) return;
+            var data = cLevel.getData(INSTANCE_DATA);
+
+            data.incrementTicks();
+
+            for (var player : cLevel.players()) {
+                sendToPlayer(player, new InstanceSyncS2CP(data));
+                var remaining = data.getMaxTime() - data.getTicks();
+                var lessThan20Seconds = remaining <= 400;
+                var lessThan10Seconds = remaining <= 200;
+
+                if(lessThan20Seconds && (data.getTicks() % 20) == 0){
+                    var pitch = (float) Math.abs((remaining / 10) - 38) / 19;
+                    player.playNotifySound(SoundEvents.NOTE_BLOCK_BASS.value(), PLAYERS, 1, pitch);
+                    player.playNotifySound(SoundEvents.WARDEN_HEARTBEAT, PLAYERS, 1, 0.8F);
+                }
+
+                if(lessThan20Seconds && (data.getTicks() % (lessThan10Seconds ? 10 : 20)) == 0){
+                    player.playNotifySound(SoundEvents.WARDEN_HEARTBEAT, PLAYERS, 1, 0.8F);
+                }
+
+                if(remaining == 0) {
+                    player.playNotifySound(SoundEvents.ALLAY_DEATH, PLAYERS, 1, 0.8F);
+                    player.kill();
+                }
+            }
+        }
     }
 
     @SubscribeEvent
@@ -127,8 +162,8 @@ public class ServerEvents {
         var entity = event.getEntity();
 
         if(entity instanceof ServerPlayer player){
-            var wallet = player.getData(AttachmentReg.PLAYER_WALLET).getWallet();
-            PacketDistributor.sendToPlayer(player, new WalletSyncS2CP(wallet));
+            var wallet = player.getData(PLAYER_WALLET).getWallet();
+            sendToPlayer(player, new WalletSyncS2CP(wallet));
             if(event.getLevel() instanceof CustomLevel){
                 player.removeAllEffects();
             }

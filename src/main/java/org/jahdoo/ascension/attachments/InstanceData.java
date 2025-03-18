@@ -12,31 +12,46 @@ public class InstanceData implements IAttachment {
     private int eternalWizard;
     private int voidSpider;
     private int clearedRooms;
+    private int ticks;
+    private int maxTime;
     private double health;
     private double speed;
     private double armor;
     private double attackDamage;
-    public static InstanceData DEFAULT = new InstanceData(5);
 
-    public InstanceData(){}
+    public InstanceData() {}
 
-    public InstanceData(int zombie){
-        this.horde = zombie;
-    }
-
-    public InstanceData(int horde, int skeleton, int eternalWizard, int voidSpider, int clearedRooms, double health, double speed, double armor, double attackDamage) {
+    public InstanceData(
+        int ticks,
+        int horde,
+        int skeleton,
+        int eternalWizard,
+        int voidSpider,
+        int clearedRooms,
+        int maxTime,
+        double health,
+        double speed,
+        double armor,
+        double attackDamage
+    ) {
+        this.ticks = ticks;
         this.horde = horde;
         this.skeleton = skeleton;
         this.eternalWizard = eternalWizard;
         this.voidSpider = voidSpider;
         this.clearedRooms = clearedRooms;
+        this.maxTime = maxTime;
         this.health = health;
         this.speed = speed;
         this.armor = armor;
         this.attackDamage = attackDamage;
     }
 
-    public int getEternalWizard(){
+    public int getMaxTime() {
+        return maxTime;
+    }
+
+    public int getEternalWizard() {
         return eternalWizard;
     }
 
@@ -52,23 +67,23 @@ public class InstanceData implements IAttachment {
         return voidSpider;
     }
 
-    public double getHealthMultiplier(){
+    public double getHealthMultiplier() {
         return health;
     }
 
-    public double getSpeedMultiplier(){
+    public double getSpeedMultiplier() {
         return speed;
     }
 
-    public double getArmorMultiplier(){
+    public double getArmorMultiplier() {
         return armor;
     }
 
-    public double getAttackDamageMultiplier(){
+    public double getAttackDamageMultiplier() {
         return attackDamage;
     }
 
-    public int getClearedRooms(){
+    public int getClearedRooms() {
         return this.clearedRooms;
     }
 
@@ -92,50 +107,72 @@ public class InstanceData implements IAttachment {
         return armor;
     }
 
-    public void incrementSkeleton(double mobs){
+    public int getTicks() {
+        return ticks;
+    }
+
+    public void incrementSkeleton(double mobs) {
         this.skeleton += (int) mobs;
     }
 
-    public void incrementHorde(double mobs){
+    public void incrementHorde(double mobs) {
         this.horde += (int) mobs;
     }
 
-    public void incrementEternalWizard(double mobs){
+    public void incrementEternalWizard(double mobs) {
         this.eternalWizard += (int) mobs;
     }
 
-    public void incrementVoidSpider(double mobs){
+    public void incrementVoidSpider(double mobs) {
         this.voidSpider += (int) mobs;
     }
 
-    public void incrementHealth(double health){
+    public void incrementHealth(double health) {
         this.health += health;
     }
 
-    public void incrementSpeed(double speed){
+    public void incrementSpeed(double speed) {
         this.speed += speed;
     }
 
-    public void incrementArmor(double armor){
+    public void incrementArmor(double armor) {
         this.armor += armor;
     }
 
-    public void incrementAttackDamage(double attackDamage){
+    public void incrementAttackDamage(double attackDamage) {
         this.attackDamage += attackDamage;
     }
 
-    public void incrementClearedRooms(){
-        this.clearedRooms ++;
+    public void incrementClearedRooms() {
+        this.clearedRooms++;
     }
 
+    public void incrementTicks() {
+        this.ticks++;
+    }
+
+    public void setMaxTime(int maxTime) {
+        this.maxTime += maxTime;
+    }
+
+    public static InstanceData setBaseData() {
+        var data = new InstanceData();
+        data.incrementHorde(5);
+
+        //Current default is 15 Minutes
+        data.setMaxTime(18000);
+        return data;
+    }
 
     public static final Codec<InstanceData> CODEC = RecordCodecBuilder.create(
         instance -> instance.group(
+            Codec.INT.fieldOf("ticks").forGetter(InstanceData::getTicks),
             Codec.INT.fieldOf("horde").forGetter(InstanceData::getHorde),
             Codec.INT.fieldOf("skeleton").forGetter(InstanceData::getSkeleton),
             Codec.INT.fieldOf("eternal_wizard").forGetter(InstanceData::getEternalWizard),
             Codec.INT.fieldOf("void_spider").forGetter(InstanceData::getVoidSpider),
             Codec.INT.fieldOf("cleared_rooms").forGetter(InstanceData::getClearedRooms),
+            Codec.INT.fieldOf("max_time").forGetter(InstanceData::getMaxTime),
             Codec.DOUBLE.fieldOf("health").forGetter(InstanceData::getHealth),
             Codec.DOUBLE.fieldOf("speed").forGetter(InstanceData::getSpeed),
             Codec.DOUBLE.fieldOf("armor").forGetter(InstanceData::getArmor),
@@ -150,10 +187,12 @@ public class InstanceData implements IAttachment {
         nbt.putDouble("armor", armor);
         nbt.putDouble("damage", attackDamage);
         nbt.putInt("horde", horde);
-        nbt.putInt("skeleton", horde);
+        nbt.putInt("skeleton", skeleton);
         nbt.putInt("eternal_wizard", eternalWizard);
         nbt.putInt("void_spider", voidSpider);
         nbt.putInt("cleared_rooms", clearedRooms);
+        nbt.putInt("tick", ticks);
+        nbt.putInt("max_time", maxTime);
     }
 
     @Override
@@ -167,12 +206,16 @@ public class InstanceData implements IAttachment {
         voidSpider = nbt.getInt("void_spider");
         eternalWizard = nbt.getInt("eternal_wizard");
         clearedRooms = nbt.getInt("cleared_rooms");
+        ticks = nbt.getInt("tick");
+        maxTime = nbt.getInt("max_time");
     }
 
     @Override
     public String toString() {
         return
         "Level Data: " + "\n" +
+        "Ticks = " + ticks + "\n" +
+        "Max Time = " + maxTime + "\n" +
         "Completed Rooms = " + clearedRooms + "\n" +
         "Horde = " + horde + "\n" +
         "Skeletons = " + skeleton + "\n" +
@@ -184,3 +227,4 @@ public class InstanceData implements IAttachment {
         "Mob Armor = " + armor;
     }
 }
+

@@ -11,7 +11,7 @@ import java.util.List;
 
 import static net.minecraft.world.entity.EquipmentSlot.*;
 import static net.minecraft.world.item.enchantment.Enchantments.*;
-import static org.jahdoo.ascension.RewardLootTables.attachEnchantment;
+import static org.jahdoo.ascension.trading_post.RewardLootTables.attachEnchantment;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class ShoppingArmor {

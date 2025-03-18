@@ -1,4 +1,4 @@
-package org.jahdoo.ascension;
+package org.jahdoo.ascension.level_manager;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -9,19 +9,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockReg;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.core.BlockPos.withinManhattan;
-import static org.jahdoo.ascension.BlockSetupManager.setBlockGenerator;
-import static org.jahdoo.ascension.BlockSetupManager.setLocks;
+import static org.jahdoo.ascension.level_manager.BlockSetupManager.setBlockGenerator;
+import static org.jahdoo.ascension.level_manager.BlockSetupManager.setLocks;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
@@ -29,16 +31,16 @@ import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 
 public class StructureManager {
 
-    public static final String TRADING_POST = "Trading Post";
-    public static final String POWER_UP = "Power Up";
-    public static final String ROOM = "Room";
-    public static final String ROOM_1 = "Room 1";
-    public static final String ROOM_2 = "Room 2";
-    public static final String ROOM_3 = "Room 3";
-
-    public static final String STARTING_ROOM = "Starting Room";
-    public static final String BOSS = "Boss";
+    public static final String BAZAAR = "bazaar";
+    public static final String SANCTUARY = "sanctuary";
+    public static final String THE_HALL = "the_hall";
+    public static final String THE_CHAMBERS = "the_chambers";
+    public static final String THE_OASIS = "the_oasis";
+    public static final String THE_BASTION = "the_bastion";
+    public static final String STARTING_ROOM = "starting_room";
+    public static final String THE_CRUCIBLE = "boss_crucible";
     public static final int GLOBAL_Y = 60;
+    public static final Vec3 SPAWN_POSITION = new Vec3(33.5, GLOBAL_Y + 2, 27.5);
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
@@ -54,36 +56,41 @@ public class StructureManager {
 
     public static Component getRandomRoomId(){
         var roomGen = new ArrayList<Component>();
-        roomGen.add(withStyleComponent(listRandom(List.of(ROOM, ROOM_1, ROOM_2, ROOM_3)), SYMPATHISER_ORANGE));
+        roomGen.add(getBattleRooms());
 
         if (Random.nextInt(3) == 0){
-          roomGen.add(withStyleComponent(POWER_UP, COSMIC_PURPLE));
+          roomGen.add(withStyleComponent(stringIdToName(SANCTUARY), COSMIC_PURPLE));
         }
 
         if(Random.nextInt(5) == 0){
-          roomGen.add(withStyleComponent(TRADING_POST, AETHER_BLUE));
+          roomGen.add(withStyleComponent(stringIdToName(BAZAAR), AETHER_BLUE));
         }
 
         if(Random.nextInt(10) == 0) {
-            roomGen.add(withStyleComponent(BOSS, NEGATIVE_RED));
+            roomGen.add(withStyleComponent(stringIdToName(THE_CRUCIBLE), NEGATIVE_RED));
         }
 
         return listRandom(roomGen);
     }
 
-    public static void placeLocksWithData(ServerLevel level, BlockPos pos) {
+    public static @NotNull Component getBattleRooms() {
+        return withStyleComponent(stringIdToName(listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION))), SYMPATHISER_ORANGE);
+    }
+
+    public static void placeLocksWithData(ServerLevel level, BlockPos pos, boolean isStartingBlock) {
         var range = roomBoundingFromCenter(pos);
 
         for (var blockPos : range) {
             BlockSetupManager.generateExit(level, blockPos);
-            setLocks(level, blockPos);
+            setLocks(level, blockPos, false);
             if(level.getBlockState(blockPos).is(Blocks.TINTED_GLASS)){
                 level.destroyBlock(blockPos, false);
             }
             var getLock = level.getBlockEntity(blockPos);
             if(getLock instanceof LockBlockEntity lock) {
+                lock.setStartingBlock(isStartingBlock);
                 lock.setRoomData();
-                var getPositions = innerRadiusRandom(blockPos.getCenter().subtract(0,   1, 0), 2.3, 350);
+                var getPositions = innerRadiusRandom(blockPos.getCenter().subtract(0, 1, 0), 2.3, 350);
 
                 for (var vec3 : getPositions) {
                     var colour = lock.roomId.getStyle().getColor().getValue();
@@ -94,7 +101,7 @@ public class StructureManager {
         }
     }
 
-    static void generateStructure(ServerLevel level){
+    public static void generateStructure(ServerLevel level){
         var pos = new BlockPos(0, GLOBAL_Y, 0);
         var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 1).toList();
         var settings = new StructurePlaceSettings();
@@ -104,8 +111,8 @@ public class StructureManager {
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
 
-        placeStructure(level, pos, settings, nameToId(STARTING_ROOM));
-        placeLocksWithData(level, BlockPos.containing(DimHandler.trial().spawn().subtract(10,0,0)));
+        placeStructure(level, pos, settings, STARTING_ROOM);
+        placeLocksWithData(level, BlockPos.containing(SPAWN_POSITION.subtract(10,0,0)), true);
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
         //Here we can pass the data from the previous altar to set up the next challenge stack.

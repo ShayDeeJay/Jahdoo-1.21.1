@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.UnaryOperator;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.LocalLootBeamData.attachLootBeamComponent;
+import static org.jahdoo.ascension.utils.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.ascension.rarity.RarityAttributes.*;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.setAbilityToAugment;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getRuneData;

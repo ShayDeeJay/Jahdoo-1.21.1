@@ -25,7 +25,7 @@ import org.jahdoo.common.registers.SoundReg;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
-import static org.jahdoo.ascension.BlockSetupManager.blockExitBarrier;
+import static org.jahdoo.ascension.level_manager.BlockSetupManager.blockExitBarrier;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 

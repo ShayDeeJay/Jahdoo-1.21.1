@@ -20,8 +20,8 @@ import java.util.List;
 
 import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
 import static net.minecraft.world.entity.EquipmentSlot.OFFHAND;
-import static org.jahdoo.ascension.LocalLootBeamData.attachLootBeamComponent;
-import static org.jahdoo.ascension.RewardLootTables.magnetItem;
+import static org.jahdoo.ascension.utils.LocalLootBeamData.attachLootBeamComponent;
+import static org.jahdoo.ascension.trading_post.RewardLootTables.magnetItem;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.setGoldCost;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.setPlatinumCost;

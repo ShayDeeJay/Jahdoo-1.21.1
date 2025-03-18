@@ -25,6 +25,7 @@ public class CommonSetup {
         modEventBus.addListener(AbilityReg::registerRegistry);
         modEventBus.addListener(ElementReg::registerRegistry);
         modEventBus.addListener(EntityDataReg::registerRegistry);
+        modEventBus.addListener(LevelBoonReg::registerRegistry);
     }
 
     public static void common(final FMLCommonSetupEvent event){
@@ -51,6 +52,7 @@ public class CommonSetup {
         EntityDataReg.register(modEventBus);
         AbilityReg.register(modEventBus);
         ElementReg.register(modEventBus);
+        LevelBoonReg.register(modEventBus);
     }
 
 }

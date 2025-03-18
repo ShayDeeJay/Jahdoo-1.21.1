@@ -13,14 +13,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.ascension.MobManager;
-import org.jahdoo.ascension.RewardLootTables;
+import org.jahdoo.ascension.mobs.MobManager;
+import org.jahdoo.ascension.trading_post.RewardLootTables;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.SyncedBlockEntity;
-import org.jahdoo.common.networking.server2client.InstanceSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -36,8 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.jahdoo.ascension.BlockSetupManager.setPerkTable;
-import static org.jahdoo.ascension.StructureManager.placeLocksWithData;
+import static org.jahdoo.ascension.level_manager.BlockSetupManager.setPerkTable;
+import static org.jahdoo.ascension.level_manager.StructureManager.placeLocksWithData;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.block.altar.AltarAnim.idleParticleAnim;
@@ -114,7 +112,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         var clearedRooms = data.getClearedRooms();
 
         lootsplosian(pos, serverLevel, clearedRooms, ColourStore.PERK_GREEN, RewardLootTables.getCoinItems(serverLevel, pos.getCenter(), clearedRooms), false);
-        placeLocksWithData(serverLevel, pos.below(2));
+        placeLocksWithData(serverLevel, pos.below(2), false);
         serverLevel.destroyBlock(pos, false);
         getSoundWithPosition(serverLevel, pos, SoundReg.END_TRIAL.get(), 2, 1.5F);
         data.incrementClearedRooms();
@@ -126,7 +124,6 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
 
     private static void serverPacket(ServerPlayer serverPlayer, InstanceData data) {
         var cleared = data.getClearedRooms();
-        PacketDistributor.sendToPlayer(serverPlayer, new InstanceSyncS2CP(data));
 
         if(cleared % 5 == 0){
             serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(40, 50, 30));

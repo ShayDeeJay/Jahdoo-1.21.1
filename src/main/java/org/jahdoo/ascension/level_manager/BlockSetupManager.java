@@ -1,4 +1,4 @@
-package org.jahdoo.ascension;
+package org.jahdoo.ascension.level_manager;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,11 +19,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.world.level.block.Blocks.*;
-import static org.jahdoo.ascension.StructureManager.*;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.*;
+import static org.jahdoo.ascension.level_manager.StructureManager.*;
 import static org.jahdoo.ascension.trading_post.ShoppingItems.getEliteShoppingItem;
 import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.ascension.utils.Helpers.nameToId;
 import static org.jahdoo.common.block.TrialPortalBlock.*;
 import static org.jahdoo.common.block.loot_chest.LootChestBlock.FACING;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
@@ -52,11 +51,11 @@ public class BlockSetupManager {
         level.setBlockAndUpdate(blockPos.above(1), BARRIER.defaultBlockState());
     }
 
-    static void setBlockGenerator(ServerLevel level, Iterable<BlockPos> pos, Direction direction, String id) {
+    public static void setBlockGenerator(ServerLevel level, Iterable<BlockPos> pos, Direction direction, String id) {
         for (var blockPos : pos) {
-            if(Objects.equals(id, nameToId(POWER_UP))) placePerkTables(level, blockPos);
-            if(id.contains("room") || id.contains("boss")) setLocks(level, blockPos);
-            if(Objects.equals(id, nameToId(TRADING_POST))){
+            if(Objects.equals(id, SANCTUARY)) placePerkTables(level, blockPos);
+            if(id.contains("the") || id.contains("boss")) setLocks(level, blockPos, true);
+            if(Objects.equals(id, BAZAAR)){
                 var table = SHOPPING_TABLE.get().defaultBlockState();
                 setLootChests(level, blockPos, direction);
                 uniqueItems(level, table, blockPos, direction);
@@ -67,12 +66,12 @@ public class BlockSetupManager {
         }
     }
 
-    public static void setLocks(ServerLevel level, BlockPos blockPos) {
+    public static void setLocks(ServerLevel level, BlockPos blockPos, boolean ignoreCheck) {
         var blockState = level.getBlockState(blockPos);
         if(blockState.is(OBSERVER)){
             level.setBlockAndUpdate(blockPos, BlockReg.LOCK.get().defaultBlockState().setValue(FACING, blockState.getValue(FACING)));
 
-            if(level.getBlockEntity(blockPos) instanceof LockBlockEntity lockBlockEntity){
+            if(ignoreCheck && level.getBlockEntity(blockPos) instanceof LockBlockEntity lockBlockEntity){
                 if(!lockBlockEntity.canPlace()){
                     level.setBlockAndUpdate(blockPos, NETHERITE_BLOCK.defaultBlockState());
                     level.setBlockAndUpdate(blockPos.relative(blockState.getValue(FACING), 1), NETHERITE_BLOCK.defaultBlockState());

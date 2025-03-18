@@ -21,7 +21,7 @@ import org.jahdoo.common.registers.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.jahdoo.ascension.MobManager.spawnAroundEntity;
+import static org.jahdoo.ascension.mobs.MobManager.spawnAroundEntity;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.registers.ElementReg.*;
 import static org.jahdoo.ascension.utils.Helpers.*;

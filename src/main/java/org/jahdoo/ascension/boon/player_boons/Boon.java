@@ -1,4 +1,4 @@
-package org.jahdoo.ascension.boon;
+package org.jahdoo.ascension.boon.player_boons;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

@@ -14,8 +14,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -23,20 +21,18 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.boon.LevelBoonSelection;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.LevelBoonReg;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
-import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK;
 import static net.minecraft.world.level.block.Blocks.OBSERVER;
-import static org.jahdoo.ascension.StructureManager.placeNewSide;
+import static org.jahdoo.ascension.level_manager.StructureManager.placeNewSide;
+import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
 
 public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -98,13 +94,13 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
-        return createTickerHelper(
-            entityType, LOCK_BE.get(),
-            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
-        );
-    }
+//    @Override
+//    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
+//        return createTickerHelper(
+//            entityType, LOCK_BE.get(),
+//            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
+//        );
+//    }
 
     @Override
     protected ItemInteractionResult useItemOn(
@@ -118,18 +114,21 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     ) {
         if(!(level.getBlockEntity(pos) instanceof LockBlockEntity entity)) return FAIL;
         if(entity.isInitialized()){
-            if (!entity.canPlace()) {
-                player.displayClientMessage(Helpers.withStyleComponent("Can't place, room already generated", ColourStore.NEGATIVE_RED), true);
-                Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_REJECT_REWARDED_PLAYER, 0.3F , 2F);
-                return FAIL;
+
+            if(!level.isClientSide && !entity.isStartingBlock){
+                if (!entity.canPlace()) {
+                    player.displayClientMessage(Helpers.withStyleComponent("Can't place, room already generated", ColourStore.NEGATIVE_RED), true);
+                    Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
+                    return FAIL;
+                }
             }
 
             if (level instanceof ServerLevel serverLevel) {
                 var getState = state.getValue(FACING);
-                var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
+
                 getSoundWithPosition(serverLevel, pos, SoundEvents.LODESTONE_COMPASS_LOCK, 1, 1.4F);
                 getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_ACTIVATE, 1, 0.6F);
-                placeNewSide(serverLevel, getState, pos.relative(getState, 1), Helpers.nameToId(entity.roomId.getString()));
+                placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingBlock ? 12 : 1), Helpers.nameToId(entity.roomId.getString()));
 
                 var range = betweenClosed(
                     pos.getX() - 10, pos.getY() - 10, pos.getZ() - 10,
@@ -143,10 +142,30 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
                     if (observer || netherite) serverLevel.destroyBlock(blockPos, false);
                 }
 
+                if(entity.isStartingBlock){
+                    var nPos = pos.relative(getState, 12);
+                    var ranges = betweenClosed(
+                        nPos.getX() - 10, nPos.getY() - 10, nPos.getZ() - 10,
+                        nPos.getX() + 10, nPos.getY() + 10, nPos.getZ() + 10
+                    );
+
+                    for (var blockPos : ranges) {
+                        var netherite = serverLevel.getBlockState(blockPos).is(NETHERITE_BLOCK);
+                        var observer = serverLevel.getBlockState(blockPos).is(OBSERVER);
+
+                        if (observer || netherite) serverLevel.destroyBlock(blockPos, false);
+                    }
+                }
+
                 serverLevel.destroyBlock(pos, false);
-                var getBoon = entity.getBoon;
-                LevelBoonSelection.getRun(level, getBoon.value(), getBoon.executeIndex());
-                player.sendSystemMessage(literal(data.toString()));
+                var getBoon = LevelBoonReg.fromId(entity.negativeBoon.id());
+                if(getBoon.isPresent()){
+                    getBoon.get().execute(serverLevel, entity.negativeBoon.value());
+                    if(entity.positiveBoon != EMPTY){
+                        var getBoonPos = LevelBoonReg.fromId(entity.positiveBoon.id());
+                        getBoonPos.ifPresent(boon -> boon.execute(serverLevel, entity.positiveBoon.value()));
+                    }
+                };
                 return SUCCESS;
             }
 

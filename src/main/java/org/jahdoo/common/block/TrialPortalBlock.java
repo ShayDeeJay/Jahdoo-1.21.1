@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -18,23 +17,18 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.portal.DimensionTransition;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.LevelGenerator;
+import org.jahdoo.ascension.level_manager.LevelGenerator;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
-import static org.jahdoo.ascension.DimHandler.trial;
-import static org.jahdoo.ascension.LevelGenerator.createNewWorld;
+import static org.jahdoo.ascension.level_manager.LevelGenerator.createLevelAndStartingRoom;
 import static org.jahdoo.ascension.utils.ColourStore.COSMIC_PURPLE;
 import static org.jahdoo.ascension.utils.ColourStore.PERK_GREEN;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 
 public class TrialPortalBlock extends NetherPortalBlock {
@@ -89,8 +83,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
         if(level instanceof CustomLevel cLevel) LevelGenerator.removeLevel(cLevel);
         level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 
-        var getDim = trial();
-        return createNewWorld(player, level, getDim);
+        return createLevelAndStartingRoom(player, level);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.jahdoo.ascension;
+package org.jahdoo.ascension.utils;
 
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.rarity.JahdooRarity;

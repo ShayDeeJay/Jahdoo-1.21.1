@@ -4,50 +4,37 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.ascension.boon.LevelBoon;
-import org.jahdoo.ascension.boon.LevelBoonSelection;
+import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.registers.BlockEntityReg;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.jahdoo.ascension.StructureManager.*;
-import static org.jahdoo.ascension.utils.ColourStore.*;
-import static org.jahdoo.ascension.utils.Helpers.listRandom;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.ascension.level_manager.StructureManager.getBattleRooms;
+import static org.jahdoo.ascension.level_manager.StructureManager.getRandomRoomId;
+import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData;
+import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.*;
 import static org.jahdoo.common.block.lock.LockBlock.FACING;
+import static org.jahdoo.common.registers.LevelBoonReg.randomNegative;
+import static org.jahdoo.common.registers.LevelBoonReg.randomPositive;
 
 
 public class LockBlockEntity extends SyncedBlockEntity {
 
     public Component roomId = Component.literal("");
-    public LevelBoon getBoon = LevelBoon.EMPTY;
+    public SyncableData negativeBoon = EMPTY;
+    public SyncableData positiveBoon = EMPTY;
+    public boolean isStartingBlock;
 
     public LockBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.LOCK_BE.get(), pPos, pBlockState);
     }
 
-    @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putString("component", Component.Serializer.toJson(this.roomId, registries));
-        LevelBoon.saveData(getBoon, tag, registries);
+    public void setStartingBlock(boolean startingBlock) {
+        isStartingBlock = startingBlock;
     }
-
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.roomId = Component.Serializer.fromJson(tag.getString("component"), registries);
-        this.getBoon = LevelBoon.loadData(tag, registries);
-    }
-
-    public void tick(Level level, BlockPos pos, BlockState state) {}
 
     public boolean isInitialized(){
-        return !this.roomId.getString().isEmpty() && this.getBoon != LevelBoon.EMPTY;
+        return !this.roomId.getString().isEmpty()/* && this.negativeBoon != EMPTY*/;
     }
 
     public boolean canPlace(){
@@ -59,9 +46,26 @@ public class LockBlockEntity extends SyncedBlockEntity {
     }
 
     public void setRoomData(){
-        this.roomId = getRandomRoomId();
-        this.getBoon = LevelBoonSelection.getRandomBoon();
+        this.roomId = this.isStartingBlock ? getBattleRooms() : getRandomRoomId();
+        this.negativeBoon = toSyncable(randomNegative());
+        if(Maths.percentageChance(30) && !this.isStartingBlock) this.positiveBoon = toSyncable(randomPositive());
         this.updateBlock();
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putString("component", Component.Serializer.toJson(this.roomId, registries));
+        saveSyncable(tag, registries, this.negativeBoon, "negative");
+        saveSyncable(tag, registries, this.positiveBoon, "positive");
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.roomId = Component.Serializer.fromJson(tag.getString("component"), registries);
+        this.negativeBoon = loadData(tag, registries, "negative");
+        this.positiveBoon = loadData(tag, registries, "positive");
     }
 
 }

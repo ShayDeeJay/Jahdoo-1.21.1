@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jetbrains.annotations.NotNull;
@@ -23,14 +24,15 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.mojang.datafixers.util.Pair.of;
+import static java.lang.String.*;
 import static net.minecraft.network.chat.Component.empty;
+import static net.minecraft.resources.ResourceLocation.*;
 import static org.jahdoo.ascension.attachments.PlayerWallet.*;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.convertToCoins;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.convertToWallet;
 import static org.jahdoo.ascension.utils.ColourStore.MAGNET_RANGE_GREEN;
 import static org.jahdoo.ascension.utils.ColourStore.NEGATIVE_RED;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.common.client.Icons.*;
 
 public class WalletOverlay implements LayeredDraw.Layer {
 
@@ -120,10 +122,9 @@ public class WalletOverlay implements LayeredDraw.Layer {
         slideGuiStats();
         deltaTracker.getGameTimeDeltaTicks();
 
-        if(minecraft.player.level().getDescription().getString().contains("trial")){
+        if(minecraft.player.level().getDescription().getString().contains("ascension")){
             levelData(graphics, level, minecraft, currentData, screen);
         }
-
 
         timer = Math.max(0, timer - 1);
         previousWallet = getWalletValue(player);
@@ -147,18 +148,22 @@ public class WalletOverlay implements LayeredDraw.Layer {
         graphics.drawString(minecraft.font, withStyleComponent("Current Run", ColourStore.COSMIC_PURPLE), (int) (10 + offsetX), 33 + offsetY, -1, true);
         graphics.pose().popPose();
 
+        var remainingTime = data.getMaxTime() - data.getTicks();
+        var prefix = "textures/item/";
         var getComps = List.of(
-            of(appendStat("Rooms Completed: ", data.getClearedRooms()), UPGRADE),
-            of(appendStat("Horde Killed: ", data.getHorde()), HORDE),
-            of(appendStat("Skeletons Killed: ", data.getSkeleton()), SKELETON),
-            of(appendStat("Wizards Killed: ", data.getEternalWizard()), ETERNAL_WIZARD),
-            of(appendStat("Spiders Killed: ", data.getVoidSpider()), VOID_SPIDER)
+            of(appendStat("Rooms Completed: ", valueOf(data.getClearedRooms()), MAGNET_RANGE_GREEN), withDefaultNamespace(prefix + "iron_door.png")),
+//            of(appendStat("Horde Killed: ", valueOf(data.getHorde()), MAGNET_RANGE_GREEN), HORDE),
+//            of(appendStat("Skeletons Killed: ", valueOf(data.getSkeleton()), MAGNET_RANGE_GREEN), SKELETON),
+//            of(appendStat("Wizards Killed: ", valueOf(data.getEternalWizard()), MAGNET_RANGE_GREEN), ETERNAL_WIZARD),
+//            of(appendStat("Spiders Killed: ", valueOf(data.getVoidSpider()), MAGNET_RANGE_GREEN), VOID_SPIDER),
+            of(appendStat("Time: ", Maths.ticksToTime(valueOf(remainingTime)), remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED), withDefaultNamespace(prefix + "clock_00.png"))
         );
 
+
         for (var getComp : getComps) {
-            var size = 18;
-            graphics.blit(getComp.getSecond(), (int) (10 + offsetX), 94 + spacer + offsetY, 0, 0, size, size, size, size);
-            graphics.drawString(minecraft.font, getComp.getFirst(), (int) (30 + offsetX), 100 + spacer + offsetY, -1, true);
+            var size = 12;
+            graphics.blit(getComp.getSecond(), (int) (12 + offsetX), 98 + spacer + offsetY, 0, 0, size, size, size, size);
+            graphics.drawString(minecraft.font, getComp.getFirst(), (int) (28 + offsetX), 100 + spacer + offsetY, -1, true);
             spacer += 18;
         }
 
@@ -172,9 +177,9 @@ public class WalletOverlay implements LayeredDraw.Layer {
         }
     }
 
-    private static @NotNull MutableComponent appendStat(String prefix, int value) {
-        var aetherBlue = ColourStore.PENDENT_NAME;
-        return withStyleComponent(prefix, aetherBlue).copy().append(withStyleComponent("" + value, MAGNET_RANGE_GREEN));
+    private static @NotNull MutableComponent appendStat(String prefix, String value, int colour) {
+        var aetherBlue = ColourStore.SYMPATHISER_ORANGE;
+        return withStyleComponent(prefix, aetherBlue).copy().append(withStyleComponent(value, colour));
     }
 
     private static Component displayDifference(

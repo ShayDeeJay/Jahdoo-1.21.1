@@ -71,18 +71,17 @@ public class Maths {
     }
 
     public static String ticksToTime(String current) {
-        String converter;
-        var duration = singleFormattedDouble(Double.parseDouble(current) / 20);
-        var minutes = (int) (duration / 60);
-        var seconds = (int) (duration % 60);
-        if (minutes > 0 && seconds == 0) {
-            converter = roundNonWholeString(minutes) + "m";
-        } else if (minutes > 0) {
-            converter = minutes + "m " + seconds + "s";
-        } else {
-            converter = roundNonWholeString(duration) + "s";
-        }
-        return converter;
+        int duration = (int) (Double.parseDouble(current) / 20); // Convert ticks to seconds
+        int hours = duration / 3600;
+        int minutes = (duration % 3600) / 60;
+        int seconds = duration % 60;
+
+        StringBuilder converter = new StringBuilder();
+        if (hours > 0) converter.append(hours).append("h ");
+        if (minutes > 0) converter.append(minutes).append("m ");
+        if (seconds > 0 || converter.isEmpty()) converter.append(seconds).append("s");
+
+        return converter.toString().trim();
     }
 
     public static String roundNonWholeString(String input) {

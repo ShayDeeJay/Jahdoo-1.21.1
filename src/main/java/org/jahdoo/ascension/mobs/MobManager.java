@@ -1,14 +1,18 @@
-package org.jahdoo.ascension;
+package org.jahdoo.ascension.mobs;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.monster.Husk;
 import net.minecraft.world.entity.monster.Vindicator;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
@@ -19,6 +23,7 @@ import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.Maths;
@@ -57,8 +62,7 @@ import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.THIS_ENTITY;
-import static org.jahdoo.ascension.LevelStageModifiers.addBaseAttribute;
-import static org.jahdoo.ascension.LevelStageModifiers.effectWithChance;
+import static org.jahdoo.ascension.level_manager.StructureManager.*;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.*;
@@ -80,6 +84,26 @@ public class MobManager {
         var damage = Maths.getPercentageTotal(round, 12);
 
         return new AncientGolem(serverLevel, null, damage, 100, 1, INFINITE_LIFE, 20);
+    }
+
+    public static void effectWithChance(LivingEntity livingEntity, Holder<MobEffect> effect, int amplifier, int chance) {
+        if(Maths.percentageChance(chance)){
+            if(!livingEntity.hasEffect(effect)){
+                livingEntity.addEffect(new JahdooMobEffect(effect, MobEffectInstance.INFINITE_DURATION, amplifier));
+            }
+        }
+    }
+
+    public static void addBaseAttribute(
+        Holder<Attribute> attributes,
+        LivingEntity getEntity,
+        double multiplier
+    ){
+        if(getEntity.getAttributes().hasAttribute(attributes)){
+            var attributeInstance = getEntity.getAttributes().getInstance(attributes);
+            if (attributeInstance == null) return;
+            attributeInstance.setBaseValue(Maths.getPercentageTotal(multiplier, attributeInstance.getValue()));
+        }
     }
 
     public static LivingEntity generateMob(LivingEntity livingEntity, InstanceData getData){
@@ -127,9 +151,9 @@ public class MobManager {
 
     public static LivingEntity getReadyZombie(ServerLevel serverLevel, String id){
         var entity = switch (id){
-            case "room" -> new CustomZombie(serverLevel, null);
-            case "room_1" -> new Vindicator(EntityType.VINDICATOR, serverLevel)  ;
-            case "room_2" -> new Husk(EntityType.HUSK, serverLevel);
+            case THE_HALL -> new CustomZombie(serverLevel, null);
+            case THE_CHAMBERS -> new Vindicator(EntityType.VINDICATOR, serverLevel)  ;
+            case THE_OASIS -> new Husk(EntityType.HUSK, serverLevel);
             default -> new ZombifiedPiglin(EntityType.ZOMBIFIED_PIGLIN, serverLevel);
         };
 

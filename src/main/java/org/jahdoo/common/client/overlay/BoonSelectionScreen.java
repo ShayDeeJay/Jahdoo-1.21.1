@@ -6,7 +6,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.ascension.boon.Boon;
+import org.jahdoo.ascension.boon.player_boons.Boon;
 import org.jahdoo.common.registers.SoundReg;
 
 import java.util.ArrayList;
@@ -15,8 +15,8 @@ import java.util.function.Consumer;
 
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.boon.BoonSelection.getNegativeBoon;
-import static org.jahdoo.ascension.boon.BoonSelection.getPositiveBoon;
+import static org.jahdoo.ascension.boon.player_boons.BoonSelection.getNegativeBoon;
+import static org.jahdoo.ascension.boon.player_boons.BoonSelection.getPositiveBoon;
 import static org.jahdoo.ascension.utils.ColourStore.MAGNET_RANGE_GREEN;
 import static org.jahdoo.ascension.utils.ColourStore.MAGNET_STRENGTH_RED;
 import static org.jahdoo.common.client.SharedUI.*;
