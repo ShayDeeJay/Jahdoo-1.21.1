@@ -8,6 +8,7 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.block.lock.LockBlockEntity;
+import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.BlockReg;
@@ -32,10 +33,13 @@ import static org.jahdoo.common.registers.ItemReg.RUNE;
 
 public class BlockSetupManager {
 
-    private static void setLootChests(ServerLevel level, BlockPos pos, Direction direction) {
+    public static void setLootChests(ServerLevel level, BlockPos pos, Direction direction, int type, boolean ignore) {
         var chestState = LOOT_CHEST.get().defaultBlockState().setValue(FACING, direction);
-        if(level.getBlockState(pos).is(MAGENTA_CONCRETE)){
+        if(ignore || level.getBlockState(pos).is(MAGENTA_CONCRETE)){
             level.setBlockAndUpdate(pos, chestState);
+            if(level.getBlockEntity(pos) instanceof LootChestEntity l){
+                l.getRarity = type;
+            }
         }
     }
 
@@ -57,7 +61,7 @@ public class BlockSetupManager {
             if(id.contains("the") || id.contains("boss")) setLocks(level, blockPos, true);
             if(Objects.equals(id, BAZAAR)){
                 var table = SHOPPING_TABLE.get().defaultBlockState();
-                setLootChests(level, blockPos, direction);
+                setLootChests(level, blockPos, direction, Random.nextInt(4), false);
                 uniqueItems(level, table, blockPos, direction);
                 otherShopping(level, table, blockPos, direction);
                 keyTable(level, table, blockPos, direction);

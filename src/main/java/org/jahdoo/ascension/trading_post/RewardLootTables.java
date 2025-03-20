@@ -1,6 +1,7 @@
 package org.jahdoo.ascension.trading_post;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.LocalLootBeamData;
 import org.jahdoo.common.items.augments.Augment;
@@ -25,6 +27,9 @@ import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.core.registries.Registries.ENCHANTMENT;
@@ -147,11 +152,26 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> MAGNET = 
         lootTableItem(ItemReg.MAGNET.get());
     
-    public static ObjectArrayList<ItemStack> getCoinItems(ServerLevel serverLevel, Vec3 pos, int level) {
-        var loot = LootTable.lootTable().withPool(coinLoot(level));
-        var getCoin = new ItemStack(ItemReg.COIN);
+    public static List<ItemStack> getCoinItems(InstanceData data) {
+        var lootCoins = new ArrayList<ItemStack>();
 
-        return createLootParams(serverLevel, pos, loot);
+        for (int i = 0; i < data.getBronzeCoin(); i++){
+            lootCoins.add(new ItemStack(ItemReg.COIN));
+        }
+
+        for (int i = 0; i < data.getSilverCoin(); i++){
+            var stack = new ItemStack(ItemReg.COIN);
+            stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
+            lootCoins.add(stack);
+        }
+
+        for (int i = 0; i < data.getGoldCoin(); i++){
+            var stack = new ItemStack(ItemReg.COIN);
+            stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(2));
+            lootCoins.add(stack);
+        }
+
+        return lootCoins;
     }
 
     private static void attachLootBeam(ItemStack itemStack, LootBeamComponent data) {
@@ -233,12 +253,6 @@ public class RewardLootTables {
             case Magnet ignored -> magnetItem(rarity, itemStack);
             default -> { /*IGNORE*/ }
         }
-    }
-
-    private static LootPool.Builder coinLoot(float level) {
-        var builder = LootPool.lootPool().setRolls(between(level/2, level));
-
-        return builder.add(COIN.setWeight(40));
     }
 
     private static LootPool.Builder rarePool(ServerLevel serverLevel) {

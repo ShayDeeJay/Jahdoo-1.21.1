@@ -2,16 +2,12 @@ package org.jahdoo.common.client.overlay;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.InventoryMenu;
 
 import java.util.List;
 
-import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
 import static org.jahdoo.common.client.Icons.WAND_GUI;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.overlay.OverlayHelpers.getAllStat;
@@ -105,6 +101,7 @@ public class StatScreen extends Screen {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBlurredBackground(partialTick);
+
         int i = this.width/2;
         int j = this.height/2;
         var player = getMinecraft().player;
@@ -117,6 +114,8 @@ public class StatScreen extends Screen {
             renderStatScreen(guiGraphics, player);
             renderPlayer(guiGraphics, mouseX, mouseY, i, j, player);
         }
+
+        WalletOverlay.renderWallet(guiGraphics, getMinecraft(), 10);
 
         boxMaker(guiGraphics, i - 170, j - 84, 62, 78, HEADER_COLOUR, getFadedColourBackground(0f));
         super.render(guiGraphics, mouseX, mouseY, partialTick);

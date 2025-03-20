@@ -38,7 +38,7 @@ public class StructureManager {
     public static final String THE_OASIS = "the_oasis";
     public static final String THE_BASTION = "the_bastion";
     public static final String STARTING_ROOM = "starting_room";
-    public static final String THE_CRUCIBLE = "boss_crucible";
+    public static final String BOSS_CRUCIBLE = "boss_crucible";
     public static final int GLOBAL_Y = 60;
     public static final Vec3 SPAWN_POSITION = new Vec3(33.5, GLOBAL_Y + 2, 27.5);
 
@@ -67,18 +67,20 @@ public class StructureManager {
         }
 
         if(Random.nextInt(10) == 0) {
-            roomGen.add(withStyleComponent(stringIdToName(THE_CRUCIBLE), NEGATIVE_RED));
+            roomGen.add(withStyleComponent(stringIdToName(BOSS_CRUCIBLE), NEGATIVE_RED));
         }
 
         return listRandom(roomGen);
     }
 
     public static @NotNull Component getBattleRooms() {
-        return withStyleComponent(stringIdToName(listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION))), SYMPATHISER_ORANGE);
+        return withStyleComponent(stringIdToName(listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION))), EXPERIENCE_GREEN);
     }
 
-    public static void placeLocksWithData(ServerLevel level, BlockPos pos, boolean isStartingBlock) {
+    public static void placeLocksWithData(ServerLevel level, BlockPos pos) {
         var range = roomBoundingFromCenter(pos);
+        var dif = List.of("Easy", "Medium", "Hard").reversed();
+        var counter = 0;
 
         for (var blockPos : range) {
             BlockSetupManager.generateExit(level, blockPos);
@@ -88,7 +90,8 @@ public class StructureManager {
             }
             var getLock = level.getBlockEntity(blockPos);
             if(getLock instanceof LockBlockEntity lock) {
-                lock.setStartingBlock(isStartingBlock);
+                lock.getDifficulty = dif.get(counter);
+                counter++;
                 lock.setRoomData();
                 var getPositions = innerRadiusRandom(blockPos.getCenter().subtract(0, 1, 0), 2.3, 350);
 
@@ -112,7 +115,7 @@ public class StructureManager {
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
 
         placeStructure(level, pos, settings, STARTING_ROOM);
-        placeLocksWithData(level, BlockPos.containing(SPAWN_POSITION.subtract(10,0,0)), true);
+        placeLocksWithData(level, BlockPos.containing(SPAWN_POSITION.subtract(10,0,0)));
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
         //Here we can pass the data from the previous altar to set up the next challenge stack.
@@ -157,6 +160,7 @@ public class StructureManager {
                     level.setBlockAndUpdate(blockPos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
                     if(level.getBlockEntity(blockPos) instanceof AltarBlockEntity e){
                         e.roomId = roomId;
+                        e.direction = direction;
                     }
                 }
             }

@@ -12,6 +12,7 @@ public class RarityAttributes {
     private final Pair<Double, Double> healChance;
     private final Pair<Integer, Integer> maxHealth;
     private final Pair<Integer, Integer> maxAbsorption;
+    private final Pair<Integer, Integer> time;
 
     public RarityAttributes(
         Pair<Double, Double> manaPool,
@@ -22,7 +23,8 @@ public class RarityAttributes {
         Pair<Integer, Integer> refinementPotential,
         Pair<Double, Double> healChance,
         Pair<Integer, Integer> maxHealth,
-        Pair<Integer, Integer> maxAbsorption
+        Pair<Integer, Integer> maxAbsorption,
+        Pair<Integer, Integer> time
     ) {
         this.manaPool = manaPool;
         this.manaRegen = manaRegen;
@@ -33,6 +35,7 @@ public class RarityAttributes {
         this.healChance = healChance;
         this.maxHealth = maxHealth;
         this.maxAbsorption = maxAbsorption;
+        this.time = time;
     }
 
     public double getRandomManaPool() {
@@ -71,6 +74,10 @@ public class RarityAttributes {
         return getRandomInteger(maxAbsorption);
     }
 
+    public int getRandomTime() {
+        return getRandomInteger(time);
+    }
+
     public Pair<Double, Double> getManaPoolRange() {
         return manaPool;
     }
@@ -107,6 +114,10 @@ public class RarityAttributes {
         return maxAbsorption;
     }
 
+    public Pair<Integer, Integer> getTimeRange() {
+        return time;
+    }
+
     private double getRandomDouble(Pair<Double, Double> range) {
         return Random.nextDouble(range.getFirst(), range.getSecond());
     }
@@ -125,7 +136,8 @@ public class RarityAttributes {
             Pair.of(50, 100),      // Refinement Potential
             Pair.of(1.0, 1.5),     // Heal Chance
             Pair.of(1, 3),         // Max Health
-            Pair.of(1, 2)          // Max Absorption
+            Pair.of(1, 2),         // Max Absorption
+            Pair.of(200, 600)        // Time
         );
 
     public static final RarityAttributes RARE_ATTRIBUTES =
@@ -138,7 +150,8 @@ public class RarityAttributes {
             Pair.of(100, 150),     // Refinement Potential
             Pair.of(2.0, 2.5),     // Heal Chance
             Pair.of(3, 6),         // Max Health
-            Pair.of(3, 4)          // Max Absorption
+            Pair.of(3, 4),         // Max Absorption
+            Pair.of(600, 1000)        // Time
         );
 
     public static final RarityAttributes EPIC_ATTRIBUTES =
@@ -150,8 +163,9 @@ public class RarityAttributes {
             Pair.of(9.0, 12.0),    // Damage
             Pair.of(150, 200),     // Refinement Potential
             Pair.of(3.0, 3.5),     // Heal Chance
-            Pair.of(6, 9),        // Max Health
-            Pair.of(5, 6)          // Max Absorption
+            Pair.of(6, 9),         // Max Health
+            Pair.of(5, 6),         // Max Absorption
+            Pair.of(1000, 1800)        // Time
         );
 
     public static final RarityAttributes LEGENDARY_ATTRIBUTES =
@@ -163,8 +177,9 @@ public class RarityAttributes {
             Pair.of(12.0, 15.0),   // Damage
             Pair.of(200, 250),     // Refinement Potential
             Pair.of(4.0, 4.5),     // Heal Chance
-            Pair.of(9, 12),       // Max Health
-            Pair.of(7, 8)          // Max Absorption
+            Pair.of(9, 12),        // Max Health
+            Pair.of(7, 8),         // Max Absorption
+            Pair.of(1800, 3600)        // Time
         );
 
     public static final RarityAttributes ETERNAL_ATTRIBUTES =
@@ -177,6 +192,7 @@ public class RarityAttributes {
             Pair.of(250, 300),     // Refinement Potential
             Pair.of(5.0, 5.5),     // Heal Chance
             Pair.of(12, 15),       // Max Health
-            Pair.of(9, 10)         // Max Absorption
+            Pair.of(9, 10),        // Max Absorption
+            Pair.of(3600, 6000)        // Time
         );
 }

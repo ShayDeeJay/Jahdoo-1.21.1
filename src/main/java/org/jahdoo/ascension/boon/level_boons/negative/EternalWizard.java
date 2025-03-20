@@ -28,7 +28,7 @@ public class EternalWizard extends MobLevelBoon {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.COMMON;
+        return JahdooRarity.LEGENDARY;
     }
 
 }

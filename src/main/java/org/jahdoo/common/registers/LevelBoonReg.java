@@ -10,7 +10,8 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.boon.level_boons.*;
 import org.jahdoo.ascension.boon.level_boons.negative.*;
-import org.jahdoo.ascension.boon.level_boons.positive.Time;
+import org.jahdoo.ascension.boon.level_boons.positive.*;
+import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.Objects;
@@ -44,6 +45,24 @@ public class LevelBoonReg {
         var element = REGISTRY
             .stream()
             .filter(a -> !a.isPositive())
+            .toList();
+        return Helpers.listRandom(element);
+    }
+
+    public static AbstractLevelBoon withRarityNegative(JahdooRarity rarity) {
+        var element = REGISTRY
+            .stream()
+            .filter(a -> !a.isPositive())
+            .filter(a -> a.rarity() == rarity)
+            .toList();
+        return Helpers.listRandom(element);
+    }
+
+    public static AbstractLevelBoon withRarityPositive(JahdooRarity rarity) {
+        var element = REGISTRY
+            .stream()
+            .filter(AbstractLevelBoon::isPositive)
+            .filter(a -> a.rarity() == rarity)
             .toList();
         return Helpers.listRandom(element);
     }
@@ -89,6 +108,18 @@ public class LevelBoonReg {
     //Positive
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> TIME =
         registerElement(Time::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> BRONZE_COIN =
+        registerElement(BronzeCoins::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> FILLER_BRONZE_COIN =
+        registerElement(FillerBronzeCoins::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> SILVER_COIN =
+        registerElement(SilverCoins::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> GOLD_COIN =
+        registerElement(GoldCoins::new);
 
     public static void register(IEventBus eventBus) {
         LEVEL_BOON.register(eventBus);

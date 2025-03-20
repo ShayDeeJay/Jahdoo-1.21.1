@@ -1,23 +1,16 @@
 package org.jahdoo.common.block.altar;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.mobs.MobManager;
-import org.jahdoo.ascension.trading_post.RewardLootTables;
-import org.jahdoo.ascension.attachments.InstanceData;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
@@ -34,13 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.jahdoo.ascension.level_manager.BlockSetupManager.setLootChests;
 import static org.jahdoo.ascension.level_manager.BlockSetupManager.setPerkTable;
 import static org.jahdoo.ascension.level_manager.StructureManager.placeLocksWithData;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.block.altar.AltarAnim.idleParticleAnim;
 import static org.jahdoo.common.block.altar.AltarAnim.onActivationAnim;
-import static org.jahdoo.common.block.loot_chest.LootChestBlock.lootsplosian;
 import static org.jahdoo.common.entities.EntityAnimations.ALTAR_IDLE;
 
 
@@ -53,6 +45,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     public double animateTick;
     public boolean started;
     public boolean beginSpawning;
+    public Direction direction;
     public String roomId;
     public List<UUID> spawnedMobs = new ArrayList<>();
 
@@ -107,53 +100,44 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         }
     }
 
-    private static void onCompleteAltar(BlockPos pos, ServerLevel serverLevel) {
+    private void onCompleteAltar(BlockPos pos, ServerLevel serverLevel) {
         var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
         var clearedRooms = data.getClearedRooms();
 
-        lootsplosian(pos, serverLevel, clearedRooms, ColourStore.PERK_GREEN, RewardLootTables.getCoinItems(serverLevel, pos.getCenter(), clearedRooms), false);
-        placeLocksWithData(serverLevel, pos.below(2), false);
+        data.incrementClearedRooms();
+        placeLocksWithData(serverLevel, pos.below(2));
         serverLevel.destroyBlock(pos, false);
         getSoundWithPosition(serverLevel, pos, SoundReg.END_TRIAL.get(), 2, 1.5F);
-        data.incrementClearedRooms();
 
-        Helpers.sendPacketsToPlayerDistance(pos.getCenter(), 400, serverLevel, serverPlayer -> serverPacket(serverPlayer, data));
-
-        if(clearedRooms % 2 == 0) setPerkTable(serverLevel, pos, 2);
-    }
-
-    private static void serverPacket(ServerPlayer serverPlayer, InstanceData data) {
-        var cleared = data.getClearedRooms();
-
-        if(cleared % 5 == 0){
-            serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(40, 50, 30));
-            serverPlayer.connection.send(new ClientboundSetTitleTextPacket(withStyleComponent("Current Run", ColourStore.PERK_GREEN)));
-            serverPlayer.connection.send(new ClientboundSetSubtitleTextPacket(withStyleComponent("Rooms Completed: " + cleared, ColourStore.PERK_GREEN)));
+        if(clearedRooms % 2 == 0) {
+            setPerkTable(serverLevel, pos, 2);
+        } else {
+            setLootChests(serverLevel, pos, direction, -1, true);
         }
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
-        tag.putInt("challenge_altar.private", privateTicks);
-        tag.putBoolean("challenge_altar.beginSpawn", beginSpawning);
+        tag.putInt("private_ticks", privateTicks);
+        tag.putBoolean("beginSpawn", beginSpawning);
         tag.putDouble("animate", this.animateTick);
         tag.putBoolean("started", this.started);
         tag.putInt("spawned", this.mobsSpawned);
         tag.putString("roomId", this.roomId);
-
         var uuids = new CompoundTag();
         for (var spawnedMob : this.spawnedMobs) {
             uuids.putUUID(String.valueOf(spawnedMob), spawnedMob);
         }
+
         tag.put("uuid", uuids);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
-        privateTicks = tag.getInt("challenge_altar.private");
-        beginSpawning = tag.getBoolean("challenge_altar.beginSpawning");
+        privateTicks = tag.getInt("private_ticks");
+        beginSpawning = tag.getBoolean("beginSpawning");
         animateTick = tag.getDouble("animate");
         started = tag.getBoolean("started");
         mobsSpawned = tag.getInt("spawned");

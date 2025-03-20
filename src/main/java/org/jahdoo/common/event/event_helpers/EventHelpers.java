@@ -7,13 +7,10 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.Husk;
-import net.minecraft.world.entity.monster.Vindicator;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
@@ -42,13 +39,15 @@ import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.entities.CustomSkeleton;
-import org.jahdoo.common.entities.CustomZombie;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.registers.*;
+import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.EffectReg;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.ItemReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -56,7 +55,6 @@ import java.util.ArrayList;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
-import static net.minecraft.world.entity.ai.behavior.BehaviorUtils.throwItem;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
@@ -312,7 +310,7 @@ public class EventHelpers {
                 throwItem(entity, stack, entity.position());
             }
 
-            if(entity instanceof VoidSpider spider){
+            if(entity instanceof VoidSpider spider && !spider.isBaby()){
                 if(spider.getOwner() == null){
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
                     stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));

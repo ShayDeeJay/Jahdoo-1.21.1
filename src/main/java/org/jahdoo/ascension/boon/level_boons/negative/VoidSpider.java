@@ -28,7 +28,7 @@ public class VoidSpider extends MobLevelBoon {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.COMMON;
+        return JahdooRarity.RARE;
     }
 
 }

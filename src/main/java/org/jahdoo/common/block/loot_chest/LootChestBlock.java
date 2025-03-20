@@ -25,6 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -38,8 +39,10 @@ import java.util.List;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.sounds.SoundEvents.*;
-import static org.jahdoo.ascension.trading_post.RewardLootTables.attachItemData;
-import static org.jahdoo.ascension.trading_post.RewardLootTables.getCompletionLoot;
+import static net.minecraft.world.ItemInteractionResult.FAIL;
+import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static org.jahdoo.ascension.trading_post.RewardLootTables.*;
+import static org.jahdoo.ascension.utils.ColourStore.PERK_GREEN;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.registers.SoundReg.EXPLOSION;
 
@@ -115,33 +118,64 @@ public class LootChestBlock extends BaseEntityBlock {
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (!(level.getBlockEntity(pos) instanceof LootChestEntity lootChestEntity)) return ItemInteractionResult.FAIL;
+        if (!(level.getBlockEntity(pos) instanceof LootChestEntity cEntity)) return FAIL;
+        if (!(level instanceof ServerLevel serverLevel)) return FAIL;
 
-        if(!lootChestEntity.isOpen){
-            var isKey = stack.is(ItemReg.LOOT_KEY);
-            if (level instanceof ServerLevel serverLevel && isKey) {
-                var value = stack.get(CUSTOM_MODEL_DATA).value();
-                var isValid = value == lootChestEntity.getRarity;
-                if (isValid) {
-                    lootChestEntity.setOpen(true);
-                    var lootLevel = serverLevel.getData(AttachmentReg.INSTANCE_DATA).getClearedRooms();
-                    var getId = new CustomModelData(lootChestEntity.getRarity);
-                    var colour = KeyItem.getJahdooRarity(getId).getColour();
-                    var setLootValue = lootLevel + (value * value);
-                    var lootMultiplier = value + 1;
+        if(!cEntity.isOpen){
+            var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
 
-                    for(var i = 0; i < lootMultiplier; i++){
-                        var rewards = getCompletionLoot(serverLevel, pos.getCenter(), setLootValue);
-                        lootsplosian(pos, serverLevel, lootMultiplier,  colour, rewards, true);
-                    }
-                    stack.shrink(1);
-                    return ItemInteractionResult.SUCCESS;
-                }
+            if(cEntity.isCoinChest()){
+                return coinChestGetter(pos, serverLevel, cEntity, data);
+            } else {
+                var success = lootChestGetter(stack, serverLevel, pos, cEntity, data.getClearedRooms());
+                if (success != null) return success;
             }
+
             getSoundWithPosition(level, pos, LODESTONE_COMPASS_LOCK, 1,1.8F);
         }
 
-        return ItemInteractionResult.SUCCESS;
+        return SUCCESS;
+    }
+
+    private static @NotNull ItemInteractionResult coinChestGetter(
+        BlockPos pos,
+        ServerLevel serverLevel,
+        LootChestEntity lootChestEntity,
+        InstanceData data
+    ) {
+        lootChestEntity.setOpen(true);
+        lootsplosian(pos, serverLevel, 10, PERK_GREEN, getCoinItems(data), false, 0);
+        return SUCCESS;
+    }
+
+    private static ItemInteractionResult lootChestGetter(
+        ItemStack stack,
+        ServerLevel serverLevel,
+        BlockPos pos,
+        LootChestEntity lootChestEntity,
+        int clearedRooms
+    ) {
+        if (stack.is(ItemReg.LOOT_KEY)) {
+            var value = stack.get(CUSTOM_MODEL_DATA).value();
+            var isValid = value == lootChestEntity.getRarity;
+            if (isValid) {
+                lootChestEntity.setOpen(true);
+                var getId = new CustomModelData(lootChestEntity.getRarity);
+                var colour = KeyItem.getJahdooRarity(getId).getColour();
+                var setLootValue = clearedRooms + (value * value);
+                var lootMultiplier = value + 1;
+
+                for(var i = 0; i < lootMultiplier; i++){
+                    var rewards = getCompletionLoot(serverLevel, pos.getCenter(), setLootValue);
+                    lootsplosian(pos, serverLevel, lootMultiplier,  colour, rewards, true, 30);
+                }
+
+                stack.shrink(1);
+                return SUCCESS;
+            }
+        }
+
+        return null;
     }
 
     public static void lootsplosian(
@@ -150,7 +184,8 @@ public class LootChestBlock extends BaseEntityBlock {
         int level,
         int colour,
         List<ItemStack> rewards,
-        boolean shouldDropExperience
+        boolean shouldDropExperience,
+        int pickupDelay
     ) {
         for (var reward : rewards) {
             var pCenter = pos.getCenter();
@@ -164,7 +199,7 @@ public class LootChestBlock extends BaseEntityBlock {
             var rarity = JahdooRarity.getRarity();
 
             itemEntity.setDeltaMovement(velocity);
-            itemEntity.setPickUpDelay(30);
+            itemEntity.setPickUpDelay(pickupDelay);
 
             if(shouldDropExperience && Random.nextInt(10) == 0) {
                 var exp = ItemReg.EXPERIENCE_ORB.get();
@@ -178,7 +213,7 @@ public class LootChestBlock extends BaseEntityBlock {
 
                 var itemEntity1 = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() + 0.2, pCenter.z(), itemStack);
                 itemEntity1.setDeltaMovement(velocity);
-                itemEntity1.setPickUpDelay(30);
+                itemEntity1.setPickUpDelay(pickupDelay);
                 serverLevel.addFreshEntity(itemEntity1);
             }
 

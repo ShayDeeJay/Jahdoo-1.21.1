@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.shopping_table.DisplayDirection;
 import org.slf4j.Logger;
@@ -38,18 +39,22 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         var player = mc.player;
         var font = mc.font;
 
-        if(entity.isInitialized() && player != null && player.distanceToSqr(entity.getBlockPos().getCenter()) < 2500){
-            var id = entity.roomId.getString();
-            var getIcon = id.contains("Boss") ? "☠" : id.contains("The") ? "⚔" : id.contains("Sanctuary") ? "\uD83E\uDDEA" : "⇵" ;
-            var textColour = entity.roomId.getStyle().getColor().getValue();
+        if(!entity.isStartingRoom()){
+            if (entity.isInitialized() && player != null && player.distanceToSqr(entity.getBlockPos().getCenter()) < 2500) {
+                var id = entity.roomId.getString();
+                var getIcon = id.contains("Boss") ? "☠" : id.contains("The") ? "⚔" : id.contains("Sanctuary") ? "\uD83E\uDDEA" : "⇵";
+                var textColour = entity.roomId.getStyle().getColor().getValue();
 
-            renderName(Helpers.withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction);
-            renderName(entity.roomId, pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction);
-            renderNewLine(font, pose, source, entity.negativeBoon.label(), entity.negativeBoon.icon(), x, facing, direction, 0.2F, light);
+                renderName(Helpers.withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction);
+                renderName(entity.roomId, pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction);
+                renderNewLine(font, pose, source, entity.negativeBoon.label(), entity.negativeBoon.icon(), x, facing, direction, 0.2F, light);
 
-            if(!Objects.equals(entity.positiveBoon, EMPTY)){
-                renderNewLine(font, pose, source, entity.positiveBoon.label(), entity.positiveBoon.icon(), x - 0.6F, facing, direction, 0.2F, light);
+                if (!Objects.equals(entity.positiveBoon, EMPTY)) {
+                    renderNewLine(font, pose, source, entity.positiveBoon.label(), entity.positiveBoon.icon(), x - 0.6F, facing, direction, 0.2F, light);
+                }
             }
+        } else {
+            renderName(Helpers.withStyleComponent(entity.getDifficulty, ColourStore.PERK_GREEN), pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction);
         }
     }
 

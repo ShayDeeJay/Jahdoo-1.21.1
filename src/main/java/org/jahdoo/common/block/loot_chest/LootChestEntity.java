@@ -1,4 +1,5 @@
 package org.jahdoo.common.block.loot_chest;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -19,30 +20,32 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.List;
-
-import static org.jahdoo.common.entities.EntityAnimations.*;
-import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
+import static org.jahdoo.common.entities.EntityAnimations.OPEN_LOOT;
+import static org.jahdoo.common.entities.EntityAnimations.SPAWN_CHEST;
+import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
 
 public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity {
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public int privateTicks;
     public boolean isOpen = false;
-    public String getTexture;
     public int getRarity;
 
     public LootChestEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.LOOT_CHEST_BE.get(), pos, state);
-        getRarity = Random.nextInt(4);
-        getTexture = List.of("loot_chest.png", "loot_chest_1.png", "loot_chest_2.png", "loot_chest_3.png").get(getRarity);
     }
 
     public void setOpen(boolean open) {
         isOpen = open;
+    }
+
+    public boolean canRender() {
+        return !this.isOpen && !this.isCoinChest();
+    }
+
+    public boolean isCoinChest(){
+        return this.getRarity == -1;
     }
 
     @Override
@@ -65,7 +68,6 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         super.saveAdditional(tag, provider);
         tag.putInt("loot_chest.private", privateTicks);
         tag.putBoolean("isOpen", isOpen);
-        tag.putString("texture", getTexture);
         tag.putInt("getRarity", getRarity);
     }
 
@@ -74,7 +76,6 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         super.loadAdditional(tag, provider);
         privateTicks = tag.getInt("loot_chest.private");
         isOpen = tag.getBoolean("isOpen");
-        getTexture = tag.getString("texture");
         getRarity = tag.getInt("getRarity");
     }
 
@@ -83,7 +84,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         privateTicks++;
         var id = getRarity;
 
-        if(!this.isOpen){
+        if(canRender()){
             if(this.privateTicks % (6 - getRarity) == 0){
                 for (var vec3 : PositionFinders.innerRadiusRandom(pos.getCenter().subtract(0, 0.35, 0), 0.55, Math.max(3, 5 * id))) {
                     var colour1 = KeyItem.getJahdooRarity(new CustomModelData(id));
@@ -91,7 +92,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
                     var size = Random.nextFloat(1.2f, 1.6f) - ((float) getRarity / 30);
                     var lifetime = 6 + id + Random.nextInt(2, 5);
                     var particleColour = getNonBakedParticles(colour1.getColour(), darker, lifetime, size);
-                    var ySpeed = /*0.1 +*/ ((double) id / 60) + Random.nextDouble(0.07, 0.13);
+                    var ySpeed =  ((double) id / 60) + Random.nextDouble(0.07, 0.13);
 
                     level.addParticle(particleColour, vec3.x, vec3.y, vec3.z, 0, ySpeed, 0);
                 }
@@ -112,7 +113,6 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         }
 
         if(level instanceof ServerLevel serverLevel){
-//            if(privateTicks >= 20) serverLevel.destroyBlock(pPos, false);
             serverLevel.sendBlockUpdated(pos, blockState, blockState, 2);
         }
     }

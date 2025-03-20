@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -22,17 +21,18 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.LevelBoonReg;
+import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
+import static net.minecraft.sounds.SoundEvents.*;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK;
 import static net.minecraft.world.level.block.Blocks.OBSERVER;
-import static org.jahdoo.ascension.level_manager.StructureManager.placeNewSide;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
-import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.ascension.level_manager.StructureManager.placeNewSide;
+import static org.jahdoo.ascension.utils.Helpers.*;
 
 public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -113,68 +113,64 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         BlockHitResult hitResult
     ) {
         if(!(level.getBlockEntity(pos) instanceof LockBlockEntity entity)) return FAIL;
+        if(!(level instanceof ServerLevel serverLevel)) return FAIL;
+
         if(entity.isInitialized()){
+            var getState = state.getValue(FACING);
 
-            if(!level.isClientSide && !entity.isStartingBlock){
-                if (!entity.canPlace()) {
-                    player.displayClientMessage(Helpers.withStyleComponent("Can't place, room already generated", ColourStore.NEGATIVE_RED), true);
-                    Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
-                    return FAIL;
-                }
+            if (!entity.isStartingRoom() && !entity.canPlace()) {
+                player.displayClientMessage(withStyleComponent("Can't place, room already generated", ColourStore.NEGATIVE_RED), true);
+                getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
+                return FAIL;
             }
 
-            if (level instanceof ServerLevel serverLevel) {
-                var getState = state.getValue(FACING);
 
-                getSoundWithPosition(serverLevel, pos, SoundEvents.LODESTONE_COMPASS_LOCK, 1, 1.4F);
-                getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_ACTIVATE, 1, 0.6F);
-                placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingBlock ? 12 : 1), Helpers.nameToId(entity.roomId.getString()));
+            getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, 1, 1.4F);
+            getSoundWithPosition(serverLevel, pos, VAULT_ACTIVATE, 1, 0.6F);
+            placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()));
+            destroyDoors(serverLevel, pos);
 
-                var range = betweenClosed(
-                    pos.getX() - 10, pos.getY() - 10, pos.getZ() - 10,
-                    pos.getX() + 10, pos.getY() + 10, pos.getZ() + 10
-                );
+            if(entity.isStartingRoom()) destroyDoors(serverLevel, pos.relative(getState, 12));
 
-                for (var blockPos : range) {
-                    var netherite = serverLevel.getBlockState(blockPos).is(NETHERITE_BLOCK);
-                    var observer = serverLevel.getBlockState(blockPos).is(OBSERVER);
-
-                    if (observer || netherite) serverLevel.destroyBlock(blockPos, false);
-                }
-
-                if(entity.isStartingBlock){
-                    var nPos = pos.relative(getState, 12);
-                    var ranges = betweenClosed(
-                        nPos.getX() - 10, nPos.getY() - 10, nPos.getZ() - 10,
-                        nPos.getX() + 10, nPos.getY() + 10, nPos.getZ() + 10
-                    );
-
-                    for (var blockPos : ranges) {
-                        var netherite = serverLevel.getBlockState(blockPos).is(NETHERITE_BLOCK);
-                        var observer = serverLevel.getBlockState(blockPos).is(OBSERVER);
-
-                        if (observer || netherite) serverLevel.destroyBlock(blockPos, false);
-                    }
-                }
-
-                serverLevel.destroyBlock(pos, false);
-                var getBoon = LevelBoonReg.fromId(entity.negativeBoon.id());
-                if(getBoon.isPresent()){
-                    getBoon.get().execute(serverLevel, entity.negativeBoon.value());
-                    if(entity.positiveBoon != EMPTY){
-                        var getBoonPos = LevelBoonReg.fromId(entity.positiveBoon.id());
-                        getBoonPos.ifPresent(boon -> boon.execute(serverLevel, entity.positiveBoon.value()));
-                    }
-                };
-                return SUCCESS;
-            }
-
-        } else {
-//            entity.setRoomData();
-//            return SUCCESS;
+            onUnlock(pos, entity, serverLevel);
+            return SUCCESS;
         }
 
         return FAIL;
+    }
+
+    //For debug only
+    private static @NotNull ItemInteractionResult manuallySetData(LockBlockEntity entity) {
+        entity.setRoomData();
+        return SUCCESS;
+    }
+
+    private static void onUnlock(BlockPos pos, LockBlockEntity entity, ServerLevel level) {
+        level.destroyBlock(pos, false);
+
+        if(entity.negativeBoon != EMPTY){
+            var getBoonNeg = LevelBoonReg.fromId(entity.negativeBoon.id());
+            getBoonNeg.ifPresent(b -> b.execute(level, entity.negativeBoon.value()));
+        }
+
+        if(entity.positiveBoon != EMPTY){
+            var getBoonPos = LevelBoonReg.fromId(entity.positiveBoon.id());
+            getBoonPos.ifPresent(b -> b.execute(level, entity.positiveBoon.value()));
+        }
+
+    }
+
+    private static void destroyDoors(ServerLevel serverLevel, BlockPos pos) {
+        var range = betweenClosed(
+            pos.getX() - 2, pos.getY() - 1, pos.getZ() - 2,
+            pos.getX() + 2, pos.getY() + 3, pos.getZ() + 2
+        );
+        for (var blockPos : range) {
+            var netherite = serverLevel.getBlockState(blockPos).is(NETHERITE_BLOCK);
+            var observer = serverLevel.getBlockState(blockPos).is(OBSERVER);
+
+            if (observer || netherite) serverLevel.destroyBlock(blockPos, false);
+        }
     }
 }
 

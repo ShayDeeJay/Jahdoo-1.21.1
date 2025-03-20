@@ -6,10 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.client.event.*;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.OverlayBlockTooltip;
@@ -37,10 +34,17 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
+    public static void screenRender(ScreenEvent.Render.Pre event) {
+        var screen = event.getScreen();
+        var guiGraphics = event.getGuiGraphics();
+
+    }
+
+
+    @SubscribeEvent
     public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
         var instance = Minecraft.getInstance();
         var player = instance.player;
-
 
         crosshairManager(event);
         simpleGui(event, player);

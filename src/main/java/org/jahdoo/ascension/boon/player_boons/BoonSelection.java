@@ -10,6 +10,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.networking.client2server.AttributeC2SP;
 import org.jahdoo.common.networking.client2server.EffectC2SP;
 import org.jahdoo.common.registers.AttributeReg;
@@ -61,12 +62,14 @@ public class BoonSelection {
         var level = JahdooRarity.getRarity().getId();
 
         sharedBoons(boonCollection, false);
-        boonCollection.add(effectBoon(MobEffects.REGENERATION, Math.min(level, 2)));
-        boonCollection.add(effectBoon(MobEffects.MOVEMENT_SPEED, Math.min(level, 2)));
-        boonCollection.add(effectBoon(MobEffects.DAMAGE_BOOST, level));
-        boonCollection.add(effectBoon(MobEffects.DAMAGE_RESISTANCE, level));
-        boonCollection.add(effectBoon(MobEffects.HEAL, level));
-        boonCollection.add(effectBoon(MobEffects.ABSORPTION, level));
+        if(Random.nextInt(10) == 0){
+            boonCollection.add(effectBoon(MobEffects.REGENERATION, Math.min(level, 2)));
+            boonCollection.add(effectBoon(MobEffects.MOVEMENT_SPEED, Math.min(level, 2)));
+            boonCollection.add(effectBoon(MobEffects.DAMAGE_BOOST, level));
+            boonCollection.add(effectBoon(MobEffects.DAMAGE_RESISTANCE, level));
+//            boonCollection.add(effectBoon(MobEffects.HEAL, level));
+            boonCollection.add(effectBoon(MobEffects.ABSORPTION, level));
+        }
 
         return Helpers.listRandom(boonCollection);
     }
@@ -76,12 +79,12 @@ public class BoonSelection {
         var level = JahdooRarity.getRarity().getId();
 
         sharedBoons(boonCollection, true);
-        boonCollection.add(effectBoon(MobEffects.MOVEMENT_SLOWDOWN, level));
-        boonCollection.add(effectBoon(MobEffects.CONFUSION, level));
-        boonCollection.add(effectBoon(MobEffects.POISON, level));
-        boonCollection.add(effectBoon(MobEffects.WITHER, level));
-        boonCollection.add(effectBoon(MobEffects.HUNGER, level));
-        boonCollection.add(effectBoon(MobEffects.BLINDNESS, level));
+        if(Random.nextInt(10) == 0){
+            boonCollection.add(effectBoon(MobEffects.MOVEMENT_SLOWDOWN, level));
+            boonCollection.add(effectBoon(MobEffects.POISON, level));
+            boonCollection.add(effectBoon(MobEffects.WITHER, level));
+            boonCollection.add(effectBoon(MobEffects.HUNGER, level));
+        }
         for (int i = 0; i < 4; i++){
             boonCollection.add(Boon.EMPTY);
         }
@@ -103,7 +106,7 @@ public class BoonSelection {
         boonCollection.add(attributeBoon(Attributes.MAX_HEALTH, isNegativeValue(attributes.getRandomMaxHealth(), isNegative), false, iconFromEffect(MobEffects.HEAL)));
         boonCollection.add(attributeBoon(Attributes.MAX_ABSORPTION, isNegativeValue(attributes.getRandomMaxAbsorption(), isNegative), false, iconFromEffect(MobEffects.ABSORPTION)));
         boonCollection.add(attributeBoon(Attributes.ATTACK_DAMAGE, isNegativeValue(attributes.getRandomMaxHealth(), isNegative), false, iconFromEffect(MobEffects.DAMAGE_BOOST)));
-
+        boonCollection.add(attributeBoon(Attributes.ATTACK_SPEED, isNegativeValue(attributes.getRandomCooldown()/10, isNegative), false, Icons.ATTACK_SPEED));
     }
 
     public static Boon attributeBoon(Holder<Attribute> attribute, double value, boolean isPercentage, ResourceLocation icon){

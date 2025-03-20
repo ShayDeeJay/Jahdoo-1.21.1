@@ -82,8 +82,10 @@ public class MobManager {
 
     private static LivingEntity getAncienGolem(ServerLevel serverLevel, int round) {
         var damage = Maths.getPercentageTotal(round, 12);
+        var ancientGolem = new AncientGolem(serverLevel, null, damage, 100, 1, INFINITE_LIFE, 20);
 
-        return new AncientGolem(serverLevel, null, damage, 100, 1, INFINITE_LIFE, 20);
+        addBaseAttribute(SCALE, ancientGolem, 50);
+        return ancientGolem;
     }
 
     public static void effectWithChance(LivingEntity livingEntity, Holder<MobEffect> effect, int amplifier, int chance) {
@@ -210,6 +212,7 @@ public class MobManager {
     public static LivingEntity getEliteSkeleton(ServerLevel serverLevel, int level){
         var skeleton = new CustomSkeleton(serverLevel, null, new ItemStack(ARROW));
         var getEliteArmor = getEliteArmor(serverLevel, 100);
+        addBaseAttribute(SCALE, skeleton, 50);
         skeleton.setElite();
 
         effectWithChance(skeleton, HEALTH_BOOST, 5, 100);
@@ -228,12 +231,12 @@ public class MobManager {
     public static void summonEntities(AltarBlockEntity entity, String roomId){
         if(!(entity.getLevel() instanceof ServerLevel level)) return;
 
-        var randomPoses = innerRadiusRandom(entity.getBlockPos().getCenter(), 12, 200)
+        var randomPoses = innerRadiusRandom(entity.getBlockPos().below(2).getCenter(), 20, 200)
             .stream()
             .filter(pos -> level.getBlockState(containing(pos)).isAir() && level.getBlockState(containing(pos).above()).isAir())
             .toList();
 
-        if(!Objects.equals(roomId, "boss")){
+        if(!Objects.equals(roomId, BOSS_CRUCIBLE)){
             var actualEntity = buildMobs(level, roomId);
 
             for (var livingEntity : actualEntity) {
@@ -246,7 +249,8 @@ public class MobManager {
             var eliteSkeleton = getEliteSkeleton(level, round);
             var boss = Helpers.listRandom(List.of(ancienGolem, eliteSkeleton));
 
-            addAndPositionEntity(level, containing(listRandom(randomPoses)), boss);
+            addAndPositionEntity(level, entity.getBlockPos().relative(entity.direction, -3), boss);
+            boss.setYBodyRot(entity.direction.toYRot());
             entity.spawnedMobs.add(boss.getUUID());
         }
     }

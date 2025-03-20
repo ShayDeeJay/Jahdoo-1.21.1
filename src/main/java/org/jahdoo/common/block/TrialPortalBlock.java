@@ -76,6 +76,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
         int dimId = level.getBlockState(pos).getValue(DIMENSION_KEY);
 
         if(dimId == KEY_HOME && player instanceof ServerPlayer serverPlayer){
+            serverPlayer.getAttributes().getSyncableAttributes().clear();
             return serverPlayer.findRespawnPositionAndUseSpawnBlock(true, DO_NOTHING);
         }
 

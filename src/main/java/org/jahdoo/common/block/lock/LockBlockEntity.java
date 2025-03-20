@@ -5,36 +5,41 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.registers.BlockEntityReg;
 
-import static org.jahdoo.ascension.level_manager.StructureManager.getBattleRooms;
-import static org.jahdoo.ascension.level_manager.StructureManager.getRandomRoomId;
+import java.util.Objects;
+
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.*;
+import static org.jahdoo.ascension.level_manager.StructureManager.getBattleRooms;
+import static org.jahdoo.ascension.level_manager.StructureManager.getRandomRoomId;
+import static org.jahdoo.ascension.rarity.JahdooRarity.COMMON;
 import static org.jahdoo.common.block.lock.LockBlock.FACING;
-import static org.jahdoo.common.registers.LevelBoonReg.randomNegative;
-import static org.jahdoo.common.registers.LevelBoonReg.randomPositive;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.common.registers.LevelBoonReg.*;
 
 
 public class LockBlockEntity extends SyncedBlockEntity {
 
-    public Component roomId = Component.literal("");
+    public Component roomId = Component.empty();
     public SyncableData negativeBoon = EMPTY;
     public SyncableData positiveBoon = EMPTY;
-    public boolean isStartingBlock;
+    public String getDifficulty;
 
     public LockBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.LOCK_BE.get(), pPos, pBlockState);
     }
 
-    public void setStartingBlock(boolean startingBlock) {
-        isStartingBlock = startingBlock;
+    public boolean isStartingRoom(){
+        if(this.getLevel() == null) return false;
+        return this.getLevel().getData(INSTANCE_DATA).getClearedRooms() == 0;
     }
 
     public boolean isInitialized(){
-        return !this.roomId.getString().isEmpty()/* && this.negativeBoon != EMPTY*/;
+        return !Objects.equals(this.roomId, Component.empty());
     }
 
     public boolean canPlace(){
@@ -46,15 +51,16 @@ public class LockBlockEntity extends SyncedBlockEntity {
     }
 
     public void setRoomData(){
-        this.roomId = this.isStartingBlock ? getBattleRooms() : getRandomRoomId();
-        this.negativeBoon = toSyncable(randomNegative());
-        if(Maths.percentageChance(30) && !this.isStartingBlock) this.positiveBoon = toSyncable(randomPositive());
+        this.roomId = this.isStartingRoom() ? getBattleRooms() : getRandomRoomId();
+        this.negativeBoon = toSyncable(this.isStartingRoom() ? withRarityNegative(COMMON) : randomNegative());
+        if(Maths.percentageChance(50) && !this.isStartingRoom()) this.positiveBoon = toSyncable(withRarityPositive(JahdooRarity.getRarity()));
         this.updateBlock();
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        tag.putString("dif", getDifficulty);
         tag.putString("component", Component.Serializer.toJson(this.roomId, registries));
         saveSyncable(tag, registries, this.negativeBoon, "negative");
         saveSyncable(tag, registries, this.positiveBoon, "positive");
@@ -63,6 +69,7 @@ public class LockBlockEntity extends SyncedBlockEntity {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        this.getDifficulty = tag.getString("dif");
         this.roomId = Component.Serializer.fromJson(tag.getString("component"), registries);
         this.negativeBoon = loadData(tag, registries, "negative");
         this.positiveBoon = loadData(tag, registries, "positive");

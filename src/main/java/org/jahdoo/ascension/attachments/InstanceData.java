@@ -14,6 +14,9 @@ public class InstanceData implements IAttachment {
     private int clearedRooms;
     private int ticks;
     private int maxTime;
+    private int bronzeCoin;
+    private int silverCoin;
+    private int goldCoin;
     private double health;
     private double speed;
     private double armor;
@@ -29,6 +32,9 @@ public class InstanceData implements IAttachment {
         int voidSpider,
         int clearedRooms,
         int maxTime,
+        int bronzeCoin,
+        int silverCoin,
+        int goldCoin,
         double health,
         double speed,
         double armor,
@@ -45,6 +51,9 @@ public class InstanceData implements IAttachment {
         this.speed = speed;
         this.armor = armor;
         this.attackDamage = attackDamage;
+        this.bronzeCoin = bronzeCoin;
+        this.silverCoin = silverCoin;
+        this.goldCoin = goldCoin;
     }
 
     public int getMaxTime() {
@@ -111,6 +120,18 @@ public class InstanceData implements IAttachment {
         return ticks;
     }
 
+    public int getBronzeCoin() {
+        return bronzeCoin;
+    }
+
+    public int getSilverCoin() {
+        return silverCoin;
+    }
+
+    public int getGoldCoin() {
+        return goldCoin;
+    }
+
     public void incrementSkeleton(double mobs) {
         this.skeleton += (int) mobs;
     }
@@ -155,6 +176,18 @@ public class InstanceData implements IAttachment {
         this.maxTime += maxTime;
     }
 
+    public void setBronzeCoin(int bronzeCoin) {
+        this.bronzeCoin += bronzeCoin;
+    }
+
+    public void setSilverCoin(int silverCoin) {
+        this.silverCoin += silverCoin;
+    }
+
+    public void setGoldTime(int goldCoin) {
+        this.goldCoin += goldCoin;
+    }
+
     public static InstanceData setBaseData() {
         var data = new InstanceData();
         data.incrementHorde(5);
@@ -173,6 +206,9 @@ public class InstanceData implements IAttachment {
             Codec.INT.fieldOf("void_spider").forGetter(InstanceData::getVoidSpider),
             Codec.INT.fieldOf("cleared_rooms").forGetter(InstanceData::getClearedRooms),
             Codec.INT.fieldOf("max_time").forGetter(InstanceData::getMaxTime),
+            Codec.INT.fieldOf("bronze_coin").forGetter(InstanceData::getBronzeCoin),
+            Codec.INT.fieldOf("silver_coin").forGetter(InstanceData::getSilverCoin),
+            Codec.INT.fieldOf("gold_coin").forGetter(InstanceData::getGoldCoin),
             Codec.DOUBLE.fieldOf("health").forGetter(InstanceData::getHealth),
             Codec.DOUBLE.fieldOf("speed").forGetter(InstanceData::getSpeed),
             Codec.DOUBLE.fieldOf("armor").forGetter(InstanceData::getArmor),
@@ -193,6 +229,9 @@ public class InstanceData implements IAttachment {
         nbt.putInt("cleared_rooms", clearedRooms);
         nbt.putInt("tick", ticks);
         nbt.putInt("max_time", maxTime);
+        nbt.putInt("bronze_coin", bronzeCoin);
+        nbt.putInt("silver_coin", silverCoin);
+        nbt.putInt("gold_coin", goldCoin);
     }
 
     @Override
@@ -208,6 +247,9 @@ public class InstanceData implements IAttachment {
         clearedRooms = nbt.getInt("cleared_rooms");
         ticks = nbt.getInt("tick");
         maxTime = nbt.getInt("max_time");
+        bronzeCoin = nbt.getInt("bronze_coin");
+        silverCoin = nbt.getInt("silver_coin");
+        goldCoin = nbt.getInt("gold_coin");
     }
 
     @Override
@@ -216,6 +258,9 @@ public class InstanceData implements IAttachment {
         "Level Data: " + "\n" +
         "Ticks = " + ticks + "\n" +
         "Max Time = " + maxTime + "\n" +
+        "Bronze Coins = " + bronzeCoin + "\n" +
+        "Silver Coins = " + silverCoin + "\n" +
+        "Gold Coins = " + goldCoin + "\n" +
         "Completed Rooms = " + clearedRooms + "\n" +
         "Horde = " + horde + "\n" +
         "Skeletons = " + skeleton + "\n" +

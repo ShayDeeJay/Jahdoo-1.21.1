@@ -70,8 +70,12 @@ public class VoidSpider extends Spider implements ITamableEntity {
         if(onDeath) {
             spawnBabies();
             this.triggerDeathSpawn = true;
-            if(this.getScale() != 1.5F) level().setBlockAndUpdate(this.blockPosition(), Blocks.COBWEB.defaultBlockState());
+            if(isBaby()) level().setBlockAndUpdate(this.blockPosition(), Blocks.COBWEB.defaultBlockState());
         }
+    }
+
+    public boolean isBaby() {
+        return this.getScale() != 1.5F;
     }
 
     public static AttributeSupplier.Builder createMain() {
