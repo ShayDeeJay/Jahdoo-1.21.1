@@ -28,7 +28,7 @@ public class Skeleton extends MobLevelBoon {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.EPIC;
+        return JahdooRarity.RARE;
     }
 
 }

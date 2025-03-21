@@ -56,6 +56,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
 public class Helpers {
+    public static final String EASY = "novice";
+    public static final String MEDIUM = "expert";
+    public static final String HARD = "master";
+
     public static final Random Random = ThreadLocalRandom.current();
 
     public static void itemOverlay(ItemStack itemStack, ItemDisplayContext displayContext, PoseStack poseStack, Consumer<ItemStack> runnable) {

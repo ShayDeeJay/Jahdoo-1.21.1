@@ -4,13 +4,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.shopping_table.DisplayDirection;
 import org.slf4j.Logger;
@@ -21,6 +21,7 @@ import java.util.Objects;
 import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 import static net.minecraft.core.Direction.*;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
+import static org.jahdoo.ascension.level_manager.InstanceDifficulty.getFromName;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 
 public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
@@ -40,21 +41,46 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         var font = mc.font;
 
         if(!entity.isStartingRoom()){
-            if (entity.isInitialized() && player != null && player.distanceToSqr(entity.getBlockPos().getCenter()) < 2500) {
-                var id = entity.roomId.getString();
-                var getIcon = id.contains("Boss") ? "☠" : id.contains("The") ? "⚔" : id.contains("Sanctuary") ? "\uD83E\uDDEA" : "⇵";
-                var textColour = entity.roomId.getStyle().getColor().getValue();
-
-                renderName(Helpers.withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction);
-                renderName(entity.roomId, pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction);
-                renderNewLine(font, pose, source, entity.negativeBoon.label(), entity.negativeBoon.icon(), x, facing, direction, 0.2F, light);
-
-                if (!Objects.equals(entity.positiveBoon, EMPTY)) {
-                    renderNewLine(font, pose, source, entity.positiveBoon.label(), entity.positiveBoon.icon(), x - 0.6F, facing, direction, 0.2F, light);
-                }
-            }
+            newRoomSelection(entity, pose, source, light, player, font, adjustY, facing, direction, x);
         } else {
-            renderName(Helpers.withStyleComponent(entity.getDifficulty, ColourStore.PERK_GREEN), pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction);
+            difficultyPick(entity, pose, source, facing, font, adjustY, direction);
+        }
+    }
+
+    private void difficultyPick(LockBlockEntity entity, PoseStack pose, MultiBufferSource source, Direction facing, Font font, float adjustY, DisplayDirection direction) {
+        if(entity.getDifficulty.isEmpty()) return;
+        var getDifficulty = getFromName(entity.getDifficulty);
+        var formattedName = Helpers.stringIdToName(getDifficulty.getSerializedName());
+        var directionA = DisplayDirection.fromMCDirection(facing.getOpposite());
+        var isLook = facing == EAST || facing == WEST;
+
+        pose.pushPose();
+        pose.translate(directionA.x() + (isLook ? 0.2 : 0), 0.6, directionA.z() - (facing == SOUTH ? 0.2 :  0));
+        pose.rotateAround(Axis.YP.rotationDegrees(isLook ? -90 : 0) , 0, 0, 0); // Horizontal rotation
+        pose.rotateAround(Axis.XP.rotationDegrees(-90), 0,0,0); // Horizontal rotation
+        drawTexture(pose.last(), source, 255, 2, getFromName(entity.getDifficulty).getIcon(), -1);
+        pose.popPose();
+        pose.pushPose();
+        renderName(Helpers.withStyleComponent(entity.hasDifficulty() ? formattedName : "LOCKED", getDifficulty.getColor()), pose, source, -1, font, 0.08F, 3F - adjustY, true, facing, direction, false);
+        pose.popPose();
+    }
+
+    private void newRoomSelection(LockBlockEntity entity, PoseStack pose, MultiBufferSource source, int light, LocalPlayer player, Font font, float adjustY, Direction facing, DisplayDirection direction, float x) {
+        if (entity.isInitialized() && player != null && player.distanceToSqr(entity.getBlockPos().getCenter()) < 2500) {
+            var id = entity.roomId.getString();
+            var getIcon = id.contains("Boss") ? "☠" : id.contains("The") ? "⚔" : id.contains("Sanctuary") ? "\uD83E\uDDEA" : "⇵";
+            var textColour = entity.roomId.getStyle().getColor().getValue();
+
+            renderName(Helpers.withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);
+            renderName(entity.roomId, pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction, false);
+            var hasNegative = !Objects.equals(entity.negativeBoon, EMPTY);
+            if(hasNegative){
+                renderNewLine(font, pose, source, entity.negativeBoon.label(), entity.negativeBoon.icon(), x, facing, direction, 0.2F, light);
+            }
+
+            if (!Objects.equals(entity.positiveBoon, EMPTY)) {
+                renderNewLine(font, pose, source, entity.positiveBoon.label(), entity.positiveBoon.icon(), x -(hasNegative ?  0.6F : 0), facing, direction, 0.2F, light);
+            }
         }
     }
 
@@ -82,9 +108,8 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         poseStack.mulPose(Axis.XP.rotationDegrees(270));
         drawTexture(poseStack.last(), source, light, 2, location, -1);
         poseStack.popPose();
-        renderName(info, poseStack, source, -1, font, 0.02F,  2.25F + spacer, false, direction, displayDirection);
+        renderName(info, poseStack, source, -1, font, 0.02F,  2.25F + spacer, false, direction, displayDirection, false);
     }
-
 
     protected void renderName(
         Component name,
@@ -96,7 +121,8 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         float height,
         boolean centre,
         Direction direction,
-        DisplayDirection displayDirection
+        DisplayDirection displayDirection,
+        boolean shadow
     ) {
 
         var v2 = 0.01;
@@ -109,8 +135,9 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         poseStack.scale(scale, scale, scale);
         var center = (float) -font.width(name) / 2 + 0.6F;
 
-        font.drawInBatch(name, centre ? center : -42, 0, textColour, false, poseStack.last().pose(), source, NORMAL, 0, 255);
+        font.drawInBatch(name, centre ? center : -42, 0, textColour, shadow, poseStack.last().pose(), source, NORMAL, 0, 255);
         poseStack.popPose();
     }
+
 
 }

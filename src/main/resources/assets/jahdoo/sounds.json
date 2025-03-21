@@ -95,5 +95,11 @@
     "sounds": [
       "jahdoo:coin_sound"
     ]
+  },
+  "sword_thud": {
+    "subtitles": "sounds.jahdoo.sword_thud",
+    "sounds": [
+      "jahdoo:sword_thud"
+    ]
   }
 }

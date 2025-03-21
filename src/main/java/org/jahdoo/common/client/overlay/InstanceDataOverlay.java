@@ -48,12 +48,13 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         var mc = Minecraft.getInstance();
         var level = mc.level;
         var player = mc.player;
+        var screen = mc.screen;
 
         if(player == null || mc.options.hideGui || level == null) return;
 
         slideGuiStats();
         if(level.getDescription().getString().contains("ascension")){
-            levelData(graphics, level, mc, instanceData, mc.screen);
+            levelData(graphics, level, mc, instanceData, screen);
         }
     }
 
@@ -61,35 +62,39 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         var data = level.getData(INSTANCE_DATA);
         var size = 18;
         var spacer = 0;
-        var offsetX = -14 + fade;
-        var offsetY = 24;
+        var offsetX = -24 + fade;
+        var offsetY = 0;
+        System.out.println(offsetY);
         var sizeB = 1.8F;
         var remainingTime = data.getMaxTime() - data.getTicks();
         var pose = graphics.pose();
-        var prefix = "textures/item/";
 
         timer = Math.max(0, timer - 1);
         instanceData = data;
 
+        if(data.getDifficulty().isEmpty()) timer = 0;
         pose.pushPose();
         pose.scale(sizeB, sizeB, sizeB);
-        graphics.drawString(mc.font, withStyleComponent("Current Run", COSMIC_PURPLE), (int) (10 + offsetX), 33 + offsetY, -1, true);
-        pose.popPose();
 
         var getComps = List.of(
-//            of(appendStat("Horde Killed: ", valueOf(data.getHorde()), MAGNET_RANGE_GREEN), HORDE),
-//            of(appendStat("Skeletons Killed: ", valueOf(data.getSkeleton()), MAGNET_RANGE_GREEN), SKELETON),
-//            of(appendStat("Wizards Killed: ", valueOf(data.getEternalWizard()), MAGNET_RANGE_GREEN), ETERNAL_WIZARD),
-//            of(appendStat("Spiders Killed: ", valueOf(data.getVoidSpider()), MAGNET_RANGE_GREEN), VOID_SPIDER),
-            of(appendStat("Rooms Completed: ", valueOf(data.getClearedRooms()), MAGNET_RANGE_GREEN), Icons.UP),
+            of(appendStat("Room's Completed: ", valueOf(data.getClearedRooms()), MAGNET_RANGE_GREEN), Icons.UP),
             of(appendStat("Time: ", Maths.ticksToTime(valueOf(remainingTime)), remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED), Icons.CLOCK)
         );
+        pose.popPose();
 
+        pose.pushPose();
+        pose.translate(0,  graphics.guiHeight() - 164, 0);
+//        pose.scale();
+//        var x = Helpers.stringIdToName(data.getDifficulty());
+//        graphics.drawString(mc.font, withStyleComponent(x + " Run", COSMIC_PURPLE), (int) (40 + offsetX), 33 + offsetY, -1, true);
         for (var getComp : getComps) {
-            graphics.blit(getComp.getSecond(), (int) (12 + offsetX), 94 + spacer + offsetY, 0, 0, size, size, size, size);
-            graphics.drawString(mc.font, getComp.getFirst(), (int) (28 + offsetX), 100 + spacer + offsetY, -1, true);
-            spacer += 18;
+            if(!getComp.getFirst().getSiblings().getFirst().getString().isEmpty()){
+                graphics.blit(getComp.getSecond(), (int) (12 + offsetX), 94 + offsetY + spacer, 0, 0, size, size, size, size);
+                graphics.drawString(mc.font, getComp.getFirst(), (int) (32 + offsetX), 100  + offsetY + spacer, -1, true);
+                spacer += 18;
+            }
         }
+        pose.popPose();
 
         if(currentData != instanceData) timer = 400;
         if(screen instanceof InventoryScreen) { timer = 30; }

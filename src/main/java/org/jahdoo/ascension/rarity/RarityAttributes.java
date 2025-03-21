@@ -137,7 +137,7 @@ public class RarityAttributes {
             Pair.of(1.0, 1.5),     // Heal Chance
             Pair.of(1, 3),         // Max Health
             Pair.of(1, 2),         // Max Absorption
-            Pair.of(200, 600)        // Time
+            Pair.of(200, 600)      // Time
         );
 
     public static final RarityAttributes RARE_ATTRIBUTES =
@@ -151,7 +151,7 @@ public class RarityAttributes {
             Pair.of(2.0, 2.5),     // Heal Chance
             Pair.of(3, 6),         // Max Health
             Pair.of(3, 4),         // Max Absorption
-            Pair.of(600, 1000)        // Time
+            Pair.of(600, 1000)     // Time
         );
 
     public static final RarityAttributes EPIC_ATTRIBUTES =
@@ -165,7 +165,7 @@ public class RarityAttributes {
             Pair.of(3.0, 3.5),     // Heal Chance
             Pair.of(6, 9),         // Max Health
             Pair.of(5, 6),         // Max Absorption
-            Pair.of(1000, 1800)        // Time
+            Pair.of(1000, 1800)    // Time
         );
 
     public static final RarityAttributes LEGENDARY_ATTRIBUTES =
@@ -179,7 +179,7 @@ public class RarityAttributes {
             Pair.of(4.0, 4.5),     // Heal Chance
             Pair.of(9, 12),        // Max Health
             Pair.of(7, 8),         // Max Absorption
-            Pair.of(1800, 3600)        // Time
+            Pair.of(1800, 3600)    // Time
         );
 
     public static final RarityAttributes ETERNAL_ATTRIBUTES =
@@ -193,6 +193,6 @@ public class RarityAttributes {
             Pair.of(5.0, 5.5),     // Heal Chance
             Pair.of(12, 15),       // Max Health
             Pair.of(9, 10),        // Max Absorption
-            Pair.of(3600, 6000)        // Time
+            Pair.of(3600, 6000)    // Time
         );
 }

@@ -7,9 +7,8 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static org.jahdoo.ascension.boon.player_boons.BoonSelection.iconFromEffect;
-import static org.jahdoo.ascension.rarity.JahdooRarity.getRarity;
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
-import static org.jahdoo.common.registers.AttachmentReg.*;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class MobHealth extends AbstractLevelBoon {
 
@@ -40,8 +39,8 @@ public class MobHealth extends AbstractLevelBoon {
     }
 
     @Override
-    public double value() {
-        var getRarity = getRarity().getAttributes();
+    public double value(JahdooRarity rarity) {
+        var getRarity = rarity.getAttributes();
         return doubleFormattedDouble(getRarity.getRandomManaReduction());
     }
 

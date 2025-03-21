@@ -12,6 +12,15 @@ public class Icons {
     public static final String ITEMS_PREFIX = "textures/item/";
     public static final String ABILITY_PREFIX = "textures/ability_icons/";
 
+    public static final ResourceLocation EASY =
+        res(PREFIX + "easy.png");
+
+    public static final ResourceLocation MEDIUM =
+        res(PREFIX + "medium.png");
+
+    public static final ResourceLocation HARD =
+        res(PREFIX + "hard.png");
+
     public static final ResourceLocation ATTACK_SPEED =
         res(ABILITY_PREFIX + "attack_speed.png");
 

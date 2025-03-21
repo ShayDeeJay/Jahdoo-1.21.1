@@ -10,7 +10,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -18,16 +20,21 @@ import org.jahdoo.common.registers.BlockReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.core.BlockPos.withinManhattan;
 import static org.jahdoo.ascension.level_manager.BlockSetupManager.setBlockGenerator;
 import static org.jahdoo.ascension.level_manager.BlockSetupManager.setLocks;
+import static org.jahdoo.ascension.level_manager.InstanceDifficulty.*;
+import static org.jahdoo.ascension.level_manager.InstanceDifficulty.EASY;
+import static org.jahdoo.ascension.level_manager.InstanceDifficulty.MEDIUM;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class StructureManager {
 
@@ -54,33 +61,43 @@ public class StructureManager {
         );
     }
 
-    public static Component getRandomRoomId(){
+    public static List<Component> getRandomRoomId(boolean isStarter, InstanceData data){
         var roomGen = new ArrayList<Component>();
         roomGen.add(getBattleRooms());
+        var difficulty = data.getDifficulty();
+        var forSanctuary = EASY.getSerializedName().equals(difficulty) ? 80 : MEDIUM.getSerializedName().equals(difficulty) ? 50 : 20 ;
+        var forBoss = EASY.getSerializedName().equals(difficulty) ? 10 : MEDIUM.getSerializedName().equals(difficulty) ? 40 : 70 ;
 
-        if (Random.nextInt(3) == 0){
-          roomGen.add(withStyleComponent(stringIdToName(SANCTUARY), COSMIC_PURPLE));
+        if(!isStarter){
+            if (Maths.percentageChance(forSanctuary)) {
+                roomGen.add(withStyleComponent(stringIdToName(SANCTUARY), COSMIC_PURPLE));
+            }
+
+            if (Maths.percentageChance(50)) {
+                roomGen.add(withStyleComponent(stringIdToName(BAZAAR), AETHER_BLUE));
+            }
+
+            if(roomGen.size() == 3) return roomGen;
+
+            if (Maths.percentageChance(forBoss)) {
+                roomGen.add(withStyleComponent(stringIdToName(BOSS_CRUCIBLE), NEGATIVE_RED));
+            }
         }
 
-        if(Random.nextInt(5) == 0){
-          roomGen.add(withStyleComponent(stringIdToName(BAZAAR), AETHER_BLUE));
-        }
+        while (roomGen.size() < 4) roomGen.add(getBattleRooms());
 
-        if(Random.nextInt(10) == 0) {
-            roomGen.add(withStyleComponent(stringIdToName(BOSS_CRUCIBLE), NEGATIVE_RED));
-        }
-
-        return listRandom(roomGen);
+        Collections.shuffle(roomGen);
+        return roomGen;
     }
 
     public static @NotNull Component getBattleRooms() {
         return withStyleComponent(stringIdToName(listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION))), EXPERIENCE_GREEN);
     }
 
-    public static void placeLocksWithData(ServerLevel level, BlockPos pos) {
+    public static void placeLocksWithData(ServerLevel level, BlockPos pos, boolean isStarter) {
         var range = roomBoundingFromCenter(pos);
-        var dif = List.of("Easy", "Medium", "Hard").reversed();
         var counter = 0;
+        var getRooms = getRandomRoomId(isStarter, level.getData(INSTANCE_DATA));
 
         for (var blockPos : range) {
             BlockSetupManager.generateExit(level, blockPos);
@@ -90,9 +107,12 @@ public class StructureManager {
             }
             var getLock = level.getBlockEntity(blockPos);
             if(getLock instanceof LockBlockEntity lock) {
-                lock.getDifficulty = dif.get(counter);
+                lock.isStarting = isStarter;
+                if(lock.isStartingRoom()){
+                    lock.getDifficulty = getDifficulties().reversed().get(counter).getSerializedName();
+                }
+                lock.setRoomData(getRooms.get(counter));
                 counter++;
-                lock.setRoomData();
                 var getPositions = innerRadiusRandom(blockPos.getCenter().subtract(0, 1, 0), 2.3, 350);
 
                 for (var vec3 : getPositions) {
@@ -115,7 +135,7 @@ public class StructureManager {
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
 
         placeStructure(level, pos, settings, STARTING_ROOM);
-        placeLocksWithData(level, BlockPos.containing(SPAWN_POSITION.subtract(10,0,0)));
+        placeLocksWithData(level, BlockPos.containing(SPAWN_POSITION.subtract(10,0,0)), true);
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
         //Here we can pass the data from the previous altar to set up the next challenge stack.
@@ -166,4 +186,6 @@ public class StructureManager {
             }
         }
     }
+
+
 }

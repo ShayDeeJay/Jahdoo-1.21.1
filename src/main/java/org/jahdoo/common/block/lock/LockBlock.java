@@ -33,6 +33,7 @@ import static net.minecraft.world.level.block.Blocks.OBSERVER;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.ascension.level_manager.StructureManager.placeNewSide;
 import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -117,13 +118,23 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
         if(entity.isInitialized()){
             var getState = state.getValue(FACING);
+            var doesntHaveDifficulty = serverLevel.getData(INSTANCE_DATA).getDifficulty().isEmpty();
 
-            if (!entity.isStartingRoom() && !entity.canPlace()) {
-                player.displayClientMessage(withStyleComponent("Can't place, room already generated", ColourStore.NEGATIVE_RED), true);
+            if ((!entity.getDifficulty.isEmpty() && !doesntHaveDifficulty)) {
+                var message = "Difficulty already selected";
+                player.displayClientMessage(withStyleComponent(message, ColourStore.NEGATIVE_RED), true);
                 getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
                 return FAIL;
             }
 
+            if (!entity.isStartingRoom() && !entity.canPlace()) {
+                var message = "Can't place, room already generated";
+                player.displayClientMessage(withStyleComponent(message, ColourStore.NEGATIVE_RED), true);
+                getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
+                return FAIL;
+            }
+
+            if(doesntHaveDifficulty) entity.setDifficulty();
 
             getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, 1, 1.4F);
             getSoundWithPosition(serverLevel, pos, VAULT_ACTIVATE, 1, 0.6F);
@@ -141,7 +152,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
     //For debug only
     private static @NotNull ItemInteractionResult manuallySetData(LockBlockEntity entity) {
-        entity.setRoomData();
+//        entity.setRoomData();
         return SUCCESS;
     }
 

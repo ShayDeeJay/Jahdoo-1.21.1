@@ -84,15 +84,15 @@ public class LevelGenerator {
     }
 
     public static DimensionTransition createLevelAndStartingRoom(Player player, ServerLevel serverLevel) {
-        var testKey = "ascension-" + UUID.randomUUID();
+        var levelKey = "ascension-" + UUID.randomUUID();
         var getLevel = new AtomicReference<ServerLevel>();
 
-        generateNewLevel(serverLevel, testKey);
+        generateNewLevel(serverLevel, levelKey);
 
-        findLevel(testKey, serverLevel).ifPresent(
+        findLevel(levelKey, serverLevel).ifPresent(
             level -> {
                 generateStructure(level);
-                level.setData(INSTANCE_DATA, InstanceData.setBaseData());
+                level.setData(INSTANCE_DATA, new InstanceData());
                 getLevel.set(level);
             }
         );

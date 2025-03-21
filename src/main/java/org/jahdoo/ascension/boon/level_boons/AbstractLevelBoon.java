@@ -10,9 +10,8 @@ import org.jahdoo.ascension.utils.Maths;
 
 import java.util.Objects;
 
-import static java.lang.String.*;
-import static net.minecraft.network.chat.Component.*;
-import static net.minecraft.resources.ResourceLocation.*;
+import static java.lang.String.valueOf;
+import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
 import static org.jahdoo.ascension.utils.ColourStore.MAGNET_RANGE_GREEN;
 import static org.jahdoo.ascension.utils.ColourStore.MAGNET_STRENGTH_RED;
@@ -28,7 +27,7 @@ public abstract class AbstractLevelBoon {
 
     abstract public ResourceLocation getIcon();
 
-    abstract public double value();
+    abstract public double value(JahdooRarity rarity);
 
     abstract public JahdooRarity rarity();
 
@@ -50,8 +49,8 @@ public abstract class AbstractLevelBoon {
 
         public static final SyncableData EMPTY =  new SyncableData("", withDefaultNamespace(""), 0.0, empty());
 
-        public static SyncableData toSyncable(AbstractLevelBoon boon){
-            var value = boon.value();
+        public static SyncableData toSyncable(AbstractLevelBoon boon, JahdooRarity rarity){
+            var value = boon.value(rarity);
             var id = boon.id();
             return new SyncableData(id, boon.getIcon(), value, boon.boonLabel(value, id));
         }

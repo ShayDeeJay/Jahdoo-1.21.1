@@ -1,6 +1,7 @@
 package org.jahdoo.ascension.boon.level_boons.positive;
 
 import org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon;
+import org.jahdoo.ascension.rarity.JahdooRarity;
 
 public abstract class Coins extends AbstractLevelBoon {
 
@@ -15,7 +16,7 @@ public abstract class Coins extends AbstractLevelBoon {
     }
 
     @Override
-    public double value() {
+    public double value(JahdooRarity rarity) {
         return 1;
     }
 

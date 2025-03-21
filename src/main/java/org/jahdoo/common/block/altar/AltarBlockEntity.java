@@ -105,7 +105,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         var clearedRooms = data.getClearedRooms();
 
         data.incrementClearedRooms();
-        placeLocksWithData(serverLevel, pos.below(2));
+        placeLocksWithData(serverLevel, pos.below(2), false);
         serverLevel.destroyBlock(pos, false);
         getSoundWithPosition(serverLevel, pos, SoundReg.END_TRIAL.get(), 2, 1.5F);
 

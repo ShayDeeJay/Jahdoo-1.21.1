@@ -60,6 +60,9 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> COIN =
         registerSoundEvent("coin_sound");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> SWORD_THUD =
+        registerSoundEvent("sword_thud");
+
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));
     }

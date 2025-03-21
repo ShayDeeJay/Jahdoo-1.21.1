@@ -5,8 +5,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
+import static org.jahdoo.ascension.level_manager.InstanceDifficulty.*;
+
 public class InstanceData implements IAttachment {
 
+    private String difficulty;
     private int horde;
     private int skeleton;
     private int eternalWizard;
@@ -25,6 +28,7 @@ public class InstanceData implements IAttachment {
     public InstanceData() {}
 
     public InstanceData(
+        String difficulty,
         int ticks,
         int horde,
         int skeleton,
@@ -40,6 +44,7 @@ public class InstanceData implements IAttachment {
         double armor,
         double attackDamage
     ) {
+        this.difficulty = difficulty;
         this.ticks = ticks;
         this.horde = horde;
         this.skeleton = skeleton;
@@ -54,6 +59,12 @@ public class InstanceData implements IAttachment {
         this.bronzeCoin = bronzeCoin;
         this.silverCoin = silverCoin;
         this.goldCoin = goldCoin;
+    }
+
+    public static final InstanceData INIT = new InstanceData("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+    public String getDifficulty() {
+        return difficulty == null ? "" : difficulty;
     }
 
     public int getMaxTime() {
@@ -132,6 +143,10 @@ public class InstanceData implements IAttachment {
         return goldCoin;
     }
 
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
+    }
+
     public void incrementSkeleton(double mobs) {
         this.skeleton += (int) mobs;
     }
@@ -188,17 +203,51 @@ public class InstanceData implements IAttachment {
         this.goldCoin += goldCoin;
     }
 
-    public static InstanceData setBaseData() {
+    public static InstanceData setEasyData() {
         var data = new InstanceData();
-        data.incrementHorde(5);
 
-        //Current default is 15 Minutes
+        data.incrementHorde(5);
+        data.setDifficulty(EASY.getSerializedName());
+        //20 Minutes
+        data.setMaxTime(24000);
+
+        return data;
+    }
+
+    public static InstanceData setMediumData() {
+        var data = new InstanceData();
+
+        data.setDifficulty(MEDIUM.getSerializedName());
+        data.incrementHorde(10);
+        data.incrementHealth(20);
+        data.incrementAttackDamage(20);
+        data.incrementSpeed(10);
+        //15 Minutes
         data.setMaxTime(18000);
+
+        return data;
+    }
+
+    public static InstanceData setHardData() {
+        var data = new InstanceData();
+
+        data.setDifficulty(HARD.getSerializedName());
+        data.incrementHealth(100);
+        data.incrementAttackDamage(100);
+        data.incrementSpeed(50);
+        data.incrementHorde(10);
+        data.incrementSkeleton(5);
+        data.incrementEternalWizard(2);
+        data.incrementVoidSpider(2);
+
+        //10 Minutes
+        data.setMaxTime(12000);
         return data;
     }
 
     public static final Codec<InstanceData> CODEC = RecordCodecBuilder.create(
         instance -> instance.group(
+            Codec.STRING.fieldOf("difficulty").forGetter(InstanceData::getDifficulty),
             Codec.INT.fieldOf("ticks").forGetter(InstanceData::getTicks),
             Codec.INT.fieldOf("horde").forGetter(InstanceData::getHorde),
             Codec.INT.fieldOf("skeleton").forGetter(InstanceData::getSkeleton),
@@ -218,6 +267,7 @@ public class InstanceData implements IAttachment {
 
     @Override
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
+        nbt.putString("difficulty", difficulty);
         nbt.putDouble("health", health);
         nbt.putDouble("speed", speed);
         nbt.putDouble("armor", armor);
@@ -236,6 +286,7 @@ public class InstanceData implements IAttachment {
 
     @Override
     public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
+        difficulty = nbt.getString("difficulty");
         speed = nbt.getDouble("speed");
         armor = nbt.getDouble("armor");
         health = nbt.getDouble("health");
@@ -256,6 +307,7 @@ public class InstanceData implements IAttachment {
     public String toString() {
         return
         "Level Data: " + "\n" +
+        "Difficulty = " + difficulty + "\n" +
         "Ticks = " + ticks + "\n" +
         "Max Time = " + maxTime + "\n" +
         "Bronze Coins = " + bronzeCoin + "\n" +

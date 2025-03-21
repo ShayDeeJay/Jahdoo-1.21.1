@@ -6,7 +6,6 @@ import org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 
-import static org.jahdoo.ascension.rarity.JahdooRarity.getRarity;
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
@@ -39,8 +38,8 @@ public class Time extends AbstractLevelBoon {
     }
 
     @Override
-    public double value() {
-        var getRarity = getRarity().getAttributes();
+    public double value(JahdooRarity rarity) {
+        var getRarity = rarity.getAttributes();
         return doubleFormattedDouble(getRarity.getRandomTime());
     }
 
