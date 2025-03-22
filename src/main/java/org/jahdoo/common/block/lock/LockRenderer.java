@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
+import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static net.minecraft.core.Direction.*;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.ascension.level_manager.InstanceDifficulty.getFromName;
@@ -55,14 +56,13 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         var isLook = facing == EAST || facing == WEST;
 
         pose.pushPose();
-        pose.translate(directionA.x() + (isLook ? 0.2 : 0), 0.6, directionA.z() - (facing == SOUTH ? 0.2 :  0));
+        pose.translate(directionA.x() + (isLook ? 0.2 : 0), 0.5, directionA.z() - (facing == SOUTH ? 0.2 :  0));
         pose.rotateAround(Axis.YP.rotationDegrees(isLook ? -90 : 0) , 0, 0, 0); // Horizontal rotation
         pose.rotateAround(Axis.XP.rotationDegrees(-90), 0,0,0); // Horizontal rotation
-        drawTexture(pose.last(), source, 255, 2, getFromName(entity.getDifficulty).getIcon(), -1);
+        drawTexture(pose.last(), source, 255, 1.4F, getFromName(entity.getDifficulty).getIcon(), -1);
         pose.popPose();
-        pose.pushPose();
-        renderName(Helpers.withStyleComponent(entity.hasDifficulty() ? formattedName : "LOCKED", getDifficulty.getColor()), pose, source, -1, font, 0.08F, 3F - adjustY, true, facing, direction, false);
-        pose.popPose();
+
+        renderName(Helpers.withStyleComponent(entity.hasDifficulty() ? formattedName : "LOCKED", getDifficulty.getColor()), pose, source, -1, font, 0.05F, 3F - adjustY, true, facing, direction, false);
     }
 
     private void newRoomSelection(LockBlockEntity entity, PoseStack pose, MultiBufferSource source, int light, LocalPlayer player, Font font, float adjustY, Direction facing, DisplayDirection direction, float x) {
@@ -135,7 +135,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         poseStack.scale(scale, scale, scale);
         var center = (float) -font.width(name) / 2 + 0.6F;
 
-        font.drawInBatch(name, centre ? center : -42, 0, textColour, shadow, poseStack.last().pose(), source, NORMAL, 0, 255);
+        font.drawInBatch(name, centre ? center : -42, 0, textColour, shadow, poseStack.last().pose(), source, NORMAL, 0, FULL_BRIGHT);
         poseStack.popPose();
     }
 

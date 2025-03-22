@@ -11,6 +11,7 @@ import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
 import org.jahdoo.common.entities.decoy.Decoy;
+import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.EntityReg;
@@ -33,6 +34,7 @@ public class ServerBusEvents {
         event.put(EntityReg.CUSTOM_ZOMBIE.get(), CustomZombie.createMobAttributes().build());
         event.put(EntityReg.CUSTOM_SKELETON.get(), CustomSkeleton.createMobAttributes().build());
         event.put(EntityReg.ANCIENT_GOLEM.get(), AncientGolem.createAttributes().build());
+        event.put(EntityReg.INFERNO_CREEPER.get(), InfernoCreeper.createAttributes().build());
         event.put(EntityReg.VOID_SPIDER.get(), VoidSpider.createMain().build());
         event.put(EntityReg.VOID_SPIDER_SPAWN.get(), VoidSpider.createBaby().build());
     }

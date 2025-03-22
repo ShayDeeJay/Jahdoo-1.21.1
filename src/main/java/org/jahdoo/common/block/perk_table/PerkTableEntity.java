@@ -12,8 +12,9 @@ import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.client.overlay.BoonSelectionScreen;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.SoundReg;
 
-import static net.minecraft.sounds.SoundEvents.PLAYER_LEVELUP;
+import static net.minecraft.sounds.SoundEvents.*;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
@@ -60,7 +61,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
         var getPositions = innerRadiusRandom(pos.subtract(0, 0.45, 0), 0.38, 3);
 
         for (var vec3 : getPositions) {
-            var bState = state.getValue(TEXTURE);
+            int bState = state.getValue(TEXTURE);
             var byState = bState == 0 ? color(207, 62, 62) : bState == 1 ? color(43, 193, 252) : color(59, 173, 80) ;
             var genericParticle = ParticleHandlers.genericParticle(PLUS_PARTICLE, 16, 3, byState, byState, false);
             sendParticles(level, genericParticle, vec3, 0, 0, 0.5, 0, 35);
@@ -84,9 +85,9 @@ public class PerkTableEntity extends SyncedBlockEntity {
 
             this.updateBlock();
             idleEffect(player.level(), player.position(), state);
-            getSoundWithPosition(level, getBlockPos(), PLAYER_LEVELUP, 1, 0.8F);
-            level.destroyBlock(getBlockPos().above(), false);
-            level.destroyBlock(getBlockPos(), false);
+            getSoundWithPosition(level, getBlockPos(), value == 0 ? SoundReg.HEAL.get() : value == 1 ? BREWING_STAND_BREW : PLAYER_LEVELUP, 1, 0.8F);
+            level.removeBlock(getBlockPos().above(), false);
+            level.removeBlock(getBlockPos(), false);
         }
     }
 }

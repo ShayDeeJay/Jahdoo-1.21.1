@@ -105,6 +105,9 @@ public class LevelBoonReg {
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> ETERNAL_WIZARD =
         registerElement(EternalWizard::new);
 
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> INFERNO_CREEPER =
+        registerElement(InfernoCreeper::new);
+
     //Positive
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> TIME =
         registerElement(Time::new);

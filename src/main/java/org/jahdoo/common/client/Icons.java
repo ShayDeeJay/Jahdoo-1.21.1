@@ -39,6 +39,9 @@ public class Icons {
     public static final ResourceLocation VOID_SPIDER =
         res(ABILITY_PREFIX + "void_spider.png");
 
+    public static final ResourceLocation INFERNO_CREEPER =
+        res(ABILITY_PREFIX + "inferno_creeper.png");
+
     public static final ResourceLocation GUI_BUTTON =
         res(BUTTON_PREFIX + "gui_button.png");
 

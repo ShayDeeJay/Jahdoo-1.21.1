@@ -9,7 +9,6 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.MutableComponent;
 import org.jahdoo.ascension.attachments.InstanceData;
-import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.client.Icons;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +18,7 @@ import static com.mojang.datafixers.util.Pair.of;
 import static java.lang.String.valueOf;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.ascension.utils.Maths.ticksToTime;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class InstanceDataOverlay implements LayeredDraw.Layer {
@@ -62,36 +62,27 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         var data = level.getData(INSTANCE_DATA);
         var size = 18;
         var spacer = 0;
-        var offsetX = -24 + fade;
-        var offsetY = 0;
-        System.out.println(offsetY);
-        var sizeB = 1.8F;
+        var offsetX = -22 + fade;
+        var offsetY = -4;
         var remainingTime = data.getMaxTime() - data.getTicks();
         var pose = graphics.pose();
+        var getComps = List.of(
+            of(appendStat("Room's Completed: ", valueOf(data.getClearedRooms()), MAGNET_RANGE_GREEN), Icons.UP),
+            of(appendStat("Time: ", ticksToTime(valueOf(remainingTime)), remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED), Icons.CLOCK)
+        );
 
         timer = Math.max(0, timer - 1);
         instanceData = data;
 
         if(data.getDifficulty().isEmpty()) timer = 0;
-        pose.pushPose();
-        pose.scale(sizeB, sizeB, sizeB);
-
-        var getComps = List.of(
-            of(appendStat("Room's Completed: ", valueOf(data.getClearedRooms()), MAGNET_RANGE_GREEN), Icons.UP),
-            of(appendStat("Time: ", Maths.ticksToTime(valueOf(remainingTime)), remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED), Icons.CLOCK)
-        );
-        pose.popPose();
 
         pose.pushPose();
-        pose.translate(0,  graphics.guiHeight() - 164, 0);
-//        pose.scale();
-//        var x = Helpers.stringIdToName(data.getDifficulty());
-//        graphics.drawString(mc.font, withStyleComponent(x + " Run", COSMIC_PURPLE), (int) (40 + offsetX), 33 + offsetY, -1, true);
+        pose.translate(0, (float) graphics.guiHeight() - 160, 0);
         for (var getComp : getComps) {
             if(!getComp.getFirst().getSiblings().getFirst().getString().isEmpty()){
                 graphics.blit(getComp.getSecond(), (int) (12 + offsetX), 94 + offsetY + spacer, 0, 0, size, size, size, size);
                 graphics.drawString(mc.font, getComp.getFirst(), (int) (32 + offsetX), 100  + offsetY + spacer, -1, true);
-                spacer += 18;
+                spacer += 14;
             }
         }
         pose.popPose();

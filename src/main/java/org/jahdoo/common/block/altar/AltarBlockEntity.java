@@ -153,6 +153,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         if(level instanceof ServerLevel serverLevel){
             if(this.started) {
                 this.privateTicks++;
+
                 this.updateBlock();
                 idleParticleAnim(pos, privateTicks, level);
             }

@@ -32,10 +32,10 @@ import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
+import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 
@@ -67,11 +67,16 @@ import static org.jahdoo.ascension.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.*;
 import static org.jahdoo.common.entities.ancient_golem.AncientGolem.INFINITE_LIFE;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class MobManager {
 
     private static LivingEntity getVoidSpider(ServerLevel serverLevel) {
         return new VoidSpider(serverLevel);
+    }
+
+    private static LivingEntity getInfernoCreeper(ServerLevel serverLevel) {
+        return new InfernoCreeper(serverLevel);
     }
 
     private static void addProtection(ServerLevel serverLevel, ItemStack stack, int round) {
@@ -129,14 +134,14 @@ public class MobManager {
         return 1;
     }
 
-    public static ObjectArrayList<ItemStack> equipWeapon(LivingEntity livingEntity, ServerLevel serverLevel, int round){
+    public static ObjectArrayList<ItemStack> equipWeapon(LivingEntity livingEntity, ServerLevel serverLevel, InstanceData data){
         var lootparams = new LootParams
             .Builder(serverLevel)
             .withParameter(ORIGIN, livingEntity.position())
             .withParameter(THIS_ENTITY, livingEntity)
             .create(VAULT);
 
-        return new MobItemHandler(serverLevel,(float) round / 10).getRandomWeapon().getRandomItems(lootparams);
+        return new MobItemHandler(serverLevel, data.getClearedRooms(), data.getDifficulty()).getRandomWeapon().getRandomItems(lootparams);
     }
 
     public static void setOuterRingPulses(Level level, Vec3 position, double radius){
@@ -151,7 +156,7 @@ public class MobManager {
         );
     }
 
-    public static LivingEntity getReadyZombie(ServerLevel serverLevel, String id){
+    public static LivingEntity getReadyZombie(ServerLevel serverLevel, String id, InstanceData data){
         var entity = switch (id){
             case THE_HALL -> new CustomZombie(serverLevel, null);
             case THE_CHAMBERS -> new Vindicator(EntityType.VINDICATOR, serverLevel)  ;
@@ -159,10 +164,10 @@ public class MobManager {
             default -> new ZombifiedPiglin(EntityType.ZOMBIFIED_PIGLIN, serverLevel);
         };
 
-        var round = serverLevel.getData(AttachmentReg.INSTANCE_DATA).getClearedRooms();
-        attachEquipment(entity, serverLevel, round);
+        var round = serverLevel.getData(INSTANCE_DATA).getClearedRooms();
+        attachEquipment(entity, serverLevel, data);
 
-        var collection = equipWeapon(entity, serverLevel, round);
+        var collection = equipWeapon(entity, serverLevel, data);
         if(!collection.isEmpty()) {
             var weapon = Helpers.listRandom(collection);
             entity.setItemSlot(MAINHAND, weapon.is(Items.BOW) ? ItemStack.EMPTY : weapon);
@@ -172,13 +177,13 @@ public class MobManager {
         return entity;
     }
 
-    public static LivingEntity getReadySkeleton(ServerLevel serverLevel){
-        var arrow = MobItemHandler.getAllowedArrow(0);
+    public static LivingEntity getReadySkeleton(ServerLevel serverLevel, InstanceData data){
+        var arrow = MobItemHandler.getAllowedArrow(0, data.getDifficulty());
         var entity = new CustomSkeleton(serverLevel, null, arrow);
 
         entity.setPersistenceRequired();
-        attachEquipment(entity, serverLevel, 10);
-        var collection = equipWeapon(entity, serverLevel, 50);
+        attachEquipment(entity, serverLevel, data);
+        var collection = equipWeapon(entity, serverLevel, data);
 
         if(!collection.isEmpty()){
             entity.setItemSlot(MAINHAND, listRandom(collection));
@@ -186,12 +191,13 @@ public class MobManager {
         return entity;
     }
 
-    public static void attachEquipment(LivingEntity livingEntity, ServerLevel serverLevel, int round){
+    public static void attachEquipment(LivingEntity livingEntity, ServerLevel serverLevel, InstanceData data){
         var lootparams = new LootParams.Builder(serverLevel)
             .withParameter(ORIGIN, livingEntity.position())
             .withParameter(THIS_ENTITY, livingEntity)
             .create(VAULT);
-        var randomLeather = new MobItemHandler(serverLevel,(float) round /10).getByRound(round);
+        var difficulty = data.getDifficulty();
+        var randomLeather = new MobItemHandler(serverLevel, data.getClearedRooms(), difficulty).getByDifficulty(difficulty);
 
         for (var randomItem : randomLeather.getRandomItems(lootparams)) {
             if(randomItem.getItem() instanceof ArmorItem armorItem){
@@ -238,13 +244,12 @@ public class MobManager {
 
         if(!Objects.equals(roomId, BOSS_CRUCIBLE)){
             var actualEntity = buildMobs(level, roomId);
-
             for (var livingEntity : actualEntity) {
                 addAndPositionEntity(level, containing(listRandom(randomPoses)), livingEntity);
                 entity.spawnedMobs.add(livingEntity.getUUID());
             }
         } else {
-            var round = entity.getData(AttachmentReg.INSTANCE_DATA).getClearedRooms();
+            var round = entity.getData(INSTANCE_DATA).getClearedRooms();
             var ancienGolem = getAncienGolem(level, round);
             var eliteSkeleton = getEliteSkeleton(level, round);
             var boss = Helpers.listRandom(List.of(ancienGolem, eliteSkeleton));
@@ -270,14 +275,15 @@ public class MobManager {
         }
     }
 
-    public static LivingEntity getReadyEternalWizard(ServerLevel serverLevel, double damage){
-        var entity = new EternalWizard(serverLevel, null, damage, 100, 2, -1, 30);
+    public static LivingEntity getReadyEternalWizard(ServerLevel serverLevel, InstanceData data){
+        var damage = 10  + 1 * data.getAttackDamage();
+        var entity = new EternalWizard(serverLevel, null, damage, 200, 2, -1, 30);
         var wand = new ItemStack(ItemReg.WAND_ITEM_VITALITY.get());
         var helm = new ItemStack(ItemReg.MAGE_HELMET.get());
         var chestplate = new ItemStack(ItemReg.MAGE_CHESTPLATE.get());
         var leggings = new ItemStack(ItemReg.MAGE_LEGGINGS.get());
         var boots = new ItemStack(ItemReg.MAGE_BOOTS.get());
-        var multipliers = serverLevel.getData(AttachmentReg.INSTANCE_DATA).getClearedRooms();
+        var multipliers = serverLevel.getData(INSTANCE_DATA).getClearedRooms();
 
         entity.setPersistenceRequired();
         entity.setItemSlot(MAINHAND, wand);
@@ -324,23 +330,28 @@ public class MobManager {
     }
 
     private static List<LivingEntity> buildMobs(ServerLevel serverLevel, String roomId) {
+        var data = serverLevel.getData(INSTANCE_DATA);
         var entities = new ArrayList<LivingEntity>();
-        var getInstanceData = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
+        var getInstanceData = serverLevel.getData(INSTANCE_DATA);
 
         for (var i = 0; i < getInstanceData.getHorde(); i++){
-            entities.add(generateMob(getReadyZombie(serverLevel, roomId), getInstanceData));
+            entities.add(generateMob(getReadyZombie(serverLevel, roomId, data), getInstanceData));
         }
 
         for (var i = 0; i < getInstanceData.getSkeleton(); i++){
-            entities.add(generateMob(getReadySkeleton(serverLevel), getInstanceData));
+            entities.add(generateMob(getReadySkeleton(serverLevel, data), getInstanceData));
         }
 
         for (var i = 0; i < getInstanceData.getEternalWizard(); i++){
-            entities.add(generateMob(getReadyEternalWizard(serverLevel, 10), getInstanceData));
+            entities.add(generateMob(getReadyEternalWizard(serverLevel, data), getInstanceData));
         }
 
         for (var i = 0; i < getInstanceData.getVoidSpiders(); i++){
             entities.add(generateMob(getVoidSpider(serverLevel), getInstanceData));
+        }
+
+        for (var i = 0; i < getInstanceData.getInfernoCreeper(); i++){
+            entities.add(generateMob(getInfernoCreeper(serverLevel), getInstanceData));
         }
 
         return entities;

@@ -16,9 +16,9 @@ import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public enum InstanceDifficulty  implements StringRepresentable, IExtensibleEnum {
 
-    EASY(Helpers.EASY, color(140, 82, 41), Icons.EASY),
-    MEDIUM(Helpers.MEDIUM, color(113, 94, 90), Icons.MEDIUM),
-    HARD(Helpers.HARD, color(157, 129, 50), Icons.HARD);
+    EASY(Helpers.EASY, color(224, 181, 149), Icons.EASY),
+    MEDIUM(Helpers.MEDIUM, color(139, 203, 225), Icons.MEDIUM),
+    HARD(Helpers.HARD, color(223, 199, 241), Icons.HARD);
 
     private final String name;
     private final int color;

@@ -16,6 +16,7 @@ import org.jahdoo.common.entities.decoy.Decoy;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 
 import static net.minecraft.world.entity.EntityType.*;
@@ -85,6 +86,12 @@ public class EntityReg {
         regEntity("void_spider", Builder.<VoidSpider>of(VoidSpider::new, MONSTER)
             .sized(1.4F, 0.9F)
             .passengerAttachments(0.765F)
+            .clientTrackingRange(8)
+        );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<InfernoCreeper>> INFERNO_CREEPER =
+        regEntity("inferno_creeper", Builder.<InfernoCreeper>of(InfernoCreeper::new, MONSTER)
+            .sized(0.6F, 1.7F)
             .clientTrackingRange(8)
         );
 

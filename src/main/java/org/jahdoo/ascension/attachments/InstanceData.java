@@ -14,6 +14,7 @@ public class InstanceData implements IAttachment {
     private int skeleton;
     private int eternalWizard;
     private int voidSpider;
+    private int infernoCreeper;
     private int clearedRooms;
     private int ticks;
     private int maxTime;
@@ -34,6 +35,7 @@ public class InstanceData implements IAttachment {
         int skeleton,
         int eternalWizard,
         int voidSpider,
+        int infernoCreeper,
         int clearedRooms,
         int maxTime,
         int bronzeCoin,
@@ -50,6 +52,7 @@ public class InstanceData implements IAttachment {
         this.skeleton = skeleton;
         this.eternalWizard = eternalWizard;
         this.voidSpider = voidSpider;
+        this.infernoCreeper = infernoCreeper;
         this.clearedRooms = clearedRooms;
         this.maxTime = maxTime;
         this.health = health;
@@ -61,7 +64,6 @@ public class InstanceData implements IAttachment {
         this.goldCoin = goldCoin;
     }
 
-    public static final InstanceData INIT = new InstanceData("", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     public String getDifficulty() {
         return difficulty == null ? "" : difficulty;
@@ -143,6 +145,10 @@ public class InstanceData implements IAttachment {
         return goldCoin;
     }
 
+    public int getInfernoCreeper() {
+        return infernoCreeper;
+    }
+
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
@@ -203,11 +209,16 @@ public class InstanceData implements IAttachment {
         this.goldCoin += goldCoin;
     }
 
+    public void incrementInfernoCreeper(double infernoCreeper) {
+        this.infernoCreeper += (int) infernoCreeper;
+    }
+
     public static InstanceData setEasyData() {
         var data = new InstanceData();
 
         data.incrementHorde(5);
         data.setDifficulty(EASY.getSerializedName());
+
         //20 Minutes
         data.setMaxTime(24000);
 
@@ -219,9 +230,9 @@ public class InstanceData implements IAttachment {
 
         data.setDifficulty(MEDIUM.getSerializedName());
         data.incrementHorde(10);
-        data.incrementHealth(20);
-        data.incrementAttackDamage(20);
-        data.incrementSpeed(10);
+        data.incrementHealth(10);
+        data.incrementAttackDamage(15);
+
         //15 Minutes
         data.setMaxTime(18000);
 
@@ -234,11 +245,10 @@ public class InstanceData implements IAttachment {
         data.setDifficulty(HARD.getSerializedName());
         data.incrementHealth(100);
         data.incrementAttackDamage(100);
-        data.incrementSpeed(50);
+        data.incrementSpeed(15);
         data.incrementHorde(10);
         data.incrementSkeleton(5);
         data.incrementEternalWizard(2);
-        data.incrementVoidSpider(2);
 
         //10 Minutes
         data.setMaxTime(12000);
@@ -253,6 +263,7 @@ public class InstanceData implements IAttachment {
             Codec.INT.fieldOf("skeleton").forGetter(InstanceData::getSkeleton),
             Codec.INT.fieldOf("eternal_wizard").forGetter(InstanceData::getEternalWizard),
             Codec.INT.fieldOf("void_spider").forGetter(InstanceData::getVoidSpider),
+            Codec.INT.fieldOf("inferno_creeper").forGetter(InstanceData::getInfernoCreeper),
             Codec.INT.fieldOf("cleared_rooms").forGetter(InstanceData::getClearedRooms),
             Codec.INT.fieldOf("max_time").forGetter(InstanceData::getMaxTime),
             Codec.INT.fieldOf("bronze_coin").forGetter(InstanceData::getBronzeCoin),
@@ -276,6 +287,7 @@ public class InstanceData implements IAttachment {
         nbt.putInt("skeleton", skeleton);
         nbt.putInt("eternal_wizard", eternalWizard);
         nbt.putInt("void_spider", voidSpider);
+        nbt.putInt("inferno_creeper", infernoCreeper);
         nbt.putInt("cleared_rooms", clearedRooms);
         nbt.putInt("tick", ticks);
         nbt.putInt("max_time", maxTime);
@@ -295,6 +307,7 @@ public class InstanceData implements IAttachment {
         skeleton = nbt.getInt("skeleton");
         voidSpider = nbt.getInt("void_spider");
         eternalWizard = nbt.getInt("eternal_wizard");
+        infernoCreeper = nbt.getInt("inferno_creeper");
         clearedRooms = nbt.getInt("cleared_rooms");
         ticks = nbt.getInt("tick");
         maxTime = nbt.getInt("max_time");
@@ -318,6 +331,7 @@ public class InstanceData implements IAttachment {
         "Skeletons = " + skeleton + "\n" +
         "Eternal Wizard = " + eternalWizard + "\n" +
         "Void Spider = " + voidSpider + "\n" +
+        "Inferno Creeper = " + infernoCreeper + "\n" +
         "Mob Health = " + health + "\n" +
         "Mob Speed = " + speed + "\n" +
         "Mob Attack Damage = " + attackDamage + "\n" +

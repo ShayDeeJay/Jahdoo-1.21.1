@@ -57,6 +57,7 @@ public class BlockSetupManager {
 
     public static void setBlockGenerator(ServerLevel level, Iterable<BlockPos> pos, Direction direction, String id) {
         for (var blockPos : pos) {
+            if(Objects.equals(id, EASY_EXIT)) generateExit(level, blockPos, direction.getOpposite());
             if(Objects.equals(id, SANCTUARY)) placePerkTables(level, blockPos);
             if(id.contains("the") || id.contains("boss")) setLocks(level, blockPos, true);
             if(Objects.equals(id, BAZAAR)){
@@ -85,8 +86,8 @@ public class BlockSetupManager {
     }
 
     //Don't delete as useful for generating exit in entry room
-    public static void generateExit(ServerLevel level, BlockPos pos) {
-        var portal = TRAIL_PORTAL.get().defaultBlockState().setValue(AXIS, Direction.Axis.Z);
+    public static void generateExit(ServerLevel level, BlockPos pos, Direction direction) {
+        var portal = TRAIL_PORTAL.get().defaultBlockState().setValue(AXIS, direction.getAxis());
         var state = level.getBlockState(pos);
         if(state.is(WHITE_CONCRETE)) {
             level.setBlockAndUpdate(pos, portal.setValue(DIMENSION_KEY, KEY_HOME));
