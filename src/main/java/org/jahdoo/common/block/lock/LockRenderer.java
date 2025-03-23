@@ -68,7 +68,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
     private void newRoomSelection(LockBlockEntity entity, PoseStack pose, MultiBufferSource source, int light, LocalPlayer player, Font font, float adjustY, Direction facing, DisplayDirection direction, float x) {
         if (entity.isInitialized() && player != null && player.distanceToSqr(entity.getBlockPos().getCenter()) < 2500) {
             var id = entity.roomId.getString();
-            var getIcon = id.contains("Boss") ? "☠" : id.contains("The") ? "⚔" : id.contains("Sanctuary") ? "\uD83E\uDDEA" : "⇵";
+            var getIcon = id.contains("Boss") ? "☠" : id.contains("The") ? "⚔" : id.contains("Sanctuary") ? "\uD83E\uDDEA" : id.contains("Exit") ? "⚠" : "⇵";
             var textColour = entity.roomId.getStyle().getColor().getValue();
 
             renderName(Helpers.withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);

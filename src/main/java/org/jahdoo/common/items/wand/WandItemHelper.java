@@ -173,7 +173,8 @@ public class WandItemHelper {
         var appendComponents = new ArrayList<Component>();
         var abstractElement = fromWand(wandItem.getItem());
         if(abstractElement.isPresent()){
-            appendComponents.add(attachRarityTooltip(wandItem, level));
+            var e = attachRarityTooltip(wandItem, level);
+            if(e != null) appendComponents.add(e);
             totalSlots(appendComponents, wandItem, SUB_HEADER_COLOUR);
             appendRefinementPotential(appendComponents, wandItem);
             appendSelectedAbility(wandItem, appendComponents);

@@ -78,13 +78,14 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
     }
 
     public static ShoppingItems getEliteShoppingItem(ServerLevel serverLevel){
-        return switch (Random.nextInt(7)){
+        return switch (Random.nextInt(8)){
             case 1 -> shoppingWandItem();
             case 2 -> shoppingTomeItem();
             case 3 -> shoppingAmuletItem();
             case 4 -> shoppingArmorItem(serverLevel);
             case 5 -> shoppingSwordItem(serverLevel);
             case 6 -> shoppingMagnetItem();
+            case 7 -> shoppingGauntletItem();
             default -> shoppingRuneItem();
         };
     }
@@ -120,6 +121,11 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
 
         generateFullRune(stack, getRandomRune.getFirst());
         return new ShoppingItems(stack, getRandomRune.getSecond());
+    }
+
+    public static ShoppingItems shoppingGauntletItem(){
+        var shoppingItem = new ItemStack(ItemReg.BATTLEMAGE_GAUNTLET);
+        return new ShoppingItems(shoppingItem, setPlatinumCost((850)));
     }
 
     public static ShoppingItems shoppingTomeItem(){

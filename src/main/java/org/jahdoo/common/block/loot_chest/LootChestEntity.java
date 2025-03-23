@@ -8,10 +8,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.SoundReg;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -85,6 +87,9 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         var id = getRarity;
 
         if(canRender()){
+            if(Random.nextInt(5) == 0){
+                Helpers.getSoundWithPosition(level, pos, SoundReg.LOOTBOX_IDLE.get(), 0.4F, 1F);
+            }
             if(this.privateTicks % (6 - getRarity) == 0){
                 for (var vec3 : PositionFinders.innerRadiusRandom(pos.getCenter().subtract(0, 0.35, 0), 0.55, Math.max(3, 5 * id))) {
                     var colour1 = KeyItem.getJahdooRarity(new CustomModelData(id));

@@ -95,14 +95,6 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
-//    @Override
-//    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
-//        return createTickerHelper(
-//            entityType, LOCK_BE.get(),
-//            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
-//        );
-//    }
-
     @Override
     protected ItemInteractionResult useItemOn(
         ItemStack stack,
@@ -172,10 +164,8 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     }
 
     private static void destroyDoors(ServerLevel serverLevel, BlockPos pos) {
-        var range = betweenClosed(
-            pos.getX() - 2, pos.getY() - 1, pos.getZ() - 2,
-            pos.getX() + 2, pos.getY() + 3, pos.getZ() + 2
-        );
+        var range = betweenClosed(pos.getX() - 2, pos.getY() - 1, pos.getZ() - 2, pos.getX() + 2, pos.getY() + 3, pos.getZ() + 2);
+
         for (var blockPos : range) {
             var netherite = serverLevel.getBlockState(blockPos).is(NETHERITE_BLOCK);
             var observer = serverLevel.getBlockState(blockPos).is(OBSERVER);

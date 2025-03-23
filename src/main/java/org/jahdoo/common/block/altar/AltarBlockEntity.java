@@ -5,12 +5,17 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.mobs.MobManager;
+import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
@@ -27,10 +32,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static net.minecraft.core.BlockPos.containing;
 import static org.jahdoo.ascension.level_manager.BlockSetupManager.setLootChests;
 import static org.jahdoo.ascension.level_manager.BlockSetupManager.setPerkTable;
 import static org.jahdoo.ascension.level_manager.StructureManager.placeLocksWithData;
+import static org.jahdoo.ascension.mobs.MobManager.addAndPositionEntity;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.ascension.utils.Helpers.listRandom;
+import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
 import static org.jahdoo.common.block.altar.AltarAnim.idleParticleAnim;
 import static org.jahdoo.common.block.altar.AltarAnim.onActivationAnim;
 import static org.jahdoo.common.entities.EntityAnimations.ALTAR_IDLE;
@@ -47,7 +56,8 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     public boolean beginSpawning;
     public Direction direction;
     public String roomId;
-    public List<UUID> spawnedMobs = new ArrayList<>();
+    public List<LivingEntity> spawnableMobs = new ArrayList<>();
+    public List<UUID> onField = new ArrayList<>();
 
     public AltarBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.CHALLENGE_ALTAR_BE.get(), pos, state);
@@ -90,10 +100,10 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     }
 
     private void removeKilledMobs(ServerLevel serverLevel) {
-        for (var activeMob : this.spawnedMobs) {
+        for (var activeMob : this.onField) {
             var entity = serverLevel.getEntity(activeMob);
             if(entity == null || !entity.isAlive()){
-                this.spawnedMobs.remove(activeMob);
+                this.onField.remove(activeMob);
                 this.mobsSpawned++;
                 return;
             }
@@ -108,6 +118,13 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         placeLocksWithData(serverLevel, pos.below(2), false);
         serverLevel.destroyBlock(pos, false);
         getSoundWithPosition(serverLevel, pos, SoundReg.END_TRIAL.get(), 2, 1.5F);
+
+        Helpers.sendPacketsToPlayerDistance(getBlockPos().getCenter(), 400, serverLevel,
+            (serverPlayer) -> {
+                serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(5, 20, 20));
+                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(Helpers.withStyleComponent("ALTAR COMPLETE", ColourStore.MAGNET_RANGE_GREEN)));
+            }
+        );
 
         if(clearedRooms % 2 == 0) {
             setPerkTable(serverLevel, pos, 2);
@@ -125,12 +142,19 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         tag.putBoolean("started", this.started);
         tag.putInt("spawned", this.mobsSpawned);
         tag.putString("roomId", this.roomId);
-        var uuids = new CompoundTag();
-        for (var spawnedMob : this.spawnedMobs) {
-            uuids.putUUID(String.valueOf(spawnedMob), spawnedMob);
-        }
 
-        tag.put("uuid", uuids);
+        var allowedMobs = new CompoundTag();
+        for (var spawnedMob : this.spawnableMobs) {
+            allowedMobs.putUUID(String.valueOf(spawnedMob.getUUID()), spawnedMob.getUUID());
+        }
+        tag.put("allowedMobs", allowedMobs);
+
+        var spawnedMobs = new CompoundTag();
+        for (var spawnedMob : this.onField) {
+            spawnedMobs.putUUID(String.valueOf(spawnedMob), spawnedMob);
+        }
+        tag.put("uuid", spawnedMobs);
+
     }
 
     @Override
@@ -143,9 +167,16 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         mobsSpawned = tag.getInt("spawned");
         roomId = tag.getString("roomId");
 
+        var allowedMobs = tag.getCompound("allowedMobs");
+        for (var uuid : allowedMobs.getAllKeys()) {
+            if(level instanceof ServerLevel serverLevel){
+                this.spawnableMobs.add((LivingEntity) serverLevel.getEntity(allowedMobs.getUUID(uuid)));
+            }
+        }
+
         var uuids = tag.getCompound("uuid");
         for (var uuid : uuids.getAllKeys()) {
-            this.spawnedMobs.add(uuids.getUUID(uuid));
+            this.onField.add(uuids.getUUID(uuid));
         }
     }
 
@@ -153,6 +184,21 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         if(level instanceof ServerLevel serverLevel){
             if(this.started) {
                 this.privateTicks++;
+
+                if(privateTicks % 2 == 0){
+                    if(!this.spawnableMobs.isEmpty() && onField.size() < 20){
+                        var randomPoses = innerRadiusRandom(pos.below(2).getCenter(), 20, 200)
+                            .stream()
+                            .filter(pos1 -> level.getBlockState(containing(pos1)).isAir() && level.getBlockState(containing(pos1).above()).isAir())
+                            .toList();
+
+                        var entity = listRandom(this.spawnableMobs);
+                        var position = listRandom(randomPoses);
+                        addAndPositionEntity(serverLevel, containing(position), entity);
+                        this.onField.add(entity.getUUID());
+                        this.spawnableMobs.remove(entity);
+                    }
+                }
 
                 this.updateBlock();
                 idleParticleAnim(pos, privateTicks, level);
@@ -167,7 +213,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
             }
 
             if (privateTicks == 1) onActivationAnim(level, pos, privateTicks);
-            if (privateTicks > 30 && started && this.spawnedMobs.isEmpty()) {
+            if (privateTicks > 30 && started && this.onField.isEmpty() && spawnableMobs.isEmpty()) {
                 onCompleteAltar(pos, serverLevel);
             }
         }

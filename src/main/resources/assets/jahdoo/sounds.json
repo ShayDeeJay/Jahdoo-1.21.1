@@ -101,5 +101,23 @@
     "sounds": [
       "jahdoo:sword_thud"
     ]
+  },
+  "lootbox_idle": {
+    "subtitles": "sounds.jahdoo.lootbox_idle",
+    "sounds": [
+      "jahdoo:lootbox_idle"
+    ]
+  },
+  "lootbox_open": {
+    "subtitles": "sounds.jahdoo.lootbox_open",
+    "sounds": [
+      "jahdoo:lootbox_open"
+    ]
+  },
+  "coinbox_open": {
+    "subtitles": "sounds.jahdoo.coinbox_open",
+    "sounds": [
+      "jahdoo:coinbox_open"
+    ]
   }
 }

@@ -1,6 +1,7 @@
 package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
@@ -87,6 +88,21 @@ public class ServerEvents {
         var pos = event.getPos();
         var blockState = event.getLevel().getBlockState(pos);
         saveBlockType(event, item, blockState, pos);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        var player = event.getEntity();
+        var playerData = player.getPersistentData();
+        var data = playerData.getCompound(Player.PERSISTED_NBT_TAG);
+
+        if(player.level() instanceof ServerLevel serverLevel){
+            getStarterKit(player, serverLevel);
+        }
+        if (!data.getBoolean("first_join")) {
+            data.putBoolean("first_join", true);
+            playerData.put(Player.PERSISTED_NBT_TAG, data);
+        }
     }
 
     @SubscribeEvent

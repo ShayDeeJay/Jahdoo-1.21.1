@@ -4,6 +4,7 @@ import com.mojang.math.Axis;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
@@ -15,11 +16,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.armortrim.TrimMaterials;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -29,11 +34,13 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.ability.abilities.block_placer.BlockPlacerAbility;
 import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.ascension.ability.abilities.wall_placer.WallPlacerAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.ascension.mobs.MobItemHandler;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
@@ -52,12 +59,18 @@ import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
+import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
+import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
+import static org.jahdoo.ascension.mobs.MobItemHandler.getRandomNetheriteOther;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
+import static org.jahdoo.common.items.augments.AugmentItemHelper.elementalWithType;
+import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentWithAbility;
 import static org.jahdoo.common.items.wand.WandItemHelper.storeBlockType;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
@@ -162,6 +175,48 @@ public class EventHelpers {
                 }
             }
         }
+    }
+
+    public static void getStarterKit(Player player, ServerLevel serverLevel) {
+        var freeItems = new ArrayList<ItemStack>();
+        var element = ElementReg.random();
+
+        for (int i = 0; i < 2; i++){
+            freeItems.add(ItemStack.EMPTY);
+        }
+
+        var trim = switch (element.id()){
+            case 1 -> TrimMaterials.LAPIS;
+            case 2 -> TrimMaterials.GOLD;
+            case 3 -> TrimMaterials.AMETHYST;
+            default -> TrimMaterials.REDSTONE;
+        };
+
+        var params = new LootParams.Builder(serverLevel).withParameter(ORIGIN, player.position()).create(VAULT);
+        freeItems.addAll(getRandomNetheriteOther(serverLevel, trim).getRandomItems(params));
+        freeItems.addAll(MobItemHandler.buildForNetherite(serverLevel).getRandomItems(params));
+
+        for (int i = 0; i < 5; i++) freeItems.add(ItemStack.EMPTY);
+
+        freeItems.add(new ItemStack(ItemReg.CHALLENGER_TICKET));
+        freeItems.add(new ItemStack(Objects.requireNonNull(element.getWand())));
+        freeItems.add(new ItemStack(ItemReg.CHALLENGER_TICKET));
+
+        for (int i = 0; i < 7; i++) freeItems.add(ItemStack.EMPTY);
+
+        freeItems.add(getAugmentWithAbility(elementalWithType(element.id())));
+
+        var shulkerBox = new ItemStack(
+            switch (element.id()){
+                case 1 -> Items.LIGHT_BLUE_SHULKER_BOX;
+                case 2 -> Items.ORANGE_SHULKER_BOX;
+                case 3 -> Items.PURPLE_SHULKER_BOX;
+                default -> Items.RED_SHULKER_BOX;
+            }
+        );
+
+        shulkerBox.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(freeItems));
+        ItemHandlerHelper.giveItemToPlayer(player, shulkerBox);
     }
 
     public static void greaterFrostEffectDamageAmplifier(LivingDamageEvent.Pre event, LivingEntity entity) {

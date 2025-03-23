@@ -31,4 +31,9 @@ public class EternalWizard extends MobLevelBoon {
         return JahdooRarity.LEGENDARY;
     }
 
+    @Override
+    public boolean isTrashMob() {
+        return false;
+    }
+
 }

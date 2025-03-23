@@ -31,4 +31,8 @@ public class Horde extends MobLevelBoon {
         return JahdooRarity.COMMON;
     }
 
+    @Override
+    public boolean isTrashMob() {
+        return true;
+    }
 }

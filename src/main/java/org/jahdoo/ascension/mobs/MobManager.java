@@ -44,7 +44,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static net.minecraft.core.BlockPos.containing;
 import static net.minecraft.core.component.DataComponents.TRIM;
 import static net.minecraft.core.registries.Registries.TRIM_MATERIAL;
 import static net.minecraft.core.registries.Registries.TRIM_PATTERN;
@@ -65,7 +64,8 @@ import static net.minecraft.world.level.storage.loot.parameters.LootContextParam
 import static org.jahdoo.ascension.level_manager.StructureManager.*;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.ascension.utils.PositionFinders.*;
+import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
+import static org.jahdoo.ascension.utils.PositionFinders.getRandomSphericalBlockPositions;
 import static org.jahdoo.common.entities.ancient_golem.AncientGolem.INFINITE_LIFE;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
@@ -237,17 +237,9 @@ public class MobManager {
     public static void summonEntities(AltarBlockEntity entity, String roomId){
         if(!(entity.getLevel() instanceof ServerLevel level)) return;
 
-        var randomPoses = innerRadiusRandom(entity.getBlockPos().below(2).getCenter(), 20, 200)
-            .stream()
-            .filter(pos -> level.getBlockState(containing(pos)).isAir() && level.getBlockState(containing(pos).above()).isAir())
-            .toList();
-
         if(!Objects.equals(roomId, BOSS_CRUCIBLE)){
             var actualEntity = buildMobs(level, roomId);
-            for (var livingEntity : actualEntity) {
-                addAndPositionEntity(level, containing(listRandom(randomPoses)), livingEntity);
-                entity.spawnedMobs.add(livingEntity.getUUID());
-            }
+            entity.spawnableMobs.addAll(actualEntity);
         } else {
             var round = entity.getData(INSTANCE_DATA).getClearedRooms();
             var ancienGolem = getAncienGolem(level, round);
@@ -256,7 +248,7 @@ public class MobManager {
 
             addAndPositionEntity(level, entity.getBlockPos().relative(entity.direction, -3), boss);
             boss.setYBodyRot(entity.direction.toYRot());
-            entity.spawnedMobs.add(boss.getUUID());
+            entity.onField.add(boss.getUUID());
         }
     }
 

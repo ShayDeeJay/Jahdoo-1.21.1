@@ -21,6 +21,7 @@ import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.block_items.ModularChaosCubeItem;
 import org.jahdoo.common.items.block_items.InfuserBlockItem;
 import org.jahdoo.common.items.tome.TomeOfUnity;
+import org.jahdoo.common.items.RecallToken;
 import org.jahdoo.common.items.wand.subWands.*;
 
 import java.util.function.Supplier;
@@ -44,6 +45,15 @@ public class ItemReg {
         basicItem("augment_core");
 
     //Complex Items
+    public static final DeferredHolder<Item, Item> RECALL_TOKEN =
+        complexItem("recall_token", RecallToken::new);
+
+    public static final DeferredHolder<Item, Item> CHALLENGER_TICKET =
+        complexItem("challenger_ticket", ChallengerTicket::new);
+
+    public static final DeferredHolder<Item, Item> COIN =
+        complexItem("coin", CoinItem::new);
+
     public static final DeferredHolder<Item, Item> LOOT_KEY =
         complexItem("key", KeyItem::new);
 
@@ -145,8 +155,6 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> MAGE_BOOTS =
         complexItem("mage_boots", () -> new MageArmor(BOOTS));
 
-    //Coins
-    public static final DeferredHolder<Item, Item> COIN = ITEMS.register("coin", CoinItem::new);
 
     public static DeferredHolder<Item, Item> complexItem(String name, Supplier<? extends Item> sup){
         return ITEMS.register(name, sup);

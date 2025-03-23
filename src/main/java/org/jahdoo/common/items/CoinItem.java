@@ -7,12 +7,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.ascension.attachments.PlayerWallet;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.IItemEntityBehaviour;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
@@ -47,7 +45,7 @@ public class CoinItem extends Item implements IItemEntityBehaviour {
                 PacketDistributor.sendToPlayer(player, new WalletSyncS2CP(getWallet.getWallet()));
             }
 
-            Helpers.getSoundWithPosition(serverLevel, entity.blockPosition(), SoundReg.COIN.get());
+            Helpers.getSoundWithPosition(serverLevel, entity.blockPosition(), SoundReg.COIN.get(), 1, 0.8F);
         }
         stack.setCount(0);
     }

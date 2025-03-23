@@ -72,6 +72,10 @@ public class TrialPortalBlock extends NetherPortalBlock {
 
     @Override
     public @Nullable DimensionTransition getPortalDestination(ServerLevel level, Entity entity, BlockPos pos) {
+        return challengeTransition(level, entity, pos);
+    }
+
+    public static @Nullable DimensionTransition challengeTransition(ServerLevel level, Entity entity, BlockPos pos) {
         if(!(entity instanceof Player player)) return null;
         int dimId = level.getBlockState(pos).getValue(DIMENSION_KEY);
 

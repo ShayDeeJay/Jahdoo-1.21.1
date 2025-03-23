@@ -147,7 +147,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(getRarityId, 0, 5));
             return JahdooRarity.addRarityTooltip(getRarity, level);
         }
-        return Component.empty();
+        return null;
     }
 
     public static JahdooRarity getRarity() {

@@ -23,7 +23,6 @@ import static org.jahdoo.ascension.ability.abilities.dimensional_recall.Dimensio
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.items.wand.CastHelper.validManaAndCooldown;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttachmentReg.DIMENSIONAL_RECALL;
 
@@ -33,15 +32,15 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
         player.getData(DIMENSIONAL_RECALL).onTickMethod(player);
     }
 
-    private void sendNoHomeMessage(Player player){
-        player.displayClientMessage(withStyleComponentTrans("ability.jahdoo.no_home", getElement().textColourA()), true);
+    public static void sendNoHomeMessage(Player player, AbstractElement element){
+        player.displayClientMessage(withStyleComponentTrans("ability.jahdoo.no_home", element.textColourA()), true);
     }
 
     public AbstractElement getElement(){
         return ElementReg.mystic();
     }
 
-    private void onSuccessfulCast(ServerPlayer serverPlayer, WandAbilityHolder wandAbilityHolder, int ticksUsing){
+    public void onSuccessfulCast(ServerPlayer serverPlayer, WandAbilityHolder wandAbilityHolder, int ticksUsing){
         var pos = serverPlayer.getRespawnPosition();
         var dimension = serverPlayer.getRespawnDimension();
         var abilityName = abilityId.getPath().intern();
@@ -76,7 +75,7 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
 
         if(startedUsing && hasAbility && validManaAndCooldown(player)){
             if (pos != null) {
-                pullParticlesToCenter(player);
+                pullParticlesToCenter(player, this.getElement());
                 var setVolume = Math.min(2, player.getTicksUsingItem() / 5);
                 var setPitch = (float) player.getTicksUsingItem() / (int) getCastTime;
 
@@ -92,16 +91,16 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
 
                 this.onSuccessfulCast(serverPlayer, getHolder, (int) (getCastTime == 0 ? 200 : getCastTime));
             } else {
-                sendNoHomeMessage(player);
+                sendNoHomeMessage(player, this.getElement());
             }
         }
     }
 
-    public void pullParticlesToCenter(Player player){
+    public static void pullParticlesToCenter(Player player, AbstractElement element){
         var casterData = player.getData(CASTER_DATA);
         var manaReduction = casterData.getMaxMana(player) / 60;
-        var bakedParticleOption = bakedParticle(this.getElement().id(), 6, 2f, false);
-        var genericParticleOptions = ParticleHandlers.genericParticle(ParticleStore.SOFT_PARTICLE, this.getElement(), 10, 1.4f);
+        var bakedParticleOption = bakedParticle(element.id(), 6, 2f, false);
+        var genericParticleOptions = ParticleHandlers.genericParticle(ParticleStore.SOFT_PARTICLE, element, 10, 1.4f);
         var particleOptionsList = List.of(bakedParticleOption, genericParticleOptions);
         var getRandomParticle = particleOptionsList.get(RandomSource.create().nextInt(0, 2));
 

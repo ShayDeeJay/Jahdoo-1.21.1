@@ -19,7 +19,9 @@ import org.jahdoo.ascension.utils.LocalLootBeamData;
 import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.items.magnet.Magnet;
 import org.jahdoo.common.items.magnet.MagnetData;
+import org.jahdoo.common.items.pendent.Pendent;
 import org.jahdoo.common.items.runes.RuneItem;
+import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.tome.TomeOfUnity;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.BlockReg;
@@ -140,17 +142,20 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> RUNE = 
         lootTableItem(ItemReg.RUNE.get());
     
-    public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_GAUNTLET = 
-        lootTableItem(ItemReg.BATTLEMAGE_GAUNTLET.get());
-    
     public static final LootPoolSingletonContainer.Builder<?> INGMAS_SWORD = 
         lootTableItem(ItemReg.INGMAS_SWORD.get());
     
-    public static final LootPoolSingletonContainer.Builder<?> ANCIENT_AMULET = 
+    public static final LootPoolSingletonContainer.Builder<?> RECALL_TOKEN =
+        lootTableItem(ItemReg.RECALL_TOKEN.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> AMULET =
         lootTableItem(ItemReg.PENDENT.get());
     
-    public static final LootPoolSingletonContainer.Builder<?> MAGNET = 
+    public static final LootPoolSingletonContainer.Builder<?> MAGNET =
         lootTableItem(ItemReg.MAGNET.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> CHALLENGER_TICKET =
+        lootTableItem(ItemReg.CHALLENGER_TICKET.get());
     
     public static List<ItemStack> getCoinItems(InstanceData data) {
         var lootCoins = new ArrayList<ItemStack>();
@@ -212,6 +217,16 @@ public class RewardLootTables {
         return createLootParams(serverLevel, pos, loot);
     }
 
+    public static void amuletItem(ItemStack pendent) {
+        var isLegendary = getRarity() == LEGENDARY;
+        var x = isLegendary ? 1 : 0;
+
+        if(isLegendary) pendent.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(x));
+
+        RuneHolder.createNewRuneSlots(pendent, x + 1, 0);
+    }
+
+
     public static ItemStack magnetItem(JahdooRarity getRarity, ItemStack itemStack) {
         var id = getRarity.getId() + 1;
         var origin = id * 1000;
@@ -251,6 +266,7 @@ public class RewardLootTables {
             case SwordItem ignored -> enchantSword(serverLevel, itemStack, isSpecial);
             case EnchantedBookItem ignored -> enchantedBook(serverLevel, itemStack);
             case Magnet ignored -> magnetItem(rarity, itemStack);
+            case Pendent ignored -> amuletItem(itemStack);
             default -> { /*IGNORE*/ }
         }
     }
@@ -268,7 +284,8 @@ public class RewardLootTables {
         var builder = LootPool.lootPool().setRolls(exactly(1.0F));
 
         return builder
-            .add(AUGMENT_HYPER_CORE_BUILDER.setWeight(6))
+            .add(RECALL_TOKEN.setWeight(4))
+            .add(AUGMENT_HYPER_CORE_BUILDER.setWeight(2))
             .add(WIZARD_HELM_BUILDER.setWeight(1))
             .add(WIZARD_CHEST_BUILDER.setWeight(1))
             .add(WIZARD_LEGGINGS_BUILDER.setWeight(1))
@@ -281,6 +298,7 @@ public class RewardLootTables {
         return builder
             .add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight(6))
             .add(TOME_OF_UNITY_BUILDER.setWeight(4))
+            .add(CHALLENGER_TICKET.setWeight(1))
             .add(BATTLEMAGE_HELM_BUILDER.setWeight(1))
             .add(BATTLEMAGE_CHEASTPLATE_BUILDER.setWeight(1))
             .add(BATTLEMAGE_LEGGINGS_BUILDER.setWeight(1))
@@ -305,6 +323,7 @@ public class RewardLootTables {
         var builder = LootPool.lootPool().setRolls(between(2.0F, 5.0F));
 
         return builder
+            .add(AMULET.setWeight(1))
             .add(GOLDEN_CARROT_BUILDER.setWeight(50))
             .add(IRON_BUILDER.setWeight(35))
             .add(GOLD_BUILDER.setWeight(25))

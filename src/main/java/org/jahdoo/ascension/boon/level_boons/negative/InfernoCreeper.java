@@ -28,7 +28,11 @@ public class InfernoCreeper extends MobLevelBoon {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.EPIC;
+        return JahdooRarity.ETERNAL;
     }
 
+    @Override
+    public boolean isTrashMob() {
+        return false;
+    }
 }

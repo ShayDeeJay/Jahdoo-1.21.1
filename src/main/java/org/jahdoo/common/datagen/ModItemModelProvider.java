@@ -119,7 +119,8 @@ public class ModItemModelProvider extends ItemModelProvider {
             ItemReg.NEXITE_POWDER, ItemReg.HEALTH_CONTAINER,
             ItemReg.AUGMENT_CORE, ItemReg.AUGMENT_FRAGMENT,
             ItemReg.ADVANCED_AUGMENT_CORE, ItemReg.AUGMENT_HYPER_CORE,
-            ItemReg.MANA_CONTAINER, ItemReg.BOON_CONTAINER
+            ItemReg.MANA_CONTAINER, ItemReg.BOON_CONTAINER,
+            ItemReg.RECALL_TOKEN, ItemReg.CHALLENGER_TICKET
         );
 
         simpleItems.forEach(this::createSimpleItemModel);

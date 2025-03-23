@@ -31,4 +31,8 @@ public class VoidSpider extends MobLevelBoon {
         return JahdooRarity.EPIC;
     }
 
+    @Override
+    public boolean isTrashMob() {
+        return false;
+    }
 }

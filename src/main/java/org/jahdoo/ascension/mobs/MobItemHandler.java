@@ -2,14 +2,14 @@ package org.jahdoo.ascension.mobs;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.armortrim.ArmorTrim;
+import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -18,6 +18,7 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import org.jahdoo.ascension.level_manager.InstanceDifficulty;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.ArrayList;
@@ -76,7 +77,19 @@ public class MobItemHandler {
     public LootTable getRandomNetherite(){
         return buildForNetherite(armorTrimLegendary, armorTrimLegendarySecondary, regLookup2, multiplier, difficulty);
     }
-    
+
+    public static LootTable getRandomNetheriteOther(ServerLevel serverLevel, ResourceKey<TrimMaterial> material){
+        var regLookup = serverLevel.registryAccess().lookup(TRIM_PATTERN).orElseThrow();
+        var regLookup1 = serverLevel.registryAccess().lookup(TRIM_MATERIAL).orElseThrow();
+        var regLookup2 = serverLevel.registryAccess().lookupOrThrow(ENCHANTMENT);
+        var list = regLookup.listElements().toList();
+        return buildForNetherite(
+            new ArmorTrim(regLookup1.get(material).orElseThrow(), listRandom(list)),
+            new ArmorTrim(regLookup1.get(material).orElseThrow(), listRandom(list)),
+            regLookup2, 100, InstanceDifficulty.HARD.getSerializedName()
+        );
+    }
+
     public static LootTable weaponFromDifficulty(HolderLookup.RegistryLookup<Enchantment> registryLookup, float multiplier, String difficulty) {
         var builder = LootTable.lootTable();
         builder.withPool(weaponWithChance(registryLookup, Items.BOW, multiplier, difficulty));
@@ -96,9 +109,10 @@ public class MobItemHandler {
             .build();
     }
 
-    public static LootTable buildForNetherite(HolderLookup.RegistryLookup<Enchantment> registryLookup, float multiplier, String difficulty) {
+    public static LootTable buildForNetherite(ServerLevel serverLevel) {
+        var regLookup2 = serverLevel.registryAccess().lookupOrThrow(ENCHANTMENT);
         return LootTable.lootTable()
-            .withPool(weaponWithChance(registryLookup, Items.NETHERITE_SWORD, multiplier, difficulty))
+        .withPool(weaponWithChance(regLookup2, Items.NETHERITE_SWORD, 100, InstanceDifficulty.HARD.getSerializedName()))
             .build();
     }
 
@@ -208,51 +222,61 @@ public class MobItemHandler {
         String difficulty
     ) {
         var chance = min(0.1F * multiplier, 1.0f);
-        var builder = LootItem.lootTableItem(item);
+        var builder = LootItem.lootTableItem(item).apply(
+            new SetEnchantmentsFunction.Builder()
+                .when(randomChance(chance))
+                .withEnchantment(registry.getOrThrow(UNBREAKING), between(min(0.0F * multiplier, 3.0f), 3.0f))
+        );
 
         if(!Objects.equals(difficulty, EASY)){
-            builder.apply(
-                new SetEnchantmentsFunction.Builder()
-                    .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(INFINITY), ConstantValue.exactly(0F))
-            )
-            .apply(
-                new SetEnchantmentsFunction.Builder()
-                    .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(POWER), between(min(0.0F * multiplier, 5.0f), 5.0f))
-            )
-            .apply(
-                new SetEnchantmentsFunction.Builder()
-                    .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(UNBREAKING), between(min(0.0F * multiplier, 3.0f), 3.0f))
-            )
-            .apply(
-                new SetEnchantmentsFunction.Builder()
-                    .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(FLAME), ConstantValue.exactly(0F))
-            )
-            .apply(
-                new SetEnchantmentsFunction.Builder()
-                    .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(FEATHER_FALLING), between(min(0.0F * multiplier, 4.0f), 4.0f))
-            )
-            .apply(
-                new SetEnchantmentsFunction.Builder()
-                    .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(PUNCH), between(min(0.0F * multiplier, 3.0f), 2.0f))
-            ).apply(
-                new SetEnchantmentsFunction.Builder()
-                    .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(SHARPNESS), between(min(0.0F * multiplier, 5.0f), 5.0f))
-            ).apply(
-                new SetEnchantmentsFunction.Builder()
-                    .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(KNOCKBACK), between(min(0.0F * multiplier, 2.0f), 2.0f))
-            ).apply(
-                new SetEnchantmentsFunction.Builder()
-                    .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(FIRE_ASPECT), between(min(0.0F * multiplier, 2.0f), 2.0f))
-            );
+            if(item instanceof SwordItem){
+                builder.apply(
+                    new SetEnchantmentsFunction.Builder()
+                        .when(randomChance(chance))
+                        .withEnchantment(registry.getOrThrow(MENDING), between(min(0.0F * multiplier, 3.0f), 3.0f))
+                )
+                .apply(
+                    new SetEnchantmentsFunction.Builder()
+                        .when(randomChance(chance))
+                        .withEnchantment(registry.getOrThrow(SHARPNESS), between(min(0.0F * multiplier, 5.0f), 5.0f))
+                )
+                .apply(
+                    new SetEnchantmentsFunction.Builder()
+                        .when(randomChance(chance))
+                        .withEnchantment(registry.getOrThrow(KNOCKBACK), between(min(0.0F * multiplier, 2.0f), 2.0f))
+                )
+                .apply(
+                    new SetEnchantmentsFunction.Builder()
+                        .when(randomChance(chance))
+                        .withEnchantment(registry.getOrThrow(FIRE_ASPECT), between(min(0.0F * multiplier, 2.0f), 2.0f))
+                );
+            } else {
+                builder.apply(
+                    new SetEnchantmentsFunction.Builder()
+                        .when(randomChance(chance))
+                        .withEnchantment(registry.getOrThrow(INFINITY), ConstantValue.exactly(0F))
+                )
+                .apply(
+                    new SetEnchantmentsFunction.Builder()
+                        .when(randomChance(chance))
+                        .withEnchantment(registry.getOrThrow(POWER), between(min(0.0F * multiplier, 5.0f), 5.0f))
+                )
+                .apply(
+                    new SetEnchantmentsFunction.Builder()
+                        .when(randomChance(chance))
+                        .withEnchantment(registry.getOrThrow(UNBREAKING), between(min(0.0F * multiplier, 3.0f), 3.0f))
+                )
+                .apply(
+                    new SetEnchantmentsFunction.Builder()
+                        .when(randomChance(chance))
+                        .withEnchantment(registry.getOrThrow(FLAME), ConstantValue.exactly(0F))
+                )
+                .apply(
+                    new SetEnchantmentsFunction.Builder()
+                        .when(randomChance(chance))
+                        .withEnchantment(registry.getOrThrow(PUNCH), between(min(0.0F * multiplier, 3.0f), 2.0f))
+                );
+            }
         }
 
         return builder;
@@ -282,28 +306,34 @@ public class MobItemHandler {
             .apply(
                 new SetEnchantmentsFunction.Builder()
                     .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(THORNS), between(min(0.0F * roundMultiplier, 4.0f), 4.0f))
-            )
-            .apply(
-                new SetEnchantmentsFunction.Builder()
-                    .when(randomChance(chance))
                     .withEnchantment(registry.getOrThrow(UNBREAKING), between(min(0.0F * roundMultiplier, 4.0f), 3.0f))
             )
             .apply(
                 new SetEnchantmentsFunction.Builder()
                     .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(THORNS), between(min(0.0F * roundMultiplier, 4.0f), 3.0f))
-            )
-            .apply(
-                new SetEnchantmentsFunction.Builder()
-                    .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(FEATHER_FALLING), between(min(0.0F * roundMultiplier, 4.0f), 4.0f))
-            )
-            .apply(
-                new SetEnchantmentsFunction.Builder()
-                    .when(randomChance(chance))
-                    .withEnchantment(registry.getOrThrow(DEPTH_STRIDER), between(min(0.0F * roundMultiplier, 4.0f), 3.0f))
+                    .withEnchantment(registry.getOrThrow(MENDING), between(min(0.0F * roundMultiplier, 4.0f), 3.0f))
             );
+
+            if(armourPiece instanceof ArmorItem armorItem && armorItem.getType() == ArmorItem.Type.LEGGINGS){
+                pool.apply(
+                    new SetEnchantmentsFunction.Builder()
+                        .when(randomChance(chance))
+                        .withEnchantment(registry.getOrThrow(SWIFT_SNEAK), between(min(0.0F * roundMultiplier, 4.0f), 4.0f))
+                );
+            }
+
+            if(armourPiece instanceof ArmorItem armorItem && armorItem.getType() == ArmorItem.Type.BOOTS){
+                pool.apply(
+                        new SetEnchantmentsFunction.Builder()
+                            .when(randomChance(chance))
+                            .withEnchantment(registry.getOrThrow(FEATHER_FALLING), between(min(0.0F * roundMultiplier, 4.0f), 4.0f))
+                )
+                .apply(
+                    new SetEnchantmentsFunction.Builder()
+                        .when(randomChance(chance))
+                        .withEnchantment(registry.getOrThrow(DEPTH_STRIDER), between(min(0.0F * roundMultiplier, 4.0f), 3.0f))
+                );
+            }
         }
 
         return pool;

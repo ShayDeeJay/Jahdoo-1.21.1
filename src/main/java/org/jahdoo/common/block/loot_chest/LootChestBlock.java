@@ -1,9 +1,11 @@
 package org.jahdoo.common.block.loot_chest;
 
 import com.mojang.serialization.MapCodec;
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -27,24 +29,25 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
-import static net.minecraft.sounds.SoundEvents.*;
+import static net.minecraft.sounds.SoundEvents.LODESTONE_COMPASS_LOCK;
+import static net.minecraft.sounds.SoundEvents.VAULT_EJECT_ITEM;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.ascension.trading_post.RewardLootTables.*;
-import static org.jahdoo.ascension.utils.ColourStore.PERK_GREEN;
 import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.common.registers.SoundReg.EXPLOSION;
 
 public class LootChestBlock extends BaseEntityBlock {
 
@@ -121,11 +124,11 @@ public class LootChestBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof LootChestEntity cEntity)) return FAIL;
         if (!(level instanceof ServerLevel serverLevel)) return FAIL;
 
-        if(!cEntity.isOpen){
+        if(serverLevel instanceof CustomLevel && !cEntity.isOpen){
             var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
 
             if(cEntity.isCoinChest()){
-                return coinChestGetter(pos, serverLevel, cEntity, data);
+                return coinChestGetter(pos, serverLevel, cEntity, data, player);
             } else {
                 var success = lootChestGetter(stack, serverLevel, pos, cEntity, data.getClearedRooms());
                 if (success != null) return success;
@@ -141,10 +144,17 @@ public class LootChestBlock extends BaseEntityBlock {
         BlockPos pos,
         ServerLevel serverLevel,
         LootChestEntity lootChestEntity,
-        InstanceData data
+        InstanceData data,
+        Player player
     ) {
-        lootChestEntity.setOpen(true);
-        lootsplosian(pos, serverLevel, 10, PERK_GREEN, getCoinItems(data), false, 0);
+        var coinItems = getCoinItems(data);
+        if(!coinItems.isEmpty()){
+            lootChestEntity.setOpen(true);
+            lootsplosian(pos, serverLevel, 10, ColourStore.ABSORPTION_YELLOW, coinItems, false, 0);
+            openingSoundEffect(pos, serverLevel, false);
+        } else {
+            player.displayClientMessage(withStyleComponent("Chest is empty!", ColourStore.NEGATIVE_RED), true);
+        }
         return SUCCESS;
     }
 
@@ -169,6 +179,8 @@ public class LootChestBlock extends BaseEntityBlock {
                     var rewards = getCompletionLoot(serverLevel, pos.getCenter(), setLootValue);
                     lootsplosian(pos, serverLevel, lootMultiplier,  colour, rewards, true, 30);
                 }
+
+                openingSoundEffect(pos, serverLevel, true);
 
                 stack.shrink(1);
                 return SUCCESS;
@@ -221,10 +233,18 @@ public class LootChestBlock extends BaseEntityBlock {
             attachItemData(serverLevel, rarity, itemStackMain, false, null);
             serverLevel.addFreshEntity(itemEntity);
         }
+    }
 
-        getSoundWithPosition(serverLevel, pos, VAULT_OPEN_SHUTTER, 1F, 1.8F);
-        getSoundWithPosition(serverLevel, pos, ILLUSIONER_CAST_SPELL, 1F, 1F);
-        getSoundWithPosition(serverLevel, pos, EXPLOSION.get(), 0.8F, 0.9F);
+    private static void openingSoundEffect(BlockPos pos, ServerLevel serverLevel, boolean isLootChest) {
+        getSoundWithPosition(serverLevel, pos, VAULT_EJECT_ITEM, 2F, 0.8F);
+        getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, 2F, 1.4F);
+        getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_PLACE, 2F, 0.4F);
+
+        if(isLootChest) {
+            getSoundWithPosition(serverLevel, pos, SoundReg.LOOTBOX_OPEN.get(), 2F, 1F);
+        } else {
+            getSoundWithPosition(serverLevel, pos, SoundReg.COINBOX_OPEN.get(), 0.6F, 1F);
+        }
     }
 }
 

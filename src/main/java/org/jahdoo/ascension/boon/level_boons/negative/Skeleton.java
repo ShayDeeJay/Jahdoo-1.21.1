@@ -31,4 +31,8 @@ public class Skeleton extends MobLevelBoon {
         return JahdooRarity.RARE;
     }
 
+    @Override
+    public boolean isTrashMob() {
+        return true;
+    }
 }

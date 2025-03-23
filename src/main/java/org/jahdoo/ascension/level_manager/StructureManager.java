@@ -91,9 +91,7 @@ public class StructureManager {
         var forBoss = EASY.getSerializedName().equals(difficulty) ? 10 : MEDIUM.getSerializedName().equals(difficulty) ? 40 : 70 ;
 
         if(!isStarter){
-            if(Maths.percentageChance(100)){
-                roomGen.add(withStyleComponent(stringIdToName(EASY_EXIT), PERK_GREEN));
-            }
+
             if (Maths.percentageChance(forSanctuary)) {
                 roomGen.add(withStyleComponent(stringIdToName(SANCTUARY), COSMIC_PURPLE));
             }
@@ -104,6 +102,11 @@ public class StructureManager {
 
             if(roomGen.size() == 3) return roomGen;
 
+            if(Maths.percentageChance(5)){
+                roomGen.add(withStyleComponent(stringIdToName(EASY_EXIT), MAGNET_RANGE_GREEN));
+            }
+
+            if(roomGen.size() == 3) return roomGen;
 
             if (Maths.percentageChance(forBoss)) {
                 roomGen.add(withStyleComponent(stringIdToName(BOSS_CRUCIBLE), NEGATIVE_RED));
@@ -122,7 +125,7 @@ public class StructureManager {
         var getRooms = getRandomRoomId(isStarter, level.getData(INSTANCE_DATA));
 
         for (var blockPos : range) {
-            BlockSetupManager.generateExit(level, blockPos, Direction.NORTH);
+            BlockSetupManager.generateExit(level, blockPos, Direction.EAST);
             setLocks(level, blockPos, false);
             if(level.getBlockState(blockPos).is(Blocks.TINTED_GLASS)){
                 level.destroyBlock(blockPos, false);

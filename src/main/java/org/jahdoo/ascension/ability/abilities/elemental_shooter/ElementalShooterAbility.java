@@ -74,6 +74,10 @@ public class ElementalShooterAbility extends AbilityRegistrar {
         Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.ENDER_EYE_DEATH, 0.25f);
     }
 
+    public int setTypeManually(int type){
+        return type;
+    }
+
     @Override
     public void setModifiers(ItemStack itemStack) {
         new AbilityBuilder(itemStack, abilityId.getPath().intern())
@@ -85,7 +89,7 @@ public class ElementalShooterAbility extends AbilityRegistrar {
             .setEffectDuration(300, 100, 50)
             .setAbilityTagModifiersRandom(SHOT_MULTIPLIER, 3, 1, true, 1)
             .setAbilityTagModifiersRandom(NUMBER_OF_RICOCHET, 6, 1, true, 1)
-            .setModifier(SET_ELEMENT_TYPE, 0, 0, false, Random.nextInt(1,6))
+            .setModifier(SET_ELEMENT_TYPE, 0, 0, false, Random.nextInt(1,5))
             .build();
     }
 

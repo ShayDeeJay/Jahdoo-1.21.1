@@ -87,7 +87,7 @@ public class BlockSetupManager {
 
     //Don't delete as useful for generating exit in entry room
     public static void generateExit(ServerLevel level, BlockPos pos, Direction direction) {
-        var portal = TRAIL_PORTAL.get().defaultBlockState().setValue(AXIS, direction.getAxis());
+        var portal = TRAIL_PORTAL.get().defaultBlockState().setValue(AXIS, direction.getClockWise().getAxis());
         var state = level.getBlockState(pos);
         if(state.is(WHITE_CONCRETE)) {
             level.setBlockAndUpdate(pos, portal.setValue(DIMENSION_KEY, KEY_HOME));
