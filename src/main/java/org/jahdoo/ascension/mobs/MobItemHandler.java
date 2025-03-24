@@ -63,11 +63,11 @@ public class MobItemHandler {
     }
 
     public LootTable getRandomWeapon(){
-        return weaponFromDifficulty(regLookup2, multiplier, difficulty);
+        return weaponByDifficulty(regLookup2, multiplier, difficulty);
     }
 
     public LootTable getRandomIron(){
-        return weaponFromDifficulty(armorTrimIntermediate, armorTrimIntermediateSecondary, regLookup2, multiplier, difficulty);
+        return buildForIron(armorTrimIntermediate, armorTrimIntermediateSecondary, regLookup2, multiplier, difficulty);
     }
 
     public LootTable getRandomLeather(){
@@ -78,19 +78,19 @@ public class MobItemHandler {
         return buildForNetherite(armorTrimLegendary, armorTrimLegendarySecondary, regLookup2, multiplier, difficulty);
     }
 
-    public static LootTable getRandomNetheriteOther(ServerLevel serverLevel, ResourceKey<TrimMaterial> material){
+    public static LootTable getEnchantedIronArmor(ServerLevel serverLevel, ResourceKey<TrimMaterial> material){
         var regLookup = serverLevel.registryAccess().lookup(TRIM_PATTERN).orElseThrow();
         var regLookup1 = serverLevel.registryAccess().lookup(TRIM_MATERIAL).orElseThrow();
         var regLookup2 = serverLevel.registryAccess().lookupOrThrow(ENCHANTMENT);
         var list = regLookup.listElements().toList();
-        return buildForNetherite(
+        return buildForIron(
             new ArmorTrim(regLookup1.get(material).orElseThrow(), listRandom(list)),
             new ArmorTrim(regLookup1.get(material).orElseThrow(), listRandom(list)),
             regLookup2, 100, InstanceDifficulty.HARD.getSerializedName()
         );
     }
 
-    public static LootTable weaponFromDifficulty(HolderLookup.RegistryLookup<Enchantment> registryLookup, float multiplier, String difficulty) {
+    public static LootTable weaponByDifficulty(HolderLookup.RegistryLookup<Enchantment> registryLookup, float multiplier, String difficulty) {
         var builder = LootTable.lootTable();
         builder.withPool(weaponWithChance(registryLookup, Items.BOW, multiplier, difficulty));
 
@@ -109,10 +109,10 @@ public class MobItemHandler {
             .build();
     }
 
-    public static LootTable buildForNetherite(ServerLevel serverLevel) {
+    public static LootTable buildForIronWeapon(ServerLevel serverLevel) {
         var regLookup2 = serverLevel.registryAccess().lookupOrThrow(ENCHANTMENT);
         return LootTable.lootTable()
-        .withPool(weaponWithChance(regLookup2, Items.NETHERITE_SWORD, 100, InstanceDifficulty.HARD.getSerializedName()))
+        .withPool(weaponWithChance(regLookup2, Items.IRON_SWORD, 100, InstanceDifficulty.HARD.getSerializedName()))
             .build();
     }
 
@@ -151,7 +151,7 @@ public class MobItemHandler {
     }
 
 
-    private static LootTable weaponFromDifficulty(ArmorTrim trimA, ArmorTrim trimB, HolderLookup.RegistryLookup<Enchantment> registry, float multiplier, String difficulty) {
+    private static LootTable buildForIron(ArmorTrim trimA, ArmorTrim trimB, HolderLookup.RegistryLookup<Enchantment> registry, float multiplier, String difficulty) {
         return LootTable.lootTable()
             .withPool(armorWithChance(trimA, trimB, registry, Items.IRON_HELMET, multiplier, difficulty))
             .withPool(armorWithChance(trimA, trimB, registry, Items.IRON_CHESTPLATE, multiplier, difficulty))

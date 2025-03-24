@@ -47,6 +47,8 @@ public class CreativeTab {
                 outPut.accept(INGMAS_SWORD.get());
                 outPut.accept(RECALL_TOKEN.get());
                 outPut.accept(CHALLENGER_TICKET.get());
+                outPut.accept(RECOVERY_RECEIPT.get());
+
 
                 registerElementalSwords(outPut);
                 registerAmulets(outPut);

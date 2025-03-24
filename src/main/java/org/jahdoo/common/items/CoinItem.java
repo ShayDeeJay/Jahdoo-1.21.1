@@ -17,6 +17,8 @@ import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 
+import static org.jahdoo.ascension.attachments.PlayerWallet.CoinProperties;
+
 public class CoinItem extends Item implements IItemEntityBehaviour {
 
     public CoinItem() { super(new Properties()); }
@@ -53,15 +55,14 @@ public class CoinItem extends Item implements IItemEntityBehaviour {
     @Override
     public Component getName(ItemStack stack) {
         var data = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        if(data == null) return Component.literal("Bronze Coin");
+        if(data == null) return Helpers.withStyleComponent("Bronze Coin", CoinProperties.BRONZE.getTextColour());
+        var value = switch (data.value()) {
+            case 1 -> CoinProperties.SILVER;
+            case 2 -> CoinProperties.GOLD;
+            default -> CoinProperties.PLATINUM;
+        };
 
-        return Component.literal(
-            switch (data.value()) {
-                case 1 -> "Silver";
-                case 2 -> "Gold";
-                default -> "Platinum";
-            } + " Coin"
-        );
+        return Helpers.withStyleComponent(value.getSerializedName() + " Coin", value.getTextColour());
     }
 
     @Override

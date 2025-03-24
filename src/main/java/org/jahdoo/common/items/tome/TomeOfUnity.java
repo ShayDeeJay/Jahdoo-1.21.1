@@ -35,7 +35,8 @@ public class TomeOfUnity extends RelicItem {
     public List<Component> getSlotsTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
         var newComp = new ArrayList<Component>();
         var rarity = JahdooRarity.attachRarityTooltip(stack, context.level());
-        newComp.add(rarity);
+        if(rarity != null) newComp.add(rarity);
+
         newComp.addAll(tooltips);
         newComp.add(Component.empty());
         return newComp;

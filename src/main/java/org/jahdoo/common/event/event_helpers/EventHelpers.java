@@ -65,9 +65,8 @@ import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTER
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
-import static org.jahdoo.ascension.mobs.MobItemHandler.getRandomNetheriteOther;
-import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedIronArmor;
+import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.elementalWithType;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentWithAbility;
@@ -81,7 +80,9 @@ import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
 public class EventHelpers {
 
     public static void saveDestinyBondItems(LivingEntity entity) {
-        if(entity instanceof Player player) player.getData(SAVE_DATA).addAllItems(player);
+        if(entity instanceof Player player) {
+            player.getData(SAVE_DATA).addAllItems(player);
+        }
     }
 
     public static int getColour(ItemStack stack){
@@ -187,14 +188,14 @@ public class EventHelpers {
 
         var trim = switch (element.id()){
             case 1 -> TrimMaterials.LAPIS;
-            case 2 -> TrimMaterials.GOLD;
+            case 2 -> TrimMaterials.COPPER;
             case 3 -> TrimMaterials.AMETHYST;
             default -> TrimMaterials.REDSTONE;
         };
 
         var params = new LootParams.Builder(serverLevel).withParameter(ORIGIN, player.position()).create(VAULT);
-        freeItems.addAll(getRandomNetheriteOther(serverLevel, trim).getRandomItems(params));
-        freeItems.addAll(MobItemHandler.buildForNetherite(serverLevel).getRandomItems(params));
+        freeItems.addAll(getEnchantedIronArmor(serverLevel, trim).getRandomItems(params));
+        freeItems.addAll(MobItemHandler.buildForIronWeapon(serverLevel).getRandomItems(params));
 
         for (int i = 0; i < 5; i++) freeItems.add(ItemStack.EMPTY);
 
@@ -215,6 +216,7 @@ public class EventHelpers {
             }
         );
 
+        shulkerBox.set(DataComponents.CUSTOM_NAME, withStyleComponent(element.name() + " Starter Box", element.textColourB()));
         shulkerBox.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(freeItems));
         ItemHandlerHelper.giveItemToPlayer(player, shulkerBox);
     }
@@ -267,7 +269,6 @@ public class EventHelpers {
                     JahdooMod.LOGGER.log(org.apache.logging.log4j.Level.ALL, e);
                 }
             }
-
         }
 
         for (var modifier : item.getAttributeModifiers().modifiers()) {

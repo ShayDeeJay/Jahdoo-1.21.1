@@ -6,11 +6,12 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jahdoo.JahdooMod;
 
-import static net.neoforged.neoforge.registries.DeferredRegister.*;
-import static net.neoforged.neoforge.registries.NeoForgeRegistries.*;
+import java.util.function.Supplier;
+
+import static net.neoforged.neoforge.registries.DeferredRegister.create;
+import static net.neoforged.neoforge.registries.NeoForgeRegistries.Keys;
 
 public class ModLootModifiers {
 
@@ -25,4 +26,5 @@ public class ModLootModifiers {
         LOOT_MODIFIER_SERIALIZERS.register(eventBus);
     }
 
+    public static final Supplier<MapCodec<? extends IGlobalLootModifier>> APPEND_LOOT_MODIFIER = LOOT_MODIFIER_SERIALIZERS.register("append_loot", AddItemModifier.CODEC);
 }

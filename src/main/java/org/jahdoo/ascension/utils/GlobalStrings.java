@@ -11,7 +11,4 @@ public class GlobalStrings {
     public static final String BONE_MEALER = "Applies bone meal to all vegetation that can be bone mealed within a radius of X";
     public static final String HAMMER = "Destroys blocks in a X by X by 1 surface in any direction.";
 
-    //Mystic
-//    public static final String HAMMER = "Destroys blocks in a X by X by 1 surface in any direction.";
-
 }

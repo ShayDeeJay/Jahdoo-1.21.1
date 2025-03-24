@@ -1,12 +1,15 @@
 package org.jahdoo.ascension.attachments;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.BundleContents;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
+import org.jahdoo.common.registers.ItemReg;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.ArrayList;
@@ -70,6 +73,7 @@ public class SaveData implements IAttachment {
         allFilteredItems.addAll(filteredAdditionalSlots);
 
         var curioSlotsItems = CuriosApi.getCuriosInventory(player);
+
         if(curioSlotsItems.isPresent()){
             var withSlots = curioSlotsItems.get().getEquippedCurios();
             var slots = withSlots.getSlots();
@@ -89,6 +93,44 @@ public class SaveData implements IAttachment {
 
         this.itemStacks.addAll(wandItems);
         allFilteredItems.forEach(player.getInventory()::removeItem);
+
+        getLostItemReceipt(player);
+    }
+
+    private void getLostItemReceipt(Player player) {
+        var receipt = new ItemStack(ItemReg.RECOVERY_RECEIPT);
+        var list = new ArrayList<ItemStack>();
+
+        //Save inventory items
+        for (var item : player.getInventory().items) {
+            if(!item.isEmpty()) list.add(item);
+        }
+
+        //Save curious items
+        var curioSlotsItems = CuriosApi.getCuriosInventory(player);
+        if(curioSlotsItems.isPresent()){
+            var withSlots = curioSlotsItems.get().getEquippedCurios();
+            var slots = withSlots.getSlots();
+            for (int i = 0; i < slots; i++) {
+                var getCurioItem = withSlots.getStackInSlot(i);
+
+                if(!getCurioItem.isEmpty()) list.add(getCurioItem);
+            }
+        }
+
+        //Save armor slot items
+        for (var allSlot : player.getArmorSlots()) {
+            if(!allSlot.isEmpty()) list.add(allSlot);
+        }
+
+        //Save main hand only as using sand hand slots dupes main hand item
+        var offhand = player.getOffhandItem();
+        if(!offhand.isEmpty()) list.add(offhand);
+
+        if(!list.isEmpty()){//Add as bundle for now as item that saves may have tooltip
+            receipt.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(list));
+            this.itemStacks.add(receipt);
+        }
     }
 
 }

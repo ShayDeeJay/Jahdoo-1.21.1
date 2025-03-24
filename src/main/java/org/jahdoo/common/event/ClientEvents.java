@@ -34,14 +34,6 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void screenRender(ScreenEvent.Render.Pre event) {
-        var screen = event.getScreen();
-        var guiGraphics = event.getGuiGraphics();
-
-    }
-
-
-    @SubscribeEvent
     public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
         var instance = Minecraft.getInstance();
         var player = instance.player;

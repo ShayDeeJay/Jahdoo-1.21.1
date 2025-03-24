@@ -162,6 +162,7 @@ public class AugmentItemHelper {
         LocalLootBeamData.attachLootBeamComponent(itemStack, ability.rarity());
         ability.setModifiers(itemStack);
         var wandAbilityHolder = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
+        itemStack.set(JAHDOO_RARITY, ability.rarity().getId());
         setAbilityToAugment(itemStack, ability, wandAbilityHolder);
     }
 

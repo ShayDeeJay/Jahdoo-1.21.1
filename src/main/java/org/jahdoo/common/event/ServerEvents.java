@@ -96,10 +96,10 @@ public class ServerEvents {
         var playerData = player.getPersistentData();
         var data = playerData.getCompound(Player.PERSISTED_NBT_TAG);
 
-        if(player.level() instanceof ServerLevel serverLevel){
-            getStarterKit(player, serverLevel);
-        }
         if (!data.getBoolean("first_join")) {
+            if(player.level() instanceof ServerLevel serverLevel){
+                getStarterKit(player, serverLevel);
+            }
             data.putBoolean("first_join", true);
             playerData.put(Player.PERSISTED_NBT_TAG, data);
         }
@@ -183,23 +183,6 @@ public class ServerEvents {
                 player.removeAllEffects();
             }
         }
-
-    }
-
-    @SubscribeEvent
-    public static void itemClickEvent(PlayerInteractEvent.RightClickItem event) {
-        var mainHand = event.getItemStack();
-        var player = event.getEntity();
-
-//        if(mainHand.has(DataComponentRegistry.RUNE_HOLDER)){
-//            var rune = player.getOffhandItem();
-//            var list = new ArrayList<ItemStack>();
-//            if(rune.getItem() instanceof RuneItem){
-//                list.add(rune);
-//                RuneHolder.updateRuneSlots(mainHand, list);
-//                event.setCanceled(true);
-//            }
-//        }
 
     }
 

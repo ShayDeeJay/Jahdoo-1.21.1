@@ -149,7 +149,6 @@ public class PlayerWallet implements IAttachment{
 
         public static ItemStack getItemStack(CurrencyConverter converter){
             var type = CurrencyConverter.getCoin(converter).getFirst().ordinal();
-//            System.out.println(type);
             var itemStack = new ItemStack(ItemReg.COIN);
             if(type == 0) return itemStack;
 

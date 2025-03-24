@@ -63,9 +63,11 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
     public List<Component> getSlotsTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
         var rarity = JahdooRarity.attachRarityTooltip(stack, context.level());
         var newComp = new ArrayList<>(tooltips);
-
-        newComp.add(rarity);
-        if(!rarity.getString().isEmpty()) newComp.add(Component.empty());
+        newComp.add(Component.empty());
+        if(rarity != null){
+            newComp.add(rarity);
+            if (!rarity.getString().isEmpty()) newComp.add(Component.empty());
+        }
         return newComp;
     }
 
