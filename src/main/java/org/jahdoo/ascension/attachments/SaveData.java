@@ -1,5 +1,6 @@
 package org.jahdoo.ascension.attachments;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -94,7 +95,9 @@ public class SaveData implements IAttachment {
         this.itemStacks.addAll(wandItems);
         allFilteredItems.forEach(player.getInventory()::removeItem);
 
-        getLostItemReceipt(player);
+        if(player.level() instanceof CustomLevel){
+            getLostItemReceipt(player);
+        }
     }
 
     private void getLostItemReceipt(Player player) {

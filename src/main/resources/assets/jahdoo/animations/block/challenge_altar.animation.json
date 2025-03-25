@@ -6,34 +6,14 @@
 			"bones": {
 				"pillar": {
 					"rotation": {
-						"0.7083": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"4.5": {
-							"vector": [0, 1440, 0],
-							"easing": "easeInOutExpo"
-						}
+						"0.7083": [0, 0, 0],
+						"4.5": [0, 1440, 0]
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, 3.6, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 13.6, 0],
-							"easing": "easeInElastic",
-							"easingArgs": [0.2]
-						},
-						"4.6667": {
-							"vector": [0, 13.6, 0],
-							"easing": "linear"
-						},
-						"4.9583": {
-							"vector": [0, 3.6, 0],
-							"easing": "easeInBounce",
-							"easingArgs": [0.08]
-						}
+						"0.0": [0, 0, 0],
+						"0.5": [0, 13.6, 0],
+						"4.6667": [0, 13.6, 0],
+						"4.9583": [0, 3.6, 0]
 					}
 				}
 			}
@@ -79,22 +59,27 @@
 				}
 			}
 		},
-        "idle": {
-            "loop": true,
-            "animation_length": 1000000000,
-            "bones": {
-                "pillar": {
-                    "rotation": ["math.sin(query.anim_time * 80) * 1", "query.anim_time * 80", "math.cos(query.anim_time * 60) * 0.5"],
-                    "position": {
-                      "0.0": {
-                        "post": [0, 0, 0],
-                        "lerp_mode": "catmullrom"
-                      },
-                      "0.5": [0, "23.6+math.sin(query.anim_time * 100) * 3", 0]
-                    }
-                }
-            }
-        }
+		"idle": {
+			"loop": true,
+			"animation_length": 10000,
+			"bones": {
+				"pillar": {
+					"rotation": {
+						"vector": ["math.sin(query.anim_time * 80) * 1", "query.anim_time * 80", "math.cos(query.anim_time * 60) * 0.5"],
+						"easing": "linear"
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, "35 + math.sin(query.anim_time * 100) * 3", 0],
+							"easing": "easeOutCirc"
+						}
+					}
+				}
+			}
+		}
 	},
 	"geckolib_format_version": 2
 }

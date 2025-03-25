@@ -17,7 +17,6 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.armortrim.TrimMaterials;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.GameType;
@@ -40,7 +39,6 @@ import org.jahdoo.ascension.ability.abilities.block_placer.BlockPlacerAbility;
 import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.ascension.ability.abilities.wall_placer.WallPlacerAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.mobs.MobItemHandler;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
@@ -65,7 +63,7 @@ import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTER
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
-import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedIronArmor;
+import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedArmor;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.elementalWithType;
@@ -186,16 +184,19 @@ public class EventHelpers {
             freeItems.add(ItemStack.EMPTY);
         }
 
-        var trim = switch (element.id()){
-            case 1 -> TrimMaterials.LAPIS;
-            case 2 -> TrimMaterials.COPPER;
-            case 3 -> TrimMaterials.AMETHYST;
-            default -> TrimMaterials.REDSTONE;
-        };
-
         var params = new LootParams.Builder(serverLevel).withParameter(ORIGIN, player.position()).create(VAULT);
-        freeItems.addAll(getEnchantedIronArmor(serverLevel, trim).getRandomItems(params));
-        freeItems.addAll(MobItemHandler.buildForIronWeapon(serverLevel).getRandomItems(params));
+        freeItems.addAll(
+            getEnchantedArmor(
+                serverLevel,
+                element,
+                Items.IRON_HELMET,
+                Items.IRON_CHESTPLATE,
+                Items.IRON_LEGGINGS,
+                Items.IRON_BOOTS,
+                Items.IRON_SWORD
+            )
+                .getRandomItems(params)
+        );
 
         for (int i = 0; i < 5; i++) freeItems.add(ItemStack.EMPTY);
 

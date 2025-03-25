@@ -2,15 +2,16 @@ package org.jahdoo.ascension.mobs;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.armortrim.ArmorTrim;
-import net.minecraft.world.item.armortrim.TrimMaterial;
+import net.minecraft.world.item.armortrim.TrimMaterials;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -18,10 +19,13 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.level_manager.InstanceDifficulty;
+import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static java.lang.Math.min;
@@ -31,9 +35,13 @@ import static net.minecraft.core.registries.Registries.*;
 import static net.minecraft.world.item.armortrim.TrimMaterials.*;
 import static net.minecraft.world.item.armortrim.TrimPatterns.*;
 import static net.minecraft.world.item.enchantment.Enchantments.*;
+import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
+import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition.randomChance;
 import static net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.between;
 import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.common.items.augments.AugmentItemHelper.elementalWithType;
+import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentWithAbility;
 
 public class MobItemHandler {
 
@@ -67,27 +75,95 @@ public class MobItemHandler {
     }
 
     public LootTable getRandomIron(){
-        return buildForIron(armorTrimIntermediate, armorTrimIntermediateSecondary, regLookup2, multiplier, difficulty);
+        return buildArmor(
+            armorTrimBasic,
+            armorTrimBasicSecondary,
+            regLookup2,
+            multiplier,
+            difficulty,
+            Items.IRON_HELMET,
+            Items.IRON_CHESTPLATE,
+            Items.IRON_LEGGINGS,
+            Items.IRON_BOOTS
+        ).build();
     }
 
     public LootTable getRandomLeather(){
-        return buildForLeather(armorTrimBasic, armorTrimBasicSecondary, regLookup2, multiplier, difficulty);
+        return buildArmor(
+            armorTrimBasic,
+            armorTrimBasicSecondary,
+            regLookup2,
+            multiplier,
+            difficulty,
+            Items.LEATHER_HELMET,
+            Items.LEATHER_CHESTPLATE,
+            Items.LEATHER_LEGGINGS,
+            Items.LEATHER_BOOTS
+        ).build();
     }
 
     public LootTable getRandomNetherite(){
-        return buildForNetherite(armorTrimLegendary, armorTrimLegendarySecondary, regLookup2, multiplier, difficulty);
+        return buildArmor(
+            armorTrimBasic,
+            armorTrimBasicSecondary,
+            regLookup2,
+            multiplier,
+            difficulty,
+            Items.NETHERITE_HELMET,
+            Items.NETHERITE_CHESTPLATE,
+            Items.NETHERITE_LEGGINGS,
+            Items.NETHERITE_BOOTS
+        ).build();
     }
 
-    public static LootTable getEnchantedIronArmor(ServerLevel serverLevel, ResourceKey<TrimMaterial> material){
+
+    public static LootTable getEnchantedArmor(
+        ServerLevel serverLevel,
+        AbstractElement element,
+        Item helmet,
+        Item chestplate,
+        Item leggings,
+        Item boots,
+        Item weapon
+    ){
         var regLookup = serverLevel.registryAccess().lookup(TRIM_PATTERN).orElseThrow();
         var regLookup1 = serverLevel.registryAccess().lookup(TRIM_MATERIAL).orElseThrow();
         var regLookup2 = serverLevel.registryAccess().lookupOrThrow(ENCHANTMENT);
         var list = regLookup.listElements().toList();
-        return buildForIron(
+        var material =  switch (element.id()){
+            case 1 -> TrimMaterials.LAPIS;
+            case 2 -> TrimMaterials.COPPER;
+            case 3 -> TrimMaterials.AMETHYST;
+            default -> TrimMaterials.REDSTONE;
+        };
+
+        return buildArmor(
             new ArmorTrim(regLookup1.get(material).orElseThrow(), listRandom(list)),
             new ArmorTrim(regLookup1.get(material).orElseThrow(), listRandom(list)),
-            regLookup2, 100, InstanceDifficulty.HARD.getSerializedName()
-        );
+            regLookup2,
+            100,
+            InstanceDifficulty.HARD.getSerializedName(),
+            helmet, chestplate, leggings, boots
+        ).withPool(weaponWithChance(regLookup2, weapon, 100, InstanceDifficulty.HARD.getSerializedName())).build();
+    }
+
+    public static List<ItemStack> addArmorWithElement(
+        Player player,
+        ServerLevel serverLevel,
+        Item helmet,
+        Item chestplate,
+        Item leggings,
+        Item boots,
+        Item weapon
+    ) {
+        var element = ElementReg.random();
+        var params = new LootParams.Builder(serverLevel).withParameter(ORIGIN, player.position()).create(VAULT);
+
+        var freeItems = new ArrayList<>(getEnchantedArmor(serverLevel, element, helmet, chestplate, leggings, boots, weapon).getRandomItems(params));
+        freeItems.add(new ItemStack(Objects.requireNonNull(element.getWand())));
+        freeItems.add(getAugmentWithAbility(elementalWithType(element.id())));
+
+        return freeItems;
     }
 
     public static LootTable weaponByDifficulty(HolderLookup.RegistryLookup<Enchantment> registryLookup, float multiplier, String difficulty) {
@@ -101,19 +177,6 @@ public class MobItemHandler {
         }
 
         return builder.build();
-    }
-
-    public static LootTable buildForDiamond(HolderLookup.RegistryLookup<Enchantment> registryLookup, float multiplier, String difficulty) {
-        return LootTable.lootTable()
-            .withPool(weaponWithChance(registryLookup, Items.DIAMOND_SWORD, multiplier, difficulty))
-            .build();
-    }
-
-    public static LootTable buildForIronWeapon(ServerLevel serverLevel) {
-        var regLookup2 = serverLevel.registryAccess().lookupOrThrow(ENCHANTMENT);
-        return LootTable.lootTable()
-        .withPool(weaponWithChance(regLookup2, Items.IRON_SWORD, 100, InstanceDifficulty.HARD.getSerializedName()))
-            .build();
     }
 
     private static LootPool.Builder weaponWithChance(HolderLookup.RegistryLookup<Enchantment> registry, Item item, float multiplier, String difficulty) {
@@ -141,32 +204,22 @@ public class MobItemHandler {
             .add(getArmor(trimA, armorTrim2, registry, item, multiplier, difficulty).setWeight(1));
     }
 
-    private static LootTable buildForLeather(ArmorTrim trimA, ArmorTrim trimB, HolderLookup.RegistryLookup<Enchantment> registry, float multiplier, String difficulty) {
+    private static LootTable.Builder buildArmor(
+        ArmorTrim trimA,
+        ArmorTrim trimB,
+        HolderLookup.RegistryLookup<Enchantment> registry,
+        float multiplier,
+        String difficulty,
+        Item helmet,
+        Item chestplate,
+        Item leggings,
+        Item boots
+    ) {
         return LootTable.lootTable()
-            .withPool(armorWithChance(trimA, trimB, registry, Items.LEATHER_HELMET, multiplier, difficulty))
-            .withPool(armorWithChance(trimA, trimB, registry, Items.LEATHER_CHESTPLATE, multiplier, difficulty))
-            .withPool(armorWithChance(trimA, trimB, registry, Items.LEATHER_LEGGINGS, multiplier, difficulty))
-            .withPool(armorWithChance(trimA, trimB, registry, Items.LEATHER_BOOTS, multiplier, difficulty))
-            .build();
-    }
-
-
-    private static LootTable buildForIron(ArmorTrim trimA, ArmorTrim trimB, HolderLookup.RegistryLookup<Enchantment> registry, float multiplier, String difficulty) {
-        return LootTable.lootTable()
-            .withPool(armorWithChance(trimA, trimB, registry, Items.IRON_HELMET, multiplier, difficulty))
-            .withPool(armorWithChance(trimA, trimB, registry, Items.IRON_CHESTPLATE, multiplier, difficulty))
-            .withPool(armorWithChance(trimA, trimB, registry, Items.IRON_LEGGINGS, multiplier, difficulty))
-            .withPool(armorWithChance(trimA, trimB, registry, Items.IRON_BOOTS, multiplier, difficulty))
-            .build();
-    }
-
-    private static LootTable buildForNetherite(ArmorTrim trimA, ArmorTrim trimB, HolderLookup.RegistryLookup<Enchantment> registry, float multiplier, String difficulty) {
-        return LootTable.lootTable()
-            .withPool(armorWithChance(trimA, trimB, registry, Items.NETHERITE_HELMET, multiplier, difficulty))
-            .withPool(armorWithChance(trimA, trimB, registry, Items.NETHERITE_CHESTPLATE, multiplier, difficulty))
-            .withPool(armorWithChance(trimA, trimB, registry, Items.NETHERITE_LEGGINGS, multiplier, difficulty))
-            .withPool(armorWithChance(trimA, trimB, registry, Items.NETHERITE_BOOTS, multiplier, difficulty))
-            .build();
+            .withPool(armorWithChance(trimA, trimB, registry, helmet, multiplier, difficulty))
+            .withPool(armorWithChance(trimA, trimB, registry, chestplate, multiplier, difficulty))
+            .withPool(armorWithChance(trimA, trimB, registry, leggings, multiplier, difficulty))
+            .withPool(armorWithChance(trimA, trimB, registry, boots, multiplier, difficulty));
     }
 
     public static ItemStack getAllowedArrow(int round, String difficulty){

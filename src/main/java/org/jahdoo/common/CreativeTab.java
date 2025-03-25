@@ -48,8 +48,8 @@ public class CreativeTab {
                 outPut.accept(RECALL_TOKEN.get());
                 outPut.accept(CHALLENGER_TICKET.get());
                 outPut.accept(RECOVERY_RECEIPT.get());
-
-
+                
+                registerCarePackages(outPut);
                 registerElementalSwords(outPut);
                 registerAmulets(outPut);
                 registerXpOrbs(outPut);
@@ -90,6 +90,18 @@ public class CreativeTab {
             var customModelData = new CustomModelData(i);
             elementalSword.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
             pOutput.accept(elementalSword);
+        }
+    }
+
+    private static void registerCarePackages(CreativeModeTab.Output pOutput) {
+        pOutput.accept(CARE_PACKAGE.get());
+
+        for(int i = 1; i < 3; i++) {
+            var carePackage = new ItemStack(CARE_PACKAGE.get());
+            var customModelData = new CustomModelData(i);
+
+            carePackage.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
+            pOutput.accept(carePackage);
         }
     }
 

@@ -17,6 +17,7 @@ import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;
+import java.util.UUID;
 
 import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
 import static net.minecraft.world.entity.EquipmentSlot.OFFHAND;
@@ -135,14 +136,12 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var getRegen = randomRegenValue + randomRegenValue * Random.nextDouble(0.0, 1.5);
         var randomManaPool = singleFormattedDouble(rarityValues.getAttributes().getRandomManaPool());
         var getMana = randomManaPool + randomManaPool * Random.nextDouble(0.0, 1.5);
-        var manaRegen = MANA_REGEN;
-        var manaPool = MANA_POOL;
         var rarity = JahdooRarity.UNIQUE;
 
         attachLootBeamComponent(itemStack, rarity);
         itemStack.set(JAHDOO_RARITY.get(), rarity.getId());
-        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, getRegen, MAINHAND, false);
-        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, getMana, OFFHAND, false);
+        replaceOrAddAttribute(itemStack, UUID.randomUUID().toString(), MANA_REGEN, getRegen, MAINHAND, false);
+        replaceOrAddAttribute(itemStack, UUID.randomUUID().toString(), MANA_POOL, getMana, OFFHAND, false);
         return new ShoppingItems(itemStack, setGoldCost(180));
     }
 
@@ -172,9 +171,9 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         RuneHolder.createNewRuneSlots(itemStack, 4, refinementPotential);
         itemStack.set(JAHDOO_RARITY, rarity.getId());
 
-        replaceOrAddAttribute(itemStack, cooldownReductionName, cooldownReductionType, cooldownReductionValue, MAINHAND, false);
-        replaceOrAddAttribute(itemStack, manaReductionName, manaReductionType, manaReductionValue, MAINHAND, false);
-        replaceOrAddAttribute(itemStack, damageAmplifierName, damageAmplifierType, damageAmplifierValue, MAINHAND, false);
+        replaceOrAddAttribute(itemStack, UUID.randomUUID().toString(), cooldownReductionType, cooldownReductionValue, MAINHAND, false);
+        replaceOrAddAttribute(itemStack, UUID.randomUUID().toString(), manaReductionType, manaReductionValue, MAINHAND, false);
+        replaceOrAddAttribute(itemStack, UUID.randomUUID().toString(), damageAmplifierType, damageAmplifierValue, MAINHAND, false);
 
         var altElement = Helpers.listRandom(getWithout(element));
         addAttribute(altElement, itemStack);

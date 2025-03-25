@@ -153,7 +153,7 @@ public class AttributeReg {
 
     public static ItemAttributeModifiers.Entry setAttribute(String name, Holder<Attribute> attribute, double value, EquipmentSlot equipmentSlot, boolean isRandomId){
         var resourcelocation = isRandomId ? res(String.valueOf(UUID.randomUUID())) : parse(name);
-        var attributes = new AttributeModifier(resourcelocation, value,  ADD_VALUE);
+        var attributes = new AttributeModifier(resourcelocation, value, ADD_VALUE);
         
         return new ItemAttributeModifiers.Entry(attribute, attributes,  EquipmentSlotGroup.bySlot(equipmentSlot));
     }

@@ -45,7 +45,7 @@ public class ChallengerTicket extends Item {
     }
 
     public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.SPYGLASS;
+        return UseAnim.BLOCK;
     }
 
     @Override

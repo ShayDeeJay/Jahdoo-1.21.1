@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
-import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.jahdoo.ascension.utils.ColourStore.*;
 
 public class PlayerWallet implements IAttachment{
 
@@ -166,10 +166,10 @@ public class PlayerWallet implements IAttachment{
     }
 
     public enum CoinProperties implements StringRepresentable, IExtensibleEnum {
-        BRONZE(Icons.BRONZE_COIN, "Bronze", color(193, 108, 51)),
-        SILVER(Icons.SILVER_COIN, "Silver", color(129, 129, 129)),
-        GOLD(Icons.GOLD_COIN, "Gold", color(225, 155, 50)),
-        PLATINUM(Icons.PLATINUM_COIN, "Platinum", color(194, 194, 194));
+        BRONZE(Icons.BRONZE_COIN, "Bronze", BRONZE_COIN),
+        SILVER(Icons.SILVER_COIN, "Silver", SILVER_COIN),
+        GOLD(Icons.GOLD_COIN, "Gold", GOLD_COIN),
+        PLATINUM(Icons.PLATINUM_COIN, "Platinum", PLATINUM_COIN);
 
         private final ResourceLocation location;
         private final String name;

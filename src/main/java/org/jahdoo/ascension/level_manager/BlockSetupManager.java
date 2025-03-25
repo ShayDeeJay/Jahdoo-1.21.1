@@ -17,6 +17,7 @@ import org.jahdoo.common.registers.ItemReg;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.world.level.block.Blocks.*;
@@ -56,6 +57,7 @@ public class BlockSetupManager {
     }
 
     public static void setBlockGenerator(ServerLevel level, Iterable<BlockPos> pos, Direction direction, String id) {
+        var counter = new AtomicInteger();
         for (var blockPos : pos) {
             if(Objects.equals(id, EASY_EXIT)) generateExit(level, blockPos, direction.getOpposite());
             if(Objects.equals(id, SANCTUARY)) placePerkTables(level, blockPos);
@@ -67,6 +69,7 @@ public class BlockSetupManager {
                 otherShopping(level, table, blockPos, direction);
                 keyTable(level, table, blockPos, direction);
                 setHelperBlocks(level, table, blockPos, direction);
+                starterPack(level, table, blockPos, direction, counter);
             }
         }
     }
@@ -124,6 +127,31 @@ public class BlockSetupManager {
             level.setBlockAndUpdate(pos, AUGMENT_MODIFICATION_STATION.get().defaultBlockState().setValue(FACING, direction.getClockWise()));
         } else if (blue) {
             level.setBlockAndUpdate(pos, WAND_MANAGER_TABLE.get().defaultBlockState());
+        }
+    }
+
+    private static void starterPack(ServerLevel level, BlockState shoppingTableState, BlockPos pos, Direction direction, AtomicInteger counter) {
+        var keyState = shoppingTableState.setValue(FACING, direction.getOpposite()).setValue(TEXTURE, 1);
+
+        if(level.getBlockState(pos).is(RED_CONCRETE)){
+            level.setBlockAndUpdate(pos, keyState);
+            var blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ShoppingTableEntity entity) {
+                var itemStack = new ItemStack(ItemReg.CARE_PACKAGE);
+                if(counter.get() != 0){
+                    itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(counter.get()));
+                }
+                entity.setItem(itemStack);
+
+                var cost = switch (counter.get()) {
+                    case 1 -> setSilverCost(50);
+                    case 2 -> setGoldCost(3);
+                    default -> setBronzeCost(20);
+                };
+
+                entity.setCost(cost);
+            }
+            counter.incrementAndGet();
         }
     }
 

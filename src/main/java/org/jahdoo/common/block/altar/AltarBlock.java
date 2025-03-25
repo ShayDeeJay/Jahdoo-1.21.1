@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.BlockEntityReg;
@@ -31,9 +30,7 @@ import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 
 public class AltarBlock extends BaseEntityBlock {
 
-    private static final VoxelShape SHAPE_BASE = Block.box(4.5, 5, 4.5, 11.5, 32, 11.5);
-    private static final VoxelShape SHAPE_BASE_SECOND = Block.box(3.5, 0, 3.5, 12.5, 5, 12.5);
-    private static final VoxelShape SHAPE_COMMON = Shapes.or(SHAPE_BASE_SECOND, SHAPE_BASE);
+    private static final VoxelShape SHAPE_BASE = Block.box(0, 0, 0, 16, 16, 16);
 
     public AltarBlock() {
         super(sharedBehaviour.strength(-1.0F, 3600000.0F));
@@ -46,7 +43,7 @@ public class AltarBlock extends BaseEntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE_COMMON;
+        return SHAPE_BASE;
     }
 
     @Override

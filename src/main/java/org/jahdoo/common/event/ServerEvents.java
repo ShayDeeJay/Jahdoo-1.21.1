@@ -12,6 +12,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -100,6 +101,7 @@ public class ServerEvents {
             if(player.level() instanceof ServerLevel serverLevel){
                 getStarterKit(player, serverLevel);
             }
+
             data.putBoolean("first_join", true);
             playerData.put(Player.PERSISTED_NBT_TAG, data);
         }
@@ -183,7 +185,24 @@ public class ServerEvents {
                 player.removeAllEffects();
             }
         }
+    }
 
+    @SubscribeEvent
+    public static void leaveEvent(EntityLeaveLevelEvent event){
+        var entity = event.getEntity();
+
+        if(event.getLevel() instanceof CustomLevel && entity instanceof Player player){
+            for (var syncableAttribute : player.getAttributes().getSyncableAttributes()) {
+                var modifiers = syncableAttribute.getModifiers();
+                if(!modifiers.isEmpty()){
+                    for (var attributeModifier : modifiers.stream().toList()) {
+                        if(attributeModifier.id().getPath().intern().contains("boon")){
+                            syncableAttribute.removeModifier(attributeModifier);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @SubscribeEvent
@@ -215,9 +234,8 @@ public class ServerEvents {
     public static void livingDropsEvent(LivingDropsEvent event){
         var entity = event.getEntity();
 
-        if(entity.level() instanceof CustomLevel) {
+        if(entity.level() instanceof CustomLevel)
             event.setCanceled(true);
-        }
     }
 
     @SubscribeEvent

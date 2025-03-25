@@ -2,17 +2,20 @@ package org.jahdoo.common.items;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.particle.ParticleHandlers;
 
-import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.ascension.utils.ColourStore.EXPERIENCE_GREEN;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 
@@ -37,7 +40,10 @@ public class ExperienceOrb extends Item {
         var high = 880;
         var getExp = data == null ? high : data.value() == 1 ? low : medium;
 
-        player.giveExperiencePoints(getExp);
+        if(player instanceof ServerPlayer serverPlayer){
+            var xpPoints = repairPlayerItems(serverPlayer, getExp);
+            if(xpPoints > 0) player.giveExperiencePoints(xpPoints);
+        }
 
         item.shrink(1);
 
@@ -55,5 +61,25 @@ public class ExperienceOrb extends Item {
         player.playSound(SoundEvents.PLAYER_LEVELUP, 1, 0.5f);
         player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 1, 1.5f);
         return super.use(level, player, usedHand);
+    }
+
+    private int repairPlayerItems(ServerPlayer player, int value) {
+        var optional = EnchantmentHelper.getRandomItemWith(EnchantmentEffectComponents.REPAIR_WITH_XP, player, ItemStack::isDamaged);
+        if (optional.isPresent()) {
+            ItemStack itemstack = optional.get().itemStack();
+            int i = EnchantmentHelper.modifyDurabilityToRepairFromXp(player.serverLevel(), itemstack, (int)((float)value * itemstack.getXpRepairRatio()));
+            int j = Math.min(i, itemstack.getDamageValue());
+            itemstack.setDamageValue(itemstack.getDamageValue() - j);
+            if (j > 0) {
+                int k = value - j * value / i;
+                if (k > 0) {
+                    return this.repairPlayerItems(player, k);
+                }
+            }
+
+            return 0;
+        } else {
+            return value;
+        }
     }
 }

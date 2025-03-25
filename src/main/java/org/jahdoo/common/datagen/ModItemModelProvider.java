@@ -32,6 +32,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         registerArmorModels();
         registerMagnets();
         registerCoins();
+        registerCarePackages();
     }
 
     private void createSimpleItemModel(DeferredHolder<Item, Item> item) {
@@ -84,6 +85,13 @@ public class ModItemModelProvider extends ItemModelProvider {
         for (int i = 1; i < 4; i++) {
             createModel("coin" + i, "item/coins/coin" + i);
             createOverride(i, ItemReg.COIN, "item/coin");
+        }
+    }
+
+    private void registerCarePackages() {
+        for (int i = 1; i < 3; i++) {
+            createModel("starter_pack" + i, "item/starter_packs/starter_pack" + i);
+            createOverride(i, ItemReg.CARE_PACKAGE, "item/starter_pack");
         }
     }
 

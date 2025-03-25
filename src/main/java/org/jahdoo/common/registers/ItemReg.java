@@ -45,6 +45,9 @@ public class ItemReg {
         basicItem("augment_core");
 
     //Complex Items
+    public static final DeferredHolder<Item, Item> CARE_PACKAGE =
+        complexItem("starter_pack", StarterPack::new);
+
     public static final DeferredHolder<Item, Item> RECALL_TOKEN =
         complexItem("recall_token", RecallToken::new);
 
