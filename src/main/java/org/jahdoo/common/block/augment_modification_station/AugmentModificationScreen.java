@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 import static net.minecraft.sounds.SoundEvents.APPLY_EFFECT_TRIAL_OMEN;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.gui.ToggleComponent.*;
+import static org.jahdoo.common.client.button.ToggleComponent.*;
 import static org.jahdoo.common.block.augment_modification_station.AugmentModificationData.*;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
 import static org.jahdoo.common.items.augments.AugmentRatingSystem.calculateRatingNext;

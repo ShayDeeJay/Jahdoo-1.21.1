@@ -1,4 +1,4 @@
-package org.jahdoo.common.client.gui;
+package org.jahdoo.common.client;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;

@@ -24,7 +24,7 @@ import static org.jahdoo.ascension.attachments.ChaosCubeData.*;
 import static org.jahdoo.common.block.chaos_cube.ChaosCubeEntity.AUGMENT_SLOT;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.gui.ToggleComponent.*;
+import static org.jahdoo.common.client.button.ToggleComponent.*;
 import static org.jahdoo.common.block.chaos_cube.ChaosCubeData.selectDirection;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.*;
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;

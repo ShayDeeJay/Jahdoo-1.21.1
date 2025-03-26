@@ -1,14 +1,12 @@
 package org.jahdoo.ascension.utils;
 
-import net.minecraft.util.FastColor;
-
 import static net.minecraft.util.FastColor.ARGB32.color;
 
 public class ColourStore {
 
     public static final int HEADER_COLOUR = -9013642;
-    public static final int SUB_HEADER_COLOUR = FastColor.ARGB32.color(198, 198, 198);
     public static final int OFF_WHITE = -1381654;
+    public static final int SUB_HEADER_COLOUR = color(198, 198, 198);
     public static final int AETHER_BLUE = color(87, 180, 250);
     public static final int COSMIC_PURPLE = color(171, 87, 194);
     public static final int PERK_GREEN = color(193, 255, 99);
@@ -27,5 +25,7 @@ public class ColourStore {
     public static final int PLATINUM_COIN = color(194, 194, 194);
     public static final int DIAMOND_BOX = color(135, 222, 222);
     public static final int NETHERITE_BOX = color(107, 95, 96);
+    public static final int COOLDOWN_GREEN = color(66, 245, 197);
+    public static final int WALLET_BROWN = color(105, 52, 13);
 
 }

@@ -1,4 +1,4 @@
-package org.jahdoo.common.client.overlay;
+package org.jahdoo.common.client.screens;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

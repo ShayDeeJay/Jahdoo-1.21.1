@@ -5,8 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 
-public class
-AbilityIconButton extends ImageButton {
+public class AbilityIconButton extends ImageButton {
     private float sizes;
     private final int defaultSize;
     private final int totalSize;

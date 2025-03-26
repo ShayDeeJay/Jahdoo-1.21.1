@@ -31,6 +31,7 @@ import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.networking.server2client.InstanceSyncS2CP;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
+import org.jahdoo.common.registers.AttributeReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
 import static net.minecraft.sounds.SoundSource.PLAYERS;
@@ -97,7 +98,12 @@ public class ServerEvents {
         var playerData = player.getPersistentData();
         var data = playerData.getCompound(Player.PERSISTED_NBT_TAG);
 
+        for (var entry : AttributeReg.ATTRIBUTES.getEntries()) {
+            player.getAttributes().getInstance(entry);
+        }
+
         if (!data.getBoolean("first_join")) {
+
             if(player.level() instanceof ServerLevel serverLevel){
                 getStarterKit(player, serverLevel);
             }

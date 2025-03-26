@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.client.gui.AbilityWheelScreen;
+import org.jahdoo.common.client.screens.AbilityWheelScreen;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.client2server.StopUsingC2SP;
 import org.jahdoo.common.registers.AbilityReg;

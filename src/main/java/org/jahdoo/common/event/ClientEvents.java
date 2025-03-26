@@ -6,12 +6,15 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.OverlayBlockTooltip;
 import org.jahdoo.common.client.RuneTooltipRenderer;
-import org.jahdoo.common.client.overlay.StatScreen;
+import org.jahdoo.common.client.screens.StatScreen;
 
 import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import static net.neoforged.neoforge.client.event.RenderLivingEvent.Pre;

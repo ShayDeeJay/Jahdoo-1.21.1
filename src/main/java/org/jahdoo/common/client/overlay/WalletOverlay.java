@@ -8,7 +8,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
+import org.jahdoo.common.client.SharedUI;
+import org.jahdoo.common.client.screens.StatScreen;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -79,7 +82,7 @@ public class WalletOverlay implements LayeredDraw.Layer {
         if(player == null || minecraft.options.hideGui || level == null) return;
         var shoppingTable = isLookingAtBlock(player);
 
-        renderWallet(graphics, minecraft, fadeIn);
+        renderWallet(graphics, minecraft, fadeIn, 0 , 0, true);
         slideGui();
 
         timer = Math.max(0, timer - 1);
@@ -110,15 +113,22 @@ public class WalletOverlay implements LayeredDraw.Layer {
         return name.copy().append(withStyleComponent(prop2 + (isDeductible ? "↓" : ""), isDeductible ? NEGATIVE_RED : prop.getTextColour()));
     }
 
-    public static void renderWallet(GuiGraphics graphics, Minecraft minecraft, float fade) {
+    public static void renderWallet(
+        GuiGraphics graphics,
+        Minecraft minecraft,
+        float fade,
+        double adjustX,
+        double adjustY,
+        boolean hideBackground
+    ) {
         var player = minecraft.player;
         if(player == null) return;
 
-        var size = 40;
+        var size = 34;
         var spacer = 0;
         var wallet = getWalletCoins(player);
-        var getX = fade - 15    ;
-        var getY = -3;
+        int getX = (int) (fade - 15 + adjustX);
+        int getY = (int) (-3 + adjustY);
 
         var coinsTypes = wallet.coins().reversed();
         var properties = Arrays.stream(CoinProperties.values()).toList().reversed();
@@ -130,7 +140,12 @@ public class WalletOverlay implements LayeredDraw.Layer {
             var purchaseColour = cantPurchase ? NEGATIVE_RED : MAGNET_RANGE_GREEN;
             var comp = withStyleComponent(purchaseText + " Purchase!", purchaseColour);
 
-            graphics.drawString(minecraft.font, comp, (int) (getX + 16), getY + 95 + spacer, -1, false);
+            graphics.drawString(minecraft.font, comp, getX + 16, getY + 95 + spacer, -1, false);
+        }
+
+        if(!hideBackground){
+            SharedUI.boxMaker(graphics, getX + 6, getY - 10, 48, 46, ColourStore.BRONZE_COIN, ColourStore.NETHERITE_BOX, ColourStore.WALLET_BROWN);
+            graphics.drawString(minecraft.font, withStyleComponent("Wallet", ColourStore.SUB_HEADER_COLOUR), getX + 16, getY + spacer - 2, -1, false);
         }
 
         for (int i = 0; i < properties.size(); i++){
@@ -140,10 +155,10 @@ public class WalletOverlay implements LayeredDraw.Layer {
             var priceDifference = displayDifference(wallet, shoppingTable, i, coin, prop);
             var getTextType = !priceDifference.equals(empty()) ? priceDifference : text;
 
-            graphics.blit(prop.getLocation(), (int) getX, getY + spacer, 0, 0, size, size, size, size);
-            graphics.drawString(minecraft.font, getTextType, (int) (getX + 32), getY + 17 + spacer, -1, false);
+            graphics.blit(prop.getLocation(), getX + 2, getY + spacer + 2, 0, 0, size, size, size, size);
+            graphics.drawString(minecraft.font, getTextType, getX + 28, getY + 15 + spacer, -1, false);
 
-            spacer += 20;
+            spacer += 16;
         }
     }
 

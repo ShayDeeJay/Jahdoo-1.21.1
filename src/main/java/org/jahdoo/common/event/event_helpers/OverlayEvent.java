@@ -6,7 +6,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import org.jahdoo.common.client.gui.AbilityWheelScreen;
+import org.jahdoo.common.client.screens.AbilityWheelScreen;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.ascension.utils.Configuration;
 import org.jahdoo.ascension.utils.Helpers;

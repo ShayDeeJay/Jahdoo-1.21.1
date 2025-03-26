@@ -23,9 +23,10 @@ import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.ability.abilities.elemental_shooter.ElementalShooterAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.LocalLootBeamData;
-import org.jahdoo.common.client.gui.AugmentScreen;
+import org.jahdoo.common.client.screens.AugmentScreen;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -486,17 +487,17 @@ public class AugmentItemHelper {
         var curlyEnd = String.valueOf((char) 187);
         if(abilityHolder == null) return toolTips;
 
-        List<String> filteredSuffix = abilityHolder.abilityProperties().keySet()
+        var filteredSuffix = abilityHolder.abilityProperties().keySet()
               .stream()
               .filter(abilityModifiers -> !exceptions.contains(abilityModifiers))
               .toList();
 
         if(abilityHolder.abilityProperties().containsKey(MANA_COST)){
-            toolTipBase(toolTips, itemStack, itemStack1, MANA_COST, abilityLocation, -6829330, hide);
+            toolTipBase(toolTips, itemStack, itemStack1, MANA_COST, abilityLocation, ColourStore.AETHER_BLUE, hide);
         }
 
         if(abilityHolder.abilityProperties().containsKey(COOLDOWN)){
-            toolTipBase(toolTips, itemStack, itemStack1, COOLDOWN, abilityLocation, -7471171, hide);
+            toolTipBase(toolTips, itemStack, itemStack1, COOLDOWN, abilityLocation, ColourStore.COOLDOWN_GREEN, hide);
         }
 
         if(!filteredSuffix.isEmpty()){

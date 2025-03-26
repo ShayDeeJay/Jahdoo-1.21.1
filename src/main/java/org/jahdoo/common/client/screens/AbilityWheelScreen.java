@@ -1,4 +1,4 @@
-package org.jahdoo.common.client.gui;
+package org.jahdoo.common.client.screens;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;

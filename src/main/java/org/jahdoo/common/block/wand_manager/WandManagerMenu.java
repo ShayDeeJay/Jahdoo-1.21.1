@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.Block;
 import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.common.client.gui.AbstractInternalContainer;
+import org.jahdoo.common.client.AbstractInternalContainer;
 import org.jahdoo.common.client.slots.AugmentCoreSlot;
 import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;

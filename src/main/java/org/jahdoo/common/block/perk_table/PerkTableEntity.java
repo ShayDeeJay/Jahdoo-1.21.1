@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.block.SyncedBlockEntity;
-import org.jahdoo.common.client.overlay.BoonSelectionScreen;
+import org.jahdoo.common.client.screens.BoonSelectionScreen;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;

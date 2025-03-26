@@ -1,4 +1,4 @@
-package org.jahdoo.common.client.gui;
+package org.jahdoo.common.client.screens;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -11,6 +11,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
+import org.jahdoo.common.client.button.ToggleComponent;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.networking.client2server.SyncComponentBlockC2S;
@@ -27,7 +28,7 @@ import static org.jahdoo.ascension.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.ascension.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.BORDER_COLOUR;
-import static org.jahdoo.common.client.gui.ToggleComponent.textWithBackgroundLarge;
+import static org.jahdoo.common.client.button.ToggleComponent.textWithBackgroundLarge;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
 import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
