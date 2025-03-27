@@ -94,7 +94,7 @@ public class CustomZombie extends Zombie implements ITamableEntity {
     @Override
     protected void addBehaviourGoals() {
         this.goalSelector.addGoal(1, new ZombieAttackGoal(this, 1.0F, false));
-        this.goalSelector.addGoal(2, new AttackNearbyMonsters<>(this, Player.class, false, 4, 100));
+        this.goalSelector.addGoal(2, new AttackNearbyMonsters<>(this, Player.class, false, true, null));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new FollowGoal(this, 1.0D, 5.0F, 2.0F, false));

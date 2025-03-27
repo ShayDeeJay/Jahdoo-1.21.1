@@ -28,9 +28,7 @@ public class GenericMeleeAttackGoal extends Goal {
     private double pathTargetZ;
     private int ticksUntilNextPathRecalculation;
     private int ticksUntilNextAttack;
-    private final int attackInterval = 20;
     private long lastCanUseCheck;
-    private static final long COOLDOWN_BETWEEN_CAN_USE_CHECKS = 20L;
     private int failedPathFindingPenalty = 0;
     private final boolean canPenalize = false;
 
@@ -42,7 +40,7 @@ public class GenericMeleeAttackGoal extends Goal {
     }
 
     protected void resetAttackCooldown() {
-        this.ticksUntilNextAttack = this.adjustedTickDelay(20);
+        this.ticksUntilNextAttack = this.adjustedTickDelay(50);
     }
 
     protected boolean isTimeToAttack() {
@@ -140,7 +138,13 @@ public class GenericMeleeAttackGoal extends Goal {
         if (livingentity != null) {
             this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
             this.ticksUntilNextPathRecalculation = Math.max(this.ticksUntilNextPathRecalculation - 1, 0);
-            if ((this.followingTargetEvenIfNotSeen || this.mob.getSensing().hasLineOfSight(livingentity)) && this.ticksUntilNextPathRecalculation <= 0 && (this.pathTargetX == (double)0.0F && this.pathTargetY == (double)0.0F && this.pathTargetZ == (double)0.0F || livingentity.distanceToSqr(this.pathTargetX, this.pathTargetY, this.pathTargetZ) >= (double)1.0F || this.mob.getRandom().nextFloat() < 0.05F)) {
+
+            var needsVisual = this.followingTargetEvenIfNotSeen || this.mob.getSensing().hasLineOfSight(livingentity);
+            var hasDistance = livingentity.distanceToSqr(this.pathTargetX, this.pathTargetY, this.pathTargetZ) >= (double) 1.0F || this.mob.getRandom().nextFloat() < 0.05F;
+            var hasPath = this.pathTargetX == (double) 0.0F && this.pathTargetY == (double) 0.0F && this.pathTargetZ == (double) 0.0F;
+            var canRePath = this.ticksUntilNextPathRecalculation <= 0;
+
+            if (needsVisual && canRePath && (hasPath || hasDistance)) {
                 this.pathTargetX = livingentity.getX();
                 this.pathTargetY = livingentity.getY();
                 this.pathTargetZ = livingentity.getZ();

@@ -23,6 +23,7 @@ import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.co
 import static org.jahdoo.ascension.utils.ColourStore.MAGNET_RANGE_GREEN;
 import static org.jahdoo.ascension.utils.ColourStore.NEGATIVE_RED;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
 
 public class WalletOverlay implements LayeredDraw.Layer {
     private int previousWallet;
@@ -144,7 +145,8 @@ public class WalletOverlay implements LayeredDraw.Layer {
         }
 
         if(!hideBackground){
-            SharedUI.boxMaker(graphics, getX + 6, getY - 10, 48, 46, ColourStore.BRONZE_COIN, ColourStore.NETHERITE_BOX, ColourStore.WALLET_BROWN);
+            var fadeBackground = getFadedColourBackground(0.4F);
+            SharedUI.boxMaker(graphics, getX + 6, getY - 10, 48, 46, ColourStore.WALLET_BROWN, fadeBackground, fadeBackground);
             graphics.drawString(minecraft.font, withStyleComponent("Wallet", ColourStore.SUB_HEADER_COLOUR), getX + 16, getY + spacer - 2, -1, false);
         }
 

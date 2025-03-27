@@ -66,7 +66,7 @@ public class SharedUI {
         guiGraphics.drawString(font, formattedcharsequence, x - font.width(formattedcharsequence) / 2, y, color, shadow);
     }
 
-    public static void boxMaker(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset, int colourBorder) {
+    public static void boxMaker(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset) {
         int widthTo = startX + widthOffset * 2;
         int heightTo = startY + heightOffset * 2;
 

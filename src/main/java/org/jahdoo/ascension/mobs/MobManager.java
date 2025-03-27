@@ -47,8 +47,6 @@ import java.util.function.Consumer;
 import static net.minecraft.core.component.DataComponents.TRIM;
 import static net.minecraft.core.registries.Registries.TRIM_MATERIAL;
 import static net.minecraft.core.registries.Registries.TRIM_PATTERN;
-import static net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE;
-import static net.minecraft.world.effect.MobEffects.HEALTH_BOOST;
 import static net.minecraft.world.entity.EquipmentSlot.*;
 import static net.minecraft.world.entity.EquipmentSlot.CHEST;
 import static net.minecraft.world.entity.ai.attributes.Attributes.*;
@@ -88,7 +86,7 @@ public class MobManager {
     private static LivingEntity getAncienGolem(ServerLevel serverLevel, int round) {
         var damage = Maths.getPercentageTotal(round, 12);
         var ancientGolem = new AncientGolem(serverLevel, null, damage, 100, 1, INFINITE_LIFE, 20);
-
+        addBaseAttribute(MAX_HEALTH, ancientGolem, 300);
         addBaseAttribute(SCALE, ancientGolem, 50);
         return ancientGolem;
     }
@@ -164,7 +162,6 @@ public class MobManager {
             default -> new ZombifiedPiglin(EntityType.ZOMBIFIED_PIGLIN, serverLevel);
         };
 
-        var round = serverLevel.getData(INSTANCE_DATA).getClearedRooms();
         attachEquipment(entity, serverLevel, data);
 
         var collection = equipWeapon(entity, serverLevel, data);
@@ -218,12 +215,11 @@ public class MobManager {
     public static LivingEntity getEliteSkeleton(ServerLevel serverLevel, int level){
         var skeleton = new CustomSkeleton(serverLevel, null, new ItemStack(ARROW));
         var getEliteArmor = getEliteArmor(serverLevel, 100);
+        addBaseAttribute(MAX_HEALTH, skeleton, 300);
         addBaseAttribute(SCALE, skeleton, 50);
         skeleton.setElite();
 
-        effectWithChance(skeleton, HEALTH_BOOST, 5, 100);
         effectWithChance(skeleton, MobEffects.MOVEMENT_SPEED, 0, 100);
-        effectWithChance(skeleton, DAMAGE_RESISTANCE, 3, 100);
 
         skeleton.setCustomName(Component.literal("Master Archer"));
         skeleton.setItemSlot(HEAD, getEliteArmor.getFirst());
@@ -239,6 +235,11 @@ public class MobManager {
 
         if(!Objects.equals(roomId, BOSS_CRUCIBLE)){
             var actualEntity = buildMobs(level, roomId);
+
+            //Heal as when adding more health still spawns with only the amount of health that is default
+            for (var livingEntity : actualEntity) {
+                livingEntity.setHealth(livingEntity.getMaxHealth());
+            }
             entity.spawnableMobs.addAll(actualEntity);
         } else {
             var round = entity.getData(INSTANCE_DATA).getClearedRooms();
@@ -246,6 +247,9 @@ public class MobManager {
             var eliteSkeleton = getEliteSkeleton(level, round);
             var boss = Helpers.listRandom(List.of(ancienGolem, eliteSkeleton));
 
+            //Heal as when adding more health still spawns with only the amount of health that is default
+            boss.setHealth(boss.getMaxHealth());
+            boss.getPersistentData().putBoolean("boss", true);
             addAndPositionEntity(level, entity.getBlockPos().relative(entity.direction, -3), boss);
             boss.setYBodyRot(entity.direction.toYRot());
             entity.onField.add(boss.getUUID());

@@ -11,8 +11,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.shopping_table.DisplayDirection;
+import org.jahdoo.common.client.Icons;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,8 +21,12 @@ import java.util.Objects;
 import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static net.minecraft.core.Direction.*;
+import static net.minecraft.world.effect.MobEffects.*;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
+import static org.jahdoo.ascension.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.ascension.level_manager.InstanceDifficulty.getFromName;
+import static org.jahdoo.ascension.utils.Helpers.stringIdToName;
+import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 
 public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
@@ -51,7 +55,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
     private void difficultyPick(LockBlockEntity entity, PoseStack pose, MultiBufferSource source, Direction facing, Font font, float adjustY, DisplayDirection direction) {
         if(entity.getDifficulty.isEmpty()) return;
         var getDifficulty = getFromName(entity.getDifficulty);
-        var formattedName = Helpers.stringIdToName(getDifficulty.getSerializedName());
+        var formattedName = stringIdToName(getDifficulty.getSerializedName());
         var directionA = DisplayDirection.fromMCDirection(facing.getOpposite());
         var isLook = facing == EAST || facing == WEST;
 
@@ -59,10 +63,56 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         pose.translate(directionA.x() + (isLook ? 0.2 : 0), 0.5, directionA.z() - (facing == SOUTH ? 0.2 :  0));
         pose.rotateAround(Axis.YP.rotationDegrees(isLook ? -90 : 0) , 0, 0, 0); // Horizontal rotation
         pose.rotateAround(Axis.XP.rotationDegrees(-90), 0,0,0); // Horizontal rotation
-        drawTexture(pose.last(), source, 255, 1.4F, getFromName(entity.getDifficulty).getIcon(), -1);
+        drawTexture(pose.last(), source, 255, 1F, getFromName(entity.getDifficulty).getIcon(), -1);
         pose.popPose();
+        var isInit = entity.hasDifficulty();
 
-        renderName(Helpers.withStyleComponent(entity.hasDifficulty() ? formattedName : "LOCKED", getDifficulty.getColor()), pose, source, -1, font, 0.05F, 3F - adjustY, true, facing, direction, false);
+        if(isInit){
+            renderName(withStyleComponent("Start with", getDifficulty.getColor()), pose, source, -1, font, 0.025F, 3.5F - adjustY, true, facing, direction, false);
+            switch (getDifficulty.getSerializedName()) {
+                case "novice" -> noviceRun(pose, source, facing, font, direction, getDifficulty.getColor());
+                case "expert" -> expertRun(pose, source, facing, font, direction, getDifficulty.getColor());
+                case "master" -> masterRun(pose, source, facing, font, direction, getDifficulty.getColor());
+            }
+        }
+
+        renderName(withStyleComponent(isInit ? formattedName : "LOCKED", getDifficulty.getColor()), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);
+    }
+
+    private void noviceRun(PoseStack pose, MultiBufferSource source, Direction facing, Font font, DisplayDirection direction, int colour) {
+        pose.pushPose();
+        var z = 0.6F;
+        pose.scale(z, z, z);
+        pose.translate(0.1, 0.9, -0.15);
+        renderNewLine(font, pose, source, withStyleComponent("+5 Horde", colour), Icons.HORDE, 0.5F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, withStyleComponent("20 Minute Timer", colour), Icons.CLOCK, 0.1F, facing, direction, 0.2F, 255);
+        pose.popPose();
+    }
+
+    private void expertRun(PoseStack pose, MultiBufferSource source, Direction facing, Font font, DisplayDirection direction, int colour) {
+        pose.pushPose();
+        var z = 0.6F;
+        pose.scale(z, z, z);
+        pose.translate(0.75, 1.3, 0.1);
+        renderNewLine(font, pose, source, withStyleComponent("+10 Horde", colour), Icons.HORDE, 0.5F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, withStyleComponent("15 Minute Timer", colour), Icons.CLOCK, 0.1F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, withStyleComponent("+10% Mob Health", colour), iconFromEffect(REGENERATION), -0.3F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, withStyleComponent("+15% Mob Damage", colour),  iconFromEffect(DAMAGE_BOOST), -0.7F, facing, direction, 0.2F, 255);
+        pose.popPose();
+    }
+
+    private void masterRun(PoseStack pose, MultiBufferSource source, Direction facing, Font font, DisplayDirection direction, int colour) {
+        pose.pushPose();
+        var z = 0.6F;
+        pose.scale(z, z, z);
+        pose.translate(0.5, 1.7, 0.75);
+        renderNewLine(font, pose, source, withStyleComponent("+10 Horde",colour), Icons.HORDE, 0.5F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, withStyleComponent("+10 Skeleton", colour), Icons.SKELETON, 0.1F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, withStyleComponent("10 Minute Timer", colour), Icons.CLOCK, -0.3F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, withStyleComponent("+100% Mob Health", colour), iconFromEffect(REGENERATION), -0.7F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, withStyleComponent("+100% Mob Damage", colour), iconFromEffect(DAMAGE_BOOST), -1.1F, facing, direction, 0.2F, 255);
+        renderNewLine(font, pose, source, withStyleComponent("+15% Mob Speed", colour), iconFromEffect(MOVEMENT_SPEED), -1.5F, facing, direction, 0.2F, 255);
+        pose.popPose();
     }
 
     private void newRoomSelection(LockBlockEntity entity, PoseStack pose, MultiBufferSource source, int light, LocalPlayer player, Font font, float adjustY, Direction facing, DisplayDirection direction, float x) {
@@ -71,7 +121,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
             var getIcon = id.contains("Boss") ? "☠" : id.contains("The") ? "⚔" : id.contains("Sanctuary") ? "\uD83E\uDDEA" : id.contains("Exit") ? "⚠" : "⇵";
             var textColour = entity.roomId.getStyle().getColor().getValue();
 
-            renderName(Helpers.withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);
+            renderName(withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);
             renderName(entity.roomId, pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction, false);
             var hasNegative = !Objects.equals(entity.negativeBoon, EMPTY);
             if(hasNegative){

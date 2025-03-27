@@ -60,17 +60,17 @@ public abstract class AbstractPanableScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
-    private void transformativeObjects(GuiGraphics guiGraphics, int mouseX, int mouseY, int centerX, int centerY) {
+    private void transformativeObjects(GuiGraphics guiGraphics, int mouseX, int mouseY, float centerX, float centerY) {
         var pose = guiGraphics.pose();
         var mc = getMinecraft();
         var player = mc.player;
         var zoom = (float) (this.smoothToX + 1);
 
-        guiGraphics.enableScissor(3, 3,  this.width - 3, this.height - 4);
+        guiGraphics.enableScissor(3, 3, this.width - 3, this.height - 4);
         pose.pushPose();
-        pose.translate(centerX, centerY, 0);  // Move to center
-        pose.scale(zoom, zoom, zoom);  // Scale
-        pose.translate(-centerX, -centerY, 0);  // Move back
+        pose.translate(centerX, centerY, 0);
+        pose.scale(zoom, zoom, zoom);
+        pose.translate(-centerX, -centerY, 0);
         renderObjects(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
         pose.popPose();
         guiGraphics.disableScissor();
@@ -89,6 +89,14 @@ public abstract class AbstractPanableScreen extends Screen {
         }
     }
 
-    protected abstract void renderObjects(GuiGraphics guiGraphics, int mouseX, int mouseY, LocalPlayer player, int centerX, int centerY, Minecraft mc);
+    protected abstract void renderObjects(
+        GuiGraphics guiGraphics,
+        int mouseX,
+        int mouseY,
+        LocalPlayer player,
+        float centerX,
+        float centerY,
+        Minecraft mc
+    );
 
 }

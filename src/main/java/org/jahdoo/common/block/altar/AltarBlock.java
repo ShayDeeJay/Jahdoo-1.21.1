@@ -18,14 +18,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.common.registers.SoundReg;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
-import static net.minecraft.world.ItemInteractionResult.SUCCESS;
-import static org.jahdoo.ascension.level_manager.BlockSetupManager.blockExitBarrier;
-import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.common.block.altar.AltarBlockEntity.startAltar;
 import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 
 public class AltarBlock extends BaseEntityBlock {
@@ -73,17 +69,8 @@ public class AltarBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof AltarBlockEntity altarE)) return FAIL;
         if (!(level instanceof ServerLevel serverLevel)) return FAIL;
 
-        blockExitBarrier(serverLevel, pos);
-        altarE.setData(INSTANCE_DATA, serverLevel.getData(INSTANCE_DATA));
-        if(!altarE.started){
-            Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.START_TRIAL.get(), 2);
-            altarE.summonMobs();
-            return SUCCESS;
-        }
-
-        return FAIL;
+        return startAltar(pos, altarE, serverLevel);
     }
-
 
 }
 

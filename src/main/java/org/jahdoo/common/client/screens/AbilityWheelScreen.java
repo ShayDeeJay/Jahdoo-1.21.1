@@ -227,9 +227,9 @@ public class AbilityWheelScreen extends Screen  {
             var getAbilityId = DataComponentHelper.getAbilityTypeWand(getMinecraft().player);
             var getAbility = AbilityReg.getSpellsByTypeId(getAbilityId.getPath().intern());
            if(!getAbility.isEmpty()){
-                SharedUI.getAbilityNameWithColour(getAbility.getFirst(), guiGraphics, x, y - 90, true);
+               SharedUI.getAbilityNameWithColour(getAbility.getFirst(), guiGraphics, x, y - 90, true);
                int width = (int) (getAbilityId.getPath().intern().length() * 3.5);
-               SharedUI.boxMaker(guiGraphics, x - width, y - 96, width, 10, SharedUI.BORDER_COLOUR);
+               SharedUI.boxMaker(guiGraphics, x - width, y - 96, width, 10);
            }
         }
     }

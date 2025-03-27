@@ -3,10 +3,12 @@ package org.jahdoo.ascension.level_manager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
@@ -223,10 +225,13 @@ public class BlockSetupManager {
                     for(int i = 0; i < 5; i++){
                         for (var direction : list) {
                             var blocker = TINTED_GLASS;
-                            var relative = startPlace.below(i).relative(direction);
+                            var newPos = startPlace.below(i);
+                            var relative = newPos.relative(direction);
                             var canPlaceHere = new AtomicBoolean(false);
 
-                            level.setBlockAndUpdate(startPlace.below(i), blocker.defaultBlockState());
+                            level.setBlockAndUpdate(newPos, blocker.defaultBlockState());
+                            Helpers.getSoundWithPosition(level, newPos, blocker.defaultBlockState().getSoundType().getPlaceSound());
+                            Helpers.getSoundWithPosition(level, newPos, SoundEvents.LODESTONE_COMPASS_LOCK, 1, 0.8F);
 
                             for (var direction1 : list) {
                                 var adjacentBlocks = relative.relative(direction1);

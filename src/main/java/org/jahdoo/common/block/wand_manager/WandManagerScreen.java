@@ -309,7 +309,6 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     }
 
     private void renderWand(GuiGraphics guiGraphics, int mouseX, int mouseY, int startX, int startY) {
-
         var i = 40;
         var i1 = -17;
         var shiftX1 = 75;
@@ -335,14 +334,13 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             var heightOffset = 86 - (showInventory ? 40 : 0);
             var color = color(50, borderColour);
             var colorA = color(20, borderColour);
-            boxMaker(guiGraphics, minX, minY, 30, heightOffset, getFadedColourBackground(0.4f));
+            boxMaker(guiGraphics, minX, minY, 30, heightOffset);
             boxMaker(guiGraphics, minX, minY, 30, heightOffset, color, colorA, colorFade);
         }
 
         guiGraphics.disableScissor();
         guiGraphics.pose().popPose();
         wandProperties(guiGraphics, startX, i, startY, i1);
-
     }
 
     private void baseWandProperties(

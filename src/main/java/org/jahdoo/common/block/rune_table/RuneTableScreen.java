@@ -236,7 +236,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
             var color = color(50, borderColour);
             var colorA = color(20, borderColour);
 
-            boxMaker(guiGraphics, minX, minY, 30, heightOffset, getFadedColourBackground(0.4f));
+            boxMaker(guiGraphics, minX, minY, 30, heightOffset);
             SharedUI.boxMaker(guiGraphics, minX, minY, 30, heightOffset, color, colorA, colorFade);
         }
 

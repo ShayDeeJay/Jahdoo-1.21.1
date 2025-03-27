@@ -150,7 +150,7 @@ public class LootChestBlock extends BaseEntityBlock {
         var coinItems = getCoinItems(data);
         if(!coinItems.isEmpty()){
             lootChestEntity.setOpen(true);
-            lootsplosian(pos, serverLevel, 10, ColourStore.ABSORPTION_YELLOW, coinItems, false, 0);
+            lootsplosian(pos.getCenter(), serverLevel, 10, ColourStore.ABSORPTION_YELLOW, coinItems, false, 0);
             openingSoundEffect(pos, serverLevel, false);
         } else {
             player.displayClientMessage(withStyleComponent("Chest is empty!", ColourStore.NEGATIVE_RED), true);
@@ -177,7 +177,7 @@ public class LootChestBlock extends BaseEntityBlock {
 
                 for(var i = 0; i < lootMultiplier; i++){
                     var rewards = getCompletionLoot(serverLevel, pos.getCenter(), setLootValue);
-                    lootsplosian(pos, serverLevel, lootMultiplier,  colour, rewards, true, 30);
+                    lootsplosian(pos.getCenter(), serverLevel, lootMultiplier,  colour, rewards, true, 30);
                 }
 
                 openingSoundEffect(pos, serverLevel, true);
@@ -191,7 +191,7 @@ public class LootChestBlock extends BaseEntityBlock {
     }
 
     public static void lootsplosian(
-        BlockPos pos,
+        Vec3 pos,
         ServerLevel serverLevel,
         int level,
         int colour,
@@ -200,8 +200,7 @@ public class LootChestBlock extends BaseEntityBlock {
         int pickupDelay
     ) {
         for (var reward : rewards) {
-            var pCenter = pos.getCenter();
-            var itemEntity = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() + 0.2, pCenter.z(), reward);
+            var itemEntity = new ItemEntity(serverLevel, pos.x(), pos.y() + 0.2, pos.z(), reward);
             var angle = Random.nextDouble() * 2 * Math.PI;
             var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
             var offsetX = Math.cos(angle) * horizontalOffset;
@@ -223,13 +222,13 @@ public class LootChestBlock extends BaseEntityBlock {
                     case LEGENDARY, ETERNAL -> { /*No Data*/ }
                 }
 
-                var itemEntity1 = new ItemEntity(serverLevel, pCenter.x(), pCenter.y() + 0.2, pCenter.z(), itemStack);
+                var itemEntity1 = new ItemEntity(serverLevel, pos.x(), pos.y() + 0.2, pos.z(), itemStack);
                 itemEntity1.setDeltaMovement(velocity);
                 itemEntity1.setPickUpDelay(pickupDelay);
                 serverLevel.addFreshEntity(itemEntity1);
             }
 
-            particleBurst(serverLevel, pCenter, colour, level);
+            particleBurst(serverLevel, pos, colour, level);
             attachItemData(serverLevel, rarity, itemStackMain, false, null);
             serverLevel.addFreshEntity(itemEntity);
         }

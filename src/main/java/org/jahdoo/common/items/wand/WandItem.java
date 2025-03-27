@@ -1,5 +1,6 @@
 package org.jahdoo.common.items.wand;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -118,6 +119,14 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
+
+        if(level instanceof CustomLevel customLevel && player.isShiftKeyDown()){
+            for (var entity : customLevel.getEntities().getAll()) {
+                if(!(entity instanceof Player)){
+                    entity.kill();
+                }
+            }
+        }
 
         if (canOffHand(player, interactionHand, true)) {
             player.startUsingItem(interactionHand);

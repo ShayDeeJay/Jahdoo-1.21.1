@@ -39,6 +39,9 @@ import org.jahdoo.ascension.ability.abilities.block_placer.BlockPlacerAbility;
 import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.ascension.ability.abilities.wall_placer.WallPlacerAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.ascension.attachments.InstanceData;
+import org.jahdoo.ascension.trading_post.RewardLootTables;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
@@ -66,6 +69,7 @@ import static net.minecraft.world.level.storage.loot.parameters.LootContextParam
 import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedArmor;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
+import static org.jahdoo.common.block.loot_chest.LootChestBlock.lootsplosian;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.elementalWithType;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentWithAbility;
 import static org.jahdoo.common.items.wand.WandItemHelper.storeBlockType;
@@ -351,7 +355,7 @@ public class EventHelpers {
     }
 
     public static void coinDropCalc(LivingEntity entity, int bonus) {
-        if(entity.level() instanceof CustomLevel){
+        if(entity.level() instanceof CustomLevel level){
             entity.skipDropExperience();
             var max = Math.max(1, bonus);
 
@@ -360,6 +364,12 @@ public class EventHelpers {
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
                     throwItem(entity, stack, entity.position());
                 }
+            }
+
+            if(entity.getPersistentData().getBoolean("boss")){
+                var data = new InstanceData();
+                data.setGoldTime(10);
+                lootsplosian(entity.position(), level, 10, ColourStore.ABSORPTION_YELLOW, RewardLootTables.getCoinItems(data), false, 0);
             }
 
             if(entity instanceof CustomSkeleton){

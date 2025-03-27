@@ -19,19 +19,11 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
     @Nullable
     protected LivingEntity target;
     protected TargetingConditions targetConditions;
-    protected float trackDistance;
     protected final Class<T> targetType;
-    protected final int randomInterval;
 
-    public AttackNearbyMonsters(Mob mob, Class<T> targetType, boolean mustSee, int randomInterval, int trackDistance) {
-        this(mob, targetType, randomInterval, mustSee, false, null);
-        this.trackDistance = trackDistance;
-    }
-
-    public AttackNearbyMonsters(Mob mob, Class<T> targetType, int randomInterval, boolean mustSee, boolean mustReach, @Nullable Predicate<LivingEntity> targetPredicate) {
+    public AttackNearbyMonsters(Mob mob, Class<T> targetType, boolean mustSee, boolean mustReach, @Nullable Predicate<LivingEntity> targetPredicate) {
         super(mob, mustSee, mustReach);
         this.targetType = targetType;
-        this.randomInterval = reducedTickDelay(randomInterval);
         this.setFlags(EnumSet.of(Flag.TARGET));
         this.targetConditions = TargetingConditions.forCombat().range(this.getFollowDistance()).selector(targetPredicate);
     }

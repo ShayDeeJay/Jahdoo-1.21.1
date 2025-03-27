@@ -273,7 +273,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
 //        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, false));
-        this.targetSelector.addGoal(1, new AttackNearbyMonsters<>(this, LivingEntity.class, false, 5, 100));
+        this.targetSelector.addGoal(1, new AttackNearbyMonsters<>(this, LivingEntity.class, false, true, null));
         this.targetSelector.addGoal(2, new GenericHurtByTargetGoal(this));
         this.targetSelector.addGoal(3, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(3, new GenericOwnerHurtTargetGoal(this, this::getOwner));

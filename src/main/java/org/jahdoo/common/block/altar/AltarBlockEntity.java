@@ -10,9 +10,12 @@ import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jahdoo.ascension.mobs.MobManager;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
@@ -33,8 +36,9 @@ import java.util.List;
 import java.util.UUID;
 
 import static net.minecraft.core.BlockPos.containing;
-import static org.jahdoo.ascension.level_manager.BlockSetupManager.setLootChests;
-import static org.jahdoo.ascension.level_manager.BlockSetupManager.setPerkTable;
+import static net.minecraft.world.ItemInteractionResult.FAIL;
+import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static org.jahdoo.ascension.level_manager.BlockSetupManager.*;
 import static org.jahdoo.ascension.level_manager.StructureManager.placeLocksWithData;
 import static org.jahdoo.ascension.mobs.MobManager.addAndPositionEntity;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
@@ -43,6 +47,7 @@ import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
 import static org.jahdoo.common.block.altar.AltarAnim.idleParticleAnim;
 import static org.jahdoo.common.block.altar.AltarAnim.onActivationAnim;
 import static org.jahdoo.common.entities.EntityAnimations.ALTAR_IDLE;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 
 public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntity {
@@ -108,6 +113,30 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
                 return;
             }
         }
+    }
+
+    private void autoStartAltar(ServerLevel serverLevel, BlockPos pos) {
+        if(!this.started){
+            var getWithBounding = new AABB(
+                pos.getX() - 23, pos.getY() - 3, pos.getZ() - 23,
+                pos.getX() + 24, pos.getY(), pos.getZ() + 24
+            );
+            for (var entity : serverLevel.getEntities(null, getWithBounding)) {
+                if(entity instanceof Player) startAltar(pos, this, serverLevel);
+            }
+        }
+    }
+
+    public static ItemInteractionResult startAltar(BlockPos pos, AltarBlockEntity altarE, ServerLevel serverLevel) {
+        if(!altarE.started){
+            blockExitBarrier(serverLevel, pos);
+            altarE.setData(INSTANCE_DATA, serverLevel.getData(INSTANCE_DATA));
+            Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.START_TRIAL.get(), 2);
+            altarE.summonMobs();
+            return SUCCESS;
+        }
+
+        return FAIL;
     }
 
     private void onCompleteAltar(BlockPos pos, ServerLevel serverLevel) {
@@ -181,41 +210,42 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if(level instanceof ServerLevel serverLevel){
-            if(this.started) {
-                this.privateTicks++;
+        if(!(level instanceof ServerLevel serverLevel)) return;
 
-                if(privateTicks % 2 == 0){
-                    if(!this.spawnableMobs.isEmpty() && onField.size() < 20){
-                        var randomPoses = innerRadiusRandom(pos.below(2).getCenter(), 20, 200)
-                            .stream()
-                            .filter(pos1 -> level.getBlockState(containing(pos1)).isAir() && level.getBlockState(containing(pos1).above()).isAir())
-                            .toList();
+        autoStartAltar(serverLevel, pos);
+        if(this.started) {
+            this.privateTicks++;
 
-                        var entity = listRandom(this.spawnableMobs);
-                        var position = listRandom(randomPoses);
-                        addAndPositionEntity(serverLevel, containing(position), entity);
-                        this.onField.add(entity.getUUID());
-                        this.spawnableMobs.remove(entity);
-                    }
+            if(privateTicks % 2 == 0){
+                if(!this.spawnableMobs.isEmpty() && onField.size() < 20){
+                    var randomPoses = innerRadiusRandom(pos.below(2).getCenter(), 20, 200)
+                        .stream()
+                        .filter(pos1 -> serverLevel.getBlockState(containing(pos1)).isAir() && serverLevel.getBlockState(containing(pos1).above()).isAir())
+                        .toList();
+
+                    var entity = listRandom(this.spawnableMobs);
+                    var position = listRandom(randomPoses);
+                    addAndPositionEntity(serverLevel, containing(position), entity);
+                    this.onField.add(entity.getUUID());
+                    this.spawnableMobs.remove(entity);
                 }
-
-                this.updateBlock();
-                idleParticleAnim(pos, privateTicks, level);
             }
 
-            removeKilledMobs(serverLevel);
-            tickBossEvent();
+            this.updateBlock();
+            idleParticleAnim(pos, privateTicks, level);
+        }
 
-            if(privateTicks == 30){
-                MobManager.summonEntities(this, roomId);
-                this.beginSpawning = false;
-            }
+        removeKilledMobs(serverLevel);
+        tickBossEvent();
 
-            if (privateTicks == 1) onActivationAnim(level, pos, privateTicks);
-            if (privateTicks > 30 && started && this.onField.isEmpty() && spawnableMobs.isEmpty()) {
-                onCompleteAltar(pos, serverLevel);
-            }
+        if(privateTicks == 30){
+            MobManager.summonEntities(this, roomId);
+            this.beginSpawning = false;
+        }
+
+        if (privateTicks == 1) onActivationAnim(level, pos, privateTicks);
+        if (privateTicks > 30 && started && this.onField.isEmpty() && spawnableMobs.isEmpty()) {
+            onCompleteAltar(pos, serverLevel);
         }
     }
 

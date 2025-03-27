@@ -65,8 +65,16 @@
 			"bones": {
 				"pillar": {
 					"rotation": {
-						"vector": ["math.sin(query.anim_time * 80) * 1", "query.anim_time * 80", "math.cos(query.anim_time * 60) * 0.5"],
-						"easing": "linear"
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.4": {
+							"vector": [0, 0, 0]
+						},
+						"0.7": {
+							"vector": ["math.sin(query.anim_time * 80) * 1", "query.anim_time * 80", "math.cos(query.anim_time * 60) * 0.5"],
+							"easing": "linear"
+						}
 					},
 					"position": {
 						"0.0": {
@@ -74,7 +82,7 @@
 						},
 						"0.5": {
 							"vector": [0, "35 + math.sin(query.anim_time * 100) * 3", 0],
-							"easing": "easeOutCirc"
+							"easing": "easeInCirc"
 						}
 					}
 				}

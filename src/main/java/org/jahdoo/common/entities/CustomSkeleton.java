@@ -48,6 +48,10 @@ public class CustomSkeleton extends Skeleton implements ITamableEntity {
         this.arrowType = arrowType;
     }
 
+    public boolean isElite(){
+        return this.isElite;
+    }
+
     public void setElite(){
         this.isElite = true;
     }

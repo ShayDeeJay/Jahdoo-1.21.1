@@ -215,19 +215,16 @@ public class InstanceData implements IAttachment {
 
     public static InstanceData setEasyData() {
         var data = new InstanceData();
-
         data.incrementHorde(5);
         data.setDifficulty(EASY.getSerializedName());
 
         //20 Minutes
         data.setMaxTime(24000);
-
         return data;
     }
 
     public static InstanceData setMediumData() {
         var data = new InstanceData();
-
         data.setDifficulty(MEDIUM.getSerializedName());
         data.incrementHorde(10);
         data.incrementHealth(10);
@@ -235,20 +232,17 @@ public class InstanceData implements IAttachment {
 
         //15 Minutes
         data.setMaxTime(18000);
-
         return data;
     }
 
     public static InstanceData setHardData() {
         var data = new InstanceData();
-
         data.setDifficulty(HARD.getSerializedName());
+        data.incrementHorde(10);
+        data.incrementSkeleton(10);
         data.incrementHealth(100);
         data.incrementAttackDamage(100);
         data.incrementSpeed(15);
-        data.incrementHorde(10);
-        data.incrementSkeleton(5);
-        data.incrementEternalWizard(2);
 
         //10 Minutes
         data.setMaxTime(12000);

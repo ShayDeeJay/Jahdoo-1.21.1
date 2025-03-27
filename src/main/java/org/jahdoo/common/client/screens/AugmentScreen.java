@@ -8,15 +8,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
-import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
 import org.jahdoo.common.client.button.ToggleComponent;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.networking.client2server.SyncComponentBlockC2S;
 import org.jahdoo.common.networking.client2server.SyncComponentC2S;
-import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -26,12 +26,11 @@ import java.util.stream.Collectors;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.ascension.ability.AbilityBuilder.MANA_COST;
+import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.SharedUI.BORDER_COLOUR;
 import static org.jahdoo.common.client.button.ToggleComponent.textWithBackgroundLarge;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
 import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
-import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 
 public class AugmentScreen extends Screen  {
 
@@ -146,10 +145,8 @@ public class AugmentScreen extends Screen  {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBlurredBackground(partialTick);
-        SharedUI.boxMaker(guiGraphics, this.width/2-131, this.height/2 - 70, 16, this.previousScreen == null ? 16 : 25, BORDER_COLOUR);
+        SharedUI.boxMaker(guiGraphics, this.width/2-131, this.height/2 - 70, 16, this.previousScreen == null ? 16 : 25);
         SharedUI.setCustomBackground(this.height, this.width, guiGraphics);
-//        Centre finder
-//        SharedUI.boxMaker(guiGraphics, this.width/2 - 100, this.height/2 - 70, 50, this.previousScreen == null ? 95 : 55, BORDER_COLOUR);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.disableScissor();
         SharedUI.header(guiGraphics, this.width, this.height, itemStack, this.font, this.getMinecraft().level);

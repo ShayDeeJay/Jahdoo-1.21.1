@@ -329,7 +329,7 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
         this.targetSelector.addGoal(1, new GenericHurtByTargetGoal(this));
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getOwner));
-        this.targetSelector.addGoal(2, new AttackNearbyMonsters<>(this, LivingEntity.class, true, 10, 30));
+        this.targetSelector.addGoal(2, new AttackNearbyMonsters<>(this, LivingEntity.class, true, true, null));
     }
 
     @Override
