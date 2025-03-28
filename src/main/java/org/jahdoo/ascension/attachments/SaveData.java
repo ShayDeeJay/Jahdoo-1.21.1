@@ -4,12 +4,16 @@ import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.BundleContents;
+import net.minecraft.world.item.component.CustomModelData;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ItemReg;
 import top.theillusivec4.curios.api.CuriosApi;
 
@@ -95,12 +99,12 @@ public class SaveData implements IAttachment {
         this.itemStacks.addAll(wandItems);
         allFilteredItems.forEach(player.getInventory()::removeItem);
 
-        if(player.level() instanceof CustomLevel){
-            getLostItemReceipt(player);
+        if(player.level() instanceof CustomLevel customLevel){
+            getLostItemReceipt(player, customLevel);
         }
     }
 
-    private void getLostItemReceipt(Player player) {
+    private void getLostItemReceipt(Player player, ServerLevel serverLevel) {
         var receipt = new ItemStack(ItemReg.RECOVERY_RECEIPT);
         var list = new ArrayList<ItemStack>();
 
@@ -132,6 +136,15 @@ public class SaveData implements IAttachment {
 
         if(!list.isEmpty()){//Add as bundle for now as item that saves may have tooltip
             receipt.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(list));
+            var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
+            var value = new CustomModelData(
+                switch (data.getDifficulty()){
+                    case Helpers.MEDIUM -> 2;
+                    case Helpers.HARD -> 3;
+                    default -> 1;
+                }
+            );
+            receipt.set(DataComponents.CUSTOM_MODEL_DATA, value);
             this.itemStacks.add(receipt);
         }
     }

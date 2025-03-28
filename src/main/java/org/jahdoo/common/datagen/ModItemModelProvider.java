@@ -33,6 +33,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         registerMagnets();
         registerCoins();
         registerCarePackages();
+        registerRecoveryReceipts();
     }
 
     private void createSimpleItemModel(DeferredHolder<Item, Item> item) {
@@ -95,6 +96,13 @@ public class ModItemModelProvider extends ItemModelProvider {
         }
     }
 
+    private void registerRecoveryReceipts() {
+        for (int i = 1; i < 4; i++) {
+            createModel("recovery_receipt" + i, "item/recovery_receipts/recovery_receipt" + i);
+            createOverride(i, ItemReg.RECOVERY_RECEIPT, "item/recovery_receipt");
+        }
+    }
+
     private void createOverride(int runeId, DeferredHolder<Item, Item> item, String prefix) {
         getWithParent(item, prefix + "s/" + item.getId().getPath())
             .override()
@@ -128,8 +136,7 @@ public class ModItemModelProvider extends ItemModelProvider {
             ItemReg.AUGMENT_CORE, ItemReg.AUGMENT_FRAGMENT,
             ItemReg.ADVANCED_AUGMENT_CORE, ItemReg.AUGMENT_HYPER_CORE,
             ItemReg.MANA_CONTAINER, ItemReg.BOON_CONTAINER,
-            ItemReg.RECALL_TOKEN, ItemReg.CHALLENGER_TICKET,
-            ItemReg.RECOVERY_RECEIPT
+            ItemReg.RECALL_TOKEN, ItemReg.CHALLENGER_TICKET
         );
 
         simpleItems.forEach(this::createSimpleItemModel);
@@ -140,7 +147,11 @@ public class ModItemModelProvider extends ItemModelProvider {
             ItemReg.WIZARD_HELMET, ItemReg.WIZARD_CHESTPLATE,
             ItemReg.WIZARD_LEGGINGS, ItemReg.WIZARD_BOOTS,
             ItemReg.MAGE_HELMET, ItemReg.MAGE_CHESTPLATE,
-            ItemReg.MAGE_LEGGINGS, ItemReg.MAGE_BOOTS
+            ItemReg.MAGE_LEGGINGS, ItemReg.MAGE_BOOTS,
+            ItemReg.BATTLEMAGE_HELMET, ItemReg.BATTLEMAGE_CHESTPLATE,
+            ItemReg.BATTLEMAGE_LEGGINGS, ItemReg.BATTLEMAGE_BOOTS,
+            ItemReg.KNIGHT_KING_HELMET, ItemReg.KNIGHT_KING_CHESTPLATE,
+            ItemReg.KNIGHT_KING_LEGGINGS, ItemReg.KNIGHT_KING_BOOTS
         );
 
         armorItems.forEach(this::createSimpleItemModel);

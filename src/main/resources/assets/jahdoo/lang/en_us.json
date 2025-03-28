@@ -17,10 +17,20 @@
   "item.jahdoo.wizard_leggings": "Grand Wizard Leggings",
   "item.jahdoo.wizard_boots": "Grand Wizard Boots",
 
-  "item.jahdoo.mage_helmet": "Battlemage Hood",
-  "item.jahdoo.mage_chestplate": "Battlemage Chest Piece",
-  "item.jahdoo.mage_leggings": "Battlemage Leggings",
-  "item.jahdoo.mage_boots": "Battlemage Sandals",
+  "item.jahdoo.mage_helmet": "Mage Hood",
+  "item.jahdoo.mage_chestplate": "Mage Chest Piece",
+  "item.jahdoo.mage_leggings": "Mage Leggings",
+  "item.jahdoo.mage_boots": "Mage Sandals",
+
+  "item.jahdoo.battlemage_helmet": "Battlemage Crown",
+  "item.jahdoo.battlemage_chestplate": "Battlemage Chest Piece",
+  "item.jahdoo.battlemage_leggings": "Battlemage Leggings",
+  "item.jahdoo.battlemage_boots": "Battlemage Sandals",
+
+  "item.jahdoo.knight_king_helmet": "Knight King Helmet",
+  "item.jahdoo.knight_king_chestplate": "Knight King Chestplate",
+  "item.jahdoo.knight_king_leggings": "Knight King Leggings",
+  "item.jahdoo.knight_king_boots": "Knight King Boots",
 
   "block.jahdoo.infusion_table": "Infusion Table",
   "block.jahdoo.creator": "Creator Pedestal",

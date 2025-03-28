@@ -31,6 +31,12 @@ public class ArmorMaterialReg {
     public static DeferredHolder<ArmorMaterial, ArmorMaterial> MAGE =
         register("mage_armor", makeArmorMap(3, 8, 6, 3));
 
+    public static DeferredHolder<ArmorMaterial, ArmorMaterial> BATTLEMAGE =
+        register("battlemage_armor", makeArmorMap(3, 8, 6, 3));
+
+    public static DeferredHolder<ArmorMaterial, ArmorMaterial> KNIGHT_KING =
+        register("knight_king_armor", makeArmorMap(3, 8, 6, 3));
+
     private static DeferredHolder<ArmorMaterial, ArmorMaterial> register(
         String name,
         EnumMap<ArmorItem.Type, Integer> defense

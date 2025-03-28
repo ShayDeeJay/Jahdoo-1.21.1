@@ -47,8 +47,8 @@ public class CreativeTab {
                 outPut.accept(INGMAS_SWORD.get());
                 outPut.accept(RECALL_TOKEN.get());
                 outPut.accept(CHALLENGER_TICKET.get());
-                outPut.accept(RECOVERY_RECEIPT.get());
-                
+
+                registerRecoveryReceipts(outPut);
                 registerCarePackages(outPut);
                 registerElementalSwords(outPut);
                 registerAmulets(outPut);
@@ -64,14 +64,27 @@ public class CreativeTab {
                 outPut.accept(AUGMENT_HYPER_CORE.get());
                 outPut.accept(TOME_OF_UNITY.get());
                 outPut.accept(BATTLEMAGE_GAUNTLET.get());
+
                 outPut.accept(WIZARD_HELMET.get());
                 outPut.accept(WIZARD_CHESTPLATE.get());
                 outPut.accept(WIZARD_LEGGINGS.get());
                 outPut.accept(WIZARD_BOOTS.get());
+
                 outPut.accept(MAGE_HELMET.get());
                 outPut.accept(MAGE_CHESTPLATE.get());
                 outPut.accept(MAGE_LEGGINGS.get());
                 outPut.accept(MAGE_BOOTS.get());
+
+                outPut.accept(BATTLEMAGE_HELMET.get());
+                outPut.accept(BATTLEMAGE_CHESTPLATE.get());
+                outPut.accept(BATTLEMAGE_LEGGINGS.get());
+                outPut.accept(BATTLEMAGE_BOOTS.get());
+
+                outPut.accept(KNIGHT_KING_HELMET.get());
+                outPut.accept(KNIGHT_KING_CHESTPLATE.get());
+                outPut.accept(KNIGHT_KING_LEGGINGS.get());
+                outPut.accept(KNIGHT_KING_BOOTS.get());
+
                 outPut.accept(WAND_MANAGER_TABLE.get());
                 outPut.accept(WAND_ITEM_MYSTIC.get());
                 outPut.accept(WAND_ITEM_FROST.get());
@@ -90,6 +103,18 @@ public class CreativeTab {
             var customModelData = new CustomModelData(i);
             elementalSword.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
             pOutput.accept(elementalSword);
+        }
+    }
+
+    private static void registerRecoveryReceipts(CreativeModeTab.Output pOutput) {
+        pOutput.accept(RECOVERY_RECEIPT.get());
+
+        for(int i = 1; i < 4; i++) {
+            var carePackage = new ItemStack(RECOVERY_RECEIPT.get());
+            var customModelData = new CustomModelData(i);
+
+            carePackage.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
+            pOutput.accept(carePackage);
         }
     }
 

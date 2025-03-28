@@ -9,6 +9,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.items.*;
+import org.jahdoo.common.items.armor.KnightKingArmor;
+import org.jahdoo.common.items.armor.mage.BattleMageArmor;
 import org.jahdoo.common.items.armor.mage.MageArmor;
 import org.jahdoo.common.items.armor.wizard.WizardArmor;
 import org.jahdoo.common.items.augments.Augment;
@@ -160,6 +162,32 @@ public class ItemReg {
 
     public static final DeferredHolder<Item, Item> MAGE_BOOTS =
         complexItem("mage_boots", () -> new MageArmor(BOOTS));
+
+    //Battlemage
+    public static final DeferredHolder<Item, Item> BATTLEMAGE_HELMET =
+        complexItem("battlemage_helmet", () -> new BattleMageArmor(HELMET));
+
+    public static final DeferredHolder<Item, Item> BATTLEMAGE_CHESTPLATE =
+        complexItem("battlemage_chestplate", () -> new BattleMageArmor(CHESTPLATE));
+
+    public static final DeferredHolder<Item, Item> BATTLEMAGE_LEGGINGS =
+        complexItem("battlemage_leggings", () -> new BattleMageArmor(LEGGINGS));
+
+    public static final DeferredHolder<Item, Item> BATTLEMAGE_BOOTS =
+        complexItem("battlemage_boots", () -> new BattleMageArmor(BOOTS));
+
+    //Knight King
+    public static final DeferredHolder<Item, Item> KNIGHT_KING_HELMET =
+        complexItem("knight_king_helmet", () -> new KnightKingArmor(HELMET));
+
+    public static final DeferredHolder<Item, Item> KNIGHT_KING_CHESTPLATE =
+        complexItem("knight_king_chestplate", () -> new KnightKingArmor(CHESTPLATE));
+
+    public static final DeferredHolder<Item, Item> KNIGHT_KING_LEGGINGS =
+        complexItem("knight_king_leggings", () -> new KnightKingArmor(LEGGINGS));
+
+    public static final DeferredHolder<Item, Item> KNIGHT_KING_BOOTS =
+        complexItem("knight_king_boots", () -> new KnightKingArmor(BOOTS));
 
 
     public static DeferredHolder<Item, Item> complexItem(String name, Supplier<? extends Item> sup){
