@@ -249,6 +249,28 @@ public class InstanceData implements IAttachment {
         return data;
     }
 
+    public static InstanceData copyInstance(InstanceData original) {
+        return new InstanceData(
+            original.difficulty,
+            original.ticks,
+            original.horde,
+            original.skeleton,
+            original.eternalWizard,
+            original.voidSpider,
+            original.infernoCreeper,
+            original.clearedRooms,
+            original.maxTime,
+            original.bronzeCoin,
+            original.silverCoin,
+            original.goldCoin,
+            original.health,
+            original.speed,
+            original.armor,
+            original.attackDamage
+        );
+    }
+
+
     public static final Codec<InstanceData> CODEC = RecordCodecBuilder.create(
         instance -> instance.group(
             Codec.STRING.fieldOf("difficulty").forGetter(InstanceData::getDifficulty),

@@ -33,6 +33,8 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         nexite(recipeOutput, NEXITE_BLOCK.get().asItem());
         chaosCube(recipeOutput, MODULAR_CHAOS_CUBE.get().asItem());
         augmentModificationTable(recipeOutput, AUGMENT_MODIFICATION_STATION.get().asItem());
+        oreSmelting(recipeOutput, List.of(Items.ROTTEN_FLESH), RecipeCategory.MISC, Items.LEATHER, 2.0F, 200, "leather");
+
     }
 
     protected void infuser(RecipeOutput output, Item result) {
@@ -92,6 +94,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     protected void nexite(RecipeOutput output, Item result) {
         nineBlockStorageRecipes(output, RecipeCategory.MISC, NEXITE_POWDER.get(), RecipeCategory.BUILDING_BLOCKS, NEXITE_BLOCK.get());
+
         oreSmelting(output, List.of(RAW_NEXITE_BLOCK.get()),RecipeCategory.BUILDING_BLOCKS, result, 2.0F, 200, "nexite");
     }
 

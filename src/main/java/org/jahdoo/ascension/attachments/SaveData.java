@@ -97,6 +97,7 @@ public class SaveData implements IAttachment {
             .toList();
 
         this.itemStacks.addAll(wandItems);
+
         allFilteredItems.forEach(player.getInventory()::removeItem);
 
         if(player.level() instanceof CustomLevel customLevel){

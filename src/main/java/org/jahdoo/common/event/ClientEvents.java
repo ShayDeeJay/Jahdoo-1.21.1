@@ -37,12 +37,17 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
+    public static void overlayEventPre(RenderGuiLayerEvent.Pre event) {
         var instance = Minecraft.getInstance();
         var player = instance.player;
 
         crosshairManager(event);
         simpleGui(event, player);
+    }
+
+
+    @SubscribeEvent
+    public static void overlayEventPost(RenderGuiLayerEvent.Post event) {
         OverlayBlockTooltip.overlayEvent(event);
     }
 

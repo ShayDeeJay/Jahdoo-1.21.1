@@ -276,9 +276,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
 
     }
 
-
     public void reRollBaseModifiers(){
-
         var wandItemCopy = getWand().copy();
 
         for (var modifier : wandItemCopy.getAttributeModifiers().modifiers()) {
@@ -371,24 +369,28 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             var widthOffset = widthHeader / 2 + 8;
             boxMaker(guiGraphics, startX1, startY1, widthOffset, 20, borderColour, groupFade());
 
-            for (Component components : modifiersAndHeader) {
-                var posY = this.height / 2 - 74 + spacer.get() + shiftY;
-                var skip = components.getString().contains("Applies");
+            if(!modifiersAndHeader.isEmpty()){
+                for (Component components : modifiersAndHeader) {
+                    var posY = this.height / 2 - 74 + spacer.get() + shiftY;
+                    var skip = components.getString().contains("Applies");
 
-                guiGraphics.drawString(this.font, components, sharedX, posY, 0);
-                if(!skip){
-                    var range = getModifierRange(wandManager, components.getString());
-                    var posX = this.width / 2 - 28 + shiftX;
-                    var posY1 = this.height / 2 - 64 + spacer.get() + shiftY;
-                    guiGraphics.drawString(this.font, range, posX, posY1, ColourStore.HEADER_COLOUR);
+                    guiGraphics.drawString(this.font, components, sharedX, posY, 0);
+                    if (!skip) {
+                        var range = getModifierRange(wandManager, components.getString());
+                        var posX = this.width / 2 - 28 + shiftX;
+                        var posY1 = this.height / 2 - 64 + spacer.get() + shiftY;
+                        guiGraphics.drawString(this.font, range, posX, posY1, ColourStore.HEADER_COLOUR);
+                    }
+                    spacer.set(spacer.get() + (!skip ? 24 : 15));
+                    if (widthProperties < font.width(components)) widthProperties = font.width(components);
                 }
-                spacer.set(spacer.get() + (!skip ? 24 : 15));
-                if (widthProperties < font.width(components)) widthProperties = font.width(components);
+            } else {
+                guiGraphics.drawCenteredString(this.font, "No Base Stats", startX1 + 60, startY1 + 96, ColourStore.SUB_HEADER_COLOUR);
             }
 
             var startY2 = startY - 69 + shiftY;
             var offset = widthProperties / 2 + 8;
-            boxMaker(guiGraphics, startX1, startY2, offset, 65, borderColour, groupFade());
+            boxMaker(guiGraphics, startX1, startY2, Math.max(offset, 60), 65, borderColour, groupFade());
         }
     }
 

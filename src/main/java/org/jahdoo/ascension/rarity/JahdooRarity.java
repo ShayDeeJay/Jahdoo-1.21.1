@@ -169,6 +169,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
                 .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom)
                 .toList()
         );
+
         return listRandom(filteredList).getFirst();
     }
 

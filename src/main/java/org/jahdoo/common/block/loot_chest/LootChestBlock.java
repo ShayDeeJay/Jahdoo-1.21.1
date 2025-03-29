@@ -27,12 +27,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -48,6 +46,7 @@ import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.ascension.trading_post.RewardLootTables.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class LootChestBlock extends BaseEntityBlock {
 
@@ -125,10 +124,10 @@ public class LootChestBlock extends BaseEntityBlock {
         if (!(level instanceof ServerLevel serverLevel)) return FAIL;
 
         if(serverLevel instanceof CustomLevel && !cEntity.isOpen){
-            var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
+            var data = serverLevel.getData(INSTANCE_DATA);
 
             if(cEntity.isCoinChest()){
-                return coinChestGetter(pos, serverLevel, cEntity, data, player);
+                return coinChestGetter(pos, serverLevel, cEntity, player);
             } else {
                 var success = lootChestGetter(stack, serverLevel, pos, cEntity, data.getClearedRooms());
                 if (success != null) return success;
@@ -144,10 +143,9 @@ public class LootChestBlock extends BaseEntityBlock {
         BlockPos pos,
         ServerLevel serverLevel,
         LootChestEntity lootChestEntity,
-        InstanceData data,
         Player player
     ) {
-        var coinItems = getCoinItems(data);
+        var coinItems = getCoinItems(lootChestEntity.getData(INSTANCE_DATA));
         if(!coinItems.isEmpty()){
             lootChestEntity.setOpen(true);
             lootsplosian(pos.getCenter(), serverLevel, 10, ColourStore.ABSORPTION_YELLOW, coinItems, false, 0);
@@ -165,8 +163,10 @@ public class LootChestBlock extends BaseEntityBlock {
         LootChestEntity lootChestEntity,
         int clearedRooms
     ) {
-        if (stack.is(ItemReg.LOOT_KEY)) {
-            var value = stack.get(CUSTOM_MODEL_DATA).value();
+        var keyData = stack.get(CUSTOM_MODEL_DATA);
+        if (stack.is(ItemReg.LOOT_KEY) && keyData != null) {
+
+            var value = keyData.value();
             var isValid = value == lootChestEntity.getRarity;
             if (isValid) {
                 lootChestEntity.setOpen(true);
@@ -174,14 +174,10 @@ public class LootChestBlock extends BaseEntityBlock {
                 var colour = KeyItem.getJahdooRarity(getId).getColour();
                 var setLootValue = clearedRooms + (value * value);
                 var lootMultiplier = value + 1;
+                var rewards = getCompletionLoot(serverLevel, pos.getCenter(), setLootValue, value);
 
-                for(var i = 0; i < lootMultiplier; i++){
-                    var rewards = getCompletionLoot(serverLevel, pos.getCenter(), setLootValue);
-                    lootsplosian(pos.getCenter(), serverLevel, lootMultiplier,  colour, rewards, true, 30);
-                }
-
+                lootsplosian(pos.getCenter(), serverLevel, lootMultiplier, colour, rewards, true, 30);
                 openingSoundEffect(pos, serverLevel, true);
-
                 stack.shrink(1);
                 return SUCCESS;
             }

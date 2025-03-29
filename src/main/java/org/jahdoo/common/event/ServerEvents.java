@@ -103,11 +103,9 @@ public class ServerEvents {
         }
 
         if (!data.getBoolean("first_join")) {
-
             if(player.level() instanceof ServerLevel serverLevel){
                 getStarterKit(player, serverLevel);
             }
-
             data.putBoolean("first_join", true);
             playerData.put(Player.PERSISTED_NBT_TAG, data);
         }

@@ -66,7 +66,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
 
     @Override
     protected int getAllSlots() {
-        int size = RuneHolder.getRuneholder(getWandManagerEntity().getWandSlot()).runeSlots().size();
+        var size = RuneHolder.getRuneholder(getWandManagerEntity().getWandSlot()).runeSlots().size();
         return size + DEFAULT_SLOTS;
     }
 
@@ -78,19 +78,22 @@ public class WandManagerMenu extends AbstractInternalContainer {
 
     private void insertAugmentSlots() {
         var spacer = new AtomicInteger();
+        var handler = getWandManagerEntity().inputItemHandler;
 
         for (int i = 1; i < 4; i ++){
-            this.addSlot(new AugmentCoreSlot(getWandManagerEntity().inputItemHandler, i, posX - 75, posY + spacer.get() - 96, getCore().get(i-1)));
+            this.addSlot(new AugmentCoreSlot(handler, i, posX - 75, posY + spacer.get() - 96, getCore().get(i-1)));
             spacer.set(spacer.get() + 28);
         }
     }
 
     private void insertRuneSlots() {
         try{
+
             var getAllSlots = this.getWandManagerEntity().getWandSlot();
             var getData = RuneHolder.getRuneholder(getAllSlots);
             var iHandler = getWandManagerEntity().inputItemHandler;
             var indexOne = new AtomicInteger(4);
+
             for (ItemStack itemStack : getData.runeSlots()) {
                 iHandler.setStackInSlot(indexOne.get(), itemStack);
                 indexOne.set(indexOne.get() + 1);
@@ -101,7 +104,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
                 getData.runeSlots().size(), 0,0, offSetX, offSetY
             );
 
-        } catch (Exception e){
+        } catch (Exception e) {
             JahdooMod.LOGGER.log(Level.DEBUG, e);
         }
     }

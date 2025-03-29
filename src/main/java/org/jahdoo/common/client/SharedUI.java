@@ -296,10 +296,10 @@ public class SharedUI {
         FormattedCharSequence formattedcharsequence = pText.getVisualOrderText();
         String s = pText.getString();
         int i1 = isCentered ? pX - pFont.width(formattedcharsequence) / 2 : pX;
-        guiGraphics.drawString(pFont, s, i1 + 1, pY, backgroundColour, false);
-        guiGraphics.drawString(pFont, s, i1 - 1, pY, backgroundColour, false);
-        guiGraphics.drawString(pFont, s, i1, pY + 1, backgroundColour, false);
-        guiGraphics.drawString(pFont, s, i1, pY - 1, backgroundColour, false);
+//        guiGraphics.drawString(pFont, s, i1 + 1, pY, backgroundColour, false);
+//        guiGraphics.drawString(pFont, s, i1 - 1, pY, backgroundColour, false);
+//        guiGraphics.drawString(pFont, s, i1, pY + 1, backgroundColour, false);
+//        guiGraphics.drawString(pFont, s, i1, pY - 1, backgroundColour, false);
         guiGraphics.drawString(pFont, s, i1, pY, textColour, false);
         guiGraphics.pose().popPose();
     }

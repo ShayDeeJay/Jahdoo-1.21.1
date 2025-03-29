@@ -5,35 +5,30 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.attachments.CastingData;
-import org.jahdoo.ascension.attachments.PlayerWallet;
+import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.AbilityReg;
-import org.jahdoo.ascension.utils.Configuration;
-import org.jahdoo.common.components.DataComponentHelper;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.mojang.blaze3d.systems.RenderSystem.*;
-import static java.lang.String.*;
-import static net.minecraft.network.chat.Component.*;
-import static org.jahdoo.ascension.attachments.PlayerWallet.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static com.mojang.blaze3d.systems.RenderSystem.enableBlend;
+import static java.lang.String.valueOf;
+import static net.minecraft.network.chat.Component.literal;
+import static org.jahdoo.ascension.utils.Configuration.CUSTOM_UI;
+import static org.jahdoo.ascension.utils.Helpers.getUsedItem;
 import static org.jahdoo.ascension.utils.Maths.ticksToTime;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
-import static org.jahdoo.common.client.SharedUI.drawStringWithBackground;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
-import static org.jahdoo.common.registers.ElementReg.*;
+import static org.jahdoo.common.registers.ElementReg.fromWand;
 
 public class ManaBarOverlay implements LayeredDraw.Layer {
 
@@ -53,6 +48,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var heightRed = 10;
         var widthOffset = width - widthRed;
         var heightOffset = height - heightRed;
+
         boxMaker(guiGraphics, guiGraphics.guiWidth()/2 + offsetX, guiGraphics.guiHeight()/2 + offsetY, widthOffset, heightOffset, getFadedColourBackground(0.1F), getFadedColourBackground(0.8F));
         boxMaker(guiGraphics, guiGraphics.guiWidth()/2 + 4 + offsetX, guiGraphics.guiHeight()/2 + 4 + offsetY, widthOffset - 4, heightOffset - 4, 0, colour1, colour2);
     }
@@ -60,8 +56,30 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
     private void layoutStatOverlays(float health, int shiftX, int shiftY, int texture) {
         var spacer = new AtomicInteger();
         for(int i = 0; i < health; i+=2){
-            alignedGui.displayGuiLayer(33 + shiftX + spacer.get(), 29 + shiftY, texture, 6, 6);
+            alignedGui.displayGuiLayer(33 + shiftX + spacer.get(), 29 + shiftY, texture, 77, 6, 6);
             spacer.set(spacer.get() + 5);
+        }
+    }
+
+    public void setHEALTHOverlay(AlignedGui alignedGui, Player player, int manaProgress){
+        var type = getUsedItem(player);
+        var element = fromWand(type.getItem());
+
+        element.ifPresent(getElement -> this.types = getElement.id());
+        if(types > 0){
+            int[] manaOverlay = {35, 43, 27, 11, 19, 20};
+            alignedGui.displayGuiLayer(-manaProgress + 3, 18, 0, manaOverlay[4], manaProgress, 8, MANA_LEVEL_BAR);
+        }
+    }
+
+    public void setHealthOverlay(AlignedGui alignedGui, Player player, int manaProgress){
+        var type = getUsedItem(player);
+        var element = fromWand(type.getItem());
+
+        element.ifPresent(getElement -> this.types = getElement.id());
+        if(types > 0){
+            int[] manaOverlay = {35, 43, 27, 11, 19, 20};
+            alignedGui.displayGuiLayer(-manaProgress + 3, 18, 0, manaOverlay[4], manaProgress, 8, MANA_LEVEL_BAR);
         }
     }
 
@@ -72,7 +90,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         element.ifPresent(getElement -> this.types = getElement.id());
         if(types > 0){
             int[] manaOverlay = {35, 43, 27, 11, 19, 20};
-            alignedGui.displayGuiLayer(25, 18, 0, manaOverlay[types - 1], manaProgress, 8, MANA_LEVEL_BAR);
+            alignedGui.displayGuiLayer(25, 18, 0, manaOverlay[1], manaProgress, 8, MANA_LEVEL_BAR);
         }
     }
 
@@ -80,23 +98,24 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var spacer = new AtomicInteger();
         for(int i = 0; i < stat; i++){
             if(i%2==0){
-                alignedGui.displayGuiLayer(34 + shiftX + spacer.get(), 28 + shiftY, texture, 2, 2);
+                alignedGui.displayGuiLayer(34 + shiftX + spacer.get(), 47 + shiftY, texture, 77, 2, 2);
             } else {
-                alignedGui.displayGuiLayer(33 + shiftX + spacer.get(), 29 + shiftY, texture + 3, 4, 4);
+                alignedGui.displayGuiLayer(33 + shiftX + spacer.get(), 47 + shiftY, texture + 3, 77, 4, 4);
                 spacer.set(spacer.get() + 5);
             }
         }
     }
 
-    private void manaPoolCount(CastingData casterData, GuiGraphics pGuiGraphics, Minecraft minecraft){
+    private void manaPoolCount(double data, GuiGraphics pGuiGraphics, Minecraft minecraft, double x, double y, int colour){
         var height = pGuiGraphics.guiHeight();
-        var manaPoolCount = literal(valueOf(Math.round(casterData.getManaPool())));
+        var manaPoolCount = literal(valueOf(Math.round(data)));
         var colourBack = -13816531;
         var pose = pGuiGraphics.pose();
+
         pose.pushPose();
-        pose.translate(58 + this.alignedGui.shiftGuiX - 0.1, height - 16.1 - this.alignedGui.shiftGuiY, 10D);
+        pose.translate(58 + this.alignedGui.shiftGuiX - 0.1 + x, height - 16.1 - this.alignedGui.shiftGuiY + y, 10D);
         pose.scale(0.5f,0.5f,0.5f);
-        drawStringWithBackground(pGuiGraphics, minecraft.font, manaPoolCount, 0, 0, colourBack,  -4276546, true);
+        drawStringWithBackground(pGuiGraphics, minecraft.font, manaPoolCount, 0, 0, colourBack, colour, true);
         pose.popPose();
     }
 
@@ -104,6 +123,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var experienceLevel = player.experienceLevel;
         var experience = literal(valueOf(experienceLevel));
         var i = guiGraphics.guiHeight();
+
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(this.alignedGui.shiftGuiX - 20.8, i - this.alignedGui.shiftGuiY - 28.1, 10D);
         guiGraphics.pose().scale(0.5f, 0.5f, 0.5f);
@@ -117,7 +137,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
 
         if (alignedGui == null || alignedGui.getScreenWidth() != width || alignedGui.getScreenWidth() != height) {
             var alignedGui1 = new AlignedGui(graphics, height, width);
-            if(Configuration.CUSTOM_UI.get()){
+            if(CUSTOM_UI.get()){
                 alignedGui1.offsetGui(width / 2 - 16, 10);
             }
             this.alignedGui = alignedGui1;
@@ -135,19 +155,22 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         }
     }
 
-    private void cooldownTimer(AbilityRegistrar ability, CastingData casterData, GuiGraphics pGuiGraphics, Minecraft minecraft){
+    private void cooldownTimer(AbilityRegistrar ability, CastingData casterData, GuiGraphics graphics, Minecraft minecraft){
         if (ability == null) return;
 
         if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {
             var cooldownStatus = casterData.getCooldown(ability.setAbilityId());
-            pGuiGraphics.pose().pushPose();
+
+            graphics.pose().pushPose();
             var v = 0.5F;
-            pGuiGraphics.pose().scale(v, v, v);
-            var getCorrectX = Configuration.CUSTOM_UI.get() ? ((pGuiGraphics.guiWidth() / 2) * 2) : 32;
-            var getCorrectY = pGuiGraphics.guiHeight() * 2 - (Configuration.CUSTOM_UI.get() ? 40 : 20) ;
-            pGuiGraphics.pose().translate(getCorrectX, getCorrectY, 10D);
-            centeredStringNoShadow(pGuiGraphics, minecraft.font, literal(ticksToTime(valueOf(cooldownStatus))), 0, 0, -1, false);
-            pGuiGraphics.pose().popPose();
+            graphics.pose().scale(v, v, v);
+
+            var getCorrectX = CUSTOM_UI.get() ? ((graphics.guiWidth() / 2) * 2) : 32;
+            var getCorrectY = graphics.guiHeight() * 2 - (CUSTOM_UI.get() ? 40 : 20) ;
+
+            graphics.pose().translate(getCorrectX, getCorrectY, 10D);
+            centeredStringNoShadow(graphics, minecraft.font, literal(ticksToTime(valueOf(cooldownStatus))), 0, 0, -1, false);
+            graphics.pose().popPose();
         }
     }
 
@@ -161,13 +184,15 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
             var cooldownOverlaySize = 19;
             if(cooldownCost > 0){
                 var currentOverlayHeight = (cooldownStatus * cooldownOverlaySize) / cooldownCost;
-                alignedGui.displayGuiLayer(6, 5 + currentOverlayHeight, 89, cooldownOverlaySize, currentOverlayHeight);
-
+                enableBlend();
+                setShaderColor(1f, 1f, 1f, 0.9F);
+                alignedGui.displayGuiLayer(6, 5 + currentOverlayHeight, 77, 89, cooldownOverlaySize, currentOverlayHeight);
+                setShaderColor(1f, 1f, 1f, 1f);
             }
         }
     }
 
-    private static void renderSlot(@NotNull GuiGraphics graphics, ItemStack next, int x, int y, ResourceLocation lit, int index, int textColour, float alpha) {
+    private static void renderSlot(GuiGraphics graphics, ItemStack next, int x, int y, ResourceLocation lit, int index, int textColour, float alpha) {
         var count = next.getCount();
         graphics.renderFakeItem(next, x, y);
         int size = 24;
@@ -184,16 +209,15 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         }
     }
 
-    private static void inventory(@NotNull GuiGraphics graphics, LocalPlayer player) {
+    private static void inventory(GuiGraphics graphics, LocalPlayer player) {
         var selectedIndex = player.getInventory().selected;
         var current = player.getInventory().getItem(selectedIndex);
-        int prevIndex = selectedIndex - 1 < 0 ? 8 : selectedIndex - 1;
+        var prevIndex = selectedIndex - 1 < 0 ? 8 : selectedIndex - 1;
         var previous = player.getInventory().getItem(prevIndex);
-        int nextIndex = selectedIndex + 1 > 8 ? 0 : selectedIndex + 1;
+        var nextIndex = selectedIndex + 1 > 8 ? 0 : selectedIndex + 1;
         var next = player.getInventory().getItem(nextIndex);
         var y = graphics.guiHeight() - 60;
         var x = graphics.guiWidth() / 2 - 9;
-
         var unSelected = GUI_ITEM_SLOT;
         var alpha = 0.6f;
         var textColour = -7303024;
@@ -211,20 +235,12 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var shiftY = -12;
         var health = player.getHealth();
         var food = player.getFoodData();
-        var goldenHearts = player.getAbsorptionAmount();
         var experienceProgress = player.experienceProgress;
         var experienceWidth = (int) (20 * experienceProgress);
 
-        alignedGui.displayGuiLayer(31 + shiftX, 24 + shiftY, 70, 60, 8);
-        alignedGui.displayGuiLayer(31 + shiftX, 31 + shiftY, 70, 60, 8);
-        alignedGui.displayGuiLayer(31 + shiftX, 38 + shiftY, 70, 60, 8);
-//        var mana = ElementRegistry.FROST.get();
-//        var healths = ElementRegistry.VITALITY.get();
-//        var i = 20;
-//        statContainer(graphics, 26, 26, mana.textColourPrimary(), mana.textColourSecondary(), (6 + i) ,0);
-//        statContainer(graphics, 26, 26, healths.particleColourFaded(), healths.textColourPrimary(), -(40 + i) ,0);
+//        alignedGui.displayGuiLayer(28 + shiftX, 41 + shiftY, 77, 70, 60, 8);
+//        alignedGui.displayGuiLayer(31 + shiftX, 38 + shiftY, 77, 70, 60, 8);
 
-        layoutStatOverlays(goldenHearts, shiftX-1, shiftY + 1, 30);
         layoutStatOverlays(food.getSaturationLevel(), shiftX-1, shiftY - 6, 37);
         layoutStat(experienceWidth, shiftX, shiftY + 7, 44);
         layoutStat(food.getFoodLevel(), shiftX, shiftY - 7, 52);
@@ -238,37 +254,45 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var player = minecraft.player;
         if(player == null || minecraft.options.hideGui) return;
 
-        var manaBarWidth = 57;
+        var manaBarWidth = 47;
         var abilityRegistrars = AbilityReg.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
         var casterData = player.getData(CASTER_DATA);
         var manaPool = casterData.getManaPool();
         var maxMana = casterData.getMaxMana(player);
         var manaProgress = maxMana != 0 && manaPool != 0 ? (int) (manaPool * manaBarWidth / maxMana) : 0;
+        var healthProgress = (player.getHealth() * manaBarWidth / player.getMaxHealth());
 
         this.alignedGuiInstance(graphics);
         this.setFadeGui(player);
         this.alignedGui.setScale(2);
 
-
         graphics.pose().pushPose();
         enableBlend();
-        if(!Configuration.CUSTOM_UI.get()){
+
+        graphics.pose().translate(0, 8, 0);
+
+        if(!CUSTOM_UI.get()){
             graphics.pose().translate(0, -fadeIn, 0);
             setShaderColor(1f, 1f, 1f, fadeIn);
         }
 
         //Container
-        alignedGui.displayGuiLayer(1, 29, 120, 89, 29);
-        alignedGui.displayGuiLayer(40, 25, 108, 52, 3);
+        alignedGui.displayGuiLayer(-59, 29, 17, 120, 149, 29);
+        alignedGui.displayGuiLayer(40, 25, 17, 108, 52, 3);
 
+        this.manaPoolCount(player.getHealth(), graphics, minecraft, -77, 0,  ColourStore.MAGNET_STRENGTH_RED);
+        this.manaPoolCount(casterData.getManaPool(), graphics, minecraft, -5 , 0,  ColourStore.AETHER_BLUE);
+
+        this.setHealthOverlay(alignedGui, player, (int) (healthProgress + 3));
         this.setTypeOverlay(alignedGui, player, manaProgress + 3);
+
         this.cooldownOverlay(abilityRegistrars, casterData, graphics, minecraft);
         this.cooldownTimer(abilityRegistrars, casterData, graphics, minecraft);
-        this.manaPoolCount(casterData, graphics, minecraft);
-        if(Configuration.CUSTOM_UI.get()){
+
+        if(CUSTOM_UI.get()){
             Minecraft.getInstance().gui.renderSelectedItemName(graphics, 94);
             playerStats(graphics, player);
-            experienceNumber(minecraft, graphics, player);
+//            experienceNumber(minecraft, graphics, player);
             inventory(graphics, player);
         }
 
@@ -290,10 +314,10 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
             this.screenWidth = screenWidth;
         }
 
-        public void displayGuiLayer(int xA, int yA, int offsetY, int barSizeXb, int barSizeYb){
+        public void displayGuiLayer(int xA, int yA, int offsetU, int offsetY, int barSizeXb, int barSizeYb){
             int positionX = xA + shiftGuiX;
             int positionY = screenHeight - yA - shiftGuiY;
-            guiGraphics.blit(MANA_CONTAINER, positionX, positionY, 77, offsetY, barSizeXb, barSizeYb);
+            guiGraphics.blit(MANA_CONTAINER, positionX, positionY, offsetU, offsetY , barSizeXb, barSizeYb);
         }
 
         public void displayGuiLayer(int xA, int yA, int offsetX, int offsetY, int iconSize, ResourceLocation resourceLocation){

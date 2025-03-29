@@ -66,12 +66,16 @@ public class WandBlockMenu extends AbstractInternalContainer {
 
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int slotIndex) {
+
         var sourceSlot = slots.get(slotIndex);
         var sourceStack = sourceSlot.getItem();
         var copyOfSourceStack = sourceStack.copy();
-        int totalSlotsInWand = getWandBlockEntity().inputItemHandler.getSlots();
+        var totalSlotsInWand = getWandBlockEntity().inputItemHandler.getSlots();
+
         if(!sourceStack.has(WAND_DATA)) return ItemStack.EMPTY;
+
         var sourceStackIndex = getAbilityTypeItemStack(copyOfSourceStack);
+
         for(int i = 1; i < totalSlotsInWand; i++){
             if(slotIndex < SLOT_A + SLOT_SIZE){
                 var targetSlots = getWandBlockEntity().inputItemHandler;
@@ -94,5 +98,6 @@ public class WandBlockMenu extends AbstractInternalContainer {
         }
 
         return super.quickMoveStack(player, slotIndex);
+
     }
 }

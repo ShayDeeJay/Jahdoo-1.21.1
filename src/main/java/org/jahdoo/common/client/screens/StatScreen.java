@@ -66,11 +66,12 @@ public class StatScreen extends AbstractPanableScreen {
             player.getAttribute(ATTACK_SPEED),
             player.getAttribute(MOVEMENT_SPEED),
             player.getAttribute(ARMOR_TOUGHNESS),
+            player.getAttribute(ATTACK_DAMAGE),
             player.getAttribute(JUMP_STRENGTH)
         );
 
         getModStat(
-            guiGraphics, mc, xSpacing, ySpacing - 124,
+            guiGraphics, mc, xSpacing, ySpacing - 114,
             "Mana",
             Icons.MANA,
             AETHER_BLUE,
@@ -82,7 +83,7 @@ public class StatScreen extends AbstractPanableScreen {
         );
 
         getModStat(
-            guiGraphics, mc, xSpacing, ySpacing - 54,
+            guiGraphics, mc, xSpacing, ySpacing - 44,
             "Cooldown",
             Icons.CLOCK,
             COOLDOWN_GREEN,
@@ -92,7 +93,7 @@ public class StatScreen extends AbstractPanableScreen {
         );
 
         getModStat(
-            guiGraphics, mc, xSpacing, ySpacing - 4,
+            guiGraphics, mc, xSpacing, ySpacing + 6,
             "Magic Damage",
             Icons.EASY,
             color(237, 199, 74),

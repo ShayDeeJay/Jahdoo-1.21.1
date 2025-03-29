@@ -107,10 +107,16 @@ public class PlayerWallet implements IAttachment{
             return new CurrencyConverter(0, 0, 0, bronze);
         }
 
+        public static void purchase(CurrencyConverter converter, Player player) {
+            var wallet = PlayerWallet.getWalletValue(player);
+            var walletAfterPurchase = wallet - convertToWallet(converter);
+            updateWallet(player, walletAfterPurchase);
+        }
+
         public static boolean checkAndPurchase(CurrencyConverter converter, Player player) {
             var wallet = PlayerWallet.getWalletValue(player);
             if (canPurchase(converter, wallet)) {
-                int walletAfterPurchase = wallet - convertToWallet(converter);
+                var walletAfterPurchase = wallet - convertToWallet(converter);
                 updateWallet(player, walletAfterPurchase);
                 return true;
             }

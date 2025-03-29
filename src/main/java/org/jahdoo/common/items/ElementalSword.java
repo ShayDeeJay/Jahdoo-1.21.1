@@ -33,9 +33,10 @@ public class ElementalSword extends SwordItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-//        var mainHandItem = player.getMainHandItem();
+        var mainHandItem = player.getMainHandItem();
 //        if(!(level instanceof ServerLevel)) return InteractionResultHolder.fail(mainHandItem);
 //        mainHandItem.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(Random.nextInt(5)));
+
         return super.use(level, player, usedHand);
     }
 

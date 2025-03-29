@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import org.jahdoo.common.client.SharedUI;
 
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
@@ -49,15 +50,16 @@ public abstract class AbstractPanableScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         this.renderBlurredBackground(partialTick);
         var centerX = this.width / 2;
         var centerY = this.height / 2;
 
         smoothZoom();
-        renderBackground(guiGraphics, centerX, centerY);
-        transformativeObjects(guiGraphics, mouseX, mouseY, centerX, centerY);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        renderBackground(graphics, centerX, centerY);
+        transformativeObjects(graphics, mouseX, mouseY, centerX, centerY);
+        SharedUI.bezelMaker(graphics, -20 , -20, this.width - 20, this.height - 20, 60, null);
+        super.render(graphics, mouseX, mouseY, partialTick);
     }
 
     private void transformativeObjects(GuiGraphics guiGraphics, int mouseX, int mouseY, float centerX, float centerY) {
@@ -78,6 +80,7 @@ public abstract class AbstractPanableScreen extends Screen {
 
     private static void renderBackground(GuiGraphics guiGraphics, int centerX, int centerY) {
         boxMaker(guiGraphics, 2, 2, centerX - 2, centerY - 2, HEADER_COLOUR, getFadedColourBackground(0.8f));
+
     }
 
     private void smoothZoom() {

@@ -52,16 +52,13 @@ import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.*;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
@@ -205,12 +202,14 @@ public class EventHelpers {
         for (int i = 0; i < 5; i++) freeItems.add(ItemStack.EMPTY);
 
         freeItems.add(new ItemStack(ItemReg.CHALLENGER_TICKET));
-        freeItems.add(new ItemStack(Objects.requireNonNull(element.getWand())));
+        freeItems.add(new ItemStack(requireNonNull(element.getWand())));
         freeItems.add(new ItemStack(ItemReg.CHALLENGER_TICKET));
 
-        for (int i = 0; i < 7; i++) freeItems.add(ItemStack.EMPTY);
+        for (int i = 0; i < 6; i++) freeItems.add(ItemStack.EMPTY);
 
         freeItems.add(getAugmentWithAbility(elementalWithType(element.id())));
+        freeItems.add(ItemStack.EMPTY);
+        freeItems.add(getAugmentWithAbility(AbilityReg.BLOCK_BREAKER.get()));
 
         var shulkerBox = new ItemStack(
             switch (element.id()){

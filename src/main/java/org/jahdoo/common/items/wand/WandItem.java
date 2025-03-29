@@ -1,7 +1,7 @@
 package org.jahdoo.common.items.wand;
 
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -13,6 +13,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -30,8 +31,7 @@ import java.util.function.Consumer;
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.items.wand.WandItemHelper.*;
 import static org.jahdoo.common.registers.BlockReg.WAND;
-import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
-import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
+import static org.jahdoo.common.registers.ComponentReg.*;
 
 public class WandItem extends BlockItem implements GeoItem, JahdooItem {
 
@@ -90,7 +90,8 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
             .stacksTo(1)
             .component(ComponentReg.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
             .component(WAND_DATA.get(), WandData.DEFAULT)
-            .fireResistant();
+            .component(RUNE_HOLDER, RuneHolder.makeRuneSlots(0, 40))
+            .component(ComponentReg.JAHDOO_RARITY, 0);
     }
 
     @Override
@@ -120,10 +121,12 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
 
-        if(level instanceof CustomLevel customLevel && player.isShiftKeyDown()){
-            for (var entity : customLevel.getEntities().getAll()) {
-                if(!(entity instanceof Player)){
-                    entity.kill();
+        if(player.isCreative()){
+            if (level instanceof ServerLevel serverLevel) {
+                for (var entity : serverLevel.getEntities().getAll()) {
+                    if (!(entity instanceof Player)) {
+                        entity.kill();
+                    }
                 }
             }
         }

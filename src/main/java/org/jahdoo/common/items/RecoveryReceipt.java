@@ -3,7 +3,6 @@ package org.jahdoo.common.items;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -17,8 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.attachments.PlayerWallet;
-import org.jahdoo.common.items.augments.AugmentItemHelper;
+import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -26,23 +24,25 @@ import java.util.Optional;
 
 import static net.minecraft.world.InteractionResultHolder.fail;
 import static net.minecraft.world.InteractionResultHolder.success;
-import static org.jahdoo.ascension.attachments.PlayerWallet.CoinProperties;
+import static org.jahdoo.ascension.attachments.PlayerWallet.*;
+import static org.jahdoo.ascension.attachments.PlayerWallet.CoinProperties.*;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.*;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.common.items.augments.AugmentItemHelper.throwNewItem;
 
 public class RecoveryReceipt extends Item {
 
     public RecoveryReceipt() { super(new Properties()); }
-    public static final Pair<PlayerWallet.CoinProperties, PlayerWallet.CurrencyConverter> SILVER_CHARGE = Pair.of(
-        CoinProperties.SILVER, setBronzeCost(20)
-    );
-    public static final Pair<PlayerWallet.CoinProperties, PlayerWallet.CurrencyConverter> GOLD_CHARGE = Pair.of(
-        CoinProperties.GOLD, setSilverCost(20)
-    );
-    public static final Pair<PlayerWallet.CoinProperties, PlayerWallet.CurrencyConverter> PLATINUM_CHARGE = Pair.of(
-        CoinProperties.PLATINUM, setPlatinumCost(20)
-    );
+
+    public static final Pair<CoinProperties, CurrencyConverter> SILVER_CHARGE =
+        Pair.of(SILVER, setSilverCost(20));
+
+    public static final Pair<CoinProperties, CurrencyConverter> GOLD_CHARGE =
+        Pair.of(GOLD, setGoldCost(20));
+
+    public static final Pair<CoinProperties, CurrencyConverter> PLATINUM_CHARGE =
+        Pair.of(PLATINUM, setPlatinumCost(20));
 
     @Override
     public Component getName(ItemStack stack) {
@@ -80,7 +80,7 @@ public class RecoveryReceipt extends Item {
         var getPrice = getRecoveryCost(stack);
         if (getPrice == null) return fail(stack);
 
-        if(checkAndPurchase(getPrice.getSecond(), player)){
+        if(canPurchase(getPrice.getSecond(), getWalletValue(player))){
             player.startUsingItem(usedHand);
             return success(stack);
         } else {
@@ -104,25 +104,29 @@ public class RecoveryReceipt extends Item {
     }
 
     @Override
-    public void onUseTick(Level level, LivingEntity player, ItemStack stack, int remainingUseDuration) {
+    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int remainingUseDuration) {
         var confirmationTime = 50;
-        if (!(player instanceof ServerPlayer serverPlayer)) return;
+        if (!(livingEntity instanceof Player player)) return;
 
-        var hand = serverPlayer.getItemInHand(serverPlayer.getUsedItemHand());
-        if(serverPlayer.isUsingItem() && serverPlayer.getTicksUsingItem() >= confirmationTime){
-            var content = hand.get(DataComponents.BUNDLE_CONTENTS);
+        if(player.isUsingItem() && player.getTicksUsingItem() >= confirmationTime){
+            var content = stack.get(DataComponents.BUNDLE_CONTENTS);
+            var getPrice = getRecoveryCost(stack);
+            if(content != null && getPrice != null){
+                for (var itemStack : content.items()) throwNewItem(player, itemStack);
 
-            if(content != null){
-                for (var itemStack : content.items()) {
-                    AugmentItemHelper.throwNewItem(serverPlayer, itemStack);
-                }
-                hand.shrink(1);
-                serverPlayer.stopUsingItem();
+                player.playSound(SoundReg.COINBOX_OPEN.get(), 1, 1.8F);
+                purchase(getPrice.getSecond(), player);
+                stack.shrink(1);
+                player.stopUsingItem();
+            }
+        } else {
+            if(player.getTicksUsingItem() % 14 == 0){
+                player.playSound(SoundEvents.ENDER_CHEST_OPEN, 1, 2F);
             }
         }
     }
 
-    private static @Nullable Pair<CoinProperties, PlayerWallet.CurrencyConverter> getRecoveryCost(ItemStack stack) {
+    private static @Nullable Pair<CoinProperties, CurrencyConverter> getRecoveryCost(ItemStack stack) {
         var getTicket = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         if(getTicket == null) return null;
 

@@ -67,9 +67,6 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> SHULKER_SHELLS_BUILDER =
         lootTableItem(Items.SHULKER_SHELL);
 
-    public static final LootPoolSingletonContainer.Builder<?> ENCHANTED_BOTTLES_BUILDER =
-        lootTableItem(Items.EXPERIENCE_BOTTLE);
-
     public static final LootPoolSingletonContainer.Builder<?> GOLDEN_CARROT_BUILDER =
         lootTableItem(Items.GOLDEN_CARROT);
 
@@ -156,7 +153,10 @@ public class RewardLootTables {
 
     public static final LootPoolSingletonContainer.Builder<?> CHALLENGER_TICKET =
         lootTableItem(ItemReg.CHALLENGER_TICKET.get());
-    
+
+    public static final LootPoolSingletonContainer.Builder<?> STARTER_PACK =
+        lootTableItem(ItemReg.CARE_PACKAGE.get());
+
     public static List<ItemStack> getCoinItems(InstanceData data) {
         var lootCoins = new ArrayList<ItemStack>();
 
@@ -206,14 +206,29 @@ public class RewardLootTables {
         return shouldEnchant.build().getRandomItems(lootParams);
     }
 
-    public static ObjectArrayList<ItemStack> getCompletionLoot(ServerLevel serverLevel, Vec3 pos, int level) {
-        var loot = LootTable.lootTable().withPool(commonPool(serverLevel));
-        if (Random.nextInt(Math.max(1, 10 - level)) == 0) loot.withPool(epicPool(serverLevel));
-        if (Random.nextInt(Math.max(1, 100 - level)) == 0) loot.withPool(legendaryPool(serverLevel));
-        
-        loot.withPool(rareWeaponPool(serverLevel));
-        loot.withPool(rarePool(serverLevel));
-        
+    public static ObjectArrayList<ItemStack> getCompletionLoot(
+        ServerLevel serverLevel,
+        Vec3 pos,
+        int level,
+        int chestRarity
+    ) {
+        var loot = LootTable.lootTable()
+            .withPool(commonPool(level, chestRarity))
+            .withPool(commonPoolSingle());
+
+        if(chestRarity >= 1){
+            loot.withPool(rarePoolSingle())
+                .withPool(rarePool(level, chestRarity));
+        }
+
+        if(chestRarity >= 2){
+            loot.withPool(epicPool());
+        }
+
+        if(chestRarity > 2){
+            loot.withPool(legendaryPool());
+        }
+
         return createLootParams(serverLevel, pos, loot);
     }
 
@@ -256,7 +271,13 @@ public class RewardLootTables {
             );
     }
 
-    public static void attachItemData(ServerLevel serverLevel, JahdooRarity rarity, ItemStack itemStack, boolean isSpecial, JahdooRarity runeRarity) {
+    public static void attachItemData(
+        ServerLevel serverLevel,
+        JahdooRarity rarity,
+        ItemStack itemStack,
+        boolean isSpecial,
+        JahdooRarity runeRarity
+    ) {
         switch (itemStack.getItem()){
             case WandItem ignored -> setGeneratedWand(rarity, itemStack);
             case TomeOfUnity ignored -> createTomeAttributes(rarity, itemStack);
@@ -271,16 +292,7 @@ public class RewardLootTables {
         }
     }
 
-    private static LootPool.Builder rarePool(ServerLevel serverLevel) {
-        var builder = LootPool.lootPool().setRolls(between(1.0F, 3.0F));
-
-        return builder
-            .add(NEXITE_BLOCK_BUILDER.setWeight(20))
-            .add(AUGMENT_CORE_BUILDER.setWeight(15))
-            .add(BOOK_BUILDER.setWeight(5));
-    }
-
-    private static LootPool.Builder legendaryPool(ServerLevel serverLevel) {
+    private static LootPool.Builder legendaryPool() {
         var builder = LootPool.lootPool().setRolls(exactly(1.0F));
 
         return builder
@@ -292,20 +304,20 @@ public class RewardLootTables {
             .add(WIZARD_BOOTS_BUILDER.setWeight(1));
     }
 
-    private static LootPool.Builder epicPool(ServerLevel serverLevel) {
+    private static LootPool.Builder epicPool() {
         var builder = LootPool.lootPool().setRolls(exactly(1.0F));
 
         return builder
             .add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight(6))
+            .add(RECALL_TOKEN.setWeight(4))
             .add(TOME_OF_UNITY_BUILDER.setWeight(4))
-            .add(CHALLENGER_TICKET.setWeight(1))
             .add(BATTLEMAGE_HELM_BUILDER.setWeight(1))
             .add(BATTLEMAGE_CHEASTPLATE_BUILDER.setWeight(1))
             .add(BATTLEMAGE_LEGGINGS_BUILDER.setWeight(1))
             .add(BATTLEMAGE_BOOTS_BUILDER.setWeight(1));
     }
 
-    private static LootPool.Builder rareWeaponPool(ServerLevel serverLevel) {
+    private static LootPool.Builder rarePoolSingle() {
         var builder = LootPool.lootPool().setRolls(exactly(1.0F));
 
         return builder
@@ -313,26 +325,52 @@ public class RewardLootTables {
             .add(AUGMENT_ITEM_BUILDER.setWeight(5))
             .add(getRandomWand().setWeight(2))
             .add(MAGNET.setWeight(5))
-            .add(IRON_SWORD_BUILDER.setWeight(20))
-            .add(DIAMOND_SWORD_BUILDER.setWeight(10))
             .add(NETHERITE_SWORD_BUILDER.setWeight(2))
+            .add(CHALLENGER_TICKET.setWeight(1))
             .add(INGMAS_SWORD.setWeight(1));
     }
 
-    private static LootPool.Builder commonPool(ServerLevel serverLevel) {
-        var builder = LootPool.lootPool().setRolls(between(2.0F, 5.0F));
+    private static LootPool.Builder rarePool(int level, int chestRarity) {
+        var lootMultiplier = getLootMultiplier(level, chestRarity);
+        var builder = LootPool.lootPool().setRolls(between(1.0F, lootMultiplier));
 
         return builder
+            .add(NEXITE_BLOCK_BUILDER.setWeight(20))
+            .add(BOOK_BUILDER.setWeight(15))
+            .add(AUGMENT_CORE_BUILDER.setWeight(5));
+    }
+
+    private static LootPool.Builder commonPoolSingle() {
+        var builder = LootPool.lootPool().setRolls(exactly(1.0F));
+
+        return builder
+            .add(ELYTRA_BUILDER.setWeight(1))
             .add(AMULET.setWeight(1))
+            .add(STARTER_PACK.setWeight(1))
+            .add(IRON_SWORD_BUILDER.setWeight(20))
+            .add(DIAMOND_SWORD_BUILDER.setWeight(5));
+    }
+
+
+    private static LootPool.Builder commonPool(int level, int chestRarity) {
+        var lootMultiplier = getLootMultiplier(level, chestRarity);
+        var builder = LootPool.lootPool().setRolls(between(2.0F, lootMultiplier + 5));
+
+        return builder
             .add(GOLDEN_CARROT_BUILDER.setWeight(50))
             .add(IRON_BUILDER.setWeight(35))
             .add(GOLD_BUILDER.setWeight(25))
             .add(EMERALD_BUILDER.setWeight(20))
             .add(DIAMOND_BUILDER.setWeight(10))
             .add(COIN.setWeight(10))
-            .add(ENCHANTED_BOTTLES_BUILDER.setWeight(8))
+            .add(XP.setWeight(8))
             .add(SHULKER_SHELLS_BUILDER.setWeight(5))
-            .add(NETHERITE_BUILDER.setWeight(2))
-            .add(ELYTRA_BUILDER.setWeight(1));
+            .add(NETHERITE_BUILDER.setWeight(2));
+
     }
+
+    private static int getLootMultiplier(int level, int chestRarity) {
+        return (((level / 5) + 1)) * (chestRarity + 1);
+    }
+
 }

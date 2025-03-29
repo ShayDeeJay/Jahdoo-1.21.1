@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
@@ -30,6 +31,7 @@ import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.block.TrialPortalBlock.*;
 import static org.jahdoo.common.block.loot_chest.LootChestBlock.FACING;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockReg.*;
 import static org.jahdoo.common.registers.ItemReg.AUGMENT;
 import static org.jahdoo.common.registers.ItemReg.RUNE;
@@ -42,6 +44,7 @@ public class BlockSetupManager {
             level.setBlockAndUpdate(pos, chestState);
             if(level.getBlockEntity(pos) instanceof LootChestEntity l){
                 l.getRarity = type;
+                l.setData(INSTANCE_DATA, InstanceData.copyInstance(level.getData(INSTANCE_DATA)));
             }
         }
     }
@@ -170,10 +173,10 @@ public class BlockSetupManager {
                 entity.setItem(itemStack);
 
                 var cost = switch (value) {
-                    case 1 -> setBronzeCost(40);
-                    case 2 -> setSilverCost(40);
-                    case 3 -> setPlatinumCost(3);
-                    default -> setBronzeCost(20);
+                    case 1 -> setSilverCost(5);
+                    case 2 -> setGoldCost(5);
+                    case 3 -> setPlatinumCost(5);
+                    default -> setBronzeCost(50);
                 };
 
                 entity.setCost(cost);
