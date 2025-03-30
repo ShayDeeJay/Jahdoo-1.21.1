@@ -84,8 +84,13 @@
   "augmentHelper.jahdoo.attributes": "%s Unique Attributes %s",
 
   "jahdoo.configuration.customUI": "Enable Custom UI",
+  "jahdoo.configuration.height": "Adjust Custom UI Height",
+  "jahdoo.configuration.scale": "Adjust Custom UI Scale",
   "jahdoo.configuration.quickSelect": "Quick Select Wheel Opening",
   "jahdoo.configuration.lockOn": "Lock To Target",
+  "jahdoo.configuration.show_hunger": "Always Show Hunger Bar",
+  "jahdoo.configuration.show_xp": "Always Show XP Bar",
+
 
   "key.assets.jahdoo.slot_1": "Wand Slot 01",
   "key.assets.jahdoo.slot_2": "Wand Slot 02",

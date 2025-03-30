@@ -1,6 +1,7 @@
 package org.jahdoo.common.client;
 
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -12,8 +13,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -39,6 +42,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
 import static org.jahdoo.ascension.ability.AbilityBuilder.SET_ELEMENT_TYPE;
+import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.client.Icons.*;
 
 public class SharedUI {
@@ -126,7 +130,62 @@ public class SharedUI {
         }
     }
 
-    public static void renderExperienceBar(GuiGraphics guiGraphics, int x, int l, Minecraft minecraft) {
+    public static void renderFoodLevel(GuiGraphics graphics, Minecraft mc) {
+        var player = mc.player;
+        if (player != null) {
+            mc.getProfiler().push("food");
+            int i1 = graphics.guiWidth() / 2 + 91;
+            int j1 = graphics.guiHeight() - 10;
+            renderFood(graphics, player, j1, i1);
+            mc.getProfiler().pop();
+        }
+    }
+
+    private static final ResourceLocation FOOD_EMPTY_HUNGER_SPRITE = ResourceLocation.withDefaultNamespace("hud/food_empty_hunger");
+    private static final ResourceLocation FOOD_HALF_HUNGER_SPRITE = ResourceLocation.withDefaultNamespace("hud/food_half_hunger");
+    private static final ResourceLocation FOOD_FULL_HUNGER_SPRITE = ResourceLocation.withDefaultNamespace("hud/food_full_hunger");
+    private static final ResourceLocation FOOD_EMPTY_SPRITE = ResourceLocation.withDefaultNamespace("hud/food_empty");
+    private static final ResourceLocation FOOD_HALF_SPRITE = ResourceLocation.withDefaultNamespace("hud/food_half");
+    private static final ResourceLocation FOOD_FULL_SPRITE = ResourceLocation.withDefaultNamespace("hud/food_full");
+    private static void renderFood(GuiGraphics guiGraphics, Player player, int y, int x) {
+        FoodData fooddata = player.getFoodData();
+        int i = fooddata.getFoodLevel();
+        RenderSystem.enableBlend();
+
+        for(int j = 0; j < 10; ++j) {
+            int k = y;
+            ResourceLocation resourcelocation;
+            ResourceLocation resourcelocation1;
+            ResourceLocation resourcelocation2;
+            if (player.hasEffect(MobEffects.HUNGER)) {
+                resourcelocation = FOOD_EMPTY_HUNGER_SPRITE;
+                resourcelocation1 = FOOD_HALF_HUNGER_SPRITE;
+                resourcelocation2 = FOOD_FULL_HUNGER_SPRITE;
+            } else {
+                resourcelocation = FOOD_EMPTY_SPRITE;
+                resourcelocation1 = FOOD_HALF_SPRITE;
+                resourcelocation2 = FOOD_FULL_SPRITE;
+            }
+
+            if (player.getFoodData().getSaturationLevel() <= 0.0F && player.tickCount % (i * 3 + 1) == 0) {
+                k = y + (Random.nextInt(3) - 1);
+            }
+
+            int l = x - j * 8 - 9;
+            guiGraphics.blitSprite(resourcelocation, l, k, 9, 9);
+            if (j * 2 + 1 < i) {
+                guiGraphics.blitSprite(resourcelocation2, l, k, 9, 9);
+            }
+
+            if (j * 2 + 1 == i) {
+                guiGraphics.blitSprite(resourcelocation1, l, k, 9, 9);
+            }
+        }
+
+        RenderSystem.disableBlend();
+    }
+
+    public static void renderXPBar(GuiGraphics guiGraphics, int x, int l, Minecraft minecraft) {
         var expBackground = ResourceLocation.withDefaultNamespace("hud/experience_bar_background");
         var expProgress = ResourceLocation.withDefaultNamespace("hud/experience_bar_progress");
         if(minecraft == null || minecraft.player == null) return;
@@ -136,6 +195,22 @@ public class SharedUI {
             int k = (int)(minecraft.player.experienceProgress * 183.0F);
             guiGraphics.blitSprite(expBackground, x, l, 182, 5);
             if (k > 0) guiGraphics.blitSprite(expProgress, 182, 5, 0, 0, x, l, k, 5);
+        }
+        minecraft.getProfiler().pop();
+    }
+
+    public static void renderMiniXPBar(GuiGraphics guiGraphics, int x, int l, Minecraft minecraft) {
+        var expBackground = Helpers.res("textures/gui/xp_bar_container.png");
+        var expProgress = Helpers.res("textures/gui/xp_bar.png");
+
+        if(minecraft == null || minecraft.player == null) return;
+        minecraft.getProfiler().push("expBar");
+        var i = minecraft.player.getXpNeededForNextLevel();
+        if (i > 0) {
+            int k = (int)(minecraft.player.experienceProgress * 83.0F);
+            var x1 = 82;
+            guiGraphics.blit(expBackground, x, l, 0,0, x1, 5, x1, 5);
+            if (k > 0) guiGraphics.blit(expProgress, x, l, 0, 0,  k, 5, 82, 5);
         }
         minecraft.getProfiler().pop();
     }
@@ -296,10 +371,10 @@ public class SharedUI {
         FormattedCharSequence formattedcharsequence = pText.getVisualOrderText();
         String s = pText.getString();
         int i1 = isCentered ? pX - pFont.width(formattedcharsequence) / 2 : pX;
-//        guiGraphics.drawString(pFont, s, i1 + 1, pY, backgroundColour, false);
-//        guiGraphics.drawString(pFont, s, i1 - 1, pY, backgroundColour, false);
-//        guiGraphics.drawString(pFont, s, i1, pY + 1, backgroundColour, false);
-//        guiGraphics.drawString(pFont, s, i1, pY - 1, backgroundColour, false);
+        guiGraphics.drawString(pFont, s, i1 + 1, pY, backgroundColour, false);
+        guiGraphics.drawString(pFont, s, i1 - 1, pY, backgroundColour, false);
+        guiGraphics.drawString(pFont, s, i1, pY + 1, backgroundColour, false);
+        guiGraphics.drawString(pFont, s, i1, pY - 1, backgroundColour, false);
         guiGraphics.drawString(pFont, s, i1, pY, textColour, false);
         guiGraphics.pose().popPose();
     }

@@ -271,7 +271,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             drawStringWithBackground(guiGraphics, this.font, refinementPotential, mouseX + offsetX, mouseY + 15 + offsetY, 0, expColour, true);
             guiGraphics.drawCenteredString(font, "Exp Cost", mouseX + offsetX, mouseY + 4 + offsetY, -1);
             drawStringWithBackground(guiGraphics, this.font, expLvl, i, startY + 69, 0, 8453920, true);
-            renderExperienceBar(guiGraphics, i - 91, startY + 78, this.getMinecraft());
+            renderXPBar(guiGraphics, i - 91, startY + 78, this.getMinecraft());
         }
 
     }

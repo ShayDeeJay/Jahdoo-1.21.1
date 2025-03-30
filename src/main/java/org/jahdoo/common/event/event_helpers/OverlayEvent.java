@@ -36,7 +36,8 @@ public class OverlayEvent {
         if(player == null) return;
         var exceptions = List.of(
             EXPERIENCE_LEVEL, EXPERIENCE_BAR, HOTBAR,
-            PLAYER_HEALTH, FOOD_LEVEL, SELECTED_ITEM_NAME
+            PLAYER_HEALTH, FOOD_LEVEL, SELECTED_ITEM_NAME,
+            ARMOR_LEVEL
         );
 
         if(Configuration.CUSTOM_UI.get()){

@@ -18,6 +18,12 @@ public class Icons {
     public static final ResourceLocation MANA_REGEN =
         res("textures/mob_effect/mana_regen.png");
 
+    public static final ResourceLocation XP_BAR =
+        res(PREFIX + "xp_bar.png");
+
+    public static final ResourceLocation XP_BAR_CONTAINER =
+        res(PREFIX + "xp_bar_container.png");
+
     public static final ResourceLocation EASY =
         res(PREFIX + "easy.png");
 
