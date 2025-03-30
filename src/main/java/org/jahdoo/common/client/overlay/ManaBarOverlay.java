@@ -41,7 +41,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
     float fadeXpTimer;
     float fadeInFood;
     float fadeFoodTimer;
-    ResourceLocation cacheLastAbility;
     AlignedGui alignedGui;
 
     private static void inventoryIndex(@NotNull GuiGraphics graphics, int x, int y, int index, int textColour) {
@@ -180,33 +179,19 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
     }
 
     private void cooldownOverlay(AbilityRegistrar ability, CastingData casterData){
-        var cached = this.cacheLastAbility;
-        if(this.fadeIn < 0 && !CUSTOM_UI.get()) return;
-        if(ability != null){
-            var icon = ability.getAbilityIconLocation();
-
-            if(cached == null) this.cacheLastAbility = icon;
-            if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {
-                var cooldownCost = casterData.getStaticCooldown(ability.setAbilityId());
-                var cooldownStatus = casterData.getCooldown(ability.setAbilityId());
-                var cooldownOverlaySize = 19;
-                if(cooldownCost > 0){
-                    var currentOverlayHeight = (cooldownStatus * cooldownOverlaySize) / cooldownCost;
-                    enableBlend();
-                    setShaderColor(1f, 1f, 1f, 0.9F);
-                    alignedGui.displayGuiLayer(6, 5 + currentOverlayHeight, 0, 97, cooldownOverlaySize, currentOverlayHeight);
-                    setShaderColor(1f, 1f, 1f, 1f);
-                }
+        if(this.fadeIn < 0 && !CUSTOM_UI.get() || ability == null) return;
+        alignedGui.displayGuiLayer(4, 26, 0, 0, 23, ability.getAbilityIconLocation());
+        if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {
+            var cooldownCost = casterData.getStaticCooldown(ability.setAbilityId());
+            var cooldownStatus = casterData.getCooldown(ability.setAbilityId());
+            var cooldownOverlaySize = 19;
+            if(cooldownCost > 0){
+                var currentOverlayHeight = (cooldownStatus * cooldownOverlaySize) / cooldownCost;
+                enableBlend();
+                setShaderColor(1f, 1f, 1f, 0.9F);
+                alignedGui.displayGuiLayer(6, 5 + currentOverlayHeight, 0, 97, cooldownOverlaySize, currentOverlayHeight);
+                setShaderColor(1f, 1f, 1f, 1f);
             }
-        } else {
-            var player = Minecraft.getInstance().player;
-            if(player != null && player.getMainHandItem().getItem() instanceof WandItem){
-                this.cacheLastAbility = null;
-            }
-        }
-
-        if(cached != null){
-            alignedGui.displayGuiLayer(4, 26, 0, 0, 23, cached);
         }
     }
 
