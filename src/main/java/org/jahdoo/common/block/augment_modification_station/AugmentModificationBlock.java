@@ -24,18 +24,18 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.ModTags;
+import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.block.BlockInteractionHandler;
 import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
 
-import static net.minecraft.core.component.DataComponents.*;
-import static net.minecraft.sounds.SoundEvents.*;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
+import static net.minecraft.sounds.SoundEvents.VAULT_ACTIVATE;
 import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 
 public class AugmentModificationBlock extends BaseEntityBlock{
@@ -161,6 +161,32 @@ public class AugmentModificationBlock extends BaseEntityBlock{
                 );
             }
         );
+    }
+
+    public static ItemInteractionResult infuserBlockInteraction(
+        Level level,
+        BlockPos pos,
+        Player player,
+        InteractionHand hand,
+        AbstractBEInventory augmentStation,
+        ItemStack stack,
+        SoundEvent soundEvent,
+        double yOffset,
+        int lifetime,
+        double speed,
+        double radius
+    ) {
+        if (stack.is(ModTags.Items.ESSENCE_FRAGMENT) || stack.isEmpty() && player.isShiftKeyDown()) {
+            if(!stack.isEmpty()) Helpers.getSoundWithPosition(level, pos, soundEvent, 1, 1.2f);
+            BlockInteractionHandler.swapItemsWithHand(augmentStation.inputItemHandler, 0, player, hand);
+            var stackInSlot = augmentStation.inputItemHandler.getStackInSlot(0);
+            var type = stackInSlot.get(CUSTOM_MODEL_DATA);
+            if (type != null) {
+                setOuterRingPulse(level, type.value(), pos, yOffset, lifetime, speed, radius);
+            }
+            return ItemInteractionResult.SUCCESS;
+        }
+        return ItemInteractionResult.FAIL;
     }
 
     public static ItemInteractionResult augmentBlockInteraction(

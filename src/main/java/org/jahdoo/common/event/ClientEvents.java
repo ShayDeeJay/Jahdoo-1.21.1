@@ -94,7 +94,9 @@ public class ClientEvents {
         if(WAND_SLOT_8A.consumeClick()) selectWandSlot(8);
         if(WAND_SLOT_9A.consumeClick()) selectWandSlot(9);
         if(WAND_SLOT_10A.consumeClick()) selectWandSlot(10);
-        if(STAT_SCREEN.consumeClick()) instance.setScreen(new StatScreen());
+        if(STAT_SCREEN.consumeClick()) {
+            instance.setScreen(new StatScreen());
+        }
     }
 
 }

@@ -2,7 +2,7 @@ package org.jahdoo.common.client;
 
 import net.minecraft.resources.ResourceLocation;
 
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.ascension.utils.Helpers.res;
 
 public class Icons {
     
@@ -11,6 +11,18 @@ public class Icons {
     public static final String SLOTS_PREFIX = PREFIX + "slots/";
     public static final String ITEMS_PREFIX = "textures/item/";
     public static final String ABILITY_PREFIX = "textures/ability_icons/";
+
+    public static final ResourceLocation FROST_ICON =
+        res("textures/element_icons/frost_icon.png");
+
+    public static final ResourceLocation INFERNO_ICON =
+        res("textures/element_icons/inferno_icon.png");
+
+    public static final ResourceLocation MYSTIC_ICON =
+        res("textures/element_icons/mystic_icon.png");
+
+    public static final ResourceLocation VITALITY_ICON =
+        res("textures/element_icons/vitality_icon.png");
 
     public static final ResourceLocation MANA =
         res("textures/mob_effect/mana_pool.png");
@@ -191,6 +203,8 @@ public class Icons {
 
     public static final ResourceLocation PLATINUM_COIN =
         res(ITEMS_PREFIX + "coins/coin3.png");
-    
+
+
+
 }
 

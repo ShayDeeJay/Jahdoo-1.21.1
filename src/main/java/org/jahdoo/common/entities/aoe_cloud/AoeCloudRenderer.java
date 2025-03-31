@@ -7,10 +7,10 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.ascension.ability.abilities.life_siphon.LifeSiphonNova;
-import org.jahdoo.ascension.ability.abilities.mob_abilities.Barrage;
-import org.jahdoo.ascension.ability.abilities.armageddon.Armageddon;
-import org.jahdoo.ascension.ability.abilities.permafrost.Permafrost;
+import org.jahdoo.ascension.ability.abilities_combat.life_siphon.LifeSiphonNova;
+import org.jahdoo.ascension.ability.abilities_combat.mob_abilities.Barrage;
+import org.jahdoo.ascension.ability.abilities_combat.armageddon.Armageddon;
+import org.jahdoo.ascension.ability.abilities_combat.permafrost.Permafrost;
 import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.Objects;

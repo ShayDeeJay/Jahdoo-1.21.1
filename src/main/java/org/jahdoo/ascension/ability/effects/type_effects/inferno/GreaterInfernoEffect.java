@@ -16,7 +16,6 @@ import org.jahdoo.common.registers.EffectReg;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffectCategory.HARMFUL;
 import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.ElementReg.inferno;
 
@@ -42,7 +41,7 @@ public class GreaterInfernoEffect extends MobEffect {
 
     @Override
     public boolean isBeneficial() {
-        return true;
+        return false;
     }
 
     @Override

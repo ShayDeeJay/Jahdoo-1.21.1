@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
-import org.jahdoo.ascension.ability.abilities.BurningSkullsAbility;
+import org.jahdoo.ascension.ability.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.WandAbilityHolder;

@@ -133,7 +133,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     private void registerSimpleItems() {
         var simpleItems = List.of(
             ItemReg.NEXITE_POWDER, ItemReg.HEALTH_CONTAINER,
-            ItemReg.AUGMENT_CORE, ItemReg.AUGMENT_FRAGMENT,
+            ItemReg.AUGMENT_CORE, ItemReg.ESSENCE_FRAGMENT,
             ItemReg.ADVANCED_AUGMENT_CORE, ItemReg.AUGMENT_HYPER_CORE,
             ItemReg.MANA_CONTAINER, ItemReg.BOON_CONTAINER,
             ItemReg.RECALL_TOKEN, ItemReg.CHALLENGER_TICKET

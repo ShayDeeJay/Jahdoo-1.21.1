@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 public class JahdooMobEffect extends MobEffectInstance {
 
     public JahdooMobEffect(Holder<MobEffect> pEffect, int pDuration, int pAmplifier) {
-        super(pEffect, pDuration, pAmplifier, false, false, false);
+        super(pEffect, pDuration, pAmplifier, false, false, true);
     }
 
     @Override

@@ -171,6 +171,7 @@ public class Network {
             InstanceSyncS2CP.STREAM_CODEC,
             InstanceSyncS2CP::handle
         );
+
     }
 
 }

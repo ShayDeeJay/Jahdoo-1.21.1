@@ -9,6 +9,7 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
@@ -110,10 +111,10 @@ public class InfuserBlockEntity extends AbstractTankUser implements GeoBlockEnti
     private void shiftProcessedItemsToOutput(){
         var outputHandler = this.outputItemHandler;
         var inputHandler = this.inputItemHandler;
-        var augment = AUGMENT_FRAGMENT.get();
+        var essenceFragment = ESSENCE_FRAGMENT.get();
 
-        if (outputHandler.getStackInSlot(0).isEmpty() && inputHandler.getStackInSlot(0).is(augment)) {
-            outputHandler.setStackInSlot(0, new ItemStack(augment));
+        if (outputHandler.getStackInSlot(0).isEmpty() && inputHandler.getStackInSlot(0).is(essenceFragment)) {
+            outputHandler.setStackInSlot(0, new ItemStack(essenceFragment));
             inputHandler.setStackInSlot(0, ItemStack.EMPTY);
         }
     }
@@ -132,11 +133,9 @@ public class InfuserBlockEntity extends AbstractTankUser implements GeoBlockEnti
     }
 
     private void completedRecycling(Level level){
-        var getRandom = Helpers.Random.nextInt(0,20);
-        var itemCore = AUGMENT_CORE.get();
-        var itemFragment = AUGMENT_FRAGMENT.get();
+        var itemFragment = ESSENCE_FRAGMENT.get();
         this.inputItemHandler.setStackInSlot(0, ItemStack.EMPTY);
-        this.outputItemHandler.setStackInSlot(0, new ItemStack(getRandom == 0 ? itemCore : itemFragment));
+        this.outputItemHandler.setStackInSlot(0, new ItemStack(itemFragment));
         this.chargeTankFuel(RECYCLING_COST);
         level.sendBlockUpdated(this.tankPosition, level.getBlockState(this.tankPosition), this.getBlockState(), 3);
         this.progress = 0;
@@ -157,19 +156,18 @@ public class InfuserBlockEntity extends AbstractTankUser implements GeoBlockEnti
     }
 
     private void recyclingProcess(){
-        var isInputAugment = this.inputItemHandler.getStackInSlot(0).is(AUGMENT.get());
+        var isInputAugment = this.inputItemHandler.getStackInSlot(0).is(ModTags.Items.ESSENCE_FRAGMENT);
         var isOutputEmpty = this.outputItemHandler.getStackInSlot(0).isEmpty();
         if (isOutputEmpty && isInputAugment){
             this.progress++;
 
             if (this.getTankEntity().inputItemHandler.getStackInSlot(0).getCount() >= 6) {
-                if (this.inputItemHandler.getStackInSlot(0).copy().is(AUGMENT.get())) {
-                    if(progress % 21 == 0){
-                        if(!(this.level instanceof ServerLevel serverLevel)) return;
-                        this.tableProcessingParticle(this.level, serverLevel, this.getBlockPos());
-                    }
+                if(progress % 21 == 0){
+                    if(!(this.level instanceof ServerLevel serverLevel)) return;
+                    this.tableProcessingParticle(this.level, serverLevel, this.getBlockPos());
                 }
             }
+
         } else {
             if(this.progress > 0) this.progress = 0;
         }

@@ -20,7 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
-import org.jahdoo.ascension.ability.abilities.elemental_shooter.ElementalShooterAbility;
+import org.jahdoo.ascension.ability.abilities_combat.elemental_shooter.ElementalShooterAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;

@@ -21,9 +21,9 @@ import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.ability.abilities.dimensional_recall.DimensionalRecall;
-import org.jahdoo.ascension.ability.abilities.nova_smash.NovaSmash;
-import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
+import org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecall;
+import org.jahdoo.ascension.ability.abilities_combat.nova_smash.NovaSmash;
+import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
@@ -114,6 +114,7 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onPlayerTickEvent(PlayerTickEvent.Pre event){
         var player = event.getEntity();
+
 
         if(player instanceof ServerPlayer serverPlayer){
             CastingData.cooldownTickEvent(serverPlayer);

@@ -114,12 +114,12 @@ public class InfuserBlock extends BaseEntityBlock {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!(level.getBlockEntity(pos) instanceof InfuserBlockEntity tableEntity)) return ItemInteractionResult.FAIL;
         var hands = player.getItemInHand(hand);
-        ItemStack getOutputSlot = tableEntity.outputItemHandler.getStackInSlot(0);
+        var getOutputSlot = tableEntity.outputItemHandler.getStackInSlot(0);
         if(!getOutputSlot.isEmpty()){
             this.addItemToHand(player, getOutputSlot);
             return ItemInteractionResult.SUCCESS;
         } else {
-            AugmentModificationBlock.augmentBlockInteraction(level, pos, player, hand, tableEntity, hands, SoundEvents.VAULT_DEACTIVATE, 0.64, 8, 0.4, 0.3);
+            AugmentModificationBlock.infuserBlockInteraction(level, pos, player, hand, tableEntity, hands, SoundEvents.VAULT_DEACTIVATE, 0.64, 8, 0.4, 0.3);
         }
         return ItemInteractionResult.SUCCESS;
     }

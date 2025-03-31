@@ -8,7 +8,7 @@ public class IngmasSword extends SwordItem {
     public IngmasSword() {
         super(
             Tiers.NETHERITE,
-            new Properties().attributes(createAttributes(Tiers.NETHERITE, 3, -2.4F))
+            new Properties().attributes(createAttributes(Tiers.NETHERITE, 5, -2.4F))
         );
     }
 

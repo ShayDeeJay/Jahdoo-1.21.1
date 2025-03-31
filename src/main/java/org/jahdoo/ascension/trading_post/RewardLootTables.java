@@ -141,7 +141,10 @@ public class RewardLootTables {
     
     public static final LootPoolSingletonContainer.Builder<?> INGMAS_SWORD = 
         lootTableItem(ItemReg.INGMAS_SWORD.get());
-    
+
+    public static final LootPoolSingletonContainer.Builder<?> GLAIVE =
+        lootTableItem(ItemReg.ANCIENT_GLAIVE.get());
+
     public static final LootPoolSingletonContainer.Builder<?> RECALL_TOKEN =
         lootTableItem(ItemReg.RECALL_TOKEN.get());
 
@@ -192,9 +195,14 @@ public class RewardLootTables {
         return lootTableItem(wand);
     }
 
-    public static void attachEnchantment(ItemStack itemStack, ServerLevel serverLevel, ResourceKey<Enchantment> enchantmentKey, int minVal, int maxVal, boolean isSpecial) {
+    public static void attachEnchantmentWithChance(ItemStack itemStack, ServerLevel serverLevel, ResourceKey<Enchantment> enchantmentKey, int minVal, int maxVal, boolean isSpecial) {
         if (Random.nextInt(isSpecial ? 5 : 20) != 0) return;
-        
+
+        enchant(itemStack, serverLevel.registryAccess(), enchantmentKey, Random.nextInt(minVal, maxVal));
+        attachLootBeam(itemStack, LocalLootBeamData.ENCHANTED_VANILLA_SWORD);
+    }
+
+    public static void attachEnchantment(ItemStack itemStack, ServerLevel serverLevel, ResourceKey<Enchantment> enchantmentKey, int minVal, int maxVal) {
         enchant(itemStack, serverLevel.registryAccess(), enchantmentKey, Random.nextInt(minVal, maxVal));
         attachLootBeam(itemStack, LocalLootBeamData.ENCHANTED_VANILLA_SWORD);
     }
@@ -240,7 +248,6 @@ public class RewardLootTables {
 
         RuneHolder.createNewRuneSlots(pendent, x + 1, 0);
     }
-
 
     public static ItemStack magnetItem(JahdooRarity getRarity, ItemStack itemStack) {
         var id = getRarity.getId() + 1;
@@ -296,7 +303,6 @@ public class RewardLootTables {
         var builder = LootPool.lootPool().setRolls(exactly(1.0F));
 
         return builder
-            .add(RECALL_TOKEN.setWeight(4))
             .add(AUGMENT_HYPER_CORE_BUILDER.setWeight(2))
             .add(WIZARD_HELM_BUILDER.setWeight(1))
             .add(WIZARD_CHEST_BUILDER.setWeight(1))
@@ -308,7 +314,8 @@ public class RewardLootTables {
         var builder = LootPool.lootPool().setRolls(exactly(1.0F));
 
         return builder
-            .add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight(6))
+            .add(GLAIVE.setWeight(10))
+            .add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight(5))
             .add(RECALL_TOKEN.setWeight(4))
             .add(TOME_OF_UNITY_BUILDER.setWeight(4))
             .add(BATTLEMAGE_HELM_BUILDER.setWeight(1))
@@ -321,7 +328,7 @@ public class RewardLootTables {
         var builder = LootPool.lootPool().setRolls(exactly(1.0F));
 
         return builder
-            .add(RUNE.setWeight(5))
+            .add(RUNE.setWeight(15))
             .add(AUGMENT_ITEM_BUILDER.setWeight(5))
             .add(getRandomWand().setWeight(2))
             .add(MAGNET.setWeight(5))
@@ -344,11 +351,11 @@ public class RewardLootTables {
         var builder = LootPool.lootPool().setRolls(exactly(1.0F));
 
         return builder
-            .add(ELYTRA_BUILDER.setWeight(1))
-            .add(AMULET.setWeight(1))
-            .add(STARTER_PACK.setWeight(1))
             .add(IRON_SWORD_BUILDER.setWeight(20))
-            .add(DIAMOND_SWORD_BUILDER.setWeight(5));
+            .add(DIAMOND_SWORD_BUILDER.setWeight(5))
+            .add(AMULET.setWeight(5))
+            .add(ELYTRA_BUILDER.setWeight(1))
+            .add(STARTER_PACK.setWeight(1));
     }
 
 

@@ -48,7 +48,6 @@ public class StatScreen extends AbstractPanableScreen {
         renderWallet(graphics, mc, 10, withPanX - 49, withPanY - 180, false);
     }
 
-
     private void otherMagicStats(GuiGraphics guiGraphics, float i, float j, LocalPlayer player, Minecraft mc) {
         var spacing = 22;
         var xSpacing = i + this.panX + spacing;

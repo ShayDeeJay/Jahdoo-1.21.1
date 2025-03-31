@@ -11,7 +11,7 @@ import java.util.List;
 
 import static net.minecraft.world.entity.EquipmentSlot.*;
 import static net.minecraft.world.item.enchantment.Enchantments.*;
-import static org.jahdoo.ascension.trading_post.RewardLootTables.attachEnchantment;
+import static org.jahdoo.ascension.trading_post.RewardLootTables.attachEnchantmentWithChance;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class ShoppingArmor {
@@ -52,18 +52,19 @@ public class ShoppingArmor {
 
         if (Random.nextInt(isSpecial ? 20 : 50) != 0) return;
 
-        attachEnchantment(itemStack, serverLevel, BLAST_PROTECTION, 5, 10, isSpecial);
-        attachEnchantment(itemStack, serverLevel, PROJECTILE_PROTECTION, 5, 10, isSpecial);
-        attachEnchantment(itemStack, serverLevel, PROTECTION, 5, 10, isSpecial);
-        attachEnchantment(itemStack, serverLevel, UNBREAKING, 4, 9, isSpecial);
+        attachEnchantmentWithChance(itemStack, serverLevel, BLAST_PROTECTION, 5, 10, isSpecial);
+        attachEnchantmentWithChance(itemStack, serverLevel, PROJECTILE_PROTECTION, 5, 10, isSpecial);
+        attachEnchantmentWithChance(itemStack, serverLevel, PROTECTION, 5, 10, isSpecial);
+        attachEnchantmentWithChance(itemStack, serverLevel, UNBREAKING, 4, 9, isSpecial);
 
         if(slot == FEET){
-            attachEnchantment(itemStack, serverLevel, SOUL_SPEED, 4, 9, isSpecial);
-            attachEnchantment(itemStack, serverLevel, DEPTH_STRIDER, 4, 9, isSpecial);
-            attachEnchantment(itemStack, serverLevel, FEATHER_FALLING, 5, 10, isSpecial);
+            attachEnchantmentWithChance(itemStack, serverLevel, SOUL_SPEED, 4, 9, isSpecial);
+            attachEnchantmentWithChance(itemStack, serverLevel, DEPTH_STRIDER, 4, 9, isSpecial);
+            attachEnchantmentWithChance(itemStack, serverLevel, FEATHER_FALLING, 5, 10, isSpecial);
         }
-        if(slot == LEGS) attachEnchantment(itemStack, serverLevel, SWIFT_SNEAK, 4, 9, isSpecial);
-        if(slot == HEAD) attachEnchantment(itemStack, serverLevel, RESPIRATION, 4, 9, isSpecial);
+
+        if(slot == LEGS) attachEnchantmentWithChance(itemStack, serverLevel, SWIFT_SNEAK, 4, 9, isSpecial);
+        if(slot == HEAD) attachEnchantmentWithChance(itemStack, serverLevel, RESPIRATION, 4, 9, isSpecial);
     }
 
 }

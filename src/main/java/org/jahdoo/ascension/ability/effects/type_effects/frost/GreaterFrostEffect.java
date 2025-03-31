@@ -28,7 +28,7 @@ public class GreaterFrostEffect extends MobEffect {
 
     @Override
     public boolean isBeneficial() {
-        return true;
+        return false;
     }
 
     @Override

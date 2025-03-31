@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
-import org.jahdoo.ascension.ability.abilities.vital_rejuvenation.VitalRejuvenation;
+import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.ascension.utils.IItemEntityBehaviour;
 import org.jahdoo.common.particle.ParticleHandlers;

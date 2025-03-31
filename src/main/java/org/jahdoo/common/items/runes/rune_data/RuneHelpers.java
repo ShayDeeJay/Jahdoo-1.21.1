@@ -185,32 +185,31 @@ public class RuneHelpers {
                 case COMMON ->
                     List.of(
                         generateElementalRune(getElement.manaReduction(), attributes.getRandomManaReduction(), COMMON, getElement.id(), id),
-                        generatePerkRune(DESTINY_BOND.getDelegate(), NO_VALUE, COMMON, "Keep your item on death.", NO_VALUE, NO_VALUE)
-                    );
+                        generateElementalRune(getElement.damageAmplifier(), attributes.getRandomDamage(), RARE, getElement.id(), id)
+                        );
                 case RARE ->
                     List.of(
-                        generateElementalRune(getElement.damageAmplifier(), attributes.getRandomDamage(), RARE, getElement.id(), id),
+                        generateAetherRune(MANA_POOL.getDelegate(), attributes.getRandomManaPool(), id),
                         generatePerkRune(Attributes.MOVEMENT_SPEED, attributes.getRandomDamage(), RARE, NO_DESCRIPTION, id, 0.1)
                     );
                 case EPIC ->
                     List.of(
-                        generateElementalRune(getElement.cooldownReduction(), attributes.getRandomCooldown(), EPIC, getElement.id(), id),
-                        generatePerkRune(TRIPLE_JUMP, 100, RARE, "Allows player to jump up to 3 times", NO_VALUE, 100)
+                        generateAetherRune(MANA_REGEN.getDelegate(), attributes.getRandomManaRegen(), id),
+                        generateElementalRune(getElement.cooldownReduction(), attributes.getRandomCooldown(), EPIC, getElement.id(), id)
                     );
                 case LEGENDARY ->
                     List.of(
-                        generateAetherRune(MANA_REGEN.getDelegate(), attributes.getRandomManaRegen(), id),
-                        generateAetherRune(MANA_POOL.getDelegate(), attributes.getRandomManaPool(), id),
+                        generatePerkRune(TRIPLE_JUMP, 100, RARE, "Allows player to jump up to 3 times", NO_VALUE, 100),
                         generatePerkRune(Attributes.MAX_HEALTH, attributes.getRandomMaxHealth(), LEGENDARY, "Increase max health", id, NO_VALUE),
                         generatePerkRune(Attributes.MAX_ABSORPTION, attributes.getRandomMaxAbsorption(), LEGENDARY, "Increase absorption heart capacity", id, NO_VALUE),
-                        generatePerkRune(MAGE_FLIGHT.getDelegate(), 100, LEGENDARY, "Allows the player to fly, at the cost of mana.", NO_VALUE, 100)
+                        generatePerkRune(MAGE_FLIGHT.getDelegate(), 100, LEGENDARY, "Allows the player to fly, at the cost of mana.", NO_VALUE, 100),
+                        generatePerkRune(DESTINY_BOND.getDelegate(), NO_VALUE, COMMON, "Keep your item on death.", NO_VALUE, NO_VALUE)
                     );
                 case ETERNAL ->
                     List.of(
                         generateCosmicRune(MAGIC_DAMAGE_MULTIPLIER.getDelegate(), attributes.getRandomDamage(), id).build(),
                         generateCosmicRune(COOLDOWN_REDUCTION.getDelegate(), attributes.getRandomCooldown(), id).build(),
                         generateCosmicRune(MANA_COST_REDUCTION.getDelegate(), attributes.getRandomManaReduction(), id).build(),
-                        generateSympathiserRune(CAST_HEAL.getDelegate(), attributes.getRandomHealChance(), id),
                         generateSympathiserRune(ABSORPTION_HEARTS.getDelegate(), attributes.getRandomHealChance(), id),
                         generateSympathiserRune(SKIP_MANA.getDelegate(), attributes.getRandomHealChance(), id),
                         generateSympathiserRune(SKIP_COOLDOWN.getDelegate(), attributes.getRandomHealChance(), id)

@@ -78,12 +78,11 @@ public abstract class AbilityRegistrar {
         return abilityId;
     }
 
-    public static int Laccuracy(LivingEntity player){
-        var effect = EffectReg.AMPLIFY_BLOCK_REACH;
+    public static int hexedEffect(LivingEntity player){
+        var effect = EffectReg.HEXED;
         var getEffectLevel = player.getEffect(effect);
-        if(player.hasEffect(effect)){
-            return getEffectLevel.getAmplifier();
-        }
+
+        if(getEffectLevel != null) return getEffectLevel.getAmplifier();
         return 0;
     }
 
@@ -98,7 +97,7 @@ public abstract class AbilityRegistrar {
     public static void fireProjectileDirection(Projectile projectile, LivingEntity player, float velocity, Vec3 direction){
         if(player != null){
             if(player.level() instanceof ServerLevel serverLevel){
-                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, Laccuracy(player));
+                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, hexedEffect(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
             }
@@ -109,7 +108,7 @@ public abstract class AbilityRegistrar {
         if(player != null){
             if(player.level() instanceof ServerLevel serverLevel){
                 Vec3 direction = player.getLookAngle();
-                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, Laccuracy(player));
+                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, hexedEffect(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
             }
@@ -120,7 +119,7 @@ public abstract class AbilityRegistrar {
         if(player != null){
             if(player.level() instanceof ServerLevel serverLevel){
                 Vec3 direction = player.getLookAngle();
-                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, Laccuracy(player));
+                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, hexedEffect(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
                 Helpers.getSoundWithPositionV(projectile.level(), player.position(), SoundReg.ORB_FIRE.get(), 0.4f, 1f);
@@ -132,7 +131,7 @@ public abstract class AbilityRegistrar {
         if(player != null){
             if(player.level() instanceof ServerLevel serverLevel){
                 Vec3 direction = player.getLookAngle();
-                projectile.shoot(direction.x(), direction.y(), direction.z(), 1.2f, Laccuracy(player));
+                projectile.shoot(direction.x(), direction.y(), direction.z(), 1.2f, hexedEffect(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
                 Helpers.getSoundWithPositionV(projectile.level(), player.position(), SoundEvents.BREEZE_CHARGE , 0.05f,1.4f);

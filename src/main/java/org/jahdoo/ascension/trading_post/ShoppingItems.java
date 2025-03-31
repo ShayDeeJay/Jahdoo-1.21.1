@@ -68,27 +68,38 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         return new ShoppingItems(itemStack, setGoldCost(100));
     }
 
-    public static ShoppingItems shoppingSwordItem(ServerLevel serverLevel) {
-        var glaive = new ItemStack(ItemReg.ANCIENT_GLAIVE);
+    public static ShoppingItems ingmasSword(ServerLevel serverLevel) {
         var ingmasSword = new ItemStack(ItemReg.INGMAS_SWORD);
-        var meleeWeapons = List.of(getElementalSword(), glaive, ingmasSword);
-        var getRandomArmor = listRandom(meleeWeapons);
+        enchantSword(serverLevel, ingmasSword, true);
+        return new ShoppingItems(ingmasSword, setGoldCost(110));
+    }
 
-        enchantSword(serverLevel, getRandomArmor, true);
-        return new ShoppingItems(getRandomArmor, setGoldCost(110));
+    public static ShoppingItems glaive(ServerLevel serverLevel) {
+        var glaive = new ItemStack(ItemReg.ANCIENT_GLAIVE);
+        enchantSword(serverLevel, glaive, true);
+        return new ShoppingItems(glaive, setGoldCost(110));
+    }
+
+    public static ShoppingItems elementalSword(ServerLevel serverLevel) {
+        var meleeWeapons = getElementalSword();
+
+        enchantSword(serverLevel, meleeWeapons, true);
+        return new ShoppingItems(meleeWeapons, setGoldCost(110));
     }
 
     public static ShoppingItems getEliteShoppingItem(ServerLevel serverLevel){
-        return switch (Random.nextInt(8)){
-            case 1 -> shoppingWandItem();
-            case 2 -> shoppingTomeItem();
-            case 3 -> shoppingAmuletItem();
-            case 4 -> shoppingArmorItem(serverLevel);
-            case 5 -> shoppingSwordItem(serverLevel);
-            case 6 -> shoppingMagnetItem();
-            case 7 -> shoppingGauntletItem();
-            default -> shoppingRuneItem();
-        };
+        var items = List.of(
+            shoppingWandItem(),
+            shoppingTomeItem(),
+            shoppingAmuletItem(),
+            shoppingArmorItem(serverLevel),
+            elementalSword(serverLevel),
+            shoppingMagnetItem(),
+            shoppingGauntletItem(),
+            shoppingRuneItem()
+        );
+
+        return Helpers.listRandom(items);
     }
 
     private static void addAttribute(AbstractElement altElement, ItemStack itemStack) {
@@ -154,15 +165,12 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var refinementPotential = Random.nextInt(300, 500);
 
         var cooldownReductionType = element.cooldownReduction();
-        var cooldownReductionName = cooldownReductionType.getRegisteredName();
         var cooldownReductionValue = rarity.getAttributes().getRandomCooldown();
 
         var manaReductionType = element.manaReduction();
-        var manaReductionName = manaReductionType.getRegisteredName();
         var manaReductionValue = rarity.getAttributes().getRandomManaReduction();
 
         var damageAmplifierType = element.damageAmplifier();
-        var damageAmplifierName = damageAmplifierType.getRegisteredName();
         var damageAmplifierValue = rarity.getAttributes().getRandomDamage();
 
         attachLootBeamComponent(itemStack, rarity);

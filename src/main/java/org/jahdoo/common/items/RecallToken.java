@@ -20,9 +20,9 @@ import org.jahdoo.common.registers.ElementReg;
 import java.util.List;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.ability.abilities.dimensional_recall.DimensionalRecall.pullParticlesToCenter;
-import static org.jahdoo.ascension.ability.abilities.dimensional_recall.DimensionalRecall.sendNoHomeMessage;
-import static org.jahdoo.ascension.ability.abilities.dimensional_recall.DimensionalRecallAbility.abilityId;
+import static org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecall.pullParticlesToCenter;
+import static org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecall.sendNoHomeMessage;
+import static org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility.abilityId;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPositionV;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;

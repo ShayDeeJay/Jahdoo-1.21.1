@@ -92,6 +92,8 @@ public class MysticEffect extends MobEffect {
         var currentYVelocity = targetEntity.getDeltaMovement().y;
         var newYVelocity = Math.max(currentYVelocity, 0.01);
 
+        targetEntity.fallDistance = 20;
+
         if(targetEntity instanceof ServerPlayer serverPlayer){
             PacketDistributor.sendToPlayer(serverPlayer, new MoveClientEntityS2CP(0, newYVelocity, 0, serverPlayer.getId()));
         } else {
@@ -100,5 +102,6 @@ public class MysticEffect extends MobEffect {
 
         idleAnim(targetEntity, serverLevel, element);
     }
+
 
 }

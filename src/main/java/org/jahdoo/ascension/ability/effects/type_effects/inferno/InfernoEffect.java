@@ -37,7 +37,7 @@ public class InfernoEffect extends MobEffect {
 
     @Override
     public boolean isBeneficial() {
-        return true;
+        return false;
     }
 
     @Override

@@ -12,6 +12,9 @@ public class ModTags {
 
     public static class Items {
         public static final TagKey<Item> WAND_TAGS = tag("wand_tag");
+        public static final TagKey<Item> ESSENCE_FRAGMENT = tag("essence_fragment");
+        public static final TagKey<Item> AUGMENT_CORE = tag("augment_core");
+
         private static TagKey<Item> tag(String name) {
             return ItemTags.create(Helpers.res(name));
         }

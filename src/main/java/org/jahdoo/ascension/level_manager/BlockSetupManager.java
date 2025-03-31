@@ -173,9 +173,9 @@ public class BlockSetupManager {
                 entity.setItem(itemStack);
 
                 var cost = switch (value) {
-                    case 1 -> setSilverCost(5);
-                    case 2 -> setGoldCost(5);
-                    case 3 -> setPlatinumCost(5);
+                    case 1 -> setSilverCost(2);
+                    case 2 -> setGoldCost(2);
+                    case 3 -> setPlatinumCost(2);
                     default -> setBronzeCost(50);
                 };
 

@@ -2,7 +2,9 @@ package org.jahdoo.common.datagen;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.*;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -34,7 +36,20 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         chaosCube(recipeOutput, MODULAR_CHAOS_CUBE.get().asItem());
         augmentModificationTable(recipeOutput, AUGMENT_MODIFICATION_STATION.get().asItem());
         oreSmelting(recipeOutput, List.of(Items.ROTTEN_FLESH), RecipeCategory.MISC, Items.LEATHER, 2.0F, 200, "leather");
+        nineBlockStorageRecipes(recipeOutput, RecipeCategory.MISC, ESSENCE_FRAGMENT.get(), RecipeCategory.MISC, AUGMENT_CORE.get());
+        ticket(recipeOutput, CHALLENGER_TICKET.get());
+    }
 
+    protected void ticket(RecipeOutput output, Item result) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+            .define('M', Items.PAPER)
+            .define('X', AUGMENT_CORE.get())
+            .pattern(" M ")
+            .pattern("MXM")
+            .pattern(" M ")
+            .unlockedBy("paper", has(Items.PAPER))
+            .unlockedBy("core", has(AUGMENT_CORE.get()))
+            .save(output);
     }
 
     protected void infuser(RecipeOutput output, Item result) {

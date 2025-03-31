@@ -7,8 +7,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.ascension.attachments.IAttachment;
 import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.IAttachment;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
@@ -20,7 +20,6 @@ import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.ElementReg;
 
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
 import static org.jahdoo.common.registers.ElementReg.fromWand;
@@ -80,12 +79,14 @@ public class MageFlight implements IAttachment {
 
     private void flying(Player player, CastingData manaSystem, ItemStack wandItem) {
         if (manaSystem.getManaPool() > manaCost) {
-            player.getAbilities().mayfly = true;
             var getPool = player.getAttribute(AttributeReg.MANA_POOL);
             var manaCost = (getPool != null ? getPool.getValue() : 1) / 150;
-            manaSystem.subtractMana(Math.min(manaCost, 2), player);
             var getDelta = player.getDeltaMovement();
             var speedModifier = 0.02;
+
+            player.resetFallDistance();
+            player.getAbilities().mayfly = true;
+            manaSystem.subtractMana(Math.min(manaCost, 2), player);
             player.setDeltaMovement(player.getDeltaMovement().add(getDelta.x * speedModifier, 0.09, getDelta.z * speedModifier));
             mageFlightAnimation(wandItem, player);
         }

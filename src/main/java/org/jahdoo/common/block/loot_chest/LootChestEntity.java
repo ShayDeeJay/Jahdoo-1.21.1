@@ -26,7 +26,6 @@ import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.entities.EntityAnimations.OPEN_LOOT;
 import static org.jahdoo.common.entities.EntityAnimations.SPAWN_CHEST;
 import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
-import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity {
 
@@ -83,14 +82,6 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
     }
 
     public void tick(Level level, BlockPos pos, BlockState blockState) {
-
-
-        if(!this.isOpen){
-            System.out.println(" ");
-            System.out.println(this.getData(INSTANCE_DATA));
-            System.out.println(" ");
-        }
-
 
         updateBlock();
         privateTicks++;

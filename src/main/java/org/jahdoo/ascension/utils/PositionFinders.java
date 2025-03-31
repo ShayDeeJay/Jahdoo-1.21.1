@@ -41,9 +41,9 @@ public class PositionFinders {
 
     public static List<Vec3> getInnerRingOfRadius(Entity player, double radius) {
         List<Vec3> positions = new ArrayList<>(Mth.floor(radius));
-        Vec3 playerPos = player.position();
-        double playerX = playerPos.x;
-        double playerZ = playerPos.z;
+        var playerPos = player.position();
+        var playerX = playerPos.x;
+        var playerZ = playerPos.z;
 
         for (double x = -radius; x <= radius; x++) {
             for (double z = -radius; z <= radius; z++) {

@@ -13,6 +13,7 @@ import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.networking.client2server.AttributeC2SP;
 import org.jahdoo.common.networking.client2server.EffectC2SP;
 import org.jahdoo.common.registers.AttributeReg;
+import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ElementReg;
 
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ public class BoonSelection {
 
         sharedBoons(boonCollection, false);
         if(Random.nextInt(10) == 0){
+            boonCollection.add(effectBoon(EffectReg.REPLENISH_MANA, Math.min(level, 2)));
             boonCollection.add(effectBoon(MobEffects.REGENERATION, Math.min(level, 2)));
             boonCollection.add(effectBoon(MobEffects.MOVEMENT_SPEED, Math.min(level, 2)));
             boonCollection.add(effectBoon(MobEffects.DAMAGE_BOOST, level));

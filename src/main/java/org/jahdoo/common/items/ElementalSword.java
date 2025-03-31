@@ -10,14 +10,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.ascension.element.AbstractElement;
 
 import java.util.Objects;
 
+import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.items.wand.WandItemHelper.canOffHand;
-import static org.jahdoo.common.registers.ElementReg.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.common.registers.ElementReg.fromId;
+import static org.jahdoo.common.registers.ElementReg.fromWand;
 
 public class ElementalSword extends SwordItem {
 
@@ -33,10 +35,6 @@ public class ElementalSword extends SwordItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        var mainHandItem = player.getMainHandItem();
-//        if(!(level instanceof ServerLevel)) return InteractionResultHolder.fail(mainHandItem);
-//        mainHandItem.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(Random.nextInt(5)));
-
         return super.use(level, player, usedHand);
     }
 

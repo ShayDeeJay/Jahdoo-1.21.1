@@ -37,7 +37,7 @@ public class VitalityEffect extends MobEffect {
 
     @Override
     public boolean isBeneficial() {
-        return true;
+        return false;
     }
 
     public static void throwHeartContainer(LivingEntity targetEntity, float healAmount) {

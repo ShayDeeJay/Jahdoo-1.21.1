@@ -37,8 +37,8 @@ public class ItemReg {
         DeferredRegister.create(Registries.ITEM, JahdooMod.MOD_ID);
 
     //Basic Items
-    public static final DeferredHolder<Item, Item> AUGMENT_FRAGMENT =
-        basicItem("augment_fragment");
+    public static final DeferredHolder<Item, Item> ESSENCE_FRAGMENT =
+        basicItem("essence_fragment");
 
     public static final DeferredHolder<Item, Item> NEXITE_POWDER =
         basicItem("nexite_powder");

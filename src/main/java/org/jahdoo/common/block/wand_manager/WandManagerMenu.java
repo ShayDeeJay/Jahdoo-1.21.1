@@ -88,7 +88,6 @@ public class WandManagerMenu extends AbstractInternalContainer {
 
     private void insertRuneSlots() {
         try{
-
             var getAllSlots = this.getWandManagerEntity().getWandSlot();
             var getData = RuneHolder.getRuneholder(getAllSlots);
             var iHandler = getWandManagerEntity().inputItemHandler;

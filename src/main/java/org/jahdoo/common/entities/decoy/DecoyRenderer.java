@@ -7,12 +7,10 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
 
-import static net.minecraft.client.renderer.entity.EntityRendererProvider.*;
+import static net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 
 public class DecoyRenderer extends AbstractDecoyRenderer<Decoy, DecoyModel<Decoy>> {
 
@@ -53,8 +51,8 @@ public class DecoyRenderer extends AbstractDecoyRenderer<Decoy, DecoyModel<Decoy
             entity.setScale((float) Math.min(1, entity.getScale() + 0.06 * partialTicks));
             poseStack.scale(entity.getScale(), entity.getScale(), entity.getScale());
         }
-        this.overriddenRenderer(entity, partialTicks, poseStack, buffer);
 
+        this.overriddenRenderer(entity, partialTicks, poseStack, buffer);
         poseStack.popPose();
     }
 
@@ -74,15 +72,17 @@ public class DecoyRenderer extends AbstractDecoyRenderer<Decoy, DecoyModel<Decoy
         var f6 = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
         var f7 = this.getBob(entity, partialTicks);
 
-        this.setupRotations(entity, postStack, f7, f, partialTicks,1);
+        this.setupRotations(entity, postStack, f7, f, partialTicks, 1);
         postStack.scale(-1.0F, -1.0F, 1.0F);
+
         this.scale(entity, postStack, partialTicks);
         postStack.translate(0.0F, -1.501F, 0.0F);
+
         var f8 = 0.0F;
         var f5 = 0.0F;
         this.model.prepareMobModel(entity, f5, f8, partialTicks);
         this.model.setupAnim(entity, f5, f8, f7, f2, f6);
-        Minecraft minecraft = Minecraft.getInstance();
+        var minecraft = Minecraft.getInstance();
         var flag = this.isBodyVisible(entity);
         var flag1 = !flag && !entity.isInvisibleTo(minecraft.player);
         var flag2 = minecraft.shouldEntityAppearGlowing(entity);

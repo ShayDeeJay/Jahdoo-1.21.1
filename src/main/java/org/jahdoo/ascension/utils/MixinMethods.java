@@ -7,7 +7,7 @@ import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.registers.EntityDataReg;
 
-import static org.jahdoo.ascension.ability.abilities.permafrost.PermafrostAbility.abilityId;
+import static org.jahdoo.ascension.ability.abilities_combat.permafrost.PermafrostAbility.abilityId;
 
 public class MixinMethods {
 

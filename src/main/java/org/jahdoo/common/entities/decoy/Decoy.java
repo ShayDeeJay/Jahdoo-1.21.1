@@ -13,7 +13,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.ability.abilities.EscapeDecoyAbility;
+import org.jahdoo.ascension.ability.abilities_combat.EscapeDecoyAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
@@ -137,7 +137,7 @@ public class Decoy extends Mob {
     }
 
     private void onDiscard() {
-        if(this.tickCount >= this.getMaxLifetime()) {
+        if(this.tickCount >= this.getMaxLifetime() && player != null) {
             Helpers.getSoundWithPosition(level(), this.blockPosition(), SoundReg.ORB_FIRE.get(), 2, 2f);
             EscapeDecoyAbility.onExistenceChange(this, getElement());
             this.discard();
