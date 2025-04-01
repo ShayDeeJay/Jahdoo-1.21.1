@@ -246,7 +246,7 @@ public class RewardLootTables {
 
         if(isLegendary) pendent.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(x));
 
-        RuneHolder.createNewRuneSlots(pendent, x + 1, 0);
+        RuneHolder.createNewRuneSlots(pendent, x + 1, isLegendary ? 50 : 25);
     }
 
     public static ItemStack magnetItem(JahdooRarity getRarity, ItemStack itemStack) {

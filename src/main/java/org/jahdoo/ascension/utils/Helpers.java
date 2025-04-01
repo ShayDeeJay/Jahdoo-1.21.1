@@ -3,7 +3,6 @@ package org.jahdoo.ascension.utils;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -20,7 +19,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -32,7 +30,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.*;
@@ -54,6 +51,10 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
+
+import static net.minecraft.advancements.CriteriaTriggers.ITEM_DURABILITY_CHANGED;
+import static net.minecraft.sounds.SoundEvents.ITEM_BREAK;
+import static net.minecraft.world.item.enchantment.EnchantmentHelper.processDurabilityChange;
 
 public class Helpers {
     public static final String EASY = "novice";
@@ -417,53 +418,39 @@ public class Helpers {
             damage = itemStack.getItem().damageItem(itemStack, damage, livingEntity, (item) -> { });
 
             if (damage > 0) {
-                if(level instanceof ServerLevel serverLevel){
-                    damage = EnchantmentHelper.processDurabilityChange(serverLevel, itemStack, damage);
-                }
+                if(level instanceof ServerLevel serverLevel)
+                    damage = processDurabilityChange(serverLevel, itemStack, damage);
 
                 if (damage <= 0) return;
             }
 
             if (livingEntity instanceof ServerPlayer sp) {
-                if (damage != 0) {
-                    CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger(sp, itemStack, itemStack.getDamageValue() + damage);
-                }
+                if (damage != 0) ITEM_DURABILITY_CHANGED.trigger(sp, itemStack, itemStack.getDamageValue() + damage);
             }
 
             var i = itemStack.getDamageValue() + damage;
             itemStack.setDamageValue(i);
 
-            if (stackDurability(itemStack) == 0) {
-                livingEntity.playSound(SoundEvents.ITEM_BREAK);
-            }
+            if (stackDurability(itemStack) == 0) livingEntity.playSound(ITEM_BREAK);
         }
     }
 
     public static int getColorTransition(int startColor, int endColor, int ticker, double transitionDelay) {
-        // Extract RGB components from the start color
-        int startRed = (startColor >> 16) & 0xFF;
-        int startGreen = (startColor >> 8) & 0xFF;
-        int startBlue = startColor & 0xFF;
+        var startRed = (startColor >> 16) & 0xFF;
+        var startGreen = (startColor >> 8) & 0xFF;
+        var startBlue = startColor & 0xFF;
+        var endRed = (endColor >> 16) & 0xFF;
+        var endGreen = (endColor >> 8) & 0xFF;
+        var endBlue = endColor & 0xFF;
+        var progress = 0.5 * (1.0 + Math.sin(2 * Math.PI * ticker / transitionDelay));
+        var red = (int) (startRed + (endRed - startRed) * progress);
+        var green = (int) (startGreen + (endGreen - startGreen) * progress);
+        var blue = (int) (startBlue + (endBlue - startBlue) * progress);
 
-        // Extract RGB components from the end color
-        int endRed = (endColor >> 16) & 0xFF;
-        int endGreen = (endColor >> 8) & 0xFF;
-        int endBlue = endColor & 0xFF;
-
-        // Calculate progress using a sinusoidal function
-        double progress = 0.5 * (1.0 + Math.sin(2 * Math.PI * ticker / transitionDelay));
-
-        // Interpolate each RGB component
-        int red = (int) (startRed + (endRed - startRed) * progress);
-        int green = (int) (startGreen + (endGreen - startGreen) * progress);
-        int blue = (int) (startBlue + (endBlue - startBlue) * progress);
-
-        // Ensure the values are within the valid range [0, 255]
         red = Math.min(Math.max(red, 0), 255);
         green = Math.min(Math.max(green, 0), 255);
         blue = Math.min(Math.max(blue, 0), 255);
 
-        // Pack the interpolated RGB components into an integer
         return (red << 16) | (green << 8) | blue;
     }
 

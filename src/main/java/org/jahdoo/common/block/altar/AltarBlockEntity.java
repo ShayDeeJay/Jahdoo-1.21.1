@@ -1,17 +1,16 @@
 package org.jahdoo.common.block.altar;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
-import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,9 +19,11 @@ import org.jahdoo.ascension.mobs.MobManager;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.SyncedBlockEntity;
+import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -52,7 +53,6 @@ import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntity {
 
-    public ServerBossEvent bossEvent;
     public final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public int privateTicks;
     public int mobsSpawned;
@@ -66,7 +66,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
 
     public AltarBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.CHALLENGE_ALTAR_BE.get(), pos, state);
-        this.bossEvent = new ServerBossEvent(Component.literal(""), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.NOTCHED_20);
+
     }
 
     @Override
@@ -84,24 +84,9 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         return PlayState.STOP;
     }
 
-    @Override
-    public void onChunkUnloaded() {
-        super.onChunkUnloaded();
-        this.bossEvent.removeAllPlayers();
-    }
-
     public void summonMobs() {
         this.started = true;
         this.updateBlock();
-    }
-
-    private void tickBossEvent() {
-//        var data = this.altarData();
-//        var progress = data.maxMobs > 0 ? (float) data.activeMobs().size() / data.maxSpawnableMobs() : 0.0f;
-
-//        bossEvent.setVisible(!spawnedMobs.isEmpty());
-//        bossEvent.setProgress(progress);
-//        bossEvent.setName(Component.nullToEmpty(spawnedMobs.size() + " / " + data.maxSpawnableMobs()));
     }
 
     private void removeKilledMobs(ServerLevel serverLevel) {
@@ -115,12 +100,16 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         }
     }
 
+    private static @NotNull AABB roomBounding(BlockPos pos) {
+        return new AABB(
+            pos.getX() - 23, pos.getY() - 3, pos.getZ() - 23,
+            pos.getX() + 24, pos.getY(), pos.getZ() + 24
+        );
+    }
+
     private void autoStartAltar(ServerLevel serverLevel, BlockPos pos) {
         if(!this.started){
-            var getWithBounding = new AABB(
-                pos.getX() - 23, pos.getY() - 3, pos.getZ() - 23,
-                pos.getX() + 24, pos.getY(), pos.getZ() + 24
-            );
+            var getWithBounding = roomBounding(pos);
             for (var entity : serverLevel.getEntities(null, getWithBounding)) {
                 if(entity instanceof Player) startAltar(pos, this, serverLevel);
             }
@@ -137,6 +126,39 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         }
 
         return FAIL;
+    }
+
+    private void reAssignTarget(Level getLevel, BlockPos pos){
+        if(!(getLevel instanceof CustomLevel level)) return;
+        var asList = new ArrayList<Mob>();
+        var getWithBounding = roomBounding(pos);
+        level.getEntities(null, getWithBounding).forEach(
+            e -> {
+                if ((!(e instanceof ITamableEntity t && t.getOwner() != null) || !(e instanceof Player)) && e instanceof Mob mob) {
+                    asList.add(mob);
+                }
+            }
+        );
+
+        for (var entity : asList) {
+            if(entity.getTarget() == null){
+                System.out.println(entity.getDisplayName());
+                var validTargets = level.getEntities(null, getWithBounding).stream().filter(
+                    livEnt -> livEnt instanceof ITamableEntity t && t.getOwner() != null || livEnt instanceof Player
+                ).toList();
+
+                if(!validTargets.isEmpty()) entity.setTarget((LivingEntity) Helpers.listRandom(validTargets));
+            }
+        }
+    }
+
+    public int getMaxAllowedMobsOnField(ServerLevel serverLevel){
+        var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
+        return switch (data.getDifficulty()){
+            case Helpers.MEDIUM -> 40;
+            case Helpers.HARD -> 60;
+            default -> 20;
+        };
     }
 
     private void onCompleteAltar(BlockPos pos, ServerLevel serverLevel) {
@@ -215,9 +237,11 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         autoStartAltar(serverLevel, pos);
         if(this.started) {
             this.privateTicks++;
+            this.reAssignTarget(level, pos);
+
 
             if(privateTicks % 2 == 0){
-                if(!this.spawnableMobs.isEmpty() && onField.size() < 20){
+                if(!this.spawnableMobs.isEmpty() && onField.size() < getMaxAllowedMobsOnField(serverLevel)){
                     var randomPoses = innerRadiusRandom(pos.below(2).getCenter(), 20, 200)
                         .stream()
                         .filter(pos1 -> serverLevel.getBlockState(containing(pos1)).isAir() && serverLevel.getBlockState(containing(pos1).above()).isAir())
@@ -236,7 +260,6 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         }
 
         removeKilledMobs(serverLevel);
-        tickBossEvent();
 
         if(privateTicks == 30){
             MobManager.summonEntities(this, roomId);

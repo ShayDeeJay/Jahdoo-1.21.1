@@ -3,12 +3,10 @@ package org.jahdoo.common.client.screens;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.player.Input;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -20,8 +18,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
-import org.jahdoo.common.client.button.AbilityIconButton;
+import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
+import org.jahdoo.common.client.button.AbilityIconButton;
+import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.wand.WandData;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.client2server.StopUsingC2SP;
@@ -29,15 +30,15 @@ import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.components.DataComponentHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static org.jahdoo.common.client.Icons.COG;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.*;
+import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentModificationScreenWand;
+import static org.jahdoo.common.items.augments.AugmentItemHelper.isConfigAbility;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class AbilityWheelScreen extends Screen  {
@@ -190,9 +191,9 @@ public class AbilityWheelScreen extends Screen  {
     @SubscribeEvent
     public static void updateInputEvent(MovementInputUpdateEvent event) {
         if (Minecraft.getInstance().screen instanceof AbilityWheelScreen) {
-            Options settings = Minecraft.getInstance().options;
-            Input eInput = event.getInput();
-            long window = Minecraft.getInstance().getWindow().getWindow();
+            var settings = Minecraft.getInstance().options;
+            var eInput = event.getInput();
+            var window = Minecraft.getInstance().getWindow().getWindow();
 
             eInput.up = InputConstants.isKeyDown(window, settings.keyUp.getKey().getValue());
             eInput.down = InputConstants.isKeyDown(window, settings.keyDown.getKey().getValue());

@@ -18,10 +18,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.common.registers.BlockEntityReg;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static org.jahdoo.common.block.altar.AltarBlockEntity.startAltar;
+import static org.jahdoo.common.registers.BlockEntityReg.CHALLENGE_ALTAR_BE;
 import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 
 public class AltarBlock extends BaseEntityBlock {
@@ -50,9 +50,7 @@ public class AltarBlock extends BaseEntityBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
         return createTickerHelper(
-            entityType,
-            BlockEntityReg.CHALLENGE_ALTAR_BE.get(),
-            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
+            entityType, CHALLENGE_ALTAR_BE.get(), (levelA, pos, bState, bEntity) -> bEntity.tick(levelA, pos, bState)
         );
     }
 

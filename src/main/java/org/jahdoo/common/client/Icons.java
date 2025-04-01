@@ -12,6 +12,18 @@ public class Icons {
     public static final String ITEMS_PREFIX = "textures/item/";
     public static final String ABILITY_PREFIX = "textures/ability_icons/";
 
+    public static final ResourceLocation FROST_BOLTZ =
+        res(ABILITY_PREFIX + "frostbolts.png");
+
+    public static final ResourceLocation PERMAFROST =
+        res(ABILITY_PREFIX + "permafrost.png");
+
+    public static final ResourceLocation ICE_BOMB =
+        res(ABILITY_PREFIX + "ice_bomb.png");
+
+    public static final ResourceLocation STORM_RUSH =
+        res(ABILITY_PREFIX + "storm_rush.png");
+
     public static final ResourceLocation FROST_ICON =
         res("textures/element_icons/frost_icon.png");
 

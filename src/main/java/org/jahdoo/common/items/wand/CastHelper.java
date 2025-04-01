@@ -139,6 +139,7 @@ public class CastHelper {
                 }
                 onCast(player, ability);
                 OnCastPerks.onCastPerkApply(player);
+//                Helpers.hurtAndKeepItem(wandItem, 20, player.level(), player);
             } else failedCastNotification(player);
         } else onCast(player, ability);
     }
@@ -157,7 +158,9 @@ public class CastHelper {
             failedCastNotification(player);
             return fail;
         }
+
         if(cantUse) return fail;
+
         if(canUse) executeAndCharge(player); else failedCastNotification(player);
 
         return InteractionResultHolder.pass(itemStack);

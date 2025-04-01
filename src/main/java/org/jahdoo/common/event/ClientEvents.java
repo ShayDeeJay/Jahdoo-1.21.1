@@ -45,7 +45,6 @@ public class ClientEvents {
         simpleGui(event, player);
     }
 
-
     @SubscribeEvent
     public static void overlayEventPost(RenderGuiLayerEvent.Post event) {
         OverlayBlockTooltip.overlayEvent(event);
@@ -96,6 +95,7 @@ public class ClientEvents {
         if(WAND_SLOT_10A.consumeClick()) selectWandSlot(10);
         if(STAT_SCREEN.consumeClick()) {
             instance.setScreen(new StatScreen());
+//            instance.setScreen(new AbilityUnlockScreen());
         }
     }
 

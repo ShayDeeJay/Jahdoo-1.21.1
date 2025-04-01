@@ -1,13 +1,8 @@
 package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -28,17 +23,11 @@ import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
-import org.jahdoo.common.entities.ITamableEntity;
-import org.jahdoo.common.networking.server2client.InstanceSyncS2CP;
-import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
-import org.jahdoo.common.registers.AttributeReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
-import static net.minecraft.sounds.SoundSource.PLAYERS;
-import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
-import static org.jahdoo.common.registers.AttachmentReg.*;
+import static org.jahdoo.common.registers.AttachmentReg.SAVE_DATA;
 
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID)
@@ -98,23 +87,13 @@ public class ServerEvents {
         var playerData = player.getPersistentData();
         var data = playerData.getCompound(Player.PERSISTED_NBT_TAG);
 
-        for (var entry : AttributeReg.ATTRIBUTES.getEntries()) {
-            player.getAttributes().getInstance(entry);
-        }
-
-        if (!data.getBoolean("first_join")) {
-            if(player.level() instanceof ServerLevel serverLevel){
-                getStarterKit(player, serverLevel);
-            }
-            data.putBoolean("first_join", true);
-            playerData.put(Player.PERSISTED_NBT_TAG, data);
-        }
+        syncPlayerAttributes(player);
+        onFirstTimeJoined(data, player, playerData);
     }
 
     @SubscribeEvent
     public static void onPlayerTickEvent(PlayerTickEvent.Pre event){
         var player = event.getEntity();
-
 
         if(player instanceof ServerPlayer serverPlayer){
             CastingData.cooldownTickEvent(serverPlayer);
@@ -132,39 +111,8 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void levelTickEvent(LevelTickEvent.Pre tickEvent){
-        assignTarget(tickEvent);
-
-        if(tickEvent.getLevel() instanceof CustomLevel cLevel){
-            if(!cLevel.hasData(INSTANCE_DATA)) return;
-            var data = cLevel.getData(INSTANCE_DATA);
-
-            var difficulty = data.getDifficulty();
-
-            if(!difficulty.isEmpty()){
-                data.incrementTicks();
-                for (var player : cLevel.players()) {
-                    sendToPlayer(player, new InstanceSyncS2CP(data));
-                    var remaining = data.getMaxTime() - data.getTicks();
-                    var lessThan20Seconds = remaining <= 400;
-                    var lessThan10Seconds = remaining <= 200;
-
-                    if (lessThan20Seconds && (data.getTicks() % 20) == 0) {
-                        var pitch = (float) Math.abs((remaining / 10) - 38) / 19;
-                        player.playNotifySound(SoundEvents.NOTE_BLOCK_BASS.value(), PLAYERS, 1, pitch);
-                        player.playNotifySound(SoundEvents.WARDEN_HEARTBEAT, PLAYERS, 1, 0.8F);
-                    }
-
-                    if (lessThan20Seconds && (data.getTicks() % (lessThan10Seconds ? 10 : 20)) == 0) {
-                        player.playNotifySound(SoundEvents.WARDEN_HEARTBEAT, PLAYERS, 1, 0.8F);
-                    }
-
-                    if (remaining == 0) {
-                        player.playNotifySound(SoundEvents.ALLAY_DEATH, PLAYERS, 1, 0.8F);
-                        player.kill();
-                    }
-                }
-            }
-        }
+//        assignTarget(tickEvent);
+        instanceEndingWarning(tickEvent);
     }
 
     @SubscribeEvent
@@ -181,58 +129,17 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void joinEvent(EntityJoinLevelEvent event){
-        var entity = event.getEntity();
-
-        if(entity instanceof ServerPlayer player){
-            var wallet = player.getData(PLAYER_WALLET).getWallet();
-            sendToPlayer(player, new WalletSyncS2CP(wallet));
-            if(event.getLevel() instanceof CustomLevel){
-                player.removeAllEffects();
-            }
-        }
+        removeCurrentEffects(event);
     }
 
     @SubscribeEvent
     public static void leaveEvent(EntityLeaveLevelEvent event){
-        var entity = event.getEntity();
-
-        if(event.getLevel() instanceof CustomLevel && entity instanceof Player player){
-            for (var syncableAttribute : player.getAttributes().getSyncableAttributes()) {
-                var modifiers = syncableAttribute.getModifiers();
-                if(!modifiers.isEmpty()){
-                    for (var attributeModifier : modifiers.stream().toList()) {
-                        if(attributeModifier.id().getPath().intern().contains("boon")){
-                            syncableAttribute.removeModifier(attributeModifier);
-                        }
-                    }
-                }
-            }
-        }
+        removeInstanceBuffs(event);
     }
 
     @SubscribeEvent
     public static void hitEvent(ProjectileImpactEvent event) {
-        var projectile = event.getProjectile();
-        var type = event.getRayTraceResult();
-        if(projectile.level() instanceof CustomLevel){
-            if (projectile instanceof Arrow) {
-                if(type instanceof BlockHitResult) projectile.discard();
-            }
-
-            if (event.getRayTraceResult() instanceof EntityHitResult result) {
-                var owner = projectile.getOwner();
-                var entity = result.getEntity();
-
-                var nonFriendlyProjectile = !(owner instanceof Player) && !(owner instanceof ITamableEntity t && t.getOwner() != null);
-
-                if(nonFriendlyProjectile){
-                    var isNotTarget = !(entity instanceof Player) && !(entity instanceof ITamableEntity t && t.getOwner() != null);
-                    if(isNotTarget){
-                        event.setCanceled(true);
-                    }
-                }
-            }
-        }
+        dontDamageAlliedMobs(event);
     }
 
     @SubscribeEvent

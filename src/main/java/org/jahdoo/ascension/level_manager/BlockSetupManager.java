@@ -127,7 +127,7 @@ public class BlockSetupManager {
         var blue = state.is(BLUE_CONCRETE);
 
         if(white){
-            level.setBlockAndUpdate(pos, RUNE_TABLE.get().defaultBlockState().setValue(FACING, direction.getOpposite()));
+            level.setBlockAndUpdate(pos, RUNE_TABLE.get().defaultBlockState().setValue(FACING, direction.getCounterClockWise()));
         } else if (green){
             level.setBlockAndUpdate(pos, AUGMENT_MODIFICATION_STATION.get().defaultBlockState().setValue(FACING, direction.getClockWise()));
         } else if (blue) {

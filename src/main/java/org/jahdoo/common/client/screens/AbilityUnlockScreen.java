@@ -2,45 +2,81 @@ package org.jahdoo.common.client.screens;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.common.client.Icons;
-import org.jahdoo.common.client.button.ToggleComponent;
+import net.minecraft.world.item.ItemStack;
+import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.ElementReg;
 
-import static org.jahdoo.common.client.OverlayHelpers.elementalModStat;
+import static org.jahdoo.ascension.utils.Helpers.res;
+import static org.jahdoo.common.client.Icons.ABILITY_PREFIX;
+import static org.jahdoo.common.client.Icons.GUI_BUTTON;
+import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
+import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentWithAbility;
 
 public class AbilityUnlockScreen extends AbstractPanableScreen {
+
+    ItemStack itemStack = ItemStack.EMPTY;
 
     @Override
     protected void init() {
         super.init();
-        var withPanX =  (this.panX - 31);
-        var withPanY =  (this.panY);
-        renderButton(withPanX - 60, withPanY, Icons.FROST_ICON);
-        renderButton(withPanX - 0, withPanY, Icons.INFERNO_ICON);
-        renderButton(withPanX + 60, withPanY, Icons.MYSTIC_ICON);
-        renderButton(withPanX + 120, withPanY, Icons.VITALITY_ICON);
+        var size = (int) (30 + 30 * this.zoomX);
+        var baseSpacing = 90;
+        var scaledSpacing = baseSpacing * (size / 60.0);
+
+        var baseXOffset = 50; // Original spacing between elements
+        var scaledXOffset = baseXOffset * (size / 26.0); // Scale X spacing
+
+        var centerX = (double) this.width / 2 + panX - 8; // Screen center
+        var centerY = (double) this.height / 2 + panY - 30; // Screen center
+
+        withElementObjects(centerX, scaledSpacing, centerY, size, ElementReg.frost());
+        withElementObjects(centerX + scaledXOffset, scaledSpacing, centerY, size, ElementReg.inferno());
+        withElementObjects(centerX + 2 * scaledXOffset, scaledSpacing, centerY, size, ElementReg.mystic());
+        withElementObjects(centerX + 3 * scaledXOffset, scaledSpacing, centerY, size, ElementReg.vitality());
     }
 
-    private void renderButton(double withPanX, double withPanY, ResourceLocation icons) {
-        this.addRenderableWidget(ToggleComponent.menuButton((int) ((double) this.width /2 + withPanX) - 15, (int) ((double) this.height /2 + withPanY)- 15, (Button) -> {}, icons, "", 30));
-    }
+    private void withElementObjects(double centerX, double scaledSpacing, double centerY, int size, AbstractElement element) {
+        renderButton(centerX - 1.5 * scaledSpacing, centerY, element.iconTexture(), size, ItemStack.EMPTY);
 
-    private void elementalStats(GuiGraphics guiGraphics, LocalPlayer player, float i, float j, Minecraft mc) {
-        var x = 0;
-        for (var abstractElement : ElementReg.getWithout()) {
-            elementalModStat(guiGraphics, mc, player, i + this.panX + 20, j + this.panY + x - 124, "Jahdoo", abstractElement);
-            x += 60;
+        var spacer = 60;
+        var index = 1.2;
+
+        for (var abilityRegistrar : AbilityReg.getWithElement(element)) {
+            var res = res(ABILITY_PREFIX + abilityRegistrar.setAbilityId() + ".png");
+            var augment = getAugmentWithAbility(abilityRegistrar);
+            var withPanY = centerY + (index * spacer * (size / 60.0));
+
+            renderButton(centerX - 1.5 * scaledSpacing, withPanY, res, size, augment);
+            index++;
         }
     }
 
+    private void renderButton(double withPanX, double withPanY, ResourceLocation icons, int size, ItemStack stack) {
+        var posX = (int) (withPanX - 15 - (double) size / 2);
+        var posY = (int) (withPanY - 15 - (double) size / 2);
+        this.addRenderableWidget(
+            menuButtonSound(
+                posX, posY,
+                (Button) -> { },
+                icons, size, false, 0, new WidgetSprites(GUI_BUTTON, GUI_BUTTON), true,
+                () -> this.itemStack = stack
+            )
+        );
+    }
+
     @Override
-    protected void renderObjects(GuiGraphics graphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
-        var withPanX =  (centerX + this.panX);
-        var withPanY =  (centerY + this.panY);
-//        renderButton(withPanX - 60, withPanY, Icons.FROST_ICON);
-//        elementalStats(graphics, player, centerX - 280, centerY, mc);
+    protected void renderWithScale(GuiGraphics graphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
+    }
+
+    @Override
+    protected void baseRender(GuiGraphics graphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
+        this.rebuildWidgets();
+        if(!this.itemStack.isEmpty()) graphics.renderTooltip(font, this.itemStack, mouseX, mouseY);
+        this.itemStack = ItemStack.EMPTY;
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.mojang.math.Axis;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,9 +26,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -52,6 +59,8 @@ import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.items.wand.WandItem;
+import org.jahdoo.common.networking.server2client.InstanceSyncS2CP;
+import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.*;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
@@ -59,10 +68,12 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 import java.util.ArrayList;
 
 import static java.util.Objects.requireNonNull;
+import static net.minecraft.sounds.SoundSource.PLAYERS;
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
+import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedArmor;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
@@ -72,7 +83,7 @@ import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentWithA
 import static org.jahdoo.common.items.wand.WandItemHelper.storeBlockType;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
-import static org.jahdoo.common.registers.AttachmentReg.SAVE_DATA;
+import static org.jahdoo.common.registers.AttachmentReg.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
 import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
 
@@ -110,6 +121,18 @@ public class EventHelpers {
         if(event.getEntity().level() instanceof CustomLevel && !player.isCreative()){
             if(!(event.getEffectInstance() instanceof JahdooMobEffect) && event.getEffectInstance().getEffect().value().isBeneficial()){
                 event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
+            }
+        }
+    }
+
+    public static void removeCurrentEffects(EntityJoinLevelEvent event) {
+        var entity = event.getEntity();
+
+        if(entity instanceof ServerPlayer player){
+            var wallet = player.getData(PLAYER_WALLET).getWallet();
+            sendToPlayer(player, new WalletSyncS2CP(wallet));
+            if(event.getLevel() instanceof CustomLevel){
+                player.removeAllEffects();
             }
         }
     }
@@ -162,6 +185,26 @@ public class EventHelpers {
         }
     }
 
+    /**
+     * Need this to init player attributes for the attribute scree,
+     * without it any attributes with 0 value wont show
+     * */
+    public static void syncPlayerAttributes(Player player) {
+        for (var entry : AttributeReg.ATTRIBUTES.getEntries()) {
+            player.getAttributes().getInstance(entry);
+        }
+    }
+
+    public static void onFirstTimeJoined(CompoundTag data, Player player, CompoundTag playerData) {
+        if (!data.getBoolean("first_join")) {
+            if(player.level() instanceof ServerLevel serverLevel){
+                getStarterKit(player, serverLevel);
+            }
+            data.putBoolean("first_join", true);
+            playerData.put(Player.PERSISTED_NBT_TAG, data);
+        }
+    }
+
     public static void saveBlockType(PlayerInteractEvent.LeftClickBlock event, ItemStack item, BlockState blockState, BlockPos pos) {
         if(event.getItemStack().getItem() instanceof WandItem){
             if(event.getEntity().isShiftKeyDown()){
@@ -172,6 +215,31 @@ public class EventHelpers {
                 if(name.equals(wallPlacer) || name.equals(blockPlacer)){
                     storeBlockType(item, blockState, event.getEntity(), pos);
                     event.setCanceled(true);
+                }
+            }
+        }
+    }
+
+
+    public static void dontDamageAlliedMobs(ProjectileImpactEvent event) {
+        var projectile = event.getProjectile();
+        var type = event.getRayTraceResult();
+        if(projectile.level() instanceof CustomLevel){
+            if (projectile instanceof Arrow) {
+                if(type instanceof BlockHitResult) projectile.discard();
+            }
+
+            if (event.getRayTraceResult() instanceof EntityHitResult result) {
+                var owner = projectile.getOwner();
+                var entity = result.getEntity();
+
+                var nonFriendlyProjectile = !(owner instanceof Player) && !(owner instanceof ITamableEntity t && t.getOwner() != null);
+
+                if(nonFriendlyProjectile){
+                    var isNotTarget = !(entity instanceof Player) && !(entity instanceof ITamableEntity t && t.getOwner() != null);
+                    if(isNotTarget){
+                        event.setCanceled(true);
+                    }
                 }
             }
         }
@@ -223,6 +291,22 @@ public class EventHelpers {
         shulkerBox.set(DataComponents.CUSTOM_NAME, withStyleComponent(element.name() + " Starter Box", element.textColourB()));
         shulkerBox.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(freeItems));
         ItemHandlerHelper.giveItemToPlayer(player, shulkerBox);
+    }
+
+    public static void removeInstanceBuffs(EntityLeaveLevelEvent event) {
+        var entity = event.getEntity();
+        if(event.getLevel() instanceof CustomLevel && entity instanceof Player player){
+            for (var syncableAttribute : player.getAttributes().getSyncableAttributes()) {
+                var modifiers = syncableAttribute.getModifiers();
+                if(!modifiers.isEmpty()){
+                    for (var attributeModifier : modifiers.stream().toList()) {
+                        if(attributeModifier.id().getPath().intern().contains("boon")){
+                            syncableAttribute.removeModifier(attributeModifier);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public static void greaterFrostEffectDamageAmplifier(LivingDamageEvent.Pre event, LivingEntity entity) {
@@ -440,6 +524,40 @@ public class EventHelpers {
                         if(SharedEntityBehaviours.canTarget(livingEntity, t.getOwner())){
                             entity.setTarget(livingEntity);
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    public static void instanceEndingWarning(LevelTickEvent.Pre tickEvent) {
+        if(tickEvent.getLevel() instanceof CustomLevel cLevel){
+            if(!cLevel.hasData(INSTANCE_DATA)) return;
+            var data = cLevel.getData(INSTANCE_DATA);
+
+            var difficulty = data.getDifficulty();
+
+            if(!difficulty.isEmpty()){
+                data.incrementTicks();
+                for (var player : cLevel.players()) {
+                    sendToPlayer(player, new InstanceSyncS2CP(data));
+                    var remaining = data.getMaxTime() - data.getTicks();
+                    var lessThan20Seconds = remaining <= 400;
+                    var lessThan10Seconds = remaining <= 200;
+
+                    if (lessThan20Seconds && (data.getTicks() % 20) == 0) {
+                        var pitch = (float) Math.abs((remaining / 10) - 38) / 19;
+                        player.playNotifySound(SoundEvents.NOTE_BLOCK_BASS.value(), PLAYERS, 1, pitch);
+                        player.playNotifySound(SoundEvents.WARDEN_HEARTBEAT, PLAYERS, 1, 0.8F);
+                    }
+
+                    if (lessThan20Seconds && (data.getTicks() % (lessThan10Seconds ? 10 : 20)) == 0) {
+                        player.playNotifySound(SoundEvents.WARDEN_HEARTBEAT, PLAYERS, 1, 0.8F);
+                    }
+
+                    if (remaining == 0) {
+                        player.playNotifySound(SoundEvents.ALLAY_DEATH, PLAYERS, 1, 0.8F);
+                        player.kill();
                     }
                 }
             }

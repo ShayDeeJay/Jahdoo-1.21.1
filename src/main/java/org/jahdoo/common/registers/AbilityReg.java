@@ -40,6 +40,7 @@ import org.jahdoo.ascension.ability.abilities_combat.quantum_destroyer.QuantumDe
 import org.jahdoo.ascension.ability.abilities_combat.storm_rush.StormRushAbility;
 import org.jahdoo.ascension.ability.abilities_utility.vein_miner.VeinMinerAbility;
 import org.jahdoo.ascension.ability.abilities_utility.wall_placer.WallPlacerAbility;
+import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 
 import java.util.List;
@@ -102,6 +103,13 @@ public class AbilityReg {
             .stream()
             .filter(a -> Objects.equals(a.setAbilityId(), typeId))
             .findFirst();  // Lazy and returns an Optional
+    }
+
+    public static List<AbilityRegistrar> getWithElement(AbstractElement element) {
+        return AbilityReg.REGISTRY
+            .stream()
+            .filter(a -> a.getElemenType() == element)
+            .toList();  // Lazy and returns an Optional
     }
 
     public static Optional<AbilityRegistrar> getFirstSpellFromAugment(ItemStack itemStack) {

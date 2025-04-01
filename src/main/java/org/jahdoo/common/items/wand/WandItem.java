@@ -1,7 +1,5 @@
 package org.jahdoo.common.items.wand;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -9,7 +7,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -17,10 +14,8 @@ import net.minecraft.world.level.Level;
 import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
-import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -33,12 +28,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.items.wand.WandItemHelper.*;
-import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
-import static org.jahdoo.common.particle.ParticleStore.PLUS_PARTICLE;
 import static org.jahdoo.common.registers.BlockReg.WAND;
 import static org.jahdoo.common.registers.ComponentReg.*;
 
@@ -97,6 +88,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     public static Properties wandProperties(){
         return new Item.Properties()
             .stacksTo(1)
+            .durability(300)
             .component(ComponentReg.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
             .component(WAND_DATA.get(), WandData.DEFAULT)
             .component(RUNE_HOLDER, RuneHolder.makeRuneSlots(0, 40))
@@ -149,22 +141,15 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         return InteractionResultHolder.fail(item);
     }
 
-    public static void test(ItemEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci){
-
-        float scale = 2; // Modify this to adjust scale dynamically
-        if(entity.tickCount % 10 == 0){
-            var getPositions = innerRadiusRandom(entity.position().subtract(0, 0.45, 0), scale / 4, scale);
-
-            for (var vec3 : getPositions) {
-                int bState = 1;
-                var byState = bState == 0 ? color(207, 62, 62) : bState == 1 ? color(43, 193, 252) : color(59, 173, 80);
-                var genericParticle = ParticleHandlers.genericParticle(PLUS_PARTICLE, 16, scale * 4, byState, byState, false);
-                sendParticles(entity.level(), genericParticle, vec3, 0, 0, 0.5, 0, 35);
-            }
-        }
-
-        poseStack.translate(0, 0.5, 0);
-        poseStack.scale(scale, scale, scale);
+    @Override
+    public boolean isDamageable(ItemStack stack) {
+        return true;
     }
+
+    @Override
+    public boolean isDamaged(ItemStack stack) {
+        return true;
+    }
+
 
 }

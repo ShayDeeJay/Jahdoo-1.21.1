@@ -18,7 +18,6 @@ import static org.jahdoo.common.client.OverlayHelpers.getModStat;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.overlay.WalletOverlay.renderWallet;
 import static org.jahdoo.common.registers.AttributeReg.*;
-
 public class StatScreen extends AbstractPanableScreen {
 
     private void elementalStats(GuiGraphics guiGraphics, LocalPlayer player, float i, float j, Minecraft mc) {
@@ -38,7 +37,7 @@ public class StatScreen extends AbstractPanableScreen {
     }
 
     @Override
-    protected void renderObjects(GuiGraphics graphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
+    protected void renderWithScale(GuiGraphics graphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
         var withPanX =  (centerX + this.panX);
         var withPanY =  (centerY + this.panY);
 

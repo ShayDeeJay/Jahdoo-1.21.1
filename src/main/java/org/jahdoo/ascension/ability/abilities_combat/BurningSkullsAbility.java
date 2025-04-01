@@ -68,7 +68,7 @@ public class BurningSkullsAbility extends AbilityRegistrar {
             .setEffectStrength(4, 0, 1)
             .setEffectChance(25, 0, 5)
             .shotMultiplier(5, 2, 1)
-            .setLifetime(70, 40, 5)
+            .setLifetime(100, 40, 20)
             .build();
     }
 

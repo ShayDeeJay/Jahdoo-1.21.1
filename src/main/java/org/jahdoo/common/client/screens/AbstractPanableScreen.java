@@ -33,19 +33,17 @@ public abstract class AbstractPanableScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        this.zoomX = Math.min(Math.max(this.zoomX + (scrollY / 12), -0.6), 1);
+        double scaleFactor = Math.max(0.1, Math.abs(zoomX) * 0.5); // Scale dynamically
+        this.zoomX = Math.min(Math.max(this.zoomX + (scrollY * scaleFactor), -0.6), 1);
         return true;
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         var zoomScale = this.zoomX + 1;
-        var adjustedDragX = dragX / zoomScale;
-        var adjustedDragY = dragY / zoomScale;
 
-        panX += adjustedDragX;
-        panY += adjustedDragY;
-
+        panX += Math.round(dragX / zoomScale);
+        panY += Math.round(dragY / zoomScale);
         return true;
     }
 
@@ -68,12 +66,14 @@ public abstract class AbstractPanableScreen extends Screen {
         var player = mc.player;
         var zoom = (float) (this.smoothToX + 1);
 
+        baseRender(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
+
         guiGraphics.enableScissor(3, 3, this.width - 3, this.height - 4);
         pose.pushPose();
         pose.translate(centerX, centerY, 0);
         pose.scale(zoom, zoom, zoom);
         pose.translate(-centerX, -centerY, 0);
-        renderObjects(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
+        renderWithScale(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
         pose.popPose();
         guiGraphics.disableScissor();
     }
@@ -92,7 +92,7 @@ public abstract class AbstractPanableScreen extends Screen {
         }
     }
 
-    protected abstract void renderObjects(
+    protected abstract void renderWithScale(
         GuiGraphics guiGraphics,
         int mouseX,
         int mouseY,
@@ -101,5 +101,15 @@ public abstract class AbstractPanableScreen extends Screen {
         float centerY,
         Minecraft mc
     );
+
+    protected void baseRender(
+        GuiGraphics guiGraphics,
+        int mouseX,
+        int mouseY,
+        LocalPlayer player,
+        float centerX,
+        float centerY,
+        Minecraft mc
+    ){};
 
 }
