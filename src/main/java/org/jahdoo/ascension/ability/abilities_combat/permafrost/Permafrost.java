@@ -14,7 +14,7 @@ import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
@@ -26,7 +26,6 @@ import java.util.List;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.EffectReg.FROST_EFFECT;
 
@@ -53,8 +52,8 @@ public class Permafrost extends DefaultEntityBehaviour {
     }
 
     @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.cloud.getwandabilityholder();
+    public AbilityHolder getAbilityHolder() {
+        return this.cloud.getAbilityHolder();
     }
 
     @Override

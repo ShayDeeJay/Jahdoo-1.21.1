@@ -15,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.PositionFinders;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -30,7 +30,6 @@ import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.attributeModifierCalculator;
 import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
 
@@ -67,8 +66,8 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     }
 
     @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.cloud.getwandabilityholder();
+    public AbilityHolder getAbilityHolder() {
+        return this.cloud.getAbilityHolder();
     }
 
     @Override

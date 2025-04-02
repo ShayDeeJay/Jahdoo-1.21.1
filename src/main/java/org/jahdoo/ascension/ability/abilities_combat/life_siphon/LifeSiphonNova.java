@@ -5,15 +5,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.effects.type_effects.vitality.VitalityEffect;
-import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.ElementReg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +21,12 @@ import java.util.List;
 import static org.jahdoo.ascension.ability.AbilityBuilder.DAMAGE;
 import static org.jahdoo.ascension.ability.AbilityBuilder.RANGE;
 import static org.jahdoo.ascension.ability.abilities_combat.life_siphon.LifeSiphonAbility.HEAL_VALUE;
-import static org.jahdoo.common.components.DataComponentHelper.*;
-import static org.jahdoo.common.particle.ParticleHandlers.*;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.ascension.utils.Helpers.listRandom;
+import static org.jahdoo.ascension.utils.Helpers.res;
+import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
-import static org.jahdoo.common.particle.ParticleStore.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 
 public class LifeSiphonNova extends DefaultEntityBehaviour {
 
@@ -52,8 +52,8 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
     }
 
     @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.cloud.getwandabilityholder();
+    public AbilityHolder getAbilityHolder() {
+        return this.cloud.getAbilityHolder();
     }
 
     @Override
@@ -74,12 +74,11 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
     }
 
     public float getValue(String value){
-        var id = abilityId.getPath().intern();
-        var holder = this.cloud.getwandabilityholder();
-        return (float) getSpecificValue(id, holder, value);
+        var holder = this.cloud.getAbilityHolder();
+        return (float) getSpecificValue(holder, value);
     }
 
-    public static WandAbilityHolder setModifiers(double damage, double range, double healValue) {
+    public static AbilityHolder setModifiers(double damage, double range, double healValue) {
         return new AbilityBuilder(null, abilityId.getPath().intern())
             .setModifierWithoutBounds(DAMAGE, damage)
             .setModifierWithoutBounds(RANGE, range)

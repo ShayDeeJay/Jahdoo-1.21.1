@@ -19,30 +19,30 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.attachments.IAttachment;
 import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.NovaSmashS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.List;
 
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
-import static org.jahdoo.common.components.DataComponentHelper.*;
+import static org.jahdoo.ascension.utils.DamageUtils.damageWithJahdoo;
+import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
+import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.common.registers.AttachmentReg.NOVA_SMASH;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.ascension.utils.DamageUtils.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.ascension.utils.PositionFinders.*;
 
 public class NovaSmash implements IAttachment {
 
@@ -182,8 +182,8 @@ public class NovaSmash implements IAttachment {
         this.highestDelta = Math.max(this.highestDelta, getCurrentDelta);
 
         if (this.canSmash){
-            var getHolder = WandAbilityHolder.getHolderFromWand(player);
-            var getValue = (float) getSpecificValue(NovaSmashAbility.abilityId.getPath().intern(), getHolder,AbilityBuilder.DAMAGE);
+            var getHolder = AbilityHolder.getHolderFromWand(player);
+            var getValue = (float) getSpecificValue(getHolder, AbilityBuilder.DAMAGE);
             this.getDamage = Helpers.attributeModifierCalculator(player, getValue, false, MAGIC_DAMAGE_MULTIPLIER, MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
             player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
             if(player.onGround()){

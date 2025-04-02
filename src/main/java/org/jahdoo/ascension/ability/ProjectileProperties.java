@@ -16,7 +16,7 @@ import net.neoforged.neoforge.event.EventHooks;
 import org.jahdoo.ascension.ability.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.components.AbilityHolder;
 
 public abstract class ProjectileProperties extends Projectile {
     private static final EntityDataAccessor<Integer> ANIMATION_TYPE = SynchedEntityData.defineId(ProjectileProperties.class, EntityDataSerializers.INT);
@@ -69,9 +69,9 @@ public abstract class ProjectileProperties extends Projectile {
         return 1.0F;
     }
 
-    public static double getTag(String name, WandAbilityHolder wandAbilityHolder) {
+    public static double getTag(String name, AbilityHolder abilityHolder) {
         var abName = BurningSkullsAbility.abilityId.getPath().intern();
-        var modifier = Helpers.getModifierValue(wandAbilityHolder, abName).get(name);
+        var modifier = Helpers.getModifierValue(abilityHolder, abName).get(name);
 
         if(modifier != null) return modifier.setValue();
 

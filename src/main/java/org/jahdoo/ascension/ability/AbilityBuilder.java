@@ -1,8 +1,8 @@
 package org.jahdoo.ascension.ability;
 
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.registers.ComponentReg;
 
 import javax.annotation.Nullable;
@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 
-import static org.jahdoo.common.registers.ComponentReg.AUGMENT_RATING;
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
+import static org.jahdoo.common.registers.ComponentReg.AUGMENT_RATING;
 
 public class AbilityBuilder {
 
@@ -36,8 +36,7 @@ public class AbilityBuilder {
 
     private final ItemStack item;
     private final String abilityId;
-    private final WandAbilityHolder wandAbilityHolder = new WandAbilityHolder(new LinkedHashMap<>());
-    private final AbilityHolder abilityHolder = new AbilityHolder(new LinkedHashMap<>());
+    private final AbilityData abilityData = new AbilityData(new LinkedHashMap<>());
 
     /**
      * If you null ItemStack then you should only buildAndReturn()
@@ -45,10 +44,6 @@ public class AbilityBuilder {
     public AbilityBuilder(@Nullable ItemStack itemStack, String abilityId) {
         this.item = itemStack;
         this.abilityId = abilityId;
-    }
-
-    public double getPropertyFromHolder(String getSelection){
-        return this.abilityHolder.abilityProperties().get(getSelection).actualValue();
     }
 
     public AbilityBuilder setDamage(double high, double low, double step){
@@ -161,15 +156,13 @@ public class AbilityBuilder {
         return this;
     }
 
-    public WandAbilityHolder buildAndReturn(){
-        this.wandAbilityHolder.abilityProperties().put(abilityId, this.abilityHolder);
-        return this.wandAbilityHolder;
+    public AbilityHolder buildAndReturn(){
+        return new AbilityHolder(abilityId, abilityData);
     }
 
     public void build() {
-        this.wandAbilityHolder.abilityProperties().put(abilityId, this.abilityHolder);
         if(this.item != null){
-            this.item.set(ComponentReg.WAND_ABILITY_HOLDER.get(), this.wandAbilityHolder);
+            this.item.set(ComponentReg.ABILITY_HOLDER.get(), new AbilityHolder(abilityId, abilityData));
         }
     }
 
@@ -181,36 +174,36 @@ public class AbilityBuilder {
     }
 
     public AbilityBuilder setModifier(String name, double high, double low, boolean isHigherBetter, double actualValue) {
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(
+        var abilityModifiers = new AbilityData.AbilityModifiers(
             actualValue, high, low, 0, actualValue, isHigherBetter
         );
 
-        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
+        this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
 
     public AbilityBuilder setModifierWithStep(String name, double high, double low, boolean isHigherBetter, double actualValue, double step) {
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(
+        var abilityModifiers = new AbilityData.AbilityModifiers(
             actualValue, high, low, step, actualValue, isHigherBetter
         );
 
-        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
+        this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
 
     public AbilityBuilder setModifierWithStepSet(String name, double high, double low, boolean isHigherBetter, double actualValue, double setValue, double step) {
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(
+        var abilityModifiers = new AbilityData.AbilityModifiers(
             actualValue, high, low, step, setValue, isHigherBetter
         );
 
-        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
+        this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
     public AbilityBuilder setModifierWithoutBounds(String name, double actualValue) {
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(
+        var abilityModifiers = new AbilityData.AbilityModifiers(
             actualValue, -1, -1, 0, actualValue, true
         );
-        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
+        this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
 
@@ -223,8 +216,8 @@ public class AbilityBuilder {
         var highR = doubleFormattedDouble(high);
         var lowR = doubleFormattedDouble(low);
         var stepR = doubleFormattedDouble(step);
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(chosenR, highR, lowR, stepR, chosenR, isHigherBetter);
-        this.abilityHolder.abilityProperties().put(name, abilityModifiers);
+        var abilityModifiers = new AbilityData.AbilityModifiers(chosenR, highR, lowR, stepR, chosenR, isHigherBetter);
+        this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
 

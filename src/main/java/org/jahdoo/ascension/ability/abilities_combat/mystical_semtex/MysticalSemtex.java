@@ -15,7 +15,7 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.EntityMovers;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -73,8 +73,8 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
     }
 
     @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.element.getwandabilityholder();
+    public AbilityHolder getAbilityHolder() {
+        return this.element.getAbilityHolder();
     }
 
     @Override
@@ -271,7 +271,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         if (Helpers.Random.nextInt(0, (int) this.additionalProjectileChance) != 0) return;
         var getType = EntityReg.MYSTIC_ELEMENT_PROJECTILE.get();
         var abilityId = EntityDataReg.MYSTICAL_SEMTEX.get().setAbilityId();
-        var abilityHolder = projectile.getwandabilityholder();
+        var abilityHolder = projectile.getAbilityHolder();
         var abilityName = MysticalSemtexAbility.abilityId.getPath().intern();
 
         EntityMovers.moveEntitiesRelativeToPlayer(this.target, additionalProjectiles,

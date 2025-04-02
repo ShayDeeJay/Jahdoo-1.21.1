@@ -6,21 +6,21 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.ascension.utils.GlobalStrings;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.decoy.Decoy;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.GlobalStrings;
-import org.jahdoo.ascension.ability.AbilityBuilder;
 
+import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
-import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 
 
 public class EscapeDecoyAbility extends AbilityRegistrar {
@@ -75,7 +75,7 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
 
     @Override
     public void invokeAbility(Player player) {
-        var tagModifier = Helpers.getModifierValue(WandAbilityHolder.getHolderFromWand(player), abilityId.getPath().intern());
+        var tagModifier = Helpers.getModifierValue(AbilityHolder.getHolderFromWand(player), abilityId.getPath().intern());
         var range = tagModifier.get(RANGE);
         if(range != null){
             var decoy = new Decoy(player.level(), player, (int) range.setValue());

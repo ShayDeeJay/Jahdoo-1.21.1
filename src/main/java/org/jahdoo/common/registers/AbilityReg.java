@@ -13,31 +13,31 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.ability.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.ascension.ability.abilities_combat.EscapeDecoyAbility;
-import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.*;
 import org.jahdoo.ascension.ability.abilities_combat.ancient_golem.SummonAncientGolemAbility;
 import org.jahdoo.ascension.ability.abilities_combat.arcane_shift.ArcaneShiftAbility;
 import org.jahdoo.ascension.ability.abilities_combat.armageddon.ArmageddonAbility;
-import org.jahdoo.ascension.ability.abilities_utility.block_bomb.BlockBombAbility;
-import org.jahdoo.ascension.ability.abilities_utility.block_breaker.BlockBreakerAbility;
-import org.jahdoo.ascension.ability.abilities_utility.block_placer.BlockPlacerAbility;
 import org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility;
 import org.jahdoo.ascension.ability.abilities_combat.elemental_shooter.ElementalShooterAbility;
-import org.jahdoo.ascension.ability.abilities_utility.enchanted_fusion.EnchantedFusionAbility;
 import org.jahdoo.ascension.ability.abilities_combat.eternal_wizard.SummonEternalWizardAbility;
-import org.jahdoo.ascension.ability.abilities_utility.farmers_touch.FarmersTouchAbility;
-import org.jahdoo.ascension.ability.abilities_utility.fetch.FetchAbility;
 import org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility;
 import org.jahdoo.ascension.ability.abilities_combat.frostbolts.FrostboltsAbility;
-import org.jahdoo.ascension.ability.abilities_utility.hammer.HammerAbility;
 import org.jahdoo.ascension.ability.abilities_combat.hellfire.HellfireAbility;
 import org.jahdoo.ascension.ability.abilities_combat.ice_bomb.IceBombAbility;
 import org.jahdoo.ascension.ability.abilities_combat.life_siphon.LifeSiphonAbility;
-import org.jahdoo.ascension.ability.abilities_utility.light_placer.LightPlacerAbility;
 import org.jahdoo.ascension.ability.abilities_combat.mystical_semtex.MysticalSemtexAbility;
 import org.jahdoo.ascension.ability.abilities_combat.nova_smash.NovaSmashAbility;
 import org.jahdoo.ascension.ability.abilities_combat.permafrost.PermafrostAbility;
 import org.jahdoo.ascension.ability.abilities_combat.quantum_destroyer.QuantumDestroyerAbility;
 import org.jahdoo.ascension.ability.abilities_combat.storm_rush.StormRushAbility;
+import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility;
+import org.jahdoo.ascension.ability.abilities_utility.block_bomb.BlockBombAbility;
+import org.jahdoo.ascension.ability.abilities_utility.block_breaker.BlockBreakerAbility;
+import org.jahdoo.ascension.ability.abilities_utility.block_placer.BlockPlacerAbility;
+import org.jahdoo.ascension.ability.abilities_utility.enchanted_fusion.EnchantedFusionAbility;
+import org.jahdoo.ascension.ability.abilities_utility.farmers_touch.FarmersTouchAbility;
+import org.jahdoo.ascension.ability.abilities_utility.fetch.FetchAbility;
+import org.jahdoo.ascension.ability.abilities_utility.hammer.HammerAbility;
+import org.jahdoo.ascension.ability.abilities_utility.light_placer.LightPlacerAbility;
 import org.jahdoo.ascension.ability.abilities_utility.vein_miner.VeinMinerAbility;
 import org.jahdoo.ascension.ability.abilities_utility.wall_placer.WallPlacerAbility;
 import org.jahdoo.ascension.element.AbstractElement;
@@ -47,9 +47,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static net.minecraft.resources.ResourceKey.*;
-import static net.neoforged.neoforge.registries.DeferredRegister.*;
-import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
+import static net.minecraft.resources.ResourceKey.createRegistryKey;
+import static net.neoforged.neoforge.registries.DeferredRegister.create;
+import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 import static org.jahdoo.common.registers.ElementReg.utility;
 
 public class AbilityReg {
@@ -114,16 +114,13 @@ public class AbilityReg {
 
     public static Optional<AbilityRegistrar> getFirstSpellFromAugment(ItemStack itemStack) {
         if(itemStack.isEmpty()) return Optional.empty();
-        var wandAbilityHolder = itemStack.get(WAND_ABILITY_HOLDER);
+        var abilityHolder = itemStack.get(ABILITY_HOLDER);
 
-        if(wandAbilityHolder != null) {
-            var typeId = wandAbilityHolder.abilityProperties().keySet().stream().findFirst();
-            return typeId.flatMap(s ->
-                AbilityReg.REGISTRY
-                    .stream()
-                    .filter(a -> Objects.equals(a.setAbilityId(), s))
-                    .findFirst()
-            );
+        if(abilityHolder != null) {
+            return AbilityReg.REGISTRY
+                .stream()
+                .filter(a -> Objects.equals(a.setAbilityId(), abilityHolder.abilityName()))
+                .findFirst();
         }
 
         return Optional.empty();

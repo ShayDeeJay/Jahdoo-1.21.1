@@ -7,25 +7,32 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jahdoo.JahdooMod;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.magnet.MagnetData;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.JahdooMod;
 import org.jahdoo.common.items.wand.WandData;
 
 import java.util.function.UnaryOperator;
 
 public class ComponentReg {
-    private static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, JahdooMod.MOD_ID);
 
+    private static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, JahdooMod.MOD_ID);
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<WandAbilityHolder>> WAND_ABILITY_HOLDER =
         register("wand_ability_holder", builder ->
             builder
                 .persistent(WandAbilityHolder.CODEC)
                 .networkSynchronized(WandAbilityHolder.STREAM_CODEC)
+        );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<AbilityHolder>> ABILITY_HOLDER =
+        register("ability_holder", builder ->
+            builder
+                .persistent(AbilityHolder.CODEC)
+                .networkSynchronized(AbilityHolder.STREAM_CODEC)
         );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Double>> AUGMENT_RATING =
@@ -95,13 +102,13 @@ public class ComponentReg {
                 .cacheEncoding()
         );
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<AbilityHolder>> ABILITY_HOLDER =
-        register("ability_holder", builder ->
-            builder
-                .persistent(AbilityHolder.CODEC)
-                .networkSynchronized(AbilityHolder.STREAM_CODEC)
-                .cacheEncoding()
-        );
+//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<AbilityData>> ABILITY_HOLDER =
+//        register("ability_holder", builder ->
+//            builder
+//                .persistent(AbilityData.CODEC)
+//                .networkSynchronized(AbilityData.STREAM_CODEC)
+//                .cacheEncoding()
+//        );
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name, UnaryOperator<DataComponentType.Builder<T>> builderUnaryOperator) {
         return COMPONENTS.register(name, () -> builderUnaryOperator.apply(DataComponentType.builder()).build());

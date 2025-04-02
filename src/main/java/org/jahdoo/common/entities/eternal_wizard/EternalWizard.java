@@ -22,26 +22,26 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.ability.abilities_combat.EtherealArrow;
 import org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility;
 import org.jahdoo.ascension.ability.abilities_combat.frostbolts.FrostboltsAbility;
-import org.jahdoo.ascension.ability.abilities_combat.EtherealArrow;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.goals.*;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.items.wand.WandItemHelper;
 import org.jahdoo.common.registers.*;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility.abilityId;
 import static org.jahdoo.ascension.ability.abilities_combat.armageddon.ArmageddonModule.buddy;
+import static org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility.abilityId;
 import static org.jahdoo.common.entities.SharedEntityBehaviours.canTarget;
 import static org.jahdoo.common.items.wand.CastHelper.castAnimation;
 import static org.jahdoo.common.items.wand.WandAnimations.SINGLE_CAST_ID;
@@ -214,7 +214,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         fireProjectile(target, elementProjectile, 1.2, 0.5F);
     }
 
-    public WandAbilityHolder fireballModule() {
+    public AbilityHolder fireballModule() {
         //NOTE: Does not work when spawned without player as does not have any attributes, so may need static values
         return new AbilityBuilder(null, FireballAbility.abilityId.getPath().intern())
             .setDamageWithValue(0,0, this.damage)

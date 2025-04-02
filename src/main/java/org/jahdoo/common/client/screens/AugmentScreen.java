@@ -7,16 +7,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
 import org.jahdoo.common.client.button.ToggleComponent;
+import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.common.networking.client2server.SyncComponentBlockC2S;
-import org.jahdoo.common.networking.client2server.SyncComponentC2S;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -30,11 +26,11 @@ import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.button.ToggleComponent.textWithBackgroundLarge;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
-import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 
 public class AugmentScreen extends Screen  {
 
-    private WandAbilityHolder holder;
+    private AbilityHolder holder;
     private final String abilityName;
     private final Screen previousScreen;
     private double yScroll;
@@ -42,7 +38,7 @@ public class AugmentScreen extends Screen  {
 
     public AugmentScreen(ItemStack itemStack, String abilityName, Screen previousScreen) {
         super(Component.literal("Augment Menu"));
-        this.holder = itemStack.get(WAND_ABILITY_HOLDER.get());
+        this.holder = itemStack.get(ABILITY_HOLDER.get());
         this.itemStack = itemStack;
         this.abilityName = abilityName;
         this.previousScreen = previousScreen;
@@ -70,14 +66,14 @@ public class AugmentScreen extends Screen  {
         this.addRenderableWidget(new AbilityIconButton(posX, posY, button, size, action, false, () -> {}));
     }
 
-    private void buttonReduce(String e, AbilityHolder.AbilityModifiers v) {
+    private void buttonReduce(String e, AbilityData.AbilityModifiers v) {
         var min = Math.min(v.setValue() + v.step(), v.highestValue());
         var max = Math.max(v.setValue() - v.step(), v.lowestValue());
         updateAugmentConfig(e, v, v.isHigherBetter() ? max : min);
         this.rebuildWidgets();
     }
 
-    private void buttonIncrease(String e, AbilityHolder.AbilityModifiers v) {
+    private void buttonIncrease(String e, AbilityData.AbilityModifiers v) {
         var min = Math.max(v.setValue() - v.step(), v.actualValue());
         var max = Math.min(v.setValue() + v.step(), v.actualValue());
         updateAugmentConfig(e, v, v.isHigherBetter() ? max : min);
@@ -103,7 +99,7 @@ public class AugmentScreen extends Screen  {
         }
     }
 
-    private void displayButtons(LinkedHashMap<String, AbilityHolder.AbilityModifiers> copy1, AtomicInteger verticalSpacing) {
+    private void displayButtons(LinkedHashMap<String, AbilityData.AbilityModifiers> copy1, AtomicInteger verticalSpacing) {
 
         copy1.forEach(
             (e, v) -> {
@@ -130,8 +126,8 @@ public class AugmentScreen extends Screen  {
         displayButtons(getModifiableList(), verticalSpacing);
     }
 
-    private LinkedHashMap<String, AbilityHolder.AbilityModifiers> getModifiableList() {
-        var mainHolderValues = holder.abilityProperties().get(abilityName);
+    private LinkedHashMap<String, AbilityData.AbilityModifiers> getModifiableList() {
+        var mainHolderValues = holder.data();
         var copy = new HashMap<>(mainHolderValues.abilityProperties());
         copy.remove(MANA_COST);
         copy.remove(COOLDOWN);
@@ -153,13 +149,13 @@ public class AugmentScreen extends Screen  {
 
     }
 
-    private void updateAugmentConfig(String e, AbilityHolder.AbilityModifiers v, double i) {
-        var newWandHolder = new WandAbilityHolder(new HashMap<>(holder.abilityProperties()));
-        var newHolder = new AbilityHolder(new HashMap<>(holder.abilityProperties().get(abilityName).abilityProperties()));
-        var abilityModifier = new AbilityHolder.AbilityModifiers(v.actualValue(), v.highestValue(), v.lowestValue(), v.step(), i, v.isHigherBetter());
-        newHolder.abilityProperties().put(e, abilityModifier);
-        newWandHolder.abilityProperties().put(abilityName, newHolder);
+    private void updateAugmentConfig(String e, AbilityData.AbilityModifiers v, double i) {
 
+        var newHolder = new AbilityData(new HashMap<>(holder.data().abilityProperties()));
+        var abilityModifier = new AbilityData.AbilityModifiers(v.actualValue(), v.highestValue(), v.lowestValue(), v.step(), i, v.isHigherBetter());
+        newHolder.abilityProperties().put(e, abilityModifier);
+        //TODO AS NEEDS PACKET FIX
+        /*
         if(this.previousScreen != null && this.previousScreen instanceof ChaosCubeScreen screen){
             var pos = screen.entity().getBlockPos();
             PacketDistributor.sendToServer(new SyncComponentBlockC2S(newWandHolder, pos));
@@ -167,7 +163,7 @@ public class AugmentScreen extends Screen  {
             PacketDistributor.sendToServer(new SyncComponentC2S(newWandHolder));
         }
 
-        this.holder = newWandHolder;
+        this.holder = newWandHolder;*/
         this.rebuildWidgets();
     }
 }

@@ -7,19 +7,16 @@ import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityDataReg;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
@@ -52,8 +49,8 @@ public class Armageddon extends DefaultEntityBehaviour {
     }
 
     @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.cloud.getwandabilityholder();
+    public AbilityHolder getAbilityHolder() {
+        return this.cloud.getAbilityHolder();
     }
 
     @Override
@@ -89,15 +86,13 @@ public class Armageddon extends DefaultEntityBehaviour {
         this.createModule(getPositionInRadius.get(Helpers.Random.nextInt(0, getPositionInRadius.size())));
     }
 
-    public AbilityHolder setAbilityModifiers(String name, double value){
-        var abilityModifiers = new AbilityHolder.AbilityModifiers(value, 0,0,0,value,true);
-        return new AbilityHolder(Map.of(name, abilityModifiers));
+    public AbilityData setAbilityModifiers(String name, double value){
+        var abilityModifiers = new AbilityData.AbilityModifiers(value, 0,0,0,value,true);
+        return new AbilityData(Map.of(name, abilityModifiers));
     }
 
-    public WandAbilityHolder armageddonModule() {
-        var wandAbilityHolder = new LinkedHashMap<String, AbilityHolder>();
-        wandAbilityHolder.put(ArmageddonModule.name, this.setAbilityModifiers(DAMAGE, this.damage));
-        return new WandAbilityHolder(wandAbilityHolder);
+    public AbilityHolder armageddonModule() {
+        return new AbilityHolder(ArmageddonModule.name, this.setAbilityModifiers(DAMAGE, this.damage));
     }
 
     @Override

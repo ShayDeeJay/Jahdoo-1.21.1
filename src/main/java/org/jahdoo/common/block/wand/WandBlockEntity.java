@@ -1,6 +1,7 @@
 package org.jahdoo.common.block.wand;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
@@ -9,21 +10,17 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.common.items.wand.WandData;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.AbilityReg;
-import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.block.AbstractBEInventory;
+import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.BlockEntityReg;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -31,11 +28,8 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
 
-import static org.jahdoo.common.items.augments.AugmentItemHelper.setAbilityToAugment;
-import static org.jahdoo.common.registers.ComponentReg.NUMBER;
 import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
 import static org.jahdoo.common.registers.ElementReg.fromWand;
 
@@ -43,6 +37,7 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
 
     public static final int GET_WAND_SLOT = 0;
     private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle_block");
+    private static final Logger log = LoggerFactory.getLogger(WandBlockEntity.class);
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private int tickCounter;
 
@@ -102,11 +97,9 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
 
     public int getAllowedSlots(){
         var getSlots = getWandItemFromSlot();
-        if(getSlots.has(WAND_DATA.get())){
-            var a = getSlots.get(WAND_DATA).abilitySlots();
-            return Math.min(a, slotsWithoutWand());
-        }
-        return 4;
+        var a = getSlots.get(WAND_DATA);
+
+        return a != null ? Math.min(a.abilitySlots(), slotsWithoutWand()) : 4;
     }
 
     public void tick(Level level, BlockPos blockPos, BlockState state) {
@@ -148,65 +141,36 @@ public class WandBlockEntity extends AbstractBEInventory implements MenuProvider
     }
 
     public void setAllAbilities(){
-        var wandAbilityHolder = new WandAbilityHolder(new LinkedHashMap<>());
-        var positions = new ArrayList<String>();
-        ItemStack wandItem = this.getWandItemFromSlot().copy();
+        var wandItem = this.getWandItemFromSlot().copy();
+
+        var bundleContents = wandItem.get(DataComponents.BUNDLE_CONTENTS);
+        if(bundleContents == null) return;
+
+        var newComponents = new ArrayList<ItemStack>();
 
         for(int i = 0; i < this.getAllowedSlots(); i++){
             var augmentItem = this.inputItemHandler.getStackInSlot(i+1);
-            var hasAbility = augmentItem.has(ComponentReg.WAND_ABILITY_HOLDER.get());
-            if(hasAbility){
-                var getKeyFromAugment = DataComponentHelper.getAbilityTypeItemStack(augmentItem);
-                var abilityHolder = augmentItem.get(ComponentReg.WAND_ABILITY_HOLDER.get()).abilityProperties().get(getKeyFromAugment);
-                positions.add(getKeyFromAugment);
-                wandAbilityHolder.abilityProperties().put(getKeyFromAugment, abilityHolder);
-            } else {
-                positions.add("empty" + i);
-                wandAbilityHolder.abilityProperties().put("empty" + i, new AbilityHolder(Collections.emptyMap()));
+            if(!augmentItem.isEmpty()){
+                newComponents.add(augmentItem);
             }
         }
 
-        if(!wandAbilityHolder.abilityProperties().containsKey(  wandItem.get(WAND_DATA).selectedAbility())){
-            wandItem.update(WAND_DATA, WandData.DEFAULT, data -> data.setSelectedAbility(""));
-        }
-        wandItem.update(WAND_DATA, WandData.DEFAULT, data -> data.setAbilityOrder(positions));
-        wandItem.set(ComponentReg.WAND_ABILITY_HOLDER.get(), wandAbilityHolder);
+        wandItem.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(newComponents));
         this.inputItemHandler.setStackInSlot(GET_WAND_SLOT, wandItem);
+
     }
 
     public void updateView(){
-        for(int i = 1; i < this.inputItemHandler.getSlots(); i++) {
-            this.inputItemHandler.setStackInSlot(i, ItemStack.EMPTY);
-        }
+        var list = this.getWandItemFromSlot().get(DataComponents.BUNDLE_CONTENTS);
 
-        var actualAbilities =
-            this.inputItemHandler.getStackInSlot(GET_WAND_SLOT)
-                .get(ComponentReg.WAND_ABILITY_HOLDER.get());
-
-        var storedAbilities = this.inputItemHandler
-            .getStackInSlot(GET_WAND_SLOT)
-            .get(WAND_DATA.get());
-
-        AtomicInteger integer = new AtomicInteger(1);
-
-        for (String key : storedAbilities.abilitySet()) {
-            var abilityRegistrars = AbilityReg.getSpellsByTypeId(key);
-            if (!abilityRegistrars.isEmpty()) {
-                var ability = abilityRegistrars.getFirst();
-                var itemStack = new ItemStack(ItemReg.AUGMENT.get());
-                itemStack.set(NUMBER, 4);
-                var abilityHolder = actualAbilities.abilityProperties().get(key);
-                setAbilityToAugment(itemStack, ability, actualAbilities);
-                var newHolder = new WandAbilityHolder(new LinkedHashMap<>());
-                newHolder.abilityProperties().put(key, abilityHolder);
-                itemStack.set(ComponentReg.WAND_ABILITY_HOLDER.get(), newHolder);
-                itemStack.set(ComponentReg.JAHDOO_RARITY, ability.rarity().getId());
-                this.inputItemHandler.setStackInSlot(integer.get(), itemStack);
-
-            } else {
-                this.inputItemHandler.setStackInSlot(integer.get(), ItemStack.EMPTY);
+        var counter = 1;
+        if(list != null){
+            for (var itemStack : list.itemCopyStream().toList()) {
+                if(!itemStack.isEmpty()){
+                    this.inputItemHandler.setStackInSlot(counter, itemStack);
+                    counter++;
+                }
             }
-            integer.set(integer.get() + 1);
         }
     }
 }

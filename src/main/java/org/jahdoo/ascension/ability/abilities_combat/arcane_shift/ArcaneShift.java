@@ -11,7 +11,7 @@ import org.jahdoo.ascension.ability.AbstractAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ElementReg;
 
@@ -26,16 +26,16 @@ import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 public class ArcaneShift extends AbstractAbility {
 
     private final Player player;
-    private final WandAbilityHolder wandAbilityHolder;
+    private final AbilityHolder abilityHolder;
 
     public ArcaneShift(Player player) {
         this.player = player;
-        this.wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
+        this.abilityHolder = AbilityHolder.getHolderFromWand(player);
     }
 
     @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return wandAbilityHolder;
+    public AbilityHolder getAbilityHolder() {
+        return abilityHolder;
     }
 
     @Override

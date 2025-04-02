@@ -17,12 +17,12 @@ import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
 public class GuiButton extends ImageButton {
 
     private float sizes;
+    private final boolean isSelected;
+    private final boolean showHover;
     private final int defaultSize;
     private final int totalSize;
     private final OnPress pOnPress;
-    private final boolean isSelected;
     private final ResourceLocation buttonOverlay;
-    private final boolean showHover;
     private final String label;
 
     public GuiButton(
@@ -69,34 +69,37 @@ public class GuiButton extends ImageButton {
     }
 
     @Override
-    public void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        this.setSize((int) sizes-4, (int) sizes-4);
-        if(isSelected) sizes = totalSize;
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         var normalizedTick = (sizes - defaultSize) / (totalSize - defaultSize);
         var easedTick = easeInOutCubic(normalizedTick);
         var easedValue = (int) (easedTick * (totalSize - defaultSize)) + defaultSize;
         var offset = (easedValue - defaultSize) / 2;
-        pGuiGraphics.drawCenteredString(Minecraft.getInstance().font, label, this.getX() + 17, this.getY()-8, -1);
-        pGuiGraphics.blit(this.sprites.enabled(), this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
-        if (this.isMouseOver(pMouseX, pMouseY)) {
+
+        if(isSelected) sizes = totalSize;
+        this.setSize((int) sizes-4, (int) sizes-4);
+
+        graphics.drawCenteredString(Minecraft.getInstance().font, label, this.getX() + 17, this.getY()-8, -1);
+        graphics.blit(this.sprites.enabled(), this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
+
+        if (this.isMouseOver(mouseX, mouseY)) {
             sizes = Math.min(sizes + 2f, totalSize);
             int i = 4;
-            pGuiGraphics.pose().pushPose();
-            pGuiGraphics.pose().translate(0,0,2);
+            graphics.pose().pushPose();
+            graphics.pose().translate(0,0,2);
             if(showHover){
-                pGuiGraphics.blit(SELECTED_GUI_BUTTON_OVERLAY, this.getX() - offset + i / 2, this.getY() - offset + i / 2, 0, 0, 0, easedValue - i, easedValue - i, easedValue - i, easedValue - i);
+                graphics.blit(SELECTED_GUI_BUTTON_OVERLAY, this.getX() - offset + i / 2, this.getY() - offset + i / 2, 0, 0, 0, easedValue - i, easedValue - i, easedValue - i, easedValue - i);
             }
-            pGuiGraphics.pose().popPose();
+            graphics.pose().popPose();
         } else {
             if (sizes > defaultSize) sizes -= 2f;
         }
 
         if(isSelected){
-            pGuiGraphics.blit(GUI_BUTTON_SELECTED, this.getX() - offset, this.getY()- offset, 1, 0, 0, easedValue, easedValue, easedValue, easedValue);
+            graphics.blit(GUI_BUTTON_SELECTED, this.getX() - offset, this.getY()- offset, 1, 0, 0, easedValue, easedValue, easedValue, easedValue);
         }
 
         if(buttonOverlay != null){
-            pGuiGraphics.blit(buttonOverlay, this.getX() - offset, this.getY() - offset, 1, 0, 0, easedValue, easedValue, easedValue, easedValue);
+            graphics.blit(buttonOverlay, this.getX() - offset, this.getY() - offset, 1, 0, 0, easedValue, easedValue, easedValue, easedValue);
         }
     }
 

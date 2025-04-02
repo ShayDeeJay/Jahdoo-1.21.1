@@ -10,23 +10,23 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.AbstractEntityProperty;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.ProjectileProperties;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.EntityReg;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
 public class GenericProjectile extends ProjectileProperties implements IEntityProperties {
 
     private String projectileSelectionIndex;
     private DefaultEntityBehaviour getProjectile;
-    private WandAbilityHolder wandAbilityHolder;
+    private AbilityHolder abilityHolder;
     private AbstractElement getElement;
     private String abilityId;
     public double maxDistance;
@@ -46,7 +46,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.setProjectileWithOffsets(this, player, offset, 1);
         this.reapplyPosition();
         this.setOwner(player);
-        this.wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
+        this.abilityHolder = AbilityHolder.getHolderFromWand(player);
         this.projectileSelectionIndex = projectileSelectionIndex;
         this.abilityId = abilityId;
         this.getProjectile = EntityDataReg.getProperty(projectileSelectionIndex);
@@ -64,7 +64,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.setProjectileWithOffsets(this, player, offset, 1);
         this.reapplyPosition();
         this.setOwner(player);
-        this.wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
+        this.abilityHolder = AbilityHolder.getHolderFromWand(player);
         this.projectileSelectionIndex = index;
         this.abilityId = abilityId;
         this.getProjectile = EntityDataReg.getProperty(index);
@@ -73,7 +73,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     }
 
     public GenericProjectile(
-        WandAbilityHolder wandAbilityHolder,
+        AbilityHolder wandAbilityHolder,
         Vec3 direction,
         Level level,
         String index,
@@ -83,7 +83,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.moveTo(direction.x, direction.y, direction.z, 0, 0);
         this.reapplyPosition();
         this.blockEntityPos = direction;
-        this.wandAbilityHolder = wandAbilityHolder;
+        this.abilityHolder = wandAbilityHolder;
         this.projectileSelectionIndex = index;
         this.abilityId = abilityId;
         this.getProjectile = EntityDataReg.getProperty(index);
@@ -96,7 +96,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         double spawnY,
         double spawnZ,
         String index,
-        WandAbilityHolder wandAbilityHolder,
+        AbilityHolder wandAbilityHolder,
         AbstractElement abstractElement,
         String abilityId
     ) {
@@ -104,7 +104,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.moveTo(spawnX, spawnY, spawnZ, this.getYRot(), this.getXRot());
         this.reapplyPosition();
         this.setOwner(owner);
-        this.wandAbilityHolder = wandAbilityHolder;
+        this.abilityHolder = wandAbilityHolder;
         this.getElement = abstractElement;
         this.abilityId = abilityId;
         this.projectileSelectionIndex = index;
@@ -112,13 +112,9 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.getProjectile.getGenericProjectile(this);
     }
 
-    public WandAbilityHolder wandAbilityHolder(){
-        return this.wandAbilityHolder;
-    }
-
     @Override
-    public WandAbilityHolder getwandabilityholder() {
-        return this.wandAbilityHolder;
+    public AbilityHolder getAbilityHolder() {
+        return this.abilityHolder;
     }
 
     public void setMaxDistance(double maxDistance){
@@ -165,7 +161,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         super.addAdditionalSaveData(tag);
         tag.putString("projectileIndex", this.projectileSelectionIndex);
         tag.putString("abilityId", this.abilityId);
-        DefaultEntityBehaviour.writeTag(this.wandAbilityHolder, this.abilityId, tag);
+        AbilityHolder.writeTag(this.abilityHolder, tag);
         if(this.getElement != null) tag.putInt("elementId", this.getElement.id());
         if(this.getProjectile != null) getProjectile.addAdditionalDetails(tag);
     }
@@ -175,7 +171,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         super.readAdditionalSaveData(tag);
         this.projectileSelectionIndex = tag.getString("projectileIndex");
         this.abilityId = tag.getString("abilityId");
-        this.wandAbilityHolder = DefaultEntityBehaviour.readTag(tag, abilityId);
+        this.abilityHolder = AbilityHolder.readTag(tag, abilityId);
 
         if(this.getElement == null && tag.getInt("elementId") > 0) {
             ElementReg.fromId(tag.getInt("elementId")).ifPresent(

@@ -12,25 +12,25 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.ascension.utils.Helpers;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.ability.AbilityRegistrar.DISTANCE_CAST;
 import static org.jahdoo.ascension.ability.AbilityRegistrar.HOLD_CAST;
+import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.ascension.utils.Maths.getFormattedFloat;
 import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttributeReg.COOLDOWN_REDUCTION;
 import static org.jahdoo.common.registers.AttributeReg.MANA_COST_REDUCTION;
-import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 import static org.jahdoo.common.registers.ElementReg.fromWand;
-import static org.jahdoo.ascension.utils.Maths.getFormattedFloat;
-import static org.jahdoo.ascension.utils.Helpers.*;
 
 
 public class CastHelper {
@@ -146,7 +146,8 @@ public class CastHelper {
 
     public static InteractionResultHolder<ItemStack> use(Player player) {
         var itemStack = Helpers.getUsedItem(player);
-        var abilityName = DataComponentHelper.getAbilityTypeWand(player);
+//        var abilityName = DataComponentHelper.getAbilityTypeWand(player);
+        var abilityName = DataComponentHelper.getAbilityTypePlayer(player);
         var getAbility = AbilityReg.REGISTRY.get(abilityName);
         var canUse = getCanApplyDistanceAbility(player, itemStack);
         var cantUseInDim = player.level() instanceof CustomLevel && getAbility != null && !getAbility.isMultiType() && getAbility.getElemenType().equals(ElementReg.utility());
@@ -169,8 +170,9 @@ public class CastHelper {
     public static boolean getCanApplyDistanceAbility(Player player, ItemStack itemStack){
         var isDistanceCast = AbilityReg.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
         if(isDistanceCast != null && isDistanceCast.getCastType() == DISTANCE_CAST){
-            var getCurrentAbility = DataComponentHelper.getAbilityTypeItemStack(itemStack);
-            var getAbility = Helpers.getModifierValue(itemStack.get(WAND_ABILITY_HOLDER.get()), getCurrentAbility);
+//            var getCurrentAbility = DataComponentHelper.getAbilityTypeItemStack(itemStack);
+            var getCurrentAbility = DataComponentHelper.getAbilityTypePlayerString(player);
+            var getAbility = Helpers.getModifierValue(itemStack.get(ABILITY_HOLDER.get()), getCurrentAbility);
             var allowedDistance = getAbility.get(CASTING_DISTANCE).actualValue();
             var lookAtLocation = player.pick(allowedDistance, 0, false);
             var isValidCastLocation = lookAtLocation.getType() == HitResult.Type.MISS;

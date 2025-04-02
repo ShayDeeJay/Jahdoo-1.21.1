@@ -16,7 +16,7 @@ import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.ProjectileProperties;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ComponentReg;
@@ -45,7 +45,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
     private double lerpYRot;
     private double lerpXRot;
 
-    WandAbilityHolder wandAbilityHolder;
+    AbilityHolder abilityHolder;
     DefaultEntityBehaviour getProjectile;
     public String selectedAbility;
     boolean isChildObject;
@@ -80,7 +80,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         this.setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
-        this.wandAbilityHolder = owner.getItemInHand(owner.getUsedItemHand()).get(ComponentReg.WAND_ABILITY_HOLDER.get());
+        this.abilityHolder = owner.getItemInHand(owner.getUsedItemHand()).get(ComponentReg.ABILITY_HOLDER.get());
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
         this.getProjectile = EntityDataReg.getProperty(selectedAbility);
@@ -92,14 +92,14 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         LivingEntity owner,
         String selectedAbility,
         double spacing,
-        WandAbilityHolder wandAbilityHolder,
+        AbilityHolder wandAbilityHolder,
         String abilityId
     ) {
         super(entityType, owner.level());
         this.setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
-        this.wandAbilityHolder = wandAbilityHolder;
+        this.abilityHolder = wandAbilityHolder;
         this.getProjectile =  EntityDataReg.getProperty(selectedAbility);
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
@@ -111,14 +111,14 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         LivingEntity owner,
         double x, double y, double z,
         String selection,
-        WandAbilityHolder wandAbilityHolder,
+        AbilityHolder wandAbilityHolder,
         String abilityId
     ) {
         super(entityType, owner.level());
         this.moveTo(x, y, z, 0, 0);
         this.reapplyPosition();
         this.setOwner(owner);
-        this.wandAbilityHolder = wandAbilityHolder;
+        this.abilityHolder = wandAbilityHolder;
         this.selectedAbility = selection;
         this.abilityId = abilityId;
         this.getProjectile = EntityDataReg.getProperty(selection);
@@ -212,7 +212,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         super.addAdditionalSaveData(pCompound);
         pCompound.putString("ability", this.selectedAbility);
         pCompound.putString("abilityId", this.abilityId);
-        DefaultEntityBehaviour.writeTag(this.wandAbilityHolder, this.abilityId, pCompound);
+        AbilityHolder.writeTag(this.abilityHolder, pCompound);
         getProjectile.addAdditionalDetails(pCompound);
     }
 
@@ -221,7 +221,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         super.readAdditionalSaveData(pCompound);
         this.selectedAbility = pCompound.getString("ability");
         this.abilityId = pCompound.getString("abilityId");
-        this.wandAbilityHolder = DefaultEntityBehaviour.readTag(pCompound, this.abilityId);
+        this.abilityHolder = AbilityHolder.readTag(pCompound, this.abilityId);
         if(this.getProjectile == null && !selectedAbility.isEmpty()){
             this.getProjectile = EntityDataReg.REGISTRY
                 .get(Helpers.res(selectedAbility))
@@ -265,7 +265,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
     }
 
     @Override
-    public WandAbilityHolder getwandabilityholder() {
-        return this.wandAbilityHolder;
+    public AbilityHolder getAbilityHolder() {
+        return this.abilityHolder;
     }
 }

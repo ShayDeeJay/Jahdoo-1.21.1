@@ -26,20 +26,21 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.wand.WandData;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ItemReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
+import static net.minecraft.world.ItemInteractionResult.*;
 import static org.jahdoo.common.block.wand.WandBlockEntity.GET_WAND_SLOT;
-//import static org.jahdoo.common.registers.DataComponentRegistry.ABILITY_SLOTS;
-import static org.jahdoo.common.particle.ParticleStore.*;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
 import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
 import static org.jahdoo.common.registers.ElementReg.fromWand;
@@ -112,8 +113,8 @@ public class WandBlock extends BaseEntityBlock {
     }
 
     public static ItemInteractionResult openWandGUI(Player player, BlockPos blockPos, Level level){
-        var success = ItemInteractionResult.SUCCESS;
-        var fail = ItemInteractionResult.FAIL;
+        var success = SUCCESS;
+        var fail = FAIL;
         if (!(level.getBlockEntity(blockPos) instanceof WandBlockEntity wandBlock)) return fail;
         if(!(player instanceof ServerPlayer serverPlayer)) return fail;
         serverPlayer.openMenu(wandBlock, blockPos);
@@ -142,10 +143,10 @@ public class WandBlock extends BaseEntityBlock {
                 int addSlotOrMax = Math.min(index, 10);
                 WandData.createNewAbilitySlots(wandBlock.getWandItemFromSlot(), addSlotOrMax);
 //                PacketDistributor.sendToServer(new WandDataC2SPacket(wa, wandBlock.getBlockPos()));
-                return ItemInteractionResult.CONSUME;
+                return CONSUME;
             }
         }
-        return ItemInteractionResult.FAIL;
+        return FAIL;
     }
 
     @Override
@@ -178,12 +179,20 @@ public class WandBlock extends BaseEntityBlock {
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
-        if (!(level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock)) return ItemInteractionResult.FAIL;
-        getItemInteractionResult(stack, wandBlock);
+        if (!(level.getBlockEntity(pos) instanceof WandBlockEntity wandBlock)) return FAIL;
+//        getItemInteractionResult(stack, wandBlock);
+
+        if(stack.getItem() instanceof Augment){
+//            var test = new ArrayList<ItemStack>();
+//
+//            test.add(stack);
+//            wandBlock.getWandItemFromSlot().set(DataComponents.BUNDLE_CONTENTS, new BundleContents(test));
+//            return CONSUME;
+        }
 
         if (stack.isEmpty() && player.isShiftKeyDown()) {
             this.pickUpWand(player, pos, level);
-            return ItemInteractionResult.CONSUME;
+            return CONSUME;
         }
 
         return openWandGUI(player, pos, level);
@@ -202,7 +211,7 @@ public class WandBlock extends BaseEntityBlock {
                         heldItem.shrink(1);
                         RuneHolder.updateRuneSlots(wandBlock.getWandItemFromSlot(), temp);
 //                        PacketDistributor.sendToServer(new WandDataC2SPacket(wandData, blockPos));
-                        return ItemInteractionResult.CONSUME;
+                        return CONSUME;
                     }
                 }
             } else {
@@ -212,12 +221,12 @@ public class WandBlock extends BaseEntityBlock {
                         temp.set(temp.indexOf(itemStack), ItemStack.EMPTY);
                         RuneHolder.updateRuneSlots(wandBlock.getWandItemFromSlot(), temp);
 //                        PacketDistributor.sendToServer(new WandDataC2SPacket(wandData, blockPos));
-                        return ItemInteractionResult.CONSUME;
+                        return CONSUME;
                     }
                 }
             }
         }
-        return ItemInteractionResult.FAIL;
+        return FAIL;
     }
 }
 

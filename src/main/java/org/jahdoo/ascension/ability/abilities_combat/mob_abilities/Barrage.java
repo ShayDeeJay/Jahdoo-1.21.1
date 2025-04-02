@@ -8,7 +8,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.abilities_combat.permafrost.PermafrostAbility;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleHandlers;
 
@@ -16,7 +16,6 @@ import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.PositionFinders.getInnerRingOfRadius;
 import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 
 
@@ -41,8 +40,8 @@ public class Barrage extends DefaultEntityBehaviour {
     }
 
     @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.cloud.getwandabilityholder();
+    public AbilityHolder getAbilityHolder() {
+        return this.cloud.getAbilityHolder();
     }
 
     private Level level(){

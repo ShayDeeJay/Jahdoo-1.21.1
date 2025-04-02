@@ -11,31 +11,31 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.slots.InventorySlots;
+import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.networking.client2server.ChargeCoreC2SP;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 import static net.minecraft.sounds.SoundEvents.APPLY_EFFECT_TRIAL_OMEN;
-import static org.jahdoo.common.client.SharedUI.*;
-import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.button.ToggleComponent.*;
+import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
 import static org.jahdoo.common.block.augment_modification_station.AugmentModificationData.*;
+import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.common.client.SharedUI.*;
+import static org.jahdoo.common.client.button.ToggleComponent.*;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
 import static org.jahdoo.common.items.augments.AugmentRatingSystem.calculateRatingNext;
 import static org.jahdoo.common.networking.client2server.ChargeCoreC2SP.chargeCoreSides;
-import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
-import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 
 public class AugmentModificationScreen extends AbstractContainerScreen<AugmentModificationMenu> {
     public static WidgetSprites WIDGET = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
@@ -76,7 +76,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         if(item.isEmpty()) return;
         var spacer = new AtomicInteger();
         int width = this.width / 2;
-        var getTag = this.item.get(ComponentReg.WAND_ABILITY_HOLDER);
+        var getTag = this.item.get(ComponentReg.ABILITY_HOLDER);
         if (getTag == null) return;
         var components = componentsWithBounds(item, this.getMinecraft().level);
 
@@ -100,7 +100,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
 
     public static List<Component> componentsWithBounds(ItemStack item, Level level){
         var components = getComponents(item, level);
-        var getTag =item.get(ComponentReg.WAND_ABILITY_HOLDER);
+        var getTag =item.get(ComponentReg.ABILITY_HOLDER);
         var compNew = components
             .subList(1, components.size()-2).stream().filter(component -> getAbilityModifiers(component, getTag).highestValue() != -1)
             .filter(component -> !component.equals(Component.literal(" ")) && !component.getString().contains("Unique"));
@@ -118,7 +118,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         }
     }
 
-    private void upgradeButton(Component component, int width, int ySpacer, boolean nexUpgrade, boolean correctAdjustment, AbilityHolder.AbilityModifiers x) {
+    private void upgradeButton(Component component, int width, int ySpacer, boolean nexUpgrade, boolean correctAdjustment, AbilityData.AbilityModifiers x) {
         var canPurchase = canPurchase(calculateRatingNext(x));
         int posX = width + 72;
         int posY = (int) (ySpacer + 11 + this.yScroll);
@@ -143,25 +143,24 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         );
     }
 
-    private static AbilityHolder.AbilityModifiers getAbilityModifiers(Component component, WandAbilityHolder getTag) {
-        var defaultVal = new AbilityHolder.AbilityModifiers(0,0,0,0,0,true);
+    private static AbilityData.AbilityModifiers getAbilityModifiers(Component component, AbilityHolder getTag) {
+        var defaultVal = new AbilityData.AbilityModifiers(0, 0, 0, 0, 0,true);
         if(component == null) return defaultVal;
-        var abilityKey = getTag.abilityProperties().keySet().stream().findFirst().get();
-        var actualValue = getTag.abilityProperties().get(abilityKey).abilityProperties().get(extractName(component.getString()));
+        var actualValue = getTag.data().abilityProperties().get(extractName(component.getString()));
         return actualValue == null ? defaultVal : actualValue;
     }
 
     private void doOnClick(Component component, ItemStack itemStack, boolean correctAdjustment, int posX, int posY){
         if(this.isInHitbox(posX, posY)){
-            var getTag = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER);
+            var getTag = itemStack.get(ComponentReg.ABILITY_HOLDER);
             if(getTag == null) return;
-            var abilityKey = getTag.abilityProperties().keySet().stream().findFirst().get();
+            var abilityKey = getTag.abilityName();
             if(component == null) return;
             var localHolder = getAbilityModifiers(component, getTag);
             this.chargeCoreType(this.getChargeableCore());
             updateAugmentConfig(
                 extractName(component.getString()), localHolder, abilityKey, getTag,
-                (myHolder) ->  this.item.set(WAND_ABILITY_HOLDER, myHolder),entity()
+                (myHolder) ->  this.item.set(ABILITY_HOLDER, myHolder),entity()
             );
             var level = getMinecraft().level;
             if(correctAdjustment && level != null){
@@ -310,7 +309,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, colourBorder, semiTransLayer);
         boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, colourBorder, semiTransLayer);
         guiGraphics.drawCenteredString(this.font, this.upgradeValue, startX + 34, (int) (startY + 10 + yScroll), 0);
-        if(this.item != null && this.item.has(WAND_ABILITY_HOLDER)){
+        if(this.item != null && this.item.has(ABILITY_HOLDER)){
             if(this.upgradeValue != null){
                 guiGraphics.renderFakeItem(new ItemStack(getChargeableCore()),  startX + 74, (int) (startY + 6 + yScroll));
             }
@@ -319,7 +318,7 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     }
 
     public Item getChargeableCore() {
-        return calculateRatingNext(getAbilityModifiers(this.key, entity().getInteractionSlot().get(WAND_ABILITY_HOLDER)));
+        return calculateRatingNext(getAbilityModifiers(this.key, entity().getInteractionSlot().get(ABILITY_HOLDER)));
     }
 
     @Override

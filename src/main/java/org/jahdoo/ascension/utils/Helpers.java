@@ -38,8 +38,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
@@ -171,20 +171,18 @@ public class Helpers {
 
     public static double getTag(Player player, String name, String abilityName) {
         if(player != null){
-            var wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
-            var holder = Helpers.getModifierValue(wandAbilityHolder, abilityName).get(name);
+            var abilityHolder = AbilityHolder.getHolderFromWand(player);
+            var holder = Helpers.getModifierValue(abilityHolder, abilityName).get(name);
             if(holder != null) return holder.setValue();
         }
         return 0;
     }
 
-    public static Map<String, AbilityHolder.AbilityModifiers> getModifierValue(WandAbilityHolder wandAbilityHolder, String tagName) {
-        if(wandAbilityHolder != null){
-            var allModifiers = wandAbilityHolder.abilityProperties();
-            if (allModifiers != null) {
-                if(allModifiers.get(tagName) != null){
-                    return allModifiers.get(tagName).abilityProperties();
-                }
+    public static Map<String, AbilityData.AbilityModifiers> getModifierValue(AbilityHolder abilityHolder, String tagName) {
+        if(abilityHolder != null){
+            var allModifiers = abilityHolder.data().abilityProperties();
+            if(allModifiers.get(tagName) != null){
+                return allModifiers;
             }
         }
         return Collections.emptyMap();

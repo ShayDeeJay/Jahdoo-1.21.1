@@ -26,10 +26,7 @@ import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.wand.WandData;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.client2server.StopUsingC2SP;
-import org.jahdoo.common.registers.AbilityReg;
-import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -55,9 +52,20 @@ public class AbilityWheelScreen extends Screen  {
     }
 
     public static List<String> getAllAbilities(ItemStack wand){
-        var wandData = ComponentReg.WAND_DATA.get();
-        if(wand.has(wandData)) return wand.get(wandData).abilitySet();
-        return new ArrayList<>();
+        var player = Minecraft.getInstance().player;
+        var names = new ArrayList<String>();
+
+        for (var unlockedAbility : player.getData(AttachmentReg.CASTER_DATA).getUnlockedAbilities()) {
+            names.add(unlockedAbility.abilityName());
+        }
+//        var storeNames = wand.get(DataComponents.BUNDLE_CONTENTS);
+//
+//        for (var itemStack : storeNames.itemCopyStream().toList()) {
+//            names.add(itemStack.get(ComponentReg.ABILITY_HOLDER).abilityName());
+//        }
+//        var wandData = ComponentReg.WAND_DATA.get();
+//        if(wand.has(wandData)) return wand.get(wandData).abilitySet();
+        return names;
     }
 
     @Override

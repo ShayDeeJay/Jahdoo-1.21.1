@@ -1,16 +1,20 @@
 package org.jahdoo.ascension.attachments;
+
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.CooldownsSyncS2CP;
 import org.jahdoo.common.networking.server2client.ManaSyncS2CP;
 import org.jahdoo.common.registers.AttributeReg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
@@ -24,8 +28,10 @@ public class CastingData implements IAttachment {
     private static final Logger LOGGER = LoggerFactory.getLogger(CastingData.class);
 
     private double manaPool;
+    private String selectedAbility;
     private Map<String, Integer> abilityCooldowns = new Object2IntOpenHashMap<>();
     private Map<String, Integer> abilityCooldownsStatic = new Object2IntOpenHashMap<>();
+    private List<AbilityHolder> unlockedAbilities = new ArrayList<>();
 
     public double getManaPool() {
         return manaPool;
@@ -41,6 +47,49 @@ public class CastingData implements IAttachment {
 
     public void setLocalMana(double manaPool){
         this.manaPool = manaPool;
+    }
+
+    public void updateAbility(AbilityHolder holder){
+        if(holder.abilityName().isEmpty()) return;
+        for (var unlockedAbility : this.unlockedAbilities) {
+            if(unlockedAbility.abilityName().equals(holder.abilityName())){
+                var index = this.unlockedAbilities.indexOf(unlockedAbility);
+                this.unlockedAbilities.remove(unlockedAbility);
+                this.unlockedAbilities.add(index, holder);
+                return;
+            }
+        }
+
+        this.unlockedAbilities.add(holder);
+    }
+
+    public boolean hasAbility(AbilityHolder holder){
+        for (var unlockedAbility : this.unlockedAbilities) {
+            if(unlockedAbility.abilityName().equals(holder.abilityName())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setSelectedAbility(String selectedAbility) {
+        this.selectedAbility = selectedAbility;
+    }
+
+    public String getSelectedAbility() {
+        return selectedAbility;
+    }
+
+    public void syncHolders(List<AbilityHolder> holders){
+        this.unlockedAbilities = holders;
+    }
+
+    public void clearAllAbilities(){
+        this.unlockedAbilities = new ArrayList<>();
+    }
+
+    public List<AbilityHolder> getUnlockedAbilities(){
+        return this.unlockedAbilities;
     }
 
     public Map<String, Integer> getAllCooldowns() {
@@ -115,27 +164,6 @@ public class CastingData implements IAttachment {
         sendToPlayer(serverPlayer, new CooldownsSyncS2CP(cooldowns.getAllCooldowns(), cooldowns.getAllCooldownsStatic()));
     }
 
-    @Override
-    public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
-        manaPool = nbt.getDouble(MANA);
-        nbt.getCompound(COOLDOWNS).getAllKeys().forEach(
-            keys -> abilityCooldowns.put(keys, nbt.getCompound(COOLDOWNS).getInt(keys))
-        );
-        nbt.getCompound(COOLDOWNS_STATIC).getAllKeys().forEach(
-            keys -> abilityCooldownsStatic.put(keys, nbt.getCompound(COOLDOWNS_STATIC).getInt(keys))
-        );
-    }
-
-    @Override
-    public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
-        CompoundTag cooldowns = new CompoundTag();
-        CompoundTag cooldownsStatic = new CompoundTag();
-        this.abilityCooldowns.forEach(cooldowns::putInt);
-        this.abilityCooldownsStatic.forEach(cooldownsStatic::putInt);
-        nbt.put(CastingData.COOLDOWNS, cooldowns);
-        nbt.putDouble(MANA, manaPool);
-    }
-
     private double getModifiedMana(Player player){
         var getRegen = player.getAttribute(AttributeReg.MANA_REGEN);
         double baseManaRegen = 0.15;
@@ -150,6 +178,7 @@ public class CastingData implements IAttachment {
 
     public void applyAllCooldowns(){
         if(abilityCooldowns.isEmpty()) return;
+
         abilityCooldowns.forEach(
             (ability, cooldown) -> {
                 if(cooldown > 0) {
@@ -160,5 +189,38 @@ public class CastingData implements IAttachment {
                 }
             }
         );
+    }
+
+    @Override
+    public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
+        CompoundTag cooldowns = new CompoundTag();
+        CompoundTag cooldownsStatic = new CompoundTag();
+
+        this.abilityCooldowns.forEach(cooldowns::putInt);
+        this.abilityCooldownsStatic.forEach(cooldownsStatic::putInt);
+
+        nbt.putString("selected_ability", this.selectedAbility);
+        nbt.put(CastingData.COOLDOWNS, cooldowns);
+        nbt.put(CastingData.COOLDOWNS_STATIC, cooldownsStatic);
+        nbt.putDouble(MANA, manaPool);
+
+        AbilityHolder.saveListHolders(this.unlockedAbilities, nbt);
+    }
+
+    @Override
+    public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
+        manaPool = nbt.getDouble(MANA);
+
+        this.selectedAbility = nbt.getString("selected_ability");
+
+        nbt.getCompound(COOLDOWNS).getAllKeys().forEach(
+            keys -> abilityCooldowns.put(keys, nbt.getCompound(COOLDOWNS).getInt(keys))
+        );
+
+        nbt.getCompound(COOLDOWNS_STATIC).getAllKeys().forEach(
+            keys -> abilityCooldownsStatic.put(keys, nbt.getCompound(COOLDOWNS_STATIC).getInt(keys))
+        );
+
+        this.unlockedAbilities = AbilityHolder.readListHolders(nbt);
     }
 }

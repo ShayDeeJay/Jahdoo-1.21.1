@@ -4,14 +4,14 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.text.DecimalFormat;
 
-import static net.minecraft.util.FastColor.ARGB32.*;
+import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextRange;
-import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 
 public class AugmentRatingSystem {
 
@@ -27,10 +27,9 @@ public class AugmentRatingSystem {
         return Double.parseDouble(FORMAT.format((1.0 / max) * 100));
     }
 
-    public static AbilityHolder.AbilityModifiers getModifier(ItemStack itemStack, String abilityLocation, String keys){
-        var holder = itemStack.get(WAND_ABILITY_HOLDER.get());
-        var ability = holder.abilityProperties().get(abilityLocation);
-        return ability.abilityProperties().get(keys);
+    public static AbilityData.AbilityModifiers getModifier(ItemStack itemStack, String abilityLocation, String keys){
+        var holder = itemStack.get(ABILITY_HOLDER.get());
+        return holder.data().abilityProperties().get(keys);
     }
 
     public static Component additionalInformation(ItemStack itemStack, String keys, String abilityLocation, boolean isHigherBetter){
@@ -41,7 +40,7 @@ public class AugmentRatingSystem {
     }
 
     public static Component hoverTextHelper(ItemStack itemStack, String keys, String abilityLocation, boolean isHigherBetter) {
-        if (itemStack.has(WAND_ABILITY_HOLDER.get())) {
+        if (itemStack.has(ABILITY_HOLDER.get())) {
             var modifiers = getModifier(itemStack, abilityLocation, keys);
             var max = FORMAT.format(modifiers.highestValue());
             var min = FORMAT.format(modifiers.lowestValue());
@@ -53,7 +52,7 @@ public class AugmentRatingSystem {
         return Component.empty();
     }
 
-    public static Item calculateRatingNext(AbilityHolder.AbilityModifiers mod) {
+    public static Item calculateRatingNext(AbilityData.AbilityModifiers mod) {
         double normalizedValue = getNormalizedValue(mod);
         var rating = (int)(normalizedValue * 4) + 1;
         var core = ItemReg.AUGMENT_CORE.get();
@@ -65,7 +64,7 @@ public class AugmentRatingSystem {
         return hyperCore;
     }
 
-    public static int calculateRating(AbilityHolder.AbilityModifiers mod) {
+    public static int calculateRating(AbilityData.AbilityModifiers mod) {
 
         boolean higherIsBetter = mod.isHigherBetter();
 
@@ -88,7 +87,7 @@ public class AugmentRatingSystem {
         return (int)(normalizedValue * 4) + 1; // Map to 1-5 rating
     }
 
-    private static double getNormalizedValue(AbilityHolder.AbilityModifiers mod) {
+    private static double getNormalizedValue(AbilityData.AbilityModifiers mod) {
         boolean higherIsBetter = mod.isHigherBetter();
 
         double value = higherIsBetter ? mod.actualValue() + mod.step() : mod.actualValue() - mod.step();
@@ -115,7 +114,7 @@ public class AugmentRatingSystem {
         int chatFormatting;
         boolean isHigherBetter = true;
 
-        if(itemStack.has(WAND_ABILITY_HOLDER.get())){
+        if(itemStack.has(ABILITY_HOLDER.get())){
             var modifier = getModifier(itemStack, abilityLocation, keys);
             getRating = calculateRating(modifier);
             isHigherBetter = modifier.isHigherBetter();

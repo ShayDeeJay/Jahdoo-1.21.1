@@ -10,7 +10,7 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.SET_ELEMENT_TYPE;
@@ -60,7 +60,7 @@ public class ElementalShooterAbility extends AbilityRegistrar {
     }
 
     private double getTag(Player player, String name){
-        var wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
+        var wandAbilityHolder = AbilityHolder.getHolderFromWand(player);
         var id = abilityId.getPath().intern();
         return Helpers.getModifierValue(wandAbilityHolder, id).get(name).actualValue();
     }

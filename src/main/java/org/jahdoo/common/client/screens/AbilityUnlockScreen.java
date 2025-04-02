@@ -5,11 +5,17 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
 
+import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.common.client.Icons.ABILITY_PREFIX;
 import static org.jahdoo.common.client.Icons.GUI_BUTTON;
@@ -58,14 +64,26 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     private void renderButton(double withPanX, double withPanY, ResourceLocation icons, int size, ItemStack stack) {
         var posX = (int) (withPanX - 15 - (double) size / 2);
         var posY = (int) (withPanY - 15 - (double) size / 2);
+        var player = getMinecraft().player;
+        if(player == null) return;
+        var holder = stack.get(ComponentReg.ABILITY_HOLDER);
+
+        var unlocked = holder != null && player.getData(AttachmentReg.CASTER_DATA).hasAbility(holder);
+
+        System.out.println(unlocked);
+
         this.addRenderableWidget(
             menuButtonSound(
                 posX, posY,
-                (Button) -> { },
-                icons, size, false, 0, new WidgetSprites(GUI_BUTTON, GUI_BUTTON), true,
+                (Button) -> onClick(player, holder),
+                icons, size, unlocked, 0, new WidgetSprites(GUI_BUTTON, GUI_BUTTON), !unlocked,
                 () -> this.itemStack = stack
             )
         );
+    }
+
+    private void onClick(Player player, AbilityHolder abilityHolder){
+        sendToServer(new AbilityHolderC2SP(abilityHolder));
     }
 
     @Override

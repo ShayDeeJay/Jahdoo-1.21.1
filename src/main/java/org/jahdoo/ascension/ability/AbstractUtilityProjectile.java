@@ -6,12 +6,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.ElementReg;
 
-import static org.jahdoo.common.particle.ParticleHandlers.*;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.playParticles3;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 
 public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
@@ -36,8 +37,8 @@ public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
     }
 
     @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.generic.wandAbilityHolder();
+    public AbilityHolder getAbilityHolder() {
+        return this.generic.getAbilityHolder();
     }
 
     protected void discardParticleEffect(int lifetime) {

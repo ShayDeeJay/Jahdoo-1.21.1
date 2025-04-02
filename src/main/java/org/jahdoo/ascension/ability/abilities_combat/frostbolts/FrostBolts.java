@@ -10,17 +10,17 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.abilities_combat.EtherealArrow;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.items.wand.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,8 +70,8 @@ public class FrostBolts  extends DefaultEntityBehaviour {
     }
 
     @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.generic.wandAbilityHolder();
+    public AbilityHolder getAbilityHolder() {
+        return this.generic.getAbilityHolder();
     }
 
     @Override

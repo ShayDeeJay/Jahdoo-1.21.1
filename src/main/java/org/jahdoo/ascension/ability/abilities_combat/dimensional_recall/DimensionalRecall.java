@@ -7,8 +7,8 @@ import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.attachments.AbstractHoldUseAttachment;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.DataComponentHelper;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.wand.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
@@ -40,15 +40,15 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
         return ElementReg.mystic();
     }
 
-    public void onSuccessfulCast(ServerPlayer serverPlayer, WandAbilityHolder wandAbilityHolder, int ticksUsing){
+    public void onSuccessfulCast(ServerPlayer serverPlayer, AbilityHolder abilityHolder, int ticksUsing){
         var pos = serverPlayer.getRespawnPosition();
         var dimension = serverPlayer.getRespawnDimension();
         var abilityName = abilityId.getPath().intern();
         var getCasterData = serverPlayer.getData(CASTER_DATA);
         var getTeleportSound = SoundEvents.CHORUS_FRUIT_TELEPORT;
         var getSuccessSound = SoundEvents.ILLUSIONER_CAST_SPELL;
-        var getManaCost = DataComponentHelper.getSpecificValue(abilityName, wandAbilityHolder, MANA_COST);
-        var getCooldownCost = DataComponentHelper.getSpecificValue(abilityName, wandAbilityHolder, COOLDOWN);
+        var getManaCost = DataComponentHelper.getSpecificValue(abilityHolder, MANA_COST);
+        var getCooldownCost = DataComponentHelper.getSpecificValue(abilityHolder, COOLDOWN);
         var getLevelDimension = serverPlayer.getServer().getLevel(dimension);
 
         if(getLevelDimension != null){
@@ -67,13 +67,13 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
     @Override
     public void onTickMethod(Player player){
         super.onTickMethod(player);
-        var getHolder = WandAbilityHolder.getHolderFromWand(player);
-        var hasAbility = getModifierValue(getHolder, abilityId.getPath().intern()) != null;
-        var getCastTime = DataComponentHelper.getSpecificValue(abilityId.getPath().intern(), getHolder, CASTING_TIME);
+        var getHolder = AbilityHolder.getHolderFromWand(player);
+        getModifierValue(getHolder, abilityId.getPath().intern());
+        var getCastTime = DataComponentHelper.getSpecificValue(getHolder, CASTING_TIME);
         if (!(player instanceof ServerPlayer serverPlayer)) return;
         var pos = serverPlayer.getRespawnPosition();
 
-        if(startedUsing && hasAbility && validManaAndCooldown(player)){
+        if(startedUsing && validManaAndCooldown(player)){
             if (pos != null) {
                 pullParticlesToCenter(player, this.getElement());
                 var setVolume = Math.min(2, player.getTicksUsingItem() / 5);

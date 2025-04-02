@@ -11,8 +11,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.attachments.AbstractHoldUseAttachment;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.DataComponentHelper;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.wand.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ElementReg;
@@ -53,16 +53,16 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
         PositionFinders.getOuterRingOfRadius(player.position(), 0.2, 30, vec3 -> setRejuvenationSuccessEffect(vec3, player));
     }
 
-    private void successfulCast(Player player, WandAbilityHolder wandAbilityHolder) {
-        var mana = DataComponentHelper.getSpecificValue(name, wandAbilityHolder, MANA_COST);
+    private void successfulCast(Player player, AbilityHolder wandAbilityHolder) {
+        var mana = DataComponentHelper.getSpecificValue(wandAbilityHolder, MANA_COST);
         CastHelper.chargeMana(name, mana, player);
         applyHeal(player, wandAbilityHolder);
         successfulCastAnimation(player);
         counter = 0;
     }
 
-    private void applyHeal(Player player, WandAbilityHolder wandAbilityHolder) {
-        var maxAbsorption = DataComponentHelper.getSpecificValue(name, wandAbilityHolder, MAX_ABSORPTION);
+    private void applyHeal(Player player, AbilityHolder abilityBuilder) {
+        var maxAbsorption = DataComponentHelper.getSpecificValue(abilityBuilder, MAX_ABSORPTION);
         var foodProperties = new FoodProperties(2, 2, true, 0, Optional.empty(), Collections.emptyList());
         player.heal(1);
         addTransientAttribute(player, maxAbsorption * 2, "absorption", Attributes.MAX_ABSORPTION);
@@ -104,9 +104,9 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     public void onTickMethod(Player player) {
         super.onTickMethod(player);
         if(this.startedUsing && validManaAndCooldown(player)){
-            var wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
-            if(wandAbilityHolder == null || !wandAbilityHolder.abilityProperties().containsKey(name)) return;
-            var castDelay = DataComponentHelper.getSpecificValue(name, wandAbilityHolder, CAST_DELAY);
+            var abilityHolder = AbilityHolder.getHolderFromWand(player);
+            if(abilityHolder == null) return;
+            var castDelay = DataComponentHelper.getSpecificValue(abilityHolder, CAST_DELAY);
 
 
             if(ticksUsing == 0) {
@@ -117,7 +117,7 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
             if(ticksUsing > castDelay){
                 counter++;
                 if (counter < spacers) unSuccessfulCast(player);
-                if (counter == spacers) successfulCast(player, wandAbilityHolder);
+                if (counter == spacers) successfulCast(player, abilityHolder);
                 ticksUsing = 0;
             }
 

@@ -12,14 +12,14 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.ProjectileProperties;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityReg;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -28,22 +28,23 @@ import software.bernie.geckolib.animation.AnimationController;
 
 import java.util.List;
 
-import static java.util.Comparator.*;
-import static net.minecraft.network.syncher.EntityDataSerializers.*;
-import static net.minecraft.network.syncher.SynchedEntityData.*;
+import static java.util.Comparator.comparingDouble;
+import static net.minecraft.network.syncher.EntityDataSerializers.INT;
+import static net.minecraft.network.syncher.SynchedEntityData.Builder;
+import static net.minecraft.network.syncher.SynchedEntityData.defineId;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.ascension.ability.AbilityBuilder.DAMAGE;
-import static org.jahdoo.ascension.ability.DefaultEntityBehaviour.*;
-import static org.jahdoo.common.entities.EntityAnimations.*;
-import static org.jahdoo.common.entities.EntityMovers.*;
+import static org.jahdoo.ascension.ability.DefaultEntityBehaviour.canDamageEntity;
+import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.Helpers.hasLineOfSight;
+import static org.jahdoo.common.entities.EntityAnimations.IDLE_SKULL;
+import static org.jahdoo.common.entities.EntityMovers.entityMover;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.ComponentReg.*;
-import static org.jahdoo.common.registers.EffectReg.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
-import static software.bernie.geckolib.animation.AnimatableManager.*;
-import static software.bernie.geckolib.util.GeckoLibUtil.*;
+import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
+import static org.jahdoo.common.registers.EffectReg.INFERNO_EFFECT;
+import static software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
+import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
 public class BurningSkull extends ProjectileProperties implements GeoEntity {
 
@@ -72,7 +73,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         this.reapplyPosition();
         this.setOwner(owner);
 
-        var holder = owner.getItemInHand(owner.getUsedItemHand()).get(WAND_ABILITY_HOLDER.get());
+        var holder = owner.getItemInHand(owner.getUsedItemHand()).get(ABILITY_HOLDER.get());
         this.effectChance = getTag(EFFECT_CHANCE, holder);
         this.effectStrength = getTag(EFFECT_STRENGTH, holder);
         this.effectDuration = getTag(EFFECT_DURATION, holder);
@@ -168,7 +169,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         this.lerpSteps = 15;
     }
 
-    private void damageWithModifiers(WandAbilityHolder holder) {
+    private void damageWithModifiers(AbilityHolder holder) {
         var player = this.getOwner();
         var damage = getTag(DAMAGE, holder);
         this.damage = Helpers.attributeModifierCalculator(

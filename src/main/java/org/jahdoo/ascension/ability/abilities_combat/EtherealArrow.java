@@ -6,19 +6,19 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
-import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
-import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.jahdoo.common.particle.ParticleHandlers;
 
-import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.common.particle.ParticleStore.*;
+import static org.jahdoo.common.particle.ParticleHandlers.*;
+import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 
 public class EtherealArrow extends DefaultEntityBehaviour {
 
@@ -38,9 +38,10 @@ public class EtherealArrow extends DefaultEntityBehaviour {
         this.effectChance = this.getTag(EFFECT_CHANCE);
     }
 
+
     @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.generic.wandAbilityHolder();
+    public AbilityHolder getAbilityHolder() {
+        return this.generic.getAbilityHolder();
     }
 
     @Override
@@ -100,7 +101,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
         );
     }
 
-    public static WandAbilityHolder setArrowProperties(double damage, double effectDuration, double effectStrength, double effectChance){
+    public static AbilityHolder setArrowProperties(double damage, double effectDuration, double effectStrength, double effectChance){
         return new AbilityBuilder(null, EtherealArrow.abilityId.getPath().intern())
             .setModifierWithoutBounds(DAMAGE, damage)
             .setModifierWithoutBounds(EFFECT_DURATION, effectDuration)

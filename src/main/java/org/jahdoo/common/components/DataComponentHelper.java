@@ -6,11 +6,11 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.items.wand.WandData;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.registers.AttachmentReg;
 
 import java.util.Map;
 
-import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
-import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
+import static org.jahdoo.common.registers.ComponentReg.*;
 
 public class DataComponentHelper {
 
@@ -19,7 +19,11 @@ public class DataComponentHelper {
     }
 
     public static boolean hasWandAbilitiesTag(ItemStack itemStack){
-        return itemStack.get(WAND_ABILITY_HOLDER.get()) != null;
+        return itemStack.get(ABILITY_HOLDER.get()) != null;
+    }
+
+    public static String getAbilityTypePlayerString(Player player) {
+        return player.getData(AttachmentReg.CASTER_DATA).getSelectedAbility();
     }
 
     public static String getAbilityTypeItemStack(ItemStack itemStack) {
@@ -30,10 +34,9 @@ public class DataComponentHelper {
     }
 
     public static String getKeyFromAugment(ItemStack itemStack){
-        var abilityHolder = itemStack.get(WAND_ABILITY_HOLDER);
+        var abilityHolder = itemStack.get(ABILITY_HOLDER);
         if(abilityHolder != null){
-            var name = abilityHolder.abilityProperties().keySet().stream().findFirst();
-            if(name.isPresent()) return name.get();
+            return abilityHolder.abilityName();
         }
 
         return "";
@@ -47,32 +50,25 @@ public class DataComponentHelper {
         }
     }
 
-    public static Map<String, AbilityHolder.AbilityModifiers> getSpecificValue(Player player){
-        var abilityName = DataComponentHelper.getAbilityTypeWand(player);
-        var wandAbilityHolder = WandAbilityHolder.getHolderFromWand(player);
-        var allModifiers = wandAbilityHolder.abilityProperties().get(abilityName.getPath().intern());
-
-        return allModifiers.abilityProperties();
+    public static Map<String, AbilityData.AbilityModifiers> getSpecificValue(Player player){
+        var wandAbilityHolder = AbilityHolder.getHolderFromWand(player);
+        return wandAbilityHolder.data().abilityProperties();
     }
 
     public static double getSpecificValue(Player player, ItemStack itemStack, String modifier){
-        var abilityName = DataComponentHelper.getAbilityTypeWand(player);
-        var wandAbilityHolder = itemStack.get(WAND_ABILITY_HOLDER.get());
-        var allModifiers = wandAbilityHolder.abilityProperties().get(abilityName.getPath().intern());
+        var wandAbilityHolder = itemStack.get(ABILITY_HOLDER.get());
 
-        if(allModifiers.abilityProperties().containsKey(modifier)){
-            var specificValue = allModifiers.abilityProperties().get(modifier);
+        if(wandAbilityHolder != null){
+            var specificValue = wandAbilityHolder.data().abilityProperties().get(modifier);
             return specificValue.setValue();
         }
+
         return 0;
     }
 
-    public static double getSpecificValue(String name, WandAbilityHolder abilityHolder, String modifier){
+    public static double getSpecificValue(AbilityHolder abilityHolder, String modifier){
         if(abilityHolder == null) return 0;
-        var allModifiers = abilityHolder.abilityProperties().get(name);
-
-        if(allModifiers == null) return 0;
-        var specificValue = allModifiers.abilityProperties().get(modifier);
+        var specificValue = abilityHolder.data().abilityProperties().get(modifier);
 
         if(specificValue == null) return 0;
         return specificValue.setValue();
@@ -84,9 +80,13 @@ public class DataComponentHelper {
         var itemInHand = Helpers.getUsedItem(player);
 
         if (!(itemInHand.getItem() instanceof WandItem)) return res;
-        var abilityName = itemInHand.get(WAND_DATA.get()).selectedAbility();
+        var abilityName = itemInHand.get(WAND_DATA.get());
 
         if (abilityName == null) return res;
-        return Helpers.res(abilityName);
+        return Helpers.res(abilityName.selectedAbility());
+    }
+
+    public static ResourceLocation getAbilityTypePlayer(Player player) {
+        return Helpers.res(player.getData(AttachmentReg.CASTER_DATA).getSelectedAbility());
     }
 }

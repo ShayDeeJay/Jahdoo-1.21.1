@@ -91,15 +91,17 @@ public class ToggleComponent  {
         Runnable hoverAction
     ) {
         return new GuiButton(posX, posY, button, size, action, active, location, "", scale, showHover) {
+
             public void playDownSound(SoundManager handler) {
                 handler.play(SimpleSoundInstance.forUI(SoundEvents.VAULT_INSERT_ITEM, 1.2F));
                 handler.play(SimpleSoundInstance.forUI(SoundEvents.VAULT_OPEN_SHUTTER, 1.4F));
             }
 
-            public void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-                super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-                if(this.isMouseOver(pMouseX, pMouseY)) hoverAction.run();
+            public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
+                super.renderWidget(graphics, mouseX, mouseY, pPartialTick);
+                if(this.isMouseOver(mouseX, mouseY)) hoverAction.run();
             }
+
         };
     }
 

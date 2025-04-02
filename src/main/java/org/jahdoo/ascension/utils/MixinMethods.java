@@ -3,7 +3,7 @@ package org.jahdoo.ascension.utils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.common.components.WandAbilityHolder;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.registers.EntityDataReg;
 
@@ -17,7 +17,7 @@ public class MixinMethods {
         level.addFreshEntity(aoeCloud);
     }
 
-    private static final WandAbilityHolder WAND_ABILITY_HOLDER_BARRAGE =
+    private static final AbilityHolder WAND_ABILITY_HOLDER_BARRAGE =
         new AbilityBuilder(null, abilityId.getPath().intern())
             .setStaticMana(60)
             .setStaticCooldown(1200)

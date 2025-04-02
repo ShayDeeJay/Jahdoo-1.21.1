@@ -1,17 +1,19 @@
 package org.jahdoo.common.items.wand;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.tooltip.BundleTooltip;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.registers.ComponentReg;
@@ -25,11 +27,14 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.items.wand.WandItemHelper.*;
+import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.BlockReg.WAND;
 import static org.jahdoo.common.registers.ComponentReg.*;
 
@@ -89,10 +94,17 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         return new Item.Properties()
             .stacksTo(1)
             .durability(300)
-            .component(ComponentReg.WAND_ABILITY_HOLDER.get(), WandAbilityHolder.DEFAULT)
+            .component(DataComponents.BUNDLE_CONTENTS, new BundleContents(new ArrayList<>()))
             .component(WAND_DATA.get(), WandData.DEFAULT)
             .component(RUNE_HOLDER, RuneHolder.makeRuneSlots(0, 40))
             .component(ComponentReg.JAHDOO_RARITY, 0);
+    }
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+        return !stack.has(DataComponents.HIDE_TOOLTIP) && !stack.has(DataComponents.HIDE_ADDITIONAL_TOOLTIP)
+            ? Optional.ofNullable(stack.get(DataComponents.BUNDLE_CONTENTS)).map(BundleTooltip::new)
+            : Optional.empty();
     }
 
     @Override
@@ -121,17 +133,9 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
+//        player.getData(AttachmentReg.CASTER_DATA.get()).clearAllAbilities();
 
-        if(player.isCreative() && player.isShiftKeyDown()){
-            if (level instanceof ServerLevel serverLevel) {
-                for (var entity : serverLevel.getEntities().getAll()) {
-                    if (!(entity instanceof Player)) {
-                        entity.kill();
-                    }
-                }
-            }
-        }
-
+        System.out.println(player.getData(CASTER_DATA).getSelectedAbility());
         if (canOffHand(player, interactionHand, true)) {
             player.startUsingItem(interactionHand);
             CastHelper.use(player);

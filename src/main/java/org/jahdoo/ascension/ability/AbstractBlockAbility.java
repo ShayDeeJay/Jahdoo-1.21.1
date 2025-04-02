@@ -23,7 +23,7 @@ public abstract class AbstractBlockAbility extends AbilityRegistrar {
         var isDown = direction.equals(entity.getBlockPos().below());
 
         var genericProjectile = new GenericProjectile(
-            augment.get(ComponentReg.WAND_ABILITY_HOLDER.get()),
+            augment.get(ComponentReg.ABILITY_HOLDER.get()),
             entity.getBlockPos().getCenter().subtract(0, isUp || isDown ? 0 : 0.1,0),
             entity.getLevel(),
             projectileKey(),

@@ -9,8 +9,8 @@ import org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.DataComponentHelper;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
@@ -19,7 +19,6 @@ import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.EntityReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.DAMAGE;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.rgbToInt;
 
 public class ArmageddonModule extends DefaultEntityBehaviour {
@@ -51,8 +50,8 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
     }
 
     @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.element.getwandabilityholder();
+    public AbilityHolder getAbilityHolder() {
+        return this.element.getAbilityHolder();
     }
 
     @Override
@@ -72,8 +71,9 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
         this.aoe = compoundTag.getDouble("aoe");
     }
 
-    public WandAbilityHolder armageddonFireballModifiers() {
-        double damageA = DataComponentHelper.getSpecificValue(name, this.cloud.getwandabilityholder(), DAMAGE);
+    public AbilityHolder armageddonFireballModifiers() {
+        var damageA = DataComponentHelper.getSpecificValue(this.cloud.getAbilityHolder(), DAMAGE);
+
         return new AbilityBuilder(null, FireballAbility.abilityId.getPath().intern())
             .setDamageWithValue(0,0, damageA)
             .setEffectDurationWithValue(0,0,200)

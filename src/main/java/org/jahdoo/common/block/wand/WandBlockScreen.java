@@ -72,8 +72,8 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
             var currentAugment = this.wandBlockMenu.getWandBlockEntity().inputItemHandler.getStackInSlot(i);
             var selectedAbility = this.getAbilityFromRegistry(comparable);
             if(selectedAbility.isEmpty()) return ItemStack.EMPTY;
-            var wandAbilityHolder = currentAugment.get(ComponentReg.WAND_ABILITY_HOLDER.get());
-            if (wandAbilityHolder != null && wandAbilityHolder.abilityProperties().containsKey(selectedAbility.getFirst().setAbilityId())) {
+            var wandAbilityHolder = currentAugment.get(ComponentReg.ABILITY_HOLDER.get());
+            if (wandAbilityHolder != null && wandAbilityHolder.abilityName().equals(selectedAbility.getFirst().setAbilityId())) {
                 return currentAugment;
             }
         }
@@ -88,8 +88,9 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
                 var currentAbility = this.getAbilityFromRegistry(currentAugment);
 
                 if(!ability.isEmpty() && !currentAbility.isEmpty()){
-                    var wandAbilityHolder = currentAugment.get(ComponentReg.WAND_ABILITY_HOLDER.get());
-                    if (wandAbilityHolder.abilityProperties().containsKey(ability.getFirst().setAbilityId())) {
+                    var wandAbilityHolder = currentAugment.get(ComponentReg.ABILITY_HOLDER.get());
+
+                    if (wandAbilityHolder.abilityName().equals(ability.getFirst().setAbilityId())) {
                         return i - 1;
                     }
                 }
@@ -116,7 +117,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         if(getElement != null){
             ElementReg.fromId(Math.max(getElement.value(), 0)).ifPresent(
                 element -> {
-                    if (itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get()) != null) {
+                    if (itemStack.get(ComponentReg.ABILITY_HOLDER.get()) != null) {
                         toolTips.add(AugmentItemHelper.getAbilityName(itemStack,element));
                         toolTips.addAll(getAllAbilityModifiers(itemStack, itemStack1, abilityLocation, false, this.getMinecraft().level));
                         shiftForDetails(toolTips);

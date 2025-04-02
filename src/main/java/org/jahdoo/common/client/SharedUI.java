@@ -300,9 +300,8 @@ public class SharedUI {
     ){
         var element = new AtomicInteger();
         if (abilityRegistrars.isMultiType()) {
-            var wandAbilityHolder = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
-            var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityRegistrars.setAbilityId());
-            var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
+            var wandAbilityHolder = itemStack.get(ComponentReg.ABILITY_HOLDER.get());
+            var abilityModifiers = wandAbilityHolder.data().abilityProperties().get(SET_ELEMENT_TYPE);
             ElementReg.fromId((int) abilityModifiers.actualValue()).ifPresent(
                 getElement -> element.set(getElement.textColourA())
             );
@@ -320,9 +319,8 @@ public class SharedUI {
         var abilityRegistrars = AbilityReg.getFirstSpellByTypeId(key).orElseThrow();
         var element = new AtomicInteger();
         if (abilityRegistrars.isMultiType()) {
-            var wandAbilityHolder = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
-            var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityRegistrars.setAbilityId());
-            var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
+            var abilityHolder = itemStack.get(ComponentReg.ABILITY_HOLDER.get());
+            var abilityModifiers = abilityHolder.data().abilityProperties().get(SET_ELEMENT_TYPE);
             ElementReg.fromId((int) abilityModifiers.actualValue()).ifPresent(
                 getElement -> element.set(getElement.textColourA())
             );
@@ -386,10 +384,8 @@ public class SharedUI {
         AtomicReference<AbstractElement> element = new AtomicReference<>(ElementReg.mystic());
 
         if (abilityRegistrars.isMultiType()) {
-
-            var wandAbilityHolder = itemStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
-            var abilityHolder = wandAbilityHolder.abilityProperties().get(abilityRegistrars.setAbilityId());
-            var abilityModifiers = abilityHolder.abilityProperties().get(SET_ELEMENT_TYPE);
+            var abilityHolder = itemStack.get(ComponentReg.ABILITY_HOLDER.get());
+            var abilityModifiers = abilityHolder.data().abilityProperties().get(SET_ELEMENT_TYPE);
             ElementReg.fromId((int) abilityModifiers.actualValue()).ifPresent(element::set);
         } else {
             element.set(abilityRegistrars.getElemenType());

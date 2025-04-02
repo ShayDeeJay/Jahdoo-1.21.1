@@ -9,18 +9,20 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.level.Level;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
 import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.EntityReg;
-import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.UUID;
 
-import static net.minecraft.network.syncher.EntityDataSerializers.*;
-import static net.minecraft.network.syncher.SynchedEntityData.*;
-import static org.jahdoo.common.registers.ComponentReg.*;
+import static net.minecraft.network.syncher.EntityDataSerializers.FLOAT;
+import static net.minecraft.network.syncher.EntityDataSerializers.STRING;
+import static net.minecraft.network.syncher.SynchedEntityData.Builder;
+import static net.minecraft.network.syncher.SynchedEntityData.defineId;
+import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 
 public class AoeCloud extends Entity implements TraceableEntity, IEntityProperties {
 
@@ -32,7 +34,7 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
     private LivingEntity owner;
     private double getRandomCloudRadius;
     private DefaultEntityBehaviour getAoe;
-    private WandAbilityHolder wandAbilityHolder;
+    private AbilityHolder abilityHolder;
 
     public AoeCloud(EntityType<?> entityType, Level level) {
         super(entityType, level);
@@ -50,7 +52,7 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         this.reapplyPosition();
         this.setRadius(setWidth);
         this.owner = livingEntity;
-        this.wandAbilityHolder = livingEntity.getItemInHand(livingEntity.getUsedItemHand()).get(WAND_ABILITY_HOLDER.get());
+        this.abilityHolder = livingEntity.getItemInHand(livingEntity.getUsedItemHand()).get(ABILITY_HOLDER.get());
         this.setEntityType(selectedAbility);
         this.abilityId = abilityId;
         this.getAoe = EntityDataReg.getProperty(selectedAbility);
@@ -63,14 +65,14 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         LivingEntity livingEntity,
         float setWidth,
         String selectedAbility,
-        WandAbilityHolder wandAbilityHolder,
+        AbilityHolder wandAbilityHolder,
         String abilityId
     )  {
         super(EntityReg.CUSTOM_AOE_CLOUD.get(), level);
         this.reapplyPosition();
         this.setRadius(setWidth);
         this.owner = livingEntity;
-        this.wandAbilityHolder = wandAbilityHolder;
+        this.abilityHolder = wandAbilityHolder;
         this.setEntityType(selectedAbility);
         this.abilityId = abilityId;
         this.getAoe = EntityDataReg.getProperty(selectedAbility);
@@ -90,8 +92,8 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         return this.getEntityData().get(DATA_RADIUS);
     }
 
-    public WandAbilityHolder getwandabilityholder(){
-        return this.wandAbilityHolder;
+    public AbilityHolder getAbilityHolder(){
+        return this.abilityHolder;
     }
 
     public void setOwner(LivingEntity owner){
@@ -139,7 +141,7 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
     protected void addAdditionalSaveData(CompoundTag tag) {
         tag.putString("get_selection", getEntityType());
         tag.putString("ability_id", this.abilityId);
-        DefaultEntityBehaviour.writeTag(wandAbilityHolder, abilityId, tag);
+        AbilityHolder.writeTag(abilityHolder, tag);
         tag.putDouble("random_radius", this.getRandomCloudRadius);
         tag.putFloat("radius", this.getRadius());
         if(owner != null) tag.putUUID("uuid", owner.getUUID());
@@ -150,7 +152,7 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
     protected void readAdditionalSaveData(CompoundTag tag) {
         this.setEntityType(tag.getString("get_selection"));
         this.abilityId = tag.getString("ability_id");
-        this.wandAbilityHolder = DefaultEntityBehaviour.readTag(tag, abilityId);
+        this.abilityHolder = AbilityHolder.readTag(tag, abilityId);
         this.getRandomCloudRadius = tag.getDouble("random_radius");
         if(tag.hasUUID("uuid")){
             if (this.ownerUUID == null) this.ownerUUID = tag.getUUID("uuid");

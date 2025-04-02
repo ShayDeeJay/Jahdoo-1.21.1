@@ -69,6 +69,7 @@ public class Augment extends Item implements MenuAccess {
     public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand interactionHand) {
         var itemStack = player.getItemInHand(interactionHand);
 
+
         if(player instanceof LocalPlayer){
             setAugmentModificationScreen(itemStack, null);
         }

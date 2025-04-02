@@ -44,17 +44,17 @@ public class AugmentSlot extends SlotItemHandler {
     @Override
     public boolean mayPlace(ItemStack itemStack) {
         return itemStack.is(ItemReg.AUGMENT.get()) &&
-            itemStack.getComponents().has(WAND_ABILITY_HOLDER.get()) &&
+            itemStack.getComponents().has(ABILITY_HOLDER.get()) &&
             doesWandHaveAbility(getAbilityTypeItemStack(itemStack)) ||
             canSwapCarried();
     }
 
     public boolean doesWandHaveAbility(String abilityLocation){
         var wandItem = wandBlockMenu.getWandBlockEntity().getWandItemFromSlot();
-        var abilityHolderMap = wandItem
-            .get(WAND_ABILITY_HOLDER.get())
-            .abilityProperties();
-        return !abilityHolderMap.containsKey(abilityLocation);
+        var abilityHolderMap = wandItem.get(ABILITY_HOLDER.get());
+        if(abilityHolderMap == null) return true;
+
+        return !abilityHolderMap.abilityName().equals(abilityLocation);
     }
 
     public boolean canSwapCarried(){
@@ -96,6 +96,6 @@ public class AugmentSlot extends SlotItemHandler {
             handler.setStackInSlot(0, copiedStack);
         }
 
-        wandItem.get(WAND_ABILITY_HOLDER.get()).abilityProperties().remove(ability);
+//        wandItem.get(ABILITY_HOLDER.get()).abilityProperties().remove(ability);
     }
 }

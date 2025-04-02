@@ -238,7 +238,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         var emptyStack = new ItemStack(ItemReg.AUGMENT.get());
         ability.setModifiers(emptyStack);
         emptyStack.set(ComponentReg.NUMBER, 5);
-        var wandAbilityHolder = emptyStack.get(ComponentReg.WAND_ABILITY_HOLDER.get());
+        var wandAbilityHolder = emptyStack.get(ComponentReg.ABILITY_HOLDER.get());
         setAbilityToAugment(emptyStack, ability, wandAbilityHolder);
         return emptyStack;
     }

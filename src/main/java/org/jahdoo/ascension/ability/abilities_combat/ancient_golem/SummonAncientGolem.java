@@ -13,25 +13,24 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
+import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
-import org.jahdoo.common.components.WandAbilityHolder;
-import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
+import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
-import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.UUID;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
+import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusList;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
-import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusList;
 
 public class SummonAncientGolem extends DefaultEntityBehaviour {
 
@@ -65,9 +64,10 @@ public class SummonAncientGolem extends DefaultEntityBehaviour {
         }
     }
 
+
     @Override
-    public WandAbilityHolder getWandAbilityHolder() {
-        return this.cloud.getwandabilityholder();
+    public AbilityHolder getAbilityHolder() {
+        return this.cloud.getAbilityHolder();
     }
 
     @Override

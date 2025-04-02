@@ -8,30 +8,30 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.block.AbstractBEInventory;
+import org.jahdoo.common.components.AbilityHolder;
 
-import static org.jahdoo.common.registers.ComponentReg.WAND_ABILITY_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 
 public class SyncComponentBlockC2S implements CustomPacketPayload{
     public static final Type<SyncComponentBlockC2S> TYPE = new Type<>(Helpers.res("sync_item_block_update"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncComponentBlockC2S> STREAM_CODEC = CustomPacketPayload.codec(SyncComponentBlockC2S::toBytes, SyncComponentBlockC2S::new);
-    private WandAbilityHolder wandAbilityHolder;
+    private AbilityHolder abilityHolder;
     private BlockPos blockPos;
 
-    public SyncComponentBlockC2S(WandAbilityHolder wandAbilityHolder, BlockPos blockPos) {
-        this.wandAbilityHolder = wandAbilityHolder;
+    public SyncComponentBlockC2S(AbilityHolder wandAbilityHolder, BlockPos blockPos) {
+        this.abilityHolder = wandAbilityHolder;
         this.blockPos = blockPos;
     }
 
     public SyncComponentBlockC2S(FriendlyByteBuf buf) {
-        this.wandAbilityHolder = buf.readJsonWithCodec(WandAbilityHolder.CODEC);
+        this.abilityHolder = buf.readJsonWithCodec(AbilityHolder.CODEC);
         this.blockPos = buf.readBlockPos();
     }
 
     public void toBytes(FriendlyByteBuf bug) {
-        bug.writeJsonWithCodec(WandAbilityHolder.CODEC, this.wandAbilityHolder);
+        bug.writeJsonWithCodec(AbilityHolder.CODEC, this.abilityHolder);
         bug.writeBlockPos(this.blockPos);
     }
 
@@ -40,18 +40,18 @@ public class SyncComponentBlockC2S implements CustomPacketPayload{
             () -> {
                 if(ctx.player().level() instanceof ServerLevel serverLevel){
                     var entity = serverLevel.getBlockEntity(this.blockPos);
-                    sendTagsToSlot(entity, this.wandAbilityHolder);
+                    sendTagsToSlot(entity, this.abilityHolder);
                 }
             }
         );
         return true;
     }
 
-    public static void sendTagsToSlot(BlockEntity entity, WandAbilityHolder wandAbilityHolder) {
+    public static void sendTagsToSlot(BlockEntity entity, AbilityHolder wandAbilityHolder) {
         if(entity instanceof AbstractBEInventory entity1){
             var handler = entity1.inputItemHandler;
             var augment = handler.getStackInSlot(0).copy();
-            augment.set(WAND_ABILITY_HOLDER, wandAbilityHolder);
+            augment.set(ABILITY_HOLDER, wandAbilityHolder);
             handler.setStackInSlot(0, augment);
         }
     }

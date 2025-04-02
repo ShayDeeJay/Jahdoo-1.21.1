@@ -18,6 +18,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.components.DataComponentHelper;
@@ -28,23 +30,27 @@ import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static org.jahdoo.ascension.attachments.ChaosCubeData.getActionDirection;
+import static org.jahdoo.ascension.attachments.ChaosCubeData.getActive;
 import static org.jahdoo.common.block.BlockInteractionHandler.getItemHandlerAt;
-import static org.jahdoo.ascension.attachments.ChaosCubeData.*;
-import static org.jahdoo.common.components.DataComponentHelper.getKeyFromAugment;
 import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.common.entities.EntityAnimations.*;
-import static org.jahdoo.common.registers.AttachmentReg.*;
+import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 
 
 public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, GeoBlockEntity {
@@ -122,9 +128,9 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
 
     @Override
     public int setCraftingCost() {
-        var getHolder = this.augmentSlot().get(ComponentReg.WAND_ABILITY_HOLDER);
+        var getHolder = this.augmentSlot().get(ComponentReg.ABILITY_HOLDER);
         if(getHolder == null) return -1;
-        return (int) getSpecificValue(getKeyFromAugment(this.augmentSlot()),  getHolder, AbilityBuilder.MANA_COST);
+        return (int) getSpecificValue(getHolder, AbilityBuilder.MANA_COST);
     }
 
     private void positionalParticles(Level level, int positions, double radius) {

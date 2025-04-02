@@ -9,8 +9,9 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.DataComponentHelper;
+import org.jahdoo.common.registers.AttachmentReg;
 
-    public class SelectAbilityC2SP implements CustomPacketPayload {
+public class SelectAbilityC2SP implements CustomPacketPayload {
         public static final Type<SelectAbilityC2SP> TYPE = new Type<>(Helpers.res("selected_ability"));
         public static final StreamCodec<RegistryFriendlyByteBuf, SelectAbilityC2SP> STREAM_CODEC = CustomPacketPayload.codec(SelectAbilityC2SP::toBytes, SelectAbilityC2SP::new);
 
@@ -32,6 +33,8 @@ import org.jahdoo.common.components.DataComponentHelper;
             ctx.enqueueWork(
                 () -> {
                     if(ctx.player() instanceof ServerPlayer serverPlayer){
+                        serverPlayer.getData(AttachmentReg.CASTER_DATA).setSelectedAbility(currentAbility);
+
                         if(serverPlayer.getItemInHand(serverPlayer.getUsedItemHand()).getItem() instanceof WandItem){
                             if(currentAbility != null){
                                 DataComponentHelper.setAbilityTypeWand(serverPlayer, this.currentAbility);

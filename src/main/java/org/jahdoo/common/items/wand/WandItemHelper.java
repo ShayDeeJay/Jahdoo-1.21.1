@@ -185,9 +185,9 @@ public class WandItemHelper {
     }
 
     private static void appendSelectedAbility(ItemStack wandItem, ArrayList<Component> appendComponents) {
-        var abilityId = wandItem.get(WAND_DATA).selectedAbility();
-        if(wandItem.has(WAND_DATA) && !abilityId.isEmpty()){
-            var getFullName = AbilityReg.getFirstSpellByTypeId(abilityId);
+        var abilityId = wandItem.get(WAND_DATA);
+        if(abilityId != null && !abilityId.selectedAbility().isEmpty()){
+            var getFullName = AbilityReg.getFirstSpellByTypeId(abilityId.selectedAbility());
             getFullName.ifPresent(
                 abilityRegistrar -> {
                     var prefix = withStyleComponent("Selected: ", HEADER_COLOUR);

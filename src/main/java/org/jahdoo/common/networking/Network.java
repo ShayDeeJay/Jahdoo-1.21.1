@@ -99,6 +99,12 @@ public class Network {
             EffectC2SP::handle
         );
 
+        payloadRegistrar.playToServer(
+            AbilityHolderC2SP.TYPE,
+            AbilityHolderC2SP.STREAM_CODEC,
+            AbilityHolderC2SP::handle
+        );
+
         //S2C
         payloadRegistrar.playToClient(
             ManaSyncS2CP.TYPE,
@@ -172,6 +178,11 @@ public class Network {
             InstanceSyncS2CP::handle
         );
 
+        payloadRegistrar.playToClient(
+            AbilityHolderS2CP.TYPE,
+            AbilityHolderS2CP.STREAM_CODEC,
+            AbilityHolderS2CP::handle
+        );
     }
 
 }
