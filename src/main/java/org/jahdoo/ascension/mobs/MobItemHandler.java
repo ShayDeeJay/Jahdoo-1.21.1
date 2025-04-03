@@ -40,8 +40,6 @@ import static net.minecraft.world.level.storage.loot.parameters.LootContextParam
 import static net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition.randomChance;
 import static net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.between;
 import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.elementalWithType;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentWithAbility;
 
 public class MobItemHandler {
 
@@ -161,7 +159,7 @@ public class MobItemHandler {
 
         var freeItems = new ArrayList<>(getEnchantedArmor(serverLevel, element, helmet, chestplate, leggings, boots, weapon).getRandomItems(params));
         freeItems.add(new ItemStack(Objects.requireNonNull(element.getWand())));
-        freeItems.add(getAugmentWithAbility(elementalWithType(element.id())));
+//        freeItems.add(getAugmentWithAbility(elementalWithType(element.id())));
 
         return freeItems;
     }

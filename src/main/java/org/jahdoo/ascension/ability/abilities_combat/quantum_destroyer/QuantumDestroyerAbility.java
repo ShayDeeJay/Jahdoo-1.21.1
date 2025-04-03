@@ -2,19 +2,19 @@ package org.jahdoo.ascension.ability.abilities_combat.quantum_destroyer;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.utils.GlobalStrings;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.GlobalStrings;
-import org.jahdoo.ascension.utils.Helpers;
 
-import static org.jahdoo.common.registers.EntityReg.*;
-import static org.jahdoo.common.registers.EntityDataReg.*;
+import static org.jahdoo.common.registers.EntityDataReg.QUANTUM_DESTROYER;
+import static org.jahdoo.common.registers.EntityReg.MYSTIC_ELEMENT_PROJECTILE;
 
 public class QuantumDestroyerAbility extends AbilityRegistrar {
 
@@ -64,8 +64,8 @@ public class QuantumDestroyerAbility extends AbilityRegistrar {
     }
 
     @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+    public AbilityHolder setModifiers() {
+        return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(160)
             .setStaticCooldown(6000)
             .setDamage(20, 10, 2)
@@ -73,7 +73,7 @@ public class QuantumDestroyerAbility extends AbilityRegistrar {
             .setLifetime(200, 100, 20)
             .setGravitationalPull(2, 1, 0.2)
             .setAbilityTagModifiersRandom(ENERGY_RADIUS, 6, 3, true, 1)
-            .build();
+            .buildAndReturn();
     }
 
 }

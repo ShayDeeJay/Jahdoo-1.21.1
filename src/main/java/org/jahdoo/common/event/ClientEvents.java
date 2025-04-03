@@ -15,12 +15,9 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.OverlayBlockTooltip;
 import org.jahdoo.common.client.RuneTooltipRenderer;
 import org.jahdoo.common.client.screens.AbilityUnlockScreen;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 
 import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import static net.neoforged.neoforge.client.event.RenderLivingEvent.Pre;
-import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.common.client.KeyBinding.*;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.mysticEffectClient;
 import static org.jahdoo.common.event.event_helpers.KeyBindHelper.quickSelectBehaviour;
@@ -98,9 +95,8 @@ public class ClientEvents {
         if(WAND_SLOT_10A.consumeClick()) selectWandSlot(10);
         if(STAT_SCREEN.consumeClick()) {
 //            instance.setScreen(new StatScreen());
-            sendToServer(new AbilityHolderC2SP(AbilityHolder.DEFAULT));
             instance.setScreen(new AbilityUnlockScreen());
-
+            Helpers.syncAbilities();
         }
     }
 

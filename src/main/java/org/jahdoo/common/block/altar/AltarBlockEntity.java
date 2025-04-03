@@ -142,7 +142,6 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
 
         for (var entity : asList) {
             if(entity.getTarget() == null){
-                System.out.println(entity.getDisplayName());
                 var validTargets = level.getEntities(null, getWithBounding).stream().filter(
                     livEnt -> livEnt instanceof ITamableEntity t && t.getOwner() != null || livEnt instanceof Player
                 ).toList();

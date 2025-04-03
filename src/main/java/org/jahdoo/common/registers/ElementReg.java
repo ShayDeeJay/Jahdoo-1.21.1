@@ -57,6 +57,13 @@ public class ElementReg {
         return Helpers.listRandom(list);
     }
 
+    public static AbstractElement random(long seed) {
+        var list = REGISTRY.stream()
+            .filter(e -> e != utility())
+            .toList();
+        return Helpers.listRandom(list, seed);
+    }
+
     private static DeferredHolder<AbstractElement, AbstractElement> registerElement(Supplier<AbstractElement> element) {
         return ELEMENT.register(element.get().setAbilityId(), element);
     }

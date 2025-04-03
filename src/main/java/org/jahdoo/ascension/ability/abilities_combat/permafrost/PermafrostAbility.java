@@ -2,17 +2,17 @@ package org.jahdoo.ascension.ability.abilities_combat.permafrost;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.utils.GlobalStrings;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.GlobalStrings;
-import org.jahdoo.ascension.ability.AbilityBuilder;
 
 public class PermafrostAbility extends AbilityRegistrar {
 
@@ -59,15 +59,15 @@ public class PermafrostAbility extends AbilityRegistrar {
     }
 
     @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+    public AbilityHolder setModifiers() {
+        return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(60)
             .setStaticCooldown(1200)
             .setEffectDuration(300, 100, 50)
             .setEffectStrength(10, 5,1)
             .setLifetime(200, 100, 20)
             .setAoe(4, 2, 0.5)
-            .build();
+            .buildAndReturn();
     }
 
 }

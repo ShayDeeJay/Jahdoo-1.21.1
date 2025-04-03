@@ -25,7 +25,7 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
 
     private int privateTicks;
     private double aoe = 0.05;
-    public static final String buddy = "buddy";
+    public static final String IS_BUDDY = "buddy";
     public static final String name = "armageddon_module";
     private static final ResourceLocation abilityId = Helpers.res("armageddon_module_property");
 
@@ -80,7 +80,7 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
             .setEffectChanceWithValue(0,0,20)
             .setEffectStrengthWithValue(0,0,0)
             .setModifier(FireballAbility.NOVA_RANGE, 0,0,true, Helpers.Random.nextInt(4,6))
-            .setModifierWithoutBounds(buddy, 1)
+            .setModifierWithoutBounds(IS_BUDDY, 1)
             .buildAndReturn();
 
     }

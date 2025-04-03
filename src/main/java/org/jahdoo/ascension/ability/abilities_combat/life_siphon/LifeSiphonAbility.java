@@ -2,18 +2,18 @@ package org.jahdoo.ascension.ability.abilities_combat.life_siphon;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.utils.GlobalStrings;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.GlobalStrings;
-import org.jahdoo.ascension.ability.AbilityBuilder;
 
-import static org.jahdoo.common.registers.EntityReg.*;
-import static org.jahdoo.common.registers.EntityDataReg.*;
+import static org.jahdoo.common.registers.EntityDataReg.OVERCHARGED;
+import static org.jahdoo.common.registers.EntityReg.VITALITY_ELEMENT_PROJECTILE;
 
 public class LifeSiphonAbility extends AbilityRegistrar {
 
@@ -61,15 +61,15 @@ public class LifeSiphonAbility extends AbilityRegistrar {
     }
 
     @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+    public AbilityHolder setModifiers() {
+        return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(100)
             .setStaticCooldown(1200)
             .setDamage(20, 10, 2)
             .setRange(2.5, 1.5, 0.2)
             .setAbilityTagModifiersRandom(HEAL_VALUE, 1.5,0.5, true, 0.2)
             .setAbilityTagModifiersRandom(PULSES, 5,1, true, 1)
-            .build();
+            .buildAndReturn();
     }
 
 }

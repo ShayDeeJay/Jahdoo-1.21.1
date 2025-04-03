@@ -5,7 +5,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
@@ -63,14 +62,14 @@ public class EscapeDecoyAbility extends AbilityRegistrar {
     }
 
     @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+    public AbilityHolder setModifiers() {
+        return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(50)
             .setStaticCooldown(1200)
             .setLifetime(300, 100, 50)
             .setEffectDuration(200, 50, 50)
             .setRange(15, 5, 2)
-            .build();
+            .buildAndReturn();
     }
 
     @Override

@@ -13,6 +13,7 @@ import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.EntityReg;
 
@@ -22,7 +23,6 @@ import static net.minecraft.network.syncher.EntityDataSerializers.FLOAT;
 import static net.minecraft.network.syncher.EntityDataSerializers.STRING;
 import static net.minecraft.network.syncher.SynchedEntityData.Builder;
 import static net.minecraft.network.syncher.SynchedEntityData.defineId;
-import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 
 public class AoeCloud extends Entity implements TraceableEntity, IEntityProperties {
 
@@ -52,7 +52,8 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         this.reapplyPosition();
         this.setRadius(setWidth);
         this.owner = livingEntity;
-        this.abilityHolder = livingEntity.getItemInHand(livingEntity.getUsedItemHand()).get(ABILITY_HOLDER.get());
+//        this.abilityHolder = livingEntity.getItemInHand(livingEntity.getUsedItemHand()).get(ABILITY_HOLDER.get());
+        this.abilityHolder = livingEntity.getData(AttachmentReg.CASTER_DATA).getHolder(abilityId);
         this.setEntityType(selectedAbility);
         this.abilityId = abilityId;
         this.getAoe = EntityDataReg.getProperty(selectedAbility);

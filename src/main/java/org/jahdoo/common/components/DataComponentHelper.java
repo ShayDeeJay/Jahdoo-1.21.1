@@ -3,6 +3,7 @@ package org.jahdoo.common.components;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.common.items.wand.WandData;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.ascension.utils.Helpers;
@@ -55,16 +56,22 @@ public class DataComponentHelper {
         return wandAbilityHolder.data().abilityProperties();
     }
 
-    public static double getSpecificValue(Player player, ItemStack itemStack, String modifier){
-        var wandAbilityHolder = itemStack.get(ABILITY_HOLDER.get());
 
-        if(wandAbilityHolder != null){
-            var specificValue = wandAbilityHolder.data().abilityProperties().get(modifier);
-            return specificValue.setValue();
-        }
-
-        return 0;
+    public static double getSpecificValue(Player player, String modifier){
+        var getValue = CastingData.entityHolderWithSelected(player).data().abilityProperties().get(modifier);
+        return getValue != null ? getValue.setValue() : 0;
     }
+
+//    public static double getSpecificValue(Player player, ItemStack itemStack, String modifier){
+//        var wandAbilityHolder = itemStack.get(ABILITY_HOLDER.get());
+//
+//        if(wandAbilityHolder != null){
+//            var specificValue = wandAbilityHolder.data().abilityProperties().get(modifier);
+//            return specificValue.setValue();
+//        }
+//
+//        return 0;
+//    }
 
     public static double getSpecificValue(AbilityHolder abilityHolder, String modifier){
         if(abilityHolder == null) return 0;
@@ -87,6 +94,9 @@ public class DataComponentHelper {
     }
 
     public static ResourceLocation getAbilityTypePlayer(Player player) {
-        return Helpers.res(player.getData(AttachmentReg.CASTER_DATA).getSelectedAbility());
+//        return Helpers.res(player.getData(AttachmentReg.CASTER_DATA).getSelectedAbility());
+        Helpers.syncAbilities();
+        var data = player.getData(AttachmentReg.CASTER_DATA).getSelectedAbility();
+        return Helpers.res(data);
     }
 }

@@ -5,17 +5,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.utils.GlobalStrings;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.GlobalStrings;
-import org.jahdoo.ascension.utils.Helpers;
 
 public class SummonAncientGolemAbility extends AbilityRegistrar {
 
@@ -52,8 +52,8 @@ public class SummonAncientGolemAbility extends AbilityRegistrar {
     }
 
     @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+    public AbilityHolder setModifiers() {
+        return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(200)
             .setStaticCooldown(6000)
             .setDamage(40, 10, 5)
@@ -62,7 +62,7 @@ public class SummonAncientGolemAbility extends AbilityRegistrar {
             .setEffectChance(60, 20, 10)
             .setCastingDistance(30, 10, 5)
             .setLifetime(12000, 2400, 1200)
-            .build();
+            .buildAndReturn();
     }
 
     @Override

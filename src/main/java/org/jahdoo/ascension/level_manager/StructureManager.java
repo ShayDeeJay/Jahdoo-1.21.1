@@ -49,9 +49,10 @@ public class StructureManager {
     public static final String EASY_EXIT = "emergency_exit";
     public static final int GLOBAL_Y = 60;
     public static final Vec3 SPAWN_POSITION = new Vec3(33.5, GLOBAL_Y + 2, 27.5);
+    public static final long SEED = /*Random.nextLong()*/ 874095743;
 
     public static @NotNull Component getBattleRooms() {
-        return withStyleComponent(stringIdToName(listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION))), SYMPATHISER_ORANGE);
+        return withStyleComponent(stringIdToName(Helpers.listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION), SEED)), SYMPATHISER_ORANGE);
     }
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
@@ -92,23 +93,23 @@ public class StructureManager {
 
         if(!isStarter){
 
-            if (Maths.percentageChance(forSanctuary)) {
+            if (Maths.percentageChance(forSanctuary, SEED)) {
                 roomGen.add(withStyleComponent(stringIdToName(SANCTUARY), COSMIC_PURPLE));
             }
 
-            if (Maths.percentageChance(50)) {
+            if (Maths.percentageChance(50, SEED)) {
                 roomGen.add(withStyleComponent(stringIdToName(BAZAAR), AETHER_BLUE));
             }
 
             if(roomGen.size() == 3) return roomGen;
 
-            if(Maths.percentageChance(5)){
+            if(Maths.percentageChance(5, SEED)){
                 roomGen.add(withStyleComponent(stringIdToName(EASY_EXIT), MAGNET_RANGE_GREEN));
             }
 
             if(roomGen.size() == 3) return roomGen;
 
-            if (Maths.percentageChance(forBoss)) {
+            if (Maths.percentageChance(forBoss, SEED)) {
                 roomGen.add(withStyleComponent(stringIdToName(BOSS_CRUCIBLE), NEGATIVE_RED));
             }
         }

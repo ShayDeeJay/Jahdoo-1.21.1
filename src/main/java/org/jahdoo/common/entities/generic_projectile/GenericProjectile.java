@@ -17,6 +17,7 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.EntityReg;
@@ -64,7 +65,9 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.setProjectileWithOffsets(this, player, offset, 1);
         this.reapplyPosition();
         this.setOwner(player);
-        this.abilityHolder = AbilityHolder.getHolderFromWand(player);
+//        this.abilityHolder = AbilityHolder.getHolderFromWand(player);
+        var holder = player.getData(AttachmentReg.CASTER_DATA).getHolder(abilityId);
+        this.abilityHolder = holder;
         this.projectileSelectionIndex = index;
         this.abilityId = abilityId;
         this.getProjectile = EntityDataReg.getProperty(index);

@@ -2,6 +2,7 @@ package org.jahdoo.common.items.wand;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -34,7 +36,6 @@ import java.util.function.Consumer;
 
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.items.wand.WandItemHelper.*;
-import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.BlockReg.WAND;
 import static org.jahdoo.common.registers.ComponentReg.*;
 
@@ -119,7 +120,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     }
 
     @Override
-    public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int slotId, boolean isSoltSelected) {
+    public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int slotId, boolean isSlotSelected) {
         if(!(entity instanceof Player player)) return;
         var itemInMain = player.getMainHandItem();
         var itemInOff = player.getOffhandItem();
@@ -133,16 +134,31 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
-//        player.getData(AttachmentReg.CASTER_DATA.get()).clearAllAbilities();
+        var data = player.getData(AttachmentReg.CASTER_DATA.get());
 
-        System.out.println(player.getData(CASTER_DATA).getSelectedAbility());
-        if (canOffHand(player, interactionHand, true)) {
-            player.startUsingItem(interactionHand);
-            CastHelper.use(player);
-            return InteractionResultHolder.pass(item);
+//        System.out.println(data.getSelectedAbility());
+//        debugKillAll(level, player);
+
+
+        if(!level.isClientSide){
+            if (canOffHand(player, interactionHand, true)) {
+                player.startUsingItem(interactionHand);
+                CastHelper.use(player);
+                return InteractionResultHolder.pass(item);
+            }
         }
 
         return InteractionResultHolder.fail(item);
+    }
+
+    private static void debugKillAll(Level level, Player player) {
+        if(level instanceof ServerLevel serverLevel && player.isCreative() && player.isShiftKeyDown()){
+            for (var entity : serverLevel.getEntities().getAll()) {
+                if(!(entity instanceof Player)){
+                    entity.kill();
+                }
+            }
+        }
     }
 
     @Override

@@ -45,6 +45,7 @@ public class Permafrost extends DefaultEntityBehaviour {
     public void getAoeCloud(AoeCloud aoeCloud) {
         super.getAoeCloud(aoeCloud);
         aoeCloud.setRadius((float) this.getTag(AOE));
+
         this.aoe = this.getTag(AOE);
         this.effectDuration = this.getTag(EFFECT_DURATION);
         this.effectStrength = this.getTag(EFFECT_STRENGTH);

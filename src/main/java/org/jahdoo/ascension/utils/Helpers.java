@@ -38,12 +38,17 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
+import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
+import org.jahdoo.common.networking.server2client.AbilityHolderS2CP;
 import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ComponentReg;
 
 import java.awt.*;
@@ -52,9 +57,11 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
+import static java.util.Collections.*;
 import static net.minecraft.advancements.CriteriaTriggers.ITEM_DURABILITY_CHANGED;
 import static net.minecraft.sounds.SoundEvents.ITEM_BREAK;
 import static net.minecraft.world.item.enchantment.EnchantmentHelper.processDurabilityChange;
+import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 
 public class Helpers {
     public static final String EASY = "novice";
@@ -62,6 +69,22 @@ public class Helpers {
     public static final String HARD = "master";
 
     public static final Random Random = ThreadLocalRandom.current();
+
+    public static void syncAbilities(){
+        sendToServer(new AbilityHolderC2SP(AbilityHolder.DEFAULT));
+    }
+
+    public static void syncSelectedAbility(Player player, String updateAbility) {
+        player.getData(AttachmentReg.CASTER_DATA).setSelectedAbility(updateAbility);
+        PacketDistributor.sendToServer(new SelectAbilityC2SP(updateAbility));
+    }
+
+    public static void syncAbilitiesServer(Player player) {
+        if(player instanceof ServerPlayer serverPlayer){
+            var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
+            PacketDistributor.sendToPlayer(serverPlayer, new AbilityHolderS2CP(casterData.getUnlockedAbilities()));
+        }
+    }
 
     public static void itemOverlay(ItemStack itemStack, ItemDisplayContext displayContext, PoseStack poseStack, Consumer<ItemStack> runnable) {
 //        var handContextRight = displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
@@ -161,6 +184,11 @@ public class Helpers {
         return collection.get(index);
     }
 
+    public static <T> T listRandom(List<T> collection, long seed){
+        var index = collection.size() > 1 ? new Random(seed).nextInt(collection.size()) : 0 ;
+        return collection.get(index);
+    }
+
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch){
         PacketDistributor.sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, true));
     }
@@ -181,11 +209,19 @@ public class Helpers {
     public static Map<String, AbilityData.AbilityModifiers> getModifierValue(AbilityHolder abilityHolder, String tagName) {
         if(abilityHolder != null){
             var allModifiers = abilityHolder.data().abilityProperties();
+
             if(allModifiers.get(tagName) != null){
+                System.out.println("i made it here");
                 return allModifiers;
             }
         }
-        return Collections.emptyMap();
+        return emptyMap();
+    }
+
+
+    public static Map<String, AbilityData.AbilityModifiers> getModifierValue(Player player, String abilityName) {
+        var data = CastingData.entityHolder(player, abilityName);
+        return data != null ? data.data().abilityProperties(): emptyMap();
     }
 
     public static int getColourDarker(int color, double darkValue) {

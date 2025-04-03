@@ -62,7 +62,7 @@ public class FireBall extends DefaultEntityBehaviour {
         this.effectStrength = this.getTag(EFFECT_STRENGTH);
         this.effectDuration = this.getTag(EFFECT_DURATION);
         this.novaMaxSize = this.getTag(FireballAbility.NOVA_RANGE);
-        this.isBuddy = this.getTag(ArmageddonModule.buddy) == 0.0;
+        this.isBuddy = this.getTag(ArmageddonModule.IS_BUDDY) == 0.0;
         if(!(this.element.getOwner() instanceof Player)){
             this.damage = this.getTag(DAMAGE);
         } else {

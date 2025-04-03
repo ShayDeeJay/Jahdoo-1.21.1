@@ -25,7 +25,8 @@ import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.ascension.rarity.JahdooRarity.getRarity;
 import static org.jahdoo.ascension.utils.ColourStore.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.ascension.utils.Maths.*;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getColourBy;
 

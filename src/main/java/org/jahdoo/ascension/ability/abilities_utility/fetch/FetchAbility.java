@@ -2,15 +2,15 @@ package org.jahdoo.ascension.ability.abilities_utility.fetch;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.ability.AbstractBlockAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.ability.AbstractBlockAbility;
-import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.jahdoo.common.registers.ElementReg;
 
 import static org.jahdoo.common.registers.EntityDataReg.FETCH;
 
@@ -65,11 +65,11 @@ public class FetchAbility extends AbstractBlockAbility {
     }
 
     @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+    public AbilityHolder setModifiers() {
+        return new AbilityBuilder(abilityId.getPath().intern())
             .setMana(20, 10, 2)
             .setRange(10,  3, 1)
-            .build();
+            .buildAndReturn();
     }
 
 }

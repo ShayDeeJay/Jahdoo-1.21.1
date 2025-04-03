@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.ascension.ability.abilities_combat.armageddon.ArmageddonModule.buddy;
+import static org.jahdoo.ascension.ability.abilities_combat.armageddon.ArmageddonModule.IS_BUDDY;
 import static org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility.abilityId;
 import static org.jahdoo.common.entities.SharedEntityBehaviours.canTarget;
 import static org.jahdoo.common.items.wand.CastHelper.castAnimation;
@@ -222,7 +222,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
             .setEffectChanceWithValue(0,0, this.effectChance)
             .setEffectStrengthWithValue(0,0,this.effectStrength)
             .setModifier(FireballAbility.NOVA_RANGE, 0,0,true, Helpers.Random.nextInt(4,6))
-            .setModifierWithoutBounds(buddy, 0)
+            .setModifierWithoutBounds(IS_BUDDY, 0)
             .buildAndReturn();
     }
 

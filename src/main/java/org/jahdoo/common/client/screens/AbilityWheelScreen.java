@@ -16,85 +16,86 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
 import org.jahdoo.common.components.DataComponentHelper;
-import org.jahdoo.common.items.wand.WandData;
-import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
-import org.jahdoo.common.networking.client2server.StopUsingC2SP;
-import org.jahdoo.common.registers.*;
+import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static org.jahdoo.ascension.utils.Helpers.syncSelectedAbility;
 import static org.jahdoo.common.client.Icons.COG;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentModificationScreenWand;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.isConfigAbility;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class AbilityWheelScreen extends Screen  {
-    private static final int RADIAL_SIZE = 150;
-    private final int buttonSize = RADIAL_SIZE / 7 + 3 + 6;
-    private float localTick = 60;
-    private boolean switchState;
-    private final List<AbilityIconButton> buttons = new ArrayList<>();
+
     private int slots;
+    private boolean switchState;
+    private final int buttonSize = RADIAL_SIZE / 16;
+    private float localTick = 60;
+    private static final int RADIAL_SIZE = 150;
     private static final int RADIUS = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 4);
+    private final List<AbilityIconButton> buttons = new ArrayList<>();
+
+    @Override
+    public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {}
+
+    public float easeInOutCubic(float t) {
+        return t < 0.2f ? 4 * t * t * t : (float) (1 - (float) Math.pow(-2 * t + 2, 3) / 1.2);
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
 
     public AbilityWheelScreen() {
         super(Component.literal("Ability Menu"));
+        Helpers.syncAbilities();
+    }
+
+    private void onClick(List<String> abilityHolder, int finalI, Player player) {
+        var updateAbility = abilityHolder.get(finalI);
+        syncSelectedAbility(player, updateAbility);
+    }
+
+    private void onHoverClick(List<String> abilityHolder, int finalI, Player player) {
+        if(!switchState){
+            player.playSound(SoundReg.SELECT.get(), 1f, 1.4f);
+            switchState = true;
+            onClick(abilityHolder, finalI, player);
+        }
+    }
+
+    private int posToSlice(double mouseX, double mouseY){
+        var buttons = this.slots;
+        var angle = Math.atan2(mouseY, mouseX) + (Math.PI / buttons) + Math.PI / 2 ;
+        var index = Mth.floor(angle * buttons / (2 * Math.PI));
+        if(index < 0) index += buttons;
+        return index;
     }
 
     public static List<String> getAllAbilities(ItemStack wand){
         var player = Minecraft.getInstance().player;
         var names = new ArrayList<String>();
+        var data = player.getData(AttachmentReg.CASTER_DATA);
 
-        for (var unlockedAbility : player.getData(AttachmentReg.CASTER_DATA).getUnlockedAbilities()) {
+        for (var unlockedAbility : data.getUnlockedAbilities()) {
             names.add(unlockedAbility.abilityName());
         }
-//        var storeNames = wand.get(DataComponents.BUNDLE_CONTENTS);
-//
-//        for (var itemStack : storeNames.itemCopyStream().toList()) {
-//            names.add(itemStack.get(ComponentReg.ABILITY_HOLDER).abilityName());
-//        }
-//        var wandData = ComponentReg.WAND_DATA.get();
-//        if(wand.has(wandData)) return wand.get(wandData).abilitySet();
         return names;
-    }
-
-    @Override
-    protected void init() {
-        var player = this.getMinecraft().player;
-        this.buttons.clear();
-        if(player == null) return;
-        var wand = Helpers.getUsedItem(player);
-        var wandData = wand.get(ComponentReg.WAND_DATA.get());
-        var abilityHolder = getAllAbilities(wand);
-        var totalSlots = abilityHolder.size();
-        int centerX = this.width / 2 + 2;
-        int centerY = this.height / 2 + 2;
-        double angleOffset = -Math.PI / 2.0;
-
-        if(wandData == null) return;
-        this.slots = wandData.abilitySlots();
-
-        for (int i = 0; i < totalSlots; i++) {
-            double angle = angleOffset + 2 * Math.PI * i / totalSlots; // Calculate angle for each position
-            int buttonX = (int) (centerX + RADIUS * Math.cos(angle)) - buttonSize / 2;
-            int buttonY = (int) (centerY + RADIUS * Math.sin(angle)) - buttonSize / 2;
-
-            if (!abilityHolder.isEmpty() && !AbilityReg.getSpellsByTypeId(abilityHolder.get(i)).isEmpty()) {
-                abilityButton(abilityHolder, i, buttonX, buttonY, i, wandData, player);
-            } else {
-                showSlotIndex(i, buttonX, buttonY);
-            }
-        }
     }
 
     @Override
@@ -108,75 +109,6 @@ public class AbilityWheelScreen extends Screen  {
         var index = posToSlice(x, y);
         for (AbilityIconButton button : this.buttons) button.setFocused(false);
         if(index < this.buttons.size()) this.buttons.get(index).setFocused(true);
-    }
-
-    private int posToSlice(double mouseX, double mouseY){
-        var buttons = this.slots;
-        var angle = Math.atan2(mouseY, mouseX) + (Math.PI / buttons) + Math.PI / 2 ;
-        var index = Mth.floor(angle * buttons / (2 * Math.PI));
-        if(index < 0) index += buttons;
-        return index;
-    }
-
-    private void abilityButton(
-        List<String> abilityHolder,
-        int i,
-        int buttonX,
-        int buttonY,
-        int finalI,
-        WandData wandData,
-        Player player
-    ) {
-        var selectedAbility = AbilityReg.getFirstSpellByTypeId(wandData.selectedAbility());
-        var ability = AbilityReg.getSpellsByTypeId(abilityHolder.get(i)).getFirst();
-        var iconResource = ability.getAbilityIconLocation();
-        var abilityButton = new WidgetSprites(iconResource, iconResource);
-        var isSelected = Objects.equals(selectedAbility.isPresent() ? selectedAbility.get().getAbilityName() : "", ability.getAbilityName());
-        var widget = new AbilityIconButton(buttonX - 2, buttonY - 2, abilityButton, buttonSize, pButton -> {}, isSelected,
-            () -> onHoverClick(abilityHolder, finalI, player)
-        );
-
-        if(isSelected){
-            selectedAbility.ifPresent(abilityRegistrars -> showConfig(wandData, player, abilityRegistrars, buttonX + 20, buttonY - 10));
-        }
-        this.addRenderableWidget(widget);
-        buttons.add(widget);
-    }
-
-    private void onHoverClick(List<String> abilityHolder, int finalI, Player player) {
-        if(!switchState){
-            player.playSound(SoundReg.SELECT.get(), 1f, 1.4f);
-            switchState = true;
-            onClick(abilityHolder, finalI, player);
-        }
-    }
-
-    private void onClick(List<String> abilityHolder, int finalI, Player player) {
-        var updateAbility = abilityHolder.get(finalI);
-        DataComponentHelper.setAbilityTypeWand(player, updateAbility);
-        PacketDistributor.sendToServer(new StopUsingC2SP());
-        PacketDistributor.sendToServer(new SelectAbilityC2SP(updateAbility));
-    }
-
-    private void showConfig(WandData wandData, Player player, AbilityRegistrar selectedAbility, int posX, int posY) {
-        var configButton = new WidgetSprites(COG, COG);
-        var configButtonSize = 20;
-        var itemStack = Helpers.getUsedItem(player);
-        if (selectedAbility.getElemenType() == ElementReg.utility()) {
-            var filterOutBase = isConfigAbility(selectedAbility, wandData.selectedAbility(), itemStack);
-            if(filterOutBase){
-                this.addRenderableWidget(
-                    new AbilityIconButton(
-                        posX, posY,
-                        configButton,
-                        configButtonSize,
-                        pButton -> this.getMinecraft().setScreen(getAugmentModificationScreenWand(itemStack, this)),
-                        false,
-                        () -> { }
-                    )
-                );
-            }
-        }
     }
 
     private void showSlotIndex(int finalI, int buttonX, int buttonY) {
@@ -195,52 +127,71 @@ public class AbilityWheelScreen extends Screen  {
         );
     }
 
-//    Yoinked from Ars Nouveau
-    @SubscribeEvent
-    public static void updateInputEvent(MovementInputUpdateEvent event) {
-        if (Minecraft.getInstance().screen instanceof AbilityWheelScreen) {
-            var settings = Minecraft.getInstance().options;
-            var eInput = event.getInput();
-            var window = Minecraft.getInstance().getWindow().getWindow();
-
-            eInput.up = InputConstants.isKeyDown(window, settings.keyUp.getKey().getValue());
-            eInput.down = InputConstants.isKeyDown(window, settings.keyDown.getKey().getValue());
-            eInput.left = InputConstants.isKeyDown(window, settings.keyLeft.getKey().getValue());
-            eInput.right = InputConstants.isKeyDown(window, settings.keyRight.getKey().getValue());
-
-            eInput.forwardImpulse = eInput.up == eInput.down ? 0.0F : (eInput.up ? 1.0F : -1.0F);
-            eInput.leftImpulse = eInput.left == eInput.right ? 0.0F : (eInput.left ? 1.0F : -1.0F);
-            eInput.jumping = InputConstants.isKeyDown(window, settings.keyJump.getKey().getValue());
-            eInput.shiftKeyDown = InputConstants.isKeyDown(window, settings.keyShift.getKey().getValue());
-
-            if (Minecraft.getInstance().player.isMovingSlowly()) {
-                eInput.leftImpulse = (float) ((double) eInput.leftImpulse * 0.3D);
-                eInput.forwardImpulse = (float) ((double) eInput.forwardImpulse * 0.3D);
-            }
-        }
-    }
-
-    public float easeInOutCubic(float t) {
-        return t < 0.2f ? 4 * t * t * t : (float) (1 - (float) Math.pow(-2 * t + 2, 3) / 1.2);
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
-
     private void getSelectedAbilityName(GuiGraphics guiGraphics) {
         int x = (this.width / 2);
         int y = (this.height / 2) - 5;
         if (localTick >= (RADIAL_SIZE - 20)) {
             var getAbilityId = DataComponentHelper.getAbilityTypeWand(getMinecraft().player);
             var getAbility = AbilityReg.getSpellsByTypeId(getAbilityId.getPath().intern());
-           if(!getAbility.isEmpty()){
-               SharedUI.getAbilityNameWithColour(getAbility.getFirst(), guiGraphics, x, y - 90, true);
-               int width = (int) (getAbilityId.getPath().intern().length() * 3.5);
-               SharedUI.boxMaker(guiGraphics, x - width, y - 96, width, 10);
-           }
+            if(!getAbility.isEmpty()){
+                SharedUI.getAbilityNameWithColour(getAbility.getFirst(), guiGraphics, x, y - 90, true);
+                int width = (int) (getAbilityId.getPath().intern().length() * 3.5);
+                SharedUI.boxMaker(guiGraphics, x - width, y - 96, width, 10);
+            }
         }
+    }
+
+    @Override
+    protected void init() {
+        var player = this.getMinecraft().player;
+        this.buttons.clear();
+        if(player == null) return;
+        var wand = Helpers.getUsedItem(player);
+        var castingData = player.getData(AttachmentReg.CASTER_DATA);
+        var abilityHolder = getAllAbilities(wand);
+        var totalSlots = abilityHolder.size();
+        int centerX = this.width / 2 + 2;
+        int centerY = this.height / 2 + 2;
+        double angleOffset = -Math.PI / 2.0;
+
+        this.slots = totalSlots;
+
+        for (int i = 0; i < totalSlots; i++) {
+            double angle = angleOffset + 2 * Math.PI * i / totalSlots; // Calculate angle for each position
+            int buttonX = (int) (centerX + RADIUS * Math.cos(angle)) - buttonSize / 2;
+            int buttonY = (int) (centerY + RADIUS * Math.sin(angle)) - buttonSize / 2;
+
+            if (!abilityHolder.isEmpty() && !AbilityReg.getSpellsByTypeId(abilityHolder.get(i)).isEmpty()) {
+                abilityButton(abilityHolder, i, buttonX, buttonY, i, castingData, player);
+            } else {
+                showSlotIndex(i, buttonX, buttonY);
+            }
+        }
+    }
+
+    private void abilityButton(
+        List<String> abilityHolder,
+        int i,
+        int buttonX,
+        int buttonY,
+        int finalI,
+        CastingData castingData,
+        Player player
+    ) {
+        var selectedAbility = AbilityReg.getFirstSpellByTypeId(castingData.getSelectedAbility());
+        var ability = AbilityReg.getSpellsByTypeId(abilityHolder.get(i)).getFirst();
+        var iconResource = ability.getAbilityIconLocation();
+        var abilityButton = new WidgetSprites(iconResource, iconResource);
+        var isSelected = Objects.equals(selectedAbility.isPresent() ? selectedAbility.get().getAbilityName() : "", ability.getAbilityName());
+        var widget = new AbilityIconButton(buttonX - 2, buttonY - 2, abilityButton, buttonSize, pButton -> {}, isSelected,
+            () -> onHoverClick(abilityHolder, finalI, player)
+        );
+
+        if(isSelected){
+            selectedAbility.ifPresent(abilityRegistrars -> showConfig(castingData, player, abilityRegistrars, buttonX + 20, buttonY - 10));
+        }
+        this.addRenderableWidget(widget);
+        buttons.add(widget);
     }
 
     private void setRadialTexture(GuiGraphics guiGraphics, int easedValue, float fade){
@@ -278,7 +229,49 @@ public class AbilityWheelScreen extends Screen  {
         }
     }
 
-    @Override
-    public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {}
+    private void showConfig(CastingData castingData, Player player, AbilityRegistrar selectedAbility, int posX, int posY) {
+        var configButton = new WidgetSprites(COG, COG);
+        var configButtonSize = 20;
+        var itemStack = Helpers.getUsedItem(player);
+        if (selectedAbility.getElemenType() == ElementReg.utility()) {
+            var filterOutBase = isConfigAbility(selectedAbility, castingData.getSelectedAbility(), itemStack);
+            if(filterOutBase){
+                this.addRenderableWidget(
+                    new AbilityIconButton(
+                        posX, posY,
+                        configButton,
+                        configButtonSize,
+                        pButton -> this.getMinecraft().setScreen(getAugmentModificationScreenWand(itemStack, this)),
+                        false,
+                        () -> { }
+                    )
+                );
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void updateInputEvent(MovementInputUpdateEvent event) {
+        if (Minecraft.getInstance().screen instanceof AbilityWheelScreen) {
+            var settings = Minecraft.getInstance().options;
+            var eInput = event.getInput();
+            var window = Minecraft.getInstance().getWindow().getWindow();
+
+            eInput.up = InputConstants.isKeyDown(window, settings.keyUp.getKey().getValue());
+            eInput.down = InputConstants.isKeyDown(window, settings.keyDown.getKey().getValue());
+            eInput.left = InputConstants.isKeyDown(window, settings.keyLeft.getKey().getValue());
+            eInput.right = InputConstants.isKeyDown(window, settings.keyRight.getKey().getValue());
+
+            eInput.forwardImpulse = eInput.up == eInput.down ? 0.0F : (eInput.up ? 1.0F : -1.0F);
+            eInput.leftImpulse = eInput.left == eInput.right ? 0.0F : (eInput.left ? 1.0F : -1.0F);
+            eInput.jumping = InputConstants.isKeyDown(window, settings.keyJump.getKey().getValue());
+            eInput.shiftKeyDown = InputConstants.isKeyDown(window, settings.keyShift.getKey().getValue());
+
+            if (Minecraft.getInstance().player.isMovingSlowly()) {
+                eInput.leftImpulse = (float) ((double) eInput.leftImpulse * 0.3D);
+                eInput.forwardImpulse = (float) ((double) eInput.forwardImpulse * 0.3D);
+            }
+        }
+    }
 
 }

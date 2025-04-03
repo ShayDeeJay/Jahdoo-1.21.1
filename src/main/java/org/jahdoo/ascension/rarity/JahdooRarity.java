@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.UnaryOperator;
 
@@ -161,8 +162,31 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return listRandom(filteredList).getFirst();
     }
 
+    public static JahdooRarity getRarity(long rarity) {
+        var getRandom = new Random(rarity).nextInt(1, 6020);
+        var filteredList = new ArrayList<>(
+            BASE_RARITY_CHANCES
+                .stream()
+                .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom)
+                .toList()
+        );
+        return listRandom(filteredList).getFirst();
+    }
+
     public static JahdooRarity getRarity(@Nullable List<Pair<JahdooRarity, Integer>> rarities) {
         var getRandom = Random.nextInt(1, 6020);
+        var filteredList = new ArrayList<>(
+            rarities != null ? rarities : BASE_RARITY_CHANCES
+                .stream()
+                .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom)
+                .toList()
+        );
+
+        return listRandom(filteredList).getFirst();
+    }
+
+    public static JahdooRarity getRarity(@Nullable List<Pair<JahdooRarity, Integer>> rarities, long rarity) {
+        var getRandom = new Random(rarity).nextInt(1, 6020);
         var filteredList = new ArrayList<>(
             rarities != null ? rarities : BASE_RARITY_CHANCES
                 .stream()
@@ -236,7 +260,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         var list = AbilityReg.getMatchingRarity(allRarities.get(Random.nextInt(0, allRarities.size())));
         var ability = list.get(Random.nextInt(0, list.size()));
         var emptyStack = new ItemStack(ItemReg.AUGMENT.get());
-        ability.setModifiers(emptyStack);
+//        ability.setModifiers(emptyStack);
         emptyStack.set(ComponentReg.NUMBER, 5);
         var wandAbilityHolder = emptyStack.get(ComponentReg.ABILITY_HOLDER.get());
         setAbilityToAugment(emptyStack, ability, wandAbilityHolder);

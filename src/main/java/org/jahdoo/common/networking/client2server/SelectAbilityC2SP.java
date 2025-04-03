@@ -6,47 +6,51 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.components.DataComponentHelper;
+import org.jahdoo.common.networking.server2client.SelectedAbilityS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 
+import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
+
 public class SelectAbilityC2SP implements CustomPacketPayload {
-        public static final Type<SelectAbilityC2SP> TYPE = new Type<>(Helpers.res("selected_ability"));
-        public static final StreamCodec<RegistryFriendlyByteBuf, SelectAbilityC2SP> STREAM_CODEC = CustomPacketPayload.codec(SelectAbilityC2SP::toBytes, SelectAbilityC2SP::new);
 
-        String currentAbility;
+    public static final Type<SelectAbilityC2SP> TYPE = new Type<>(Helpers.res("selected_ability"));
 
-        public SelectAbilityC2SP(String selectedAbility) {
-            this.currentAbility = selectedAbility;
-        }
+    public static final StreamCodec<RegistryFriendlyByteBuf, SelectAbilityC2SP> STREAM_CODEC =
+        CustomPacketPayload.codec(SelectAbilityC2SP::toBytes, SelectAbilityC2SP::new);
 
-        public SelectAbilityC2SP(FriendlyByteBuf buf) {
-            this.currentAbility = buf.readUtf() ;
-        }
+    String currentAbility;
 
-        public void toBytes(FriendlyByteBuf buf) {
-            buf.writeUtf(this.currentAbility);
-        }
+    public SelectAbilityC2SP(String selectedAbility) {
+        this.currentAbility = selectedAbility;
+    }
 
-        public void handle(IPayloadContext ctx) {
-            ctx.enqueueWork(
-                () -> {
-                    if(ctx.player() instanceof ServerPlayer serverPlayer){
-                        serverPlayer.getData(AttachmentReg.CASTER_DATA).setSelectedAbility(currentAbility);
+    public SelectAbilityC2SP(FriendlyByteBuf buf) {
+        this.currentAbility = buf.readUtf() ;
+    }
 
-                        if(serverPlayer.getItemInHand(serverPlayer.getUsedItemHand()).getItem() instanceof WandItem){
-                            if(currentAbility != null){
-                                DataComponentHelper.setAbilityTypeWand(serverPlayer, this.currentAbility);
-                            }
-                        }
+    public void toBytes(FriendlyByteBuf buf) {
+        buf.writeUtf(this.currentAbility);
+    }
+
+    public void handle(IPayloadContext ctx) {
+        ctx.enqueueWork(
+            () -> {
+                if(ctx.player() instanceof ServerPlayer serverPlayer){
+                    var castingData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
+                    if(!currentAbility.isEmpty()) {
+                        castingData.setSelectedAbility(currentAbility);
+                    } else {
+                        sendToPlayer(serverPlayer, new SelectedAbilityS2CP(castingData.getSelectedAbility()));
                     }
                 }
-            );
-        }
-
-        @Override
-        public Type<? extends CustomPacketPayload> type() {
-            return TYPE;
-        }
+            }
+        );
     }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
+}

@@ -40,8 +40,8 @@ public class BlockBomb extends AbstractUtilityProjectile {
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
-        this.totalRadiusMax = (int) this.getTagUtility(EXPLOSION_RANGE);
-        this.blockDropChance = (int) this.getTagUtility(BLOCK_DROP_CHANCE);
+        this.totalRadiusMax = (int) this.getTag(EXPLOSION_RANGE);
+        this.blockDropChance = (int) this.getTag(BLOCK_DROP_CHANCE);
     }
 
     private Level level(){

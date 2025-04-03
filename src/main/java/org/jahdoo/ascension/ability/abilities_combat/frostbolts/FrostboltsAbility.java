@@ -2,12 +2,12 @@ package org.jahdoo.ascension.ability.abilities_combat.frostbolts;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.EntityDataReg;
 
@@ -69,8 +69,8 @@ public class FrostboltsAbility extends AbilityRegistrar {
     }
 
     @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+    public AbilityHolder setModifiers() {
+        return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(60)
             .setStaticCooldown(600)
             .setDamage(25, 15, 2)
@@ -79,7 +79,7 @@ public class FrostboltsAbility extends AbilityRegistrar {
             .setEffectStrength(10, 0,1)
             .setEffectChance(40,5,5)
             .setCastingDistance(30,5,5)
-            .build();
+            .buildAndReturn();
     }
 
 }

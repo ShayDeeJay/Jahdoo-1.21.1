@@ -124,7 +124,6 @@ public class AncientGolem extends IronGolem implements ITamableEntity {
 
     @Override
     public void setTarget(@Nullable LivingEntity target) {
-        System.out.println(owner);
         if(canTarget(target, owner)){
             super.setTarget(target);
         }

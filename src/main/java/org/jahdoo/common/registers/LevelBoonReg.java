@@ -8,7 +8,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.boon.level_boons.*;
+import org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.ascension.boon.level_boons.negative.*;
 import org.jahdoo.ascension.boon.level_boons.positive.*;
 import org.jahdoo.ascension.rarity.JahdooRarity;
@@ -17,6 +17,8 @@ import org.jahdoo.ascension.utils.Helpers;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import static org.jahdoo.ascension.level_manager.StructureManager.SEED;
 
 public class LevelBoonReg {
 
@@ -38,7 +40,7 @@ public class LevelBoonReg {
             .stream()
             .filter(AbstractLevelBoon::isPositive)
             .toList();
-        return Helpers.listRandom(element);
+        return Helpers.listRandom(element, SEED);
     }
 
     public static AbstractLevelBoon randomNegative() {
@@ -46,7 +48,7 @@ public class LevelBoonReg {
             .stream()
             .filter(a -> !a.isPositive())
             .toList();
-        return Helpers.listRandom(element);
+        return Helpers.listRandom(element, SEED);
     }
 
     public static AbstractLevelBoon withRarityNegative(JahdooRarity rarity) {
@@ -55,7 +57,7 @@ public class LevelBoonReg {
             .filter(a -> !a.isPositive())
             .filter(a -> a.rarity() == rarity)
             .toList();
-        return Helpers.listRandom(element);
+        return Helpers.listRandom(element, SEED);
     }
 
     public static AbstractLevelBoon withRarityPositive(JahdooRarity rarity) {
@@ -64,7 +66,7 @@ public class LevelBoonReg {
             .filter(AbstractLevelBoon::isPositive)
             .filter(a -> a.rarity() == rarity)
             .toList();
-        return Helpers.listRandom(element);
+        return Helpers.listRandom(element, SEED);
     }
 
     public static Optional<AbstractLevelBoon> fromId(String typeId) {

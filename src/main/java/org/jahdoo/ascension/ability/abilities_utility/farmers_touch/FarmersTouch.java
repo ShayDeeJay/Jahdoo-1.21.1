@@ -15,20 +15,20 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbstractUtilityProjectile;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.UtilityHelpers;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.ascension.ability.abilities_utility.farmers_touch.FarmersTouchAbility.*;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
+import static org.jahdoo.ascension.ability.AbilityBuilder.RANGE;
+import static org.jahdoo.ascension.ability.abilities_utility.farmers_touch.FarmersTouchAbility.GROWTH_CHANCE;
+import static org.jahdoo.ascension.ability.abilities_utility.farmers_touch.FarmersTouchAbility.HARVEST_CHANCE;
 import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 
 public class FarmersTouch extends AbstractUtilityProjectile {
 
@@ -43,9 +43,9 @@ public class FarmersTouch extends AbstractUtilityProjectile {
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
-        this.range = this.getTagUtility(RANGE);
-        this.growthChance = this.getTagUtility(GROWTH_CHANCE);
-        this.harvestChance = this.getTagUtility(HARVEST_CHANCE);
+        this.range = this.getTag(RANGE);
+        this.growthChance = this.getTag(GROWTH_CHANCE);
+        this.harvestChance = this.getTag(HARVEST_CHANCE);
     }
 
     @Override

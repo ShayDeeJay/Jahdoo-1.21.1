@@ -41,7 +41,7 @@ public class Boltz extends DefaultEntityBehaviour {
         this.effectChance = this.getTag(EFFECT_CHANCE);
         this.effectStrength = this.getTag(EFFECT_STRENGTH);
         this.effectDuration = this.getTag(EFFECT_DURATION);
-        this.dischargeRadius = this.getTag(BoltzAbility.dischargeRadius);
+        this.dischargeRadius = this.getTag(BoltzAbility.DISCHARGE_RADIUS);
 //        if(this.elementProjectile.getOwner() != null){
 //            var player = this.elementProjectile.getOwner();
 //            var damage = this.getTag(DAMAGE);
@@ -109,7 +109,7 @@ public class Boltz extends DefaultEntityBehaviour {
         compoundTag.putDouble(EFFECT_STRENGTH, effectStrength);
         compoundTag.putDouble(EFFECT_DURATION, effectDuration);
         compoundTag.putDouble(DAMAGE, damage);
-        compoundTag.putDouble(BoltzAbility.dischargeRadius, dischargeRadius);
+        compoundTag.putDouble(BoltzAbility.DISCHARGE_RADIUS, dischargeRadius);
     }
 
     public void applyInertia(Projectile projectile) {
@@ -127,7 +127,7 @@ public class Boltz extends DefaultEntityBehaviour {
         this.effectChance = compoundTag.getDouble(EFFECT_CHANCE);
         this.effectStrength = compoundTag.getDouble(EFFECT_STRENGTH);
         this.effectDuration = compoundTag.getDouble(EFFECT_DURATION);
-        this.dischargeRadius = compoundTag.getDouble(BoltzAbility.dischargeRadius);
+        this.dischargeRadius = compoundTag.getDouble(BoltzAbility.DISCHARGE_RADIUS);
         this.damage = compoundTag.getDouble(DAMAGE);
     }
 

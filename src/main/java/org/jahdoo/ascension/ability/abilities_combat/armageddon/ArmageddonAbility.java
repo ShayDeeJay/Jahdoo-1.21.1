@@ -5,13 +5,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -65,8 +65,8 @@ public class ArmageddonAbility extends AbilityRegistrar {
     }
 
     @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+    public AbilityHolder setModifiers( ) {
+        return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(150)
             .setStaticCooldown(4800)
             .setDamage(40, 20, 5)
@@ -74,7 +74,7 @@ public class ArmageddonAbility extends AbilityRegistrar {
             .setLifetime(400, 200, 40)
             .setAoe(6,4,0.5)
             .setAbilityTagModifiersRandom(SPAWNING_SPEED, 30,5, false, 5)
-            .build();
+            .buildAndReturn();
     }
 
 }

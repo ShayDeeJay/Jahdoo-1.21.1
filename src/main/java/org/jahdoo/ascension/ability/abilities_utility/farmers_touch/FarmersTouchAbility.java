@@ -2,16 +2,16 @@ package org.jahdoo.ascension.ability.abilities_utility.farmers_touch;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.ability.AbstractBlockAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.ability.AbstractBlockAbility;
+import org.jahdoo.ascension.utils.GlobalStrings;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityDataReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.GlobalStrings;
-import org.jahdoo.ascension.ability.AbilityBuilder;
 
 
 public class FarmersTouchAbility extends AbstractBlockAbility {
@@ -66,13 +66,13 @@ public class FarmersTouchAbility extends AbstractBlockAbility {
     }
 
     @Override
-    public void setModifiers(ItemStack itemStack) {
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+    public AbilityHolder setModifiers() {
+        return new AbilityBuilder(abilityId.getPath().intern())
             .setMana(30, 15, 5)
             .setRange(10, 1, 1)
             .setAbilityTagModifiersRandom(GROWTH_CHANCE, 30, 5, false, 5)
             .setAbilityTagModifiersRandom(HARVEST_CHANCE, 30, 5, false, 5)
-            .build();
+            .buildAndReturn();
     }
 
 }

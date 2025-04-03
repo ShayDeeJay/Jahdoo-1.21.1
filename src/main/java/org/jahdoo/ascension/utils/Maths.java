@@ -1,6 +1,7 @@
 package org.jahdoo.ascension.utils;
 
 import java.text.DecimalFormat;
+import java.util.Random;
 
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
@@ -53,6 +54,16 @@ public class Maths {
         }
 
         int randomValue = Random.nextInt(100) + 1;
+        return randomValue <= percentageChance;
+    }
+
+    public static boolean percentageChance(int percentageChance, long seed) {
+        if(percentageChance == 0) return false;
+        if (percentageChance < 0 || percentageChance > 100) {
+            throw new IllegalArgumentException("Percentage chance must be between 0 and 100.");
+        }
+
+        int randomValue = new Random(seed).nextInt() + 1;
         return randomValue <= percentageChance;
     }
 

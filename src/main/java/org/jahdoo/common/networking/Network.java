@@ -183,6 +183,12 @@ public class Network {
             AbilityHolderS2CP.STREAM_CODEC,
             AbilityHolderS2CP::handle
         );
+
+        payloadRegistrar.playToClient(
+            SelectedAbilityS2CP.TYPE,
+            SelectedAbilityS2CP.STREAM_CODEC,
+            SelectedAbilityS2CP::handle
+        );
     }
 
 }

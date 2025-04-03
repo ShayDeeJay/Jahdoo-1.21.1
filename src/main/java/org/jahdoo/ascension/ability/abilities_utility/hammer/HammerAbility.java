@@ -2,16 +2,16 @@ package org.jahdoo.ascension.ability.abilities_utility.hammer;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.ability.AbstractBlockAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.ability.AbstractBlockAbility;
+import org.jahdoo.ascension.utils.GlobalStrings;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityDataReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.GlobalStrings;
-import org.jahdoo.ascension.ability.AbilityBuilder;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.OFFSET;
 
@@ -65,13 +65,13 @@ public class HammerAbility extends AbstractBlockAbility {
     }
 
     @Override
-    public void setModifiers(ItemStack itemStack) {
+    public AbilityHolder setModifiers() {
         int high = 13;
-        new AbilityBuilder(itemStack, abilityId.getPath().intern())
+        return new AbilityBuilder(abilityId.getPath().intern())
             .setMana(30, 15, 5)
             .setBlockSize(high, 3, 2)
             .setModifierWithStepSet(OFFSET, high,0, true, high, 1, 1)
-            .build();
+            .buildAndReturn();
     }
 
 }

@@ -10,15 +10,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.ascension.ability.AbstractUtilityProjectile;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.List;
 
-import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.ascension.ability.AbilityBuilder.RANGE;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 
 public class Fetch extends AbstractUtilityProjectile {
@@ -44,7 +43,7 @@ public class Fetch extends AbstractUtilityProjectile {
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
-        this.range = (int) this.getTagUtility(RANGE);
+        this.range = (int) this.getTag(RANGE);
     }
 
     private static boolean handlePlayerPickup(ItemEntity itemEntity, Container inv, Player player) {

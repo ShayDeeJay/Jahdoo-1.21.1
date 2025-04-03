@@ -42,8 +42,8 @@ import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.ability.abilities_utility.block_placer.BlockPlacerAbility;
 import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
+import org.jahdoo.ascension.ability.abilities_utility.block_placer.BlockPlacerAbility;
 import org.jahdoo.ascension.ability.abilities_utility.wall_placer.WallPlacerAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.attachments.InstanceData;
@@ -78,7 +78,6 @@ import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedArmor;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 import static org.jahdoo.common.block.loot_chest.LootChestBlock.lootsplosian;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.elementalWithType;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentWithAbility;
 import static org.jahdoo.common.items.wand.WandItemHelper.storeBlockType;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
@@ -275,7 +274,7 @@ public class EventHelpers {
 
         for (int i = 0; i < 6; i++) freeItems.add(ItemStack.EMPTY);
 
-        freeItems.add(getAugmentWithAbility(elementalWithType(element.id())));
+//        freeItems.add(getAugmentWithAbility(elementalWithType(element.id())));
         freeItems.add(ItemStack.EMPTY);
         freeItems.add(getAugmentWithAbility(AbilityReg.BLOCK_BREAKER.get()));
 

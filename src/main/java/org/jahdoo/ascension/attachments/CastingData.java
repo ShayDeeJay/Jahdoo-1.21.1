@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityHolder;
@@ -92,6 +93,10 @@ public class CastingData implements IAttachment {
         return this.unlockedAbilities;
     }
 
+    public AbilityHolder getHolder(String id){
+        return this.unlockedAbilities.stream().filter(s -> s.abilityName().equals(id)).findFirst().get();
+    }
+
     public Map<String, Integer> getAllCooldowns() {
         return abilityCooldowns;
     }
@@ -155,13 +160,15 @@ public class CastingData implements IAttachment {
     }
 
     public static void cooldownTickEvent(ServerPlayer serverPlayer){
-        var cooldowns = serverPlayer.getData(CASTER_DATA);
-        try{
-            cooldowns.applyAllCooldowns();
-        } catch (Exception e){
-            JahdooMod.LOGGER.error("e: ", e);
+        var casterData = serverPlayer.getData(CASTER_DATA);
+        if(!casterData.abilityCooldowns.isEmpty()){
+            try{
+                casterData.applyAllCooldowns();
+            } catch (Exception e){
+                JahdooMod.LOGGER.error("e: ", e);
+            }
+            sendToPlayer(serverPlayer, new CooldownsSyncS2CP(casterData.getAllCooldowns(), casterData.getAllCooldownsStatic()));
         }
-        sendToPlayer(serverPlayer, new CooldownsSyncS2CP(cooldowns.getAllCooldowns(), cooldowns.getAllCooldownsStatic()));
     }
 
     private double getModifiedMana(Player player){
@@ -174,6 +181,19 @@ public class CastingData implements IAttachment {
         }
 
         return baseManaRegen;
+    }
+
+    public static String selectedAbility(LivingEntity livingEntity){
+        return livingEntity.getData(CASTER_DATA).getSelectedAbility();
+    }
+
+    public static AbilityHolder entityHolderWithSelected(LivingEntity livingEntity){
+        var data = livingEntity.getData(CASTER_DATA);
+        return data.getHolder(data.getSelectedAbility());
+    }
+
+    public static AbilityHolder entityHolder(LivingEntity livingEntity, String id){
+        return livingEntity.getData(CASTER_DATA).getHolder(id);
     }
 
     public void applyAllCooldowns(){

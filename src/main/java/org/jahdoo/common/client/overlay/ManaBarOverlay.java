@@ -11,10 +11,11 @@ import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.attachments.CastingData;
-import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.wand.WandItem;
+import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,7 @@ import static com.mojang.blaze3d.systems.RenderSystem.enableBlend;
 import static com.mojang.blaze3d.systems.RenderSystem.setShaderColor;
 import static java.lang.String.valueOf;
 import static net.minecraft.network.chat.Component.literal;
+import static org.jahdoo.ascension.attachments.CastingData.*;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Configuration.*;
 import static org.jahdoo.ascension.utils.Helpers.getUsedItem;
@@ -237,7 +239,9 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         if(player == null || minecraft.options.hideGui) return;
 
         var manaBarWidth = 47;
-        var abilityRegistrars = AbilityReg.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
+        var typeId = selectedAbility(player);
+        if(typeId == null) PacketDistributor.sendToServer(new SelectAbilityC2SP(""));
+        var abilityRegistrars = AbilityReg.getFirstSpellByTypeId(typeId);
         var casterData = player.getData(CASTER_DATA);
         var manaPool = casterData.getManaPool();
         var maxMana = casterData.getMaxMana(player);
@@ -258,7 +262,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var scale = CUSTOM_UI_SCALE.get().floatValue();
         var yOffset = CUSTOM_UI_HEIGHT.get().floatValue() + (CUSTOM_UI.get() ? 0 : 10) ;
         var center = this.alignedGui.screenWidth / 2;
-        var centerX = center - (41);
         var centerY = this.alignedGui.screenHeight - 7;
 
         pose.translate(center, centerY + yOffset, 0);
@@ -269,7 +272,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
             Minecraft.getInstance().gui.renderSelectedItemName(graphics, (int) (100 + this.fadeInExperience));
             inventory(graphics, player);
             foodBar(pose, foodProgress);
-            xpBar(graphics, pose, centerX, centerY, minecraft, player, center);
+            xpBar(graphics, pose, centerY, minecraft, player, center);
             alignedGui.displayGuiLayer(-53, 29, 0, 0, 137, 29);
 
             this.healthAndAbsorptionCount(graphics, minecraft);
@@ -285,8 +288,13 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
 
         alignedGui.displayGuiLayer(25, 18, 0, 43, manaProgress + 3, 8, MANA_LEVEL_BAR);
         this.manaPoolCount(casterData.getManaPool(), graphics, minecraft, -5 , 0, AETHER_BLUE);
-        this.cooldownOverlay(abilityRegistrars, casterData);
-        this.cooldownTimer(abilityRegistrars, casterData, graphics, minecraft);
+
+        abilityRegistrars.ifPresent(
+            location -> {
+                this.cooldownOverlay(location, casterData);
+                this.cooldownTimer(location, casterData, graphics, minecraft);
+            }
+        );
 
         setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         pose.popPose();
@@ -306,7 +314,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         pose.popPose();
     }
 
-    private void xpBar(GuiGraphics graphics, PoseStack pose, int centerX, int centerY, Minecraft minecraft, LocalPlayer player, int center) {
+    private void xpBar(GuiGraphics graphics, PoseStack pose, int centerY, Minecraft minecraft, LocalPlayer player, int center) {
         var alwaysShow = CUSTOM_UI_ALWAYS_SHOW_XP.get();
         var k = (int) (player.experienceProgress * 98.0F);
 
@@ -328,7 +336,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         private int shiftGuiY;
         private final int screenWidth;
         private final int screenHeight;
-        private int scale;
 
         public AlignedGui(GuiGraphics guiGraphics, int screenHeight, int screenWidth){
             this.guiGraphics = guiGraphics;
@@ -356,10 +363,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         public void offsetGui(int shiftGuiX, int shiftGuiY){
             this.shiftGuiX = shiftGuiX;
             this.shiftGuiY = shiftGuiY;
-        }
-
-        private void setScale(int scale){
-            this.scale = scale;
         }
 
         public int getScreenWidth() {

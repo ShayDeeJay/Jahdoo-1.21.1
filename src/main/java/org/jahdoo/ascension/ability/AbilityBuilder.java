@@ -34,7 +34,7 @@ public class AbilityBuilder {
     public static final String GRAVITATIONAL_PULL = "Gravitational Pull";
     public static final String ENTITY_MULTIPLIER = "Shot Multiplier";
 
-    private final ItemStack item;
+    private ItemStack item = null;
     private final String abilityId;
     private final AbilityData abilityData = new AbilityData(new LinkedHashMap<>());
 
@@ -43,6 +43,10 @@ public class AbilityBuilder {
      * **/
     public AbilityBuilder(@Nullable ItemStack itemStack, String abilityId) {
         this.item = itemStack;
+        this.abilityId = abilityId;
+    }
+
+    public AbilityBuilder(String abilityId) {
         this.abilityId = abilityId;
     }
 

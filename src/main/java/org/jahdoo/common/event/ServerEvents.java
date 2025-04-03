@@ -25,6 +25,7 @@ import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
+import static org.jahdoo.ascension.utils.Helpers.syncAbilitiesServer;
 import static org.jahdoo.common.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_DATA;
@@ -86,6 +87,8 @@ public class ServerEvents {
         var player = event.getEntity();
         var playerData = player.getPersistentData();
         var data = playerData.getCompound(Player.PERSISTED_NBT_TAG);
+
+        syncAbilitiesServer(player);
 
         syncPlayerAttributes(player);
         onFirstTimeJoined(data, player, playerData);

@@ -18,9 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbilityRegistrar;
-import org.jahdoo.ascension.ability.abilities_combat.elemental_shooter.ElementalShooterAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
@@ -34,7 +32,6 @@ import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -108,7 +105,7 @@ public class AugmentItemHelper {
     public static void augmentIdentifierShared(ItemStack itemStack, @Nullable Player player){
         var abstractAbilities = AbilityReg.REGISTRY.stream().toList();
         var ability = abstractAbilities.get(Helpers.Random.nextInt(0, abstractAbilities.size()));
-        ability.setModifiers(itemStack);
+//        ability.setModifiers(itemStack);
         var wandAbilityHolder = itemStack.get(ABILITY_HOLDER.get());
         if(player != null){
             if(!player.level().isClientSide) setAbilityToAugment(itemStack, ability, wandAbilityHolder);
@@ -121,39 +118,39 @@ public class AugmentItemHelper {
     public static ItemStack getAugmentWithAbility(AbilityRegistrar ability) {
         var itemStack = new ItemStack(ItemReg.AUGMENT);
         LocalLootBeamData.attachLootBeamComponent(itemStack, ability.rarity());
-        ability.setModifiers(itemStack);
+//        ability.setModifiers(itemStack);
         itemStack.set(ComponentReg.JAHDOO_RARITY, ability.rarity().getId());
         var wandAbilityHolder = itemStack.get(ABILITY_HOLDER.get());
         setAbilityToAugment(itemStack, ability, wandAbilityHolder);
         return itemStack;
     }
 
-    public static @NotNull ElementalShooterAbility elementalWithType(int elementId) {
-        var ability = new ElementalShooterAbility(){
-            @Override
-            public void setModifiers(ItemStack itemStack) {
-                new AbilityBuilder(itemStack, abilityId.getPath().intern())
-                    .setStaticMana(15)
-                    .setStaticCooldown(0)
-                    .setDamage(10, 5, 1)
-                    .setEffectChance(50, 10, 10)
-                    .setEffectStrength(10, 1, 1)
-                    .setEffectDuration(300, 100, 50)
-                    .setAbilityTagModifiersRandom(SHOT_MULTIPLIER, 3, 1, true, 1)
-                    .setAbilityTagModifiersRandom(NUMBER_OF_RICOCHET, 6, 1, true, 1)
-                    .setModifier(SET_ELEMENT_TYPE, 0, 0, false, elementId)
-                    .build();
-            }
-        };
-        getAugmentWithAbility(ability);
-        return ability;
-    }
+//    public static @NotNull ElementalShooterAbility elementalWithType(int elementId) {
+//        var ability = new ElementalShooterAbility(){
+//            @Override
+//            public void setModifiers(ItemStack itemStack) {
+//                new AbilityBuilder(itemStack, abilityId.getPath().intern())
+//                    .setStaticMana(15)
+//                    .setStaticCooldown(0)
+//                    .setDamage(10, 5, 1)
+//                    .setEffectChance(50, 10, 10)
+//                    .setEffectStrength(10, 1, 1)
+//                    .setEffectDuration(300, 100, 50)
+//                    .setAbilityTagModifiersRandom(SHOT_MULTIPLIER, 3, 1, true, 1)
+//                    .setAbilityTagModifiersRandom(NUMBER_OF_RICOCHET, 6, 1, true, 1)
+//                    .setModifier(SET_ELEMENT_TYPE, 0, 0, false, elementId)
+//                    .build();
+//            }
+//        };
+//        getAugmentWithAbility(ability);
+//        return ability;
+//    }
 
     public static void augmentIdentifierSharedRarity(ItemStack itemStack, boolean withUtil, @Nullable JahdooRarity rarity){
         var ability = JahdooRarity.getAbilityWithRarity(withUtil, rarity);
 
         LocalLootBeamData.attachLootBeamComponent(itemStack, ability.rarity());
-        ability.setModifiers(itemStack);
+//        ability.setModifiers(itemStack);
         var wandAbilityHolder = itemStack.get(ABILITY_HOLDER.get());
         setAbilityToAugment(itemStack, ability, wandAbilityHolder);
     }
@@ -161,7 +158,7 @@ public class AugmentItemHelper {
     public static void augmentIdentifierSharedUtil(ItemStack itemStack, @Nullable JahdooRarity rarity){
         var ability = JahdooRarity.getAbilityUtil(rarity);
         LocalLootBeamData.attachLootBeamComponent(itemStack, ability.rarity());
-        ability.setModifiers(itemStack);
+//        ability.setModifiers(itemStack);
         var wandAbilityHolder = itemStack.get(ABILITY_HOLDER.get());
         itemStack.set(JAHDOO_RARITY, ability.rarity().getId());
         setAbilityToAugment(itemStack, ability, wandAbilityHolder);

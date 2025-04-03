@@ -61,6 +61,7 @@ public class FrostBolts  extends DefaultEntityBehaviour {
                 (LivingEntity) player, (float) this.getTag(DAMAGE), true, MAGIC_DAMAGE_MULTIPLIER, FROST_MAGIC_DAMAGE_MULTIPLIER
             );
         }
+
         this.effectChance = this.getTag(EFFECT_CHANCE);
         this.effectStrength = this.getTag(EFFECT_STRENGTH);
         this.effectDuration = this.getTag(EFFECT_DURATION);

@@ -168,6 +168,7 @@ public class BlockSetupManager {
             var blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ShoppingTableEntity entity) {
                 var itemStack = new ItemStack(ItemReg.LOOT_KEY);
+
                 var value = Random.nextInt(4);
                 itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(value));
                 entity.setItem(itemStack);

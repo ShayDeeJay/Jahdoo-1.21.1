@@ -9,13 +9,13 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -30,7 +30,7 @@ public abstract class AbilityRegistrar {
 
     public abstract ResourceLocation getAbilityResource();
 
-    public abstract void setModifiers(ItemStack itemStack);
+    public abstract AbilityHolder setModifiers();
 
     public abstract String getDescription();
 

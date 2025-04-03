@@ -5,14 +5,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
@@ -46,43 +45,43 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     }
 
     private void withElementObjects(double centerX, double scaledSpacing, double centerY, int size, AbstractElement element) {
-        renderButton(centerX - 1.5 * scaledSpacing, centerY, element.iconTexture(), size, ItemStack.EMPTY);
+        var withElement = AbilityReg.getWithElement(element);
+        renderButton(centerX - 1.5 * scaledSpacing, centerY, element.iconTexture(), size, withElement.getFirst());
 
         var spacer = 60;
         var index = 1.2;
 
-        for (var abilityRegistrar : AbilityReg.getWithElement(element)) {
+        for (var abilityRegistrar : withElement) {
             var res = res(ABILITY_PREFIX + abilityRegistrar.setAbilityId() + ".png");
             var augment = getAugmentWithAbility(abilityRegistrar);
             var withPanY = centerY + (index * spacer * (size / 60.0));
 
-            renderButton(centerX - 1.5 * scaledSpacing, withPanY, res, size, augment);
+            renderButton(centerX - 1.5 * scaledSpacing, withPanY, res, size, abilityRegistrar);
             index++;
         }
     }
 
-    private void renderButton(double withPanX, double withPanY, ResourceLocation icons, int size, ItemStack stack) {
+    private void renderButton(double withPanX, double withPanY, ResourceLocation icons, int size, AbilityRegistrar registrar) {
         var posX = (int) (withPanX - 15 - (double) size / 2);
         var posY = (int) (withPanY - 15 - (double) size / 2);
         var player = getMinecraft().player;
         if(player == null) return;
-        var holder = stack.get(ComponentReg.ABILITY_HOLDER);
 
+
+        var holder = registrar.setModifiers();
         var unlocked = holder != null && player.getData(AttachmentReg.CASTER_DATA).hasAbility(holder);
-
-        System.out.println(unlocked);
 
         this.addRenderableWidget(
             menuButtonSound(
                 posX, posY,
-                (Button) -> onClick(player, holder),
+                (Button) -> onClick(holder),
                 icons, size, unlocked, 0, new WidgetSprites(GUI_BUTTON, GUI_BUTTON), !unlocked,
-                () -> this.itemStack = stack
+                () -> this.itemStack = ItemStack.EMPTY
             )
         );
     }
 
-    private void onClick(Player player, AbilityHolder abilityHolder){
+    private void onClick(AbilityHolder abilityHolder){
         sendToServer(new AbilityHolderC2SP(abilityHolder));
     }
 
