@@ -164,7 +164,7 @@ public class ToggleComponent  {
                 var i2 = 43;
 
                 guiGraphics.drawCenteredString(minecraft.font, textOverlay, posX + i2, posY + 8, -2763307);
-                guiGraphics.blit(TEXT_BACKGROUND, posX, posY, 0,0, width, height1, width, height1);
+                guiGraphics.blit(TEXT_BACKGROUND, posX, posY, 0, 0, width, height1, width, height1);
                 guiGraphics.drawCenteredString(minecraft.font, header, posX + i2, posY - 7, -6052957);
             }
         };

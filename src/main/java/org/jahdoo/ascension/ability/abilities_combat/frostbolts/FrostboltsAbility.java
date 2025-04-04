@@ -2,8 +2,8 @@ package org.jahdoo.ascension.ability.abilities_combat.frostbolts;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
@@ -14,7 +14,7 @@ import org.jahdoo.common.registers.EntityDataReg;
 import static org.jahdoo.ascension.utils.GlobalStrings.BLOCK_MINER_DESCRIPTION;
 import static org.jahdoo.common.registers.ElementReg.frost;
 
-public class FrostboltsAbility extends AbilityRegistrar {
+public class FrostboltsAbility extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("frostbolts");
     public static final String NUMBER_OF_PROJECTILES = "Total Arrows";

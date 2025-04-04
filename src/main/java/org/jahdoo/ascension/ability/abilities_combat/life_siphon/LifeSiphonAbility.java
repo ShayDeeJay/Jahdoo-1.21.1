@@ -2,8 +2,8 @@ package org.jahdoo.ascension.ability.abilities_combat.life_siphon;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -15,7 +15,7 @@ import org.jahdoo.common.registers.ElementReg;
 import static org.jahdoo.common.registers.EntityDataReg.OVERCHARGED;
 import static org.jahdoo.common.registers.EntityReg.VITALITY_ELEMENT_PROJECTILE;
 
-public class LifeSiphonAbility extends AbilityRegistrar {
+public class LifeSiphonAbility extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("life_siphon");
     public static final String HEAL_VALUE = "Heal Value";

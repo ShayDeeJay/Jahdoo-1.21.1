@@ -145,7 +145,7 @@ public class AugmentScreen extends Screen  {
         SharedUI.setCustomBackground(this.height, this.width, guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.disableScissor();
-        SharedUI.header(guiGraphics, this.width, this.height, itemStack, this.font, this.getMinecraft().level);
+//        SharedUI.header(guiGraphics, this.width, this.height, itemStack, this.font, this.getMinecraft().level);
 
     }
 

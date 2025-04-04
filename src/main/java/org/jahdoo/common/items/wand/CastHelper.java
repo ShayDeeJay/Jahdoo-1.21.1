@@ -10,7 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
@@ -21,8 +21,8 @@ import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.ElementReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.ascension.ability.AbilityRegistrar.DISTANCE_CAST;
-import static org.jahdoo.ascension.ability.AbilityRegistrar.HOLD_CAST;
+import static org.jahdoo.ascension.ability.Ability.DISTANCE_CAST;
+import static org.jahdoo.ascension.ability.Ability.HOLD_CAST;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.Maths.getFormattedFloat;
 import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
@@ -35,7 +35,7 @@ import static org.jahdoo.common.registers.ElementReg.fromWand;
 
 public class CastHelper {
 
-    public static void onCast(Player player, AbilityRegistrar ability){
+    public static void onCast(Player player, Ability ability){
         if(!ability.selfChargeAbility()){
             castAnimation(player, SINGLE_CAST_ID);
         }

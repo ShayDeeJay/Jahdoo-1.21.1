@@ -136,9 +136,7 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
         var item = player.getItemInHand(interactionHand);
         var data = player.getData(AttachmentReg.CASTER_DATA.get());
 
-//        System.out.println(data.getSelectedAbility());
-//        debugKillAll(level, player);
-
+        data.clearAllAbilities();
 
         if(!level.isClientSide){
             if (canOffHand(player, interactionHand, true)) {

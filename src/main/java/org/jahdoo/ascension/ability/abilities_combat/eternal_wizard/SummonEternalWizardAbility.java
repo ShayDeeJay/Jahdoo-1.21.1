@@ -2,8 +2,8 @@ package org.jahdoo.ascension.ability.abilities_combat.eternal_wizard;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -18,7 +18,7 @@ import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.common.registers.EntityDataReg.SUMMON_ETERNAL_WIZARD;
 import static org.jahdoo.common.registers.SoundReg.EXPLOSION;
 
-public class SummonEternalWizardAbility extends AbilityRegistrar {
+public class SummonEternalWizardAbility extends Ability {
 
     public static final ResourceLocation abilityId = res("eternal_wizard");
 

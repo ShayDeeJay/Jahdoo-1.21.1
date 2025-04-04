@@ -3,7 +3,7 @@ package org.jahdoo.ascension.ability.abilities_combat.quantum_destroyer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -16,7 +16,7 @@ import org.jahdoo.common.registers.SoundReg;
 import static org.jahdoo.common.registers.EntityDataReg.QUANTUM_DESTROYER;
 import static org.jahdoo.common.registers.EntityReg.MYSTIC_ELEMENT_PROJECTILE;
 
-public class QuantumDestroyerAbility extends AbilityRegistrar {
+public class QuantumDestroyerAbility extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("quantum_destroyer");
     public static final String ENERGY_RADIUS = "Energy Radius";

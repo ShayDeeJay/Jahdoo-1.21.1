@@ -5,7 +5,7 @@ import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.ComponentReg;
 
-public abstract class AbstractBlockAbility extends AbilityRegistrar {
+public abstract class AbstractBlockAbility extends Ability {
 
     public boolean isInputUser() {
         return false;

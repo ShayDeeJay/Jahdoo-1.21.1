@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
-import static org.jahdoo.common.registers.ComponentReg.AUGMENT_RATING;
 
 public class AbilityBuilder {
 
@@ -27,7 +26,7 @@ public class AbilityBuilder {
     public static final String RANGE = "Range";
     public static final String CASTING_DISTANCE = "Cast Distance";
     public static final String SET_ELEMENT_TYPE = "Element Type";
-    public static final String LIFETIME = "Life Time";
+    public static final String LIFETIME = "Duration";
     public static final String AOE = "Area of Effect";
     public static final String SIZE = "Block Size";
     public static final String OFFSET = "Offset";
@@ -178,45 +177,31 @@ public class AbilityBuilder {
     }
 
     public AbilityBuilder setModifier(String name, double high, double low, boolean isHigherBetter, double actualValue) {
-        var abilityModifiers = new AbilityData.AbilityModifiers(
-            actualValue, high, low, 0, actualValue, isHigherBetter
-        );
-
+        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, high, low, 0, actualValue, isHigherBetter);
         this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
 
     public AbilityBuilder setModifierWithStep(String name, double high, double low, boolean isHigherBetter, double actualValue, double step) {
-        var abilityModifiers = new AbilityData.AbilityModifiers(
-            actualValue, high, low, step, actualValue, isHigherBetter
-        );
-
+        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, high, low, step, actualValue, isHigherBetter);
         this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
 
     public AbilityBuilder setModifierWithStepSet(String name, double high, double low, boolean isHigherBetter, double actualValue, double setValue, double step) {
-        var abilityModifiers = new AbilityData.AbilityModifiers(
-            actualValue, high, low, step, setValue, isHigherBetter
-        );
-
+        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, high, low, step, setValue, isHigherBetter);
         this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
     public AbilityBuilder setModifierWithoutBounds(String name, double actualValue) {
-        var abilityModifiers = new AbilityData.AbilityModifiers(
-            actualValue, -1, -1, 0, actualValue, true
-        );
+        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, -1, -1, 0, actualValue, true);
         this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
 
     public AbilityBuilder setAbilityTagModifiersRandom(String name, double high, double low, boolean isHigherBetter, double step) {
-//        var getModifier = getLuckModifier();
-//        var weightedDouble = getWeightedRandomDouble(high, low, (getModifier == 0) != isHigherBetter, step, getModifier);
         var getValue = isHigherBetter ? low : high;
-        var chooseValue = this.item != null && this.item.has(AUGMENT_RATING.get()) ? getRandomWeightedDouble(low, high, step) : getValue;
-        var chosenR = doubleFormattedDouble(chooseValue);
+        var chosenR = doubleFormattedDouble(getValue);
         var highR = doubleFormattedDouble(high);
         var lowR = doubleFormattedDouble(low);
         var stepR = doubleFormattedDouble(step);

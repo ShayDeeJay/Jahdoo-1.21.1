@@ -7,7 +7,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.ascension.utils.Helpers;
@@ -25,7 +25,7 @@ public class UseAbilityC2SP implements CustomPacketPayload {
     public void toBytes(FriendlyByteBuf bug) {}
 
     private void invokeSelectedAbility(Player player){
-        AbilityRegistrar ability = AbilityReg.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
+        Ability ability = AbilityReg.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
         if(ability != null) ability.invokeAbility(player);
     }
 

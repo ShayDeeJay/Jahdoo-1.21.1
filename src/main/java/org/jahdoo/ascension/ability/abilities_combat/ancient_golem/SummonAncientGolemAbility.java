@@ -6,7 +6,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -17,7 +17,7 @@ import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.SoundReg;
 
-public class SummonAncientGolemAbility extends AbilityRegistrar {
+public class SummonAncientGolemAbility extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("ancient_golem");
 

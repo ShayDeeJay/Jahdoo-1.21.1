@@ -22,9 +22,10 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.registers.AbilityReg;
@@ -56,7 +57,13 @@ public class SharedUI {
 
     public static List<Component> getComponents(ItemStack item, Level level){
         var components = new ArrayList<Component>();
-        AugmentItemHelper.getHoverText(item, components, true, level);
+//        AugmentItemHelper.getHoverText(item, components, true, level);
+        return components;
+    }
+
+    public static List<Component> getComponents(Ability ability, AbilityHolder holder, Level level){
+        var components = new ArrayList<Component>();
+        AugmentItemHelper.getHoverText(ability, holder, components, true, level);
         return components;
     }
 
@@ -94,12 +101,12 @@ public class SharedUI {
         guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
     }
 
-    public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, ItemStack itemStack, Font font, Level level) {
+    public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, Ability ability, AbilityHolder holder, Font font, Level level) {
         var yOff = 102;
         int xOff = width/2 - 55;
-        guiGraphics.drawString(font, getComponents(itemStack, level).getFirst(), xOff, (height/2 - (yOff - 10)), 0, true);
-        guiGraphics.drawString(font, AugmentItemHelper.getHoverName(itemStack), xOff, (height/2 - yOff), 0, true);
-        abilityIcon(guiGraphics, itemStack, width - 155, height - 180, 109, 40, 12);
+        guiGraphics.drawString(font, getComponents(ability, holder, level).getFirst(), xOff, (height/2 - yOff), 0, true);
+        guiGraphics.drawString(font, getComponents(ability, holder, level).get(1), xOff, (height/2 - (yOff - 10)), 0, true);
+        abilityIcon(guiGraphics, ability.getAbilityIconLocation(), width - 155, height - 180, 109, 40, 12);
     }
 
     public static void renderEntityInInventoryFollowsMouse(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int scale, float yOffset, float mouseX, float mouseY, LivingEntity entity, float rotationSmoothing) {
@@ -216,7 +223,8 @@ public class SharedUI {
     }
 
     public static void getAbilityNameWithColour(
-        AbilityRegistrar abilityRegistrar,
+        Ability abilityRegistrar,
+        AbilityHolder holder,
         GuiGraphics guiGraphics,
         int posX,
         int posY,
@@ -225,7 +233,7 @@ public class SharedUI {
         var player = Minecraft.getInstance().player;
         if(player != null){
             Font font = Minecraft.getInstance().font;
-            var element = getElementColour(abilityRegistrar, Helpers.getUsedItem(player));
+            var element = getElementColour(abilityRegistrar, holder);
             if (isCenteredString) {
                 guiGraphics.drawCenteredString(font, abilityRegistrar.getAbilityName(), posX, posY, element);
                 return;
@@ -295,37 +303,34 @@ public class SharedUI {
     }
 
     public static int getElementColour(
-        AbilityRegistrar abilityRegistrars,
-        ItemStack itemStack
+        Ability ability,
+        AbilityHolder holder
     ){
         var element = new AtomicInteger();
-        if (abilityRegistrars.isMultiType()) {
-            var wandAbilityHolder = itemStack.get(ComponentReg.ABILITY_HOLDER.get());
-            var abilityModifiers = wandAbilityHolder.data().abilityProperties().get(SET_ELEMENT_TYPE);
+        if (ability.isMultiType()) {
+            var abilityModifiers = holder.data().abilityProperties().get(SET_ELEMENT_TYPE);
             ElementReg.fromId((int) abilityModifiers.actualValue()).ifPresent(
                 getElement -> element.set(getElement.textColourA())
             );
         } else {
-            element.set(abilityRegistrars.getElemenType().textColourB());
+            element.set(ability.getElemenType().textColourB());
         }
 
         return element.get();
     }
 
     public static int getElementIdAugment(
-        ItemStack itemStack
+        Ability ability,
+        AbilityHolder holder
     ){
-        var key = DataComponentHelper.getKeyFromAugment(itemStack);
-        var abilityRegistrars = AbilityReg.getFirstSpellByTypeId(key).orElseThrow();
         var element = new AtomicInteger();
-        if (abilityRegistrars.isMultiType()) {
-            var abilityHolder = itemStack.get(ComponentReg.ABILITY_HOLDER.get());
-            var abilityModifiers = abilityHolder.data().abilityProperties().get(SET_ELEMENT_TYPE);
+        if (ability.isMultiType()) {
+            var abilityModifiers = holder.data().abilityProperties().get(SET_ELEMENT_TYPE);
             ElementReg.fromId((int) abilityModifiers.actualValue()).ifPresent(
                 getElement -> element.set(getElement.textColourA())
             );
         } else {
-            element.set(abilityRegistrars.getElemenType().id());
+            element.set(ability.getElemenType().id());
         }
 
         return element.get();
@@ -378,7 +383,7 @@ public class SharedUI {
     }
 
     public static AbstractElement getElementWithType(
-        AbilityRegistrar abilityRegistrars,
+        Ability abilityRegistrars,
         ItemStack itemStack
     ){
         AtomicReference<AbstractElement> element = new AtomicReference<>(ElementReg.mystic());
@@ -392,6 +397,18 @@ public class SharedUI {
         }
 
         return element.get();
+    }
+
+    public static void abilityIcon(GuiGraphics guiGraphics, ResourceLocation icon, int width, int height, int offset, int localImageSize, int shrinkBy){
+        var verticalOffset = 38 + offset;
+        var imageWithShrink = localImageSize - shrinkBy;
+        var posX = (width - localImageSize) / 2 ;
+        var posY = (height - localImageSize) / 2 - 150 + verticalOffset;
+        var posX1 = (width - imageWithShrink) / 2 ;
+        var posY1 = (height - imageWithShrink) / 2 - 150 + verticalOffset;
+
+        guiGraphics.blit(GUI_GENERAL_SLOT, posX, posY, 0, 0, localImageSize, localImageSize, localImageSize, localImageSize);
+        guiGraphics.blit(icon, posX1, posY1, 0, 0, imageWithShrink, imageWithShrink, imageWithShrink, imageWithShrink);
     }
 
     public static void abilityIcon(GuiGraphics guiGraphics, ItemStack cachedItem, int width, int height, int offset, int localImageSize, int shrinkBy){

@@ -2,22 +2,16 @@ package org.jahdoo.common.block.augment_modification_station;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.client.slots.InventorySlots;
+import org.jahdoo.common.client.screens.AbilityUnlockScreen;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.networking.client2server.ChargeCoreC2SP;
-import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,81 +22,102 @@ import java.util.regex.Pattern;
 import static net.minecraft.sounds.SoundEvents.APPLY_EFFECT_TRIAL_OMEN;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
-import static org.jahdoo.common.block.augment_modification_station.AugmentModificationData.*;
+import static org.jahdoo.common.block.augment_modification_station.AugmentModificationData.extractName;
+import static org.jahdoo.common.block.augment_modification_station.AugmentModificationData.updateAugmentConfig;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
-import static org.jahdoo.common.client.button.ToggleComponent.*;
+import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
+import static org.jahdoo.common.client.button.ToggleComponent.textRenderable;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
-import static org.jahdoo.common.items.augments.AugmentRatingSystem.calculateRatingNext;
-import static org.jahdoo.common.networking.client2server.ChargeCoreC2SP.chargeCoreSides;
-import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 
-public class AugmentModificationScreen extends AbstractContainerScreen<AugmentModificationMenu> {
-    public static WidgetSprites WIDGET = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
-    private final AugmentModificationMenu augmentModificationMenu;
-    private final ItemStack item;
+public class AugmentModificationScreen extends Screen {
+
+    public Inventory inventory;
+    private Component upgradeValue;
     private double yScroll;
     private int selectedY;
-    private Component upgradeValue;
-    public Inventory inventory;
-    boolean showInventory;
-    private Component key;
+    private final Ability ability;
+    private AbilityHolder holder;
+    public static WidgetSprites WIDGET = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
 
-    public AugmentModificationScreen(AugmentModificationMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
-        super(pMenu, pPlayerInventory, pTitle);
-        this.augmentModificationMenu = pMenu;
-        this.item = pMenu.getAugmentEntity().getInteractionSlot();
-        this.inventory = pPlayerInventory;
-        this.switchVisibility();
+    int size;
+    double panX;
+    double panY;
+    double zoomX;
+    double scaledSpacing;
+    double scaledXOffset; // Scale X spacing
+    double centerX; // Screen center
+    double centerY; // Screen center
+
+    public AugmentModificationScreen(
+        AbilityHolder holder,
+        Ability ability,
+        int size,
+        double panX,
+        double panY,
+        double zoomX,
+        double scaledSpacing,
+        double scaledXOffset,
+        double centerX,
+        double centerY
+    ) {
+        super(Component.empty());
+        this.holder = holder;
+        this.ability = ability;
+        this.size = size;
+        this.panX = panX;
+        this.panY = panY;
+        this.zoomX = zoomX;
+        this.scaledSpacing = scaledSpacing;
+        this.scaledXOffset = scaledXOffset;
+        this.centerX = centerX;
+        this.centerY = centerY;
     }
 
     @Override
     protected void init() {
         super.init();
         this.displayAugmentProperties();
-        this.keyboardButton();
     }
 
     @Override
-    protected void containerTick() {
-        if(this.hoveredSlot != null) rebuildWidgets();
-    }
-
-    public AugmentModificationEntity entity(){
-        return this.augmentModificationMenu.getAugmentEntity();
+    public void onClose() {
+        getMinecraft().setScreen(new AbilityUnlockScreen(size, panX, panY, zoomX, scaledSpacing, scaledXOffset, centerX, centerY));
     }
 
     public void displayAugmentProperties(){
-        if(item.isEmpty()) return;
+        if(holder == null) return;
+
         var spacer = new AtomicInteger();
-        int width = this.width / 2;
-        var getTag = this.item.get(ComponentReg.ABILITY_HOLDER);
-        if (getTag == null) return;
-        var components = componentsWithBounds(item, this.getMinecraft().level);
+        var width = this.width / 2;
+        var components = componentsWithBounds(ability, holder, this.getMinecraft().level);
 
-        for (Component component : components){
-            var x = getAbilityModifiers(component, getTag);
+        for (Component comp : components){
+            var mod = getAbilityModifiers(comp, this.holder);
 
-            if(x.highestValue() != -1){
-                String regex = ".*\\d.*";
-                var ySpacer = (this.height / 2 - 90) + spacer.get();
-                int selectedY1 = (int) (ySpacer + this.yScroll);
-                buildPropertiesWithHighlight(component, width, selectedY1);
-                if (Pattern.matches(regex, component.getString()) && !component.getString().contains(")")) {
-                    var correctAdjustment = x.isHigherBetter() ? x.actualValue() == x.highestValue() : x.actualValue() == x.lowestValue();
-                    var nexUpgrade = x.isHigherBetter() ? x.actualValue() + x.step() == x.highestValue() : x.actualValue() - x.step() == x.lowestValue();
-                    upgradeButton(component, width, ySpacer, nexUpgrade, correctAdjustment, x);
+            if(mod.highestValue() != -1){
+                var regex = ".*\\d.*";
+                var ySpacer = (this.height / 2 - 106) + spacer.get();
+                var selectedY1 = (int) (ySpacer + this.yScroll);
+
+                buildPropertiesWithHighlight(comp, width, selectedY1);
+
+                if (Pattern.matches(regex, comp.getString()) && !comp.getString().contains(")")) {
+                    var correctAdjustment = mod.isHigherBetter() ? mod.actualValue() == mod.highestValue() : mod.actualValue() == mod.lowestValue();
+                    var nexUpgrade = mod.isHigherBetter() ? mod.actualValue() + mod.step() == mod.highestValue() : mod.actualValue() - mod.step() == mod.lowestValue();
+
+                    upgradeButton(comp, width, ySpacer, nexUpgrade, correctAdjustment, mod);
                 }
-                spacer.set(spacer.get() + (component.getString().contains(")") || !Pattern.matches(regex, component.getString()) ? 17 : 10));
+
+                spacer.set(spacer.get() + (comp.getString().contains(")") || !Pattern.matches(regex, comp.getString()) ? 17 : 10));
             }
         }
     }
 
-    public static List<Component> componentsWithBounds(ItemStack item, Level level){
-        var components = getComponents(item, level);
-        var getTag =item.get(ComponentReg.ABILITY_HOLDER);
+    public static List<Component> componentsWithBounds(Ability ability, AbilityHolder holder, Level level){
+        var components = getComponents(ability, holder, level);
         var compNew = components
-            .subList(1, components.size()-2).stream().filter(component -> getAbilityModifiers(component, getTag).highestValue() != -1)
+            .subList(1, components.size()).stream().filter(component -> getAbilityModifiers(component, holder).highestValue() != -1)
             .filter(component -> !component.equals(Component.literal(" ")) && !component.getString().contains("Unique"));
         return compNew.toList();
     }
@@ -119,25 +134,21 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     }
 
     private void upgradeButton(Component component, int width, int ySpacer, boolean nexUpgrade, boolean correctAdjustment, AbilityData.AbilityModifiers x) {
-        var canPurchase = canPurchase(calculateRatingNext(x));
         int posX = width + 72;
         int posY = (int) (ySpacer + 11 + this.yScroll);
         this.addRenderableWidget(
             menuButtonSound(
                 posX, posY,
-                (press) -> {
-                    if(canPurchase) doOnClick(component, item, nexUpgrade, posX, posY);
-                },
-                correctAdjustment || !canPurchase ? UPGRADE_DISABLED : UPGRADE, 22,
-                correctAdjustment || !this.isInHitbox(posX, posY) || !canPurchase,
-                correctAdjustment || !canPurchase ? 0 : 8, WIDGET,
-                !correctAdjustment  && this.isInHitbox(posX, posY) && canPurchase,
+                (press) -> doOnClick(component, holder, nexUpgrade, posX, posY),
+                correctAdjustment  ? UPGRADE_DISABLED : UPGRADE, 22,
+                correctAdjustment || !this.isInHitbox(posX, posY) ,
+                correctAdjustment  ? 0 : 8, WIDGET,
+                !correctAdjustment  && this.isInHitbox(posX, posY),
                 () -> {
                     var getHighest = x.isHigherBetter() ? x.actualValue() + x.step() : x.actualValue() - x.step();
                     var original = getModifierContextSingle(extractName(component.getString()), String.valueOf(doubleFormattedDouble(getHighest)), 1);
                     this.upgradeValue = withStyleComponent("↑ " + original.getString(), -7092917);
                     this.selectedY = correctAdjustment ? 0 : ySpacer;
-                    this.key = component;
                 }
             )
         );
@@ -150,39 +161,21 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         return actualValue == null ? defaultVal : actualValue;
     }
 
-    private void doOnClick(Component component, ItemStack itemStack, boolean correctAdjustment, int posX, int posY){
+    private void doOnClick(Component component, AbilityHolder holder, boolean correctAdjustment, int posX, int posY){
         if(this.isInHitbox(posX, posY)){
-            var getTag = itemStack.get(ComponentReg.ABILITY_HOLDER);
-            if(getTag == null) return;
-            var abilityKey = getTag.abilityName();
             if(component == null) return;
-            var localHolder = getAbilityModifiers(component, getTag);
-            this.chargeCoreType(this.getChargeableCore());
-            updateAugmentConfig(
-                extractName(component.getString()), localHolder, abilityKey, getTag,
-                (myHolder) ->  this.item.set(ABILITY_HOLDER, myHolder),entity()
-            );
+            var pos = getMinecraft().player.blockPosition();
             var level = getMinecraft().level;
+            var abilityKey = holder.abilityName();
+
+            this.holder = updateAugmentConfig(extractName(component.getString()), abilityKey, getMinecraft().player);
+
             if(correctAdjustment && level != null){
-                Helpers.getLocalSound(level, entity().getBlockPos(), APPLY_EFFECT_TRIAL_OMEN, 1, 2);
+                Helpers.getLocalSound(level, pos, APPLY_EFFECT_TRIAL_OMEN, 1, 2);
             }
+
             this.rebuildWidgets();
         }
-    }
-
-    private void switchVisibility() {
-        for (Slot slot : this.menu.slots) {
-            if(slot instanceof InventorySlots inventorySlots){
-                inventorySlots.setActive(showInventory);
-            }
-        }
-    }
-
-    private void keyboardButton() {
-        var resourceLocation = this.showInventory ? INFORMATION : INVENTORY;
-        this.addRenderableWidget(
-            menuButton(this.width/2 - 133, this.height/2 + 45, (press) -> inventoryHandler(), resourceLocation, 24, false, 0, WIDGET, true)
-        );
     }
 
     @Override
@@ -197,14 +190,6 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         return true;
     }
 
-    public void inventoryHandler(){
-        showInventory = !showInventory;
-        switchVisibility();
-        this.yScroll = 0;
-        this.rebuildWidgets();
-        this.selectedY = 0;
-    }
-
     public boolean isInHitbox(double mouseX, double mouseY){
         var widthOffset = 100;
         var heightOffset = 115;
@@ -214,83 +199,47 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
         var heightFrom = i1 - heightOffset;
         var widthTo = i + widthOffset;
         var heightTo = i1 + heightOffset - 5;
-        return mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 35 && mouseY < heightTo - (showInventory ?  114 : 5);
+        return mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 35 && mouseY < heightTo -  5;
     }
 
     private void windowMoveVertical(double dragY) {
-        var size = componentsWithBounds(item, this.getMinecraft().level).size();
-        if (size > 14 || size > 2 && showInventory) {
+        var size = componentsWithBounds(ability, holder, this.getMinecraft().level).size();
+        if (size > 14) {
             int b = 7 * size * size - 135 * size + 578;
-            this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, b + (!showInventory ? -20 : -120)));
+            this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, b   -120));
             this.rebuildWidgets();
             this.selectedY = 0;
         } else this.yScroll = 0;
-    }
-
-    private void chargeCoreType(Item item){
-        ItemStack itemStack1 = new ItemStack(item);
-        PacketDistributor.sendToServer(new ChargeCoreC2SP(entity().getBlockPos(), itemStack1));
-        chargeCoreSides(entity(), itemStack1);
-    }
-
-    private boolean canPurchase(Item itemStack){
-        var inputItemHandler = entity().inputItemHandler;
-        for(int i = 1; i < inputItemHandler.getSlots(); i++){
-            if(inputItemHandler.getStackInSlot(i).getItem() == itemStack) return true;
-        }
-        return false;
     }
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         var adjustX = 18;
         var adjustY = -27;
         var startX = this.width / 2 - 140;
         var startY = this.height/2 + 22;
-        this.renderBlurredBackground(pPartialTick);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
+
+        this.renderBlurredBackground(partialTick);
         SharedUI.setCustomBackground(this.height, this.width, guiGraphics);
         selectedBoxUpgrade(guiGraphics, mouseX, mouseY);
         selectedBox(guiGraphics, mouseX, mouseY);
-        super.render(guiGraphics, mouseX, mouseY, pPartialTick);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.disableScissor();
-        SharedUI.header(guiGraphics, this.width, this.height, this.item, this.font, this.getMinecraft().level);
-        overlayInventory(guiGraphics, startX, startY);
-        SharedUI.augmentCoreSlots(guiGraphics, 20, 10, BORDER_COLOUR, this.width, this.height, getFadedColourBackground(0.7f));
 
-        ElementReg.fromId(getElementIdAugment(this.item)).ifPresent(
+        SharedUI.header(guiGraphics, this.width, this.height, ability, holder, this.font, this.getMinecraft().level);
+        ElementReg.fromId(getElementIdAugment(ability, holder)).ifPresent(
             element ->bezelMaker(guiGraphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element)
         );
-    }
-
-    private void coreSlots(@NotNull GuiGraphics guiGraphics, int adjustX, int adjustY) {
-        var spacer = new AtomicInteger();
-        for(ResourceLocation location : getOverlays()){
-            guiGraphics.blit(GUI_ITEM_SLOT, this.width/2 - 156 + adjustX, (this.height/2) + spacer.get() - 23 + adjustY, 0,0,32,32,32,32);
-            guiGraphics.blit(location, this.width/2 - 156 + adjustX, (this.height/2) + spacer.get() - 23 + adjustY, 0,0,32,32,32,32);
-            spacer.set(spacer.get() + 30);
-        }
-    }
-
-    private void overlayInventory(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
-        guiGraphics.pose().popPose();
-        guiGraphics.pose().translate(0,0,10);
-        if(showInventory){
-            var i = 40;
-            var i1 = -17;
-            boxMaker(guiGraphics, startX + i, startY + i1, 100, 55, BORDER_COLOUR, SharedUI.getFadedColourBackground(0.9f));
-            renderInventoryBackground(guiGraphics, this, 256, 24, this.showInventory);
-        }
-        guiGraphics.pose().pushPose();
     }
 
     private void selectedBox(@NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         if(!this.isInHitbox(mouseX, mouseY)) return;
         if(this.selectedY <= 0) return;
-        var colour = getAbstractElement(entity()).textColourB();
+
+        var colour = ability.getElemenType().textColourB();
         var semiTransLayer = getFadedColourBackground(0.8f);
 
         boxMaker(guiGraphics, this.width/2 - 97, (int) (this.selectedY + 8 + yScroll), 97, 14, colour, semiTransLayer);
@@ -299,31 +248,17 @@ public class AugmentModificationScreen extends AbstractContainerScreen<AugmentMo
     private void selectedBoxUpgrade(@NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         if(!this.isInHitbox(mouseX, mouseY)) return;
         if(this.selectedY <= 0) return;
+
         var startX = this.width / 2 + 102;
         var startY = this.selectedY + 8;
-
-        var colourBorder = getAbstractElement(entity()).textColourB();
+        var colourBorder = ability.getElemenType().textColourB();
         var semiTransLayer = getFadedColourBackground(0.8f);
+
         boxMaker(guiGraphics, startX , (int) (startY + yScroll), 35, 14, colourBorder, semiTransLayer);
         boxMaker(guiGraphics, startX, (int) (startY + yScroll), 35, 14, colourBorder, semiTransLayer);
         boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, colourBorder, semiTransLayer);
         boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, colourBorder, semiTransLayer);
         guiGraphics.drawCenteredString(this.font, this.upgradeValue, startX + 34, (int) (startY + 10 + yScroll), 0);
-        if(this.item != null && this.item.has(ABILITY_HOLDER)){
-            if(this.upgradeValue != null){
-                guiGraphics.renderFakeItem(new ItemStack(getChargeableCore()),  startX + 74, (int) (startY + 6 + yScroll));
-            }
-        }
-
     }
 
-    public Item getChargeableCore() {
-        return calculateRatingNext(getAbilityModifiers(this.key, entity().getInteractionSlot().get(ABILITY_HOLDER)));
-    }
-
-    @Override
-    protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {}
-
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {}
 }

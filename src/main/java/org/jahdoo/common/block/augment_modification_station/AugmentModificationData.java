@@ -2,14 +2,16 @@ package org.jahdoo.common.block.augment_modification_station;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
+import org.jahdoo.common.registers.AttachmentReg;
 
-import java.util.HashMap;
-import java.util.function.Consumer;
+import java.util.LinkedHashMap;
 
+import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
 import static org.jahdoo.common.registers.ElementReg.fromId;
 import static org.jahdoo.common.registers.ElementReg.mystic;
@@ -44,31 +46,32 @@ public class AugmentModificationData {
         return mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 50 && mouseY < heightTo - (showInventory ?  120 : 5);
     }
 
-    public static void updateAugmentConfig(
+    public static AbilityHolder updateAugmentConfig(
         String name,
-        AbilityData.AbilityModifiers modifiers,
         String abilityName,
-        AbilityHolder holder,
-        Consumer<AbilityHolder> holderExe,
-        AbstractBEInventory user
+        Player player
     ) {
-//        var newWandHolder = new WandAbilityHolder(new HashMap<>(holder.abilityProperties()));
-        var newHolder = new AbilityData(new HashMap<>(holder.data().abilityProperties()));
 
-        var higherBetter = modifiers.isHigherBetter();
-        var actualValue = doubleFormattedDouble(modifiers.actualValue());
-        var step = doubleFormattedDouble(modifiers.step());
-        var highestValue = doubleFormattedDouble(modifiers.highestValue());
-        var lowestValue = doubleFormattedDouble(modifiers.lowestValue());
+        var data = player.getData(AttachmentReg.CASTER_DATA);
+        var properties = new LinkedHashMap<>(data.getHolder(abilityName).data().abilityProperties());
+        var mod = properties.get(name);
+        var higherBetter = mod.isHigherBetter();
+        var actualValue = doubleFormattedDouble(mod.actualValue());
+        var step = doubleFormattedDouble(mod.step());
+        var highestValue = doubleFormattedDouble(mod.highestValue());
+        var lowestValue = doubleFormattedDouble(mod.lowestValue());
         var correctAdjustment = higherBetter ? actualValue + step : actualValue - step;
 
         var valueWithinRange = higherBetter && actualValue < highestValue ? correctAdjustment : !higherBetter && actualValue > lowestValue ? correctAdjustment : actualValue;
         var abilityModifier = new AbilityData.AbilityModifiers(valueWithinRange, highestValue, lowestValue, step, valueWithinRange, higherBetter);
 
-        newHolder.abilityProperties().put(name, abilityModifier);
-        /* newWandHolder.abilityProperties().put(abilityName, newHolder);
-        PacketDistributor.sendToServer(new SyncComponentBlockC2S(newWandHolder, user.getBlockPos()));
-        holderExe.accept(newWandHolder);*/
+        properties.replace(name, abilityModifier);
+
+        var holders = new AbilityHolder(abilityName, new AbilityData(properties));
+
+        data.updateAbility(holders);
+        sendToServer(new AbilityHolderC2SP(holders));
+        return holders;
     }
 
 }

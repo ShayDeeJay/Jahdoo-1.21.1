@@ -2,8 +2,8 @@ package org.jahdoo.ascension.ability.abilities_combat.hellfire;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.ability.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
@@ -15,7 +15,7 @@ import org.jahdoo.common.registers.ElementReg;
 
 import static org.jahdoo.common.registers.EntityDataReg.HELLFIRE;
 
-public class HellfireAbility extends AbilityRegistrar {
+public class HellfireAbility extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("hellfire");
 

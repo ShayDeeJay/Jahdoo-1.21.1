@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import static org.jahdoo.ascension.ability.AbilityBuilder.ENTITY_MULTIPLIER;
 import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
 
-public class BurningSkullsAbility extends AbilityRegistrar {
+public class BurningSkullsAbility extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("burning_skulls");
 

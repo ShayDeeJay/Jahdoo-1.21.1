@@ -2,8 +2,8 @@ package org.jahdoo.ascension.ability.abilities_combat.mystical_semtex;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -14,7 +14,7 @@ import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.EntityReg;
 
-public class MysticalSemtexAbility extends AbilityRegistrar {
+public class MysticalSemtexAbility extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("mystical_semtex");
     public static final String additionalProjectile = "Additional Projectiles";

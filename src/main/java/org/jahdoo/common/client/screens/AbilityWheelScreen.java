@@ -16,13 +16,12 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
-import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ElementReg;
@@ -43,10 +42,10 @@ public class AbilityWheelScreen extends Screen  {
 
     private int slots;
     private boolean switchState;
-    private final int buttonSize = RADIAL_SIZE / 16;
     private float localTick = 60;
     private static final int RADIAL_SIZE = 150;
     private static final int RADIUS = (int) (8.4 * ((double) RADIAL_SIZE / 20) - 4);
+    private int buttonSize;
     private final List<AbilityIconButton> buttons = new ArrayList<>();
 
     @Override
@@ -131,13 +130,13 @@ public class AbilityWheelScreen extends Screen  {
         int x = (this.width / 2);
         int y = (this.height / 2) - 5;
         if (localTick >= (RADIAL_SIZE - 20)) {
-            var getAbilityId = DataComponentHelper.getAbilityTypeWand(getMinecraft().player);
-            var getAbility = AbilityReg.getSpellsByTypeId(getAbilityId.getPath().intern());
-            if(!getAbility.isEmpty()){
-                SharedUI.getAbilityNameWithColour(getAbility.getFirst(), guiGraphics, x, y - 90, true);
-                int width = (int) (getAbilityId.getPath().intern().length() * 3.5);
-                SharedUI.boxMaker(guiGraphics, x - width, y - 96, width, 10);
-            }
+//            var getAbilityId = DataComponentHelper.getAbilityTypeWand(getMinecraft().player);
+//            var ability
+//            if(!getAbility.isEmpty()){
+//                SharedUI.getAbilityNameWithColour(getAbility.getFirst(), holder, x, y - 90, true);
+//                int width = (int) (getAbilityId.getPath().intern().length() * 3.5);
+//                SharedUI.boxMaker(guiGraphics, x - width, y - 96, width, 10);
+//            }
         }
     }
 
@@ -155,6 +154,7 @@ public class AbilityWheelScreen extends Screen  {
         double angleOffset = -Math.PI / 2.0;
 
         this.slots = totalSlots;
+        this.buttonSize = RADIAL_SIZE / (5 + (totalSlots/4));
 
         for (int i = 0; i < totalSlots; i++) {
             double angle = angleOffset + 2 * Math.PI * i / totalSlots; // Calculate angle for each position
@@ -229,7 +229,7 @@ public class AbilityWheelScreen extends Screen  {
         }
     }
 
-    private void showConfig(CastingData castingData, Player player, AbilityRegistrar selectedAbility, int posX, int posY) {
+    private void showConfig(CastingData castingData, Player player, Ability selectedAbility, int posX, int posY) {
         var configButton = new WidgetSprites(COG, COG);
         var configButtonSize = 20;
         var itemStack = Helpers.getUsedItem(player);

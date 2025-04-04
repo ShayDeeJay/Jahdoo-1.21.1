@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
@@ -29,7 +30,7 @@ public class CastingData implements IAttachment {
     private static final Logger LOGGER = LoggerFactory.getLogger(CastingData.class);
 
     private double manaPool;
-    private String selectedAbility;
+    private String selectedAbility = "";
     private Map<String, Integer> abilityCooldowns = new Object2IntOpenHashMap<>();
     private Map<String, Integer> abilityCooldownsStatic = new Object2IntOpenHashMap<>();
     private List<AbilityHolder> unlockedAbilities = new ArrayList<>();
@@ -52,6 +53,7 @@ public class CastingData implements IAttachment {
 
     public void updateAbility(AbilityHolder holder){
         if(holder.abilityName().isEmpty()) return;
+
         for (var unlockedAbility : this.unlockedAbilities) {
             if(unlockedAbility.abilityName().equals(holder.abilityName())){
                 var index = this.unlockedAbilities.indexOf(unlockedAbility);
@@ -87,6 +89,7 @@ public class CastingData implements IAttachment {
 
     public void clearAllAbilities(){
         this.unlockedAbilities = new ArrayList<>();
+        this.selectedAbility = "";
     }
 
     public List<AbilityHolder> getUnlockedAbilities(){
@@ -95,6 +98,10 @@ public class CastingData implements IAttachment {
 
     public AbilityHolder getHolder(String id){
         return this.unlockedAbilities.stream().filter(s -> s.abilityName().equals(id)).findFirst().get();
+    }
+
+    public Optional<AbilityHolder> getHolderOptional(String id){
+        return this.unlockedAbilities.stream().filter(s -> s.abilityName().equals(id)).findFirst();
     }
 
     public Map<String, Integer> getAllCooldowns() {
@@ -173,7 +180,8 @@ public class CastingData implements IAttachment {
 
     private double getModifiedMana(Player player){
         var getRegen = player.getAttribute(AttributeReg.MANA_REGEN);
-        double baseManaRegen = 0.15;
+        var baseManaRegen = 0.15;
+
         if(getRegen != null) {
             var regenPercentage = getRegen.getValue();
             var calculatedRegen = (baseManaRegen * regenPercentage) / 100;

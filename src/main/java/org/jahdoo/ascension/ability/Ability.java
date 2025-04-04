@@ -20,7 +20,7 @@ import org.jahdoo.common.registers.SoundReg;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public abstract class AbilityRegistrar {
+public abstract class Ability {
 
     public static final int DISTANCE_CAST = 1;
     public static final int PROJECTILE_CAST = 2;

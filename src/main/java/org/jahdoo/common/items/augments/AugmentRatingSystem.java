@@ -3,15 +3,14 @@ package org.jahdoo.common.items.augments;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.components.AbilityData;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.text.DecimalFormat;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextRange;
-import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 
 public class AugmentRatingSystem {
 
@@ -27,21 +26,20 @@ public class AugmentRatingSystem {
         return Double.parseDouble(FORMAT.format((1.0 / max) * 100));
     }
 
-    public static AbilityData.AbilityModifiers getModifier(ItemStack itemStack, String abilityLocation, String keys){
-        var holder = itemStack.get(ABILITY_HOLDER.get());
-        return holder.data().abilityProperties().get(keys);
+    public static AbilityData.AbilityModifiers getModifier(AbilityHolder holder, String keys){
+       return holder.data().abilityProperties().get(keys);
     }
 
-    public static Component additionalInformation(ItemStack itemStack, String keys, String abilityLocation, boolean isHigherBetter){
+    public static Component additionalInformation(AbilityHolder holder, String keys, boolean isHigherBetter){
         return Component.literal(" (")
-            .append(hoverTextHelper(itemStack, keys, abilityLocation, isHigherBetter))
+            .append(hoverTextHelper(holder, keys, isHigherBetter))
             .append(")")
             .withStyle(ChatFormatting.DARK_GRAY);
     }
 
-    public static Component hoverTextHelper(ItemStack itemStack, String keys, String abilityLocation, boolean isHigherBetter) {
-        if (itemStack.has(ABILITY_HOLDER.get())) {
-            var modifiers = getModifier(itemStack, abilityLocation, keys);
+    public static Component hoverTextHelper(AbilityHolder holder, String keys, boolean isHigherBetter) {
+        if (holder != null) {
+            var modifiers = getModifier(holder, keys);
             var max = FORMAT.format(modifiers.highestValue());
             var min = FORMAT.format(modifiers.lowestValue());
             var getLowest = isHigherBetter ? min : max;
@@ -65,6 +63,7 @@ public class AugmentRatingSystem {
     }
 
     public static int calculateRating(AbilityData.AbilityModifiers mod) {
+        if(mod == null) return -1;
 
         boolean higherIsBetter = mod.isHigherBetter();
 
@@ -109,13 +108,13 @@ public class AugmentRatingSystem {
         return normalizedValue;
     }
 
-    public static Component displayRating(ItemStack itemStack, String keys, String abilityLocation) {
+    public static Component displayRating(AbilityHolder abilityHolder, String keys) {
          int getRating;
         int chatFormatting;
         boolean isHigherBetter = true;
 
-        if(itemStack.has(ABILITY_HOLDER.get())){
-            var modifier = getModifier(itemStack, abilityLocation, keys);
+        if(abilityHolder != null){
+            var modifier = getModifier(abilityHolder, keys);
             getRating = calculateRating(modifier);
             isHigherBetter = modifier.isHigherBetter();
 
@@ -133,7 +132,7 @@ public class AugmentRatingSystem {
 
         return Component.literal("▊".repeat(Math.max(1, getRating)))
             .withStyle(style -> style.withColor(chatFormatting))
-            .append(additionalInformation(itemStack, keys, abilityLocation, isHigherBetter));
+            .append(additionalInformation(abilityHolder, keys, isHigherBetter));
     }
 
 }

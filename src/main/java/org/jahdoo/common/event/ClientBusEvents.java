@@ -11,7 +11,6 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.altar.AltarRenderer;
 import org.jahdoo.common.block.augment_modification_station.AugmentModificationRenderer;
-import org.jahdoo.common.block.augment_modification_station.AugmentModificationScreen;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockRenderer;
@@ -76,7 +75,7 @@ public class ClientBusEvents {
     public static void onClientSetup(RegisterMenuScreensEvent event) {
         event.register(WAND_BLOCK_MENU.get(), WandBlockScreen::new);
         event.register(MODULAR_CHAOS_CUBE_MENU.get(), ChaosCubeScreen::new);
-        event.register(AUGMENT_MODIFICATION_MENU.get(), AugmentModificationScreen::new);
+//        event.register(AUGMENT_MODIFICATION_MENU.get(), AugmentModificationScreen::new);
         event.register(WAND_MANAGER_MENU.get(), WandManagerScreen::new);
         event.register(RUNE_TABLE_MENU.get(), RuneTableScreen::new);
     }

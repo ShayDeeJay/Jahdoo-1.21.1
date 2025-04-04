@@ -10,7 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.ascension.ability.abilities_combat.EscapeDecoyAbility;
 import org.jahdoo.ascension.ability.abilities_combat.ancient_golem.SummonAncientGolemAbility;
@@ -54,13 +54,13 @@ import static org.jahdoo.common.registers.ElementReg.utility;
 
 public class AbilityReg {
 
-    public static final ResourceKey<Registry<AbilityRegistrar>> ABILITY_REGISTRY_KEY =
+    public static final ResourceKey<Registry<Ability>> ABILITY_REGISTRY_KEY =
         createRegistryKey(ResourceLocation.fromNamespaceAndPath(JahdooMod.MOD_ID,"ability"));
 
-    private static final DeferredRegister<AbilityRegistrar> ABILITIES =
+    private static final DeferredRegister<Ability> ABILITIES =
         create(ABILITY_REGISTRY_KEY, JahdooMod.MOD_ID);
 
-    public static final Registry<AbilityRegistrar> REGISTRY =
+    public static final Registry<Ability> REGISTRY =
         new RegistryBuilder<>(ABILITY_REGISTRY_KEY).create();
 
     public static void registerRegistry(NewRegistryEvent event) {
@@ -68,21 +68,21 @@ public class AbilityReg {
         event.register(REGISTRY);
     }
 
-    public static List<AbilityRegistrar> getSpellsByTypeId(String typeId) {
+    public static List<Ability> getSpellsByTypeId(String typeId) {
         return AbilityReg.REGISTRY
             .stream()
             .filter(a -> Objects.equals(a.setAbilityId(), typeId))
             .toList();
     }
 
-    public static List<AbilityRegistrar> getMatchingRarity(JahdooRarity rarity) {
+    public static List<Ability> getMatchingRarity(JahdooRarity rarity) {
         return AbilityReg.REGISTRY
             .stream()
             .filter(a -> a.rarity().getId() == rarity.getId())
             .toList();
     }
 
-    public static List<AbilityRegistrar> getMatchingRarityNoUtil(JahdooRarity rarity) {
+    public static List<Ability> getMatchingRarityNoUtil(JahdooRarity rarity) {
         return AbilityReg.REGISTRY
             .stream()
             .filter(a -> a.rarity().getId() == rarity.getId())
@@ -90,7 +90,7 @@ public class AbilityReg {
             .toList();
     }
 
-    public static List<AbilityRegistrar> getMatchingRarityUtilOnly(JahdooRarity rarity) {
+    public static List<Ability> getMatchingRarityUtilOnly(JahdooRarity rarity) {
         return AbilityReg.REGISTRY
                 .stream()
                 .filter(a -> a.rarity().getId() == rarity.getId())
@@ -98,21 +98,21 @@ public class AbilityReg {
                 .toList();
     }
 
-    public static Optional<AbilityRegistrar> getFirstSpellByTypeId(String typeId) {
+    public static Optional<Ability> getFirstSpellByTypeId(String typeId) {
         return AbilityReg.REGISTRY
             .stream()
             .filter(a -> Objects.equals(a.setAbilityId(), typeId))
             .findFirst();  // Lazy and returns an Optional
     }
 
-    public static List<AbilityRegistrar> getWithElement(AbstractElement element) {
+    public static List<Ability> getWithElement(AbstractElement element) {
         return AbilityReg.REGISTRY
             .stream()
             .filter(a -> a.getElemenType() == element)
             .toList();  // Lazy and returns an Optional
     }
 
-    public static Optional<AbilityRegistrar> getFirstSpellFromAugment(ItemStack itemStack) {
+    public static Optional<Ability> getFirstSpellFromAugment(ItemStack itemStack) {
         if(itemStack.isEmpty()) return Optional.empty();
         var abilityHolder = itemStack.get(ABILITY_HOLDER);
 
@@ -130,99 +130,99 @@ public class AbilityReg {
 //    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> BOLTZ = registerSpell(new BoltzAbility());
 
     //Multi-Type
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ELEMENTAL_SHOOTER =
+    public static final DeferredHolder<Ability, Ability> ELEMENTAL_SHOOTER =
         registerSpell(new ElementalShooterAbility());
 
     //Inferno
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ARMAGEDDON =
+    public static final DeferredHolder<Ability, Ability> ARMAGEDDON =
         registerSpell(new ArmageddonAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> FIREBALL =
+    public static final DeferredHolder<Ability, Ability> FIREBALL =
         registerSpell(new FireballAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> HELLFIRE =
+    public static final DeferredHolder<Ability, Ability> HELLFIRE =
         registerSpell(new HellfireAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> BURNING_SKULLS =
+    public static final DeferredHolder<Ability, Ability> BURNING_SKULLS =
         registerSpell(new BurningSkullsAbility());
 
     //Mystic
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ARCANE_SHIFT =
+    public static final DeferredHolder<Ability, Ability> ARCANE_SHIFT =
         registerSpell(new ArcaneShiftAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> MYSTICAL_SEMTEX =
+    public static final DeferredHolder<Ability, Ability> MYSTICAL_SEMTEX =
         registerSpell(new MysticalSemtexAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> QUANTUM_DESTROYER =
+    public static final DeferredHolder<Ability, Ability> QUANTUM_DESTROYER =
         registerSpell(new QuantumDestroyerAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> NOVA_SMASH =
+    public static final DeferredHolder<Ability, Ability> NOVA_SMASH =
         registerSpell(new NovaSmashAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> DIMENSIONAL_RECALL =
+    public static final DeferredHolder<Ability, Ability> DIMENSIONAL_RECALL =
         registerSpell(new DimensionalRecallAbility());
 
     //Frost
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> PERMAFROST =
+    public static final DeferredHolder<Ability, Ability> PERMAFROST =
         registerSpell(new PermafrostAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ICE_BOMB =
+    public static final DeferredHolder<Ability, Ability> ICE_BOMB =
         registerSpell(new IceBombAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> FROST_BOLTS =
+    public static final DeferredHolder<Ability, Ability> FROST_BOLTS =
         registerSpell(new FrostboltsAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> STORM_RUSH =
+    public static final DeferredHolder<Ability, Ability> STORM_RUSH =
         registerSpell(new StormRushAbility());
 
     //Vitality
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> SUMMON_ETERNAL_WIZARD =
+    public static final DeferredHolder<Ability, Ability> SUMMON_ETERNAL_WIZARD =
         registerSpell(new SummonEternalWizardAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ESCAPE_DECOY =
+    public static final DeferredHolder<Ability, Ability> ESCAPE_DECOY =
         registerSpell(new EscapeDecoyAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> VITAL_REJUVENATION =
+    public static final DeferredHolder<Ability, Ability> VITAL_REJUVENATION =
         registerSpell(new VitalRejuvenationAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> SUMMON_ANCIENT_GOLEM =
+    public static final DeferredHolder<Ability, Ability> SUMMON_ANCIENT_GOLEM =
         registerSpell(new SummonAncientGolemAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> LIFE_SIPHON =
+    public static final DeferredHolder<Ability, Ability> LIFE_SIPHON =
         registerSpell(new LifeSiphonAbility());
 
     //Utility
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> BLOCK_BOMB =
+    public static final DeferredHolder<Ability, Ability> BLOCK_BOMB =
         registerSpell(new BlockBombAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> BLOCK_BREAKER =
+    public static final DeferredHolder<Ability, Ability> BLOCK_BREAKER =
         registerSpell(new BlockBreakerAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> BLOCK_PLACER =
+    public static final DeferredHolder<Ability, Ability> BLOCK_PLACER =
         registerSpell(new BlockPlacerAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> FARMERS_TOUCH =
+    public static final DeferredHolder<Ability, Ability> FARMERS_TOUCH =
         registerSpell(new FarmersTouchAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> HAMMER =
+    public static final DeferredHolder<Ability, Ability> HAMMER =
         registerSpell(new HammerAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> LIGHT_PLACER =
+    public static final DeferredHolder<Ability, Ability> LIGHT_PLACER =
         registerSpell(new LightPlacerAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> FETCH =
+    public static final DeferredHolder<Ability, Ability> FETCH =
         registerSpell(new FetchAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> VEIN_MINER =
+    public static final DeferredHolder<Ability, Ability> VEIN_MINER =
         registerSpell(new VeinMinerAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> WALL_PLACER =
+    public static final DeferredHolder<Ability, Ability> WALL_PLACER =
         registerSpell(new WallPlacerAbility());
 
-    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> ENCHANTED_FUSION =
+    public static final DeferredHolder<Ability, Ability> ENCHANTED_FUSION =
         registerSpell(new EnchantedFusionAbility());
 
-    private static DeferredHolder<AbilityRegistrar, AbilityRegistrar> registerSpell(AbilityRegistrar spell) {
+    private static DeferredHolder<Ability, Ability> registerSpell(Ability spell) {
         return ABILITIES.register(spell.setAbilityId(), () -> spell);
     }
 

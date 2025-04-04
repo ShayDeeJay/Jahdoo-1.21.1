@@ -11,18 +11,17 @@ import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.slots.InventorySlots;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.augments.Augment;
-import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -31,13 +30,11 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
-import static org.jahdoo.common.client.SharedUI.*;
+import static org.jahdoo.common.block.augment_modification_station.AugmentModificationScreen.WIDGET;
 import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.Icons.INFORMATION;
+import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
 import static org.jahdoo.common.client.button.ToggleComponent.textRenderable;
-import static org.jahdoo.common.block.augment_modification_station.AugmentModificationScreen.WIDGET;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.getAllAbilityModifiers;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.shiftForDetails;
 
 public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
@@ -63,7 +60,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         inventorySlider();
     }
 
-    private List<AbilityRegistrar> getAbilityFromRegistry(ItemStack comparable){
+    private List<Ability> getAbilityFromRegistry(ItemStack comparable){
         return AbilityReg.getSpellsByTypeId(DataComponentHelper.getAbilityTypeItemStack(comparable));
     }
 
@@ -118,8 +115,8 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
             ElementReg.fromId(Math.max(getElement.value(), 0)).ifPresent(
                 element -> {
                     if (itemStack.get(ComponentReg.ABILITY_HOLDER.get()) != null) {
-                        toolTips.add(AugmentItemHelper.getAbilityName(itemStack,element));
-                        toolTips.addAll(getAllAbilityModifiers(itemStack, itemStack1, abilityLocation, false, this.getMinecraft().level));
+//                        toolTips.add(AugmentItemHelper.getAbilityName(itemStack,element));
+//                        toolTips.addAll(getAllAbilityModifiers(itemStack, itemStack1, abilityLocation, false, this.getMinecraft().level));
                         shiftForDetails(toolTips);
                     }
                 }
@@ -327,7 +324,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         List<String> lines = new ArrayList<>();
         if(this.cachedItem == null) return lines;
         int maxCharsPerLine = 34;
-        Optional<AbilityRegistrar> first = this.getAbilityFromRegistry(this.cachedItem).stream().findFirst();
+        Optional<Ability> first = this.getAbilityFromRegistry(this.cachedItem).stream().findFirst();
         if(first.isPresent()){
             String[] words = first.get().getDescription().split(" ");
             StringBuilder currentLine = new StringBuilder();

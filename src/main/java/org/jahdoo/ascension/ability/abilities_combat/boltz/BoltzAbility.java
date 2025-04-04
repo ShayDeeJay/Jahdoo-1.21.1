@@ -3,8 +3,8 @@ package org.jahdoo.ascension.ability.abilities_combat.boltz;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -22,7 +22,7 @@ import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 
-public class BoltzAbility extends AbilityRegistrar {
+public class BoltzAbility extends Ability {
 
     private static final String TOTAL_BOLTS = "Total Boltz";
     public static final ResourceLocation abilityId = Helpers.res("boltz");

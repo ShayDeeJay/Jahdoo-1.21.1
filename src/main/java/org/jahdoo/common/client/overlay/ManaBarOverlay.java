@@ -12,7 +12,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
@@ -161,7 +161,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         }
     }
 
-    private void cooldownTimer(AbilityRegistrar ability, CastingData casterData, GuiGraphics graphics, Minecraft minecraft){
+    private void cooldownTimer(Ability ability, CastingData casterData, GuiGraphics graphics, Minecraft minecraft){
         if (ability == null) return;
 
         if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {
@@ -180,7 +180,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         }
     }
 
-    private void cooldownOverlay(AbilityRegistrar ability, CastingData casterData){
+    private void cooldownOverlay(Ability ability, CastingData casterData){
         if(this.fadeIn < 0 && !CUSTOM_UI.get() || ability == null) return;
         alignedGui.displayGuiLayer(4, 26, 0, 0, 23, ability.getAbilityIconLocation());
         if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {

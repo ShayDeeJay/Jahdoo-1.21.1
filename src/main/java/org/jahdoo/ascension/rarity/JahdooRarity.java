@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
@@ -111,7 +111,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return correctRarity == JahdooRarity.UNIQUE ? JahdooRarity.EPIC : correctRarity;
     }
 
-    public static AbilityRegistrar getAbilityUtil(@Nullable JahdooRarity rarity) {
+    public static Ability getAbilityUtil(@Nullable JahdooRarity rarity) {
         var listAll = AbilityReg.getMatchingRarityUtilOnly(getJahdooRarity(rarity));
         return listAll.get(Random.nextInt(0, listAll.size()));
     }
@@ -197,7 +197,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return listRandom(filteredList).getFirst();
     }
 
-    public static AbilityRegistrar getAbilityWithRarity(boolean withUtil, @Nullable JahdooRarity rarity) {
+    public static Ability getAbilityWithRarity(boolean withUtil, @Nullable JahdooRarity rarity) {
         var removeRarity = getJahdooRarity(rarity);
         var listAll = AbilityReg.getMatchingRarity(removeRarity);
         var listNoUtil = AbilityReg.getMatchingRarityNoUtil(removeRarity);

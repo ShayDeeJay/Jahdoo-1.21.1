@@ -2,8 +2,8 @@ package org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.AbilityRegistrar;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -13,7 +13,7 @@ import org.jahdoo.common.registers.ElementReg;
 
 import static org.jahdoo.common.registers.AttachmentReg.VITAL_REJUVENATION;
 
-public class VitalRejuvenationAbility extends AbilityRegistrar {
+public class VitalRejuvenationAbility extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("vital_rejuvenation");
     public static final String MAX_ABSORPTION = "Max Absorption hearts";

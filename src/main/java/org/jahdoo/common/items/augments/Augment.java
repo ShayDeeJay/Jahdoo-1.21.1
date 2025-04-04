@@ -40,7 +40,8 @@ public class Augment extends Item implements MenuAccess {
 
     @Override
     public @NotNull Component getName(ItemStack itemStack) {
-        return AugmentItemHelper.getHoverName(itemStack);
+//        return AugmentItemHelper.getHoverName(itemStack);
+        return Component.empty();
     }
 
     @Override
@@ -55,7 +56,7 @@ public class Augment extends Item implements MenuAccess {
 
     @Override
     public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
-        AugmentItemHelper.getHoverText(pStack, pTooltipComponents, false, pContext.level());
+//        AugmentItemHelper.getHoverText(pStack, pTooltipComponents, false, pContext.level());
     }
 
     @Override

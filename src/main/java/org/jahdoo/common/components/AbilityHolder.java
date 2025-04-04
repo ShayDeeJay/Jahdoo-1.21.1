@@ -1,5 +1,6 @@
 package org.jahdoo.common.components;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
@@ -9,10 +10,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.utils.Helpers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 
@@ -86,29 +85,70 @@ public record AbilityHolder(String abilityName, AbilityData data) {
     }
 
     public static void writeTag(
-        AbilityHolder wandAbilityHolder,
+        AbilityHolder holder,
         CompoundTag compoundTag
     ){
         var storedAbility = new CompoundTag();
-        var abilityHolder = wandAbilityHolder.data();
+        var abilityHolder = holder.data().abilityProperties().entrySet();
+        var index = new AtomicInteger();
 
-        if(abilityHolder != null){
-            abilityHolder.abilityProperties().forEach((key, value) -> storedAbility.putDouble(key, value.actualValue()));
+        if(!abilityHolder.isEmpty()){
+            abilityHolder.forEach(
+                key -> {
+                    var value = key.getValue();
+                    storedAbility.put(
+                        key.getKey(), Helpers.nbtDoubleList(
+                            value.actualValue(),
+                            value.highestValue(),
+                            value.lowestValue(),
+                            value.step(),
+                            value.setValue(),
+                            value.isHigherBetter() ? 0 : 1,
+                            index.get()
+                        )
+                    );
+                    index.incrementAndGet();
+                }
+            );
         }
+
+
 
         compoundTag.put("wand_abilities", storedAbility);
     }
 
-    public static AbilityHolder readTag(CompoundTag compoundTag, String abilityId){
-        var holder = new HashMap<String, AbilityData.AbilityModifiers>();
+    public static AbilityHolder readTag(CompoundTag compoundTag, String abilityId) {
+        var holder = new LinkedHashMap<String, AbilityData.AbilityModifiers>();
+        var wandAbilities = compoundTag.getCompound("wand_abilities");
 
-        compoundTag.getCompound("wand_abilities").getAllKeys().forEach(
-            keys -> {
-                var actualValue = compoundTag.getCompound("wand_abilities").getDouble(keys);
-                var modifier = new AbilityData.AbilityModifiers(actualValue, 0, 0, 0, actualValue,true);
-                holder.put(keys, modifier);
+        // Create a list with nulls up to the maximum possible index
+        int maxIndex = wandAbilities.getAllKeys().stream()
+            .mapToInt(key -> (int) wandAbilities.getList(key, CompoundTag.TAG_DOUBLE).getDouble(6))
+            .max()
+            .orElse(-1) + 1;
+
+        List<Pair<String, AbilityData.AbilityModifiers>> orderedList = new ArrayList<>(Collections.nCopies(maxIndex, null));
+
+        wandAbilities.getAllKeys().forEach(
+            key -> {
+                var actualValue = wandAbilities.getList(key, CompoundTag.TAG_DOUBLE);
+                var modifier = new AbilityData.AbilityModifiers(
+                    actualValue.getDouble(0),
+                    actualValue.getDouble(1),
+                    actualValue.getDouble(2),
+                    actualValue.getDouble(3),
+                    actualValue.getDouble(4),
+                    actualValue.getDouble(5) == 0
+                );
+                int position = (int) actualValue.getDouble(6);
+                orderedList.set(position, Pair.of(key, modifier));
             }
         );
+
+        // Add non-null entries to the map in order
+        orderedList.stream()
+            .filter(Objects::nonNull)
+            .forEach(pair -> holder.put(pair.getFirst(), pair.getSecond()));
 
         var abilityHolder = new AbilityData(holder);
         return new AbilityHolder(abilityId, abilityHolder);
