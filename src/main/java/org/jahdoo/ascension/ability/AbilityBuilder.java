@@ -32,7 +32,8 @@ public class AbilityBuilder {
     public static final String OFFSET = "Offset";
     public static final String GRAVITATIONAL_PULL = "Gravitational Pull";
     public static final String ENTITY_MULTIPLIER = "Shot Multiplier";
-
+    public static final String SHOT_MULTIPLIER = "Shot Multiplier";
+    public static final String NUMBER_OF_RICOCHET = "Ricochets";
     private ItemStack item = null;
     private final String abilityId;
     private final AbilityData abilityData = new AbilityData(new LinkedHashMap<>());
@@ -174,6 +175,12 @@ public class AbilityBuilder {
         for(double i = min; i < max; i += step) allowed.add(i);
         Collections.shuffle(allowed);
         return allowed.getFirst();
+    }
+
+    public AbilityBuilder setElement(double actualValue) {
+        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, 0, 0, 0, actualValue, false);
+        this.abilityData.abilityProperties().put(SET_ELEMENT_TYPE, abilityModifiers);
+        return this;
     }
 
     public AbilityBuilder setModifier(String name, double high, double low, boolean isHigherBetter, double actualValue) {

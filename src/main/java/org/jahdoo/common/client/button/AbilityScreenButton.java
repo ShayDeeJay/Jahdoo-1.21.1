@@ -11,10 +11,7 @@ import org.jahdoo.common.registers.SoundReg;
 
 import javax.annotation.Nullable;
 
-import static org.jahdoo.common.client.Icons.GUI_BUTTON_SELECTED;
-import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
-
-public class GuiButton extends ImageButton {
+public class AbilityScreenButton extends ImageButton {
 
     private float sizes;
     private final boolean isSelected;
@@ -25,7 +22,7 @@ public class GuiButton extends ImageButton {
     private final ResourceLocation buttonOverlay;
     private final String label;
 
-    public GuiButton(
+    public AbilityScreenButton(
         int pX,
         int pY,
         WidgetSprites sprites,
@@ -86,22 +83,17 @@ public class GuiButton extends ImageButton {
             int i = 4;
             graphics.pose().pushPose();
             graphics.pose().translate(0,0,2);
-            if(showHover){
-                graphics.blit(SELECTED_GUI_BUTTON_OVERLAY, this.getX() - offset + i / 2, this.getY() - offset + i / 2, 0, 0, 0, easedValue - i, easedValue - i, easedValue - i, easedValue - i);
-            }
+//            if(showHover){
+//                graphics.blit(SELECTED_GUI_BUTTON_OVERLAY, this.getX() - offset + i / 2, this.getY() - offset + i / 2, 0, 0, 0, easedValue - i, easedValue - i, easedValue - i, easedValue - i);
+//            }
             graphics.pose().popPose();
         } else {
             if (sizes > defaultSize) sizes -= 2f;
         }
 
-        if(isSelected){
-            graphics.blit(GUI_BUTTON_SELECTED, this.getX() - offset, this.getY()- offset, 1, 0, 0, easedValue, easedValue, easedValue, easedValue);
-        }
-
         if(buttonOverlay != null){
-            var i = easedValue/3;
-            var uWidth = easedValue - i;
-            graphics.blit(buttonOverlay, this.getX() - offset + i/2, this.getY() - offset + i/2, 1, 0, 0, uWidth, uWidth, uWidth, uWidth);
+            var uWidth = easedValue;
+            graphics.blit(buttonOverlay, this.getX() - offset , this.getY() - offset , 0, 0, 0, uWidth, uWidth, uWidth, uWidth);
         }
     }
 

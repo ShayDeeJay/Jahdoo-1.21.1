@@ -36,6 +36,9 @@ public class Icons {
     public static final ResourceLocation VITALITY_ICON =
         res("textures/element_icons/vitality_icon.png");
 
+    public static final ResourceLocation UTILITY_ICON =
+        res("textures/element_icons/utility_icon.png");
+
     public static final ResourceLocation MANA =
         res("textures/mob_effect/mana_pool.png");
 
@@ -80,6 +83,36 @@ public class Icons {
 
     public static final ResourceLocation GUI_BUTTON =
         res(BUTTON_PREFIX + "gui_button.png");
+
+    public static final ResourceLocation GUI_BUTTON_VITALITY =
+        res(BUTTON_PREFIX + "gui_button_vitality.png");
+
+    public static final ResourceLocation GUI_BUTTON_INFERNO =
+        res(BUTTON_PREFIX + "gui_button_inferno.png");
+
+    public static final ResourceLocation GUI_BUTTON_FROST =
+        res(BUTTON_PREFIX + "gui_button_frost.png");
+
+    public static final ResourceLocation GUI_BUTTON_MYSTIC =
+        res(BUTTON_PREFIX + "gui_button_mystic.png");
+
+    public static final ResourceLocation GUI_BUTTON_UTILITY =
+        res(BUTTON_PREFIX + "gui_button_utility.png");
+
+    public static final ResourceLocation GUI_BUTTON_VITALITY_SQUARE =
+        res(BUTTON_PREFIX + "gui_button_vitality_square.png");
+
+    public static final ResourceLocation GUI_BUTTON_INFERNO_SQUARE =
+        res(BUTTON_PREFIX + "gui_button_inferno_square.png");
+
+    public static final ResourceLocation GUI_BUTTON_FROST_SQUARE =
+        res(BUTTON_PREFIX + "gui_button_frost_square.png");
+
+    public static final ResourceLocation GUI_BUTTON_MYSTIC_SQUARE =
+        res(BUTTON_PREFIX + "gui_button_mystic_square.png");
+
+    public static final ResourceLocation GUI_BUTTON_UTILITY_SQUARE =
+        res(BUTTON_PREFIX + "gui_button_utility_square.png");
 
     public static final ResourceLocation GUI_BUTTON_SELECTED =
         res(BUTTON_PREFIX + "gui_button_select.png");

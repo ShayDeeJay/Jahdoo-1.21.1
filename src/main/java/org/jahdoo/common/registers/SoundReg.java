@@ -72,6 +72,9 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> COINBOX_OPEN =
         registerSoundEvent("coinbox_open");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> UNLOCK =
+        registerSoundEvent("unlock");
+
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));
     }

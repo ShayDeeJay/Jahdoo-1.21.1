@@ -197,7 +197,9 @@ public class CastingData implements IAttachment {
 
     public static AbilityHolder entityHolderWithSelected(LivingEntity livingEntity){
         var data = livingEntity.getData(CASTER_DATA);
-        return data.getHolder(data.getSelectedAbility());
+        var holder = data.getHolder(data.getSelectedAbility());
+        System.out.println(holder);
+        return holder;
     }
 
     public static AbilityHolder entityHolder(LivingEntity livingEntity, String id){

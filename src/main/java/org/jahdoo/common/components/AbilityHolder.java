@@ -7,10 +7,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.utils.Helpers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
@@ -41,12 +43,6 @@ public record AbilityHolder(String abilityName, AbilityData data) {
         );
     }
 
-    public static AbilityHolder getHolder(ItemStack itemStack){
-        var getHolder = itemStack.get(ABILITY_HOLDER);
-        if(getHolder != null) return getHolder;
-        return DEFAULT;
-    }
-
     public static final Codec<AbilityHolder> CODEC = RecordCodecBuilder.create(
         instance -> instance.group(
             Codec.STRING.fieldOf("name").forGetter(AbilityHolder::abilityName),
@@ -65,15 +61,15 @@ public record AbilityHolder(String abilityName, AbilityData data) {
             collectionHolders.put(unlockedAbility.abilityName(), abilityTag);
         }
 
-        tag.put("wand_collection", collectionHolders);
+        tag.put("holder", collectionHolders);
     }
 
 
     public static List<AbilityHolder> readListHolders(CompoundTag tag){
         var unlockedAbilities = new ArrayList<AbilityHolder>();
 
-        if (tag.contains("wand_collection")) {
-            var collectionHolder = tag.getCompound("wand_collection");
+        if (tag.contains("holder")) {
+            var collectionHolder = tag.getCompound("holder");
 
             for (String abilityId : collectionHolder.getAllKeys()) {
                 AbilityHolder abilityHolder = readTag(collectionHolder.getCompound(abilityId), abilityId);
@@ -111,46 +107,33 @@ public record AbilityHolder(String abilityName, AbilityData data) {
                 }
             );
         }
-
-
-
-        compoundTag.put("wand_abilities", storedAbility);
+        compoundTag.put("abilities", storedAbility);
     }
 
     public static AbilityHolder readTag(CompoundTag compoundTag, String abilityId) {
         var holder = new LinkedHashMap<String, AbilityData.AbilityModifiers>();
-        var wandAbilities = compoundTag.getCompound("wand_abilities");
+        var withPos = new ArrayList<Pair<Integer, Pair<String, AbilityData.AbilityModifiers>>>();
+        var abilities = compoundTag.getCompound("abilities");
 
-        // Create a list with nulls up to the maximum possible index
-        int maxIndex = wandAbilities.getAllKeys().stream()
-            .mapToInt(key -> (int) wandAbilities.getList(key, CompoundTag.TAG_DOUBLE).getDouble(6))
-            .max()
-            .orElse(-1) + 1;
-
-        List<Pair<String, AbilityData.AbilityModifiers>> orderedList = new ArrayList<>(Collections.nCopies(maxIndex, null));
-
-        wandAbilities.getAllKeys().forEach(
+        abilities.getAllKeys().forEach(
             key -> {
-                var actualValue = wandAbilities.getList(key, CompoundTag.TAG_DOUBLE);
+                var value = abilities.getList(key, CompoundTag.TAG_DOUBLE);
                 var modifier = new AbilityData.AbilityModifiers(
-                    actualValue.getDouble(0),
-                    actualValue.getDouble(1),
-                    actualValue.getDouble(2),
-                    actualValue.getDouble(3),
-                    actualValue.getDouble(4),
-                    actualValue.getDouble(5) == 0
+                    value.getDouble(0), value.getDouble(1),
+                    value.getDouble(2), value.getDouble(3),
+                    value.getDouble(4), value.getDouble(5) == 0
                 );
-                int position = (int) actualValue.getDouble(6);
-                orderedList.set(position, Pair.of(key, modifier));
+                int position = (int) value.getDouble(6);
+                withPos.add(Pair.of(position, Pair.of(key, modifier)));
             }
         );
 
-        // Add non-null entries to the map in order
-        orderedList.stream()
-            .filter(Objects::nonNull)
-            .forEach(pair -> holder.put(pair.getFirst(), pair.getSecond()));
+        withPos.sort(Comparator.comparing(Pair::getFirst));
+        withPos.forEach(o -> holder.put(o.getSecond().getFirst(),o.getSecond().getSecond()));
 
         var abilityHolder = new AbilityData(holder);
         return new AbilityHolder(abilityId, abilityHolder);
     }
+
+
 }

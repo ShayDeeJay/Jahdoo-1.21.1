@@ -37,7 +37,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
-        this.numberOfRicochets = getTag(ElementalShooterAbility.NUMBER_OF_RICOCHET);
+        this.numberOfRicochets = getTag(NUMBER_OF_RICOCHET);
         this.effectChance = getTag(EFFECT_CHANCE);
         this.effectStrength = getTag(EFFECT_STRENGTH);
         this.effectDuration = getTag(EFFECT_DURATION);
@@ -68,7 +68,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 
     @Override
     public String abilityId() {
-        return ElementalShooterAbility.abilityId.getPath().intern();
+        return generic.getAbilityId();
     }
 
     @Override
@@ -142,7 +142,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
     @Override
     public void addAdditionalDetails(CompoundTag compoundTag) {
         compoundTag.putInt("blockBounce", this.blockBounce);
-        compoundTag.putDouble(ElementalShooterAbility.NUMBER_OF_RICOCHET, this.numberOfRicochets);
+        compoundTag.putDouble(NUMBER_OF_RICOCHET, this.numberOfRicochets);
         compoundTag.putDouble(EFFECT_CHANCE, this.effectChance);
         compoundTag.putDouble(EFFECT_DURATION, this.effectDuration);
         compoundTag.putDouble(EFFECT_STRENGTH, this.effectStrength);
@@ -152,7 +152,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
     @Override
     public void readCompoundTag(CompoundTag compoundTag) {
         this.blockBounce = compoundTag.getInt("blockBounce");
-        this.numberOfRicochets = compoundTag.getDouble(ElementalShooterAbility.NUMBER_OF_RICOCHET);
+        this.numberOfRicochets = compoundTag.getDouble(NUMBER_OF_RICOCHET);
         this.effectChance = compoundTag.getDouble(EFFECT_CHANCE);
         this.effectDuration = compoundTag.getDouble(EFFECT_DURATION);
         this.effectStrength = compoundTag.getDouble(EFFECT_STRENGTH);

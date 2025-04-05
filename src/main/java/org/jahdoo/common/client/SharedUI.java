@@ -29,7 +29,6 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.registers.AbilityReg;
-import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;
@@ -388,13 +387,14 @@ public class SharedUI {
     ){
         AtomicReference<AbstractElement> element = new AtomicReference<>(ElementReg.mystic());
 
-        if (abilityRegistrars.isMultiType()) {
-            var abilityHolder = itemStack.get(ComponentReg.ABILITY_HOLDER.get());
-            var abilityModifiers = abilityHolder.data().abilityProperties().get(SET_ELEMENT_TYPE);
-            ElementReg.fromId((int) abilityModifiers.actualValue()).ifPresent(element::set);
-        } else {
-            element.set(abilityRegistrars.getElemenType());
-        }
+        element.set(abilityRegistrars.getElemenType());
+//        if (abilityRegistrars.isMultiType()) {
+//            var abilityHolder = itemStack.get(ComponentReg.ABILITY_HOLDER.get());
+//            var abilityModifiers = abilityHolder.data().abilityProperties().get(SET_ELEMENT_TYPE);
+//            ElementReg.fromId((int) abilityModifiers.actualValue()).ifPresent(element::set);
+//        } else {
+//            element.set(abilityRegistrars.getElemenType());
+//        }
 
         return element.get();
     }

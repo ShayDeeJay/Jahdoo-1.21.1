@@ -85,6 +85,11 @@ public class AugmentModificationScreen extends Screen {
         getMinecraft().setScreen(new AbilityUnlockScreen(size, panX, panY, zoomX, scaledSpacing, scaledXOffset, centerX, centerY));
     }
 
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
+
     public void displayAugmentProperties(){
         if(holder == null) return;
 
@@ -230,8 +235,8 @@ public class AugmentModificationScreen extends Screen {
         guiGraphics.disableScissor();
 
         SharedUI.header(guiGraphics, this.width, this.height, ability, holder, this.font, this.getMinecraft().level);
-        ElementReg.fromId(getElementIdAugment(ability, holder)).ifPresent(
-            element ->bezelMaker(guiGraphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element)
+        ElementReg.fromId(ability.getElemenType().id()).ifPresent(
+            element -> bezelMaker(guiGraphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element)
         );
     }
 
@@ -240,7 +245,7 @@ public class AugmentModificationScreen extends Screen {
         if(this.selectedY <= 0) return;
 
         var colour = ability.getElemenType().textColourB();
-        var semiTransLayer = getFadedColourBackground(0.8f);
+        var semiTransLayer = getFadedColourBackground(0.9f);
 
         boxMaker(guiGraphics, this.width/2 - 97, (int) (this.selectedY + 8 + yScroll), 97, 14, colour, semiTransLayer);
     }

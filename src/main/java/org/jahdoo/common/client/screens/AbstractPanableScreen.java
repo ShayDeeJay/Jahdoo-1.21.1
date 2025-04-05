@@ -54,7 +54,7 @@ public abstract class AbstractPanableScreen extends Screen {
         var centerY = this.height / 2;
 
         smoothZoom();
-        renderBackground(graphics, centerX, centerY);
+        customRenderBackground(graphics, centerX, centerY);
         transformativeObjects(graphics, mouseX, mouseY, centerX, centerY);
         SharedUI.bezelMaker(graphics, -20 , -20, this.width - 20, this.height - 20, 60, null);
         super.render(graphics, mouseX, mouseY, partialTick);
@@ -78,9 +78,8 @@ public abstract class AbstractPanableScreen extends Screen {
         guiGraphics.disableScissor();
     }
 
-    private static void renderBackground(GuiGraphics guiGraphics, int centerX, int centerY) {
+    public void customRenderBackground(GuiGraphics guiGraphics, int centerX, int centerY) {
         boxMaker(guiGraphics, 2, 2, centerX - 2, centerY - 2, HEADER_COLOUR, getFadedColourBackground(0.8f));
-
     }
 
     private void smoothZoom() {

@@ -6,7 +6,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.client.Icons;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.sounds.SoundEvents.ENDER_EYE_DEATH;
@@ -93,6 +93,6 @@ public class Vitality extends AbstractElement {
 
     @Override
     public @Nullable ResourceLocation iconTexture() {
-        return Helpers.res("textures/element_icons/vitality_icon.png");
+        return Icons.VITALITY_ICON;
     }
 }

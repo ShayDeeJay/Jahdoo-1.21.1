@@ -119,5 +119,11 @@
     "sounds": [
       "jahdoo:coinbox_open"
     ]
+  },
+  "unlock": {
+    "subtitles": "sounds.jahdoo.unlock",
+    "sounds": [
+      "jahdoo:unlock"
+    ]
   }
 }

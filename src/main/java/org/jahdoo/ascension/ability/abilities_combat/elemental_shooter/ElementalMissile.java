@@ -5,6 +5,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -12,15 +13,13 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 
-import static org.jahdoo.ascension.ability.AbilityBuilder.SET_ELEMENT_TYPE;
+import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.registers.EntityDataReg.ELEMENTAL_SHOOTER;
 
-public class ElementalShooterAbility extends Ability {
+public class ElementalMissile extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("elemental_shooter");
-    public static final String SHOT_MULTIPLIER = "Shot Multiplier";
-    public static final String NUMBER_OF_RICOCHET = "Ricochets";
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -59,16 +58,16 @@ public class ElementalShooterAbility extends Ability {
     }
 
     private double getTag(Player player, String name){
-        var wandAbilityHolder = AbilityHolder.getHolderFromWand(player);
-        var id = abilityId.getPath().intern();
-        return Helpers.getModifierValue(wandAbilityHolder, id).get(name).actualValue();
+        var holder = CastingData.entityHolderWithSelected(player);
+        return holder.data().abilityProperties().get(name).setValue();
     }
 
     @Override
     public void invokeAbility(Player player) {
-        var projectileCount = getTag(player, (ElementalShooterAbility.SHOT_MULTIPLIER));
+        var projectileCount = getTag(player, SHOT_MULTIPLIER);
         var index = ELEMENTAL_SHOOTER.get().setAbilityId();
         var aId = abilityId.getPath().intern();
+
         fireMultiShotProjectile((int) projectileCount , 1.2f, player, 0.1, () -> new GenericProjectile(player, 0, index, aId));
         Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.ENDER_EYE_DEATH, 0.25f);
     }

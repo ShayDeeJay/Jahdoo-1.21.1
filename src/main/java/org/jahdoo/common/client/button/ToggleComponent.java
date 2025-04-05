@@ -11,6 +11,7 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import org.jahdoo.common.registers.SoundReg;
 
 import static org.jahdoo.common.client.Icons.*;
 
@@ -105,6 +106,32 @@ public class ToggleComponent  {
         };
     }
 
+    public static AbilityScreenButton menuButtonSoundAbilities(
+        int posX,
+        int posY,
+        Button.OnPress action,
+        ResourceLocation location,
+        int size,
+        boolean active,
+        int scale,
+        WidgetSprites button,
+        boolean showHover,
+        Runnable hoverAction
+    ) {
+        return new AbilityScreenButton(posX, posY, button, size, action, active, location, "", scale, showHover) {
+
+            public void playDownSound(SoundManager handler) {
+                handler.play(SimpleSoundInstance.forUI(SoundReg.UNLOCK, 1F));
+            }
+
+            public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
+                super.renderWidget(graphics, mouseX, mouseY, pPartialTick);
+                if(this.isMouseOver(mouseX, mouseY)) hoverAction.run();
+            }
+
+        };
+    }
+
     public static Renderable textWithBackground(
         int posX,
         int posY,
@@ -170,4 +197,31 @@ public class ToggleComponent  {
         };
     }
 
+    public static Renderable textWithBackgroundScaled(
+        int posX,
+        int posY,
+        Component textOverlay,
+        Minecraft minecraft,
+        Component header,
+        int scale
+    ) {
+        return new Overlay() {
+            public void render(GuiGraphics guiGraphics, int i, int i1, float v) {
+                var width = 96 - scale;
+                var height1 = 32 - scale;
+                var i2 = 43;
+                var pose = guiGraphics.pose();
+
+                pose.pushPose();
+                pose.translate(posX, posY, 0);
+                pose.scale(scale, scale, scale);
+                pose.translate(-posX, -posY, 0);
+                guiGraphics.drawCenteredString(minecraft.font, textOverlay, posX + i2, posY + 8, -2763307);
+//                guiGraphics.blit(TEXT_BACKGROUND, posX, posY, 0, 0, width, height1, width, height1);
+                guiGraphics.drawCenteredString(minecraft.font, header, posX + i2, posY - 7, -6052957);
+                pose.popPose();
+
+            }
+        };
+    }
 }

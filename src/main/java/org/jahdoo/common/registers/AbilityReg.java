@@ -17,7 +17,7 @@ import org.jahdoo.ascension.ability.abilities_combat.ancient_golem.SummonAncient
 import org.jahdoo.ascension.ability.abilities_combat.arcane_shift.ArcaneShiftAbility;
 import org.jahdoo.ascension.ability.abilities_combat.armageddon.ArmageddonAbility;
 import org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility;
-import org.jahdoo.ascension.ability.abilities_combat.elemental_shooter.ElementalShooterAbility;
+import org.jahdoo.ascension.ability.abilities_combat.elemental_shooter.*;
 import org.jahdoo.ascension.ability.abilities_combat.eternal_wizard.SummonEternalWizardAbility;
 import org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility;
 import org.jahdoo.ascension.ability.abilities_combat.frostbolts.FrostboltsAbility;
@@ -43,6 +43,7 @@ import org.jahdoo.ascension.ability.abilities_utility.wall_placer.WallPlacerAbil
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -109,6 +110,7 @@ public class AbilityReg {
         return AbilityReg.REGISTRY
             .stream()
             .filter(a -> a.getElemenType() == element)
+            .sorted(Comparator.comparing(b -> b.rarity().getId()))
             .toList();  // Lazy and returns an Optional
     }
 
@@ -131,7 +133,7 @@ public class AbilityReg {
 
     //Multi-Type
     public static final DeferredHolder<Ability, Ability> ELEMENTAL_SHOOTER =
-        registerSpell(new ElementalShooterAbility());
+        registerSpell(new ElementalMissile());
 
     //Inferno
     public static final DeferredHolder<Ability, Ability> ARMAGEDDON =
@@ -145,6 +147,9 @@ public class AbilityReg {
 
     public static final DeferredHolder<Ability, Ability> BURNING_SKULLS =
         registerSpell(new BurningSkullsAbility());
+
+    public static final DeferredHolder<Ability, Ability> INFERNO_MISSILE =
+        registerSpell(new InfernoMissile());
 
     //Mystic
     public static final DeferredHolder<Ability, Ability> ARCANE_SHIFT =
@@ -162,6 +167,9 @@ public class AbilityReg {
     public static final DeferredHolder<Ability, Ability> DIMENSIONAL_RECALL =
         registerSpell(new DimensionalRecallAbility());
 
+    public static final DeferredHolder<Ability, Ability> MYSTIC_MISSILE =
+        registerSpell(new MysticMissile());
+
     //Frost
     public static final DeferredHolder<Ability, Ability> PERMAFROST =
         registerSpell(new PermafrostAbility());
@@ -174,6 +182,9 @@ public class AbilityReg {
 
     public static final DeferredHolder<Ability, Ability> STORM_RUSH =
         registerSpell(new StormRushAbility());
+
+    public static final DeferredHolder<Ability, Ability> FROST_MISSILE =
+        registerSpell(new FrostMissile());
 
     //Vitality
     public static final DeferredHolder<Ability, Ability> SUMMON_ETERNAL_WIZARD =
@@ -190,6 +201,9 @@ public class AbilityReg {
 
     public static final DeferredHolder<Ability, Ability> LIFE_SIPHON =
         registerSpell(new LifeSiphonAbility());
+
+    public static final DeferredHolder<Ability, Ability> VITALITY_MISSILE =
+        registerSpell(new VitalityMissile());
 
     //Utility
     public static final DeferredHolder<Ability, Ability> BLOCK_BOMB =

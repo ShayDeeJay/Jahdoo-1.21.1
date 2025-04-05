@@ -36,10 +36,10 @@ import static org.jahdoo.common.registers.ElementReg.fromWand;
 public class CastHelper {
 
     public static void onCast(Player player, Ability ability){
-        if(!ability.selfChargeAbility()){
-            castAnimation(player, SINGLE_CAST_ID);
-        }
+        if(!ability.selfChargeAbility()) castAnimation(player, SINGLE_CAST_ID);
+
         ability.invokeAbility(player);
+
         if(ability.getCastType() != HOLD_CAST) player.stopUsingItem();
     }
 
@@ -124,7 +124,7 @@ public class CastHelper {
         var wandItem = Helpers.getUsedItem(player);
         var typeId = CastingData.selectedAbility(player);
         var ability = AbilityReg.getFirstSpellByTypeId(typeId).get();
-        var getElement = SharedUI.getElementWithType(ability, wandItem);
+        var getElement = ability.getElemenType();
 
         if(!player.isCreative()){
             if(validManaAndCooldown(player)){
