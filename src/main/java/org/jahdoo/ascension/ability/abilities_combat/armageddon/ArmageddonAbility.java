@@ -65,15 +65,20 @@ public class ArmageddonAbility extends Ability {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 16;
+    }
+
+    @Override
     public AbilityHolder setModifiers( ) {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(150)
             .setStaticCooldown(4800)
-            .setDamage(40, 20, 5)
-            .setCastingDistance(30, 10, 5)
-            .setLifetime(400, 200, 40)
-            .setAoe(6,4,0.5)
-            .setAbilityTagModifiersRandom(SPAWNING_SPEED, 30,5, false, 5)
+            .setDamage(40, 20, 5, 1, 1.5)
+            .setCastingDistance(30, 10, 5, 1, 1.5)
+            .setLifetime(400, 200, 40, 1, 1.5)
+            .setAoe(6,4,0.5, 1, 1.5)
+            .setAbilityTagModifiersRandom(SPAWNING_SPEED, 30,5, false, 5, 1, 1.5)
             .buildAndReturn();
     }
 

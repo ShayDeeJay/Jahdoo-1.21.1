@@ -66,15 +66,20 @@ public class MysticalSemtexAbility extends Ability {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 8;
+    }
+
+    @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(60)
             .setStaticCooldown(500)
-            .setDamage(45, 25, 5)
-            .setAbilityTagModifiersRandom(additionalProjectile, 10,4, true, 1)
-            .setAbilityTagModifiersRandom(explosionDelays, 50,20, false, 5)
-            .setAbilityTagModifiersRandom(clusterChance, 10,1, false, 1)
-            .setAbilityTagModifiersRandom(explosionRadius, 8,3, true, 1)
+            .setDamage(45, 25, 5, 1, 1.5)
+            .setAbilityTagModifiersRandom(additionalProjectile, 10,4, true, 1, 1, 1.5)
+            .setAbilityTagModifiersRandom(explosionDelays, 50,20, false, 5, 1, 1.5)
+            .setAbilityTagModifiersRandom(clusterChance, 10,1, false, 1, 1, 1.5)
+            .setAbilityTagModifiersRandom(explosionRadius, 8,3, true, 1, 1, 1.5)
             .buildAndReturn();
     }
 

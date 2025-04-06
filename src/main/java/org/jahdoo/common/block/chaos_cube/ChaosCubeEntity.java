@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractTankUser;
@@ -48,7 +49,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.jahdoo.ascension.attachments.ChaosCubeData.getActionDirection;
 import static org.jahdoo.ascension.attachments.ChaosCubeData.getActive;
 import static org.jahdoo.common.block.BlockInteractionHandler.getItemHandlerAt;
-import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.common.entities.EntityAnimations.*;
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 
@@ -130,7 +130,7 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
     public int setCraftingCost() {
         var getHolder = this.augmentSlot().get(ComponentReg.ABILITY_HOLDER);
         if(getHolder == null) return -1;
-        return (int) getSpecificValue(getHolder, AbilityBuilder.MANA_COST);
+        return (int) CastingData.getSpecificValue(getHolder, AbilityBuilder.MANA_COST);
     }
 
     private void positionalParticles(Level level, int positions, double radius) {

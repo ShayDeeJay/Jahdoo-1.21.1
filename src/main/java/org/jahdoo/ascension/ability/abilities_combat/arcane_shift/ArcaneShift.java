@@ -1,7 +1,6 @@
 package org.jahdoo.ascension.ability.abilities_combat.arcane_shift;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -9,11 +8,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbstractAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.SoundReg;
 
 import static net.minecraft.world.entity.EntitySelector.LIVING_ENTITY_STILL_ALIVE;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
@@ -30,7 +32,7 @@ public class ArcaneShift extends AbstractAbility {
 
     public ArcaneShift(Player player) {
         this.player = player;
-        this.abilityHolder = AbilityHolder.getHolderFromWand(player);
+        this.abilityHolder = CastingData.entityHolderWithSelected(player);
     }
 
     @Override
@@ -43,7 +45,7 @@ public class ArcaneShift extends AbstractAbility {
         return ArcaneShiftAbility.abilityId.getPath().intern();
     }
 
-    public void teleportToHome(){
+    public void shift(){
 //        var maxEntity = getTag(ArcaneShiftAbility.maxEntities);
         var distances = getTag(CASTING_DISTANCE);
         var position = player.pick(distances, 0, false).getLocation();
@@ -64,8 +66,7 @@ public class ArcaneShift extends AbstractAbility {
                 player.teleportTo(inFront.x, inFront.y + 0.5, inFront.z);
             }
 
-            Helpers.getSoundWithPositionV(level, position, SoundEvents.ENDERMAN_TELEPORT, 0.5f, 0.8f);
-            Helpers.getSoundWithPositionV(level, position, SoundEvents.ILLUSIONER_PREPARE_MIRROR, 0.5f, 2f);
+            Helpers.getSoundWithPositionV(level, position, SoundReg.TELEPORT.get(), 2f, 1f);
             player.resetFallDistance();
         }
 
@@ -79,7 +80,17 @@ public class ArcaneShift extends AbstractAbility {
 
         for (int i = 0; i < 50; i++) {
             var particle = getAllParticleTypes(element(), 10, 1.5f);
-            level.addParticle(particle, player.getRandomX(1), player.getRandomY(), player.getRandomZ(1), Random.nextDouble(0.1, 0.3) - 0.2, Random.nextDouble(0.2, 0.5), Random.nextDouble(0.1, 0.3) - 0.2);
+
+            ParticleHandlers.sendParticles(
+                level,
+                particle,
+                new Vec3(player.getRandomX(2), player.getRandomY()-1, player.getRandomZ(2)),
+                0,
+                Random.nextDouble(0.1, 0.3) - 0.2,
+                Random.nextDouble(0.2, 0.5),
+                Random.nextDouble(0.1, 0.3) - 0.2,
+                2F
+            );
         }
 
         var list = level.getEntities((Entity) null, player.getBoundingBox().inflate(areaOfEffect, 4, areaOfEffect), LIVING_ENTITY_STILL_ALIVE);

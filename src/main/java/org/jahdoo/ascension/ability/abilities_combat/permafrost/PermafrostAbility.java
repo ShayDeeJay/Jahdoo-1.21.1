@@ -59,14 +59,19 @@ public class PermafrostAbility extends Ability {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 12;
+    }
+
+    @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(60)
             .setStaticCooldown(1200)
-            .setEffectDuration(300, 100, 50)
-            .setEffectStrength(10, 5,1)
-            .setLifetime(200, 100, 20)
-            .setAoe(4, 2, 0.5)
+            .setEffectDuration(300, 100, 50, 1, 1.5)
+            .setEffectStrength(10, 5,1, 1, 1.5)
+            .setLifetime(200, 100, 20, 1, 1.5)
+            .setAoe(4, 2, 0.5, 1, 1.5)
             .buildAndReturn();
     }
 

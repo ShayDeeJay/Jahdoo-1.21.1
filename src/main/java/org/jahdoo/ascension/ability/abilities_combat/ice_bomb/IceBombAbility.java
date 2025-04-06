@@ -62,13 +62,18 @@ public class IceBombAbility extends Ability {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 5;
+    }
+
+    @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(45)
             .setStaticCooldown(400)
-            .setDamage(20, 10, 2)
-            .setEffectStrength(10, 5, 1)
-            .setEffectDuration(600,200,100)
+            .setDamage(20, 10, 2, 1, 1.5)
+            .setEffectStrength(10, 5, 1, 1, 1.5)
+            .setEffectDuration(600,200,100, 1, 1.5)
             .buildAndReturn();
     }
 

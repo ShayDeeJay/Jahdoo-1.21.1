@@ -34,6 +34,11 @@ public class NovaSmashAbility extends Ability {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 6;
+    }
+
+    @Override
     public String getDescription() {
         return GlobalStrings.BLOCK_PLACER;
     }
@@ -67,7 +72,7 @@ public class NovaSmashAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(40)
             .setStaticCooldown(400)
-            .setDamage(12, 4, 2)
+            .setDamage(12, 4, 2, 1, 1.5)
             .buildAndReturn();
     }
 

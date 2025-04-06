@@ -6,11 +6,11 @@ import net.minecraft.sounds.SoundEvents;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
@@ -72,7 +72,7 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
     }
 
     public AbilityHolder armageddonFireballModifiers() {
-        var damageA = DataComponentHelper.getSpecificValue(this.cloud.getAbilityHolder(), DAMAGE);
+        var damageA = CastingData.getSpecificValue(this.cloud.getAbilityHolder(), DAMAGE);
 
         return new AbilityBuilder(null, FireballAbility.abilityId.getPath().intern())
             .setDamageWithValue(0,0, damageA)

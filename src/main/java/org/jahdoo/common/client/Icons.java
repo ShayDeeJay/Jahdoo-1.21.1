@@ -114,6 +114,12 @@ public class Icons {
     public static final ResourceLocation GUI_BUTTON_UTILITY_SQUARE =
         res(BUTTON_PREFIX + "gui_button_utility_square.png");
 
+    public static final ResourceLocation LOCKED_ABILITY =
+        res(BUTTON_PREFIX + "locked_ability.png");
+
+    public static final ResourceLocation LOCKED_ABILITY_CENTER =
+        res(BUTTON_PREFIX + "locked_ability_center.png");
+
     public static final ResourceLocation GUI_BUTTON_SELECTED =
         res(BUTTON_PREFIX + "gui_button_select.png");
 

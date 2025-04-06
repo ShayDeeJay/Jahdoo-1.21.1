@@ -185,9 +185,9 @@ public class Network {
         );
 
         payloadRegistrar.playToClient(
-            SelectedAbilityS2CP.TYPE,
-            SelectedAbilityS2CP.STREAM_CODEC,
-            SelectedAbilityS2CP::handle
+            CastingDataSyncS2CP.TYPE,
+            CastingDataSyncS2CP.STREAM_CODEC,
+            CastingDataSyncS2CP::handle
         );
     }
 

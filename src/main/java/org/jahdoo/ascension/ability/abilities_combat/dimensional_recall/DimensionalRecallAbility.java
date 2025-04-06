@@ -51,8 +51,13 @@ public class DimensionalRecallAbility extends Ability {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 50;
+    }
+
+    @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.EPIC;
+        return JahdooRarity.ETERNAL;
     }
 
     @Override
@@ -69,7 +74,7 @@ public class DimensionalRecallAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(120)
             .setStaticCooldown(7200)
-            .setAbilityTagModifiersRandom(CASTING_TIME, 400, 100, false, 100)
+            .setAbilityTagModifiersRandom(CASTING_TIME, 400, 100, false, 100, 1, 1.5)
             .buildAndReturn();
     }
 

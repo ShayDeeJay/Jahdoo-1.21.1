@@ -273,7 +273,6 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             drawStringWithBackground(guiGraphics, this.font, expLvl, i, startY + 69, 0, 8453920, true);
             renderXPBar(guiGraphics, i - 91, startY + 78, this.getMinecraft());
         }
-
     }
 
     public void reRollBaseModifiers(){

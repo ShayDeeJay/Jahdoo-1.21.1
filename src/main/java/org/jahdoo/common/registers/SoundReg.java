@@ -75,6 +75,12 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> UNLOCK =
         registerSoundEvent("unlock");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> TELEPORT =
+        registerSoundEvent("teleport");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> SUSPEND =
+        registerSoundEvent("suspend");
+
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));
     }

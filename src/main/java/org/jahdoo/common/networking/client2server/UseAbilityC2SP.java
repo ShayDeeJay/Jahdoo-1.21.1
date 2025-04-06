@@ -7,11 +7,10 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.AbilityReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.components.DataComponentHelper;
 
 public class UseAbilityC2SP implements CustomPacketPayload {
 
@@ -25,8 +24,8 @@ public class UseAbilityC2SP implements CustomPacketPayload {
     public void toBytes(FriendlyByteBuf bug) {}
 
     private void invokeSelectedAbility(Player player){
-        Ability ability = AbilityReg.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
-        if(ability != null) ability.invokeAbility(player);
+        var isDistanceCast = AbilityReg.getFirstSpellByTypeId(CastingData.selectedAbility(player));
+        isDistanceCast.ifPresent(ability -> ability.invokeAbility(player));
     }
 
     public void handle(IPayloadContext ctx) {

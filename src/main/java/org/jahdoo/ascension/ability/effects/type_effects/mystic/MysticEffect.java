@@ -82,8 +82,8 @@ public class MysticEffect extends MobEffect {
             livingEntity.setDeltaMovement(0, 0.5, 0);
         }
 
-        livingEntity.playSound(getElement().sound());
-        livingEntity.playSound(SoundReg.DASH_EFFECT_INSTANT.get(), 1, 0.6f);
+//        livingEntity.playSound(getElement().sound());
+        livingEntity.playSound(SoundReg.SUSPEND.get());
         super.onEffectAdded(livingEntity, amplifier);
     }
 

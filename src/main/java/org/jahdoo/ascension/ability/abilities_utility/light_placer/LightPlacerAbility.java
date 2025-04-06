@@ -56,7 +56,7 @@ public class LightPlacerAbility extends AbstractBlockAbility {
     @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
-            .setMana(15, 5, 2)
+            .setMana(15, 5, 2, 1, 1.5)
             .buildAndReturn();
     }
 
@@ -68,6 +68,11 @@ public class LightPlacerAbility extends AbstractBlockAbility {
             abilityId.getPath().intern()
         );
         fireUtilityProjectile(genericProjectile, player);
+    }
+
+    @Override
+    public int getAbilityCost() {
+        return 1;
     }
 
 }

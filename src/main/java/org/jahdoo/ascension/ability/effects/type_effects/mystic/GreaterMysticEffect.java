@@ -29,7 +29,6 @@ import java.util.List;
 
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 
 public class GreaterMysticEffect extends MobEffect {
@@ -76,8 +75,7 @@ public class GreaterMysticEffect extends MobEffect {
             livingEntity.setDeltaMovement(0, 0.5, 0);
         }
 
-        livingEntity.playSound(getElement().sound());
-        livingEntity.playSound(SoundReg.DASH_EFFECT_INSTANT.get(), 1, 0.6f);
+        livingEntity.playSound(SoundReg.SUSPEND.get(), 2F, 1F);
         super.onEffectAdded(livingEntity, amplifier);
     }
 

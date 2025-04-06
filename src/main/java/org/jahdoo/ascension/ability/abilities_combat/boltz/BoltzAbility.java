@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -19,7 +20,6 @@ import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.SoundReg;
 
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 
 public class BoltzAbility extends Ability {
@@ -63,19 +63,19 @@ public class BoltzAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(50)
             .setStaticCooldown(200)
-            .setDamage(30,10,5)
-            .setEffectDuration(300,100,50)
-            .setEffectStrength(10, 0, 1)
-            .setEffectChance(20,5,5)
-            .setAbilityTagModifiersRandom(DISCHARGE_RADIUS, 3, 1, true, 1)
-            .setAbilityTagModifiersRandom(TOTAL_BOLTS, 6, 2, true, 1)
+            .setDamage(30,10,5, 1, 1.5)
+            .setEffectDuration(300,100,50, 1, 1.5)
+            .setEffectStrength(10, 0, 1, 1, 1.5)
+            .setEffectChance(20,5,5, 1, 1.5)
+            .setAbilityTagModifiersRandom(DISCHARGE_RADIUS, 3, 1, true, 1, 1, 1.5)
+            .setAbilityTagModifiersRandom(TOTAL_BOLTS, 6, 2, true, 1, 1, 1.5)
             .buildAndReturn();
     }
 
     @Override
     public void invokeAbility(Player player) {
         var amplifier = 1;
-        var totalShots = (int) getSpecificValue(player, TOTAL_BOLTS) * amplifier;
+        var totalShots = (int) CastingData.getSpecificValue(player, TOTAL_BOLTS) * amplifier;
         var direction = player.getLookAngle();
         var particleOptions = ParticleHandlers.genericParticle(ParticleStore.ELECTRIC_PARTICLE, this.getElemenType(), 5, 1.2f, 0.5);
 
@@ -104,6 +104,11 @@ public class BoltzAbility extends Ability {
         }
 
         getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.ORB_CREATE.get(), 0.5f,1.5f);
+    }
+
+    @Override
+    public int getAbilityCost() {
+        return 0;
     }
 
 }

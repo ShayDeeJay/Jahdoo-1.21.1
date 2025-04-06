@@ -55,7 +55,7 @@ public class BlockBreakerAbility extends AbstractBlockAbility {
     @Override
     public AbilityHolder setModifiers() {
        return new AbilityBuilder(abilityId.getPath().intern())
-            .setMana(5, 1, 1)
+            .setMana(5, 1, 1, 1, 1.5)
             .buildAndReturn();
     }
 
@@ -65,6 +65,11 @@ public class BlockBreakerAbility extends AbstractBlockAbility {
             player, 0, projectileKey(), abilityId.getPath().intern()
         );
         fireUtilityProjectile(genericProjectile, player);
+    }
+
+    @Override
+    public int getAbilityCost() {
+        return 1;
     }
 
 }

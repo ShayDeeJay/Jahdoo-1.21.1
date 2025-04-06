@@ -7,6 +7,7 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
+import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.SoundReg;
 
 import javax.annotation.Nullable;
@@ -21,6 +22,8 @@ public class AbilityScreenButton extends ImageButton {
     private final OnPress pOnPress;
     private final ResourceLocation buttonOverlay;
     private final String label;
+    private final boolean isDummy;
+    private final boolean locked;
 
     public AbilityScreenButton(
         int pX,
@@ -32,7 +35,9 @@ public class AbilityScreenButton extends ImageButton {
         @Nullable ResourceLocation buttonOverlay,
         String label,
         int scale,
-        boolean showHover
+        boolean showHover,
+        boolean isDummy,
+        boolean locked
     ) {
         super(pX, pY, size, size, sprites, pOnPress);
         this.defaultSize = size;
@@ -43,6 +48,8 @@ public class AbilityScreenButton extends ImageButton {
         this.buttonOverlay = buttonOverlay;
         this.label = label;
         this.showHover = showHover;
+        this.isDummy = isDummy;
+        this.locked = locked;
     }
 
     public float easeInOutCubic(float t) {
@@ -69,31 +76,44 @@ public class AbilityScreenButton extends ImageButton {
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         var normalizedTick = (sizes - defaultSize) / (totalSize - defaultSize);
         var easedTick = easeInOutCubic(normalizedTick);
+
+        var easedValue1 = (int) (easedTick * (totalSize - defaultSize)) + (defaultSize*2);
+        var offset1 = (easedValue1 - (defaultSize)) / 2;
+
         var easedValue = (int) (easedTick * (totalSize - defaultSize)) + defaultSize;
         var offset = (easedValue - defaultSize) / 2;
 
         if(isSelected) sizes = totalSize;
-        this.setSize((int) sizes-4, (int) sizes-4);
 
         graphics.drawCenteredString(Minecraft.getInstance().font, label, this.getX() + 17, this.getY()-8, -1);
-        graphics.blit(this.sprites.enabled(), this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
+        graphics.blit(this.sprites.enabled(), this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
+        if(locked && !isDummy){
+            graphics.blit(Icons.LOCKED_ABILITY_CENTER, this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
+        }
+
+
 
         if (this.isMouseOver(mouseX, mouseY)) {
             sizes = Math.min(sizes + 2f, totalSize);
-            int i = 4;
             graphics.pose().pushPose();
             graphics.pose().translate(0,0,2);
-//            if(showHover){
-//                graphics.blit(SELECTED_GUI_BUTTON_OVERLAY, this.getX() - offset + i / 2, this.getY() - offset + i / 2, 0, 0, 0, easedValue - i, easedValue - i, easedValue - i, easedValue - i);
-//            }
             graphics.pose().popPose();
         } else {
             if (sizes > defaultSize) sizes -= 2f;
         }
 
         if(buttonOverlay != null){
-            var uWidth = easedValue;
-            graphics.blit(buttonOverlay, this.getX() - offset , this.getY() - offset , 0, 0, 0, uWidth, uWidth, uWidth, uWidth);
+
+            graphics.pose().pushPose();
+            graphics.blit(buttonOverlay, this.getX() - offset , this.getY() - offset , 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
+
+
+//            setShaderColor(1.0F, 1.0F, 1.0F, 0.2F);
+            if(locked && !isDummy){
+                graphics.blit(Icons.LOCKED_ABILITY, this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
+            }
+//            setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            graphics.pose().popPose();
         }
     }
 

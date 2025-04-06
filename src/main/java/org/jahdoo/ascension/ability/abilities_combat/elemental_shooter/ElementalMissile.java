@@ -57,6 +57,11 @@ public class ElementalMissile extends Ability {
         return true;
     }
 
+    @Override
+    public int getAbilityCost() {
+        return 1;
+    }
+
     private double getTag(Player player, String name){
         var holder = CastingData.entityHolderWithSelected(player);
         return holder.data().abilityProperties().get(name).setValue();
@@ -72,17 +77,31 @@ public class ElementalMissile extends Ability {
         Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.ENDER_EYE_DEATH, 0.25f);
     }
 
+    public AbilityHolder getWithElement(int id){
+        return new AbilityBuilder(abilityId.getPath().intern())
+            .setStaticMana(15)
+            .setStaticCooldown(0)
+            .setDamage(20, 10, 2, 1, 1.5)
+            .setEffectChance(50, 10, 10, 1, 1.5)
+            .setEffectStrength(10, 1, 1, 1, 1.5)
+            .setEffectDuration(300, 100, 50, 1, 1.5)
+            .setAbilityTagModifiersRandom(SHOT_MULTIPLIER, 3, 1, true, 1, 1, 1.5)
+            .setAbilityTagModifiersRandom(NUMBER_OF_RICOCHET, 6, 1, true, 1, 1, 1.5)
+            .setModifier(SET_ELEMENT_TYPE, 0, 0, false, id)
+            .buildAndReturn();
+    }
+
     @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(15)
             .setStaticCooldown(0)
-            .setDamage(20, 10, 2)
-            .setEffectChance(50, 10, 10)
-            .setEffectStrength(10, 1, 1)
-            .setEffectDuration(300, 100, 50)
-            .setAbilityTagModifiersRandom(SHOT_MULTIPLIER, 3, 1, true, 1)
-            .setAbilityTagModifiersRandom(NUMBER_OF_RICOCHET, 6, 1, true, 1)
+            .setDamage(20, 10, 2, 1, 1.5)
+            .setEffectChance(50, 10, 10, 1, 1.5)
+            .setEffectStrength(10, 1, 1, 1, 1.5)
+            .setEffectDuration(300, 100, 50, 1, 1.5)
+            .setAbilityTagModifiersRandom(SHOT_MULTIPLIER, 3, 1, true, 1, 1, 1.5)
+            .setAbilityTagModifiersRandom(NUMBER_OF_RICOCHET, 6, 1, true, 1, 1, 1.5)
             .setModifier(SET_ELEMENT_TYPE, 0, 0, false, Random.nextInt(1,5))
             .buildAndReturn();
     }

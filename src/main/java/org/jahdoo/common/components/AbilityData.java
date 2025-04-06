@@ -37,6 +37,8 @@ public record AbilityData(Map<String, AbilityModifiers> abilityProperties) {
         double lowestValue,
         double step,
         double setValue,
+        double baseCost,
+        double upgradeMultiplier,
         boolean isHigherBetter
     ){
         private static final StreamCodec<FriendlyByteBuf, AbilityModifiers> STREAM_CODEC = StreamCodec.ofMember(
@@ -60,6 +62,8 @@ public record AbilityData(Map<String, AbilityModifiers> abilityProperties) {
                 friendlyByteBuf.readDouble(),
                 friendlyByteBuf.readDouble(),
                 friendlyByteBuf.readDouble(),
+                friendlyByteBuf.readDouble(),
+                friendlyByteBuf.readDouble(),
                 friendlyByteBuf.readBoolean()
             );
         }
@@ -71,6 +75,8 @@ public record AbilityData(Map<String, AbilityModifiers> abilityProperties) {
                 Codec.DOUBLE.fieldOf("lowest").forGetter(AbilityModifiers::lowestValue),
                 Codec.DOUBLE.fieldOf("step").forGetter(AbilityModifiers::step),
                 Codec.DOUBLE.fieldOf("set_value").forGetter(AbilityModifiers::setValue),
+                Codec.DOUBLE.fieldOf("baseCost").forGetter(AbilityModifiers::baseCost),
+                Codec.DOUBLE.fieldOf("upgrade_multiplier").forGetter(AbilityModifiers::upgradeMultiplier),
                 Codec.BOOL.fieldOf("is_higher_better").forGetter(AbilityModifiers::isHigherBetter)
             ).apply(instance, AbilityModifiers::new)
         );
@@ -78,11 +84,13 @@ public record AbilityData(Map<String, AbilityModifiers> abilityProperties) {
         @Override
         public String toString() {
             return "AbilityModifiers {\n" +
-                "  ActualValue: " + actualValue + ",\n" +
-                "  HighestValue: " + highestValue + ",\n" +
-                "  LowestValue: " + lowestValue + ",\n" +
+                "  Actual Value: " + actualValue + ",\n" +
+                "  Highest Value: " + highestValue + ",\n" +
+                "  Lowest Value: " + lowestValue + ",\n" +
                 "  Step: " + step + ",\n" +
-                "  SetValue: " + setValue + ",\n" +
+                "  Set Value: " + setValue + ",\n" +
+                "  Base Cost: " + setValue + ",\n" +
+                "  Upgrade Multiplier: " + setValue + ",\n" +
                 "  Is Higher Better: " + isHigherBetter + "\n" +
                 "}";
         }

@@ -50,6 +50,11 @@ public class FrostboltsAbility extends Ability {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 6;
+    }
+
+    @Override
     public JahdooRarity rarity() {
         return JahdooRarity.EPIC;
     }
@@ -73,12 +78,12 @@ public class FrostboltsAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(60)
             .setStaticCooldown(600)
-            .setDamage(25, 15, 2)
-            .setAbilityTagModifiersRandom(NUMBER_OF_PROJECTILES, 30,10, true, 5)
-            .setEffectDuration(300, 100, 20)
-            .setEffectStrength(10, 0,1)
-            .setEffectChance(40,5,5)
-            .setCastingDistance(30,5,5)
+            .setDamage(25, 15, 2, 1, 1.5)
+            .setAbilityTagModifiersRandom(NUMBER_OF_PROJECTILES, 30,10, true, 5, 1, 1.5)
+            .setEffectDuration(300, 100, 20, 1, 1.5)
+            .setEffectStrength(10, 0, 1, 1, 1.5)
+            .setEffectChance(40, 5, 5, 1, 1.5)
+            .setCastingDistance(30, 5, 5, 1, 1.5)
             .buildAndReturn();
     }
 

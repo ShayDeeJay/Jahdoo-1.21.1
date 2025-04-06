@@ -116,12 +116,14 @@ public class ToggleComponent  {
         int scale,
         WidgetSprites button,
         boolean showHover,
-        Runnable hoverAction
+        Runnable hoverAction,
+        boolean isDummy,
+        boolean locked
     ) {
-        return new AbilityScreenButton(posX, posY, button, size, action, active, location, "", scale, showHover) {
+        return new AbilityScreenButton(posX, posY, button, size, action, active, location, "", scale, showHover, isDummy, locked) {
 
             public void playDownSound(SoundManager handler) {
-                handler.play(SimpleSoundInstance.forUI(SoundReg.UNLOCK, 1F));
+                if(!locked) handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT, 1F));
             }
 
             public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {

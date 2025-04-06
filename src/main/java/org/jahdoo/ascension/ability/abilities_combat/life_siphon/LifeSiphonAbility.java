@@ -61,14 +61,19 @@ public class LifeSiphonAbility extends Ability {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 14;
+    }
+
+    @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(100)
             .setStaticCooldown(1200)
-            .setDamage(20, 10, 2)
-            .setRange(2.5, 1.5, 0.2)
-            .setAbilityTagModifiersRandom(HEAL_VALUE, 1.5,0.5, true, 0.2)
-            .setAbilityTagModifiersRandom(PULSES, 5,1, true, 1)
+            .setDamage(20, 10, 2, 1, 1.5)
+            .setRange(2.5, 1.5, 0.2, 1, 1.5)
+            .setAbilityTagModifiersRandom(HEAL_VALUE, 1.5,0.5, true, 0.2, 1, 1.5)
+            .setAbilityTagModifiersRandom(PULSES, 5,1, true, 1, 1, 1.5)
             .buildAndReturn();
     }
 

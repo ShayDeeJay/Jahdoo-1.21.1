@@ -93,7 +93,7 @@ public class WallPlacer extends AbstractUtilityProjectile {
         for (int x = -radius; x <= radius; x++) {
             for (int y = -radius; y <= radius; y++) {
                 for (int z = -radius; z <= radius; z++) {
-                    BlockPos offsetPos = pos.offset(
+                    var offsetPos = pos.offset(
                         x * (isLookingUpOrDown || axisZ ? 1 : 0),
                         y * (isLookingUpOrDown ? 0 : 1),
                         z * (isLookingUpOrDown || axisX ? 1 : 0)

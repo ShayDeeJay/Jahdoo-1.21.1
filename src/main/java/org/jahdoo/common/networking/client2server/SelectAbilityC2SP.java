@@ -7,7 +7,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.networking.server2client.SelectedAbilityS2CP;
+import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
@@ -41,7 +41,7 @@ public class SelectAbilityC2SP implements CustomPacketPayload {
                     if(!currentAbility.isEmpty()) {
                         castingData.setSelectedAbility(currentAbility);
                     } else {
-                        sendToPlayer(serverPlayer, new SelectedAbilityS2CP(castingData.getSelectedAbility()));
+                        sendToPlayer(serverPlayer, new CastingDataSyncS2CP(castingData));
                     }
                 }
             }

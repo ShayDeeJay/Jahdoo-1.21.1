@@ -46,13 +46,13 @@ import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRej
 import org.jahdoo.ascension.ability.abilities_utility.block_placer.BlockPlacerAbility;
 import org.jahdoo.ascension.ability.abilities_utility.wall_placer.WallPlacerAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.trading_post.RewardLootTables;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
-import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.SharedEntityBehaviours;
@@ -207,7 +207,7 @@ public class EventHelpers {
     public static void saveBlockType(PlayerInteractEvent.LeftClickBlock event, ItemStack item, BlockState blockState, BlockPos pos) {
         if(event.getItemStack().getItem() instanceof WandItem){
             if(event.getEntity().isShiftKeyDown()){
-                var name = DataComponentHelper.getAbilityTypeItemStack(item);
+                var name = CastingData.selectedAbility(event.getEntity());
                 var wallPlacer = WallPlacerAbility.abilityId.getPath().intern();
                 var blockPlacer = BlockPlacerAbility.abilityId.getPath().intern();
 

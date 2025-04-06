@@ -3,8 +3,9 @@ package org.jahdoo.ascension.ability.abilities_combat;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -17,7 +18,6 @@ import org.jahdoo.common.registers.SoundReg;
 import java.util.ArrayList;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.ENTITY_MULTIPLIER;
-import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
 
 public class BurningSkullsAbility extends Ability {
 
@@ -63,19 +63,18 @@ public class BurningSkullsAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(40)
             .setStaticCooldown(300)
-            .setDamage(20, 10, 2)
-            .setEffectDuration(200, 100, 20)
-            .setEffectStrength(4, 0, 1)
-            .setEffectChance(25, 0, 5)
-            .shotMultiplier(5, 2, 1)
-            .setLifetime(100, 40, 20)
+            .setDamage(20, 10, 2, 1, 1.5)
+            .setEffectDuration(200, 100, 20, 1, 1.5)
+            .setEffectStrength(4, 0, 1, 1, 1.5)
+            .setEffectChance(25, 0, 5, 1, 1.5)
+            .shotMultiplier(5, 2, 1, 1, 1.5)
+            .setLifetime(100, 40, 20, 1, 1.5)
             .buildAndReturn();
     }
 
     @Override
     public void invokeAbility(Player player) {
-        var itemInHand = Helpers.getUsedItem(player);
-        var projectileCount = getSpecificValue(player, ENTITY_MULTIPLIER);
+        var projectileCount = CastingData.getSpecificValue(player, ENTITY_MULTIPLIER);
         var adjustSpread = 1.8 - (projectileCount / 4);
         var getLocalEntities = new ArrayList<>(BurningSkull.getValidTargets(player, player, 10));
         var totalWidth = (projectileCount - 1) * adjustSpread;
@@ -93,6 +92,11 @@ public class BurningSkullsAbility extends Ability {
                 fireProjectileDirection(skull, player, 0.3F, direction);
             }
         }
+    }
+
+    @Override
+    public int getAbilityCost() {
+        return 5;
     }
 
 }

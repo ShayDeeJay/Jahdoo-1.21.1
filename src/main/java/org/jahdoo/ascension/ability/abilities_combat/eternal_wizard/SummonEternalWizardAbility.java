@@ -64,16 +64,21 @@ public class SummonEternalWizardAbility extends Ability {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 8;
+    }
+
+    @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(100)
             .setStaticCooldown(6000)
-            .setDamage(40, 15, 5)
-            .setEffectStrength(10, 0, 1)
-            .setEffectDuration(600, 200, 50)
-            .setEffectChance(60, 20, 10)
-            .setCastingDistance(30, 10, 5)
-            .setLifetime(12000, 2400, 1200)
+            .setDamage(40, 15, 5, 1, 1.5)
+            .setEffectStrength(10, 0, 1, 1, 1.5)
+            .setEffectDuration(600, 200, 50, 1, 1.5)
+            .setEffectChance(60, 20, 10, 1, 1.5)
+            .setCastingDistance(30, 10, 5, 1, 1.5)
+            .setLifetime(12000, 2400, 1200, 1, 1.5)
             .buildAndReturn();
     }
 

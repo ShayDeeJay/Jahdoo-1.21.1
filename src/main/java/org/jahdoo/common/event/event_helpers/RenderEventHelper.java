@@ -18,6 +18,7 @@ import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.jahdoo.ascension.ability.abilities_combat.arcane_shift.ArcaneShiftAbility;
 import org.jahdoo.ascension.ability.abilities_combat.frostbolts.FrostboltsAbility;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.utils.Configuration;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.RenderHelpers;
@@ -38,10 +39,9 @@ import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
 public class RenderEventHelper {
 
     public static void renderTeleportLocationOverlay(RenderLevelStageEvent event, Player player, ItemStack stack) {
-        var getSelectedAbility = stack.get(WAND_DATA);
-        if(getSelectedAbility == null) return;
-        if(Objects.equals(getSelectedAbility.selectedAbility(), ArcaneShiftAbility.abilityId.getPath().intern())){
-            var pickDistance = Helpers.getTag(player, CASTING_DISTANCE, getSelectedAbility.selectedAbility());
+        var ability = CastingData.selectedAbility(player);
+        if(Objects.equals(ability, ArcaneShiftAbility.abilityId.getPath().intern())){
+            var pickDistance = CastingData.getSpecificValue(player, CASTING_DISTANCE);
             var pick = player.pick(pickDistance, 1, false);
             if (stack.getItem() instanceof WandItem) {
                 if (pick.getType() != HitResult.Type.MISS) {
@@ -87,22 +87,20 @@ public class RenderEventHelper {
     }
 
     public static void renderAbilityOverlay(RenderLevelStageEvent event, ItemStack stack, Player player) {
-        var getSelectedAbility = stack.get(WAND_DATA);
-        if(getSelectedAbility == null) return;
         var filtered = List.of(
               ArcaneShiftAbility.abilityId.getPath().intern(),
               FrostboltsAbility.abilityId.getPath().intern()
         );
 
-        var typeId = getSelectedAbility.selectedAbility();
+        var typeId = CastingData.selectedAbility(player);
         var ability = AbilityReg.getFirstSpellByTypeId(typeId);
         var view = event.getCamera().getPosition();
         var pose = event.getPoseStack();
         var buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         if(ability.isEmpty() || filtered.contains(typeId) || player.getData(AttachmentReg.CASTER_DATA.get()).isAbilityOnCooldown(typeId)) return;
 
-        var pickDistance = Helpers.getTag(player, CASTING_DISTANCE, typeId);
-        var radius = Helpers.getTag(player, AOE, typeId) * 3;
+        var pickDistance = CastingData.getSpecificValue(player, CASTING_DISTANCE);
+        var radius = CastingData.getSpecificValue(player, AOE) * 2;
         var scale = Math.sin((event.getRenderTick() + event.getPartialTick().getRealtimeDeltaTicks()) / 4.0F) * Math.max((radius/10), 0.1) + Math.max(radius, 1);
         var pick = player.pick(pickDistance, event.getPartialTick().getGameTimeDeltaTicks(), false);
         var item = stack.getItem();
@@ -166,8 +164,9 @@ public class RenderEventHelper {
                 if (pick instanceof BlockHitResult blockHitResult) {
                     var getSelectedAbility = stack.get(WAND_DATA);
                     if(getSelectedAbility == null) return;
-                    var breakerSize = Helpers.getTag(player, SIZE, getSelectedAbility.selectedAbility());
-                    var offSet = Helpers.getTag(player, OFFSET, getSelectedAbility.selectedAbility());
+
+                    var breakerSize = CastingData.getSpecificValue(player, SIZE);
+                    var offSet = CastingData.getSpecificValue(player, OFFSET);
                     var size = (int) ((breakerSize / 2) - offSet);
                     var radius = (int) (breakerSize / 2);
                     var pos = blockHitResult.getBlockPos();

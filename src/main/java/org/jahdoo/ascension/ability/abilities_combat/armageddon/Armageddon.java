@@ -87,7 +87,7 @@ public class Armageddon extends DefaultEntityBehaviour {
     }
 
     public AbilityData setAbilityModifiers(String name, double value){
-        var abilityModifiers = new AbilityData.AbilityModifiers(value, 0,0,0,value,true);
+        var abilityModifiers = new AbilityData.AbilityModifiers(value, 0,0,0,value,0,0,true);
         return new AbilityData(Map.of(name, abilityModifiers));
     }
 

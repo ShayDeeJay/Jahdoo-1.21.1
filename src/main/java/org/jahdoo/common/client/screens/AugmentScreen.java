@@ -152,7 +152,7 @@ public class AugmentScreen extends Screen  {
     private void updateAugmentConfig(String e, AbilityData.AbilityModifiers v, double i) {
 
         var newHolder = new AbilityData(new HashMap<>(holder.data().abilityProperties()));
-        var abilityModifier = new AbilityData.AbilityModifiers(v.actualValue(), v.highestValue(), v.lowestValue(), v.step(), i, v.isHigherBetter());
+        var abilityModifier = new AbilityData.AbilityModifiers(v.actualValue(), v.highestValue(), v.lowestValue(), v.step(), i, v.baseCost(), v.upgradeMultiplier(), v.isHigherBetter());
         newHolder.abilityProperties().put(e, abilityModifier);
         //TODO AS NEEDS PACKET FIX
         /*

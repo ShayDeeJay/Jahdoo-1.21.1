@@ -56,12 +56,12 @@ public class SummonAncientGolemAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(200)
             .setStaticCooldown(6000)
-            .setDamage(40, 10, 5)
-            .setEffectStrength(10, 0, 1)
-            .setEffectDuration(600, 200, 50)
-            .setEffectChance(60, 20, 10)
-            .setCastingDistance(30, 10, 5)
-            .setLifetime(12000, 2400, 1200)
+            .setDamage(40, 10, 5, 1, 1.5)
+            .setEffectStrength(10, 0, 1, 1, 1.5 )
+            .setEffectDuration(600, 200, 50, 1, 1.5)
+            .setEffectChance(60, 20, 10, 1, 1.5)
+            .setCastingDistance(30, 10, 5, 1, 1.5)
+            .setLifetime(12000, 2400, 1200, 1, 1.5)
             .buildAndReturn();
     }
 
@@ -76,6 +76,11 @@ public class SummonAncientGolemAbility extends Ability {
         player.level().addFreshEntity(aoeCloud);
         player.level().playSound(null, BlockPos.containing(location), SoundEvents.ELDER_GUARDIAN_DEATH, SoundSource.BLOCKS, 2f, 1.4f);
         player.level().playSound(null, BlockPos.containing(location), SoundReg.EXPLOSION.get(), SoundSource.BLOCKS, 2f, 1.2f);
+    }
+
+    @Override
+    public int getAbilityCost() {
+        return 16;
     }
 
 }

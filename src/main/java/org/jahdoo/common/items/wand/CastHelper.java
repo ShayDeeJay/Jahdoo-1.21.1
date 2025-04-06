@@ -15,17 +15,15 @@ import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.ElementReg;
 
-import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.ability.Ability.DISTANCE_CAST;
 import static org.jahdoo.ascension.ability.Ability.HOLD_CAST;
+import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.Maths.getFormattedFloat;
-import static org.jahdoo.common.components.DataComponentHelper.getSpecificValue;
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttributeReg.COOLDOWN_REDUCTION;
@@ -53,9 +51,8 @@ public class CastHelper {
     }
 
     public static void chargeManaAndCooldown(String abilityId, Player player){
-        var wandItem = Helpers.getUsedItem(player);
-        var cooldownCost = getSpecificValue(player, COOLDOWN);
-        var getManaCost = getSpecificValue(player, MANA_COST);
+        var cooldownCost = CastingData.getSpecificValue(player, COOLDOWN);
+        var getManaCost = CastingData.getSpecificValue(player, MANA_COST);
         chargeMana(abilityId, getManaCost, player);
         chargeCooldown(abilityId, cooldownCost, player);
     }
@@ -129,8 +126,8 @@ public class CastHelper {
         if(!player.isCreative()){
             if(validManaAndCooldown(player)){
                 if(!ability.selfChargeAbility()){
-                    var cooldownCost = getSpecificValue(player, COOLDOWN);
-                    var getManaCost = getSpecificValue(player, MANA_COST);
+                    var cooldownCost = CastingData.getSpecificValue(player, COOLDOWN);
+                    var getManaCost = CastingData.getSpecificValue(player, MANA_COST);
                     var adjustedMana = Helpers.attributeModifierCalculator(player, (float) getManaCost, false, getElement.manaReduction(), MANA_COST_REDUCTION);
                     var adjustedCooldown = Helpers.attributeModifierCalculator(player, (float) cooldownCost, false, getElement.cooldownReduction(), COOLDOWN_REDUCTION);
                     chargeCooldown(typeId, adjustedCooldown, player);
@@ -166,10 +163,10 @@ public class CastHelper {
     }
 
     public static boolean getCanApplyDistanceAbility(Player player, ItemStack itemStack){
-        var isDistanceCast = AbilityReg.REGISTRY.get(DataComponentHelper.getAbilityTypeWand(player));
-        if(isDistanceCast != null && isDistanceCast.getCastType() == DISTANCE_CAST){
+        var isDistanceCast = AbilityReg.getFirstSpellByTypeId(CastingData.selectedAbility(player));
+        if(isDistanceCast.isPresent() && isDistanceCast.get().getCastType() == DISTANCE_CAST){
 //            var getCurrentAbility = DataComponentHelper.getAbilityTypeItemStack(itemStack);
-            var getCurrentAbility = DataComponentHelper.getAbilityTypePlayerString(player);
+            var getCurrentAbility = CastingData.selectedAbility(player);
             var getAbility = Helpers.getModifierValue(player, getCurrentAbility);
             var allowedDistance = getAbility.get(CASTING_DISTANCE).setValue();
             var lookAtLocation = player.pick(allowedDistance, 0, false);
@@ -195,7 +192,7 @@ public class CastHelper {
         var typeId = CastingData.selectedAbility(player);
         var ability = AbilityReg.getFirstSpellByTypeId(typeId).get();
         var getElement = fromWand(wandItem.getItem()).orElseThrow();
-        var getManaCost = getSpecificValue(player, MANA_COST);
+        var getManaCost = CastingData.getSpecificValue(player, MANA_COST);
         var typeReduction = getElement.manaReduction();
         var adjustedMana = Helpers.attributeModifierCalculator(player, (float) getManaCost, false, MANA_COST_REDUCTION, typeReduction);
         var manaAvailable = casterData.getManaPool();

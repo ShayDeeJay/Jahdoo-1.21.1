@@ -22,6 +22,11 @@ public class StormRushAbility extends Ability {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 4;
+    }
+
+    @Override
     public JahdooRarity rarity() {
         return JahdooRarity.RARE;
     }
@@ -56,11 +61,11 @@ public class StormRushAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(30)
             .setStaticCooldown(100)
-            .setDamage(30, 10, 5)
-            .setEffectChance(10, 1, 1)
-            .setEffectDuration(300, 100, 50)
-            .setEffectStrength(10, 1, 1)
-            .setAbilityTagModifiersRandom(launchDistance, 2.5,1.5, true, 0.2)
+            .setDamage(30, 10, 5, 1, 1.5)
+            .setEffectChance(10, 1, 1, 1, 1.5)
+            .setEffectDuration(300, 100, 50, 1, 1.5)
+            .setEffectStrength(10, 1, 1, 1, 1.5)
+            .setAbilityTagModifiersRandom(launchDistance, 2.5,1.5, true, 0.2, 1, 1.5)
             .buildAndReturn();
     }
 

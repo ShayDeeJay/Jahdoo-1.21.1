@@ -125,5 +125,17 @@
     "sounds": [
       "jahdoo:unlock"
     ]
+  },
+  "teleport": {
+    "subtitles": "sounds.jahdoo.teleport",
+    "sounds": [
+      "jahdoo:teleport"
+    ]
+  },
+  "suspend": {
+    "subtitles": "sounds.jahdoo.suspend",
+    "sounds": [
+      "jahdoo:suspend"
+    ]
   }
 }

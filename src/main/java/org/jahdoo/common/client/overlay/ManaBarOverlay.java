@@ -24,7 +24,7 @@ import static com.mojang.blaze3d.systems.RenderSystem.enableBlend;
 import static com.mojang.blaze3d.systems.RenderSystem.setShaderColor;
 import static java.lang.String.valueOf;
 import static net.minecraft.network.chat.Component.literal;
-import static org.jahdoo.ascension.attachments.CastingData.*;
+import static org.jahdoo.ascension.attachments.CastingData.selectedAbility;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Configuration.*;
 import static org.jahdoo.ascension.utils.Helpers.getUsedItem;
@@ -295,6 +295,12 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
                 this.cooldownTimer(location, casterData, graphics, minecraft);
             }
         );
+
+//        var comp =  Helpers.withStyleComponent(String.valueOf(CastingData.getLevel(player)), -1);
+//        var points =  Helpers.withStyleComponent(String.valueOf(CastingData.getAbilityPoints(player)), -1);
+//        graphics.drawCenteredString(minecraft.font, points, graphics.guiWidth()/2, graphics.guiHeight()/2 + 10, -1);
+//        graphics.drawCenteredString(minecraft.font, comp, graphics.guiWidth()/2, graphics.guiHeight()/2, -1);
+//        SharedUI.renderMiniXPBar(graphics, graphics.guiWidth()/2, graphics.guiHeight()/2, player);
 
         setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         pose.popPose();

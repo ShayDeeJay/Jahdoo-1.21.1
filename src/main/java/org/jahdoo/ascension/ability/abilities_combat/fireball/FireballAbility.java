@@ -66,16 +66,21 @@ public class FireballAbility extends Ability {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 12;
+    }
+
+    @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(60)
             .setStaticCooldown(600)
-            .setDamage(45, 20, 5)
-            .setEffectDuration(300, 100, 20)
-            .setEffectStrength(10, 0, 1)
-            .setEffectChance(50, 10, 10)
+            .setDamage(45, 20, 5, 1, 1.5)
+            .setEffectDuration(300, 100, 20, 1, 1.5)
+            .setEffectStrength(10, 0, 1, 1, 1.5)
+            .setEffectChance(50, 10, 10, 1, 1.5)
             .setModifierWithoutBounds(IS_BUDDY, 0)
-            .setAbilityTagModifiersRandom(NOVA_RANGE, 6, 3, true, 1)
+            .setAbilityTagModifiersRandom(NOVA_RANGE, 6, 3, true, 1, 1, 1.5)
             .buildAndReturn();
     }
 

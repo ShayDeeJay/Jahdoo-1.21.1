@@ -5,10 +5,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.attachments.AbstractHoldUseAttachment;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.wand.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
@@ -47,8 +47,8 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
         var getCasterData = serverPlayer.getData(CASTER_DATA);
         var getTeleportSound = SoundEvents.CHORUS_FRUIT_TELEPORT;
         var getSuccessSound = SoundEvents.ILLUSIONER_CAST_SPELL;
-        var getManaCost = DataComponentHelper.getSpecificValue(abilityHolder, MANA_COST);
-        var getCooldownCost = DataComponentHelper.getSpecificValue(abilityHolder, COOLDOWN);
+        var getManaCost = CastingData.getSpecificValue(abilityHolder, MANA_COST);
+        var getCooldownCost = CastingData.getSpecificValue(abilityHolder, COOLDOWN);
         var getLevelDimension = serverPlayer.getServer().getLevel(dimension);
 
         if(getLevelDimension != null){
@@ -67,9 +67,9 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
     @Override
     public void onTickMethod(Player player){
         super.onTickMethod(player);
-        var getHolder = AbilityHolder.getHolderFromWand(player);
+        var getHolder = CastingData.entityHolderWithSelected(player);
         getModifierValue(getHolder, abilityId.getPath().intern());
-        var getCastTime = DataComponentHelper.getSpecificValue(getHolder, CASTING_TIME);
+        var getCastTime = CastingData.getSpecificValue(getHolder, CASTING_TIME);
         if (!(player instanceof ServerPlayer serverPlayer)) return;
         var pos = serverPlayer.getRespawnPosition();
 

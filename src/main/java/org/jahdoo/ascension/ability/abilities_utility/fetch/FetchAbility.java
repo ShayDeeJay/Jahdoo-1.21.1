@@ -65,10 +65,15 @@ public class FetchAbility extends AbstractBlockAbility {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 2;
+    }
+
+    @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
-            .setMana(20, 10, 2)
-            .setRange(10,  3, 1)
+            .setMana(20, 10, 2, 1, 1.5)
+            .setRange(10, 3, 1, 1, 1.5)
             .buildAndReturn();
     }
 

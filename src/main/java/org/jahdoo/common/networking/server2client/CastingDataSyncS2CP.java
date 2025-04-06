@@ -6,36 +6,36 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.AttachmentReg;
 
-public class SelectedAbilityS2CP implements CustomPacketPayload {
+public class CastingDataSyncS2CP implements CustomPacketPayload {
 
-    public static final Type<SelectedAbilityS2CP> TYPE = new Type<>(Helpers.res("selected_ability_s2c"));
+    public static final Type<CastingDataSyncS2CP> TYPE = new Type<>(Helpers.res("selected_ability_s2c"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, SelectedAbilityS2CP> STREAM_CODEC =
-        CustomPacketPayload.codec(SelectedAbilityS2CP::toBytes, SelectedAbilityS2CP::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, CastingDataSyncS2CP> STREAM_CODEC =
+        CustomPacketPayload.codec(CastingDataSyncS2CP::toBytes, CastingDataSyncS2CP::new);
 
-    private final String ability;
+    private final CastingData data;
 
-    public SelectedAbilityS2CP(String ability) {
-        this.ability = ability;
+    public CastingDataSyncS2CP(CastingData data) {
+        this.data = data;
     }
 
-    public SelectedAbilityS2CP(FriendlyByteBuf buf) {
-        this.ability = buf.readUtf();
+    public CastingDataSyncS2CP(FriendlyByteBuf buf) {
+        this.data = buf.readJsonWithCodec(CastingData.CODEC);
     }
 
     public void toBytes(FriendlyByteBuf buf) {
-        buf.writeUtf(ability);
+        buf.writeJsonWithCodec(CastingData.CODEC, data);
     }
 
     public void handle(IPayloadContext ctx) {
         ctx.enqueueWork(
             () -> {
                 if(ctx.player() instanceof LocalPlayer localPlayer){
-                    var casterData = localPlayer.getData(AttachmentReg.CASTER_DATA);
-                    casterData.setSelectedAbility(ability);
+                    localPlayer.setData(AttachmentReg.CASTER_DATA, data);
                 }
             }
         );

@@ -6,7 +6,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.ArrayList;
@@ -14,8 +13,6 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 
 public record AbilityHolder(String abilityName, AbilityData data) {
 
@@ -30,11 +27,6 @@ public record AbilityHolder(String abilityName, AbilityData data) {
         AbilityHolder::serialise,
         AbilityHolder::deserialise
     );
-
-    public static AbilityHolder getHolderFromWand(Player player){
-        var component = ABILITY_HOLDER.get();
-        return Helpers.getUsedItem(player).get(component);
-    }
 
     private static AbilityHolder deserialise(FriendlyByteBuf friendlyByteBuf){
         return new AbilityHolder(
@@ -99,6 +91,8 @@ public record AbilityHolder(String abilityName, AbilityData data) {
                             value.lowestValue(),
                             value.step(),
                             value.setValue(),
+                            value.baseCost(),
+                            value.upgradeMultiplier(),
                             value.isHigherBetter() ? 0 : 1,
                             index.get()
                         )
@@ -121,7 +115,8 @@ public record AbilityHolder(String abilityName, AbilityData data) {
                 var modifier = new AbilityData.AbilityModifiers(
                     value.getDouble(0), value.getDouble(1),
                     value.getDouble(2), value.getDouble(3),
-                    value.getDouble(4), value.getDouble(5) == 0
+                    value.getDouble(4), value.getDouble(5),
+                    value.getDouble(6), value.getDouble(7) == 0
                 );
                 int position = (int) value.getDouble(6);
                 withPos.add(Pair.of(position, Pair.of(key, modifier)));

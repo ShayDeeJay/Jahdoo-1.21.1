@@ -6,6 +6,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.common.client.screens.AbilityWheelScreen;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.ascension.utils.Configuration;
@@ -54,7 +55,7 @@ public class OverlayEvent {
         var getSelectedAbility = stack.get(WAND_DATA);
         if(getSelectedAbility == null) return;
         if(Objects.equals(getSelectedAbility.selectedAbility(), abilityId.getPath().intern())){
-            var pickDistance = Helpers.getTag(player, CASTING_DISTANCE, getSelectedAbility.selectedAbility());
+            var pickDistance = CastingData.getSpecificValue(player, CASTING_DISTANCE);
             var pick = player.pick(pickDistance, 1, false);
             if (stack.getItem() instanceof WandItem) {
                 if (pick.getType() != HitResult.Type.MISS) {

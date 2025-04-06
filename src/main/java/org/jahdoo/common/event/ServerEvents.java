@@ -23,8 +23,11 @@ import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
+import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
+import org.jahdoo.common.registers.AttachmentReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
+import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.ascension.utils.Helpers.syncAbilitiesServer;
 import static org.jahdoo.common.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
@@ -52,6 +55,7 @@ public class ServerEvents {
     @SubscribeEvent
     public static void dimChange(PlayerEvent.PlayerChangedDimensionEvent event) {
         var player = event.getEntity();
+
         setGameModeOnDimChange(event, player);
     }
 
@@ -65,6 +69,7 @@ public class ServerEvents {
     public static void playerCloneEvent(PlayerEvent.PlayerRespawnEvent event){
         var player = event.getEntity();
         player.getData(SAVE_DATA).takeAllItems(player);
+
     }
 
     @SubscribeEvent
@@ -89,7 +94,9 @@ public class ServerEvents {
         var data = playerData.getCompound(Player.PERSISTED_NBT_TAG);
 
         syncAbilitiesServer(player);
-
+        if(player instanceof ServerPlayer serverPlayer){
+            sendToPlayer(serverPlayer, new CastingDataSyncS2CP(serverPlayer.getData(AttachmentReg.CASTER_DATA)));
+        }
         syncPlayerAttributes(player);
         onFirstTimeJoined(data, player, playerData);
     }

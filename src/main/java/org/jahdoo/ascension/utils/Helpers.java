@@ -197,15 +197,6 @@ public class Helpers {
         PacketDistributor.sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, isBatched));
     }
 
-    public static double getTag(Player player, String name, String abilityName) {
-        if(player != null){
-            var abilityHolder = AbilityHolder.getHolderFromWand(player);
-            var holder = Helpers.getModifierValue(abilityHolder, abilityName).get(name);
-            if(holder != null) return holder.setValue();
-        }
-        return 0;
-    }
-
     public static Map<String, AbilityData.AbilityModifiers> getModifierValue(AbilityHolder abilityHolder, String tagName) {
         if(abilityHolder != null){
             var allModifiers = abilityHolder.data().abilityProperties();

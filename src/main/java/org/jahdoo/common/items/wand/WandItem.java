@@ -132,13 +132,20 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+    public InteractionResultHolder<ItemStack> use(Level plevel, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
         var data = player.getData(AttachmentReg.CASTER_DATA.get());
+//
+        data.clearAllAbilities();
+//        System.out.println(CastingData.getExpFromLevel(230));
+//        System.out.println(CastingData.getLevelFromExp(202895));
+//        CastingData.addExperience(player, 4232);
+//        CastingData.decrementAbilityPoints(player, 4);
+//        CastingData.clearLevels(player);
+//        CastingData.decrementAbilityPoints(player, 100);
+//        System.out.println(CastingData.getLevel(player));
 
-//        data.clearAllAbilities();
-
-        if(!level.isClientSide){
+        if(!plevel.isClientSide){
             if (canOffHand(player, interactionHand, true)) {
                 player.startUsingItem(interactionHand);
                 CastHelper.use(player);

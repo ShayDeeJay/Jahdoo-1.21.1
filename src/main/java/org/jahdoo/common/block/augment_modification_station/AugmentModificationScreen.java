@@ -3,16 +3,18 @@ package org.jahdoo.common.block.augment_modification_station;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.screens.AbilityUnlockScreen;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.registers.ElementReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -20,6 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 import static net.minecraft.sounds.SoundEvents.APPLY_EFFECT_TRIAL_OMEN;
+import static org.jahdoo.ascension.utils.ColourStore.PERK_GREEN;
+import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
 import static org.jahdoo.common.block.augment_modification_station.AugmentModificationData.extractName;
@@ -29,11 +33,13 @@ import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
 import static org.jahdoo.common.client.button.ToggleComponent.textRenderable;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
+import static org.jahdoo.common.registers.ElementReg.*;
 
 public class AugmentModificationScreen extends Screen {
 
     public Inventory inventory;
     private Component upgradeValue;
+    private Component upgradeCost;
     private double yScroll;
     private int selectedY;
     private final Ability ability;
@@ -151,8 +157,11 @@ public class AugmentModificationScreen extends Screen {
                 !correctAdjustment  && this.isInHitbox(posX, posY),
                 () -> {
                     var getHighest = x.isHigherBetter() ? x.actualValue() + x.step() : x.actualValue() - x.step();
+                    var getCostMult = x.isHigherBetter() ? x.actualValue() / x.step() : x.actualValue() * x.step();
+
                     var original = getModifierContextSingle(extractName(component.getString()), String.valueOf(doubleFormattedDouble(getHighest)), 1);
                     this.upgradeValue = withStyleComponent("↑ " + original.getString(), -7092917);
+                    this.upgradeCost = withStyleComponent((int)((x.baseCost()) + (x.upgradeMultiplier() * x.actualValue() / x.step()) - 1) + "", -1);
                     this.selectedY = correctAdjustment ? 0 : ySpacer;
                 }
             )
@@ -160,7 +169,7 @@ public class AugmentModificationScreen extends Screen {
     }
 
     private static AbilityData.AbilityModifiers getAbilityModifiers(Component component, AbilityHolder getTag) {
-        var defaultVal = new AbilityData.AbilityModifiers(0, 0, 0, 0, 0,true);
+        var defaultVal = new AbilityData.AbilityModifiers(0, 0, 0, 0, 0, 0, 0, true);
         if(component == null) return defaultVal;
         var actualValue = getTag.data().abilityProperties().get(extractName(component.getString()));
         return actualValue == null ? defaultVal : actualValue;
@@ -221,23 +230,43 @@ public class AugmentModificationScreen extends Screen {
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         var adjustX = 18;
         var adjustY = -27;
-        var startX = this.width / 2 - 140;
-        var startY = this.height/2 + 22;
+        var i1 = this.width / 2;
+        var startX = i1 - 140;
+        var i = this.height / 2;
+        var startY = i + 22;
 
         this.renderBlurredBackground(partialTick);
-        SharedUI.setCustomBackground(this.height, this.width, guiGraphics);
-        selectedBoxUpgrade(guiGraphics, mouseX, mouseY);
-        selectedBox(guiGraphics, mouseX, mouseY);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.disableScissor();
+        var fade = SharedUI.getFadedColourBackground(0.9F);
+        var element = ability.getElemenType();
 
-        SharedUI.header(guiGraphics, this.width, this.height, ability, holder, this.font, this.getMinecraft().level);
-        ElementReg.fromId(ability.getElemenType().id()).ifPresent(
-            element -> bezelMaker(guiGraphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element)
-        );
+        boxMaker(graphics, 3, 3, i1 - 3, i - 3, element.partColourFade(), fade, FastColor.ARGB32.color(60, element.partColourFade()));
+
+        SharedUI.bezelMaker(graphics, -20 , -20, this.width - 20, this.height - 20, 60, null);
+        SharedUI.setCustomBackground(this.height, this.width, graphics);
+
+        selectedBoxUpgrade(graphics, mouseX, mouseY);
+        selectedBox(graphics, mouseX, mouseY);
+        super.render(graphics, mouseX, mouseY, partialTick);
+        graphics.disableScissor();
+
+        bezelMaker(graphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element);
+        var backdrop = element == utility() ? GUI_BUTTON_UTILITY_SQUARE : element == vitality() ? GUI_BUTTON_VITALITY_SQUARE : element == mystic() ? GUI_BUTTON_MYSTIC_SQUARE : element == frost() ? GUI_BUTTON_FROST_SQUARE : GUI_BUTTON_INFERNO_SQUARE;
+        SharedUI.header(graphics, this.width, this.height, ability, holder, this.font, this.getMinecraft().level, backdrop);
+
+        overlaySkillPoints(graphics, getMinecraft().player, (int) centerX, adjustY, 24);
+    }
+
+    private void overlaySkillPoints(GuiGraphics guiGraphics, LocalPlayer player, int centerX, int adjustY, int size) {
+        var skillPoints = CastingData.getAbilityPoints(player);
+        var fade = SharedUI.getFadedColourBackground(0.4F);
+        var cX = this.width / 2;
+        var cY = this.height / 2;
+        boxMaker(guiGraphics, cX - 70, cY - 140, 70, 10, ability.getElemenType().partColourA(), fade, fade);
+        guiGraphics.drawString(font, withStyleComponent(skillPoints + " " + "Skill Points", PERK_GREEN), cX - 24, cY - 134, -1);
+        guiGraphics.blit(res("textures/item/skill_point.png"),  cX - 50,  cY - 142, 0, 0, size, size, size, size);
     }
 
     private void selectedBox(@NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
@@ -264,6 +293,7 @@ public class AugmentModificationScreen extends Screen {
         boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, colourBorder, semiTransLayer);
         boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, colourBorder, semiTransLayer);
         guiGraphics.drawCenteredString(this.font, this.upgradeValue, startX + 34, (int) (startY + 10 + yScroll), 0);
+        guiGraphics.drawCenteredString(this.font, this.upgradeCost, startX + 60, (int) (startY + 10 + yScroll), 0);
     }
 
 }

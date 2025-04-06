@@ -23,12 +23,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +44,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
 import static org.jahdoo.ascension.ability.AbilityBuilder.SET_ELEMENT_TYPE;
+import static org.jahdoo.ascension.attachments.CastingData.getXpNeededForNextLevel;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.client.Icons.*;
 
@@ -100,12 +103,12 @@ public class SharedUI {
         guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
     }
 
-    public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, Ability ability, AbilityHolder holder, Font font, Level level) {
+    public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, Ability ability, AbilityHolder holder, Font font, Level level, ResourceLocation slot) {
         var yOff = 102;
         int xOff = width/2 - 55;
         guiGraphics.drawString(font, getComponents(ability, holder, level).getFirst(), xOff, (height/2 - yOff), 0, true);
         guiGraphics.drawString(font, getComponents(ability, holder, level).get(1), xOff, (height/2 - (yOff - 10)), 0, true);
-        abilityIcon(guiGraphics, ability.getAbilityIconLocation(), width - 155, height - 180, 109, 40, 12);
+        abilityIcon(guiGraphics, ability.getAbilityIconLocation(), width - 155, height - 180, 109, 30, 8, slot);
     }
 
     public static void renderEntityInInventoryFollowsMouse(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int scale, float yOffset, float mouseX, float mouseY, LivingEntity entity, float rotationSmoothing) {
@@ -203,6 +206,21 @@ public class SharedUI {
             if (k > 0) guiGraphics.blitSprite(expProgress, 182, 5, 0, 0, x, l, k, 5);
         }
         minecraft.getProfiler().pop();
+    }
+
+    public static void renderMiniXPBar(GuiGraphics guiGraphics, int x, int l, Player player) {
+        var expBackground = Helpers.res("textures/gui/xp_bar_container.png");
+        var expProgress = Helpers.res("textures/gui/xp_bar.png");
+        var data = player.getData(AttachmentReg.CASTER_DATA);
+        var customLevel = data.getLevel();
+
+        int xpNeeded = getXpNeededForNextLevel(customLevel);
+        if (xpNeeded > 0) {
+            int barWidth = 82;
+            int k = (int)(CastingData.getExperienceProgress(player) * (float)(barWidth + 1));
+            guiGraphics.blit(expBackground, x, l, 0, 0, barWidth, 5, barWidth, 5);
+            if (k > 0) guiGraphics.blit(expProgress, x, l, 0, 0, k, 5, barWidth, 5);
+        }
     }
 
     public static void renderMiniXPBar(GuiGraphics guiGraphics, int x, int l, Minecraft minecraft) {
@@ -399,7 +417,7 @@ public class SharedUI {
         return element.get();
     }
 
-    public static void abilityIcon(GuiGraphics guiGraphics, ResourceLocation icon, int width, int height, int offset, int localImageSize, int shrinkBy){
+    public static void abilityIcon(GuiGraphics guiGraphics, ResourceLocation icon, int width, int height, int offset, int localImageSize, int shrinkBy, ResourceLocation slot){
         var verticalOffset = 38 + offset;
         var imageWithShrink = localImageSize - shrinkBy;
         var posX = (width - localImageSize) / 2 ;
@@ -407,7 +425,7 @@ public class SharedUI {
         var posX1 = (width - imageWithShrink) / 2 ;
         var posY1 = (height - imageWithShrink) / 2 - 150 + verticalOffset;
 
-        guiGraphics.blit(GUI_GENERAL_SLOT, posX, posY, 0, 0, localImageSize, localImageSize, localImageSize, localImageSize);
+        guiGraphics.blit(slot, posX, posY, 0, 0, localImageSize, localImageSize, localImageSize, localImageSize);
         guiGraphics.blit(icon, posX1, posY1, 0, 0, imageWithShrink, imageWithShrink, imageWithShrink, imageWithShrink);
     }
 

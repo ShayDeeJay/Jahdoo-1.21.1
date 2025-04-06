@@ -52,6 +52,8 @@ public abstract class Ability {
         return false;
     }
 
+    abstract public int getAbilityCost();
+
     public String getAbilityName(){
         return Helpers.stringIdToName(this.abilityId);
     }

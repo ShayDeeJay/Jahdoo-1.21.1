@@ -11,14 +11,10 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.components.DataComponentHelper;
-import org.jahdoo.common.registers.AbilityReg;
-import org.jahdoo.common.registers.ElementReg;
 
 import static org.jahdoo.common.block.infuser.InfuserBlock.FACING;
 
@@ -58,13 +54,13 @@ public class AugmentModificationRenderer implements BlockEntityRenderer<AugmentM
         int packedOverlay
     ){
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
-        var keyFromAugment = DataComponentHelper.getKeyFromAugment(augmentStation.getInteractionSlot());
-        var ability = AbilityReg.getFirstSpellByTypeId(keyFromAugment);
-        if(ability.isPresent()){
-            var getElement = ElementReg.fromId(augmentStation.getInteractionSlot().get(DataComponents.CUSTOM_MODEL_DATA).value());
-            var name = Component.literal(ability.get().getAbilityName());
-            getElement.ifPresent(element -> renderNameTag(augmentStation, name, poseStack, source, element.textColourA()));
-        }
+//        var keyFromAugment = DataComponentHelper.getKeyFromAugment(augmentStation.getInteractionSlot());
+//        var ability = AbilityReg.getFirstSpellByTypeId(keyFromAugment);
+//        if(ability.isPresent()){
+//            var getElement = ElementReg.fromId(augmentStation.getInteractionSlot().get(DataComponents.CUSTOM_MODEL_DATA).value());
+//            var name = Component.literal(ability.get().getAbilityName());
+//            getElement.ifPresent(element -> renderNameTag(augmentStation, name, poseStack, source, element.textColourA()));
+//        }
         focusedItem(poseStack, augmentStation, itemRenderer, source, packedLight);
     }
 

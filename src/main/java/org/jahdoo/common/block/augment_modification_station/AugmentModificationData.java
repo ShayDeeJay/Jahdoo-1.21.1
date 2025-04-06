@@ -60,10 +60,12 @@ public class AugmentModificationData {
         var step = doubleFormattedDouble(mod.step());
         var highestValue = doubleFormattedDouble(mod.highestValue());
         var lowestValue = doubleFormattedDouble(mod.lowestValue());
+        var baseCost = doubleFormattedDouble(mod.baseCost());
+        var costMultiplier = doubleFormattedDouble(mod.upgradeMultiplier());
         var correctAdjustment = higherBetter ? actualValue + step : actualValue - step;
 
         var valueWithinRange = higherBetter && actualValue < highestValue ? correctAdjustment : !higherBetter && actualValue > lowestValue ? correctAdjustment : actualValue;
-        var abilityModifier = new AbilityData.AbilityModifiers(valueWithinRange, highestValue, lowestValue, step, valueWithinRange, higherBetter);
+        var abilityModifier = new AbilityData.AbilityModifiers(valueWithinRange, highestValue, lowestValue, step, valueWithinRange, baseCost, costMultiplier, higherBetter);
 
         properties.replace(name, abilityModifier);
 

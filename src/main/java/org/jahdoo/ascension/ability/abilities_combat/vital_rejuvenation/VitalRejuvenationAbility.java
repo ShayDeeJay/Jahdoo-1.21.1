@@ -55,6 +55,11 @@ public class VitalRejuvenationAbility extends Ability {
     }
 
     @Override
+    public int getAbilityCost() {
+        return 35;
+    }
+
+    @Override
     public JahdooRarity rarity() {
         return JahdooRarity.EPIC;
     }
@@ -63,8 +68,8 @@ public class VitalRejuvenationAbility extends Ability {
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(100)
-            .setAbilityTagModifiersRandom(MAX_ABSORPTION, 10, 2, true, 1)
-            .setAbilityTagModifiersRandom(CAST_DELAY, 15, 5, false, 2)
+            .setAbilityTagModifiersRandom(MAX_ABSORPTION, 10, 2, true, 1, 1, 1.5)
+            .setAbilityTagModifiersRandom(CAST_DELAY, 15, 5, false, 2, 1, 1.5)
             .buildAndReturn();
     }
 

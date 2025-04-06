@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -66,15 +67,15 @@ public class EscapeDecoyAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(50)
             .setStaticCooldown(1200)
-            .setLifetime(300, 100, 50)
-            .setEffectDuration(200, 50, 50)
-            .setRange(15, 5, 2)
+            .setLifetime(300, 100, 50, 1, 1.5)
+            .setEffectDuration(200, 50, 50, 1, 1.5)
+            .setRange(15, 5, 2, 1, 1.5)
             .buildAndReturn();
     }
 
     @Override
     public void invokeAbility(Player player) {
-        var tagModifier = Helpers.getModifierValue(AbilityHolder.getHolderFromWand(player), abilityId.getPath().intern());
+        var tagModifier = Helpers.getModifierValue(CastingData.entityHolderWithSelected(player), abilityId.getPath().intern());
         var range = tagModifier.get(RANGE);
         if(range != null){
             var decoy = new Decoy(player.level(), player, (int) range.setValue());
@@ -102,5 +103,10 @@ public class EscapeDecoyAbility extends Ability {
 
             onExistenceChange(decoy, getElemenType());
         }
+    }
+
+    @Override
+    public int getAbilityCost() {
+        return 8;
     }
 }
