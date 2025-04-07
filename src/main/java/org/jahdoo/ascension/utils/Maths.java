@@ -87,7 +87,7 @@ public class Maths {
         int minutes = (duration % 3600) / 60;
         int seconds = duration % 60;
 
-        StringBuilder converter = new StringBuilder();
+        var converter = new StringBuilder();
         if (hours > 0) converter.append(hours).append("h ");
         if (minutes > 0) converter.append(minutes).append("m ");
         if (seconds > 0 || converter.isEmpty()) converter.append(seconds).append("s");
@@ -95,9 +95,32 @@ public class Maths {
         return converter.toString().trim();
     }
 
+    public static String ticksToTime(String current, boolean showMilliseconds) {
+        double totalSeconds = Double.parseDouble(current) / 20.0; // Convert ticks to seconds
+        int hours = (int) (totalSeconds / 3600);
+        int minutes = (int) ((totalSeconds % 3600) / 60);
+        int seconds = (int) totalSeconds;
+        int milliseconds = (int) ((totalSeconds - seconds) * 1000);
+
+        var converter = new StringBuilder();
+        if (hours > 0) converter.append(hours).append("h ");
+        if (minutes > 0) converter.append(minutes).append("m ");
+
+        if (showMilliseconds) {
+            double secWithMs = seconds + (milliseconds / 1000.0);
+            converter.append(String.format("%.3fs", secWithMs));
+        } else {
+            if (seconds > 0 || converter.isEmpty()) converter.append(seconds).append("s");
+        }
+
+        return converter.toString().trim();
+    }
+
+
     public static String roundNonWholeString(String input) {
-        StringBuilder result = new StringBuilder();
-        StringBuilder numberBuffer = new StringBuilder();
+        var result = new StringBuilder();
+        var numberBuffer = new StringBuilder();
+
         for (char c : input.toCharArray()) {
             if (Character.isDigit(c) || c == '.') {
                 numberBuffer.append(c);

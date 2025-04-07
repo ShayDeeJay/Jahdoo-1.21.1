@@ -235,16 +235,15 @@ public class AbilityWheelScreen extends Screen  {
     private void showConfig(CastingData castingData, Player player, Ability selectedAbility, int posX, int posY) {
         var configButton = new WidgetSprites(COG, COG);
         var configButtonSize = 20;
-        var itemStack = Helpers.getUsedItem(player);
         if (selectedAbility.getElemenType() == ElementReg.utility()) {
-            var filterOutBase = isConfigAbility(selectedAbility, castingData.getSelectedAbility(), itemStack);
+            var filterOutBase = isConfigAbility(getMinecraft().player);
             if(filterOutBase){
                 this.addRenderableWidget(
                     new AbilityIconButton(
                         posX, posY,
                         configButton,
                         configButtonSize,
-                        pButton -> this.getMinecraft().setScreen(getAugmentModificationScreenWand(itemStack, this)),
+                        pButton -> this.getMinecraft().setScreen(getAugmentModificationScreenWand(player, this)),
                         false,
                         () -> { }
                     )

@@ -69,12 +69,12 @@ public class BurningSkullsAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(40)
             .setStaticCooldown(300)
-            .setDamage(20, 10, 2, 1, 1.5)
-            .setEffectDuration(200, 100, 20, 1, 1.5)
-            .setEffectStrength(4, 0, 1, 1, 1.5)
-            .setEffectChance(25, 0, 5, 1, 1.5)
-            .shotMultiplier(5, 2, 1, 1, 1.5)
-            .setLifetime(100, 40, 20, 1, 1.5)
+            .setDamage(20, 10, 2, 1)
+            .setEffectDuration(200, 100, 20, 1)
+            .setEffectStrength(4, 0, 1, 1)
+            .setEffectChance(25, 0, 5, 1)
+            .shotMultiplier(5, 2, 1, 1)
+            .setLifetime(100, 40, 20, 1)
             .buildAndReturn();
     }
 

@@ -81,6 +81,9 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> SUSPEND =
         registerSoundEvent("suspend");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> UNLOCK_NOTIFICATION =
+        registerSoundEvent("unlock_notification");
+
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));
     }

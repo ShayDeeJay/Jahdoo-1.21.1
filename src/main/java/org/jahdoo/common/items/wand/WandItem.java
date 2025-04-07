@@ -16,6 +16,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.level.Level;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -133,12 +134,17 @@ public class WandItem extends Item implements GeoItem, JahdooItem {
 
         if(player.isShiftKeyDown()){
             data.clearAllAbilities();
+            CastingData.decrementAbilityPoints(player, 3000);
         }
+
+//        CastingData.clearLevels(player);
+//        System.out.println(CastingData.getXpNeededForNextLevel(CastingData.getLevel(player)));;
+//        CastingData.addExperience(player, 10);
 //        System.out.println(LifeSiphonAbility.abilityId.getPath());
 //        System.out.println(CastingData.getExpFromLevel(230));
 //        System.out.println(CastingData.getLevelFromExp(202895));
-//        CastingData.addExperience(player, 4232);
-//        CastingData.decrementAbilityPoints(player, 4);
+//        CastingData.incrementAbilityPoints(player, 10);
+//        CastingData.decrementAbilityPoints(player, 100);
 //        CastingData.decrementAbilityPoints(player, 3000);
 //        CastingData.decreme---ntAbilityPoints(player, 100);
 //        System.out.println(CastingData.getLevel(player));

@@ -6,7 +6,8 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
@@ -26,21 +27,16 @@ import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.button.ToggleComponent.textWithBackgroundLarge;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
-import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 
 public class AugmentScreen extends Screen  {
 
-    private AbilityHolder holder;
-    private final String abilityName;
+    private final AbilityHolder holder;
     private final Screen previousScreen;
     private double yScroll;
-    private final ItemStack itemStack;
 
-    public AugmentScreen(ItemStack itemStack, String abilityName, Screen previousScreen) {
+    public AugmentScreen(Player player, Screen previousScreen) {
         super(Component.literal("Augment Menu"));
-        this.holder = itemStack.get(ABILITY_HOLDER.get());
-        this.itemStack = itemStack;
-        this.abilityName = abilityName;
+        this.holder = CastingData.entityHolderWithSelected(player);
         this.previousScreen = previousScreen;
     }
 
@@ -152,7 +148,7 @@ public class AugmentScreen extends Screen  {
     private void updateAugmentConfig(String e, AbilityData.AbilityModifiers v, double i) {
 
         var newHolder = new AbilityData(new HashMap<>(holder.data().abilityProperties()));
-        var abilityModifier = new AbilityData.AbilityModifiers(v.actualValue(), v.highestValue(), v.lowestValue(), v.step(), i, v.baseCost(), v.upgradeMultiplier(), v.isHigherBetter());
+        var abilityModifier = new AbilityData.AbilityModifiers(v.actualValue(), v.highestValue(), v.lowestValue(), v.step(), i, v.baseCost(), v.isHigherBetter());
         newHolder.abilityProperties().put(e, abilityModifier);
         //TODO AS NEEDS PACKET FIX
         /*

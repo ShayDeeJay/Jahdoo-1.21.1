@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -138,17 +137,17 @@ public class AugmentItemHelper {
         int type;
         DataComponentHelper.setAbilityTypeItemStack(itemStack, ability.setAbilityId());
 
-        if (ability.isMultiType()) {
-            var abilityModifiers = abilityHolder
-                .data()
-                .abilityProperties()
-                .get(SET_ELEMENT_TYPE);
-            type = (int) abilityModifiers.actualValue();
-        } else {
-            type = ability.getElemenType().id();
-        }
+//        if (ability.isMultiType()) {
+//            var abilityModifiers = abilityHolder
+//                .data()
+//                .abilityProperties()
+//                .get(SET_ELEMENT_TYPE);
+//            type = (int) abilityModifiers.actualValue();
+//        } else {
+//            type = ability.getElemenType().id();
+//        }
 
-        itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(type));
+//        itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(type));
     }
 
     public static void throwOrAddItem(Player player, ItemStack newItem){
@@ -259,24 +258,18 @@ public class AugmentItemHelper {
             var ability = AbilityReg.getFirstSpellByTypeId(typeId);
             if(ability.isPresent()){
                 if (isConfigAbility(ability.get(), typeId, itemStack)) {
-                    return new AugmentScreen(itemStack, typeId, previousScreen);
+//                    return new AugmentScreen(itemStack, typeId, previousScreen);
                 }
             }
         }
         return null;
     }
 
-    public static Screen getAugmentModificationScreenWand(ItemStack itemStack, @org.jetbrains.annotations.Nullable Screen previousScreen) {
-        var itemStacks = itemStack.get(ComponentReg.ABILITY_HOLDER.get());
-        var selected = itemStack.get(WAND_DATA);
-        if(itemStacks != null && selected != null){
-            var item = selected.selectedAbility();
-            var ability = AbilityReg.getFirstSpellByTypeId(item);
-            if(ability.isPresent()){
-                if (isConfigAbility(ability.get(), item, itemStack)) {
-                    return new AugmentScreen(itemStack, item, previousScreen);
-                }
-            }
+    public static Screen getAugmentModificationScreenWand(Player player, Screen previousScreen) {
+        var data = player.getData(AttachmentReg.CASTER_DATA);
+        var ability = AbilityReg.getFirstSpellByTypeId(data.getSelectedAbility());
+        if(ability.isPresent()){
+            if (isConfigAbility(player)) return new AugmentScreen(player, previousScreen);
         }
         return null;
     }
@@ -305,6 +298,16 @@ public class AugmentItemHelper {
         return /*selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && */!filterOutBase.toList().isEmpty();
 //        return selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && !filterOutBase.toList().isEmpty();
     }
+
+    public static boolean isConfigAbility(Player player) {
+        var filterOutBase = CastingData.entityHolderWithSelected(player).data().abilityProperties()
+            .keySet()
+            .stream()
+            .filter(name -> !name.equals(MANA_COST) && !name.equals(COOLDOWN));
+        return /*selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && */!filterOutBase.toList().isEmpty();
+//        return selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && !filterOutBase.toList().isEmpty();
+    }
+
 
     public static Component getCurrentModifierRating(Ability ability, AbilityHolder holder, ItemStack itemStack1, String keys) {
         if(ability == null) return Component.empty();
@@ -351,8 +354,8 @@ public class AugmentItemHelper {
 
         if (time.stream().anyMatch(keys::contains)) {
             displayValue = isRange
-                  ? rangeString(ticksToTime(min), ticksToTime(max))
-                  : ticksToTime(current);
+                  ? rangeString(ticksToTime(min, true), ticksToTime(max, true))
+                  : ticksToTime(current, true);
         } else if (probability.stream().anyMatch(keys::contains)) {
             displayValue = isRange
                   ? rangeString(
@@ -382,8 +385,8 @@ public class AugmentItemHelper {
         var colour = isRange ? matchesStat : getComparison == 1 ? matchesStat : getComparison == 2 ? betterThanStat : worseThanStat;
 
         return Component
-              .literal(roundNonWholeString(displayValue))
-              .withStyle(style -> style.withColor(colour));
+          .literal(roundNonWholeString(displayValue))
+          .withStyle(style -> style.withColor(colour));
     }
 
     public static List<Component> getAllAbilityModifiers(

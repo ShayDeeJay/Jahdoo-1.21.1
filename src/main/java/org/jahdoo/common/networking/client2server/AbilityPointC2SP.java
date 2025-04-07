@@ -5,10 +5,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 
 public class AbilityPointC2SP implements CustomPacketPayload {
@@ -38,7 +36,7 @@ public class AbilityPointC2SP implements CustomPacketPayload {
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
                     var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
                     casterData.decrementAbilityPoints(points);
-                    PacketDistributor.sendToPlayer(serverPlayer, new CastingDataSyncS2CP(casterData));
+//                    PacketDistributor.sendToPlayer(serverPlayer, new CastingDataSyncS2CP(casterData));
                 }
             }
         );

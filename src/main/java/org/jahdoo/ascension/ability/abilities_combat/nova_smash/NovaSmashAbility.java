@@ -78,7 +78,7 @@ public class NovaSmashAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(40)
             .setStaticCooldown(400)
-            .setDamage(12, 4, 2, 1, 1.5)
+            .setDamage(12, 4, 2, 1)
             .buildAndReturn();
     }
 

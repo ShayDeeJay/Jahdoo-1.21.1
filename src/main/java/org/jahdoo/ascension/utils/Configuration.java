@@ -10,6 +10,7 @@ public class Configuration {
     public static ModConfigSpec.BooleanValue CUSTOM_UI_SHOW_MANA;
     public static ModConfigSpec.BooleanValue CUSTOM_UI_ALWAYS_SHOW_HUNGER;
     public static ModConfigSpec.BooleanValue CUSTOM_UI_ALWAYS_SHOW_XP;
+    public static ModConfigSpec.BooleanValue CUSTOM_UI_ALWAYS_SHOW_ABILITY_BAR;
     public static ModConfigSpec.DoubleValue CUSTOM_UI_HEIGHT;
     public static ModConfigSpec.DoubleValue CUSTOM_UI_SCALE;
 
@@ -25,6 +26,7 @@ public class Configuration {
         CUSTOM_UI_SCALE = CLIENT_BUILDER.comment("Adjust custom UI scale").defineInRange("scale", 1.0, 0, 5);
         CUSTOM_UI_ALWAYS_SHOW_HUNGER = CLIENT_BUILDER.comment("Always show hunger bar").define("show_hunger", true);
         CUSTOM_UI_ALWAYS_SHOW_XP = CLIENT_BUILDER.comment("Always show XP bar").define("show_xp", true);
+        CUSTOM_UI_ALWAYS_SHOW_ABILITY_BAR = CLIENT_BUILDER.comment("Always show ability bar").define("show_ability", true);
         CUSTOM_UI_SHOW_MANA = CLIENT_BUILDER.comment("Always show stand alone mana bar").define("mana_bar", false);
 
         QUICK_SELECT = CLIENT_BUILDER.comment("Hold to keep open Quick Select menu").define("quickSelect", false);

@@ -7,13 +7,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.registers.AbilityReg;
@@ -24,6 +25,7 @@ import static com.mojang.blaze3d.systems.RenderSystem.enableBlend;
 import static com.mojang.blaze3d.systems.RenderSystem.setShaderColor;
 import static java.lang.String.valueOf;
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.attachments.CastingData.selectedAbility;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Configuration.*;
@@ -39,8 +41,11 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
 
     float fadeIn;
     float fadeInExperience;
+    float fadeInAbility;
     float storedExp;
+    float storedAbilityExp;
     float fadeXpTimer;
+    float fadeAbilityTimer;
     float fadeInFood;
     float fadeFoodTimer;
     AlignedGui alignedGui;
@@ -141,12 +146,27 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         if (this.fadeXpTimer > 0 || alwaysShow) {
             if (this.fadeInExperience < 1) this.fadeInExperience += 0.8F;
         } else {
-            if (this.fadeInExperience > -6) this.fadeInExperience -= 0.5F;
+            if (this.fadeInExperience > -16) this.fadeInExperience -= 0.5F;
         }
 
         this.fadeXpTimer = Math.max(this.fadeXpTimer - 0.5F, 0);
         this.storedExp = xp;
+    }
 
+    private void setFadeInAbility(Player player){
+        var xp = player.getData(CASTER_DATA).getExp();
+        var alwaysShow = CUSTOM_UI_ALWAYS_SHOW_ABILITY_BAR.get();
+
+        if(this.storedAbilityExp != xp) this.fadeAbilityTimer = 200;
+
+        if (this.fadeAbilityTimer > 0 || alwaysShow) {
+            if (this.fadeInAbility < 1) this.fadeInAbility += 0.8F;
+        } else {
+            if (this.fadeInAbility > -6) this.fadeInAbility -= 0.5F;
+        }
+
+        this.fadeAbilityTimer = Math.max(this.fadeAbilityTimer - 0.5F, 0);
+        this.storedAbilityExp = xp;
     }
 
     private void setFadeGui(Player player){
@@ -221,7 +241,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var previous = player.getInventory().getItem(prevIndex);
         var nextIndex = selectedIndex + 1 > 8 ? 0 : selectedIndex + 1;
         var next = player.getInventory().getItem(nextIndex);
-        var y = graphics.guiHeight() - 68 + (int) (-this.fadeInExperience);
+        var y = graphics.guiHeight() - 68 + (int) (-this.fadeInAbility);
         var x = graphics.guiWidth() / 2 - 9;
         var unSelected = GUI_ITEM_SLOT;
         var alpha = 0.6f;
@@ -254,6 +274,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         this.alignedGuiInstance(graphics);
         this.setFadeGui(player);
         this.setFadeInExperience(player);
+        this.setFadeInAbility(player);
         this.setFadeInFood(player);
 
         pose.pushPose();
@@ -269,10 +290,11 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         pose.translate(-center, -centerY + yOffset, 0);
 
         if(CUSTOM_UI.get()){
-            Minecraft.getInstance().gui.renderSelectedItemName(graphics, (int) (100 + this.fadeInExperience));
+            minecraft.gui.renderSelectedItemName(graphics, (int) (100 + this.fadeInAbility));
             inventory(graphics, player);
             foodBar(pose, foodProgress);
-            xpBar(graphics, pose, centerY, minecraft, player, center);
+            abilityBar(graphics, pose, centerY, minecraft, player, center);
+            xpBar(graphics, pose, minecraft);
             alignedGui.displayGuiLayer(-53, 29, 0, 0, 137, 29);
 
             this.healthAndAbsorptionCount(graphics, minecraft);
@@ -296,12 +318,6 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
             }
         );
 
-//        var comp =  Helpers.withStyleComponent(String.valueOf(CastingData.getLevel(player)), -1);
-//        var points =  Helpers.withStyleComponent(String.valueOf(CastingData.getAbilityPoints(player)), -1);
-//        graphics.drawCenteredString(minecraft.font, points, graphics.guiWidth()/2, graphics.guiHeight()/2 + 10, -1);
-//        graphics.drawCenteredString(minecraft.font, comp, graphics.guiWidth()/2, graphics.guiHeight()/2, -1);
-//        SharedUI.renderMiniXPBar(graphics, graphics.guiWidth()/2, graphics.guiHeight()/2, player);
-
         setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         pose.popPose();
     }
@@ -320,18 +336,31 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         pose.popPose();
     }
 
-    private void xpBar(GuiGraphics graphics, PoseStack pose, int centerY, Minecraft minecraft, LocalPlayer player, int center) {
+    private void abilityBar(GuiGraphics graphics, PoseStack pose, int centerY, Minecraft minecraft, LocalPlayer player, int center) {
+        var progress = CastingData.getExperienceProgress(player);
+        var level = CastingData.getLevel(player);
         var alwaysShow = CUSTOM_UI_ALWAYS_SHOW_XP.get();
-        var k = (int) (player.experienceProgress * 98.0F);
+        var k = (int) (progress * 98.0F);
+        var y = 32;
 
         pose.pushPose();
-        pose.translate(0, -fadeInExperience + 6, 0);
-        setShaderColor(1f, 1f, 1f, Math.max(0, fadeInExperience));
-        var y = 32;
+        pose.translate(0, -fadeInAbility + 6, 0);
+        setShaderColor(1f, 1f, 1f, Math.max(0, fadeInAbility));
         alignedGui.displayGuiLayer(-38, y, 0, 77, 107, 12);
         alignedGui.displayGuiLayer(-36, y - 2, 0, 90, k, 6);
 
-        if(fadeInExperience > 0 || alwaysShow) drawStringWithBackground(graphics, minecraft.font, literal(valueOf(player.experienceLevel)), center, centerY - 45, 0, FastColor.ARGB32.color(133, 189, 72), true);
+        if(fadeInAbility > 0 || alwaysShow) drawStringWithBackground(graphics, minecraft.font, literal(valueOf(level)), center, centerY - 45, color(28, 28, 28), color(167, 84, 168), true);
+        setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        pose.popPose();
+    }
+
+
+    private void xpBar(GuiGraphics graphics, PoseStack pose, Minecraft minecraft) {
+        pose.pushPose();
+        pose.translate(0, -fadeInExperience + 10, 0);
+        setShaderColor(1f, 1f, 1f, Math.max(0, fadeInExperience));
+        graphics.drawCenteredString(minecraft.font, Helpers.withStyleComponent("", -1), graphics.guiWidth()/2, graphics.guiHeight()/2, -1);
+        SharedUI.renderMiniXPBar(graphics, graphics.guiWidth()/2 - 42, graphics.guiHeight() - 5, Minecraft.getInstance());
         setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         pose.popPose();
     }

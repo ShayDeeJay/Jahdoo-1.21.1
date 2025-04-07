@@ -66,10 +66,10 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         } else {
             this.damage = this.getTag(DAMAGE);
         }
-        this.setExplosionDelay = this.getTag(MysticalSemtexAbility.explosionDelays);
-        this.additionalProjectiles = this.getTag(MysticalSemtexAbility.additionalProjectile);
-        this.additionalProjectileChance = this.getTag(MysticalSemtexAbility.clusterChance);
-        this.explosionRadius = this.getTag(MysticalSemtexAbility.explosionRadius);
+        this.setExplosionDelay = this.getTag(MysticalSemtexAbility.EXPLOSION_DELAYS);
+        this.additionalProjectiles = this.getTag(MysticalSemtexAbility.ADDITIONAL_PROJECTILE);
+        this.additionalProjectileChance = this.getTag(MysticalSemtexAbility.CLUSTER_CHANCE);
+        this.explosionRadius = this.getTag(MysticalSemtexAbility.EXPLOSION_RADIUS);
     }
 
     @Override
@@ -169,9 +169,9 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
     public void addAdditionalDetails(CompoundTag compoundTag) {
         compoundTag.putInt("explosion", this.explosionDelay);
         compoundTag.putBoolean("attached", isAttached);
-        compoundTag.putDouble(MysticalSemtexAbility.explosionDelays, this.setExplosionDelay);
-        compoundTag.putDouble(MysticalSemtexAbility.additionalProjectile, this.additionalProjectiles);
-        compoundTag.putDouble(MysticalSemtexAbility.explosionDelays, this.explosionRadius);
+        compoundTag.putDouble(MysticalSemtexAbility.EXPLOSION_DELAYS, this.setExplosionDelay);
+        compoundTag.putDouble(MysticalSemtexAbility.ADDITIONAL_PROJECTILE, this.additionalProjectiles);
+        compoundTag.putDouble(MysticalSemtexAbility.EXPLOSION_DELAYS, this.explosionRadius);
         compoundTag.putDouble(DAMAGE, this.damage);
         if(localOffset != null){
             compoundTag.put("offset", Helpers.nbtDoubleList(localOffset.x, localOffset.y, localOffset.z));
@@ -184,10 +184,10 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
     @Override
     public void readCompoundTag(CompoundTag compoundTag) {
         var listTag = compoundTag.getList("offset", 6);
-        setExplosionDelay = compoundTag.getDouble(MysticalSemtexAbility.explosionDelays);
-        additionalProjectiles = compoundTag.getDouble(MysticalSemtexAbility.additionalProjectile);
-        additionalProjectileChance = compoundTag.getDouble(MysticalSemtexAbility.clusterChance);
-        explosionRadius = compoundTag.getDouble(MysticalSemtexAbility.explosionRadius);
+        setExplosionDelay = compoundTag.getDouble(MysticalSemtexAbility.EXPLOSION_DELAYS);
+        additionalProjectiles = compoundTag.getDouble(MysticalSemtexAbility.ADDITIONAL_PROJECTILE);
+        additionalProjectileChance = compoundTag.getDouble(MysticalSemtexAbility.CLUSTER_CHANCE);
+        explosionRadius = compoundTag.getDouble(MysticalSemtexAbility.EXPLOSION_RADIUS);
         damage = compoundTag.getDouble(DAMAGE);
         this.localOffset = new Vec3(listTag.getDouble(0), listTag.getDouble(1), listTag.getDouble(2));
         this.explosionDelay = compoundTag.getInt("explosion");

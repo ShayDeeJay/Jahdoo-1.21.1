@@ -72,10 +72,10 @@ public class HellfireAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(80)
             .setStaticCooldown(600)
-            .setDamage(30, 15, 5, 1, 1.5)
-            .setEffectDuration(300, 20, 20, 1, 1.5)
-            .setEffectStrength(10, 0, 1, 1, 1.5)
-            .setRange(20, 10, 2, 1, 1.5)
+            .setDamage(30, 15, 5, 2)
+            .setEffectDuration(300, 20, 20, 1)
+            .setEffectStrength(10, 0, 1, 1)
+            .setRange(20, 10, 2, 2)
             .buildAndReturn();
     }
 

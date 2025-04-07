@@ -50,8 +50,8 @@ public class AbilityBuilder {
         this.abilityId = abilityId;
     }
 
-    public AbilityBuilder setDamage(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(DAMAGE, high, low, true, step, baseCost, costMultiplier);
+    public AbilityBuilder setDamage(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(DAMAGE, high, low, true, step, baseCost);
         return this;
     }
 
@@ -65,8 +65,8 @@ public class AbilityBuilder {
         return this;
     }
 
-    public AbilityBuilder setGravitationalPull(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(GRAVITATIONAL_PULL, high, low, true, step, baseCost, costMultiplier);
+    public AbilityBuilder setGravitationalPull(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(GRAVITATIONAL_PULL, high, low, true, step, baseCost);
         return this;
     }
 
@@ -75,13 +75,13 @@ public class AbilityBuilder {
         return this;
     }
 
-    public AbilityBuilder setMana(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(MANA_COST, high, low, false, step, baseCost, costMultiplier);
+    public AbilityBuilder setMana(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(MANA_COST, high, low, false, step, baseCost);
         return this;
     }
 
-    public AbilityBuilder setBlockSize(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(SIZE, high, low, true, step, baseCost, costMultiplier);
+    public AbilityBuilder setBlockSize(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(SIZE, high, low, true, step, baseCost);
         return this;
     }
 
@@ -95,8 +95,8 @@ public class AbilityBuilder {
         return this;
     }
 
-    public AbilityBuilder setCooldown(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(COOLDOWN, high, low, false, step, baseCost, costMultiplier);
+    public AbilityBuilder setCooldown(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(COOLDOWN, high, low, false, step, baseCost);
         return this;
     }
 
@@ -105,8 +105,8 @@ public class AbilityBuilder {
         return this;
     }
 
-    public AbilityBuilder setEffectStrength(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(EFFECT_STRENGTH, high, low, true, step, baseCost, costMultiplier);
+    public AbilityBuilder setEffectStrength(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(EFFECT_STRENGTH, high, low, true, step, baseCost);
         return this;
     }
 
@@ -115,8 +115,8 @@ public class AbilityBuilder {
         return this;
     }
 
-    public AbilityBuilder setEffectDuration(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(EFFECT_DURATION, high, low, true, step, baseCost, costMultiplier);
+    public AbilityBuilder setEffectDuration(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(EFFECT_DURATION, high, low, true, step, baseCost);
         return this;
     }
 
@@ -125,13 +125,13 @@ public class AbilityBuilder {
         return this;
     }
 
-    public AbilityBuilder setEffectChance(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(EFFECT_CHANCE, high, low, false, step, baseCost, costMultiplier);
+    public AbilityBuilder setEffectChance(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(EFFECT_CHANCE, high, low, false, step, baseCost);
         return this;
     }
 
-    public AbilityBuilder shotMultiplier(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(ENTITY_MULTIPLIER, high, low, true, step, baseCost, costMultiplier);
+    public AbilityBuilder shotMultiplier(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(ENTITY_MULTIPLIER, high, low, true, step, baseCost);
         return this;
     }
 
@@ -140,23 +140,23 @@ public class AbilityBuilder {
         return this;
     }
 
-    public AbilityBuilder setCastingDistance(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(CASTING_DISTANCE, high, low, true, step, baseCost, costMultiplier);
+    public AbilityBuilder setCastingDistance(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(CASTING_DISTANCE, high, low, true, step, baseCost);
         return this;
     }
 
-    public AbilityBuilder setRange(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(RANGE, high, low, true, step, baseCost, costMultiplier);
+    public AbilityBuilder setRange(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(RANGE, high, low, true, step, baseCost);
         return this;
     }
 
-    public AbilityBuilder setAoe(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(AOE, high, low, true, step, baseCost, costMultiplier);
+    public AbilityBuilder setAoe(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(AOE, high, low, true, step, baseCost);
         return this;
     }
 
-    public AbilityBuilder setLifetime(double high, double low, double step, double baseCost, double costMultiplier){
-        this.setAbilityTagModifiersRandom(LIFETIME, high, low, true, step, baseCost, costMultiplier);
+    public AbilityBuilder setLifetime(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(LIFETIME, high, low, true, step, baseCost);
         return this;
     }
 
@@ -178,41 +178,41 @@ public class AbilityBuilder {
     }
 
     public AbilityBuilder setElement(double actualValue) {
-        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, 0, 0, 0, actualValue, 0, 0, false);
+        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, 0, 0, 0, actualValue, 0, false);
         this.abilityData.abilityProperties().put(SET_ELEMENT_TYPE, abilityModifiers);
         return this;
     }
 
     public AbilityBuilder setModifier(String name, double high, double low, boolean isHigherBetter, double actualValue) {
-        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, high, low, 0, actualValue, 0, 0, isHigherBetter);
+        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, high, low, 0, actualValue, 0, isHigherBetter);
         this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
 
-    public AbilityBuilder setModifierWithStep(String name, double high, double low, boolean isHigherBetter, double actualValue, double step, double baseCost, double costMultiplier) {
-        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, high, low, step, actualValue, baseCost, costMultiplier, isHigherBetter);
+    public AbilityBuilder setModifierWithStep(String name, double high, double low, boolean isHigherBetter, double actualValue, double step, double baseCost) {
+        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, high, low, step, actualValue, baseCost, isHigherBetter);
         this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
 
-    public AbilityBuilder setModifierWithStepSet(String name, double high, double low, boolean isHigherBetter, double actualValue, double setValue, double step, double baseCost, double costMultiplier) {
-        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, high, low, step, setValue,  baseCost, costMultiplier, isHigherBetter);
+    public AbilityBuilder setModifierWithStepSet(String name, double high, double low, boolean isHigherBetter, double actualValue, double setValue, double step, double baseCost) {
+        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, high, low, step, setValue,  baseCost, isHigherBetter);
         this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
     public AbilityBuilder setModifierWithoutBounds(String name, double actualValue) {
-        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, -1, -1, 0, actualValue, 0, 0, true);
+        var abilityModifiers = new AbilityData.AbilityModifiers(actualValue, -1, -1, 0, actualValue, 0, true);
         this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }
 
-    public AbilityBuilder setAbilityTagModifiersRandom(String name, double high, double low, boolean isHigherBetter, double step, double baseCost, double costMultiplier) {
+    public AbilityBuilder setAbilityTagModifiersRandom(String name, double high, double low, boolean isHigherBetter, double step, double baseCost) {
         var getValue = isHigherBetter ? low : high;
         var chosenR = doubleFormattedDouble(getValue);
         var highR = doubleFormattedDouble(high);
         var lowR = doubleFormattedDouble(low);
         var stepR = doubleFormattedDouble(step);
-        var abilityModifiers = new AbilityData.AbilityModifiers(chosenR, highR, lowR, stepR, chosenR, baseCost, costMultiplier, isHigherBetter);
+        var abilityModifiers = new AbilityData.AbilityModifiers(chosenR, highR, lowR, stepR, chosenR, baseCost, isHigherBetter);
         this.abilityData.abilityProperties().put(name, abilityModifiers);
         return this;
     }

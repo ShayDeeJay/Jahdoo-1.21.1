@@ -44,6 +44,7 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.server2client.AbilityHolderS2CP;
+import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
@@ -79,10 +80,17 @@ public class Helpers {
         PacketDistributor.sendToServer(new SelectAbilityC2SP(updateAbility));
     }
 
-    public static void syncAbilitiesServer(Player player) {
+    public static void syncAbilitiesServer(Entity player) {
         if(player instanceof ServerPlayer serverPlayer){
             var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
             PacketDistributor.sendToPlayer(serverPlayer, new AbilityHolderS2CP(casterData.getUnlockedAbilities()));
+        }
+    }
+
+    public static void syncCasterData(Entity player) {
+        if(player instanceof ServerPlayer serverPlayer){
+            var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
+            PacketDistributor.sendToPlayer(serverPlayer, new CastingDataSyncS2CP(casterData));
         }
     }
 

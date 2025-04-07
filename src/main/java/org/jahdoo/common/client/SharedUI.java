@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,6 +22,7 @@ import org.apache.logging.log4j.util.TriConsumer;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.DataComponentHelper;
@@ -37,7 +39,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static java.lang.String.valueOf;
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
+import static net.minecraft.network.chat.Component.literal;
 import static org.jahdoo.ascension.ability.AbilityBuilder.SET_ELEMENT_TYPE;
 import static org.jahdoo.ascension.attachments.CastingData.getXpNeededForNextLevel;
 import static org.jahdoo.ascension.utils.ColourStore.BORDER_COLOUR;
@@ -150,20 +154,28 @@ public class SharedUI {
         }
     }
 
-    public static void renderMiniXPBar(GuiGraphics guiGraphics, int x, int l, Minecraft minecraft) {
+    public static void renderMiniXPBar(GuiGraphics graphics, int x, int l, Minecraft minecraft) {
+        if(minecraft == null || minecraft.player == null) return;
         var expBackground = Helpers.res("textures/gui/xp_bar_container.png");
         var expProgress = Helpers.res("textures/gui/xp_bar.png");
+        var literal = getLiteral(minecraft);
 
-        if(minecraft == null || minecraft.player == null) return;
         minecraft.getProfiler().push("expBar");
-        var i = minecraft.player.getXpNeededForNextLevel();
-        if (i > 0) {
-            int k = (int)(minecraft.player.experienceProgress * 83.0F);
+
+        if (minecraft.player.getXpNeededForNextLevel() > 0) {
+            var k = (int)(minecraft.player.experienceProgress * 83.0F);
             var x1 = 82;
-            guiGraphics.blit(expBackground, x, l, 0,0, x1, 5, x1, 5);
-            if (k > 0) guiGraphics.blit(expProgress, x, l, 0, 0,  k, 5, 82, 5);
+
+            graphics.blit(expBackground, x, l, 0, 0, x1, 5, x1, 5);
+            if (k > 0) graphics.blit(expProgress, x, l, 0, 0, k, 5, 82, 5);
         }
+        drawStringWithBackground(graphics, minecraft.font, literal, x + 42, l - 2, 0, ColourStore.EXPERIENCE_GREEN, true);
+
         minecraft.getProfiler().pop();
+    }
+
+    private static @NotNull MutableComponent getLiteral(Minecraft minecraft) {
+        return literal(valueOf(minecraft.player.experienceLevel));
     }
 
     public static void getAbilityNameWithColour(

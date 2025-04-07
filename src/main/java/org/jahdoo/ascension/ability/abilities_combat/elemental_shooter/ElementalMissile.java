@@ -76,12 +76,12 @@ abstract public class ElementalMissile extends Ability {
         return new AbilityBuilder(name)
             .setStaticMana(15)
             .setStaticCooldown(0)
-            .setDamage(20, 10, 2, 1, 1.5)
-            .setEffectChance(50, 10, 10, 1, 1.5)
-            .setEffectStrength(10, 1, 1, 1, 1.5)
-            .setEffectDuration(300, 100, 50, 1, 1.5)
-            .setAbilityTagModifiersRandom(SHOT_MULTIPLIER, 3, 1, true, 1, 1, 1.5)
-            .setAbilityTagModifiersRandom(NUMBER_OF_RICOCHET, 6, 1, true, 1, 1, 1.5)
+            .setDamage(20, 10, 2, 1)
+            .setEffectChance(50, 10, 10, 2)
+            .setEffectStrength(10, 1, 1, 1)
+            .setEffectDuration(300, 100, 50, 1)
+            .setAbilityTagModifiersRandom(SHOT_MULTIPLIER, 3, 1, true, 1, 3)
+            .setAbilityTagModifiersRandom(NUMBER_OF_RICOCHET, 6, 1, true, 1, 1)
             .setModifier(SET_ELEMENT_TYPE, 0, 0, false, id)
             .buildAndReturn();
     }

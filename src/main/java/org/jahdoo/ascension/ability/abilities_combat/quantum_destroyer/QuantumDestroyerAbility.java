@@ -79,11 +79,11 @@ public class QuantumDestroyerAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(160)
             .setStaticCooldown(6000)
-            .setDamage(20, 10, 2, 1, 1.5)
-            .setCastingDistance(30, 10, 5, 1, 1.5)
-            .setLifetime(200, 100, 20, 1, 1.5)
-            .setGravitationalPull(2, 1, 0.2, 1, 1.5)
-            .setAbilityTagModifiersRandom(ENERGY_RADIUS, 6, 3, true, 1, 1, 1.5)
+            .setDamage(20, 10, 2, 2)
+            .setCastingDistance(30, 10, 5, 2)
+            .setLifetime(200, 100, 20, 2)
+            .setGravitationalPull(2, 1, 0.2, 2)
+            .setAbilityTagModifiersRandom(ENERGY_RADIUS, 6, 3, true, 1, 3)
             .buildAndReturn();
     }
 

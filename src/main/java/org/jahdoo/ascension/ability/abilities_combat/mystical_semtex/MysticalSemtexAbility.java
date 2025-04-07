@@ -18,10 +18,10 @@ import org.jahdoo.common.registers.EntityReg;
 public class MysticalSemtexAbility extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("mystical_semtex");
-    public static final String additionalProjectile = "Additional Projectiles";
-    public static final String explosionDelays = "Explosion Delay";
-    public static final String clusterChance = "Cluster Chance";
-    public static final String explosionRadius = "Explosion Radius";
+    public static final String ADDITIONAL_PROJECTILE = "Additional Projectiles";
+    public static final String EXPLOSION_DELAYS = "Explosion Delay";
+    public static final String CLUSTER_CHANCE = "Cluster Chance";
+    public static final String EXPLOSION_RADIUS = "Explosion Radius";
 
     @Override
     public JahdooRarity rarity() {
@@ -81,11 +81,11 @@ public class MysticalSemtexAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(60)
             .setStaticCooldown(500)
-            .setDamage(45, 25, 5, 1, 1.5)
-            .setAbilityTagModifiersRandom(additionalProjectile, 10,4, true, 1, 1, 1.5)
-            .setAbilityTagModifiersRandom(explosionDelays, 50,20, false, 5, 1, 1.5)
-            .setAbilityTagModifiersRandom(clusterChance, 10,1, false, 1, 1, 1.5)
-            .setAbilityTagModifiersRandom(explosionRadius, 8,3, true, 1, 1, 1.5)
+            .setDamage(45, 25, 5, 1)
+            .setAbilityTagModifiersRandom(ADDITIONAL_PROJECTILE, 10,4, true, 1, 1)
+            .setAbilityTagModifiersRandom(EXPLOSION_DELAYS, 50,20, false, 5, 1)
+            .setAbilityTagModifiersRandom(CLUSTER_CHANCE, 10,1, false, 1, 1)
+            .setAbilityTagModifiersRandom(EXPLOSION_RADIUS, 8,3, true, 1, 1)
             .buildAndReturn();
     }
 

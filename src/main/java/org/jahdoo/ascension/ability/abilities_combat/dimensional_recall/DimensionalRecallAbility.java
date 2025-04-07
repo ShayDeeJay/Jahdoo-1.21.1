@@ -80,7 +80,7 @@ public class DimensionalRecallAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(120)
             .setStaticCooldown(7200)
-            .setAbilityTagModifiersRandom(CASTING_TIME, 400, 100, false, 100, 1, 1.5)
+            .setAbilityTagModifiersRandom(CASTING_TIME, 400, 100, false, 100, 2)
             .buildAndReturn();
     }
 

@@ -265,7 +265,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
             if(!dependency && CastingData.checkAndConsume(player, ability.getAbilityCost())){
                 sendToServer(new AbilityHolderC2SP(abilityHolder));
-                player.playSound(SoundReg.UNLOCK.get());
+                player.playSound(SoundReg.UNLOCK_NOTIFICATION.get());
                 this.components = new ArrayList<>();
                 this.rebuildWidgets();
             } else {
@@ -290,10 +290,8 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     protected void baseRender(GuiGraphics guiGraphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
         var pose = guiGraphics.pose();
         var fade = SharedUI.getFadedColourBackground(0.8F);
-
         var adjustY = -6;
         var i = 70;
-        var j = 70;
         var x = 3F;
 
         boxMaker(guiGraphics, this.width/2 - i, 20 + adjustY, i, 20, 0, fade, fade);
@@ -316,20 +314,22 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         }
 
         boxMaker(guiGraphics, 3, 3, (int) (centerX - 3), (int) (centerY - 3), AETHER_BLUE, fade, color(100, UNIQUE_B));
-        overlaySkillPoints(guiGraphics, player, (int) centerX, i, adjustY, j, fade);
+        overlaySkillPoints(guiGraphics, player);
         this.components = new ArrayList<>();
         super.baseRender(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
         guiGraphics.hLine(3, this.width - 5, 89,  AETHER_BLUE);
     }
 
-    private void overlaySkillPoints(GuiGraphics guiGraphics, LocalPlayer player, int centerX, int i, int adjustY, int j, int fade) {
+    private void overlaySkillPoints(GuiGraphics guiGraphics, LocalPlayer player) {
         var size = 24;
         var skillPoints = CastingData.getAbilityPoints(player);
         var fade1 = SharedUI.getFadedColourBackground(0.5F);
         var length = valueOf(skillPoints).length();
-        boxMaker(guiGraphics, this.width/2 - i + 145, 20 + adjustY, 15 + (length * length), 10, 0, fade1, fade1);
-        guiGraphics.drawString(font, withStyleComponent(skillPoints + "", PERK_GREEN), this.width/2 - i + 165, 26 + adjustY, -1);
-        guiGraphics.blit(res("textures/item/skill_point.png"), this.width/2 - i + 143, 18 + adjustY, 0, 0, size, size, size, size);
+        var i1 = this.width / 2 + 80 ;
+        var i2 = -6;
+        boxMaker(guiGraphics, i1, 20 + i2, 15 + (length * length), 10, 0, fade1, fade1);
+        guiGraphics.drawString(font, withStyleComponent(skillPoints + "", PERK_GREEN), i1 + 22, 26 + i2, -1);
+        guiGraphics.blit(SKILL_POINT, i1 - 2, 18 + i2, 0, 0, size, size, size, size);
     }
 
     @Override
@@ -341,7 +341,6 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         float centerX,
         float centerY,
         Minecraft mc
-    ){
-    }
+    ){}
 
 }

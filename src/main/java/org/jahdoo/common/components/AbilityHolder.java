@@ -92,7 +92,6 @@ public record AbilityHolder(String abilityName, AbilityData data) {
                             value.step(),
                             value.setValue(),
                             value.baseCost(),
-                            value.upgradeMultiplier(),
                             value.isHigherBetter() ? 0 : 1,
                             index.get()
                         )
@@ -116,7 +115,7 @@ public record AbilityHolder(String abilityName, AbilityData data) {
                     value.getDouble(0), value.getDouble(1),
                     value.getDouble(2), value.getDouble(3),
                     value.getDouble(4), value.getDouble(5),
-                    value.getDouble(6), value.getDouble(7) == 0
+                    value.getDouble(6) == 0
                 );
                 int position = (int) value.getDouble(6);
                 withPos.add(Pair.of(position, Pair.of(key, modifier)));

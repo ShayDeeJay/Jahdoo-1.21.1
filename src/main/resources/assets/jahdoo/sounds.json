@@ -137,5 +137,11 @@
     "sounds": [
       "jahdoo:suspend"
     ]
+  },
+  "unlock_notification": {
+    "subtitles": "sounds.jahdoo.unlock_notification",
+    "sounds": [
+      "jahdoo:unlock_notification"
+    ]
   }
 }

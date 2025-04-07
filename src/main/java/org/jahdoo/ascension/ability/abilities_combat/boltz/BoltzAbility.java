@@ -63,12 +63,12 @@ public class BoltzAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(50)
             .setStaticCooldown(200)
-            .setDamage(30,10,5, 1, 1.5)
-            .setEffectDuration(300,100,50, 1, 1.5)
-            .setEffectStrength(10, 0, 1, 1, 1.5)
-            .setEffectChance(20,5,5, 1, 1.5)
-            .setAbilityTagModifiersRandom(DISCHARGE_RADIUS, 3, 1, true, 1, 1, 1.5)
-            .setAbilityTagModifiersRandom(TOTAL_BOLTS, 6, 2, true, 1, 1, 1.5)
+            .setDamage(30,10,5, 1)
+            .setEffectDuration(300,100,50, 1)
+            .setEffectStrength(10, 0, 1, 1)
+            .setEffectChance(20,5,5, 1)
+            .setAbilityTagModifiersRandom(DISCHARGE_RADIUS, 3, 1, true, 1, 1)
+            .setAbilityTagModifiersRandom(TOTAL_BOLTS, 6, 2, true, 1, 1)
             .buildAndReturn();
     }
 

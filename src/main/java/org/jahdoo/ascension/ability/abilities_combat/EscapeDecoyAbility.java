@@ -68,9 +68,9 @@ public class EscapeDecoyAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(50)
             .setStaticCooldown(1200)
-            .setLifetime(300, 100, 50, 1, 1.5)
-            .setEffectDuration(200, 50, 50, 1, 1.5)
-            .setRange(15, 5, 2, 1, 1.5)
+            .setLifetime(300, 100, 50, 1)
+            .setEffectDuration(200, 50, 50, 1)
+            .setRange(15, 5, 2, 2)
             .buildAndReturn();
     }
 

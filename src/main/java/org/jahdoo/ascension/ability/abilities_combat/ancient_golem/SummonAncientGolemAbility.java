@@ -1,12 +1,9 @@
 package org.jahdoo.ascension.ability.abilities_combat.ancient_golem;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.abilities_combat.life_siphon.LifeSiphonAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
@@ -15,8 +12,11 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.common.registers.EntityDataReg;
-import org.jahdoo.common.registers.SoundReg;
+
+import static net.minecraft.core.BlockPos.containing;
+import static net.minecraft.sounds.SoundEvents.ELDER_GUARDIAN_DEATH;
+import static org.jahdoo.common.registers.EntityDataReg.SUMMON_ANCIENT_GOLEM;
+import static org.jahdoo.common.registers.SoundReg.EXPLOSION;
 
 public class SummonAncientGolemAbility extends Ability {
 
@@ -57,26 +57,26 @@ public class SummonAncientGolemAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(200)
             .setStaticCooldown(6000)
-            .setDamage(40, 10, 5, 1, 1.5)
-            .setEffectStrength(10, 0, 1, 1, 1.5 )
-            .setEffectDuration(600, 200, 50, 1, 1.5)
-            .setEffectChance(60, 20, 10, 1, 1.5)
-            .setCastingDistance(30, 10, 5, 1, 1.5)
-            .setLifetime(12000, 2400, 1200, 1, 1.5)
+            .setDamage(40, 10, 5, 2)
+            .setEffectStrength(10, 0, 1, 1)
+            .setEffectDuration(600, 200, 50, 1)
+            .setEffectChance(60, 20, 10, 1)
+            .setCastingDistance(30, 10, 5, 2)
+            .setLifetime(12000, 2400, 1200, 1)
             .buildAndReturn();
     }
 
     @Override
     public void invokeAbility(Player player) {
-        var location = player.pick(40, 0,false).getLocation();
-        var selectedAbility = EntityDataReg.SUMMON_ANCIENT_GOLEM.get().setAbilityId();
+        var location = player.pick(40, 0, false).getLocation();
+        var selectedAbility = SUMMON_ANCIENT_GOLEM.get().setAbilityId();
         var intern = abilityId.getPath().intern();
         var aoeCloud = new AoeCloud(player.level(), player, 0f, selectedAbility, intern);
 
         aoeCloud.setPos(location.x, location.y, location.z);
         player.level().addFreshEntity(aoeCloud);
-        player.level().playSound(null, BlockPos.containing(location), SoundEvents.ELDER_GUARDIAN_DEATH, SoundSource.BLOCKS, 2f, 1.4f);
-        player.level().playSound(null, BlockPos.containing(location), SoundReg.EXPLOSION.get(), SoundSource.BLOCKS, 2f, 1.2f);
+        Helpers.getSoundWithPosition(player.level(), containing(location), ELDER_GUARDIAN_DEATH, 2F, 1.4F);
+        Helpers.getSoundWithPosition(player.level(), containing(location), EXPLOSION.get(), 2F, 1.2F);
     }
 
     @Override

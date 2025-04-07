@@ -77,9 +77,9 @@ public class IceBombAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(45)
             .setStaticCooldown(400)
-            .setDamage(20, 10, 2, 1, 1.5)
-            .setEffectStrength(10, 5, 1, 1, 1.5)
-            .setEffectDuration(600,200,100, 1, 1.5)
+            .setDamage(20, 10, 2, 1)
+            .setEffectStrength(10, 5, 1, 1)
+            .setEffectDuration(600, 200, 100, 1)
             .buildAndReturn();
     }
 

@@ -66,6 +66,9 @@ public class Icons {
     public static final ResourceLocation ABILITY_BACKGROUND =
         res(PREFIX + "ability_background.png");
 
+    public static final ResourceLocation SKILL_POINT =
+        res(ITEMS_PREFIX + "skill_point.png");
+
     public static final ResourceLocation ATTACK_SPEED =
         res(ABILITY_PREFIX + "attack_speed.png");
 

@@ -38,7 +38,6 @@ public record AbilityData(Map<String, AbilityModifiers> abilityProperties) {
         double step,
         double setValue,
         double baseCost,
-        double upgradeMultiplier,
         boolean isHigherBetter
     ){
         private static final StreamCodec<FriendlyByteBuf, AbilityModifiers> STREAM_CODEC = StreamCodec.ofMember(
@@ -52,12 +51,12 @@ public record AbilityData(Map<String, AbilityModifiers> abilityProperties) {
             friendlyByteBuf.writeDouble(lowestValue);
             friendlyByteBuf.writeDouble(step);
             friendlyByteBuf.writeDouble(setValue);
+            friendlyByteBuf.writeDouble(baseCost);
             friendlyByteBuf.writeBoolean(isHigherBetter);
         }
 
         private static AbilityModifiers deserialise(FriendlyByteBuf friendlyByteBuf){
             return new AbilityModifiers(
-                friendlyByteBuf.readDouble(),
                 friendlyByteBuf.readDouble(),
                 friendlyByteBuf.readDouble(),
                 friendlyByteBuf.readDouble(),
@@ -76,7 +75,6 @@ public record AbilityData(Map<String, AbilityModifiers> abilityProperties) {
                 Codec.DOUBLE.fieldOf("step").forGetter(AbilityModifiers::step),
                 Codec.DOUBLE.fieldOf("set_value").forGetter(AbilityModifiers::setValue),
                 Codec.DOUBLE.fieldOf("baseCost").forGetter(AbilityModifiers::baseCost),
-                Codec.DOUBLE.fieldOf("upgrade_multiplier").forGetter(AbilityModifiers::upgradeMultiplier),
                 Codec.BOOL.fieldOf("is_higher_better").forGetter(AbilityModifiers::isHigherBetter)
             ).apply(instance, AbilityModifiers::new)
         );
@@ -90,7 +88,6 @@ public record AbilityData(Map<String, AbilityModifiers> abilityProperties) {
                 "  Step: " + step + ",\n" +
                 "  Set Value: " + setValue + ",\n" +
                 "  Base Cost: " + setValue + ",\n" +
-                "  Upgrade Multiplier: " + setValue + ",\n" +
                 "  Is Higher Better: " + isHigherBetter + "\n" +
                 "}";
         }

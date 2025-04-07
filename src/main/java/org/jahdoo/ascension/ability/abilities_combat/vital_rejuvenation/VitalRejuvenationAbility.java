@@ -74,8 +74,8 @@ public class VitalRejuvenationAbility extends Ability {
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(100)
-            .setAbilityTagModifiersRandom(MAX_ABSORPTION, 10, 2, true, 1, 1, 1.5)
-            .setAbilityTagModifiersRandom(CAST_DELAY, 15, 5, false, 2, 1, 1.5)
+            .setAbilityTagModifiersRandom(MAX_ABSORPTION, 10, 2, true, 1, 3)
+            .setAbilityTagModifiersRandom(CAST_DELAY, 15, 5, false, 2, 3)
             .buildAndReturn();
     }
 
