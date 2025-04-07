@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static org.jahdoo.ascension.attachments.CastingData.entityHolderWithSelected;
 import static org.jahdoo.ascension.utils.Helpers.syncSelectedAbility;
 import static org.jahdoo.common.client.Icons.COG;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentModificationScreenWand;
@@ -130,13 +131,14 @@ public class AbilityWheelScreen extends Screen  {
         int x = (this.width / 2);
         int y = (this.height / 2) - 5;
         if (localTick >= (RADIAL_SIZE - 20)) {
-//            var getAbilityId = DataComponentHelper.getAbilityTypeWand(getMinecraft().player);
-//            var ability
-//            if(!getAbility.isEmpty()){
-//                SharedUI.getAbilityNameWithColour(getAbility.getFirst(), holder, x, y - 90, true);
-//                int width = (int) (getAbilityId.getPath().intern().length() * 3.5);
-//                SharedUI.boxMaker(guiGraphics, x - width, y - 96, width, 10);
-//            }
+            var data = getMinecraft().player.getData(AttachmentReg.CASTER_DATA);
+            var selectedAbility = data.getSelectedAbility();
+            var ability = AbilityReg.getFirstSpellByTypeId(selectedAbility);
+            if(ability.isPresent()){
+                SharedUI.getAbilityNameWithColour(ability.get(), entityHolderWithSelected(getMinecraft().player), guiGraphics, x, y - 90, true);
+                int width = (int) (selectedAbility.length() * 3.5);
+                SharedUI.boxMaker(guiGraphics, x - width, y - 96, width, 10);
+            }
         }
     }
 
@@ -147,8 +149,8 @@ public class AbilityWheelScreen extends Screen  {
         if(player == null) return;
         var wand = Helpers.getUsedItem(player);
         var castingData = player.getData(AttachmentReg.CASTER_DATA);
-        var abilityHolder = getAllAbilities(wand);
-        var totalSlots = abilityHolder.size();
+        var abilityHolder = castingData.getAbilitySlots();
+        var totalSlots = abilityHolder.stream().filter(s -> !s.isEmpty()).toList().size();
         int centerX = this.width / 2 + 2;
         int centerY = this.height / 2 + 2;
         double angleOffset = -Math.PI / 2.0;
@@ -223,6 +225,7 @@ public class AbilityWheelScreen extends Screen  {
             this.rebuildWidgets();
             this.switchState = false;
         }
+
         if(this.localTick >= RADIAL_SIZE) {
             this.getSelectedAbilityName(guiGraphics);
             super.render(guiGraphics, mouseX, mouseY, delta);

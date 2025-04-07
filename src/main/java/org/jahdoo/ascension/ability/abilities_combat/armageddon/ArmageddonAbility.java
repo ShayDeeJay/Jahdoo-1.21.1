@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
@@ -47,6 +48,11 @@ public class ArmageddonAbility extends Ability {
     @Override
     public int getCastDuration(Player player) {
         return 0;
+    }
+
+    @Override
+    public String requiredUnlock() {
+        return FireballAbility.abilityId.getPath();
     }
 
     @Override

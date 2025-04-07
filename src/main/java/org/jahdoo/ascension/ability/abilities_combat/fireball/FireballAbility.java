@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.abilities_combat.BurningSkullsAbility;
+import org.jahdoo.ascension.ability.abilities_combat.hellfire.HellfireAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -50,6 +51,11 @@ public class FireballAbility extends Ability {
     @Override
     public AbstractElement getElemenType() {
         return ElementReg.inferno();
+    }
+
+    @Override
+    public String requiredUnlock() {
+        return HellfireAbility.abilityId.getPath();
     }
 
     @Override

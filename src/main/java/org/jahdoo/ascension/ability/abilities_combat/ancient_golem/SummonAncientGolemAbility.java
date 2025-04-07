@@ -7,6 +7,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.ability.abilities_combat.life_siphon.LifeSiphonAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -76,6 +77,11 @@ public class SummonAncientGolemAbility extends Ability {
         player.level().addFreshEntity(aoeCloud);
         player.level().playSound(null, BlockPos.containing(location), SoundEvents.ELDER_GUARDIAN_DEATH, SoundSource.BLOCKS, 2f, 1.4f);
         player.level().playSound(null, BlockPos.containing(location), SoundReg.EXPLOSION.get(), SoundSource.BLOCKS, 2f, 1.2f);
+    }
+
+    @Override
+    public String requiredUnlock() {
+        return LifeSiphonAbility.abilityId.getPath();
     }
 
     @Override

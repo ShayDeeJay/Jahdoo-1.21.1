@@ -19,7 +19,7 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.Ability;
-import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
@@ -29,17 +29,21 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
+import static org.jahdoo.ascension.utils.ColourStore.PERK_GREEN;
+import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.ascension.utils.Maths.ticksToTime;
 import static org.jahdoo.common.items.augments.AugmentRatingSystem.*;
@@ -104,7 +108,6 @@ public class AugmentItemHelper {
     public static void augmentIdentifierShared(ItemStack itemStack, @Nullable Player player){
         var abstractAbilities = AbilityReg.REGISTRY.stream().toList();
         var ability = abstractAbilities.get(Helpers.Random.nextInt(0, abstractAbilities.size()));
-//        ability.setModifiers(itemStack);
         var wandAbilityHolder = itemStack.get(ABILITY_HOLDER.get());
         if(player != null){
             if(!player.level().isClientSide) setAbilityToAugment(itemStack, ability, wandAbilityHolder);
@@ -117,47 +120,15 @@ public class AugmentItemHelper {
     public static ItemStack getAugmentWithAbility(Ability ability) {
         var itemStack = new ItemStack(ItemReg.AUGMENT);
         LocalLootBeamData.attachLootBeamComponent(itemStack, ability.rarity());
-//        ability.setModifiers(itemStack);
         itemStack.set(ComponentReg.JAHDOO_RARITY, ability.rarity().getId());
         var wandAbilityHolder = itemStack.get(ABILITY_HOLDER.get());
         setAbilityToAugment(itemStack, ability, wandAbilityHolder);
         return itemStack;
     }
 
-//    public static @NotNull ElementalShooterAbility elementalWithType(int elementId) {
-//        var ability = new ElementalShooterAbility(){
-//            @Override
-//            public void setModifiers(ItemStack itemStack) {
-//                new AbilityBuilder(itemStack, abilityId.getPath().intern())
-//                    .setStaticMana(15)
-//                    .setStaticCooldown(0)
-//                    .setDamage(10, 5, 1)
-//                    .setEffectChance(50, 10, 10)
-//                    .setEffectStrength(10, 1, 1)
-//                    .setEffectDuration(300, 100, 50)
-//                    .setAbilityTagModifiersRandom(SHOT_MULTIPLIER, 3, 1, true, 1)
-//                    .setAbilityTagModifiersRandom(NUMBER_OF_RICOCHET, 6, 1, true, 1)
-//                    .setModifier(SET_ELEMENT_TYPE, 0, 0, false, elementId)
-//                    .build();
-//            }
-//        };
-//        getAugmentWithAbility(ability);
-//        return ability;
-//    }
-
-    public static void augmentIdentifierSharedRarity(ItemStack itemStack, boolean withUtil, @Nullable JahdooRarity rarity){
-        var ability = JahdooRarity.getAbilityWithRarity(withUtil, rarity);
-
-        LocalLootBeamData.attachLootBeamComponent(itemStack, ability.rarity());
-//        ability.setModifiers(itemStack);
-        var wandAbilityHolder = itemStack.get(ABILITY_HOLDER.get());
-        setAbilityToAugment(itemStack, ability, wandAbilityHolder);
-    }
-
     public static void augmentIdentifierSharedUtil(ItemStack itemStack, @Nullable JahdooRarity rarity){
         var ability = JahdooRarity.getAbilityUtil(rarity);
         LocalLootBeamData.attachLootBeamComponent(itemStack, ability.rarity());
-//        ability.setModifiers(itemStack);
         var wandAbilityHolder = itemStack.get(ABILITY_HOLDER.get());
         itemStack.set(JAHDOO_RARITY, ability.rarity().getId());
         setAbilityToAugment(itemStack, ability, wandAbilityHolder);
@@ -165,7 +136,6 @@ public class AugmentItemHelper {
 
     public static void setAbilityToAugment(ItemStack itemStack, Ability ability, AbilityHolder abilityHolder){
         int type;
-
         DataComponentHelper.setAbilityTypeItemStack(itemStack, ability.setAbilityId());
 
         if (ability.isMultiType()) {
@@ -215,7 +185,7 @@ public class AugmentItemHelper {
         }
 
         if(modifier.highestValue() != -1){
-            if (hide ) {
+            if (hide) {
                 toolTips.add(displayRating(holder, keys));
             }
         }
@@ -242,7 +212,7 @@ public class AugmentItemHelper {
 
     public static boolean shiftForDetails(List<Component> toolTips){
         if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
-//            toolTips.add(Component.literal(" "));
+            toolTips.add(Component.literal(" "));
             var hotkey = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey",-2631721);
             var holdToDiscover = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details",-10066330, hotkey);
             toolTips.add(holdToDiscover);
@@ -251,39 +221,31 @@ public class AugmentItemHelper {
         return false;
     }
 
-    public static void getHoverText(Ability ability, AbilityHolder holder, List<Component> toolTips, boolean hide, Level level){
-        if(holder != null) toolTips.addAll(getAllAbilityModifiers(ability, holder, hide, level));
+    public static List<Component> shiftForDetails(Boolean showSpacer){
+        var comps = new ArrayList<Component>();
+
+        if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
+            if(showSpacer) comps.add(Component.literal(" "));
+            var hotkey = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey",-2631721);
+            var holdToDiscover = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details",-10066330, hotkey);
+            comps.add(holdToDiscover);
+            return comps;
+        }
+
+        return comps;
     }
 
-    public static Component getAbilityName(AbilityHolder holder, AbstractElement info){
-        var component = new AtomicReference<>(Component.empty());
+    public static Component getAbilityName(AbilityHolder holder){
 
         if(holder != null){
-            var abilityRegistrars = AbilityReg.REGISTRY.get(Helpers.res(holder.abilityName()));
-            if (abilityRegistrars != null) {
-                component.set(
-                    Component.literal(abilityRegistrars.getAbilityName())
-                        .withStyle((style) -> style.withColor(info.textColourA()))
-                );
+            var ability = AbilityReg.getFirstSpellByTypeId(holder.abilityName());
+            if (ability.isPresent()) {
+                var getAbility = ability.get();
+                return withStyleComponent(getAbility.getAbilityName(), getAbility.getElemenType().textColourA());
             }
         }
 
-        return component.get();
-    }
-
-    public static Component getHoverName(Ability ability, AbilityHolder holder){
-        if(ability != null){
-            var abstractElement = ability.getElemenType();
-
-            if (abstractElement != null) {
-                return AugmentItemHelper.getAbilityName(holder, abstractElement);
-
-//                var elementName = abstractElement.name() + " Augment";
-//                var elementColour = abstractElement.getFirst().textColourA();
-//                return Helpers.withStyleComponent(elementName, elementColour);
-            }
-        }
-        return Component.literal("Unidentified Augment").withStyle(style -> style.withColor(-9013642));
+        return Component.empty();
     }
 
     public static void setAugmentModificationScreen(ItemStack itemStack, @Nullable Screen previousScreen){
@@ -428,45 +390,55 @@ public class AugmentItemHelper {
           Ability ability,
           AbilityHolder holder,
           boolean hide,
-          Level level
+          boolean showUnlockDetails,
+          Player player
     ){
         var toolTips = new ArrayList<Component>();
         var exceptions = List.of(COOLDOWN, MANA_COST, SET_ELEMENT_TYPE, "index", OFFSET, "buddy");
-
-        if(holder == null) return toolTips;
-
-        toolTips.add(getHoverName(ability, holder));
-
-        var index = ability.rarity();
-
-        if(index != null){
-            toolTips.add(JahdooRarity.addRarityTooltip(index, level));
-        }
-
-        toolTips.add(Component.empty());
-
+        var data = player.getData(AttachmentReg.CASTER_DATA);
+        var unlocked = holder != null && data.hasAbility(holder);
         var subHeaderColour = -2434342;
         var curlyStart = String.valueOf((char) 171);
         var curlyEnd = String.valueOf((char) 187);
 
-        var filteredSuffix = holder.data().abilityProperties().keySet()
-              .stream()
-              .filter(abilityModifiers -> !exceptions.contains(abilityModifiers))
-              .toList();
+        if(!unlocked && showUnlockDetails){
 
+            toolTips.addFirst(Component.empty());
+            var prefix = withStyleComponent("Cost: ", SUB_HEADER_COLOUR);
+            var suffix = withStyleComponent("◆ " + ability.getAbilityCost() + " Skill Points", PERK_GREEN).copy();
+            toolTips.addFirst(prefix.copy().append(suffix));
 
-        if(holder.data().abilityProperties().containsKey(MANA_COST)){
-            toolTipBase(toolTips, ability, holder, null, MANA_COST, ColourStore.AETHER_BLUE, hide);
+            if(!Objects.equals(ability.requiredUnlock(), Ability.NON) && !CastingData.hasAbility(player, ability.requiredUnlock())){
+                var prefix1 = withStyleComponent("Requires: ", SUB_HEADER_COLOUR);
+                var suffix1 = withStyleComponent(Helpers.stringIdToName(ability.requiredUnlock()), ability.getElemenType().textColourA()).copy();
+                toolTips.addFirst(prefix1.copy().append(suffix1));
+            }
         }
 
-        if(holder.data().abilityProperties().containsKey(COOLDOWN)){
-            toolTipBase(toolTips, ability, holder, null, COOLDOWN, ColourStore.COOLDOWN_GREEN, hide);
-        }
+        toolTips.add(getAbilityName(holder));
 
-        if(!filteredSuffix.isEmpty()){
-            toolTips.add(Component.literal(" "));
-            toolTips.add(Helpers.withStyleComponentTrans("augmentHelper.jahdoo.attributes", subHeaderColour, curlyStart, curlyEnd));
-            filteredSuffix.forEach(keys -> toolTipBase(toolTips, ability, holder, null, keys, 0, hide));
+        if(hide || unlocked){
+            toolTips.add(JahdooRarity.addRarityTooltip(ability.rarity(), player.level()));
+            toolTips.add(Component.empty());
+
+            var filteredSuffix = holder.data().abilityProperties().keySet()
+                .stream()
+                .filter(abilityModifiers -> !exceptions.contains(abilityModifiers))
+                .toList();
+
+            if (holder.data().abilityProperties().containsKey(MANA_COST)) {
+                toolTipBase(toolTips, ability, holder, null, MANA_COST, ColourStore.AETHER_BLUE, hide);
+            }
+
+            if (holder.data().abilityProperties().containsKey(COOLDOWN)) {
+                toolTipBase(toolTips, ability, holder, null, COOLDOWN, ColourStore.COOLDOWN_GREEN, hide);
+            }
+
+            if (!filteredSuffix.isEmpty()) {
+                toolTips.add(Component.literal(" "));
+                toolTips.add(Helpers.withStyleComponentTrans("augmentHelper.jahdoo.attributes", subHeaderColour, curlyStart, curlyEnd));
+                filteredSuffix.forEach(keys -> toolTipBase(toolTips, ability, holder, null, keys, 0, hide));
+            }
         }
 
         return toolTips;

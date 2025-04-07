@@ -13,13 +13,11 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.CooldownsSyncS2CP;
 import org.jahdoo.common.networking.server2client.ManaSyncS2CP;
 import org.jahdoo.common.registers.AttributeReg;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
@@ -30,6 +28,7 @@ public class CastingData implements IAttachment {
     private static final String COOLDOWNS = "jahdoo_magic_data_cooldowns";
     private static final String COOLDOWNS_STATIC = "jahdoo_magic_data_cooldowns";
     private static final Logger LOGGER = LoggerFactory.getLogger(CastingData.class);
+    public static final List<@NotNull String> EMPTY = List.of("", "", "", "", "", "", "", "", "", "", "", "");
 
     private int xp;
     private int abilityPoints;
@@ -38,16 +37,17 @@ public class CastingData implements IAttachment {
     private Map<String, Integer> abilityCooldowns = new Object2IntOpenHashMap<>();
     private Map<String, Integer> abilityCooldownsStatic = new Object2IntOpenHashMap<>();
     private List<AbilityHolder> unlockedAbilities = new ArrayList<>();
+    public List<String> abilitySlots = new ArrayList<>();
 
     public CastingData(
         int xp,
         int abilityPoints,
         double manaPool,
         String selectedAbility,
-
         Map<String, Integer> abilityCooldowns,
         Map<String, Integer> abilityCooldownsStatic,
-        List<AbilityHolder> unlockedAbilities
+        List<AbilityHolder> unlockedAbilities,
+        List<String> abilitySlots
     ) {
         this.xp = xp;
         this.abilityPoints = abilityPoints;
@@ -56,9 +56,13 @@ public class CastingData implements IAttachment {
         this.abilityCooldowns = abilityCooldowns;
         this.abilityCooldownsStatic = abilityCooldownsStatic;
         this.unlockedAbilities = unlockedAbilities;
+        this.abilitySlots = abilitySlots;
+
     }
 
-    public CastingData(){}
+    public CastingData(){
+        abilitySlots.addAll(EMPTY);
+    }
 
     public double getManaPool() {
         return manaPool;
@@ -117,13 +121,21 @@ public class CastingData implements IAttachment {
         for (var unlockedAbility : this.unlockedAbilities) {
             if(unlockedAbility.abilityName().equals(holder.abilityName())){
                 var index = this.unlockedAbilities.indexOf(unlockedAbility);
-                this.unlockedAbilities.remove(unlockedAbility);
-                this.unlockedAbilities.add(index, holder);
+                this.unlockedAbilities.set(index, holder);
                 return;
             }
         }
 
         this.unlockedAbilities.add(holder);
+    }
+
+    public boolean hasAbility(String ability){
+        for (var unlockedAbility : this.unlockedAbilities) {
+            if(unlockedAbility.abilityName().equals(ability)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean hasAbility(AbilityHolder holder){
@@ -149,7 +161,36 @@ public class CastingData implements IAttachment {
 
     public void clearAllAbilities(){
         this.unlockedAbilities = new ArrayList<>();
+        this.abilitySlots = new ArrayList<>(EMPTY);
         this.selectedAbility = "";
+    }
+
+    public List<String> getAbilitySlots(){
+        return this.abilitySlots;
+    }
+
+    public void addAbilitySlot(String selectedAbility){
+        if (!this.abilitySlots.contains(selectedAbility)) {
+            for (int i = 0; i < this.abilitySlots.size(); i++) {
+                if (this.abilitySlots.get(i).isEmpty()) {
+                    this.abilitySlots.set(i, selectedAbility);
+                    return; // Stop after inserting into the first empty slot
+                }
+            }
+        }
+    }
+
+    public void removeAbilitySlot(String selectedAbility){
+        int index = this.abilitySlots.indexOf(selectedAbility);
+        if (index == -1) return; // Not found, nothing to remove
+
+        for (int i = index; i < this.abilitySlots.size() - 1; i++) {
+            this.abilitySlots.set(i, this.abilitySlots.get(i + 1));
+        }
+
+        // Empty out the last slot
+        this.abilitySlots.set(this.abilitySlots.size() - 1, "");
+        if(Objects.equals(selectedAbility, this.selectedAbility)) this.selectedAbility = "";
     }
 
     public List<AbilityHolder> getUnlockedAbilities(){
@@ -261,6 +302,11 @@ public class CastingData implements IAttachment {
         return baseManaRegen;
     }
 
+    public static Boolean hasAbility(LivingEntity livingEntity,  String selectedAbility){
+        return livingEntity.getData(CASTER_DATA).hasAbility(selectedAbility);
+    }
+
+
     public static String selectedAbility(LivingEntity livingEntity){
         return livingEntity.getData(CASTER_DATA).getSelectedAbility();
     }
@@ -310,11 +356,15 @@ public class CastingData implements IAttachment {
     }
 
     public static boolean checkAndConsume(Player player, int cost){
-        var available = CastingData.getAbilityPoints(player);
-        var canPurchase = available >= cost;
-        if(!canPurchase) return false;
+        if (canPurchase(player, cost)) return false;
         CastingData.decrementAbilityPoints(player, cost);
         return true;
+    }
+
+    public static boolean canPurchase(Player player, int cost) {
+        var available = CastingData.getAbilityPoints(player);
+        var canPurchase = available >= cost;
+        return !canPurchase;
     }
 
     public static float getExperienceProgress(Player player) {
@@ -369,7 +419,8 @@ public class CastingData implements IAttachment {
             Codec.STRING.fieldOf("selected_ability").forGetter(CastingData::getSelectedAbility),
             Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("ability_cooldowns").forGetter(CastingData::getAllCooldowns),
             Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("ability_cooldowns_static").forGetter(CastingData::getAllCooldownsStatic),
-            Codec.list(AbilityHolder.CODEC).fieldOf("unlocked_abilities").forGetter(CastingData::getUnlockedAbilities)
+            Codec.list(AbilityHolder.CODEC).fieldOf("unlocked_abilities").forGetter(CastingData::getUnlockedAbilities),
+            Codec.list(Codec.STRING).fieldOf("ability_slots").forGetter(CastingData::getAbilitySlots)
         ).apply(instance, CastingData::new)
     );
 
@@ -377,12 +428,21 @@ public class CastingData implements IAttachment {
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         var cooldowns = new CompoundTag();
         var cooldownsStatic = new CompoundTag();
+        var abilitySlots = new CompoundTag();
+
+        for (int i = 0; i < this.abilitySlots.size(); i++) {
+            String abilitySlot = this.abilitySlots.get(i);
+            if (!abilitySlot.isEmpty()) {
+                abilitySlots.putString(String.valueOf(i), abilitySlot); // Save using index
+            }
+        }
 
         this.abilityCooldowns.forEach(cooldowns::putInt);
         this.abilityCooldownsStatic.forEach(cooldownsStatic::putInt);
 
         nbt.put(CastingData.COOLDOWNS, cooldowns);
         nbt.put(CastingData.COOLDOWNS_STATIC, cooldownsStatic);
+        nbt.put("ability_slots", abilitySlots);
         nbt.putDouble(MANA, manaPool);
         nbt.putInt("level", this.xp);
         nbt.putInt("ability_points", this.abilityPoints);
@@ -393,15 +453,33 @@ public class CastingData implements IAttachment {
     @Override
     public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         manaPool = nbt.getDouble(MANA);
-        this.selectedAbility = nbt.getString("selected_ability");
+        selectedAbility = nbt.getString("selected_ability");
 
-        nbt.getCompound(COOLDOWNS).
-            getAllKeys()
-            .forEach(keys -> abilityCooldowns.put(keys, nbt.getCompound(COOLDOWNS).getInt(keys)));
+        nbt.getCompound(COOLDOWNS)
+            .getAllKeys()
+            .forEach(key -> abilityCooldowns.put(key, nbt.getCompound(COOLDOWNS).getInt(key)));
 
         nbt.getCompound(COOLDOWNS_STATIC)
             .getAllKeys()
-            .forEach(keys -> abilityCooldownsStatic.put(keys, nbt.getCompound(COOLDOWNS_STATIC).getInt(keys)));
+            .forEach(key -> abilityCooldownsStatic.put(key, nbt.getCompound(COOLDOWNS_STATIC).getInt(key)));
+
+        var slots = nbt.getCompound("ability_slots");
+        this.abilitySlots.clear();
+        int maxIndex = 0;
+
+        for (String key : slots.getAllKeys()) {
+            var index = Integer.parseInt(key);
+            var ability = slots.getString(key);
+            while (this.abilitySlots.size() <= index) {
+                this.abilitySlots.add(""); // pad with empty strings
+            }
+            this.abilitySlots.set(index, ability);
+            if (index > maxIndex) maxIndex = index;
+        }
+
+        for (int i = this.abilitySlots.size(); i < 12; i++) {
+            this.abilitySlots.add("");
+        }
 
         this.xp = nbt.getInt("level");
         this.abilityPoints = nbt.getInt("ability_points");

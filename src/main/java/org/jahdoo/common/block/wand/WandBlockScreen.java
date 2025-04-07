@@ -30,7 +30,8 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
-import static org.jahdoo.common.block.augment_modification_station.AugmentModificationScreen.WIDGET;
+import static org.jahdoo.ascension.utils.ColourStore.BORDER_COLOUR;
+import static org.jahdoo.common.block.augment_modification_station.AbilityModificationScreen.WIDGET;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
@@ -353,12 +354,12 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         var adjustX = -198;
         var adjustY = 120;
         if(this.cachedItem != null && !this.cachedItem.isEmpty()){
-            var components = SharedUI.getComponents(this.cachedItem, this.getMinecraft().level);
+//            var components = SharedUI.getComponents(this.cachedItem, this.getMinecraft().level);
             var subComponents = new ArrayList<Component>();
             subComponents.add(Helpers.withStyleComponent("Description: ", -23281));
             for (String s : wrapText()) subComponents.add(Helpers.withStyleComponent(s, -1));
             subComponents.add(Component.literal(" "))    ;
-            subComponents.addAll(components.subList(2, components.size() - 2));
+//            subComponents.addAll(components.subList(2, components.size() - 2));
             var spacer = new AtomicInteger();
 
             for(Component component : subComponents){
@@ -383,28 +384,28 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
         return mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 50 && mouseY < heightTo - (showInventory ?  120 : 5);
     }
 
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(isInHitbox(mouseX, mouseY)) windowMoveVertical(dragY);
-        return true;
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if(isInHitbox(mouseX, mouseY)) windowMoveVertical(scrollY * 4);
-        return true;
-    }
-
-    private void windowMoveVertical(double dragY) {
-        int size = getComponents(this.cachedItem, this.getMinecraft().level)
-            .stream()
-            .filter(component -> component.getString().contains("|"))
-            .toList()
-            .size();
-        int b = 7 * size * size * this.wrapText().size();
-        this.yScroll = Math.min(0, this.yScroll + dragY);
-        this.rebuildWidgets();
-    }
+//    @Override
+//    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+//        if(isInHitbox(mouseX, mouseY)) windowMoveVertical(dragY);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+//        if(isInHitbox(mouseX, mouseY)) windowMoveVertical(scrollY * 4);
+//        return true;
+//    }
+//
+//    private void windowMoveVertical(double dragY) {
+//        int size = getComponents(this.cachedItem, this.getMinecraft().level)
+//            .stream()
+//            .filter(component -> component.getString().contains("|"))
+//            .toList()
+//            .size();
+//        int b = 7 * size * size * this.wrapText().size();
+//        this.yScroll = Math.min(0, this.yScroll + dragY);
+//        this.rebuildWidgets();
+//    }
 
     private void header(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
         if(this.cachedItem != null){

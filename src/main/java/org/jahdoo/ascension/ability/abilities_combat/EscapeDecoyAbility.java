@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.ability.abilities_combat.elemental_shooter.VitalityMissile;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
@@ -71,6 +72,11 @@ public class EscapeDecoyAbility extends Ability {
             .setEffectDuration(200, 50, 50, 1, 1.5)
             .setRange(15, 5, 2, 1, 1.5)
             .buildAndReturn();
+    }
+
+    @Override
+    public String requiredUnlock() {
+        return VitalityMissile.abilityId.getPath();
     }
 
     @Override

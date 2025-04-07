@@ -50,6 +50,11 @@ public class HellfireAbility extends Ability {
     }
 
     @Override
+    public String requiredUnlock() {
+        return BurningSkullsAbility.abilityId.getPath();
+    }
+
+    @Override
     public void invokeAbility(Player player) {
         AoeCloud aoeCloud = new AoeCloud(player.level(), player, 0.3f, HELLFIRE.get().setAbilityId(), abilityId.getPath().intern());
         aoeCloud.setPos(player.getX(), player.getY(), player.getZ());

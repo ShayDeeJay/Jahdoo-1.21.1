@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.jahdoo.ascension.utils.ColourStore.BORDER_COLOUR;
 import static org.jahdoo.ascension.utils.Helpers.filterList;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.Icons.*;

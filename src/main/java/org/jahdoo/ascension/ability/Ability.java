@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 
 public abstract class Ability {
 
+    public static final String NON = "non";
     public static final int DISTANCE_CAST = 1;
     public static final int PROJECTILE_CAST = 2;
     public static final int AREA_CAST = 3;
@@ -43,6 +44,8 @@ public abstract class Ability {
     public abstract int getCastDuration(Player player);
 
     public abstract void invokeAbility(Player player);
+
+    public abstract String requiredUnlock();
 
     public boolean isMultiType(){
         return false;

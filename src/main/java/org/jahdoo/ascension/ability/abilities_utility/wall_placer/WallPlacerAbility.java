@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
+import org.jahdoo.ascension.ability.abilities_utility.farmers_touch.FarmersTouchAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -68,6 +69,11 @@ public class WallPlacerAbility extends AbstractBlockAbility {
     @Override
     public int getAbilityCost() {
         return 2;
+    }
+
+    @Override
+    public String requiredUnlock() {
+        return FarmersTouchAbility.abilityId.getPath();
     }
 
     @Override

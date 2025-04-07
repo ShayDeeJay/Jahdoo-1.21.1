@@ -28,5 +28,6 @@ public class ColourStore {
     public static final int NETHERITE_BOX = color(107, 95, 96);
     public static final int COOLDOWN_GREEN = color(66, 245, 197);
     public static final int WALLET_BROWN = color(105, 52, 13);
-
+    public static final int BOX_COLOUR = -804253680;
+    public static final int BORDER_COLOUR =  -12434878;
 }

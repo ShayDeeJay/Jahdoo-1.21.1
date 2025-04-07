@@ -4,16 +4,17 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.BundleTooltip;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.BundleContents;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
@@ -36,16 +37,15 @@ import java.util.function.Consumer;
 
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.items.wand.WandItemHelper.*;
-import static org.jahdoo.common.registers.BlockReg.WAND;
 import static org.jahdoo.common.registers.ComponentReg.*;
 
-public class WandItem extends BlockItem implements GeoItem, JahdooItem {
+public class WandItem extends Item implements GeoItem, JahdooItem {
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public String location;
 
     public WandItem(String location) {
-        super(WAND.get(), wandProperties());
+        super(wandProperties());
         SingletonGeoAnimatable.registerSyncedAnimatable(this);
         this.location = location;
     }
@@ -58,11 +58,6 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return 72000;
-    }
-
-    @Override
-    public InteractionResult place(BlockPlaceContext context) {
-        return onPlace(context);
     }
 
     @Override
@@ -135,14 +130,17 @@ public class WandItem extends BlockItem implements GeoItem, JahdooItem {
     public InteractionResultHolder<ItemStack> use(Level plevel, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
         var data = player.getData(AttachmentReg.CASTER_DATA.get());
-//
-        data.clearAllAbilities();
+
+        if(player.isShiftKeyDown()){
+            data.clearAllAbilities();
+        }
+//        System.out.println(LifeSiphonAbility.abilityId.getPath());
 //        System.out.println(CastingData.getExpFromLevel(230));
 //        System.out.println(CastingData.getLevelFromExp(202895));
 //        CastingData.addExperience(player, 4232);
 //        CastingData.decrementAbilityPoints(player, 4);
-//        CastingData.clearLevels(player);
-//        CastingData.decrementAbilityPoints(player, 100);
+//        CastingData.decrementAbilityPoints(player, 3000);
+//        CastingData.decreme---ntAbilityPoints(player, 100);
 //        System.out.println(CastingData.getLevel(player));
 
         if(!plevel.isClientSide){

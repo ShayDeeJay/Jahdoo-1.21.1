@@ -7,7 +7,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.utils.Helpers;
@@ -15,6 +15,7 @@ import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.screens.AbilityUnlockScreen;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -35,7 +36,7 @@ import static org.jahdoo.common.client.button.ToggleComponent.textRenderable;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
 import static org.jahdoo.common.registers.ElementReg.*;
 
-public class AugmentModificationScreen extends Screen {
+public class AbilityModificationScreen extends Screen {
 
     public Inventory inventory;
     private Component upgradeValue;
@@ -55,7 +56,7 @@ public class AugmentModificationScreen extends Screen {
     double centerX; // Screen center
     double centerY; // Screen center
 
-    public AugmentModificationScreen(
+    public AbilityModificationScreen(
         AbilityHolder holder,
         Ability ability,
         int size,
@@ -101,7 +102,7 @@ public class AugmentModificationScreen extends Screen {
 
         var spacer = new AtomicInteger();
         var width = this.width / 2;
-        var components = componentsWithBounds(ability, holder, this.getMinecraft().level);
+        var components = componentsWithBounds(ability, holder, getMinecraft().player);
 
         for (Component comp : components){
             var mod = getAbilityModifiers(comp, this.holder);
@@ -125,8 +126,8 @@ public class AugmentModificationScreen extends Screen {
         }
     }
 
-    public static List<Component> componentsWithBounds(Ability ability, AbilityHolder holder, Level level){
-        var components = getComponents(ability, holder, level);
+    public static List<Component> componentsWithBounds(Ability ability, AbilityHolder holder, Player player){
+        var components = AugmentItemHelper.getAllAbilityModifiers(ability, holder, true, false, player);
         var compNew = components
             .subList(1, components.size()).stream().filter(component -> getAbilityModifiers(component, holder).highestValue() != -1)
             .filter(component -> !component.equals(Component.literal(" ")) && !component.getString().contains("Unique"));
@@ -147,21 +148,25 @@ public class AugmentModificationScreen extends Screen {
     private void upgradeButton(Component component, int width, int ySpacer, boolean nexUpgrade, boolean correctAdjustment, AbilityData.AbilityModifiers x) {
         int posX = width + 72;
         int posY = (int) (ySpacer + 11 + this.yScroll);
+
+        var canPurchase = CastingData.canPurchase(getMinecraft().player, (int) x.baseCost());
+
+        System.out.println(canPurchase);
         this.addRenderableWidget(
             menuButtonSound(
                 posX, posY,
                 (press) -> doOnClick(component, holder, nexUpgrade, posX, posY),
-                correctAdjustment  ? UPGRADE_DISABLED : UPGRADE, 22,
-                correctAdjustment || !this.isInHitbox(posX, posY) ,
+                correctAdjustment  || canPurchase ? UPGRADE_DISABLED : UPGRADE, 22,
+                correctAdjustment || !this.isInHitbox(posX, posY) || canPurchase,
                 correctAdjustment  ? 0 : 8, WIDGET,
-                !correctAdjustment  && this.isInHitbox(posX, posY),
+                !correctAdjustment && this.isInHitbox(posX, posY)  && !canPurchase,
                 () -> {
                     var getHighest = x.isHigherBetter() ? x.actualValue() + x.step() : x.actualValue() - x.step();
                     var getCostMult = x.isHigherBetter() ? x.actualValue() / x.step() : x.actualValue() * x.step();
 
                     var original = getModifierContextSingle(extractName(component.getString()), String.valueOf(doubleFormattedDouble(getHighest)), 1);
                     this.upgradeValue = withStyleComponent("↑ " + original.getString(), -7092917);
-                    this.upgradeCost = withStyleComponent((int)((x.baseCost()) + (x.upgradeMultiplier() * x.actualValue() / x.step()) - 1) + "", -1);
+                    this.upgradeCost = withStyleComponent((int) x.baseCost() + "", PERK_GREEN);
                     this.selectedY = correctAdjustment ? 0 : ySpacer;
                 }
             )
@@ -182,7 +187,7 @@ public class AugmentModificationScreen extends Screen {
             var level = getMinecraft().level;
             var abilityKey = holder.abilityName();
 
-            this.holder = updateAugmentConfig(extractName(component.getString()), abilityKey, getMinecraft().player);
+            this.holder = updateAugmentConfig(extractName(component.getString()), abilityKey, getMinecraft().player, Integer.parseInt(this.upgradeCost.getString()));
 
             if(correctAdjustment && level != null){
                 Helpers.getLocalSound(level, pos, APPLY_EFFECT_TRIAL_OMEN, 1, 2);
@@ -217,7 +222,7 @@ public class AugmentModificationScreen extends Screen {
     }
 
     private void windowMoveVertical(double dragY) {
-        var size = componentsWithBounds(ability, holder, this.getMinecraft().level).size();
+        var size = componentsWithBounds(ability, holder, getMinecraft().player).size();
         if (size > 14) {
             int b = 7 * size * size - 135 * size + 578;
             this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, b   -120));
@@ -254,7 +259,7 @@ public class AugmentModificationScreen extends Screen {
 
         bezelMaker(graphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element);
         var backdrop = element == utility() ? GUI_BUTTON_UTILITY_SQUARE : element == vitality() ? GUI_BUTTON_VITALITY_SQUARE : element == mystic() ? GUI_BUTTON_MYSTIC_SQUARE : element == frost() ? GUI_BUTTON_FROST_SQUARE : GUI_BUTTON_INFERNO_SQUARE;
-        SharedUI.header(graphics, this.width, this.height, ability, holder, this.font, this.getMinecraft().level, backdrop);
+        SharedUI.header(graphics, this.width, this.height, ability, holder, this.font, getMinecraft().player, backdrop);
 
         overlaySkillPoints(graphics, getMinecraft().player, (int) centerX, adjustY, 24);
     }
@@ -293,7 +298,7 @@ public class AugmentModificationScreen extends Screen {
         boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, colourBorder, semiTransLayer);
         boxMaker(guiGraphics, startX + 68, (int) (startY + yScroll), 14, 14, colourBorder, semiTransLayer);
         guiGraphics.drawCenteredString(this.font, this.upgradeValue, startX + 34, (int) (startY + 10 + yScroll), 0);
-        guiGraphics.drawCenteredString(this.font, this.upgradeCost, startX + 60, (int) (startY + 10 + yScroll), 0);
+        guiGraphics.drawCenteredString(this.font, this.upgradeCost, startX + 82, (int) (startY + 10 + yScroll), 0);
     }
 
 }

@@ -1,6 +1,5 @@
 package org.jahdoo.ascension.ability.abilities_combat.elemental_shooter;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
@@ -14,16 +13,14 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.registers.EntityDataReg.ELEMENTAL_SHOOTER;
 
-public class ElementalMissile extends Ability {
+abstract public class ElementalMissile extends Ability {
 
-    public static final ResourceLocation abilityId = Helpers.res("elemental_shooter");
 
     @Override
-    public ResourceLocation getAbilityResource() {
-        return abilityId;
+    public String requiredUnlock() {
+        return NON;
     }
 
     @Override
@@ -62,23 +59,21 @@ public class ElementalMissile extends Ability {
         return 1;
     }
 
-    private double getTag(Player player, String name){
+    protected double getTag(Player player, String name){
         var holder = CastingData.entityHolderWithSelected(player);
         return holder.data().abilityProperties().get(name).setValue();
     }
 
-    @Override
-    public void invokeAbility(Player player) {
+    protected void doOnCast(Player player, String name) {
         var projectileCount = getTag(player, SHOT_MULTIPLIER);
         var index = ELEMENTAL_SHOOTER.get().setAbilityId();
-        var aId = abilityId.getPath().intern();
 
-        fireMultiShotProjectile((int) projectileCount , 1.2f, player, 0.1, () -> new GenericProjectile(player, 0, index, aId));
+        fireMultiShotProjectile((int) projectileCount , 1.2f, player, 0.1, () -> new GenericProjectile(player, 0, index, name));
         Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.ENDER_EYE_DEATH, 0.25f);
     }
 
-    public AbilityHolder getWithElement(int id){
-        return new AbilityBuilder(abilityId.getPath().intern())
+    protected AbilityHolder getWithElement(int id, String name){
+        return new AbilityBuilder(name)
             .setStaticMana(15)
             .setStaticCooldown(0)
             .setDamage(20, 10, 2, 1, 1.5)
@@ -90,20 +85,6 @@ public class ElementalMissile extends Ability {
             .setModifier(SET_ELEMENT_TYPE, 0, 0, false, id)
             .buildAndReturn();
     }
-
-    @Override
-    public AbilityHolder setModifiers() {
-        return new AbilityBuilder(abilityId.getPath().intern())
-            .setStaticMana(15)
-            .setStaticCooldown(0)
-            .setDamage(20, 10, 2, 1, 1.5)
-            .setEffectChance(50, 10, 10, 1, 1.5)
-            .setEffectStrength(10, 1, 1, 1, 1.5)
-            .setEffectDuration(300, 100, 50, 1, 1.5)
-            .setAbilityTagModifiersRandom(SHOT_MULTIPLIER, 3, 1, true, 1, 1, 1.5)
-            .setAbilityTagModifiersRandom(NUMBER_OF_RICOCHET, 6, 1, true, 1, 1, 1.5)
-            .setModifier(SET_ELEMENT_TYPE, 0, 0, false, Random.nextInt(1,5))
-            .buildAndReturn();
-    }
+    
 
 }

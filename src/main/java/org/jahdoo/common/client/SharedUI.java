@@ -1,7 +1,6 @@
 package org.jahdoo.common.client;
 
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -13,14 +12,11 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.attachments.CastingData;
@@ -37,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -45,28 +40,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
 import static org.jahdoo.ascension.ability.AbilityBuilder.SET_ELEMENT_TYPE;
 import static org.jahdoo.ascension.attachments.CastingData.getXpNeededForNextLevel;
-import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.ColourStore.BORDER_COLOUR;
+import static org.jahdoo.ascension.utils.ColourStore.BOX_COLOUR;
 import static org.jahdoo.common.client.Icons.*;
 
 public class SharedUI {
 
-    public static final int BOX_COLOUR = -804253680;
-    public static final int BORDER_COLOUR =  -12434878;
-
     public static List<ResourceLocation> getOverlays(){
         return List.of(Icons.AUGMENT_CORE, Icons.ADVANCED_AUGMENT_CORE, Icons.AUGMENT_HYPER_CORE);
-    }
-
-    public static List<Component> getComponents(ItemStack item, Level level){
-        var components = new ArrayList<Component>();
-//        AugmentItemHelper.getHoverText(item, components, true, level);
-        return components;
-    }
-
-    public static List<Component> getComponents(Ability ability, AbilityHolder holder, Level level){
-        var components = new ArrayList<Component>();
-        AugmentItemHelper.getHoverText(ability, holder, components, true, level);
-        return components;
     }
 
     public static int getFadedColourBackground(float alpha){
@@ -103,11 +84,12 @@ public class SharedUI {
         guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
     }
 
-    public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, Ability ability, AbilityHolder holder, Font font, Level level, ResourceLocation slot) {
+    public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, Ability ability, AbilityHolder holder, Font font, Player player, ResourceLocation slot) {
         var yOff = 102;
         int xOff = width/2 - 55;
-        guiGraphics.drawString(font, getComponents(ability, holder, level).getFirst(), xOff, (height/2 - yOff), 0, true);
-        guiGraphics.drawString(font, getComponents(ability, holder, level).get(1), xOff, (height/2 - (yOff - 10)), 0, true);
+        var components = AugmentItemHelper.getAllAbilityModifiers(ability, holder, true, false, player);
+        guiGraphics.drawString(font, components.getFirst(), xOff, (height/2 - yOff), 0, true);
+        guiGraphics.drawString(font, components.get(1), xOff, (height/2 - (yOff - 10)), 0, true);
         abilityIcon(guiGraphics, ability.getAbilityIconLocation(), width - 155, height - 180, 109, 30, 8, slot);
     }
 
@@ -137,61 +119,6 @@ public class SharedUI {
                 0, 0, IMAGE_SIZE, IMAGE_SIZE
             );
         }
-    }
-
-    public static void renderFoodLevel(GuiGraphics graphics, Minecraft mc) {
-        var player = mc.player;
-        if (player != null) {
-            mc.getProfiler().push("food");
-            int i1 = graphics.guiWidth() / 2 + 91;
-            int j1 = graphics.guiHeight() - 10;
-            renderFood(graphics, player, j1, i1);
-            mc.getProfiler().pop();
-        }
-    }
-
-    private static final ResourceLocation FOOD_EMPTY_HUNGER_SPRITE = ResourceLocation.withDefaultNamespace("hud/food_empty_hunger");
-    private static final ResourceLocation FOOD_HALF_HUNGER_SPRITE = ResourceLocation.withDefaultNamespace("hud/food_half_hunger");
-    private static final ResourceLocation FOOD_FULL_HUNGER_SPRITE = ResourceLocation.withDefaultNamespace("hud/food_full_hunger");
-    private static final ResourceLocation FOOD_EMPTY_SPRITE = ResourceLocation.withDefaultNamespace("hud/food_empty");
-    private static final ResourceLocation FOOD_HALF_SPRITE = ResourceLocation.withDefaultNamespace("hud/food_half");
-    private static final ResourceLocation FOOD_FULL_SPRITE = ResourceLocation.withDefaultNamespace("hud/food_full");
-    private static void renderFood(GuiGraphics guiGraphics, Player player, int y, int x) {
-        FoodData fooddata = player.getFoodData();
-        int i = fooddata.getFoodLevel();
-        RenderSystem.enableBlend();
-
-        for(int j = 0; j < 10; ++j) {
-            int k = y;
-            ResourceLocation resourcelocation;
-            ResourceLocation resourcelocation1;
-            ResourceLocation resourcelocation2;
-            if (player.hasEffect(MobEffects.HUNGER)) {
-                resourcelocation = FOOD_EMPTY_HUNGER_SPRITE;
-                resourcelocation1 = FOOD_HALF_HUNGER_SPRITE;
-                resourcelocation2 = FOOD_FULL_HUNGER_SPRITE;
-            } else {
-                resourcelocation = FOOD_EMPTY_SPRITE;
-                resourcelocation1 = FOOD_HALF_SPRITE;
-                resourcelocation2 = FOOD_FULL_SPRITE;
-            }
-
-            if (player.getFoodData().getSaturationLevel() <= 0.0F && player.tickCount % (i * 3 + 1) == 0) {
-                k = y + (Random.nextInt(3) - 1);
-            }
-
-            int l = x - j * 8 - 9;
-            guiGraphics.blitSprite(resourcelocation, l, k, 9, 9);
-            if (j * 2 + 1 < i) {
-                guiGraphics.blitSprite(resourcelocation2, l, k, 9, 9);
-            }
-
-            if (j * 2 + 1 == i) {
-                guiGraphics.blitSprite(resourcelocation1, l, k, 9, 9);
-            }
-        }
-
-        RenderSystem.disableBlend();
     }
 
     public static void renderXPBar(GuiGraphics guiGraphics, int x, int l, Minecraft minecraft) {
@@ -247,16 +174,14 @@ public class SharedUI {
         int posY,
         boolean isCenteredString
     ){
-        var player = Minecraft.getInstance().player;
-        if(player != null){
-            Font font = Minecraft.getInstance().font;
-            var element = getElementColour(abilityRegistrar, holder);
-            if (isCenteredString) {
-                guiGraphics.drawCenteredString(font, abilityRegistrar.getAbilityName(), posX, posY, element);
-                return;
-            }
-            guiGraphics.drawString(font, abilityRegistrar.getAbilityName(), posX, posY, element, false);
+        var font = Minecraft.getInstance().font;
+        var element = getElementColour(abilityRegistrar, holder);
+
+        if (isCenteredString) {
+            guiGraphics.drawCenteredString(font, abilityRegistrar.getAbilityName(), posX, posY, element);
+            return;
         }
+        guiGraphics.drawString(font, abilityRegistrar.getAbilityName(), posX, posY, element, false);
     }
 
     public static void augmentCoreSlots(@NotNull GuiGraphics guiGraphics, int adjustX, int adjustY, int borderColour, int width, int height, int fade) {
@@ -327,7 +252,7 @@ public class SharedUI {
         if (ability.isMultiType()) {
             var abilityModifiers = holder.data().abilityProperties().get(SET_ELEMENT_TYPE);
             ElementReg.fromId((int) abilityModifiers.actualValue()).ifPresent(
-                getElement -> element.set(getElement.textColourA())
+                getElement -> element.set(getElement.textColourB())
             );
         } else {
             element.set(ability.getElemenType().textColourB());

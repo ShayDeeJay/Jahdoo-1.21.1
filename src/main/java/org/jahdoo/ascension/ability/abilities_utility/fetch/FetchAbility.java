@@ -65,6 +65,11 @@ public class FetchAbility extends AbstractBlockAbility {
     }
 
     @Override
+    public String requiredUnlock() {
+        return NON;
+    }
+
+    @Override
     public int getAbilityCost() {
         return 2;
     }

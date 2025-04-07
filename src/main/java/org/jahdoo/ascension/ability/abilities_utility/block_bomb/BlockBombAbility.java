@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
+import org.jahdoo.ascension.ability.abilities_utility.hammer.HammerAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -67,6 +68,11 @@ public class BlockBombAbility extends AbstractBlockAbility {
     @Override
     public int getAbilityCost() {
         return 10;
+    }
+
+    @Override
+    public String requiredUnlock() {
+        return HammerAbility.abilityId.getPath();
     }
 
     @Override

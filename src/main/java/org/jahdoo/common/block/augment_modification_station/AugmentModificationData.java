@@ -7,6 +7,7 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
+import org.jahdoo.common.networking.client2server.AbilityPointC2SP;
 import org.jahdoo.common.registers.AttachmentReg;
 
 import java.util.LinkedHashMap;
@@ -49,7 +50,8 @@ public class AugmentModificationData {
     public static AbilityHolder updateAugmentConfig(
         String name,
         String abilityName,
-        Player player
+        Player player,
+        int cost
     ) {
 
         var data = player.getData(AttachmentReg.CASTER_DATA);
@@ -71,7 +73,7 @@ public class AugmentModificationData {
 
         var holders = new AbilityHolder(abilityName, new AbilityData(properties));
 
-        data.updateAbility(holders);
+        sendToServer(new AbilityPointC2SP(cost));
         sendToServer(new AbilityHolderC2SP(holders));
         return holders;
     }

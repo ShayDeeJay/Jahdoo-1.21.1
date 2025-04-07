@@ -2,8 +2,9 @@ package org.jahdoo.ascension.ability.abilities_combat.quantum_destroyer;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.ability.abilities_combat.mystical_semtex.MysticalSemtexAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -39,6 +40,11 @@ public class QuantumDestroyerAbility extends Ability {
     @Override
     public int getCastType() {
         return DISTANCE_CAST;
+    }
+
+    @Override
+    public String requiredUnlock() {
+        return MysticalSemtexAbility.abilityId.getPath();
     }
 
     @Override

@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.ability.abilities_combat.elemental_shooter.FrostMissile;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -39,6 +40,11 @@ public class StormRushAbility extends Ability {
     @Override
     public String getDescription() {
         return GlobalStrings.BLOCK_PLACER;
+    }
+
+    @Override
+    public String requiredUnlock() {
+        return FrostMissile.abilityId.getPath();
     }
 
     @Override

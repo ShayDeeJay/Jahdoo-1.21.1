@@ -21,6 +21,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.jahdoo.ascension.attachments.ChaosCubeData.*;
+import static org.jahdoo.ascension.utils.ColourStore.BORDER_COLOUR;
+import static org.jahdoo.ascension.utils.ColourStore.BOX_COLOUR;
 import static org.jahdoo.common.block.chaos_cube.ChaosCubeEntity.AUGMENT_SLOT;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.Icons.*;

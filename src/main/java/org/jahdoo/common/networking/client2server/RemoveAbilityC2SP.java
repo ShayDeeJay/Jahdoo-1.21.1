@@ -1,0 +1,55 @@
+package org.jahdoo.common.networking.client2server;
+
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
+import org.jahdoo.common.registers.AttachmentReg;
+
+import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
+
+public class RemoveAbilityC2SP implements CustomPacketPayload {
+
+    public static final Type<RemoveAbilityC2SP> TYPE = new Type<>(Helpers.res("remove_ability"));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, RemoveAbilityC2SP> STREAM_CODEC =
+        CustomPacketPayload.codec(RemoveAbilityC2SP::toBytes, RemoveAbilityC2SP::new);
+
+    String currentAbility;
+
+    public RemoveAbilityC2SP(String selectedAbility) {
+        this.currentAbility = selectedAbility;
+    }
+
+    public RemoveAbilityC2SP(FriendlyByteBuf buf) {
+        this.currentAbility = buf.readUtf() ;
+    }
+
+    public void toBytes(FriendlyByteBuf buf) {
+        buf.writeUtf(this.currentAbility);
+    }
+
+    public void handle(IPayloadContext ctx) {
+        ctx.enqueueWork(
+            () -> {
+                if(ctx.player() instanceof ServerPlayer serverPlayer){
+                    if(!this.currentAbility.isEmpty()){
+                        var castingData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
+                        castingData.removeAbilitySlot(currentAbility);
+                        sendToPlayer(serverPlayer, new CastingDataSyncS2CP(serverPlayer.getData(AttachmentReg.CASTER_DATA)));
+                    }
+                }
+            }
+        );
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
+}

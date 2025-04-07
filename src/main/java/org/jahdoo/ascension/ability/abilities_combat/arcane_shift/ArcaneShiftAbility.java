@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.ability.abilities_combat.elemental_shooter.MysticMissile;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -46,6 +47,11 @@ public class ArcaneShiftAbility extends Ability {
     @Override
     public void invokeAbility(Player player) {
         new ArcaneShift(player).shift();
+    }
+
+    @Override
+    public String requiredUnlock() {
+        return MysticMissile.abilityId.getPath();
     }
 
     @Override

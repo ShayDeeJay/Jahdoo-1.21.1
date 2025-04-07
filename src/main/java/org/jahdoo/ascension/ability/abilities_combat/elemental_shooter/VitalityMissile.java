@@ -1,6 +1,7 @@
 package org.jahdoo.ascension.ability.abilities_combat.elemental_shooter;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
@@ -21,8 +22,14 @@ public class VitalityMissile extends ElementalMissile {
     }
 
     @Override
-    public AbilityHolder setModifiers() {
-        return this.getWithElement(getElemenType().id());
+    public void invokeAbility(Player player) {
+        var name = abilityId.getPath().intern();
+        this.doOnCast(player, name);
     }
 
+    @Override
+    public AbilityHolder setModifiers() {
+        var name = abilityId.getPath().intern();
+        return this.getWithElement(getElemenType().id(), name);
+    }
 }

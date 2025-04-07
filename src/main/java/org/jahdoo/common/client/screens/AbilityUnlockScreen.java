@@ -1,5 +1,6 @@
 package org.jahdoo.common.client.screens;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,10 +15,13 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.common.block.augment_modification_station.AugmentModificationScreen;
+import org.jahdoo.common.block.augment_modification_station.AbilityModificationScreen;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
+import org.jahdoo.common.networking.client2server.AddAbilityC2SP;
+import org.jahdoo.common.networking.client2server.RemoveAbilityC2SP;
 import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ElementReg;
@@ -26,8 +30,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import static java.lang.String.*;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.ascension.utils.ColourStore.*;
@@ -35,7 +41,9 @@ import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
+import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSoundAbilities;
+import static org.jahdoo.common.items.augments.AugmentItemHelper.getAllAbilityModifiers;
 
 public class AbilityUnlockScreen extends AbstractPanableScreen {
     List<Component> components = new ArrayList<>();
@@ -107,22 +115,25 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 @Override
                 public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
                     test2(guiGraphics);
-
                 }
             }
         );
+
+        var spacer = 0;
+        for (int i = 0; i < 12; i++){
+            renderButton((double) this.width / 2 + spacer - 144, 30,  i);
+            spacer += 26;
+        }
     }
 
     private void test2(@NotNull GuiGraphics guiGraphics) {
         guiGraphics.disableScissor();
-//        var x = (float) this.width / 2;
-//        var y = (float) this.height / 2;
-//        guiGraphics.pose().translate(-x, -y, 0);
+        var c = SharedUI.getFadedColourBackground(0.4F);
+        SharedUI.boxMaker(guiGraphics, this.width/2 - 158, 57, 157, 14, c, c, c);
     }
 
     private void test(@NotNull GuiGraphics guiGraphics, double startX) {
         guiGraphics.enableScissor(3, 90, width - 3, height - 4);
-//        SharedUI.boxMaker(guiGraphics, (int) startX, (int) startX, 40, 40);
     }
 
     @Override
@@ -145,10 +156,10 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var currentAngle = buttonCount % 2 == 0 ? 0 : 4.7;
 
 
-        renderButton(centerX - (size * 2), centerY - (size * 2), element.iconTexture(), size * 5, withElement.getFirst(), true, BLANK, 0);
+        renderAbilityButton(centerX - (size * 2), centerY - (size * 2), element.iconTexture(), size * 5, withElement.getFirst(), true, BLANK, 0);
 
         for (Ability abilityRegistrar : withElement) {
-            renderButton(centerX - (size * 1.5), centerY + spacer + (scaledSpacing * 14), passive, size * 4, withElement.getFirst(), true, BLANK, 0);
+            renderAbilityButton(centerX - (size * 1.5), centerY + spacer + (scaledSpacing * 14), passive, size * 4, withElement.getFirst(), true, BLANK, 0);
             spacer += (int) (scaledSpacing * 8);
         }
 
@@ -160,12 +171,12 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
             var buttonX = centerX - ((double) size /2) + radius * Math.cos(currentAngle);
             var buttonY = centerY - ((double) size /2)  + radius * Math.sin(currentAngle);
 
-            renderButton(buttonX, buttonY, res, size * 2, ability, false, background, size * (!unlocked ? 0 : 2));
+            renderAbilityButton(buttonX, buttonY, res, size * 2, ability, false, background, size * (!unlocked ? 0 : 2));
             currentAngle += angleStep;
         }
     }
 
-    private void renderButton(double posX, double posY, ResourceLocation icons, int size, Ability ability, boolean isDummy, ResourceLocation background, int scaleHover) {
+    private void renderAbilityButton(double posX, double posY, ResourceLocation icons, int size, Ability ability, boolean isDummy, ResourceLocation background, int scaleHover) {
         var player = getMinecraft().player;
         if(player == null) return;
 
@@ -176,28 +187,57 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var playerHolder = data.getHolderOptional(ability.setAbilityId());
         var holderType = playerHolder.orElse(holder);
 
+        var hasDependency = !CastingData.hasAbility(player, ability.requiredUnlock()) && !Objects.equals(ability.requiredUnlock(), Ability.NON);
         this.addRenderableWidget(
             menuButtonSoundAbilities(
-                (int) posX, (int) posY, (Button) -> onClick(ability, holderType, unlocked),
-                icons, size, isDummy, scaleHover, button, (/*!unlocked &&*/ isDummy),
+                (int) posX, (int) posY, (Button) -> onClick(ability, holderType, unlocked, hasDependency),
+                icons, size, isDummy, scaleHover, button,  isDummy,
                 () -> onHover(ability, isDummy, holderType, (int) posX, (int) posY, unlocked),
-                isDummy, !unlocked
+                isDummy, !unlocked, hasDependency
             )
         );
     }
 
-    private void onHover(Ability ability, boolean isDummy, AbilityHolder holderType, int posX, int posY, boolean isLocked) {
+    private void renderButton(
+        double posX,
+        int size,
+        int index
+    ) {
+        var player = getMinecraft().player;
+        if(player == null) return;
+
+        var data = player.getData(AttachmentReg.CASTER_DATA);
+
+        if(data.getAbilitySlots().size() > index){
+            var typeId = data.getAbilitySlots().get(index);
+            var newAbility = AbilityReg.getFirstSpellByTypeId(typeId);
+            var getA = newAbility.map(Ability::getAbilityIconLocation).orElse(null);
+
+            this.addRenderableWidget(
+                menuButtonAbility(
+                    (int) posX - size / 2, 56,
+                    (Button) -> sendToServer(new RemoveAbilityC2SP(typeId)),
+                    getA,
+                    size,
+                    true,
+                    () -> {},
+                    index
+                )
+            );
+        }
+    }
+
+    private void onHover(Ability ability, boolean isDummy, AbilityHolder holder, int posX, int posY, boolean isLocked) {
         var elementType = ability.getElemenType();
         this.colour = elementType.partColourB();
         this.pos = new Vec3(posX, posY, 0);
+        var player = getMinecraft().player;
+
         if(!isDummy) {
-            var preLock = SharedUI.getComponents(ability, holderType, getMinecraft().level);
-            if(!isLocked){
-                var prefix = withStyleComponent("Cost: ", SUB_HEADER_COLOUR);
-                var suffix = withStyleComponent("◆ " + ability.getAbilityCost() + " Skill Points", PERK_GREEN).copy();
-                preLock.addFirst(prefix.copy().append(suffix));
-            }
-            this.components = preLock;
+            var components = AugmentItemHelper.shiftForDetails(isLocked);
+            var allAbilityModifiers = getAllAbilityModifiers(ability, holder, components.isEmpty(), true, player);
+            allAbilityModifiers.addAll(components);
+            this.components = allAbilityModifiers;
         } else {
             var list = new ArrayList<Component>();
             list.add(withStyleComponent(elementType.name(),elementType.textColourB()));
@@ -211,16 +251,23 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         }
     }
 
-    private void onClick(Ability ability, AbilityHolder abilityHolder, boolean unlocked){
-        var guiScreen = new AugmentModificationScreen(abilityHolder, ability, size, panX, panY, zoomX, scaledSpacing, scaledXOffset, centerX, centerY);
-        if(unlocked) getMinecraft().setScreen(guiScreen); else {
-            var player = getMinecraft().player;
-            if(player == null) return;
+    private void onClick(Ability ability, AbilityHolder abilityHolder, boolean unlocked, boolean dependency){
+        var guiScreen = new AbilityModificationScreen(abilityHolder, ability, size, panX, panY, zoomX, scaledSpacing, scaledXOffset, centerX, centerY);
+        var player = getMinecraft().player;
+        if(player == null) return;
+        if(unlocked) {
+            if(InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), InputConstants.KEY_LSHIFT)){
+                sendToServer(new AddAbilityC2SP(ability.setAbilityId()));
+            } else {
+                getMinecraft().setScreen(guiScreen);
+            }
+        } else {
 
-            if(CastingData.checkAndConsume(player, ability.getAbilityCost())){
+            if(!dependency && CastingData.checkAndConsume(player, ability.getAbilityCost())){
                 sendToServer(new AbilityHolderC2SP(abilityHolder));
-                this.components = new ArrayList<>();
                 player.playSound(SoundReg.UNLOCK.get());
+                this.components = new ArrayList<>();
+                this.rebuildWidgets();
             } else {
                 player.playSound(SoundEvents.DYE_USE, 1, 2f);
             }
@@ -279,9 +326,10 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var size = 24;
         var skillPoints = CastingData.getAbilityPoints(player);
         var fade1 = SharedUI.getFadedColourBackground(0.5F);
-        boxMaker(guiGraphics, this.width/2 - i, 65 + adjustY, j, 10, 0, fade1, fade1);
-        guiGraphics.drawString(font, withStyleComponent(skillPoints + " " + "Skill Points", PERK_GREEN), centerX - 26, 71 + adjustY, -1);
-        guiGraphics.blit(res("textures/item/skill_point.png"), this.width/2 - size - 26, 57, 0, 0, size, size, size, size);
+        var length = valueOf(skillPoints).length();
+        boxMaker(guiGraphics, this.width/2 - i + 145, 20 + adjustY, 15 + (length * length), 10, 0, fade1, fade1);
+        guiGraphics.drawString(font, withStyleComponent(skillPoints + "", PERK_GREEN), this.width/2 - i + 165, 26 + adjustY, -1);
+        guiGraphics.blit(res("textures/item/skill_point.png"), this.width/2 - i + 143, 18 + adjustY, 0, 0, size, size, size, size);
     }
 
     @Override

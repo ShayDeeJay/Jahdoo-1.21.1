@@ -131,10 +131,6 @@ public class AbilityReg {
     //Volt
 //    public static final DeferredHolder<AbilityRegistrar, AbilityRegistrar> BOLTZ = registerSpell(new BoltzAbility());
 
-    //Multi-Type
-    public static final DeferredHolder<Ability, Ability> ELEMENTAL_SHOOTER =
-        registerSpell(new ElementalMissile());
-
     //Inferno
     public static final DeferredHolder<Ability, Ability> ARMAGEDDON =
         registerSpell(new ArmageddonAbility());

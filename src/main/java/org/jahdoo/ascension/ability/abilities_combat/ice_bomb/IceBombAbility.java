@@ -2,8 +2,9 @@ package org.jahdoo.ascension.ability.abilities_combat.ice_bomb;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.ability.abilities_combat.elemental_shooter.FrostMissile;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -46,6 +47,11 @@ public class IceBombAbility extends Ability {
     @Override
     public AbstractElement getElemenType() {
         return ElementReg.frost();
+    }
+
+    @Override
+    public String requiredUnlock() {
+        return FrostMissile.abilityId.getPath();
     }
 
     @Override

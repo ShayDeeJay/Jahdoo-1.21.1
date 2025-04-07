@@ -107,6 +107,11 @@ public class BoltzAbility extends Ability {
     }
 
     @Override
+    public String requiredUnlock() {
+        return NON;
+    }
+
+    @Override
     public int getAbilityCost() {
         return 0;
     }

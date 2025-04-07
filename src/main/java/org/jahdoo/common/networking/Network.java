@@ -105,6 +105,24 @@ public class Network {
             AbilityHolderC2SP::handle
         );
 
+        payloadRegistrar.playToServer(
+            AddAbilityC2SP.TYPE,
+            AddAbilityC2SP.STREAM_CODEC,
+            AddAbilityC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
+            RemoveAbilityC2SP.TYPE,
+            RemoveAbilityC2SP.STREAM_CODEC,
+            RemoveAbilityC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
+            AbilityPointC2SP.TYPE,
+            AbilityPointC2SP.STREAM_CODEC,
+            AbilityPointC2SP::handle
+        );
+
         //S2C
         payloadRegistrar.playToClient(
             ManaSyncS2CP.TYPE,
