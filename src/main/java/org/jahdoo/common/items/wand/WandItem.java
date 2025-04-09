@@ -138,16 +138,10 @@ public class WandItem extends Item implements GeoItem, JahdooItem {
         }
 
 //        CastingData.clearLevels(player);
-//        System.out.println(CastingData.getXpNeededForNextLevel(CastingData.getLevel(player)));;
-//        CastingData.addExperience(player, 10);
-//        System.out.println(LifeSiphonAbility.abilityId.getPath());
-//        System.out.println(CastingData.getExpFromLevel(230));
-//        System.out.println(CastingData.getLevelFromExp(202895));
-//        CastingData.incrementAbilityPoints(player, 10);
+        CastingData.addExperience(player, 100);
+//        CastingData.incrementAbilityPoints(player, 100);
 //        CastingData.decrementAbilityPoints(player, 100);
 //        CastingData.decrementAbilityPoints(player, 3000);
-//        CastingData.decreme---ntAbilityPoints(player, 100);
-//        System.out.println(CastingData.getLevel(player));
 
         if(!plevel.isClientSide){
             if (canOffHand(player, interactionHand, true)) {

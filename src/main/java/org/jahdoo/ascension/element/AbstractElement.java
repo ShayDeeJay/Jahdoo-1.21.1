@@ -20,6 +20,12 @@ public abstract class AbstractElement {
     @Nullable
     public abstract Item getWand();
 
+    @Nullable
+    public abstract ResourceLocation projectileTexture();
+
+    @Nullable
+    public abstract ResourceLocation iconTexture();
+
     public abstract int id();
 
     public abstract int textColourA();
@@ -36,12 +42,6 @@ public abstract class AbstractElement {
 
     public abstract Holder<MobEffect> effect();
 
-    @Nullable
-    public abstract ResourceLocation projectileTexture();
-
-    @Nullable
-    public abstract ResourceLocation iconTexture();
-
     public abstract ResourceLocation abilityResource();
 
     public abstract Holder<Attribute> cooldownReduction();
@@ -49,6 +49,8 @@ public abstract class AbstractElement {
     public abstract Holder<Attribute> manaReduction();
 
     public abstract Holder<Attribute> damageAmplifier();
+
+    public abstract String elementDescription();
 
     public String name(){
         return capitaliseFirst(abilityResource().getPath().intern());

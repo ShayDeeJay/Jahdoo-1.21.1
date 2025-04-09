@@ -145,7 +145,7 @@ public class WalletOverlay implements LayeredDraw.Layer {
         }
 
         if(!hideBackground){
-            var fadeBackground = getFadedColourBackground(0.4F);
+            var fadeBackground = getFadedColourBackground(0.8F);
             SharedUI.boxMaker(graphics, getX + 6, getY - 10, 48, 46, ColourStore.WALLET_BROWN, fadeBackground, fadeBackground);
             graphics.drawString(minecraft.font, withStyleComponent("Wallet", ColourStore.SUB_HEADER_COLOUR), getX + 16, getY + spacer - 2, -1, false);
         }

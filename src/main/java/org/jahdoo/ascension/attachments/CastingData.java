@@ -12,14 +12,18 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.CooldownsSyncS2CP;
 import org.jahdoo.common.networking.server2client.ManaSyncS2CP;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.AttributeReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
+import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
 public class CastingData implements IAttachment {
@@ -100,11 +104,24 @@ public class CastingData implements IAttachment {
         this.abilityPoints = Math.max(0, this.abilityPoints - points);
     }
 
-    public void calculateAbilityPoints(int points){
+    public void calculateAbilityPoints(Player player, int points){
         var currentLevel = getLevelFromExp(xp);
         var level = getLevelFromExp(xp + points);
-
-        incrementAbilityPoints(Math.max(0, level - currentLevel));
+        var abilityPoints = level - currentLevel;
+        if(abilityPoints > 0){
+            incrementAbilityPoints(abilityPoints);
+            player.makeSound(SoundReg.LEVEL_UP.get());
+            for(int i = 0; i < 100; i++){
+                var particle = ParticleHandlers.getNonBakedParticles(color(167, 84, 168), color(167, 84, 168), 27, Random.nextInt(1, 3));
+                var x = player.getRandomX(0.5);
+                var y = player.getRandomY();
+                var z = player.getRandomZ(0.5);
+                double xSpeed = Random.nextDouble(0.1, 0.3) - 0.2;
+                double ySpeed = Random.nextDouble(0.1, 0.3);
+                double zSpeed = Random.nextDouble(0.1, 0.3) - 0.2;
+                player.level().addParticle(particle, x, y, z, xSpeed, ySpeed, zSpeed);
+            }
+        }
     }
 
     public int getLevel(){
@@ -273,8 +290,8 @@ public class CastingData implements IAttachment {
 
     public static void addExperience(Player player, int exp){
         var data = player.getData(CASTER_DATA);
+        data.calculateAbilityPoints(player, exp);
         data.setXp(exp);
-        data.calculateAbilityPoints(exp);
     }
 
     public static void cooldownTickEvent(ServerPlayer serverPlayer){
@@ -305,7 +322,6 @@ public class CastingData implements IAttachment {
     public static Boolean hasAbility(LivingEntity livingEntity,  String selectedAbility){
         return livingEntity.getData(CASTER_DATA).hasAbility(selectedAbility);
     }
-
 
     public static String selectedAbility(LivingEntity livingEntity){
         return livingEntity.getData(CASTER_DATA).getSelectedAbility();

@@ -80,6 +80,11 @@ public class Frost extends AbstractElement {
     }
 
     @Override
+    public String elementDescription() {
+        return "A force that prioritizes control over raw power, gradually slowing foes with its icy grip. Over time, it can freeze enemies solid, stopping them in their tracks.";
+    }
+
+    @Override
     public SoundEvent sound() {
         return ICE_ATTACH.get();
     }

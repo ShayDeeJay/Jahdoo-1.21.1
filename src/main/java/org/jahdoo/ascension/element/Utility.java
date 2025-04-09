@@ -83,6 +83,11 @@ public class Utility extends AbstractElement {
     }
 
     @Override
+    public String elementDescription() {
+        return "A power that enhances practical actions, from shaping the land to aiding in construction and resource gathering. It’s not meant for combat, but for manipulating the world to serve your needs.";
+    }
+
+    @Override
     public ResourceLocation projectileTexture() {
         return null;
     }

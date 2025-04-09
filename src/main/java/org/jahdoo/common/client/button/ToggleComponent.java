@@ -87,9 +87,11 @@ public class ToggleComponent  {
         int size,
         boolean showHover,
         Runnable hoverAction,
-        int slot
+        int slot,
+        boolean selected,
+        String label
     ) {
-        return new AbilitySlotButton(posX, posY, new WidgetSprites(ABILITY_BACKGROUND, ABILITY_BACKGROUND), size, action, false, location, "", 0, showHover, slot) {
+        return new AbilitySlotButton(posX, posY, new WidgetSprites(ABILITY_BACKGROUND, ABILITY_BACKGROUND), size, action, selected, location, label, 0, showHover, slot) {
 
             public void playDownSound(SoundManager handler) {
                 handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT.get(), 1F));

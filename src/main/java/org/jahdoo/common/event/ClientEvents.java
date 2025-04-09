@@ -14,7 +14,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.OverlayBlockTooltip;
 import org.jahdoo.common.client.RuneTooltipRenderer;
-import org.jahdoo.common.client.screens.AbilityUnlockScreen;
+import org.jahdoo.common.client.screens.StatScreen;
 
 import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import static net.neoforged.neoforge.client.event.RenderLivingEvent.Pre;
@@ -94,8 +94,7 @@ public class ClientEvents {
         if(WAND_SLOT_9A.consumeClick()) selectWandSlot(9);
         if(WAND_SLOT_10A.consumeClick()) selectWandSlot(10);
         if(STAT_SCREEN.consumeClick()) {
-//            instance.setScreen(new StatScreen());
-            instance.setScreen(new AbilityUnlockScreen());
+            instance.setScreen(new StatScreen());
             Helpers.syncAbilities();
         }
     }

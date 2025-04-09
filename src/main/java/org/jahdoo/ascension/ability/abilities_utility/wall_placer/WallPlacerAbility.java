@@ -22,7 +22,7 @@ public class WallPlacerAbility extends AbstractBlockAbility {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.COMMON;
+        return JahdooRarity.RARE;
     }
 
     @Override

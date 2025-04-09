@@ -6,6 +6,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,7 +20,8 @@ import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponentTrans;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
-import static org.jahdoo.common.client.SharedUI.*;
+import static org.jahdoo.common.client.SharedUI.boxMaker;
+import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
 
 public class OverlayHelpers {
 
@@ -45,7 +47,7 @@ public class OverlayHelpers {
 
         var filterType = element.name();
         var scale = 10;
-        var fadeBackground = getFadedColourBackground(0.4F);
+        var fadeBackground = getFadedColourBackground(0.8F);
         var headerX = (int) startX - 8;
         var headerY = adjustForHeader - 2;
         boxMaker(graphics, headerX + 60, headerY - 6, 70, 27,  element.partColourA(), fadeBackground, fadeBackground);
@@ -102,7 +104,7 @@ public class OverlayHelpers {
             if(length > maxLength) maxLength = length;
         }
 
-        var fadeBackground = getFadedColourBackground(0.4F);
+        var fadeBackground = getFadedColourBackground(0.8F);
         boxMaker(graphics, headerX + 60, headerY - 6, maxLength * 2 + 28, 12 + 5 * stream(attributes).toList().size() , borderColour, fadeBackground, fadeBackground);
         graphics.blit(icon, headerX + 64, headerY - 2, scale, scale, scale, scale, scale, scale);
         graphics.drawString(minecraft.font, header, headerX + 78, headerY, gradientColour);
@@ -120,6 +122,28 @@ public class OverlayHelpers {
         }
 
         return attSpacer.get();
+    }
+
+    public static void playerLevel(
+        GuiGraphics graphics,
+        Minecraft minecraft,
+        double startX,
+        double startY,
+        String header
+    ) {
+        var startX1 = (int) startX - 6;
+        var startY2 = (int) startY;
+        var adjustForHeader = startY2 + 10;
+        var headerX = startX1 - 8;
+        var headerY = adjustForHeader - 2;
+        var level = CastingData.getLevel(minecraft.player);
+        var nextLevel = CastingData.getExpFromLevel(level);
+
+
+        var fadeBackground = getFadedColourBackground(0.8F);
+        boxMaker(graphics, headerX + 60, headerY - 6, 40, 16, -1, fadeBackground);
+        graphics.drawCenteredString(minecraft.font, header + ": " + level, headerX + 100, headerY, -1);
+        graphics.drawCenteredString(minecraft.font, "Next Level: " + nextLevel, headerX + 100, headerY + 12, -1);
     }
 
 }

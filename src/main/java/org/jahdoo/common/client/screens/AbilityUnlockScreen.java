@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static java.lang.String.*;
+import static java.lang.String.valueOf;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.ascension.utils.ColourStore.*;
@@ -99,7 +99,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
             new Overlay() {
                 @Override
                 public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
-                    test(guiGraphics, startX);
+                    guiGraphics.enableScissor(4, 90, width - 4, height - 5);
                 }
             }
         );
@@ -114,7 +114,9 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
             new Overlay() {
                 @Override
                 public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
-                    test2(guiGraphics);
+                    guiGraphics.disableScissor();
+                    var c = SharedUI.getFadedColourBackground(0.4F);
+                    SharedUI.boxMaker(guiGraphics, width/2 - 158, 57, 157, 14, c, c, c);
                 }
             }
         );
@@ -124,16 +126,24 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
             renderButton((double) this.width / 2 + spacer - 144, 30,  i);
             spacer += 26;
         }
+
+        screenTab();
     }
 
-    private void test2(@NotNull GuiGraphics guiGraphics) {
-        guiGraphics.disableScissor();
-        var c = SharedUI.getFadedColourBackground(0.4F);
-        SharedUI.boxMaker(guiGraphics, this.width/2 - 158, 57, 157, 14, c, c, c);
-    }
+    private void screenTab() {
+        this.addRenderableWidget(
+            menuButtonAbility(
+                10, 10, (Button) -> { getMinecraft().setScreen(new StatScreen()); },
+                STAT, 30, false, () -> {}, 0, false, "Stats"
+            )
+        );
 
-    private void test(@NotNull GuiGraphics guiGraphics, double startX) {
-        guiGraphics.enableScissor(3, 90, width - 3, height - 4);
+        this.addRenderableWidget(
+            menuButtonAbility(
+                50, 10, (Button) -> { getMinecraft().setScreen(new StatScreen()); },
+                ABILITY, 30, false, () -> {}, 0, true, "Abilities"
+            )
+        );
     }
 
     @Override
@@ -153,8 +163,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var radius = 8 * scaledSpacing;
         var angleStep = 2 * Math.PI / buttonCount;
         var spacer = 0;
-        var currentAngle = buttonCount % 2 == 0 ? 0 : 4.7;
-
+        var currentAngle = 4.71;
 
         renderAbilityButton(centerX - (size * 2), centerY - (size * 2), element.iconTexture(), size * 5, withElement.getFirst(), true, BLANK, 0);
 
@@ -164,14 +173,11 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         }
 
         for (Ability ability : withElement) {
-            var holder = ability.setModifiers();
-            var data = getMinecraft().player.getData(AttachmentReg.CASTER_DATA);
-            var unlocked = holder != null && data.hasAbility(holder);
             var res = res(ABILITY_PREFIX + ability.setAbilityId() + ".png");
             var buttonX = centerX - ((double) size /2) + radius * Math.cos(currentAngle);
             var buttonY = centerY - ((double) size /2)  + radius * Math.sin(currentAngle);
 
-            renderAbilityButton(buttonX, buttonY, res, size * 2, ability, false, background, size * (!unlocked ? 0 : 2));
+            renderAbilityButton(buttonX, buttonY, res, size * 2, ability, false, background, 0);
             currentAngle += angleStep;
         }
     }
@@ -191,7 +197,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         this.addRenderableWidget(
             menuButtonSoundAbilities(
                 (int) posX, (int) posY, (Button) -> onClick(ability, holderType, unlocked, hasDependency),
-                icons, size, isDummy, scaleHover, button,  isDummy,
+                icons, size, isDummy, scaleHover, button, isDummy,
                 () -> onHover(ability, isDummy, holderType, (int) posX, (int) posY, unlocked),
                 isDummy, !unlocked, hasDependency
             )
@@ -217,11 +223,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 menuButtonAbility(
                     (int) posX - size / 2, 56,
                     (Button) -> sendToServer(new RemoveAbilityC2SP(typeId)),
-                    getA,
-                    size,
-                    true,
-                    () -> {},
-                    index
+                    getA, size, true, () -> {}, index, false, ""
                 )
             );
         }
@@ -229,9 +231,9 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
     private void onHover(Ability ability, boolean isDummy, AbilityHolder holder, int posX, int posY, boolean isLocked) {
         var elementType = ability.getElemenType();
+        var player = getMinecraft().player;
         this.colour = elementType.partColourB();
         this.pos = new Vec3(posX, posY, 0);
-        var player = getMinecraft().player;
 
         if(!isDummy) {
             var components = AugmentItemHelper.shiftForDetails(isLocked);
@@ -241,7 +243,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         } else {
             var list = new ArrayList<Component>();
             list.add(withStyleComponent(elementType.name(),elementType.textColourB()));
-            var message = "this is just a kinda long message to show something is working";
+            var message = elementType.elementDescription();
             var maxWidth = 200;
             var formattedText = new StringSplitter((a, b) -> 10).splitLines(message, maxWidth, Style.EMPTY);
             for (var lines : formattedText) {
@@ -256,7 +258,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var player = getMinecraft().player;
         if(player == null) return;
         if(unlocked) {
-            if(InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), InputConstants.KEY_LSHIFT)){
+            if(InputConstants.isKeyDown(getMinecraft().getWindow().getWindow(), InputConstants.KEY_LSHIFT)){
                 sendToServer(new AddAbilityC2SP(ability.setAbilityId()));
             } else {
                 getMinecraft().setScreen(guiScreen);
@@ -300,8 +302,8 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         guiGraphics.drawCenteredString(font, withStyleComponent("Abilities", ABSORPTION_YELLOW).copy(), (int)( centerX / x) + 1, (int) (10 + (adjustY / x)), -1);
         pose.popPose();
 
+        this.rebuildWidgets();
         if (components.isEmpty()) {
-            this.rebuildWidgets();
             this.scale = 0;
         } else {
             this.scale = Math.min(this.scale + 0.08, 1);
@@ -342,5 +344,4 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         float centerY,
         Minecraft mc
     ){}
-
 }

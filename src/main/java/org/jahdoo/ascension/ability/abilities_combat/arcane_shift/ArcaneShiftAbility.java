@@ -16,8 +16,6 @@ public class ArcaneShiftAbility extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("arcane_shift");
     public static final String distance = "Teleport Distance";
-    public static final String maxEntities = "Mystic Missile Shots";
-    public static final String lifeTime = "Shot Range";
 
     @Override
     public int getCastType() {

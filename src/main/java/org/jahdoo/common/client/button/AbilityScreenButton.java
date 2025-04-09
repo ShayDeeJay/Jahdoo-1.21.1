@@ -116,7 +116,7 @@ public class AbilityScreenButton extends ImageButton {
 
                 if(this.hasDependency){
                     setShaderColor(1.0F, 1.0F, 1.0F, this.isHovered ? 0.3F : 0.8F);
-                    graphics.blit(Icons.LOCK, this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
+//                    graphics.blit(Icons.LOCK, this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
                     setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 }
 

@@ -86,8 +86,12 @@ public class Vitality extends AbstractElement {
     }
 
     @Override
-    public ResourceLocation projectileTexture() {
+    public String elementDescription() {
+        return "Focused on life and renewal, this power heals wounds and summons allies to the fray. It shifts the tide of battle by supporting and strengthening those who fight alongside you.";
+    }
 
+    @Override
+    public ResourceLocation projectileTexture() {
         return res("textures/entity/vitality_projectile.png");
     }
 

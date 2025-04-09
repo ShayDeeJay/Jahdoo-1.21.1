@@ -9,7 +9,8 @@ import org.jahdoo.common.client.SharedUI;
 
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
-import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
+import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
 
@@ -56,7 +57,10 @@ public abstract class AbstractPanableScreen extends Screen {
         smoothZoom();
         customRenderBackground(graphics, centerX, centerY);
         transformativeObjects(graphics, mouseX, mouseY, centerX, centerY);
+        graphics.pose().pushPose();
+        graphics.pose().translate(0, 0, 100);
         SharedUI.bezelMaker(graphics, -20 , -20, this.width - 20, this.height - 20, 60, null);
+        graphics.pose().popPose();
         super.render(graphics, mouseX, mouseY, partialTick);
     }
 
@@ -68,7 +72,8 @@ public abstract class AbstractPanableScreen extends Screen {
 
         baseRender(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
 
-        guiGraphics.enableScissor(3, 3, this.width - 3, this.height - 4);
+        var scissor = 4;
+        guiGraphics.enableScissor(scissor, scissor, this.width - scissor, this.height - scissor);
         pose.pushPose();
         pose.translate(centerX, centerY, 0);
         pose.scale(zoom, zoom, zoom);
@@ -79,7 +84,9 @@ public abstract class AbstractPanableScreen extends Screen {
     }
 
     public void customRenderBackground(GuiGraphics guiGraphics, int centerX, int centerY) {
-        boxMaker(guiGraphics, 2, 2, centerX - 2, centerY - 2, HEADER_COLOUR, getFadedColourBackground(0.8f));
+        var i = 3;
+        var fade = getFadedColourBackground(0.8f);
+        boxMaker(guiGraphics, i, i, centerX - i, centerY - i, NEGATIVE_RED, fade, color(60, MAGNET_STRENGTH_RED));
     }
 
     private void smoothZoom() {

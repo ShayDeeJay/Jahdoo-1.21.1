@@ -85,6 +85,11 @@ public class Mystic extends AbstractElement {
     }
 
     @Override
+    public String elementDescription() {
+        return "Focused on mobility and control, this element manipulates space to shift the flow of battle. Its power adapts to the situation, making it highly versatile.";
+    }
+
+    @Override
     public ResourceLocation projectileTexture() {
         return res("textures/entity/mystic_projectile.png");
     }

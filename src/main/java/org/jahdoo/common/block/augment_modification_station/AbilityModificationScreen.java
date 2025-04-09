@@ -1,10 +1,13 @@
 package org.jahdoo.common.block.augment_modification_station;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -13,6 +16,7 @@ import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
+import org.jahdoo.common.client.button.AbilityIconButton;
 import org.jahdoo.common.client.screens.AbilityUnlockScreen;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
@@ -41,8 +45,6 @@ import static org.jahdoo.common.registers.ElementReg.*;
 public class AbilityModificationScreen extends Screen {
 
     public Inventory inventory;
-//    private Component upgradeValue;
-//    private Component upgradeCost;|
     private List<Component> compValues = new ArrayList<>();
     private double yScroll;
     private int selectedY;
@@ -87,7 +89,28 @@ public class AbilityModificationScreen extends Screen {
     @Override
     protected void init() {
         super.init();
+
+        this.addRenderableOnly(
+            new Overlay() {
+                @Override
+                public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
+                    guiGraphics.enableScissor(3, 90, width - 3, height - 4);
+                }
+            }
+        );
+
         this.displayAugmentProperties();
+        this.navigationButtons();
+
+        this.addRenderableOnly(
+            new Overlay() {
+                @Override
+                public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
+                    guiGraphics.disableScissor();
+                }
+            }
+        );
+
     }
 
     @Override
@@ -113,7 +136,7 @@ public class AbilityModificationScreen extends Screen {
         for (var comp : components){
             var mod = getAbilityModifiers(comp, this.holder);
             var regex = ".*\\d.*";
-            var ySpacer = (this.height / 2 - 106) + spacer;
+            var ySpacer = (this.height / 2 - 92) + spacer;
             var selectedY1 = (int) (ySpacer + this.yScroll);
 
             if(mod.highestValue() != -1){
@@ -136,7 +159,7 @@ public class AbilityModificationScreen extends Screen {
             .subList(1, components.size())
             .stream()
             .filter(c -> getAbilityModifiers(c, holder).highestValue() != -1)
-            .filter(c -> !c.equals(Component.literal(" ")) && !c.getString().contains("Unique"));
+            .filter(c -> !c.equals(Component.literal(" ")) && !c.getString().contains("Unique") && !c.getString().contains("Rarity"));
         return compNew.toList();
     }
 
@@ -260,6 +283,7 @@ public class AbilityModificationScreen extends Screen {
 
         backgroundWithStyle(graphics, i1, i, element);
         overlaySkillPoints(graphics, getMinecraft().player);
+        SharedUI.boxMaker(graphics, this.width/2-131, this.height/2 - 70, 16, 25);
         selectedModifier(graphics, mouseX, mouseY);
         container(graphics, mouseX, mouseY, partialTick, startX, startY, element);
         headerWithBorder(graphics, element);
@@ -281,9 +305,8 @@ public class AbilityModificationScreen extends Screen {
         var adjustX = 18;
         var adjustY = -27;
         SharedUI.setCustomBackground(this.height, this.width, graphics);
-        super.render(graphics, mouseX, mouseY, partialTick);
-        graphics.disableScissor();
         bezelMaker(graphics, startX + adjustX + 9, startY + adjustY - 123, 193, 224, 32, element);
+        super.render(graphics, mouseX, mouseY, partialTick);
     }
 
     /**
@@ -328,6 +351,19 @@ public class AbilityModificationScreen extends Screen {
             guiGraphics.pose().popPose();
         }
         this.compValues = new ArrayList<>();
+    }
+
+    public void menuButton(ResourceLocation location, int posX, int posY, int size, Button.OnPress action) {
+        var button = new WidgetSprites(location, location);
+        this.addRenderableWidget(new AbilityIconButton(posX, posY, button, size, action, false, () -> {}));
+    }
+
+    private void navigationButtons() {
+        var size = 32;
+        var x = this.width/2 - 30;
+        var y = this.height/2 - 70;
+        this.menuButton(CLOSE, x - 101, y, size, (s) -> this.getMinecraft().setScreen(null));
+        this.menuButton(DIRECTION_ARROW_BACK, x - 101, y + 20, size, (s) -> this.getMinecraft().setScreen(new AbilityUnlockScreen(size, panX, panY, zoomX, scaledSpacing, scaledXOffset, centerX, centerY)));
     }
 
 }

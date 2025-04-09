@@ -96,7 +96,6 @@ public class AugmentScreen extends Screen  {
     }
 
     private void displayButtons(LinkedHashMap<String, AbilityData.AbilityModifiers> copy1, AtomicInteger verticalSpacing) {
-
         copy1.forEach(
             (e, v) -> {
                 var value = getModifierContextSingle(e, roundNonWholeString(v.setValue()), 1).getString();
@@ -140,7 +139,7 @@ public class AugmentScreen extends Screen  {
         SharedUI.boxMaker(guiGraphics, this.width/2-131, this.height/2 - 70, 16, this.previousScreen == null ? 16 : 25);
         SharedUI.setCustomBackground(this.height, this.width, guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.disableScissor();
+//        guiGraphics.disableScissor();
 //        SharedUI.header(guiGraphics, this.width, this.height, itemStack, this.font, this.getMinecraft().level);
 
     }

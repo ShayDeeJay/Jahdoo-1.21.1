@@ -1,10 +1,10 @@
 package org.jahdoo.ascension.ability.abilities_combat.arcane_shift;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbstractAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
@@ -46,15 +46,14 @@ public class ArcaneShift extends AbstractAbility {
     }
 
     public void shift(){
-//        var maxEntity = getTag(ArcaneShiftAbility.maxEntities);
         var distances = getTag(CASTING_DISTANCE);
-        var position = player.pick(distances, 0, false).getLocation();
+        var position = player.pick(distances, 0, false);
         var level = player.level();
 
         doOnTeleport(player);
 
-        if(!level.isClientSide) {
-            var blockPos = BlockPos.containing(position);
+        if(!level.isClientSide && position instanceof BlockHitResult result) {
+            var blockPos = result.getBlockPos();
             var isEmptyA = level.getBlockState(blockPos.above()).isAir();
             var isEmptyB = level.getBlockState(blockPos.above(2)).isAir();
             var center = blockPos.getCenter();
@@ -62,11 +61,11 @@ public class ArcaneShift extends AbstractAbility {
             if(isEmptyA && isEmptyB){
                 player.teleportTo(center.x, center.y + 0.5, center.z);
             } else {
-                var inFront = blockPos.relative(player.getDirection(),-1).getCenter();
+                var inFront = blockPos.relative(player.getDirection(), -1).getCenter();
                 player.teleportTo(inFront.x, inFront.y + 0.5, inFront.z);
             }
 
-            Helpers.getSoundWithPositionV(level, position, SoundReg.TELEPORT.get(), 2f, 1f);
+            Helpers.getSoundWithPositionV(level, result.getLocation(), SoundReg.TELEPORT.get(), 2f, 1f);
             player.resetFallDistance();
         }
 

@@ -227,7 +227,6 @@ public class SharedUI {
         guiGraphics.fill(widthFrom, heightFrom, widthTo, heightTo, BOX_COLOUR);
         guiGraphics.hLine(i -100, i + 99, i1 - 70, BORDER_COLOUR);
         guiGraphics.renderOutline(widthFrom, heightFrom, widthTo - widthFrom, heightTo - heightFrom, BORDER_COLOUR);
-        guiGraphics.enableScissor(0, heightFrom + 50, width, heightTo - 5);
     }
 
     public static void bezelMaker(GuiGraphics guiGraphics, int posX, int posY, int offsetX, int offsetY, int size, AbstractElement element) {

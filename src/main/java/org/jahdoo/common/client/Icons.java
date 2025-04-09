@@ -63,6 +63,12 @@ public class Icons {
     public static final ResourceLocation LOCK =
         res(PREFIX + "lock.png");
 
+    public static final ResourceLocation STAT =
+        res(PREFIX + "stat.png");
+
+    public static final ResourceLocation ABILITY =
+        res(PREFIX + "ability.png");
+
     public static final ResourceLocation ABILITY_BACKGROUND =
         res(PREFIX + "ability_background.png");
 

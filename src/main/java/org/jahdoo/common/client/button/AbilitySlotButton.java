@@ -14,7 +14,9 @@ import org.jahdoo.common.registers.SoundReg;
 import javax.annotation.Nullable;
 
 import static com.mojang.blaze3d.systems.RenderSystem.setShaderColor;
+import static org.jahdoo.ascension.utils.ColourStore.MAGNET_RANGE_GREEN;
 import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
+import static org.jahdoo.common.client.SharedUI.boxMaker;
 
 public class AbilitySlotButton extends ImageButton {
 
@@ -83,18 +85,23 @@ public class AbilitySlotButton extends ImageButton {
         if(isSelected) sizes = totalSize;
         this.setSize((int) sizes-4, (int) sizes-4);
 
-        graphics.drawCenteredString(Minecraft.getInstance().font, label, this.getX() + 17, this.getY()-8, -1);
+        graphics.drawCenteredString(Minecraft.getInstance().font, label, this.getX() + 15, this.getY() + 30, ColourStore.SUB_HEADER_COLOUR);
 
         RenderSystem.enableBlend();
-        setShaderColor(1.0F, 1.0F, 1.0F, 0.5F);
+        setShaderColor(1.0F, 1.0F, 1.0F, this.isSelected ? 1f : 0.5F);
         graphics.blit(this.sprites.enabled(), this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
         setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
 
 
+        setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);
+        if(isSelected) boxMaker(graphics, this.getX() + 3, this.getY() + 3, 12, 12, MAGNET_RANGE_GREEN, 0, 0);
+        setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.disableBlend();
+
         if (this.isMouseOver(mouseX, mouseY)) {
             sizes = Math.min(sizes + 2f, totalSize);
-            int i = 4;
+            int i = 0;
             graphics.pose().pushPose();
             graphics.pose().translate(0,0,2);
             if(showHover){

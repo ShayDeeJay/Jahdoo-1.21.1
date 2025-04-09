@@ -13,12 +13,35 @@ import static net.minecraft.world.entity.ai.attributes.Attributes.*;
 import static org.jahdoo.ascension.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.ascension.utils.ColourStore.AETHER_BLUE;
 import static org.jahdoo.ascension.utils.ColourStore.COOLDOWN_GREEN;
-import static org.jahdoo.common.client.OverlayHelpers.elementalModStat;
-import static org.jahdoo.common.client.OverlayHelpers.getModStat;
+import static org.jahdoo.common.client.Icons.ABILITY;
+import static org.jahdoo.common.client.Icons.STAT;
+import static org.jahdoo.common.client.OverlayHelpers.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
+import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
 import static org.jahdoo.common.client.overlay.WalletOverlay.renderWallet;
 import static org.jahdoo.common.registers.AttributeReg.*;
 public class StatScreen extends AbstractPanableScreen {
+
+    @Override
+    protected void init() {
+        screenTab();
+    }
+
+    private void screenTab() {
+        this.addRenderableWidget(
+            menuButtonAbility(
+                10, 10, (Button) -> { getMinecraft().setScreen(new StatScreen()); },
+                STAT, 30, false, () -> {}, 0, true, "Stats"
+            )
+        );
+
+        this.addRenderableWidget(
+            menuButtonAbility(
+                50, 10, (Button) -> { getMinecraft().setScreen(new AbilityUnlockScreen()); },
+                ABILITY, 30, false, () -> {}, 0, false, "Abilities"
+            )
+        );
+    }
 
     private void elementalStats(GuiGraphics guiGraphics, LocalPlayer player, float i, float j, Minecraft mc) {
         var x = 0;
@@ -45,6 +68,7 @@ public class StatScreen extends AbstractPanableScreen {
         elementalStats(graphics, player, centerX - 280, centerY, mc);
         renderPlayer(graphics, mouseX, mouseY, (int) withPanX, (int) withPanY, player);
         renderWallet(graphics, mc, 10, withPanX - 49, withPanY - 180, false);
+//        playerLevel(graphics, getMinecraft(), withPanX - 86, withPanY + 72, "Level");
     }
 
     private void otherMagicStats(GuiGraphics guiGraphics, float i, float j, LocalPlayer player, Minecraft mc) {

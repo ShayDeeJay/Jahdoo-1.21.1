@@ -85,6 +85,11 @@ public class Inferno extends AbstractElement {
     }
 
     @Override
+    public String elementDescription() {
+        return "A force of raw destruction, delivering powerful strikes and setting enemies ablaze, causing them to suffer burn damage over time.";
+    }
+
+    @Override
     public ResourceLocation projectileTexture() {
         return res("textures/entity/fire_projectile.png");
     }

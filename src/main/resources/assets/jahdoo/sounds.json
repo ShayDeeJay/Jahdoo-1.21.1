@@ -143,5 +143,11 @@
     "sounds": [
       "jahdoo:unlock_notification"
     ]
+  },
+  "level_up": {
+    "subtitles": "sounds.jahdoo.level_up",
+    "sounds": [
+      "jahdoo:level_up"
+    ]
   }
 }
