@@ -76,13 +76,11 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
         var element = ElementReg.vitality();
         var col1 = element.partColourA();
         var col2 = element.partColourFade();
-
         var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 0.1f, col1, col2, true);
-        if(player.level().isClientSide){
-            ParticleHandlers.sendParticles(
-                player.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 3.5
-            );
-        }
+
+        ParticleHandlers.sendParticles(
+            player.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.05
+        );
     }
 
     public static void setRejuvenationSuccessEffect(Vec3 worldPosition, LivingEntity livingEntity){

@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbstractAbility;
 import org.jahdoo.ascension.attachments.CastingData;
-import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
+import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
@@ -63,10 +63,10 @@ public class StormRush extends AbstractAbility {
 
         player.startAutoSpinAttack(10, damageModified, ItemStack.EMPTY);
 
-        BouncyFoot.setBouncyFoot(player, 320);
+        Rebound.setBouncyFoot(player, 320);
         spawnElectrifiedParticles(level, pos, particleOptions, 10, player, 0.08);
         spawnElectrifiedParticles(level, pos, this.getType().getParticleGroup().magic(), 30, player, 0.08);
-        BouncyFoot.setBouncyFoot(player, 320);
+        Rebound.setBouncyFoot(player, 320);
     }
 
 }

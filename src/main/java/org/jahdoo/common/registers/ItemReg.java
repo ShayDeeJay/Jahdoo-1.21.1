@@ -47,7 +47,7 @@ public class ItemReg {
         basicItem("augment_core");
 
     public static final DeferredHolder<Item, Item> SKILL_POINT =
-        basicItem("skill_point");
+        complexItem("skill_point", SkillPointItem::new);
 
     //Complex Items
     public static final DeferredHolder<Item, Item> CARE_PACKAGE =

@@ -11,6 +11,7 @@ public class Icons {
     public static final String SLOTS_PREFIX = PREFIX + "slots/";
     public static final String ITEMS_PREFIX = "textures/item/";
     public static final String ABILITY_PREFIX = "textures/ability_icons/";
+    public static final String SKILLS = "textures/skill/";
 
     public static final ResourceLocation FROST_BOLTZ =
         res(ABILITY_PREFIX + "frostbolts.png");
@@ -107,6 +108,18 @@ public class Icons {
 
     public static final ResourceLocation GUI_BUTTON_FROST =
         res(BUTTON_PREFIX + "gui_button_frost.png");
+
+    public static final ResourceLocation MAGE_FLIGHT =
+        res(SKILLS + "mage_flight.png");
+
+    public static final ResourceLocation CLIMBER =
+        res(SKILLS + "climber.png");
+
+    public static final ResourceLocation REBOUND =
+        res(SKILLS + "rebound.png");
+
+    public static final ResourceLocation TRIPLE_JUMP =
+        res(SKILLS + "triple_jump.png");
 
     public static final ResourceLocation GUI_BUTTON_MYSTIC =
         res(BUTTON_PREFIX + "gui_button_mystic.png");

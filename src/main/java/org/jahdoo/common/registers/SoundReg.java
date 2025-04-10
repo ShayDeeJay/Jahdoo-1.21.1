@@ -87,6 +87,12 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> LEVEL_UP =
         registerSoundEvent("level_up");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> REJECT =
+        registerSoundEvent("reject");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> UPGRADE_MODIFIER =
+        registerSoundEvent("upgrade_modifier");
+
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));
     }

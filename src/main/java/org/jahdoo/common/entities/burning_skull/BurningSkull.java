@@ -14,6 +14,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jahdoo.ascension.ability.ProjectileProperties;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Helpers;
@@ -41,7 +42,6 @@ import static org.jahdoo.common.entities.EntityMovers.entityMover;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 import static org.jahdoo.common.registers.EffectReg.INFERNO_EFFECT;
 import static software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
 import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
@@ -73,11 +73,14 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         this.reapplyPosition();
         this.setOwner(owner);
 
-        var holder = owner.getItemInHand(owner.getUsedItemHand()).get(ABILITY_HOLDER.get());
+        var holder = CastingData.entityHolderWithSelected(owner);
+
         this.effectChance = getTag(EFFECT_CHANCE, holder);
         this.effectStrength = getTag(EFFECT_STRENGTH, holder);
         this.effectDuration = getTag(EFFECT_DURATION, holder);
+
         setLifetimes((int) getTag(LIFETIME, holder));
+
         if(!(this.getOwner() instanceof Player)){
             this.damage = getTag(DAMAGE, holder);
         } else {

@@ -79,36 +79,37 @@ public class EscapeDecoyAbility extends Ability {
         return VitalityMissile.abilityId.getPath();
     }
 
+    public static double getTag(Player player, String id){
+        return CastingData.entityHolderWithSelected(player).data().abilityProperties().get(id).setValue();
+    }
+
     @Override
     public void invokeAbility(Player player) {
-        var tagModifier = Helpers.getModifierValue(CastingData.entityHolderWithSelected(player), abilityId.getPath().intern());
-        var range = tagModifier.get(RANGE);
-        if(range != null){
-            var decoy = new Decoy(player.level(), player, (int) range.setValue());
-            decoy.setMaxLifetime((int) tagModifier.get(LIFETIME).actualValue());
-            var duration = (int) tagModifier.get(EFFECT_DURATION).actualValue();
+        var range = getTag(player, RANGE);
+        var decoy = new Decoy(player.level(), player, (int) range);
+        var duration = (int) getTag(player, EFFECT_DURATION);
+        var lookVector = player.getLookAngle();
 
-            var lookVector = player.getLookAngle();
-            player.addEffect(new JahdooMobEffect(MobEffects.MOVEMENT_SPEED, duration, 6));
-            player.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, duration, 0));
-            player.addEffect(new JahdooMobEffect(EffectReg.STEP_BOOST, duration, 1));
+        decoy.setMaxLifetime((int) getTag(player, LIFETIME));
+        player.addEffect(new JahdooMobEffect(MobEffects.MOVEMENT_SPEED, duration, 6));
+        player.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, duration, 0));
+        player.addEffect(new JahdooMobEffect(EffectReg.STEP_BOOST, duration, 1));
 
-            Helpers.getSoundWithPositionV(player.level(), player.position(), SoundEvents.WARDEN_ATTACK_IMPACT, 1,0.6f);
-            Helpers.getSoundWithPositionV(player.level(), player.position(), SoundEvents.CAMEL_DASH, 1,1.6f);
+        Helpers.getSoundWithPositionV(player.level(), player.position(), SoundEvents.WARDEN_ATTACK_IMPACT, 1,0.6f);
+        Helpers.getSoundWithPositionV(player.level(), player.position(), SoundEvents.CAMEL_DASH, 1,1.6f);
 
-            var yaw = Math.toDegrees(Math.atan2(lookVector.z, lookVector.x)) + 270.0;
-            decoy.setYRot((float) yaw);
-            decoy.setYHeadRot((float) yaw);
-            decoy.setYBodyRot((float) yaw);
-            decoy.setPos(player.getX(), player.getY(), player.getY());
-            decoy.yRotO = (float) yaw;
-            decoy.yHeadRotO = (float) yaw;
-            decoy.setNoAi(true);
-            decoy.moveTo(player.position());
-            player.level().addFreshEntity(decoy);
+        var yaw = Math.toDegrees(Math.atan2(lookVector.z, lookVector.x)) + 270.0;
+        decoy.setYRot((float) yaw);
+        decoy.setYHeadRot((float) yaw);
+        decoy.setYBodyRot((float) yaw);
+        decoy.setPos(player.getX(), player.getY(), player.getY());
+        decoy.yRotO = (float) yaw;
+        decoy.yHeadRotO = (float) yaw;
+        decoy.setNoAi(true);
+        decoy.moveTo(player.position());
+        player.level().addFreshEntity(decoy);
 
-            onExistenceChange(decoy, getElemenType());
-        }
+        onExistenceChange(decoy, getElemenType());
     }
 
     @Override

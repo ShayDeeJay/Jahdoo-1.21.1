@@ -47,7 +47,7 @@ public class BlockPlacer extends AbstractUtilityProjectile {
 
     private static void placeSound(BlockPos blockPos, Direction side, Block replaceBlock, Level level, boolean playSound) {
         var state = replaceBlock.defaultBlockState();
-//        level.setBlockAndUpdate(blockPos.relative(side), state);
+        level.setBlockAndUpdate(blockPos.relative(side), state);
         if(playSound){
             Helpers.getSoundWithPosition(level, blockPos, state.getSoundType().getBreakSound());
         }

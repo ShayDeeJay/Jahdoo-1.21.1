@@ -10,7 +10,6 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import org.jahdoo.common.registers.SoundReg;
 
 import static org.jahdoo.common.client.Icons.*;
@@ -121,8 +120,8 @@ public class ToggleComponent  {
         return new GuiButton(posX, posY, button, size, action, active, location, "", scale, showHover) {
 
             public void playDownSound(SoundManager handler) {
-                handler.play(SimpleSoundInstance.forUI(SoundEvents.VAULT_INSERT_ITEM, 1.2F));
-                handler.play(SimpleSoundInstance.forUI(SoundEvents.VAULT_OPEN_SHUTTER, 1.4F));
+                handler.play(SimpleSoundInstance.forUI(SoundReg.UPGRADE_MODIFIER.get(), 1F, 1F));
+//                handler.play(SimpleSoundInstance.forUI(SoundEvents.VAULT_OPEN_SHUTTER, 1.4F));
             }
 
             public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {

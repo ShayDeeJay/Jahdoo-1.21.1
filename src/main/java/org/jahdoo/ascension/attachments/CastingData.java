@@ -180,6 +180,8 @@ public class CastingData implements IAttachment {
         this.unlockedAbilities = new ArrayList<>();
         this.abilitySlots = new ArrayList<>(EMPTY);
         this.selectedAbility = "";
+        this.abilityPoints = 0;
+        this.xp = 0;
     }
 
     public List<String> getAbilitySlots(){

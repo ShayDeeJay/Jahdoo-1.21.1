@@ -13,9 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
-import org.jahdoo.ascension.ability.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 
 public abstract class ProjectileProperties extends Projectile {
@@ -70,11 +68,8 @@ public abstract class ProjectileProperties extends Projectile {
     }
 
     public static double getTag(String name, AbilityHolder abilityHolder) {
-        var abName = BurningSkullsAbility.abilityId.getPath().intern();
-        var modifier = Helpers.getModifierValue(abilityHolder, abName).get(name);
-
+        var modifier = abilityHolder.data().abilityProperties().get(name);
         if(modifier != null) return modifier.setValue();
-
         return 0;
     }
 

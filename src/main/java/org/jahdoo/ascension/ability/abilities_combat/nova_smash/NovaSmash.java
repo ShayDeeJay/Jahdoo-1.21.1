@@ -22,7 +22,7 @@ import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.attachments.IAttachment;
-import org.jahdoo.ascension.attachments.player_abilities.BouncyFoot;
+import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.networking.server2client.NovaSmashS2CP;
@@ -190,7 +190,7 @@ public class NovaSmash implements IAttachment {
                 this.setKnockbackAndDamage(player);
                 this.highestDelta = 0;
                 this.canSmash = false;
-                BouncyFoot.setBouncyFoot(player, 160);
+                Rebound.setBouncyFoot(player, 160);
             }
         }
 

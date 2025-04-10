@@ -13,6 +13,8 @@ import org.jahdoo.common.registers.SoundReg;
 
 import javax.annotation.Nullable;
 
+import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
+import static com.mojang.blaze3d.platform.InputConstants.isKeyDown;
 import static com.mojang.blaze3d.systems.RenderSystem.setShaderColor;
 
 public class AbilityScreenButton extends ImageButton {
@@ -92,10 +94,22 @@ public class AbilityScreenButton extends ImageButton {
 
         if(isSelected) sizes = totalSize;
 
+
+
         graphics.drawCenteredString(Minecraft.getInstance().font, label, this.getX() + 17, this.getY()-8, -1);
         graphics.blit(this.sprites.enabled(), this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
 
         if (this.isMouseOver(mouseX, mouseY)) {
+            var shift = isKeyDown(Minecraft.getInstance().getWindow().getWindow(), KEY_LSHIFT);
+
+            if(!isDummy){
+                RenderSystem.enableBlend();
+                setShaderColor(1.0F, 1.0F, 1.0F, !shift ? 0.5F : 1F);
+                graphics.blit(Icons.LOCKED_ABILITY, this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
+                setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.disableBlend();
+            }
+
             sizes = Math.min(sizes + 2f, totalSize);
             graphics.pose().pushPose();
             graphics.pose().translate(0,0,2);
@@ -114,11 +128,6 @@ public class AbilityScreenButton extends ImageButton {
                 graphics.blit(Icons.LOCKED_ABILITY_CENTER, this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
                 setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-                if(this.hasDependency){
-                    setShaderColor(1.0F, 1.0F, 1.0F, this.isHovered ? 0.3F : 0.8F);
-//                    graphics.blit(Icons.LOCK, this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
-                    setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                }
 
                 RenderSystem.disableBlend();
             }

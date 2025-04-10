@@ -37,8 +37,8 @@ public class AttachmentReg {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<NovaSmash>> NOVA_SMASH =
         withProvider("nova_smash", NovaSmash::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BouncyFoot>> BOUNCY_FOOT =
-        withProvider("bouncy_foot", BouncyFoot::new);
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Rebound>> BOUNCY_FOOT =
+        withProvider("bouncy_foot", Rebound::new);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ChaosCubeData>> MODULAR_CHAOS_CUBE =
         withProvider("modular_chaos_cube", ChaosCubeData::new);

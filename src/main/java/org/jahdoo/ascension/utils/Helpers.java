@@ -209,10 +209,7 @@ public class Helpers {
         if(abilityHolder != null){
             var allModifiers = abilityHolder.data().abilityProperties();
 
-            if(allModifiers.get(tagName) != null){
-                System.out.println("i made it here");
-                return allModifiers;
-            }
+            if(allModifiers.get(tagName) != null) return allModifiers;
         }
         return emptyMap();
     }

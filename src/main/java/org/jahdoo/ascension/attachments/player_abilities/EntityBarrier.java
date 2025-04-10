@@ -1,4 +1,4 @@
-package org.jahdoo.ascension.ability.wand_perks;
+package org.jahdoo.ascension.attachments.player_abilities;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -18,6 +18,8 @@ import static org.jahdoo.ascension.utils.PositionFinders.getRandomSphericalPosit
 import static org.jahdoo.common.particle.ParticleHandlers.particleBurst;
 
 public class EntityBarrier {
+
+    // NOT AN ATTACHMENT
 
     private double expandRadius = 0;
 

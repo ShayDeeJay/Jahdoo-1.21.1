@@ -1,6 +1,5 @@
 package org.jahdoo.common.client.screens;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,7 +9,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.attachments.CastingData;
@@ -33,6 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
+import static com.mojang.blaze3d.platform.InputConstants.isKeyDown;
 import static java.lang.String.valueOf;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
@@ -89,11 +89,11 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         this.scaledXOffset = baseXOffset * (size / 8.0); // Scale X spacing
 
         // Always scale relative to the screen center
-        this.centerX = (double) this.width / 2 + panX;
-        this.centerY = (double) this.height / 2 + panY - 40;
+        this.centerX = (double) this.width / 2 + panX + 2;
+        this.centerY = (double) this.height / 2 + panY + 34;
 
         // Adjusted offsets to keep elements centered
-        double startX = centerX - (10.1 * scaledXOffset); // Center the first element
+        var startX = centerX - (10.1 * scaledXOffset); // Center the first element
 
         this.addRenderableOnly(
             new Overlay() {
@@ -103,6 +103,15 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 }
             }
         );
+
+
+        var skillHeight = centerY + (scaledSpacing / 2) - (size * 25);
+        var startXS = centerX - (3.2 * scaledXOffset); // Center the first element
+        skillButton(startXS, skillHeight, size);
+        skillButton(startXS + 2 * scaledXOffset, skillHeight, size);
+        skillButton(startXS + 4 * scaledXOffset, skillHeight, size);
+        skillButton(startXS + 6 * scaledXOffset, skillHeight, size);
+
 
         withElementObjects(startX, scaledSpacing, centerY, size, ElementReg.frost(), GUI_BUTTON_FROST, GUI_BUTTON_FROST_SQUARE);
         withElementObjects(startX + 5 * scaledXOffset, scaledSpacing, centerY, size, ElementReg.inferno(), GUI_BUTTON_INFERNO, GUI_BUTTON_INFERNO_SQUARE);
@@ -116,7 +125,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
                     guiGraphics.disableScissor();
                     var c = SharedUI.getFadedColourBackground(0.4F);
-                    SharedUI.boxMaker(guiGraphics, width/2 - 158, 57, 157, 14, c, c, c);
+                    SharedUI.boxMaker(guiGraphics, width / 2 - 158, 57, 157, 14, c, c, c);
                 }
             }
         );
@@ -149,6 +158,26 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     @Override
     public void customRenderBackground(GuiGraphics guiGraphics, int centerX, int centerY) {}
 
+    private void skillButton(
+        double centerX,
+        double centerY,
+        int size
+    ) {
+        var player = getMinecraft().player;
+        if(player == null) return;
+
+        var data = player.getData(AttachmentReg.CASTER_DATA);
+        var button = new WidgetSprites(GUI_BUTTON_SKILL, GUI_BUTTON_SKILL);
+
+        this.addRenderableWidget(
+            menuButtonSoundAbilities(
+                (int) centerX, (int) centerY, (Button) -> { },
+                CLOCK, size * 2, false, 0, button, false, () -> {},
+                false, false, false
+            )
+        );
+    }
+
     private void withElementObjects(
         double centerX,
         double scaledSpacing,
@@ -168,7 +197,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         renderAbilityButton(centerX - (size * 2), centerY - (size * 2), element.iconTexture(), size * 5, withElement.getFirst(), true, BLANK, 0);
 
         for (Ability abilityRegistrar : withElement) {
-            renderAbilityButton(centerX - (size * 1.5), centerY + spacer + (scaledSpacing * 14), passive, size * 4, withElement.getFirst(), true, BLANK, 0);
+//            renderAbilityButton(centerX - (size * 1.5), centerY + spacer + (scaledSpacing * 14), passive, size * 4, withElement.getFirst(), true, BLANK, 0);
             spacer += (int) (scaledSpacing * 8);
         }
 
@@ -258,7 +287,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var player = getMinecraft().player;
         if(player == null) return;
         if(unlocked) {
-            if(InputConstants.isKeyDown(getMinecraft().getWindow().getWindow(), InputConstants.KEY_LSHIFT)){
+            if(isKeyDown(getMinecraft().getWindow().getWindow(), KEY_LSHIFT)){
                 sendToServer(new AddAbilityC2SP(ability.setAbilityId()));
             } else {
                 getMinecraft().setScreen(guiScreen);
@@ -271,14 +300,14 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 this.components = new ArrayList<>();
                 this.rebuildWidgets();
             } else {
-                player.playSound(SoundEvents.DYE_USE, 1, 2f);
+                player.playSound(SoundReg.REJECT.get(), 0.5F, 1.2F);
             }
         }
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if(!components.isEmpty()) return false;
+//        if(!components.isEmpty()) return false;
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
@@ -291,7 +320,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     @Override
     protected void baseRender(GuiGraphics guiGraphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
         var pose = guiGraphics.pose();
-        var fade = SharedUI.getFadedColourBackground(0.8F);
+        var fade = SharedUI.getFadedColourBackground(1F);
         var adjustY = -6;
         var i = 70;
         var x = 3F;
@@ -303,6 +332,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         pose.popPose();
 
         this.rebuildWidgets();
+
         if (components.isEmpty()) {
             this.scale = 0;
         } else {
@@ -316,20 +346,20 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         }
 
         boxMaker(guiGraphics, 3, 3, (int) (centerX - 3), (int) (centerY - 3), AETHER_BLUE, fade, color(100, UNIQUE_B));
-        overlaySkillPoints(guiGraphics, player);
+        overlaySkillPoints(guiGraphics, player, 74);
         this.components = new ArrayList<>();
         super.baseRender(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
         guiGraphics.hLine(3, this.width - 5, 89,  AETHER_BLUE);
     }
 
-    private void overlaySkillPoints(GuiGraphics guiGraphics, LocalPlayer player) {
+    private void overlaySkillPoints(GuiGraphics guiGraphics, LocalPlayer player, int spacer) {
         var size = 24;
         var skillPoints = CastingData.getAbilityPoints(player);
         var fade1 = SharedUI.getFadedColourBackground(0.5F);
         var length = valueOf(skillPoints).length();
-        var i1 = this.width / 2 + 80 ;
+        var i1 = this.width / 2 + spacer;
         var i2 = -6;
-        boxMaker(guiGraphics, i1, 20 + i2, 15 + (length * length), 10, 0, fade1, fade1);
+        boxMaker(guiGraphics, i1, 20 + i2, 15 + (length * length), 10, 1, fade1, fade1);
         guiGraphics.drawString(font, withStyleComponent(skillPoints + "", PERK_GREEN), i1 + 22, 26 + i2, -1);
         guiGraphics.blit(SKILL_POINT, i1 - 2, 18 + i2, 0, 0, size, size, size, size);
     }

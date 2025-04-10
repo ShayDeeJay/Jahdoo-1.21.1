@@ -149,5 +149,17 @@
     "sounds": [
       "jahdoo:level_up"
     ]
+  },
+  "reject": {
+    "subtitles": "sounds.jahdoo.reject",
+    "sounds": [
+      "jahdoo:reject"
+    ]
+  },
+  "upgrade_modifier": {
+    "subtitles": "sounds.jahdoo.upgrade_modifier",
+    "sounds": [
+      "jahdoo:upgrade_modifier"
+    ]
   }
 }

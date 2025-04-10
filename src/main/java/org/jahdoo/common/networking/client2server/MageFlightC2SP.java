@@ -1,12 +1,15 @@
 package org.jahdoo.common.networking.client2server;
 
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.ascension.ability.wand_perks.mage_flight.MageFlightClient;
 import org.jahdoo.ascension.utils.Helpers;
+
+import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
 
 public class MageFlightC2SP implements CustomPacketPayload {
 
@@ -22,7 +25,10 @@ public class MageFlightC2SP implements CustomPacketPayload {
     public void toBytes(FriendlyByteBuf bug) {}
 
     public boolean handle(IPayloadContext ctx) {
-        MageFlightClient.mageFlightClient(ctx.player());
+        if(ctx.player() instanceof LocalPlayer localPlayer){
+            PacketDistributor.sendToServer(new FlyingC2SP(localPlayer.input.jumping));
+            localPlayer.getData(MAGE_FLIGHT).setJumpKeyDown(localPlayer.input.jumping);
+        }
         return true;
     }
 

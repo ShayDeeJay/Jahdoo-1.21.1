@@ -9,10 +9,9 @@ import org.jahdoo.ascension.attachments.IAttachment;
 import org.jahdoo.common.networking.server2client.BouncyFootS2CP;
 import org.jahdoo.common.registers.EffectReg;
 
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
-import static org.jahdoo.common.registers.AttachmentReg.*;
+import static org.jahdoo.common.registers.AttachmentReg.BOUNCY_FOOT;
 
-public class BouncyFoot implements IAttachment {
+public class Rebound implements IAttachment {
 
     private double currentDelta;
     private double previousDelta;

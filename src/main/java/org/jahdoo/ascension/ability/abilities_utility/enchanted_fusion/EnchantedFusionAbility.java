@@ -61,7 +61,7 @@ public class EnchantedFusionAbility extends AbstractBlockAbility {
     @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
-            .setMana(10, 5, 1, 1)
+            .setMana(100, 50, 10, 1)
             .buildAndReturn();
     }
 
