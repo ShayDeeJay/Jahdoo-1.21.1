@@ -22,7 +22,7 @@ import org.jahdoo.common.networking.server2client.EffectSyncS2CP;
 import org.jahdoo.common.networking.server2client.MoveClientEntityS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
 
 import java.util.List;

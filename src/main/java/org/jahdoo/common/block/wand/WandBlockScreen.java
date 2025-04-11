@@ -18,10 +18,10 @@ import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.slots.InventorySlots;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.augments.Augment;
-import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -33,10 +33,10 @@ import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.ascension.utils.ColourStore.BORDER_COLOUR;
 import static org.jahdoo.common.block.augment_modification_station.AbilityModificationScreen.WIDGET;
 import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.SharedUI.*;
+import static org.jahdoo.common.client.SharedUI.renderInventoryBackground;
+import static org.jahdoo.common.client.SharedUI.setSlotTexture;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
 import static org.jahdoo.common.client.button.ToggleComponent.textRenderable;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.shiftForDetails;
 
 public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
     private final long window = Minecraft.getInstance().getWindow().getWindow();
@@ -118,7 +118,7 @@ public class WandBlockScreen extends AbstractContainerScreen<WandBlockMenu> {
                     if (itemStack.get(ComponentReg.ABILITY_HOLDER.get()) != null) {
 //                        toolTips.add(AugmentItemHelper.getAbilityName(itemStack,element));
 //                        toolTips.addAll(getAllAbilityModifiers(itemStack, itemStack1, abilityLocation, false, this.getMinecraft().level));
-                        shiftForDetails(toolTips);
+//                        shiftForDetails(toolTips);
                     }
                 }
             );

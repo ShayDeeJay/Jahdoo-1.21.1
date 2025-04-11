@@ -19,7 +19,7 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.EntityReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

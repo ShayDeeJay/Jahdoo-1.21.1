@@ -10,7 +10,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 
 public class UseAbilityC2SP implements CustomPacketPayload {
 

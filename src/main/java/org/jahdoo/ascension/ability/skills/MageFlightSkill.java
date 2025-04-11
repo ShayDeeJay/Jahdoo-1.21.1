@@ -1,46 +1,65 @@
 package org.jahdoo.ascension.ability.skills;
 
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import org.jahdoo.common.client.Icons;
+import org.jahdoo.common.registers.EffectReg;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.jahdoo.ascension.ability.skills.TripleJumpSkill.TRIPLE_JUMP;
 
 public class MageFlightSkill extends AbstractSkill {
 
+    public static final String MAGE_FLIGHT = "mage_flight";
+
     @Override
-    String name() {
-        return "Mage Flight";
+    public String id() {
+        return MAGE_FLIGHT;
     }
 
     @Override
-    ResourceLocation icon() {
+    public ResourceLocation icon() {
         return Icons.MAGE_FLIGHT;
     }
 
     @Override
-    void doOnCall() {
+    public Holder<MobEffect> skillEffect() {
+        return EffectReg.MAGE_FLIGHT;
         //TODO
     }
 
     @Override
-    List<Component> tooltip() {
-        return List.of();
+    public List<Component> tooltip() {
+        var components = new ArrayList<Component>();
+
+//        components.add(Helpers.withStyleComponent(Helpers.stringIdToName(id()), ColourStore.HEADER_COLOUR));
+//        components.add(Helpers.withStyleComponent(description(), ColourStore.AETHER_BLUE));
+
+        return components;
     }
 
     @Override
-    int unlockCost() {
+    public int unlockCost() {
         return 20;
     }
 
     @Override
-    String dependency() {
-        return "Triple Jump";
+    public String dependency() {
+        return TRIPLE_JUMP;
     }
 
     @Override
-    int levelRequirement() {
+    public int levelRequirement() {
         return 30;
+    }
+
+    @Override
+    public String description() {
+        return "Tap into divine energy to defy gravity itself. You can now levitate freely, gliding through the air at the cost of mana.";
     }
 
 }

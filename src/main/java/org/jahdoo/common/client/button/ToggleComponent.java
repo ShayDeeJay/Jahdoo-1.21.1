@@ -92,10 +92,6 @@ public class ToggleComponent  {
     ) {
         return new AbilitySlotButton(posX, posY, new WidgetSprites(ABILITY_BACKGROUND, ABILITY_BACKGROUND), size, action, selected, location, label, 0, showHover, slot) {
 
-            public void playDownSound(SoundManager handler) {
-                handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT.get(), 1F));
-            }
-
             public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
                 super.renderWidget(graphics, mouseX, mouseY, pPartialTick);
                 if(this.isMouseOver(mouseX, mouseY)) hoverAction.run();
@@ -145,9 +141,10 @@ public class ToggleComponent  {
         Runnable hoverAction,
         boolean isDummy,
         boolean locked,
-        boolean hasDependency
+        boolean hasDependency,
+        boolean isSkill
     ) {
-        return new AbilityScreenButton(posX, posY, button, size, action, active, location, "", scale, showHover, isDummy, locked, hasDependency) {
+        return new AbilityScreenButton(posX, posY, button, size, action, active, location, "", scale, showHover, isDummy, locked, hasDependency, isSkill) {
 
             public void playDownSound(SoundManager handler) {
                 if(!locked) handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT, 1F));

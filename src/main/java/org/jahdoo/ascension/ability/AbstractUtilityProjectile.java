@@ -9,7 +9,7 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.playParticles3;

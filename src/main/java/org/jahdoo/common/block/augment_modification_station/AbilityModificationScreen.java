@@ -40,7 +40,7 @@ import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
 import static org.jahdoo.common.client.button.ToggleComponent.textRenderable;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
-import static org.jahdoo.common.registers.ElementReg.*;
+import static org.jahdoo.common.registers.mod.ElementReg.*;
 
 public class AbilityModificationScreen extends Screen {
 

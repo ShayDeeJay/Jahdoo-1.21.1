@@ -14,7 +14,7 @@ import org.jahdoo.common.networking.client2server.AttributeC2SP;
 import org.jahdoo.common.networking.client2server.EffectC2SP;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.ArrayList;
 import java.util.List;

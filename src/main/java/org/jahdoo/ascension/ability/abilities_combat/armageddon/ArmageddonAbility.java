@@ -14,11 +14,11 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
-import org.jahdoo.common.registers.EntityDataReg;
+import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jahdoo.common.registers.SoundReg;
 
 import static org.jahdoo.ascension.utils.GlobalStrings.BLOCK_MINER_DESCRIPTION;
-import static org.jahdoo.common.registers.ElementReg.inferno;
+import static org.jahdoo.common.registers.mod.ElementReg.inferno;
 
 public class ArmageddonAbility extends Ability {
 

@@ -20,7 +20,7 @@ import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.UUID;

@@ -17,7 +17,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
-import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;
 

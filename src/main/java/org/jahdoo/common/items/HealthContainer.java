@@ -8,7 +8,7 @@ import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRej
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.ascension.utils.IItemEntityBehaviour;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 

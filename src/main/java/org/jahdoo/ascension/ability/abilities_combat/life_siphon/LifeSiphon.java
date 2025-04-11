@@ -9,11 +9,10 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
@@ -24,7 +23,7 @@ import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.*;
-import static org.jahdoo.common.registers.EntityDataReg.*;
+import static org.jahdoo.common.registers.mod.EntityDataReg.*;
 
 public class LifeSiphon extends DefaultEntityBehaviour {
 

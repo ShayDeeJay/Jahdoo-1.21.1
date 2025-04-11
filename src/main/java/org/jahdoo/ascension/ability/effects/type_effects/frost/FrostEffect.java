@@ -6,7 +6,7 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import org.jahdoo.ascension.ability.effects.EffectHelpers;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
 
 import static net.minecraft.util.FastColor.ARGB32.color;

@@ -17,7 +17,7 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.List;
 

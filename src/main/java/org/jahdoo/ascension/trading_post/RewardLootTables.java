@@ -25,7 +25,7 @@ import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.tome.TomeOfUnity;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.registers.BlockReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;

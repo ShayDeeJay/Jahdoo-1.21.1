@@ -20,8 +20,8 @@ import org.jahdoo.common.entities.EntityMovers;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.common.registers.EntityDataReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.SoundReg;
 

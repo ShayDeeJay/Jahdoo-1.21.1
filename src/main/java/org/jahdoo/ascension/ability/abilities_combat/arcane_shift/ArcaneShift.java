@@ -14,7 +14,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
 
 import static net.minecraft.world.entity.EntitySelector.LIVING_ENTITY_STILL_ALIVE;

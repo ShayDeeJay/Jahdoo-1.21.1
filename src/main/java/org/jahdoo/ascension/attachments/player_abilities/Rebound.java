@@ -39,7 +39,7 @@ public class Rebound implements IAttachment {
     }
 
     public void onTick(Player player){
-        if(/*effectTimer > 0*/ player.hasEffect(EffectReg.REBOUND.getDelegate())){
+        if(/*effectTimer > 0*/ player.hasEffect(EffectReg.REBOUND)){
             if(player instanceof ServerPlayer serverPlayer){
                 var payload = new BouncyFootS2CP(effectTimer, previousDelta, currentDelta, setHighestFallPoint);
                 PacketDistributor.sendToPlayer(serverPlayer, payload);

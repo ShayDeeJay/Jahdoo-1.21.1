@@ -13,7 +13,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.wand.WandData;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;
@@ -36,8 +36,8 @@ import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.generateFullRune;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
-import static org.jahdoo.common.registers.ElementReg.getWithout;
-import static org.jahdoo.common.registers.ElementReg.random;
+import static org.jahdoo.common.registers.mod.ElementReg.getWithout;
+import static org.jahdoo.common.registers.mod.ElementReg.random;
 
 public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts){
 

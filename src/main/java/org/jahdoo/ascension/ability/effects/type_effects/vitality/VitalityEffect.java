@@ -10,7 +10,7 @@ import org.jahdoo.ascension.ability.effects.EffectHelpers;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;
 

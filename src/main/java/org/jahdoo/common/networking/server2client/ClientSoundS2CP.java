@@ -46,10 +46,7 @@ public class ClientSoundS2CP implements CustomPacketPayload {
                 @Override
                 public void run() {
                     if(ctx.player() instanceof LocalPlayer localPlayer) {
-                        var volumeAdjust = ctx.listener().getMainThreadEventLoop().getPendingTasksCount();
-                        var v = volume - (float) volumeAdjust / 6;
-                        var adjusted = isBatched ? v : volume;
-                        localPlayer.playSound(soundEvents, adjusted, pitch);
+                        localPlayer.playSound(soundEvents, volume, pitch);
                     }
                 }
             }

@@ -22,7 +22,7 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
 
 import java.util.ArrayList;
@@ -138,9 +138,9 @@ public class FireBall extends DefaultEntityBehaviour {
     private void setShockwaveNova(Vec3 worldPosition){
         var directions = worldPosition.subtract(this.element.position()).normalize();
         var lifetime = 3;
-        var col1 = -8487298;
-        var col2 = -13355980;
-        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 0.1f, col1, col2, true);
+        var col1 = -1;
+        var col2 = ElementReg.inferno().partColourA();
+        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 0.04f, col1, col2, true);
 
         ParticleHandlers.sendParticles(
             level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 1.5

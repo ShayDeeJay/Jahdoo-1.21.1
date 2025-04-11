@@ -34,7 +34,7 @@ import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.block.augment_modification_station.AugmentModificationBlock.*;
 import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.common.registers.ElementReg.fromWand;
+import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
 
 public class WandManagerBlock extends BaseEntityBlock {
 

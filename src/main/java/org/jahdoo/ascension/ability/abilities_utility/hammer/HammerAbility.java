@@ -11,8 +11,8 @@ import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.common.registers.EntityDataReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.common.registers.mod.EntityDataReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.OFFSET;
 

@@ -17,7 +17,7 @@ import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.*;
-import static org.jahdoo.common.registers.ElementReg.*;
+import static org.jahdoo.common.registers.mod.ElementReg.*;
 
 public abstract class AbstractBEInventory extends SyncedBlockEntity {
 

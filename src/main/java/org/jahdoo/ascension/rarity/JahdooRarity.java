@@ -16,9 +16,9 @@ import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.wand.WandData;
-import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

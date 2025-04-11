@@ -28,7 +28,7 @@ import org.jahdoo.common.block.wand.WandBlockEntity;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
-import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -55,7 +55,7 @@ import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.particle.ParticleStore.rgbToInt;
 import static org.jahdoo.common.registers.ComponentReg.*;
-import static org.jahdoo.common.registers.ElementReg.fromWand;
+import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
 
 
 public class WandItemHelper {

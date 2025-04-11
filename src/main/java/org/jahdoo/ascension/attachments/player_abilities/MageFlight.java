@@ -11,18 +11,18 @@ import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.attachments.IAttachment;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
-import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.networking.client2server.MageFlightC2SP;
 import org.jahdoo.common.networking.server2client.MageFlightSyncS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AttributeReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.EffectReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
-import static org.jahdoo.common.registers.ElementReg.fromWand;
+import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
 
 public class MageFlight implements IAttachment {
 
@@ -68,8 +68,8 @@ public class MageFlight implements IAttachment {
         }
     }
 
-    private boolean cancelAttempt(Player player, ItemStack wandItem) {
-        if(!RuneHelpers.canMageFlight(player) || player.onGround() || player.isFallFlying()) {
+    private boolean cancelAttempt(Player player) {
+        if(!player.hasEffect(EffectReg.MAGE_FLIGHT) || player.onGround() || player.isFallFlying()) {
             player.getAbilities().mayfly = false;
             this.isFlying = false;
             return true;
@@ -84,7 +84,6 @@ public class MageFlight implements IAttachment {
             var getDelta = player.getDeltaMovement();
             var speedModifier = 0.02;
 
-            player.resetFallDistance();
             player.getAbilities().mayfly = true;
             manaSystem.subtractMana(Math.min(manaCost, 2), player);
             player.setDeltaMovement(player.getDeltaMovement().add(getDelta.x * speedModifier, 0.09, getDelta.z * speedModifier));
@@ -117,10 +116,10 @@ public class MageFlight implements IAttachment {
 
         var wandItem = Helpers.getUsedItem(player);
         var manaSystem = player.getData(CASTER_DATA);
-        if (cancelAttempt(player, wandItem)) return;
+        if (cancelAttempt(player)) return;
 
         if (!this.lastJumped && jumpKeyDown) {
-            if (this.jumpTickCounter == 0) this.jumpTickCounter = 10; else this.isFlying = true;
+            if (this.jumpTickCounter == 0) this.jumpTickCounter = 5; else this.isFlying = true;
         }
 
         if (this.jumpTickCounter > 0) this.jumpTickCounter--;

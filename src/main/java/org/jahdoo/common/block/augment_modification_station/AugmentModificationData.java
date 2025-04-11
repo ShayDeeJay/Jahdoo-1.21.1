@@ -14,8 +14,8 @@ import java.util.LinkedHashMap;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
-import static org.jahdoo.common.registers.ElementReg.fromId;
-import static org.jahdoo.common.registers.ElementReg.mystic;
+import static org.jahdoo.common.registers.mod.ElementReg.fromId;
+import static org.jahdoo.common.registers.mod.ElementReg.mystic;
 
 public class AugmentModificationData {
 
@@ -73,7 +73,7 @@ public class AugmentModificationData {
         var holders = new AbilityHolder(abilityName, new AbilityData(properties));
 
         sendToServer(new AbilityPointC2SP(cost));
-        sendToServer(new AbilityHolderC2SP(holders));
+        sendToServer(new AbilityHolderC2SP(holders, 0));
         data.decrementAbilityPoints(cost);
         return holders;
     }

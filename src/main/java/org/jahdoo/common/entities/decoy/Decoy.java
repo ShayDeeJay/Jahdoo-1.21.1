@@ -31,7 +31,7 @@ import static net.minecraft.network.syncher.SynchedEntityData.defineId;
 import static net.minecraft.util.RandomSource.create;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
-import static org.jahdoo.common.registers.ElementReg.vitality;
+import static org.jahdoo.common.registers.mod.ElementReg.vitality;
 
 public class Decoy extends Mob {
 

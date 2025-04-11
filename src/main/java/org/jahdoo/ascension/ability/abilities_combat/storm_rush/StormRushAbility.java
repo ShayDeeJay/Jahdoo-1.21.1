@@ -10,7 +10,7 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 public class StormRushAbility extends Ability {
 

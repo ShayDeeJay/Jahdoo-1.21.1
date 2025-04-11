@@ -1,4 +1,4 @@
-package org.jahdoo.common.registers;
+package org.jahdoo.common.registers.mod;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -43,12 +43,13 @@ import java.util.function.Supplier;
 
 public class EntityDataReg {
 
-
     public static final ResourceKey<Registry<AbstractEntityProperty>> PROJECTILE_PROPERTY_REGISTRY_KEY =
         ResourceKey.createRegistryKey(Helpers.res("projectile_properties"));
 
     private static final DeferredRegister<AbstractEntityProperty> PROJECTILE_PROPERTY =
         DeferredRegister.create(PROJECTILE_PROPERTY_REGISTRY_KEY, JahdooMod.MOD_ID);
+
+//----------------------------------------------------------------------------------------------------------------------
 
     //USED FOR ELEMENT PROJECTILE
     public static final Supplier <AbstractEntityProperty> FIRE_BALL =
@@ -71,6 +72,8 @@ public class EntityDataReg {
 
     public static final Supplier <AbstractEntityProperty> BOLTZ =
         registerProperty(Boltz::new);
+
+//----------------------------------------------------------------------------------------------------------------------
 
     //USED FOR GENERIC PROJECTILE
     public static final Supplier <AbstractEntityProperty> ELEMENTAL_SHOOTER =
@@ -109,6 +112,8 @@ public class EntityDataReg {
     public static final Supplier <AbstractEntityProperty> WALL_PLACER =
         registerProperty(WallPlacer::new);
 
+//----------------------------------------------------------------------------------------------------------------------
+
     //USED FOR AOE ENTITY
     public static final Supplier <AbstractEntityProperty> ARCTIC_STORM =
         registerProperty(Permafrost::new);
@@ -131,14 +136,14 @@ public class EntityDataReg {
     public static final Supplier <AbstractEntityProperty> SUMMON_ANCIENT_GOLEM =
         registerProperty(SummonAncientGolem::new);
 
+//----------------------------------------------------------------------------------------------------------------------
     //MOB ABILITIES
     public static final Supplier <AbstractEntityProperty> BARRAGE =
         registerProperty(Barrage::new);
 
-
+//----------------------------------------------------------------------------------------------------------------------
     public static final Registry<AbstractEntityProperty> REGISTRY =
         new RegistryBuilder<>(PROJECTILE_PROPERTY_REGISTRY_KEY).create();
-
 
     private static Supplier<AbstractEntityProperty> registerProperty(Supplier<AbstractEntityProperty> entityProperty) {
         return PROJECTILE_PROPERTY.register(entityProperty.get().setAbilityId(), entityProperty);

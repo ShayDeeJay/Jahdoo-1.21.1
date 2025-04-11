@@ -26,7 +26,7 @@ import static org.jahdoo.ascension.level_manager.StructureManager.getBattleRooms
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
 import static org.jahdoo.common.block.lock.LockBlock.FACING;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
-import static org.jahdoo.common.registers.LevelBoonReg.*;
+import static org.jahdoo.common.registers.mod.LevelBoonReg.*;
 
 
 public class LockBlockEntity extends SyncedBlockEntity {

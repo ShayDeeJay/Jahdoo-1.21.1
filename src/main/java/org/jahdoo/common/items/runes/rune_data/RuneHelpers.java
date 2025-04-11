@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
@@ -19,37 +18,23 @@ import java.util.List;
 import java.util.Objects;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.utils.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
-import static org.jahdoo.ascension.rarity.JahdooRarity.LEGENDARY;
 import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.ascension.utils.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.common.items.runes.rune_data.RuneCategories.fromName;
 import static org.jahdoo.common.items.runes.rune_data.RuneData.*;
 import static org.jahdoo.common.items.runes.rune_data.RuneGenerator.*;
-import static org.jahdoo.common.items.runes.rune_data.RuneGenerator.generateSympathiserRune;
 import static org.jahdoo.common.registers.AttributeReg.*;
-import static org.jahdoo.common.registers.AttributeReg.CAST_HEAL;
 import static org.jahdoo.common.registers.ComponentReg.RUNE_DATA;
-import static org.jahdoo.common.registers.ElementReg.*;
-import static org.jahdoo.common.registers.ElementReg.random;
+import static org.jahdoo.common.registers.mod.ElementReg.*;
 
 public class RuneHelpers {
 
     public static Component getDescription(ItemStack itemStack){
         var data = getRuneData(itemStack);
         return Component.literal(data.description());
-    }
-
-    public static boolean canMageFlight(Player player){
-        var attribute = player.getAttribute(MAGE_FLIGHT);
-        return attribute != null && attribute.getValue() > 0;
-    }
-
-    public static boolean canTripleJump(Player player){
-        var attribute = player.getAttribute(TRIPLE_JUMP);
-        return attribute != null && attribute.getValue() > 0;
     }
 
     public static Component getNameWithStyle(ItemStack stack){
@@ -199,10 +184,8 @@ public class RuneHelpers {
                     );
                 case LEGENDARY ->
                     List.of(
-                        generatePerkRune(TRIPLE_JUMP, 100, RARE, "Allows player to jump up to 3 times", NO_VALUE, 100),
                         generatePerkRune(Attributes.MAX_HEALTH, attributes.getRandomMaxHealth(), LEGENDARY, "Increase max health", id, NO_VALUE),
                         generatePerkRune(Attributes.MAX_ABSORPTION, attributes.getRandomMaxAbsorption(), LEGENDARY, "Increase absorption heart capacity", id, NO_VALUE),
-                        generatePerkRune(MAGE_FLIGHT.getDelegate(), 100, LEGENDARY, "Allows the player to fly, at the cost of mana.", NO_VALUE, 100),
                         generatePerkRune(DESTINY_BOND.getDelegate(), NO_VALUE, COMMON, "Keep your item on death.", NO_VALUE, NO_VALUE)
                     );
                 case ETERNAL ->

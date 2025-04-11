@@ -7,14 +7,20 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+import java.util.Optional;
+
 import static com.mojang.blaze3d.systems.RenderSystem.setShaderColor;
 import static org.jahdoo.ascension.utils.ColourStore.MAGNET_RANGE_GREEN;
+import static org.jahdoo.common.client.Icons.LOCK;
 import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 
@@ -66,7 +72,11 @@ public class AbilitySlotButton extends ImageButton {
 
     @Override
     public void playDownSound(SoundManager handler) {
-        handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT, 1));
+        var slots = Minecraft.getInstance().player.getData(AttachmentReg.CASTER_DATA.get());
+        var validSlot = slotIndex < slots.getAllowedSlots();
+        if(validSlot){
+            handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT, 1));
+        }
     }
 
     @Override
@@ -81,11 +91,14 @@ public class AbilitySlotButton extends ImageButton {
         var easedTick = easeInOutCubic(normalizedTick);
         var easedValue = (int) (easedTick * (totalSize - defaultSize)) + defaultSize;
         var offset = (easedValue - defaultSize) / 2;
+        var mc = Minecraft.getInstance();
+        var slots = mc.player.getData(AttachmentReg.CASTER_DATA.get());
+        var validSlot = slotIndex < slots.getAllowedSlots();
 
         if(isSelected) sizes = totalSize;
         this.setSize((int) sizes-4, (int) sizes-4);
 
-        graphics.drawCenteredString(Minecraft.getInstance().font, label, this.getX() + 15, this.getY() + 30, ColourStore.SUB_HEADER_COLOUR);
+        graphics.drawCenteredString(mc.font, label, this.getX() + 15, this.getY() + 30, ColourStore.SUB_HEADER_COLOUR);
 
         RenderSystem.enableBlend();
         setShaderColor(1.0F, 1.0F, 1.0F, this.isSelected ? 1f : 0.5F);
@@ -93,19 +106,21 @@ public class AbilitySlotButton extends ImageButton {
         setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
 
-
         setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);
         if(isSelected) boxMaker(graphics, this.getX() + 3, this.getY() + 3, 12, 12, MAGNET_RANGE_GREEN, 0, 0);
         setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
 
         if (this.isMouseOver(mouseX, mouseY)) {
+            if(!validSlot){
+                graphics.renderTooltip(mc.font, List.of(Component.literal("Unlocked at level: " + ((slotIndex-1) * 10) / 2)), Optional.empty(), mouseX, mouseY);
+            }
             sizes = Math.min(sizes + 2f, totalSize);
-            int i = 0;
+            var i = 0;
             graphics.pose().pushPose();
             graphics.pose().translate(0,0,2);
-            if(showHover){
-                graphics.blit(SELECTED_GUI_BUTTON_OVERLAY, this.getX() - offset + i / 2, this.getY() - offset + i / 2, 0, 0, 0, easedValue - i, easedValue - i, easedValue - i, easedValue - i);
+            if(showHover && validSlot){
+                graphics.blit(SELECTED_GUI_BUTTON_OVERLAY, this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue - i, easedValue - i, easedValue - i, easedValue - i);
             }
             graphics.pose().popPose();
         } else {
@@ -113,11 +128,15 @@ public class AbilitySlotButton extends ImageButton {
         }
 
         var i = easedValue/3;
-        var uWidth = easedValue - i;
+        var size = easedValue - i;
         if(buttonOverlay != null){
-            graphics.blit(buttonOverlay, this.getX() - offset + i/2, this.getY() - offset + i/2, 1, 0, 0, uWidth, uWidth, uWidth, uWidth);
+            graphics.blit(buttonOverlay, this.getX() - offset + i/2, this.getY() - offset + i/2, 1, 0, 0, size, size, size, size);
         } else {
-            graphics.drawCenteredString(Minecraft.getInstance().font, String.valueOf(slotIndex + 1), this.getX() - offset + 15, this.getY() - offset + 11, ColourStore.HEADER_COLOUR);
+            if(validSlot){
+                graphics.drawCenteredString(mc.font, String.valueOf(slotIndex + 1), this.getX() - offset + 15, this.getY() - offset + 11, ColourStore.HEADER_COLOUR);
+            } else {
+                graphics.blit(LOCK, this.getX() - offset, this.getY() - offset , 1, 0, 0, easedValue, easedValue, easedValue, easedValue);
+            }
         }
     }
 

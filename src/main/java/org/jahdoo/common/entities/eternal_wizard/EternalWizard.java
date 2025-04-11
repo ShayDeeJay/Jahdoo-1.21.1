@@ -34,6 +34,8 @@ import org.jahdoo.common.entities.goals.*;
 import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.items.wand.WandItemHelper;
 import org.jahdoo.common.registers.*;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

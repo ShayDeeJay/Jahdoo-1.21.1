@@ -22,9 +22,9 @@ import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
-import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 

@@ -10,10 +10,10 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.registers.EntityDataReg;
+import org.jahdoo.common.registers.mod.EntityDataReg;
 
 import static org.jahdoo.ascension.utils.GlobalStrings.BLOCK_MINER_DESCRIPTION;
-import static org.jahdoo.common.registers.ElementReg.frost;
+import static org.jahdoo.common.registers.mod.ElementReg.frost;
 
 public class FrostboltsAbility extends Ability {
 

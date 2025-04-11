@@ -20,17 +20,21 @@ public class AbilityHolderC2SP implements CustomPacketPayload {
         CustomPacketPayload.codec(AbilityHolderC2SP::toBytes, AbilityHolderC2SP::new);
 
     private final AbilityHolder abilityHolder;
+    private final int upgradeCost;
 
-    public AbilityHolderC2SP(AbilityHolder abilityHolder) {
+    public AbilityHolderC2SP(AbilityHolder abilityHolder, int upgradeCost) {
         this.abilityHolder = abilityHolder;
+        this.upgradeCost = upgradeCost;
     }
 
     public AbilityHolderC2SP(FriendlyByteBuf buf) {
         this.abilityHolder = buf.readJsonWithCodec(AbilityHolder.CODEC);
+        this.upgradeCost = buf.readInt();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeJsonWithCodec(AbilityHolder.CODEC, this.abilityHolder);
+        buf.writeInt(upgradeCost);
     }
 
     public void handle(IPayloadContext ctx) {
@@ -40,6 +44,7 @@ public class AbilityHolderC2SP implements CustomPacketPayload {
                     var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
                     if(abilityHolder != AbilityHolder.DEFAULT){
                         casterData.updateAbility(abilityHolder);
+                        casterData.decrementAbilityPoints(upgradeCost);
                     }
                     PacketDistributor.sendToPlayer(serverPlayer, new AbilityHolderS2CP(casterData.getUnlockedAbilities()));
                 }

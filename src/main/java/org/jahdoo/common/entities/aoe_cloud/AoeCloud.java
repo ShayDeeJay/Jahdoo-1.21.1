@@ -14,7 +14,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.common.registers.EntityDataReg;
+import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jahdoo.common.registers.EntityReg;
 
 import java.util.UUID;

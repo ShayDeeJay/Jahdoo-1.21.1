@@ -12,7 +12,7 @@ import org.jahdoo.ascension.utils.DamageUtils;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffectCategory.HARMFUL;
 import static org.jahdoo.ascension.ability.effects.EffectHelpers.setEffectParticle;
-import static org.jahdoo.common.registers.ElementReg.inferno;
+import static org.jahdoo.common.registers.mod.ElementReg.inferno;
 
 public class InfernoEffect extends MobEffect {
 

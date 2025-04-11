@@ -10,11 +10,10 @@ import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.joml.Matrix4f;
 
 import static org.jahdoo.ascension.utils.Maths.ticksToTime;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.*;
 
 @OnlyIn(Dist.CLIENT)
 public class EternalWizardRenderer extends EternalWizardBodyRenderer {

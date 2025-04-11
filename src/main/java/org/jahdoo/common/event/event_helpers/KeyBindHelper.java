@@ -3,15 +3,14 @@ package org.jahdoo.common.event.event_helpers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.ascension.utils.Configuration;
 import org.jahdoo.common.client.screens.AbilityWheelScreen;
 import org.jahdoo.common.client.screens.AugmentScreen;
-import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.networking.client2server.MagnetActiveC2SP;
-import org.jahdoo.ascension.utils.Configuration;
-import org.jahdoo.ascension.utils.Helpers;
 
-import static com.mojang.blaze3d.platform.InputConstants.*;
-import static org.jahdoo.common.client.KeyBinding.*;
+import static com.mojang.blaze3d.platform.InputConstants.isKeyDown;
+import static org.jahdoo.common.client.KeyBinding.MAGNET;
+import static org.jahdoo.common.client.KeyBinding.QUICK_SELECT;
 
 public class KeyBindHelper {
 
@@ -29,7 +28,7 @@ public class KeyBindHelper {
     }
 
     public static void quickSelectBehaviour(Player player, Minecraft instance) {
-        if(player == null || !(Helpers.getUsedItem(player).getItem() instanceof WandItem)) return;
+        if(player == null) return;
 
         if(Configuration.QUICK_SELECT.get()){
             if(QUICK_SELECT.isDown()) setAbilityWheel(instance);

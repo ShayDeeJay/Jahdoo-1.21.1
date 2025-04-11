@@ -15,7 +15,7 @@ import org.jahdoo.ascension.ability.UtilityHelpers;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.ArrayDeque;

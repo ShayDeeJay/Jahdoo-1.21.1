@@ -16,8 +16,10 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.level.Level;
+import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -129,11 +131,14 @@ public class WandItem extends Item implements GeoItem, JahdooItem {
     public InteractionResultHolder<ItemStack> use(Level plevel, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
 
+        var data = player.getData(AttachmentReg.CASTER_DATA.get());
         if(player.isShiftKeyDown()){
-//            var data = player.getData(AttachmentReg.CASTER_DATA.get());
 //            data.clearAllAbilities();
 //            CastingData.decrementAbilityPoints(player, 3000);
+//            data.setAllowedSlots(2);
         }
+
+        CastingData.addExperience(player, 100);
 
         if(!plevel.isClientSide){
             if (canOffHand(player, interactionHand, true)) {

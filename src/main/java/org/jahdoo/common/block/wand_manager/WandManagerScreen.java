@@ -37,7 +37,7 @@ import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
 import static org.jahdoo.common.registers.AttributeReg.replaceOrAddAttribute;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
-import static org.jahdoo.common.registers.ElementReg.fromWand;
+import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
 
 public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> {
 

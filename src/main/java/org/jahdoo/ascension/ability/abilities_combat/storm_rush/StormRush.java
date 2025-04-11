@@ -13,7 +13,7 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.MoveClientEntityS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.DAMAGE;
 import static org.jahdoo.ascension.utils.Helpers.Random;

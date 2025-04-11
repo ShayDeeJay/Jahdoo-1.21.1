@@ -18,7 +18,7 @@ import java.util.Objects;
 import static java.lang.Math.*;
 import static net.minecraft.util.FastColor.ARGB32.*;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
-import static org.jahdoo.common.registers.ElementReg.*;
+import static org.jahdoo.common.registers.mod.ElementReg.*;
 
 public class AoeCloudRenderer extends EntityRenderer<AoeCloud> {
 

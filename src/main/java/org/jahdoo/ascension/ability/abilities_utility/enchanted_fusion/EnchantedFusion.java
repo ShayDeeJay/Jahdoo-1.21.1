@@ -18,7 +18,7 @@ import org.jahdoo.common.registers.BlockReg;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
-import static org.jahdoo.common.registers.ElementReg.utility;
+import static org.jahdoo.common.registers.mod.ElementReg.utility;
 
 public class EnchantedFusion extends AbstractUtilityProjectile {
 

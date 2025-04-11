@@ -1,24 +1,28 @@
 package org.jahdoo.ascension.ability.skills;
 
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 
 import java.util.List;
 
 abstract public class AbstractSkill {
 
-    abstract String name();
+    public abstract String id();
 
-    abstract ResourceLocation icon();
+    public abstract ResourceLocation icon();
 
-    abstract void doOnCall();
+    public abstract Holder<MobEffect> skillEffect();
 
-    abstract List<Component> tooltip();
+    public abstract List<Component> tooltip();
 
-    abstract int unlockCost();
+    public abstract int unlockCost();
 
-    abstract String dependency();
+    public abstract String dependency();
 
-    abstract int levelRequirement();
+    public abstract int levelRequirement();
+
+    public abstract String description();
 
 }

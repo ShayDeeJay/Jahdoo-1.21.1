@@ -21,7 +21,7 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.UUID;

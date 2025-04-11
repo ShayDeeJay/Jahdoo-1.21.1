@@ -1,4 +1,4 @@
-package org.jahdoo.common.registers;
+package org.jahdoo.common.registers.mod;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -51,7 +51,7 @@ import java.util.Optional;
 import static net.minecraft.resources.ResourceKey.createRegistryKey;
 import static net.neoforged.neoforge.registries.DeferredRegister.create;
 import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
-import static org.jahdoo.common.registers.ElementReg.utility;
+import static org.jahdoo.common.registers.mod.ElementReg.utility;
 
 public class AbilityReg {
 

@@ -32,7 +32,7 @@ import org.jahdoo.common.block.BlockInteractionHandler;
 import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.sounds.SoundEvents.VAULT_ACTIVATE;

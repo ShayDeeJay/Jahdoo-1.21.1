@@ -24,7 +24,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.RenderHelpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.AttachmentReg;
 
 import java.awt.*;

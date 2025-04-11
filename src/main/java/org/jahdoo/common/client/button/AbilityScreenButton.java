@@ -30,6 +30,7 @@ public class AbilityScreenButton extends ImageButton {
     private final boolean isDummy;
     private final boolean locked;
     private final boolean hasDependency;
+    private final boolean isSkill;
 
 
     public AbilityScreenButton(
@@ -45,7 +46,8 @@ public class AbilityScreenButton extends ImageButton {
         boolean showHover,
         boolean isDummy,
         boolean locked,
-        boolean hasDependency
+        boolean hasDependency,
+        boolean isSkill
     ) {
         super(pX, pY, size, size, sprites, pOnPress);
         this.defaultSize = size;
@@ -59,6 +61,7 @@ public class AbilityScreenButton extends ImageButton {
         this.isDummy = isDummy;
         this.locked = locked;
         this.hasDependency = hasDependency;
+        this.isSkill = isSkill;
     }
 
     public float easeInOutCubic(float t) {
@@ -94,8 +97,6 @@ public class AbilityScreenButton extends ImageButton {
 
         if(isSelected) sizes = totalSize;
 
-
-
         graphics.drawCenteredString(Minecraft.getInstance().font, label, this.getX() + 17, this.getY()-8, -1);
         graphics.blit(this.sprites.enabled(), this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
 
@@ -104,8 +105,8 @@ public class AbilityScreenButton extends ImageButton {
 
             if(!isDummy){
                 RenderSystem.enableBlend();
-                setShaderColor(1.0F, 1.0F, 1.0F, !shift ? 0.5F : 1F);
-                graphics.blit(Icons.LOCKED_ABILITY, this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
+                setShaderColor(1.0F, 1.0F, 1.0F, !shift || isSkill ? 0.5F : 1F);
+                graphics.blit(isSkill ? Icons.LOCKED_SKILL_CENTER : Icons.LOCKED_ABILITY, this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
                 setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 RenderSystem.disableBlend();
             }
@@ -125,7 +126,7 @@ public class AbilityScreenButton extends ImageButton {
                 RenderSystem.enableBlend();
 
                 setShaderColor(1.0F, 1.0F, 1.0F, 0.4F);
-                graphics.blit(Icons.LOCKED_ABILITY_CENTER, this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
+                graphics.blit(isSkill ? Icons.LOCKED_SKILL_CENTER : Icons.LOCKED_ABILITY_CENTER, this.getX() - offset1, this.getY() - offset1, 0, 0, 0, easedValue1, easedValue1, easedValue1, easedValue1);
                 setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 

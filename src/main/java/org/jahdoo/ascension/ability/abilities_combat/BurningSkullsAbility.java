@@ -1,7 +1,7 @@
 package org.jahdoo.ascension.ability.abilities_combat;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
@@ -13,8 +13,8 @@ import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.burning_skull.BurningSkull;
-import org.jahdoo.common.registers.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.ArrayList;
 
@@ -25,8 +25,10 @@ public class BurningSkullsAbility extends Ability {
     public static final ResourceLocation abilityId = Helpers.res("burning_skulls");
 
     public static void infernoSoundEffect(Player player) {
-        player.playSound(SoundReg.HEAL.get(), 1, 0.65F);
-        player.playSound(SoundEvents.FIRECHARGE_USE, 1, 0.65F);
+        if(player instanceof ServerPlayer serverPlayer){
+//            Helpers.sendClientSound(serverPlayer, SoundReg.HEAL.get(), 1, 0.65F);
+            Helpers.sendClientSound(serverPlayer, SoundReg.FIRE_ABILITY.get(), 2, 1.2F);
+        }
     }
 
     @Override

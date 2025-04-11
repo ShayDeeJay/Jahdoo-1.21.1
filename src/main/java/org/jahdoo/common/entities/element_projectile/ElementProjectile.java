@@ -20,7 +20,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.EntityDataReg;
+import org.jahdoo.common.registers.mod.EntityDataReg;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;

@@ -12,6 +12,7 @@ import org.jahdoo.common.items.gauntlet.GloveRenderer;
 import org.jahdoo.common.items.pendent.PendentRenderer;
 import org.jahdoo.common.items.tome.TomeRenderer;
 import org.jahdoo.common.registers.*;
+import org.jahdoo.common.registers.mod.*;
 import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
 public class CommonSetup {
@@ -26,6 +27,7 @@ public class CommonSetup {
         modEventBus.addListener(ElementReg::registerRegistry);
         modEventBus.addListener(EntityDataReg::registerRegistry);
         modEventBus.addListener(LevelBoonReg::registerRegistry);
+        modEventBus.addListener(SkillReg::registerRegistry);
     }
 
     public static void common(final FMLCommonSetupEvent event){
@@ -53,6 +55,7 @@ public class CommonSetup {
         AbilityReg.register(modEventBus);
         ElementReg.register(modEventBus);
         LevelBoonReg.register(modEventBus);
+        SkillReg.register(modEventBus);
     }
 
 }

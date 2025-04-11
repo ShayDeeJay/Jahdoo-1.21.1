@@ -59,9 +59,11 @@ import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.items.wand.WandItem;
+import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.InstanceSyncS2CP;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.*;
+import org.jahdoo.common.registers.mod.ElementReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -78,7 +80,6 @@ import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedArmor;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 import static org.jahdoo.common.block.loot_chest.LootChestBlock.lootsplosian;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentWithAbility;
 import static org.jahdoo.common.items.wand.WandItemHelper.storeBlockType;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
@@ -185,7 +186,7 @@ public class EventHelpers {
     }
 
     /**
-     * Need this to init player attributes for the attribute scree,
+     * Need this to init player attributes for the attribute screen,
      * without it any attributes with 0 value wont show
      * */
     public static void syncPlayerAttributes(Player player) {
@@ -196,6 +197,11 @@ public class EventHelpers {
 
     public static void onFirstTimeJoined(CompoundTag data, Player player, CompoundTag playerData) {
         if (!data.getBoolean("first_join")) {
+            if(player instanceof ServerPlayer serverPlayer){
+                var castingData = player.getData(CASTER_DATA.get());
+                castingData.playerInit();
+                sendToPlayer(serverPlayer, new CastingDataSyncS2CP(castingData));
+            }
             if(player.level() instanceof ServerLevel serverLevel){
                 getStarterKit(player, serverLevel);
             }
@@ -262,8 +268,7 @@ public class EventHelpers {
                 Items.IRON_LEGGINGS,
                 Items.IRON_BOOTS,
                 Items.IRON_SWORD
-            )
-                .getRandomItems(params)
+            ).getRandomItems(params)
         );
 
         for (int i = 0; i < 5; i++) freeItems.add(ItemStack.EMPTY);
@@ -274,9 +279,7 @@ public class EventHelpers {
 
         for (int i = 0; i < 6; i++) freeItems.add(ItemStack.EMPTY);
 
-//        freeItems.add(getAugmentWithAbility(elementalWithType(element.id())));
         freeItems.add(ItemStack.EMPTY);
-        freeItems.add(getAugmentWithAbility(AbilityReg.BLOCK_BREAKER.get()));
 
         var shulkerBox = new ItemStack(
             switch (element.id()){

@@ -27,10 +27,10 @@ import org.jahdoo.common.client.screens.AugmentScreen;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.AbilityReg;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -209,9 +209,9 @@ public class AugmentItemHelper {
     }
 
 
-    public static boolean shiftForDetails(List<Component> toolTips){
+    public static boolean shiftForDetails(List<Component> toolTips, boolean spacer){
         if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
-            toolTips.add(Component.literal(" "));
+            if(spacer) toolTips.add(Component.literal(" "));
             var hotkey = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey",-2631721);
             var holdToDiscover = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details",-10066330, hotkey);
             toolTips.add(holdToDiscover);
@@ -404,20 +404,6 @@ public class AugmentItemHelper {
         var curlyStart = String.valueOf((char) 171);
         var curlyEnd = String.valueOf((char) 187);
 
-        if(!unlocked && showUnlockDetails){
-
-            toolTips.addFirst(Component.empty());
-            var prefix = withStyleComponent("Cost: ", SUB_HEADER_COLOUR);
-            var suffix = withStyleComponent("◆ " + ability.getAbilityCost() + " Skill Points", PERK_GREEN).copy();
-            toolTips.addFirst(prefix.copy().append(suffix));
-
-            if(!Objects.equals(ability.requiredUnlock(), Ability.NON) && !CastingData.hasAbility(player, ability.requiredUnlock())){
-                var prefix1 = withStyleComponent("Requires: ", SUB_HEADER_COLOUR);
-                var suffix1 = withStyleComponent(Helpers.stringIdToName(ability.requiredUnlock()), ability.getElemenType().textColourA()).copy();
-                toolTips.addFirst(prefix1.copy().append(suffix1));
-            }
-        }
-
         toolTips.add(getAbilityName(holder));
 
         if(hide || unlocked){
@@ -441,6 +427,20 @@ public class AugmentItemHelper {
                 toolTips.add(Component.literal(" "));
                 toolTips.add(Helpers.withStyleComponentTrans("augmentHelper.jahdoo.attributes", subHeaderColour, curlyStart, curlyEnd));
                 filteredSuffix.forEach(keys -> toolTipBase(toolTips, ability, holder, null, keys, 0, hide));
+            }
+        }
+
+
+        if(!unlocked && showUnlockDetails){
+            toolTips.addLast(Component.empty());
+            var prefix = withStyleComponent("Cost: ", SUB_HEADER_COLOUR);
+            var suffix = withStyleComponent("◆ " + ability.getAbilityCost() + " Skill Points", PERK_GREEN).copy();
+            toolTips.addLast(prefix.copy().append(suffix));
+
+            if(!Objects.equals(ability.requiredUnlock(), Ability.NON) && !CastingData.hasAbility(player, ability.requiredUnlock())){
+                var prefix1 = withStyleComponent("Requires: ", SUB_HEADER_COLOUR);
+                var suffix1 = withStyleComponent(Helpers.stringIdToName(ability.requiredUnlock()), ability.getElemenType().textColourA()).copy();
+                toolTips.addLast(prefix1.copy().append(suffix1));
             }
         }
 

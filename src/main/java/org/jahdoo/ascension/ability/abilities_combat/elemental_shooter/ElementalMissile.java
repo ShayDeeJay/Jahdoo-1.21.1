@@ -13,7 +13,7 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.common.registers.EntityDataReg.ELEMENTAL_SHOOTER;
+import static org.jahdoo.common.registers.mod.EntityDataReg.ELEMENTAL_SHOOTER;
 
 abstract public class ElementalMissile extends Ability {
 

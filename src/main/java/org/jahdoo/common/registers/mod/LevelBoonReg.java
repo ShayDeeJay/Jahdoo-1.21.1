@@ -1,4 +1,4 @@
-package org.jahdoo.common.registers;
+package org.jahdoo.common.registers.mod;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;

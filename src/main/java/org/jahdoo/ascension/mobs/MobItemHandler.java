@@ -21,7 +21,7 @@ import net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.level_manager.InstanceDifficulty;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.ArrayList;

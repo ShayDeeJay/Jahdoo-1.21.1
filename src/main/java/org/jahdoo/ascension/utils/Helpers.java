@@ -48,7 +48,7 @@ import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ComponentReg;
 
@@ -72,7 +72,7 @@ public class Helpers {
     public static final Random Random = ThreadLocalRandom.current();
 
     public static void syncAbilities(){
-        sendToServer(new AbilityHolderC2SP(AbilityHolder.DEFAULT));
+        sendToServer(new AbilityHolderC2SP(AbilityHolder.DEFAULT, 0));
     }
 
     public static void syncSelectedAbility(Player player, String updateAbility) {

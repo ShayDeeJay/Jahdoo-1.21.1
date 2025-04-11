@@ -39,7 +39,7 @@ import org.jahdoo.common.entities.eternal_wizard.EternalWizardRenderer;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectileRenderer;
 import org.jahdoo.common.entities.inferno_creeper.InfernoCreeperRenderer;
 import org.jahdoo.common.entities.void_spider.VoidSpiderRenderer;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
 
 import static org.jahdoo.common.client.KeyBinding.*;

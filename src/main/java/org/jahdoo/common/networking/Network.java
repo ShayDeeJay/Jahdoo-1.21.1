@@ -123,6 +123,18 @@ public class Network {
             AbilityPointC2SP::handle
         );
 
+        payloadRegistrar.playToServer(
+            MobEffectC2SP.TYPE,
+            MobEffectC2SP.STREAM_CODEC,
+            MobEffectC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
+            UnlockedSkillsC2SP.TYPE,
+            UnlockedSkillsC2SP.STREAM_CODEC,
+            UnlockedSkillsC2SP::handle
+        );
+
         //S2C
         payloadRegistrar.playToClient(
             ManaSyncS2CP.TYPE,

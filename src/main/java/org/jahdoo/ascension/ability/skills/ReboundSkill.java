@@ -1,46 +1,64 @@
 package org.jahdoo.ascension.ability.skills;
 
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import org.jahdoo.common.client.Icons;
+import org.jahdoo.common.registers.EffectReg;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.jahdoo.ascension.ability.skills.ClimberSkill.CLIMBER;
 
 public class ReboundSkill extends AbstractSkill {
 
+    public static final String REBOUND = "rebound";
+
     @Override
-    String name() {
-        return "Rebound";
+    public String id() {
+        return REBOUND;
     }
 
     @Override
-    ResourceLocation icon() {
+    public ResourceLocation icon() {
         return Icons.REBOUND;
     }
 
     @Override
-    void doOnCall() {
-        //TODO
+    public Holder<MobEffect> skillEffect() {
+        return EffectReg.REBOUND;
     }
 
     @Override
-    List<Component> tooltip() {
-        return List.of();
+    public List<Component> tooltip() {
+        var components = new ArrayList<Component>();
+
+//        components.add(Helpers.withStyleComponent(Helpers.stringIdToName(id()), ColourStore.HEADER_COLOUR));
+//        components.add(Helpers.withStyleComponent(description(), ColourStore.AETHER_BLUE));
+
+        return components;
     }
 
     @Override
-    int unlockCost() {
+    public int unlockCost() {
         return 8;
     }
 
     @Override
-    String dependency() {
-        return "Climber";
+    public String dependency() {
+        return CLIMBER;
     }
 
     @Override
-    int levelRequirement() {
+    public int levelRequirement() {
         return 5;
+    }
+
+    @Override
+    public String description() {
+        return "Removes all fall damage by imbuing your body with a spell that alters your form, giving it a rubber-like resilience that absorbs impact.";
     }
 
 }

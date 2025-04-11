@@ -15,7 +15,7 @@ import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.items.wand.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
 
 import java.util.Collections;

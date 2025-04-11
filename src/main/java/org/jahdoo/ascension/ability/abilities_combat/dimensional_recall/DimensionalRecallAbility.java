@@ -12,7 +12,7 @@ import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.common.registers.AttachmentReg.DIMENSIONAL_RECALL;
 

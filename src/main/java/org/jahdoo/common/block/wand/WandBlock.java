@@ -43,7 +43,7 @@ import static org.jahdoo.common.block.wand.WandBlockEntity.GET_WAND_SLOT;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
 import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
-import static org.jahdoo.common.registers.ElementReg.fromWand;
+import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
 
 public class WandBlock extends BaseEntityBlock {
 

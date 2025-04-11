@@ -93,6 +93,9 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> UPGRADE_MODIFIER =
         registerSoundEvent("upgrade_modifier");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> FIRE_ABILITY =
+        registerSoundEvent("fire_ability");
+
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));
     }

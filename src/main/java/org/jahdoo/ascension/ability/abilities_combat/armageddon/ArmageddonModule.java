@@ -2,7 +2,6 @@ package org.jahdoo.ascension.ability.abilities_combat.armageddon;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility;
@@ -14,9 +13,10 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.ElementReg;
-import org.jahdoo.common.registers.EntityDataReg;
 import org.jahdoo.common.registers.EntityReg;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.common.registers.mod.EntityDataReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.DAMAGE;
 import static org.jahdoo.common.particle.ParticleStore.rgbToInt;
@@ -116,7 +116,7 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
             fireProjectile.shoot(0, cloud.getY(), 0, cloud.getY() > 0 ? -setRandomYHeight : setRandomYHeight, 0);
             fireProjectile.setOwner(this.cloud.getOwner());
             this.cloud.getOwner().level().addFreshEntity(fireProjectile);
-            Helpers.getSoundWithPosition(cloud.level(), cloud.blockPosition(), SoundEvents.BREEZE_SHOOT, 1f, 0.1f);
+            Helpers.getSoundWithPosition(cloud.level(), cloud.blockPosition(), SoundReg.FIRE_ABILITY.get(), 2f, 1.4f);
 
             var colour1 = rgbToInt(160,160,160);
             var colour2 = rgbToInt(61,61,61);

@@ -14,7 +14,7 @@ import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.ability.effects.EffectHelpers;
 import org.jahdoo.common.networking.server2client.MoveClientEntityS2CP;
 import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 

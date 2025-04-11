@@ -48,7 +48,7 @@ public class RuneItemHelper {
             if (hasTier != -1) tooltipComponents.add(componentRune);
         }
 
-        if(!description.getString().isEmpty() && !AugmentItemHelper.shiftForDetails(tooltipComponents)) {
+        if(!description.getString().isEmpty() && !AugmentItemHelper.shiftForDetails(tooltipComponents, true)) {
             tooltipComponents.add(Helpers.withStyleComponent(description.getString(), ColourStore.HEADER_COLOUR));
         }
 

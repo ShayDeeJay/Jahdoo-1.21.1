@@ -11,10 +11,10 @@ import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
 
-import static org.jahdoo.common.registers.EntityDataReg.QUANTUM_DESTROYER;
+import static org.jahdoo.common.registers.mod.EntityDataReg.QUANTUM_DESTROYER;
 import static org.jahdoo.common.registers.EntityReg.MYSTIC_ELEMENT_PROJECTILE;
 
 public class QuantumDestroyerAbility extends Ability {

@@ -4,12 +4,12 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jahdoo.common.components.DataComponentHelper;
-import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.jahdoo.common.registers.ElementReg.*;
+import static org.jahdoo.common.registers.mod.ElementReg.*;
 import static org.jahdoo.common.registers.ItemReg.*;
 
 public class ModularChaosCubeSlot extends SlotItemHandler {

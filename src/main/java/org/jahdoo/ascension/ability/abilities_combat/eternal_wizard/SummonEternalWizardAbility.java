@@ -10,13 +10,13 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static net.minecraft.core.BlockPos.containing;
 import static net.minecraft.sounds.SoundEvents.ELDER_GUARDIAN_DEATH;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.ascension.utils.Helpers.res;
-import static org.jahdoo.common.registers.EntityDataReg.SUMMON_ETERNAL_WIZARD;
+import static org.jahdoo.common.registers.mod.EntityDataReg.SUMMON_ETERNAL_WIZARD;
 import static org.jahdoo.common.registers.SoundReg.EXPLOSION;
 
 public class SummonEternalWizardAbility extends Ability {

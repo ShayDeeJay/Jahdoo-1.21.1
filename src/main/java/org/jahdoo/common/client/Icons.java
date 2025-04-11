@@ -109,6 +109,12 @@ public class Icons {
     public static final ResourceLocation GUI_BUTTON_FROST =
         res(BUTTON_PREFIX + "gui_button_frost.png");
 
+    public static final ResourceLocation GUI_BUTTON_SKILL =
+        res(BUTTON_PREFIX + "gui_button_skill.png");
+
+    public static final ResourceLocation GUI_BUTTON_CENTER =
+        res(BUTTON_PREFIX + "center_view.png");
+
     public static final ResourceLocation MAGE_FLIGHT =
         res(SKILLS + "mage_flight.png");
 
@@ -144,6 +150,9 @@ public class Icons {
 
     public static final ResourceLocation LOCKED_ABILITY =
         res(BUTTON_PREFIX + "locked_ability.png");
+
+    public static final ResourceLocation LOCKED_SKILL_CENTER =
+        res(BUTTON_PREFIX + "locked_skill_center.png");
 
     public static final ResourceLocation LOCKED_ABILITY_CENTER =
         res(BUTTON_PREFIX + "locked_ability_center.png");

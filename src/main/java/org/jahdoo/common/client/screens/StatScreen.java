@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
@@ -30,14 +30,14 @@ public class StatScreen extends AbstractPanableScreen {
     private void screenTab() {
         this.addRenderableWidget(
             menuButtonAbility(
-                10, 10, (Button) -> { getMinecraft().setScreen(new StatScreen()); },
+                this.width - 40, 10, (Button) -> { getMinecraft().setScreen(new StatScreen()); },
                 STAT, 30, false, () -> {}, 0, true, "Stats"
             )
         );
 
         this.addRenderableWidget(
             menuButtonAbility(
-                50, 10, (Button) -> { getMinecraft().setScreen(new AbilityUnlockScreen()); },
+                this.width - 80, 10, (Button) -> { getMinecraft().setScreen(new AbilityUnlockScreen()); },
                 ABILITY, 30, false, () -> {}, 0, false, "Abilities"
             )
         );

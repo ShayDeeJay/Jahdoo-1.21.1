@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 public class MysticMissile extends ElementalMissile {
 

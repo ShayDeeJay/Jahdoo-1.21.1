@@ -17,7 +17,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;

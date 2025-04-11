@@ -11,11 +11,11 @@ import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static net.minecraft.core.BlockPos.containing;
 import static net.minecraft.sounds.SoundEvents.ELDER_GUARDIAN_DEATH;
-import static org.jahdoo.common.registers.EntityDataReg.SUMMON_ANCIENT_GOLEM;
+import static org.jahdoo.common.registers.mod.EntityDataReg.SUMMON_ANCIENT_GOLEM;
 import static org.jahdoo.common.registers.SoundReg.EXPLOSION;
 
 public class SummonAncientGolemAbility extends Ability {

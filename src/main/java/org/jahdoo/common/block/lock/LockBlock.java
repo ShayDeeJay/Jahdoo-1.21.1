@@ -21,7 +21,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.common.registers.LevelBoonReg;
+import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.core.BlockPos.betweenClosed;

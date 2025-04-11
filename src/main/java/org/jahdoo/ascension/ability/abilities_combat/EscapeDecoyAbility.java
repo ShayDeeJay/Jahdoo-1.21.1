@@ -17,7 +17,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.decoy.Decoy;
 import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
@@ -93,7 +93,7 @@ public class EscapeDecoyAbility extends Ability {
         decoy.setMaxLifetime((int) getTag(player, LIFETIME));
         player.addEffect(new JahdooMobEffect(MobEffects.MOVEMENT_SPEED, duration, 6));
         player.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, duration, 0));
-        player.addEffect(new JahdooMobEffect(EffectReg.STEP_BOOST, duration, 1));
+        player.addEffect(new JahdooMobEffect(EffectReg.CLIMBER, duration, 1));
 
         Helpers.getSoundWithPositionV(player.level(), player.position(), SoundEvents.WARDEN_ATTACK_IMPACT, 1,0.6f);
         Helpers.getSoundWithPositionV(player.level(), player.position(), SoundEvents.CAMEL_DASH, 1,1.6f);

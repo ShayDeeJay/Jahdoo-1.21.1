@@ -30,7 +30,7 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.goals.*;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;

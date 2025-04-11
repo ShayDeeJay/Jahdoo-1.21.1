@@ -15,9 +15,9 @@ import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.AttributeReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.ascension.ability.Ability.DISTANCE_CAST;
 import static org.jahdoo.ascension.ability.Ability.HOLD_CAST;
@@ -28,7 +28,7 @@ import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttributeReg.COOLDOWN_REDUCTION;
 import static org.jahdoo.common.registers.AttributeReg.MANA_COST_REDUCTION;
-import static org.jahdoo.common.registers.ElementReg.fromWand;
+import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
 
 
 public class CastHelper {

@@ -5,16 +5,15 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.attachments.IAttachment;
+import org.jahdoo.common.registers.EffectReg;
 
-import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.*;
-import static org.jahdoo.common.registers.AttachmentReg.*;
+import static org.jahdoo.common.registers.AttachmentReg.TRIPLE_JUMP;
 
 public class TripleJump implements IAttachment {
 
     public static final int MAX_JUMPS = 2;
     private int clientJumpCount = 0;
     private boolean clientIsJumpHeld;
-
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putInt("jumpCount", clientJumpCount);
         nbt.putBoolean("isJumpHeld", clientIsJumpHeld);
@@ -25,13 +24,14 @@ public class TripleJump implements IAttachment {
         this.clientIsJumpHeld = nbt.getBoolean("isJumpHeld");
     }
 
+
     public static void tripleJumpTickEvent(Player player){
         var mageFlight = player.getData(TRIPLE_JUMP);
         mageFlight.onClientTick(player);
     }
 
     private void onClientTick(Player player) {
-        if(!(player instanceof LocalPlayer localPlayer) || !canTripleJump(player)) return;
+        if(!(player instanceof LocalPlayer localPlayer) || !player.hasEffect(EffectReg.TRIPLE_JUMP)) return;
 
         if(player.verticalCollisionBelow) {
             clientJumpCount = 0;

@@ -9,7 +9,7 @@ import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.client.screens.AbilityWheelScreen;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.client2server.StopUsingC2SP;
-import org.jahdoo.common.registers.AbilityReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 
 import java.util.List;
 

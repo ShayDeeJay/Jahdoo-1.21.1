@@ -21,7 +21,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.ElementReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.EntityReg;
 
 import java.util.List;
