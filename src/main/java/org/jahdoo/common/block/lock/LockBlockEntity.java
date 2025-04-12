@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.utils.Helpers;
@@ -18,6 +19,7 @@ import org.jahdoo.common.registers.SoundReg;
 import java.util.List;
 import java.util.Objects;
 
+import static org.jahdoo.ascension.attachments.RunData.setDateAndTime;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.*;
 import static org.jahdoo.ascension.level_manager.InstanceDifficulty.getFromLevel;
@@ -69,6 +71,12 @@ public class LockBlockEntity extends SyncedBlockEntity {
                 serverPlayer.connection.send(new ClientboundSetTitleTextPacket(Helpers.withStyleComponent("BEGIN", getFromLevel(level).getColor())));
             }
         );
+
+        if(level instanceof ServerLevel serverLevel){
+            for (var player : serverLevel.players()) {
+                setDateAndTime(player);
+            }
+        }
     }
 
     public boolean isInitialized(){

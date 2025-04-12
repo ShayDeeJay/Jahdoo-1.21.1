@@ -39,6 +39,7 @@ import java.util.UUID;
 import static net.minecraft.core.BlockPos.containing;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static org.jahdoo.ascension.attachments.RunData.incrementClearedRoomExp;
 import static org.jahdoo.ascension.level_manager.BlockSetupManager.*;
 import static org.jahdoo.ascension.level_manager.StructureManager.placeLocksWithData;
 import static org.jahdoo.ascension.mobs.MobManager.addAndPositionEntity;
@@ -180,6 +181,10 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
             setPerkTable(serverLevel, pos, 2);
         } else {
             setLootChests(serverLevel, pos, direction, -1, true);
+        }
+
+        for (var player : serverLevel.players()) {
+            incrementClearedRoomExp(player, data.getDifficulty());
         }
     }
 

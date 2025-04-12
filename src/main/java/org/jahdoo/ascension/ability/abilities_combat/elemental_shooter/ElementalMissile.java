@@ -17,10 +17,9 @@ import static org.jahdoo.common.registers.mod.EntityDataReg.ELEMENTAL_SHOOTER;
 
 abstract public class ElementalMissile extends Ability {
 
-
     @Override
-    public String requiredUnlock() {
-        return NON;
+    public int levelRequirement() {
+        return 0;
     }
 
     @Override

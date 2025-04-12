@@ -4,16 +4,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.abilities_combat.nova_smash.NovaSmashAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
+import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.EntityDataReg;
-import org.jahdoo.common.registers.EntityReg;
 
 public class MysticalSemtexAbility extends Ability {
 
@@ -54,8 +53,8 @@ public class MysticalSemtexAbility extends Ability {
     }
 
     @Override
-    public String requiredUnlock() {
-        return NovaSmashAbility.abilityId.getPath();
+    public int levelRequirement() {
+        return 20;
     }
 
     @Override

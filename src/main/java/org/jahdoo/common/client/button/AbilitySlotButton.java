@@ -1,26 +1,25 @@
 package org.jahdoo.common.client.button;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.client.screens.AbstractPanableScreen;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 
 import javax.annotation.Nullable;
-
 import java.util.List;
 import java.util.Optional;
 
-import static com.mojang.blaze3d.systems.RenderSystem.setShaderColor;
-import static org.jahdoo.ascension.utils.ColourStore.MAGNET_RANGE_GREEN;
-import static org.jahdoo.common.client.Icons.LOCK;
+import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
+import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
 import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 
@@ -94,26 +93,24 @@ public class AbilitySlotButton extends ImageButton {
         var mc = Minecraft.getInstance();
         var slots = mc.player.getData(AttachmentReg.CASTER_DATA.get());
         var validSlot = slotIndex < slots.getAllowedSlots();
+        var colourFaded = FastColor.ARGB32.color(190, AbstractPanableScreen.uiColour());
 
         if(isSelected) sizes = totalSize;
         this.setSize((int) sizes-4, (int) sizes-4);
 
-        graphics.drawCenteredString(mc.font, label, this.getX() + 15, this.getY() + 30, ColourStore.SUB_HEADER_COLOUR);
 
-        RenderSystem.enableBlend();
-        setShaderColor(1.0F, 1.0F, 1.0F, this.isSelected ? 1f : 0.5F);
+        graphics.drawCenteredString(mc.font, label, this.getX() + 15, this.getY() + 32, isSelected ? colourFaded : ColourStore.SUB_HEADER_COLOUR);
         graphics.blit(this.sprites.enabled(), this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
-        setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.disableBlend();
 
-        setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);
-        if(isSelected) boxMaker(graphics, this.getX() + 3, this.getY() + 3, 12, 12, MAGNET_RANGE_GREEN, 0, 0);
-        setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.disableBlend();
+        if(isSelected) {
+            boxMaker(graphics, this.getX() + 3, this.getY() + 3, 12, 12, colourFaded, 0, 0);
+        }
 
         if (this.isMouseOver(mouseX, mouseY)) {
             if(!validSlot){
-                graphics.renderTooltip(mc.font, List.of(Component.literal("Unlocked at level: " + ((slotIndex-1) * 10) / 2)), Optional.empty(), mouseX, mouseY);
+                var prefix = Helpers.withStyleComponent("Requires Level: ", HEADER_COLOUR);
+                var level = Helpers.withStyleComponent(((slotIndex - 1) * 10) / 2 + "", ColourStore.SUB_HEADER_COLOUR);
+                graphics.renderTooltip(mc.font, List.of(prefix.copy().append(level)), Optional.empty(), mouseX, mouseY);
             }
             sizes = Math.min(sizes + 2f, totalSize);
             var i = 0;
@@ -132,11 +129,7 @@ public class AbilitySlotButton extends ImageButton {
         if(buttonOverlay != null){
             graphics.blit(buttonOverlay, this.getX() - offset + i/2, this.getY() - offset + i/2, 1, 0, 0, size, size, size, size);
         } else {
-            if(validSlot){
-                graphics.drawCenteredString(mc.font, String.valueOf(slotIndex + 1), this.getX() - offset + 15, this.getY() - offset + 11, ColourStore.HEADER_COLOUR);
-            } else {
-                graphics.blit(LOCK, this.getX() - offset, this.getY() - offset , 1, 0, 0, easedValue, easedValue, easedValue, easedValue);
-            }
+            graphics.drawCenteredString(mc.font, validSlot ? slotIndex + 1 + "" : "⧈", this.getX() - offset + 15, this.getY() - offset + 11, validSlot ? SUB_HEADER_COLOUR : HEADER_COLOUR);
         }
     }
 

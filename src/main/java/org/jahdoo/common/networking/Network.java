@@ -219,6 +219,12 @@ public class Network {
             CastingDataSyncS2CP.STREAM_CODEC,
             CastingDataSyncS2CP::handle
         );
+
+        payloadRegistrar.playToClient(
+            RunDataS2CP.TYPE,
+            RunDataS2CP.STREAM_CODEC,
+            RunDataS2CP::handle
+        );
     }
 
 }

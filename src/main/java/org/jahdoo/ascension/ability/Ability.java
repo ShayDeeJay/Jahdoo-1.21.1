@@ -45,7 +45,7 @@ public abstract class Ability {
 
     public abstract void invokeAbility(Player player);
 
-    public abstract String requiredUnlock();
+    public abstract int levelRequirement();
 
     public boolean isMultiType(){
         return false;

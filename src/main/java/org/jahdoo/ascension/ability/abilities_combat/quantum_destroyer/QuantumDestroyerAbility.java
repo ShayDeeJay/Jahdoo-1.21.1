@@ -4,18 +4,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.abilities_combat.mystical_semtex.MysticalSemtexAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
-import static org.jahdoo.common.registers.mod.EntityDataReg.QUANTUM_DESTROYER;
 import static org.jahdoo.common.registers.EntityReg.MYSTIC_ELEMENT_PROJECTILE;
+import static org.jahdoo.common.registers.mod.EntityDataReg.QUANTUM_DESTROYER;
 
 public class QuantumDestroyerAbility extends Ability {
 
@@ -43,8 +42,8 @@ public class QuantumDestroyerAbility extends Ability {
     }
 
     @Override
-    public String requiredUnlock() {
-        return MysticalSemtexAbility.abilityId.getPath();
+    public int levelRequirement() {
+        return 60;
     }
 
     @Override

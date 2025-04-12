@@ -4,7 +4,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.abilities_combat.storm_rush.StormRushAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
@@ -51,8 +50,8 @@ public class FrostboltsAbility extends Ability {
     }
 
     @Override
-    public String requiredUnlock() {
-        return StormRushAbility.abilityId.getPath();
+    public int levelRequirement() {
+        return 20;
     }
 
     @Override

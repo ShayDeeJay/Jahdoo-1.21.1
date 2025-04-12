@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-public class SaveData implements IAttachment {
+public class SaveItemData implements IAttachment {
 
     private final List<ItemStack> itemStacks = new ArrayList<>();
 

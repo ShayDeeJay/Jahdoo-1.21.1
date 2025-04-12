@@ -4,7 +4,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
-import org.jahdoo.ascension.ability.abilities_utility.block_breaker.BlockBreakerAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -67,8 +66,8 @@ public class FarmersTouchAbility extends AbstractBlockAbility {
     }
 
     @Override
-    public String requiredUnlock() {
-        return BlockBreakerAbility.abilityId.getPath();
+    public int levelRequirement() {
+        return 10;
     }
 
     @Override

@@ -1,16 +1,10 @@
 package org.jahdoo.ascension.ability.skills;
 
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.EffectReg;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.jahdoo.ascension.ability.skills.ClimberSkill.CLIMBER;
 
 public class ReboundSkill extends AbstractSkill {
 
@@ -32,28 +26,13 @@ public class ReboundSkill extends AbstractSkill {
     }
 
     @Override
-    public List<Component> tooltip() {
-        var components = new ArrayList<Component>();
-
-//        components.add(Helpers.withStyleComponent(Helpers.stringIdToName(id()), ColourStore.HEADER_COLOUR));
-//        components.add(Helpers.withStyleComponent(description(), ColourStore.AETHER_BLUE));
-
-        return components;
-    }
-
-    @Override
     public int unlockCost() {
         return 8;
     }
 
     @Override
-    public String dependency() {
-        return CLIMBER;
-    }
-
-    @Override
     public int levelRequirement() {
-        return 5;
+        return 15;
     }
 
     @Override

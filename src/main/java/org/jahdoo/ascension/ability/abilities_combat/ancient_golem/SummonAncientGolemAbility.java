@@ -4,7 +4,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.abilities_combat.life_siphon.LifeSiphonAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -15,8 +14,8 @@ import org.jahdoo.common.registers.mod.ElementReg;
 
 import static net.minecraft.core.BlockPos.containing;
 import static net.minecraft.sounds.SoundEvents.ELDER_GUARDIAN_DEATH;
-import static org.jahdoo.common.registers.mod.EntityDataReg.SUMMON_ANCIENT_GOLEM;
 import static org.jahdoo.common.registers.SoundReg.EXPLOSION;
+import static org.jahdoo.common.registers.mod.EntityDataReg.SUMMON_ANCIENT_GOLEM;
 
 public class SummonAncientGolemAbility extends Ability {
 
@@ -80,8 +79,8 @@ public class SummonAncientGolemAbility extends Ability {
     }
 
     @Override
-    public String requiredUnlock() {
-        return LifeSiphonAbility.abilityId.getPath();
+    public int levelRequirement() {
+        return 50;
     }
 
     @Override

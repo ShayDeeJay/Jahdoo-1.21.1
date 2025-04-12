@@ -8,14 +8,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
-import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.EntityDataReg;
 
 import static org.jahdoo.ascension.utils.GlobalStrings.BLOCK_MINER_DESCRIPTION;
 import static org.jahdoo.common.registers.mod.ElementReg.inferno;
@@ -51,8 +50,8 @@ public class ArmageddonAbility extends Ability {
     }
 
     @Override
-    public String requiredUnlock() {
-        return FireballAbility.abilityId.getPath();
+    public int levelRequirement() {
+        return 60;
     }
 
     @Override

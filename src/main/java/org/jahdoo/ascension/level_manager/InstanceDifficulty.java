@@ -14,20 +14,22 @@ import java.util.Objects;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
-public enum InstanceDifficulty  implements StringRepresentable, IExtensibleEnum {
+public enum InstanceDifficulty implements StringRepresentable, IExtensibleEnum {
 
-    EASY(Helpers.EASY, color(224, 181, 149), Icons.EASY),
-    MEDIUM(Helpers.MEDIUM, color(139, 203, 225), Icons.MEDIUM),
-    HARD(Helpers.HARD, color(223, 199, 241), Icons.HARD);
+    EASY(Helpers.EASY, color(224, 181, 149), Icons.EASY, 1),
+    MEDIUM(Helpers.MEDIUM, color(139, 203, 225), Icons.MEDIUM, 4),
+    HARD(Helpers.HARD, color(223, 199, 241), Icons.HARD, 8);
 
     private final String name;
     private final int color;
     private final ResourceLocation icon;
+    private final int experienceMultiplier;
 
-    InstanceDifficulty(String name, int color, ResourceLocation icon) {
+    InstanceDifficulty(String name, int color, ResourceLocation icon, int experienceMultiplier) {
         this.name = name;
         this.color = color;
         this.icon = icon;
+        this.experienceMultiplier = experienceMultiplier;
     }
 
     @Override
@@ -43,18 +45,24 @@ public enum InstanceDifficulty  implements StringRepresentable, IExtensibleEnum 
         return icon;
     }
 
-    public static List<InstanceDifficulty> getDifficulties(){
+    public int expMultiplier() {
+        return experienceMultiplier;
+    }
+
+    public static List<InstanceDifficulty> getDifficulties() {
         return Arrays.stream(InstanceDifficulty.values()).toList();
     }
 
-    public static InstanceDifficulty getFromName(String name){
-        return getDifficulties().stream().filter(d -> Objects.equals(d.getSerializedName(), name)).toList().getFirst();
+    public static InstanceDifficulty getFromName(String name) {
+        return getDifficulties().stream()
+            .filter(d -> Objects.equals(d.getSerializedName(), name))
+            .findFirst()
+            .orElse(EASY);
     }
 
-    public static InstanceDifficulty getFromLevel(Level level){
+    public static InstanceDifficulty getFromLevel(Level level) {
         var data = level.getData(INSTANCE_DATA);
         var name = data.getDifficulty();
-        return getDifficulties().stream().filter(d -> Objects.equals(d.getSerializedName(), name)).toList().getFirst();
+        return getFromName(name);
     }
-
 }

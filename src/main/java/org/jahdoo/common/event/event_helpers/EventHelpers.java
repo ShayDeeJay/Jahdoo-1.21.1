@@ -76,6 +76,7 @@ import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
+import static org.jahdoo.ascension.attachments.RunData.incrementKilledMobsExp;
 import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedArmor;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
@@ -91,7 +92,7 @@ public class EventHelpers {
 
     public static void saveDestinyBondItems(LivingEntity entity) {
         if(entity instanceof Player player) {
-            player.getData(SAVE_DATA).addAllItems(player);
+            player.getData(SAVE_ITEM_DATA).addAllItems(player);
         }
     }
 
@@ -441,6 +442,11 @@ public class EventHelpers {
 
     public static void coinDropCalc(LivingEntity entity, int bonus) {
         if(entity.level() instanceof CustomLevel level){
+            var getKiller = entity.getKillCredit();
+            if(getKiller != null){
+                incrementKilledMobsExp(level, getKiller);
+            }
+
             entity.skipDropExperience();
             var max = Math.max(1, bonus);
 

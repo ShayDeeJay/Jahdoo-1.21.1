@@ -146,7 +146,6 @@ public class CastHelper {
         var getAbility = AbilityReg.getFirstSpellByTypeId(typeId).get();
         var canUse = getCanApplyDistanceAbility(player, itemStack);
         var cantUseInDim = player.level() instanceof CustomLevel && !getAbility.isMultiType() && getAbility.getElemenType().equals(ElementReg.utility());
-//        var cantUse = player.onGround() && player.isShiftKeyDown();
         var fail = InteractionResultHolder.fail(itemStack);
 
         if(cantUseInDim) {
@@ -154,8 +153,6 @@ public class CastHelper {
             failedCastNotification(player);
             return fail;
         }
-
-//        if(cantUse) return fail;
 
         if(canUse) executeAndCharge(player); else failedCastNotification(player);
 

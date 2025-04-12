@@ -1,16 +1,10 @@
 package org.jahdoo.ascension.ability.skills;
 
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.EffectReg;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.jahdoo.ascension.ability.Ability.NON;
 
 public class ClimberSkill extends AbstractSkill {
 
@@ -29,17 +23,6 @@ public class ClimberSkill extends AbstractSkill {
     @Override
     public Holder<MobEffect> skillEffect() {
         return EffectReg.CLIMBER;
-        //TODO
-    }
-
-    @Override
-    public List<Component> tooltip() {
-        var components = new ArrayList<Component>();
-
-//        components.add(Helpers.withStyleComponent(Helpers.stringIdToName(id()), ColourStore.HEADER_COLOUR));
-//        components.add(Helpers.withStyleComponent(description(), ColourStore.AETHER_BLUE));
-
-        return components;
     }
 
     @Override
@@ -48,13 +31,8 @@ public class ClimberSkill extends AbstractSkill {
     }
 
     @Override
-    public String dependency() {
-        return NON;
-    }
-
-    @Override
     public int levelRequirement() {
-        return 0;
+        return 5;
     }
 
     @Override

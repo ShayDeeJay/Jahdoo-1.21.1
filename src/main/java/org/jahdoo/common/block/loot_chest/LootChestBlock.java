@@ -27,6 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.ascension.attachments.RunData;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.items.KeyItem;
@@ -129,7 +130,7 @@ public class LootChestBlock extends BaseEntityBlock {
             if(cEntity.isCoinChest()){
                 return coinChestGetter(pos, serverLevel, cEntity, player);
             } else {
-                var success = lootChestGetter(stack, serverLevel, pos, cEntity, data.getClearedRooms());
+                var success = lootChestGetter(stack, serverLevel, pos, cEntity, data.getClearedRooms(), player);
                 if (success != null) return success;
             }
 
@@ -161,13 +162,16 @@ public class LootChestBlock extends BaseEntityBlock {
         ServerLevel serverLevel,
         BlockPos pos,
         LootChestEntity lootChestEntity,
-        int clearedRooms
+        int clearedRooms,
+        Player player
     ) {
         var keyData = stack.get(CUSTOM_MODEL_DATA);
-        if (stack.is(ItemReg.LOOT_KEY) && keyData != null) {
 
+        if (stack.is(ItemReg.LOOT_KEY) && keyData != null) {
             var value = keyData.value();
             var isValid = value == lootChestEntity.getRarity;
+
+            RunData.incrementChestOpenedExp(serverLevel, player, value);
             if (isValid) {
                 lootChestEntity.setOpen(true);
                 var getId = new CustomModelData(lootChestEntity.getRarity);

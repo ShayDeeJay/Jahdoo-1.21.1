@@ -52,11 +52,14 @@ public class AttachmentReg {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<CastingData>> CASTER_DATA =
         withProviderCopyDeath("caster_data", CastingData::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SaveData>> SAVE_DATA =
-        withProviderCopyDeath("save_data", SaveData::new);
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SaveItemData>> SAVE_ITEM_DATA =
+        withProviderCopyDeath("save_item_data", SaveItemData::new);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerWallet>> PLAYER_WALLET =
         withProviderCopyDeath("player_wallet", PlayerWallet::new);
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<RunData>> RUN_DATA =
+        withProviderCopyDeath("run_data", RunData::new);
 
 
     //HELPERS
@@ -72,7 +75,7 @@ public class AttachmentReg {
         String name,
         Supplier<T> defaultValueSupplier
     ){
-        var serializer = new GenericProvider<T>(defaultValueSupplier);
+        var serializer = new AttachmentProvider<T>(defaultValueSupplier);
         var supplier = builder(defaultValueSupplier).serialize(serializer);
         return regAttachment(name, supplier);
     }
@@ -81,7 +84,7 @@ public class AttachmentReg {
         String name,
         Supplier<T> defaultValueSupplier
     ){
-        var serializer = new GenericProvider<T>(defaultValueSupplier);
+        var serializer = new AttachmentProvider<T>(defaultValueSupplier);
         var supplier = builder(defaultValueSupplier).serialize(serializer).copyOnDeath();
         return regAttachment(name, supplier);
     }
@@ -89,7 +92,7 @@ public class AttachmentReg {
     public static <T extends IAttachment> DeferredHolder<AttachmentType<?>, AttachmentType<T>> getHolder(T attachment, String name){
         return ATTACHMENT_TYPES.register(
             name, () -> builder(() -> attachment)
-                .serialize(new GenericProvider<>(() -> attachment))
+                .serialize(new AttachmentProvider<>(() -> attachment))
                 .copyOnDeath()
                 .build()
         );

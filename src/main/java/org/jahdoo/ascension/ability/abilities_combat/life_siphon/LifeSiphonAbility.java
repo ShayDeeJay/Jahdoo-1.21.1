@@ -4,7 +4,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -13,8 +12,8 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.registers.mod.ElementReg;
 
-import static org.jahdoo.common.registers.mod.EntityDataReg.OVERCHARGED;
 import static org.jahdoo.common.registers.EntityReg.VITALITY_ELEMENT_PROJECTILE;
+import static org.jahdoo.common.registers.mod.EntityDataReg.OVERCHARGED;
 
 public class LifeSiphonAbility extends Ability {
 
@@ -48,8 +47,8 @@ public class LifeSiphonAbility extends Ability {
     }
 
     @Override
-    public String requiredUnlock() {
-        return VitalRejuvenationAbility.abilityId.getPath();
+    public int levelRequirement() {
+        return 50;
     }
 
     @Override

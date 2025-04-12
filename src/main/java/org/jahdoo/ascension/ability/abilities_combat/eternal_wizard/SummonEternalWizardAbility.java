@@ -4,7 +4,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.abilities_combat.EscapeDecoyAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -16,8 +15,8 @@ import static net.minecraft.core.BlockPos.containing;
 import static net.minecraft.sounds.SoundEvents.ELDER_GUARDIAN_DEATH;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.ascension.utils.Helpers.res;
-import static org.jahdoo.common.registers.mod.EntityDataReg.SUMMON_ETERNAL_WIZARD;
 import static org.jahdoo.common.registers.SoundReg.EXPLOSION;
+import static org.jahdoo.common.registers.mod.EntityDataReg.SUMMON_ETERNAL_WIZARD;
 
 public class SummonEternalWizardAbility extends Ability {
 
@@ -49,8 +48,8 @@ public class SummonEternalWizardAbility extends Ability {
     }
 
     @Override
-    public String requiredUnlock() {
-        return EscapeDecoyAbility.abilityId.getPath();
+    public int levelRequirement() {
+        return 25;
     }
 
     @Override

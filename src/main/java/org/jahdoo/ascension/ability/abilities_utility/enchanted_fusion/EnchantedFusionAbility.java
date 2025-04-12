@@ -4,7 +4,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
-import org.jahdoo.ascension.ability.abilities_utility.farmers_touch.FarmersTouchAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -76,8 +75,8 @@ public class EnchantedFusionAbility extends AbstractBlockAbility {
     }
 
     @Override
-    public String requiredUnlock() {
-        return FarmersTouchAbility.abilityId.getPath();
+    public int levelRequirement() {
+        return 25;
     }
 
     @Override

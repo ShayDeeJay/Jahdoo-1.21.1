@@ -107,8 +107,8 @@ public class BoltzAbility extends Ability {
     }
 
     @Override
-    public String requiredUnlock() {
-        return NON;
+    public int levelRequirement() {
+        return 100;
     }
 
     @Override

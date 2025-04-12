@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.abilities_combat.elemental_shooter.InfernoMissile;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
@@ -62,11 +61,6 @@ public class BurningSkullsAbility extends Ability {
     }
 
     @Override
-    public String requiredUnlock() {
-        return InfernoMissile.abilityId.getPath();
-    }
-
-    @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(40)
@@ -100,6 +94,11 @@ public class BurningSkullsAbility extends Ability {
                 fireProjectileDirection(skull, player, 0.3F, direction);
             }
         }
+    }
+
+    @Override
+    public int levelRequirement() {
+        return 10;
     }
 
     @Override

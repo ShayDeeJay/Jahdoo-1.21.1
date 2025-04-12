@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.portal.DimensionTransition;
+import org.jahdoo.ascension.attachments.RunData;
 import org.jahdoo.ascension.level_manager.LevelGenerator;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -80,6 +81,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
         int dimId = level.getBlockState(pos).getValue(DIMENSION_KEY);
 
         if(dimId == KEY_HOME && player instanceof ServerPlayer serverPlayer){
+            RunData.endRun(serverPlayer);
             return serverPlayer.findRespawnPositionAndUseSpawnBlock(true, DO_NOTHING);
         }
 

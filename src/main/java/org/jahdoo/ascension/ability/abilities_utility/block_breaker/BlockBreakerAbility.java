@@ -68,8 +68,8 @@ public class BlockBreakerAbility extends AbstractBlockAbility {
     }
 
     @Override
-    public String requiredUnlock() {
-        return NON;
+    public int levelRequirement() {
+        return 0;
     }
 
     @Override

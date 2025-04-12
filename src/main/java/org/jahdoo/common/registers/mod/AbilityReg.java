@@ -110,7 +110,7 @@ public class AbilityReg {
         return AbilityReg.REGISTRY
             .stream()
             .filter(a -> a.getElemenType() == element)
-            .sorted(Comparator.comparing(b -> b.rarity().getId()))
+            .sorted(Comparator.comparing(Ability::levelRequirement))
             .toList();  // Lazy and returns an Optional
     }
 

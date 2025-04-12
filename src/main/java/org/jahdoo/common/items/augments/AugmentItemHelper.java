@@ -35,7 +35,6 @@ import org.jahdoo.common.registers.mod.AbilityReg;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
@@ -436,10 +435,11 @@ public class AugmentItemHelper {
             var prefix = withStyleComponent("Cost: ", SUB_HEADER_COLOUR);
             var suffix = withStyleComponent("◆ " + ability.getAbilityCost() + " Skill Points", PERK_GREEN).copy();
             toolTips.addLast(prefix.copy().append(suffix));
+            var hasDependency = ability.levelRequirement() <= data.getLevel();
 
-            if(!Objects.equals(ability.requiredUnlock(), Ability.NON) && !CastingData.hasAbility(player, ability.requiredUnlock())){
-                var prefix1 = withStyleComponent("Requires: ", SUB_HEADER_COLOUR);
-                var suffix1 = withStyleComponent(Helpers.stringIdToName(ability.requiredUnlock()), ability.getElemenType().textColourA()).copy();
+            if(!hasDependency){
+                var prefix1 = withStyleComponent("Requires Level: ", SUB_HEADER_COLOUR);
+                var suffix1 = withStyleComponent(ability.levelRequirement() + "", ability.getElemenType().textColourA()).copy();
                 toolTips.addLast(prefix1.copy().append(suffix1));
             }
         }

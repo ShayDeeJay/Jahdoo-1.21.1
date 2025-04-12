@@ -50,8 +50,8 @@ public class HellfireAbility extends Ability {
     }
 
     @Override
-    public String requiredUnlock() {
-        return BurningSkullsAbility.abilityId.getPath();
+    public int levelRequirement() {
+        return 25;
     }
 
     @Override

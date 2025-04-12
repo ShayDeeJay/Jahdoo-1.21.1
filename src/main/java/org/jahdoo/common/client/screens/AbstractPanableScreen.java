@@ -5,14 +5,16 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.client.SharedUI;
 
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
+import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
 
 public abstract class AbstractPanableScreen extends Screen {
 
@@ -22,6 +24,47 @@ public abstract class AbstractPanableScreen extends Screen {
     protected double smoothToX;
 
     public AbstractPanableScreen() { super(empty()); }
+
+    @Override
+    protected void init() {
+        screenTab();
+    }
+
+    public static int uiColour(){
+        return ColourStore.SYMPATHISER_ORANGE;
+    }
+
+    public static int uiColourAlpha(){
+        return 100;
+    }
+
+    public static int uiFade(){
+        return getFadedColourBackground(0.6f);
+    }
+
+    private void screenTab() {
+        var posY = 8;
+        this.addRenderableWidget(
+            menuButtonAbility(
+                width/2 + 55, posY, (Button) -> getMinecraft().setScreen(new RunScreen()),
+                GUI_BUTTON_CENTER, 30, false, () -> {}, 0, getMinecraft().screen instanceof RunScreen, "Run Data"
+            )
+        );
+
+        this.addRenderableWidget(
+            menuButtonAbility(
+                width/2 - 15, posY, (Button) -> getMinecraft().setScreen(new StatScreen()),
+                STAT, 30, false, () -> {}, 0, getMinecraft().screen instanceof StatScreen, "Player Stats"
+            )
+        );
+
+        this.addRenderableWidget(
+            menuButtonAbility(
+                width/2 - 85, posY, (Button) -> getMinecraft().setScreen(new AbilityUnlockScreen()),
+                ABILITY, 30, false, () -> {}, 0, getMinecraft().screen instanceof AbilityUnlockScreen, "Abilities"
+            )
+        );
+    }
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
@@ -68,7 +111,8 @@ public abstract class AbstractPanableScreen extends Screen {
         var pose = guiGraphics.pose();
         var mc = getMinecraft();
         var player = mc.player;
-        var zoom = (float) (this.smoothToX + 1);
+        var window = getMinecraft().getWindow();
+        var zoom = (float) (this.smoothToX + 3 / (window.getGuiScale() ));
 
         baseRender(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
 
@@ -78,15 +122,16 @@ public abstract class AbstractPanableScreen extends Screen {
         pose.translate(centerX, centerY, 0);
         pose.scale(zoom, zoom, zoom);
         pose.translate(-centerX, -centerY, 0);
+        guiGraphics.enableScissor(4, 55, width - 4, height - 5);
         renderWithScale(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
+        guiGraphics.disableScissor();
         pose.popPose();
         guiGraphics.disableScissor();
     }
 
     public void customRenderBackground(GuiGraphics guiGraphics, int centerX, int centerY) {
         var i = 3;
-        var fade = getFadedColourBackground(0.8f);
-        boxMaker(guiGraphics, i, i, centerX - i, centerY - i, NEGATIVE_RED, fade, color(60, MAGNET_STRENGTH_RED));
+        boxMaker(guiGraphics, i, i, centerX - i, centerY - i, uiColour(), color(uiColourAlpha(), uiColour()), uiFade());
     }
 
     private void smoothZoom() {
@@ -109,13 +154,22 @@ public abstract class AbstractPanableScreen extends Screen {
     );
 
     protected void baseRender(
-        GuiGraphics guiGraphics,
+        GuiGraphics graphics,
         int mouseX,
         int mouseY,
         LocalPlayer player,
         float centerX,
         float centerY,
         Minecraft mc
-    ){};
+    ){
+        var pose = graphics.pose();
+        var x = 2F;
+        pose.pushPose();
+        pose.scale(x, x, x);
+//        graphics.drawCenteredString(font, withStyleComponent("Abilities", uiColour()).copy(), (int)( centerX / x) + 1, (int) (5 + (10 / x)), -1);
+        pose.popPose();
+        SharedUI.boxMaker(graphics, 4, 4, this.width / 2 - 4, 25);
+        graphics.hLine(3, this.width - 5, 54, uiColour());
+    };
 
 }

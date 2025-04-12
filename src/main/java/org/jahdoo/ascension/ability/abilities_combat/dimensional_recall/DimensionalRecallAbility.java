@@ -3,9 +3,8 @@ package org.jahdoo.ascension.ability.abilities_combat.dimensional_recall;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.Ability;
-import org.jahdoo.ascension.ability.abilities_combat.quantum_destroyer.QuantumDestroyerAbility;
+import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
@@ -71,8 +70,8 @@ public class DimensionalRecallAbility extends Ability {
     }
 
     @Override
-    public String requiredUnlock() {
-        return QuantumDestroyerAbility.abilityId.getPath();
+    public int levelRequirement() {
+        return 80;
     }
 
     @Override

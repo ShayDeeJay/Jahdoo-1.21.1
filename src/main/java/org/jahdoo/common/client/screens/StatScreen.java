@@ -3,45 +3,25 @@ package org.jahdoo.common.client.screens;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.SharedUI;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static net.minecraft.world.entity.ai.attributes.Attributes.*;
 import static org.jahdoo.ascension.boon.player_boons.BoonSelection.iconFromEffect;
-import static org.jahdoo.ascension.utils.ColourStore.AETHER_BLUE;
-import static org.jahdoo.ascension.utils.ColourStore.COOLDOWN_GREEN;
-import static org.jahdoo.common.client.Icons.ABILITY;
-import static org.jahdoo.common.client.Icons.STAT;
-import static org.jahdoo.common.client.OverlayHelpers.*;
+import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.common.client.OverlayHelpers.elementalModStat;
+import static org.jahdoo.common.client.OverlayHelpers.getModStat;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
-import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
+import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
 import static org.jahdoo.common.client.overlay.WalletOverlay.renderWallet;
 import static org.jahdoo.common.registers.AttributeReg.*;
 public class StatScreen extends AbstractPanableScreen {
-
-    @Override
-    protected void init() {
-        screenTab();
-    }
-
-    private void screenTab() {
-        this.addRenderableWidget(
-            menuButtonAbility(
-                this.width - 40, 10, (Button) -> { getMinecraft().setScreen(new StatScreen()); },
-                STAT, 30, false, () -> {}, 0, true, "Stats"
-            )
-        );
-
-        this.addRenderableWidget(
-            menuButtonAbility(
-                this.width - 80, 10, (Button) -> { getMinecraft().setScreen(new AbilityUnlockScreen()); },
-                ABILITY, 30, false, () -> {}, 0, false, "Abilities"
-            )
-        );
-    }
+    public static int fadeBackground = getFadedColourBackground(0.6F);
 
     private void elementalStats(GuiGraphics guiGraphics, LocalPlayer player, float i, float j, Minecraft mc) {
         var x = 0;
@@ -55,26 +35,39 @@ public class StatScreen extends AbstractPanableScreen {
         var trimWidth = 60;
         var trimHeight = 18;
         var size = 100;
-        boxMaker(guiGraphics, i - size + trimWidth, j - size + trimHeight, size - trimWidth, size - trimHeight - 6);
+        boxMaker(guiGraphics, i - size + trimWidth, j - size + trimHeight, size - trimWidth, size - trimHeight - 6, 0, fadeBackground, fadeBackground);
         SharedUI.renderEntityInInventoryFollowsMouse(guiGraphics, i, j - 10, i, j, 50, 0.0625F, mouseX, mouseY, player, 1500);
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        super.render(graphics, mouseX, mouseY, partialTick);
     }
 
     @Override
     protected void renderWithScale(GuiGraphics graphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
         var withPanX =  (centerX + this.panX);
-        var withPanY =  (centerY + this.panY);
+        var withPanY =  (centerY + 43 + this.panY);
+        var shiftY = 34;
 
-        otherMagicStats(graphics, centerX, centerY, player, mc);
-        elementalStats(graphics, player, centerX - 280, centerY, mc);
-        renderPlayer(graphics, mouseX, mouseY, (int) withPanX, (int) withPanY, player);
-        renderWallet(graphics, mc, 10, withPanX - 49, withPanY - 180, false);
-//        playerLevel(graphics, getMinecraft(), withPanX - 86, withPanY + 72, "Level");
+        otherMagicStats(graphics, centerX, centerY - 28 + shiftY, player, mc);
+        elementalStats(graphics, player, centerX - 280, centerY + shiftY, mc);
+        renderPlayer(graphics, mouseX, mouseY, (int) withPanX, (int) withPanY + shiftY, player);
+        renderWallet(graphics, mc, 10, withPanX - 49, withPanY - 180 + shiftY, false);
     }
 
     private void otherMagicStats(GuiGraphics guiGraphics, float i, float j, LocalPlayer player, Minecraft mc) {
         var spacing = 22;
         var xSpacing = i + this.panX + spacing;
         var ySpacing = j + this.panY + 100;
+        var data = player.getData(AttachmentReg.CASTER_DATA.get());
+
+        var x = (int) xSpacing - 210;
+        var y = (int) ySpacing - 220;
+        var colour = COSMIC_PURPLE;
+
+        SharedUI.boxMaker(guiGraphics, x - 20, y - 2, 70, 11, 0, fadeBackground, fadeBackground);
+        guiGraphics.drawString(font, Helpers.withStyleComponent("Arcane Level: " + data.getLevel(), colour), x - 12, y + 5, -1);
 
         getModStat(
             guiGraphics, mc, xSpacing, ySpacing - 224,

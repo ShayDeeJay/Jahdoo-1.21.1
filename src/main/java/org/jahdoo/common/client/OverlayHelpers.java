@@ -6,8 +6,9 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.registers.AttachmentReg;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,7 +22,7 @@ import static org.jahdoo.ascension.utils.Helpers.withStyleComponentTrans;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
-import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
+import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
 
 public class OverlayHelpers {
 
@@ -47,10 +48,9 @@ public class OverlayHelpers {
 
         var filterType = element.name();
         var scale = 10;
-        var fadeBackground = getFadedColourBackground(0.8F);
         var headerX = (int) startX - 8;
         var headerY = adjustForHeader - 2;
-        boxMaker(graphics, headerX + 60, headerY - 6, 70, 27,  element.partColourA(), fadeBackground, fadeBackground);
+        boxMaker(graphics, headerX + 60, headerY - 6, 70, 27,  0, fadeBackground, fadeBackground);
 
         graphics.blit(requireNonNull(element.iconTexture()), headerX + 64, headerY - 2, scale, scale, scale, scale, scale, scale);
         graphics.drawString(minecraft.font, filterType, headerX + 78, headerY, element.textColourB());
@@ -104,8 +104,7 @@ public class OverlayHelpers {
             if(length > maxLength) maxLength = length;
         }
 
-        var fadeBackground = getFadedColourBackground(0.8F);
-        boxMaker(graphics, headerX + 60, headerY - 6, maxLength * 2 + 28, 12 + 5 * stream(attributes).toList().size() , borderColour, fadeBackground, fadeBackground);
+        boxMaker(graphics, headerX + 60, headerY - 6, maxLength * 2 + 28, 12 + 5 * stream(attributes).toList().size() , 0, fadeBackground, fadeBackground);
         graphics.blit(icon, headerX + 64, headerY - 2, scale, scale, scale, scale, scale, scale);
         graphics.drawString(minecraft.font, header, headerX + 78, headerY, gradientColour);
 
@@ -129,21 +128,63 @@ public class OverlayHelpers {
         Minecraft minecraft,
         double startX,
         double startY,
-        String header
+        int primary
     ) {
         var startX1 = (int) startX - 6;
         var startY2 = (int) startY;
-        var adjustForHeader = startY2 + 10;
         var headerX = startX1 - 8;
-        var headerY = adjustForHeader - 2;
-        var level = CastingData.getLevel(minecraft.player);
-        var nextLevel = CastingData.getExpFromLevel(level);
+        var data1 = minecraft.player.getData(AttachmentReg.CASTER_DATA.get());
+        var getXStart = headerX + 46;
+        var spacer = 0;
+        var runs = data1.getPastRuns().reversed();
+        var index = runs.size();
 
+        boxMaker(graphics, getXStart - 30, -100000000, 83, 100000000, primary, fadeBackground, fadeBackground);
 
-        var fadeBackground = getFadedColourBackground(0.8F);
-        boxMaker(graphics, headerX + 60, headerY - 6, 40, 16, -1, fadeBackground);
-        graphics.drawCenteredString(minecraft.font, header + ": " + level, headerX + 100, headerY, -1);
-        graphics.drawCenteredString(minecraft.font, "Next Level: " + nextLevel, headerX + 100, headerY + 12, -1);
+        if(runs.isEmpty()){
+            var pre1 = Helpers.withStyleComponent("No Runs Registered", primary);
+            graphics.drawCenteredString(minecraft.font, pre1, graphics.guiWidth() / 2, graphics.guiHeight()/2 + 20, -1);
+        }
+
+        for (var pastRun : runs) {
+            var preA = Helpers.withStyleComponent(index + "", primary);
+            graphics.drawCenteredString(minecraft.font, preA, graphics.guiWidth()/2, startY2 + spacer - 18, -1);
+
+            var preDate = Helpers.withStyleComponent("Date: ", HEADER_COLOUR);
+            var valueDate = Helpers.withStyleComponent(pastRun.getDateAndTime().split(" ")[0], SUB_HEADER_COLOUR);
+            var appendDate = preDate.copy().append(valueDate);
+            graphics.drawString(minecraft.font, appendDate, getXStart, startY2 + spacer, -1);
+
+            var preTime = Helpers.withStyleComponent("Time: ", HEADER_COLOUR);
+            var valueTime = Helpers.withStyleComponent(pastRun.getDateAndTime().split(" ")[1], SUB_HEADER_COLOUR);
+            var appendTime = preTime.copy().append(valueTime);
+            graphics.drawString(minecraft.font, appendTime, getXStart, startY2 + 10 + spacer, -1);
+
+            var preXp = Helpers.withStyleComponent("Experience: ", HEADER_COLOUR);
+            var valueXp = Helpers.withStyleComponent(pastRun.getExperienceGained()+"XP", ABSORPTION_YELLOW);
+            var appendXp = preXp.copy().append(valueXp);
+            graphics.drawString(minecraft.font, appendXp, getXStart, startY2 + 20 + spacer, -1);
+
+            var preRoom = Helpers.withStyleComponent("Rooms Cleared: ", HEADER_COLOUR);
+            var valueRoom = Helpers.withStyleComponent(pastRun.getRoomsCleared() + "", AETHER_BLUE);
+            var appendRoom = preRoom.copy().append(valueRoom);
+            graphics.drawString(minecraft.font, appendRoom, getXStart, startY2 + 30 + spacer, -1);
+
+            var preChest = Helpers.withStyleComponent("Loot Chests: ", HEADER_COLOUR);
+            var valueChest = Helpers.withStyleComponent(pastRun.getChestsOpened() + "", COSMIC_PURPLE);
+            var appendChest = preChest.copy().append(valueChest);
+            graphics.drawString(minecraft.font, appendChest, getXStart, startY2 + 40 + spacer, -1);
+
+            var preMob = Helpers.withStyleComponent("Mobs Killed: ", HEADER_COLOUR);
+            var valueMob = Helpers.withStyleComponent(pastRun.getMobsKilled() + "", MAGNET_STRENGTH_RED);
+            var appendMob = preMob.copy().append(valueMob);
+            graphics.drawString(minecraft.font, appendMob, getXStart, startY2 + 50 + spacer, -1);
+
+            boxMaker(graphics, getXStart - 6, startY2 - 6 + spacer, 60, 35, primary, fadeBackground, fadeBackground);
+
+            spacer += 100;
+            index--;
+        }
     }
 
 }

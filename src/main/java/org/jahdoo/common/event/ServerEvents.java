@@ -28,7 +28,7 @@ import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import static org.jahdoo.ascension.utils.Helpers.syncCasterData;
 import static org.jahdoo.common.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
-import static org.jahdoo.common.registers.AttachmentReg.SAVE_DATA;
+import static org.jahdoo.common.registers.AttachmentReg.SAVE_ITEM_DATA;
 
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID)
@@ -65,7 +65,7 @@ public class ServerEvents {
     @SubscribeEvent
     public static void playerCloneEvent(PlayerEvent.PlayerRespawnEvent event){
         var player = event.getEntity();
-        player.getData(SAVE_DATA).takeAllItems(player);
+        player.getData(SAVE_ITEM_DATA).takeAllItems(player);
         syncCasterData(event.getEntity());
     }
 
