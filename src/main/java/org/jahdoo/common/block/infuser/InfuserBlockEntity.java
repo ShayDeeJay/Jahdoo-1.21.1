@@ -9,20 +9,22 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.ascension.utils.ModTags;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.registers.ItemReg;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 
-import static org.jahdoo.common.registers.ItemReg.*;
-import static software.bernie.geckolib.util.GeckoLibUtil.*;
+import static org.jahdoo.ascension.utils.ModTags.Items;
+import static org.jahdoo.ascension.utils.ModTags.Items.AUGMENT_CORE;
+import static org.jahdoo.common.registers.ItemReg.ESSENCE_FRAGMENT;
+import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
 
 public class InfuserBlockEntity extends AbstractTankUser implements GeoBlockEntity {
@@ -125,6 +127,7 @@ public class InfuserBlockEntity extends AbstractTankUser implements GeoBlockEnti
 
         if(this.hasTankAndFuel()){
             if (this.progress == maxProgress) {
+
                 this.completedRecycling(pLevel);
             } else {
                 this.recyclingProcess();
@@ -133,9 +136,13 @@ public class InfuserBlockEntity extends AbstractTankUser implements GeoBlockEnti
     }
 
     private void completedRecycling(Level level){
+        var handler = this.inputItemHandler;
         var itemFragment = ESSENCE_FRAGMENT.get();
-        this.inputItemHandler.setStackInSlot(0, ItemStack.EMPTY);
-        this.outputItemHandler.setStackInSlot(0, new ItemStack(itemFragment));
+        var itemCore = ItemReg.AUGMENT_CORE.get();
+        var stack = new ItemStack(handler.getStackInSlot(0).is(Items.ESSENCE_FRAGMENT) ? itemFragment : itemCore);
+
+        this.outputItemHandler.setStackInSlot(0, stack);
+        handler.setStackInSlot(0, ItemStack.EMPTY);
         this.chargeTankFuel(RECYCLING_COST);
         level.sendBlockUpdated(this.tankPosition, level.getBlockState(this.tankPosition), this.getBlockState(), 3);
         this.progress = 0;
@@ -156,9 +163,9 @@ public class InfuserBlockEntity extends AbstractTankUser implements GeoBlockEnti
     }
 
     private void recyclingProcess(){
-        var isInputAugment = this.inputItemHandler.getStackInSlot(0).is(ModTags.Items.ESSENCE_FRAGMENT);
+        var isInputAugment = this.inputItemHandler.getStackInSlot(0);
         var isOutputEmpty = this.outputItemHandler.getStackInSlot(0).isEmpty();
-        if (isOutputEmpty && isInputAugment){
+        if (isOutputEmpty && isInputAugment.is(Items.ESSENCE_FRAGMENT) || isInputAugment.is(AUGMENT_CORE)){
             this.progress++;
 
             if (this.getTankEntity().inputItemHandler.getStackInSlot(0).getCount() >= 6) {

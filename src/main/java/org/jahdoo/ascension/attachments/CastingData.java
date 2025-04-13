@@ -226,7 +226,7 @@ public class CastingData implements IAttachment {
     public void addSkill(String skillId){
         if(!this.unlockedSkills.contains(skillId)){
             this.unlockedSkills.add(skillId);
-        };
+        }
     }
 
     public void addAbilitySlot(String selectedAbility){
@@ -340,6 +340,8 @@ public class CastingData implements IAttachment {
         return player.getData(CASTER_DATA).getLevel();
     }
 
+
+
     public static void addExperience(Player player, int exp){
         var data = player.getData(CASTER_DATA);
         data.calculateAbilityPoints(player, exp);
@@ -414,8 +416,8 @@ public class CastingData implements IAttachment {
         livingEntity.getData(CASTER_DATA).decrementAbilityPoints(abilityPoints);
     }
 
-    public static void clearLevels(Player player){
-        player.getData(CASTER_DATA).clearLevels();
+    public static void clearData(Player player){
+        player.getData(CASTER_DATA).clearData();
     }
 
     public static boolean checkAndConsume(Player player, int cost){
@@ -430,16 +432,6 @@ public class CastingData implements IAttachment {
         return !canPurchase;
     }
 
-    public static int getXpNeededForNextLevel(int level) {
-        if (level >= 0 && level <= 15) {
-            return 2 * level + 7;
-        } else if (level >= 16 && level <= 30) {
-            return 5 * level - 38;
-        } else {
-            return 9 * level - 158;
-        }
-    }
-
     public static float getExperienceProgress(Player player) {
         var data = player.getData(CASTER_DATA);
         var totalXp = data.getExp();
@@ -451,18 +443,28 @@ public class CastingData implements IAttachment {
         return (float)(totalXp - xpForCurrentLevel) / (float)xpForNextLevel;
     }
 
-    public static int getLevelFromExp(int xp) {
-        if (xp < 0) return 0;
-        if (xp < 352) return (int)Math.floor((-6 + Math.sqrt(36 + 4 * xp)) / 2);
-        if (xp < 1507) return (int)Math.floor((40.5 + Math.sqrt(1640.25 - 10 * (360 - xp))) / 5);
-        return (int)Math.floor((162.5 + Math.sqrt(26406.25 - 18 * (2220 - xp))) / 9);
+    static int xpScale = 6;
+
+    public static int getXpNeededForNextLevel(int level) {
+        if (level >= 0 && level <= 15) return xpScale * (2 * level + 7);
+        if (level >= 16 && level <= 30) return xpScale * (5 * level - 38);
+
+        return xpScale * (9 * level - 158);
     }
 
-    public static int getExpFromLevel(int level){
-        if(level >= 1 && level <= 16) return (int)(Math.pow(level, 2) + 6 * level);
-        if(level >= 17 && level <= 31) return (int)( 2.5 * Math.pow(level, 2) - 40.5 * level + 360);
-        if(level >= 32) return (int)(4.5 * Math.pow(level, 2) - 162.5 * level + 2220);
+    public static int getExpFromLevel(int level) {
+        if(level >= 1 && level <= 16) return xpScale * (int)(Math.pow(level, 2) + 6 * level);
+        if(level >= 17 && level <= 31) return xpScale * (int)(2.5 * Math.pow(level, 2) - 40.5 * level + 360);
+        if(level >= 32) return xpScale * (int)(4.5 * Math.pow(level, 2) - 162.5 * level + 2220);
         return 0;
+    }
+
+    public static int getLevelFromExp(int xp) {
+        if (xp < 0) return 0;
+        if (xp < xpScale * 352) return (int)Math.floor((-6 + Math.sqrt(36 + 4 * (xp / (double) xpScale))) / 2);
+        if (xp < xpScale * 1507) return (int)Math.floor((40.5 + Math.sqrt(1640.25 - 10 * (360 - (xp / (double) xpScale)))) / 5);
+
+        return (int)Math.floor((162.5 + Math.sqrt(26406.25 - 18 * (2220 - (xp / (double) xpScale)))) / 9);
     }
 
     public static int getAbilityPoints(Player player){

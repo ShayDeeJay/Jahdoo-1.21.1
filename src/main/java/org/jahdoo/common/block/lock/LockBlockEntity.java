@@ -23,7 +23,6 @@ import static org.jahdoo.ascension.attachments.RunData.setDateAndTime;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.*;
 import static org.jahdoo.ascension.level_manager.InstanceDifficulty.getFromLevel;
-import static org.jahdoo.ascension.level_manager.StructureManager.SEED;
 import static org.jahdoo.ascension.level_manager.StructureManager.getBattleRooms;
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
 import static org.jahdoo.common.block.lock.LockBlock.FACING;
@@ -105,18 +104,18 @@ public class LockBlockEntity extends SyncedBlockEntity {
             switch (data.getData(INSTANCE_DATA).getDifficulty()){
                 case Helpers.EASY -> {
                     var rarityForNeg = List.of(Pair.of(COMMON, 1), Pair.of(RARE, 5000));
-                    if (Maths.percentageChance(30, SEED)) this.negativeBoon = toSyncable(withRarityNegative(getRarity(rarityForNeg, SEED)), getRarity(rarityForNeg, SEED));
-                    this.positiveBoon = toSyncable(withRarityPositive(getRarity(SEED)), getRarity(SEED));
+                    if (Maths.percentageChance(30)) this.negativeBoon = toSyncable(withRarityNegative(getRarity(rarityForNeg)), getRarity(rarityForNeg));
+                    this.positiveBoon = toSyncable(withRarityPositive(getRarity()), getRarity());
                 }
                 case Helpers.MEDIUM -> {
-                    this.negativeBoon = toSyncable(randomNegative(), getRarity(SEED));
-                    if (Maths.percentageChance(70, SEED)) this.positiveBoon = toSyncable(withRarityPositive(getRarity(SEED)), getRarity(SEED));
+                    this.negativeBoon = toSyncable(randomNegative(), getRarity());
+                    if (Maths.percentageChance(70)) this.positiveBoon = toSyncable(withRarityPositive(getRarity()), getRarity());
                 }
                 case Helpers.HARD -> {
                     var rarityForNeg = List.of(Pair.of(EPIC, 1), Pair.of(LEGENDARY, 5500), Pair.of(ETERNAL, 6000));
                     var rarityForPos = List.of(Pair.of(RARE, 1), Pair.of(LEGENDARY, 5000), Pair.of(ETERNAL, 6000));
-                    this.negativeBoon = toSyncable(withRarityNegative(getRarity(SEED)), getRarity(rarityForNeg, SEED));
-                    if (Maths.percentageChance(50, SEED)) this.positiveBoon = toSyncable(withRarityPositive(getRarity(rarityForPos, SEED)), getRarity(rarityForNeg, SEED));
+                    this.negativeBoon = toSyncable(withRarityNegative(getRarity()), getRarity(rarityForNeg));
+                    if (Maths.percentageChance(50)) this.positiveBoon = toSyncable(withRarityPositive(getRarity(rarityForPos    )), getRarity(rarityForNeg));
                 }
             }
         }

@@ -80,7 +80,7 @@ public class RecoveryReceipt extends Item {
         var getPrice = getRecoveryCost(stack);
         if (getPrice == null) return fail(stack);
 
-        if(canPurchase(getPrice.getSecond(), getWalletValue(player))){
+        if (canPurchase(getPrice.getSecond(), getWalletValue(player))) {
             player.startUsingItem(usedHand);
             return success(stack);
         } else {

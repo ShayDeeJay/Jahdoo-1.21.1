@@ -39,7 +39,6 @@ import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSoundAbilities;
 import static org.jahdoo.common.items.augments.AugmentItemHelper.getAllAbilityModifiers;
@@ -84,9 +83,9 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     protected void init() {
         super.init();
         var window = getMinecraft().getWindow();
-        this.size = (int) (((double) window.getWidth() / 500) / (window.getGuiScale()/ 3.5) + (30 * this.zoomX));
+        this.size = (int) (((double) window.getWidth() / 500) / (window.getGuiScale()/ 4) + (30 * this.zoomX));
         this.scaledSpacing = baseSpacing * (size / 90.0);
-        this.scaledXOffset = baseXOffset * (size / 8.0);
+        this.scaledXOffset = baseXOffset * (size / 10.0);
         this.centerX = (double) this.width / 2 + panX + 2;
         this.centerY = (double) this.height / 2 + panY + 60;
 
@@ -96,6 +95,11 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 @Override
                 public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
                     guiGraphics.enableScissor(4, 55, width - 4, height - 5);
+                    var startX = centerX - (12.5 * scaledXOffset);
+                    var startY = centerY - (2.5 * scaledXOffset);
+                    var startY1 = centerY - (3.295 * scaledXOffset);
+//                    SharedUI.boxMaker(guiGraphics, (int) startX, (int) startY, 62 * size, (int) (13 * size), uiColour(), uiFade(), uiFade());
+//                    SharedUI.boxMaker(guiGraphics, (int) centerX, (int) startY1, 4 * size, (int) (2 * size), uiColour(), uiFade(), uiFade());
                 }
             }
         );
@@ -108,8 +112,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 @Override
                 public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
                     guiGraphics.disableScissor();
-                    var c = SharedUI.getFadedColourBackground(1F);
-                    SharedUI.boxMaker(guiGraphics, width / 2 - 158, 54, 157, 14, uiColour(), uiFade(), uiFade());
+                    SharedUI.boxMaker(guiGraphics, width / 2 - 159, 54, 158, 15, uiColour(), uiFade(), uiFade());
                 }
             }
         );
@@ -279,7 +282,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
             this.addRenderableWidget(
                 menuButtonAbility(
-                    (int) posX - size / 2, 53,
+                    (int) posX - size / 2, 54,
                     (Button) -> sendToServer(new RemoveAbilityC2SP(typeId)),
                     getA, size, true, () -> {}, index, false, ""
                 )
@@ -374,7 +377,6 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     @Override
     protected void baseRender(GuiGraphics guiGraphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
         var pose = guiGraphics.pose();
-        var fade = SharedUI.getFadedColourBackground(0.8F);
 
         this.rebuildWidgets();
 
@@ -390,28 +392,21 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
             pose.popPose();
         }
 
-        var shared = color(183, 83, 237);
-        var color = color(255, shared);
-//        boxMaker(guiGraphics, 3, 3, (int) (centerX - 3), 26, shared, color, color);
-
-//        boxMaker(guiGraphics, 3, 3, (int) (centerX - 3), (int) (centerY - 3), shared, fade, color(255, shared));
         this.components = new ArrayList<>();
         super.baseRender(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
         overlaySkillPoints(guiGraphics, player, 74);
-//        guiGraphics.hLine(3, this.width - 5, 54, shared);
     }
 
     private void overlaySkillPoints(GuiGraphics guiGraphics, LocalPlayer player, int spacer) {
         var size = 24;
         var skillPoints = CastingData.getAbilityPoints(player);
-        var fade1 = SharedUI.getFadedColourBackground(0.5F);
-        var i1 = this.width/2 + 155;
-        var i2 = 34;
+        var i1 = 20;
+        var i2 = -2;
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 100);
-        boxMaker(guiGraphics, i1, 20 + i2, 22, 10, uiColour(), fade1, fade1);
-        guiGraphics.drawCenteredString(font, withStyleComponent(skillPoints + "", PERK_GREEN), i1 + 30, 26 + i2, -1);
+//        boxMaker(guiGraphics, i1, 20 + i2, 22, 10, uiColour(), 0, 0);
+        guiGraphics.drawCenteredString(font, withStyleComponent(skillPoints + "", PERK_GREEN), i1 + 30, 27 + i2, -1);
         guiGraphics.blit(SKILL_POINT, i1 - 1, 18 + i2, 0, 0, size, size, size, size);
         guiGraphics.pose().popPose();
     }

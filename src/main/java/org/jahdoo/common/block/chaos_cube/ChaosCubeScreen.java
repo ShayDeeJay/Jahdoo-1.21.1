@@ -86,8 +86,8 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
         this.rebuildWidgets();
     }
 
-    public static Optional<AbstractBlockAbility> isContainerAccessor(ItemStack itemStack){
-        var get = AbilityReg.getFirstSpellFromAugment(itemStack);
+    public static Optional<AbstractBlockAbility> isContainerAccessor(String id){
+        var get = AbilityReg.getFirstSpellByTypeId(id);
         if(get.isPresent() && get.get() instanceof AbstractBlockAbility accessor){
             return Optional.of(accessor);
         }
@@ -136,7 +136,7 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
     }
 
     private void direction(int posX, int posY, boolean isInput, String label, Consumer<BlockPos> buttons, Runnable switchB, BlockPos blockPos) {
-        isContainerAccessor(entity().augmentSlot()).ifPresent(
+        isContainerAccessor(entity().getHolder().abilityName()).ifPresent(
             accessor -> {
                 var isInsert = Objects.equals(label, "Insert");
                 if(isInsert ? accessor.isInputUser() : accessor.isOutputUser()){
@@ -211,7 +211,7 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
             }
         }
 
-        abilityIcon(guiGraphics, this.entity().augmentSlot(), width, height - 24, 109, 50, 12);
+        abilityIcon(guiGraphics, this.entity().getHolder().abilityName(), width, height - 24, 109, 50, 12);
         renderInventoryBackground(guiGraphics, this, IMAGE_SIZE, 24, true);
         setSlotTexture(guiGraphics, i - 16, i1 - 61, 32, "");
     }

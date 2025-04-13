@@ -27,6 +27,9 @@ public class ModItemTagGenerator extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
+        this.tag(ModTags.Items.AUGMENT_CORE)
+            .add(RECOVERY_RECEIPT.get());
+
         this.tag(ModTags.Items.ESSENCE_FRAGMENT)
             .add(WAND_ITEM_INFERNO.get())
             .add(WAND_ITEM_MYSTIC.get())

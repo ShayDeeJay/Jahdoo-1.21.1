@@ -7,11 +7,9 @@ import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.common.client.Icons;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -59,9 +57,6 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
             levelData(graphics, level, mc, instanceData, screen);
         }
 
-        if(player.level().getDescription().getString().contains("ascension") && player.tickCount % 10 == 0){
-            player.sendSystemMessage(Component.literal(player.getData(AttachmentReg.RUN_DATA).toString()));
-        }
     }
 
     private void levelData(GuiGraphics graphics, ClientLevel level, Minecraft mc, InstanceData currentData, Screen screen) {

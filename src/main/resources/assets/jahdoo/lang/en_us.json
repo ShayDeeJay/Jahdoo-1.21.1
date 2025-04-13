@@ -76,7 +76,7 @@
   "wandHelper.jahdoo.slots": "Upgrade Slots ",
 
   "rarity.jahdoo.current_rarity": "Rarity: ",
-  "abilitySelector.jahdoo.non_assigned": "No ability assigned to slot %s",
+  "abilitySelector.jahdoo.non_assigned": "Slot %s Empty",
   "ability.jahdoo.no_home": "Unable to teleport, no home set.",
 
   "augmentHelper.jahdoo.place": "Placeable in wands",
@@ -109,7 +109,7 @@
   "key.assets.jahdoo.magnet_state": "Magnet State",
   "key.jahdoo.switch_type": "Switch Mode",
   "key.assets.jahdoo.quick_select_menu": "Ability Wheel Menu",
-  "key.assets.jahdoo.stat_screen": "Stat Screen",
+  "key.assets.jahdoo.stat_screen": "Menu",
 
   "attribute.name.jahdoo.skills.mage_flight": "Mage Flight",
   "attribute.name.jahdoo.skills.destiny_bond": "Destiny Bond",

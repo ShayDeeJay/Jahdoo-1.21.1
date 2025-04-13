@@ -48,11 +48,14 @@ import org.jahdoo.ascension.ability.abilities_utility.wall_placer.WallPlacerAbil
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.attachments.CastingData;
 import org.jahdoo.ascension.attachments.InstanceData;
+import org.jahdoo.ascension.attachments.RunData;
 import org.jahdoo.ascension.trading_post.RewardLootTables;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.ModTags;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.SharedEntityBehaviours;
@@ -62,7 +65,9 @@ import org.jahdoo.common.items.wand.WandItem;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.InstanceSyncS2CP;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.*;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
@@ -157,6 +162,8 @@ public class EventHelpers {
                 if(serverPlayer.gameMode.getGameModeForPlayer() == GameType.ADVENTURE){
                     serverPlayer.setGameMode(GameType.SURVIVAL);
                 }
+
+                RunData.endRun(serverPlayer, true);
             }
         }
     }
@@ -221,6 +228,36 @@ public class EventHelpers {
                 if(name.equals(wallPlacer) || name.equals(blockPlacer)){
                     storeBlockType(item, blockState, event.getEntity(), pos);
                     event.setCanceled(true);
+                }
+            }
+        }
+    }
+
+    public static void setChaosCubeAbility(PlayerInteractEvent.LeftClickBlock event, Level level, BlockPos pos, ItemStack item) {
+        if(level.getBlockEntity(pos) instanceof ChaosCubeEntity entity && item.getItem() instanceof WandItem){
+            var player = event.getEntity();
+            var casterData = player.getData(AttachmentReg.CASTER_DATA.get());
+            var ability = AbilityReg.getFirstSpellByTypeId(casterData.getSelectedAbility());
+
+            if(ability.isPresent()) {
+                var element = ElementReg.utility();
+                if (ability.get().getElemenType() == element) {
+                    event.setCanceled(true);
+                    var holder = CastingData.entityHolderWithSelected(player);
+                    if (holder != AbilityHolder.DEFAULT) {
+                        entity.setHolder(holder);
+
+                        for (int i = 0; i < 10; i++) {
+                            var part = ParticleHandlers.getAllParticleTypes(element, 20, 2);
+                            ParticleHandlers.particleBurst(level, pos.getCenter(), 1, part);
+                        }
+
+                        getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), 1, 0.5F);
+                    } else {
+                        var message = "You don't have this ability";
+                        var messageComponent = withStyleComponent(message, element.textColourA());
+                        player.sendSystemMessage(messageComponent);
+                    }
                 }
             }
         }

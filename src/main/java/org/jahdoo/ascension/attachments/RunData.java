@@ -88,10 +88,12 @@ public class RunData implements IAttachment {
         this.chestsOpened++;
     }
 
-    public void onEndRun(Player player) {
-        var pastRun = new RunData(getExperienceGained(), getMobsKilled(), getRoomsCleared(), getChestsOpened(), getDateAndTime());
-        CastingData.addNewRun(player, pastRun);
-        CastingData.addExperience(player, getExperienceGained());
+    public void onEndRun(Player player, boolean died) {
+        if(!died){
+            var pastRun = new RunData(getExperienceGained(), getMobsKilled(), getRoomsCleared(), getChestsOpened(), getDateAndTime());
+            CastingData.addNewRun(player, pastRun);
+            CastingData.addExperience(player, getExperienceGained());
+        }
         this.experienceGained = 0;
         this.mobsKilled = 0;
         this.roomsCleared = 0;
@@ -101,7 +103,7 @@ public class RunData implements IAttachment {
 
     public static void setDateAndTime(ServerPlayer player) {
         var runData = player.getData(AttachmentReg.RUN_DATA.get());
-        var dateFormatter = DateTimeFormatter.ofPattern("dd/MM/ yy");
+        var dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
         var formattedDate = LocalDate.now().format(dateFormatter);
         var timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         var formattedTime = LocalTime.now().format(timeFormatter);
@@ -110,11 +112,13 @@ public class RunData implements IAttachment {
         PacketDistributor.sendToPlayer(player, new RunDataS2CP(runData));
     }
 
-    public static void endRun(ServerPlayer player) {
+    public static void endRun(ServerPlayer player, boolean died) {
         var runData = player.getData(AttachmentReg.RUN_DATA.get());
         var castData = player.getData(AttachmentReg.CASTER_DATA.get());
-        runData.onEndRun(player);
-        PacketDistributor.sendToPlayer(player, new CastingDataSyncS2CP(castData));
+        if(runData.dateAndTime != null){
+            runData.onEndRun(player, died);
+            PacketDistributor.sendToPlayer(player, new CastingDataSyncS2CP(castData));
+        }
     }
 
     public static void incrementClearedRoomExp(ServerPlayer player, String difficulty) {

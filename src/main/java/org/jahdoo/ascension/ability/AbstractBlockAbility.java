@@ -2,8 +2,8 @@ package org.jahdoo.ascension.ability;
 
 import net.minecraft.core.Vec3i;
 import org.jahdoo.common.block.AbstractBEInventory;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.registers.ComponentReg;
 
 public abstract class AbstractBlockAbility extends Ability {
 
@@ -17,13 +17,12 @@ public abstract class AbstractBlockAbility extends Ability {
 
     public abstract String projectileKey();
 
-    public void invokeAbilityBlock(Vec3i direction, AbstractBEInventory entity) {
-        var augment = entity.inputItemHandler.getStackInSlot(0);
+    public void invokeAbilityBlock(Vec3i direction, AbstractBEInventory entity, AbilityHolder holder) {
         var isUp = direction.equals(entity.getBlockPos().above());
         var isDown = direction.equals(entity.getBlockPos().below());
 
         var genericProjectile = new GenericProjectile(
-            augment.get(ComponentReg.ABILITY_HOLDER.get()),
+            holder,
             entity.getBlockPos().getCenter().subtract(0, isUp || isDown ? 0 : 0.1,0),
             entity.getLevel(),
             projectileKey(),

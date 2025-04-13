@@ -20,8 +20,8 @@ import org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.Dimensio
 import org.jahdoo.ascension.ability.abilities_combat.nova_smash.NovaSmash;
 import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.ascension.attachments.CastingData;
-import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
+import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
@@ -80,7 +80,10 @@ public class ServerEvents {
     public static void leftClickBlockInteraction(PlayerInteractEvent.LeftClickBlock event) {
         var item = event.getItemStack();
         var pos = event.getPos();
-        var blockState = event.getLevel().getBlockState(pos);
+        var level = event.getLevel();
+        var blockState = level.getBlockState(pos);
+
+        setChaosCubeAbility(event, level, pos, item);
         saveBlockType(event, item, blockState, pos);
     }
 

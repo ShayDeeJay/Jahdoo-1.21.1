@@ -52,7 +52,7 @@ public class StructureManager {
     public static final long SEED = /*Random.nextLong()*/ 874095743;
 
     public static @NotNull Component getBattleRooms() {
-        return withStyleComponent(stringIdToName(Helpers.listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION), SEED)), SYMPATHISER_ORANGE);
+        return withStyleComponent(stringIdToName(Helpers.listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION))), SYMPATHISER_ORANGE);
     }
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
@@ -93,23 +93,23 @@ public class StructureManager {
 
         if(!isStarter){
 
-            if (Maths.percentageChance(forSanctuary, SEED)) {
+            if (Maths.percentageChance(forSanctuary)) {
                 roomGen.add(withStyleComponent(stringIdToName(SANCTUARY), COSMIC_PURPLE));
             }
 
-            if (Maths.percentageChance(50, SEED)) {
+            if (Maths.percentageChance(50)) {
                 roomGen.add(withStyleComponent(stringIdToName(BAZAAR), AETHER_BLUE));
             }
 
             if(roomGen.size() == 3) return roomGen;
 
-            if(Maths.percentageChance(5, SEED)){
+            if(Maths.percentageChance(20)){
                 roomGen.add(withStyleComponent(stringIdToName(EASY_EXIT), MAGNET_RANGE_GREEN));
             }
 
             if(roomGen.size() == 3) return roomGen;
 
-            if (Maths.percentageChance(forBoss, SEED)) {
+            if (Maths.percentageChance(forBoss)) {
                 roomGen.add(withStyleComponent(stringIdToName(BOSS_CRUCIBLE), NEGATIVE_RED));
             }
         }

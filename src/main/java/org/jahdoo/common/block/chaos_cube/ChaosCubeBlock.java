@@ -78,7 +78,6 @@ public class ChaosCubeBlock extends BaseEntityBlock {
         var fail = InteractionResult.FAIL;
         if (!(level.getBlockEntity(blockPos) instanceof ChaosCubeEntity cubeEntity)) return fail;
         if(!(player instanceof ServerPlayer serverPlayer)) return fail;
-
         serverPlayer.openMenu(cubeEntity, blockPos);
         return InteractionResult.SUCCESS;
     }

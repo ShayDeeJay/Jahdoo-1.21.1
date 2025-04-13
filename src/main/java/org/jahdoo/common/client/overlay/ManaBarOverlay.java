@@ -219,7 +219,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
 
     private static void renderSlot(GuiGraphics graphics, ItemStack next, int x, int y, ResourceLocation lit, int index, int textColour, float alpha) {
         var count = next.getCount();
-        graphics.renderFakeItem(next, x, y);
+        graphics.renderItem(next, x, y);
         int size = 24;
         inventoryIndex(graphics, x, y, index,textColour);
         enableBlend();

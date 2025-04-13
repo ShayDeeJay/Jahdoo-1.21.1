@@ -18,7 +18,6 @@ import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -35,6 +34,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static net.minecraft.world.InteractionResultHolder.fail;
+import static net.minecraft.world.InteractionResultHolder.pass;
 import static org.jahdoo.common.items.wand.WandAnimations.*;
 import static org.jahdoo.common.items.wand.WandItemHelper.*;
 import static org.jahdoo.common.registers.ComponentReg.*;
@@ -129,19 +130,22 @@ public class WandItem extends Item implements GeoItem, JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
-        var data = player.getData(AttachmentReg.CASTER_DATA.get());
-
 
         if(!level.isClientSide){
-            data.clearData();
-            if (canOffHand(player, interactionHand, true)) {
-                player.startUsingItem(interactionHand);
-                CastHelper.use(player);
-                return InteractionResultHolder.pass(item);
-            }
+            var castAbility = castAbility(player, interactionHand, item);
+            if (castAbility != null) return castAbility;
         }
 
-        return InteractionResultHolder.fail(item);
+        return fail(item);
+    }
+
+    public static InteractionResultHolder<ItemStack> castAbility(Player player, InteractionHand interactionHand, ItemStack item) {
+        if (canOffHand(player, interactionHand, true)) {
+            player.startUsingItem(interactionHand);
+            CastHelper.use(player);
+            return pass(item);
+        }
+        return null;
     }
 
     private static void debugKillAll(Level level, Player player) {

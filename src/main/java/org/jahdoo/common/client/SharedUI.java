@@ -25,12 +25,11 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.components.DataComponentHelper;
 import org.jahdoo.common.items.augments.AugmentItemHelper;
-import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -318,7 +317,7 @@ public class SharedUI {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 2);
         guiGraphics.blit(GUI_AUGMENT_SLOT, slotX, slotY, 0, 0, imageSize, imageSize, imageSize , imageSize);
-        abilityIcon(guiGraphics, itemStack,slotX * 2 + 33, slotY * 2 + 213, 0, 26, 10);
+//        abilityIcon(guiGraphics, itemStack,slotX * 2 + 33, slotY * 2 + 213, 0, 26, 10);
         guiGraphics.pose().popPose();
     }
 
@@ -365,7 +364,7 @@ public class SharedUI {
         guiGraphics.blit(icon, posX1, posY1, 0, 0, imageWithShrink, imageWithShrink, imageWithShrink, imageWithShrink);
     }
 
-    public static void abilityIcon(GuiGraphics guiGraphics, ItemStack cachedItem, int width, int height, int offset, int localImageSize, int shrinkBy){
+    public static void abilityIcon(GuiGraphics guiGraphics, String id, int width, int height, int offset, int localImageSize, int shrinkBy){
         var verticalOffset = 38 + offset;
         var imageWithShrink = localImageSize - shrinkBy;
         var posX = (width - localImageSize) / 2 ;
@@ -375,8 +374,8 @@ public class SharedUI {
 
         guiGraphics.blit(GUI_GENERAL_SLOT, posX, posY, 0, 0, localImageSize, localImageSize, localImageSize, localImageSize);
 
-        if(cachedItem == null) return;
-        var abilityRegistrars = AbilityReg.getSpellsByTypeId(DataComponentHelper.getAbilityTypeItemStack(cachedItem));
+        if(id == null) return;
+        var abilityRegistrars = AbilityReg.getSpellsByTypeId(id);
 
         if(!abilityRegistrars.isEmpty()){
             if (!abilityRegistrars.getFirst().getAbilityIconLocation().getPath().isEmpty()) {

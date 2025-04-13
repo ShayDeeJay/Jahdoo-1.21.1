@@ -100,6 +100,7 @@ public record AbilityHolder(String abilityName, AbilityData data) {
                 }
             );
         }
+        compoundTag.putString("ability_id", holder.abilityName);
         compoundTag.put("abilities", storedAbility);
     }
 
@@ -127,6 +128,33 @@ public record AbilityHolder(String abilityName, AbilityData data) {
 
         var abilityHolder = new AbilityData(holder);
         return new AbilityHolder(abilityId, abilityHolder);
+    }
+
+    public static AbilityHolder readTag(CompoundTag compoundTag) {
+        var holder = new LinkedHashMap<String, AbilityData.AbilityModifiers>();
+        var withPos = new ArrayList<Pair<Integer, Pair<String, AbilityData.AbilityModifiers>>>();
+        var abilities = compoundTag.getCompound("abilities");
+
+        abilities.getAllKeys().forEach(
+            key -> {
+                var value = abilities.getList(key, CompoundTag.TAG_DOUBLE);
+                var modifier = new AbilityData.AbilityModifiers(
+                    value.getDouble(0), value.getDouble(1),
+                    value.getDouble(2), value.getDouble(3),
+                    value.getDouble(4), value.getDouble(5),
+                    value.getDouble(6) == 0
+                );
+                int position = (int) value.getDouble(6);
+                withPos.add(Pair.of(position, Pair.of(key, modifier)));
+            }
+        );
+
+        withPos.sort(Comparator.comparing(Pair::getFirst));
+        withPos.forEach(o -> holder.put(o.getSecond().getFirst(),o.getSecond().getSecond()));
+
+        var abilityHolder = new AbilityData(holder);
+        var id = compoundTag.getString("ability_id");
+        return new AbilityHolder(id, abilityHolder);
     }
 
 

@@ -23,13 +23,11 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.client.Icons;
-import org.jahdoo.common.components.DataComponentHelper;
-import org.jahdoo.common.items.augments.Augment;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -59,6 +57,7 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private int ticker;
     private int entityTicker;
+    private AbilityHolder holder;
 
     public ChaosCubeEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.MODULAR_CHAOS_CUBE_BE.get(), pos, state, 1);
@@ -80,13 +79,17 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
         return 64;
     }
 
-    public ItemStack augmentSlot(){
-        return this.inputItemHandler.getStackInSlot(AUGMENT_SLOT);
-    }
-
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
+    }
+
+    public AbilityHolder getHolder() {
+        return holder;
+    }
+
+    public void setHolder(AbilityHolder holder) {
+        this.holder = holder;
     }
 
     @Override
@@ -112,12 +115,15 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("infuser.progress", progress);
+        AbilityHolder.writeTag(holder == null ? AbilityHolder.DEFAULT : holder, tag);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         progress = tag.getInt("infuser.progress");
+        this.holder = AbilityHolder.readTag(tag);
+        this.updateBlock();
     }
 
     @Override
@@ -128,9 +134,8 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
 
     @Override
     public int setCraftingCost() {
-        var getHolder = this.augmentSlot().get(ComponentReg.ABILITY_HOLDER);
-        if(getHolder == null) return -1;
-        return (int) CastingData.getSpecificValue(getHolder, AbilityBuilder.MANA_COST);
+        if(holder == null) return -1;
+        return (int) CastingData.getSpecificValue(holder, AbilityBuilder.MANA_COST);
     }
 
     private void positionalParticles(Level level, int positions, double radius) {
@@ -186,18 +191,19 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
     }
 
     public void tick(Level level, BlockPos pos, BlockState blockState) {
-        if(this.augmentSlot().isEmpty() && this.ticker > 0) this.ticker = 0; this.progress = 0;
+        if(holder == null && this.ticker > 0) this.ticker = 0; this.progress = 0;
         this.entityTicker ++;
-        useAugment(level, hasTankAndFuel(), augmentSlot());
+        useAugment(level, hasTankAndFuel());
         if(this.getData(MODULAR_CHAOS_CUBE).active()){
             var speed = this.getData(MODULAR_CHAOS_CUBE).speed();
             if (this.ticker >= (speed == 0 ? 100 : speed)) this.ticker = 0;
-            if(!this.augmentSlot().isEmpty()) this.ticker++;
+            if(holder != null) this.ticker++;
         } else {
             if (this.ticker > 0) this.ticker = 0;
         }
         this.assignTankBlockInRange(level, pos, 1);
         particleAnimation(level, hasTankAndFuel());
+
     }
 
     public ItemStack externalInputInventory(Level level){
@@ -241,23 +247,21 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
         return PlayState.STOP;
     }
 
-    private void useAugment(Level level, boolean hasTank, ItemStack augmentSlot) {
+    private void useAugment(Level level, boolean hasTank) {
         if(!hasTank) return;
-        var isAugment = augmentSlot.getItem() instanceof Augment;
         var hasDirection = getActionDirection(this) != null;
         var isOff = Objects.equals(getActionDirection(this),this.getBlockPos());
         var isPowered = getActive(this);
         if(!isPowered) return;
-        if (isAugment && hasDirection && !isOff) {
+        if (hasDirection && !isOff) {
             this.progress ++;
             if(this.ticker == 1){
                 positionalParticles(level, 30, 0.7);
                 useSound(0.05f,1.4f, level);
-                var getAbilityId = DataComponentHelper.getAbilityTypeItemStack(augmentSlot);
-                var getAbility = AbilityReg.getFirstSpellByTypeId(getAbilityId);
+                var getAbility = AbilityReg.getFirstSpellByTypeId(holder.abilityName());
                 if(getAbility.isPresent()){
                     if(getAbility.get() instanceof AbstractBlockAbility abstractBlockAbility){
-                        abstractBlockAbility.invokeAbilityBlock(getActionDirection(this), this);
+                        abstractBlockAbility.invokeAbilityBlock(getActionDirection(this), this, this.holder);
                     }
                     this.chargeTankFuel(this.setCraftingCost());
                 }

@@ -18,8 +18,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static org.jahdoo.ascension.level_manager.StructureManager.SEED;
-
 public class LevelBoonReg {
 
     public static final ResourceKey<Registry<AbstractLevelBoon>> LEVEL_BOON_REGISTRY_KEY = ResourceKey.createRegistryKey(Helpers.res("level_boon"));
@@ -40,7 +38,7 @@ public class LevelBoonReg {
             .stream()
             .filter(AbstractLevelBoon::isPositive)
             .toList();
-        return Helpers.listRandom(element, SEED);
+        return Helpers.listRandom(element);
     }
 
     public static AbstractLevelBoon randomNegative() {
@@ -48,7 +46,7 @@ public class LevelBoonReg {
             .stream()
             .filter(a -> !a.isPositive())
             .toList();
-        return Helpers.listRandom(element, SEED);
+        return Helpers.listRandom(element);
     }
 
     public static AbstractLevelBoon withRarityNegative(JahdooRarity rarity) {
@@ -57,7 +55,7 @@ public class LevelBoonReg {
             .filter(a -> !a.isPositive())
             .filter(a -> a.rarity() == rarity)
             .toList();
-        return Helpers.listRandom(element, SEED);
+        return Helpers.listRandom(element);
     }
 
     public static AbstractLevelBoon withRarityPositive(JahdooRarity rarity) {
@@ -66,7 +64,7 @@ public class LevelBoonReg {
             .filter(AbstractLevelBoon::isPositive)
             .filter(a -> a.rarity() == rarity)
             .toList();
-        return Helpers.listRandom(element, SEED);
+        return Helpers.listRandom(element);
     }
 
     public static Optional<AbstractLevelBoon> fromId(String typeId) {

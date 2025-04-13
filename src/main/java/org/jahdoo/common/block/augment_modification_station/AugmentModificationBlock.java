@@ -36,6 +36,7 @@ import org.jahdoo.common.registers.mod.ElementReg;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.sounds.SoundEvents.VAULT_ACTIVATE;
+import static org.jahdoo.ascension.utils.ModTags.Items.AUGMENT_CORE;
 import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
 
 public class AugmentModificationBlock extends BaseEntityBlock{
@@ -176,7 +177,7 @@ public class AugmentModificationBlock extends BaseEntityBlock{
         double speed,
         double radius
     ) {
-        if (stack.is(ModTags.Items.ESSENCE_FRAGMENT) || stack.isEmpty() && player.isShiftKeyDown()) {
+        if (stack.is(ModTags.Items.ESSENCE_FRAGMENT) || stack.is(AUGMENT_CORE) || stack.isEmpty() && player.isShiftKeyDown()) {
             if(!stack.isEmpty()) Helpers.getSoundWithPosition(level, pos, soundEvent, 1, 1.2f);
             BlockInteractionHandler.swapItemsWithHand(augmentStation.inputItemHandler, 0, player, hand);
             var stackInSlot = augmentStation.inputItemHandler.getStackInSlot(0);
