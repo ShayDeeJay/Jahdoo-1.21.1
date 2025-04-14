@@ -521,15 +521,9 @@ public class Helpers {
 
     public static Biome newBiome(){
         return new Biome.BiomeBuilder()
-            .hasPrecipitation(false)
-            .temperature(12.0F)
-            .downfall(0.0F)
             .specialEffects(
                 new BiomeSpecialEffects.Builder()
-                    .waterColor(4159204)
-                    .waterFogColor(329011)
                     .fogColor(ColourStore.PERK_GREEN)
-                    .skyColor(calculateSkyColor(8.0F))
                     .ambientParticle(new AmbientParticleSettings(ParticleTypes.SPORE_BLOSSOM_AIR, 1.118093334F))
                     .build()
             )

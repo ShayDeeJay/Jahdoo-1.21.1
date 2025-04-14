@@ -40,14 +40,22 @@ public class StructureManager {
 
     public static final String BAZAAR = "bazaar";
     public static final String SANCTUARY = "sanctuary";
-    public static final String THE_HALL = "the_hall";
-    public static final String THE_CHAMBERS = "the_chambers";
-    public static final String THE_OASIS = "the_oasis";
-    public static final String THE_BASTION = "the_bastion";
+
+//    public static final String THE_HALL = "the_hall";
+//    public static final String THE_CHAMBERS = "the_chambers";
+//    public static final String THE_OASIS = "the_oasis";
+//    public static final String THE_BASTION = "the_bastion";
+
+    public static final String THE_HALL = "serene";
+    public static final String THE_CHAMBERS = "camp";
+    public static final String THE_OASIS = "wasteland";
+    public static final String THE_BASTION = "hellscape";
+
     public static final String STARTING_ROOM = "starting_room";
     public static final String BOSS_CRUCIBLE = "boss_crucible";
     public static final String EASY_EXIT = "emergency_exit";
     public static final int GLOBAL_Y = 60;
+
     public static final Vec3 SPAWN_POSITION = new Vec3(33.5, GLOBAL_Y + 2, 27.5);
     public static final long SEED = /*Random.nextLong()*/ 874095743;
 
@@ -191,6 +199,9 @@ public class StructureManager {
                         e.roomId = roomId;
                         e.direction = direction;
                     }
+                }
+                if(level.getBlockState(blockPos).is(Blocks.OBSERVER)){
+                    setLocks(serverLevel, blockPos, true);
                 }
             }
         }

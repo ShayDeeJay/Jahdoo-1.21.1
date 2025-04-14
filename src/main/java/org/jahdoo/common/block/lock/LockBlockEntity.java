@@ -115,7 +115,7 @@ public class LockBlockEntity extends SyncedBlockEntity {
                     var rarityForNeg = List.of(Pair.of(EPIC, 1), Pair.of(LEGENDARY, 5500), Pair.of(ETERNAL, 6000));
                     var rarityForPos = List.of(Pair.of(RARE, 1), Pair.of(LEGENDARY, 5000), Pair.of(ETERNAL, 6000));
                     this.negativeBoon = toSyncable(withRarityNegative(getRarity()), getRarity(rarityForNeg));
-                    if (Maths.percentageChance(50)) this.positiveBoon = toSyncable(withRarityPositive(getRarity(rarityForPos    )), getRarity(rarityForNeg));
+                    if (Maths.percentageChance(50)) this.positiveBoon = toSyncable(withRarityPositive(getRarity(rarityForPos)), getRarity(rarityForNeg));
                 }
             }
         }
