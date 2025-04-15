@@ -17,7 +17,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import org.jahdoo.ascension.ability.Ability;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
@@ -32,11 +32,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static org.jahdoo.ascension.attachments.CastingData.entityHolderWithSelected;
+import static org.jahdoo.ascension.attachments.CasterData.entityHolderWithSelected;
 import static org.jahdoo.ascension.utils.Helpers.syncSelectedAbility;
 import static org.jahdoo.common.client.Icons.COG;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.getAugmentModificationScreenWand;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.isConfigAbility;
+import static org.jahdoo.ascension.ability.AbilityComponentHelper.getAugmentModificationScreenWand;
+import static org.jahdoo.ascension.ability.AbilityComponentHelper.isConfigAbility;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class AbilityWheelScreen extends Screen  {
@@ -147,13 +147,12 @@ public class AbilityWheelScreen extends Screen  {
         var player = this.getMinecraft().player;
         this.buttons.clear();
         if(player == null) return;
-        var wand = Helpers.getUsedItem(player);
         var castingData = player.getData(AttachmentReg.CASTER_DATA);
         var abilityHolder = castingData.getAbilitySlots();
         var totalSlots = abilityHolder.stream().filter(s -> !s.isEmpty()).toList().size();
-        int centerX = this.width / 2 + 2;
-        int centerY = this.height / 2 + 2;
-        double angleOffset = -Math.PI / 2.0;
+        var centerX = this.width / 2 + 2;
+        var centerY = this.height / 2 + 2;
+        var angleOffset = -Math.PI / 2.0;
 
         this.slots = totalSlots;
         this.buttonSize = RADIAL_SIZE / (5 + (totalSlots/4));
@@ -165,8 +164,6 @@ public class AbilityWheelScreen extends Screen  {
 
             if (!abilityHolder.isEmpty() && !AbilityReg.getSpellsByTypeId(abilityHolder.get(i)).isEmpty()) {
                 abilityButton(abilityHolder, i, buttonX, buttonY, i, castingData, player);
-            } else {
-                showSlotIndex(i, buttonX, buttonY);
             }
         }
     }
@@ -177,34 +174,35 @@ public class AbilityWheelScreen extends Screen  {
         int buttonX,
         int buttonY,
         int finalI,
-        CastingData castingData,
+        CasterData casterData,
         Player player
     ) {
-        var selectedAbility = AbilityReg.getFirstSpellByTypeId(castingData.getSelectedAbility());
+        var selectedAbility = AbilityReg.getFirstSpellByTypeId(casterData.getSelectedAbility());
         var ability = AbilityReg.getSpellsByTypeId(abilityHolder.get(i)).getFirst();
         var iconResource = ability.getAbilityIconLocation();
         var abilityButton = new WidgetSprites(iconResource, iconResource);
         var isSelected = Objects.equals(selectedAbility.isPresent() ? selectedAbility.get().getAbilityName() : "", ability.getAbilityName());
+        if(isSelected){
+            selectedAbility.ifPresent(abilityRegistrars -> showConfig(player, abilityRegistrars, buttonX + 20, buttonY - 10));
+        }
+
         var widget = new AbilityIconButton(buttonX - 2, buttonY - 2, abilityButton, buttonSize, pButton -> {}, isSelected,
             () -> onHoverClick(abilityHolder, finalI, player)
         );
 
-        if(isSelected){
-            selectedAbility.ifPresent(abilityRegistrars -> showConfig(castingData, player, abilityRegistrars, buttonX + 20, buttonY - 10));
-        }
         this.addRenderableWidget(widget);
         buttons.add(widget);
     }
 
     private void setRadialTexture(GuiGraphics guiGraphics, int easedValue, float fade){
-        int xRadial = (this.width - easedValue) / 2;
-        int yRadial = (this.height - easedValue) / 2;
+        var xRadial = (this.width - easedValue) / 2;
+        var yRadial = (this.height - easedValue) / 2;
+        var atlasLocation = Helpers.res("textures/gui/ability_wheel_background.png");
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, fade);
-        var atlasLocation = Helpers.res("textures/gui/ability_wheel_background.png");
         guiGraphics.blit(atlasLocation, xRadial, yRadial, 0, 0, easedValue, easedValue, easedValue, easedValue);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
         RenderSystem.disableBlend();
@@ -232,7 +230,7 @@ public class AbilityWheelScreen extends Screen  {
         }
     }
 
-    private void showConfig(CastingData castingData, Player player, Ability selectedAbility, int posX, int posY) {
+    private void showConfig(Player player, Ability selectedAbility, int posX, int posY) {
         var configButton = new WidgetSprites(COG, COG);
         var configButtonSize = 20;
         if (selectedAbility.getElemenType() == ElementReg.utility()) {

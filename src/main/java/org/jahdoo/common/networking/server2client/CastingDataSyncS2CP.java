@@ -6,7 +6,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.AttachmentReg;
 
@@ -17,18 +17,18 @@ public class CastingDataSyncS2CP implements CustomPacketPayload {
     public static final StreamCodec<RegistryFriendlyByteBuf, CastingDataSyncS2CP> STREAM_CODEC =
         CustomPacketPayload.codec(CastingDataSyncS2CP::toBytes, CastingDataSyncS2CP::new);
 
-    private final CastingData data;
+    private final CasterData data;
 
-    public CastingDataSyncS2CP(CastingData data) {
+    public CastingDataSyncS2CP(CasterData data) {
         this.data = data;
     }
 
     public CastingDataSyncS2CP(FriendlyByteBuf buf) {
-        this.data = buf.readJsonWithCodec(CastingData.CODEC);
+        this.data = buf.readJsonWithCodec(CasterData.CODEC);
     }
 
     public void toBytes(FriendlyByteBuf buf) {
-        buf.writeJsonWithCodec(CastingData.CODEC, data);
+        buf.writeJsonWithCodec(CasterData.CODEC, data);
     }
 
     public void handle(IPayloadContext ctx) {

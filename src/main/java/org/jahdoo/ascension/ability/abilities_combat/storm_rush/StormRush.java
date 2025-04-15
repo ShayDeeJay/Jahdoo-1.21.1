@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbstractAbility;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
@@ -29,7 +29,7 @@ public class StormRush extends AbstractAbility {
 
     public StormRush(Player player){
         this.player = player;
-        this.abilityHolder = CastingData.entityHolderWithSelected(player);
+        this.abilityHolder = CasterData.entityHolderWithSelected(player);
     }
 
     AbstractElement getType(){

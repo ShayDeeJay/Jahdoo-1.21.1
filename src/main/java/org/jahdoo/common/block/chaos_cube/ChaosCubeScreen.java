@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.registers.mod.AbilityReg;
@@ -23,12 +22,13 @@ import java.util.function.Consumer;
 import static org.jahdoo.ascension.attachments.ChaosCubeData.*;
 import static org.jahdoo.ascension.utils.ColourStore.BORDER_COLOUR;
 import static org.jahdoo.ascension.utils.ColourStore.BOX_COLOUR;
-import static org.jahdoo.common.block.chaos_cube.ChaosCubeEntity.AUGMENT_SLOT;
-import static org.jahdoo.common.client.SharedUI.*;
-import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.button.ToggleComponent.*;
 import static org.jahdoo.common.block.chaos_cube.ChaosCubeData.selectDirection;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.*;
+import static org.jahdoo.common.block.chaos_cube.ChaosCubeEntity.AUGMENT_SLOT;
+import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.common.client.SharedUI.*;
+import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
+import static org.jahdoo.common.client.button.ToggleComponent.textWithBackground;
+import static org.jahdoo.ascension.ability.AbilityComponentHelper.isValidAugmentUtil;
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 
 public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
@@ -60,10 +60,6 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
 
     public ChaosCubeEntity entity(){
         return this.modularChaosCubeMenu.getAutomationEntity();
-    }
-
-    private void setModifyAugmentScreen(ItemStack itemStack){
-        setAugmentModificationScreen(itemStack, this);
     }
 
     private void toggleChained(ChaosCubeEntity entity){
@@ -131,7 +127,7 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
         this.addRenderableWidget(menuButton(posX + 56, posY - 112, (press) -> toggleChained(entity()), chained ? CHAINED : UNCHAINED, 20, 0));
 
         if(!this.entity().inputItemHandler.getStackInSlot(0).isEmpty() && isValidAugmentUtil(entity().inputItemHandler.getStackInSlot(AUGMENT_SLOT)).isPresent()){
-            this.addRenderableWidget(menuButton(posX + 14, posY - 23, (press) -> setModifyAugmentScreen(entity().inputItemHandler.getStackInSlot(0).copy()), COG, "", size));
+//            this.addRenderableWidget(menuButton(posX + 14, posY - 23, (press) -> setModifyAugmentScreen(entity().inputItemHandler.getStackInSlot(0).copy()), COG, "", size));
         }
     }
 

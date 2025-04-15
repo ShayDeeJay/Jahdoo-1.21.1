@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -27,13 +28,15 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.common.items.wand.WandItem;
+import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
-import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
-import static org.jahdoo.common.block.augment_modification_station.AugmentModificationBlock.*;
-import static org.jahdoo.common.registers.BlockReg.sharedBehaviour;
+import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
 
 public class WandManagerBlock extends BaseEntityBlock {
@@ -74,7 +77,7 @@ public class WandManagerBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
 
     public WandManagerBlock() {
-        super(sharedBehaviour);
+        super(Properties.of().strength(1f).sound(SoundType.DEEPSLATE_BRICKS).noOcclusion());
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
@@ -160,7 +163,7 @@ public class WandManagerBlock extends BaseEntityBlock {
         double speed,
         double radius
     ) {
-        if (hand.getItem() instanceof WandItem || hand.isEmpty() && pPlayer.isShiftKeyDown()) {
+        if (hand.getItem() instanceof CasterItem || hand.isEmpty() && pPlayer.isShiftKeyDown()) {
             if(!hand.isEmpty()) getSoundWithPosition(pLevel, pPos, soundEvent, 1, 1.2f);
             swapItemsWithHand(wandManagerTable.inputItemHandler, 0, pPlayer, pHand);
 
@@ -172,6 +175,31 @@ public class WandManagerBlock extends BaseEntityBlock {
             return ItemInteractionResult.SUCCESS;
         }
         return ItemInteractionResult.FAIL;
+    }
+
+    public static void setOuterRingPulse(
+        Level level,
+        int getType,
+        BlockPos blockPos,
+        double yOffset,
+        int lifetime,
+        double speed,
+        double radius
+    ){
+        var element = ElementReg.fromId(getType);
+        element.ifPresent(
+            e -> {
+                var particle = ParticleHandlers.genericParticle(e, lifetime, 0.8f);
+                PositionFinders.getOuterRingOfRadiusRandom(blockPos.getBottomCenter().add(0,yOffset,0), radius, 40,
+                    positions -> {
+                        ParticleHandlers.sendParticles(
+                            level, particle, positions.offsetRandom(RandomSource.create(), 0.2f),
+                            0, 0, Random.nextDouble(0.02,0.2),0,speed
+                        );
+                    }
+                );
+            }
+        );
     }
 
     @Override

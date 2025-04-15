@@ -91,7 +91,7 @@ public class AugmentCoreSlot extends SlotItemHandler {
         }
 
         getAllSlots.update(RUNE_HOLDER.get(), DEFAULT, data -> data.insertNewHolder(list));
-        getAllSlots.set(WAND_DATA, getAllSlots.get(WAND_DATA));
+//        getAllSlots.set(WAND_DATA, getAllSlots.get(WAND_DATA));
         PacketDistributor.sendToServer(new ItemInBlockC2SP(getAllSlots, entity.getBlockPos()));
     }
 }

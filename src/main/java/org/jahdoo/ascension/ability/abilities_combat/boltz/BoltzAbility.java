@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -75,7 +75,7 @@ public class BoltzAbility extends Ability {
     @Override
     public void invokeAbility(Player player) {
         var amplifier = 1;
-        var totalShots = (int) CastingData.getSpecificValue(player, TOTAL_BOLTS) * amplifier;
+        var totalShots = (int) CasterData.getSpecificValue(player, TOTAL_BOLTS) * amplifier;
         var direction = player.getLookAngle();
         var particleOptions = ParticleHandlers.genericParticle(ParticleStore.ELECTRIC_PARTICLE, this.getElemenType(), 5, 1.2f, 0.5);
 

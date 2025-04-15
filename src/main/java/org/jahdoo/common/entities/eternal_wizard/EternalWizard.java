@@ -31,9 +31,11 @@ import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.entities.goals.*;
-import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.items.wand.WandItemHelper;
-import org.jahdoo.common.registers.*;
+import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.items.caster_item.CasterItemHelper;
+import org.jahdoo.common.registers.EntityReg;
+import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jetbrains.annotations.NotNull;
@@ -45,8 +47,8 @@ import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.ability.abilities_combat.armageddon.ArmageddonModule.IS_BUDDY;
 import static org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility.abilityId;
 import static org.jahdoo.common.entities.SharedEntityBehaviours.canTarget;
-import static org.jahdoo.common.items.wand.CastHelper.castAnimation;
-import static org.jahdoo.common.items.wand.WandAnimations.SINGLE_CAST_ID;
+import static org.jahdoo.common.items.caster_item.CastHelper.castAnimation;
+import static org.jahdoo.common.items.caster_item.ItemAnimations.SINGLE_CAST_ID;
 
 public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
 
@@ -169,7 +171,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
 
     @Override
     protected @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if(this.owner != null) WandItemHelper.setWizardMode(this, player);
+        if(this.owner != null) CasterItemHelper.setWizardMode(this, player);
         return InteractionResult.CONSUME;
     }
 
@@ -243,7 +245,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
     public void reassessWeaponGoal() {
         if (this.level() instanceof ServerLevel) {
             this.goalSelector.removeGoal(this.wandGoal);
-            ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof WandItem));
+            ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof CasterItem));
             if (itemstack.is(ItemReg.WAND_ITEM_VITALITY.get())) {
                 //Set attack interval
                 int i = 10;
@@ -254,7 +256,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
     }
 
     private void fireProjectile(LivingEntity target, Projectile projectile, double offset, float velocity) {
-        if (this.getMainHandItem().getItem() instanceof WandItem) {
+        if (this.getMainHandItem().getItem() instanceof CasterItem) {
             projectile.setOwner(this);
             double d0 = target.getX() - this.getX();
             double d1 = target.getY(0.3333333333333333D) - projectile.getY() - offset;

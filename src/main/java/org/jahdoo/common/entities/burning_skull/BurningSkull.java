@@ -14,7 +14,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jahdoo.ascension.ability.ProjectileProperties;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Helpers;
@@ -73,7 +73,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         this.reapplyPosition();
         this.setOwner(owner);
 
-        var holder = CastingData.entityHolderWithSelected(owner);
+        var holder = CasterData.entityHolderWithSelected(owner);
 
         this.effectChance = getTag(EFFECT_CHANCE, holder);
         this.effectStrength = getTag(EFFECT_STRENGTH, holder);

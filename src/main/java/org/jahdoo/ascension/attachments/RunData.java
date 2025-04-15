@@ -91,8 +91,8 @@ public class RunData implements IAttachment {
     public void onEndRun(Player player, boolean died) {
         if(!died){
             var pastRun = new RunData(getExperienceGained(), getMobsKilled(), getRoomsCleared(), getChestsOpened(), getDateAndTime());
-            CastingData.addNewRun(player, pastRun);
-            CastingData.addExperience(player, getExperienceGained());
+            CasterData.addNewRun(player, pastRun);
+            CasterData.addExperience(player, getExperienceGained());
         }
         this.experienceGained = 0;
         this.mobsKilled = 0;

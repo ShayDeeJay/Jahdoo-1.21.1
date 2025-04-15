@@ -6,7 +6,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import org.jahdoo.common.items.wand.WandItemHelper;
+import org.jahdoo.common.items.caster_item.CasterItemHelper;
 import org.jahdoo.common.registers.ComponentReg;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class BaseArmor extends ArmorItem {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         var data = stack.get(ComponentReg.RUNE_HOLDER);
         if(data != null){
-            WandItemHelper.appendRefinementPotential(tooltipComponents, stack);
+            CasterItemHelper.appendRefinementPotential(tooltipComponents, stack);
         }
     }
 }

@@ -12,13 +12,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.Ability;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.items.wand.WandItem;
+import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
-import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jetbrains.annotations.NotNull;
 
 import static com.mojang.blaze3d.systems.RenderSystem.enableBlend;
@@ -26,7 +26,7 @@ import static com.mojang.blaze3d.systems.RenderSystem.setShaderColor;
 import static java.lang.String.valueOf;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.attachments.CastingData.selectedAbility;
+import static org.jahdoo.ascension.attachments.CasterData.selectedAbility;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Configuration.*;
 import static org.jahdoo.ascension.utils.Helpers.getUsedItem;
@@ -174,14 +174,14 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         var wandItem = getUsedItem(player).getItem();
         var alwaysShow = CUSTOM_UI_SHOW_MANA.get();
 
-        if (wandItem instanceof WandItem || alwaysShow) {
+        if (wandItem instanceof CasterItem || alwaysShow) {
             if (this.fadeIn < 1) this.fadeIn += fadeAmount;
         } else {
             if (this.fadeIn > 0) this.fadeIn -= fadeAmount;
         }
     }
 
-    private void cooldownTimer(Ability ability, CastingData casterData, GuiGraphics graphics, Minecraft minecraft){
+    private void cooldownTimer(Ability ability, CasterData casterData, GuiGraphics graphics, Minecraft minecraft){
         if (ability == null) return;
 
         if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {
@@ -200,7 +200,7 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
         }
     }
 
-    private void cooldownOverlay(Ability ability, CastingData casterData){
+    private void cooldownOverlay(Ability ability, CasterData casterData){
         if(this.fadeIn < 0 && !CUSTOM_UI.get() || ability == null) return;
         alignedGui.displayGuiLayer(4, 26, 0, 0, 23, ability.getAbilityIconLocation());
         if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {
@@ -337,8 +337,8 @@ public class ManaBarOverlay implements LayeredDraw.Layer {
     }
 
     private void abilityBar(GuiGraphics graphics, PoseStack pose, int centerY, Minecraft minecraft, LocalPlayer player, int center) {
-        var progress = CastingData.getExperienceProgress(player);
-        var level = CastingData.getLevel(player);
+        var progress = CasterData.getExperienceProgress(player);
+        var level = CasterData.getLevel(player);
         var alwaysShow = CUSTOM_UI_ALWAYS_SHOW_XP.get();
         var k = (int) (progress * 98.0F);
         var y = 32;

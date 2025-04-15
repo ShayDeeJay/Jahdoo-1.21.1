@@ -26,8 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.sounds.SoundEvents.*;
-import static net.minecraft.world.ItemInteractionResult.FAIL;
-import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static net.minecraft.world.ItemInteractionResult.*;
 import static net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK;
 import static net.minecraft.world.level.block.Blocks.OBSERVER;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
@@ -136,7 +135,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
             if(entity.isStartingRoom()) destroyDoors(serverLevel, pos.relative(getState, 12));
 
             onUnlock(pos, entity, serverLevel);
-            return SUCCESS;
+            return CONSUME;
         }
 
         return FAIL;

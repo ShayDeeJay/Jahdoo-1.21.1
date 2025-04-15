@@ -18,10 +18,14 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 
 import static org.jahdoo.ascension.attachments.PlayerWallet.CoinProperties;
+import static org.jahdoo.ascension.utils.LocalLootBeamData.COIN;
+import static org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg.INSTANCE;
 
 public class CoinItem extends Item implements IItemEntityBehaviour {
 
-    public CoinItem() { super(new Properties()); }
+    public CoinItem() {
+        super(new Properties().component(INSTANCE.getLOOT_BEAM_DATA(), COIN));
+    }
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {

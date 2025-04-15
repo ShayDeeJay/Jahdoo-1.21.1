@@ -28,8 +28,8 @@ import static org.jahdoo.ascension.attachments.PlayerWallet.*;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CoinProperties.*;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.*;
 import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.ascension.utils.Helpers.throwNewItem;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.throwNewItem;
 
 public class RecoveryReceipt extends Item {
 

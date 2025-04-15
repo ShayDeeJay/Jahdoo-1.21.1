@@ -20,13 +20,13 @@ import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import static net.neoforged.neoforge.client.event.RenderLivingEvent.Pre;
 import static org.jahdoo.common.client.KeyBinding.*;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.mysticEffectClient;
+import static org.jahdoo.common.event.event_helpers.EventHelpers.selectAbilitySlot;
 import static org.jahdoo.common.event.event_helpers.KeyBindHelper.quickSelectBehaviour;
 import static org.jahdoo.common.event.event_helpers.KeyBindHelper.toggleLockAbility;
 import static org.jahdoo.common.event.event_helpers.OverlayEvent.crosshairManager;
 import static org.jahdoo.common.event.event_helpers.OverlayEvent.simpleGui;
 import static org.jahdoo.common.event.event_helpers.RenderEventHelper.*;
-import static org.jahdoo.common.event.event_helpers.WandAbilitySelector.selectWandSlot;
-import static org.jahdoo.common.items.wand.WandItemHelper.getAllSlots;
+import static org.jahdoo.common.items.caster_item.CasterItemHelper.getAllSlots;
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
@@ -83,16 +83,16 @@ public class ClientEvents {
         quickSelectBehaviour(player, instance);
         toggleLockAbility(player);
 
-        if(WAND_SLOT_1A.consumeClick()) selectWandSlot(1);
-        if(WAND_SLOT_2A.consumeClick()) selectWandSlot(2);
-        if(WAND_SLOT_3A.consumeClick()) selectWandSlot(3);
-        if(WAND_SLOT_4A.consumeClick()) selectWandSlot(4);
-        if(WAND_SLOT_5A.consumeClick()) selectWandSlot(5);
-        if(WAND_SLOT_6A.consumeClick()) selectWandSlot(6);
-        if(WAND_SLOT_7A.consumeClick()) selectWandSlot(7);
-        if(WAND_SLOT_8A.consumeClick()) selectWandSlot(8);
-        if(WAND_SLOT_9A.consumeClick()) selectWandSlot(9);
-        if(WAND_SLOT_10A.consumeClick()) selectWandSlot(10);
+        if(WAND_SLOT_1A.consumeClick()) selectAbilitySlot(1);
+        if(WAND_SLOT_2A.consumeClick()) selectAbilitySlot(2);
+        if(WAND_SLOT_3A.consumeClick()) selectAbilitySlot(3);
+        if(WAND_SLOT_4A.consumeClick()) selectAbilitySlot(4);
+        if(WAND_SLOT_5A.consumeClick()) selectAbilitySlot(5);
+        if(WAND_SLOT_6A.consumeClick()) selectAbilitySlot(6);
+        if(WAND_SLOT_7A.consumeClick()) selectAbilitySlot(7);
+        if(WAND_SLOT_8A.consumeClick()) selectAbilitySlot(8);
+        if(WAND_SLOT_9A.consumeClick()) selectAbilitySlot(9);
+        if(WAND_SLOT_10A.consumeClick()) selectAbilitySlot(10);
         if(STAT_SCREEN.consumeClick()) {
             instance.setScreen(new StatScreen());
             Helpers.syncAbilities();

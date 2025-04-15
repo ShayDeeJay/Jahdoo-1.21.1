@@ -11,11 +11,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 
 public class LightBlock extends Block {
@@ -49,7 +48,7 @@ public class LightBlock extends Block {
             type = ElementReg.utility();
         }
 
-        var pos = blockPos.getCenter().subtract(0,0.05,0);
+        var pos = blockPos.getCenter().subtract(0, 0.05, 0);
         var lifetime = 10;
         var size = 0.8f;
         var bakedParticle = bakedParticle(type.id(), lifetime, size + 0.2f, false);

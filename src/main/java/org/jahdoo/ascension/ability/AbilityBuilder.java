@@ -6,8 +6,6 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.ComponentReg;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
@@ -168,13 +166,6 @@ public class AbilityBuilder {
         if(this.item != null){
             this.item.set(ComponentReg.ABILITY_HOLDER.get(), new AbilityHolder(abilityId, abilityData));
         }
-    }
-
-    private double getRandomWeightedDouble(double min, double max, double step){
-        var allowed = new ArrayList<Double>();
-        for(double i = min; i < max; i += step) allowed.add(i);
-        Collections.shuffle(allowed);
-        return allowed.getFirst();
     }
 
     public AbilityBuilder setElement(double actualValue) {

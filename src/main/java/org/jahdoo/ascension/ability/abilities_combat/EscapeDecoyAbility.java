@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -79,7 +79,7 @@ public class EscapeDecoyAbility extends Ability {
     }
 
     public static double getTag(Player player, String id){
-        return CastingData.entityHolderWithSelected(player).data().abilityProperties().get(id).setValue();
+        return CasterData.entityHolderWithSelected(player).data().abilityProperties().get(id).setValue();
     }
 
     @Override

@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbstractEntityProperty;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.ProjectileProperties;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
@@ -48,7 +48,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.setProjectileWithOffsets(this, player, offset, 1);
         this.reapplyPosition();
         this.setOwner(player);
-        this.abilityHolder = CastingData.entityHolderWithSelected(player);
+        this.abilityHolder = CasterData.entityHolderWithSelected(player);
         this.projectileSelectionIndex = projectileSelectionIndex;
         this.abilityId = abilityId;
         this.getProjectile = EntityDataReg.getProperty(projectileSelectionIndex);

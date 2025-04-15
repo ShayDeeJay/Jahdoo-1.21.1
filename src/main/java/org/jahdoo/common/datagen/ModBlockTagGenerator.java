@@ -68,13 +68,11 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
 
         this.tag(MINEABLE_WITH_PICKAXE)
             .add(TANK.get())
-            .add(INFUSER.get())
             .add(CHALLENGE_ALTAR.get())
             .add(NEXITE_ORE.get())
             .add(NEXITE_DEEPSLATE_ORE.get())
             .add(NEXITE_BLOCK.get())
-            .add(RAW_NEXITE_BLOCK.get())
-            .add(WAND_MANAGER_TABLE.get());
+            .add(RAW_NEXITE_BLOCK.get());
 
         this.tag(GARBAGE_BLOCKS)
             .add(COBBLESTONE)

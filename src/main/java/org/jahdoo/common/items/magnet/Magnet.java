@@ -17,6 +17,7 @@ import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
+import org.jahdoo.common.items.caster_item.CasterItemHelper;
 import org.jahdoo.common.registers.SoundReg;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
@@ -37,16 +38,6 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
                 .durability(300)
                 .component(MAGNET_DATA, MagnetData.DEFAULT)
         );
-    }
-
-    @Override
-    public boolean isDamageable(ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public boolean isDamaged(ItemStack stack) {
-        return true;
     }
 
     @Override
@@ -81,6 +72,7 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
         }
         toolTips.add(Helpers.withStyleComponent("Range: " + magnetData.range(), MAGNET_RANGE_GREEN));
         toolTips.add(Helpers.withStyleComponent("Strength: " + magnetData.strength(), MAGNET_STRENGTH_RED));
+        CasterItemHelper.appendDurability(stack, toolTips);
     }
 
     @Override

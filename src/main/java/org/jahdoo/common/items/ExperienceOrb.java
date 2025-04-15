@@ -76,7 +76,6 @@ public class ExperienceOrb extends Item {
                     return this.repairPlayerItems(player, k);
                 }
             }
-
             return 0;
         } else {
             return value;

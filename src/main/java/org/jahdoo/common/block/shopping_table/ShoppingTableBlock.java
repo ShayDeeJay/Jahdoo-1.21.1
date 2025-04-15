@@ -23,22 +23,17 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.attachments.PlayerWallet;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.client.overlay.WalletOverlay;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.Nullable;
 
-import static net.minecraft.core.component.DataComponents.*;
-import static net.minecraft.network.chat.Component.literal;
-import static net.minecraft.world.ItemInteractionResult.*;
-import static org.jahdoo.ascension.attachments.PlayerWallet.*;
-import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.*;
+import static net.minecraft.world.ItemInteractionResult.FAIL;
+import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.EMPTY;
+import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.checkAndPurchase;
+import static org.jahdoo.ascension.utils.Helpers.throwOrAddItem;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.throwOrAddItem;
 
 public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -102,12 +97,6 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
             entityType, BlockEntityReg.SHOPPING_TABLE_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
-    }
-
-    public static boolean hasEnoughToBuy(Player player, ItemStack item, int quantity) {
-
-
-        return false;
     }
 
     @Override

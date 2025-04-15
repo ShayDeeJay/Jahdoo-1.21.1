@@ -41,7 +41,9 @@
   "block.jahdoo.raw_nexite_block": "Raw Nexite Block",
   "block.jahdoo.nexite_deepslate_ore": "Nexite Deepslate Ore",
   "block.jahdoo.tank": "Nexite Tank",
-  "block.jahdoo.infuser": "Crystal Infuser",
+  "block.jahdoo.dissembler": "Disassembler",
+  "block.jahdoo.rune_table": "Rune Inscriber",
+  "block.jahdoo.wand_manager_table": "Wand Manager",
   "blocks.jahdoo.screen.wand.compare": "Hold shift to compare",
   "block.jahdoo.modular_chaos_cube": "Modular Chaos Cube",
 

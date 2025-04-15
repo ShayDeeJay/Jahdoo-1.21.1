@@ -19,14 +19,13 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecall;
 import org.jahdoo.ascension.ability.abilities_combat.nova_smash.NovaSmash;
 import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
 import static org.jahdoo.ascension.utils.Helpers.syncCasterData;
-import static org.jahdoo.common.event.event_helpers.CopyPasteEvent.copyPasteBlockProperties;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_ITEM_DATA;
 
@@ -103,8 +102,8 @@ public class ServerEvents {
         var player = event.getEntity();
 
         if(player instanceof ServerPlayer serverPlayer){
-            CastingData.cooldownTickEvent(serverPlayer);
-            CastingData.manaTickEvent(serverPlayer);
+            CasterData.cooldownTickEvent(serverPlayer);
+            CasterData.manaTickEvent(serverPlayer);
         }
 
         copyPasteBlockProperties(player);

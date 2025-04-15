@@ -96,8 +96,7 @@ public class TankBlockEntity extends AbstractBEInventory {
         this.harvestOreBelow(serverLevel, pos, tankSlotSize);
     }
 
-    private List<BlockPos> getTankBlockInRange(Level pLevel, BlockPos pos) {
-        var allBlocks = new ArrayList<BlockPos>();
+    private void getTankBlockInRange(Level pLevel, BlockPos pos) {
         var localList = new ArrayList<>();
 
         for (var adjacentPos : findInRange(pos)) {
@@ -107,7 +106,6 @@ public class TankBlockEntity extends AbstractBEInventory {
         }
 
         this.usingThisTank.removeIf(abstractTankUser -> !localList.contains(abstractTankUser));
-        return allBlocks;
     }
 
     private void beamParticlesToUser(ServerLevel serverLevel, BlockPos pos, int tankSlotSize){

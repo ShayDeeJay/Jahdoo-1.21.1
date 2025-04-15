@@ -14,7 +14,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.ProjectileProperties;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
@@ -80,7 +80,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         this.setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
-        this.abilityHolder = CastingData.entityHolder(owner, abilityId);
+        this.abilityHolder = CasterData.entityHolder(owner, abilityId);
         this.selectedAbility = selectedAbility;
         this.abilityId = abilityId;
         this.getProjectile = EntityDataReg.getProperty(selectedAbility);

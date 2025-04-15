@@ -7,7 +7,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.IAttachment;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
@@ -77,7 +77,7 @@ public class MageFlight implements IAttachment {
         return false;
     }
 
-    private void flying(Player player, CastingData manaSystem, ItemStack wandItem) {
+    private void flying(Player player, CasterData manaSystem, ItemStack wandItem) {
         if (manaSystem.getManaPool() > manaCost) {
             var getPool = player.getAttribute(AttributeReg.MANA_POOL);
             var manaCost = (getPool != null ? getPool.getValue() : 1) / 150;

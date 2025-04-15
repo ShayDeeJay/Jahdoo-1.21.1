@@ -10,11 +10,10 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.altar.AltarRenderer;
-import org.jahdoo.common.block.augment_modification_station.AugmentModificationRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockRenderer;
-import org.jahdoo.common.block.infuser.InfuserRenderer;
+import org.jahdoo.common.block.dissembler.DisassemblerRenderer;
 import org.jahdoo.common.block.lock.LockRenderer;
 import org.jahdoo.common.block.loot_chest.LootChestRenderer;
 import org.jahdoo.common.block.perk_table.PerkTableRenderer;
@@ -22,8 +21,6 @@ import org.jahdoo.common.block.rune_table.RuneTableRenderer;
 import org.jahdoo.common.block.rune_table.RuneTableScreen;
 import org.jahdoo.common.block.shopping_table.ShoppingTableRenderer;
 import org.jahdoo.common.block.tank.TankRenderer;
-import org.jahdoo.common.block.wand.WandBlockRenderer;
-import org.jahdoo.common.block.wand.WandBlockScreen;
 import org.jahdoo.common.block.wand_manager.WandManagerRenderer;
 import org.jahdoo.common.block.wand_manager.WandManagerScreen;
 import org.jahdoo.common.client.RuneTooltipRenderer;
@@ -39,8 +36,8 @@ import org.jahdoo.common.entities.eternal_wizard.EternalWizardRenderer;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectileRenderer;
 import org.jahdoo.common.entities.inferno_creeper.InfernoCreeperRenderer;
 import org.jahdoo.common.entities.void_spider.VoidSpiderRenderer;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.common.client.KeyBinding.*;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.getColour;
@@ -73,7 +70,6 @@ public class ClientBusEvents {
 
     @SubscribeEvent
     public static void onClientSetup(RegisterMenuScreensEvent event) {
-        event.register(WAND_BLOCK_MENU.get(), WandBlockScreen::new);
         event.register(MODULAR_CHAOS_CUBE_MENU.get(), ChaosCubeScreen::new);
 //        event.register(AUGMENT_MODIFICATION_MENU.get(), AugmentModificationScreen::new);
         event.register(WAND_MANAGER_MENU.get(), WandManagerScreen::new);
@@ -117,8 +113,7 @@ public class ClientBusEvents {
         //Block entities
         event.registerBlockEntityRenderer(TANK_BE.get(), TankRenderer::new);
         event.registerBlockEntityRenderer(LOCK_BE.get(), LockRenderer::new);
-        event.registerBlockEntityRenderer(WAND_BE.get(), WandBlockRenderer::new);
-        event.registerBlockEntityRenderer(INFUSER_BE.get(), InfuserRenderer::new);
+        event.registerBlockEntityRenderer(INFUSER_BE.get(), DisassemblerRenderer::new);
         event.registerBlockEntityRenderer(LOOT_CHEST_BE.get(), LootChestRenderer::new);
         event.registerBlockEntityRenderer(RUNE_TABLE_BE.get(), RuneTableRenderer::new);
         event.registerBlockEntityRenderer(PERK_TABLE_BE.get(), PerkTableRenderer::new);
@@ -127,7 +122,6 @@ public class ClientBusEvents {
         event.registerBlockEntityRenderer(SHOPPING_TABLE_BE.get(), ShoppingTableRenderer::new);
         event.registerBlockEntityRenderer(WAND_MANAGER_TABLE_BE.get(), WandManagerRenderer::new);
         event.registerBlockEntityRenderer(MODULAR_CHAOS_CUBE_BE.get(), ChaosCubeRenderer::new);
-        event.registerBlockEntityRenderer(AUGMENT_MODIFICATION_STATION_BE.get(), AugmentModificationRenderer::new);
 
         //Entities
         event.registerEntityRenderer(FROST_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementReg.frost().projectileTexture()));

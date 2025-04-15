@@ -10,13 +10,11 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
-import org.jahdoo.common.items.augments.Augment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-import static net.minecraft.core.registries.BuiltInRegistries.*;
-import static org.jahdoo.ascension.rarity.JahdooRarity.*;
+import static net.minecraft.core.registries.BuiltInRegistries.ITEM;
 
 public class AddItemModifier extends LootModifier {
 
@@ -44,9 +42,9 @@ public class AddItemModifier extends LootModifier {
     protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         if(this.item == null) return generatedLoot;
         for (var condition : this.conditions) if (!condition.test(context)) return generatedLoot;
-        var itemStack = this.item instanceof Augment ? setGeneratedAugment(this.item) : new ItemStack(this.item);
-
-        generatedLoot.add(itemStack);
+//        var itemStack = this.item instanceof Augment ? setGeneratedAugment(this.item) : new ItemStack(this.item);
+//
+//        generatedLoot.add(itemStack);
         return generatedLoot;
     }
 

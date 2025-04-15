@@ -3,7 +3,7 @@ package org.jahdoo.common.items.block_items;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
-import org.jahdoo.common.block.infuser.InfuserBlockRenderer;
+import org.jahdoo.common.block.dissembler.DisassemblerBlockRenderer;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -41,11 +41,11 @@ public class InfuserBlockItem extends BlockItem implements GeoItem {
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
         consumer.accept(
               new GeoRenderProvider() {
-                  private InfuserBlockRenderer renderer;
+                  private DisassemblerBlockRenderer renderer;
 
                   @Override
                   public @NotNull BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
-                      if (this.renderer == null) this.renderer = new InfuserBlockRenderer();
+                      if (this.renderer == null) this.renderer = new DisassemblerBlockRenderer();
                       return this.renderer;
                   }
 

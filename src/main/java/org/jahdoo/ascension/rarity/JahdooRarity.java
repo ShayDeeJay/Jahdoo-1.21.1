@@ -13,11 +13,9 @@ import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
-import org.jahdoo.common.items.wand.WandData;
-import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -109,12 +107,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return listAll.get(Random.nextInt(0, listAll.size()));
     }
 
-    public static ItemStack setGeneratedAugment(Item item){
-        var itemStack = new ItemStack(item);
-        itemStack.set(ComponentReg.NUMBER, 5);
-        AugmentItemHelper.augmentIdentifierSharedUtil(itemStack,  null);
-        return itemStack;
-    }
 
     public static void setGeneratedAugment(ItemStack itemStack, JahdooRarity rarity){
         itemStack.set(ComponentReg.NUMBER, 5);
@@ -249,8 +241,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         var element = ElementReg.fromWand(itemStack.getItem()).orElseThrow();
         attachLootBeamComponent(itemStack, rarity);
 
-        WandData.createRarity(itemStack, rarity.id);
-        WandData.createNewAbilitySlots(itemStack, abilitySlots);
         RuneHolder.createNewRuneSlots(itemStack, runeSlots, rarity.attributes.getRandomRefinementPotential());
         itemStack.set(JAHDOO_RARITY, rarity.id);
 

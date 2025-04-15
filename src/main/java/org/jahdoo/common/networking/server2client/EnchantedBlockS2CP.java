@@ -14,11 +14,11 @@ import org.jahdoo.ascension.utils.Helpers;
 public class EnchantedBlockS2CP implements CustomPacketPayload{
     public static final Type<EnchantedBlockS2CP> TYPE = new Type<>(Helpers.res("block_sync"));
     public static final StreamCodec<RegistryFriendlyByteBuf, EnchantedBlockS2CP> STREAM_CODEC = CustomPacketPayload.codec(EnchantedBlockS2CP::toBytes, EnchantedBlockS2CP::new);
-    private BlockPos blockPos;
-    private BlockState block;
-    private int stage;
-    private int chance;
-    private int spreadChance;
+    private final BlockPos blockPos;
+    private final BlockState block;
+    private final int stage;
+    private final int chance;
+    private final int spreadChance;
 
     public EnchantedBlockS2CP(BlockPos blockPos, BlockState block, int stage, int chance, int spreadChance) {
         this.blockPos = blockPos;

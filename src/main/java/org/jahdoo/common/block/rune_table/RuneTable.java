@@ -59,7 +59,7 @@ public class RuneTable extends BaseEntityBlock {
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
 
     public RuneTable() {
-        super(Properties.of().strength(1f).noOcclusion());
+        super(Properties.of().strength(1f).sound(SoundType.DEEPSLATE_BRICKS).noOcclusion());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.SOUTH));
     }
 

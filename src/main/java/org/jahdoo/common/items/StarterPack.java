@@ -14,7 +14,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ascension.mobs.MobItemHandler;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.items.augments.AugmentItemHelper;
 
 import java.util.List;
 
@@ -57,7 +56,7 @@ public class StarterPack extends Item {
                 getType.get(4)
             );
 
-            for (var item : items) AugmentItemHelper.throwOrAddItem(player, item);
+            for (var item : items) Helpers.throwOrAddItem(player, item);
             itemInHand.shrink(1);
         }
         return InteractionResultHolder.fail(itemInHand);

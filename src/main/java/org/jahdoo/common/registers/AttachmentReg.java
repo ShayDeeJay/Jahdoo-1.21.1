@@ -49,8 +49,8 @@ public class AttachmentReg {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> BOOL =
         regAttachment("bool", builder(() -> false).serialize(Codec.BOOL));
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<CastingData>> CASTER_DATA =
-        withProviderCopyDeath("caster_data", CastingData::new);
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<CasterData>> CASTER_DATA =
+        withProviderCopyDeath("caster_data", CasterData::new);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<SaveItemData>> SAVE_ITEM_DATA =
         withProviderCopyDeath("save_item_data", SaveItemData::new);

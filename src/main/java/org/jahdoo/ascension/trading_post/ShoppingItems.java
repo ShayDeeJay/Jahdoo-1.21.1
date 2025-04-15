@@ -11,27 +11,26 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
-import org.jahdoo.common.items.wand.WandData;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.List;
 import java.util.UUID;
 
 import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
 import static net.minecraft.world.entity.EquipmentSlot.OFFHAND;
-import static org.jahdoo.ascension.utils.LocalLootBeamData.attachLootBeamComponent;
-import static org.jahdoo.ascension.trading_post.RewardLootTables.magnetItem;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.setGoldCost;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.setPlatinumCost;
+import static org.jahdoo.ascension.trading_post.RewardLootTables.magnetItem;
 import static org.jahdoo.ascension.trading_post.ShoppingArmor.*;
 import static org.jahdoo.ascension.trading_post.ShoppingRunes.*;
 import static org.jahdoo.ascension.trading_post.ShoppingWeapon.enchantSword;
 import static org.jahdoo.ascension.trading_post.ShoppingWeapon.getElementalSword;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.listRandom;
+import static org.jahdoo.ascension.utils.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.generateFullRune;
 import static org.jahdoo.common.registers.AttributeReg.*;
@@ -174,8 +173,6 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var damageAmplifierValue = rarity.getAttributes().getRandomDamage();
 
         attachLootBeamComponent(itemStack, rarity);
-        WandData.createRarity(itemStack, rarity.getId());
-        WandData.createNewAbilitySlots(itemStack, 10);
         RuneHolder.createNewRuneSlots(itemStack, 4, refinementPotential);
         itemStack.set(JAHDOO_RARITY, rarity.getId());
 

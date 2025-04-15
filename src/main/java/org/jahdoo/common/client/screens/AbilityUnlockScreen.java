@@ -12,13 +12,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.skills.AbstractSkill;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.block.augment_modification_station.AbilityModificationScreen;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.items.augments.AugmentItemHelper;
+import org.jahdoo.ascension.ability.AbilityComponentHelper;
 import org.jahdoo.common.networking.client2server.*;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -41,7 +40,7 @@ import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSoundAbilities;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.getAllAbilityModifiers;
+import static org.jahdoo.ascension.ability.AbilityComponentHelper.getAllAbilityModifiers;
 
 public class AbilityUnlockScreen extends AbstractPanableScreen {
     List<Component> components = new ArrayList<>();
@@ -164,7 +163,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var component = new ArrayList<Component>();
         var headerColour = color(100, 116, 245);
 
-        if(AugmentItemHelper.shiftForDetails(component, false)){
+        if(AbilityComponentHelper.shiftForDetails(component, false)){
             component.add(component.size()-1, withStyleComponent(Helpers.stringIdToName(skill.id()), headerColour));
         } else {
             component.addAll(toComponent(skill.description(), Helpers.stringIdToName(skill.id()), headerColour, color(161, 171, 255)));
@@ -297,7 +296,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         this.pos = new Vec3(posX, posY, 0);
 
         if(!isDummy) {
-            var components = AugmentItemHelper.shiftForDetails(isLocked);
+            var components = AbilityComponentHelper.shiftForDetails(isLocked);
             var allAbilityModifiers = getAllAbilityModifiers(ability, holder, components.isEmpty(), true, player);
 
             allAbilityModifiers.addAll(!isLocked ? 1 : allAbilityModifiers.size(), components);
@@ -329,7 +328,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         if(unlocked) {
             sendToServer(new MobEffectC2SP(skill.skillEffect()));
         } else {
-            if(!dependency && CastingData.checkAndConsume(player, skill.unlockCost())){
+            if(!dependency && CasterData.checkAndConsume(player, skill.unlockCost())){
                 sendToServer(new UnlockedSkillsC2SP(skill.id(), skill.unlockCost()));
                 player.playSound(SoundReg.UNLOCK_NOTIFICATION.get());
             } else {
@@ -354,7 +353,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
             }
         } else {
             var abilityCost = ability.getAbilityCost();
-            if(!dependency && CastingData.checkAndConsume(player, abilityCost)){
+            if(!dependency && CasterData.checkAndConsume(player, abilityCost)){
                 sendToServer(new AbilityHolderC2SP(abilityHolder, abilityCost));
                 player.playSound(SoundReg.UNLOCK_NOTIFICATION.get());
             } else {
@@ -399,7 +398,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
     private void overlaySkillPoints(GuiGraphics guiGraphics, LocalPlayer player, int spacer) {
         var size = 24;
-        var skillPoints = CastingData.getAbilityPoints(player);
+        var skillPoints = CasterData.getAbilityPoints(player);
         var i1 = 20;
         var i2 = -2;
 

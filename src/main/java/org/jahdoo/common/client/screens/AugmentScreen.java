@@ -7,13 +7,16 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.ascension.attachments.CastingData;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
 import org.jahdoo.common.client.button.ToggleComponent;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -23,20 +26,23 @@ import java.util.stream.Collectors;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.ascension.ability.AbilityBuilder.MANA_COST;
+import static org.jahdoo.ascension.ability.AbilityComponentHelper.getModifierContextSingle;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.button.ToggleComponent.textWithBackgroundLarge;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.getModifierContextSingle;
+import static org.jahdoo.common.client.screens.AbilityModificationScreen.headerWithBorder;
 
 public class AugmentScreen extends Screen  {
 
-    private final AbilityHolder holder;
+    private AbilityHolder holder;
+    private final Ability ability;
     private final Screen previousScreen;
     private double yScroll;
 
-    public AugmentScreen(Player player, Screen previousScreen) {
+    public AugmentScreen(Player player, Screen previousScreen, Ability ability) {
         super(Component.literal("Augment Menu"));
-        this.holder = CastingData.entityHolderWithSelected(player);
+        this.holder = CasterData.entityHolderWithSelected(player);
+        this.ability = ability;
         this.previousScreen = previousScreen;
     }
 
@@ -134,31 +140,29 @@ public class AugmentScreen extends Screen  {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBlurredBackground(partialTick);
-        SharedUI.boxMaker(guiGraphics, this.width/2-131, this.height/2 - 70, 16, this.previousScreen == null ? 16 : 25);
-        SharedUI.setCustomBackground(this.height, this.width, guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-//        guiGraphics.disableScissor();
-//        SharedUI.header(guiGraphics, this.width, this.height, itemStack, this.font, this.getMinecraft().level);
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
+    @Override
+    protected void renderBlurredBackground(float partialTick) {
+        super.renderBlurredBackground(partialTick);
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBlurredBackground(partialTick);
+        SharedUI.boxMaker(graphics, this.width/2 - 131, this.height/2 - 70, 16, this.previousScreen == null ? 16 : 25);
+        SharedUI.setCustomBackground(this.height, this.width, graphics);
+        super.render(graphics, mouseX, mouseY, partialTick);
+        headerWithBorder(graphics, ability.getElemenType(), this.width, this.height, ability, holder, getMinecraft());
     }
 
     private void updateAugmentConfig(String e, AbilityData.AbilityModifiers v, double i) {
-
         var newHolder = new AbilityData(new HashMap<>(holder.data().abilityProperties()));
         var abilityModifier = new AbilityData.AbilityModifiers(v.actualValue(), v.highestValue(), v.lowestValue(), v.step(), i, v.baseCost(), v.isHigherBetter());
         newHolder.abilityProperties().put(e, abilityModifier);
-        //TODO AS NEEDS PACKET FIX
-        /*
-        if(this.previousScreen != null && this.previousScreen instanceof ChaosCubeScreen screen){
-            var pos = screen.entity().getBlockPos();
-            PacketDistributor.sendToServer(new SyncComponentBlockC2S(newWandHolder, pos));
-        } else {
-            PacketDistributor.sendToServer(new SyncComponentC2S(newWandHolder));
-        }
 
-        this.holder = newWandHolder;*/
+        this.holder = new AbilityHolder(holder.abilityName(), newHolder);
+        PacketDistributor.sendToServer(new AbilityHolderC2SP(holder, 0));
         this.rebuildWidgets();
     }
 }

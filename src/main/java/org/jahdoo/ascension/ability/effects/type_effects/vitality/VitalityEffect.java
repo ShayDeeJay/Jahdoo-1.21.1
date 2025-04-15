@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffectCategory.*;
 import static org.jahdoo.ascension.ability.effects.EffectHelpers.getGetRandomChance;
-import static org.jahdoo.common.items.augments.AugmentItemHelper.throwNewItem;
+import static org.jahdoo.ascension.utils.Helpers.throwNewItem;
 
 public class VitalityEffect extends MobEffect {
 

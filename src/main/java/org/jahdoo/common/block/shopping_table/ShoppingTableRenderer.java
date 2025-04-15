@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.items.wand.WandItem;
+import org.jahdoo.common.items.caster_item.CasterItem;
 import org.joml.Matrix4f;
 
 import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
@@ -78,7 +78,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
             var rotate = entity.ticks + partialTick;
             var animate = rotate / 12;
             var bobOff = Math.sin(rotate / 20.0F) * 0.02F + 1.9F - 0.51;
-            var scale = itemStack1.getItem() instanceof WandItem ? 0.75F : 0.5f;
+            var scale = itemStack1.getItem() instanceof CasterItem ? 0.75F : 0.5f;
 
             renderName(entity, itemStack1.getHoverName(), poseStack, source, direction);
             poseStack.pushPose();
@@ -86,7 +86,6 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
             poseStack.scale(scale, scale, scale);
             poseStack.mulPose(Axis.YP.rotationDegrees(rotate));
 
-//            poseStack.mulPose(Axis.YP.rotationDegrees(direction.direction()).invert());
             renderer.renderStatic(itemStack1, FIXED, packedLight, NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
             poseStack.popPose();
         }

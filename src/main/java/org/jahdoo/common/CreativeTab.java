@@ -31,7 +31,7 @@ public class CreativeTab {
         "jahdoo_tab",
 
         () -> CreativeModeTab.builder()
-            .icon(() -> new ItemStack(AUGMENT.get()))
+            .icon(() -> new ItemStack(WAND_ITEM_MYSTIC.get()))
             .title(Component.translatable("creative_tab.jahdoo_tab"))
             .displayItems((parameters, outPut) -> {
                 outPut.accept(NEXITE_ORE.get());
@@ -41,23 +41,24 @@ public class CreativeTab {
                 outPut.accept(MODULAR_CHAOS_CUBE_ITEM.get());
                 outPut.accept(TANK.get());
                 outPut.accept(WAND_MANAGER_TABLE.get());
-                outPut.accept(AUGMENT_MODIFICATION_STATION.get());
+                outPut.accept(RUNE_TABLE.get());
                 outPut.accept(INFUSER_ITEM.get());
                 outPut.accept(NEXITE_POWDER.get());
-                outPut.accept(INGMAS_SWORD.get());
                 outPut.accept(RECALL_TOKEN.get());
                 outPut.accept(CHALLENGER_TICKET.get());
 
                 registerRecoveryReceipts(outPut);
                 registerCarePackages(outPut);
+
                 registerElementalSwords(outPut);
+                outPut.accept(ANCIENT_GLAIVE.get());
+                outPut.accept(INGMAS_SWORD.get());
+
                 registerAmulets(outPut);
                 registerXpOrbs(outPut);
                 registerMagnets(outPut);
                 registerCoins(outPut);
 
-                outPut.accept(ANCIENT_GLAIVE.get());
-                outPut.accept(AUGMENT.get());
                 outPut.accept(RUNE.get());
                 outPut.accept(AUGMENT_CORE.get());
                 outPut.accept(ADVANCED_AUGMENT_CORE.get());

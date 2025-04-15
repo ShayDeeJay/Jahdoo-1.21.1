@@ -3,7 +3,7 @@ package org.jahdoo.common.client.screens;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -14,6 +14,7 @@ import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static net.minecraft.world.entity.ai.attributes.Attributes.*;
 import static org.jahdoo.ascension.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.OverlayHelpers.elementalModStat;
 import static org.jahdoo.common.client.OverlayHelpers.getModStat;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
@@ -62,12 +63,7 @@ public class StatScreen extends AbstractPanableScreen {
         var ySpacing = j + this.panY + 100;
         var data = player.getData(AttachmentReg.CASTER_DATA.get());
 
-        var x = (int) xSpacing - 210;
-        var y = (int) ySpacing - 220;
-        var colour = COSMIC_PURPLE;
-
-        SharedUI.boxMaker(guiGraphics, x - 20, y - 2, 70, 11, 0, fadeBackground, fadeBackground);
-        guiGraphics.drawString(font, Helpers.withStyleComponent("Arcane Level: " + data.getLevel(), colour), x - 12, y + 5, -1);
+        playerLevelData(guiGraphics, player, (int) xSpacing, (int) ySpacing, data);
 
         getModStat(
             guiGraphics, mc, xSpacing, ySpacing - 224,
@@ -115,6 +111,23 @@ public class StatScreen extends AbstractPanableScreen {
             color(201, 154, 0),
             player.getAttribute(MAGIC_DAMAGE_MULTIPLIER)
         );
+    }
+
+    private void playerLevelData(GuiGraphics guiGraphics, LocalPlayer player, int xSpacing, int ySpacing, CasterData data) {
+        var x = xSpacing - 210;
+        var y = ySpacing - 220;
+        var colour = COSMIC_PURPLE;
+
+        var adjustY = -5;
+        var adjustX = -16;
+        SharedUI.boxMaker(guiGraphics, x - 20, y - 2, 70, 11, 0, fadeBackground, fadeBackground);
+        var showLevel = withStyleComponent("Level: ", SUB_HEADER_COLOUR).copy().append(withStyleComponent("" + data.getLevel(), colour));
+        guiGraphics.drawString(font, showLevel, x + adjustX, y + 5 + adjustY, -1);
+
+        var nextLevel = CasterData.getXpNeededForNextLevel(CasterData.getLevel(player));
+        var progressToNextLevel = CasterData.getXpRemainingToNextLevel(player);
+        var showNextLevel = withStyleComponent("Next Level: ", SUB_HEADER_COLOUR).copy().append(withStyleComponent((nextLevel - progressToNextLevel) + "/" + nextLevel, colour));
+        guiGraphics.drawString(font, showNextLevel, x + adjustX, y + 15 + adjustY, -1);
     }
 
 }

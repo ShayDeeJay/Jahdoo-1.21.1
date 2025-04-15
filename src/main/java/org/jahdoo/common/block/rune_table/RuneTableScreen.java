@@ -8,23 +8,23 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
-import org.jahdoo.common.items.wand.WandItem;
+import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.minecraft.util.FastColor.ARGB32.*;
-import static org.jahdoo.common.client.Icons.GUI_GENERAL_SLOT;
-import static org.jahdoo.common.client.SharedUI.*;
+import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
 import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.common.client.Icons.GUI_GENERAL_SLOT;
+import static org.jahdoo.common.client.SharedUI.*;
 
 public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
@@ -192,7 +192,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         final var ITEM_OFFSET_X = 40;
         final var ITEM_OFFSET_Y = -17;
         final var SHIFT_X = 75;
-        final var WAND_ITEM_OFFSET = getItem().getItem() instanceof WandItem ? 80 : 90;
+        final var WAND_ITEM_OFFSET = getItem().getItem() instanceof CasterItem ? 80 : 90;
         final var SCALED_ITEM = scaleItem - WAND_ITEM_OFFSET;
         final var OFFSET_Y = 164 - 80;
 

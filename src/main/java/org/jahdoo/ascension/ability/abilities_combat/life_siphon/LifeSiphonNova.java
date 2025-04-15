@@ -7,7 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.effects.type_effects.vitality.VitalityEffect;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Maths;
@@ -75,7 +75,7 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
 
     public float getValue(String value){
         var holder = this.cloud.getAbilityHolder();
-        return (float) CastingData.getSpecificValue(holder, value);
+        return (float) CasterData.getSpecificValue(holder, value);
     }
 
     public static AbilityHolder setModifiers(double damage, double range, double healValue) {

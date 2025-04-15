@@ -9,24 +9,15 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.components.WandAbilityHolder;
 import org.jahdoo.common.items.magnet.MagnetData;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
-import org.jahdoo.common.items.wand.WandData;
 
 import java.util.function.UnaryOperator;
 
 public class ComponentReg {
 
     private static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, JahdooMod.MOD_ID);
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<WandAbilityHolder>> WAND_ABILITY_HOLDER =
-        register("wand_ability_holder", builder ->
-            builder
-                .persistent(WandAbilityHolder.CODEC)
-                .networkSynchronized(WandAbilityHolder.STREAM_CODEC)
-        );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<AbilityHolder>> ABILITY_HOLDER =
         register("ability_holder", builder ->
@@ -67,15 +58,6 @@ public class ComponentReg {
             builder
                 .persistent(Codec.INT)
                 .networkSynchronized(ByteBufCodecs.INT)
-        );
-
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<WandData>> WAND_DATA =
-        register("wand_data", builder ->
-            builder
-                .persistent(WandData.CODEC)
-                .networkSynchronized(WandData.STREAM_CODEC)
-                .cacheEncoding()
         );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<RuneData>> RUNE_DATA =

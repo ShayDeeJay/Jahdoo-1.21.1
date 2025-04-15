@@ -9,6 +9,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.AttachmentReg;
 
+
 public class AbilityPointC2SP implements CustomPacketPayload {
 
     public static final Type<AbilityPointC2SP> TYPE = new Type<>(Helpers.res("ability_points"));

@@ -24,7 +24,6 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        registerAugmentModels();
         registerRuneModels();
         registerKeyModels();
         registerXpOrbModels();
@@ -109,25 +108,6 @@ public class ModItemModelProvider extends ItemModelProvider {
             .predicate(MODEL_DATA, runeId)
             .model(modelFile(prefix + runeId))
             .end();
-    }
-
-    private void createAugmentOverride(String augment, int index) {
-        var item = ItemReg.AUGMENT;
-        getWithParent(item, "item/augments/" + item.getId().getPath())
-            .override()
-            .predicate(MODEL_DATA, index)
-            .model(modelFile("item/" + augment))
-            .end();
-    }
-
-    private void registerAugmentModels() {
-        var augmentFiles = List.of("ice_augment", "fire_augment", "mystic_augment", "vitalis_augment", "utility_augment");
-        augmentFiles.forEach(
-            location -> {
-                createModel(location, "item/augments/" + location);
-                createAugmentOverride(location, augmentFiles.indexOf(location) + 1);
-            }
-        );
     }
 
     private void registerSimpleItems() {

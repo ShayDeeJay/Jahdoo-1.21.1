@@ -36,7 +36,6 @@ public class ModItemTagGenerator extends ItemTagsProvider {
             .add(WAND_ITEM_FROST.get())
             .add(WAND_ITEM_VITALITY.get())
             .add(RECALL_TOKEN.get())
-            .add(AUGMENT.get())
             .add(TOME_OF_UNITY.get())
             .add(BATTLEMAGE_GAUNTLET.get())
             .add(RUNE.get())

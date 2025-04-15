@@ -27,6 +27,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -38,7 +39,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
@@ -48,9 +49,8 @@ import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 
 import java.awt.*;
 import java.util.*;
@@ -58,7 +58,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
-import static java.util.Collections.*;
+import static java.util.Collections.emptyMap;
 import static net.minecraft.advancements.CriteriaTriggers.ITEM_DURABILITY_CHANGED;
 import static net.minecraft.sounds.SoundEvents.ITEM_BREAK;
 import static net.minecraft.world.item.enchantment.EnchantmentHelper.processDurabilityChange;
@@ -216,7 +216,7 @@ public class Helpers {
 
 
     public static Map<String, AbilityData.AbilityModifiers> getModifierValue(Player player, String abilityName) {
-        var data = CastingData.entityHolder(player, abilityName);
+        var data = CasterData.entityHolder(player, abilityName);
         return data != null ? data.data().abilityProperties(): emptyMap();
     }
 
@@ -461,7 +461,9 @@ public class Helpers {
             var i = itemStack.getDamageValue() + damage;
             itemStack.setDamageValue(i);
 
-            if (stackDurability(itemStack) == 0) livingEntity.playSound(ITEM_BREAK);
+            if (stackDurability(itemStack) == 0) {
+                Helpers.getSoundWithPositionV(level, livingEntity.position(), ITEM_BREAK, 1, 1);
+            }
         }
     }
 
@@ -491,11 +493,9 @@ public class Helpers {
         boolean isAddition,
         Holder<Attribute> ... attribute
     ){
-        var wandItem = Helpers.getUsedItem(player);
-        var abilityName = wandItem.get(ComponentReg.WAND_DATA.get());
-        if(abilityName == null) return initialValue;
+        var abilityName = player.getData(AttachmentReg.CASTER_DATA.get());
         float getAttribute = 0;
-        var getAbility = AbilityReg.getFirstSpellByTypeId(abilityName.selectedAbility());
+        var getAbility = AbilityReg.getFirstSpellByTypeId(abilityName.getSelectedAbility());
         if(getAbility.isEmpty()) return initialValue;
 
         var reCalculatedDamage = initialValue;
@@ -521,9 +521,17 @@ public class Helpers {
 
     public static Biome newBiome(){
         return new Biome.BiomeBuilder()
+            .hasPrecipitation(true)
+            .temperature(0.7F)
+            .downfall(0.8F)
             .specialEffects(
                 new BiomeSpecialEffects.Builder()
+                    .waterColor(4159204)
+                    .waterFogColor(329011)
                     .fogColor(ColourStore.PERK_GREEN)
+                    .skyColor(calculateSkyColor(0.7F))
+                    .grassColorModifier(BiomeSpecialEffects.GrassColorModifier.DARK_FOREST)
+                    .ambientMoodSound(AmbientMoodSettings.LEGACY_CAVE_SETTINGS)
                     .ambientParticle(new AmbientParticleSettings(ParticleTypes.SPORE_BLOSSOM_AIR, 1.118093334F))
                     .build()
             )
@@ -536,5 +544,19 @@ public class Helpers {
         float $$1 = temperature / 3.0F;
         $$1 = Mth.clamp($$1, -1.0F, 1.0F);
         return Mth.hsvToRgb(0.62222224F - $$1 * 0.05F, 0.5F + $$1 * 0.1F, 1.0F);
+    }
+
+    public static void throwOrAddItem(Player player, ItemStack newItem){
+        var isValidSlot = player.getInventory().getFreeSlot() != -1;
+        if(isValidSlot) player.addItem(newItem); else throwNewItem(player, newItem);
+    }
+
+    public static void throwNewItem(LivingEntity livingEntity, ItemStack itemStack){
+        var offsetX = -Math.sin(Math.toRadians(livingEntity.yRotO)) * 2;
+        var offsetZ = Math.cos(Math.toRadians(livingEntity.yRotO)) * 2;
+        var spawnX = livingEntity.getX() + offsetX;
+        var spawnY = livingEntity.getY() + livingEntity.getEyeHeight() -0.7 ; // No vertical offset
+        var spawnZ = livingEntity.getZ() + offsetZ;
+        BehaviorUtils.throwItem(livingEntity, itemStack, new Vec3(spawnX, spawnY, spawnZ));
     }
 }

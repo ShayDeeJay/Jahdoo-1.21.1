@@ -17,7 +17,7 @@ import java.util.Objects;
 
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.common.items.wand.WandItemHelper.canOffHand;
+import static org.jahdoo.common.items.caster_item.CasterItemHelper.canOffHand;
 import static org.jahdoo.common.registers.mod.ElementReg.fromId;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
 

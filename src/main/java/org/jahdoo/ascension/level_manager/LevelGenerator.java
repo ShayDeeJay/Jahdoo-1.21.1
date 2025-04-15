@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.portal.DimensionTransition;
 import org.jahdoo.ascension.attachments.InstanceData;
@@ -22,6 +21,7 @@ import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
 import static org.jahdoo.ascension.level_manager.StructureManager.generateStructure;
 import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.common.registers.DamageTypeReg.BIOME_SOURCE;
 
 public class LevelGenerator {
 
@@ -56,8 +56,8 @@ public class LevelGenerator {
         var builder = new CustomLevelBuilder()
             .timeOfDay(18000)
             .dimensionType(BuiltinDimensionTypes.OVERWORLD)
-//            .chunkGenerator(new VoidChunkGenerator(serverLevel.getServer(), BIOME_SOURCE))
-            .chunkGenerator(new VoidChunkGenerator(serverLevel.getServer(), Biomes.THE_VOID))
+            .chunkGenerator(new VoidChunkGenerator(serverLevel.getServer(), BIOME_SOURCE))
+//            .chunkGenerator(new VoidChunkGenerator(serverLevel.getServer(), Biomes.THE_VOID))
             .dimensionKey(res(key == null ? UUID.randomUUID().toString() : key))
             .difficulty(
                 difficulty -> {

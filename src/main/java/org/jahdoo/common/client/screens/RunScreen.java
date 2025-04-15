@@ -30,9 +30,9 @@ public class RunScreen extends AbstractPanableScreen {
     @Override
     protected void renderWithScale(GuiGraphics graphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
         var withPanX =  (centerX + this.panX);
-        var withPanY =  (14 + this.panY);
+        var withPanY =  (this.panY);
 
-        playerLevel(graphics, getMinecraft(), withPanX - 86, withPanY + 72, uiColour());
+        playerLevel(graphics, getMinecraft(), withPanX - 86, withPanY + (double) this.height / 2, uiColour());
     }
 
 }

@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.AbstractBlockAbility;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractTankUser;
@@ -135,7 +135,7 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
     @Override
     public int setCraftingCost() {
         if(holder == null) return -1;
-        return (int) CastingData.getSpecificValue(holder, AbilityBuilder.MANA_COST);
+        return (int) CasterData.getSpecificValue(holder, AbilityBuilder.MANA_COST);
     }
 
     private void positionalParticles(Level level, int positions, double radius) {

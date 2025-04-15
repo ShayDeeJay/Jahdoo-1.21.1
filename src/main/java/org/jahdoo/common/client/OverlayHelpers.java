@@ -60,9 +60,9 @@ public class OverlayHelpers {
             if (syncableAttribute.getAttribute().value().getDescriptionId().contains(filterType.toLowerCase())) {
                 if(modName.equals(getName.toLowerCase())){
                     var text = syncableAttribute.getAttribute().value().getDescriptionId();
-                    var prefix = withStyleComponentTrans(text, OFF_WHITE);
+                    var prefix = withStyleComponentTrans(text, SUB_HEADER_COLOUR);
                     var withoutType = prefix.getString().replace(filterType + " ", "");
-                    var prefix2 = withStyleComponentTrans(withoutType, OFF_WHITE);
+                    var prefix2 = withStyleComponentTrans(withoutType, SUB_HEADER_COLOUR);
                     var value = syncableAttribute.getValue();
                     var readableValues = roundNonWholeString(singleFormattedDouble(value));
                     var suffix = withStyleComponent(" " + readableValues, value > 0 ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED);
@@ -110,7 +110,7 @@ public class OverlayHelpers {
 
         for (var syncableAttribute : attributes) {
             var text = syncableAttribute.getAttribute().value().getDescriptionId();
-            var prefix = withStyleComponentTrans(text, OFF_WHITE);
+            var prefix = withStyleComponentTrans(text, SUB_HEADER_COLOUR);
             var value = syncableAttribute.getValue();
             var readableValues = roundNonWholeString(singleFormattedDouble(value));
             var suffix = withStyleComponent(" " + readableValues, value > 0 ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED);
@@ -186,5 +186,6 @@ public class OverlayHelpers {
             index--;
         }
     }
+
 
 }

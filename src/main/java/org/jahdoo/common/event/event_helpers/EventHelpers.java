@@ -2,9 +2,12 @@ package org.jahdoo.common.event.event_helpers;
 
 import com.mojang.math.Axis;
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -28,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -41,12 +45,13 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.ascension.ability.abilities_utility.block_placer.BlockPlacerAbility;
 import org.jahdoo.ascension.ability.abilities_utility.wall_placer.WallPlacerAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.attachments.RunData;
 import org.jahdoo.ascension.trading_post.RewardLootTables;
@@ -61,7 +66,10 @@ import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
-import org.jahdoo.common.items.wand.WandItem;
+import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.networking.client2server.ChaosCubeC2SP;
+import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
+import org.jahdoo.common.networking.client2server.UseAbilityC2SP;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.InstanceSyncS2CP;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
@@ -74,19 +82,23 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.ArrayList;
 
+import static com.mojang.blaze3d.platform.InputConstants.*;
 import static java.util.Objects.requireNonNull;
+import static net.minecraft.client.Minecraft.getInstance;
 import static net.minecraft.sounds.SoundSource.PLAYERS;
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
+import static org.jahdoo.ascension.attachments.ChaosCubeData.getRelativePosition;
+import static org.jahdoo.ascension.attachments.ChaosCubeData.updateAll;
 import static org.jahdoo.ascension.attachments.RunData.incrementKilledMobsExp;
 import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedArmor;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 import static org.jahdoo.common.block.loot_chest.LootChestBlock.lootsplosian;
-import static org.jahdoo.common.items.wand.WandItemHelper.storeBlockType;
+import static org.jahdoo.common.items.caster_item.CasterItemHelper.storeBlockType;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttachmentReg.*;
@@ -147,7 +159,7 @@ public class EventHelpers {
         if(player != null){
             var isAllowed = !getBlock.is(ALLOWED_BLOCK_INTERACTIONS);
             var isShift = !player.isShiftKeyDown();
-            var isWand = item instanceof WandItem;
+            var isWand = item instanceof CasterItem;
 
             if (isWand && isShift && isAllowed) {
                 event.cancelWithResult(SKIP_DEFAULT_BLOCK_INTERACTION);
@@ -219,9 +231,9 @@ public class EventHelpers {
     }
 
     public static void saveBlockType(PlayerInteractEvent.LeftClickBlock event, ItemStack item, BlockState blockState, BlockPos pos) {
-        if(event.getItemStack().getItem() instanceof WandItem){
+        if(event.getItemStack().getItem() instanceof CasterItem){
             if(event.getEntity().isShiftKeyDown()){
-                var name = CastingData.selectedAbility(event.getEntity());
+                var name = CasterData.selectedAbility(event.getEntity());
                 var wallPlacer = WallPlacerAbility.abilityId.getPath().intern();
                 var blockPlacer = BlockPlacerAbility.abilityId.getPath().intern();
 
@@ -234,7 +246,7 @@ public class EventHelpers {
     }
 
     public static void setChaosCubeAbility(PlayerInteractEvent.LeftClickBlock event, Level level, BlockPos pos, ItemStack item) {
-        if(level.getBlockEntity(pos) instanceof ChaosCubeEntity entity && item.getItem() instanceof WandItem){
+        if(level.getBlockEntity(pos) instanceof ChaosCubeEntity entity && item.getItem() instanceof CasterItem){
             var player = event.getEntity();
             var casterData = player.getData(AttachmentReg.CASTER_DATA.get());
             var ability = AbilityReg.getFirstSpellByTypeId(casterData.getSelectedAbility());
@@ -243,7 +255,7 @@ public class EventHelpers {
                 var element = ElementReg.utility();
                 if (ability.get().getElemenType() == element) {
                     event.setCanceled(true);
-                    var holder = CastingData.entityHolderWithSelected(player);
+                    var holder = CasterData.entityHolderWithSelected(player);
                     if (holder != AbilityHolder.DEFAULT) {
                         entity.setHolder(holder);
 
@@ -607,5 +619,69 @@ public class EventHelpers {
                 }
             }
         }
+    }
+
+    public static void selectAbilitySlot(int keyNum){
+        var player = Minecraft.getInstance().player;
+        if(player == null) return;
+
+        var casterData = player.getData(AttachmentReg.CASTER_DATA.get());
+        var getAbility = casterData.abilitySlots.get(keyNum - 1);
+        var b = withStyleComponent(String.valueOf(keyNum), ColourStore.PERK_GREEN);
+        var a = withStyleComponentTrans("abilitySelector.jahdoo.non_assigned", ColourStore.SUB_HEADER_COLOUR, b);
+
+        if (!getAbility.isEmpty()) {
+            casterData.setSelectedAbility(getAbility);
+            PacketDistributor.sendToServer(new SelectAbilityC2SP(getAbility));
+            PacketDistributor.sendToServer(new UseAbilityC2SP());
+        } else player.displayClientMessage(a, true);
+    }
+
+    public static void copyPasteBlockProperties(Player player) {
+        var pick = player.pick(5, 1, false);
+
+        if(pick.getType() == HitResult.Type.MISS) return;
+        if(!(pick instanceof BlockHitResult blockHitResult)) return;
+
+        var be = player.level().getBlockEntity(blockHitResult.getBlockPos());
+
+        if(!(be instanceof ChaosCubeEntity modEntity)) return;
+        if(!(player instanceof LocalPlayer)) return;
+
+        var window = getInstance().getWindow().getWindow();
+        var keyDownCtrl = isKeyDown(window, KEY_LCONTROL);
+        var keyDownC = isKeyDown(window, KEY_C);
+        var keyDownV = isKeyDown(window, KEY_V);
+
+        if(keyDownC && keyDownCtrl) {
+            if(modEntity.hasData(MODULAR_CHAOS_CUBE)){
+                var data = modEntity.getData(MODULAR_CHAOS_CUBE);
+                player.setData(MODULAR_CHAOS_CUBE, data);
+                player.displayClientMessage(Component.literal("Copied!"), true);
+            } else {
+                player.displayClientMessage(Component.literal("No data to copy!"), true);
+            }
+        };
+
+        if(keyDownV && keyDownCtrl) {
+            if(player.hasData(MODULAR_CHAOS_CUBE)){
+                var chaosCubeProperties = player.getData(MODULAR_CHAOS_CUBE);
+                var action = chaosCubeProperties.getDirection(chaosCubeProperties.action());
+                var input = chaosCubeProperties.getDirection(chaosCubeProperties.input());
+                var output = chaosCubeProperties.getDirection(chaosCubeProperties.output());
+
+                var actionNew = getRelativePosition(action, modEntity.getBlockPos());
+                var inputNew = getRelativePosition(input, modEntity.getBlockPos());
+                var outputNew = getRelativePosition(output, modEntity.getBlockPos());
+                var update = updateAll(actionNew, inputNew, outputNew, chaosCubeProperties.active(), chaosCubeProperties.speed(), modEntity.getBlockPos(), chaosCubeProperties.chained());
+
+                PacketDistributor.sendToServer(new ChaosCubeC2SP(modEntity.getBlockPos(), update));
+                modEntity.setData(MODULAR_CHAOS_CUBE, update);
+                modEntity.setChanged();
+                player.displayClientMessage(Component.literal("Pasted!"), true);
+            } else {
+                player.displayClientMessage(Component.literal("Nothing to paste!"), true);
+            }
+        };
     }
 }

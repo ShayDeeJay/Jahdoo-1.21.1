@@ -9,11 +9,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.items.wand.WandItem;
+import org.jahdoo.common.items.caster_item.CasterItem;
 
 import static net.minecraft.world.InteractionHand.MAIN_HAND;
 import static net.minecraft.world.InteractionHand.OFF_HAND;
-import static org.jahdoo.common.items.wand.WandItem.*;
+import static org.jahdoo.common.items.caster_item.elemental_wand.ElementalWand.castAbility;
 
 public class UseAbilityC2SP implements CustomPacketPayload {
 
@@ -35,8 +35,8 @@ public class UseAbilityC2SP implements CustomPacketPayload {
                     var mainHand = serverPlayer.getMainHandItem().getItem();
                     var offHand = serverPlayer.getOffhandItem().getItem();
                     InteractionHand hand = null;
-                    if(mainHand instanceof WandItem) hand = MAIN_HAND;
-                    if(offHand instanceof WandItem) hand = OFF_HAND;
+                    if(mainHand instanceof CasterItem) hand = MAIN_HAND;
+                    if(offHand instanceof CasterItem) hand = OFF_HAND;
                     if(hand != null) castAbility(serverPlayer, hand, ItemStack.EMPTY);
                 }
             }

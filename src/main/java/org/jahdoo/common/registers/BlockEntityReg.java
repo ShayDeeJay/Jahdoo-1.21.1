@@ -8,18 +8,16 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.block.augment_modification_station.AugmentModificationEntity;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
+import org.jahdoo.common.block.dissembler.DisassemblerBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
-import org.jahdoo.common.block.infuser.InfuserBlockEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.block.rune_table.RuneTableEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.block.tank.TankBlockEntity;
-import org.jahdoo.common.block.wand.WandBlockEntity;
 import org.jahdoo.common.block.wand_manager.WandManagerEntity;
 
 import static org.jahdoo.common.registers.BlockReg.*;
@@ -27,9 +25,6 @@ import static org.jahdoo.common.registers.BlockReg.*;
 public class BlockEntityReg {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
         DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, JahdooMod.MOD_ID);
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WandBlockEntity>> WAND_BE =
-        registerBlockEntity("wand_be", WandBlockEntity::new, WAND);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TankBlockEntity>> TANK_BE =
         registerBlockEntity("tank_be", TankBlockEntity::new, TANK);
@@ -43,8 +38,8 @@ public class BlockEntityReg {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnchantedBlockEntity>> ENCHANTED_BE =
         registerBlockEntity("enchanted_be", EnchantedBlockEntity::new, ENCHANTED_BLOCK);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<InfuserBlockEntity>> INFUSER_BE =
-        registerBlockEntity("infuser_be", InfuserBlockEntity::new, INFUSER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DisassemblerBlockEntity>> INFUSER_BE =
+        registerBlockEntity("dissembler_be", DisassemblerBlockEntity::new, INFUSER);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AltarBlockEntity>> CHALLENGE_ALTAR_BE =
         registerBlockEntity("challenge_altar_be", AltarBlockEntity::new, CHALLENGE_ALTAR);
@@ -63,9 +58,6 @@ public class BlockEntityReg {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WandManagerEntity>> WAND_MANAGER_TABLE_BE =
         registerBlockEntity("wand_manager_table_be", WandManagerEntity::new, WAND_MANAGER_TABLE);
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AugmentModificationEntity>> AUGMENT_MODIFICATION_STATION_BE =
-        registerBlockEntity("augment_modification_station_be", AugmentModificationEntity::new, AUGMENT_MODIFICATION_STATION);
 
     public static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> registerBlockEntity(
         String name,

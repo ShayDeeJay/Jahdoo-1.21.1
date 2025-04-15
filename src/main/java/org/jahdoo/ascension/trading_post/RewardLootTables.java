@@ -16,17 +16,16 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.LocalLootBeamData;
-import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.items.magnet.Magnet;
 import org.jahdoo.common.items.magnet.MagnetData;
 import org.jahdoo.common.items.pendent.Pendent;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.tome.TomeOfUnity;
-import org.jahdoo.common.items.wand.WandItem;
+import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.registers.BlockReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 
@@ -93,9 +92,6 @@ public class RewardLootTables {
     
     public static final LootPoolSingletonContainer.Builder<?> ADVANCED_AUGMENT_CORE_BUILDER = 
         lootTableItem(ItemReg.ADVANCED_AUGMENT_CORE.get());
-    
-    public static final LootPoolSingletonContainer.Builder<?> AUGMENT_ITEM_BUILDER = 
-        lootTableItem(ItemReg.AUGMENT.get());
     
     public static final LootPoolSingletonContainer.Builder<?> TOME_OF_UNITY_BUILDER =
         lootTableItem(ItemReg.TOME_OF_UNITY.get());
@@ -286,9 +282,8 @@ public class RewardLootTables {
         JahdooRarity runeRarity
     ) {
         switch (itemStack.getItem()){
-            case WandItem ignored -> setGeneratedWand(rarity, itemStack);
+            case CasterItem ignored -> setGeneratedWand(rarity, itemStack);
             case TomeOfUnity ignored -> createTomeAttributes(rarity, itemStack);
-            case Augment ignored -> setGeneratedAugment(itemStack, rarity);
             case RuneItem ignored -> generateRandomTypAttribute(itemStack, runeRarity);
             case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem, isSpecial);
             case SwordItem ignored -> enchantSword(serverLevel, itemStack, isSpecial);
@@ -329,7 +324,6 @@ public class RewardLootTables {
 
         return builder
             .add(RUNE.setWeight(15))
-            .add(AUGMENT_ITEM_BUILDER.setWeight(5))
             .add(getRandomWand().setWeight(2))
             .add(MAGNET.setWeight(5))
             .add(NETHERITE_SWORD_BUILDER.setWeight(2))

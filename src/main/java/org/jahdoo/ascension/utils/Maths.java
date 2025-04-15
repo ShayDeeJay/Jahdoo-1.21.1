@@ -7,6 +7,8 @@ import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class Maths {
 
+    public static final DecimalFormat FORMAT = new DecimalFormat("#.##");
+
     public static double getPercentage(double multiplier, double baseValue){
         return (multiplier * baseValue) / 100;
     }
@@ -16,8 +18,7 @@ public class Maths {
     }
 
     public static float getFormattedFloat(float value){
-        var decimalFormat = new DecimalFormat("#.##");
-        return  Float.parseFloat(decimalFormat.format(value));
+        return  Float.parseFloat(FORMAT.format(value));
     }
 
     public static double singleFormattedDouble(double value){
@@ -26,8 +27,7 @@ public class Maths {
     }
 
     public static double doubleFormattedDouble(double value){
-        var decimalFormat = new DecimalFormat("#.##");
-        return roundNonWholeDouble(Double.parseDouble(decimalFormat.format(value)));
+        return roundNonWholeDouble(Double.parseDouble(FORMAT.format(value)));
     }
 
     public static double tripleFormattedDouble(double value){
@@ -79,6 +79,12 @@ public class Maths {
             // In case of unexpected parsing errors
             return number;
         }
+    }
+
+    public static double toPercent(double max) {
+        if (max == 0) return 100.0;
+        if (max <= 0) return 0;
+        return Double.parseDouble(FORMAT.format((1.0 / max) * 100));
     }
 
     public static String ticksToTime(String current) {

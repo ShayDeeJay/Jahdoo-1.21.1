@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,10 +37,10 @@ public abstract class PlayerSpinAttackMixin extends LivingEntity {
     )
     private void attackEvent(Entity target, CallbackInfo ci){
         if(this.isAutoSpinAttack()){
-            var holder = CastingData.entityHolderWithSelected(this);
-            var chance = CastingData.getSpecificValue(holder, EFFECT_CHANCE);
-            var duration = CastingData.getSpecificValue(holder, EFFECT_DURATION);
-            var strength = CastingData.getSpecificValue(holder, EFFECT_STRENGTH);
+            var holder = CasterData.entityHolderWithSelected(this);
+            var chance = CasterData.getSpecificValue(holder, EFFECT_CHANCE);
+            var duration = CasterData.getSpecificValue(holder, EFFECT_DURATION);
+            var strength = CasterData.getSpecificValue(holder, EFFECT_STRENGTH);
             if (target instanceof LivingEntity livingEntity) {
                 if (Random.nextInt(0, (int) chance) == 0) {
                     var effect = new JahdooMobEffect(FROST_EFFECT, (int) duration, (int) strength);

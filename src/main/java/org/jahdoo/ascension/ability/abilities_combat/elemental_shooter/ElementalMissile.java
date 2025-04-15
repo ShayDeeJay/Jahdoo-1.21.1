@@ -4,7 +4,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -59,7 +59,7 @@ abstract public class ElementalMissile extends Ability {
     }
 
     protected double getTag(Player player, String name){
-        var holder = CastingData.entityHolderWithSelected(player);
+        var holder = CasterData.entityHolderWithSelected(player);
         return holder.data().abilityProperties().get(name).setValue();
     }
 

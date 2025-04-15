@@ -6,19 +6,19 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import org.jahdoo.ascension.attachments.CastingData;
-import org.jahdoo.common.client.screens.AbilityWheelScreen;
-import org.jahdoo.common.items.wand.WandItem;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.utils.Configuration;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.client.screens.AbilityWheelScreen;
+import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.registers.AttachmentReg;
 
 import java.util.List;
 import java.util.Objects;
 
 import static net.neoforged.neoforge.client.gui.VanillaGuiLayers.*;
 import static org.jahdoo.ascension.ability.AbilityBuilder.CASTING_DISTANCE;
-import static org.jahdoo.ascension.ability.abilities_combat.arcane_shift.ArcaneShiftAbility.*;
-import static org.jahdoo.common.registers.ComponentReg.WAND_DATA;
+import static org.jahdoo.ascension.ability.abilities_combat.arcane_shift.ArcaneShiftAbility.abilityId;
 
 public class OverlayEvent {
 
@@ -52,12 +52,11 @@ public class OverlayEvent {
         var player = Minecraft.getInstance().player;
         if(player == null) return;
         var stack = Helpers.getUsedItem(player);
-        var getSelectedAbility = stack.get(WAND_DATA);
-        if(getSelectedAbility == null) return;
-        if(Objects.equals(getSelectedAbility.selectedAbility(), abilityId.getPath().intern())){
-            var pickDistance = CastingData.getSpecificValue(player, CASTING_DISTANCE);
+        var getSelectedAbility = player.getData(AttachmentReg.CASTER_DATA.get());
+        if(Objects.equals(getSelectedAbility.getSelectedAbility(), abilityId.getPath().intern())){
+            var pickDistance = CasterData.getSpecificValue(player, CASTING_DISTANCE);
             var pick = player.pick(pickDistance, 1, false);
-            if (stack.getItem() instanceof WandItem) {
+            if (stack.getItem() instanceof CasterItem) {
                 if (pick.getType() != HitResult.Type.MISS) {
                     if (pick instanceof BlockHitResult && event.getName().equals(VanillaGuiLayers.CROSSHAIR)) {
                         event.setCanceled(true);

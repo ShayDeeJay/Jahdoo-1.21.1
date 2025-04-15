@@ -21,7 +21,7 @@ public class PerkTableRenderer implements BlockEntityRenderer<PerkTableEntity>{
     public void render(PerkTableEntity entity, float partialTick, PoseStack stack, MultiBufferSource source, int packedLight, int packed) {
         var mc = getInstance();
         var itemRenderer = mc.getItemRenderer();
-        var state = entity.getBlockState().getValue(TEXTURE);
+        int state = entity.getBlockState().getValue(TEXTURE);
         var render = new ItemStack(state == 0 ? HEALTH_CONTAINER : state == 1 ? MANA_CONTAINER : BOON_CONTAINER);
         var rotate = entity.counter + partialTick;
         var animate = rotate / 12;

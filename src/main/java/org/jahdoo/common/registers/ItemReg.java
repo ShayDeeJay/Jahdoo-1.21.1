@@ -3,7 +3,6 @@ package org.jahdoo.common.registers;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
-
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -13,18 +12,19 @@ import org.jahdoo.common.items.armor.KnightKingArmor;
 import org.jahdoo.common.items.armor.mage.BattleMageArmor;
 import org.jahdoo.common.items.armor.mage.MageArmor;
 import org.jahdoo.common.items.armor.wizard.WizardArmor;
-import org.jahdoo.common.items.augments.Augment;
 import org.jahdoo.common.items.block_items.ChallengeAltarBlockItem;
+import org.jahdoo.common.items.block_items.InfuserBlockItem;
 import org.jahdoo.common.items.block_items.LootChestBlockItem;
+import org.jahdoo.common.items.block_items.ModularChaosCubeItem;
 import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
 import org.jahdoo.common.items.magnet.Magnet;
 import org.jahdoo.common.items.pendent.Pendent;
 import org.jahdoo.common.items.runes.RuneItem;
-import org.jahdoo.common.items.block_items.ModularChaosCubeItem;
-import org.jahdoo.common.items.block_items.InfuserBlockItem;
 import org.jahdoo.common.items.tome.TomeOfUnity;
-import org.jahdoo.common.items.RecallToken;
-import org.jahdoo.common.items.wand.subWands.*;
+import org.jahdoo.common.items.caster_item.elemental_wand.FrostWand;
+import org.jahdoo.common.items.caster_item.elemental_wand.InfernoWand;
+import org.jahdoo.common.items.caster_item.elemental_wand.MysticWand;
+import org.jahdoo.common.items.caster_item.elemental_wand.VitalityWand;
 
 import java.util.function.Supplier;
 
@@ -73,9 +73,6 @@ public class ItemReg {
 
     public static final DeferredHolder<Item, Item> AUGMENT_HYPER_CORE =
         complexItem("augment_hyper_core", CoreItem::new);
-
-    public static final DeferredHolder<Item, Item> AUGMENT =
-        complexItem("unidentified_augment", Augment::new);
 
     public static final DeferredHolder<Item, Item> TOME_OF_UNITY =
         complexItem("tome_of_unity", TomeOfUnity::new);

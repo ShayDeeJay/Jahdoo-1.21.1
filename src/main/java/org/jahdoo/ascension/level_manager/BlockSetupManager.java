@@ -33,8 +33,7 @@ import static org.jahdoo.common.block.loot_chest.LootChestBlock.FACING;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockReg.*;
-import static org.jahdoo.common.registers.ItemReg.AUGMENT;
-import static org.jahdoo.common.registers.ItemReg.RUNE;
+import static org.jahdoo.common.registers.ItemReg.*;
 
 public class BlockSetupManager {
 
@@ -129,8 +128,6 @@ public class BlockSetupManager {
         if(white){
             level.setBlockAndUpdate(pos, RUNE_TABLE.get().defaultBlockState().setValue(FACING, direction.getCounterClockWise()));
         } else if (green){
-            level.setBlockAndUpdate(pos, AUGMENT_MODIFICATION_STATION.get().defaultBlockState().setValue(FACING, direction.getClockWise()));
-        } else if (blue) {
             level.setBlockAndUpdate(pos, WAND_MANAGER_TABLE.get().defaultBlockState());
         }
     }
@@ -192,7 +189,7 @@ public class BlockSetupManager {
             level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, 0));
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
-                entity.setItem(new ItemStack(AUGMENT));
+                entity.setItem(new ItemStack(WAND_ITEM_FROST));
                 entity.setCost(setGoldCost(20));
             }
         }

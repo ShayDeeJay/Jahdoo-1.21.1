@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
@@ -72,7 +72,7 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
     }
 
     public AbilityHolder armageddonFireballModifiers() {
-        var damageA = CastingData.getSpecificValue(this.cloud.getAbilityHolder(), DAMAGE);
+        var damageA = CasterData.getSpecificValue(this.cloud.getAbilityHolder(), DAMAGE);
 
         return new AbilityBuilder(null, FireballAbility.abilityId.getPath().intern())
             .setDamageWithValue(0,0, damageA)

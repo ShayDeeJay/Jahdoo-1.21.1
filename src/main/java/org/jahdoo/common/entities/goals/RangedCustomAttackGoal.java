@@ -6,7 +6,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
-import org.jahdoo.common.items.wand.WandItem;
+import org.jahdoo.common.items.caster_item.CasterItem;
 
 import java.util.EnumSet;
 
@@ -35,11 +35,11 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
     }
 
     public boolean canUse() {
-        return this.mob.getTarget() != null && this.isHoldingWand();
+        return this.mob.getTarget() != null && this.isHoldingCasterItem();
     }
 
-    protected boolean isHoldingWand() {
-        return this.mob.isHolding(is -> is.getItem() instanceof WandItem);
+    protected boolean isHoldingCasterItem() {
+        return this.mob.isHolding(is -> is.getItem() instanceof CasterItem);
     }
 
     public boolean requiresUpdateEveryTick() {
@@ -47,7 +47,7 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
     }
 
     public boolean canContinueToUse() {
-        return (this.canUse() || !this.mob.getNavigation().isDone()) && this.isHoldingWand() || this.mob instanceof VoidSpider;
+        return (this.canUse() || !this.mob.getNavigation().isDone()) && this.isHoldingCasterItem() || this.mob instanceof VoidSpider;
     }
 
     public void start() {
@@ -123,7 +123,7 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
                     }
                 }
             } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
-                this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof WandItem));
+                this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof CasterItem));
             }
 
         }

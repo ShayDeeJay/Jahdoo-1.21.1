@@ -20,12 +20,12 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jahdoo.ascension.ability.Ability;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.items.augments.AugmentItemHelper;
+import org.jahdoo.ascension.ability.AbilityComponentHelper;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
@@ -42,7 +42,7 @@ import static java.lang.String.valueOf;
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
 import static net.minecraft.network.chat.Component.literal;
 import static org.jahdoo.ascension.ability.AbilityBuilder.SET_ELEMENT_TYPE;
-import static org.jahdoo.ascension.attachments.CastingData.getXpNeededForNextLevel;
+import static org.jahdoo.ascension.attachments.CasterData.getXpNeededForNextLevel;
 import static org.jahdoo.ascension.utils.ColourStore.BORDER_COLOUR;
 import static org.jahdoo.ascension.utils.ColourStore.BOX_COLOUR;
 import static org.jahdoo.common.client.Icons.*;
@@ -90,7 +90,7 @@ public class SharedUI {
     public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, Ability ability, AbilityHolder holder, Font font, Player player, ResourceLocation slot) {
         var yOff = 102;
         int xOff = width/2 - 55;
-        var components = AugmentItemHelper.getAllAbilityModifiers(ability, holder, true, false, player);
+        var components = AbilityComponentHelper.getAllAbilityModifiers(ability, holder, true, false, player);
         guiGraphics.drawString(font, components.getFirst(), xOff, (height/2 - yOff), 0, true);
         guiGraphics.drawString(font, components.get(1), xOff, (height/2 - (yOff - 10)), 0, true);
         abilityIcon(guiGraphics, ability.getAbilityIconLocation(), width - 155, height - 180, 109, 30, 8, slot);
@@ -147,7 +147,7 @@ public class SharedUI {
         int xpNeeded = getXpNeededForNextLevel(customLevel);
         if (xpNeeded > 0) {
             int barWidth = 82;
-            int k = (int)(CastingData.getExperienceProgress(player) * (float)(barWidth + 1));
+            int k = (int)(CasterData.getExperienceProgress(player) * (float)(barWidth + 1));
             guiGraphics.blit(expBackground, x, l, 0, 0, barWidth, 5, barWidth, 5);
             if (k > 0) guiGraphics.blit(expProgress, x, l, 0, 0, k, 5, barWidth, 5);
         }

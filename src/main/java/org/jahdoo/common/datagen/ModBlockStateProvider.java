@@ -87,15 +87,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
             new UncheckedModelFile(modLoc("block/nexite_powder_block"))
         );
 
-        simpleBlock(
-            WAND.get(),
-            new UncheckedModelFile(modLoc("block/wand_mystic"))
-        );
-
-        simpleBlockWithItem(
-            AUGMENT_MODIFICATION_STATION.get(),
-            new UncheckedModelFile(modLoc("block/augment_modification_station"))
-        );
     }
 
     private void blockWithItem(DeferredHolder<Block, Block> blockRegistryObject) {

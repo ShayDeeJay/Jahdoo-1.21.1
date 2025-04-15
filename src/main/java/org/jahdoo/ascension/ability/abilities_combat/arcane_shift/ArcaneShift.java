@@ -8,7 +8,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.AbstractAbility;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
@@ -32,7 +32,7 @@ public class ArcaneShift extends AbstractAbility {
 
     public ArcaneShift(Player player) {
         this.player = player;
-        this.abilityHolder = CastingData.entityHolderWithSelected(player);
+        this.abilityHolder = CasterData.entityHolderWithSelected(player);
     }
 
     @Override

@@ -10,19 +10,17 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.TrialPortalBlock;
-import org.jahdoo.common.block.augment_modification_station.AugmentModificationBlock;
 import org.jahdoo.common.block.altar.AltarBlock;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeBlock;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlock;
 import org.jahdoo.common.block.lock.LockBlock;
 import org.jahdoo.common.block.loot_chest.LootChestBlock;
-import org.jahdoo.common.block.infuser.InfuserBlock;
+import org.jahdoo.common.block.dissembler.DisassemblerBlock;
 import org.jahdoo.common.block.light_block.LightBlock;
 import org.jahdoo.common.block.perk_table.PerkTable;
 import org.jahdoo.common.block.rune_table.RuneTable;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.common.block.tank.TankBlock;
-import org.jahdoo.common.block.wand.WandBlock;
 import org.jahdoo.common.block.wand_manager.WandManagerBlock;
 
 import java.util.function.Supplier;
@@ -45,19 +43,13 @@ public class BlockReg {
         registerBlock("loot_chest", LootChestBlock::new);
 
     public static DeferredHolder<Block, Block> INFUSER =
-        registerBlock("infuser", InfuserBlock::new);
+        registerBlock("dissembler", DisassemblerBlock::new);
 
     public static DeferredHolder<Block, Block> MODULAR_CHAOS_CUBE =
         registerBlock("modular_chaos_cube", ChaosCubeBlock::new);
 
-    public static DeferredHolder<Block, Block> WAND =
-        registerBlock("wand_mystic", WandBlock::new);
-
     public static DeferredHolder<Block, Block> WAND_MANAGER_TABLE =
         registerBlockWithItem("wand_manager_table", WandManagerBlock::new);
-
-    public static DeferredHolder<Block, Block> AUGMENT_MODIFICATION_STATION =
-        registerBlockWithItem("augment_modification_station", AugmentModificationBlock::new);
 
     public static DeferredHolder<Block, Block> ENCHANTED_BLOCK =
         registerBlockWithItem("enchanted_block", EnchantedBlock::new);

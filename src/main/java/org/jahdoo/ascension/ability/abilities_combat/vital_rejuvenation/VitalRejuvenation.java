@@ -9,11 +9,11 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.attachments.AbstractHoldUseAttachment;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.items.wand.CastHelper;
+import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -26,7 +26,7 @@ import static org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.V
 import static org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility.MAX_ABSORPTION;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.addTransientAttribute;
-import static org.jahdoo.common.items.wand.CastHelper.validManaAndCooldown;
+import static org.jahdoo.common.items.caster_item.CastHelper.validManaAndCooldown;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttachmentReg.VITAL_REJUVENATION;
@@ -54,7 +54,7 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     }
 
     private void successfulCast(Player player, AbilityHolder wandAbilityHolder) {
-        var mana = CastingData.getSpecificValue(wandAbilityHolder, MANA_COST);
+        var mana = CasterData.getSpecificValue(wandAbilityHolder, MANA_COST);
         CastHelper.chargeMana(name, mana, player);
         applyHeal(player, wandAbilityHolder);
         successfulCastAnimation(player);
@@ -62,7 +62,7 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     }
 
     private void applyHeal(Player player, AbilityHolder abilityBuilder) {
-        var maxAbsorption = CastingData.getSpecificValue(abilityBuilder, MAX_ABSORPTION);
+        var maxAbsorption = CasterData.getSpecificValue(abilityBuilder, MAX_ABSORPTION);
         var foodProperties = new FoodProperties(2, 2, true, 0, Optional.empty(), Collections.emptyList());
         player.heal(1);
         addTransientAttribute(player, maxAbsorption * 2, "absorption", Attributes.MAX_ABSORPTION);
@@ -102,9 +102,9 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     public void onTickMethod(Player player) {
         super.onTickMethod(player);
         if(this.startedUsing && validManaAndCooldown(player)){
-            var abilityHolder = CastingData.entityHolderWithSelected(player);
+            var abilityHolder = CasterData.entityHolderWithSelected(player);
             if(abilityHolder == null) return;
-            var castDelay = CastingData.getSpecificValue(abilityHolder, CAST_DELAY);
+            var castDelay = CasterData.getSpecificValue(abilityHolder, CAST_DELAY);
 
 
             if(ticksUsing == 0) {

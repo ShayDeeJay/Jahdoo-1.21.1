@@ -120,9 +120,10 @@ public class VeinMiner extends AbstractUtilityProjectile {
         if (found.intValue() > limit || checked.contains(pos)) {
             return;
         }
+
         checked.add(pos);
 
-        BlockState state = access.getBlockState(pos);
+        var state = access.getBlockState(pos);
         if (!state.getBlock().equals(target)) {
             return;
         }

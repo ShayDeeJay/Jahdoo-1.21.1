@@ -18,8 +18,8 @@ import org.jahdoo.common.client.slots.InventorySlots;
 import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
-import org.jahdoo.common.items.wand.WandItem;
-import org.jahdoo.common.items.wand.WandItemHelper;
+import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.items.caster_item.CasterItemHelper;
 import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
 import org.jahdoo.common.networking.client2server.PlayerExpC2SP;
 import org.jetbrains.annotations.NotNull;
@@ -202,8 +202,8 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     }
 
     private void remainingPotential(GuiGraphics guiGraphics, int shiftX, AtomicInteger spacer, int shiftY) {
-        if (getWand().getItem() instanceof WandItem) {
-            var itemModifiers = WandItemHelper.getItemModifiers(getWand(), getMinecraft().level);
+        if (getWand().getItem() instanceof CasterItem) {
+            var itemModifiers = CasterItemHelper.getItemModifiers(getWand(), getMinecraft().level);
             var potentialList = filterList(itemModifiers, "Potential");
             var sharedX = this.width / 2 - 30 + shiftX;
             for (Component component : potentialList) {
@@ -349,8 +349,8 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         int startX,
         int startY
     ) {
-        if(getWand().getItem() instanceof WandItem){
-            var itemModifiers = WandItemHelper.getItemModifiers(getWand(), getMinecraft().level);
+        if(getWand().getItem() instanceof CasterItem){
+            var itemModifiers = CasterItemHelper.getItemModifiers(getWand(), getMinecraft().level);
             var rarityAndSlots = filterList(itemModifiers, "Rarity", "Slots", "Potential");
             var modifiersAndHeader = filterList(itemModifiers, "%", "Applies");
             var widthHeader = 0;

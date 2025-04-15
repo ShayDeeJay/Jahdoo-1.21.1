@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -76,7 +76,7 @@ public class BurningSkullsAbility extends Ability {
 
     @Override
     public void invokeAbility(Player player) {
-        var projectileCount = CastingData.getSpecificValue(player, ENTITY_MULTIPLIER);
+        var projectileCount = CasterData.getSpecificValue(player, ENTITY_MULTIPLIER);
         var adjustSpread = 1.8 - (projectileCount / 4);
         var getLocalEntities = new ArrayList<>(BurningSkull.getValidTargets(player, player, 10));
         var totalWidth = (projectileCount - 1) * adjustSpread;

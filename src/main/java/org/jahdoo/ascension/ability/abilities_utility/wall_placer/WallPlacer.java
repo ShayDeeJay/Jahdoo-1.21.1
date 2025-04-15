@@ -19,7 +19,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import static org.jahdoo.ascension.ability.AbilityBuilder.OFFSET;
 import static org.jahdoo.ascension.ability.AbilityBuilder.SIZE;
 import static org.jahdoo.ascension.ability.abilities_utility.block_placer.BlockPlacer.removeItemsFromInv;
-import static org.jahdoo.common.items.wand.WandItemHelper.getStoredBlock;
+import static org.jahdoo.common.items.caster_item.CasterItemHelper.getStoredBlock;
 
 public class WallPlacer extends AbstractUtilityProjectile {
 

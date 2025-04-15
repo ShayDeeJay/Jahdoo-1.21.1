@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.items.wand.WandItemHelper;
+import org.jahdoo.common.items.caster_item.CasterItemHelper;
 import org.jahdoo.common.registers.ComponentReg;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -33,7 +33,7 @@ public class Pendent extends Item implements ICurioItem, JahdooItem {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         var data = stack.get(ComponentReg.RUNE_HOLDER);
         if(data != null){
-            WandItemHelper.appendRefinementPotential(tooltipComponents, stack);
+            CasterItemHelper.appendRefinementPotential(tooltipComponents, stack);
         }
     }
 

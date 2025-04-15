@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.IAttachment;
 import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.element.AbstractElement;
@@ -181,8 +181,8 @@ public class NovaSmash implements IAttachment {
         this.highestDelta = Math.max(this.highestDelta, getCurrentDelta);
 
         if (this.canSmash){
-            var getHolder = CastingData.entityHolderWithSelected(player);
-            var getValue = (float) CastingData.getSpecificValue(getHolder, AbilityBuilder.DAMAGE);
+            var getHolder = CasterData.entityHolderWithSelected(player);
+            var getValue = (float) CasterData.getSpecificValue(getHolder, AbilityBuilder.DAMAGE);
             this.getDamage = Helpers.attributeModifierCalculator(player, getValue, false, MAGIC_DAMAGE_MULTIPLIER, MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
             player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
             if(player.onGround()){

@@ -15,6 +15,7 @@ public class LocalLootBeamData {
 
     public static final LootBeamComponent SPECIALLY_ENCHANTED_BOOK = lootBeamWithColour(Color.YELLOW.getRGB());
     public static final LootBeamComponent ENCHANTED_VANILLA_SWORD = lootBeamWithColour(Color.PINK.getRGB());
+    public static final LootBeamComponent COIN = coinLootBeamWithColour(Color.WHITE.getRGB());
 
     private static final LootBeamComponent COMMON_ITEM = rarityLootBeam(COMMON);
     private static final LootBeamComponent RARE_ITEM = rarityLootBeam(RARE);
@@ -22,6 +23,14 @@ public class LocalLootBeamData {
     private static final LootBeamComponent LEGENDARY_ITEM = rarityLootBeam(LEGENDARY);
     private static final LootBeamComponent ETERNAL_ITEM = rarityLootBeam(ETERNAL);
     private static final LootBeamComponent UNIQUE_ITEM = uniqueLootBeam(UNIQUE);
+
+    public static LootBeamComponent coinLootBeamWithColour(int colour){
+        var beamHeight = 0.45F;
+        var beamRadius = 0.2F;
+        var shadowRadius = 0f;
+        var renderDistance = 250.0;
+        return new LootBeamComponent(colour, colour, beamHeight, 0.8F,  0.2F,  false, beamRadius, 0.4F, shadowRadius, true, renderDistance,  false, 20, 0.1, shadowRadius, false);
+    }
 
     public static LootBeamComponent rarityLootBeam(JahdooRarity rarity){
         var beamHeight = 0.5F + ((float) rarity.getId() / 4);

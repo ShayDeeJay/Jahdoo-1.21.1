@@ -5,9 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,29 +16,14 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jahdoo.common.items.augments.AugmentItemHelper;
 import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.Collections;
 import java.util.Optional;
 
-import static net.minecraft.world.entity.EntitySelector.*;
+import static net.minecraft.world.entity.EntitySelector.ENTITY_STILL_ALIVE;
 
 public class BlockInteractionHandler {
-
-    public static boolean removeItemsFromHandToSlot(
-        ItemStackHandler itemStackHandler,
-        int outputSlot,
-        Player player,
-        int itemCount
-    ){
-        var mainHandItems = Helpers.getUsedItem(player);
-        if(mainHandItems.isEmpty()) return false;
-
-        itemStackHandler.setStackInSlot(outputSlot, mainHandItems.copyWithCount(itemCount));
-        /*if(!player.isCreative())*/ mainHandItems.shrink(itemCount);
-        return true;
-    }
 
     public static void swapItemsWithHand(
         ItemStackHandler itemStackHandler,
@@ -54,39 +37,11 @@ public class BlockInteractionHandler {
 
         itemStackHandler.setStackInSlot(outputSlot, playerItem.copyWithCount(count));
         if(playerItem.getCount() > 1){
-            AugmentItemHelper.throwOrAddItem(player, inventoryItem.copyWithCount(count));
+            Helpers.throwOrAddItem(player, inventoryItem.copyWithCount(count));
             playerItem.shrink(1);
         } else {
             player.setItemInHand(hand, inventoryItem.copyWithCount(count));
         }
-    }
-
-    public static boolean stackHandler(
-        ItemStackHandler itemHandler,
-        ItemStack itemStack,
-        Item item,
-        int inputSlotNumber,
-        Player player
-    ) {
-        ItemStack inputSlot = itemHandler.getStackInSlot(inputSlotNumber);
-
-        if (!itemStack.isEmpty() && itemStack.is(item)) {
-            if (inputSlot.isEmpty() || itemStack.is(inputSlot.getItem())) {
-                var remainingSpace = inputSlot.getMaxStackSize() - inputSlot.getCount();
-                if (remainingSpace > 0) {
-                    var amountToAdd = Math.min(remainingSpace, itemStack.getCount());
-                    ItemStack itemStackCopy = itemStack.copyWithCount(amountToAdd);
-
-                    if (!player.getAbilities().instabuild) {
-                        itemStack.shrink(amountToAdd);
-                    }
-
-                    itemHandler.insertItem(inputSlotNumber, itemStackCopy, false);
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public static boolean removeItemsFromSlotToHand(
@@ -112,7 +67,7 @@ public class BlockInteractionHandler {
 
     }
 
-    public static InteractionResult RemoveItemsFromSlotToHand(
+    public static void RemoveItemsFromSlotToHand(
         ItemStackHandler itemStackHandler,
         int outputSlot,
         Player player,
@@ -131,9 +86,7 @@ public class BlockInteractionHandler {
                 itemStackHandler.extractItem(outputSlot, outputSlotTotal.getCount(), false);
                 level.playLocalSound(blockPos, soundEvents, SoundSource.NEUTRAL, volume, pitch, false);
             }
-            return InteractionResult.SUCCESS;
         }
-        return InteractionResult.FAIL;
     }
 
 

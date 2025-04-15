@@ -9,7 +9,7 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.items.wand.CastHelper;
+import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.common.registers.AttachmentReg.NOVA_SMASH;

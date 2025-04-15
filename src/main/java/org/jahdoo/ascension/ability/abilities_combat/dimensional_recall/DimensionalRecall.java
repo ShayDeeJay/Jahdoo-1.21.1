@@ -5,11 +5,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.attachments.AbstractHoldUseAttachment;
-import org.jahdoo.ascension.attachments.CastingData;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.items.wand.CastHelper;
+import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.mod.ElementReg;
@@ -21,7 +21,7 @@ import static org.jahdoo.ascension.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility.CASTING_TIME;
 import static org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility.abilityId;
 import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.common.items.wand.CastHelper.validManaAndCooldown;
+import static org.jahdoo.common.items.caster_item.CastHelper.validManaAndCooldown;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttachmentReg.DIMENSIONAL_RECALL;
@@ -47,8 +47,8 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
         var getCasterData = serverPlayer.getData(CASTER_DATA);
         var getTeleportSound = SoundEvents.CHORUS_FRUIT_TELEPORT;
         var getSuccessSound = SoundEvents.ILLUSIONER_CAST_SPELL;
-        var getManaCost = CastingData.getSpecificValue(abilityHolder, MANA_COST);
-        var getCooldownCost = CastingData.getSpecificValue(abilityHolder, COOLDOWN);
+        var getManaCost = CasterData.getSpecificValue(abilityHolder, MANA_COST);
+        var getCooldownCost = CasterData.getSpecificValue(abilityHolder, COOLDOWN);
         var getLevelDimension = serverPlayer.getServer().getLevel(dimension);
 
         if(getLevelDimension != null){
@@ -67,9 +67,9 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
     @Override
     public void onTickMethod(Player player){
         super.onTickMethod(player);
-        var getHolder = CastingData.entityHolderWithSelected(player);
+        var getHolder = CasterData.entityHolderWithSelected(player);
         getModifierValue(getHolder, abilityId.getPath().intern());
-        var getCastTime = CastingData.getSpecificValue(getHolder, CASTING_TIME);
+        var getCastTime = CasterData.getSpecificValue(getHolder, CASTING_TIME);
         if (!(player instanceof ServerPlayer serverPlayer)) return;
         var pos = serverPlayer.getRespawnPosition();
 

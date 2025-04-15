@@ -41,23 +41,12 @@ public abstract class AbstractInternalContainer extends AbstractContainerMenu {
         this.addPlayerHotbar(inv, heightDiff);
     }
 
-    public AbstractInternalContainer(MenuType<?> menuType, int containerId, Inventory inv, ContainerData data) {
-        super(menuType, containerId);
-        this.blockEntity = null;
-        int heightDiff = 55;
-
-        this.level = inv.player.level();
-        this.addDataSlots(data);
-        this.addPlayerInventory(inv, heightDiff);
-        this.addPlayerHotbar(inv, heightDiff);
-    }
-
     protected abstract int getAllSlots();
 
     protected abstract Block getAssociatedBlock();
 
     public int adjustInventoryY() {
-        return  - 33;
+        return -33;
     }
 
     public int adjustInventoryX() {

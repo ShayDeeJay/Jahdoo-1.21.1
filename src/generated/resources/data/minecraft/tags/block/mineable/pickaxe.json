@@ -1,12 +1,10 @@
 {
   "values": [
     "jahdoo:tank",
-    "jahdoo:infuser",
     "jahdoo:challenge_altar",
     "jahdoo:nexite_ore",
     "jahdoo:nexite_deepslate_ore",
     "jahdoo:nexite_block",
-    "jahdoo:raw_nexite_block",
-    "jahdoo:wand_manager_table"
+    "jahdoo:raw_nexite_block"
   ]
 }

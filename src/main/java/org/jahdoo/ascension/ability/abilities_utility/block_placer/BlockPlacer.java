@@ -17,7 +17,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 
-import static org.jahdoo.common.items.wand.WandItemHelper.getStoredBlock;
+import static org.jahdoo.common.items.caster_item.CasterItemHelper.getStoredBlock;
 
 public class BlockPlacer extends AbstractUtilityProjectile {
 

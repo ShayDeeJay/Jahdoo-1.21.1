@@ -29,12 +29,12 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput recipeOutput) {
-        coinCompressor(recipeOutput);
         tankRecipe(recipeOutput, TANK.get().asItem());
-        infuser(recipeOutput, INFUSER.get().asItem());
+        dissembler(recipeOutput, INFUSER.get().asItem());
         nexite(recipeOutput, NEXITE_BLOCK.get().asItem());
         chaosCube(recipeOutput, MODULAR_CHAOS_CUBE.get().asItem());
-        augmentModificationTable(recipeOutput, AUGMENT_MODIFICATION_STATION.get().asItem());
+        runeManager(recipeOutput, RUNE_TABLE.get().asItem());
+        wandManager(recipeOutput, WAND_MANAGER_TABLE.get().asItem());
         oreSmelting(recipeOutput, List.of(Items.ROTTEN_FLESH), RecipeCategory.MISC, Items.LEATHER, 2.0F, 200, "leather");
         nineBlockStorageRecipes(recipeOutput, RecipeCategory.MISC, ESSENCE_FRAGMENT.get(), RecipeCategory.MISC, AUGMENT_CORE.get());
         ticket(recipeOutput, CHALLENGER_TICKET.get());
@@ -52,10 +52,10 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .save(output);
     }
 
-    protected void infuser(RecipeOutput output, Item result) {
+    protected void dissembler(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
             .define('M', Items.MUD_BRICKS)
-            .define('X', AUGMENT.get())
+            .define('X', AUGMENT_CORE.get())
             .pattern(" M ")
             .pattern("MXM")
             .pattern(" M ")
@@ -85,25 +85,25 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .save(output);
     }
 
-    protected void Gold(RecipeOutput output, Item result) {
+    protected void wandManager(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
             .define('X', ModTags.Items.WAND_TAGS)
             .define('M', Items.MUD_BRICKS)
-            .pattern("MMM")
-            .pattern("MXM")
-            .pattern("MMM")
+            .pattern(" M ")
+            .pattern(" X ")
+            .pattern(" M ")
             .unlockedBy("wand_item", has(ModTags.Items.WAND_TAGS))
             .save(output);
     }
 
-    protected void augmentModificationTable(RecipeOutput output, Item result) {
+    protected void runeManager(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
-            .define('X', AUGMENT.get())
+            .define('X', RUNE.get())
             .define('M', Items.MUD_BRICKS)
-            .pattern(" X ")
-            .pattern(" M ")
-            .pattern(" M ")
-            .unlockedBy("augment_item", has(AUGMENT.get()))
+            .pattern("MMM")
+            .pattern("MXM")
+            .pattern("MMM")
+            .unlockedBy("wand_item", has(RUNE.get()))
             .save(output);
     }
 
@@ -113,11 +113,5 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         oreSmelting(output, List.of(RAW_NEXITE_BLOCK.get()),RecipeCategory.BUILDING_BLOCKS, result, 2.0F, 200, "nexite");
     }
 
-    protected void coinCompressor(RecipeOutput output) {
-        var misc = RecipeCategory.MISC;
-//        nineBlockStorageRecipes(output, misc, COIN.get(), misc, SILVER_COIN.get(), "packed_silver", null, "unpacked_bronze", null);
-//        nineBlockStorageRecipes(output, misc, SILVER_COIN.get(), misc, GOLD_COIN.get(),"packed_gold", null, "unpacked_silver", null);
-//        nineBlockStorageRecipes(output, misc, GOLD_COIN.get(), misc, PLATINUM_COIN.get(), "packed_platinum", null, "unpacked_gold", null);
-    }
 
 }

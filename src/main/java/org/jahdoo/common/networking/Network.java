@@ -28,45 +28,15 @@ public class Network {
         );
 
         payloadRegistrar.playToServer(
-            StopUsingC2SP.TYPE,
-            StopUsingC2SP.STREAM_CODEC,
-            StopUsingC2SP::handle
-        );
-
-        payloadRegistrar.playToServer(
             FlyingC2SP.TYPE,
             FlyingC2SP.STREAM_CODEC,
             FlyingC2SP::handle
         );
 
         payloadRegistrar.playToServer(
-            SyncComponentC2S.TYPE,
-            SyncComponentC2S.STREAM_CODEC,
-            SyncComponentC2S::handle
-        );
-
-        payloadRegistrar.playToServer(
-            FallDistanceS2CP.TYPE,
-            FallDistanceS2CP.STREAM_CODEC,
-            FallDistanceS2CP::handle
-        );
-
-        payloadRegistrar.playToServer(
-            SyncComponentBlockC2S.TYPE,
-            SyncComponentBlockC2S.STREAM_CODEC,
-            SyncComponentBlockC2S::handle
-        );
-
-        payloadRegistrar.playToServer(
             ChaosCubeC2SP.TYPE,
             ChaosCubeC2SP.STREAM_CODEC,
             ChaosCubeC2SP::handle
-        );
-
-        payloadRegistrar.playToServer(
-            ChargeCoreC2SP.TYPE,
-            ChargeCoreC2SP.STREAM_CODEC,
-            ChargeCoreC2SP::handle
         );
 
         payloadRegistrar.playToServer(
@@ -118,12 +88,6 @@ public class Network {
         );
 
         payloadRegistrar.playToServer(
-            AbilityPointC2SP.TYPE,
-            AbilityPointC2SP.STREAM_CODEC,
-            AbilityPointC2SP::handle
-        );
-
-        payloadRegistrar.playToServer(
             MobEffectC2SP.TYPE,
             MobEffectC2SP.STREAM_CODEC,
             MobEffectC2SP::handle
@@ -133,6 +97,12 @@ public class Network {
             UnlockedSkillsC2SP.TYPE,
             UnlockedSkillsC2SP.STREAM_CODEC,
             UnlockedSkillsC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
+            AbilityPointC2SP.TYPE,
+            AbilityPointC2SP.STREAM_CODEC,
+            AbilityPointC2SP::handle
         );
 
         //S2C
