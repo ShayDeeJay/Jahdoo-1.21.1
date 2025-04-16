@@ -7,10 +7,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -18,18 +18,17 @@ import java.util.function.BiConsumer;
 
 import static net.minecraft.sounds.SoundEvents.TRIAL_SPAWNER_AMBIENT;
 import static net.minecraft.sounds.SoundEvents.TRIAL_SPAWNER_AMBIENT_OMINOUS;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 
 public class AltarAnim {
 
-    public static void placeParticle(Vec3 pos, ParticleOptions par1, Level level, int privateTicks){
+    public static void placeParticle(Vec3 pos, ParticleOptions par1, Level level){
         double randomY = Helpers.Random.nextDouble(0.0, 0.4);
         ParticleHandlers.sendParticles(level, par1, pos.subtract(0,0.4,0), 5, 0, randomY,0, 0.1);
     }
 
-    public static void onActivationAnim(Level level, BlockPos posA, int privateTicks) {
+    public static void onActivationAnim(Level level, BlockPos posA) {
         PositionFinders.getOuterRingOfRadius(
             posA.getCenter().subtract(0,0.03,0), 0.1, 50, posB -> setShockwaveNova(posB.subtract(0, 0,0), posA, level)
         );
@@ -64,7 +63,7 @@ public class AltarAnim {
             positions -> {
                 var colourDarker = Helpers.getColourDarker(ColourStore.PERK_GREEN, 0.5f);
                 var randomColouredParticle = Helpers.getRandomColouredParticle(ColourStore.PERK_GREEN, colourDarker, 10, 1, false);
-                AltarAnim.placeParticle(positions, randomColouredParticle, level, ticks);
+                AltarAnim.placeParticle(positions, randomColouredParticle, level);
             }
         );
 

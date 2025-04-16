@@ -19,7 +19,7 @@ import java.util.List;
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 
-public class PlayerWallet implements IAttachment{
+public class PlayerWallet implements IAttachment {
 
     public static final String WALLET_TOTAL = "wallet_total";
     int wallet;

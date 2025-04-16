@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
@@ -26,11 +25,7 @@ import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 
 public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableEntity>{
 
-    private final BlockEntityRenderDispatcher entityRenderDispatcher;
-
-    public ShoppingTableRenderer(Context context) {
-        this.entityRenderDispatcher = context.getBlockEntityRenderDispatcher();
-    }
+    public ShoppingTableRenderer(Context context) {}
 
     @Override
     public void render(ShoppingTableEntity entity, float partial, PoseStack poseStack, MultiBufferSource source, int packedLight, int packedOverlay) {

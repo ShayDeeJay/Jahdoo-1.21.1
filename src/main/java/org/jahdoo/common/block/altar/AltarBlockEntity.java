@@ -67,7 +67,6 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
 
     public AltarBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.CHALLENGE_ALTAR_BE.get(), pos, state);
-
     }
 
     @Override
@@ -270,7 +269,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
             this.beginSpawning = false;
         }
 
-        if (privateTicks == 1) onActivationAnim(level, pos, privateTicks);
+        if (privateTicks == 1) onActivationAnim(level, pos);
         if (privateTicks > 30 && started && this.onField.isEmpty() && spawnableMobs.isEmpty()) {
             onCompleteAltar(pos, serverLevel);
         }
