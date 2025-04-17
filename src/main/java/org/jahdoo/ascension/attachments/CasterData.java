@@ -614,7 +614,7 @@ public class CasterData implements IAttachment {
             var runList = nbt.getList("PastRuns", Tag.TAG_COMPOUND);
             for (Tag tag : runList) {
                 var runTag = (CompoundTag) tag;
-                var pastRun = new RunData(0, 0, 0, 0, ""); // placeholder init
+                var pastRun = new RunData(new HashMap<>(), ""); // placeholder init
                 pastRun.loadNBTData(runTag, provider);
                 pastRuns.add(pastRun);
             }

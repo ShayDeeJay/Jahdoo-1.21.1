@@ -115,8 +115,8 @@ public class LevelBoonReg {
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> BRONZE_COIN =
         registerElement(BronzeCoins::new);
 
-    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> FILLER_BRONZE_COIN =
-        registerElement(FillerBronzeCoins::new);
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> TRAIL_EXPERIENCE =
+        registerElement(Experience::new);
 
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> SILVER_COIN =
         registerElement(SilverCoins::new);

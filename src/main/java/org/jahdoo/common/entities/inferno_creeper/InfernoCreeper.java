@@ -111,7 +111,7 @@ public class InfernoCreeper extends Creeper {
             livingEntity -> {
                 if(livingEntity instanceof ITamableEntity t && t.getOwner() != null || livingEntity instanceof Player){
                     var damage = this.getAttribute(Attributes.ATTACK_DAMAGE);
-                    damageWithJahdoo(livingEntity, this, damage != null ? damage.getValue() : 25);
+                    damageWithJahdoo(livingEntity, this, damage != null ? damage.getValue() : 25, getElementType().damageTypeResourceKey());
                     livingEntity.addEffect(new JahdooMobEffect(EffectReg.INFERNO_EFFECT, 100, 1));
                 }
             }

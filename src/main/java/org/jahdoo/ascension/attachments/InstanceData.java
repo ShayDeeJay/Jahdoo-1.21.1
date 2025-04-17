@@ -5,353 +5,270 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
-import static org.jahdoo.ascension.level_manager.InstanceDifficulty.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.jahdoo.ascension.utils.Helpers.*;
 
 public class InstanceData implements IAttachment {
 
+    // Constants for all keys used in the values map
+    public static final String KEY_TICKS = "ticks";
+    public static final String KEY_HORDE = "horde";
+    public static final String KEY_SKELETON = "skeleton";
+    public static final String KEY_ETERNAL_WIZARD = "eternal_wizard";
+    public static final String KEY_VOID_SPIDER = "void_spider";
+    public static final String KEY_INFERNO_CREEPER = "inferno_creeper";
+    public static final String KEY_CLEARED_ROOMS = "cleared_rooms";
+    public static final String KEY_MAX_TIME = "max_time";
+    public static final String KEY_BRONZE_COIN = "bronze_coin";
+    public static final String KEY_SILVER_COIN = "silver_coin";
+    public static final String KEY_GOLD_COIN = "gold_coin";
+    public static final String KEY_HEALTH = "health";
+    public static final String KEY_SPEED = "speed";
+    public static final String KEY_ARMOR = "armor";
+    public static final String KEY_ATTACK_DAMAGE = "attack_damage";
+    public static final String KEY_EXPERIENCE = "expereience";
+
+    private final Map<String, Double> values = new HashMap<>();
     private String difficulty;
-    private int horde;
-    private int skeleton;
-    private int eternalWizard;
-    private int voidSpider;
-    private int infernoCreeper;
-    private int clearedRooms;
-    private int ticks;
-    private int maxTime;
-    private int bronzeCoin;
-    private int silverCoin;
-    private int goldCoin;
-    private double health;
-    private double speed;
-    private double armor;
-    private double attackDamage;
 
     public InstanceData() {}
 
-    public InstanceData(
-        String difficulty,
-        int ticks,
-        int horde,
-        int skeleton,
-        int eternalWizard,
-        int voidSpider,
-        int infernoCreeper,
-        int clearedRooms,
-        int maxTime,
-        int bronzeCoin,
-        int silverCoin,
-        int goldCoin,
-        double health,
-        double speed,
-        double armor,
-        double attackDamage
-    ) {
+    public InstanceData(String difficulty, Map<String, Double> values) {
         this.difficulty = difficulty;
-        this.ticks = ticks;
-        this.horde = horde;
-        this.skeleton = skeleton;
-        this.eternalWizard = eternalWizard;
-        this.voidSpider = voidSpider;
-        this.infernoCreeper = infernoCreeper;
-        this.clearedRooms = clearedRooms;
-        this.maxTime = maxTime;
-        this.health = health;
-        this.speed = speed;
-        this.armor = armor;
-        this.attackDamage = attackDamage;
-        this.bronzeCoin = bronzeCoin;
-        this.silverCoin = silverCoin;
-        this.goldCoin = goldCoin;
+        this.values.putAll(values);
     }
 
+    // Core map access
+    private double get(String key) {
+        return values.getOrDefault(key, 0.0);
+    }
 
+    private void set(String key, double value) {
+        values.put(key, value);
+    }
+
+    private void increment(String key, double amount) {
+        set(key, get(key) + amount);
+    }
+
+    // Original getters
     public String getDifficulty() {
         return difficulty == null ? "" : difficulty;
     }
 
-    public int getMaxTime() {
-        return maxTime;
-    }
-
-    public int getEternalWizard() {
-        return eternalWizard;
-    }
-
-    public int getSkeleton() {
-        return skeleton;
+    public int getTicks() {
+        return (int) get(KEY_TICKS);
     }
 
     public int getHorde() {
-        return horde;
+        return (int) get(KEY_HORDE);
     }
 
-    public int getVoidSpiders() {
-        return voidSpider;
+    public int getSkeleton() {
+        return (int) get(KEY_SKELETON);
     }
 
-    public double getHealthMultiplier() {
-        return health;
-    }
-
-    public double getSpeedMultiplier() {
-        return speed;
-    }
-
-    public double getArmorMultiplier() {
-        return armor;
-    }
-
-    public double getAttackDamageMultiplier() {
-        return attackDamage;
-    }
-
-    public int getClearedRooms() {
-        return this.clearedRooms;
+    public int getEternalWizard() {
+        return (int) get(KEY_ETERNAL_WIZARD);
     }
 
     public int getVoidSpider() {
-        return voidSpider;
-    }
-
-    public double getHealth() {
-        return health;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public double getAttackDamage() {
-        return attackDamage;
-    }
-
-    public double getArmor() {
-        return armor;
-    }
-
-    public int getTicks() {
-        return ticks;
-    }
-
-    public int getBronzeCoin() {
-        return bronzeCoin;
-    }
-
-    public int getSilverCoin() {
-        return silverCoin;
-    }
-
-    public int getGoldCoin() {
-        return goldCoin;
+        return (int) get(KEY_VOID_SPIDER);
     }
 
     public int getInfernoCreeper() {
-        return infernoCreeper;
+        return (int) get(KEY_INFERNO_CREEPER);
     }
 
+    public int getClearedRooms() {
+        return (int) get(KEY_CLEARED_ROOMS);
+    }
+
+    public int getMaxTime() {
+        return (int) get(KEY_MAX_TIME);
+    }
+
+    public int getBronzeCoin() {
+        return (int) get(KEY_BRONZE_COIN);
+    }
+
+    public int getSilverCoin() {
+        return (int) get(KEY_SILVER_COIN);
+    }
+
+    public int getGoldCoin() {
+        return (int) get(KEY_GOLD_COIN);
+    }
+
+    public int getExperience() {
+        return (int) get(KEY_EXPERIENCE);
+    }
+
+    public double getHealth() {
+        return get(KEY_HEALTH);
+    }
+
+    public double getSpeed() {
+        return get(KEY_SPEED);
+    }
+
+    public double getArmor() {
+        return get(KEY_ARMOR);
+    }
+
+    public double getAttackDamage() {
+        return get(KEY_ATTACK_DAMAGE);
+    }
+
+    // Original increment/setters
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
 
     public void incrementSkeleton(double mobs) {
-        this.skeleton += (int) mobs;
+        increment(KEY_SKELETON, mobs);
     }
 
     public void incrementHorde(double mobs) {
-        this.horde += (int) mobs;
+        increment(KEY_HORDE, mobs);
     }
 
     public void incrementEternalWizard(double mobs) {
-        this.eternalWizard += (int) mobs;
+        increment(KEY_ETERNAL_WIZARD, mobs);
     }
 
     public void incrementVoidSpider(double mobs) {
-        this.voidSpider += (int) mobs;
+        increment(KEY_VOID_SPIDER, mobs);
     }
 
-    public void incrementHealth(double health) {
-        this.health += health;
+    public void incrementInfernoCreeper(double mobs) {
+        increment(KEY_INFERNO_CREEPER, mobs);
     }
 
-    public void incrementSpeed(double speed) {
-        this.speed += speed;
+    public void incrementHealth(double amount) {
+        increment(KEY_HEALTH, amount);
     }
 
-    public void incrementArmor(double armor) {
-        this.armor += armor;
+    public void incrementSpeed(double amount) {
+        increment(KEY_SPEED, amount);
     }
 
-    public void incrementAttackDamage(double attackDamage) {
-        this.attackDamage += attackDamage;
+    public void incrementArmor(double amount) {
+        increment(KEY_ARMOR, amount);
+    }
+
+    public void incrementAttackDamage(double amount) {
+        increment(KEY_ATTACK_DAMAGE, amount);
     }
 
     public void incrementClearedRooms() {
-        this.clearedRooms++;
+        increment(KEY_CLEARED_ROOMS, 1);
     }
 
     public void incrementTicks() {
-        this.ticks++;
+        increment(KEY_TICKS, 1);
     }
 
     public void setMaxTime(int maxTime) {
-        this.maxTime += maxTime;
+        increment(KEY_MAX_TIME, maxTime);
     }
 
     public void setBronzeCoin(int bronzeCoin) {
-        this.bronzeCoin += bronzeCoin;
+        increment(KEY_BRONZE_COIN, bronzeCoin);
+    }
+
+    public void setExperience(int experience) {
+        increment(KEY_EXPERIENCE, experience);
     }
 
     public void setSilverCoin(int silverCoin) {
-        this.silverCoin += silverCoin;
+        increment(KEY_SILVER_COIN, silverCoin);
     }
 
     public void setGoldTime(int goldCoin) {
-        this.goldCoin += goldCoin;
-    }
-
-    public void incrementInfernoCreeper(double infernoCreeper) {
-        this.infernoCreeper += (int) infernoCreeper;
+        increment(KEY_GOLD_COIN, goldCoin);
     }
 
     public static InstanceData setEasyData() {
-        var data = new InstanceData();
+        InstanceData data = new InstanceData();
+        data.setDifficulty(EASY);
         data.incrementHorde(5);
-        data.setDifficulty(EASY.getSerializedName());
-
-        //20 Minutes
         data.setMaxTime(24000);
         return data;
     }
 
     public static InstanceData setMediumData() {
-        var data = new InstanceData();
-        data.setDifficulty(MEDIUM.getSerializedName());
+        InstanceData data = new InstanceData();
+        data.setDifficulty(MEDIUM);
         data.incrementHorde(10);
         data.incrementHealth(10);
         data.incrementAttackDamage(15);
-
-        //15 Minutes
         data.setMaxTime(18000);
         return data;
     }
 
     public static InstanceData setHardData() {
-        var data = new InstanceData();
-        data.setDifficulty(HARD.getSerializedName());
+        InstanceData data = new InstanceData();
+        data.setDifficulty(HARD);
         data.incrementHorde(10);
         data.incrementSkeleton(10);
         data.incrementHealth(100);
         data.incrementAttackDamage(100);
         data.incrementSpeed(15);
-
-        //10 Minutes
         data.setMaxTime(12000);
         return data;
     }
 
     public static InstanceData copyInstance(InstanceData original) {
-        return new InstanceData(
-            original.difficulty,
-            original.ticks,
-            original.horde,
-            original.skeleton,
-            original.eternalWizard,
-            original.voidSpider,
-            original.infernoCreeper,
-            original.clearedRooms,
-            original.maxTime,
-            original.bronzeCoin,
-            original.silverCoin,
-            original.goldCoin,
-            original.health,
-            original.speed,
-            original.armor,
-            original.attackDamage
-        );
+        return new InstanceData(original.difficulty, original.values);
     }
-
-
-    public static final Codec<InstanceData> CODEC = RecordCodecBuilder.create(
-        instance -> instance.group(
-            Codec.STRING.fieldOf("difficulty").forGetter(InstanceData::getDifficulty),
-            Codec.INT.fieldOf("ticks").forGetter(InstanceData::getTicks),
-            Codec.INT.fieldOf("horde").forGetter(InstanceData::getHorde),
-            Codec.INT.fieldOf("skeleton").forGetter(InstanceData::getSkeleton),
-            Codec.INT.fieldOf("eternal_wizard").forGetter(InstanceData::getEternalWizard),
-            Codec.INT.fieldOf("void_spider").forGetter(InstanceData::getVoidSpider),
-            Codec.INT.fieldOf("inferno_creeper").forGetter(InstanceData::getInfernoCreeper),
-            Codec.INT.fieldOf("cleared_rooms").forGetter(InstanceData::getClearedRooms),
-            Codec.INT.fieldOf("max_time").forGetter(InstanceData::getMaxTime),
-            Codec.INT.fieldOf("bronze_coin").forGetter(InstanceData::getBronzeCoin),
-            Codec.INT.fieldOf("silver_coin").forGetter(InstanceData::getSilverCoin),
-            Codec.INT.fieldOf("gold_coin").forGetter(InstanceData::getGoldCoin),
-            Codec.DOUBLE.fieldOf("health").forGetter(InstanceData::getHealth),
-            Codec.DOUBLE.fieldOf("speed").forGetter(InstanceData::getSpeed),
-            Codec.DOUBLE.fieldOf("armor").forGetter(InstanceData::getArmor),
-            Codec.DOUBLE.fieldOf("attack_damage").forGetter(InstanceData::getAttackDamage)
-        ).apply(instance, InstanceData::new)
-    );
 
     @Override
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putString("difficulty", difficulty);
-        nbt.putDouble("health", health);
-        nbt.putDouble("speed", speed);
-        nbt.putDouble("armor", armor);
-        nbt.putDouble("damage", attackDamage);
-        nbt.putInt("horde", horde);
-        nbt.putInt("skeleton", skeleton);
-        nbt.putInt("eternal_wizard", eternalWizard);
-        nbt.putInt("void_spider", voidSpider);
-        nbt.putInt("inferno_creeper", infernoCreeper);
-        nbt.putInt("cleared_rooms", clearedRooms);
-        nbt.putInt("tick", ticks);
-        nbt.putInt("max_time", maxTime);
-        nbt.putInt("bronze_coin", bronzeCoin);
-        nbt.putInt("silver_coin", silverCoin);
-        nbt.putInt("gold_coin", goldCoin);
+        values.forEach(nbt::putDouble);
     }
+
+    public static final Codec<InstanceData> CODEC = RecordCodecBuilder.create(
+        instance -> instance.group(
+            Codec.STRING.fieldOf("Difficulty").forGetter(InstanceData::getDifficulty),
+            Codec.unboundedMap(Codec.STRING, Codec.DOUBLE).fieldOf("Data").forGetter(run -> run.values)
+        ).apply(instance, InstanceData::new)
+    );
 
     @Override
     public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         difficulty = nbt.getString("difficulty");
-        speed = nbt.getDouble("speed");
-        armor = nbt.getDouble("armor");
-        health = nbt.getDouble("health");
-        attackDamage = nbt.getDouble("damage");
-        horde = nbt.getInt("horde");
-        skeleton = nbt.getInt("skeleton");
-        voidSpider = nbt.getInt("void_spider");
-        eternalWizard = nbt.getInt("eternal_wizard");
-        infernoCreeper = nbt.getInt("inferno_creeper");
-        clearedRooms = nbt.getInt("cleared_rooms");
-        ticks = nbt.getInt("tick");
-        maxTime = nbt.getInt("max_time");
-        bronzeCoin = nbt.getInt("bronze_coin");
-        silverCoin = nbt.getInt("silver_coin");
-        goldCoin = nbt.getInt("gold_coin");
+        for (String key : values.keySet()) {
+            if (nbt.contains(key)) {
+                values.put(key, nbt.getDouble(key));
+            }
+        }
     }
 
     @Override
     public String toString() {
         return
-        "Level Data: " + "\n" +
-        "Difficulty = " + difficulty + "\n" +
-        "Ticks = " + ticks + "\n" +
-        "Max Time = " + maxTime + "\n" +
-        "Bronze Coins = " + bronzeCoin + "\n" +
-        "Silver Coins = " + silverCoin + "\n" +
-        "Gold Coins = " + goldCoin + "\n" +
-        "Completed Rooms = " + clearedRooms + "\n" +
-        "Horde = " + horde + "\n" +
-        "Skeletons = " + skeleton + "\n" +
-        "Eternal Wizard = " + eternalWizard + "\n" +
-        "Void Spider = " + voidSpider + "\n" +
-        "Inferno Creeper = " + infernoCreeper + "\n" +
-        "Mob Health = " + health + "\n" +
-        "Mob Speed = " + speed + "\n" +
-        "Mob Attack Damage = " + attackDamage + "\n" +
-        "Mob Armor = " + armor;
+            "Level Data: \n" +
+                "Difficulty = " + difficulty + "\n" +
+                "Ticks = " + getTicks() + "\n" +
+                "Max Time = " + getMaxTime() + "\n" +
+                "Bronze Coins = " + getBronzeCoin() + "\n" +
+                "Silver Coins = " + getSilverCoin() + "\n" +
+                "Gold Coins = " + getGoldCoin() + "\n" +
+                "Completed Rooms = " + getClearedRooms() + "\n" +
+                "Horde = " + getHorde() + "\n" +
+                "Skeletons = " + getSkeleton() + "\n" +
+                "Eternal Wizard = " + getEternalWizard() + "\n" +
+                "Void Spider = " + getVoidSpider() + "\n" +
+                "Inferno Creeper = " + getInfernoCreeper() + "\n" +
+                "Mob Health = " + getHealth() + "\n" +
+                "Mob Speed = " + getSpeed() + "\n" +
+                "Mob Attack Damage = " + getAttackDamage() + "\n" +
+                "Mob Armor = " + getArmor();
     }
 }
+
 

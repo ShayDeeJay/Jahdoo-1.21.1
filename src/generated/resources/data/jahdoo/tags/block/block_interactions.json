@@ -2,6 +2,7 @@
   "values": [
     "jahdoo:wand_manager_table",
     "jahdoo:rune_table",
+    "jahdoo:disassembler",
     "jahdoo:lock"
   ]
 }

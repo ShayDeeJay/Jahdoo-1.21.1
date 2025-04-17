@@ -1,12 +1,15 @@
 package org.jahdoo.ascension.element;
 
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
 import org.jahdoo.common.client.Icons;
+import org.jahdoo.common.registers.DamageTypeReg;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.sounds.SoundEvents.ENDER_EYE_DEATH;
@@ -83,6 +86,12 @@ public class Vitality extends AbstractElement {
     @Override
     public Holder<Attribute> damageAmplifier() {
         return VITALITY_MAGIC_DAMAGE_MULTIPLIER;
+    }
+
+
+    @Override
+    public ResourceKey<DamageType> damageTypeResourceKey() {
+        return DamageTypeReg.VITALITY_SOURCE;
     }
 
     @Override

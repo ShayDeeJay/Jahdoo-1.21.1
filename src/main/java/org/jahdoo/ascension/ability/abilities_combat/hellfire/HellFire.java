@@ -105,7 +105,7 @@ public class HellFire extends DefaultEntityBehaviour {
         if (livingEntity == null) return;
         if(!canDamageEntity(livingEntity, this.cloud.getOwner())) return;
         livingEntity.addEffect(new JahdooMobEffect(EffectReg.INFERNO_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength));
-        DamageUtils.damageWithJahdoo(livingEntity, cloud.getOwner(), damage);
+        DamageUtils.damageWithJahdoo(livingEntity, cloud.getOwner(), damage, getElementType().damageTypeResourceKey());
     }
 
     private LivingEntity getEntityInRange(Vec3 positionsA){

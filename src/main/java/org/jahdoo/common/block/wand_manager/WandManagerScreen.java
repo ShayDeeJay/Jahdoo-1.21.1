@@ -6,7 +6,6 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -16,10 +15,10 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.client.slots.InventorySlots;
 import org.jahdoo.common.client.slots.RuneSlot;
-import org.jahdoo.common.items.runes.RuneItem;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.items.caster_item.CasterItemHelper;
+import org.jahdoo.common.items.runes.RuneItem;
+import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
 import org.jahdoo.common.networking.client2server.PlayerExpC2SP;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +26,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS;
 import static net.minecraft.util.FastColor.ARGB32.color;
+import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
 import static org.jahdoo.ascension.utils.ColourStore.BORDER_COLOUR;
 import static org.jahdoo.ascension.utils.Helpers.filterList;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
@@ -278,24 +279,30 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
 
     public void reRollBaseModifiers(){
         var wandItemCopy = getWand().copy();
+        var maxCounter = 0;
 
-        for (var modifier : wandItemCopy.getAttributeModifiers().modifiers()) {
-            var id = modifier.modifier().id().getPath().intern();
-            var attribute = modifier.attribute();
-            var rarityId = wandItemCopy.get(JAHDOO_RARITY);
-            if(rarityId != null){
-                var ranges = JahdooRarity.getAllRarities().get(rarityId).getAttributes();
-                var value = switch (id) {
-                    case String s when s.contains("cooldown.cooldown_reduction") -> ranges.getRandomCooldown();
-                    case String s when s.contains("mana.cost_reduction") -> ranges.getRandomManaReduction();
-                    default -> ranges.getRandomDamage();
-                };
-                replaceOrAddAttribute(wandItemCopy, attribute.getRegisteredName(), attribute, value, EquipmentSlot.MAINHAND, false);
+        var modifiers = wandItemCopy.getAttributeModifiers().modifiers();
+        for (var modifier : modifiers) {
+            if(maxCounter < Math.min(3, modifiers.size())){
+                var attribute = modifier.attribute();
+                var id = attribute.getRegisteredName();
+                var rarityId = wandItemCopy.get(JAHDOO_RARITY);
+
+                if (rarityId != null) {
+                    var ranges = JahdooRarity.getAllRarities().get(rarityId).getAttributes();
+                    var value = switch (id) {
+                        case String s when s.contains("cooldown.cooldown_reduction") -> ranges.getRandomCooldown();
+                        case String s when s.contains("mana.cost_reduction") -> ranges.getRandomManaReduction();
+                        default -> ranges.getRandomDamage();
+                    };
+                    wandItemCopy.set(ATTRIBUTE_MODIFIERS, replaceOrAddAttribute(wandItemCopy.getAttributeModifiers().modifiers().stream().toList(), id, attribute, value, MAINHAND, maxCounter));
+                }
+
+                maxCounter++;
             }
         }
 
-        var max = Math.max(0, RuneHolder.potential(wandItemCopy) - 20);
-        RuneHolder.createRefinementPotential(wandItemCopy, max);
+        RuneHolder.createRefinementPotential(wandItemCopy, Math.max(0, RuneHolder.potential(wandItemCopy) - 20));
         PacketDistributor.sendToServer(new ItemInBlockC2SP(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos()));
 
         var player = Minecraft.getInstance().player;
@@ -352,14 +359,14 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         if(getWand().getItem() instanceof CasterItem){
             var itemModifiers = CasterItemHelper.getItemModifiers(getWand(), getMinecraft().level);
             var rarityAndSlots = filterList(itemModifiers, "Rarity", "Slots", "Potential");
-            var modifiersAndHeader = filterList(itemModifiers, "%", "Applies");
+            var modifiersAndHeader = filterList(itemModifiers, "%");
             var widthHeader = 0;
             var widthProperties = 0;
-            var sharedX = this.width / 2 - 30 + shiftX;
+            var sharedX = this.width / 2 - 34 + shiftX;
 
             for (Component components : rarityAndSlots) {
                 var posY = this.height / 2 - 85 + spacer.get() + shiftY;
-                guiGraphics.drawString(this.font, components, sharedX, posY, 0);
+                guiGraphics.drawString(this.font, components, sharedX , posY, 0);
                 spacer.set(spacer.get() + 12);
                 if (widthHeader < font.width(components)) widthHeader = font.width(components);
             }
@@ -367,7 +374,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             var startX1 = startX + 102 + shiftX;
             var startY1 = startY - 111 + shiftY;
             var widthOffset = widthHeader / 2 + 8;
-            boxMaker(guiGraphics, startX1, startY1, widthOffset, 20, borderColour, groupFade());
+            boxMaker(guiGraphics, startX1, startY1, widthOffset, 14, borderColour, groupFade());
 
             if(!modifiersAndHeader.isEmpty()){
                 for (Component components : modifiersAndHeader) {
@@ -388,9 +395,9 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
                 guiGraphics.drawCenteredString(this.font, "No Base Stats", startX1 + 60, startY1 + 96, ColourStore.SUB_HEADER_COLOUR);
             }
 
-            var startY2 = startY - 69 + shiftY;
+            var startY2 = startY - 80 + shiftY;
             var offset = widthProperties / 2 + 8;
-            boxMaker(guiGraphics, startX1, startY2, Math.max(offset, 60), 65, borderColour, groupFade());
+            boxMaker(guiGraphics, startX1, startY2, Math.max(offset, 60), 71, borderColour, groupFade());
         }
     }
 

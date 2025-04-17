@@ -39,7 +39,7 @@ public class BlockEntityReg {
         registerBlockEntity("enchanted_be", EnchantedBlockEntity::new, ENCHANTED_BLOCK);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DisassemblerBlockEntity>> INFUSER_BE =
-        registerBlockEntity("dissembler_be", DisassemblerBlockEntity::new, INFUSER);
+        registerBlockEntity("dissembler_be", DisassemblerBlockEntity::new, DISSEMBLER);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AltarBlockEntity>> CHALLENGE_ALTAR_BE =
         registerBlockEntity("challenge_altar_be", AltarBlockEntity::new, CHALLENGE_ALTAR);

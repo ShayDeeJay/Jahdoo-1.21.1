@@ -128,7 +128,6 @@ public class AttributeReg {
             .findFirst();
         existingModifier.ifPresent(attributeList::remove);
         var attributes = setAttribute(name, attribute, value, equipmentSlot, isRandomId);
-
         attributeList.add(attributes);
         itemStack.set(DataComponents.ATTRIBUTE_MODIFIERS, itemAttributes);
     }
@@ -138,16 +137,18 @@ public class AttributeReg {
         String name,
         Holder<Attribute> attribute,
         double value,
-        EquipmentSlot equipmentSlot
+        EquipmentSlot equipmentSlot,
+        int index
     ){
-        var itemAttributes = new ItemAttributeModifiers(attributeList, false);
-        var existingModifier = attributeList
+        var modList = new ArrayList<>(attributeList);
+        var itemAttributes = new ItemAttributeModifiers(modList, false);
+        var existingModifier = modList
             .stream()
-            .filter(att -> att.modifier().id().getPath().equals(name))
+            .filter(att -> att.attribute().getRegisteredName().equals(name))
             .findFirst();
-        existingModifier.ifPresent(attributeList::remove);
 
-        attributeList.add(setAttribute(name, attribute, value, equipmentSlot, true));
+        existingModifier.ifPresent(modList::remove);
+        modList.add(index, setAttribute(name, attribute, value, equipmentSlot, true));
         return itemAttributes;
     }
 

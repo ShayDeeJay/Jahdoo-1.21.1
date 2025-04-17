@@ -7,7 +7,7 @@ import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 
 public class DisassemblerModel extends DefaultedBlockGeoModel<DisassemblerBlockEntity> {
     public DisassemblerModel() {
-        super(Helpers.res("infuser"));
+        super(Helpers.res("disassembler"));
     }
 
     @Override

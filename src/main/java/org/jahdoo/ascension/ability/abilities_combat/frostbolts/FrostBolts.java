@@ -235,7 +235,7 @@ public class FrostBolts  extends DefaultEntityBehaviour {
             var arrow = new GenericProjectile(
                 player, arrowX, arrowY, arrowZ,
                 EntityDataReg.ETHEREAL_ARROW.get().setAbilityId(),
-                EtherealArrow.setArrowProperties(damage, effectDuration, effectStrength, effectChance),
+                EtherealArrow.setArrowProperties(damage, effectDuration, effectStrength, effectChance, this.getElementType().id()),
                 this.getElementType(),
                 FrostboltsAbility.abilityId.getPath()
             );

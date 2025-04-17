@@ -10,6 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static java.lang.Math.*;
 import static org.jahdoo.ascension.utils.DamageUtils.damageWithJahdoo;
@@ -64,7 +65,7 @@ public class EntityBarrier {
                 }
 
                 getSoundWithPosition(level, entity.blockPosition(), SoundEvents.BEACON_POWER_SELECT, 0.1f, 1.5f);
-                damageWithJahdoo(entity, 1);
+                damageWithJahdoo(entity, 1, ElementReg.mystic().damageTypeResourceKey());
                 particleBurst(serverLevel, entity.position().add(0, entity.getBbHeight() / 2, 0), 5, getType.getParticleGroup().bakedSlow(), 0, 0, 0, 0.2f);
             }
         }

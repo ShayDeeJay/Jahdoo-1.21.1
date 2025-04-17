@@ -17,7 +17,6 @@ import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockReg;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,29 +38,28 @@ import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 public class StructureManager {
 
     public static final String BAZAAR = "bazaar";
-    public static final String SANCTUARY = "sanctuary";
+    public static final Component BAZAAR_COMPONENT = withStyleComponent(stringIdToName(BAZAAR), AETHER_BLUE);
 
-//    public static final String THE_HALL = "the_hall";
-//    public static final String THE_CHAMBERS = "the_chambers";
-//    public static final String THE_OASIS = "the_oasis";
-//    public static final String THE_BASTION = "the_bastion";
+    public static final String SANCTUARY = "sanctuary";
+    public static final Component SANCTUARY_COMPONENT = withStyleComponent(stringIdToName(SANCTUARY), COSMIC_PURPLE);
+
+    public static final String BOSS_CRUCIBLE = "boss_crucible";
+    public static final Component BOSS_COMPONENT = withStyleComponent(stringIdToName(BOSS_CRUCIBLE), NEGATIVE_RED);
+
+    public static final String EASY_EXIT = "emergency_exit";
+    public static final Component EXIT_ROOM_COMPONENT = withStyleComponent(stringIdToName(EASY_EXIT), MAGNET_RANGE_GREEN);
 
     public static final String THE_HALL = "serene";
     public static final String THE_CHAMBERS = "camp";
     public static final String THE_OASIS = "wasteland";
     public static final String THE_BASTION = "hellscape";
-
     public static final String STARTING_ROOM = "starting_room";
-    public static final String BOSS_CRUCIBLE = "boss_crucible";
-    public static final String EASY_EXIT = "emergency_exit";
-    public static final int GLOBAL_Y = 60;
+    public static final String VALID_ROOMS = Helpers.listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION));
+    public static final Component BATTLE_ROOM = withStyleComponent(stringIdToName(VALID_ROOMS), SYMPATHISER_ORANGE);
 
+    public static final int GLOBAL_Y = 60;
     public static final Vec3 SPAWN_POSITION = new Vec3(33.5, GLOBAL_Y + 2, 27.5);
     public static final long SEED = /*Random.nextLong()*/ 874095743;
-
-    public static @NotNull Component getBattleRooms() {
-        return withStyleComponent(stringIdToName(Helpers.listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION))), SYMPATHISER_ORANGE);
-    }
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
@@ -94,35 +92,27 @@ public class StructureManager {
 
     public static List<Component> getRandomRoomId(boolean isStarter, InstanceData data){
         var roomGen = new ArrayList<Component>();
-        roomGen.add(getBattleRooms());
+        roomGen.add(BATTLE_ROOM);
+
         var difficulty = data.getDifficulty();
         var forSanctuary = EASY.getSerializedName().equals(difficulty) ? 80 : MEDIUM.getSerializedName().equals(difficulty) ? 50 : 20 ;
         var forBoss = EASY.getSerializedName().equals(difficulty) ? 10 : MEDIUM.getSerializedName().equals(difficulty) ? 40 : 70 ;
 
         if(!isStarter){
+            if (Maths.percentageChance(forSanctuary)) roomGen.add(SANCTUARY_COMPONENT);
 
-            if (Maths.percentageChance(forSanctuary)) {
-                roomGen.add(withStyleComponent(stringIdToName(SANCTUARY), COSMIC_PURPLE));
-            }
-
-            if (Maths.percentageChance(50)) {
-                roomGen.add(withStyleComponent(stringIdToName(BAZAAR), AETHER_BLUE));
-            }
+            if (Maths.percentageChance(50)) roomGen.add(BAZAAR_COMPONENT);
 
             if(roomGen.size() == 3) return roomGen;
 
-            if(Maths.percentageChance(20)){
-                roomGen.add(withStyleComponent(stringIdToName(EASY_EXIT), MAGNET_RANGE_GREEN));
-            }
+            if(Maths.percentageChance(20)) roomGen.add(EXIT_ROOM_COMPONENT);
 
             if(roomGen.size() == 3) return roomGen;
 
-            if (Maths.percentageChance(forBoss)) {
-                roomGen.add(withStyleComponent(stringIdToName(BOSS_CRUCIBLE), NEGATIVE_RED));
-            }
+            if (Maths.percentageChance(forBoss)) roomGen.add(BOSS_COMPONENT);
         }
 
-        while (roomGen.size() < 4) roomGen.add(getBattleRooms());
+        while (roomGen.size() < 4) roomGen.add(BATTLE_ROOM);
 
         Collections.shuffle(roomGen);
         return roomGen;

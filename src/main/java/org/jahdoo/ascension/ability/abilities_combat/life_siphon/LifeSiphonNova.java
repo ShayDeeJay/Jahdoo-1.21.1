@@ -124,7 +124,7 @@ public class LifeSiphonNova extends DefaultEntityBehaviour {
             var beenTargeted = targetedEntities.contains(livingEntity);
             if(canDamage && !beenTargeted){
                 targetedEntities.add(livingEntity);
-                DamageUtils.damageWithJahdoo(livingEntity, cloud.getOwner(), getValue(DAMAGE));
+                DamageUtils.damageWithJahdoo(livingEntity, cloud.getOwner(), getValue(DAMAGE), getElementType().damageTypeResourceKey());
                 if(Maths.percentageChance(50)){
                     VitalityEffect.throwHeartContainer(livingEntity, getValue(HEAL_VALUE));
                 }

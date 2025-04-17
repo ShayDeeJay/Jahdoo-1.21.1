@@ -20,9 +20,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
-import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.items.caster_item.elemental_wand.ElementalWandItemRenderer;
+import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.ItemReg;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -34,8 +35,7 @@ import java.util.function.Consumer;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.InteractionHand.OFF_HAND;
 import static org.jahdoo.ascension.rarity.JahdooRarity.attachRarityTooltip;
-import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
-import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
@@ -157,7 +157,12 @@ public class CasterItemHelper {
         var maxDamage = wandItem.get(DataComponents.MAX_DAMAGE);
         var damageTaken = wandItem.get(DataComponents.DAMAGE);
         if(maxDamage != null && damageTaken != null){
-            appendComponents.add(Component.literal(getDamageCalculation(wandItem) + " / ").append(Component.literal(maxDamage.toString())));
+            var split = maxDamage/3;
+            var durabilityColourIndicator = damageTaken <= split ? PERK_GREEN : damageTaken <= split * 2.5 ? ABSORPTION_YELLOW : NEGATIVE_RED;
+            var prefix = Helpers.withStyleComponent("Durability: ", HEADER_COLOUR);
+            var currentDurability = Helpers.withStyleComponent(getDamageCalculation(wandItem) + "", durabilityColourIndicator);
+            var maxDurability = Helpers.withStyleComponent("/" + maxDamage, SUB_HEADER_COLOUR);
+            appendComponents.add(prefix.copy().append(currentDurability).copy().append(maxDurability));
         }
     }
 

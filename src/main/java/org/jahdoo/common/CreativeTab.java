@@ -42,9 +42,8 @@ public class CreativeTab {
                 outPut.accept(TANK.get());
                 outPut.accept(WAND_MANAGER_TABLE.get());
                 outPut.accept(RUNE_TABLE.get());
-                outPut.accept(INFUSER_ITEM.get());
+                outPut.accept(DISASSEMBLER_ITEM.get());
                 outPut.accept(NEXITE_POWDER.get());
-                outPut.accept(RECALL_TOKEN.get());
                 outPut.accept(CHALLENGER_TICKET.get());
 
                 registerRecoveryReceipts(outPut);
@@ -59,6 +58,7 @@ public class CreativeTab {
                 registerMagnets(outPut);
                 registerCoins(outPut);
 
+                outPut.accept(EXIT_KEY.get());
                 outPut.accept(RUNE.get());
                 outPut.accept(AUGMENT_CORE.get());
                 outPut.accept(ADVANCED_AUGMENT_CORE.get());
@@ -108,8 +108,6 @@ public class CreativeTab {
     }
 
     private static void registerRecoveryReceipts(CreativeModeTab.Output pOutput) {
-        pOutput.accept(RECOVERY_RECEIPT.get());
-
         for(int i = 1; i < 4; i++) {
             var carePackage = new ItemStack(RECOVERY_RECEIPT.get());
             var customModelData = new CustomModelData(i);

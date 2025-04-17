@@ -152,7 +152,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         if(!canDamageEntity(hitEntity, (LivingEntity) this.element.getOwner())) return;
         if(!this.getHitEntities.contains(hitEntity.getUUID())){
             this.getHitEntities.add(hitEntity.getUUID());
-            DamageUtils.damageWithJahdoo(hitEntity, this.element.getOwner(), this.damage);
+            DamageUtils.damageWithJahdoo(hitEntity, this.element.getOwner(), this.damage, getElementType().damageTypeResourceKey());
             if (!hitEntity.hasEffect(EffectReg.FROST_EFFECT.getDelegate())) {
                 hitEntity.addEffect(
                     new JahdooMobEffect(EffectReg.FROST_EFFECT.getDelegate(), (int) effectDuration, (int) this.effectStrength)

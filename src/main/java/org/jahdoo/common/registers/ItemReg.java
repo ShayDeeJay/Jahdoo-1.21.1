@@ -13,7 +13,7 @@ import org.jahdoo.common.items.armor.mage.BattleMageArmor;
 import org.jahdoo.common.items.armor.mage.MageArmor;
 import org.jahdoo.common.items.armor.wizard.WizardArmor;
 import org.jahdoo.common.items.block_items.ChallengeAltarBlockItem;
-import org.jahdoo.common.items.block_items.InfuserBlockItem;
+import org.jahdoo.common.items.block_items.DisassemblerBlockItem;
 import org.jahdoo.common.items.block_items.LootChestBlockItem;
 import org.jahdoo.common.items.block_items.ModularChaosCubeItem;
 import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
@@ -46,15 +46,12 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> AUGMENT_CORE =
         basicItem("augment_core");
 
+    //Complex Items
     public static final DeferredHolder<Item, Item> SKILL_POINT =
         complexItem("skill_point", SkillPointItem::new);
 
-    //Complex Items
     public static final DeferredHolder<Item, Item> CARE_PACKAGE =
         complexItem("starter_pack", StarterPack::new);
-
-    public static final DeferredHolder<Item, Item> RECALL_TOKEN =
-        complexItem("recall_token", RecallToken::new);
 
     public static final DeferredHolder<Item, Item> RECOVERY_RECEIPT =
         complexItem("recovery_receipt", RecoveryReceipt::new);
@@ -67,6 +64,9 @@ public class ItemReg {
 
     public static final DeferredHolder<Item, Item> LOOT_KEY =
         complexItem("key", KeyItem::new);
+
+    public static final DeferredHolder<Item, Item> EXIT_KEY =
+        complexItem("exit_key", KeyItem::new);
 
     public static final DeferredHolder<Item, Item> ADVANCED_AUGMENT_CORE =
         complexItem("advanced_augment_core", CoreItem::new);
@@ -102,8 +102,8 @@ public class ItemReg {
         complexItem("magnet", Magnet::new);
 
     //Block Items
-    public static final DeferredHolder<Item, Item> INFUSER_ITEM =
-        complexItem("infuser", () -> new InfuserBlockItem(INFUSER.get()));
+    public static final DeferredHolder<Item, Item> DISASSEMBLER_ITEM =
+        complexItem("disassembler", () -> new DisassemblerBlockItem(DISSEMBLER.get()));
 
     public static final DeferredHolder<Item, Item> CHALLENGE_ALTAR_ITEM =
         complexItem("challenge_altar", () -> new ChallengeAltarBlockItem(CHALLENGE_ALTAR.get()));

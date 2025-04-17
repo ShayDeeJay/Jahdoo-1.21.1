@@ -71,6 +71,7 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onEntityDamageEvent(LivingDamageEvent.Pre event){
         var entity = event.getEntity();
+
         greaterFrostEffectDamageAmplifier(event, entity);
         greaterVitalityEffect(event, entity);
     }
@@ -117,7 +118,6 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void levelTickEvent(LevelTickEvent.Pre tickEvent){
-//        assignTarget(tickEvent);
         instanceEndingWarning(tickEvent);
     }
 

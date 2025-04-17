@@ -11,6 +11,7 @@ import net.minecraft.world.level.pathfinder.Path;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
 import org.jahdoo.ascension.utils.DamageUtils;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.EnumSet;
 
@@ -89,7 +90,7 @@ public class GenericMeleeAttackGoal extends Goal {
     protected void checkAndPerformAttack(LivingEntity target) {
         if (this.canPerformAttack(target)) {
             if(this.mob instanceof AncientGolem ancientGolem){
-                DamageUtils.damageWithJahdoo(target, this.mob, ancientGolem.damage);
+                DamageUtils.damageWithJahdoo(target, this.mob, ancientGolem.damage, ElementReg.vitality().damageTypeResourceKey());
                 if(ancientGolem.level() instanceof ServerLevel serverLevel){
                     serverLevel.getChunkSource().broadcast(this.mob, new ClientboundEntityEventPacket(this.mob, (byte)4));
                 }

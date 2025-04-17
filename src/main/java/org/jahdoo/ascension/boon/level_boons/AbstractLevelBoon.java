@@ -31,12 +31,14 @@ public abstract class AbstractLevelBoon {
 
     abstract public JahdooRarity rarity();
 
+//    abstract public boolean isPlayerExclusive();
+
     abstract public void execute(ServerLevel level, double value);
 
     public Component boonLabel(double value, String id){
-        var dispValue = Maths.roundNonWholeString(value);
-        var dispTime = Maths.ticksToTime(valueOf(value));
-        var getBy = Objects.equals(id, "time") ? dispTime : dispValue;
+        var displayValue = Maths.roundNonWholeString(value);
+        var displayTime = Maths.ticksToTime(valueOf(value));
+        var getBy = Objects.equals(id, "time") ? displayTime : displayValue;
 
         return withStyleComponent("+" + getBy + (isPercentageOf() ? "% " : " ") + stringIdToName(id), textColour());
     }

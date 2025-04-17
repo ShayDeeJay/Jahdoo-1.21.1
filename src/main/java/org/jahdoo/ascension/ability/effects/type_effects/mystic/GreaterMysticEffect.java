@@ -94,13 +94,13 @@ public class GreaterMysticEffect extends MobEffect {
     }
 
     private static void explosionHandler(LivingEntity targetEntity, int pAmplifier, ServerLevel serverLevel) {
-        DamageUtils.damageWithJahdoo(targetEntity, pAmplifier);
+        DamageUtils.damageWithJahdoo(targetEntity, pAmplifier, getElement().damageTypeResourceKey());
         targetEntity.level().getNearbyEntities(
             LivingEntity.class,
             TargetingConditions.DEFAULT,
             targetEntity,
             targetEntity.getBoundingBox().inflate(4)
-        ).forEach(damage -> DamageUtils.damageWithJahdoo(damage, pAmplifier /2));
+        ).forEach(damage -> DamageUtils.damageWithJahdoo(damage, (double) pAmplifier /2, getElement().damageTypeResourceKey()));
         Helpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), SoundReg.EXPLOSION.get(), 1, 1.4f);
         Helpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), SoundEvents.AMETHYST_CLUSTER_BREAK, 0.5f, 0.1f);
     }

@@ -187,7 +187,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         ).forEach(
             livingEntity -> {
                 if (this.isImmune(livingEntity)) {
-                    DamageUtils.damageWithJahdoo(livingEntity, this.element.getOwner(), (float) this.damage);
+                    DamageUtils.damageWithJahdoo(livingEntity, this.element.getOwner(), (float) this.damage, getElementType().damageTypeResourceKey());
                 }
             }
         );

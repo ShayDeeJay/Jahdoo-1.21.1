@@ -82,6 +82,9 @@ public class Icons {
     public static final ResourceLocation CLOCK =
         res(ABILITY_PREFIX + "clock.png");
 
+    public static final ResourceLocation TRIAL_EXPERIENCE =
+        res(ABILITY_PREFIX + "experience.png");
+
     public static final ResourceLocation ETERNAL_WIZARD =
         res(ABILITY_PREFIX + "eternal_wizard.png");
 

@@ -23,7 +23,7 @@ import static org.jahdoo.ascension.attachments.RunData.setDateAndTime;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.*;
 import static org.jahdoo.ascension.level_manager.InstanceDifficulty.getFromLevel;
-import static org.jahdoo.ascension.level_manager.StructureManager.getBattleRooms;
+import static org.jahdoo.ascension.level_manager.StructureManager.BATTLE_ROOM;
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
 import static org.jahdoo.common.block.lock.LockBlock.FACING;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
@@ -91,7 +91,7 @@ public class LockBlockEntity extends SyncedBlockEntity {
     }
 
     public void setRoomData(Component roomId){
-        this.roomId = this.isStartingRoom() ? getBattleRooms() : roomId;
+        this.roomId = this.isStartingRoom() ? BATTLE_ROOM : roomId;
         setDataByDifficulty();
         this.updateBlock();
     }
@@ -100,12 +100,14 @@ public class LockBlockEntity extends SyncedBlockEntity {
         if(!this.isStartingRoom()){
             var data = getLevel();
             if(data == null) return;
-
-            switch (data.getData(INSTANCE_DATA).getDifficulty()){
+            var data1 = data.getData(INSTANCE_DATA);
+            switch (data1.getDifficulty()){
                 case Helpers.EASY -> {
                     var rarityForNeg = List.of(Pair.of(COMMON, 1), Pair.of(RARE, 5000));
                     if (Maths.percentageChance(30)) this.negativeBoon = toSyncable(withRarityNegative(getRarity(rarityForNeg)), getRarity(rarityForNeg));
                     this.positiveBoon = toSyncable(withRarityPositive(getRarity()), getRarity());
+                    System.out.println(this.negativeBoon);
+                    System.out.println(this.positiveBoon);
                 }
                 case Helpers.MEDIUM -> {
                     this.negativeBoon = toSyncable(randomNegative(), getRarity());

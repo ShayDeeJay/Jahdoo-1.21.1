@@ -77,7 +77,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
     }
 
     private void setDamageByOwner(LivingEntity target){
-        DamageUtils.damageWithJahdoo(target, this.generic.getOwner(), this.damage);
+        DamageUtils.damageWithJahdoo(target, this.generic.getOwner(), this.damage, getElement().damageTypeResourceKey());
     }
 
     @Override

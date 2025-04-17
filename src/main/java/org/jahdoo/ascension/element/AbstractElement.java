@@ -1,8 +1,10 @@
 package org.jahdoo.ascension.element;
 
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
@@ -49,6 +51,8 @@ public abstract class AbstractElement {
     public abstract Holder<Attribute> manaReduction();
 
     public abstract Holder<Attribute> damageAmplifier();
+
+    public abstract ResourceKey<DamageType> damageTypeResourceKey();
 
     public abstract String elementDescription();
 

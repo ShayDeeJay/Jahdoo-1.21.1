@@ -17,12 +17,20 @@ import static org.jahdoo.common.registers.DamageTypeReg.*;
 public class DamageTypesProvider extends DatapackBuiltinEntriesProvider {
 
     public static final String JAHDOO_DAMAGE = "jahdoo_magic";
+    public static final String INFERNO_DAMAGE = "inferno_magic";
+    public static final String MYSTIC_DAMAGE = "mystic_magic";
+    public static final String VITALITY_DAMAGE = "vitality_magic";
+    public static final String FROST_DAMAGE = "frost_magic";
 
     private static final RegistrySetBuilder BUILDER =
         new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, DamageTypesProvider::bootstrap);
 
     public static void bootstrap(BootstrapContext<DamageType> ctx) {
         ctx.register(JAHDOO_SOURCE, new DamageType(JAHDOO_DAMAGE, 0.1F));
+        ctx.register(INFERNO_SOURCE, new DamageType(INFERNO_DAMAGE, 0.1F));
+        ctx.register(MYSTIC_SOURCE, new DamageType(MYSTIC_DAMAGE, 0.1F));
+        ctx.register(VITALITY_SOURCE, new DamageType(VITALITY_DAMAGE, 0.1F));
+        ctx.register(FROST_SOURCE, new DamageType(FROST_DAMAGE, 0.1F));
     }
 
     public DamageTypesProvider(

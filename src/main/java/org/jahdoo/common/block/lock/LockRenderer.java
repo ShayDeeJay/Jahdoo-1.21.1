@@ -25,6 +25,7 @@ import static net.minecraft.world.effect.MobEffects.*;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.ascension.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.ascension.level_manager.InstanceDifficulty.getFromName;
+import static org.jahdoo.ascension.level_manager.StructureManager.VALID_ROOMS;
 import static org.jahdoo.ascension.utils.Helpers.stringIdToName;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
@@ -118,7 +119,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
     private void newRoomSelection(LockBlockEntity entity, PoseStack pose, MultiBufferSource source, int light, LocalPlayer player, Font font, float adjustY, Direction facing, DisplayDirection direction, float x) {
         if (entity.isInitialized() && player != null && player.distanceToSqr(entity.getBlockPos().getCenter()) < 2500) {
             var id = entity.roomId.getString();
-            var getIcon = id.contains("Boss") ? "☠" : id.contains("The") ? "⚔" : id.contains("Sanctuary") ? "\uD83E\uDDEA" : id.contains("Exit") ? "⚠" : "⇵";
+            var getIcon = id.contains("Boss") ? "☠" : VALID_ROOMS.contains(entity.roomId.getString().toLowerCase()) ? "⚔" : id.contains("Sanctuary") ? "\uD83E\uDDEA" : id.contains("Exit") ? "⚠" : "⇵";
             var textColour = entity.roomId.getStyle().getColor().getValue();
 
             renderName(withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);

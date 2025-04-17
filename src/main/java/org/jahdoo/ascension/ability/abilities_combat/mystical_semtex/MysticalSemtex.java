@@ -144,7 +144,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         ).forEach(
             livingEntity -> {
                 if(!isOpp(livingEntity)) return;
-                DamageUtils.damageWithJahdoo(livingEntity, this.element.getOwner(), Math.max(damage - aoe, 1));
+                DamageUtils.damageWithJahdoo(livingEntity, this.element.getOwner(), Math.max(damage - aoe, 1), getElementType().damageTypeResourceKey());
             }
         );
     }

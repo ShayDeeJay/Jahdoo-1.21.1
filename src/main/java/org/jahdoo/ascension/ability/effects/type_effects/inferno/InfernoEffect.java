@@ -46,7 +46,7 @@ public class InfernoEffect extends MobEffect {
         if(targetEntity.isAlive()){
             if (targetEntity.level() instanceof ServerLevel serverLevel) {
                 var getRandomChance = EffectHelpers.getGetRandomChance(amplifier);
-                if (getRandomChance == 0) DamageUtils.damageWithJahdoo(targetEntity, amplifier);
+                if (getRandomChance == 0) DamageUtils.damageWithJahdoo(targetEntity, amplifier, getElement().damageTypeResourceKey());
                 setEffectParticle(getRandomChance, targetEntity, serverLevel, getElement(), SoundEvents.PLAYER_HURT_ON_FIRE);
             }
         }

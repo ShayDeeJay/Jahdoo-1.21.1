@@ -1,13 +1,16 @@
 package org.jahdoo.ascension.element;
 
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.Icons;
+import org.jahdoo.common.registers.DamageTypeReg;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.sounds.SoundEvents.AXE_SCRAPE;
@@ -80,6 +83,12 @@ public class Utility extends AbstractElement {
     @Override
     public Holder<Attribute> damageAmplifier() {
         return null;
+    }
+
+
+    @Override
+    public ResourceKey<DamageType> damageTypeResourceKey() {
+        return DamageTypeReg.JAHDOO_SOURCE;
     }
 
     @Override

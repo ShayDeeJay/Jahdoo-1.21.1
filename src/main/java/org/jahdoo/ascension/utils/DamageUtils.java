@@ -16,12 +16,12 @@ import static org.jahdoo.ascension.utils.Helpers.attributeModifierCalculator;
 
 public class DamageUtils {
 
-    public static void damageWithJahdoo(Entity target, Entity cause, double damage){
-        target.hurt(DamageUtils.source(target.level(), JAHDOO_SOURCE, target, cause), (float) damage);
+    public static void damageWithJahdoo(Entity target, Entity cause, double damage, ResourceKey<DamageType> key){
+        target.hurt(DamageUtils.source(target.level(), key, target, cause), (float) damage);
     }
 
-    public static void damageWithJahdoo(Entity target, double damage){
-        target.hurt(DamageUtils.source(target.level(), JAHDOO_SOURCE, target, null), (float) damage);
+    public static void damageWithJahdoo(Entity target, double damage, ResourceKey<DamageType> key){
+        target.hurt(DamageUtils.source(target.level(), key, target, null), (float) damage);
     }
 
     public static void damageEntityWithModifiers(LivingEntity target, LivingEntity player, float currentDamage, Holder<Attribute> ... attributes){

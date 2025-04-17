@@ -131,8 +131,12 @@ public class FireBall extends DefaultEntityBehaviour {
             hitEntity.addEffect(instance);
         }
 
-        damageWithJahdoo(hitEntity, this.element.getOwner(), damage);
+        onHit(hitEntity);
         onHitBehaviour();
+    }
+
+    private void onHit(LivingEntity hitEntity) {
+        damageWithJahdoo(hitEntity, this.element.getOwner(), damage, this.getElementType().damageTypeResourceKey());
     }
 
     private void setShockwaveNova(Vec3 worldPosition){
@@ -159,7 +163,7 @@ public class FireBall extends DefaultEntityBehaviour {
             livingEntity -> {
                 if(canDamageEntity(livingEntity, (LivingEntity) this.element.getOwner())){
                     if (!this.hitTargets.contains(livingEntity.getUUID())) {
-                        damageWithJahdoo(livingEntity, this.element.getOwner(), this.damage);
+                        onHit(livingEntity);
                         this.hitTargets.add(livingEntity.getUUID());
                     }
                 }

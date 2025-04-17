@@ -53,8 +53,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
         );
 
         simpleBlockWithItem(
-            INFUSER.get(),
-            new UncheckedModelFile(modLoc("block/infuser"))
+            DISSEMBLER.get(),
+            new UncheckedModelFile(modLoc("block/disassembler"))
         );
 
         simpleBlockWithItem(

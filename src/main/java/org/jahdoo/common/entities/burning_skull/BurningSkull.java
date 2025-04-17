@@ -243,7 +243,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
             livingEntity.addEffect(effectInstance);
         }
 
-        DamageUtils.damageWithJahdoo(entity, this.getOwner(), damage);
+        DamageUtils.damageWithJahdoo(entity, this.getOwner(), damage, getElementType().damageTypeResourceKey());
         discardTask();
     }
 

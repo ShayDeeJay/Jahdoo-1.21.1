@@ -42,8 +42,8 @@ public class BlockReg {
     public static DeferredHolder<Block, Block> LOOT_CHEST =
         registerBlock("loot_chest", LootChestBlock::new);
 
-    public static DeferredHolder<Block, Block> INFUSER =
-        registerBlock("dissembler", DisassemblerBlock::new);
+    public static DeferredHolder<Block, Block> DISSEMBLER =
+        registerBlock("disassembler", DisassemblerBlock::new);
 
     public static DeferredHolder<Block, Block> MODULAR_CHAOS_CUBE =
         registerBlock("modular_chaos_cube", ChaosCubeBlock::new);

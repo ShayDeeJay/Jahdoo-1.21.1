@@ -59,7 +59,7 @@ public class VitalityEffect extends MobEffect {
                 if(Helpers.Random.nextInt(0,(20-amplifier)) == 0){
                     throwHeartContainer(targetEntity, (float) (0.1 * amplifier));
                 }
-                DamageUtils.damageWithJahdoo(targetEntity, 1);
+                DamageUtils.damageWithJahdoo(targetEntity, 1, ElementReg.vitality().damageTypeResourceKey());
             }
             EffectHelpers.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementReg.vitality(), SoundEvents.SOUL_ESCAPE.value());
         }

@@ -30,7 +30,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     @Override
     protected void buildRecipes(RecipeOutput recipeOutput) {
         tankRecipe(recipeOutput, TANK.get().asItem());
-        dissembler(recipeOutput, INFUSER.get().asItem());
+        dissembler(recipeOutput, DISSEMBLER.get().asItem());
         nexite(recipeOutput, NEXITE_BLOCK.get().asItem());
         chaosCube(recipeOutput, MODULAR_CHAOS_CUBE.get().asItem());
         runeManager(recipeOutput, RUNE_TABLE.get().asItem());

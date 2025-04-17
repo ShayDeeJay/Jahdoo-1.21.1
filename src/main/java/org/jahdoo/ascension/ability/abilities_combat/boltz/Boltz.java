@@ -97,7 +97,7 @@ public class Boltz extends DefaultEntityBehaviour {
     public void onEntityHit(LivingEntity hitEntity) {
         LivingEntity owner = (LivingEntity) this.element.getOwner();
         if(DefaultEntityBehaviour.canDamageEntity(hitEntity, (LivingEntity) this.element.getOwner())){
-            DamageUtils.damageWithJahdoo(hitEntity, owner, (float) this.damage);
+            DamageUtils.damageWithJahdoo(hitEntity, owner, (float) this.damage, getElementType().damageTypeResourceKey());
 
             Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.ICE_ATTACH.get(), 0.1f);
         }
@@ -161,7 +161,7 @@ public class Boltz extends DefaultEntityBehaviour {
 
         for (var nearbyEntity : nearbyEntities) {
             if (DefaultEntityBehaviour.canDamageEntity(nearbyEntity, (LivingEntity) owner)) {
-                DamageUtils.damageWithJahdoo(nearbyEntity, owner, (float) this.damage);
+                DamageUtils.damageWithJahdoo(nearbyEntity, owner, (float) this.damage, this.getElementType().damageTypeResourceKey());
                 if(Random.nextInt(0, (int) effectChance) == 0) {
                     nearbyEntity.addEffect(instance);
                 }

@@ -2,7 +2,7 @@
   "credit": "Made with Blockbench",
   "parent": "builtin/entity",
   "textures": {
-    "particle": "jahdoo:block/infuser"
+    "particle": "jahdoo:block/disassembler"
   },
   "texture_size": [
     64,

@@ -113,10 +113,10 @@ public class MobManager {
 
     public static LivingEntity generateMob(LivingEntity livingEntity, InstanceData getData){
         var getEntity = livingEntity.level().getNearestPlayer(livingEntity, 200);
-        addBaseAttribute(MAX_HEALTH, livingEntity, getData.getHealthMultiplier());
-        addBaseAttribute(ARMOR, livingEntity, getData.getArmorMultiplier());
-        addBaseAttribute(ATTACK_DAMAGE, livingEntity, getData.getAttackDamageMultiplier());
-        addBaseAttribute(MOVEMENT_SPEED, livingEntity, getData.getSpeedMultiplier());
+        addBaseAttribute(MAX_HEALTH, livingEntity, getData.getHealth());
+        addBaseAttribute(ARMOR, livingEntity, getData.getArmor());
+        addBaseAttribute(ATTACK_DAMAGE, livingEntity, getData.getAttackDamage());
+        addBaseAttribute(MOVEMENT_SPEED, livingEntity, getData.getSpeed());
         if (livingEntity instanceof Mob mob) mob.setTarget(getEntity);
         return livingEntity;
     }
@@ -342,7 +342,7 @@ public class MobManager {
             entities.add(generateMob(getReadyEternalWizard(serverLevel, data), getInstanceData));
         }
 
-        for (var i = 0; i < getInstanceData.getVoidSpiders(); i++){
+        for (var i = 0; i < getInstanceData.getVoidSpider(); i++){
             entities.add(generateMob(getVoidSpider(serverLevel), getInstanceData));
         }
 

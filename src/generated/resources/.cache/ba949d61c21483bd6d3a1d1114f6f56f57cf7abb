@@ -1,2 +1,6 @@
-// 1.21.1	2024-12-05T17:39:36.6781705	Jahdoo Damage Type
+// 1.21.1	2025-04-16T21:52:37.6751166	Jahdoo Damage Type
+3cc826cd50f0649fa9ad4729bd61c59f24e6cf64 data/jahdoo/damage_type/frost_magic.json
+df764db00e5f5b5b92d1594ac77cae491f334f3e data/jahdoo/damage_type/inferno_magic.json
 200494fe27190f0afe9d54fd23dc515209513dc4 data/jahdoo/damage_type/jahdoo_magic.json
+29dbb190c75d589bc5cac2dfe68a6159fa874554 data/jahdoo/damage_type/mystic_magic.json
+b8a1da42c4a58ff092b67fe597344a1398a4f574 data/jahdoo/damage_type/vitality_magic.json

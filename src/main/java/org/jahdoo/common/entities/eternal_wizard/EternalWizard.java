@@ -234,7 +234,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         GenericProjectile arrow = new GenericProjectile(
             this, this.getX(), this.getY() + 2, this.getZ(),
             EntityDataReg.ETHEREAL_ARROW.get().setAbilityId(),
-            EtherealArrow.setArrowProperties(this.damage, this.effectDuration, this.effectStrength, this.effectChance),
+            EtherealArrow.setArrowProperties(this.damage, this.effectDuration, this.effectStrength, this.effectChance, ElementReg.vitality().id()),
             ElementReg.vitality(),
             FrostboltsAbility.abilityId.getPath().intern()
         );

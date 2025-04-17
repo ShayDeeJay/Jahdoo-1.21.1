@@ -15,11 +15,11 @@ import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.function.Consumer;
 
-public class InfuserBlockItem extends BlockItem implements GeoItem {
+public class DisassemblerBlockItem extends BlockItem implements GeoItem {
 
     private final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
-    public InfuserBlockItem(Block pBlock) {
+    public DisassemblerBlockItem(Block pBlock) {
         super(pBlock, new Properties());
         SingletonGeoAnimatable.registerSyncedAnimatable(this);
     }

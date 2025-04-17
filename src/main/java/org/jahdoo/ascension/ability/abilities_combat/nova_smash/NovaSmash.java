@@ -150,7 +150,7 @@ public class NovaSmash implements IAttachment {
                     if (livingEntity != player) {
                         var knockback = (double) this.highestDelta / 2;
                         this.knockback(livingEntity, Math.max(knockback, 0.3), -deltaX / length, -deltaZ / length);
-                        damageWithJahdoo(livingEntity, player, this.getDamage);
+                        damageWithJahdoo(livingEntity, player, this.getDamage, getElement().damageTypeResourceKey());
                     }
                 }
             }

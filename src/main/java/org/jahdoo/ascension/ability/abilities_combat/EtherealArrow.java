@@ -15,6 +15,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
@@ -28,6 +29,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
     double effectDuration;
     double effectStrength;
     double effectChance;
+    double elementType;
 
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
@@ -36,6 +38,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
         this.effectDuration = this.getTag(EFFECT_DURATION);
         this.effectStrength = this.getTag(EFFECT_STRENGTH);
         this.effectChance = this.getTag(EFFECT_CHANCE);
+        this.elementType =  this.getTag(SET_ELEMENT_TYPE);
     }
 
 
@@ -101,12 +104,13 @@ public class EtherealArrow extends DefaultEntityBehaviour {
         );
     }
 
-    public static AbilityHolder setArrowProperties(double damage, double effectDuration, double effectStrength, double effectChance){
+    public static AbilityHolder setArrowProperties(double damage, double effectDuration, double effectStrength, double effectChance, int elementType){
         return new AbilityBuilder(null, EtherealArrow.abilityId.getPath().intern())
             .setModifierWithoutBounds(DAMAGE, damage)
             .setModifierWithoutBounds(EFFECT_DURATION, effectDuration)
             .setModifierWithoutBounds(EFFECT_STRENGTH, effectStrength)
             .setModifierWithoutBounds(EFFECT_CHANCE, effectChance)
+            .setModifierWithoutBounds(SET_ELEMENT_TYPE, elementType)
             .buildAndReturn();
     }
 
@@ -129,7 +133,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
                 hitEntity.addEffect(effect);
             }
 
-            DamageUtils.damageWithJahdoo(hitEntity, this.generic.getOwner(), (float) damage);
+            DamageUtils.damageWithJahdoo(hitEntity, this.generic.getOwner(), (float) damage, ElementReg.fromId((int) this.elementType).get().damageTypeResourceKey());
             this.generic.discard();
         }
     }

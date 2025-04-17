@@ -141,8 +141,8 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> GLAIVE =
         lootTableItem(ItemReg.ANCIENT_GLAIVE.get());
 
-    public static final LootPoolSingletonContainer.Builder<?> RECALL_TOKEN =
-        lootTableItem(ItemReg.RECALL_TOKEN.get());
+    public static final LootPoolSingletonContainer.Builder<?> EXIT_KEY =
+        lootTableItem(ItemReg.EXIT_KEY.get());
 
     public static final LootPoolSingletonContainer.Builder<?> AMULET =
         lootTableItem(ItemReg.PENDENT.get());
@@ -311,7 +311,7 @@ public class RewardLootTables {
         return builder
             .add(GLAIVE.setWeight(10))
             .add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight(5))
-            .add(RECALL_TOKEN.setWeight(4))
+            .add(EXIT_KEY.setWeight(1))
             .add(TOME_OF_UNITY_BUILDER.setWeight(4))
             .add(BATTLEMAGE_HELM_BUILDER.setWeight(1))
             .add(BATTLEMAGE_CHEASTPLATE_BUILDER.setWeight(1))
