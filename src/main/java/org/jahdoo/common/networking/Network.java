@@ -105,7 +105,19 @@ public class Network {
             AbilityPointC2SP::handle
         );
 
+        payloadRegistrar.playToServer(
+            PlayerTrialDataC2SP.TYPE,
+            PlayerTrialDataC2SP.STREAM_CODEC,
+            PlayerTrialDataC2SP::handle
+        );
+
         //S2C
+        payloadRegistrar.playToClient(
+            PlayerTrialDataS2CP.TYPE,
+            PlayerTrialDataS2CP.STREAM_CODEC,
+            PlayerTrialDataS2CP::handle
+        );
+
         payloadRegistrar.playToClient(
             ManaSyncS2CP.TYPE,
             ManaSyncS2CP.STREAM_CODEC,

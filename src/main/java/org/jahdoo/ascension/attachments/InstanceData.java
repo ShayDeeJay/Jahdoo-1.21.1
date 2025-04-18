@@ -24,6 +24,7 @@ public class InstanceData implements IAttachment {
     public static final String KEY_BRONZE_COIN = "bronze_coin";
     public static final String KEY_SILVER_COIN = "silver_coin";
     public static final String KEY_GOLD_COIN = "gold_coin";
+    public static final String KEY_PLATINUM_COIN = "platinum_coin";
     public static final String KEY_HEALTH = "health";
     public static final String KEY_SPEED = "speed";
     public static final String KEY_ARMOR = "armor";
@@ -41,6 +42,11 @@ public class InstanceData implements IAttachment {
     }
 
     // Core map access
+
+    public Map<String, Double> getInstance(){
+        return this.values;
+    }
+
     private double get(String key) {
         return values.getOrDefault(key, 0.0);
     }
@@ -187,8 +193,12 @@ public class InstanceData implements IAttachment {
         increment(KEY_SILVER_COIN, silverCoin);
     }
 
-    public void setGoldTime(int goldCoin) {
+    public void setGoldCoin(int goldCoin) {
         increment(KEY_GOLD_COIN, goldCoin);
+    }
+
+    public void setPlatinumCoin(int goldCoin) {
+        increment(KEY_PLATINUM_COIN, goldCoin);
     }
 
     public static InstanceData setEasyData() {
@@ -225,12 +235,6 @@ public class InstanceData implements IAttachment {
         return new InstanceData(original.difficulty, original.values);
     }
 
-    @Override
-    public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
-        nbt.putString("difficulty", difficulty);
-        values.forEach(nbt::putDouble);
-    }
-
     public static final Codec<InstanceData> CODEC = RecordCodecBuilder.create(
         instance -> instance.group(
             Codec.STRING.fieldOf("Difficulty").forGetter(InstanceData::getDifficulty),
@@ -239,11 +243,24 @@ public class InstanceData implements IAttachment {
     );
 
     @Override
+    public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
+        nbt.putString("difficulty", difficulty);
+        var valuesTag = new CompoundTag();
+        for (Map.Entry<String, Double> entry : values.entrySet()) {
+            valuesTag.putDouble(entry.getKey(), entry.getValue());
+        }
+
+        nbt.put("Values", valuesTag);
+    }
+
+    @Override
     public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         difficulty = nbt.getString("difficulty");
-        for (String key : values.keySet()) {
-            if (nbt.contains(key)) {
-                values.put(key, nbt.getDouble(key));
+        values.clear();
+        if (nbt.contains("Values")) {
+            CompoundTag valuesTag = nbt.getCompound("Values");
+            for (String key : valuesTag.getAllKeys()) {
+                values.put(key, valuesTag.getDouble(key));
             }
         }
     }

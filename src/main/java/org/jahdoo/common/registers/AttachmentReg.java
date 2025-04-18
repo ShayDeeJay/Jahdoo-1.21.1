@@ -61,6 +61,8 @@ public class AttachmentReg {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<RunData>> RUN_DATA =
         withProviderCopyDeath("run_data", RunData::new);
 
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerTrialData>> PLAYER_TRIAL_DATA =
+        withProviderCopyDeath("player_trial_data", PlayerTrialData::new);
 
     //HELPERS
     public static void register(IEventBus eventBus) {
@@ -84,7 +86,7 @@ public class AttachmentReg {
         String name,
         Supplier<T> defaultValueSupplier
     ){
-        var serializer = new AttachmentProvider<T>(defaultValueSupplier);
+        var serializer = new AttachmentProvider<>(defaultValueSupplier);
         var supplier = builder(defaultValueSupplier).serialize(serializer).copyOnDeath();
         return regAttachment(name, supplier);
     }

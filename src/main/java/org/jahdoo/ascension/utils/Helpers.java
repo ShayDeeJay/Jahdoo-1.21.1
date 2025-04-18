@@ -43,10 +43,12 @@ import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
+import org.jahdoo.common.networking.client2server.PlayerTrialDataC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.server2client.AbilityHolderS2CP;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
+import org.jahdoo.common.networking.server2client.PlayerTrialDataS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -75,6 +77,10 @@ public class Helpers {
         sendToServer(new AbilityHolderC2SP(AbilityHolder.DEFAULT, 0));
     }
 
+    public static void syncPlayerTrialData(int index){
+        sendToServer(new PlayerTrialDataC2SP(index));
+    }
+
     public static void syncSelectedAbility(Player player, String updateAbility) {
         player.getData(AttachmentReg.CASTER_DATA).setSelectedAbility(updateAbility);
         PacketDistributor.sendToServer(new SelectAbilityC2SP(updateAbility));
@@ -90,7 +96,9 @@ public class Helpers {
     public static void syncCasterData(Entity player) {
         if(player instanceof ServerPlayer serverPlayer){
             var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
+            var trialData = serverPlayer.getData(AttachmentReg.PLAYER_TRIAL_DATA);
             PacketDistributor.sendToPlayer(serverPlayer, new CastingDataSyncS2CP(casterData));
+            PacketDistributor.sendToPlayer(serverPlayer, new PlayerTrialDataS2CP(trialData));
         }
     }
 

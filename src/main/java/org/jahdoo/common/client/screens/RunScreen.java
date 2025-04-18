@@ -2,117 +2,285 @@ package org.jahdoo.common.client.screens;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import org.jahdoo.ascension.attachments.InstanceData;
+import org.jahdoo.ascension.attachments.PlayerTrialData;
+import org.jahdoo.ascension.attachments.RunData;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.client.Icons;
+import org.jahdoo.common.client.button.FlexiButton;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static net.minecraft.util.FastColor.ARGB32.color;
+import static net.minecraft.world.effect.MobEffects.*;
 import static org.jahdoo.ascension.attachments.RunData.*;
+import static org.jahdoo.ascension.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.ascension.utils.ColourStore.BRONZE_COIN;
+import static org.jahdoo.ascension.utils.ColourStore.GOLD_COIN;
+import static org.jahdoo.ascension.utils.ColourStore.PLATINUM_COIN;
+import static org.jahdoo.ascension.utils.ColourStore.SILVER_COIN;
 import static org.jahdoo.ascension.utils.Maths.ticksToTime;
+import static org.jahdoo.common.client.Icons.CLOCK;
+import static org.jahdoo.common.client.Icons.TRIAL_EXPERIENCE;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
-import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
+import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
 
 public class RunScreen extends AbstractPanableScreen {
+
+    public static final int WIDTH_OFFSET = 80;
+    private RunData runData;
+    private InstanceData instanceData;
+    private double panYMain;
+    private double mouseX;
 
     @Override
     protected void init() {
         super.init();
+        var trialData = getPlayerTrialData().getPastRuns().reversed();
+        var instanceData = getPlayerTrialData().getInstanceData().reversed();
+        var spacer = 0;
+        var moveX = -5;
+
+        this.addRenderableOnly(
+            new Overlay() {
+                @Override
+                public void render(@NotNull GuiGraphics graphics, int i, int i1, float v) {
+                    var start = canScrollSelections(mouseX, width) ? uiFade() : getFadedColourBackground(0.5F);
+                    boxMaker(graphics, width/2 - WIDTH_OFFSET * 2 + moveX, 63, WIDTH_OFFSET, height/2 - 38, canScrollSelections(mouseX, width) ? color(180, uiColour()) : 0, start, start);
+                    graphics.enableScissor(3, 69, width - 3, height - 20);
+                }
+            }
+        );
+
+        for (var pastRun : trialData) {
+            this.addRenderableWidget(new FlexiButton(width/2 - WIDTH_OFFSET * 2 + 15 + moveX, (int) (this.panY + spacer  + 78), 130, 36, runData == pastRun, pastRun, (s) -> doOnClick(pastRun, instanceData.get(trialData.indexOf(pastRun)))));
+            spacer += 47;
+        }
+
+
+        this.addRenderableOnly(
+            new Overlay() {
+                @Override
+                public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
+                    guiGraphics.disableScissor();
+                }
+            }
+        );
+
+    }
+
+    @Override
+    public void onClose() {
+        this.runData = null;
+        super.onClose();
+    }
+
+    private @NotNull PlayerTrialData getPlayerTrialData() {
+        return PlayerTrialData.getData(getMinecraft().player);
+    }
+
+    private void doOnClick(RunData runData, InstanceData instanceData){
+        this.runData = runData;
+        this.instanceData = instanceData;
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        var zoomScale = this.zoomX + 1;
-        panY = Math.min(panY + Math.round(dragY / zoomScale), 1);
+        if (canScrollSelections(mouseX, width)) {
+            var zoomScale = this.zoomX + 1;
+            panY += Math.round(dragY / zoomScale);
+            panY = Math.min(panY, 0); // Clamp to top
+
+            int entryCount = getPlayerTrialData().getPastRuns().size();
+            int totalHeight = entryCount * 47;
+            int visibleHeight = (height - 13) - 64; // Bottom - Top
+            int minPanY = Math.min(0, visibleHeight - totalHeight - 18); // Extra 10 for bottom padding
+
+            panY = Math.max(panY, minPanY); // Clamp to bottom
+        }
+
+        if (canScrollDetails(mouseX, width)) {
+            panYMain += dragY;
+            panYMain = Math.min(panYMain, 0); // Top bound
+
+            var componentHeight = getComponents(instanceData, runData, getPlayerTrialData()).size() * 14;
+            var visibleHeight = (height - 13) - (62 + 36); // Matches your layout
+            var minPanYMain = Math.min(0, visibleHeight - componentHeight - 10); // Add bottom padding
+
+            panYMain = Math.max(panYMain, minPanYMain); // Bottom bound
+        }
+
         return true;
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        var zoomScale = this.zoomX + 1;
-        panY = Math.min(panY + Math.round(scrollY * 20 / zoomScale), 1);
+        var scrollSpeed = scrollY * 14;
+        if (canScrollSelections(mouseX, width)) {
+            var zoomScale = this.zoomX + 1;
+            var scrollAmount = Math.round(scrollSpeed / zoomScale);
+            panY = Math.min(panY + scrollAmount, 0); // Upper limit still 1 (top)
+
+            int entryCount = getPlayerTrialData().getPastRuns().size();
+            int totalHeight = entryCount * 47;
+            int visibleHeight = (height - 13) - 64; // Bottom - Top of scroll box
+            int minPanY = Math.min(0, visibleHeight - totalHeight - 18); // Extra 10 for bottom padding
+
+            panY = Math.max(panY, minPanY); // Clamp to prevent overscroll
+        }
+
+        if (canScrollDetails(mouseX, width)) {
+            panYMain += scrollSpeed;
+            panYMain = Math.min(panYMain, 0); // Top bound
+
+            var componentHeight = getComponents(instanceData, runData, getPlayerTrialData()).size() * 14;
+            var visibleHeight = (height - 13) - (62 + 36); // Matches your layout
+            var minPanYMain = Math.min(0, visibleHeight - componentHeight - 10);
+
+            panYMain = Math.max(panYMain, minPanYMain); // Bottom bound
+        }
+
         return true;
+    }
+
+    private static boolean canScrollSelections(double mouseX, int width) {
+        var v = (double) width / 2-5;
+        return mouseX > v - WIDTH_OFFSET * 2 && mouseX < v;
+    }
+
+    private static boolean canScrollDetails(double mouseX, int width) {
+        var v = (double) width / 2;
+        return mouseX > v + 4 && mouseX < v + WIDTH_OFFSET * 2;
+    }
+
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+//        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+    @Override
+    protected void renderBlurredBackground(float partialTick) {
+        super.renderBlurredBackground(partialTick);
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        var startX = this.width/2 + 5;
+        var startY = 62;
+        var startAllX = startX + 10;
+        var startAllY = (int) (startY + 36 + this.panYMain);
+        var pose = graphics.pose();
+        var scale = 2F;
+        var y = (int) Math.round((startY - 24 + (this.panYMain / 2)));
+        var spacer = 0;
+        var start = canScrollDetails(mouseX, width) ? uiFade() : getFadedColourBackground(0.5F);
+
+        this.mouseX = mouseX;
         super.render(graphics, mouseX, mouseY, partialTick);
+        boxMaker(graphics, startX, startY+1, 80, this.height/2-38, canScrollDetails(mouseX, width) ? color(180, uiColour()) : 0, start, start);
+        graphics.enableScissor(startX, startY+8, this.width/2 + 200, this.height - 18);
+        pose.pushPose();
+        pose.scale(scale, scale, scale);
+        graphics.drawCenteredString(getMinecraft().font, Helpers.withStyleComponentTrans("Run Data", uiColour()), startX/2 + 27, y, -1);
+        pose.popPose();
+
+        pose.pushPose();
+        pose.scale(scale, scale, scale);
+        graphics.drawCenteredString(getMinecraft().font, Helpers.withStyleComponentTrans("Run Data", uiColour()), startX/2 + 27, y, -1);
+        pose.popPose();
+
+        if(runData != null) {
+            var getAllComponents = getComponents(instanceData, runData, getPlayerTrialData());
+            for (var component : getAllComponents) {
+                var hasIcon = component.icon != null;
+                if(hasIcon){
+                    var size = 14;
+                    graphics.blit(component.icon, startAllX - 4, startAllY + spacer - 3, 0, 0, size, size, size, size);
+                }
+                graphics.drawString(getMinecraft().font, component.component(), startAllX + (hasIcon ? 10 : 0), startAllY + spacer, -1, true);
+                spacer += 14;
+            }
+        }
+
+        if(runData == null || !PlayerTrialData.getData(getMinecraft().player).getPastRuns().contains(runData)){
+            var player = getMinecraft().player;
+            PlayerTrialData.getLastRun(player).ifPresent(x -> this.runData = x);
+            PlayerTrialData.getLastInstance(player).ifPresent(x -> this.instanceData = x);
+        }
+
+        graphics.disableScissor();
+        this.rebuildWidgets();
+    }
+
+    public static List<StatEntry> getComponents(@Nullable InstanceData instanceData, RunData runData, PlayerTrialData trialData){
+        var allComponents = new ArrayList<StatEntry>();
+        var spacer = new StatEntry(Component.empty().copy(), null);
+
+        if(trialData != null){
+            allComponents.add(new StatEntry(componentTemplate("Trial No", trialData.getPastRuns().indexOf(runData) + 1 + "", uiColour()), null));
+            allComponents.add(new StatEntry(componentTemplate("Date", runData.getDateAndTime().split(" ")[0], uiColour()), null));
+            allComponents.add(new StatEntry(componentTemplate("Time", runData.getDateAndTime().split(" ")[1], uiColour()), null));
+            allComponents.add(spacer);
+            allComponents.add(new StatEntry(componentTemplate("Run Time", ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), PERK_GREEN), CLOCK));
+            allComponents.add(new StatEntry(componentTemplate("Total Exp", runData.getStat(EXPERIENCE) + "XP", COSMIC_PURPLE), TRIAL_EXPERIENCE));
+            allComponents.add(new StatEntry(componentTemplate("Rooms Cleared", runData.getStat(ROOMS_CLEARED) + "", AETHER_BLUE), Icons.UP));
+            allComponents.add(new StatEntry(componentTemplate("Chests Looted", runData.getStat(CHESTS_OPENED) + "", ABSORPTION_YELLOW), Icons.UPGRADE));
+            allComponents.add(new StatEntry(componentTemplate("Mobs Killed", runData.getStat(MOBS_KILLED) + "", MAGNET_STRENGTH_RED), Icons.HORDE));
+            allComponents.add(new StatEntry(componentTemplate("Bronze Coins", runData.getStat(RunData.BRONZE_COIN) + "", BRONZE_COIN), Icons.BRONZE_COIN));
+            allComponents.add(new StatEntry(componentTemplate("Silver Coins", runData.getStat(RunData.SILVER_COIN) + "", SILVER_COIN), Icons.SILVER_COIN));
+            allComponents.add(new StatEntry(componentTemplate("Gold Coins", runData.getStat(RunData.GOLD_COIN) + "", GOLD_COIN), Icons.GOLD_COIN));
+            allComponents.add(new StatEntry(componentTemplate("Platinum Coins", runData.getStat(RunData.PLATINUM_COIN) + "", PLATINUM_COIN), Icons.PLATINUM_COIN));
+        }
+
+        if(instanceData != null){
+            allComponents.add(spacer);
+            allComponents.add(new StatEntry(componentTemplate("Difficulty", Helpers.stringIdToName(instanceData.getDifficulty()), uiColour()), null));
+            allComponents.add(new StatEntry(componentTemplate("Max Time", ticksToTime(instanceData.getMaxTime() + ""), PERK_GREEN), CLOCK));
+            allComponents.add(new StatEntry(componentTemplate("Bonus Exp", instanceData.getExperience() + "XP", ABSORPTION_YELLOW), TRIAL_EXPERIENCE));
+
+            // Coin rewards
+            allComponents.add(new StatEntry(componentTemplate("Bronze Coins", instanceData.getBronzeCoin() + "", BRONZE_COIN), Icons.BRONZE_COIN));
+            allComponents.add(new StatEntry(componentTemplate("Silver Coins", instanceData.getSilverCoin() + "", SILVER_COIN), Icons.SILVER_COIN));
+            allComponents.add(new StatEntry(componentTemplate("Gold Coins", instanceData.getGoldCoin() + "", GOLD_COIN), Icons.GOLD_COIN));
+
+            // Mob multipliers
+            allComponents.add(new StatEntry(componentTemplate("Mob Health", "+" + instanceData.getHealth() + "%", uiColour()), iconFromEffect(HEAL)));
+            allComponents.add(new StatEntry(componentTemplate("Mob Armor", "+" + instanceData.getArmor() + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
+            allComponents.add(new StatEntry(componentTemplate("Mob Damage", "+" + instanceData.getAttackDamage() + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
+            allComponents.add(new StatEntry(componentTemplate("Mob Speed", "+" + instanceData.getSpeed() + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
+
+            // Mob counts / composition
+            allComponents.add(new StatEntry(componentTemplate("Horde Mobs", instanceData.getHorde() + "", AETHER_BLUE), Icons.HORDE));
+            allComponents.add(new StatEntry(componentTemplate("Skeletons", instanceData.getSkeleton() + "", OFF_WHITE), Icons.SKELETON));
+            allComponents.add(new StatEntry(componentTemplate("Void Spiders", instanceData.getVoidSpider() + "", COSMIC_PURPLE), Icons.VOID_SPIDER));
+            allComponents.add(new StatEntry(componentTemplate("Inferno Creepers", instanceData.getInfernoCreeper() + "", SYMPATHISER_ORANGE), Icons.INFERNO_CREEPER));
+            allComponents.add(new StatEntry(componentTemplate("Eternal Wizards", instanceData.getEternalWizard() + "", MAGNET_STRENGTH_RED), Icons.ETERNAL_WIZARD));
+        }
+
+        return allComponents;
+    }
+
+    public static MutableComponent componentTemplate(String header, String stat, int statColour){
+        var preMob = Helpers.withStyleComponent(header + ": ", HEADER_COLOUR);
+        var valueMob = Helpers.withStyleComponent(stat, statColour);
+        return preMob.copy().append(valueMob);
     }
 
     @Override
-    protected void renderWithScale(GuiGraphics graphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
-        var withPanX =  (centerX + this.panX);
-        var withPanY =  (this.panY);
+    protected void renderWithScale(GuiGraphics graphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {}
 
-        playerLevel(graphics, getMinecraft(), withPanX - 86, withPanY + (double) this.height / 2, uiColour());
-    }
-
-    public void playerLevel(
-        GuiGraphics graphics,
-        Minecraft minecraft,
-        double startX,
-        double startY,
-        int primary
-    ) {
-        var startX1 = (int) startX - 6;
-        var startY2 = (int) startY;
-        var headerX = startX1 - 8;
-        var data1 = minecraft.player.getData(AttachmentReg.CASTER_DATA.get());
-        var getXStart = headerX + 46;
-        var spacer = 0;
-        var runs = data1.getPastRuns().reversed();
-        var index = runs.size();
-
-        boxMaker(graphics, getXStart - 30, -100000000, 83, 100000000, primary, fadeBackground, fadeBackground);
-
-        if(runs.isEmpty()){
-            var pre1 = Helpers.withStyleComponent("No Runs Registered", primary);
-            graphics.drawCenteredString(minecraft.font, pre1, graphics.guiWidth() / 2, graphics.guiHeight()/2 + 20, -1);
-        }
-
-        for (var pastRun : runs) {
-            var preA = Helpers.withStyleComponent(index + "", primary);
-            graphics.drawCenteredString(minecraft.font, preA, graphics.guiWidth()/2, startY2 + spacer - 18, -1);
-
-            var preDate = Helpers.withStyleComponent("Date: ", HEADER_COLOUR);
-            var valueDate = Helpers.withStyleComponent(pastRun.getDateAndTime().split(" ")[0], SUB_HEADER_COLOUR);
-            var appendDate = preDate.copy().append(valueDate);
-            graphics.drawString(minecraft.font, appendDate, getXStart, startY2 + spacer, -1);
-
-            var preTime = Helpers.withStyleComponent("Time: ", HEADER_COLOUR);
-            var valueTime = Helpers.withStyleComponent(pastRun.getDateAndTime().split(" ")[1], SUB_HEADER_COLOUR);
-            var appendTime = preTime.copy().append(valueTime);
-            graphics.drawString(minecraft.font, appendTime, getXStart, startY2 + 10 + spacer, -1);
-
-            var preRunTime = Helpers.withStyleComponent("Run Time: ", HEADER_COLOUR);
-            var valueRunTime = Helpers.withStyleComponent(ticksToTime(pastRun.getStat(TIME_IN_TRIAL)+""), SUB_HEADER_COLOUR);
-            var appendRunTime = preRunTime.copy().append(valueRunTime);
-            graphics.drawString(minecraft.font, appendRunTime, getXStart, startY2 + 20 + spacer, -1);
-
-            var preXp = Helpers.withStyleComponent("Experience: ", HEADER_COLOUR);
-            var valueXp = Helpers.withStyleComponent(pastRun.getStat(EXPERIENCE)+"XP", ABSORPTION_YELLOW);
-            var appendXp = preXp.copy().append(valueXp);
-            graphics.drawString(minecraft.font, appendXp, getXStart, startY2 + 30 + spacer, -1);
-
-            var preRoom = Helpers.withStyleComponent("Rooms Cleared: ", HEADER_COLOUR);
-            var valueRoom = Helpers.withStyleComponent(pastRun.getStat(ROOMS_CLEARED) + "", AETHER_BLUE);
-            var appendRoom = preRoom.copy().append(valueRoom);
-            graphics.drawString(minecraft.font, appendRoom, getXStart, startY2 + 40 + spacer, -1);
-
-            var preChest = Helpers.withStyleComponent("Loot Chests: ", HEADER_COLOUR);
-            var valueChest = Helpers.withStyleComponent(pastRun.getStat(CHESTS_OPENED) + "", COSMIC_PURPLE);
-            var appendChest = preChest.copy().append(valueChest);
-            graphics.drawString(minecraft.font, appendChest, getXStart, startY2 + 50 + spacer, -1);
-
-            var preMob = Helpers.withStyleComponent("Mobs Killed: ", HEADER_COLOUR);
-            var valueMob = Helpers.withStyleComponent(pastRun.getStat(MOBS_KILLED) + "", MAGNET_STRENGTH_RED);
-            var appendMob = preMob.copy().append(valueMob);
-            graphics.drawString(minecraft.font, appendMob, getXStart, startY2 + 60 + spacer, -1);
-
-//            boxMaker(graphics, getXStart - 6, startY2 - 6 + spacer, 60, 40, primary, fadeBackground, fadeBackground);
-
-            spacer += 100;
-            index--;
-        }
-    }
+    public record StatEntry(
+        MutableComponent component,
+        @Nullable ResourceLocation icon
+    ){}
 
 }

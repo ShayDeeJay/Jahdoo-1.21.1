@@ -47,7 +47,7 @@ public abstract class AbstractPanableScreen extends Screen {
         this.addRenderableWidget(
             menuButtonAbility(
                 width/2 + 55, posY, (Button) -> getMinecraft().setScreen(new RunScreen()),
-                GUI_BUTTON_CENTER, 30, false, () -> {}, 0, getMinecraft().screen instanceof RunScreen, "Run Data"
+                DATA, 30, false, () -> {}, 0, getMinecraft().screen instanceof RunScreen, "History"
             )
         );
 

@@ -1,5 +1,6 @@
 package org.jahdoo.common.items;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -10,14 +11,16 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.attachments.RunData;
 import org.jahdoo.ascension.utils.IItemEntityBehaviour;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 
+import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CoinProperties;
+import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.ascension.utils.LocalLootBeamData.COIN;
 import static org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg.INSTANCE;
 
@@ -48,25 +51,30 @@ public class CoinItem extends Item implements IItemEntityBehaviour {
             } else getWallet.addBronze(count);
 
             if (entity instanceof ServerPlayer player) {
-                PacketDistributor.sendToPlayer(player, new WalletSyncS2CP(getWallet.getWallet()));
+                sendToPlayer(player, new WalletSyncS2CP(getWallet.getWallet()));
             }
 
-            Helpers.getSoundWithPosition(serverLevel, entity.blockPosition(), SoundReg.COIN.get(), 1, 0.8F);
+            getSoundWithPosition(serverLevel, entity.blockPosition(), SoundReg.COIN.get(), 1, 0.8F);
+            
+            if(level instanceof CustomLevel cLevel && entity instanceof LivingEntity lEntity) {
+                RunData.incrementCoin(cLevel, lEntity, data == null ? 0 : data.value(), count);
+            }
         }
+
         stack.setCount(0);
     }
 
     @Override
     public Component getName(ItemStack stack) {
         var data = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        if(data == null) return Helpers.withStyleComponent("Bronze Coin", CoinProperties.BRONZE.getTextColour());
+        if(data == null) return withStyleComponent("Bronze Coin", CoinProperties.BRONZE.getTextColour());
         var value = switch (data.value()) {
             case 1 -> CoinProperties.SILVER;
             case 2 -> CoinProperties.GOLD;
             default -> CoinProperties.PLATINUM;
         };
 
-        return Helpers.withStyleComponent(value.getSerializedName() + " Coin", value.getTextColour());
+        return withStyleComponent(value.getSerializedName() + " Coin", value.getTextColour());
     }
 
     @Override

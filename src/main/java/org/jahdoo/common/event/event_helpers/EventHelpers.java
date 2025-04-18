@@ -508,7 +508,7 @@ public class EventHelpers {
 
             if(entity.getPersistentData().getBoolean("boss")){
                 var data = new InstanceData();
-                data.setGoldTime(10);
+                data.setGoldCoin(10);
                 lootsplosian(entity.position(), level, 10, ColourStore.ABSORPTION_YELLOW, RewardLootTables.getCoinItems(data), false, 0);
             }
 

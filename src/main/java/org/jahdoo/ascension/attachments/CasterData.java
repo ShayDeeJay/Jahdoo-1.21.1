@@ -5,8 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -46,7 +44,6 @@ public class CasterData implements IAttachment {
     private List<AbilityHolder> unlockedAbilities = new ArrayList<>();
     public List<String> abilitySlots = new ArrayList<>();
     private List<String> unlockedSkills = new ArrayList<>();
-    private List<RunData> pastRuns = new ArrayList<>();
 
     public CasterData(
         int xp,
@@ -58,8 +55,7 @@ public class CasterData implements IAttachment {
         Map<String, Integer> abilityCooldownsStatic,
         List<AbilityHolder> unlockedAbilities,
         List<String> abilitySlots,
-        List<String> unlockedSkills,
-        List<RunData> pastRuns
+        List<String> unlockedSkills
     ) {
         this.xp = xp;
         this.allowedSlots = allowedSlots;
@@ -71,7 +67,6 @@ public class CasterData implements IAttachment {
         this.unlockedAbilities = unlockedAbilities;
         this.abilitySlots = abilitySlots;
         this.unlockedSkills = unlockedSkills;
-        this.pastRuns = pastRuns;
     }
 
     public CasterData(){
@@ -112,10 +107,6 @@ public class CasterData implements IAttachment {
 
     public int getAbilityPoints(){
         return this.abilityPoints;
-    }
-
-    public void addNewRun(RunData runData){
-        this.pastRuns.add(runData);
     }
 
     public void incrementAbilityPoints(int points){
@@ -204,11 +195,6 @@ public class CasterData implements IAttachment {
         this.unlockedAbilities = new ArrayList<>();
         this.abilitySlots = new ArrayList<>(EMPTY);
         this.unlockedSkills = new ArrayList<>();
-        var copy = pastRuns;
-        for (var pastRun : copy) {
-            this.pastRuns.add(pastRun);
-        }
-//        this.pastRuns = new ArrayList<>();
         this.selectedAbility = "";
         this.abilityPoints = 0;
         this.allowedSlots = 2;
@@ -316,10 +302,6 @@ public class CasterData implements IAttachment {
         abilityCooldownsStatic.remove(ability);
     }
 
-    public List<RunData> getPastRuns() {
-        return pastRuns;
-    }
-
     public int getMaxMana(Player player){
         var maxMana = player.getAttribute(AttributeReg.MANA_POOL);
         return maxMana != null ? (int) maxMana.getValue() : 100;
@@ -340,17 +322,10 @@ public class CasterData implements IAttachment {
         return player.getData(CASTER_DATA).getLevel();
     }
 
-
-
     public static void addExperience(Player player, int exp){
         var data = player.getData(CASTER_DATA);
         data.calculateAbilityPoints(player, exp);
         data.setXp(exp);
-    }
-
-    public static void addNewRun(Player player, RunData runData){
-        var data = player.getData(CASTER_DATA);
-        data.addNewRun(runData);
     }
 
     public static void cooldownTickEvent(ServerPlayer serverPlayer){
@@ -511,8 +486,7 @@ public class CasterData implements IAttachment {
             Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("ability_cooldowns_static").forGetter(CasterData::getAllCooldownsStatic),
             Codec.list(AbilityHolder.CODEC).fieldOf("unlocked_abilities").forGetter(CasterData::getUnlockedAbilities),
             Codec.list(Codec.STRING).fieldOf("ability_slots").forGetter(CasterData::getAbilitySlots),
-            Codec.list(Codec.STRING).fieldOf("unlocked_skills").forGetter(CasterData::getUnlockedSkills),
-            Codec.list(RunData.CODEC).optionalFieldOf("PastRuns", List.of()).forGetter(CasterData::getPastRuns)
+            Codec.list(Codec.STRING).fieldOf("unlocked_skills").forGetter(CasterData::getUnlockedSkills)
         ).apply(instance, CasterData::new)
     );
 
@@ -550,14 +524,6 @@ public class CasterData implements IAttachment {
         nbt.putInt("ability_points", this.abilityPoints);
         nbt.putString("selected_ability", this.selectedAbility);
         AbilityHolder.saveListHolders(this.unlockedAbilities, nbt);
-
-        var runList = new ListTag();
-        for (RunData pastRun : pastRuns) {
-            var runTag = new CompoundTag();
-            pastRun.saveNBTData(runTag, provider);
-            runList.add(runTag);
-        }
-        nbt.put("PastRuns", runList);
     }
 
     @Override
@@ -608,16 +574,5 @@ public class CasterData implements IAttachment {
         this.abilityPoints = nbt.getInt("ability_points");
         this.unlockedAbilities = AbilityHolder.readListHolders(nbt);
 
-
-        pastRuns.clear();
-        if (nbt.contains("PastRuns", Tag.TAG_LIST)) {
-            var runList = nbt.getList("PastRuns", Tag.TAG_COMPOUND);
-            for (Tag tag : runList) {
-                var runTag = (CompoundTag) tag;
-                var pastRun = new RunData(new HashMap<>(), ""); // placeholder init
-                pastRun.loadNBTData(runTag, provider);
-                pastRuns.add(pastRun);
-            }
-        }
     }
 }

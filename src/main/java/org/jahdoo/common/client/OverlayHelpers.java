@@ -7,8 +7,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.registers.AttachmentReg;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,11 +14,11 @@ import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static net.minecraft.network.chat.Component.translatable;
-import static org.jahdoo.ascension.attachments.RunData.*;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponentTrans;
-import static org.jahdoo.ascension.utils.Maths.*;
+import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
+import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
 
@@ -77,7 +75,6 @@ public class OverlayHelpers {
         return attSpacer.get();
     }
 
-
     public static int getModStat(
         GuiGraphics graphics,
         Minecraft minecraft,
@@ -122,75 +119,5 @@ public class OverlayHelpers {
 
         return attSpacer.get();
     }
-
-    public static void playerLevel(
-        GuiGraphics graphics,
-        Minecraft minecraft,
-        double startX,
-        double startY,
-        int primary
-    ) {
-        var startX1 = (int) startX - 6;
-        var startY2 = (int) startY;
-        var headerX = startX1 - 8;
-        var data1 = minecraft.player.getData(AttachmentReg.CASTER_DATA.get());
-        var getXStart = headerX + 46;
-        var spacer = 0;
-        var runs = data1.getPastRuns().reversed();
-        var index = runs.size();
-
-        boxMaker(graphics, getXStart - 30, -100000000, 83, 100000000, primary, fadeBackground, fadeBackground);
-
-        if(runs.isEmpty()){
-            var pre1 = Helpers.withStyleComponent("No Runs Registered", primary);
-            graphics.drawCenteredString(minecraft.font, pre1, graphics.guiWidth() / 2, graphics.guiHeight()/2 + 20, -1);
-        }
-
-        for (var pastRun : runs) {
-            var preA = Helpers.withStyleComponent(index + "", primary);
-            graphics.drawCenteredString(minecraft.font, preA, graphics.guiWidth()/2, startY2 + spacer - 18, -1);
-
-            var preDate = Helpers.withStyleComponent("Date: ", HEADER_COLOUR);
-            var valueDate = Helpers.withStyleComponent(pastRun.getDateAndTime().split(" ")[0], SUB_HEADER_COLOUR);
-            var appendDate = preDate.copy().append(valueDate);
-            graphics.drawString(minecraft.font, appendDate, getXStart, startY2 + spacer, -1);
-
-            var preTime = Helpers.withStyleComponent("Time: ", HEADER_COLOUR);
-            var valueTime = Helpers.withStyleComponent(pastRun.getDateAndTime().split(" ")[1], SUB_HEADER_COLOUR);
-            var appendTime = preTime.copy().append(valueTime);
-            graphics.drawString(minecraft.font, appendTime, getXStart, startY2 + 10 + spacer, -1);
-
-            var preRunTime = Helpers.withStyleComponent("Run Time: ", HEADER_COLOUR);
-            var valueRunTime = Helpers.withStyleComponent(ticksToTime(pastRun.getStat(TIME_IN_TRIAL)+""), SUB_HEADER_COLOUR);
-            var appendRunTime = preRunTime.copy().append(valueRunTime);
-            graphics.drawString(minecraft.font, appendRunTime, getXStart, startY2 + 20 + spacer, -1);
-
-            var preXp = Helpers.withStyleComponent("Experience: ", HEADER_COLOUR);
-            var valueXp = Helpers.withStyleComponent(pastRun.getStat(EXPERIENCE)+"XP", ABSORPTION_YELLOW);
-            var appendXp = preXp.copy().append(valueXp);
-            graphics.drawString(minecraft.font, appendXp, getXStart, startY2 + 30 + spacer, -1);
-
-            var preRoom = Helpers.withStyleComponent("Rooms Cleared: ", HEADER_COLOUR);
-            var valueRoom = Helpers.withStyleComponent(pastRun.getStat(ROOMS_CLEARED) + "", AETHER_BLUE);
-            var appendRoom = preRoom.copy().append(valueRoom);
-            graphics.drawString(minecraft.font, appendRoom, getXStart, startY2 + 40 + spacer, -1);
-
-            var preChest = Helpers.withStyleComponent("Loot Chests: ", HEADER_COLOUR);
-            var valueChest = Helpers.withStyleComponent(pastRun.getStat(CHESTS_OPENED) + "", COSMIC_PURPLE);
-            var appendChest = preChest.copy().append(valueChest);
-            graphics.drawString(minecraft.font, appendChest, getXStart, startY2 + 50 + spacer, -1);
-
-            var preMob = Helpers.withStyleComponent("Mobs Killed: ", HEADER_COLOUR);
-            var valueMob = Helpers.withStyleComponent(pastRun.getStat(MOBS_KILLED) + "", MAGNET_STRENGTH_RED);
-            var appendMob = preMob.copy().append(valueMob);
-            graphics.drawString(minecraft.font, appendMob, getXStart, startY2 + 60 + spacer, -1);
-
-            boxMaker(graphics, getXStart - 6, startY2 - 6 + spacer, 60, 40, primary, fadeBackground, fadeBackground);
-
-            spacer += 100;
-            index--;
-        }
-    }
-
 
 }

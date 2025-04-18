@@ -26,6 +26,6 @@ public class GoldCoins extends Coins{
     @Override
     public void execute(ServerLevel level, double value) {
         var data = level.getData(INSTANCE_DATA);
-        data.setGoldTime((int) value);
+        data.setGoldCoin((int) value);
     }
 }

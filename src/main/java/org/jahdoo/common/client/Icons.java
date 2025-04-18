@@ -5,13 +5,13 @@ import net.minecraft.resources.ResourceLocation;
 import static org.jahdoo.ascension.utils.Helpers.res;
 
 public class Icons {
-    
-    public static final String PREFIX = "textures/gui/";
-    public static final String BUTTON_PREFIX = PREFIX + "gui_buttons/";
-    public static final String SLOTS_PREFIX = PREFIX + "slots/";
-    public static final String ITEMS_PREFIX = "textures/item/";
+
+    private static final String PREFIX = "textures/gui/";
+    private static final String BUTTON_PREFIX = PREFIX + "gui_buttons/";
+    private static final String SLOTS_PREFIX = PREFIX + "slots/";
+    private static final String ITEMS_PREFIX = "textures/item/";
     public static final String ABILITY_PREFIX = "textures/ability_icons/";
-    public static final String SKILLS = "textures/skill/";
+    private static final String SKILLS = "textures/skill/";
 
     public static final ResourceLocation FROST_BOLTZ =
         res(ABILITY_PREFIX + "frostbolts.png");
@@ -45,6 +45,9 @@ public class Icons {
 
     public static final ResourceLocation MANA_REGEN =
         res("textures/mob_effect/mana_regen.png");
+
+    public static final ResourceLocation DATA =
+        res(PREFIX + "data.png");
 
     public static final ResourceLocation XP_BAR =
         res(PREFIX + "xp_bar.png");
