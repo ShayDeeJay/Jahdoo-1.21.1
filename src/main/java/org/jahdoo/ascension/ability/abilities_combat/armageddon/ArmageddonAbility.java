@@ -2,7 +2,6 @@ package org.jahdoo.ascension.ability.abilities_combat.armageddon;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -64,8 +63,8 @@ public class ArmageddonAbility extends Ability {
         Vec3 location = player.pick(40, 0,false).getLocation();
         AoeCloud aoeCloud = new AoeCloud(player.level(), player, 3f, EntityDataReg.ARMAGEDDON.get().setAbilityId(), abilityId.getPath().intern());
         aoeCloud.setPos(location.x, location.y, location.z);
-        player.level().playSound(null, BlockPos.containing(location), SoundEvents.FIRECHARGE_USE, SoundSource.NEUTRAL, 1.4f, 0.3f);
-        player.level().playSound(null, BlockPos.containing(location), SoundReg.ORB_FIRE.get(), SoundSource.NEUTRAL, 0.8f, 0.6f);
+        player.level().playSound(null, BlockPos.containing(location), SoundReg.FIRE_ABILITY.get(), SoundSource.NEUTRAL, 1.4f, 1);
+        player.level().playSound(null, BlockPos.containing(location), SoundReg.TELEPORT.get(), SoundSource.NEUTRAL, 1f, 1f);
         player.level().addFreshEntity(aoeCloud);
     }
 

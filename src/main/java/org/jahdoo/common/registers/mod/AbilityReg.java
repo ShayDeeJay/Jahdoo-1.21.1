@@ -17,7 +17,7 @@ import org.jahdoo.ascension.ability.abilities_combat.ancient_golem.SummonAncient
 import org.jahdoo.ascension.ability.abilities_combat.arcane_shift.ArcaneShiftAbility;
 import org.jahdoo.ascension.ability.abilities_combat.armageddon.ArmageddonAbility;
 import org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility;
-import org.jahdoo.ascension.ability.abilities_combat.elemental_shooter.*;
+import org.jahdoo.ascension.ability.abilities_combat.elemental_missile.*;
 import org.jahdoo.ascension.ability.abilities_combat.eternal_wizard.SummonEternalWizardAbility;
 import org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility;
 import org.jahdoo.ascension.ability.abilities_combat.frostbolts.FrostboltsAbility;
@@ -145,7 +145,7 @@ public class AbilityReg {
         registerSpell(new BurningSkullsAbility());
 
     public static final DeferredHolder<Ability, Ability> INFERNO_MISSILE =
-        registerSpell(new InfernoMissile());
+        registerSpell(new InfernoMissileAbility());
 
     //Mystic
     public static final DeferredHolder<Ability, Ability> ARCANE_SHIFT =
@@ -164,7 +164,7 @@ public class AbilityReg {
         registerSpell(new DimensionalRecallAbility());
 
     public static final DeferredHolder<Ability, Ability> MYSTIC_MISSILE =
-        registerSpell(new MysticMissile());
+        registerSpell(new MysticMissileAbility());
 
     //Frost
     public static final DeferredHolder<Ability, Ability> PERMAFROST =
@@ -180,7 +180,7 @@ public class AbilityReg {
         registerSpell(new StormRushAbility());
 
     public static final DeferredHolder<Ability, Ability> FROST_MISSILE =
-        registerSpell(new FrostMissile());
+        registerSpell(new FrostMissileAbility());
 
     //Vitality
     public static final DeferredHolder<Ability, Ability> SUMMON_ETERNAL_WIZARD =
@@ -199,7 +199,7 @@ public class AbilityReg {
         registerSpell(new LifeSiphonAbility());
 
     public static final DeferredHolder<Ability, Ability> VITALITY_MISSILE =
-        registerSpell(new VitalityMissile());
+        registerSpell(new VitalityMissileAbility());
 
     //Utility
     public static final DeferredHolder<Ability, Ability> BLOCK_BOMB =

@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -15,14 +14,15 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.LocalLootBeamData;
+import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.items.magnet.Magnet;
 import org.jahdoo.common.items.magnet.MagnetData;
 import org.jahdoo.common.items.pendent.Pendent;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.tome.TomeOfUnity;
-import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.ElementReg;
@@ -34,6 +34,7 @@ import java.util.List;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.core.registries.Registries.ENCHANTMENT;
+import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static net.minecraft.world.level.storage.loot.entries.LootItem.lootTableItem;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
@@ -258,20 +259,42 @@ public class RewardLootTables {
     }
 
     private static void enchantedBook(ServerLevel serverLevel, ItemStack itemStack){
-        serverLevel
+        var enchantments = List.of(
+            PROTECTION,
+            FEATHER_FALLING,
+            BLAST_PROTECTION,
+            PROJECTILE_PROTECTION,
+            RESPIRATION,
+            AQUA_AFFINITY,
+            THORNS,
+            DEPTH_STRIDER,
+            FROST_WALKER,
+            SOUL_SPEED,
+            SWIFT_SNEAK,
+            SHARPNESS,
+            SMITE,
+            BANE_OF_ARTHROPODS,
+            KNOCKBACK,
+            FIRE_ASPECT,
+            LOOTING,
+            SWEEPING_EDGE,
+            EFFICIENCY,
+            SILK_TOUCH,
+            UNBREAKING,
+            FORTUNE,
+            MENDING
+        );
+
+        var resourceKey = Helpers.listRandom(enchantments);
+        var randomEnchantment = serverLevel
             .registryAccess()
             .registryOrThrow(ENCHANTMENT)
-            .getRandom(RandomSource.create())
-            .ifPresent(
-                key -> {
-                    var value = key.getDelegate().value();
-                    var maxLevel = value.getMaxLevel();
-                    var minLevel = value.getMinLevel();
+            .get(resourceKey);
 
-                    enchant(itemStack, serverLevel.registryAccess(), key.getKey(), maxLevel > minLevel ? Random.nextInt(minLevel, maxLevel) : 1);
-                    attachLootBeam(itemStack, LocalLootBeamData.SPECIALLY_ENCHANTED_BOOK);
-                }
-            );
+        var maxLevel = randomEnchantment.getMaxLevel();
+        var minLevel = randomEnchantment.getMinLevel();
+        enchant(itemStack, serverLevel.registryAccess(), resourceKey, maxLevel > minLevel ? Random.nextInt(minLevel, maxLevel) : 1);
+        attachLootBeam(itemStack, LocalLootBeamData.SPECIALLY_ENCHANTED_BOOK);
     }
 
     public static void attachItemData(

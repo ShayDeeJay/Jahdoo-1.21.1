@@ -17,18 +17,15 @@ import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.EntityMovers;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.List;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
+import static org.jahdoo.common.particle.ParticleHandlers.*;
+import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
 
@@ -111,7 +108,7 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         if (privateTicks > lifetime) {
             if (this.element.tickCount == lifetime + 1) {
                 element.setAnimation(5);
-                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundEvents.ENDER_EYE_DEATH, 2.5F, 0.8F);
+                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), getElementType().sound(), 2.5F, 0.6F);
             }
 
             if(privateTicks > lifetime + 6) this.element.discard();
@@ -123,9 +120,9 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         var lifetime = 2;
         var col1 = this.getElementType().partColourA();
         var col2 = this.getElementType().partColourFade();
-        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 0.2f, col1, col2, true);
+        var genericParticle = genericParticle(SOFT_PARTICLE, lifetime, 0.2f, col1, col2, true);
 
-        ParticleHandlers.sendParticles(
+        sendParticles(
             this.element.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.6
         );
     }
@@ -135,9 +132,9 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         var lifetime = 6;
         var col1 = this.getElementType().partColourA();
         var col2 = this.getElementType().partColourFade();
-        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 3f, col1, col2, false);
+        var genericParticle = genericParticle(SOFT_PARTICLE, lifetime, 3f, col1, col2, false);
 
-        ParticleHandlers.sendParticles(
+        sendParticles(
             this.element.level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 0.6
         );
     }
@@ -197,14 +194,14 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         var particleCount = 2;
         var speed = 0.05f;
 
-        ParticleHandlers.particleBurst(
+        particleBurst(
             level, this.element.position(), particleCount,
             bakedParticle(this.getElementType().id(), 4,2,false),
             0,0,0,speed
         );
-        ParticleHandlers.particleBurst(
+        particleBurst(
             level, this.element.position(), particleCount,
-            ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, this.getElementType(), 4,2),
+            genericParticle(GENERIC_PARTICLE, this.getElementType(), 4,2),
             0,0,0,speed
         );
     }
@@ -230,14 +227,14 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         var level = this.element.level();
         var explode = privateTicks > lifetime;
         var rando = List.of(
-            ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, this.getElementType(), 5, Random.nextInt(6,8)),
+            genericParticle(GENERIC_PARTICLE, this.getElementType(), 5, Random.nextInt(6,8)),
             bakedParticle(this.getElementType().id(), 5, Random.nextInt(5,8), false)
         );
 
         PositionFinders.getRandomSphericalPositions(this.element, counter, Math.min(radius * 6, 20),
             position -> {
                 var directions = this.element.position().subtract(position).normalize();
-                ParticleHandlers.sendParticles(
+                sendParticles(
                     level,
                     rando.get(Random.nextInt(2)),
                     position, Random.nextInt(0,2),
@@ -263,10 +260,10 @@ public class QuantumDestroyer extends DefaultEntityBehaviour {
         } else {
             if(!isFullForm){
                 isFullForm = true;
-                Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.ORB_CREATE.get(), 1.5f, 0.8f);
-                ParticleHandlers.particleBurst(
+                Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), getElementType().sound(), 2f, 1f);
+                particleBurst(
                     element.level(), this.element.position(), 20,
-                    ParticleHandlers.genericParticle(MAGIC_PARTICLE, this.getElementType(), 15,4),
+                    genericParticle(MAGIC_PARTICLE, this.getElementType(), 15,4),
                     0,0,0,1f
                 );
                 this.element.setDeltaMovement(0, 0, 0);

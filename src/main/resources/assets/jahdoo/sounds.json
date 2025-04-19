@@ -167,5 +167,29 @@
     "sounds": [
       "jahdoo:fire_ability"
     ]
+  },
+  "impact": {
+    "subtitles": "sounds.jahdoo.impact",
+    "sounds": [
+      "jahdoo:impact"
+    ]
+  },
+  "elemental_bullet": {
+    "subtitles": "sounds.jahdoo.elemental_bullet",
+    "sounds": [
+      "jahdoo:elemental_bullet"
+    ]
+  },
+  "mystic_ability": {
+    "subtitles": "sounds.jahdoo.mystic_ability",
+    "sounds": [
+      "jahdoo:mystic_ability"
+    ]
+  },
+  "set_active": {
+    "subtitles": "sounds.jahdoo.set_active",
+    "sounds": [
+      "jahdoo:set_active"
+    ]
   }
 }

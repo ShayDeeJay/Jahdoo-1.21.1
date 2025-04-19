@@ -12,9 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.attachments.PlayerTrialData;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +22,6 @@ import static net.minecraft.world.InteractionResultHolder.fail;
 import static net.minecraft.world.InteractionResultHolder.pass;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
-import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
 
 public class CasterItem extends Item implements JahdooItem {
 
@@ -62,7 +59,6 @@ public class CasterItem extends Item implements JahdooItem {
         return new Properties()
             .stacksTo(1)
             .durability(300)
-            .component(RUNE_HOLDER, RuneHolder.makeRuneSlots(0, 40))
             .component(ComponentReg.JAHDOO_RARITY, 0);
     }
 
@@ -82,7 +78,8 @@ public class CasterItem extends Item implements JahdooItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
 
-        PlayerTrialData.addDummyData(level, player, 20, true);
+//        Helpers.throwOrAddItem(player, JahdooRarity.getRandomWand(null, null));
+
 
         if(!level.isClientSide){
             var castAbility = castAbility(player, interactionHand, item);

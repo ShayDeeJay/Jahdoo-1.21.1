@@ -185,10 +185,12 @@ public class FrostBolts  extends DefaultEntityBehaviour {
         if (player.isCloseEnough(hitEntity,castDistance + 0.1)) {
             castAnimation(player, SINGLE_CAST_ID);
             this.hitTarget = hitEntity;
-            Helpers.getSoundWithPositionV(generic.level(), hitEntity.position(), SoundReg.ORB_CREATE.get(), 2f, 1f);
+            Helpers.getSoundWithPositionV(generic.level(), hitEntity.position(), SoundReg.FROST_ABILITY.get(),  1f, 1f);
             onExistenceChange(hitEntity, getElementType());
             CastHelper.chargeManaAndCooldown(FrostboltsAbility.abilityId.getPath().intern(), player);
             player.displayClientMessage(Component.literal(""), true);
+            Helpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.TELEPORT.get(), 1, 1.6F);
+            Helpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.FROST_ABILITY.get(), 1, 1.2F);
             this.generic.setDeltaMovement(0,0,0);
         } else {
             sendNoTargetMessage();

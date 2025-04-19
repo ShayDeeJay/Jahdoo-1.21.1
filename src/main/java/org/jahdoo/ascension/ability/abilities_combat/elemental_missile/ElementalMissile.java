@@ -1,4 +1,4 @@
-package org.jahdoo.ascension.ability.abilities_combat.elemental_shooter;
+package org.jahdoo.ascension.ability.abilities_combat.elemental_missile;
 
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
@@ -17,6 +17,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
@@ -24,7 +25,7 @@ import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 
-public class ElementalShooter extends DefaultEntityBehaviour {
+public class ElementalMissile extends DefaultEntityBehaviour {
 
     private static final ResourceLocation abilityId = Helpers.res("elemental_shooter_property");
     private double numberOfRicochets;
@@ -87,7 +88,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
 
     @Override
     public DefaultEntityBehaviour getEntityProperty() {
-        return new ElementalShooter();
+        return new ElementalMissile();
     }
 
     private AbstractElement getElement(){
@@ -116,6 +117,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
     public void onEntityHit(LivingEntity hitEntity) {
         this.applyEffect(hitEntity, getElement().effect());
         if(!(this.generic.level() instanceof ServerLevel serverLevel)) return;
+        Helpers.getSoundWithPositionV(this.generic.level(), hitEntity.position(), SoundReg.ELEMENTAL_BULLET.get(), 1, 0.8F);
         ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 1, getElement().getParticleGroup().bakedSlow());
         this.setDamageByOwner(hitEntity);
         this.generic.discard();
@@ -128,6 +130,7 @@ public class ElementalShooter extends DefaultEntityBehaviour {
         Helpers.getSoundWithPosition(this.generic.level(), this.generic.blockPosition(), getElement().sound(), 0.4f);
         if(!(this.generic.level() instanceof ServerLevel serverLevel)) return;
         ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 1, getElement().getParticleGroup().bakedSlow());
+        Helpers.getSoundWithPosition(serverLevel, blockHitResult.getBlockPos(), SoundReg.ELEMENTAL_BULLET.get(), 0.8F, 1.2F);
         this.setReboundBehaviour(blockHitResult);
     }
 

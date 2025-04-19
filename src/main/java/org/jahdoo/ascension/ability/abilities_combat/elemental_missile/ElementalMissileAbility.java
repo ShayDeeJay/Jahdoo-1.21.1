@@ -1,6 +1,5 @@
-package org.jahdoo.ascension.ability.abilities_combat.elemental_shooter;
+package org.jahdoo.ascension.ability.abilities_combat.elemental_missile;
 
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
@@ -11,11 +10,12 @@ import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.jahdoo.common.registers.SoundReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.registers.mod.EntityDataReg.ELEMENTAL_SHOOTER;
 
-abstract public class ElementalMissile extends Ability {
+abstract public class ElementalMissileAbility extends Ability {
 
     @Override
     public int levelRequirement() {
@@ -68,7 +68,7 @@ abstract public class ElementalMissile extends Ability {
         var index = ELEMENTAL_SHOOTER.get().setAbilityId();
 
         fireMultiShotProjectile((int) projectileCount , 1.2f, player, 0.1, () -> new GenericProjectile(player, 0, index, name));
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.ENDER_EYE_DEATH, 0.25f);
+        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.ELEMENTAL_BULLET.get(), 0.8F, 1.2F);
     }
 
     protected AbilityHolder getWithElement(int id, String name){

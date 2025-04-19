@@ -58,8 +58,9 @@ public class PermafrostAbility extends Ability {
         var aoeCloud = new AoeCloud(player.level(), player, 0f, EntityDataReg.ARCTIC_STORM.get().setAbilityId(), abilityId.getPath().intern());
         var position = player.position();
         aoeCloud.setPos(position.x, position.y, position.z);
-        Helpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundReg.ICE_ATTACH.get(), 1.2f, 0.6f);
-        Helpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundReg.MAGIC_EXPLOSION.get(), 0.4f, 0.8f);
+        Helpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundReg.FROST_ABILITY.get(), 1f, 0.8f);
+        Helpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundReg.IMPACT.get(),0.8f, 1f);
+        Helpers.getSoundWithPositionV(player.level(), aoeCloud.position(), SoundReg.DASH_EFFECT_INSTANT.get(),1f, 0.8f);
         player.level().addFreshEntity(aoeCloud);
     }
 

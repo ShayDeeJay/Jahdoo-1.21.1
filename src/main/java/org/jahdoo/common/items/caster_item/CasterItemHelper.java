@@ -242,12 +242,13 @@ public class CasterItemHelper {
             .getAttributeModifiers()
             .modifiers()
             .stream()
-            .toList()
-            .subList(0,3);
+            .toList();
 
-        if(!wandOnlyAttributes.isEmpty()){
+        var newAttributes = wandOnlyAttributes.subList(0, Math.max(wandOnlyAttributes.size(), 1));
+
+        if(!newAttributes.isEmpty()){
             var colourSuf = rgbToInt(145, 145, 145);
-            for (ItemAttributeModifiers.Entry entry : wandOnlyAttributes) {
+            for (ItemAttributeModifiers.Entry entry : newAttributes) {
                 Component translatable;
                 var value = roundNonWholeString(singleFormattedDouble(entry.modifier().amount()));
                 var valueWithFix = "+" + value + "%";

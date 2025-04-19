@@ -27,8 +27,8 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.networking.server2client.NovaSmashS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.List;
 
@@ -121,7 +121,10 @@ public class NovaSmash implements IAttachment {
 
     private void setAbilityEffects(Player player){
         getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.PLAYER_BIG_FALL);
-        getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.EXPLOSION.get(), 1,0.6f);
+        getSoundWithPosition(player.level(), player.blockPosition(), getElement().sound(), 1, 1f);
+        if(player.tickCount % 2 == 0){
+            getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.EXPLOSION.get(), 0.5F, 1f);
+        }
         this.clientDiggingParticles(player, player.level());
 
         if(player.level() instanceof ServerLevel){
@@ -185,7 +188,10 @@ public class NovaSmash implements IAttachment {
             var getValue = (float) CasterData.getSpecificValue(getHolder, AbilityBuilder.DAMAGE);
             this.getDamage = Helpers.attributeModifierCalculator(player, getValue, false, MAGIC_DAMAGE_MULTIPLIER, MYSTIC_MAGIC_DAMAGE_MULTIPLIER);
             player.setDeltaMovement(player.getDeltaMovement().add(0, -1.5, 0));
+            Helpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.DASH_EFFECT_INSTANT.get(), 1, 1.4F);
+
             if(player.onGround()){
+                player.resetFallDistance();
                 this.setAbilityEffects(player);
                 this.setKnockbackAndDamage(player);
                 this.highestDelta = 0;

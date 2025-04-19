@@ -1,5 +1,6 @@
 package org.jahdoo.common.items;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
@@ -63,7 +64,7 @@ public class ChallengerTicket extends Item {
 
     @Override
     public void onUseTick(Level level, LivingEntity player, ItemStack stack, int remainingUseDuration) {
-        if (!(player instanceof ServerPlayer serverPlayer)) return;
+        if (!(player instanceof ServerPlayer serverPlayer) || level instanceof CustomLevel) return;
 
         if(player.isUsingItem()){
             var getCastTime = 80;

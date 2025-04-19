@@ -21,8 +21,7 @@ import java.util.UUID;
 import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
 import static net.minecraft.world.entity.EquipmentSlot.OFFHAND;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter;
-import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.setGoldCost;
-import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.setPlatinumCost;
+import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.*;
 import static org.jahdoo.ascension.trading_post.RewardLootTables.magnetItem;
 import static org.jahdoo.ascension.trading_post.ShoppingArmor.*;
 import static org.jahdoo.ascension.trading_post.ShoppingRunes.*;
@@ -183,5 +182,18 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var altElement = Helpers.listRandom(getWithout(element));
         addAttribute(altElement, itemStack);
         return new ShoppingItems(itemStack, setPlatinumCost(200));
+    }
+
+    public static ShoppingItems soldWands(){
+        var randomRarity = JahdooRarity.getRarity();
+        var randomWand = JahdooRarity.getRandomWand(randomRarity, null);
+        var cost = switch (randomRarity.getId()){
+            case 1 -> setSilverCost(20);
+            case 2 -> setGoldCost(10);
+            case 3 -> setGoldCost(80);
+            case 4 -> setPlatinumCost(20);
+            default -> setBronzeCost(20);
+        };
+        return new ShoppingItems(randomWand, cost);
     }
 }

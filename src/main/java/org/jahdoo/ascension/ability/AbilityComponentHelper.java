@@ -24,8 +24,7 @@ import java.util.Optional;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.ability.AbilityRating.*;
-import static org.jahdoo.ascension.utils.ColourStore.PERK_GREEN;
-import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.ascension.utils.Maths.*;
 import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
@@ -77,8 +76,8 @@ public class AbilityComponentHelper {
     public static boolean shiftForDetails(List<Component> toolTips, boolean spacer){
         if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
             if(spacer) toolTips.add(Component.literal(" "));
-            var hotkey = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey",-2631721);
-            var holdToDiscover = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details",-10066330, hotkey);
+            var hotkey = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey", OFF_WHITE);
+            var holdToDiscover = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details", HEADER_COLOUR, hotkey);
             toolTips.add(holdToDiscover);
             return true;
         }
@@ -90,9 +89,15 @@ public class AbilityComponentHelper {
 
         if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
             if(showSpacer) comps.add(Component.literal(" "));
-            var hotkey = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey",-2631721);
-            var holdToDiscover = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details",-10066330, hotkey);
+            var hotkey = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hotkey", OFF_WHITE);
+            var holdToDiscover = Helpers.withStyleComponentTrans("augmentHelper.jahdoo.hold_details",HEADER_COLOUR, hotkey);
             comps.add(holdToDiscover);
+
+            if(showSpacer){
+                var holdToDiscover2 = Helpers.withStyleComponentTrans("Shift + Left Click To Add", SUB_HEADER_COLOUR, hotkey);
+                comps.add(holdToDiscover2);
+            }
+
             return comps;
         }
 

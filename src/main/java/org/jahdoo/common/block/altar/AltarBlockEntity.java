@@ -120,7 +120,8 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         if(!altarE.started){
             blockExitBarrier(serverLevel, pos);
             altarE.setData(INSTANCE_DATA, serverLevel.getData(INSTANCE_DATA));
-            Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.START_TRIAL.get(), 2);
+
+//            Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.START_TRIAL.get(), 2);
             altarE.summonMobs();
             return SUCCESS;
         }

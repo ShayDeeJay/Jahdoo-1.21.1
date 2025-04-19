@@ -94,6 +94,7 @@ public class GreaterMysticEffect extends MobEffect {
     }
 
     private static void explosionHandler(LivingEntity targetEntity, int pAmplifier, ServerLevel serverLevel) {
+        //Damage Applied To Effected second ones For Around
         DamageUtils.damageWithJahdoo(targetEntity, pAmplifier, getElement().damageTypeResourceKey());
         targetEntity.level().getNearbyEntities(
             LivingEntity.class,
@@ -101,8 +102,7 @@ public class GreaterMysticEffect extends MobEffect {
             targetEntity,
             targetEntity.getBoundingBox().inflate(4)
         ).forEach(damage -> DamageUtils.damageWithJahdoo(damage, (double) pAmplifier /2, getElement().damageTypeResourceKey()));
-        Helpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), SoundReg.EXPLOSION.get(), 1, 1.4f);
-        Helpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), SoundEvents.AMETHYST_CLUSTER_BREAK, 0.5f, 0.1f);
+        Helpers.getSoundWithPosition(serverLevel, targetEntity.blockPosition(), getElement().sound(), 1.2F, 1F);
     }
 
     private void setParticleNova(LivingEntity livingEntity, Vec3 worldPosition, AbstractElement element){

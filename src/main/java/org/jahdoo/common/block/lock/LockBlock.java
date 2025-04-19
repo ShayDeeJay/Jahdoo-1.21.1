@@ -22,6 +22,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.level_manager.StructureManager;
 import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jetbrains.annotations.NotNull;
@@ -111,8 +112,13 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
         if(entity.isInitialized()){
             if(stack.is(ItemReg.EXIT_KEY)) {
-                entity.setRoomData(StructureManager.EXIT_ROOM_COMPONENT);
-                stack.shrink(1);
+                var getKeyId = stack.get(ComponentReg.ID);
+                if(getKeyId != null && getKeyId.equals(level.getDescriptionKey())){
+                    entity.setRoomData(StructureManager.EXIT_ROOM_COMPONENT);
+                    stack.shrink(1);
+                } else {
+                    return FAIL;
+                }
             }
 
             var getState = state.getValue(FACING);

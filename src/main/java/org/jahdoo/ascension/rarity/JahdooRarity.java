@@ -1,21 +1,19 @@
 package org.jahdoo.ascension.rarity;
 
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
-import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +24,10 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.UnaryOperator;
 
+import static java.util.Objects.requireNonNull;
 import static net.minecraft.util.FastColor.ARGB32.color;
+import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
+import static net.minecraft.world.entity.EquipmentSlot.OFFHAND;
 import static org.jahdoo.ascension.rarity.RarityAttributes.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.LocalLootBeamData.attachLootBeamComponent;
@@ -102,18 +103,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return correctRarity == JahdooRarity.UNIQUE ? JahdooRarity.EPIC : correctRarity;
     }
 
-    public static Ability getAbilityUtil(@Nullable JahdooRarity rarity) {
-        var listAll = AbilityReg.getMatchingRarityUtilOnly(getJahdooRarity(rarity));
-        return listAll.get(Random.nextInt(0, listAll.size()));
-    }
-
-
-    public static void setGeneratedAugment(ItemStack itemStack, JahdooRarity rarity){
-        itemStack.set(ComponentReg.NUMBER, 5);
-//        AugmentItemHelper.augmentIdentifierSharedRarity(itemStack, false, rarity);
-        itemStack.set(JAHDOO_RARITY, rarity.id);
-    }
-
     public static Component attachRarityTooltip(ItemStack wandItem, Level level) {
         var getRarityId = wandItem.get(JAHDOO_RARITY);
         if(getRarityId != null && level != null) {
@@ -180,28 +169,14 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     }
 
     public static void setGeneratedWand(JahdooRarity rarity, ItemStack item) {
-        var totalSlots = 3;
-        switch (rarity) {
-            case RARE -> totalSlots = Random.nextInt(4, 7);
-            case EPIC -> totalSlots = Random.nextInt(5, 8);
-            case LEGENDARY -> totalSlots = Random.nextInt(6, 9);
-            case ETERNAL -> totalSlots = Random.nextInt(8, 11);
-        }
-        createWandAttributes(rarity, item, rarity.id, totalSlots);
+        createWandAttributes(rarity, item, rarity.id);
     }
 
-    public static ItemStack setGeneratedWand(JahdooRarity rarity, Item item) {
-        var itemStack = new ItemStack(item);
-        var totalSlots = 3;
-
-        switch (rarity) {
-            case RARE -> totalSlots = Random.nextInt(4, 7);
-            case EPIC -> totalSlots = Random.nextInt(5, 8);
-            case LEGENDARY -> totalSlots = Random.nextInt(6, 9);
-            case ETERNAL -> totalSlots = Random.nextInt(8, 11);
-        }
-
-        createWandAttributes(rarity, itemStack, rarity.id, totalSlots);
+    public static ItemStack getRandomWand(@Nullable JahdooRarity rarity, @Nullable Item item) {
+        var wand = ElementReg.random().getWand();
+        var itemStack = new ItemStack(item != null ? item : requireNonNull(wand));
+        var rarityActual = rarity != null ? rarity : JahdooRarity.getRarity();
+        createWandAttributes(rarityActual, itemStack, rarityActual.id);
         return itemStack;
     }
 
@@ -228,37 +203,40 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         attachLootBeamComponent(itemStack, rarity);
         itemStack.set(ComponentReg.JAHDOO_RARITY.get(), rarity.getId());
 
-        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue, EquipmentSlot.MAINHAND, false);
-        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, randomManaPool, EquipmentSlot.OFFHAND, false);
+        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue, MAINHAND, false);
+        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, randomManaPool, OFFHAND, false);
     }
 
     public static void createWandAttributes(
         JahdooRarity rarity,
         ItemStack itemStack,
-        int runeSlots,
-        int abilitySlots
+        int runeSlots
     ) {
         var element = ElementReg.fromWand(itemStack.getItem()).orElseThrow();
-        attachLootBeamComponent(itemStack, rarity);
-
-        RuneHolder.createNewRuneSlots(itemStack, runeSlots, rarity.attributes.getRandomRefinementPotential());
-        itemStack.set(JAHDOO_RARITY, rarity.id);
-
+        var rarityId = rarity.id;
         var cooldownReductionType = element.cooldownReduction();
         var cooldownReductionName = cooldownReductionType.getRegisteredName();
         var cooldownReductionValue = rarity.attributes.getRandomCooldown();
-
         var manaReductionType = element.manaReduction();
         var manaReductionName = manaReductionType.getRegisteredName();
         var manaReductionValue = rarity.attributes.getRandomManaReduction();
-
         var damageAmplifierType = element.damageAmplifier();
         var damageAmplifierName = damageAmplifierType.getRegisteredName();
         var damageAmplifierValue = rarity.attributes.getRandomDamage();
+        var durability = rarity.attributes.getRandomTime();
 
-        replaceOrAddAttribute(itemStack, cooldownReductionName, cooldownReductionType, cooldownReductionValue, EquipmentSlot.MAINHAND, false);
-        replaceOrAddAttribute(itemStack, manaReductionName, manaReductionType, manaReductionValue, EquipmentSlot.MAINHAND, false);
-        replaceOrAddAttribute(itemStack, damageAmplifierName, damageAmplifierType, damageAmplifierValue, EquipmentSlot.MAINHAND, false);
+        itemStack.set(JAHDOO_RARITY, rarityId);
+        attachLootBeamComponent(itemStack, rarity);
+
+        if(rarityId > 0){
+            RuneHolder.createNewRuneSlots(itemStack, runeSlots, (int) (Math.round(rarity.attributes.getRandomPotential()/5.0) * 5));
+            replaceOrAddAttribute(itemStack, damageAmplifierName, damageAmplifierType, damageAmplifierValue, MAINHAND, false);
+            if(rarityId > 1) replaceOrAddAttribute(itemStack, manaReductionName, manaReductionType, manaReductionValue, MAINHAND, false);
+            if(rarityId > 2) replaceOrAddAttribute(itemStack, cooldownReductionName, cooldownReductionType, cooldownReductionValue, MAINHAND, false);
+        }
+
+        itemStack.set(DataComponents.MAX_DAMAGE, (int) (Math.round(durability/10.0) * 10));
+        itemStack.set(DataComponents.DAMAGE, 0);
     }
 
     //Debug using use on item

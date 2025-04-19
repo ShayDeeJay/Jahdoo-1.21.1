@@ -62,7 +62,7 @@ public class RarityAttributes {
         return getRandomDouble(healChance);
     }
 
-    public int getRandomRefinementPotential() {
+    public int getRandomPotential() {
         return getRandomInteger(refinementPotential);
     }
 

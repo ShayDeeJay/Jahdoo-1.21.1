@@ -1,4 +1,4 @@
-package org.jahdoo.ascension.ability.abilities_combat.elemental_shooter;
+package org.jahdoo.ascension.ability.abilities_combat.elemental_missile;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -7,9 +7,9 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.mod.ElementReg;
 
-public class InfernoMissile extends ElementalMissile {
+public class MysticMissileAbility extends ElementalMissileAbility {
 
-    public static final ResourceLocation abilityId = Helpers.res("inferno_missile");
+    public static final ResourceLocation abilityId = Helpers.res("mystic_missile");
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -18,7 +18,7 @@ public class InfernoMissile extends ElementalMissile {
 
     @Override
     public AbstractElement getElemenType() {
-        return ElementReg.INFERNO.get();
+        return ElementReg.MYSTIC.get();
     }
 
     @Override

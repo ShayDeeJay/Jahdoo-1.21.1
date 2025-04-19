@@ -11,6 +11,7 @@ import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -32,8 +33,8 @@ public class AltarAnim {
         PositionFinders.getOuterRingOfRadius(
             posA.getCenter().subtract(0,0.03,0), 0.1, 50, posB -> setShockwaveNova(posB.subtract(0, 0,0), posA, level)
         );
-        Helpers.getSoundWithPosition(level, posA, SoundEvents.DEEPSLATE_BREAK, 0.4f, 0.6f);
-        Helpers.getSoundWithPosition(level, posA, SoundEvents.VAULT_OPEN_SHUTTER, 0.4f, 0f);
+        Helpers.getSoundWithPosition(level, posA, SoundEvents.DEEPSLATE_BREAK, 1f, 0.6f);
+        Helpers.getSoundWithPosition(level, posA, SoundReg.SET_ACTIVE.get(), 3f, 1f);
     }
 
     static @NotNull BiConsumer<BlockPos, ServerLevel> getBlockPosServerLevelBiConsumer(Level level, BlockState state) {

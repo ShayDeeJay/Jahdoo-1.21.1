@@ -49,6 +49,18 @@ public class Icons {
     public static final ResourceLocation DATA =
         res(PREFIX + "data.png");
 
+    public static final ResourceLocation CHEST_COMMON =
+        res(PREFIX + "chest_common.png");
+
+    public static final ResourceLocation CHEST_RARE =
+        res(PREFIX + "chest_rare.png");
+
+    public static final ResourceLocation CHEST_LEGENDARY =
+        res(PREFIX + "chest_legendary.png");
+
+    public static final ResourceLocation CHEST_ETERNAL =
+        res(PREFIX + "chest_eternal.png");
+
     public static final ResourceLocation XP_BAR =
         res(PREFIX + "xp_bar.png");
 

@@ -30,7 +30,7 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> ICE_EXPLOSION =
         registerSoundEvent("ice_explosion");
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> ICE_ATTACH =
+    public static final DeferredHolder<SoundEvent, SoundEvent> FROST_ABILITY =
         registerSoundEvent("ice_attach");
 
     public static final DeferredHolder<SoundEvent, SoundEvent> BOLT =
@@ -95,6 +95,18 @@ public class SoundReg {
 
     public static final DeferredHolder<SoundEvent, SoundEvent> FIRE_ABILITY =
         registerSoundEvent("fire_ability");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> IMPACT =
+        registerSoundEvent("impact");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELEMENTAL_BULLET =
+        registerSoundEvent("elemental_bullet");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> MYSTIC_ABILITY =
+        registerSoundEvent("mystic_ability");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> SET_ACTIVE =
+        registerSoundEvent("set_active");
 
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));

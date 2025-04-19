@@ -116,7 +116,7 @@ public class ArmageddonModule extends DefaultEntityBehaviour {
             fireProjectile.shoot(0, cloud.getY(), 0, cloud.getY() > 0 ? -setRandomYHeight : setRandomYHeight, 0);
             fireProjectile.setOwner(this.cloud.getOwner());
             this.cloud.getOwner().level().addFreshEntity(fireProjectile);
-            Helpers.getSoundWithPosition(cloud.level(), cloud.blockPosition(), SoundReg.FIRE_ABILITY.get(), 2f, 1.4f);
+            Helpers.getSoundWithPosition(cloud.level(), cloud.blockPosition(), SoundReg.SUSPEND.get(), 2f, 0.8f);
 
             var colour1 = rgbToInt(160,160,160);
             var colour2 = rgbToInt(61,61,61);

@@ -17,7 +17,7 @@ import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.EffectReg.FROST_EFFECT;
 import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_FROST;
-import static org.jahdoo.common.registers.SoundReg.ICE_ATTACH;
+import static org.jahdoo.common.registers.SoundReg.FROST_ABILITY;
 
 public class Frost extends AbstractElement {
     ResourceLocation abilityId = res("frost");
@@ -94,7 +94,7 @@ public class Frost extends AbstractElement {
 
     @Override
     public SoundEvent sound() {
-        return ICE_ATTACH.get();
+        return FROST_ABILITY.get();
     }
 
     @Override

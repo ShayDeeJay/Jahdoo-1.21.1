@@ -3,12 +3,12 @@ package org.jahdoo.ascension.level_manager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.attachments.InstanceData;
+import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
@@ -16,6 +16,7 @@ import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.SoundReg;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -33,7 +34,7 @@ import static org.jahdoo.common.block.loot_chest.LootChestBlock.FACING;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockReg.*;
-import static org.jahdoo.common.registers.ItemReg.*;
+import static org.jahdoo.common.registers.ItemReg.RUNE;
 
 public class BlockSetupManager {
 
@@ -189,8 +190,9 @@ public class BlockSetupManager {
             level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, 0));
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
-                entity.setItem(new ItemStack(WAND_ITEM_FROST));
-                entity.setCost(setGoldCost(20));
+                var randomWandForSale = ShoppingItems.soldWands();
+                entity.setItem(randomWandForSale.ShoppingItem());
+                entity.setCost(randomWandForSale.itemCosts());
             }
         }
 
@@ -218,21 +220,22 @@ public class BlockSetupManager {
         var list = new ArrayList<>(Direction.stream().toList());
         list.remove(Direction.DOWN);
         list.remove(Direction.UP);
+        var startPlace = new BlockPos(0,0,0);
+        var blocker = TINTED_GLASS;
+        var state = blocker.defaultBlockState();
+
 
         for (var blockPos : roomBoundingFromCenter(pos)) {
             if(level.getBlockState(blockPos).is(REDSTONE_BLOCK)){
-                var startPlace = blockPos.below(2);
+                startPlace = blockPos.below(2);
                 if(level.getBlockState(startPlace).isAir()){
                     for(int i = 0; i < 5; i++){
                         for (var direction : list) {
-                            var blocker = TINTED_GLASS;
                             var newPos = startPlace.below(i);
                             var relative = newPos.relative(direction);
                             var canPlaceHere = new AtomicBoolean(false);
 
-                            level.setBlockAndUpdate(newPos, blocker.defaultBlockState());
-                            Helpers.getSoundWithPosition(level, newPos, blocker.defaultBlockState().getSoundType().getPlaceSound());
-                            Helpers.getSoundWithPosition(level, newPos, SoundEvents.LODESTONE_COMPASS_LOCK, 1, 0.8F);
+                            level.setBlockAndUpdate(newPos, state);
 
                             for (var direction1 : list) {
                                 var adjacentBlocks = relative.relative(direction1);
@@ -244,13 +247,17 @@ public class BlockSetupManager {
                             }
 
                             if(canPlaceHere.get()){
-                                level.setBlockAndUpdate(relative, blocker.defaultBlockState());
+                                level.setBlockAndUpdate(relative, state);
                             }
                         }
                     }
+
                 }
             }
         }
+
+        Helpers.getSoundWithPosition(level, startPlace, blocker.defaultBlockState().getSoundType().getPlaceSound());
+        Helpers.getSoundWithPosition(level, startPlace, SoundReg.UNLOCK.get(), 1, 1.8F);
     }
 
 }

@@ -128,6 +128,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
             target = hitTarget;
             element.setAnimation(6);
             Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundEvents.SLIME_BLOCK_BREAK);
+            Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), getElementType().sound());
         }
     }
 
@@ -243,8 +244,8 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
             if(aoe == 0.1) {
                 element.setShowTrailParticles(false);
                 this.element.setInvisible(true);
-                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundReg.EXPLOSION.get(),2F, 0.8F);
-                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundEvents.AMETHYST_BLOCK_BREAK, 2F, 0.6f);
+                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), getElementType().sound(), 2F, 1F);
+//                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundEvents.AMETHYST_BLOCK_BREAK, 2F, 0.6f);
                 additionalProjectileSpread();
                 if(this.element.level() instanceof ServerLevel serverLevel){
                     particleBurst(
@@ -289,6 +290,6 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
                 this.target.level().addFreshEntity(newElementProjectile);
             }
         );
-        Helpers.getSoundWithPosition(projectile.level(), this.target.blockPosition(), SoundReg.ORB_FIRE.get(), 0.05f);
+        Helpers.getSoundWithPosition(projectile.level(), this.target.blockPosition(), getElementType().sound(), 0.05f);
     }
 }

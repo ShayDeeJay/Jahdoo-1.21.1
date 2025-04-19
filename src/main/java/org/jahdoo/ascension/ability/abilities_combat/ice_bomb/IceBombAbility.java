@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.ability.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -55,7 +56,8 @@ public class IceBombAbility extends Ability {
 
     @Override
     public void invokeAbility(Player player) {
-        fireProjectile(
+        BurningSkullsAbility.frostSoundEffect(player);
+        fireProjectileNoSound(
             new ElementProjectile(
                 EntityReg.FROST_ELEMENT_PROJECTILE.get(), player,
                 EntityDataReg.ICE_BOMB.get().setAbilityId(),

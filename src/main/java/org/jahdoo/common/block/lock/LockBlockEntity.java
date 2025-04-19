@@ -23,7 +23,7 @@ import static org.jahdoo.ascension.attachments.RunData.setDateAndTime;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.*;
 import static org.jahdoo.ascension.level_manager.InstanceDifficulty.getFromLevel;
-import static org.jahdoo.ascension.level_manager.StructureManager.BATTLE_ROOM;
+import static org.jahdoo.ascension.level_manager.StructureManager.getBattleRoom;
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
 import static org.jahdoo.common.block.lock.LockBlock.FACING;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
@@ -91,7 +91,7 @@ public class LockBlockEntity extends SyncedBlockEntity {
     }
 
     public void setRoomData(Component roomId){
-        this.roomId = this.isStartingRoom() ? BATTLE_ROOM : roomId;
+        this.roomId = this.isStartingRoom() ? getBattleRoom() : roomId;
         setDataByDifficulty();
         this.updateBlock();
     }

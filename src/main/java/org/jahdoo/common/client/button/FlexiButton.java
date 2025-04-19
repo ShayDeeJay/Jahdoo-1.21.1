@@ -1,19 +1,22 @@
 package org.jahdoo.common.client.button;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
+import org.jahdoo.ascension.attachments.InstanceData;
+import org.jahdoo.ascension.attachments.PlayerTrialData;
 import org.jahdoo.ascension.attachments.RunData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.Icons;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 
+import java.util.HashMap;
+
 import static com.mojang.blaze3d.platform.InputConstants.KEY_DELETE;
+import static com.mojang.blaze3d.platform.InputConstants.isKeyDown;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
@@ -66,19 +69,25 @@ public class FlexiButton extends ImageButton {
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         var fade = isHovered ? color(60, uiColour()) : uiFade();
         var minecraft = Minecraft.getInstance();
-        var trialData = minecraft.player.getData(AttachmentReg.PLAYER_TRIAL_DATA);
+        var trialData = PlayerTrialData.getData(minecraft.player);
         var getXStart = this.getX() + 4;
         var startY2 = this.getY() + 4;
         var spacer = 0;
-        var getAllComponents = getComponents(null, pastRun, trialData).subList(0,3);
+        var newInst = new InstanceData("", new HashMap<>());
+        var getAllComponents = getComponents(newInst, pastRun, trialData).subList(0,3);
         var isSelected = !this.isSelected ? fade : color(160, HEADER_COLOUR);
         var borderColour =  0;
         var width = (int) this.width / 2;
         var height = (int) this.height / 2;
         var window = minecraft.getWindow().getWindow();
 
-        if(isHovered && InputConstants.isKeyDown(window, KEY_DELETE)) {
-            Helpers.syncPlayerTrialData(trialData.getPastRuns().indexOf(pastRun));
+        if(isHovered) {
+//            var literal = Helpers.withStyleComponent("Press Delete To Remove", -1);
+//            graphics.renderTooltip(minecraft.font, List.of(literal), Optional.empty(), mouseX, mouseY);
+            if(isKeyDown(window, KEY_DELETE)){
+                var index = trialData.getPastRuns().indexOf(pastRun);
+                Helpers.syncPlayerTrialData(index);
+            }
         }
 
         boxMaker(graphics, this.getX(), this.getY(), width, height, borderColour, isSelected, isSelected);

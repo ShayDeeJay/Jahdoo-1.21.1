@@ -23,14 +23,14 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffects.*;
 import static org.jahdoo.ascension.attachments.RunData.*;
 import static org.jahdoo.ascension.boon.player_boons.BoonSelection.iconFromEffect;
+import static org.jahdoo.ascension.rarity.JahdooRarity.*;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.ColourStore.BRONZE_COIN;
 import static org.jahdoo.ascension.utils.ColourStore.GOLD_COIN;
 import static org.jahdoo.ascension.utils.ColourStore.PLATINUM_COIN;
 import static org.jahdoo.ascension.utils.ColourStore.SILVER_COIN;
 import static org.jahdoo.ascension.utils.Maths.ticksToTime;
-import static org.jahdoo.common.client.Icons.CLOCK;
-import static org.jahdoo.common.client.Icons.TRIAL_EXPERIENCE;
+import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
 
@@ -41,6 +41,7 @@ public class RunScreen extends AbstractPanableScreen {
     private InstanceData instanceData;
     private double panYMain;
     private double mouseX;
+    private double mouseY;
 
     @Override
     protected void init() {
@@ -54,8 +55,8 @@ public class RunScreen extends AbstractPanableScreen {
             new Overlay() {
                 @Override
                 public void render(@NotNull GuiGraphics graphics, int i, int i1, float v) {
-                    var start = canScrollSelections(mouseX, width) ? uiFade() : getFadedColourBackground(0.5F);
-                    boxMaker(graphics, width/2 - WIDTH_OFFSET * 2 + moveX, 63, WIDTH_OFFSET, height/2 - 38, canScrollSelections(mouseX, width) ? color(180, uiColour()) : 0, start, start);
+                    var start = canScrollSelections(mouseX, mouseY, width) ? getFadedColourBackground(0.8F): uiFade();
+                    boxMaker(graphics, width/2 - WIDTH_OFFSET * 2 + moveX, 63, WIDTH_OFFSET, height/2 - 38, canScrollSelections(mouseX, mouseY, width) ? color(180, uiColour()) : 0, start, start);
                     graphics.enableScissor(3, 69, width - 3, height - 20);
                 }
             }
@@ -95,7 +96,7 @@ public class RunScreen extends AbstractPanableScreen {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (canScrollSelections(mouseX, width)) {
+        if (canScrollSelections(mouseX, mouseY, width)) {
             var zoomScale = this.zoomX + 1;
             panY += Math.round(dragY / zoomScale);
             panY = Math.min(panY, 0); // Clamp to top
@@ -108,7 +109,7 @@ public class RunScreen extends AbstractPanableScreen {
             panY = Math.max(panY, minPanY); // Clamp to bottom
         }
 
-        if (canScrollDetails(mouseX, width)) {
+        if (canScrollDetails(mouseX, mouseY, width)) {
             panYMain += dragY;
             panYMain = Math.min(panYMain, 0); // Top bound
 
@@ -125,7 +126,7 @@ public class RunScreen extends AbstractPanableScreen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         var scrollSpeed = scrollY * 14;
-        if (canScrollSelections(mouseX, width)) {
+        if (canScrollSelections(mouseX, mouseY, width)) {
             var zoomScale = this.zoomX + 1;
             var scrollAmount = Math.round(scrollSpeed / zoomScale);
             panY = Math.min(panY + scrollAmount, 0); // Upper limit still 1 (top)
@@ -138,7 +139,7 @@ public class RunScreen extends AbstractPanableScreen {
             panY = Math.max(panY, minPanY); // Clamp to prevent overscroll
         }
 
-        if (canScrollDetails(mouseX, width)) {
+        if (canScrollDetails(mouseX, mouseY, width)) {
             panYMain += scrollSpeed;
             panYMain = Math.min(panYMain, 0); // Top bound
 
@@ -152,14 +153,16 @@ public class RunScreen extends AbstractPanableScreen {
         return true;
     }
 
-    private static boolean canScrollSelections(double mouseX, int width) {
+    private static boolean canScrollSelections(double mouseX, double mouseY, int width) {
         var v = (double) width / 2-5;
         return mouseX > v - WIDTH_OFFSET * 2 && mouseX < v;
     }
 
-    private static boolean canScrollDetails(double mouseX, int width) {
+    private static boolean canScrollDetails(double mouseX, double mouseY, int width) {
         var v = (double) width / 2;
-        return mouseX > v + 4 && mouseX < v + WIDTH_OFFSET * 2;
+        var canScrollX = mouseX > v + 4 && mouseX < v + WIDTH_OFFSET * 2;
+        var canScrollY = mouseY > v + 4 && mouseY < v + WIDTH_OFFSET * 2;
+        return canScrollX;
     }
 
     @Override
@@ -182,12 +185,16 @@ public class RunScreen extends AbstractPanableScreen {
         var scale = 2F;
         var y = (int) Math.round((startY - 24 + (this.panYMain / 2)));
         var spacer = 0;
-        var start = canScrollDetails(mouseX, width) ? uiFade() : getFadedColourBackground(0.5F);
+        var start = canScrollDetails(mouseX, mouseY, width) ? getFadedColourBackground(0.8F): uiFade();
 
         this.mouseX = mouseX;
+        this.mouseY = mouseY;
+
         super.render(graphics, mouseX, mouseY, partialTick);
-        boxMaker(graphics, startX, startY+1, 80, this.height/2-38, canScrollDetails(mouseX, width) ? color(180, uiColour()) : 0, start, start);
+        var colourBorder = canScrollDetails(mouseX, mouseY, width) ? color(180, uiColour()) : 0;
+        boxMaker(graphics, startX, startY+1, 80, this.height/2 - 38, colourBorder, start, start);
         graphics.enableScissor(startX, startY+8, this.width/2 + 200, this.height - 18);
+
         pose.pushPose();
         pose.scale(scale, scale, scale);
         graphics.drawCenteredString(getMinecraft().font, Helpers.withStyleComponentTrans("Run Data", uiColour()), startX/2 + 27, y, -1);
@@ -224,47 +231,50 @@ public class RunScreen extends AbstractPanableScreen {
     public static List<StatEntry> getComponents(@Nullable InstanceData instanceData, RunData runData, PlayerTrialData trialData){
         var allComponents = new ArrayList<StatEntry>();
         var spacer = new StatEntry(Component.empty().copy(), null);
+        if(trialData == null || instanceData == null) return allComponents;
 
-        if(trialData != null){
-            allComponents.add(new StatEntry(componentTemplate("Trial No", trialData.getPastRuns().indexOf(runData) + 1 + "", uiColour()), null));
-            allComponents.add(new StatEntry(componentTemplate("Date", runData.getDateAndTime().split(" ")[0], uiColour()), null));
-            allComponents.add(new StatEntry(componentTemplate("Time", runData.getDateAndTime().split(" ")[1], uiColour()), null));
-            allComponents.add(spacer);
-            allComponents.add(new StatEntry(componentTemplate("Run Time", ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), PERK_GREEN), CLOCK));
-            allComponents.add(new StatEntry(componentTemplate("Total Exp", runData.getStat(EXPERIENCE) + "XP", COSMIC_PURPLE), TRIAL_EXPERIENCE));
-            allComponents.add(new StatEntry(componentTemplate("Rooms Cleared", runData.getStat(ROOMS_CLEARED) + "", AETHER_BLUE), Icons.UP));
-            allComponents.add(new StatEntry(componentTemplate("Chests Looted", runData.getStat(CHESTS_OPENED) + "", ABSORPTION_YELLOW), Icons.UPGRADE));
-            allComponents.add(new StatEntry(componentTemplate("Mobs Killed", runData.getStat(MOBS_KILLED) + "", MAGNET_STRENGTH_RED), Icons.HORDE));
-            allComponents.add(new StatEntry(componentTemplate("Bronze Coins", runData.getStat(RunData.BRONZE_COIN) + "", BRONZE_COIN), Icons.BRONZE_COIN));
-            allComponents.add(new StatEntry(componentTemplate("Silver Coins", runData.getStat(RunData.SILVER_COIN) + "", SILVER_COIN), Icons.SILVER_COIN));
-            allComponents.add(new StatEntry(componentTemplate("Gold Coins", runData.getStat(RunData.GOLD_COIN) + "", GOLD_COIN), Icons.GOLD_COIN));
-            allComponents.add(new StatEntry(componentTemplate("Platinum Coins", runData.getStat(RunData.PLATINUM_COIN) + "", PLATINUM_COIN), Icons.PLATINUM_COIN));
-        }
+        allComponents.add(new StatEntry(componentTemplate("Trial No", trialData.getPastRuns().indexOf(runData) + 1 + "", uiColour()), null));
+        allComponents.add(new StatEntry(componentTemplate("Date", runData.getDateAndTime().split(" ")[0], uiColour()), null));
+        allComponents.add(new StatEntry(componentTemplate("Time", runData.getDateAndTime().split(" ")[1], uiColour()), null));
+        allComponents.add(new StatEntry(componentTemplate("Difficulty", Helpers.stringIdToName(instanceData.getDifficulty()), uiColour()), null));
 
-        if(instanceData != null){
-            allComponents.add(spacer);
-            allComponents.add(new StatEntry(componentTemplate("Difficulty", Helpers.stringIdToName(instanceData.getDifficulty()), uiColour()), null));
-            allComponents.add(new StatEntry(componentTemplate("Max Time", ticksToTime(instanceData.getMaxTime() + ""), PERK_GREEN), CLOCK));
-            allComponents.add(new StatEntry(componentTemplate("Bonus Exp", instanceData.getExperience() + "XP", ABSORPTION_YELLOW), TRIAL_EXPERIENCE));
+        allComponents.add(spacer);
+        allComponents.add(new StatEntry(componentTemplate("Run Time", ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), PERK_GREEN), CLOCK));
+        allComponents.add(new StatEntry(componentTemplate("Total Exp", runData.getStat(EXPERIENCE) + "XP", COSMIC_PURPLE), TRIAL_EXPERIENCE));
+        allComponents.add(new StatEntry(componentTemplate("Rooms Cleared", runData.getStat(ROOMS_CLEARED) + "", AETHER_BLUE), Icons.UP));
 
-            // Coin rewards
-            allComponents.add(new StatEntry(componentTemplate("Bronze Coins", instanceData.getBronzeCoin() + "", BRONZE_COIN), Icons.BRONZE_COIN));
-            allComponents.add(new StatEntry(componentTemplate("Silver Coins", instanceData.getSilverCoin() + "", SILVER_COIN), Icons.SILVER_COIN));
-            allComponents.add(new StatEntry(componentTemplate("Gold Coins", instanceData.getGoldCoin() + "", GOLD_COIN), Icons.GOLD_COIN));
+        allComponents.add(new StatEntry(componentTemplate("Common Chest", runData.getStat(CHESTS_COMMON) + "", COMMON.getColour()), CHEST_COMMON));
+        allComponents.add(new StatEntry(componentTemplate("Rare Chest", runData.getStat(CHESTS_RARE) + "", RARE.getColour()), CHEST_RARE));
+        allComponents.add(new StatEntry(componentTemplate("Legendary Chest", runData.getStat(CHESTS_LEGENDARY) + "", LEGENDARY.getColour()), CHEST_LEGENDARY));
+        allComponents.add(new StatEntry(componentTemplate("Eternal Chest", runData.getStat(CHESTS_ETERNAL) + "", ETERNAL.getColour()), CHEST_ETERNAL));
 
-            // Mob multipliers
-            allComponents.add(new StatEntry(componentTemplate("Mob Health", "+" + instanceData.getHealth() + "%", uiColour()), iconFromEffect(HEAL)));
-            allComponents.add(new StatEntry(componentTemplate("Mob Armor", "+" + instanceData.getArmor() + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
-            allComponents.add(new StatEntry(componentTemplate("Mob Damage", "+" + instanceData.getAttackDamage() + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
-            allComponents.add(new StatEntry(componentTemplate("Mob Speed", "+" + instanceData.getSpeed() + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
+        allComponents.add(new StatEntry(componentTemplate("Mobs Killed", runData.getStat(MOBS_KILLED) + "", MAGNET_STRENGTH_RED), Icons.HORDE));
+        allComponents.add(new StatEntry(componentTemplate("Bronze Coins", runData.getStat(RunData.BRONZE_COIN) + "", BRONZE_COIN), Icons.BRONZE_COIN));
+        allComponents.add(new StatEntry(componentTemplate("Silver Coins", runData.getStat(RunData.SILVER_COIN) + "", SILVER_COIN), Icons.SILVER_COIN));
+        allComponents.add(new StatEntry(componentTemplate("Gold Coins", runData.getStat(RunData.GOLD_COIN) + "", GOLD_COIN), Icons.GOLD_COIN));
+        allComponents.add(new StatEntry(componentTemplate("Platinum Coins", runData.getStat(RunData.PLATINUM_COIN) + "", PLATINUM_COIN), Icons.PLATINUM_COIN));
 
-            // Mob counts / composition
-            allComponents.add(new StatEntry(componentTemplate("Horde Mobs", instanceData.getHorde() + "", AETHER_BLUE), Icons.HORDE));
-            allComponents.add(new StatEntry(componentTemplate("Skeletons", instanceData.getSkeleton() + "", OFF_WHITE), Icons.SKELETON));
-            allComponents.add(new StatEntry(componentTemplate("Void Spiders", instanceData.getVoidSpider() + "", COSMIC_PURPLE), Icons.VOID_SPIDER));
-            allComponents.add(new StatEntry(componentTemplate("Inferno Creepers", instanceData.getInfernoCreeper() + "", SYMPATHISER_ORANGE), Icons.INFERNO_CREEPER));
-            allComponents.add(new StatEntry(componentTemplate("Eternal Wizards", instanceData.getEternalWizard() + "", MAGNET_STRENGTH_RED), Icons.ETERNAL_WIZARD));
-        }
+        allComponents.add(spacer);
+//        allComponents.add(new StatEntry(componentTemplate("Max Time", ticksToTime(instanceData.getMaxTime() + ""), PERK_GREEN), CLOCK));
+//        allComponents.add(new StatEntry(componentTemplate("Bonus Exp", instanceData.getExperience() + "XP", ABSORPTION_YELLOW), TRIAL_EXPERIENCE));
+
+        // Coin rewards
+//        allComponents.add(new StatEntry(componentTemplate("Bronze Coins", instanceData.getBronzeCoin() + "", BRONZE_COIN), Icons.BRONZE_COIN));
+//        allComponents.add(new StatEntry(componentTemplate("Silver Coins", instanceData.getSilverCoin() + "", SILVER_COIN), Icons.SILVER_COIN));
+//        allComponents.add(new StatEntry(componentTemplate("Gold Coins", instanceData.getGoldCoin() + "", GOLD_COIN), Icons.GOLD_COIN));
+
+        // Mob multipliers
+        allComponents.add(new StatEntry(componentTemplate("Mob Health", "+" + instanceData.getHealth() + "%", uiColour()), iconFromEffect(HEAL)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Armor", "+" + instanceData.getArmor() + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Damage", "+" + instanceData.getAttackDamage() + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Speed", "+" + instanceData.getSpeed() + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
+
+        // Mob counts / composition
+        allComponents.add(new StatEntry(componentTemplate("Horde Mobs", instanceData.getHorde() + "", AETHER_BLUE), Icons.HORDE));
+        allComponents.add(new StatEntry(componentTemplate("Skeletons", instanceData.getSkeleton() + "", OFF_WHITE), Icons.SKELETON));
+        allComponents.add(new StatEntry(componentTemplate("Void Spiders", instanceData.getVoidSpider() + "", COSMIC_PURPLE), Icons.VOID_SPIDER));
+        allComponents.add(new StatEntry(componentTemplate("Inferno Creepers", instanceData.getInfernoCreeper() + "", SYMPATHISER_ORANGE), Icons.INFERNO_CREEPER));
+        allComponents.add(new StatEntry(componentTemplate("Eternal Wizards", instanceData.getEternalWizard() + "", MAGNET_STRENGTH_RED), Icons.ETERNAL_WIZARD));
 
         return allComponents;
     }

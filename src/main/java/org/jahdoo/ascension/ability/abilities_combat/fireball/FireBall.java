@@ -22,8 +22,8 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,7 @@ import static net.minecraft.sounds.SoundEvents.FIRE_AMBIENT;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.DamageUtils.damageWithJahdoo;
+import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.PositionFinders.*;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.*;
@@ -126,7 +127,7 @@ public class FireBall extends DefaultEntityBehaviour {
     public void onEntityHit(LivingEntity hitEntity) {
         var chance = effectChance == 0 ? 100 : effectChance;
 
-        if (Helpers.Random.nextInt(0, (int) chance) == 0) {
+        if (Random.nextInt(0, (int) chance) == 0) {
             var instance = new JahdooMobEffect(INFERNO_EFFECT.getDelegate(), (int) effectDuration, (int) effectStrength);
             hitEntity.addEffect(instance);
         }
@@ -242,14 +243,14 @@ public class FireBall extends DefaultEntityBehaviour {
         var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), 0.3f);
         var directions = positionScrambler.subtract(this.element.position()).normalize();
         var lifetime = (int) this.novaMaxSize;
-        var size = Helpers.Random.nextDouble(0.2, 0.6);
+        var size = Random.nextDouble(0.2, 0.6);
         var bakedParticle = bakedParticle(this.getElementType().id(), lifetime, (float) size, true);
         var col1 = this.getElementType().partColourA();
         var col2 =  color(51, 51, 51);
         var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, (float) (size - 0.2), col1, col2, true);
         var getRandomParticle = List.of(bakedParticle, genericParticle);
-        var randomSpeed = Helpers.Random.nextDouble(this.novaMaxSize/12, this.novaMaxSize/8);
-        var randomType = getRandomParticle.get(Helpers.Random.nextInt(2));
+        var randomSpeed = Random.nextDouble(this.novaMaxSize/12, this.novaMaxSize/8);
+        var randomType = getRandomParticle.get(Random.nextInt(2));
 
         ParticleHandlers.sendParticles(
             level(), randomType, worldPosition, 0, directions.x, directions.y+0.05, directions.z, randomSpeed
@@ -276,8 +277,8 @@ public class FireBall extends DefaultEntityBehaviour {
             );
         }
 
-        Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.EXPLOSION.get(),2f);
-        Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), FIRE_AMBIENT);
+        Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.EXPLOSION.get(), 1.4f, 0.8F);
+        Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.FIRE_ABILITY.get());
 
         this.element.setDeltaMovement(0,0,0);
         this.hasHitLocation = true;
@@ -292,7 +293,7 @@ public class FireBall extends DefaultEntityBehaviour {
         getRandomSphericalPositions(this.element, maxRadius, 16,
             position -> {
                 var newPosition = position.add(this.element.getDeltaMovement().scale(-1.5));
-                var size = Helpers.Random.nextFloat(2.5f, 3.5f);
+                var size = Random.nextFloat(2.5f, 3.5f);
                 var pType = bakedParticle(this.getElementType().id(), 2, size, false);
                 ParticleHandlers.sendParticles(
                     level(),
@@ -305,7 +306,7 @@ public class FireBall extends DefaultEntityBehaviour {
         getSphericalPositions(this.element, fireballTrail, 18,
             position -> {
                 var newPosition = position.add(this.element.getDeltaMovement().scale(-1.5));
-                var size = Helpers.Random.nextFloat(2f, 3f);
+                var size = Random.nextFloat(2f, 3f);
                 var pType = ParticleHandlers.genericParticle(GENERIC_PARTICLE, 4, size, getElementType().partColourA(), color(51, 51, 51));
                 ParticleHandlers.sendParticles(
                     level(),

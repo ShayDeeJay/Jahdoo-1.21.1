@@ -15,7 +15,7 @@ import org.jahdoo.ascension.ability.abilities_utility.block_bomb.BlockBomb;
 import org.jahdoo.ascension.ability.abilities_utility.block_breaker.BlockBreaker;
 import org.jahdoo.ascension.ability.abilities_utility.block_placer.BlockPlacer;
 import org.jahdoo.ascension.ability.abilities_combat.boltz.Boltz;
-import org.jahdoo.ascension.ability.abilities_combat.elemental_shooter.ElementalShooter;
+import org.jahdoo.ascension.ability.abilities_combat.elemental_missile.ElementalMissile;
 import org.jahdoo.ascension.ability.abilities_utility.enchanted_fusion.EnchantedFusion;
 import org.jahdoo.ascension.ability.abilities_combat.eternal_wizard.SummonEternalWizard;
 import org.jahdoo.ascension.ability.abilities_utility.farmers_touch.FarmersTouch;
@@ -77,7 +77,7 @@ public class EntityDataReg {
 
     //USED FOR GENERIC PROJECTILE
     public static final Supplier <AbstractEntityProperty> ELEMENTAL_SHOOTER =
-        registerProperty(ElementalShooter::new);
+        registerProperty(ElementalMissile::new);
 
     public static final Supplier <AbstractEntityProperty> BLOCK_BREAKER =
         registerProperty(BlockBreaker::new);

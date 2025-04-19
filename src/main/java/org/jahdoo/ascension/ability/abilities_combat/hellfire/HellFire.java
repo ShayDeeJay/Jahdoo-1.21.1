@@ -22,7 +22,6 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import java.util.List;
 
 import static net.minecraft.core.BlockPos.containing;
-import static net.minecraft.sounds.SoundEvents.FIRECHARGE_USE;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.ability.SharedFireProperties.fireTrailVegetationRemover;
 import static org.jahdoo.ascension.utils.Helpers.*;
@@ -30,7 +29,7 @@ import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
-import static org.jahdoo.common.registers.SoundReg.DASH_EFFECT_INSTANT;
+import static org.jahdoo.common.registers.SoundReg.*;
 
 public class HellFire extends DefaultEntityBehaviour {
 
@@ -123,8 +122,10 @@ public class HellFire extends DefaultEntityBehaviour {
         var level = cloud.level();
         var tick = cloud.tickCount;
 
-        if(tick == 1) getSoundWithPosition(level, posOf, DASH_EFFECT_INSTANT.get(), 0.6F, 1.4F);
-        if (tick % 3 == 0) getSoundWithPosition(level, posOf, FIRECHARGE_USE, 0.4F, 0.8F);
+        if (tick % 3 == 0) {
+            getSoundWithPosition(level, posOf, FIRE_ABILITY.get(), 1F, 1.0F);
+            getSoundWithPosition(level, posOf, SUSPEND.get(), 1F, 1.6F);
+        }
     }
 
     @Override

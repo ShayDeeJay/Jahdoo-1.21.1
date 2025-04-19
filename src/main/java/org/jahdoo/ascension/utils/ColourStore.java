@@ -30,4 +30,11 @@ public class ColourStore {
     public static final int WALLET_BROWN = color(105, 52, 13);
     public static final int BOX_COLOUR = -804253680;
     public static final int BORDER_COLOUR =  -12434878;
+
+    public static final int RATING_1_GRAY = color(211, 211, 211);
+    public static final int RATING_2_RED = color(230, 71, 71);
+    public static final int RATING_3_ORANGE = color(224, 156, 59);
+    public static final int RATING_4_YELLOW = color(230, 226, 46);
+    public static final int RATING_5_GREEN = color(143, 185, 53);
+
 }

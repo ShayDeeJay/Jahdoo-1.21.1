@@ -5,8 +5,8 @@ import net.minecraft.network.chat.Component;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
 
-import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.ability.AbilityComponentHelper.getModifierContextRange;
+import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Maths.FORMAT;
 
 public class AbilityRating {
@@ -44,14 +44,11 @@ public class AbilityRating {
         if(mod == null) return -1;
 
         boolean higherIsBetter = mod.isHigherBetter();
-
         double value = mod.actualValue();
         double minValue = mod.lowestValue();
         double maxValue = mod.highestValue();
-
         double range = maxValue - minValue;
         double relativeValue = value - minValue;
-
         double normalizedValue;
 
         if (higherIsBetter) {
@@ -61,7 +58,7 @@ public class AbilityRating {
         }
 
         normalizedValue = Math.max(0, Math.min(1, normalizedValue));
-        return (int)(normalizedValue * 4) + 1; // Map to 1-5 rating
+        return (int)(normalizedValue * 4) + 1;
     }
 
     public static Component displayRating(AbilityHolder abilityHolder, String keys) {
@@ -75,11 +72,11 @@ public class AbilityRating {
             isHigherBetter = modifier.isHigherBetter();
 
             switch (getRating){
-                case 1 -> chatFormatting = color(255, 211,211,211);
-                case 2 -> chatFormatting = color(255, 230,71,71);
-                case 3 -> chatFormatting = color(255, 224,156,59);
-                case 4 -> chatFormatting = color(255, 230,226,46);
-                default -> chatFormatting= color(255, 143,185,53);
+                case 1 -> chatFormatting = RATING_1_GRAY;
+                case 2 -> chatFormatting = RATING_2_RED;
+                case 3 -> chatFormatting = RATING_3_ORANGE;
+                case 4 -> chatFormatting = RATING_4_YELLOW;
+                default -> chatFormatting = RATING_5_GREEN;
             }
         } else {
             getRating = 0;

@@ -99,7 +99,7 @@ public class Boltz extends DefaultEntityBehaviour {
         if(DefaultEntityBehaviour.canDamageEntity(hitEntity, (LivingEntity) this.element.getOwner())){
             DamageUtils.damageWithJahdoo(hitEntity, owner, (float) this.damage, getElementType().damageTypeResourceKey());
 
-            Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.ICE_ATTACH.get(), 0.1f);
+            Helpers.getSoundWithPosition(this.element.level(), this.element.blockPosition(), SoundReg.FROST_ABILITY.get(), 0.1f);
         }
     }
 
@@ -175,7 +175,7 @@ public class Boltz extends DefaultEntityBehaviour {
             ParticleHandlers.particleBurst(serverLevel, projectile.position(), 1, particleOptions, 0, 0, 0, (float) dischargeRadius / 15);
         }
 
-        element.playSound(SoundReg.ICE_ATTACH.get(),0.4F,1.5F);
+        element.playSound(SoundReg.FROST_ABILITY.get(),0.4F,1.5F);
     }
 
     void orbEnergyParticles(Projectile projectile, double numberOfPoints, double radius){

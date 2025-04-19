@@ -54,8 +54,6 @@ public class StructureManager {
     public static final String THE_OASIS = "wasteland";
     public static final String THE_BASTION = "hellscape";
     public static final String STARTING_ROOM = "starting_room";
-    public static final String VALID_ROOMS = Helpers.listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION));
-    public static final Component BATTLE_ROOM = withStyleComponent(stringIdToName(VALID_ROOMS), SYMPATHISER_ORANGE);
 
     public static final int GLOBAL_Y = 60;
     public static final Vec3 SPAWN_POSITION = new Vec3(33.5, GLOBAL_Y + 2, 27.5);
@@ -64,6 +62,14 @@ public class StructureManager {
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
         templates.ifPresent(template -> template.placeInWorld(level, pos, new BlockPos(-22, 0, -22), settings, level.random, 2));
+    }
+
+    public static String getValidRooms(){
+        return Helpers.listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION));
+    }
+
+    public static Component getBattleRoom(){
+        return withStyleComponent(stringIdToName(getValidRooms()), SYMPATHISER_ORANGE);
     }
 
     public static Iterable<BlockPos> roomBoundingFromCenter(BlockPos pos) {
@@ -92,7 +98,7 @@ public class StructureManager {
 
     public static List<Component> getRandomRoomId(boolean isStarter, InstanceData data){
         var roomGen = new ArrayList<Component>();
-        roomGen.add(BATTLE_ROOM);
+        roomGen.add(getBattleRoom());
 
         var difficulty = data.getDifficulty();
         var forSanctuary = EASY.getSerializedName().equals(difficulty) ? 80 : MEDIUM.getSerializedName().equals(difficulty) ? 50 : 20 ;
@@ -112,7 +118,7 @@ public class StructureManager {
             if (Maths.percentageChance(forBoss)) roomGen.add(BOSS_COMPONENT);
         }
 
-        while (roomGen.size() < 4) roomGen.add(BATTLE_ROOM);
+        while (roomGen.size() < 4) roomGen.add(getBattleRoom());
 
         Collections.shuffle(roomGen);
         return roomGen;

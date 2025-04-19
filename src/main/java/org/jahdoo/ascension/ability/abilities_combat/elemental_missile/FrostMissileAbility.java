@@ -1,4 +1,4 @@
-package org.jahdoo.ascension.ability.abilities_combat.elemental_shooter;
+package org.jahdoo.ascension.ability.abilities_combat.elemental_missile;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -7,7 +7,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.mod.ElementReg;
 
-public class FrostMissile extends ElementalMissile {
+public class FrostMissileAbility extends ElementalMissileAbility {
 
     public static final ResourceLocation abilityId = Helpers.res("frost_missile");
 

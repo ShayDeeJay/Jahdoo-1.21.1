@@ -23,9 +23,30 @@ public class BurningSkullsAbility extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("burning_skulls");
 
+    public static void vitalitySoundEffect(Player player) {
+        if(player instanceof ServerPlayer serverPlayer){
+            Helpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
+            Helpers.sendClientSound(serverPlayer, SoundReg.FROST_ABILITY.get(), 2, 1.2F);
+        }
+    }
+
+    public static void mysticSoundEffect(Player player) {
+        if(player instanceof ServerPlayer serverPlayer){
+            Helpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
+            Helpers.sendClientSound(serverPlayer, SoundReg.MYSTIC_ABILITY.get(), 2, 1.2F);
+        }
+    }
+
+    public static void frostSoundEffect(Player player) {
+        if(player instanceof ServerPlayer serverPlayer){
+            Helpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
+            Helpers.sendClientSound(serverPlayer, SoundReg.FROST_ABILITY.get(), 1F, 1.2F);
+        }
+    }
+
     public static void infernoSoundEffect(Player player) {
         if(player instanceof ServerPlayer serverPlayer){
-//            Helpers.sendClientSound(serverPlayer, SoundReg.HEAL.get(), 1, 0.65F);
+            Helpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
             Helpers.sendClientSound(serverPlayer, SoundReg.FIRE_ABILITY.get(), 2, 1.2F);
         }
     }

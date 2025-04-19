@@ -14,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.monster.Husk;
-import net.minecraft.world.entity.monster.Vindicator;
+import net.minecraft.world.entity.monster.ZombieVillager;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
@@ -157,7 +157,7 @@ public class MobManager {
     public static LivingEntity getReadyZombie(ServerLevel serverLevel, String id, InstanceData data){
         var entity = switch (id){
             case THE_HALL -> new CustomZombie(serverLevel, null);
-            case THE_CHAMBERS -> new Vindicator(EntityType.VINDICATOR, serverLevel)  ;
+            case THE_CHAMBERS -> new ZombieVillager(EntityType.ZOMBIE_VILLAGER, serverLevel)  ;
             case THE_OASIS -> new Husk(EntityType.HUSK, serverLevel);
             default -> new ZombifiedPiglin(EntityType.ZOMBIFIED_PIGLIN, serverLevel);
         };
