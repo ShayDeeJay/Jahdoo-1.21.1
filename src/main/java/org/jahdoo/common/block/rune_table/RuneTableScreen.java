@@ -73,7 +73,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     }
 
     private static int groupFade() {
-        return getFadedColourBackground(0.7f);
+        return fadeBlack(0.7f);
     }
 
     private int getExperienceCost() {

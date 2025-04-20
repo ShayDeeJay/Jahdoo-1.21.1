@@ -342,7 +342,7 @@ public class AbilityModificationScreen extends Screen {
      * Display main background with element colour and bezels
      * */
     private void backgroundWithStyle(@NotNull GuiGraphics graphics, int i1, int i, AbstractElement element) {
-        var fade = SharedUI.getFadedColourBackground(0.9F);
+        var fade = SharedUI.fadeBlack(0.9F);
         boxMaker(graphics, 3, 3, i1 - 3, i - 3, element.partColourFade(), fade, FastColor.ARGB32.color(60, element.partColourFade()));
         SharedUI.bezelMaker(graphics, -20 , -20, this.width - 20, this.height - 20, 60, null);
     }
@@ -376,7 +376,7 @@ public class AbilityModificationScreen extends Screen {
     private void overlaySkillPoints(GuiGraphics guiGraphics, LocalPlayer player) {
         var size = 24;
         var skillPoints = CasterData.getAbilityPoints(player);
-        var fade1 = SharedUI.getFadedColourBackground(0.5F);
+        var fade1 = SharedUI.fadeBlack(0.5F);
         var length = valueOf(skillPoints).length();
         var i1 = this.width / 2 + 99;
         var i2 = this.height / 2 - 120;
@@ -391,7 +391,7 @@ public class AbilityModificationScreen extends Screen {
     private void selectedModifier(@NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         if(!this.compValues.isEmpty()){
             var colour = ability.getElemenType().textColourB();
-            var semiTransLayer = getFadedColourBackground(0.9f);
+            var semiTransLayer = fadeBlack(0.9f);
 
             if (this.selectedY <= 0) return;
 

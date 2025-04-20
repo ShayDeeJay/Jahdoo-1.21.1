@@ -93,6 +93,7 @@ public class ChallengerTicket extends Item {
                     serverPlayer.stopUsingItem();
                     serverPlayer.getItemInHand(player.getUsedItemHand()).shrink(1);
                     serverPlayer.playNotifySound(SoundReg.START_TRIAL.get(), SoundSource.AMBIENT, 1, 1);
+//                    RunData.addNewQuest(serverPlayer);
                 }
             }
         }

@@ -93,8 +93,8 @@ public class BoonSelectionScreen extends Screen  {
     }
 
     private void selectionSections(GuiGraphics guiGraphics) {
-        var edges = getFadedColourBackground(0.1f);
-        var centre = getFadedColourBackground(fadeEntryBack);
+        var edges = fadeBlack(0.1f);
+        var centre = fadeBlack(fadeEntryBack);
 
         for (var position : getPositions()) {
             boxMaker(guiGraphics, position, -1, getSize(), this.height, edges, centre);
@@ -122,7 +122,7 @@ public class BoonSelectionScreen extends Screen  {
 
     private void selectionBox(GuiGraphics guiGraphics, int xPos) {
         if(selection <= 0) return;
-        var border = getFadedColourBackground(0f);
+        var border = fadeBlack(0f);
         var index = this.selection - 1;
         var hasNegativeBoon = boonsNegative.get(index) != Boon.EMPTY;
         var hasPositiveBoon = boonsPositive.get(index) != Boon.EMPTY;

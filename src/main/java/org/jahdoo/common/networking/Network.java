@@ -111,6 +111,12 @@ public class Network {
             PlayerTrialDataC2SP::handle
         );
 
+        payloadRegistrar.playToServer(
+            AddQuestC2SP.TYPE,
+            AddQuestC2SP.STREAM_CODEC,
+            AddQuestC2SP::handle
+        );
+
         //S2C
         payloadRegistrar.playToClient(
             PlayerTrialDataS2CP.TYPE,

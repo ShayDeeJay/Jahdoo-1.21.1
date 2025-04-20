@@ -94,11 +94,6 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 @Override
                 public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
                     guiGraphics.enableScissor(4, 55, width - 4, height - 5);
-                    var startX = centerX - (12.5 * scaledXOffset);
-                    var startY = centerY - (2.5 * scaledXOffset);
-                    var startY1 = centerY - (3.295 * scaledXOffset);
-//                    SharedUI.boxMaker(guiGraphics, (int) startX, (int) startY, 62 * size, (int) (13 * size), uiColour(), uiFade(), uiFade());
-//                    SharedUI.boxMaker(guiGraphics, (int) centerX, (int) startY1, 4 * size, (int) (2 * size), uiColour(), uiFade(), uiFade());
                 }
             }
         );
@@ -310,7 +305,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         }
     }
 
-    private static @NotNull ArrayList<Component> toComponent(String body, String name, int colour1, int colour2) {
+    public static @NotNull ArrayList<Component> toComponent(String body, String name, int colour1, int colour2) {
         var list = new ArrayList<Component>();
         var maxWidth = 200;
         var formattedText = new StringSplitter((a, b) -> 10).splitLines(body, maxWidth, Style.EMPTY);
@@ -376,7 +371,6 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     @Override
     protected void baseRender(GuiGraphics guiGraphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
         var pose = guiGraphics.pose();
-
         this.rebuildWidgets();
 
         if (components.isEmpty()) {

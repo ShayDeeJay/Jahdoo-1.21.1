@@ -9,9 +9,9 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.registers.mod.ElementReg;
 
+import static org.jahdoo.common.items.caster_item.CastHelper.chargeManaAndCooldown;
 import static org.jahdoo.common.registers.AttachmentReg.NOVA_SMASH;
 
 public class NovaSmashAbility extends Ability {
@@ -68,7 +68,7 @@ public class NovaSmashAbility extends Ability {
         if(!player.onGround()) {
             var novaSmash = player.getData(NOVA_SMASH);
             novaSmash.setCanSmash(true);
-            CastHelper.chargeManaAndCooldown(abilityId.getPath().intern(), player);
+            chargeManaAndCooldown(abilityId.getPath().intern(), player);
         }
     }
 

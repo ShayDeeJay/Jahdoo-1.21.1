@@ -28,6 +28,7 @@ public class CommonSetup {
         modEventBus.addListener(EntityDataReg::registerRegistry);
         modEventBus.addListener(LevelBoonReg::registerRegistry);
         modEventBus.addListener(SkillReg::registerRegistry);
+        modEventBus.addListener(QuestReg::registerRegistry);
     }
 
     public static void common(final FMLCommonSetupEvent event){
@@ -56,6 +57,7 @@ public class CommonSetup {
         ElementReg.register(modEventBus);
         LevelBoonReg.register(modEventBus);
         SkillReg.register(modEventBus);
+        QuestReg.register(modEventBus);
     }
 
 }

@@ -13,6 +13,7 @@ import org.jahdoo.ascension.attachments.RunData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.button.FlexiButton;
+import org.jahdoo.common.registers.mod.QuestReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,10 +30,10 @@ import static org.jahdoo.ascension.utils.ColourStore.BRONZE_COIN;
 import static org.jahdoo.ascension.utils.ColourStore.GOLD_COIN;
 import static org.jahdoo.ascension.utils.ColourStore.PLATINUM_COIN;
 import static org.jahdoo.ascension.utils.ColourStore.SILVER_COIN;
-import static org.jahdoo.ascension.utils.Maths.ticksToTime;
+import static org.jahdoo.ascension.utils.Maths.*;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
-import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
+import static org.jahdoo.common.client.SharedUI.fadeBlack;
 
 public class RunScreen extends AbstractPanableScreen {
 
@@ -55,7 +56,7 @@ public class RunScreen extends AbstractPanableScreen {
             new Overlay() {
                 @Override
                 public void render(@NotNull GuiGraphics graphics, int i, int i1, float v) {
-                    var start = canScrollSelections(mouseX, mouseY, width) ? getFadedColourBackground(0.8F): uiFade();
+                    var start = canScrollSelections(mouseX, mouseY, width) ? fadeBlack(0.8F): uiFade();
                     boxMaker(graphics, width/2 - WIDTH_OFFSET * 2 + moveX, 63, WIDTH_OFFSET, height/2 - 38, canScrollSelections(mouseX, mouseY, width) ? color(180, uiColour()) : 0, start, start);
                     graphics.enableScissor(3, 69, width - 3, height - 20);
                 }
@@ -185,7 +186,7 @@ public class RunScreen extends AbstractPanableScreen {
         var scale = 2F;
         var y = (int) Math.round((startY - 24 + (this.panYMain / 2)));
         var spacer = 0;
-        var start = canScrollDetails(mouseX, mouseY, width) ? getFadedColourBackground(0.8F): uiFade();
+        var start = canScrollDetails(mouseX, mouseY, width) ? fadeBlack(0.8F): uiFade();
 
         this.mouseX = mouseX;
         this.mouseY = mouseY;
@@ -238,7 +239,18 @@ public class RunScreen extends AbstractPanableScreen {
         allComponents.add(new StatEntry(componentTemplate("Time", runData.getDateAndTime().split(" ")[1], uiColour()), null));
         allComponents.add(new StatEntry(componentTemplate("Difficulty", Helpers.stringIdToName(instanceData.getDifficulty()), uiColour()), null));
 
+        var died = runData.died();
+        allComponents.add(new StatEntry(componentTemplate("Fate", died ? "Died!" : "Survived!", died ? RATING_2_RED : RATING_5_GREEN), null));
         allComponents.add(spacer);
+
+        var stat = runData.getCurrentQuestId();
+        if(!stat.isEmpty()){
+            var completed = runData.isCompletedQuest();
+            var statusColour = completed ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED;
+            allComponents.add(new StatEntry(componentTemplate("Quest Type", QuestReg.getQuestByName(stat).get().getDisplayName(), RATING_5_GREEN), null));
+            allComponents.add(new StatEntry(componentTemplate("Quest Status", (completed ? "Completed" : "Failed"), statusColour), null));
+        }
+
         allComponents.add(new StatEntry(componentTemplate("Run Time", ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), PERK_GREEN), CLOCK));
         allComponents.add(new StatEntry(componentTemplate("Total Exp", runData.getStat(EXPERIENCE) + "XP", COSMIC_PURPLE), TRIAL_EXPERIENCE));
         allComponents.add(new StatEntry(componentTemplate("Rooms Cleared", runData.getStat(ROOMS_CLEARED) + "", AETHER_BLUE), Icons.UP));
@@ -264,10 +276,10 @@ public class RunScreen extends AbstractPanableScreen {
 //        allComponents.add(new StatEntry(componentTemplate("Gold Coins", instanceData.getGoldCoin() + "", GOLD_COIN), Icons.GOLD_COIN));
 
         // Mob multipliers
-        allComponents.add(new StatEntry(componentTemplate("Mob Health", "+" + instanceData.getHealth() + "%", uiColour()), iconFromEffect(HEAL)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Armor", "+" + instanceData.getArmor() + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Damage", "+" + instanceData.getAttackDamage() + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Speed", "+" + instanceData.getSpeed() + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Health", "+" + roundNonWholeString(doubleFormattedDouble(instanceData.getHealth())) + "%", uiColour()), iconFromEffect(HEAL)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Armor", "+" + roundNonWholeString(doubleFormattedDouble(instanceData.getArmor())) + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Damage", "+" + roundNonWholeString(doubleFormattedDouble(instanceData.getAttackDamage())) + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Speed", "+" + roundNonWholeString(doubleFormattedDouble(instanceData.getSpeed())) + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
 
         // Mob counts / composition
         allComponents.add(new StatEntry(componentTemplate("Horde Mobs", instanceData.getHorde() + "", AETHER_BLUE), Icons.HORDE));

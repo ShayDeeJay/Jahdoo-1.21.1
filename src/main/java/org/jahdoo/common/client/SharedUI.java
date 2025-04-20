@@ -53,7 +53,7 @@ public class SharedUI {
         return List.of(Icons.AUGMENT_CORE, Icons.ADVANCED_AUGMENT_CORE, Icons.AUGMENT_HYPER_CORE);
     }
 
-    public static int getFadedColourBackground(float alpha){
+    public static int fadeBlack(float alpha){
         var minecraft = Minecraft.getInstance();
         return minecraft.options.getBackgroundColor(alpha);
     }

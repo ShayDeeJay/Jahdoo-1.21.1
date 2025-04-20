@@ -79,7 +79,7 @@ public class StructureManager {
         );
     }
 
-    public static void generateStructure(ServerLevel level){
+    public static void generateStartingRoom(ServerLevel level){
         var pos = new BlockPos(0, GLOBAL_Y, 0);
         var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 1).toList();
         var settings = new StructurePlaceSettings();
@@ -129,13 +129,20 @@ public class StructureManager {
         var counter = 0;
         var getRooms = getRandomRoomId(isStarter, level.getData(INSTANCE_DATA));
 
+        var pos1 = new BlockPos(23, 61, 27);
+        if(level.getBlockState(pos1).is(Blocks.LIME_CONCRETE)){
+            BlockSetupManager.setPerkTable(level, pos1, 2);
+        }
+
         for (var blockPos : range) {
             BlockSetupManager.generateExit(level, blockPos, Direction.EAST);
             setLocks(level, blockPos, false);
             if(level.getBlockState(blockPos).is(Blocks.TINTED_GLASS)){
                 level.destroyBlock(blockPos, false);
             }
+
             var getLock = level.getBlockEntity(blockPos);
+
             if(getLock instanceof LockBlockEntity lock) {
                 lock.isStarting = isStarter;
                 if(lock.isStartingRoom()){

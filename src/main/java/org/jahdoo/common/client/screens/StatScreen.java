@@ -18,12 +18,12 @@ import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.OverlayHelpers.elementalModStat;
 import static org.jahdoo.common.client.OverlayHelpers.getModStat;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
-import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
+import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.overlay.WalletOverlay.renderWallet;
 import static org.jahdoo.common.registers.AttributeReg.*;
 public class StatScreen extends AbstractPanableScreen {
 
-    public static int fadeBackground = getFadedColourBackground(0.6F);
+    public static int fadeBackground = fadeBlack(0.6F);
 
     private void elementalStats(GuiGraphics guiGraphics, LocalPlayer player, float i, float j, Minecraft mc) {
         var x = 0;

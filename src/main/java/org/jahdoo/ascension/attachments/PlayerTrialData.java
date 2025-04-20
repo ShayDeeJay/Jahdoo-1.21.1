@@ -130,7 +130,7 @@ public class PlayerTrialData implements IAttachment{
             var runList = nbt.getList("PastRuns", Tag.TAG_COMPOUND);
             for (Tag tag : runList) {
                 var runTag = (CompoundTag) tag;
-                var pastRun = new RunData(new HashMap<>(), ""); // placeholder init
+                var pastRun = RunData.emptyRun(); // placeholder init
                 pastRun.loadNBTData(runTag, provider);
                 pastRuns.add(pastRun);
             }

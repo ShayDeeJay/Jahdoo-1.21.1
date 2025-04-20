@@ -128,7 +128,7 @@ public class EventHelpers {
         if(getBlock.is(Blocks.BARRIER)){
             if(level.getBlockEntity(pos.below(1)) instanceof PerkTableEntity entity){
                 entity.setUsed(entity.getBlockState(), player);
-                level.destroyBlock(pos, false);
+//                level.destroyBlock(pos, false);
             }
         }
     }

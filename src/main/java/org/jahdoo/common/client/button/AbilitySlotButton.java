@@ -8,6 +8,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.screens.AbstractPanableScreen;
@@ -109,7 +110,7 @@ public class AbilitySlotButton extends ImageButton {
         if (this.isMouseOver(mouseX, mouseY)) {
             if(!validSlot){
                 var prefix = Helpers.withStyleComponent("Requires Level: ", HEADER_COLOUR);
-                var level = Helpers.withStyleComponent(((slotIndex - 1) * 10) / 2 + "", ColourStore.SUB_HEADER_COLOUR);
+                var level = Helpers.withStyleComponent(((slotIndex - 1) * CasterData.UNLOCKED_AT)  + "", ColourStore.SUB_HEADER_COLOUR);
                 graphics.renderTooltip(mc.font, List.of(prefix.copy().append(level)), Optional.empty(), mouseX, mouseY);
             }
             sizes = Math.min(sizes + 2f, totalSize);

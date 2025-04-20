@@ -20,6 +20,7 @@ import java.util.List;
 
 import static net.minecraft.world.InteractionResultHolder.fail;
 import static net.minecraft.world.InteractionResultHolder.pass;
+import static org.jahdoo.ascension.quests.AbstractQuest.questValueMultiplier;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
 
@@ -77,11 +78,11 @@ public class CasterItem extends Item implements JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
-
-//        Helpers.throwOrAddItem(player, JahdooRarity.getRandomWand(null, null));
-
-
+        System.out.println(questValueMultiplier(player, 50, 25, 5));
         if(!level.isClientSide){
+//        CasterData.addExperience(player, 2000);
+//        CasterData.clearData(player);
+//        CasterData.regretAbilities(player);
             var castAbility = castAbility(player, interactionHand, item);
             if (castAbility != null) return castAbility;
         }

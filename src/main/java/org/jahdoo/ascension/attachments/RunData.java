@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
+import static org.jahdoo.ascension.attachments.CasterData.addExperience;
 import static org.jahdoo.common.registers.AttachmentReg.*;
 
 public class RunData implements IAttachment {
@@ -27,7 +28,7 @@ public class RunData implements IAttachment {
     public static final String EXPERIENCE = "experience";
     public static final String MOBS_KILLED = "mobs_killed";
     public static final String ROOMS_CLEARED = "rooms_cleared";
-//    public static final String CHESTS_OPENED = "chests_cleared";
+
     public static final String CHESTS_COMMON = "chests_common";
     public static final String CHESTS_RARE = "chests_rare";
     public static final String CHESTS_LEGENDARY = "chests_legendary";
@@ -40,13 +41,27 @@ public class RunData implements IAttachment {
     public static final String PLATINUM_COIN = "platinum_coin";
 
     private Map<String, Integer> stats = new HashMap<>();
+    private String currentQuestId = "";
     private String dateAndTime;
+    private boolean completedQuest;
+    private boolean died;
+
+    public static RunData EMPTY = new RunData(new HashMap<>(), "", "", false, false);
 
     public RunData() {}
 
-    public RunData(Map<String, Integer> stats, String dateAndTime) {
+    public RunData(
+        Map<String, Integer> stats,
+        String dateAndTime,
+        String currentQuestId,
+        boolean completedQuest,
+        boolean died
+    ) {
         this.stats = stats;
         this.dateAndTime = dateAndTime;
+        this.currentQuestId = currentQuestId;
+        this.completedQuest = completedQuest;
+        this.died = died;
     }
 
     public int getStat(String key) {
@@ -57,16 +72,40 @@ public class RunData implements IAttachment {
         stats.put(key, getStat(key) + amount);
     }
 
+    public boolean died() {
+        return died;
+    }
+
+    public boolean isCompletedQuest() {
+        return completedQuest;
+    }
+
     public void incrementStat(String key) {
         addStat(key, 1);
+    }
+
+    public String getCurrentQuestId() {
+        return currentQuestId;
     }
 
     public String getDateAndTime() {
         return dateAndTime;
     }
 
+    public void setDied() {
+        this.died = true;
+    }
+
     public void setDateAndTime(String dateAndTime) {
         this.dateAndTime = dateAndTime;
+    }
+
+    public void setCompletedQuest(boolean completedQuest) {
+        this.completedQuest = completedQuest;
+    }
+
+    public void setCurrentQuestId(String currentQuestId) {
+        this.currentQuestId = currentQuestId;
     }
 
     public void setExperienceGained(String difficulty, int baseExp) {
@@ -82,13 +121,14 @@ public class RunData implements IAttachment {
         PlayerTrialData.addNewInstance(player, new InstanceData(data.getDifficulty(), data.getInstance()));
         runData.addInstance(data);
 
-        if (!died) {
-            var pastRun = new RunData(new HashMap<>(stats), dateAndTime);
-            PlayerTrialData.addNewRun(player, pastRun);
-            CasterData.addExperience(player, getStat(EXPERIENCE) + data.getExperience());
-        }
+        var pastRun = new RunData(new HashMap<>(stats), dateAndTime, currentQuestId, completedQuest, died);
+        PlayerTrialData.addNewRun(player, pastRun);
+
+        if (!died) addExperience(player, getStat(EXPERIENCE) + data.getExperience());
 
         stats.clear();
+        setCurrentQuestId("");
+        setCompletedQuest(false);
         setDateAndTime("");
     }
 
@@ -102,6 +142,16 @@ public class RunData implements IAttachment {
 
         runData.setDateAndTime(date + " " + time);
         sendToPlayer(player, new RunDataS2CP(runData));
+    }
+
+    public static void addNewQuest(ServerPlayer player, String currentQuestId) {
+        var runData = player.getData(RUN_DATA.get());
+        runData.setCurrentQuestId(currentQuestId);
+        sendToPlayer(player, new RunDataS2CP(runData));
+    }
+
+    public static RunData emptyRun(){
+        return new RunData(new HashMap<>(), "", "", false, false);
     }
 
     public static void endRun(ServerPlayer player, boolean died) {
@@ -158,7 +208,10 @@ public class RunData implements IAttachment {
     public static final Codec<RunData> CODEC = RecordCodecBuilder.create(
         instance -> instance.group(
             Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("Stats").forGetter(run -> run.stats),
-            Codec.STRING.fieldOf("DateAndTime").forGetter(RunData::getDateAndTime)
+            Codec.STRING.fieldOf("DateAndTime").forGetter(RunData::getDateAndTime),
+            Codec.STRING.fieldOf("QuestId").forGetter(RunData::getCurrentQuestId),
+            Codec.BOOL.fieldOf("CompletedQuest").forGetter(RunData::isCompletedQuest),
+            Codec.BOOL.fieldOf("Died").forGetter(RunData::died)
         ).apply(instance, RunData::new)
     );
 
@@ -166,11 +219,14 @@ public class RunData implements IAttachment {
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         var statsTag = new CompoundTag();
 
-        for (Map.Entry<String, Integer> entry : stats.entrySet()) {
+        for (var entry : stats.entrySet()) {
             statsTag.putInt(entry.getKey(), entry.getValue());
         }
 
         nbt.put("Stats", statsTag);
+        nbt.putString("QuestID", currentQuestId);
+        nbt.putBoolean("CompletedQuest", completedQuest);
+        nbt.putBoolean("Died", died);
         if (dateAndTime != null) nbt.putString("DateAndTime", dateAndTime);
     }
 
@@ -179,12 +235,15 @@ public class RunData implements IAttachment {
         stats.clear();
 
         if (nbt.contains("Stats")) {
-            CompoundTag statsTag = nbt.getCompound("Stats");
-            for (String key : statsTag.getAllKeys()) {
+            var statsTag = nbt.getCompound("Stats");
+            for (var key : statsTag.getAllKeys()) {
                 stats.put(key, statsTag.getInt(key));
             }
         }
 
+        this.currentQuestId = nbt.getString("QuestID");
+        this.completedQuest = nbt.getBoolean("CompletedQuest");
+        this.died = nbt.getBoolean("Died");
         dateAndTime = nbt.contains("DateAndTime") ? nbt.getString("DateAndTime") : null;
     }
 
@@ -193,6 +252,7 @@ public class RunData implements IAttachment {
         return "RunData{" +
             "stats=" + stats +
             ", dateAndTime='" + dateAndTime + '\'' +
+            ", quest='" + currentQuestId + '\'' +
             '}';
     }
 }

@@ -18,7 +18,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
-import static org.jahdoo.ascension.level_manager.StructureManager.generateStructure;
+import static org.jahdoo.ascension.level_manager.StructureManager.generateStartingRoom;
 import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.DamageTypeReg.BIOME_SOURCE;
@@ -92,7 +92,7 @@ public class LevelGenerator {
 
         findLevel(levelKey, serverLevel).ifPresent(
             level -> {
-                generateStructure(level);
+                generateStartingRoom(level);
                 level.setData(INSTANCE_DATA, new InstanceData());
                 getLevel.set(level);
             }

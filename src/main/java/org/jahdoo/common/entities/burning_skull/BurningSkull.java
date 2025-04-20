@@ -19,6 +19,7 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.EntityReg;
 import org.jetbrains.annotations.NotNull;
@@ -145,6 +146,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         ambientSound();
         entityMovement();
         discardTime();
+
     }
 
     private void discardTask() {
@@ -233,23 +235,21 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         if(!(level() instanceof ServerLevel) || !(entity instanceof LivingEntity livingEntity) ) return;
         if(!canDamageEntity(livingEntity, (LivingEntity) this.getOwner())) return;
 
-        var bitePitch = 0.75F;
-        var biteVolume = 0.6F;
-        var biteSound = SoundEvents.BLAZE_SHOOT;
+        this.playSound(SoundReg.FIRE_ABILITY.get(), 1F, 1F);
+        this.playSound(SoundEvents.PHANTOM_BITE, 0.4F, 0.5F);
 
-        this.playSound(biteSound, biteVolume, bitePitch);
         if(effectChance == 0 || Random.nextInt((int) effectChance) == 0){
             var effectInstance = new JahdooMobEffect(INFERNO_EFFECT, (int) effectDuration, (int) effectStrength);
             livingEntity.addEffect(effectInstance);
         }
 
         DamageUtils.damageWithJahdoo(entity, this.getOwner(), damage, getElementType().damageTypeResourceKey());
-        discardTask();
+//        discardTask();
     }
 
     private void ambientSound() {
         var bitePitch = 0.5F;
-        var biteVolume = 1F;
+        var biteVolume = 0.8F;
         var biteSound = SoundEvents.SOUL_ESCAPE.value();
 
         var firePitch = 1.5F;

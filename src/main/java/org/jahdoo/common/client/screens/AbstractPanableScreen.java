@@ -13,7 +13,7 @@ import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
-import static org.jahdoo.common.client.SharedUI.getFadedColourBackground;
+import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
 
 public abstract class AbstractPanableScreen extends Screen {
@@ -39,7 +39,7 @@ public abstract class AbstractPanableScreen extends Screen {
     }
 
     public static int uiFade(){
-        return getFadedColourBackground(0.6f);
+        return fadeBlack(0.6f);
     }
 
     private void screenTab() {
@@ -84,7 +84,10 @@ public abstract class AbstractPanableScreen extends Screen {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        var isCenteredView = this.zoomX == 0 && this.panY == 0 && this.panX == 0;
         var zoomScale = this.zoomX + 1;
+
+        if(isCenteredView) return false;
 
         panX += Math.round(dragX / zoomScale);
         panY += Math.round(dragY / zoomScale);

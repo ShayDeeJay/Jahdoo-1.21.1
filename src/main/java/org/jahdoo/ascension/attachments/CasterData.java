@@ -10,6 +10,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
+import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
 import org.jahdoo.common.networking.server2client.CooldownsSyncS2CP;
 import org.jahdoo.common.networking.server2client.ManaSyncS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -21,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static java.lang.String.*;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.ascension.utils.Helpers.Random;
@@ -33,14 +36,17 @@ public class CasterData implements IAttachment {
     private static final String COOLDOWNS_STATIC = "jahdoo_magic_data_cooldowns";
     private static final Logger LOGGER = LoggerFactory.getLogger(CasterData.class);
     public static final List<@NotNull String> EMPTY = List.of("", "", "", "", "", "", "", "", "", "", "", "");
+    public static final int UNLOCKED_AT = 10;
 
     private int xp;
     private int allowedSlots;
     private int abilityPoints;
     private double manaPool;
-    private String selectedAbility = "";
+
     private Map<String, Integer> abilityCooldowns = new Object2IntOpenHashMap<>();
     private Map<String, Integer> abilityCooldownsStatic = new Object2IntOpenHashMap<>();
+
+    private String selectedAbility = "";
     private List<AbilityHolder> unlockedAbilities = new ArrayList<>();
     public List<String> abilitySlots = new ArrayList<>();
     private List<String> unlockedSkills = new ArrayList<>();
@@ -125,7 +131,8 @@ public class CasterData implements IAttachment {
         if(abilityPoints > 0){
             incrementAbilityPoints(abilityPoints);
             player.makeSound(SoundReg.LEVEL_UP.get());
-            this.setAllowedSlots(Math.divideExact(level, 5) - Math.divideExact(currentLevel, 5));
+            var allowedSlots1 = Math.divideExact(level, UNLOCKED_AT) - Math.divideExact(currentLevel, UNLOCKED_AT);
+            this.setAllowedSlots(allowedSlots1);
             for(int i = 0; i < 100; i++){
                 var particle = ParticleHandlers.getNonBakedParticles(color(167, 84, 168), color(167, 84, 168), 27, Random.nextInt(1, 3));
                 var x = player.getRandomX(0.5);
@@ -220,7 +227,7 @@ public class CasterData implements IAttachment {
             for (int i = 0; i < this.abilitySlots.size(); i++) {
                 if (this.abilitySlots.get(i).isEmpty()) {
                     this.abilitySlots.set(i, selectedAbility);
-                    return; // Stop after inserting into the first empty slot
+                    return;
                 }
             }
         }
@@ -233,13 +240,12 @@ public class CasterData implements IAttachment {
 
     public void removeAbilitySlot(String selectedAbility){
         int index = this.abilitySlots.indexOf(selectedAbility);
-        if (index == -1) return; // Not found, nothing to remove
+        if (index == -1) return;
 
         for (int i = index; i < this.abilitySlots.size() - 1; i++) {
             this.abilitySlots.set(i, this.abilitySlots.get(i + 1));
         }
 
-        // Empty out the last slot
         this.abilitySlots.set(this.abilitySlots.size() - 1, "");
         if(Objects.equals(selectedAbility, this.selectedAbility)) this.selectedAbility = "";
     }
@@ -391,6 +397,20 @@ public class CasterData implements IAttachment {
         livingEntity.getData(CASTER_DATA).decrementAbilityPoints(abilityPoints);
     }
 
+    public static void regretAbilities(LivingEntity livingEntity){
+        if(livingEntity instanceof ServerPlayer serverPlayer){
+            var data = livingEntity.getData(CASTER_DATA);
+            data.abilitySlots = new ArrayList<>(EMPTY);
+            data.unlockedSkills.clear();
+            data.unlockedAbilities.clear();
+            data.selectedAbility = "";
+            data.incrementAbilityPoints(data.getLevel() - data.abilityPoints);
+            sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
+            sendToPlayer(serverPlayer, new ClientSoundS2CP(SoundReg.REJECT.get(), 1, 1, false));
+            sendToPlayer(serverPlayer, new ClientSoundS2CP(SoundReg.ORB_CREATE.get(), 0.4F, 2, false));
+        }
+    }
+
     public static void clearData(Player player){
         player.getData(CASTER_DATA).clearData();
     }
@@ -406,8 +426,6 @@ public class CasterData implements IAttachment {
         var canPurchase = available >= cost;
         return !canPurchase;
     }
-
-    static int xpScale = 6;
 
     public static int getXpRemainingToNextLevel(Player player) {
         var data = player.getData(CASTER_DATA);
@@ -434,6 +452,8 @@ public class CasterData implements IAttachment {
         return (float)(totalXp - xpForCurrentLevel) / (float)xpForNextLevel;
     }
 
+    static int xpScale = 6;
+
     public static int getXpNeededForNextLevel(int level) {
         if (level >= 0 && level <= 15) return xpScale * (2 * level + 7);
         if (level >= 16 && level <= 30) return xpScale * (5 * level - 38);
@@ -451,7 +471,7 @@ public class CasterData implements IAttachment {
     public static int getLevelFromExp(int xp) {
         if (xp < 0) return 0;
         if (xp < xpScale * 352) return (int)Math.floor((-6 + Math.sqrt(36 + 4 * (xp / (double) xpScale))) / 2);
-        if (xp < xpScale * 1507) return (int)Math.floor((40.5 + Math.sqrt(1640.25 - 10 * (360 - (xp / (double) xpScale)))) / 5);
+        if (xp < xpScale * 1507) return (int)Math.floor((40.5 + Math.sqrt(1640.25 - UNLOCKED_AT * (360 - (xp / (double) xpScale)))) / 5);
 
         return (int)Math.floor((162.5 + Math.sqrt(26406.25 - 18 * (2220 - (xp / (double) xpScale)))) / 9);
     }
@@ -462,7 +482,6 @@ public class CasterData implements IAttachment {
 
     public void applyAllCooldowns(){
         if(abilityCooldowns.isEmpty()) return;
-
         abilityCooldowns.forEach(
             (ability, cooldown) -> {
                 if(cooldown > 0) {
@@ -495,20 +514,17 @@ public class CasterData implements IAttachment {
         var cooldowns = new CompoundTag();
         var cooldownsStatic = new CompoundTag();
         var abilitySlots = new CompoundTag();
-        var unlockedSKills = new CompoundTag();
+        var unlockedSkills = new CompoundTag();
 
         for (int i = 0; i < this.abilitySlots.size(); i++) {
-            String abilitySlot = this.abilitySlots.get(i);
+            var abilitySlot = this.abilitySlots.get(i);
             if (!abilitySlot.isEmpty()) {
-                abilitySlots.putString(String.valueOf(i), abilitySlot); // Save using index
+                abilitySlots.putString(valueOf(i), abilitySlot); // Save using index
             }
         }
 
-        for (int i = 0; i < this.unlockedSkills.size(); i++) {
-            String abilitySlot = this.unlockedSkills.get(i);
-            if (!abilitySlot.isEmpty()) {
-                unlockedSKills.putString(String.valueOf(i), abilitySlot); // Save using index
-            }
+        for (var unlockedSkill : this.unlockedSkills) {
+            unlockedSkills.putString(unlockedSkill, unlockedSkill);
         }
 
         this.abilityCooldowns.forEach(cooldowns::putInt);
@@ -518,7 +534,7 @@ public class CasterData implements IAttachment {
         nbt.put(CasterData.COOLDOWNS, cooldowns);
         nbt.put(CasterData.COOLDOWNS_STATIC, cooldownsStatic);
         nbt.put("ability_slots", abilitySlots);
-        nbt.put("unlocked_skills", unlockedSKills);
+        nbt.put("unlocked_skills", unlockedSkills);
         nbt.putDouble(MANA, manaPool);
         nbt.putInt("level", this.xp);
         nbt.putInt("ability_points", this.abilityPoints);
@@ -540,34 +556,19 @@ public class CasterData implements IAttachment {
             .forEach(key -> abilityCooldownsStatic.put(key, nbt.getCompound(COOLDOWNS_STATIC).getInt(key)));
 
         var slots = nbt.getCompound("ability_slots");
-        var skills = nbt.getCompound("unlocked_skills");
-        this.abilitySlots.clear();
-        int maxIndex = 0;
 
         for (String key : slots.getAllKeys()) {
             var index = Integer.parseInt(key);
             var ability = slots.getString(key);
-            while (this.abilitySlots.size() <= index) {
-                this.abilitySlots.add(""); // pad with empty strings
-            }
             this.abilitySlots.set(index, ability);
-            if (index > maxIndex) maxIndex = index;
         }
-
-        for (String key : skills.getAllKeys()) {
-            var index = Integer.parseInt(key);
-            var ability = skills.getString(key);
-            while (this.abilitySlots.size() <= index) {
-                this.abilitySlots.add(""); // pad with empty strings
-            }
-            this.abilitySlots.set(index, ability);
-            if (index > maxIndex) maxIndex = index;
-        }
-
 
         for (int i = this.abilitySlots.size(); i < 12; i++) {
             this.abilitySlots.add("");
         }
+
+        var skills = nbt.getCompound("unlocked_skills");
+        unlockedSkills.addAll(skills.getAllKeys());
 
         this.allowedSlots = nbt.getInt("allowed_slots");
         this.xp = nbt.getInt("level");

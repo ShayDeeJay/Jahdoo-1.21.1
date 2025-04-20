@@ -117,7 +117,7 @@ public class ModItemModelProvider extends ItemModelProvider {
             ItemReg.ADVANCED_AUGMENT_CORE, ItemReg.AUGMENT_HYPER_CORE,
             ItemReg.MANA_CONTAINER, ItemReg.BOON_CONTAINER,
             ItemReg.CHALLENGER_TICKET, ItemReg.SKILL_POINT,
-            ItemReg.EXIT_KEY
+            ItemReg.EXIT_KEY, ItemReg.QUEST_CONTAINER
         );
 
         simpleItems.forEach(this::createSimpleItemModel);

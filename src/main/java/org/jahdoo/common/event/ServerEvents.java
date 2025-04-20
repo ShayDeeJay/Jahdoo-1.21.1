@@ -1,8 +1,11 @@
 package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -23,6 +26,12 @@ import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
+import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.QuestReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
 import static org.jahdoo.ascension.utils.Helpers.syncCasterData;
@@ -101,6 +110,30 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onPlayerTickEvent(PlayerTickEvent.Pre event){
         var player = event.getEntity();
+        var level = player.level();
+
+        if(level instanceof CustomLevel){
+            if(player instanceof ServerPlayer serverPlayer){
+                var runData = serverPlayer.getData(AttachmentReg.RUN_DATA.get());
+                var getQuestId = runData.getCurrentQuestId();
+                if(getQuestId != null){
+                    var getQuest = QuestReg.getQuestByName(getQuestId);
+                    if (getQuest.isPresent()) {
+                        var stat = runData.getStat(getQuestId);
+                        var i = getQuest.get().questQuantity(serverPlayer);
+
+                        if (stat >= i && !runData.isCompletedQuest()) {
+                            Helpers.sendClientSound(serverPlayer, SoundReg.SWORD_THUD.get(), 1, 1);
+                            Helpers.throwOrAddItem(serverPlayer, new ItemStack(ItemReg.CHALLENGER_TICKET));
+                            Helpers.throwOrAddItem(serverPlayer, new ItemStack(ItemReg.EXIT_KEY));
+                            runData.setCompletedQuest(true);
+                            serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(5, 10, 5));
+                            serverPlayer.connection.send(new ClientboundSetTitleTextPacket(Helpers.withStyleComponent("Quest Complete", ColourStore.UNIQUE_A)));
+                        }
+                    }
+                }
+            }
+        }
 
         if(player instanceof ServerPlayer serverPlayer){
             CasterData.cooldownTickEvent(serverPlayer);
