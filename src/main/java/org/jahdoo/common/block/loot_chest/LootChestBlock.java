@@ -149,7 +149,7 @@ public class LootChestBlock extends BaseEntityBlock {
         var coinItems = getCoinItems(lootChestEntity.getData(INSTANCE_DATA));
         if(!coinItems.isEmpty()){
             lootChestEntity.setOpen(true);
-            lootsplosian(pos.getCenter(), serverLevel, 10, ColourStore.ABSORPTION_YELLOW, coinItems, false, 0);
+            lootsplosian(pos.getCenter(), serverLevel, 10, ColourStore.ABSORPTION_YELLOW, coinItems, false, 20);
             openingSoundEffect(pos, serverLevel, false);
         } else {
             player.displayClientMessage(withStyleComponent("Chest is empty!", ColourStore.NEGATIVE_RED), true);

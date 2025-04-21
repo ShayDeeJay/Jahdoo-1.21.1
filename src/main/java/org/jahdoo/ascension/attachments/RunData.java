@@ -2,6 +2,7 @@ package org.jahdoo.ascension.attachments;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -9,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.level_manager.InstanceDifficulty;
+import org.jahdoo.ascension.level_manager.LevelGenerator;
 import org.jahdoo.common.networking.server2client.PlayerTrialDataS2CP;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -114,17 +116,18 @@ public class RunData implements IAttachment {
     }
 
     public void onEndRun(Player player, boolean died) {
-        var data = player.level().getData(INSTANCE_DATA);
-        var runData = player.level().getData(PLAYER_TRIAL_DATA);
-        addStat(TIME_IN_TRIAL, data.getTicks());
 
-        PlayerTrialData.addNewInstance(player, new InstanceData(data.getDifficulty(), data.getInstance()));
-        runData.addInstance(data);
+        if(!this.dateAndTime.isEmpty()){
+            var data = player.level().getData(INSTANCE_DATA);
+            var runData = player.level().getData(PLAYER_TRIAL_DATA);
 
-        var pastRun = new RunData(new HashMap<>(stats), dateAndTime, currentQuestId, completedQuest, died);
-        PlayerTrialData.addNewRun(player, pastRun);
-
-        if (!died) addExperience(player, getStat(EXPERIENCE) + data.getExperience());
+            addStat(TIME_IN_TRIAL, data.getTicks());
+            PlayerTrialData.addNewInstance(player, new InstanceData(data.getDifficulty(), data.getInstance()));
+            runData.addInstance(data);
+            var pastRun = new RunData(new HashMap<>(stats), dateAndTime, currentQuestId, completedQuest, died);
+            PlayerTrialData.addNewRun(player, pastRun);
+            if (!died) addExperience(player, getStat(EXPERIENCE));
+        }
 
         stats.clear();
         setCurrentQuestId("");
@@ -160,7 +163,18 @@ public class RunData implements IAttachment {
         if (runData.dateAndTime != null) {
             runData.onEndRun(player, died);
             sendToPlayer(player, new PlayerTrialDataS2CP(castData));
+            if(player.level() instanceof CustomLevel customLevel){
+                if(customLevel.players().isEmpty()){
+                    LevelGenerator.removeLevel(customLevel);
+                }
+            }
         }
+    }
+
+    public static void addExperienceToTotal(int value, ServerPlayer player) {
+        var data = player.getData(RUN_DATA.get());
+        data.addStat(RunData.EXPERIENCE, value);
+        sendToPlayer(player, new RunDataS2CP(data));
     }
 
     public static void incrementClearedRoomExp(ServerPlayer player, String difficulty) {
@@ -170,12 +184,12 @@ public class RunData implements IAttachment {
         sendToPlayer(player, new RunDataS2CP(runData));
     }
 
-    public static void incrementKilledMobsExp(ServerLevel level, LivingEntity player) {
+    public static void incrementKilledMobsExp(ServerLevel level, LivingEntity player, int amount) {
         var instanceData = level.getData(INSTANCE_DATA.get());
         var runData = player.getData(RUN_DATA.get());
 
         runData.incrementStat(MOBS_KILLED);
-        runData.setExperienceGained(instanceData.getDifficulty(), 1);
+        runData.setExperienceGained(instanceData.getDifficulty(), amount);
 
         if (player instanceof ServerPlayer serverPlayer) {
             sendToPlayer(serverPlayer, new RunDataS2CP(runData));
@@ -193,6 +207,7 @@ public class RunData implements IAttachment {
             sendToPlayer(serverPlayer, new RunDataS2CP(runData));
         }
     }
+
 
     public static void incrementChestOpenedExp(ServerLevel level, LivingEntity player, int chestValue) {
         var instanceData = level.getData(INSTANCE_DATA.get());

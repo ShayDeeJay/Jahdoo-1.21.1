@@ -11,7 +11,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.client.screens.StatScreen;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -23,16 +23,16 @@ import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.co
 import static org.jahdoo.ascension.utils.ColourStore.MAGNET_RANGE_GREEN;
 import static org.jahdoo.ascension.utils.ColourStore.NEGATIVE_RED;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.common.client.screens.StatScreen.*;
+import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
 
 public class WalletOverlay implements LayeredDraw.Layer {
     private int previousWallet;
     private int timer;
     private float fadeIn;
 
-    public static int canPurchase(CurrencyConverter wallet, ShoppingTableEntity shoppingTable) {
+    public static int canPurchase(CurrencyConverter wallet, CurrencyConverter currencyConverter) {
         var currentWallet = convertToWallet(wallet);
-        var shoppingWallet = convertToWallet(shoppingTable.itemCosts);
+        var shoppingWallet = convertToWallet(currencyConverter);
         return currentWallet - shoppingWallet;
     }
 
@@ -83,26 +83,26 @@ public class WalletOverlay implements LayeredDraw.Layer {
         if(player == null || minecraft.options.hideGui || level == null) return;
         var shoppingTable = isLookingAtBlock(player);
 
-        renderWallet(graphics, minecraft, fadeIn, 0 , 0, true);
+        renderWallet(graphics, minecraft, fadeIn, 0 , 0, true, null);
         slideGui();
 
         timer = Math.max(0, timer - 1);
         previousWallet = getWalletValue(player);
 
         if(currentWallet != previousWallet) timer = 200;
-        if(screen instanceof StatScreen) { timer = 0; }
+        if(minecraft.screen != null) { timer = 0; }
         if(shoppingTable != null && shoppingTable.canPurchase()) timer = 50;
     }
 
     private static Component displayDifference(
         CurrencyConverter wallet,
-        ShoppingTableEntity shoppingTable,
+        @Nullable CurrencyConverter purchasePrice,
         int index,
         Integer coin,
         CoinProperties prop
     ) {
-        if(shoppingTable == null) return empty();
-        var validAmount = canPurchase(wallet, shoppingTable);
+        if(purchasePrice == null) return empty();
+        var validAmount = canPurchase(wallet, purchasePrice);
 
         if(validAmount <= 0) return empty();
 
@@ -120,7 +120,8 @@ public class WalletOverlay implements LayeredDraw.Layer {
         float fade,
         double adjustX,
         double adjustY,
-        boolean hideBackground
+        boolean hideBackground,
+        @Nullable CurrencyConverter converter
     ) {
         var player = minecraft.player;
         if(player == null) return;
@@ -129,19 +130,20 @@ public class WalletOverlay implements LayeredDraw.Layer {
         var spacer = 0;
         var wallet = getWalletCoins(player);
         int getX = (int) (fade - 15 + adjustX);
-        int getY = (int) (-3 + adjustY);
+        int getY = (int) (-3 + adjustY + 20);
 
         var coinsTypes = wallet.coins().reversed();
         var properties = Arrays.stream(CoinProperties.values()).toList().reversed();
         var shoppingTable = isLookingAtBlock(player);
 
-        if(shoppingTable != null){
-            var cantPurchase = canPurchase(wallet, shoppingTable) <= 0;
+        if(shoppingTable != null || converter != null){
+            var currencyConverter = shoppingTable != null ? shoppingTable.itemCosts : converter;
+            var cantPurchase = canPurchase(wallet, currencyConverter) <= 0;
             var purchaseText = cantPurchase ? "Can't" : "Can";
             var purchaseColour = cantPurchase ? NEGATIVE_RED : MAGNET_RANGE_GREEN;
             var comp = withStyleComponent(purchaseText + " Purchase!", purchaseColour);
 
-            graphics.drawString(minecraft.font, comp, getX + 16, getY + 95 + spacer, -1, false);
+            graphics.drawString(minecraft.font, comp, getX + 15, getY + 84 + spacer, -1, false);
         }
 
         if(!hideBackground){
@@ -153,7 +155,7 @@ public class WalletOverlay implements LayeredDraw.Layer {
             var prop = properties.get(i);
             var coin = coinsTypes.get(i);
             var text = withStyleComponent(prop.getSerializedName() + ": "+ coin, prop.getTextColour());
-            var priceDifference = displayDifference(wallet, shoppingTable, i, coin, prop);
+            var priceDifference = displayDifference(wallet, shoppingTable != null ? shoppingTable.itemCosts : converter, i, coin, prop);
             var getTextType = !priceDifference.equals(empty()) ? priceDifference : text;
 
             graphics.blit(prop.getLocation(), getX + 2, getY + spacer + 2, 0, 0, size, size, size, size);
@@ -161,6 +163,7 @@ public class WalletOverlay implements LayeredDraw.Layer {
 
             spacer += 16;
         }
+
     }
 
 }

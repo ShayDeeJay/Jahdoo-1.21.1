@@ -7,31 +7,31 @@ import org.jahdoo.ascension.attachments.RunData;
 
 import java.util.List;
 
-public class BronzeCoins extends CollectCoinQuest {
+public class GoldCoins extends CollectCoinQuest {
 
     @Override
     public PlayerWallet.CoinProperties coinType() {
-        return PlayerWallet.CoinProperties.BRONZE;
+        return PlayerWallet.CoinProperties.GOLD;
     }
 
     @Override
     public int questQuantity(Player player) {
-        return questValueMultiplier(player, 50, 25, 5);
-    }
-
-    @Override
-    public int questXp(Player player) {
-        return questValueMultiplier(player, 50, 30, 5);
+        return questValueMultiplier(player, 20, 5, 5);
     }
 
     @Override
     public String questName() {
-        return RunData.BRONZE_COIN;
+        return RunData.GOLD_COIN;
+    }
+
+    @Override
+    public int questXp(Player player) {
+        return questValueMultiplier(player, 50, 150, 5);
     }
 
     @Override
     public List<ItemStack> questRewards() {
         return super.questRewards();
-
     }
+
 }

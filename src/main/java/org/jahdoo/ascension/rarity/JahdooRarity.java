@@ -1,7 +1,6 @@
 package org.jahdoo.ascension.rarity;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.StringRepresentable;
@@ -11,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
+import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.registers.ComponentReg;
@@ -223,7 +223,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         var damageAmplifierType = element.damageAmplifier();
         var damageAmplifierName = damageAmplifierType.getRegisteredName();
         var damageAmplifierValue = rarity.attributes.getRandomDamage();
-        var durability = rarity.attributes.getRandomTime();
 
         itemStack.set(JAHDOO_RARITY, rarityId);
         attachLootBeamComponent(itemStack, rarity);
@@ -235,8 +234,8 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             if(rarityId > 2) replaceOrAddAttribute(itemStack, cooldownReductionName, cooldownReductionType, cooldownReductionValue, MAINHAND, false);
         }
 
-        itemStack.set(DataComponents.MAX_DAMAGE, (int) (Math.round(durability/10.0) * 10));
-        itemStack.set(DataComponents.DAMAGE, 0);
+        var durability = rarity.attributes.getRandomTime();
+        ShoppingItems.attachDurability(itemStack, durability);
     }
 
     //Debug using use on item

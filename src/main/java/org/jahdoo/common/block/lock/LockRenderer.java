@@ -63,7 +63,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
         pose.translate(directionA.x() + (isLook ? 0.2 : 0), 0.5, directionA.z() - (facing == SOUTH ? 0.2 :  0));
         pose.rotateAround(Axis.YP.rotationDegrees(isLook ? -90 : 0) , 0, 0, 0); // Horizontal rotation
         pose.rotateAround(Axis.XP.rotationDegrees(-90), 0,0,0); // Horizontal rotation
-        drawTexture(pose.last(), source, 255, 1F, getFromName(entity.getDifficulty).getIcon(), -1);
+//        drawTexture(pose.last(), source, 255, 1F, getFromName(entity.getDifficulty).getIcon(), -1);
         pose.popPose();
         var isInit = entity.hasDifficulty();
 
@@ -76,7 +76,7 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
             }
         }
 
-        renderName(withStyleComponent(isInit ? formattedName : "LOCKED", getDifficulty.getColor()), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);
+        renderName(withStyleComponent(isInit ? formattedName : "", getDifficulty.getColor()), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);
     }
 
     private void noviceRun(PoseStack pose, MultiBufferSource source, Direction facing, Font font, DisplayDirection direction, int colour) {

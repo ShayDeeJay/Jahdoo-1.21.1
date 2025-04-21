@@ -178,7 +178,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         );
 
         if(clearedRooms % 2 == 0) {
-            setPerkTable(serverLevel, pos, 2);
+            setPerkTable(serverLevel, pos, 3);
         } else {
             setLootChests(serverLevel, pos, direction, -1, true);
         }
@@ -197,6 +197,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         tag.putBoolean("started", this.started);
         tag.putInt("spawned", this.mobsSpawned);
         tag.putString("roomId", this.roomId);
+        tag.putString("direction", this.direction.name());
 
         var allowedMobs = new CompoundTag();
         for (var spawnedMob : this.spawnableMobs) {
@@ -221,6 +222,12 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         started = tag.getBoolean("started");
         mobsSpawned = tag.getInt("spawned");
         roomId = tag.getString("roomId");
+
+        for (var direction1 : Direction.stream().toList()) {
+            if(tag.getString("direction").equals(direction1.name())){
+                this.direction = direction1;
+            }
+        }
 
         var allowedMobs = tag.getCompound("allowedMobs");
         for (var uuid : allowedMobs.getAllKeys()) {

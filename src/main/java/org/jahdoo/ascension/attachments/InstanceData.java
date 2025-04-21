@@ -29,7 +29,6 @@ public class InstanceData implements IAttachment {
     public static final String KEY_SPEED = "speed";
     public static final String KEY_ARMOR = "armor";
     public static final String KEY_ATTACK_DAMAGE = "attack_damage";
-    public static final String KEY_EXPERIENCE = "expereience";
 
     private final Map<String, Double> values = new HashMap<>();
     private String difficulty;
@@ -108,10 +107,6 @@ public class InstanceData implements IAttachment {
         return (int) get(KEY_GOLD_COIN);
     }
 
-    public int getExperience() {
-        return (int) get(KEY_EXPERIENCE);
-    }
-
     public double getHealth() {
         return get(KEY_HEALTH);
     }
@@ -183,10 +178,6 @@ public class InstanceData implements IAttachment {
 
     public void setBronzeCoin(int bronzeCoin) {
         increment(KEY_BRONZE_COIN, bronzeCoin);
-    }
-
-    public void setExperience(int experience) {
-        increment(KEY_EXPERIENCE, experience);
     }
 
     public void setSilverCoin(int silverCoin) {

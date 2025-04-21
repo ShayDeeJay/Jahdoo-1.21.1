@@ -55,7 +55,7 @@ public class NovaSmashAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 5;
+        return 15;
     }
 
     @Override

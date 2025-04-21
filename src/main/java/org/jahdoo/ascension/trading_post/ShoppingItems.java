@@ -179,9 +179,17 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         replaceOrAddAttribute(itemStack, UUID.randomUUID().toString(), manaReductionType, manaReductionValue, MAINHAND, false);
         replaceOrAddAttribute(itemStack, UUID.randomUUID().toString(), damageAmplifierType, damageAmplifierValue, MAINHAND, false);
 
+        var durability = rarity.getAttributes().getRandomTime() * 2;
+        attachDurability(itemStack, durability);
+
         var altElement = Helpers.listRandom(getWithout(element));
         addAttribute(altElement, itemStack);
         return new ShoppingItems(itemStack, setPlatinumCost(200));
+    }
+
+    public static void attachDurability(ItemStack itemStack, int durability) {
+        itemStack.set(DataComponents.MAX_DAMAGE, (int) (Math.round(durability /10.0) * 10));
+        itemStack.set(DataComponents.DAMAGE, 0);
     }
 
     public static ShoppingItems soldWands(){

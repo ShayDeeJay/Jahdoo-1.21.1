@@ -205,7 +205,8 @@ public class AbilityModificationScreen extends Screen {
                 posX, posY,
                 (press) -> doOnClick(component, holder, nexUpgrade, adjusted),
                 buttonIcon, 22, active, scale, WIDGET, showHover,
-                () -> onHover(component, ySpacer, active, getHighest, adjusted)
+                () -> onHover(component, ySpacer, active, getHighest, adjusted),
+                null
             )
         );
     }

@@ -54,7 +54,7 @@ public class FireballAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 35;
+        return 50;
     }
 
     @Override

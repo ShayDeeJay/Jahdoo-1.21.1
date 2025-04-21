@@ -51,7 +51,7 @@ public class FrostboltsAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 20;
+        return 30;
     }
 
     @Override

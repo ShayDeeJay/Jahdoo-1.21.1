@@ -25,7 +25,7 @@ import org.jahdoo.common.block.wand_manager.WandManagerRenderer;
 import org.jahdoo.common.block.wand_manager.WandManagerScreen;
 import org.jahdoo.common.client.RuneTooltipRenderer;
 import org.jahdoo.common.client.overlay.InstanceDataOverlay;
-import org.jahdoo.common.client.overlay.ManaBarOverlay;
+import org.jahdoo.common.client.overlay.CustomHudOverlay;
 import org.jahdoo.common.client.overlay.WalletOverlay;
 import org.jahdoo.common.entities.ancient_golem.AncientGolemRenderer;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloudRenderer;
@@ -63,7 +63,7 @@ public class ClientBusEvents {
 
     @SubscribeEvent
     public static void onRegisterOverlays(RegisterGuiLayersEvent event) {
-        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, Helpers.res("mana_bar"), new ManaBarOverlay());
+        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, Helpers.res("mana_bar"), new CustomHudOverlay());
         event.registerBelow(VanillaGuiLayers.AIR_LEVEL, Helpers.res("level_data"), new InstanceDataOverlay());
         event.registerAboveAll(Helpers.res("wallet"), new WalletOverlay());
     }

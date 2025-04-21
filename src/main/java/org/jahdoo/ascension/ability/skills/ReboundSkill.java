@@ -32,7 +32,7 @@ public class ReboundSkill extends AbstractSkill {
 
     @Override
     public int levelRequirement() {
-        return 15;
+        return 25;
     }
 
     @Override

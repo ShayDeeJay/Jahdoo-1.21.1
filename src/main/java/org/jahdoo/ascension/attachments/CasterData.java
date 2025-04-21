@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-import static java.lang.String.*;
+import static java.lang.String.valueOf;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.ascension.utils.Helpers.Random;
@@ -450,6 +450,15 @@ public class CasterData implements IAttachment {
         int xpForNextLevel = getXpNeededForNextLevel(level);
         if (xpForNextLevel == 0) return 0f; // Avoid division by zero
         return (float)(totalXp - xpForCurrentLevel) / (float)xpForNextLevel;
+    }
+
+    public static void setToLevel(Player player, int level) {
+        var data = player.getData(CASTER_DATA);
+        data.clearLevels();
+        CasterData.addExperience(player, CasterData.getExpFromLevel(level));
+        if(player instanceof ServerPlayer serverPlayer){
+            sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
+        }
     }
 
     static int xpScale = 6;

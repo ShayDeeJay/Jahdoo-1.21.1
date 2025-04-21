@@ -129,16 +129,16 @@ public class ItemReg {
         complexItem("wand_vitality", VitalityWand::new);
 
     public static final DeferredHolder<Item, Item> HEALTH_CONTAINER =
-        complexItem("health_container", HealthContainer::new);
+        complexItem("health_perk", HealthContainer::new);
 
     public static final DeferredHolder<Item, Item> MANA_CONTAINER =
-        complexItem("mana_container", ManaContainer::new);
+        complexItem("mana_perk", ManaContainer::new);
 
     public static final DeferredHolder<Item, Item> BOON_CONTAINER =
-        complexItem("boon_container", ManaContainer::new);
+        complexItem("boon_perk", ManaContainer::new);
 
     public static final DeferredHolder<Item, Item> QUEST_CONTAINER =
-        complexItem("quest_container", ManaContainer::new);
+        complexItem("quest_perk", ManaContainer::new);
 
     //Wizard
     public static final DeferredHolder<Item, Item> WIZARD_HELMET =

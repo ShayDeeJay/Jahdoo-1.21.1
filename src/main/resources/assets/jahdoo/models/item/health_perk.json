@@ -1,0 +1,63 @@
+{
+	"credit": "Made with Blockbench",
+    "textures": {
+      "2": "jahdoo:item/health_perk",
+      "particle": "jahdoo:item/health_perk"
+    },
+	"elements": [
+		{
+			"from": [6.91789, 1.90533, 6],
+			"to": [10.91789, 8.40533, 10],
+			"rotation": {"angle": -45, "axis": "z", "origin": [7.29289, 4.53033, 8]},
+			"faces": {
+				"north": {"uv": [0, 0, 4, 6.5], "texture": "#2"},
+				"east": {"uv": [4, 0, 8, 6.5], "texture": "#2"},
+				"south": {"uv": [0, 7, 4, 13.5], "texture": "#2"},
+				"west": {"uv": [4, 7, 8, 13.5], "texture": "#2"},
+				"up": {"uv": [12, 4, 8, 0], "texture": "#2"},
+				"down": {"uv": [12, 4, 8, 8], "texture": "#2"}
+			}
+		},
+		{
+			"from": [4.66789, 4.90533, 6],
+			"to": [8.66789, 7.40533, 10],
+			"rotation": {"angle": 45, "axis": "z", "origin": [7.29289, 4.53033, 8]},
+			"faces": {
+				"north": {"uv": [12, 4, 16, 6.5], "texture": "#2"},
+				"east": {"uv": [12, 7, 16, 9.5], "texture": "#2"},
+				"south": {"uv": [8, 12, 12, 14.5], "texture": "#2"},
+				"west": {"uv": [12, 10, 16, 12.5], "texture": "#2"},
+				"up": {"uv": [12, 12, 8, 8], "texture": "#2"},
+				"down": {"uv": [16, 0, 12, 4], "texture": "#2"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"translation": [0, 5, 1.75]
+		},
+		"thirdperson_lefthand": {
+			"translation": [0, 5, 1.75]
+		},
+		"firstperson_righthand": {
+			"translation": [1.5, 3.5, 0]
+		},
+		"firstperson_lefthand": {
+			"translation": [1.5, 3.5, 0]
+		},
+		"ground": {
+			"translation": [0, 6.25, 0]
+		},
+		"gui": {
+			"translation": [0, 6.25, 0],
+			"scale": [1.49, 1.49, 1.49]
+		},
+		"head": {
+			"translation": [0, 14.5, 0]
+		},
+		"fixed": {
+			"translation": [0, 7.25, 0],
+			"scale": [1.74, 1.74, 1.74]
+		}
+	}
+}

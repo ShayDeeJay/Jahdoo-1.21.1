@@ -48,7 +48,7 @@ public class LifeSiphonAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 50;
+        return 65;
     }
 
     @Override

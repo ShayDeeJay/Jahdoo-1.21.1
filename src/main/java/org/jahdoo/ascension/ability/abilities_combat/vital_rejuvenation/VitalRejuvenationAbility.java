@@ -51,7 +51,7 @@ public class VitalRejuvenationAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 40;
+        return 60;
     }
 
     @Override

@@ -49,7 +49,7 @@ public class SummonEternalWizardAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 25;
+        return 35;
     }
 
     @Override

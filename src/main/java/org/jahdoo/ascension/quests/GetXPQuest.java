@@ -9,18 +9,18 @@ import org.jahdoo.common.client.Icons;
 
 import java.util.List;
 
-import static org.jahdoo.ascension.attachments.RunData.MOBS_KILLED;
+import static org.jahdoo.ascension.attachments.RunData.EXPERIENCE;
 
-public class KillHordeQuest extends AbstractQuest{
+public class GetXPQuest extends AbstractQuest{
 
     @Override
     public String questName() {
-        return MOBS_KILLED;
+        return EXPERIENCE;
     }
 
     @Override
     public ResourceLocation questIcon() {
-        return Icons.HORDE;
+        return Icons.TRIAL_EXPERIENCE;
     }
 
     @Override
@@ -30,32 +30,31 @@ public class KillHordeQuest extends AbstractQuest{
 
     @Override
     public int questQuantity(Player player) {
-        return questValueMultiplier(player, 50, 5, 5);
+        return questValueMultiplier(player, 200, 30, 5);
     }
 
     @Override
     public String getDisplayName() {
-        return "Massacre";
+        return "Experienced";
     }
 
     @Override
     public String questDescription(Player player) {
-        return "Kill " + questQuantity(player) + " Mobs";
+        return "Gather " + questQuantity(player) + " Xp";
     }
 
     @Override
     public int questColour() {
-        return ColourStore.NEGATIVE_RED;
+        return ColourStore.COSMIC_PURPLE;
     }
 
     @Override
     public int questXp(Player player) {
-        return questValueMultiplier(player, 50, 40, 5);
+        return questValueMultiplier(player, 50, 60, 5);
     }
 
     @Override
     public List<ItemStack> questRewards() {
         return super.questRewards();
     }
-
 }

@@ -1,6 +1,5 @@
 package org.jahdoo.common.client.overlay;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -9,20 +8,22 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.ascension.attachments.InstanceData;
+import org.jahdoo.ascension.level_manager.LevelGenerator;
+import org.jahdoo.ascension.quests.AbstractQuest;
 import org.jahdoo.common.client.Icons;
+import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.QuestReg;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.Optional;
 
-import static com.mojang.datafixers.util.Pair.of;
 import static java.lang.String.valueOf;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.ascension.utils.Maths.ticksToTime;
+import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiFade;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class InstanceDataOverlay implements LayeredDraw.Layer {
@@ -57,63 +58,68 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         if(player == null || mc.options.hideGui || level == null) return;
 
         slideGuiStats();
-        if(level.getDescription().getString().contains("ascension")){
+        if(level.getDescription().getString().contains(LevelGenerator.LEVEL_PREFIX)){
             levelData(graphics, level, mc, instanceData, screen);
         }
-
     }
 
     private void levelData(GuiGraphics graphics, ClientLevel level, Minecraft mc, InstanceData currentData, Screen screen) {
         var getInstanceData = level.getData(INSTANCE_DATA);
-        var getRunData = mc.player.getData(AttachmentReg.RUN_DATA.get());
-        var questId = getRunData.getCurrentQuestId();
-        var getQuestStuff = QuestReg.getQuestByName(questId);
-        var size = 18;
-        var spacer = 0;
-        var offsetX = -22 + fade;
-        var offsetY = -4;
-        var remainingTime = getInstanceData.getMaxTime() - getInstanceData.getTicks();
-        var pose = graphics.pose();
-        var trialHud = new ArrayList<Pair<MutableComponent, ResourceLocation>>();
-
-        trialHud.add(of(appendStat("Room's Completed: ", valueOf(getInstanceData.getClearedRooms()), MAGNET_RANGE_GREEN), Icons.UP));
-        trialHud.add(of(appendStat("Time: ", ticksToTime(valueOf(remainingTime)), remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED), Icons.CLOCK));
-        if(getQuestStuff.isPresent()){
-            trialHud.add(of(appendStat("", "  ", -1), Icons.BLANK));
-            var abstractQuest = getQuestStuff.get();
-            trialHud.add(of(appendStat("Quest: ", abstractQuest.getDisplayName() , -1), abstractQuest.questIcon()));
-            var current = getRunData.getStat(questId);
-            var needed = abstractQuest.questQuantity(mc.player);
-            var isComplete = current >= needed;
-            var display = isComplete ? "Quest Complete" : current + "/" + needed;
-            var colour = isComplete ? PERK_GREEN : MAGNET_STRENGTH_RED;
-
-            trialHud.add(of(appendStat("Progress: ", display, colour), Icons.BLANK));
-        }
+        var getQuest = allInstanceOverlays(graphics, mc, getInstanceData);
 
 
         timer = Math.max(0, timer - 1);
         instanceData = getInstanceData;
 
-        if(getInstanceData.getDifficulty().isEmpty()) timer = 0;
-
-        pose.pushPose();
-        pose.translate(0, (float) graphics.guiHeight() - 160, 0);
-        for (var getComp : trialHud) {
-            if(!getComp.getFirst().getSiblings().getFirst().getString().isEmpty()){
-                graphics.blit(getComp.getSecond(), (int) (12 + offsetX), 94 + offsetY + spacer, 0, 0, size, size, size, size);
-                graphics.drawString(mc.font, getComp.getFirst(), (int) (32 + offsetX), 100  + offsetY + spacer, -1, true);
-                spacer += 14;
-            }
+        if(getInstanceData.getDifficulty().isEmpty() || getQuest.isEmpty()) {
+            timer = 0;
         }
-        pose.popPose();
 
         if(currentData != instanceData) timer = 400;
         if(screen instanceof InventoryScreen) { timer = 30; }
     }
 
+    private @NotNull Optional<AbstractQuest> allInstanceOverlays(GuiGraphics graphics, Minecraft mc, InstanceData getInstanceData) {
+        var getRunData = mc.player.getData(AttachmentReg.RUN_DATA.get());
+        var questId = getRunData.getCurrentQuestId();
+        var getQuest = QuestReg.getQuestByName(questId);
+
+        if(getQuest.isPresent()){
+            var baseWidth = 60;
+            var size = 18;
+            var offsetX = graphics.guiWidth()/2 - baseWidth;
+            var offsetY = (int) fade - 20;
+            var remainingTime = getInstanceData.getMaxTime() - getInstanceData.getTicks();
+            var quest = getQuest.get();
+            var current = getRunData.getStat(questId);
+            var needed = quest.questQuantity(mc.player);
+            var isComplete = current >= needed;
+            var display = isComplete ? "Quest Complete" : current + "/" + needed;
+            var colour = isComplete ? PERK_GREEN : OFF_WHITE;
+            var startY = offsetY + 30;
+            var height = 4;
+            var offset = 3;
+            var font = mc.font;
+            var colourBorder = quest.questColour();
+
+            SharedUI.boxMaker(graphics, offsetX, startY, baseWidth, height, SUB_HEADER_COLOUR, uiFade(), uiFade());
+            if (current > 0) {
+                var progressRatio = (float) Math.min(current, needed) / (float) needed;
+                var barWidth = (baseWidth - offset) * progressRatio;
+                SharedUI.boxMaker(graphics, offsetX + offset, startY + offset, Math.max((int) barWidth, 1), height - offset, colourBorder, colourBorder, colourBorder);
+            }
+
+            var clockX = 8;
+            graphics.blit(Icons.CLOCK, clockX - 3, (int) (fade), 0, 0, size, size, size, size);
+            graphics.drawString(font, appendStat("", ticksToTime(valueOf(remainingTime)), remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED), clockX + 16, (int) (6 + fade), -1, false);
+            graphics.drawCenteredString(font, appendStat("Quest: ", quest.getDisplayName(), quest.questColour()), offsetX + baseWidth, startY - 12, -1);
+            graphics.drawCenteredString(font, withStyleComponent(display, colour), offsetX + baseWidth, startY + (height * 2) + 3, -1);
+        }
+        return getQuest;
+    }
+
     private static @NotNull MutableComponent appendStat(String prefix, String value, int colour) {
-        return withStyleComponent(prefix, SYMPATHISER_ORANGE).copy().append(withStyleComponent(value, colour));
+        return withStyleComponent(prefix, SUB_HEADER_COLOUR).copy().append(withStyleComponent(value, colour));
     }
 
 }

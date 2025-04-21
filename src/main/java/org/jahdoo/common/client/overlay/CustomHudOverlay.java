@@ -37,7 +37,7 @@ import static org.jahdoo.common.client.SharedUI.centeredStringNoShadow;
 import static org.jahdoo.common.client.SharedUI.drawStringWithBackground;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
-public class ManaBarOverlay implements LayeredDraw.Layer {
+public class CustomHudOverlay implements LayeredDraw.Layer {
 
     float fadeIn;
     float fadeInExperience;

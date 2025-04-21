@@ -19,6 +19,8 @@ import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.QuestReg;
 
+import java.util.Objects;
+
 import static net.minecraft.sounds.SoundEvents.BREWING_STAND_BREW;
 import static net.minecraft.sounds.SoundEvents.PLAYER_LEVELUP;
 import static net.minecraft.util.FastColor.ARGB32.color;
@@ -35,6 +37,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
     public int counter;
     private boolean hasUsed;
     private String getQuestId;
+    private int reRollCounter;
 
     public PerkTableEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.PERK_TABLE_BE.get(), pos, state);
@@ -47,6 +50,21 @@ public class PerkTableEntity extends SyncedBlockEntity {
 
     public String getGetQuestId() {
         return getQuestId;
+    }
+
+    public int getReRollCounter() {
+        return reRollCounter;
+    }
+
+    public void reRollQuest() {
+        var storeQuest = QuestReg.getRandomQuest().questName();
+
+        while (Objects.equals(storeQuest, getQuestId)){
+            storeQuest = QuestReg.getRandomQuest().questName();
+        }
+
+        reRollCounter++;
+        getQuestId = storeQuest;
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
@@ -102,20 +120,21 @@ public class PerkTableEntity extends SyncedBlockEntity {
                         return;
                     }
                 }
-                default -> {
+                case 3 -> {
                     if(level.isClientSide){
                         Minecraft.getInstance().setScreen(new BoonSelectionScreen());
                     }
                 }
             }
 
-            this.updateBlock();
-            idleEffect(player.level(), player.position(), state);
-
-            this.hasUsed = true;
-            level.removeBlock(getBlockPos().above(), false);
-            level.removeBlock(getBlockPos(), false);
-            getSoundWithPosition(level, getBlockPos(), value == 0 ? SoundReg.HEAL.get() : value == 1 ? BREWING_STAND_BREW : PLAYER_LEVELUP, 1, 1.8F);
+            if(value != 2){
+                this.updateBlock();
+                idleEffect(player.level(), player.position(), state);
+                this.hasUsed = true;
+                level.removeBlock(getBlockPos().above(), false);
+                level.removeBlock(getBlockPos(), false);
+                getSoundWithPosition(level, getBlockPos(), value == 0 ? SoundReg.HEAL.get() : value == 1 ? BREWING_STAND_BREW : PLAYER_LEVELUP, 1, 0.8F);
+            }
         }
     }
 }

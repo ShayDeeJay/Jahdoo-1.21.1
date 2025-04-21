@@ -45,7 +45,7 @@ public class PermafrostAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 30;
+        return 40;
     }
 
     @Override

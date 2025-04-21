@@ -55,7 +55,7 @@ public class MysticalSemtexAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 20;
+        return 30;
     }
 
     @Override

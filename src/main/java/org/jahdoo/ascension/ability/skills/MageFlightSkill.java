@@ -27,7 +27,7 @@ public class MageFlightSkill extends AbstractSkill {
 
     @Override
     public int unlockCost() {
-        return 20;
+        return 60;
     }
 
     @Override

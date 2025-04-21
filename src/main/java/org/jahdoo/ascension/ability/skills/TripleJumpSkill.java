@@ -31,7 +31,7 @@ public class TripleJumpSkill extends AbstractSkill {
 
     @Override
     public int levelRequirement() {
-        return 30;
+        return 45;
     }
 
     @Override

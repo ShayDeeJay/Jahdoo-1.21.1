@@ -51,7 +51,7 @@ public class IceBombAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 10;
+        return 15;
     }
 
     @Override

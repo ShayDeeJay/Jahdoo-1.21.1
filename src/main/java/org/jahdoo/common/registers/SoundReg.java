@@ -108,6 +108,9 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> SET_ACTIVE =
         registerSoundEvent("set_active");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEST_COMPLETE =
+        registerSoundEvent("quest_complete");
+
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));
     }

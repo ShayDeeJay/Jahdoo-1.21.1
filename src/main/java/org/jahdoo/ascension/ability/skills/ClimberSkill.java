@@ -32,7 +32,7 @@ public class ClimberSkill extends AbstractSkill {
 
     @Override
     public int levelRequirement() {
-        return 5;
+        return 15;
     }
 
     @Override

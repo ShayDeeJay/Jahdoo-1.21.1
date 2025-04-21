@@ -2,6 +2,7 @@ package org.jahdoo.ascension.level_manager;
 
 import net.casual.arcade.dimensions.ArcadeDimensions;
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.casual.arcade.dimensions.level.LevelPersistence;
 import net.casual.arcade.dimensions.level.builder.CustomLevelBuilder;
 import net.casual.arcade.dimensions.utils.impl.VoidChunkGenerator;
 import net.minecraft.server.level.ServerLevel;
@@ -24,6 +25,8 @@ import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.DamageTypeReg.BIOME_SOURCE;
 
 public class LevelGenerator {
+
+    public static final String LEVEL_PREFIX = "ascension";
 
     public static void removeLevel(CustomLevel customLevel) {
         ArcadeDimensions.delete(customLevel.getServer(), customLevel);
@@ -81,11 +84,12 @@ public class LevelGenerator {
                     return null;
                 }
             );
+        builder.setPersistence(LevelPersistence.Persistent);
         ArcadeDimensions.add(serverLevel.getServer(), builder);
     }
 
     public static DimensionTransition createLevelAndStartingRoom(Player player, ServerLevel serverLevel) {
-        var levelKey = "ascension-" + UUID.randomUUID();
+        var levelKey = LEVEL_PREFIX + "-" + UUID.randomUUID();
         var getLevel = new AtomicReference<ServerLevel>();
 
         generateNewLevel(serverLevel, levelKey);

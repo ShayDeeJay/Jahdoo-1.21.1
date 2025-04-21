@@ -55,8 +55,15 @@ public class QuestReg {
     public static final DeferredHolder<AbstractQuest, AbstractQuest> COIN_CATCHER_SILVER =
         registerQuest(SilverCoins::new);
 
+    public static final DeferredHolder<AbstractQuest, AbstractQuest> COIN_CATCHER_GOLD =
+        registerQuest(GoldCoins::new);
+
     public static final DeferredHolder<AbstractQuest, AbstractQuest> RUSH =
         registerQuest(ClearRoomsQuest::new);
+
+    public static final DeferredHolder<AbstractQuest, AbstractQuest> EXPERIENCED =
+        registerQuest(GetXPQuest::new);
+
 
     public static void register(IEventBus eventBus) {
         QUEST.register(eventBus);

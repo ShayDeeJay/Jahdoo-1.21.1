@@ -71,7 +71,7 @@ public class DimensionalRecallAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 80;
+        return 100;
     }
 
     @Override

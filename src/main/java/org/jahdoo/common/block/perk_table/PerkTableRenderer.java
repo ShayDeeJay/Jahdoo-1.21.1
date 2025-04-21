@@ -36,7 +36,7 @@ public class PerkTableRenderer implements BlockEntityRenderer<PerkTableEntity>{
             itemRenderer.renderStatic(
                 render,
                 ItemDisplayContext.FIXED,
-                255,
+                packedLight,
                 OverlayTexture.NO_OVERLAY,
                 stack,
                 source,

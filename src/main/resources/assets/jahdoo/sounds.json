@@ -191,5 +191,10 @@
     "sounds": [
       "jahdoo:set_active"
     ]
+  },"quest_complete": {
+    "subtitles": "sounds.jahdoo.quest_complete",
+    "sounds": [
+      "jahdoo:quest_complete"
+    ]
   }
 }

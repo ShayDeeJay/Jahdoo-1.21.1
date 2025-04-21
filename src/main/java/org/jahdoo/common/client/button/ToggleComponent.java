@@ -6,12 +6,13 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Overlay;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.registers.SoundReg;
 
+import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
 import static org.jahdoo.common.client.Icons.*;
 
 public class ToggleComponent  {
@@ -111,13 +112,13 @@ public class ToggleComponent  {
         int scale,
         WidgetSprites button,
         boolean showHover,
-        Runnable hoverAction
+        Runnable hoverAction,
+        SoundInstance instance
     ) {
         return new GuiButton(posX, posY, button, size, action, active, location, "", scale, showHover) {
 
             public void playDownSound(SoundManager handler) {
-                handler.play(SimpleSoundInstance.forUI(SoundReg.UPGRADE_MODIFIER.get(), 1F, 1F));
-//                handler.play(SimpleSoundInstance.forUI(SoundEvents.VAULT_OPEN_SHUTTER, 1.4F));
+                handler.play(instance == null ? forUI(SoundReg.UPGRADE_MODIFIER.get(), 1F, 1F) : instance);
             }
 
             public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
@@ -147,7 +148,7 @@ public class ToggleComponent  {
         return new AbilityScreenButton(posX, posY, button, size, action, active, location, "", scale, showHover, isDummy, locked, hasDependency, isSkill) {
 
             public void playDownSound(SoundManager handler) {
-                if(!locked) handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT, 1F));
+                if(!locked) handler.play(forUI(SoundReg.SELECT, 1F));
             }
 
             public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {

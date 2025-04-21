@@ -54,6 +54,7 @@ import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.attachments.RunData;
+import org.jahdoo.ascension.level_manager.LevelGenerator;
 import org.jahdoo.ascension.trading_post.RewardLootTables;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
@@ -65,6 +66,7 @@ import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
+import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.networking.client2server.ChaosCubeC2SP;
@@ -77,6 +79,7 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.*;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.common.registers.mod.QuestReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -93,7 +96,7 @@ import static net.minecraft.world.level.storage.loot.parameters.LootContextParam
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.ascension.attachments.ChaosCubeData.getRelativePosition;
 import static org.jahdoo.ascension.attachments.ChaosCubeData.updateAll;
-import static org.jahdoo.ascension.attachments.RunData.incrementKilledMobsExp;
+import static org.jahdoo.ascension.attachments.RunData.*;
 import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedArmor;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
@@ -219,6 +222,7 @@ public class EventHelpers {
         if (!data.getBoolean("first_join")) {
             if(player instanceof ServerPlayer serverPlayer){
                 var castingData = player.getData(CASTER_DATA.get());
+                serverPlayer.setData(RUN_DATA, EMPTY);
                 castingData.playerInit();
                 sendToPlayer(serverPlayer, new CastingDataSyncS2CP(castingData));
             }
@@ -492,9 +496,6 @@ public class EventHelpers {
     public static void coinDropCalc(LivingEntity entity, int bonus) {
         if(entity.level() instanceof CustomLevel level){
             var getKiller = entity.getKillCredit();
-            if(getKiller != null){
-                incrementKilledMobsExp(level, getKiller);
-            }
 
             entity.skipDropExperience();
             var max = Math.max(1, bonus);
@@ -504,17 +505,26 @@ public class EventHelpers {
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
                     throwItem(entity, stack, entity.position());
                 }
+                if(getKiller != null){
+                    incrementKilledMobsExp(level, getKiller, 1);
+                }
             }
 
             if(entity.getPersistentData().getBoolean("boss")){
                 var data = new InstanceData();
                 data.setGoldCoin(10);
                 lootsplosian(entity.position(), level, 10, ColourStore.ABSORPTION_YELLOW, RewardLootTables.getCoinItems(data), false, 0);
+                if(getKiller != null){
+                    incrementKilledMobsExp(level, getKiller, 200);
+                }
             }
 
             if(entity instanceof CustomSkeleton){
                 var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 20 - bonus));
                 throwItem(entity, stack, entity.position());
+                if(getKiller != null){
+                    incrementKilledMobsExp(level, getKiller, 3);
+                }
             }
 
             if(entity instanceof VoidSpider spider && !spider.isBaby()){
@@ -522,6 +532,9 @@ public class EventHelpers {
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
                     stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
                     throwItem(entity, stack, entity.position());
+                    if(getKiller != null){
+                        incrementKilledMobsExp(level, getKiller, 5);
+                    }
                 }
             }
 
@@ -532,6 +545,22 @@ public class EventHelpers {
 
                     stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(canDropGold ? 2 : 1));
                     throwItem(entity, stack, entity.position());
+
+                    if(getKiller != null){
+                        incrementKilledMobsExp(level, getKiller, 10);
+                    }
+                }
+            }
+
+            if(entity instanceof InfernoCreeper){
+                var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(4, 10 - bonus));
+                var canDropGold = Random.nextInt(10) == 0;
+
+                stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(canDropGold ? 2 : 1));
+                throwItem(entity, stack, entity.position());
+
+                if(getKiller != null){
+                    incrementKilledMobsExp(level, getKiller, 10);
                 }
             }
         }
@@ -621,6 +650,24 @@ public class EventHelpers {
         }
     }
 
+    //Remove custom levels when time runs out, level should already be discarded on end of run
+    //this is more for safety incase something has been left behind
+    public static void discardLevelOnEnd(LevelTickEvent.Pre tickEvent) {
+        if(tickEvent.getLevel() instanceof ServerLevel serverLevel){
+            if(serverLevel instanceof CustomLevel customLevel){
+                var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA.get());
+                var players = customLevel.players();
+                if(!data.getDifficulty().isEmpty() && players.isEmpty()){
+                    var i = data.getMaxTime() - data.getTicks();
+                    if (i <= 0) {
+                        for (var player : players) player.kill();
+                        LevelGenerator.removeLevel(customLevel);
+                    }
+                }
+            }
+        }
+    }
+
     public static void selectAbilitySlot(int keyNum){
         var player = Minecraft.getInstance().player;
         if(player == null) return;
@@ -684,4 +731,44 @@ public class EventHelpers {
             }
         };
     }
+
+    public static void questTracker(Level level, Player player) {
+        if(!(level instanceof CustomLevel)) return;
+        if(!(player instanceof ServerPlayer serverPlayer)) return;
+
+        var runData = serverPlayer.getData(AttachmentReg.RUN_DATA.get());
+        var getQuestId = runData.getCurrentQuestId();
+        if(getQuestId == null) return;
+
+        var getQuest = QuestReg.getQuestByName(getQuestId);
+        if (getQuest.isEmpty()) return;
+
+        var quest = getQuest.get();
+        var stat = runData.getStat(getQuestId);
+        var i = quest.questQuantity(serverPlayer);
+
+        if (stat >= i && !runData.isCompletedQuest()) {
+            Helpers.sendClientSound(serverPlayer, SoundReg.QUEST_COMPLETE.get(), 1, 1);
+
+            for(int j = 0; j < 100; j++){
+                var color = Helpers.getRgb();
+                var particle = ParticleHandlers.getNonBakedParticles(color, color, 27, Random.nextInt(1, 3));
+                var x = player.getRandomX(0.5);
+                var y = player.getRandomY();
+                var z = player.getRandomZ(0.5);
+                double xSpeed = Random.nextDouble(0.1, 0.3) - 0.2;
+                double ySpeed = Random.nextDouble(0.1, 0.3);
+                double zSpeed = Random.nextDouble(0.1, 0.3) - 0.2;
+                ParticleHandlers.sendParticles(level, particle, new Vec3(x,y,z), 1, xSpeed, ySpeed, zSpeed, 0.1);
+            }
+
+            for (var questReward : quest.questRewards()) {
+                Helpers.throwOrAddItem(serverPlayer, questReward);
+            }
+
+            addExperienceToTotal(quest.questXp(serverPlayer), serverPlayer);
+            runData.setCompletedQuest(true);
+        }
+    }
+
 }

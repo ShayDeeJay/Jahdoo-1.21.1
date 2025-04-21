@@ -55,7 +55,7 @@ public class StatScreen extends AbstractPanableScreen {
         otherMagicStats(graphics, centerX, centerY - 28 + shiftY, player, mc);
         elementalStats(graphics, player, centerX - 280, centerY + shiftY, mc);
         renderPlayer(graphics, mouseX, mouseY, (int) withPanX, (int) withPanY + shiftY, player);
-        renderWallet(graphics, mc, 10, withPanX - 49, withPanY - 180 + shiftY, false);
+        renderWallet(graphics, mc, 10, withPanX - 49, withPanY - 200 + shiftY, false, null);
     }
 
     private void otherMagicStats(GuiGraphics guiGraphics, float i, float j, LocalPlayer player, Minecraft mc) {

@@ -6,7 +6,7 @@ import org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 
-import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.ascension.attachments.RunData.addExperienceToTotal;
 
 public class Experience extends AbstractLevelBoon {
 
@@ -17,8 +17,9 @@ public class Experience extends AbstractLevelBoon {
 
     @Override
     public void execute(ServerLevel level, double value) {
-        var data = level.getData(INSTANCE_DATA);
-        data.setExperience((int) value);
+        for (var player : level.players()) {
+            addExperienceToTotal((int) value, player);
+        }
     }
 
     @Override

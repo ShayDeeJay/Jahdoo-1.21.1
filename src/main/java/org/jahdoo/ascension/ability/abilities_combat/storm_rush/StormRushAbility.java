@@ -43,7 +43,7 @@ public class StormRushAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 10;
+        return 20;
     }
 
     @Override

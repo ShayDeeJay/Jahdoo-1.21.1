@@ -34,4 +34,9 @@ public abstract class CollectCoinQuest extends AbstractQuest{
         return "Collect " + questQuantity(player) + " " + coinType().getSerializedName() + " Coins";
     }
 
+    @Override
+    public int questColour() {
+        return coinType().getTextColour();
+    }
+
 }

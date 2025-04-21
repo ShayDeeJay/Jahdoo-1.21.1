@@ -178,7 +178,8 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
                 () -> {
                     this.rebuildWidgets();
                     this.isHovering = true;
-                }
+                },
+                null
             )
         );
     }

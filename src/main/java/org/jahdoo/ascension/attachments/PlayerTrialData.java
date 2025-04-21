@@ -40,16 +40,21 @@ public class PlayerTrialData implements IAttachment{
         this.pastInstances = pastInstances;
     }
 
+    public void clearAllData(){
+        this.pastRuns = new ArrayList<>();
+        this.pastInstances = new ArrayList<>();
+    }
+
     public List<InstanceData> getInstanceData() {
         return pastInstances;
     }
 
-    public void addInstance(InstanceData instanceData) {
-        this.pastInstances.add(instanceData);
-    }
-
     public List<RunData> getPastRuns() {
         return pastRuns;
+    }
+
+    public void addInstance(InstanceData instanceData) {
+        this.pastInstances.add(instanceData);
     }
 
     public void addNewRun(RunData runData){
@@ -80,6 +85,12 @@ public class PlayerTrialData implements IAttachment{
     public static void addNewRun(Player player, RunData runData){
         var data = player.getData(PLAYER_TRIAL_DATA);
         data.addNewRun(runData);
+    }
+
+    public static void clearAllData(ServerPlayer player){
+        var data = player.getData(PLAYER_TRIAL_DATA);
+        data.clearAllData();
+        PacketDistributor.sendToPlayer(player, new PlayerTrialDataS2CP(data));
     }
 
     public static void addNewInstance(Player player, InstanceData instanceData){
@@ -153,7 +164,6 @@ public class PlayerTrialData implements IAttachment{
                     var newRunData = new RunData();
                     var name = Helpers.listRandom(Arrays.stream(InstanceDifficulty.values()).toList()).getSerializedName();
 
-                    newInstance.setExperience(Random.nextInt(200, 500));
                     newInstance.setPlatinumCoin(Random.nextInt(5, 30));
                     newInstance.setGoldCoin(Random.nextInt(10, 50));
                     newInstance.setSilverCoin(Random.nextInt(50, 150));

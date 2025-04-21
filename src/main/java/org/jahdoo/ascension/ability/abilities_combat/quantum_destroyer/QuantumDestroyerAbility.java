@@ -43,7 +43,7 @@ public class QuantumDestroyerAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 60;
+        return 90;
     }
 
     @Override

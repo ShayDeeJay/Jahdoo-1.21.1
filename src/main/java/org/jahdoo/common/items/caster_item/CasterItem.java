@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,6 @@ import java.util.List;
 
 import static net.minecraft.world.InteractionResultHolder.fail;
 import static net.minecraft.world.InteractionResultHolder.pass;
-import static org.jahdoo.ascension.quests.AbstractQuest.questValueMultiplier;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
 
@@ -78,11 +78,15 @@ public class CasterItem extends Item implements JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
-        System.out.println(questValueMultiplier(player, 50, 25, 5));
+
         if(!level.isClientSide){
+            CasterData.setToLevel(player, 120);
 //        CasterData.addExperience(player, 2000);
 //        CasterData.clearData(player);
 //        CasterData.regretAbilities(player);
+//            if(player instanceof ServerPlayer serverPlayer){
+//                PlayerTrialData.clearAllData(serverPlayer);
+//            }
             var castAbility = castAbility(player, interactionHand, item);
             if (castAbility != null) return castAbility;
         }

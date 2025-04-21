@@ -117,6 +117,12 @@ public class Network {
             AddQuestC2SP::handle
         );
 
+        payloadRegistrar.playToServer(
+            WalletSyncC2SP.TYPE,
+            WalletSyncC2SP.STREAM_CODEC,
+            WalletSyncC2SP::handle
+        );
+
         //S2C
         payloadRegistrar.playToClient(
             PlayerTrialDataS2CP.TYPE,

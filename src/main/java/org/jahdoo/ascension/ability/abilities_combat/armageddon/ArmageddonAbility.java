@@ -50,7 +50,7 @@ public class ArmageddonAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 60;
+        return 80;
     }
 
     @Override
