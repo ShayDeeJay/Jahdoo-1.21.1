@@ -245,7 +245,6 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
                 element.setShowTrailParticles(false);
                 this.element.setInvisible(true);
                 Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), getElementType().sound(), 2F, 1F);
-//                Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundEvents.AMETHYST_BLOCK_BREAK, 2F, 0.6f);
                 additionalProjectileSpread();
                 if(this.element.level() instanceof ServerLevel serverLevel){
                     particleBurst(

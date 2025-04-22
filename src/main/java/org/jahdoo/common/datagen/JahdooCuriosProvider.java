@@ -38,6 +38,6 @@ public class JahdooCuriosProvider extends CuriosDataProvider {
             .addPlayer()
             .addSlots("relic")
             .addSlots("magnet");
-
     }
+
 }

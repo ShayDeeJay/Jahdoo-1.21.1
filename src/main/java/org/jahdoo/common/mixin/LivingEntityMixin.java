@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -29,8 +30,10 @@ public abstract class LivingEntityMixin extends Entity {
             color = inferno().textColourA();
         } else if (this.hasEffect(FROST_EFFECT)) {
             color = frost().textColourA();
-        }  else if (this.hasEffect(VITALITY_EFFECT)) {
+        } else if (this.hasEffect(VITALITY_EFFECT)) {
             color = vitality().textColourA();
+        } else if (this.hasEffect(CHAMPION_EFFECT)) {
+            color = ColourStore.CHAMPION_GOLD;
         }
 
         return color;

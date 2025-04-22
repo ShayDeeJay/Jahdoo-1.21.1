@@ -70,11 +70,12 @@ public class FrostboltsAbility extends Ability {
             var projSelect = EntityDataReg.FROST_BOLT.get().setAbilityId();
             var id = abilityId.getPath().intern();
             var elementProjectile = new GenericProjectile(player, 0, projSelect, id, this.getElemenType());
+            var level = player.level();
 
             elementProjectile.setOwner(player);
             elementProjectile.setInvisible(true);
             fireProjectileNoSound(elementProjectile, player, 100f);
-            player.level().addFreshEntity(elementProjectile);
+            level.addFreshEntity(elementProjectile);
         }
     }
 

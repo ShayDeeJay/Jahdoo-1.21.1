@@ -4,7 +4,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -18,9 +17,9 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.EntityDataReg;
-import org.jahdoo.common.registers.SoundReg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -185,13 +184,14 @@ public class FrostBolts  extends DefaultEntityBehaviour {
         if (player.isCloseEnough(hitEntity,castDistance + 0.1)) {
             castAnimation(player, SINGLE_CAST_ID);
             this.hitTarget = hitEntity;
-            Helpers.getSoundWithPositionV(generic.level(), hitEntity.position(), SoundReg.FROST_ABILITY.get(),  1f, 1f);
             onExistenceChange(hitEntity, getElementType());
             CastHelper.chargeManaAndCooldown(FrostboltsAbility.abilityId.getPath().intern(), player);
             player.displayClientMessage(Component.literal(""), true);
-            Helpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.TELEPORT.get(), 1, 1.6F);
-            Helpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.FROST_ABILITY.get(), 1, 1.2F);
             this.generic.setDeltaMovement(0,0,0);
+            var level = player.level();
+            var position = player.position();
+            Helpers.getSoundWithPositionV(level, position, SoundReg.ELEMENTAL_BULLET.get(), 1.2F, 1.4F);
+            Helpers.getSoundWithPositionV(level, position, SoundReg.FROST_ABILITY.get(), 0.2F, 1);
         } else {
             sendNoTargetMessage();
             this.generic.discard();
@@ -265,8 +265,7 @@ public class FrostBolts  extends DefaultEntityBehaviour {
             this.generic.level().addFreshEntity(arrow);
             this.currentShotCount++;
 
-            Helpers.getSoundWithPosition(generic.level(), hitEntity.blockPosition(), SoundEvents.BREEZE_SHOOT, 0.4f, 2f);
-            Helpers.getSoundWithPosition(generic.level(), hitEntity.blockPosition(), SoundReg.ORB_CREATE.get(), 0.2f, 1.8f);
+            Helpers.getSoundWithPosition(generic.level(), hitEntity.blockPosition(), SoundReg.TELEPORT.get(), 1.4f, 1.6f);
         }
     }
 

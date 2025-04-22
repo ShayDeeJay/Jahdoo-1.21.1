@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.mobs.MobManager;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
@@ -22,6 +23,7 @@ import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -43,8 +45,7 @@ import static org.jahdoo.ascension.attachments.RunData.incrementClearedRoomExp;
 import static org.jahdoo.ascension.level_manager.BlockSetupManager.*;
 import static org.jahdoo.ascension.level_manager.StructureManager.placeLocksWithData;
 import static org.jahdoo.ascension.mobs.MobManager.addAndPositionEntity;
-import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.ascension.utils.Helpers.listRandom;
+import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
 import static org.jahdoo.common.block.altar.AltarAnim.idleParticleAnim;
 import static org.jahdoo.common.block.altar.AltarAnim.onActivationAnim;
@@ -64,6 +65,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     public String roomId;
     public List<LivingEntity> spawnableMobs = new ArrayList<>();
     public List<UUID> onField = new ArrayList<>();
+    public boolean spawnedChampion;
 
     public AltarBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.CHALLENGE_ALTAR_BE.get(), pos, state);
@@ -193,20 +195,21 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         super.saveAdditional(tag, provider);
         tag.putInt("private_ticks", privateTicks);
         tag.putBoolean("beginSpawn", beginSpawning);
-        tag.putDouble("animate", this.animateTick);
-        tag.putBoolean("started", this.started);
-        tag.putInt("spawned", this.mobsSpawned);
-        tag.putString("roomId", this.roomId);
-        tag.putString("direction", this.direction.name());
+        tag.putDouble("animate", animateTick);
+        tag.putBoolean("started", started);
+        tag.putInt("spawned", mobsSpawned);
+        tag.putString("roomId", roomId);
+        tag.putString("direction", direction.name());
+        tag.putBoolean("spawned_champion", spawnedChampion);
 
         var allowedMobs = new CompoundTag();
-        for (var spawnedMob : this.spawnableMobs) {
+        for (var spawnedMob : spawnableMobs) {
             allowedMobs.putUUID(String.valueOf(spawnedMob.getUUID()), spawnedMob.getUUID());
         }
         tag.put("allowedMobs", allowedMobs);
 
         var spawnedMobs = new CompoundTag();
-        for (var spawnedMob : this.onField) {
+        for (var spawnedMob : onField) {
             spawnedMobs.putUUID(String.valueOf(spawnedMob), spawnedMob);
         }
         tag.put("uuid", spawnedMobs);
@@ -222,23 +225,24 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         started = tag.getBoolean("started");
         mobsSpawned = tag.getInt("spawned");
         roomId = tag.getString("roomId");
+        spawnedChampion = tag.getBoolean("spawned_champion");
 
         for (var direction1 : Direction.stream().toList()) {
             if(tag.getString("direction").equals(direction1.name())){
-                this.direction = direction1;
+                direction = direction1;
             }
         }
 
         var allowedMobs = tag.getCompound("allowedMobs");
         for (var uuid : allowedMobs.getAllKeys()) {
             if(level instanceof ServerLevel serverLevel){
-                this.spawnableMobs.add((LivingEntity) serverLevel.getEntity(allowedMobs.getUUID(uuid)));
+                spawnableMobs.add((LivingEntity) serverLevel.getEntity(allowedMobs.getUUID(uuid)));
             }
         }
 
         var uuids = tag.getCompound("uuid");
         for (var uuid : uuids.getAllKeys()) {
-            this.onField.add(uuids.getUUID(uuid));
+            onField.add(uuids.getUUID(uuid));
         }
     }
 
@@ -261,6 +265,12 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
                     var entity = listRandom(this.spawnableMobs);
                     var position = listRandom(randomPoses);
                     addAndPositionEntity(serverLevel, containing(position), entity);
+
+                    if(!this.spawnedChampion && Random.nextInt(100) == 0){
+                        entity.addEffect(new JahdooMobEffect(EffectReg.CHAMPION_EFFECT, -1, 1));
+                        this.spawnedChampion = true;
+                    }
+
                     this.onField.add(entity.getUUID());
                     this.spawnableMobs.remove(entity);
                 }

@@ -8,8 +8,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.ability.effects.GenericEffect;
 import org.jahdoo.ascension.ability.effects.ReplenishManaEffect;
-import org.jahdoo.ascension.ability.effects.StunEffect;
+import org.jahdoo.ascension.ability.effects.ChampionEffect;
 import org.jahdoo.ascension.ability.effects.type_effects.frost.FrostEffect;
+import org.jahdoo.ascension.ability.effects.type_effects.frost.FrostStormEffect;
 import org.jahdoo.ascension.ability.effects.type_effects.frost.GreaterFrostEffect;
 import org.jahdoo.ascension.ability.effects.type_effects.inferno.GreaterInfernoEffect;
 import org.jahdoo.ascension.ability.effects.type_effects.inferno.InfernoEffect;
@@ -18,6 +19,7 @@ import org.jahdoo.ascension.ability.effects.type_effects.mystic.MysticEffect;
 import org.jahdoo.ascension.ability.effects.type_effects.vitality.GreaterVitalityEffect;
 import org.jahdoo.ascension.ability.effects.type_effects.vitality.VitalityEffect;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
@@ -38,6 +40,10 @@ public class EffectReg {
         () -> new GenericEffect().addAttributeModifier(BLOCK_INTERACTION_RANGE, withDefaultNamespace("amplify_block_reach_tag"), 1.0F, ADD_VALUE)
     );
 
+    public static Optional<MobEffect> getByName(String name){
+        return MOB_EFFECTS.getRegistry().get().stream().filter(a -> a.getDescriptionId().equals(name)).findFirst();
+    }
+
     //Standard effects
     public static final DeferredHolder<MobEffect, MobEffect> REPLENISH_MANA =
         mobEffect("replenish_mana", ReplenishManaEffect::new);
@@ -51,8 +57,8 @@ public class EffectReg {
     public static final DeferredHolder<MobEffect, MobEffect> MAGE_FLIGHT =
         mobEffect("mage_flight",  GenericEffect::new);
 
-    public static final DeferredHolder<MobEffect, MobEffect> STUN_EFFECT =
-        mobEffect("stun_effect", StunEffect::new);
+    public static final DeferredHolder<MobEffect, MobEffect> CHAMPION_EFFECT =
+        mobEffect("champion_effect", ChampionEffect::new);
 
     public static final DeferredHolder<MobEffect, MobEffect> HEXED  =
         mobEffect("hexed_effect", GenericEffect::new);
@@ -61,10 +67,14 @@ public class EffectReg {
     public static final DeferredHolder<MobEffect, MobEffect> FROST_EFFECT = mobEffect("frost_effect",
         () -> new FrostEffect().addAttributeModifier(MOVEMENT_SPEED, withDefaultNamespace("frost_effect_tag"), -0.05F, ADD_MULTIPLIED_TOTAL)
     );
+
     public static final DeferredHolder<MobEffect, MobEffect> GREATER_FROST_EFFECT =
         mobEffect("greater_frost_effect", GreaterFrostEffect::new);
 
-//----------------------------------------------------------------------------------------------------------------------
+    public static final DeferredHolder<MobEffect, MobEffect> FROST_STORM_RUSH =
+        mobEffect("frost_storm_rush", FrostStormEffect::new);
+
+    //----------------------------------------------------------------------------------------------------------------------
     public static final DeferredHolder<MobEffect, MobEffect> MYSTIC_EFFECT =
         mobEffect("mystic_effect", MysticEffect::new);
 

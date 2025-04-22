@@ -15,7 +15,6 @@ public class AttachmentProvider<T extends IAttachment> implements IAttachmentSer
         this.factory = supplier;
     }
 
-
     @Override
     public T read(IAttachmentHolder iAttachmentHolder, CompoundTag compoundTag, HolderLookup.Provider provider) {
         T attachment = factory.get();

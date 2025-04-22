@@ -6,6 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
@@ -23,6 +24,7 @@ import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
+import org.jahdoo.common.commands.PlayerLevelCommand;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
 import static org.jahdoo.ascension.utils.Helpers.syncCasterData;
@@ -88,6 +90,26 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
+    public static void rightClick(PlayerInteractEvent.EntityInteract event) {
+//        var mobCurio = CuriosApi.getCuriosInventory((LivingEntity) event.getTarget());
+//
+//        if(mobCurio.isPresent()){
+//            var getCurio = mobCurio.get();
+//            var crownSlots = getCurio.getStacksHandler("champions_crown");
+//            if(crownSlots.isPresent()){
+//                var stacks = crownSlots.get().getStacks();
+//                stacks.setStackInSlot(0, new ItemStack(ItemReg.CHAMPIONS_CROWN));
+//            }
+//        }
+
+    }
+
+    @SubscribeEvent
+    public static void commandRegister(RegisterCommandsEvent event) {
+        PlayerLevelCommand.register(event.getDispatcher());
+    }
+
+    @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         var player = event.getEntity();
         var playerData = player.getPersistentData();
@@ -118,6 +140,7 @@ public class ServerEvents {
         TripleJump.tripleJumpTickEvent(player);
         Rebound.staticTickEvent(player);
     }
+
 
     @SubscribeEvent
     public static void levelTickEvent(LevelTickEvent.Pre tickEvent){

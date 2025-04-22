@@ -2,6 +2,7 @@ package org.jahdoo.common.event.event_helpers;
 
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.FastColor;
@@ -11,11 +12,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import org.jahdoo.ascension.ability.abilities_combat.arcane_shift.ArcaneShiftAbility;
 import org.jahdoo.ascension.ability.abilities_combat.frostbolts.FrostboltsAbility;
 import org.jahdoo.ascension.attachments.CasterData;
@@ -25,6 +28,8 @@ import org.jahdoo.common.client.RenderHelpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.EffectReg;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 
 import java.awt.*;
@@ -154,6 +159,40 @@ public class RenderEventHelper {
         float smoothFactor = 0.013f; // Adjust for smoother/faster transitions
         player.setYRot(currentYaw + yawDifference * smoothFactor);
         player.setXRot(player.getXRot() + (desiredPitch - player.getXRot()) * smoothFactor);
+    }
+
+    public static void renderChampionVisual(RenderLivingEvent.Pre livingEvent) {
+        var entity = livingEvent.getEntity();
+        if(!entity.hasEffect(EffectReg.CHAMPION_EFFECT)) return;
+
+        var stack = livingEvent.getPoseStack();
+        var itemStack = new ItemStack(ItemReg.CHAMPIONS_CROWN);
+        var renderTypeBuffer = livingEvent.getMultiBufferSource();
+        var instance = Minecraft.getInstance();
+        var itemRenderer = instance.getItemRenderer();
+        var rotate = entity.tickCount + livingEvent.getPartialTick();
+        var animate = rotate / 5;
+        var height = entity.getBbHeight();
+        var width = entity.getBbWidth();
+        var scale = Math.min(Math.max(width/2, 0.5F), animate);
+        var bobOff = Math.sin(rotate / 10.0F) * 0.05F + height * 1.1;
+        var level = entity.level();
+
+        stack.pushPose();
+        stack.translate(0, Math.min(bobOff, animate), 0.);
+        stack.scale(scale, scale, scale);
+        stack.mulPose(Axis.YP.rotationDegrees(rotate * 2));
+        itemRenderer.renderStatic(
+            itemStack,
+            ItemDisplayContext.FIXED,
+            200,
+            OverlayTexture.NO_OVERLAY,
+            stack,
+            renderTypeBuffer,
+            level,
+            1
+        );
+        stack.popPose();
     }
 
     public static void renderUtilityOverlay(RenderLevelStageEvent event, Player player, ItemStack stack) {

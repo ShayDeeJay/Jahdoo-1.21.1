@@ -335,6 +335,15 @@ public class Helpers {
         }
     }
 
+    public static void sendEffectPacketsToPlayer(Level level, int entityId, MobEffectInstance effectInstance) {
+        if((level instanceof ServerLevel serverLevel)){
+            for (int j = 0; j < serverLevel.players().size(); ++j) {
+                var serverplayer = serverLevel.players().get(j);
+                serverplayer.connection.send(new ClientboundUpdateMobEffectPacket(entityId, effectInstance, true));
+            }
+        }
+    }
+
     public static ParticleOptions getRandomColouredParticle(int colourA, int colourB, int lifetime, float size, boolean staticSize){
         var generic = ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, colourA, colourB,lifetime,size, staticSize, size);
         var magic = ParticleHandlers.genericParticle(ParticleStore.MAGIC_PARTICLE, colourA, colourB,lifetime,size, staticSize, size);

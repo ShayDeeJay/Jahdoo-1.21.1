@@ -18,16 +18,15 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
-import org.jahdoo.common.networking.server2client.EffectSyncS2CP;
 import org.jahdoo.common.networking.server2client.MoveClientEntityS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.List;
 
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 
@@ -74,7 +73,6 @@ public class GreaterMysticEffect extends MobEffect {
         } else {
             livingEntity.setDeltaMovement(0, 0.5, 0);
         }
-
         livingEntity.playSound(SoundReg.SUSPEND.get(), 2F, 1F);
         super.onEffectAdded(livingEntity, amplifier);
     }
@@ -85,8 +83,7 @@ public class GreaterMysticEffect extends MobEffect {
         if(targetEntity.isAlive()){
             if (targetEntity.level() instanceof ServerLevel serverLevel) {
                 onTickApply(targetEntity, pAmplifier, serverLevel, getElement());
-                sendEffectPacketsToPlayerDistance(targetEntity.position(), 50, serverLevel, targetEntity.getId(), new JahdooMobEffect(EffectReg.MYSTIC_EFFECT, 10, pAmplifier));
-                sendPacketsToPlayer(serverLevel, new EffectSyncS2CP(targetEntity.getId(), 4, pAmplifier));
+                targetEntity.addEffect(new JahdooMobEffect(EffectReg.MYSTIC_EFFECT, 10, pAmplifier));
             }
         } else removeThis(targetEntity);
 

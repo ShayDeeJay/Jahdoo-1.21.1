@@ -34,6 +34,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void entityRenderer(Pre event) {
         mysticEffectClient(event);
+        renderChampionVisual(event);
     }
 
     @SubscribeEvent

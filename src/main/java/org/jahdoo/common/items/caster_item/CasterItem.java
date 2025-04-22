@@ -12,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
@@ -79,14 +78,7 @@ public class CasterItem extends Item implements JahdooItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
 
-        if(!level.isClientSide){
-            CasterData.setToLevel(player, 120);
-//        CasterData.addExperience(player, 2000);
-//        CasterData.clearData(player);
-//        CasterData.regretAbilities(player);
-//            if(player instanceof ServerPlayer serverPlayer){
-//                PlayerTrialData.clearAllData(serverPlayer);
-//            }
+        if(level instanceof ServerLevel serverLevel){
             var castAbility = castAbility(player, interactionHand, item);
             if (castAbility != null) return castAbility;
         }

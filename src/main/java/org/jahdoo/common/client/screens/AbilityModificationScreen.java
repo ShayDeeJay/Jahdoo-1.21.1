@@ -194,7 +194,7 @@ public class AbilityModificationScreen extends Screen {
             (x.actualValue() - x.lowestValue()) / x.step() :
             (x.highestValue() - x.actualValue()) / x.step();
         var adjusted = (int) Math.max(x.baseCost(), x.baseCost() * ((costMultiplier/2) * 1.2));
-        var canPurchase = CasterData.canPurchase(getMinecraft().player, adjusted);
+        var canPurchase = CasterData.canPurchaseAbility(getMinecraft().player, adjusted);
         var buttonIcon = correctAdjustment || canPurchase ? UPGRADE_DISABLED : UPGRADE;
         var active = correctAdjustment ||  canPurchase;
         var scale = correctAdjustment ? 0 : 8;

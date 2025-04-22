@@ -210,6 +210,7 @@ public class MobManager {
         getSoundWithPosition(serverLevel, pos, SoundEvents.ALLAY_HURT, 0.3F, 0.8F);
         entity.moveTo(pos.getCenter());
         serverLevel.addFreshEntity(entity);
+
     }
 
     public static LivingEntity getEliteSkeleton(ServerLevel serverLevel, int level){
@@ -235,12 +236,12 @@ public class MobManager {
 
         if(!Objects.equals(roomId, BOSS_CRUCIBLE)){
             var actualEntity = buildMobs(level, roomId);
-
             //Heal as when adding more health still spawns with only the amount of health that is default
             for (var livingEntity : actualEntity) {
                 livingEntity.setHealth(livingEntity.getMaxHealth());
             }
             entity.spawnableMobs.addAll(actualEntity);
+
         } else {
             var round = entity.getData(INSTANCE_DATA).getClearedRooms();
             var ancienGolem = getAncienGolem(level, round);

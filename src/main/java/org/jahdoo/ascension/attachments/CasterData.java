@@ -412,16 +412,20 @@ public class CasterData implements IAttachment {
     }
 
     public static void clearData(Player player){
-        player.getData(CASTER_DATA).clearData();
+        var data = player.getData(CASTER_DATA);
+        data.clearData();
+        if(player instanceof ServerPlayer serverPlayer){
+            sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
+        }
     }
 
     public static boolean checkAndConsume(Player player, int cost){
-        if (canPurchase(player, cost)) return false;
+        if (canPurchaseAbility(player, cost)) return false;
         CasterData.decrementAbilityPoints(player, cost);
         return true;
     }
 
-    public static boolean canPurchase(Player player, int cost) {
+    public static boolean canPurchaseAbility(Player player, int cost) {
         var available = CasterData.getAbilityPoints(player);
         var canPurchase = available >= cost;
         return !canPurchase;

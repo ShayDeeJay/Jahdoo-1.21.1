@@ -16,7 +16,7 @@ import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.EntityReg;
 
-import static net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.*;
+import static net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK;
 import static org.jahdoo.common.registers.BlockEntityReg.*;
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD)

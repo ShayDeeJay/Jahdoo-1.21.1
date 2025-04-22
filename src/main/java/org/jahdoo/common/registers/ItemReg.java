@@ -46,6 +46,9 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> AUGMENT_CORE =
         basicItem("augment_core");
 
+    public static final DeferredHolder<Item, Item> CHAMPIONS_CROWN =
+        basicItem("champions_crown");
+
     //Complex Items
     public static final DeferredHolder<Item, Item> SKILL_POINT =
         complexItem("skill_point", SkillPointItem::new);

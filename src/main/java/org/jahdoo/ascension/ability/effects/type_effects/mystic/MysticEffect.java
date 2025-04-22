@@ -61,13 +61,6 @@ public class MysticEffect extends MobEffect {
         if(targetEntity.isAlive()){
             if (targetEntity.level() instanceof ServerLevel serverLevel) {
                 onTickApply(targetEntity, serverLevel, getElement());
-                sendEffectPacketsToPlayerDistance(
-                    targetEntity.position(),
-                    50,
-                    serverLevel,
-                    targetEntity.getId(),
-                    new JahdooMobEffect(EffectReg.MYSTIC_EFFECT, 10, amplifier)
-                );
             }
         } else removeThis(targetEntity);
 

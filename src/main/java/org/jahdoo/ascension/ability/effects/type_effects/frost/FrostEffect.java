@@ -5,6 +5,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import org.jahdoo.ascension.ability.effects.EffectHelpers;
+import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -38,6 +39,9 @@ public class FrostEffect extends MobEffect {
         if(targetEntity.level() instanceof ServerLevel serverLevel){
             int getRandomChance = Helpers.Random.nextInt(0,20);
             EffectHelpers.setEffectParticle(getRandomChance, targetEntity, serverLevel, ElementReg.frost(), SoundReg.FROST_ABILITY.get());
+            if(getRandomChance == 0){
+                DamageUtils.damageWithJahdoo(targetEntity, amplifier, ElementReg.frost().damageTypeResourceKey());
+            }
         }
         return true;
     }
