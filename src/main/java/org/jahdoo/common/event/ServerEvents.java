@@ -2,7 +2,6 @@ package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -79,6 +78,12 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
+    public static void shieldEvent(LivingShieldBlockEvent event){
+        var entity = event.getEntity();
+        shieldBlock(event, entity);
+    }
+
+    @SubscribeEvent
     public static void leftClickBlockInteraction(PlayerInteractEvent.LeftClickBlock event) {
         var item = event.getItemStack();
         var pos = event.getPos();
@@ -90,18 +95,8 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public static void rightClick(PlayerInteractEvent.EntityInteract event) {
-//        var mobCurio = CuriosApi.getCuriosInventory((LivingEntity) event.getTarget());
-//
-//        if(mobCurio.isPresent()){
-//            var getCurio = mobCurio.get();
-//            var crownSlots = getCurio.getStacksHandler("champions_crown");
-//            if(crownSlots.isPresent()){
-//                var stacks = crownSlots.get().getStacks();
-//                stacks.setStackInSlot(0, new ItemStack(ItemReg.CHAMPIONS_CROWN));
-//            }
-//        }
-
+    public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
+        removeShieldUse(rightClickItem);
     }
 
     @SubscribeEvent
@@ -112,12 +107,10 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         var player = event.getEntity();
-        var playerData = player.getPersistentData();
-        var data = playerData.getCompound(Player.PERSISTED_NBT_TAG);
 
         syncCasterData(player);
         syncPlayerAttributes(player);
-        onFirstTimeJoined(data, player, playerData);
+        onFirstTimeJoined(player);
     }
 
     @SubscribeEvent
@@ -128,6 +121,7 @@ public class ServerEvents {
         questTracker(level, player);
 
         if(player instanceof ServerPlayer serverPlayer){
+            restrictElytra(serverPlayer, level);
             CasterData.cooldownTickEvent(serverPlayer);
             CasterData.manaTickEvent(serverPlayer);
         }
@@ -140,7 +134,6 @@ public class ServerEvents {
         TripleJump.tripleJumpTickEvent(player);
         Rebound.staticTickEvent(player);
     }
-
 
     @SubscribeEvent
     public static void levelTickEvent(LevelTickEvent.Pre tickEvent){
@@ -163,7 +156,7 @@ public class ServerEvents {
     @SubscribeEvent
     public static void joinEvent(EntityJoinLevelEvent event){
         syncCasterData(event.getEntity());
-        removeCurrentEffects(event);
+        removeNonAllowedEffects(event);
     }
 
     @SubscribeEvent

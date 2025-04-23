@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.ability.abilities_combat.BurningSkullsAbility;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
@@ -62,7 +63,8 @@ public class LifeSiphonAbility extends Ability {
             VITALITY_ELEMENT_PROJECTILE.get(), player, OVERCHARGED.get().setAbilityId(),
             offsetShoot(player), abilityId.getPath().intern()
         );
-        fireProjectile(projectile, player, 0.8f);
+        fireProjectileNoSound(projectile, player, 0.8f);
+        BurningSkullsAbility.vitalitySoundEffect(player);
     }
 
     @Override

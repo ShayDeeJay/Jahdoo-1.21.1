@@ -263,7 +263,8 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
             double d2 = target.getZ() - this.getZ();
             double d3 = Math.sqrt(d0 * d0 + d2 * d2);
             projectile.shoot(d0, d1 + d3 * (double)0.2F, d2, velocity, 0);
-            this.playSound(SoundReg.ORB_CREATE.get(), 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
+
+            this.playSound(SoundReg.ELEMENTAL_BULLET.get(), 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
             castAnimation(this, SINGLE_CAST_ID);
             this.level().addFreshEntity(projectile);
         }

@@ -7,8 +7,9 @@ import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
-import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.ITamableEntity;
+import org.jahdoo.common.entities.decoy.Decoy;
+import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -53,7 +54,7 @@ public class AttackNearbyMonsters<T extends LivingEntity> extends TargetGoal {
     }
 
     protected void findTarget() {
-        if (this.targetType != Player.class && this.targetType != ServerPlayer.class) {
+        if (this.targetType != Player.class && this.targetType != ServerPlayer.class || this.target instanceof Decoy) {
             this.target = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(this.targetType, this.getTargetSearchArea(), (t) -> true), this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ());
         } else {
             this.target = this.mob.level().getNearestPlayer(this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ());

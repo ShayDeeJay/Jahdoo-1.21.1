@@ -35,4 +35,25 @@ public class ParticleRenderTypes {
             return "ABILITY_PART_RENDER";
         }
     };
+
+
+    static ParticleRenderType ABILITY_RENDERER_ALT = new ParticleRenderType() {
+        @Override
+        public BufferBuilder begin(Tesselator buffer, @NotNull TextureManager textureManager) {
+            Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
+            RenderSystem.enableBlend();
+            RenderSystem.depthMask(false);
+            RenderSystem.setShader(GameRenderer::getParticleShader);
+            RenderSystem.enableCull();
+            RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
+            RenderSystem.enableDepthTest();
+            RenderSystem.depthMask(true);
+            return buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+        }
+
+        @Override
+        public String toString() {
+            return "ABILITY_PART_RENDER";
+        }
+    };
 }

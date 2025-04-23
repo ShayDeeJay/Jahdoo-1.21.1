@@ -12,7 +12,6 @@ import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
 import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
@@ -203,8 +202,8 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         attachLootBeamComponent(itemStack, rarity);
         itemStack.set(ComponentReg.JAHDOO_RARITY.get(), rarity.getId());
 
-        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue, MAINHAND, false);
-        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, randomManaPool, OFFHAND, false);
+        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue, MAINHAND, false, "");
+        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, randomManaPool, OFFHAND, false, "");
     }
 
     public static void createWandAttributes(
@@ -224,18 +223,13 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         var damageAmplifierName = damageAmplifierType.getRegisteredName();
         var damageAmplifierValue = rarity.attributes.getRandomDamage();
 
-        itemStack.set(JAHDOO_RARITY, rarityId);
-        attachLootBeamComponent(itemStack, rarity);
+        ShoppingItems.attachSharedProperties(itemStack, runeSlots, rarity);
 
         if(rarityId > 0){
-            RuneHolder.createNewRuneSlots(itemStack, runeSlots, (int) (Math.round(rarity.attributes.getRandomPotential()/5.0) * 5));
-            replaceOrAddAttribute(itemStack, damageAmplifierName, damageAmplifierType, damageAmplifierValue, MAINHAND, false);
-            if(rarityId > 1) replaceOrAddAttribute(itemStack, manaReductionName, manaReductionType, manaReductionValue, MAINHAND, false);
-            if(rarityId > 2) replaceOrAddAttribute(itemStack, cooldownReductionName, cooldownReductionType, cooldownReductionValue, MAINHAND, false);
+            replaceOrAddAttribute(itemStack, damageAmplifierName, damageAmplifierType, damageAmplifierValue, MAINHAND, true, "wand");
+            if(rarityId > 1) replaceOrAddAttribute(itemStack, manaReductionName, manaReductionType, manaReductionValue, MAINHAND, true, "wand");
+            if(rarityId > 2) replaceOrAddAttribute(itemStack, cooldownReductionName, cooldownReductionType, cooldownReductionValue, MAINHAND, true, "wand");
         }
-
-        var durability = rarity.attributes.getRandomTime();
-        ShoppingItems.attachDurability(itemStack, durability);
     }
 
     //Debug using use on item

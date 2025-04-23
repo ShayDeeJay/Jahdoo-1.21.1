@@ -12,7 +12,6 @@ import org.jahdoo.ascension.ability.AbilityComponentHelper;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.ComponentReg;
@@ -25,7 +24,7 @@ import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getNameWithStyle;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.standAloneAttributes;
 
-public class RuneItem extends Item implements JahdooItem {
+public class RuneItem extends Item {
     public RuneItem() {
         super(new Properties().component(ComponentReg.RUNE_DATA.get(), RuneData.DEFAULT));
     }

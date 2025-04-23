@@ -17,7 +17,6 @@ import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
-import org.jahdoo.common.items.caster_item.CasterItemHelper;
 import org.jahdoo.common.registers.SoundReg;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
@@ -50,29 +49,21 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
     }
 
-    @Override
-    public List<Component> getSlotsTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
-        var rarity = JahdooRarity.attachRarityTooltip(stack, context.level());
-        var newComp = new ArrayList<>(tooltips);
-        newComp.add(Component.empty());
-        if(rarity != null){
-            newComp.add(rarity);
-            if (!rarity.getString().isEmpty()) newComp.add(Component.empty());
-        }
-        return newComp;
-    }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> toolTips, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, toolTips, tooltipFlag);
         var list = stack.getAttributeModifiers().modifiers().stream().toList();
         var magnetData = MagnetData.getMagnetData(stack);
+        this.appendItemToolTips(stack, context, toolTips, true);
+        toolTips.add(Component.empty());
+
         if(!list.isEmpty()){
             for (var entry : list) toolTips.add(RuneHelpers.standAloneAttributes(entry));
+            toolTips.add(Component.empty());
         }
-        toolTips.add(Helpers.withStyleComponent("Range: " + magnetData.range(), MAGNET_RANGE_GREEN));
+        toolTips.add(Helpers.withStyleComponent("Range: "+magnetData.range(), MAGNET_RANGE_GREEN));
         toolTips.add(Helpers.withStyleComponent("Strength: " + magnetData.strength(), MAGNET_STRENGTH_RED));
-        CasterItemHelper.appendDurability(stack, toolTips);
     }
 
     @Override

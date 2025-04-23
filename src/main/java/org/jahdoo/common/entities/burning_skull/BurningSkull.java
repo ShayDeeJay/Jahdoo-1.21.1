@@ -107,6 +107,11 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
     }
 
     @Override
+    public boolean isPickable() {
+        return false;
+    }
+
+    @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
     }
@@ -147,6 +152,11 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         entityMovement();
         discardTime();
 
+    }
+
+    @Override
+    public float getPickRadius() {
+        return 0;
     }
 
     private void discardTask() {

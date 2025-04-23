@@ -34,10 +34,16 @@ public class JahdooCuriosProvider extends CuriosDataProvider {
             .dropRule(ICurio.DropRule.ALWAYS_DROP)
             .replace(true);
 
+        this.createSlot("shield")
+            .size(1)
+            .dropRule(ICurio.DropRule.ALWAYS_DROP)
+            .replace(true);
+
         this.createEntities("player")
             .addPlayer()
             .addSlots("relic")
-            .addSlots("magnet");
+            .addSlots("magnet")
+            .addSlots("shield");
     }
 
 }

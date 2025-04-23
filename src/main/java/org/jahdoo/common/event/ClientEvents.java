@@ -55,6 +55,7 @@ public class ClientEvents {
     public static void tooltipEvent(RenderTooltipEvent.GatherComponents e){
         var current = e.getTooltipElements();
         var itemStack = e.getItemStack();
+
         var allSlots = getAllSlots(itemStack);
         if(allSlots.isEmpty()) return;
 

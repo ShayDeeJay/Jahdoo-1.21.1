@@ -37,7 +37,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
 
     private static final ResourceLocation abilityId = res("summon_eternal_wizard_property");
     private EternalWizard eternalWizard;
-    private double increaseRate = 0.1;
+    private double increaseRate = 0.3;
     private double effectDuration;
     private double effectStrength;
     private double effectChance;
@@ -158,11 +158,11 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         if (eternalWizard.position().y < cloud.position().y + 0.5) {
             if (eternalWizard.isNoAi()) {
                 eternalWizard.moveTo(eternalWizard.position().add(0, increaseRate, 0));
-                if (increaseRate > 0.2) increaseRate -= 0.1;
+//                if (increaseRate > 0.2) increaseRate -= 0.1;
             }
         }
 
-        if (cloud.tickCount > 18) {
+        if (cloud.tickCount > 14) {
             if (eternalWizard.isInvulnerable()) eternalWizard.setInvulnerable(false);
             if (eternalWizard.isNoAi()) eternalWizard.setNoAi(false);
             cloud.discard();

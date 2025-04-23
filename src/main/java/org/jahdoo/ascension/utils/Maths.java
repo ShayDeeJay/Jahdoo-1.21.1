@@ -57,6 +57,16 @@ public class Maths {
         return randomValue <= percentageChance;
     }
 
+    public static boolean percentageChance(double percentageChance) {
+        if (percentageChance <= 0) return false;
+        if (percentageChance > 100) {
+            throw new IllegalArgumentException("Percentage chance must be between 0 and 100.");
+        }
+
+        var randomValue = Math.random() * 100;
+        return randomValue < percentageChance;
+    }
+
     public static boolean percentageChance(int percentageChance, long seed) {
         if(percentageChance == 0) return false;
         if (percentageChance < 0 || percentageChance > 100) {

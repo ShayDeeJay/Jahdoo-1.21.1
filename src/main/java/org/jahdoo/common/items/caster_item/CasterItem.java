@@ -51,6 +51,7 @@ public class CasterItem extends Item implements JahdooItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> toolTip, TooltipFlag flag) {
+        appendItemToolTips(stack, context, toolTip, false);
         toolTip.addAll(CasterItemHelper.getItemModifiers(stack, context.level()));
         bonusModifierTooltip(stack, toolTip, context);
     }

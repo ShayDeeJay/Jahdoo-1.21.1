@@ -37,7 +37,6 @@ import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.common.components.AbilityData;
@@ -45,10 +44,7 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.networking.client2server.PlayerTrialDataC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
-import org.jahdoo.common.networking.server2client.AbilityHolderS2CP;
-import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
-import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
-import org.jahdoo.common.networking.server2client.PlayerTrialDataS2CP;
+import org.jahdoo.common.networking.server2client.*;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -64,7 +60,9 @@ import static java.util.Collections.emptyMap;
 import static net.minecraft.advancements.CriteriaTriggers.ITEM_DURABILITY_CHANGED;
 import static net.minecraft.sounds.SoundEvents.ITEM_BREAK;
 import static net.minecraft.world.item.enchantment.EnchantmentHelper.processDurabilityChange;
+import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
+import static org.jahdoo.common.registers.AttachmentReg.PLAYER_WALLET;
 
 public class Helpers {
     public static final String EASY = "novice";
@@ -83,13 +81,13 @@ public class Helpers {
 
     public static void syncSelectedAbility(Player player, String updateAbility) {
         player.getData(AttachmentReg.CASTER_DATA).setSelectedAbility(updateAbility);
-        PacketDistributor.sendToServer(new SelectAbilityC2SP(updateAbility));
+        sendToServer(new SelectAbilityC2SP(updateAbility));
     }
 
     public static void syncAbilitiesServer(Entity player) {
         if(player instanceof ServerPlayer serverPlayer){
             var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
-            PacketDistributor.sendToPlayer(serverPlayer, new AbilityHolderS2CP(casterData.getUnlockedAbilities()));
+            sendToPlayer(serverPlayer, new AbilityHolderS2CP(casterData.getUnlockedAbilities()));
         }
     }
 
@@ -97,8 +95,10 @@ public class Helpers {
         if(player instanceof ServerPlayer serverPlayer){
             var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
             var trialData = serverPlayer.getData(AttachmentReg.PLAYER_TRIAL_DATA);
-            PacketDistributor.sendToPlayer(serverPlayer, new CastingDataSyncS2CP(casterData));
-            PacketDistributor.sendToPlayer(serverPlayer, new PlayerTrialDataS2CP(trialData));
+            var wallet = player.getData(PLAYER_WALLET).getWallet();
+            sendToPlayer(serverPlayer, new WalletSyncS2CP(wallet));
+            sendToPlayer(serverPlayer, new CastingDataSyncS2CP(casterData));
+            sendToPlayer(serverPlayer, new PlayerTrialDataS2CP(trialData));
         }
     }
 
@@ -206,11 +206,11 @@ public class Helpers {
     }
 
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch){
-        PacketDistributor.sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, true));
+        sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, true));
     }
 
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch, boolean isBatched){
-        PacketDistributor.sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, isBatched));
+        sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, isBatched));
     }
 
     public static Map<String, AbilityData.AbilityModifiers> getModifierValue(AbilityHolder abilityHolder, String tagName) {
@@ -297,7 +297,7 @@ public class Helpers {
         if((level instanceof ServerLevel serverLevel)){
             for (int j = 0; j < serverLevel.players().size(); ++j) {
                 var serverplayer = serverLevel.players().get(j);
-                PacketDistributor.sendToPlayer(serverplayer, payloads);
+                sendToPlayer(serverplayer, payloads);
             }
         }
     }
@@ -307,7 +307,7 @@ public class Helpers {
             for (int j = 0; j < serverLevel.players().size(); ++j) {
                 var serverplayer = serverLevel.players().get(j);
                 if (pos.closerThan(serverplayer.position(), distance)) {
-                    PacketDistributor.sendToPlayer(serverplayer, payloads);
+                    sendToPlayer(serverplayer, payloads);
                 }
             }
         }
@@ -457,6 +457,15 @@ public class Helpers {
             }
         }
         return component;
+    }
+
+    public static int durabilityDamageCount(ItemStack itemStack){
+        var maxDamage = itemStack.get(DataComponents.MAX_DAMAGE);
+        var damageTaken = itemStack.get(DataComponents.DAMAGE);
+        if(maxDamage != null && damageTaken != null){
+            return maxDamage - damageTaken;
+        }
+        return 0;
     }
 
     public static void hurtAndKeepItem(ItemStack itemStack, int damage, Level level, LivingEntity livingEntity) {

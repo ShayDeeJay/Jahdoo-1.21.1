@@ -46,11 +46,18 @@ public class ComponentReg {
                 .networkSynchronized(ByteBufCodecs.INT)
         );
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> NUMBER =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> STORE_INTEGER =
         register("number", builder ->
             builder
                 .persistent(Codec.INT)
                 .networkSynchronized(ByteBufCodecs.INT)
+        );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Double>> SHIELD_BLOCK_CHANCE =
+        register("shield_block_chance", builder ->
+            builder
+                .persistent(Codec.DOUBLE)
+                .networkSynchronized(ByteBufCodecs.DOUBLE)
         );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> ID =

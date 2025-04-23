@@ -32,6 +32,8 @@ public class OverlayBlockTooltip {
         BlockPos pos
     ) {
         var instance = Minecraft.getInstance();
+//        if(instance.screen != null) return;;
+
         var entity = player.level().getBlockEntity(pos);
 
         if (entity instanceof ShoppingTableEntity tableEntity){
@@ -45,12 +47,7 @@ public class OverlayBlockTooltip {
 
             if (canRender) {
                 var mouseY = height - (tooltip.size() * 5);
-                var pose = graphics.pose();
-
-                pose.pushPose();
-                pose.translate(0, 0, -4000);
                 graphics.renderTooltip(instance.font, itemStack, width + 60, mouseY);
-                pose.popPose();
             }
         }
     }

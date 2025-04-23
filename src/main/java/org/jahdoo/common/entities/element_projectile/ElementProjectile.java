@@ -190,6 +190,16 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         if (this.getOwner() != null && distanceTo(this.getOwner()) > 70f) this.discard();
     }
 
+    @Override
+    public float getPickRadius() {
+        return 0;
+    }
+
+    @Override
+    public boolean isPickable() {
+        return false;
+    }
+
     public void setShowTrailParticles(boolean setShowTrailParticles){
         this.showTrailParticles = setShowTrailParticles;
     }

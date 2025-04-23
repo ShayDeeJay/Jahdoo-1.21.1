@@ -6,10 +6,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
+import static org.jahdoo.ascension.utils.Configuration.BRIGHT_PARTICLE;
+import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class GenericParticle extends SimpleAnimatedParticle {
 
@@ -35,13 +36,13 @@ public class GenericParticle extends SimpleAnimatedParticle {
 
     @Override
     public int getLightColor(float pPartialTick) {
-        return 255;
+        return FULL_BRIGHT;
     }
 
     @Override
     public @NotNull ParticleRenderType getRenderType() {
-        return ParticleRenderTypes.ABILITY_RENDERER;
-
+        return BRIGHT_PARTICLE.get() ? ParticleRenderTypes.ABILITY_RENDERER : ParticleRenderTypes.ABILITY_RENDERER_ALT;
+//        return ParticleRenderType.PARTICLE_SHEET_LIT;
     }
 
     @OnlyIn(Dist.CLIENT)

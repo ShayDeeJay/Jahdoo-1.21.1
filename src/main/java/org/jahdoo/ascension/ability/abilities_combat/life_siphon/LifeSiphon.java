@@ -2,28 +2,31 @@ package org.jahdoo.ascension.ability.abilities_combat.life_siphon;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
+import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.common.registers.mod.ElementReg;
 
-import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.ascension.ability.abilities_combat.life_siphon.LifeSiphonAbility.*;
+import static org.jahdoo.ascension.ability.AbilityBuilder.DAMAGE;
+import static org.jahdoo.ascension.ability.AbilityBuilder.RANGE;
+import static org.jahdoo.ascension.ability.abilities_combat.life_siphon.LifeSiphonAbility.HEAL_VALUE;
+import static org.jahdoo.ascension.ability.abilities_combat.life_siphon.LifeSiphonAbility.PULSES;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
-import static org.jahdoo.common.registers.AttributeReg.*;
-import static org.jahdoo.common.registers.mod.EntityDataReg.*;
+import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.AttributeReg.VITALITY_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.common.registers.mod.EntityDataReg.SOUL_SIPHON_NOVA;
 
 public class LifeSiphon extends DefaultEntityBehaviour {
 
@@ -111,8 +114,16 @@ public class LifeSiphon extends DefaultEntityBehaviour {
             if(fuse == 0) fuse = privateTicks;
             if(fuse + 20 == privateTicks){
                 var pos = this.element.blockPosition();
-                Helpers.getSoundWithPosition(level(), pos, SoundReg.HEAL.get(), 2f, 0.7f);
-                Helpers.getSoundWithPosition(level(), pos, SoundReg.EXPLOSION.get(), 2f);
+                Helpers.getSoundWithPosition(level(), pos, getElementType().sound(), 2f, 0.7f);
+                Helpers.getSoundWithPosition(level(), pos, SoundReg.IMPACT.get(), 2f);
+                if(level() instanceof ServerLevel serverLevel){
+                    for (int i = 0; i  < 10; i++){
+                        ParticleHandlers.particleBurst(serverLevel, this.element.position(), 1,
+                            ParticleHandlers.getAllParticleTypes(this.getElementType(), 40, 4), 0, 0, 0, 0.5F
+                        );
+                    }
+
+                }
                 this.element.discard();
             }
         }
@@ -135,7 +146,14 @@ public class LifeSiphon extends DefaultEntityBehaviour {
                 Helpers.getSoundWithPosition(
                     level(),
                     this.element.blockPosition(),
-                    SoundReg.ORB_CREATE.get()
+                    getElementType().sound(),
+                    1, 1.8F
+                );
+                Helpers.getSoundWithPosition(
+                    level(),
+                    this.element.blockPosition(),
+                    SoundReg.SUSPEND.get(),
+                    2,0.8F
                 );
             }
             this.element.setDeltaMovement(0, 0, 0);
@@ -156,7 +174,8 @@ public class LifeSiphon extends DefaultEntityBehaviour {
                 if(spacePulseBy) {
                     pulseCounter++;
                     createModule(projectile.position().add(0, 0.2, 0));
-                    element.playSound(SoundReg.HEAL.get(), 1f, 0.8f);
+                    element.playSound(getElementType().sound(), 1f, 1.2f);
+                    element.playSound(SoundReg.IMPACT.get(), 1f, 1.5f);
                 }
             }
         }

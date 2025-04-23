@@ -55,7 +55,7 @@ public class StormRush extends AbstractAbility {
 
         if(player instanceof ServerPlayer serverPlayer) {
             serverPlayer.getAbilities().mayfly = true;
-            var launchDistances = getTag(StormRushAbility.launchDistance);
+            var launchDistances = getTag(StormRushAbility.LAUNCH_DISTANCE);
             var lookVector = serverPlayer.getLookAngle().scale(launchDistances);
             PacketDistributor.sendToPlayer(serverPlayer, new MoveClientEntityS2CP(lookVector.x, lookVector.y, lookVector.z, serverPlayer.getId()));
             Helpers.getSoundWithPosition(level, serverPlayer.blockPosition(), DASH_EFFECT_INSTANT.get(), 2f);

@@ -12,9 +12,7 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.registers.mod.ElementReg;
 
-import static net.minecraft.core.BlockPos.containing;
-import static net.minecraft.sounds.SoundEvents.ELDER_GUARDIAN_DEATH;
-import static org.jahdoo.common.registers.SoundReg.EXPLOSION;
+import static org.jahdoo.ascension.ability.abilities_combat.eternal_wizard.SummonEternalWizardAbility.summonMinionSound;
 import static org.jahdoo.common.registers.mod.EntityDataReg.SUMMON_ANCIENT_GOLEM;
 
 public class SummonAncientGolemAbility extends Ability {
@@ -74,8 +72,7 @@ public class SummonAncientGolemAbility extends Ability {
 
         aoeCloud.setPos(location.x, location.y, location.z);
         player.level().addFreshEntity(aoeCloud);
-        Helpers.getSoundWithPosition(player.level(), containing(location), ELDER_GUARDIAN_DEATH, 2F, 1.4F);
-        Helpers.getSoundWithPosition(player.level(), containing(location), EXPLOSION.get(), 2F, 1.2F);
+        summonMinionSound(player, location);
     }
 
     @Override

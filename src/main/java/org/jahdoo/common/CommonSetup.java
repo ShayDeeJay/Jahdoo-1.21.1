@@ -10,6 +10,7 @@ import org.jahdoo.ascension.utils.Configuration;
 import org.jahdoo.common.datagen.loot.ModLootModifiers;
 import org.jahdoo.common.items.gauntlet.GloveRenderer;
 import org.jahdoo.common.items.pendent.PendentRenderer;
+import org.jahdoo.common.items.shields.ShieldRenderer;
 import org.jahdoo.common.items.tome.TomeRenderer;
 import org.jahdoo.common.registers.*;
 import org.jahdoo.common.registers.mod.*;
@@ -35,6 +36,7 @@ public class CommonSetup {
         CuriosRendererRegistry.register(ItemReg.PENDENT.get(), PendentRenderer::new);
         CuriosRendererRegistry.register(ItemReg.TOME_OF_UNITY.get(), TomeRenderer::new);
         CuriosRendererRegistry.register(ItemReg.BATTLEMAGE_GAUNTLET.get(), GloveRenderer::new);
+        CuriosRendererRegistry.register(ItemReg.BASIC_SHIELD.get(), ShieldRenderer::new);
     }
 
     public static void registers(IEventBus modEventBus){

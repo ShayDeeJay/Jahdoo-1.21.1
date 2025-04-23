@@ -18,10 +18,9 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.IEntityProperties;
-import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.EntityDataReg;
-import org.jahdoo.common.registers.EntityReg;
 import org.jetbrains.annotations.NotNull;
 
 public class GenericProjectile extends ProjectileProperties implements IEntityProperties {
@@ -66,9 +65,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         this.setProjectileWithOffsets(this, player, offset, 1);
         this.reapplyPosition();
         this.setOwner(player);
-//        this.abilityHolder = AbilityHolder.getHolderFromWand(player);
-        var holder = player.getData(AttachmentReg.CASTER_DATA).getHolder(abilityId);
-        this.abilityHolder = holder;
+        this.abilityHolder = CasterData.entityHolder(player, abilityId);
         this.projectileSelectionIndex = index;
         this.abilityId = abilityId;
         this.getProjectile = EntityDataReg.getProperty(index);
@@ -132,6 +129,11 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     @Override
     public float getPickRadius() {
         return 0;
+    }
+
+    @Override
+    public boolean isPickable() {
+        return false;
     }
 
     @Override

@@ -10,9 +10,9 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.DamageTypeReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.Nullable;
 
-import static net.minecraft.sounds.SoundEvents.ENDER_EYE_DEATH;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.common.registers.AttributeReg.*;
@@ -65,7 +65,7 @@ public class Vitality extends AbstractElement {
 
     @Override
     public SoundEvent sound() {
-        return ENDER_EYE_DEATH;
+        return SoundReg.VITALITY_ABILITY.get();
     }
 
     @Override

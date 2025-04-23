@@ -6,22 +6,19 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.GameType;
@@ -39,6 +36,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -58,6 +56,7 @@ import org.jahdoo.ascension.level_manager.LevelGenerator;
 import org.jahdoo.ascension.trading_post.RewardLootTables;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
@@ -74,12 +73,12 @@ import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.client2server.UseAbilityC2SP;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.InstanceSyncS2CP;
-import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.*;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.QuestReg;
+import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -88,6 +87,7 @@ import java.util.ArrayList;
 import static com.mojang.blaze3d.platform.InputConstants.*;
 import static java.util.Objects.requireNonNull;
 import static net.minecraft.client.Minecraft.getInstance;
+import static net.minecraft.sounds.SoundEvents.SHIELD_BLOCK;
 import static net.minecraft.sounds.SoundSource.PLAYERS;
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
@@ -146,14 +146,15 @@ public class EventHelpers {
         }
     }
 
-    public static void removeCurrentEffects(EntityJoinLevelEvent event) {
+    public static void removeNonAllowedEffects(EntityJoinLevelEvent event) {
         var entity = event.getEntity();
-
         if(entity instanceof ServerPlayer player){
-            var wallet = player.getData(PLAYER_WALLET).getWallet();
-            sendToPlayer(player, new WalletSyncS2CP(wallet));
             if(event.getLevel() instanceof CustomLevel){
-                player.removeAllEffects();
+                for (var activeEffect : player.getActiveEffects()) {
+                    if(!(activeEffect instanceof JahdooMobEffect)){
+                        player.removeEffect(activeEffect.getEffect());
+                    }
+                }
             }
         }
     }
@@ -166,6 +167,17 @@ public class EventHelpers {
 
             if (isWand && isShift && isAllowed) {
                 event.cancelWithResult(SKIP_DEFAULT_BLOCK_INTERACTION);
+            }
+        }
+    }
+
+    public static void restrictElytra(ServerPlayer serverPlayer, Level level) {
+        if(level instanceof CustomLevel){
+            var itemStack = serverPlayer.getItemBySlot(EquipmentSlot.CHEST);
+            if (itemStack.getItem() instanceof ElytraItem) {
+                if(serverPlayer.isFallFlying()){
+                    serverPlayer.stopFallFlying();
+                }
             }
         }
     }
@@ -218,7 +230,10 @@ public class EventHelpers {
         }
     }
 
-    public static void onFirstTimeJoined(CompoundTag data, Player player, CompoundTag playerData) {
+    public static void onFirstTimeJoined(Player player) {
+        var playerData = player.getPersistentData();
+        var data = playerData.getCompound(Player.PERSISTED_NBT_TAG);
+
         if (!data.getBoolean("first_join")) {
             if(player instanceof ServerPlayer serverPlayer){
                 var castingData = player.getData(CASTER_DATA.get());
@@ -246,6 +261,35 @@ public class EventHelpers {
                     event.setCanceled(true);
                 }
             }
+        }
+    }
+
+    public static void removeShieldUse(PlayerInteractEvent.RightClickItem rightClickItem) {
+        if(rightClickItem.getItemStack().getItem() instanceof ShieldItem && rightClickItem.getLevel() instanceof CustomLevel){
+            rightClickItem.setCanceled(true);
+            rightClickItem.getEntity().displayClientMessage(Helpers.withStyleComponent("This item doesn't work here", ColourStore.OFF_WHITE), true);
+        }
+    }
+
+    public static void shieldBlock(LivingShieldBlockEvent event, LivingEntity entity) {
+        var curioSlotsItems = CuriosApi.getCuriosInventory(entity);
+        if(curioSlotsItems.isEmpty()) return;
+
+        var withSlots = curioSlotsItems.get().getEquippedCurios();
+        var shieldSlots = withSlots.getStackInSlot(2);
+        if (shieldSlots.isEmpty()) return;
+
+        var shieldDurability = durabilityDamageCount(shieldSlots);
+        var blockPercentage = shieldSlots.get(ComponentReg.SHIELD_BLOCK_CHANCE);
+        if(blockPercentage == null) return;
+
+        var blockChance = Maths.percentageChance(blockPercentage);
+        if (blockChance && shieldDurability > 0) {
+            event.setBlocked(true);
+            var damage = (int) (event.getBlockedDamage());
+
+            hurtAndKeepItem(shieldSlots, damage, event.getEntity().level(), entity);
+            getSoundWithPositionV(entity.level(), entity.position(), SHIELD_BLOCK, 1, 1);
         }
     }
 

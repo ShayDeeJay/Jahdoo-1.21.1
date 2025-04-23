@@ -196,5 +196,11 @@
     "sounds": [
       "jahdoo:quest_complete"
     ]
+  },
+  "vitality_ability": {
+    "subtitles": "sounds.jahdoo.vitality_ability",
+    "sounds": [
+      "jahdoo:vitality_ability"
+    ]
   }
 }

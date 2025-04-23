@@ -20,6 +20,7 @@ import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
 import org.jahdoo.common.items.magnet.Magnet;
 import org.jahdoo.common.items.pendent.Pendent;
 import org.jahdoo.common.items.runes.RuneItem;
+import org.jahdoo.common.items.shields.JahdooShieldItem;
 import org.jahdoo.common.items.tome.TomeOfUnity;
 import org.jahdoo.common.items.caster_item.elemental_wand.FrostWand;
 import org.jahdoo.common.items.caster_item.elemental_wand.InfernoWand;
@@ -103,6 +104,9 @@ public class ItemReg {
 
     public static final DeferredHolder<Item, Item> MAGNET =
         complexItem("magnet", Magnet::new);
+
+    public static final DeferredHolder<Item, Item> BASIC_SHIELD =
+        complexItem("basic_shield", JahdooShieldItem::new);
 
     //Block Items
     public static final DeferredHolder<Item, Item> DISASSEMBLER_ITEM =

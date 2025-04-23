@@ -118,7 +118,8 @@ public class AttributeReg {
         Holder<Attribute> attribute,
         double value,
         EquipmentSlot equipmentSlot,
-        boolean isRandomId
+        boolean isRandomId,
+        String prefix
     ){
         var attributeList = new ArrayList<>(itemStack.getAttributeModifiers().modifiers().stream().toList());
         var itemAttributes = new ItemAttributeModifiers(attributeList, false);
@@ -127,7 +128,7 @@ public class AttributeReg {
             .filter(att -> att.modifier().id().getPath().equals(name))
             .findFirst();
         existingModifier.ifPresent(attributeList::remove);
-        var attributes = setAttribute(name, attribute, value, equipmentSlot, isRandomId);
+        var attributes = setAttribute(name, attribute, value, equipmentSlot, isRandomId, prefix);
         attributeList.add(attributes);
         itemStack.set(DataComponents.ATTRIBUTE_MODIFIERS, itemAttributes);
     }
@@ -148,12 +149,12 @@ public class AttributeReg {
             .findFirst();
 
         existingModifier.ifPresent(modList::remove);
-        modList.add(index, setAttribute(name, attribute, value, equipmentSlot, true));
+        modList.add(index, setAttribute(name, attribute, value, equipmentSlot, true, ""));
         return itemAttributes;
     }
 
-    public static ItemAttributeModifiers.Entry setAttribute(String name, Holder<Attribute> attribute, double value, EquipmentSlot equipmentSlot, boolean isRandomId){
-        var resourcelocation = isRandomId ? res(String.valueOf(UUID.randomUUID())) : parse(name);
+    public static ItemAttributeModifiers.Entry setAttribute(String name, Holder<Attribute> attribute, double value, EquipmentSlot equipmentSlot, boolean isRandomId, String prefix){
+        var resourcelocation = isRandomId ? res(prefix + UUID.randomUUID()) : parse(name);
         var attributes = new AttributeModifier(resourcelocation, value, ADD_VALUE);
         
         return new ItemAttributeModifiers.Entry(attribute, attributes,  EquipmentSlotGroup.bySlot(equipmentSlot));

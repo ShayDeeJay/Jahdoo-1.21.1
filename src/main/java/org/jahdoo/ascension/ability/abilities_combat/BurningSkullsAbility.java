@@ -26,7 +26,7 @@ public class BurningSkullsAbility extends Ability {
     public static void vitalitySoundEffect(Player player) {
         if(player instanceof ServerPlayer serverPlayer){
             Helpers.sendClientSound(serverPlayer, SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
-            Helpers.sendClientSound(serverPlayer, SoundReg.FROST_ABILITY.get(), 2, 1.2F);
+            Helpers.sendClientSound(serverPlayer, SoundReg.VITALITY_ABILITY.get(), 2, 1.2F);
         }
     }
 

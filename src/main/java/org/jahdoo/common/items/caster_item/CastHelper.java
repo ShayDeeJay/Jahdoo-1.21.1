@@ -127,7 +127,7 @@ public class CastHelper {
             var getElement = getAbility.getElemenType();
 
             if (!player.isCreative()) {
-                if(CasterItemHelper.getDamageCalculation(wandItem) > 0){
+                if(durabilityDamageCount(wandItem) > 0){
                     if (validManaAndCooldown(player)) {
                         if (!getAbility.selfChargeAbility()) {
                             var cooldownCost = CasterData.getSpecificValue(player, COOLDOWN);

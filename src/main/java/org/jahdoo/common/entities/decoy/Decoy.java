@@ -19,18 +19,13 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.EntityReg;
-import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 import static net.minecraft.network.syncher.EntityDataSerializers.FLOAT;
 import static net.minecraft.network.syncher.EntityDataSerializers.INT;
 import static net.minecraft.network.syncher.SynchedEntityData.Builder;
 import static net.minecraft.network.syncher.SynchedEntityData.defineId;
 import static net.minecraft.util.RandomSource.create;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.mod.ElementReg.vitality;
 
 public class Decoy extends Mob {
@@ -60,6 +55,7 @@ public class Decoy extends Mob {
     public float getScale() {
         return this.entityData.get(SCALE);
     }
+
 
     public void setScale(float getSelectedAbility) {
         this.entityData.set(SCALE, getSelectedAbility);
@@ -105,7 +101,9 @@ public class Decoy extends Mob {
 
 
     private void onAttract(Mob mob) {
-        mob.setTarget(this);
+        if(mob.getTarget() == this.player){
+            mob.setTarget(this);
+        }
     }
 
     @Override
@@ -138,7 +136,7 @@ public class Decoy extends Mob {
 
     private void onDiscard() {
         if(this.tickCount >= this.getMaxLifetime() && player != null) {
-            Helpers.getSoundWithPosition(level(), this.blockPosition(), SoundReg.ORB_FIRE.get(), 2, 2f);
+            Helpers.getSoundWithPositionV(player.level(), player.position(), getElement().sound(), 1, 1.4f);
             EscapeDecoyAbility.onExistenceChange(this, getElement());
             this.discard();
         }
@@ -167,15 +165,10 @@ public class Decoy extends Mob {
     }
 
     public void pullParticlesToCenter(){
-        var bakedParticlesOptions =
-            bakedParticle(vitality().id(), 6, 2f, false);
+        extracted(getElement());
+    }
 
-        var genericParticleOptions =
-            ParticleHandlers.genericParticle(GENERIC_PARTICLE, this.getElement(), 6, 2f);
-
-        var particleOptionsList =
-            List.of(bakedParticlesOptions, genericParticleOptions);
-
+    public void extracted(AbstractElement element) {
         PositionFinders.innerRadiusRandom(
             this.position()
                 .add(0,this.getBbHeight()/2,0)
@@ -189,7 +182,7 @@ public class Decoy extends Mob {
 
                 ParticleHandlers.sendParticles(
                     this.level(),
-                    Helpers.listRandom(particleOptionsList),
+                    ParticleHandlers.getAllParticleTypes(element, 6, 2),
                     positions,
                     0,
                     directions.x,

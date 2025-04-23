@@ -1,7 +1,6 @@
 package org.jahdoo.ascension.ability.abilities_combat;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +15,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.decoy.Decoy;
 import org.jahdoo.common.registers.EffectReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
@@ -94,8 +94,8 @@ public class EscapeDecoyAbility extends Ability {
         player.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, duration, 0));
         player.addEffect(new JahdooMobEffect(EffectReg.CLIMBER, duration, 1));
 
-        Helpers.getSoundWithPositionV(player.level(), player.position(), SoundEvents.WARDEN_ATTACK_IMPACT, 1,0.6f);
-        Helpers.getSoundWithPositionV(player.level(), player.position(), SoundEvents.CAMEL_DASH, 1,1.6f);
+        Helpers.getSoundWithPositionV(player.level(), player.position(), getElemenType().sound(), 1, 0.8f);
+        Helpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.TELEPORT.get(), 2, 0.6F);
 
         var yaw = Math.toDegrees(Math.atan2(lookVector.z, lookVector.x)) + 270.0;
         decoy.setYRot((float) yaw);

@@ -2,20 +2,19 @@ package org.jahdoo.ascension.ability.abilities_combat.eternal_wizard;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.ability.AbilityBuilder;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.GlobalStrings;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 
-import static net.minecraft.core.BlockPos.containing;
-import static net.minecraft.sounds.SoundEvents.ELDER_GUARDIAN_DEATH;
-import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.ascension.utils.Helpers.res;
-import static org.jahdoo.common.registers.SoundReg.EXPLOSION;
 import static org.jahdoo.common.registers.mod.EntityDataReg.SUMMON_ETERNAL_WIZARD;
 
 public class SummonEternalWizardAbility extends Ability {
@@ -63,9 +62,13 @@ public class SummonEternalWizardAbility extends Ability {
         var aoeCloud = new AoeCloud(player.level(), player, 0f, SUMMON_ETERNAL_WIZARD.get().setAbilityId(), abilityId.getPath().intern());
 
         aoeCloud.setPos(location.x, location.y, location.z);
-        getSoundWithPosition(player.level(), containing(location), ELDER_GUARDIAN_DEATH, 2F, 1.4F);
-        getSoundWithPosition(player.level(), containing(location), EXPLOSION.get(), 2F, 1.2F);
+        summonMinionSound(player, location);
         player.level().addFreshEntity(aoeCloud);
+    }
+
+    public static void summonMinionSound(Player player, Vec3 location) {
+        Helpers.getSoundWithPositionV(player.level(), player.position(), ElementReg.vitality().sound(), 1, 1f);
+        Helpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.TELEPORT.get(), 2, 0.8F);
     }
 
     @Override

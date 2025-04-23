@@ -34,7 +34,6 @@ import java.util.function.Consumer;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.InteractionHand.OFF_HAND;
-import static org.jahdoo.ascension.rarity.JahdooRarity.attachRarityTooltip;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
@@ -117,6 +116,7 @@ public class CasterItemHelper {
         var type = withStyleComponent(abstractElement.name(), abstractElement.textColourA());
         var colourPre = rgbToInt(198, 198, 198);
         var attributes = itemStack.getAttributeModifiers().modifiers().stream().toList();
+;
         if(!attributes.isEmpty()){
             appendComponents.add(Component.empty());
             appendComponents.add(withStyleComponentTrans(PREFIX + "get_modifiers", colourPre, type));
@@ -141,13 +141,9 @@ public class CasterItemHelper {
         var appendComponents = new ArrayList<Component>();
         var abstractElement = fromWand(wandItem.getItem());
         if(abstractElement.isPresent()){
-            var e = attachRarityTooltip(wandItem, level);
-            if(e != null) appendComponents.add(e);
-            appendRefinementPotential(appendComponents, wandItem);
-
-            appendDurability(wandItem, appendComponents);
 
             attributeToolTips(wandItem, appendComponents, abstractElement.get());
+
             if (!getAllSlots(wandItem).isEmpty()) appendComponents.add(Component.empty());
         }
         return appendComponents;
@@ -160,20 +156,12 @@ public class CasterItemHelper {
             var split = maxDamage/3;
             var durabilityColourIndicator = damageTaken <= split ? PERK_GREEN : damageTaken <= split * 2.5 ? ABSORPTION_YELLOW : NEGATIVE_RED;
             var prefix = Helpers.withStyleComponent("Durability: ", HEADER_COLOUR);
-            var currentDurability = Helpers.withStyleComponent(getDamageCalculation(wandItem) + "", durabilityColourIndicator);
+            var currentDurability = Helpers.withStyleComponent(durabilityDamageCount(wandItem) + "", durabilityColourIndicator);
             var maxDurability = Helpers.withStyleComponent("/" + maxDamage, SUB_HEADER_COLOUR);
             appendComponents.add(prefix.copy().append(currentDurability).copy().append(maxDurability));
         }
     }
 
-    public static int getDamageCalculation(ItemStack itemStack){
-        var maxDamage = itemStack.get(DataComponents.MAX_DAMAGE);
-        var damageTaken = itemStack.get(DataComponents.DAMAGE);
-        if(maxDamage != null && damageTaken != null){
-            return maxDamage - damageTaken;
-        }
-        return 0;
-    }
 
     static void canOffhandWand(
         ItemStack itemStack,
@@ -197,19 +185,16 @@ public class CasterItemHelper {
     }
 
     static void bonusModifierTooltip(ItemStack stack, List<Component> toolTip, Item.TooltipContext context) {
-        var list = stack.getAttributeModifiers().modifiers().stream().toList();
-        if(list.size() > 3){
-            var text = "Bonus Modifiers";
-            var gold = color(255, 215, 0);
-            var comp = highlightTextComponent(context.level(), text, HEADER_COLOUR, gold, 2, 20);
-            toolTip.add(comp);
-            var runeHolder = stack.get(RUNE_HOLDER);
-            var maxSize = runeHolder != null ? runeHolder.runeSlots().size() : list.size();
-            for (var entry : list.subList(3, Math.max(maxSize, 4))) {
-                toolTip.add(RuneHelpers.standAloneAttributes(entry));
-            }
-            toolTip.add(Component.empty());
-        }
+        var list = stack.getAttributeModifiers().modifiers().stream().filter(e -> e.modifier().id().getPath().contains("bonus")).toList();
+        if(list.isEmpty()) return;
+
+        var text = "Bonus Modifiers";
+        var gold = color(255, 215, 0);
+        var comp = highlightTextComponent(context.level(), text, HEADER_COLOUR, gold, 2, 20);
+        toolTip.add(comp);
+
+        for (var entry : list) toolTip.add(RuneHelpers.standAloneAttributes(entry));
+        toolTip.add(Component.empty());
     }
 
     public static boolean canOffHand(
@@ -246,17 +231,20 @@ public class CasterItemHelper {
 
         var newAttributes = wandOnlyAttributes.subList(0, Math.max(wandOnlyAttributes.size(), 1));
 
+
         if(!newAttributes.isEmpty()){
             var colourSuf = rgbToInt(145, 145, 145);
             for (ItemAttributeModifiers.Entry entry : newAttributes) {
-                Component translatable;
-                var value = roundNonWholeString(singleFormattedDouble(entry.modifier().amount()));
-                var valueWithFix = "+" + value + "%";
-                var descriptionId = entry.attribute().value().getDescriptionId();
-                translatable = withStyleComponent(valueWithFix, colourSuf)
-                    .copy()
-                    .append(withStyleComponentTrans(descriptionId, colourSuf).getString().replace(element.name(), ""));
-                appendComponents.add(translatable);
+                if(entry.modifier().id().getPath().contains("wand")){
+                    Component translatable;
+                    var value = roundNonWholeString(singleFormattedDouble(entry.modifier().amount()));
+                    var valueWithFix = "+" + value + "%";
+                    var descriptionId = entry.attribute().value().getDescriptionId();
+                    translatable = withStyleComponent(valueWithFix, colourSuf)
+                        .copy()
+                        .append(withStyleComponentTrans(descriptionId, colourSuf).getString().replace(element.name(), ""));
+                    appendComponents.add(translatable);
+                }
             }
         }
         return appendComponents;

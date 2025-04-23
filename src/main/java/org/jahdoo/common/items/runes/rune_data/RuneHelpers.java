@@ -65,7 +65,7 @@ public class RuneHelpers {
 
     public static void generateFullRune(ItemStack stack, RuneGenerator runGen) {
         var isPercentage = runGen.getPercentage() > 0 ? (runGen.getValue() * runGen.getPercentage()) / 100 : runGen.getValue();
-        replaceOrAddAttribute(stack, runGen.getType().getRegisteredName(), runGen.getType(), isPercentage, EquipmentSlot.MAINHAND, true);
+        replaceOrAddAttribute(stack, runGen.getType().getRegisteredName(), runGen.getType(), isPercentage, EquipmentSlot.MAINHAND, true, "rune");
         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(runGen.getModelData()));
 
         var value = new RuneData(runGen.getElementId(), runGen.getName(), runGen.getDescription(), runGen.getColour(), runGen.getRarity().getId(), runGen.getTier());

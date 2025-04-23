@@ -9,6 +9,9 @@ import net.minecraft.commands.arguments.EntityArgument;
 import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.PlayerTrialData;
 import org.jahdoo.ascension.attachments.RunData;
+import org.jahdoo.ascension.trading_post.ShoppingItems;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 
@@ -59,6 +62,30 @@ public class PlayerLevelCommand {
                                         Commands.argument("amount", IntegerArgumentType.integer())
                                             .executes(
                                                 context -> addExperience(context.getSource(), IntegerArgumentType.getInteger(context, "amount"))
+                                            )
+                                    )
+                            )
+                    )
+                    .then(
+                        Commands.literal("add_skill_points")
+                            .then(
+                                Commands.argument("targets", EntityArgument.players())
+                                    .then(
+                                        Commands.argument("amount", IntegerArgumentType.integer())
+                                            .executes(
+                                                context -> addSkillPoints(context.getSource(), IntegerArgumentType.getInteger(context, "amount"))
+                                            )
+                                    )
+                            )
+                    )
+                    .then(
+                        Commands.literal("remove_skill_points")
+                            .then(
+                                Commands.argument("targets", EntityArgument.players())
+                                    .then(
+                                        Commands.argument("amount", IntegerArgumentType.integer())
+                                            .executes(
+                                                context -> removeSkillPoints(context.getSource(), IntegerArgumentType.getInteger(context, "amount"))
                                             )
                                     )
                             )
@@ -126,6 +153,36 @@ public class PlayerLevelCommand {
                     )
             )
         );
+
+        dispatcher.register(Commands.literal(MOD_ID).requires(sender -> sender.hasPermission(2))
+            .then(
+                Commands.literal("give_items")
+                    .then(
+                        Commands.literal("shield")
+                            .then(
+                                Commands.argument("count", IntegerArgumentType.integer())
+                                    .then(
+                                        Commands.argument("targets", EntityArgument.players())
+                                            .executes(
+                                                context -> getShield(context.getSource(), IntegerArgumentType.getInteger(context, "count"))
+                                            )
+                                    )
+                            )
+                    )
+                    .then(
+                        Commands.literal("wand")
+                            .then(
+                                Commands.argument("count", IntegerArgumentType.integer())
+                                    .then(
+                                        Commands.argument("targets", EntityArgument.players())
+                                            .executes(
+                                                context -> getWand(context.getSource(), IntegerArgumentType.getInteger(context, "count"))
+                                            )
+                                    )
+                            )
+                    )
+            )
+        );
     }
 
     private static int endRun(CommandSourceStack source, boolean died){
@@ -153,6 +210,24 @@ public class PlayerLevelCommand {
         return 1;
     }
 
+    private static int addSkillPoints(CommandSourceStack source, int skillPoints){
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        CasterData.incrementAbilityPoints(player, skillPoints);
+        sendToPlayer(player, new CastingDataSyncS2CP(player.getData(AttachmentReg.CASTER_DATA)));
+        return 1;
+    }
+
+    private static int removeSkillPoints(CommandSourceStack source, int skillPoints){
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        CasterData.decrementAbilityPoints(player, skillPoints);
+        sendToPlayer(player, new CastingDataSyncS2CP(player.getData(AttachmentReg.CASTER_DATA)));
+        return 1;
+    }
+
     private static int regretAbilities(CommandSourceStack source){
         var player = source.getPlayer();
         if(player == null) return 0;
@@ -174,6 +249,25 @@ public class PlayerLevelCommand {
         if(player == null) return 0;
 
         CasterData.setToLevel(player, level);
+        return 1;
+    }
+
+    private static int getShield(CommandSourceStack source, int count) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+        for (int i = 0; i < count; i++){
+            Helpers.throwOrAddItem(player, ShoppingItems.getShieldWithRarity());
+        }
+        return 1;
+    }
+
+    private static int getWand(CommandSourceStack source, int count) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (int i = 0; i < count; i++){
+            Helpers.throwOrAddItem(player, ShoppingItems.soldWands().ShoppingItem());
+        }
         return 1;
     }
 

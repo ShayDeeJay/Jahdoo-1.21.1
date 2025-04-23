@@ -64,7 +64,7 @@ public class MysticalSemtexAbility extends Ability {
             EntityReg.MYSTIC_ELEMENT_PROJECTILE.get(),
             player,
             EntityDataReg.MYSTICAL_SEMTEX.get().setAbilityId(),
-            offsetShoot(player),
+            0,
             abilityId.getPath().intern()
         );
         elementProjectile.setPredicate(1);

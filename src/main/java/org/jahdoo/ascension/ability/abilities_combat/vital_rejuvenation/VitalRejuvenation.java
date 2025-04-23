@@ -1,6 +1,5 @@
 package org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation;
 
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -15,8 +14,8 @@ import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -27,7 +26,6 @@ import static org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.V
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.addTransientAttribute;
 import static org.jahdoo.common.items.caster_item.CastHelper.validManaAndCooldown;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttachmentReg.VITAL_REJUVENATION;
 
@@ -43,14 +41,14 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     }
 
     private void unSuccessfulCast(Player player) {
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.HEAL.get(), 0.8f, 0.8f);
+        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), ElementReg.vitality().sound(), 0.8f, 1.2f);
         PositionFinders.getOuterRingOfRadius(player.position(), 0.3, 30, vec3 -> setCastingAnimation(vec3, player));
     }
 
     public static void successfulCastAnimation(LivingEntity player) {
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, 1f,1.2f);
-        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.HEAL.get(), 1f,1f);
-        PositionFinders.getOuterRingOfRadius(player.position(), 0.2, 30, vec3 -> setRejuvenationSuccessEffect(vec3, player));
+        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), ElementReg.vitality().sound(), 1f,1.2f);
+        Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.IMPACT.get(), 1f,0.8f);
+        setRejuvenationSuccessEffect(player);
     }
 
     private void successfulCast(Player player, AbilityHolder wandAbilityHolder) {
@@ -83,19 +81,30 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
         );
     }
 
-    public static void setRejuvenationSuccessEffect(Vec3 worldPosition, LivingEntity livingEntity){
-        var directions = worldPosition.subtract(livingEntity.position()).normalize();
-        var lifetime = 8;
-        var element = ElementReg.vitality();
-        var col1 = element.partColourA();
-        var col2 = element.partColourFade();
-        var bakedParticle = bakedParticle(element.id(), lifetime, 0.1f, true);
-        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 0.1f, col1, col2, true);
+    public static void setRejuvenationSuccessEffect(LivingEntity livingEntity){
+        var position = livingEntity.position();
 
-        if(livingEntity.level().isClientSide){
-            ParticleHandlers.sendParticles(livingEntity.level(), bakedParticle, worldPosition, 0, directions.x, directions.y + 4, directions.z, Random.nextDouble(3, 6));
-            ParticleHandlers.sendParticles(livingEntity.level(), genericParticle, worldPosition, 0, directions.x, directions.y + 4, directions.z, Random.nextDouble(3, 6));
-        }
+        PositionFinders.innerRadiusRandom(
+            position.add(0,livingEntity.getBbHeight() /2, 0), 3, 100,
+            positions -> {
+                var directions = position
+                    .subtract(positions)
+                    .normalize()
+                    .add(0,livingEntity.getBbHeight() /2,0);
+
+                ParticleHandlers.sendParticles(
+                    livingEntity.level(),
+                    ParticleHandlers.getAllParticleTypes(ElementReg.vitality(), 18, 2),
+                    positions,
+                    0,
+                    directions.x,
+                    Random.nextDouble(-0.3, 0.3),
+                    directions.z,
+                    0.3
+                );
+            }
+        );
+
     }
 
     @Override

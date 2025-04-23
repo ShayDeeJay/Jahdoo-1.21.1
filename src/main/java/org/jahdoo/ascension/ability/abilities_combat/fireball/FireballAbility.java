@@ -60,7 +60,7 @@ public class FireballAbility extends Ability {
     @Override
     public void invokeAbility(Player player) {
         var projCount = 1;
-        fireMultiShotProjectile(projCount, 0.5f, player, 0.1,
+        fireMultiShotProjectile(projCount, 0.5f, player, 0,
             () -> new ElementProjectile(
                 EntityReg.INFERNO_ELEMENT_PROJECTILE.get(), player,
                 EntityDataReg.FIRE_BALL.get().setAbilityId(), projCount == 1 ? offsetShoot(player) : 0,

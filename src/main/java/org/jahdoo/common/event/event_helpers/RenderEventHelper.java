@@ -74,7 +74,7 @@ public class RenderEventHelper {
         var playerPosition = player.position();
         var playerDirection = player.getLookAngle(); // Direction the player is looking
 
-        LivingEntity nearestEntity = player.level().getNearestEntity(
+        var nearestEntity = player.level().getNearestEntity(
             Mob.class,
             TargetingConditions.DEFAULT,
             player,
@@ -84,9 +84,7 @@ public class RenderEventHelper {
 
         if (nearestEntity == null) return null;
         var targetDirection = nearestEntity.position().subtract(playerPosition).normalize();
-
-        double angleToTarget = Math.toDegrees(Math.acos(playerDirection.dot(targetDirection)));
-
+        var angleToTarget = Math.toDegrees(Math.acos(playerDirection.dot(targetDirection)));
         if (angleToTarget <= maxAngle) return nearestEntity; else return null;
     }
 
