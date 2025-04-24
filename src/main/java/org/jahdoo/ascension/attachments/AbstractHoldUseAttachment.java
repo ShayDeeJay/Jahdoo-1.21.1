@@ -23,11 +23,6 @@ public abstract class AbstractHoldUseAttachment implements IAttachment {
     }
 
     public void onTickMethod(Player player){
-
-        if(player.isUsingItem()){
-            player.setDeltaMovement(0, player.getDeltaMovement().y, 0);
-        }
-
         if(!player.isUsingItem()) {
             startedUsing = false;
         }

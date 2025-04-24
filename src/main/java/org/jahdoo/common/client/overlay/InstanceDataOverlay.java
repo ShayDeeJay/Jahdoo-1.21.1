@@ -71,7 +71,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         timer = Math.max(0, timer - 1);
         instanceData = getInstanceData;
 
-        if(getInstanceData.getDifficulty().isEmpty() || getQuest.isEmpty()) {
+        if(getInstanceData.getDifficulty().isEmpty() && getQuest.isEmpty()) {
             timer = 0;
         }
 
@@ -83,13 +83,16 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         var getRunData = mc.player.getData(AttachmentReg.RUN_DATA.get());
         var questId = getRunData.getCurrentQuestId();
         var getQuest = QuestReg.getQuestByName(questId);
+        var size = 18;
+        var remainingTime = getInstanceData.getMaxTime() - getInstanceData.getTicks();
+        var roomsCleared = getInstanceData.getClearedRooms();
+        var clockX = 8;
+        var font = mc.font;
 
         if(getQuest.isPresent()){
             var baseWidth = 60;
-            var size = 18;
             var offsetX = graphics.guiWidth()/2 - baseWidth;
             var offsetY = (int) fade - 20;
-            var remainingTime = getInstanceData.getMaxTime() - getInstanceData.getTicks();
             var quest = getQuest.get();
             var current = getRunData.getStat(questId);
             var needed = quest.questQuantity(mc.player);
@@ -99,7 +102,6 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
             var startY = offsetY + 30;
             var height = 4;
             var offset = 3;
-            var font = mc.font;
             var colourBorder = quest.questColour();
 
             SharedUI.boxMaker(graphics, offsetX, startY, baseWidth, height, SUB_HEADER_COLOUR, uiFade(), uiFade());
@@ -109,12 +111,16 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
                 SharedUI.boxMaker(graphics, offsetX + offset, startY + offset, Math.max((int) barWidth, 1), height - offset, colourBorder, colourBorder, colourBorder);
             }
 
-            var clockX = 8;
-            graphics.blit(Icons.CLOCK, clockX - 3, (int) (fade), 0, 0, size, size, size, size);
-            graphics.drawString(font, appendStat("", ticksToTime(valueOf(remainingTime)), remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED), clockX + 16, (int) (6 + fade), -1, false);
             graphics.drawCenteredString(font, appendStat("Quest: ", quest.getDisplayName(), quest.questColour()), offsetX + baseWidth, startY - 12, -1);
             graphics.drawCenteredString(font, withStyleComponent(display, colour), offsetX + baseWidth, startY + (height * 2) + 3, -1);
         }
+
+        graphics.blit(Icons.CLOCK, clockX - 3, (int) (fade), 0, 0, size, size, size, size);
+        graphics.drawString(font, appendStat("", ticksToTime(valueOf(remainingTime)), remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED), clockX + 16, (int) (6 + fade), -1, false);
+
+        var i = 16;
+        graphics.blit(Icons.ROOMS_CLEARED, clockX - 3, (int) (fade) + i, 0, 0, size, size, size, size);
+        graphics.drawString(font, "" + roomsCleared, clockX + 16, (int) (6 + fade) + i, -1, false);
         return getQuest;
     }
 

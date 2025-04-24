@@ -190,7 +190,7 @@ public class BlockSetupManager {
             level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, 0));
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
-                var randomWandForSale = ShoppingItems.soldWands();
+                var randomWandForSale = ShoppingItems.soldWands(null);
                 entity.setItem(randomWandForSale.ShoppingItem());
                 entity.setCost(randomWandForSale.itemCosts());
             }
@@ -201,7 +201,7 @@ public class BlockSetupManager {
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
                 var randomLootItem = new ItemStack(RUNE);
-                RuneHelpers.generateRandomTypAttribute(randomLootItem, null);
+                RuneHelpers.generateRandomTypAttribute(randomLootItem, null, null);
                 entity.setItem(randomLootItem);
                 entity.setCost(setGoldCost(10));
             }

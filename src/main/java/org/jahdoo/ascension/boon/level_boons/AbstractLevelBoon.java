@@ -31,9 +31,11 @@ public abstract class AbstractLevelBoon {
 
     abstract public JahdooRarity rarity();
 
-//    abstract public boolean isPlayerExclusive();
-
     abstract public void execute(ServerLevel level, double value);
+
+    public int textColour(){
+        return isPositive() ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED;
+    }
 
     public Component boonLabel(double value, String id){
         var displayValue = Maths.roundNonWholeString(value);
@@ -41,10 +43,6 @@ public abstract class AbstractLevelBoon {
         var getBy = Objects.equals(id, "time") ? displayTime : displayValue;
 
         return withStyleComponent("+" + getBy + (isPercentageOf() ? "% " : " ") + stringIdToName(id), textColour());
-    }
-
-    public int textColour(){
-        return isPositive() ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED;
     }
 
     public record SyncableData(String id, ResourceLocation icon, double value, Component label){

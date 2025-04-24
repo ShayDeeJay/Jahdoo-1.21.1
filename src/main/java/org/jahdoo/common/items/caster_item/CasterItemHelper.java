@@ -141,9 +141,7 @@ public class CasterItemHelper {
         var appendComponents = new ArrayList<Component>();
         var abstractElement = fromWand(wandItem.getItem());
         if(abstractElement.isPresent()){
-
             attributeToolTips(wandItem, appendComponents, abstractElement.get());
-
             if (!getAllSlots(wandItem).isEmpty()) appendComponents.add(Component.empty());
         }
         return appendComponents;

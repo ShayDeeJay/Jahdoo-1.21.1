@@ -17,8 +17,7 @@ import static net.minecraft.network.chat.Component.translatable;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponentTrans;
-import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
-import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
+import static org.jahdoo.ascension.utils.Maths.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
 
@@ -96,7 +95,7 @@ public class OverlayHelpers {
         int maxLength = 0;
 
         for (var attribute : attributes) {
-            var s = roundNonWholeString(singleFormattedDouble(attribute.getValue()));
+            var s = roundNonWholeString(doubleFormattedDouble(attribute.getValue()));
             var length = Component.translatable(attribute.getAttribute().value().getDescriptionId()).getString().length() + s.length();
             if(length > maxLength) maxLength = length;
         }
@@ -109,7 +108,7 @@ public class OverlayHelpers {
             var text = syncableAttribute.getAttribute().value().getDescriptionId();
             var prefix = withStyleComponentTrans(text, SUB_HEADER_COLOUR);
             var value = syncableAttribute.getValue();
-            var readableValues = roundNonWholeString(singleFormattedDouble(value));
+            var readableValues = roundNonWholeString(doubleFormattedDouble(value));
             var suffix = withStyleComponent(" " + readableValues, value > 0 ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED);
             var string = prefix.copy().append(Component.literal(":")).append(suffix);
 

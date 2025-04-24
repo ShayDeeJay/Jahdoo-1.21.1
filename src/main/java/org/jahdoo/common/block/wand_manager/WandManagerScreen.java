@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.element.AbstractElement;
@@ -29,6 +30,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
+import static net.minecraft.world.item.TooltipFlag.ADVANCED;
+import static net.neoforged.neoforge.client.ClientTooltipFlag.of;
 import static org.jahdoo.ascension.utils.ColourStore.BORDER_COLOUR;
 import static org.jahdoo.ascension.utils.Helpers.filterList;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
@@ -58,7 +61,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         element.ifPresent(
             getElement -> {
                 this.element = getElement;
-                this.borderColour =  color(100, getElement.textColourA());
+                this.borderColour = color(100, getElement.textColourA());
             }
         );
         this.wandManager = menu;
@@ -258,7 +261,6 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     }
 
     private void experienceCost(GuiGraphics guiGraphics, int mouseX, int mouseY, int i, int startY) {
-
         var player = this.getMinecraft().player;
         if(player == null) return;
         var exp = player.experienceLevel;
@@ -284,7 +286,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
 
         var modifiers = wandItemCopy.getAttributeModifiers().modifiers();
         for (var modifier : modifiers) {
-            if(maxCounter < Math.min(3, modifiers.size())){
+            if(maxCounter < Math.max(3, modifiers.size())){
                 var attribute = modifier.attribute();
                 var id = attribute.getRegisteredName();
                 var rarityId = wandItemCopy.get(JAHDOO_RARITY);
@@ -296,7 +298,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
                         case String s when s.contains("mana.cost_reduction") -> ranges.getRandomManaReduction();
                         default -> ranges.getRandomDamage();
                     };
-                    wandItemCopy.set(ATTRIBUTE_MODIFIERS, replaceOrAddAttribute(wandItemCopy.getAttributeModifiers().modifiers().stream().toList(), id, attribute, value, MAINHAND, maxCounter));
+                    wandItemCopy.set(ATTRIBUTE_MODIFIERS, replaceOrAddAttribute(modifiers.stream().toList(), id, attribute, value, MAINHAND, maxCounter));
                 }
 
                 maxCounter++;
@@ -358,8 +360,10 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         int startY
     ) {
         if(getWand().getItem() instanceof CasterItem){
-            var itemModifiers = CasterItemHelper.getItemModifiers(getWand(), getMinecraft().level);
-            var rarityAndSlots = filterList(itemModifiers, "Rarity", "Slots", "Potential");
+            var level = getMinecraft().level;
+            var player = getMinecraft().player;
+            var itemModifiers = getWand().getTooltipLines(Item.TooltipContext.of(level), player, of(ADVANCED));
+            var rarityAndSlots = filterList(itemModifiers, "Rarity", "Potential");
             var modifiersAndHeader = filterList(itemModifiers, "%");
             var widthHeader = 0;
             var widthProperties = 0;

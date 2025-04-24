@@ -253,7 +253,7 @@ public class RunScreen extends AbstractPanableScreen {
 
         allComponents.add(new StatEntry(componentTemplate("Run Time", ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), PERK_GREEN), CLOCK));
         allComponents.add(new StatEntry(componentTemplate("Total Exp", runData.getStat(EXPERIENCE) + "XP", COSMIC_PURPLE), TRIAL_EXPERIENCE));
-        allComponents.add(new StatEntry(componentTemplate("Rooms Cleared", runData.getStat(ROOMS_CLEARED) + "", AETHER_BLUE), Icons.UP));
+        allComponents.add(new StatEntry(componentTemplate("Rooms Cleared", runData.getStat(RunData.ROOMS_CLEARED) + "", AETHER_BLUE), Icons.ROOMS_CLEARED));
 
         allComponents.add(new StatEntry(componentTemplate("Common Chest", runData.getStat(CHESTS_COMMON) + "", COMMON.getColour()), CHEST_COMMON));
         allComponents.add(new StatEntry(componentTemplate("Rare Chest", runData.getStat(CHESTS_RARE) + "", RARE.getColour()), CHEST_RARE));

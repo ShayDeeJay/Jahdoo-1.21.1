@@ -305,9 +305,9 @@ public class RewardLootTables {
         JahdooRarity runeRarity
     ) {
         switch (itemStack.getItem()){
-            case CasterItem ignored -> setGeneratedWand(rarity, itemStack);
+            case CasterItem ignored -> ShoppingItems.getRandomWand(rarity, itemStack);
             case TomeOfUnity ignored -> createTomeAttributes(rarity, itemStack);
-            case RuneItem ignored -> generateRandomTypAttribute(itemStack, runeRarity);
+            case RuneItem ignored -> generateRandomTypAttribute(itemStack, runeRarity, null);
             case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem, isSpecial);
             case SwordItem ignored -> enchantSword(serverLevel, itemStack, isSpecial);
             case EnchantedBookItem ignored -> enchantedBook(serverLevel, itemStack);

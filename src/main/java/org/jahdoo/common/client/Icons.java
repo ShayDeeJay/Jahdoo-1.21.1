@@ -85,6 +85,9 @@ public class Icons {
     public static final ResourceLocation ABILITY =
         res(PREFIX + "ability.png");
 
+    public static final ResourceLocation ROOMS_CLEARED =
+        res(PREFIX + "room.png");
+
     public static final ResourceLocation ABILITY_BACKGROUND =
         res(PREFIX + "ability_background.png");
 

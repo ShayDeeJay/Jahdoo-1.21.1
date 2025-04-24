@@ -14,8 +14,8 @@ import org.jahdoo.ascension.utils.Helpers;
 import java.util.EnumMap;
 import java.util.List;
 
-import static net.minecraft.sounds.SoundEvents.*;
-import static net.minecraft.world.item.crafting.Ingredient.*;
+import static net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_DIAMOND;
+import static net.minecraft.world.item.crafting.Ingredient.of;
 
 public class ArmorMaterialReg {
 

@@ -115,6 +115,7 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
             if(abilityHolder == null) return;
             var castDelay = CasterData.getSpecificValue(abilityHolder, CAST_DELAY);
 
+            player.setDeltaMovement(0, player.getDeltaMovement().y, 0);
 
             if(ticksUsing == 0) {
                 counter++;

@@ -149,7 +149,7 @@ public class AttributeReg {
             .findFirst();
 
         existingModifier.ifPresent(modList::remove);
-        modList.add(index, setAttribute(name, attribute, value, equipmentSlot, true, ""));
+        modList.add(index, setAttribute(name, attribute, value, equipmentSlot, true, "wand"));
         return itemAttributes;
     }
 

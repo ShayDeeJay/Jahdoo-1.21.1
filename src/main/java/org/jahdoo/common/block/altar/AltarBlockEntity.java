@@ -267,7 +267,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
                     addAndPositionEntity(serverLevel, containing(position), entity);
 
                     if(!this.spawnedChampion && Random.nextInt(100) == 0){
-                        entity.addEffect(new JahdooMobEffect(EffectReg.CHAMPION_EFFECT, -1, 1));
+                        entity.addEffect(new JahdooMobEffect(EffectReg.CHAMPION_EFFECT, -1, 2));
                         this.spawnedChampion = true;
                     }
 

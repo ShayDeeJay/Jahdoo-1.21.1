@@ -1,6 +1,5 @@
 package org.jahdoo.common.items;
 
-import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -25,10 +24,6 @@ public class ElementalSword extends SwordItem implements JahdooItem{
 
     public ElementalSword() {
         super(Tiers.NETHERITE, new Properties().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 10, -2.4F)));
-    }
-    @Override
-    public DataComponentMap components() {
-        return DataComponentMap.EMPTY;
     }
 
     @Override

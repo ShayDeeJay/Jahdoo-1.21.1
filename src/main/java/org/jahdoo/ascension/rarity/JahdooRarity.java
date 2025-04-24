@@ -2,28 +2,23 @@ package org.jahdoo.ascension.rarity;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
-import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.UnaryOperator;
 
-import static java.util.Objects.requireNonNull;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
 import static net.minecraft.world.entity.EquipmentSlot.OFFHAND;
@@ -38,19 +33,13 @@ import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 @IndexedEnum
 public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
 
-//    COMMON(0, "Common", color(120, 203, 83), 1, COMMON_ATTRIBUTES),
-//    RARE(1, "Rare", color(67, 164, 222), 1500, RARE_ATTRIBUTES),
-//    EPIC(2, "Epic", color(222, 136, 255), 4500, EPIC_ATTRIBUTES),
-//    LEGENDARY(3, "Legendary", color(241, 194, 50), 5500, LEGENDARY_ATTRIBUTES),
-//    ETERNAL(4, "Eternal", color(225,92,199), 6000, ETERNAL_ATTRIBUTES),
-//    UNIQUE(5, "Unique", color(104, 243, 252), -1, ETERNAL_ATTRIBUTES);
-
     COMMON(0, "Common", color(120, 203, 83), COMMON_ATTRIBUTES),
     RARE(1, "Rare", color(67, 164, 222), RARE_ATTRIBUTES),
     EPIC(2, "Epic", color(222, 136, 255), EPIC_ATTRIBUTES),
     LEGENDARY(3, "Legendary", color(241, 194, 50), LEGENDARY_ATTRIBUTES),
     ETERNAL(4, "Eternal", color(225,92,199), ETERNAL_ATTRIBUTES),
     UNIQUE(5, "Unique", color(104, 243, 252), ETERNAL_ATTRIBUTES);
+
     public static final List<Pair<JahdooRarity, Integer>> BASE_RARITY_CHANCES = List.of(
         Pair.of(COMMON, 1),
         Pair.of(RARE, 1500),
@@ -62,17 +51,12 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     private final int id;
     private final String name;
     private final int color;
-    private final UnaryOperator<Style> styleModifier;
-//    private final int chanceRange;
     private final RarityAttributes attributes;
-    private static final List<JahdooRarity> getAllRarities = List.of(COMMON, RARE, EPIC, LEGENDARY, ETERNAL, UNIQUE);
 
     JahdooRarity(int id, String name, int color, RarityAttributes attributes) {
         this.id = id;
         this.name = name;
         this.color = color;
-//        this.chanceRange = chanceRange;
-        this.styleModifier = style -> style.withColor(color);
         this.attributes = attributes;
     }
 
@@ -94,7 +78,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     }
 
     public static List<JahdooRarity> getAllRarities() {
-        return getAllRarities;
+        return Arrays.stream(JahdooRarity.values()).toList();
     }
 
     private static JahdooRarity getJahdooRarity(@Nullable JahdooRarity rarity) {
@@ -116,22 +100,13 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         var filteredList = new ArrayList<>(
             BASE_RARITY_CHANCES
                 .stream()
-                .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom)
+                .filter(rarity -> rarity.getSecond() <= getRandom)
+                .filter(rarity -> rarity.getFirst().id != 5)
                 .toList()
         );
-        return listRandom(filteredList).getFirst();
+        return getJahdooRarity(listRandom(filteredList).getFirst());
     }
 
-    public static JahdooRarity getRarity(long rarity) {
-        var getRandom = new Random(rarity).nextInt(1, 6020);
-        var filteredList = new ArrayList<>(
-            BASE_RARITY_CHANCES
-                .stream()
-                .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom)
-                .toList()
-        );
-        return listRandom(filteredList).getFirst();
-    }
 
     public static JahdooRarity getRarity(@Nullable List<Pair<JahdooRarity, Integer>> rarities) {
         var getRandom = Random.nextInt(1, 6020);
@@ -139,6 +114,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             rarities != null ? rarities : BASE_RARITY_CHANCES
                 .stream()
                 .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom)
+                .filter(rarity -> rarity.getFirst().id != 5)
                 .toList()
         );
 
@@ -151,6 +127,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             rarities != null ? rarities : BASE_RARITY_CHANCES
                 .stream()
                 .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom)
+                .filter(jahdooRarity -> jahdooRarity.getFirst().id != 5)
                 .toList()
         );
 
@@ -165,18 +142,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         var sibling = withStyleComponent(rarity.getSerializedName(), getCorrectColour);
 
         return withStyleComponentTrans(id, -9013642).copy().append(sibling);
-    }
-
-    public static void setGeneratedWand(JahdooRarity rarity, ItemStack item) {
-        createWandAttributes(rarity, item, rarity.id);
-    }
-
-    public static ItemStack getRandomWand(@Nullable JahdooRarity rarity, @Nullable Item item) {
-        var wand = ElementReg.random().getWand();
-        var itemStack = new ItemStack(item != null ? item : requireNonNull(wand));
-        var rarityActual = rarity != null ? rarity : JahdooRarity.getRarity();
-        createWandAttributes(rarityActual, itemStack, rarityActual.id);
-        return itemStack;
     }
 
     public static Component attachRuneTierTooltip(ItemStack wandItem) {
@@ -206,31 +171,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, randomManaPool, OFFHAND, false, "");
     }
 
-    public static void createWandAttributes(
-        JahdooRarity rarity,
-        ItemStack itemStack,
-        int runeSlots
-    ) {
-        var element = ElementReg.fromWand(itemStack.getItem()).orElseThrow();
-        var rarityId = rarity.id;
-        var cooldownReductionType = element.cooldownReduction();
-        var cooldownReductionName = cooldownReductionType.getRegisteredName();
-        var cooldownReductionValue = rarity.attributes.getRandomCooldown();
-        var manaReductionType = element.manaReduction();
-        var manaReductionName = manaReductionType.getRegisteredName();
-        var manaReductionValue = rarity.attributes.getRandomManaReduction();
-        var damageAmplifierType = element.damageAmplifier();
-        var damageAmplifierName = damageAmplifierType.getRegisteredName();
-        var damageAmplifierValue = rarity.attributes.getRandomDamage();
-
-        ShoppingItems.attachSharedProperties(itemStack, runeSlots, rarity);
-
-        if(rarityId > 0){
-            replaceOrAddAttribute(itemStack, damageAmplifierName, damageAmplifierType, damageAmplifierValue, MAINHAND, true, "wand");
-            if(rarityId > 1) replaceOrAddAttribute(itemStack, manaReductionName, manaReductionType, manaReductionValue, MAINHAND, true, "wand");
-            if(rarityId > 2) replaceOrAddAttribute(itemStack, cooldownReductionName, cooldownReductionType, cooldownReductionValue, MAINHAND, true, "wand");
-        }
-    }
 
     //Debug using use on item
     public static void debugRarity(Player player){

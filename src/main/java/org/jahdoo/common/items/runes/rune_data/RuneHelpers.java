@@ -1,31 +1,31 @@
 package org.jahdoo.common.items.runes.rune_data;
 
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.RuneReg;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Objects;
 
+import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.rarity.JahdooRarity.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.common.items.runes.rune_data.RuneCategories.fromName;
-import static org.jahdoo.common.items.runes.rune_data.RuneData.*;
-import static org.jahdoo.common.items.runes.rune_data.RuneGenerator.*;
+import static org.jahdoo.common.items.runes.rune_data.RuneData.DEFAULT;
+import static org.jahdoo.common.items.runes.rune_data.RuneData.DEFAULT_NAME;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.ComponentReg.RUNE_DATA;
 import static org.jahdoo.common.registers.mod.ElementReg.*;
@@ -59,21 +59,25 @@ public class RuneHelpers {
 
     public static String getName(ItemStack itemStack){
         var data = getRuneData(itemStack);
-        if(!Objects.equals(data.name(), DEFAULT_NAME)) return data.name();
+        if(!Objects.equals(data.name(), DEFAULT_NAME)) return Helpers.stringIdToName(data.name());
         return DEFAULT_NAME;
     }
 
     public static void generateFullRune(ItemStack stack, RuneGenerator runGen) {
         var isPercentage = runGen.getPercentage() > 0 ? (runGen.getValue() * runGen.getPercentage()) / 100 : runGen.getValue();
-        replaceOrAddAttribute(stack, runGen.getType().getRegisteredName(), runGen.getType(), isPercentage, EquipmentSlot.MAINHAND, true, "rune");
-        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(runGen.getModelData()));
 
-        var value = new RuneData(runGen.getElementId(), runGen.getName(), runGen.getDescription(), runGen.getColour(), runGen.getRarity().getId(), runGen.getTier());
-        stack.set(RUNE_DATA, value);
+        replaceOrAddAttribute(stack, runGen.getType().getRegisteredName(), runGen.getType(), isPercentage, EquipmentSlot.MAINHAND, true, "rune");
+        stack.set(CUSTOM_MODEL_DATA, new CustomModelData(runGen.getModelData()));
+        stack.set(RUNE_DATA, new RuneData(runGen.getElementId(), runGen.getName(), runGen.getDescription(), runGen.getColour(), runGen.getRarity().getId(), runGen.getTier()));
     }
 
     public static boolean hasDestinyBond(ItemStack itemStack){
         var getHolder = itemStack.get(ComponentReg.RUNE_HOLDER);
+        var getBonusDestiny = itemStack.getAttributeModifiers().modifiers().stream().toList();
+        for (var entry : getBonusDestiny) {
+            if(entry.attribute().value() == DESTINY_BOND.get()) return true;
+        }
+
         if(getHolder == null) return false;
 
         for (var runeSlot : getHolder.runeSlots()) {
@@ -97,7 +101,7 @@ public class RuneHelpers {
             return frost().textColourA();
         } else if (attributeName.contains("mana.mana")) {
             return ColourStore.AETHER_BLUE;
-        } else if (attributeName.contains("skills")) {
+        } else if (attributeName.contains("skills") || attributeName.contains("speed")) {
             return ColourStore.PERK_GREEN;
         }else if (attributeName.contains("max_health")){
             return ColourStore.MAGNET_STRENGTH_RED;
@@ -159,50 +163,37 @@ public class RuneHelpers {
         return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, colourPre, compName);
     }
 
-    public static void generateRandomTypAttribute(ItemStack stack, @Nullable JahdooRarity withRarity) {
+    public static void generateRandomTypAttribute(
+        ItemStack stack,
+        @Nullable JahdooRarity tierRarity,
+        @Nullable JahdooRarity runeRarity
+    ) {
         if(stack.getAttributeModifiers().modifiers().isEmpty()){
-            var getElement = random();
-            var rarity = withRarity != null ? withRarity : JahdooRarity.getRarity();
-            var attributes = rarity.getAttributes();
-            var id = rarity.getId();
+            var getTierRarity = tierRarity != null ? tierRarity : JahdooRarity.getRarity();
+            var getRuneRarity = runeRarity != null ? runeRarity : JahdooRarity.getRarity();
 
-            var getList = switch (getRarity()){
-                case COMMON ->
-                    List.of(
-                        generateElementalRune(getElement.manaReduction(), attributes.getRandomManaReduction(), COMMON, getElement.id(), id),
-                        generateElementalRune(getElement.damageAmplifier(), attributes.getRandomDamage(), RARE, getElement.id(), id)
-                        );
-                case RARE ->
-                    List.of(
-                        generateAetherRune(MANA_POOL.getDelegate(), attributes.getRandomManaPool(), id),
-                        generatePerkRune(Attributes.MOVEMENT_SPEED, attributes.getRandomDamage(), RARE, NO_DESCRIPTION, id, 0.1)
-                    );
-                case EPIC ->
-                    List.of(
-                        generateAetherRune(MANA_REGEN.getDelegate(), attributes.getRandomManaRegen(), id),
-                        generateElementalRune(getElement.cooldownReduction(), attributes.getRandomCooldown(), EPIC, getElement.id(), id)
-                    );
-                case LEGENDARY ->
-                    List.of(
-                        generatePerkRune(Attributes.MAX_HEALTH, attributes.getRandomMaxHealth(), LEGENDARY, "Increase max health", id, NO_VALUE),
-                        generatePerkRune(Attributes.MAX_ABSORPTION, attributes.getRandomMaxAbsorption(), LEGENDARY, "Increase absorption heart capacity", id, NO_VALUE),
-                        generatePerkRune(DESTINY_BOND.getDelegate(), NO_VALUE, COMMON, "Keep your item on death.", NO_VALUE, NO_VALUE)
-                    );
-                case ETERNAL ->
-                    List.of(
-                        generateCosmicRune(MAGIC_DAMAGE_MULTIPLIER.getDelegate(), attributes.getRandomDamage(), id).build(),
-                        generateCosmicRune(COOLDOWN_REDUCTION.getDelegate(), attributes.getRandomCooldown(), id).build(),
-                        generateCosmicRune(MANA_COST_REDUCTION.getDelegate(), attributes.getRandomManaReduction(), id).build(),
-                        generateSympathiserRune(ABSORPTION_HEARTS.getDelegate(), attributes.getRandomHealChance(), id),
-                        generateSympathiserRune(SKIP_MANA.getDelegate(), attributes.getRandomHealChance(), id),
-                        generateSympathiserRune(SKIP_COOLDOWN.getDelegate(), attributes.getRandomHealChance(), id)
-                    );
-                case UNIQUE -> List.of(generateSympathiserRune(CAST_HEAL.getDelegate(), attributes.getRandomHealChance(), id));
-            };
-
-            attachLootBeamComponent(stack, rarity);
-            generateFullRune(stack, listRandom(getList));
+            RuneReg.getRuneWithRarity(getRuneRarity).ifPresent(
+                rune -> {
+                    attachLootBeamComponent(stack, getTierRarity);
+                    generateFullRune(stack, rune.runeGenerator(getTierRarity.getId(), getTierRarity.getAttributes()));
+                }
+            );
         }
+    }
+
+    public static ItemStack generateRandomTypAttribute(
+        JahdooRarity tierRarity,
+        JahdooRarity...jahdooRarities
+    ) {
+        var stack = new ItemStack(ItemReg.RUNE);
+        if(stack.getAttributeModifiers().modifiers().isEmpty()){
+            var rune = Helpers.listRandom(RuneReg.getAllRuneWithRarity(jahdooRarities));
+
+            attachLootBeamComponent(stack, tierRarity);
+            generateFullRune(stack, rune.runeGenerator(tierRarity.getId(), tierRarity.getAttributes()));
+
+        }
+        return stack;
     }
 
 }

@@ -2,12 +2,12 @@ package org.jahdoo.common.items.runes.rune_data;
 
 public enum RuneCategories {
 
-  ELEMENTAL("Elemental", 5, -1),
-  PERK("Perk", 10, 7),
-  AETHER("Aether", 15, 0),
-  COSMIC("Cosmic", 25, 9),
-  INFINITY("Infinity", 30, 8),
-  EMPTY("Blank", 500, -1);
+  ELEMENTAL("elemental", 5, -1),
+  PERK("perk", 10, 7),
+  AETHER("aether", 15, 0),
+  COSMIC("cosmic", 25, 9),
+  INFINITY("infinity", 30, 8),
+  EMPTY("blank", 500, -1);
 
   private final String name;
   private final int cost;
