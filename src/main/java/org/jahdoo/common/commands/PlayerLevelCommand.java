@@ -309,7 +309,7 @@ public class PlayerLevelCommand {
         var player = source.getPlayer();
         if(player == null) return 0;
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.getShieldWithRarity(rarity));
+            Helpers.throwOrAddItem(player, ShoppingItems.getShieldWithRarity(null, rarity));
         }
         return 1;
     }

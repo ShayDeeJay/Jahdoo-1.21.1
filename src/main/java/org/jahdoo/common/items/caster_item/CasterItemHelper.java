@@ -7,7 +7,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -52,8 +51,8 @@ public class CasterItemHelper {
     public static void appendRefinementPotential(List<Component> toolTips, ItemStack wandItem){
         var wandData = wandItem.get(RUNE_HOLDER);
         if(wandData == null) return;
-        var slot = withStyleComponent(String.valueOf(wandData.refinementPotential()), SUB_HEADER_COLOUR);
-        toolTips.add(toolTips.size(), withStyleComponent("Potential: ", HEADER_COLOUR).copy().append(slot));
+        var slot = withStyleComponent(String.valueOf(wandData.refinementPotential()), DIAMOND_BOX);
+        toolTips.add(toolTips.size(), withStyleComponent("Potential: ", SUB_HEADER_COLOUR).copy().append(slot));
     }
 
     public static JahdooRarity getRarity(Item item){
@@ -69,7 +68,10 @@ public class CasterItemHelper {
     }
 
     private static void sendCantUseMessage(LivingEntity entity, AbstractElement abstractElement) {
-        var text = "You don't have the power to offhand this yet.";
+        var getOffhand = getGauntlet(entity);
+        var getDura = Helpers.durabilityDamageCount(getOffhand);
+        var equipped = !getOffhand.isEmpty() && getDura == 0;
+        var text = equipped ? "Gauntlet is broken." : "You unable to offhand this.";
         var colour = abstractElement.textColourA();
         var sendMessage = withStyleComponent(text, colour);
         if (entity instanceof Player player) player.displayClientMessage(sendMessage, true);
@@ -153,7 +155,7 @@ public class CasterItemHelper {
         if(maxDamage != null && damageTaken != null){
             var split = maxDamage/3;
             var durabilityColourIndicator = damageTaken <= split ? PERK_GREEN : damageTaken <= split * 2.5 ? ABSORPTION_YELLOW : NEGATIVE_RED;
-            var prefix = Helpers.withStyleComponent("Durability: ", HEADER_COLOUR);
+            var prefix = Helpers.withStyleComponent("Durability: ", SUB_HEADER_COLOUR);
             var currentDurability = Helpers.withStyleComponent(durabilityDamageCount(wandItem) + "", durabilityColourIndicator);
             var maxDurability = Helpers.withStyleComponent("/" + maxDamage, SUB_HEADER_COLOUR);
             appendComponents.add(prefix.copy().append(currentDurability).copy().append(maxDurability));
@@ -173,7 +175,7 @@ public class CasterItemHelper {
 
             if(isItemInMain){
                 if(interactState != 0) itemStack.set(hand, 0);
-            } else if (isItemInOff && canOffHand(player, OFF_HAND, false)) {
+            } else if (isItemInOff && canOffHand(player, false)) {
                 if(interactState != 1) itemStack.set(hand, 1);
             } else {
                 if(interactState != 2) itemStack.set(hand, 2);
@@ -197,26 +199,41 @@ public class CasterItemHelper {
 
     public static boolean canOffHand(
         LivingEntity entity,
-        InteractionHand interactionHand,
         boolean shouldSendMessage
     ){
         var curio = CuriosApi.getCuriosInventory(entity);
+        var offHand = entity.getItemInHand(OFF_HAND);
 
-        if(interactionHand == OFF_HAND){
+        if(offHand.getItem() instanceof CasterItem){
             if(curio.isEmpty()) return false;
 
             var isGauntletEquipped = curio.get().isEquipped(ItemReg.BATTLEMAGE_GAUNTLET.get());
-            if(isGauntletEquipped) return true;
+            var getDura = Helpers.durabilityDamageCount(getGauntlet(entity));
+            if(isGauntletEquipped && getDura > 0) return true;
 
             if(shouldSendMessage){
-                var item = entity.getItemInHand(interactionHand).getItem();
-                fromWand(item).ifPresent(element -> sendCantUseMessage(entity, element));
+                fromWand(offHand.getItem()).ifPresent(element -> sendCantUseMessage(entity, element));
             }
 
             return false;
         }
 
         return true;
+    }
+
+    public static ItemStack getGauntlet(LivingEntity entity){
+        var empty = ItemStack.EMPTY;
+        var curio = CuriosApi.getCuriosInventory(entity);
+        var offHand = entity.getItemInHand(OFF_HAND);
+
+        if(offHand.getItem() instanceof CasterItem){
+            if(curio.isEmpty()) return empty;
+            var isGauntletEquipped = curio.get().isEquipped(ItemReg.BATTLEMAGE_GAUNTLET.get());
+            if(isGauntletEquipped) return curio.get().getEquippedCurios().getStackInSlot(1);
+
+        }
+
+        return empty;
     }
 
     public static List<Component> standAloneAttributes(ItemStack itemStack, AbstractElement element) {

@@ -8,6 +8,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.utils.Helpers;
@@ -37,6 +39,8 @@ public class LockBlockEntity extends SyncedBlockEntity {
     public SyncableData positiveBoon = EMPTY;
     public String getDifficulty = "";
     public boolean isStarting;
+    public int counter;
+    public boolean clicked;
 
     public LockBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.LOCK_BE.get(), pPos, pBlockState);
@@ -78,6 +82,16 @@ public class LockBlockEntity extends SyncedBlockEntity {
         }
     }
 
+    public void tick(Level level, BlockPos pos, BlockState state) {
+        if(!(level instanceof ServerLevel serverLevel)) return;
+        if(clicked){
+            this.counter++;
+        }
+        if(counter > 1){
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+        }
+    }
+
     public boolean isInitialized(){
         return !Objects.equals(this.roomId, Component.empty());
     }
@@ -94,6 +108,7 @@ public class LockBlockEntity extends SyncedBlockEntity {
         this.roomId = this.isStartingRoom() ? getBattleRoom() : roomId;
         setDataByDifficulty();
         this.updateBlock();
+
     }
 
     private void setDataByDifficulty() {
@@ -129,6 +144,8 @@ public class LockBlockEntity extends SyncedBlockEntity {
         tag.putBoolean("starting", this.isStarting);
         tag.putString("difficulty", this.getDifficulty);
         tag.putString("component", Component.Serializer.toJson(this.roomId, registries));
+        tag.putInt("counter", this.counter);
+        tag.putBoolean("clicked", this.clicked);
         saveSyncable(tag, registries, this.negativeBoon, "negative");
         saveSyncable(tag, registries, this.positiveBoon, "positive");
     }
@@ -138,6 +155,8 @@ public class LockBlockEntity extends SyncedBlockEntity {
         super.loadAdditional(tag, registries);
         this.isStarting = tag.getBoolean("starting");
         this.getDifficulty = tag.getString("difficulty");
+        this.counter = tag.getInt("counter");
+        this.clicked = tag.getBoolean("clicked");
         this.roomId = Component.Serializer.fromJson(tag.getString("component"), registries);
         this.negativeBoon = loadData(tag, registries, "negative");
         this.positiveBoon = loadData(tag, registries, "positive");

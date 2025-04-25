@@ -36,6 +36,8 @@ import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
+import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 
@@ -59,6 +61,8 @@ import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.THIS_ENTITY;
+import static org.jahdoo.ascension.attachments.InstanceData.difficultyFromInstance;
+import static org.jahdoo.ascension.level_manager.InstanceDifficulty.*;
 import static org.jahdoo.ascension.level_manager.StructureManager.*;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.ascension.utils.Helpers.*;
@@ -210,7 +214,35 @@ public class MobManager {
         getSoundWithPosition(serverLevel, pos, SoundEvents.ALLAY_HURT, 0.3F, 0.8F);
         entity.moveTo(pos.getCenter());
         serverLevel.addFreshEntity(entity);
+    }
 
+    public static boolean championSpawn(ServerLevel serverLevel, LivingEntity entity) {
+        var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
+        var instanceDiff = difficultyFromInstance(data);
+        if(instanceDiff.isPresent()){
+            var diff = instanceDiff.get();
+
+            if (Maths.percentageChance(diff.getSpecialSpawnChance())) {
+                var duration = -1;
+                var id = diff.getId();
+                var amplifier = id + 1;
+
+                entity.addEffect(new JahdooMobEffect(EffectReg.CHAMPION_EFFECT, duration, amplifier));
+                entity.addEffect(new JahdooMobEffect(MobEffects.GLOWING, duration, 1));
+                entity.addEffect(new JahdooMobEffect(MobEffects.DAMAGE_BOOST, duration, amplifier));
+                entity.addEffect(new JahdooMobEffect(MobEffects.DAMAGE_RESISTANCE, duration, amplifier));
+                entity.addEffect(new JahdooMobEffect(MobEffects.HEALTH_BOOST, duration, amplifier));
+                entity.addEffect(new JahdooMobEffect(MobEffects.MOVEMENT_SPEED, duration, id));
+
+                if (Objects.equals(data.getDifficulty(), MASTER.getSerializedName())) {
+                    entity.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, duration, amplifier));
+                }
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static LivingEntity getEliteSkeleton(ServerLevel serverLevel, int level){

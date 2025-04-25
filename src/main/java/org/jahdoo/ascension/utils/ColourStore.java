@@ -22,7 +22,7 @@ public class ColourStore {
     public static final int UNIQUE_B = color(104, 243, 252);
     public static final int EXPERIENCE_GREEN = 8453920;
     public static final int BRONZE_COIN = color(193, 108, 51);
-    public static final int SILVER_COIN = color(129, 129, 129);
+    public static final int SILVER_COIN = color(191, 192, 192);
     public static final int GOLD_COIN = color(225, 155, 50);
     public static final int PLATINUM_COIN = color(194, 194, 194);
     public static final int DIAMOND_BOX = color(135, 222, 222);

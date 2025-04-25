@@ -58,7 +58,7 @@ public class PerkTable extends BaseEntityBlock {
 
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-        level.destroyBlock(pos, false);
+//        level.destroyBlock(pos, false);
         super.stepOn(level, pos, state, entity);
     }
 

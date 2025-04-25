@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.mobs.MobManager;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
@@ -23,7 +22,6 @@ import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -45,7 +43,9 @@ import static org.jahdoo.ascension.attachments.RunData.incrementClearedRoomExp;
 import static org.jahdoo.ascension.level_manager.BlockSetupManager.*;
 import static org.jahdoo.ascension.level_manager.StructureManager.placeLocksWithData;
 import static org.jahdoo.ascension.mobs.MobManager.addAndPositionEntity;
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.ascension.mobs.MobManager.championSpawn;
+import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.ascension.utils.Helpers.listRandom;
 import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
 import static org.jahdoo.common.block.altar.AltarAnim.idleParticleAnim;
 import static org.jahdoo.common.block.altar.AltarAnim.onActivationAnim;
@@ -253,8 +253,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         if(this.started) {
             this.privateTicks++;
             this.reAssignTarget(level, pos);
-
-
+            
             if(privateTicks % 2 == 0){
                 if(!this.spawnableMobs.isEmpty() && onField.size() < getMaxAllowedMobsOnField(serverLevel)){
                     var randomPoses = innerRadiusRandom(pos.below(2).getCenter(), 20, 200)
@@ -266,9 +265,8 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
                     var position = listRandom(randomPoses);
                     addAndPositionEntity(serverLevel, containing(position), entity);
 
-                    if(!this.spawnedChampion && Random.nextInt(100) == 0){
-                        entity.addEffect(new JahdooMobEffect(EffectReg.CHAMPION_EFFECT, -1, 2));
-                        this.spawnedChampion = true;
+                    if(!this.spawnedChampion){
+                        this.spawnedChampion = championSpawn(serverLevel, entity);
                     }
 
                     this.onField.add(entity.getUUID());

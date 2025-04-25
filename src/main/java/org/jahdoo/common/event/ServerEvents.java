@@ -149,7 +149,7 @@ public class ServerEvents {
         var level = event.getLevel();
         var getBlock = level.getBlockState(pos);
 
-        perkTableInteraction(getBlock, level, pos, player);
+        perkTableInteraction(getBlock, level, pos, player, event);
         removeWandInteractionWithBlocks(event, player, item, getBlock);
     }
 

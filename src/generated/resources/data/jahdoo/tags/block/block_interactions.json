@@ -3,6 +3,10 @@
     "jahdoo:wand_manager_table",
     "jahdoo:rune_table",
     "jahdoo:disassembler",
+    "jahdoo:challenge_altar",
+    "jahdoo:perk_table",
+    "jahdoo:shopping_table",
+    "jahdoo:loot_chest",
     "jahdoo:lock"
   ]
 }

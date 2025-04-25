@@ -30,9 +30,13 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
     protected void addTags(HolderLookup.Provider pProvider) {
 
         this.tag(ALLOWED_BLOCK_INTERACTIONS)
-            .add(WAND_MANAGER_TABLE.get())
+            .add(WAND_MANAGER_TABLE.value())
             .add(RUNE_TABLE.value())
             .add(DISSEMBLER.value())
+            .add(CHALLENGE_ALTAR.value())
+            .add(PERK_TABLE.value())
+            .add(SHOPPING_TABLE.value())
+            .add(LOOT_CHEST.value())
             .add(LOCK.value());
 
         this.tag(RARE_BLOCKS)

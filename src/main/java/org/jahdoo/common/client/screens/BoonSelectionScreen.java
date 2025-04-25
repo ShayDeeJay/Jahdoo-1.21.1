@@ -3,10 +3,14 @@ package org.jahdoo.common.client.screens;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.boon.player_boons.Boon;
+import org.jahdoo.common.block.perk_table.PerkTableEntity;
+import org.jahdoo.common.networking.client2server.PerkTableSyncC2SP;
 import org.jahdoo.common.registers.SoundReg;
 
 import java.util.ArrayList;
@@ -15,8 +19,6 @@ import java.util.function.Consumer;
 
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.boon.player_boons.BoonSelection.getNegativeBoon;
-import static org.jahdoo.ascension.boon.player_boons.BoonSelection.getPositiveBoon;
 import static org.jahdoo.ascension.utils.ColourStore.MAGNET_RANGE_GREEN;
 import static org.jahdoo.ascension.utils.ColourStore.MAGNET_STRENGTH_RED;
 import static org.jahdoo.common.client.SharedUI.*;
@@ -30,16 +32,17 @@ public class BoonSelectionScreen extends Screen  {
     private int selectionOffset;
     private final List<Boon> boonsPositive = new ArrayList<>();
     private final List<Boon> boonsNegative = new ArrayList<>();
+    private BlockPos pos;
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
-    public BoonSelectionScreen() {
+    public BoonSelectionScreen(BlockPos pos, Player player) {
         super(literal("Choice Selection Screen"));
-
-        for (var i = 0; i < 3; i++){
-            boonsPositive.add(getPositiveBoon());
-            boonsNegative.add(getNegativeBoon());
+        this.pos = pos;
+        if(player != null && player.level().getBlockEntity(pos) instanceof PerkTableEntity perkTable){
+            this.boonsNegative.addAll(perkTable.boonsNegative);
+            this.boonsPositive.addAll(perkTable.boonsPositive);
         }
     }
 
@@ -107,7 +110,12 @@ public class BoonSelectionScreen extends Screen  {
 
         if (player == null) return;
 
-        player.playSound(SoundEvents.VAULT_OPEN_SHUTTER, 1F, 1F);
+        player.playSound(SoundReg.LOOTBOX_OPEN.get(), 1F, 2F);
+        player.playSound(SoundReg.IMPACT.get(), 1F, 1.2F);
+        player.playSound(SoundReg.REJECT.get(), 1F, 1.4F);
+
+        PacketDistributor.sendToServer(new PerkTableSyncC2SP(player.getUUID(), pos));
+
         minecraft.setScreen(null);
     }
 

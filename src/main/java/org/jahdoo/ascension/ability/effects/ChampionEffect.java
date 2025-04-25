@@ -2,12 +2,10 @@ package org.jahdoo.ascension.ability.effects;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.EffectReg;
 
 import java.util.List;
 
@@ -33,15 +31,6 @@ public class ChampionEffect extends MobEffect {
 
     @Override
     public void onEffectStarted(LivingEntity livingEntity, int amplifier) {
-        var getAppliedLength = livingEntity.getEffect(EffectReg.CHAMPION_EFFECT);
-        if(getAppliedLength != null){
-            livingEntity.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, getAppliedLength.getDuration(), amplifier));
-            livingEntity.addEffect(new JahdooMobEffect(MobEffects.GLOWING, getAppliedLength.getDuration(), amplifier));
-            livingEntity.addEffect(new JahdooMobEffect(MobEffects.DAMAGE_BOOST, getAppliedLength.getDuration(), amplifier));
-            livingEntity.addEffect(new JahdooMobEffect(MobEffects.DAMAGE_RESISTANCE, getAppliedLength.getDuration(), amplifier));
-            livingEntity.addEffect(new JahdooMobEffect(MobEffects.HEALTH_BOOST, getAppliedLength.getDuration(), amplifier));
-            livingEntity.addEffect(new JahdooMobEffect(MobEffects.MOVEMENT_SPEED, getAppliedLength.getDuration(), amplifier));
-        }
     }
 
     @Override

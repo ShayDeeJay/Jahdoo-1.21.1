@@ -4,20 +4,23 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.registers.ComponentReg;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BattlemageGauntlet extends Item implements ICurioItem, JahdooItem {
 
     public BattlemageGauntlet() {
-        super(new Properties().stacksTo(1));
+        super(
+            new Properties()
+                .durability(300)
+                .stacksTo(1)
+        );
     }
 
     @Override
@@ -25,17 +28,29 @@ public class BattlemageGauntlet extends Item implements ICurioItem, JahdooItem {
         return true;
     }
 
+
+
+    @Override
+    public List<Component> getSlotsTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
+        return ICurioItem.super.getSlotsTooltip(tooltips, context, stack);
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        return Helpers.withStyleComponent(super.getName(stack).getString(), ColourStore.GOLD_COIN);
+    }
+
     @Override
     public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
         var getRarityId = stack.get(ComponentReg.JAHDOO_RARITY);
+        this.appendItemToolTips(stack, context, tooltips, false);
         if(getRarityId != null){
             var getRarity = JahdooRarity.getAllRarities().get(getRarityId);
             tooltips.addFirst(JahdooRarity.addRarityTooltip(getRarity, context.level()));
         }
-        var component = new ArrayList<Component>();
-        component.add(Component.empty());
-        component.add(Helpers.withStyleComponent("Allows the user to offhand wands", ColourStore.SUB_HEADER_COLOUR));
-        return component;
+        tooltips.add(Component.empty());
+        tooltips.add(Helpers.withStyleComponent("Offhand Wands", ColourStore.SUB_HEADER_COLOUR));
+        return tooltips;
     }
 
 }

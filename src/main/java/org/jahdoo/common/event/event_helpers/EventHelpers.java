@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -52,8 +53,8 @@ import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.attachments.RunData;
+import org.jahdoo.ascension.level_manager.InstanceDifficulty;
 import org.jahdoo.ascension.level_manager.LevelGenerator;
-import org.jahdoo.ascension.trading_post.RewardLootTables;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.Maths;
@@ -100,7 +101,6 @@ import static org.jahdoo.ascension.attachments.RunData.*;
 import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedArmor;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
-import static org.jahdoo.common.block.loot_chest.LootChestBlock.lootsplosian;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.storeBlockType;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
@@ -126,12 +126,13 @@ public class EventHelpers {
         BlockState getBlock,
         Level level,
         BlockPos pos,
-        Player player
+        Player player,
+        UseItemOnBlockEvent event
     ){
         if(getBlock.is(Blocks.BARRIER)){
             if(level.getBlockEntity(pos.below(1)) instanceof PerkTableEntity entity){
                 entity.setUsed(entity.getBlockState(), player);
-//                level.destroyBlock(pos, false);
+                event.cancelWithResult(ItemInteractionResult.SUCCESS);
             }
         }
     }
@@ -144,6 +145,7 @@ public class EventHelpers {
                 event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
             }
         }
+
     }
 
     public static void removeNonAllowedEffects(EntityJoinLevelEvent event) {
@@ -540,75 +542,60 @@ public class EventHelpers {
     public static void coinDropCalc(LivingEntity entity, int bonus) {
         if(entity.level() instanceof CustomLevel level){
             var getKiller = entity.getKillCredit();
-
             entity.skipDropExperience();
-            var max = Math.max(1, bonus);
 
             if(entity.getType().is(ModTags.Entities.HORDE_MOBS)){
-                if(Random.nextInt(0, Math.min(2, max)) == 0){
-                    var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
-                    throwItem(entity, stack, entity.position());
-                }
-                if(getKiller != null){
-                    incrementKilledMobsExp(level, getKiller, 1);
-                }
-            }
-
-            if(entity.getPersistentData().getBoolean("boss")){
-                var data = new InstanceData();
-                data.setGoldCoin(10);
-                lootsplosian(entity.position(), level, 10, ColourStore.ABSORPTION_YELLOW, RewardLootTables.getCoinItems(data), false, 0);
-                if(getKiller != null){
-                    incrementKilledMobsExp(level, getKiller, 200);
-                }
+                var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
+                onKillExpAndCoin(entity, level, stack, getKiller, 1, 0);
             }
 
             if(entity instanceof CustomSkeleton){
-                var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 20 - bonus));
-                throwItem(entity, stack, entity.position());
-                if(getKiller != null){
-                    incrementKilledMobsExp(level, getKiller, 3);
-                }
+                var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(5, 20 - bonus));
+                onKillExpAndCoin(entity, level, stack, getKiller, 3, 0);
             }
 
             if(entity instanceof VoidSpider spider && !spider.isBaby()){
                 if(spider.getOwner() == null){
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(1, 10 - bonus));
-                    stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
-                    throwItem(entity, stack, entity.position());
-                    if(getKiller != null){
-                        incrementKilledMobsExp(level, getKiller, 5);
-                    }
+                    onKillExpAndCoin(entity, level, stack, getKiller, 5, 1);
                 }
             }
 
             if(entity instanceof EternalWizard wizard){
                 if(wizard.getOwner() == null){
                     var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(4, 10 - bonus));
-                    var canDropGold = Random.nextInt(10) == 0;
-
-                    stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(canDropGold ? 2 : 1));
-                    throwItem(entity, stack, entity.position());
-
-                    if(getKiller != null){
-                        incrementKilledMobsExp(level, getKiller, 10);
-                    }
+                    onKillExpAndCoin(entity, level, stack, getKiller, 10, Random.nextInt(10) == 0 ? 2 : 1);
                 }
             }
 
             if(entity instanceof InfernoCreeper){
                 var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(4, 10 - bonus));
-                var canDropGold = Random.nextInt(10) == 0;
+                onKillExpAndCoin(entity, level, stack, getKiller, 10, Random.nextInt(10) == 0 ? 2 : 1);
+            }
 
-                stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(canDropGold ? 2 : 1));
-                throwItem(entity, stack, entity.position());
-
-                if(getKiller != null){
-                    incrementKilledMobsExp(level, getKiller, 10);
-                }
+            if(entity.getPersistentData().getBoolean("boss")){
+                var stack = new ItemStack(ItemReg.COIN).copyWithCount(Math.max(4, 10 - bonus)).copyWithCount(10);
+                onKillExpAndCoin(entity, level, stack, getKiller, 200, 2);
             }
         }
     }
+
+    private static void onKillExpAndCoin(LivingEntity entity, CustomLevel level, ItemStack stack, LivingEntity getKiller, int exp, int modelData) {
+        var isChampion = entity.hasEffect(EffectReg.CHAMPION_EFFECT);
+        var championMultiplier = 5;
+        var data = InstanceData.difficultyFromInstance(level.getData(INSTANCE_DATA.get()));
+
+        var originalCount = stack.getCount() * (data.map(InstanceDifficulty::expMultiplier).orElse(1));
+        var originalExp = exp * (data.map(InstanceDifficulty::expMultiplier).orElse(1));
+
+        var withChampionCoins = originalCount * (isChampion ? championMultiplier : 1);
+        var withChampionExp = originalExp * (isChampion ? championMultiplier : 1);
+
+        if(modelData > 0) stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(modelData));
+        throwItem(entity, stack.copyWithCount(withChampionCoins), entity.position());
+        if(getKiller != null) incrementKilledMobsExp(level, getKiller, withChampionExp);
+    }
+
 
     public static void throwItem(LivingEntity livingEntity, ItemStack stack, Vec3 offset) {
         Vec3 vec3 = new Vec3(0.3F, 0.3F, 0.3F);

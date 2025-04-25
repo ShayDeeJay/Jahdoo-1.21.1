@@ -140,9 +140,9 @@ public class MobItemHandler {
             new ArmorTrim(regLookup1.get(material).orElseThrow(), listRandom(list)),
             regLookup2,
             100,
-            InstanceDifficulty.HARD.getSerializedName(),
+            InstanceDifficulty.MASTER.getSerializedName(),
             helmet, chestplate, leggings, boots
-        ).withPool(weaponWithChance(regLookup2, weapon, 100, InstanceDifficulty.HARD.getSerializedName())).build();
+        ).withPool(weaponWithChance(regLookup2, weapon, 100, InstanceDifficulty.MASTER.getSerializedName())).build();
     }
 
     public static List<ItemStack> addArmorWithElement(

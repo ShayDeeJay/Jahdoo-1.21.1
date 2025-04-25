@@ -1,5 +1,6 @@
 package org.jahdoo.ascension.trading_post;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ArmorItem;
@@ -20,8 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static net.minecraft.world.entity.EquipmentSlot.BODY;
-import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
+import static net.minecraft.world.entity.EquipmentSlot.*;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.*;
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
@@ -154,23 +154,23 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         itemStack.set(DataComponents.DAMAGE, 0);
     }
 
-    public static ItemStack getRandomWand(@Nullable JahdooRarity rarity, @Nullable ItemStack item) {
+    public static ItemStack getRandomWand(@Nullable JahdooRarity rarity, @Nullable ItemStack item, int chestRarity) {
         var itemStack = item == null ? new ItemStack(Objects.requireNonNull(ElementReg.random().getWand())) : item;
-        var rarityActual = rarity != null ? rarity : getRarity();
-        createWandAttributes(rarityActual, itemStack, rarityActual.getId());
+        createWandAttributes(rarity, itemStack, chestRarity);
         return itemStack;
     }
 
     public static void createWandAttributes(
-        JahdooRarity rarity,
+        @Nullable JahdooRarity jahdooRarity,
         ItemStack itemStack,
-        int runeSlots
+        int chestRarity
     ) {
         var element = ElementReg.fromWand(itemStack.getItem()).orElseThrow();
+        var rarity = jahdooRarity == null ? getRaritiesByChestRarity(chestRarity) : jahdooRarity;
         var isUnique = rarity == UNIQUE;
         var rarityId = rarity.getId();
 
-        attachSharedProperties(itemStack, runeSlots, rarity, isUnique ? 50 : 0);
+        attachSharedProperties(itemStack, rarityId, rarity, isUnique ? 50 : 0);
 
         if(isUnique) addAttribute(itemStack);
 
@@ -179,6 +179,34 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
             if(rarityId > 1) addManaImplicit(rarity, itemStack, element, isUnique);
             if(rarityId > 2) addCooldownImplicit(rarity, itemStack, element, isUnique);
         }
+    }
+
+    public static void createTomeAttributes(ItemStack itemStack, int chestRarity){
+        var rarity = getRaritiesByChestRarity(chestRarity);
+        var randomRegenValue = singleFormattedDouble(rarity.getAttributes().getRandomManaRegen());
+        var randomManaPool = singleFormattedDouble(rarity.getAttributes().getRandomManaPool());
+        var manaRegen = MANA_REGEN;
+        var manaPool = MANA_POOL;
+
+        attachLootBeamComponent(itemStack, rarity);
+        itemStack.set(ComponentReg.JAHDOO_RARITY.get(), rarity.getId());
+
+        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue, MAINHAND, false, "");
+        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, randomManaPool, OFFHAND, false, "");
+    }
+
+    public static JahdooRarity getRaritiesByChestRarity(int chestRarity){
+        var common = List.of(Pair.of(COMMON, 1), Pair.of(RARE, 5000));
+        var rare = List.of(Pair.of(COMMON, 1), Pair.of(RARE, 1000), Pair.of(EPIC, 5000));
+        var legendary = List.of(Pair.of(RARE, 1), Pair.of(EPIC, 1000), Pair.of(LEGENDARY, 4000));
+        var eternal = List.of(Pair.of(EPIC, 1), Pair.of(LEGENDARY, 2000), Pair.of(ETERNAL, 5000));
+        var withDone = switch (chestRarity){
+            case 1 -> rare;
+            case 2 -> legendary;
+            case 3 -> eternal;
+            default -> common;
+        };
+        return getRarity(withDone);
     }
 
     private static void addCooldownImplicit(JahdooRarity rarity, ItemStack itemStack, AbstractElement element, boolean isUnique) {
@@ -204,7 +232,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
 
     public static ShoppingItems soldWands(@Nullable JahdooRarity rarity){
         var randomRarity = rarity == null ? getRarity() : rarity;
-        var randomWand = getRandomWand(randomRarity, null);
+        var randomWand = getRandomWand(randomRarity, null, 0);
         return switch (randomRarity.getId()){
             case 1 -> new ShoppingItems(randomWand, setSilverCost(20));
             case 2 -> new ShoppingItems(randomWand, setGoldCost(10));
@@ -213,6 +241,14 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
             case 5 -> new ShoppingItems(randomWand, setPlatinumCost(60));
             default -> new ShoppingItems(randomWand, setBronzeCost(20));
         };
+    }
+
+    public static ItemStack getGauntletWithRarity(@Nullable ItemStack itemStack, @Nullable JahdooRarity getRarity){
+        var rarity = getRarity == null ? getRarity() : getRarity;
+        var newStack = itemStack == null ? new ItemStack(ItemReg.BATTLEMAGE_GAUNTLET) : itemStack;
+        attachSharedProperties(newStack, 0, rarity, 0);
+
+        return newStack;
     }
 
     public static void attachSharedProperties(ItemStack itemStack, int runeSlots, @Nullable JahdooRarity getRarity, double uniqueMultiplier){
@@ -227,9 +263,9 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         attachDurability(itemStack, (int) getPercentageTotal(uniqueMultiplier, durability));
     }
 
-    public static ItemStack getShieldWithRarity(@Nullable JahdooRarity getRarity){
+    public static ItemStack getShieldWithRarity(@Nullable ItemStack itemStack, @Nullable JahdooRarity getRarity){
         var rarity = getRarity == null ? getRarity() : getRarity;
-        var newStack = new ItemStack(ItemReg.BASIC_SHIELD);
+        var newStack = itemStack == null ? new ItemStack(ItemReg.BASIC_SHIELD) : itemStack;
         attachSharedProperties(newStack, 0, rarity, 0);
 
         newStack.set(ComponentReg.SHIELD_BLOCK_CHANCE, rarity.getAttributes().getRandomDamage());

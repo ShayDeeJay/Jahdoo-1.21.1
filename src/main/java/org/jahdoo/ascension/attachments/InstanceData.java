@@ -4,9 +4,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import org.jahdoo.ascension.level_manager.InstanceDifficulty;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.jahdoo.ascension.utils.Helpers.*;
 
@@ -224,6 +226,10 @@ public class InstanceData implements IAttachment {
 
     public static InstanceData copyInstance(InstanceData original) {
         return new InstanceData(original.difficulty, original.values);
+    }
+
+    public static Optional<InstanceDifficulty> difficultyFromInstance(InstanceData instanceData){
+        return InstanceDifficulty.getDifficulties().stream().filter(s -> s.getSerializedName().equals(instanceData.getDifficulty())).findFirst();
     }
 
     public static final Codec<InstanceData> CODEC = RecordCodecBuilder.create(

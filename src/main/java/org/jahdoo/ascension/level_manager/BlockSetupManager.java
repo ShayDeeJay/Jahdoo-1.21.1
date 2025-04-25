@@ -201,7 +201,7 @@ public class BlockSetupManager {
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
                 var randomLootItem = new ItemStack(RUNE);
-                RuneHelpers.generateRandomTypAttribute(randomLootItem, null, null);
+                RuneHelpers.generateRandomTypAttribute(randomLootItem, null, null, Random.nextInt(0, 4));
                 entity.setItem(randomLootItem);
                 entity.setCost(setGoldCost(10));
             }

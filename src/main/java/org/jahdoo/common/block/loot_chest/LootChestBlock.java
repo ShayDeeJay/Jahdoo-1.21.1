@@ -149,7 +149,7 @@ public class LootChestBlock extends BaseEntityBlock {
         var coinItems = getCoinItems(lootChestEntity.getData(INSTANCE_DATA));
         if(!coinItems.isEmpty()){
             lootChestEntity.setOpen(true);
-            lootsplosian(pos.getCenter(), serverLevel, 10, ColourStore.ABSORPTION_YELLOW, coinItems, false, 20);
+            lootsplosian(pos.getCenter(), serverLevel, 10, ColourStore.ABSORPTION_YELLOW, coinItems, false, 20, 0);
             openingSoundEffect(pos, serverLevel, false);
         } else {
             player.displayClientMessage(withStyleComponent("Chest is empty!", ColourStore.NEGATIVE_RED), true);
@@ -180,7 +180,7 @@ public class LootChestBlock extends BaseEntityBlock {
                 var lootMultiplier = value + 1;
                 var rewards = getCompletionLoot(serverLevel, pos.getCenter(), setLootValue, value);
 
-                lootsplosian(pos.getCenter(), serverLevel, lootMultiplier, colour, rewards, true, 30);
+                lootsplosian(pos.getCenter(), serverLevel, lootMultiplier, colour, rewards, true, 30, value);
                 openingSoundEffect(pos, serverLevel, true);
                 stack.shrink(1);
                 return SUCCESS;
@@ -197,7 +197,8 @@ public class LootChestBlock extends BaseEntityBlock {
         int colour,
         List<ItemStack> rewards,
         boolean shouldDropExperience,
-        int pickupDelay
+        int pickupDelay,
+        int chestRarity
     ) {
         for (var reward : rewards) {
             var itemEntity = new ItemEntity(serverLevel, pos.x(), pos.y() + 0.2, pos.z(), reward);
@@ -229,7 +230,7 @@ public class LootChestBlock extends BaseEntityBlock {
             }
 
             particleBurst(serverLevel, pos, colour, level);
-            attachItemData(serverLevel, rarity, itemStackMain, false, null);
+            attachItemData(serverLevel, rarity, itemStackMain, false, null, chestRarity);
             serverLevel.addFreshEntity(itemEntity);
         }
     }

@@ -25,7 +25,7 @@ public class ClearRoomsQuest extends AbstractQuest{
 
     @Override
     public InstanceDifficulty difficulty() {
-        return InstanceDifficulty.EASY;
+        return InstanceDifficulty.NOVICE;
     }
 
     @Override

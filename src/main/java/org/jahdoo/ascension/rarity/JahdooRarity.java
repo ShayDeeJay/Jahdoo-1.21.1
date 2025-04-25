@@ -9,7 +9,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
 import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,14 +19,10 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
-import static net.minecraft.world.entity.EquipmentSlot.OFFHAND;
 import static org.jahdoo.ascension.rarity.RarityAttributes.*;
+import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
 import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.ascension.utils.LocalLootBeamData.attachLootBeamComponent;
-import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getRuneData;
-import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 
 @IndexedEnum
@@ -141,7 +136,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         var getCorrectColour = rarity.id == 5 ? colour : rarity.getColour();
         var sibling = withStyleComponent(rarity.getSerializedName(), getCorrectColour);
 
-        return withStyleComponentTrans(id, -9013642).copy().append(sibling);
+        return withStyleComponentTrans(id, SUB_HEADER_COLOUR).copy().append(sibling);
     }
 
     public static Component attachRuneTierTooltip(ItemStack wandItem) {
@@ -157,20 +152,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         };
         return withStyleComponent("Tier " + getTier, ColourStore.HEADER_COLOUR);
     }
-
-    public static void createTomeAttributes(JahdooRarity rarity, ItemStack itemStack){
-        var randomRegenValue = singleFormattedDouble(rarity.attributes.getRandomManaRegen());
-        var randomManaPool = singleFormattedDouble(rarity.attributes.getRandomManaPool());
-        var manaRegen = MANA_REGEN;
-        var manaPool = MANA_POOL;
-
-        attachLootBeamComponent(itemStack, rarity);
-        itemStack.set(ComponentReg.JAHDOO_RARITY.get(), rarity.getId());
-
-        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue, MAINHAND, false, "");
-        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, randomManaPool, OFFHAND, false, "");
-    }
-
 
     //Debug using use on item
     public static void debugRarity(Player player){

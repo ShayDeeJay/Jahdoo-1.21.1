@@ -27,8 +27,8 @@ import static net.minecraft.core.BlockPos.withinManhattan;
 import static org.jahdoo.ascension.level_manager.BlockSetupManager.setBlockGenerator;
 import static org.jahdoo.ascension.level_manager.BlockSetupManager.setLocks;
 import static org.jahdoo.ascension.level_manager.InstanceDifficulty.*;
-import static org.jahdoo.ascension.level_manager.InstanceDifficulty.EASY;
-import static org.jahdoo.ascension.level_manager.InstanceDifficulty.MEDIUM;
+import static org.jahdoo.ascension.level_manager.InstanceDifficulty.NOVICE;
+import static org.jahdoo.ascension.level_manager.InstanceDifficulty.EXPERT;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
@@ -101,8 +101,8 @@ public class StructureManager {
         roomGen.add(getBattleRoom());
 
         var difficulty = data.getDifficulty();
-        var forSanctuary = EASY.getSerializedName().equals(difficulty) ? 80 : MEDIUM.getSerializedName().equals(difficulty) ? 50 : 20 ;
-        var forBoss = EASY.getSerializedName().equals(difficulty) ? 10 : MEDIUM.getSerializedName().equals(difficulty) ? 40 : 70 ;
+        var forSanctuary = NOVICE.getSerializedName().equals(difficulty) ? 80 : EXPERT.getSerializedName().equals(difficulty) ? 50 : 20 ;
+        var forBoss = NOVICE.getSerializedName().equals(difficulty) ? 10 : EXPERT.getSerializedName().equals(difficulty) ? 40 : 70 ;
 
         if(!isStarter){
             if (Maths.percentageChance(forSanctuary)) roomGen.add(SANCTUARY_COMPONENT);

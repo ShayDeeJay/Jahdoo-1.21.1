@@ -13,6 +13,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -29,13 +31,15 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.sounds.SoundEvents.*;
-import static net.minecraft.world.ItemInteractionResult.*;
+import static net.minecraft.world.ItemInteractionResult.FAIL;
+import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK;
 import static net.minecraft.world.level.block.Blocks.OBSERVER;
 import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.ascension.level_manager.StructureManager.placeNewSide;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
 
 public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -97,6 +101,12 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
+        return createTickerHelper(
+            entityType, LOCK_BE.get(), (levelA, pos, bState, bEntity) -> bEntity.tick(levelA, pos, bState)
+        );
+    }
+
     @Override
     protected ItemInteractionResult useItemOn(
         ItemStack stack,
@@ -144,11 +154,10 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
             getSoundWithPosition(serverLevel, pos, VAULT_ACTIVATE, 1, 0.6F);
             placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()));
             destroyDoors(serverLevel, pos);
-
             if(entity.isStartingRoom()) destroyDoors(serverLevel, pos.relative(getState, 12));
-
             onUnlock(pos, entity, serverLevel);
-            return CONSUME;
+            entity.clicked = true;
+            return SUCCESS;
         }
 
         return FAIL;
@@ -161,7 +170,6 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     }
 
     private static void onUnlock(BlockPos pos, LockBlockEntity entity, ServerLevel level) {
-        level.destroyBlock(pos, false);
 
         if(entity.negativeBoon != EMPTY){
             var getBoonNeg = LevelBoonReg.fromId(entity.negativeBoon.id());

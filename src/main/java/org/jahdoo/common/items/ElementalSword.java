@@ -2,7 +2,6 @@ package org.jahdoo.common.items;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
@@ -50,7 +49,7 @@ public class ElementalSword extends SwordItem implements JahdooItem{
 
     @Override
     public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        var canOffhand = canOffHand(attacker, InteractionHand.OFF_HAND, false);
+        var canOffhand = canOffHand(attacker, false);
         var getWand = attacker.getOffhandItem().getItem();
 
         fromWand(getWand).ifPresent(

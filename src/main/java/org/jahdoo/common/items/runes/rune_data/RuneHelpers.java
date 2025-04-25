@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.ComponentReg;
@@ -166,11 +167,12 @@ public class RuneHelpers {
     public static void generateRandomTypAttribute(
         ItemStack stack,
         @Nullable JahdooRarity tierRarity,
-        @Nullable JahdooRarity runeRarity
+        @Nullable JahdooRarity runeRarity,
+        int chestTier
     ) {
         if(stack.getAttributeModifiers().modifiers().isEmpty()){
             var getTierRarity = tierRarity != null ? tierRarity : JahdooRarity.getRarity();
-            var getRuneRarity = runeRarity != null ? runeRarity : JahdooRarity.getRarity();
+            var getRuneRarity = runeRarity != null ? runeRarity : ShoppingItems.getRaritiesByChestRarity(chestTier);
 
             RuneReg.getRuneWithRarity(getRuneRarity).ifPresent(
                 rune -> {

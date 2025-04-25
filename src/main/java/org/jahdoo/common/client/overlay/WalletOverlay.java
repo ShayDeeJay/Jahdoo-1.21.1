@@ -126,7 +126,7 @@ public class WalletOverlay implements LayeredDraw.Layer {
         var player = minecraft.player;
         if(player == null) return;
 
-        var size = 34;
+        var size = 24;
         var spacer = 0;
         var wallet = getWalletCoins(player);
         int getX = (int) (fade - 15 + adjustX);
@@ -158,7 +158,7 @@ public class WalletOverlay implements LayeredDraw.Layer {
             var priceDifference = displayDifference(wallet, shoppingTable != null ? shoppingTable.itemCosts : converter, i, coin, prop);
             var getTextType = !priceDifference.equals(empty()) ? priceDifference : text;
 
-            graphics.blit(prop.getLocation(), getX + 2, getY + spacer + 2, 0, 0, size, size, size, size);
+            graphics.blit(prop.getLocation(), getX + 6, getY + spacer + 6, 0, 0, size, size, size, size);
             graphics.drawString(minecraft.font, getTextType, getX + 28, getY + 15 + spacer, -1, false);
 
             spacer += 16;

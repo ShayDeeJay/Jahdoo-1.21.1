@@ -17,11 +17,13 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.LocalLootBeamData;
 import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
 import org.jahdoo.common.items.magnet.Magnet;
 import org.jahdoo.common.items.magnet.MagnetData;
 import org.jahdoo.common.items.pendent.Pendent;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
+import org.jahdoo.common.items.shields.JahdooShieldItem;
 import org.jahdoo.common.items.tome.TomeOfUnity;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
@@ -40,8 +42,10 @@ import static net.minecraft.world.level.storage.loot.parameters.LootContextParam
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.minecraft.world.level.storage.loot.providers.number.ConstantValue.exactly;
 import static net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.between;
-import static org.jahdoo.ascension.rarity.JahdooRarity.*;
 import static org.jahdoo.ascension.trading_post.ShoppingArmor.enchantArmorItem;
+import static org.jahdoo.ascension.trading_post.ShoppingItems.*;
+import static org.jahdoo.ascension.trading_post.ShoppingItems.createTomeAttributes;
+import static org.jahdoo.ascension.trading_post.ShoppingItems.getRaritiesByChestRarity;
 import static org.jahdoo.ascension.trading_post.ShoppingWeapon.enchantSword;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.randomApplicableEnchantment;
@@ -157,6 +161,12 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> STARTER_PACK =
         lootTableItem(ItemReg.CARE_PACKAGE.get());
 
+    public static final LootPoolSingletonContainer.Builder<?> SHIELD =
+        lootTableItem(ItemReg.BASIC_SHIELD.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> GAUNTLET =
+        lootTableItem(ItemReg.BATTLEMAGE_GAUNTLET.get());
+
     public static List<ItemStack> getCoinItems(InstanceData data) {
         var lootCoins = new ArrayList<ItemStack>();
 
@@ -237,13 +247,12 @@ public class RewardLootTables {
         return createLootParams(serverLevel, pos, loot);
     }
 
-    public static void amuletItem(ItemStack pendent) {
-        var isLegendary = getRarity() == LEGENDARY;
-        var x = isLegendary ? 1 : 0;
+    public static void amuletItem(ItemStack pendent, int chestRarity) {
+        var min = Math.min(Math.max(1, chestRarity), 3);
 
-        if(isLegendary) pendent.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(x));
+        if(min > 1) pendent.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(min));
 
-        RuneHolder.createNewRuneSlots(pendent, x + 1, isLegendary ? 50 : 25);
+        RuneHolder.createNewRuneSlots(pendent, min, 25 * min);
     }
 
     public static ItemStack magnetItem(JahdooRarity getRarity, ItemStack itemStack) {
@@ -302,17 +311,20 @@ public class RewardLootTables {
         JahdooRarity rarity,
         ItemStack itemStack,
         boolean isSpecial,
-        JahdooRarity runeRarity
+        JahdooRarity runeRarity,
+        int chestRarity
     ) {
         switch (itemStack.getItem()){
-            case CasterItem ignored -> ShoppingItems.getRandomWand(rarity, itemStack);
-            case TomeOfUnity ignored -> createTomeAttributes(rarity, itemStack);
-            case RuneItem ignored -> generateRandomTypAttribute(itemStack, runeRarity, null);
+            case CasterItem ignored -> ShoppingItems.getRandomWand(null, itemStack, chestRarity);
+            case TomeOfUnity ignored -> createTomeAttributes(itemStack, chestRarity);
+            case RuneItem ignored -> generateRandomTypAttribute(itemStack, runeRarity, null, chestRarity);
             case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem, isSpecial);
             case SwordItem ignored -> enchantSword(serverLevel, itemStack, isSpecial);
             case EnchantedBookItem ignored -> enchantedBook(serverLevel, itemStack);
             case Magnet ignored -> magnetItem(rarity, itemStack);
-            case Pendent ignored -> amuletItem(itemStack);
+            case Pendent ignored -> amuletItem(itemStack, chestRarity);
+            case JahdooShieldItem ignored -> getShieldWithRarity(itemStack, getRaritiesByChestRarity(chestRarity));
+            case BattlemageGauntlet ignore -> getGauntletWithRarity(itemStack, getRaritiesByChestRarity(chestRarity));
             default -> { /*IGNORE*/ }
         }
     }
@@ -335,7 +347,6 @@ public class RewardLootTables {
             .add(GLAIVE.setWeight(10))
             .add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight(5))
             .add(EXIT_KEY.setWeight(1))
-            .add(TOME_OF_UNITY_BUILDER.setWeight(4))
             .add(BATTLEMAGE_HELM_BUILDER.setWeight(1))
             .add(BATTLEMAGE_CHEASTPLATE_BUILDER.setWeight(1))
             .add(BATTLEMAGE_LEGGINGS_BUILDER.setWeight(1))
@@ -347,11 +358,15 @@ public class RewardLootTables {
 
         return builder
             .add(RUNE.setWeight(15))
-            .add(getRandomWand().setWeight(2))
+            .add(AMULET.setWeight(5))
             .add(MAGNET.setWeight(5))
+            .add(getRandomWand().setWeight(5))
+            .add(TOME_OF_UNITY_BUILDER.setWeight(4))
+            .add(SHIELD.setWeight(4))
+            .add(INGMAS_SWORD.setWeight(3))
             .add(NETHERITE_SWORD_BUILDER.setWeight(2))
             .add(CHALLENGER_TICKET.setWeight(1))
-            .add(INGMAS_SWORD.setWeight(1));
+            .add(GAUNTLET.setWeight(1));
     }
 
     private static LootPool.Builder rarePool(int level, int chestRarity) {
@@ -368,9 +383,7 @@ public class RewardLootTables {
         var builder = LootPool.lootPool().setRolls(exactly(1.0F));
 
         return builder
-            .add(IRON_SWORD_BUILDER.setWeight(20))
             .add(DIAMOND_SWORD_BUILDER.setWeight(5))
-            .add(AMULET.setWeight(5))
             .add(ELYTRA_BUILDER.setWeight(1))
             .add(STARTER_PACK.setWeight(1));
     }

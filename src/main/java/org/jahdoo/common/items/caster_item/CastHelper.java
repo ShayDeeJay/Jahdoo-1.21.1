@@ -17,8 +17,8 @@ import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.caster_item.elemental_wand.ElementalWand;
-import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.AttributeReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.Nullable;
 
@@ -140,6 +140,11 @@ public class CastHelper {
                         onCast(player, getAbility);
                         OnCastPerks.onCastPerkApply(player);
                         Helpers.hurtAndKeepItem(wandItem, 5, player.level(), player);
+                        if(CasterItemHelper.canOffHand(player, false)) {
+                            var gauntlet = CasterItemHelper.getGauntlet(player);
+                            System.out.println(gauntlet);
+                            Helpers.hurtAndKeepItem(gauntlet, 5, player.level(), player);
+                        }
                     } else failedCastNotification(player);
                 } else brokenWandNotification(player, getElement);
             } else onCast(player, getAbility);

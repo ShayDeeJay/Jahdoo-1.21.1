@@ -58,7 +58,7 @@ public class RuneItem extends Item implements JahdooItem {
         if(!player.level().isClientSide){
             var newStack = stack.copyWithCount(1);
             stack.shrink(1);
-            generateRandomTypAttribute(newStack, tierRarity, runeRarity);
+//            generateRandomTypAttribute(newStack, tierRarity, runeRarity);
             Helpers.throwOrAddItem(player, newStack);
         }
     }

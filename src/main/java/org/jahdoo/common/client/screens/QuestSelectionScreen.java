@@ -15,6 +15,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.client.overlay.WalletOverlay;
 import org.jahdoo.common.networking.client2server.AddQuestC2SP;
+import org.jahdoo.common.networking.client2server.PerkTableSyncC2SP;
 import org.jahdoo.common.networking.client2server.WalletSyncC2SP;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -198,6 +199,7 @@ public class QuestSelectionScreen extends Screen  {
 
         player.playSound(SoundReg.UNLOCK_NOTIFICATION.get(), 1F, 1F);
         getQuestFromBlock().ifPresent(x -> sendToServer(new AddQuestC2SP(x.questName())));
+        PacketDistributor.sendToServer(new PerkTableSyncC2SP(getMinecraft().player.getUUID(), getBlockPos));
         minecraft.setScreen(null);
     }
 

@@ -118,9 +118,9 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         graphics.blit(Icons.CLOCK, clockX - 3, (int) (fade), 0, 0, size, size, size, size);
         graphics.drawString(font, appendStat("", ticksToTime(valueOf(remainingTime)), remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED), clockX + 16, (int) (6 + fade), -1, false);
 
-        var i = 16;
-        graphics.blit(Icons.ROOMS_CLEARED, clockX - 3, (int) (fade) + i, 0, 0, size, size, size, size);
-        graphics.drawString(font, "" + roomsCleared, clockX + 16, (int) (6 + fade) + i, -1, false);
+        var i = 65;
+        graphics.blit(Icons.ROOMS_CLEARED, clockX - 3 + i, (int) (fade), 0, 0, size, size, size, size);
+        graphics.drawString(font, "" + roomsCleared, clockX + 16 + i, (int) (6 + fade), -1, false);
         return getQuest;
     }
 

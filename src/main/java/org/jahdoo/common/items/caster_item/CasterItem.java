@@ -12,16 +12,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.registers.ComponentReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 import static net.minecraft.world.InteractionResultHolder.fail;
 import static net.minecraft.world.InteractionResultHolder.pass;
+import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
+import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 
 public class CasterItem extends Item implements JahdooItem {
 
@@ -60,7 +63,7 @@ public class CasterItem extends Item implements JahdooItem {
         return new Properties()
             .stacksTo(1)
             .durability(300)
-            .component(ComponentReg.JAHDOO_RARITY, 0);
+            .component(JAHDOO_RARITY, 0);
     }
 
     @Override
@@ -78,8 +81,18 @@ public class CasterItem extends Item implements JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         var item = player.getItemInHand(interactionHand);
+        var pic = player.pick(player.blockInteractionRange(), 1, false);
 
-        if(level instanceof ServerLevel serverLevel){
+        if(level instanceof ServerLevel){
+            if(pic instanceof BlockHitResult result){
+                var entity = level.getBlockEntity(result.getBlockPos());
+                var state = level.getBlockState(result.getBlockPos());
+                var below = level.getBlockState(result.getBlockPos().below(1));
+
+                if(entity instanceof LockBlockEntity block && !block.canPlace() ||  state.is(ALLOWED_BLOCK_INTERACTIONS) || below.is(ALLOWED_BLOCK_INTERACTIONS)){
+                    return fail(item);
+                }
+            }
             var castAbility = castAbility(player, interactionHand, item);
             if (castAbility != null) return castAbility;
         }
@@ -88,7 +101,7 @@ public class CasterItem extends Item implements JahdooItem {
     }
 
     public static InteractionResultHolder<ItemStack> castAbility(Player player, InteractionHand interactionHand, ItemStack item) {
-        if (canOffHand(player, interactionHand, true)) {
+        if (canOffHand(player, true)) {
             player.startUsingItem(interactionHand);
             CastHelper.use(player);
             return pass(item);

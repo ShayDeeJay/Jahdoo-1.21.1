@@ -28,23 +28,23 @@ public class PerkTableRenderer implements BlockEntityRenderer<PerkTableEntity>{
         var scale = Math.min(1.2F, animate);
         var bobOff = Math.sin(rotate / 10.0F) * 0.08F + 2F - 0.51;
 
-        if(!entity.getUsed()){
-            stack.pushPose();
-            stack.translate(0.5f, Math.min(bobOff, animate), 0.5F);
-            stack.scale(scale, scale, scale);
-            stack.mulPose(Axis.YP.rotationDegrees(rotate * 2));
-            itemRenderer.renderStatic(
-                render,
-                ItemDisplayContext.FIXED,
-                packedLight,
-                OverlayTexture.NO_OVERLAY,
-                stack,
-                source,
-                entity.getLevel(),
-                1
-            );
-            stack.popPose();
-        }
+        stack.pushPose();
+        stack.translate(0.5f, Math.min(bobOff, animate), 0.5F);
+        stack.scale(scale, scale, scale);
+        stack.mulPose(Axis.YP.rotationDegrees(rotate * 2));
+
+        itemRenderer.renderStatic(
+            render,
+            ItemDisplayContext.FIXED,
+            entity.interacted(mc.player) ? 50 : 180,
+            OverlayTexture.NO_OVERLAY,
+            stack,
+            source,
+            entity.getLevel(),
+            1
+        );
+
+        stack.popPose();
     }
 
 }

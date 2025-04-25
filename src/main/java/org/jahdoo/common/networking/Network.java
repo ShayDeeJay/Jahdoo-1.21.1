@@ -123,6 +123,12 @@ public class Network {
             WalletSyncC2SP::handle
         );
 
+        payloadRegistrar.playToServer(
+            PerkTableSyncC2SP.TYPE,
+            PerkTableSyncC2SP.STREAM_CODEC,
+            PerkTableSyncC2SP::handle
+        );
+
         //S2C
         payloadRegistrar.playToClient(
             PlayerTrialDataS2CP.TYPE,
