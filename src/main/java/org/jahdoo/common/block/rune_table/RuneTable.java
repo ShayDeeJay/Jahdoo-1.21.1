@@ -120,16 +120,15 @@ public class RuneTable extends BaseEntityBlock {
         BlockState newState,
         boolean movedByPiston
     ) {
-        if (state.getBlock() != newState.getBlock()) {
-            var blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof RuneTableEntity runeTable) {
+        if (level.getBlockEntity(pos) instanceof RuneTableEntity runeTable) {
+            var handler = runeTable.inputItemHandler;
+            for(int i = 0; i < handler.getSlots(); i++){
                 var inputInventory = new SimpleContainer(1);
-                var stackInSlot = runeTable.inputItemHandler.getStackInSlot(0);
-
-                inputInventory.setItem(0, stackInSlot);
+                inputInventory.addItem(handler.getStackInSlot(i));
                 Containers.dropContents(level, pos, inputInventory);
             }
         }
+
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 

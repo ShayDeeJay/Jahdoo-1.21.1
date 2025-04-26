@@ -4,9 +4,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.RelicItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import top.theillusivec4.curios.api.SlotContext;
@@ -14,7 +14,7 @@ import top.theillusivec4.curios.api.SlotContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TomeOfUnity extends RelicItem {
+public class TomeOfUnity extends RelicItem implements JahdooItem {
 
     public TomeOfUnity() {
         super(new Item.Properties().stacksTo(1));
@@ -33,18 +33,13 @@ public class TomeOfUnity extends RelicItem {
 
     @Override
     public List<Component> getSlotsTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
-        var newComp = new ArrayList<Component>();
-        var rarity = JahdooRarity.attachRarityTooltip(stack, context.level());
-        if(rarity != null) newComp.add(rarity);
-
-        newComp.addAll(tooltips);
-        newComp.add(Component.empty());
-        return newComp;
+        return super.getSlotsTooltip(tooltips, context, stack);
     }
 
     @Override
     public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
         var list = new ArrayList<Component>();
+
         var lists = stack.getAttributeModifiers().modifiers().stream().toList();
         if(!lists.isEmpty()){
             for (var entry : lists) {
@@ -57,6 +52,8 @@ public class TomeOfUnity extends RelicItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltips, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltips, tooltipFlag);
+        this.appendItemToolTips(stack, context, tooltips, false);
+        tooltips.add(Component.empty());
 
         var list = stack.getAttributeModifiers().modifiers().stream().toList();
         if(!list.isEmpty()){

@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Level;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.AbstractInternalContainer;
-import org.jahdoo.common.client.slots.AugmentCoreSlot;
+import org.jahdoo.common.client.slots.GeneralItemSlot;
 import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.registers.BlockReg;
@@ -41,7 +41,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
     }
 
     private void insertWandSlot() {
-        this.addSlot(new AugmentCoreSlot(getWandManagerEntity().inputItemHandler, 0, -1000, -1000, ItemReg.AUGMENT_CORE.get()));
+        this.addSlot(new GeneralItemSlot(getWandManagerEntity().inputItemHandler, 0, -1000, -1000, ItemReg.AUGMENT_CORE.get()));
     }
 
     @Override
@@ -81,7 +81,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
         var handler = getWandManagerEntity().inputItemHandler;
 
         for (int i = 1; i < 4; i ++){
-            this.addSlot(new AugmentCoreSlot(handler, i, posX - 75, posY + spacer.get() - 96, getCore().get(i-1)));
+            this.addSlot(new GeneralItemSlot(handler, i, posX - 75, posY + spacer.get() - 96, getCore().get(i-1)));
             spacer.set(spacer.get() + 28);
         }
     }

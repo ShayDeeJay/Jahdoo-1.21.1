@@ -22,18 +22,13 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static org.jahdoo.common.items.runes.rune_data.RuneHolder.*;
-import static org.jahdoo.common.registers.ArmorMaterialReg.*;
-import static org.jahdoo.common.registers.ComponentReg.*;
+import static org.jahdoo.common.registers.ArmorMaterialReg.WIZARD;
 
 public class WizardArmor extends BaseArmor implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public WizardArmor(Type type) {
-        super(WIZARD, type, new Properties()
-              .durability(37)
-              .component(RUNE_HOLDER.get(), makeRuneSlots(1, 100))
-        );
+        super(WIZARD, type, new Properties().durability(37));
     }
 
     @Override

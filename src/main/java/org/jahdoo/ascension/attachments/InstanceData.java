@@ -241,7 +241,8 @@ public class InstanceData implements IAttachment {
 
     @Override
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
-        nbt.putString("difficulty", difficulty);
+        if(difficulty != null) nbt.putString("difficulty", difficulty);
+
         var valuesTag = new CompoundTag();
         for (Map.Entry<String, Double> entry : values.entrySet()) {
             valuesTag.putDouble(entry.getKey(), entry.getValue());

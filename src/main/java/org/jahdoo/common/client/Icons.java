@@ -46,6 +46,9 @@ public class Icons {
     public static final ResourceLocation MANA_REGEN =
         res("textures/mob_effect/mana_regen.png");
 
+    public static final ResourceLocation REPAIR =
+        res(PREFIX + "repair.png");
+
     public static final ResourceLocation DATA =
         res(PREFIX + "data.png");
 
@@ -93,6 +96,9 @@ public class Icons {
 
     public static final ResourceLocation SKILL_POINT =
         res(ITEMS_PREFIX + "skill_point.png");
+
+    public static final ResourceLocation BLANK_RUNE =
+        res(ITEMS_PREFIX + "runes/rune.png");
 
     public static final ResourceLocation ATTACK_SPEED =
         res(ABILITY_PREFIX + "attack_speed.png");

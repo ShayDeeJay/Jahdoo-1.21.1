@@ -7,6 +7,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,6 +27,22 @@ public class RuneTableEntity extends AbstractBEInventory implements MenuProvider
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {}
+
+    public boolean checkAndChargeCores(Item item, boolean charge){
+        var handler = this.inputItemHandler;
+        for (int i = 0; i < handler.getSlots(); i++){
+            var runeTableItem = handler.getStackInSlot(i);
+
+            if(runeTableItem.getItem().equals(item)){
+                if(charge){
+                    handler.getStackInSlot(i).shrink(1);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public ItemStackHandler getItem(){
         return this.inputItemHandler;

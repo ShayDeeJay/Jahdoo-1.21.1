@@ -1,30 +1,44 @@
 package org.jahdoo.common.block.rune_table;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.items.runes.RuneItem;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
+import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.items.caster_item.CasterItemHelper;
+import org.jahdoo.common.items.runes.RuneItem;
+import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static net.minecraft.sounds.SoundEvents.ANVIL_USE;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
-import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
+import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
+import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.ascension.utils.Helpers.repairDurability;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.common.client.Icons.GUI_GENERAL_SLOT;
+import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
+import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
+import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
+import static org.jahdoo.common.client.screens.AbilityModificationScreen.WIDGET;
+import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
+import static org.jahdoo.common.items.runes.rune_data.RuneHolder.*;
 
 public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
@@ -32,14 +46,143 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     private final AbstractElement element;
     private final int borderColour;
     private int scaleItem = 60;
+    private boolean showInventory;
+    private boolean showTooltip;
+    private List<Component> hoverTooltip = new ArrayList<>();
 
     public RuneTableScreen(RuneTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         var element = ElementReg.fromWand(menu.tableEntity().itemSlot().getItem());
-
+        switchVisibility();
         this.runeTableMenu = menu;
         this.element = element.orElse(ElementReg.mystic());
-        this.borderColour = element.map(AbstractElement::textColourA).orElseGet(() -> color(56, 157, 59));
+        this.borderColour = color(200, element.map(AbstractElement::textColourA).orElseGet(() -> uiColour()));
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        keyboardButton();
+    }
+
+    private void keyboardButton() {
+        var resourceLocation = !this.showInventory ? BLANK_RUNE : REPAIR;
+        var selected = new WidgetSprites(GUI_BUTTON_SELECTED, GUI_BUTTON_SELECTED);
+        var posX = this.width/2 + 66;
+        var posY = this.height / 2 - 112;
+        var posY2 = this.height / 2 - 112;
+
+        this.addRenderableWidget(
+            menuButton(
+                posX - 19, posY, (press) -> inventoryHandler(true), BLANK_RUNE,
+                24, showInventory, 0, WIDGET, false
+            )
+        );
+
+        this.addRenderableWidget(
+            menuButton(
+                posX, posY, (press) -> inventoryHandler(false), REPAIR,
+                24, !showInventory, 0, WIDGET, false
+            )
+        );
+
+        this.addRenderableWidget(
+            menuButton(
+                posX + 19, posY2, (press) -> hideTooltip(), INFORMATION,
+                24, false, 0, this.showTooltip ? selected : WIDGET, false
+            )
+        );
+
+        if(!this.showInventory && !this.getItem().isEmpty()){
+            var canUpgrade = isCanUpgrade();
+            var posX1 = this.width / 2 + 7;
+            var posY1 = this.height / 2 - 43;
+            this.addRenderableWidget(
+                menuButtonSound(
+                    posX1, posY1, (press) -> onRepair(), REPAIR,
+                    44, canUpgrade, 0, canUpgrade(getItem()) ? WIDGET : selected, !canUpgrade, this::onHoverRepair, null
+                )
+            );
+
+            this.addRenderableOnly(
+                new Overlay() {
+                    @Override
+                    public void render(GuiGraphics guiGraphics, int i, int i1, float v) {
+                        SharedUI.boxMaker(guiGraphics, posX1 + 6, posY1 + 6, 16, 16, color(200, canUpgrade ?  HEADER_COLOUR : borderColour), 0, 0);
+                    }
+                }
+            );
+        }
+    }
+
+    public void hideTooltip(){
+        this.showTooltip = !this.showTooltip;
+    }
+
+    private boolean isCanUpgrade() {
+        var canUpgrade = canUpgrade(getItem());
+        return !canUpgrade || !(getItemPotential(getItem()) >= repairPotentialCost()) || !(entity().checkAndChargeCores(coreCost().getItem(), false));
+    }
+
+    public void onHoverRepair(){
+        if(this.hoverTooltip.isEmpty()){
+            if(!coreCost().isEmpty()){
+                var subHeaderColour = SUB_HEADER_COLOUR;
+                var prefix = withStyleComponent("Potential: ", subHeaderColour);
+                var colour = this.borderColour;
+                var value = withStyleComponent("" + repairPotentialCost(), colour);
+
+                this.hoverTooltip.add(withStyleComponent("Cost:", colour));
+                this.hoverTooltip.add(prefix.copy().append(value));
+
+                var hoverName = withStyleComponent(coreCost().getHoverName().getString() + ":", subHeaderColour);
+                this.hoverTooltip.add(hoverName.copy().append(withStyleComponent(" 1", colour)));
+            }
+        }
+    }
+
+    private ItemStack coreCost() {
+        var coreType = getCoreType();
+        return coreType < 0 ? ItemStack.EMPTY : new ItemStack(getCore().get(coreType));
+    }
+
+    private int getCoreType() {
+        return Math.min(totalRepairs(getItem()), 2);
+    }
+
+    public void onRepair(){
+        getMinecraft().player.playSound(ANVIL_USE, 1, 2F);
+        getMinecraft().player.playSound(SoundReg.REJECT.get(), 1, 1.8F);
+
+        var handler = entity().inputItemHandler.getStackInSlot(getCoreType()+1);
+        sendToServer(new ItemInBlockC2SP(handler.copyWithCount(handler.getCount()-1), entity().getBlockPos(), getCoreType()+1));
+
+        repairDurability(getItem());
+        updateRefinementPotential(getItem(), getItemPotential(getItem()) - repairPotentialCost());
+        checkAndRepair(getItem());
+
+        sendToServer(new ItemInBlockC2SP(getItem(), entity().getBlockPos(), 0));
+        this.rebuildWidgets();
+    }
+
+    private int repairPotentialCost() {
+        return 5 * (totalRepairs(getItem()) + 1);
+    }
+
+    public void inventoryHandler(boolean showInventory){
+        this.showInventory = showInventory;
+        switchVisibility();
+        this.rebuildWidgets();
+    }
+
+    private void switchVisibility() {
+        for (Slot slot : this.menu.slots) {
+            if(slot instanceof RuneSlot runeSlot){
+                if(runeSlot.getItem().getItem() instanceof RuneItem){
+                    runeSlot.setActive(showInventory);
+                }
+            }
+        }
     }
 
     @Override
@@ -65,7 +208,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     }
 
     private int getPotential() {
-        return RuneHolder.potential(getItem());
+        return getItemPotential(getItem());
     }
 
     public ItemStack getItem(){
@@ -82,12 +225,14 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     }
 
     private void remainingPotential(GuiGraphics guiGraphics, int shiftX, AtomicInteger spacer, int shiftY) {
-        var slot = Helpers.withStyleComponent(String.valueOf(getPotential()), SUB_HEADER_COLOUR);
-        var component = withStyleComponent("Potential: ", HEADER_COLOUR).copy().append(slot);
         var sharedX = this.width / 2 - 30 + shiftX;
         var posY = this.height / 2 - 85 + spacer.get() + shiftY;
 
-        guiGraphics.drawString(this.font, component, sharedX -1, posY + 2, 0);
+        CasterItemHelper.getPotentialComponent(getItem(), (s) -> guiGraphics.drawString(this.font, s, sharedX -1, posY + 2, 0));
+        if(!this.showInventory){
+            guiGraphics.drawString(font, CasterItemHelper.appendDurability(getItem()), sharedX - 1, posY + 14, -1);
+            CasterItemHelper.getRepairSlotsComponent(getItem(), (s) -> guiGraphics.drawString(font, s, sharedX - 1, posY + 26, -1));
+        }
     }
 
     private void hoverCarried(GuiGraphics guiGraphics, int x, int y){
@@ -103,18 +248,20 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     private void overlayInventory(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
         guiGraphics.pose().popPose();
         var i = 40;
-        var i1 = -17;
 
         guiGraphics.pose().translate(0,0,20);
-        var startX1 = startX + i - 5;
+        var startX1 = startX + i + 3;
 
-        boxMaker(guiGraphics, startX1, startY + i1, 105, 55, borderColour, groupFade());
+        boxMaker(guiGraphics, startX1 + 11, startY - 5, 86, 43, borderColour, groupFade());
         renderInventoryBackground(guiGraphics, this, 256, 24, true);
         guiGraphics.pose().pushPose();
     }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
+        this.rebuildWidgets();
+        var start = fadeBlack(0.4F);
+        SharedUI.boxMaker(guiGraphics, 0, 0, this.width, this.height, 0, start, start);
         this.renderBlurredBackground(pPartialTick);
         var adjustX = 18;
         var adjustY = -27;
@@ -122,42 +269,55 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         var i1 = this.height / 2;
         var startX = i - 140;
         var startY = i1 + 22;
-
-        scaleItem();
-        augmentCoreSlots(guiGraphics, adjustX, adjustY, borderColour, this.width, this.height, groupFade());
-        renderItem(guiGraphics, mouseX, mouseY, startX, startY);
-        wandProperties(guiGraphics);
-
-        super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         var hSlot = this.hoveredSlot;
 
-        if(hSlot != null && !(hSlot.getItem().getItem() instanceof RuneItem)){
-            this.renderTooltip(guiGraphics, mouseX, mouseY);
+        scaleItem();
+        augmentCoreSlots(guiGraphics, adjustX, adjustY+1, borderColour, this.width + 6, this.height + 6, groupFade());
+        runeSlotTexture(guiGraphics);
+        renderItem(guiGraphics, mouseX, mouseY, startX, startY);
+
+        if(!this.getItem().isEmpty() && this.showTooltip){
+            var startX1 = this.width / 2 + 100;
+            var startY1 = this.height / 2 - 73;
+            guiGraphics.renderTooltip(font, getItem(), startX1, startY1);
         }
 
         overlayInventory(guiGraphics, startX, startY);
         hoverCarried(guiGraphics, mouseX, mouseY);
+        if(hSlot != null && !(hSlot.getItem().getItem() instanceof RuneItem)){
+            this.renderTooltip(guiGraphics, mouseX, mouseY);
+        }
+
+        if(!this.hoverTooltip.isEmpty()){
+            guiGraphics.renderTooltip(font, this.hoverTooltip, Optional.empty(), mouseX, mouseY + 10);
+        }
+
+        this.hoverTooltip = new ArrayList<>();
+
+        super.render(guiGraphics, mouseX, mouseY, pPartialTick);
     }
 
-    private void wandProperties(GuiGraphics guiGraphics) {
+    private void runeSlotTexture(GuiGraphics guiGraphics) {
         var shiftY = 0;
         var shiftX = -5;
         var spacer = new AtomicInteger();
 
         remainingPotential(guiGraphics, shiftX, spacer, shiftY);
-        var getRunes = RuneHolder.getRuneholder(getItem());
+        var getRunes = getRuneholder(getItem());
 
         handleSlotsInGridLayout(
             (slotX, slotY, index) -> {
-                for (ItemStack ignored : getRunes.runeSlots()) {
-                    var size = 32;
-                    guiGraphics.pose().pushPose();
-                    guiGraphics.pose().translate(0,0,100);
-                    var x = slotX + runeTableMenu.posX - 96;
-                    var y = slotY - runeTableMenu.posY - 9;
-                    guiGraphics.blit(GUI_GENERAL_SLOT, x, y, 0,0, size, size, size, size);
-                    spacer.set(spacer.get() + runeTableMenu.runeYSpacer);
-                    guiGraphics.pose().popPose();
+                if(this.showInventory){
+                    for (ItemStack ignored : getRunes.runeSlots()) {
+                        var size = 32;
+                        guiGraphics.pose().pushPose();
+                        guiGraphics.pose().translate(0, 0, 100);
+                        var x = slotX + runeTableMenu.posX - 96;
+                        var y = slotY - runeTableMenu.posY - 9;
+                        guiGraphics.blit(GUI_GENERAL_SLOT, x-3, y+8, 0, 0, size, size, size, size);
+                        spacer.set(spacer.get() + runeTableMenu.runeYSpacer);
+                        guiGraphics.pose().popPose();
+                    }
                 }
             },
             getRunes.runeSlots().size(),
@@ -169,21 +329,17 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
         var startX11 = this.width/2 + shiftX - 38;
         var startY11 = this.height/2 + shiftY - 89;
-        var heightOffset = 86 - 40;
+        var heightOffset = 86 - 36;
         boxMaker(guiGraphics, startX11, startY11, Math.max(10, 74), heightOffset, borderColour, groupFade());
 
-        if(getRunes.runeSlots().isEmpty()){
-            guiGraphics.drawCenteredString(this.font, "No Slots Available", startX11 + 74, startY11 + 40, SUB_HEADER_COLOUR);
+        if(getRunes.runeSlots().isEmpty() && this.showInventory){
+            guiGraphics.drawCenteredString(this.font, "No Slots Available", startX11 + 74, startY11 + 46, SUB_HEADER_COLOUR);
         }
 
-        var startX1 = this.width / 2 - 38 + shiftX;
-        var startY1 = this.height / 2 - 111 + shiftY;
-        boxMaker(guiGraphics, startX1, startY1, 39, 10, borderColour, groupFade());
-
-        var header = Component.literal("Rune Manager");
+        var header = Component.literal(showInventory ? "Rune Manager" : "Gear Repair");
         var x = this.width / 2 - 34 + shiftX;
-        var y1 = this.height / 2 - 105 + shiftY;
-        guiGraphics.drawString(this.font, header, x, y1, SUB_HEADER_COLOUR);
+        var y1 = this.height / 2 - 102 + shiftY;
+        guiGraphics.drawString(this.font, header, x, y1, OFF_WHITE);
     }
 
 
@@ -192,27 +348,26 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         final var ITEM_OFFSET_X = 40;
         final var ITEM_OFFSET_Y = -17;
         final var SHIFT_X = 75;
-        final var WAND_ITEM_OFFSET = getItem().getItem() instanceof CasterItem ? 80 : 90;
+        final var WAND_ITEM_OFFSET = getItem().getItem() instanceof CasterItem ? 75 : 80;
         final var SCALED_ITEM = scaleItem - WAND_ITEM_OFFSET;
-        final var OFFSET_Y = 164 - 80;
+        final var OFFSET_Y = 91;
 
         var minX = startX + ITEM_OFFSET_X + 70 - SHIFT_X;
         var minY = startY + ITEM_OFFSET_Y - 94;
-        var maxX = startX + ITEM_OFFSET_X + 55;
+        var maxX = startX + ITEM_OFFSET_X + 58;
         var width = this.width - SHIFT_X * 2;
-        var height = this.height - (144 - SCALED_ITEM);
+        var height = this.height - (140 - SCALED_ITEM);
         var posX = startX + 23;
         var posY = startY + ITEM_OFFSET_Y - 106;
 
-        guiGraphics.pose().pushPose();
-        bezelMaker(guiGraphics, posX, posY, 52, OFFSET_Y, 32, null);
-        guiGraphics.pose().popPose();
+        bezelMaker(guiGraphics, posX + 1, posY+1, 200, OFFSET_Y-1, 32, null);
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, -10);
         guiGraphics.enableScissor(minX, minY, maxX, minY + 172);
 
         var stand = EntityType.ARMOR_STAND.create(getMinecraft().level);
+
         if (getItem().getItem() instanceof ArmorItem armorItem && stand != null) {
             stand.setItemSlot(armorItem.getEquipmentSlot(), getItem());
             stand.setInvisible(true);
@@ -231,13 +386,10 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         }
 
         if (this.element != null) {
-            var colorFade = color(100, borderColour);
-            var heightOffset = 86 - 40;
-            var color = color(50, borderColour);
-            var colorA = color(20, borderColour);
+            var heightOffset = OFFSET_Y - 41;
+            var colorA = groupFade();
 
-            boxMaker(guiGraphics, minX, minY, 30, heightOffset);
-            SharedUI.boxMaker(guiGraphics, minX, minY, 30, heightOffset, color, colorA, colorFade);
+            SharedUI.boxMaker(guiGraphics, minX, minY, 32, heightOffset, borderColour, colorA, borderColour);
         }
 
         guiGraphics.disableScissor();

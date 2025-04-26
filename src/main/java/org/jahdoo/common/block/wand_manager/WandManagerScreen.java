@@ -78,7 +78,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     private int getPotential() {
-        return  RuneHolder.potential(getWand());
+        return  RuneHolder.getItemPotential(getWand());
     }
 
     @Override
@@ -305,8 +305,8 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             }
         }
 
-        RuneHolder.createRefinementPotential(wandItemCopy, Math.max(0, RuneHolder.potential(wandItemCopy) - 20));
-        PacketDistributor.sendToServer(new ItemInBlockC2SP(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos()));
+        RuneHolder.updateRefinementPotential(wandItemCopy, Math.max(0, RuneHolder.getItemPotential(wandItemCopy) - 20));
+        PacketDistributor.sendToServer(new ItemInBlockC2SP(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos(), 0));
 
         var player = Minecraft.getInstance().player;
         if(player != null){

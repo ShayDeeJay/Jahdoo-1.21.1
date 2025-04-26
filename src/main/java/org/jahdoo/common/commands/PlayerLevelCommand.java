@@ -11,6 +11,7 @@ import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.PlayerTrialData;
 import org.jahdoo.ascension.attachments.RunData;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.trading_post.ShoppingArmor;
 import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
@@ -204,6 +205,63 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
+                        Commands.literal("battlemage_gauntlet")
+                            .then(
+                                Commands.argument("count", integer())
+                                    .then(
+                                        Commands.argument("targets", EntityArgument.players())
+                                            .then(
+                                                rarity(
+                                                    c -> getGauntlet(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
+                                                    c -> getGauntlet(c.getSource(), getInteger(c, "count"), JahdooRarity.RARE),
+                                                    c -> getGauntlet(c.getSource(), getInteger(c, "count"), JahdooRarity.EPIC),
+                                                    c -> getGauntlet(c.getSource(), getInteger(c, "count"), JahdooRarity.LEGENDARY),
+                                                    c -> getGauntlet(c.getSource(), getInteger(c, "count"), JahdooRarity.ETERNAL),
+                                                    c -> getGauntlet(c.getSource(), getInteger(c, "count"), JahdooRarity.UNIQUE),
+                                                    c -> getGauntlet(c.getSource(), getInteger(c, "count"), null)
+                                                )
+                                            )
+                                    )
+                            )
+                    )
+                    .then(
+                        Commands.literal("tome_of_unity")
+                            .then(
+                                Commands.argument("count", integer())
+                                    .then(
+                                        Commands.argument("targets", EntityArgument.players())
+                                            .then(
+                                                rarity(
+                                                    c -> getTome(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
+                                                    c -> getTome(c.getSource(), getInteger(c, "count"), JahdooRarity.RARE),
+                                                    c -> getTome(c.getSource(), getInteger(c, "count"), JahdooRarity.EPIC),
+                                                    c -> getTome(c.getSource(), getInteger(c, "count"), JahdooRarity.LEGENDARY),
+                                                    c -> getTome(c.getSource(), getInteger(c, "count"), JahdooRarity.ETERNAL),
+                                                    c -> getTome(c.getSource(), getInteger(c, "count"), JahdooRarity.UNIQUE),
+                                                    c -> getTome(c.getSource(), getInteger(c, "count"), null)
+                                                )
+                                            )
+                                    )
+                            )
+                    )
+                    .then(
+                        Commands.literal("knight_king_armor")
+                            .then(
+                                Commands.argument("targets", EntityArgument.players())
+                                    .then(
+                                        rarity(
+                                            c -> getKnightKingArmor(c.getSource(), JahdooRarity.COMMON),
+                                            c -> getKnightKingArmor(c.getSource(), JahdooRarity.RARE),
+                                            c -> getKnightKingArmor(c.getSource(), JahdooRarity.EPIC),
+                                            c -> getKnightKingArmor(c.getSource(), JahdooRarity.LEGENDARY),
+                                            c -> getKnightKingArmor(c.getSource(), JahdooRarity.ETERNAL),
+                                            c -> getKnightKingArmor(c.getSource(), JahdooRarity.UNIQUE),
+                                            c -> getKnightKingArmor(c.getSource(), null)
+                                        )
+                                    )
+                            )
+                    )
+                    .then(
                         Commands.literal("rune")
                             .then(
                                 Commands.argument("count", integer())
@@ -218,6 +276,7 @@ public class PlayerLevelCommand {
             )
         );
     }
+
 
     private static LiteralArgumentBuilder<CommandSourceStack> rarity(
         Function<CommandContext<CommandSourceStack>, Integer> common,
@@ -324,6 +383,26 @@ public class PlayerLevelCommand {
         return 1;
     }
 
+    private static int getGauntlet(CommandSourceStack source, int count, JahdooRarity rarity) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (int i = 0; i < count; i++){
+            Helpers.throwOrAddItem(player, ShoppingItems.getGauntletWithRarity(null, rarity));
+        }
+        return 1;
+    }
+
+    private static int getTome(CommandSourceStack source, int count, JahdooRarity rarity) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (int i = 0; i < count; i++){
+            Helpers.throwOrAddItem(player, ShoppingItems.createTomeAttributes(null, rarity == null ? JahdooRarity.getRarity() : rarity, 0));
+        }
+        return 1;
+    }
+
     private static int getRune(CommandSourceStack source, int count) {
         var player = source.getPlayer();
         if(player == null) return 0;
@@ -331,6 +410,17 @@ public class PlayerLevelCommand {
         for (int i = 0; i < count; i++){
             Helpers.throwOrAddItem(player, ShoppingItems.shoppingRuneItem().ShoppingItem());
         }
+        return 1;
+    }
+
+    private static int getKnightKingArmor(CommandSourceStack source, JahdooRarity rarity) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (var itemStack : ShoppingArmor.attachDataArmor(rarity, ShoppingArmor.getKnightKingPiece())) {
+            Helpers.throwOrAddItem(player, itemStack);
+        }
+
         return 1;
     }
 

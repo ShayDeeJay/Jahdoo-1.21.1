@@ -142,7 +142,6 @@ public class CastHelper {
                         Helpers.hurtAndKeepItem(wandItem, 5, player.level(), player);
                         if(CasterItemHelper.canOffHand(player, false)) {
                             var gauntlet = CasterItemHelper.getGauntlet(player);
-                            System.out.println(gauntlet);
                             Helpers.hurtAndKeepItem(gauntlet, 5, player.level(), player);
                         }
                     } else failedCastNotification(player);

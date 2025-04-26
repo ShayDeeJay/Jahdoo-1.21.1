@@ -457,22 +457,22 @@ public class SharedUI {
         int centerX = sharedScreenWidth / 2;
         int centerY = shareScreenHeight / 2;
 
-        if (totalSlots <= 5) {
+        if (totalSlots <= 4) {
             int startX = centerX - (totalSlots - 1) * xSpacing / 2; // Center the row
 
             for (int i = 0; i < totalSlots; i++) {
                 int slotX = startX + i * xSpacing;
-                int slotY = centerY;
-                slotAction.accept(slotX + 80, slotY + 50, i);
+                slotAction.accept(slotX + 80, centerY + 50, i);
             }
-        } else {
-            int slotsInTopRow = (totalSlots + 1) / 2;
-            int slotsInBottomRow = totalSlots / 2;
 
-            int startXTopRow = centerX - (slotsInTopRow - 1) * xSpacing / 2;
-            int startXBottomRow = centerX - (slotsInBottomRow - 1) * xSpacing / 2;
-            int startYTopRow = centerY - ySpacing / 2;
-            int startYBottomRow = centerY + ySpacing / 2;
+        } else {
+            var slotsInTopRow = (totalSlots + 1) / 2;
+            var slotsInBottomRow = totalSlots / 2;
+
+            var startXTopRow = centerX - (slotsInTopRow - 1) * xSpacing / 2;
+            var startXBottomRow = centerX - (slotsInBottomRow - 1) * xSpacing / 2;
+            var startYTopRow = centerY - ySpacing / 2;
+            var startYBottomRow = centerY + ySpacing / 2;
 
             for (int i = 0; i < totalSlots; i++) {
                 int slotX, slotY;
@@ -486,7 +486,7 @@ public class SharedUI {
                     slotY = startYBottomRow;
                 }
 
-                slotAction.accept(slotX + 80, slotY + 50, i);
+                slotAction.accept(slotX + 80, slotY + 55, i);
             }
         }
     }

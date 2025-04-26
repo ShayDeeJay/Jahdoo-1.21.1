@@ -62,7 +62,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var refinement = Random.nextInt(300, 500);
 
         itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(3));
-        itemStack.set(ComponentReg.RUNE_HOLDER, RuneHolder.makeRuneSlots(4, refinement));
+        RuneHolder.createNewRuneSlots(itemStack, 4, 0, refinement);
         return new ShoppingItems(itemStack, setGoldCost(100));
     }
 
@@ -181,18 +181,20 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         }
     }
 
-    public static void createTomeAttributes(ItemStack itemStack, int chestRarity){
-        var rarity = getRaritiesByChestRarity(chestRarity);
+    public static ItemStack createTomeAttributes(@Nullable ItemStack itemStack, @Nullable JahdooRarity withRarity, int chestRarity){
+        var rarity = withRarity == null ? getRaritiesByChestRarity(chestRarity) : withRarity;
+        var stack = itemStack == null ? new ItemStack(ItemReg.TOME_OF_UNITY) : itemStack;
         var randomRegenValue = singleFormattedDouble(rarity.getAttributes().getRandomManaRegen());
         var randomManaPool = singleFormattedDouble(rarity.getAttributes().getRandomManaPool());
         var manaRegen = MANA_REGEN;
         var manaPool = MANA_POOL;
 
-        attachLootBeamComponent(itemStack, rarity);
-        itemStack.set(ComponentReg.JAHDOO_RARITY.get(), rarity.getId());
+        attachSharedProperties(stack, 0, rarity, 0);
 
-        replaceOrAddAttribute(itemStack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue, MAINHAND, false, "");
-        replaceOrAddAttribute(itemStack, manaPool.getRegisteredName(), manaPool, randomManaPool, OFFHAND, false, "");
+        replaceOrAddAttribute(stack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue, MAINHAND, false, "");
+        replaceOrAddAttribute(stack, manaPool.getRegisteredName(), manaPool, randomManaPool, OFFHAND, false, "");
+
+        return stack;
     }
 
     public static JahdooRarity getRaritiesByChestRarity(int chestRarity){
@@ -257,7 +259,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         itemStack.set(JAHDOO_RARITY, rarity.getId());
 
         var potential = rarity.getAttributes().getRandomPotential();
-        RuneHolder.createNewRuneSlots(itemStack, runeSlots, (int) getPercentageTotal(uniqueMultiplier, potential));
+        RuneHolder.createNewRuneSlots(itemStack, runeSlots,  JahdooRarity.getRarity().getId() + 1, (int) getPercentageTotal(uniqueMultiplier, potential));
 
         var durability = rarity.getAttributes().getRandomTime();
         attachDurability(itemStack, (int) getPercentageTotal(uniqueMultiplier, durability));

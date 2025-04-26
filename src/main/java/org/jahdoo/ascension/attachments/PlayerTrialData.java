@@ -109,8 +109,6 @@ public class PlayerTrialData implements IAttachment{
         }
         nbt.put("PastInstances", instanceList);
 
-        System.out.println(instanceList);
-
         var runList = new ListTag();
         for (RunData pastRun : pastRuns) {
             var runTag = new CompoundTag();
@@ -131,7 +129,6 @@ public class PlayerTrialData implements IAttachment{
                 var runTag = (CompoundTag) tag;
                 var instanceRun = new InstanceData("", new HashMap<>()); // placeholder init
                 instanceRun.loadNBTData(runTag, provider);
-                System.out.println(instanceRun);
                 pastInstances.add(instanceRun);
             }
         }

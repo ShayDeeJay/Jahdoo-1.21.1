@@ -18,20 +18,24 @@ public class ItemInBlockC2SP implements CustomPacketPayload {
 
     BlockPos blockPos;
     ItemStack itemStack;
+    int index;
 
-    public ItemInBlockC2SP(ItemStack itemStack, BlockPos blockPos) {
+    public ItemInBlockC2SP(ItemStack itemStack, BlockPos blockPos, int index) {
         this.itemStack = itemStack;
         this.blockPos = blockPos;
+        this.index = index;
     }
 
     public ItemInBlockC2SP(FriendlyByteBuf buf) {
         this.blockPos = buf.readBlockPos();
         this.itemStack = buf.readJsonWithCodec(ItemStack.OPTIONAL_CODEC);
+        this.index = buf.readInt();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeBlockPos(blockPos);
         buf.writeJsonWithCodec(ItemStack.OPTIONAL_CODEC, itemStack);
+        buf.writeInt(index);
     }
 
     public void handle(IPayloadContext ctx) {
@@ -40,7 +44,7 @@ public class ItemInBlockC2SP implements CustomPacketPayload {
                 if(ctx.player().level() instanceof ServerLevel serverLevel){
                     var bEntity = serverLevel.getBlockEntity(blockPos);
                     if(bEntity instanceof AbstractBEInventory wandBlock){
-                        wandBlock.inputItemHandler.setStackInSlot(0, itemStack);
+                        wandBlock.inputItemHandler.setStackInSlot(index, itemStack);
                     }
                 }
             }

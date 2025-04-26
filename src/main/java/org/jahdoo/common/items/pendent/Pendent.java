@@ -33,7 +33,7 @@ public class Pendent extends Item implements ICurioItem, JahdooItem {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         var data = stack.get(ComponentReg.RUNE_HOLDER);
         if(data != null){
-            CasterItemHelper.appendRefinementPotential(tooltipComponents, stack);
+            CasterItemHelper.appendPotentialComponent(tooltipComponents, stack);
         }
     }
 

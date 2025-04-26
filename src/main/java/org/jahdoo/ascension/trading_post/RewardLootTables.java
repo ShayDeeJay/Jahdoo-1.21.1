@@ -252,7 +252,7 @@ public class RewardLootTables {
 
         if(min > 1) pendent.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(min));
 
-        RuneHolder.createNewRuneSlots(pendent, min, 25 * min);
+        RuneHolder.createNewRuneSlots(pendent, min, 0, 25 * min);
     }
 
     public static ItemStack magnetItem(JahdooRarity getRarity, ItemStack itemStack) {
@@ -316,7 +316,7 @@ public class RewardLootTables {
     ) {
         switch (itemStack.getItem()){
             case CasterItem ignored -> ShoppingItems.getRandomWand(null, itemStack, chestRarity);
-            case TomeOfUnity ignored -> createTomeAttributes(itemStack, chestRarity);
+            case TomeOfUnity ignored -> createTomeAttributes(itemStack, null, chestRarity);
             case RuneItem ignored -> generateRandomTypAttribute(itemStack, runeRarity, null, chestRarity);
             case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem, isSpecial);
             case SwordItem ignored -> enchantSword(serverLevel, itemStack, isSpecial);

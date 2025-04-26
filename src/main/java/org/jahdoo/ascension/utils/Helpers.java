@@ -459,6 +459,12 @@ public class Helpers {
         return component;
     }
 
+    public static int repairDurability(ItemStack itemStack){
+        var maxDamage = itemStack.get(DataComponents.MAX_DAMAGE);
+        itemStack.set(DataComponents.DAMAGE, 0);
+        return 0;
+    }
+
     public static int durabilityDamageCount(ItemStack itemStack){
         var maxDamage = itemStack.get(DataComponents.MAX_DAMAGE);
         var damageTaken = itemStack.get(DataComponents.DAMAGE);

@@ -1,29 +1,31 @@
 package org.jahdoo.common.client.slots;
 
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.wand_manager.WandManagerEntity;
 import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.jahdoo.common.items.runes.rune_data.RuneHolder.*;
-import static org.jahdoo.common.registers.ComponentReg.*;
+import static org.jahdoo.common.items.runes.rune_data.RuneHolder.DEFAULT;
+import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
 
-public class AugmentCoreSlot extends SlotItemHandler {
+public class GeneralItemSlot extends SlotItemHandler {
     Item item;
+    TagKey<Item> itemTag;
     int maxStackSize;
     WandManagerEntity wandManagerTableEntity;
     boolean isActive = true;
 
-    public AugmentCoreSlot(
+    public GeneralItemSlot(
         IItemHandler inputItemHandler,
         int index,
         int xPosition,
@@ -33,6 +35,18 @@ public class AugmentCoreSlot extends SlotItemHandler {
         super(inputItemHandler, index, xPosition, yPosition);
         this.item = item;
     }
+
+    public GeneralItemSlot(
+        IItemHandler inputItemHandler,
+        int index,
+        int xPosition,
+        int yPosition,
+        TagKey<Item> itemTag
+    ) {
+        super(inputItemHandler, index, xPosition, yPosition);
+        this.itemTag = itemTag;
+    }
+
 
     public void setActive(boolean active) {
         isActive = active;
@@ -60,7 +74,9 @@ public class AugmentCoreSlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(@NotNull ItemStack itemStack) {
-        if(itemStack.is(this.item) && isActive){
+        var b = this.item != null && itemStack.is(this.item);
+        var b1 = this.itemTag != null && itemStack.is(this.itemTag);
+        if((b) && isActive){
             if(this.wandManagerTableEntity != null){
                 var level = wandManagerTableEntity.getLevel();
                 var pos = wandManagerTableEntity.getBlockPos();
@@ -90,8 +106,8 @@ public class AugmentCoreSlot extends SlotItemHandler {
             index.set(index.get() + 1);
         }
 
-        getAllSlots.update(RUNE_HOLDER.get(), DEFAULT, data -> data.insertNewHolder(list));
-//        getAllSlots.set(WAND_DATA, getAllSlots.get(WAND_DATA));
-        PacketDistributor.sendToServer(new ItemInBlockC2SP(getAllSlots, entity.getBlockPos()));
+        getAllSlots.update(RUNE_HOLDER.get(), DEFAULT, data -> data.setRuneSlots(list));
+
+        PacketDistributor.sendToServer(new ItemInBlockC2SP(getAllSlots, entity.getBlockPos(), 0));
     }
 }

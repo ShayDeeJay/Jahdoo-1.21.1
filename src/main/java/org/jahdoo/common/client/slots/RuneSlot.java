@@ -56,7 +56,7 @@ public class RuneSlot extends SlotItemHandler {
     }
 
     private void serverBoundPacket(ItemStack getAllSlots) {
-        PacketDistributor.sendToServer(new ItemInBlockC2SP(getAllSlots, this.entity.getBlockPos()));
+        PacketDistributor.sendToServer(new ItemInBlockC2SP(getAllSlots, this.entity.getBlockPos(), 0));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class RuneSlot extends SlotItemHandler {
         var cost = getCostFromRune(itemStack);
 
         if(wandManager == null) return false;
-        var potential = RuneHolder.potential(wandManager.inputItemHandler.getStackInSlot(0));
+        var potential = RuneHolder.getItemPotential(wandManager.inputItemHandler.getStackInSlot(0));
 
         if(cost > potential) return false;
         var level = wandManager.getLevel();
@@ -95,7 +95,7 @@ public class RuneSlot extends SlotItemHandler {
 
         Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_INSERT_ITEM, 0.4F, 1.2F);
         Helpers.getSoundWithPosition(level, pos, SoundEvents.APPLY_EFFECT_TRIAL_OMEN, 0.4F, 2F);
-        RuneHolder.createRefinementPotential(wandManager.inputItemHandler.getStackInSlot(0), potential - cost);
+        RuneHolder.updateRefinementPotential(wandManager.inputItemHandler.getStackInSlot(0), potential - cost);
         return true;
     }
 }

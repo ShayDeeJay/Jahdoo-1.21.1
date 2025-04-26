@@ -48,12 +48,58 @@ public class CasterItemHelper {
     public static Component defence = withStyleComponentTrans(PREFIX + "set_wizard_mode.defence", rgbToInt(102, 178, 255));
     public static Component attack = withStyleComponentTrans(PREFIX + "set_wizard_mode.attack", rgbToInt(255, 102, 102));
 
-    public static void appendRefinementPotential(List<Component> toolTips, ItemStack wandItem){
-        var wandData = wandItem.get(RUNE_HOLDER);
+    public static void appendPotentialComponent(List<Component> toolTips, ItemStack gearItem){
+        var wandData = gearItem.get(RUNE_HOLDER);
         if(wandData == null) return;
-        var slot = withStyleComponent(String.valueOf(wandData.refinementPotential()), DIAMOND_BOX);
-        toolTips.add(toolTips.size(), withStyleComponent("Potential: ", SUB_HEADER_COLOUR).copy().append(slot));
+
+        getPotentialComponent(gearItem, (s) -> toolTips.add(toolTips.size(), s));
     }
+
+    public static void getPotentialComponent(ItemStack gearItem, Consumer<Component> render){
+        var wandData = gearItem.get(RUNE_HOLDER);
+        if(wandData == null) return;
+
+        var slot = withStyleComponent(String.valueOf(wandData.refinementPotential()), DIAMOND_BOX);
+        var append = withStyleComponent("Potential: ", SUB_HEADER_COLOUR).copy().append(slot);
+        render.accept(append);
+    }
+
+    public static Component appendDurability(ItemStack wandItem) {
+        var maxDamage = wandItem.get(DataComponents.MAX_DAMAGE);
+        var damageTaken = wandItem.get(DataComponents.DAMAGE);
+        if(maxDamage != null && damageTaken != null){
+            var split = maxDamage/3;
+            var durabilityColourIndicator = damageTaken <= split ? PERK_GREEN : damageTaken <= split * 2.5 ? ABSORPTION_YELLOW : NEGATIVE_RED;
+            var prefix = Helpers.withStyleComponent("Durability: ", SUB_HEADER_COLOUR);
+            var currentDurability = Helpers.withStyleComponent(durabilityDamageCount(wandItem) + "", durabilityColourIndicator);
+            var maxDurability = Helpers.withStyleComponent("/" + maxDamage, SUB_HEADER_COLOUR);
+            return prefix.copy().append(currentDurability).copy().append(maxDurability);
+        }
+        return Component.empty();
+    }
+
+    public static void appendRepairSlotsComponent(List<Component> toolTips, ItemStack gearItem) {
+        getRepairSlotsComponent(gearItem, (r) -> toolTips.add(toolTips.size(), r));
+    }
+
+    public static void getRepairSlotsComponent(ItemStack gearItem, Consumer<Component> render) {
+        var wandData = gearItem.get(RUNE_HOLDER);
+        if(wandData == null) return;
+
+        var repairSlots = wandData.repairSlots();
+        if(!repairSlots.isEmpty()){
+            var comp = withStyleComponent("Repair Slots: ", SUB_HEADER_COLOUR);
+            for (var repairSlot : repairSlots) {
+                var empty = repairSlot == 1;
+                var text = empty ? "⭘" : "◎";
+                var colour = empty ? GOLD_COIN : NETHERITE_BOX;
+                comp = comp.copy().append(withStyleComponent(text, colour));
+                comp =  comp.copy().append(" ");
+            }
+            render.accept(comp);
+        }
+    }
+
 
     public static JahdooRarity getRarity(Item item){
         var wandData = item.components().get(JAHDOO_RARITY.get());
@@ -148,20 +194,6 @@ public class CasterItemHelper {
         }
         return appendComponents;
     }
-
-    public static void appendDurability(ItemStack wandItem, List<Component> appendComponents) {
-        var maxDamage = wandItem.get(DataComponents.MAX_DAMAGE);
-        var damageTaken = wandItem.get(DataComponents.DAMAGE);
-        if(maxDamage != null && damageTaken != null){
-            var split = maxDamage/3;
-            var durabilityColourIndicator = damageTaken <= split ? PERK_GREEN : damageTaken <= split * 2.5 ? ABSORPTION_YELLOW : NEGATIVE_RED;
-            var prefix = Helpers.withStyleComponent("Durability: ", SUB_HEADER_COLOUR);
-            var currentDurability = Helpers.withStyleComponent(durabilityDamageCount(wandItem) + "", durabilityColourIndicator);
-            var maxDurability = Helpers.withStyleComponent("/" + maxDamage, SUB_HEADER_COLOUR);
-            appendComponents.add(prefix.copy().append(currentDurability).copy().append(maxDurability));
-        }
-    }
-
 
     static void canOffhandWand(
         ItemStack itemStack,

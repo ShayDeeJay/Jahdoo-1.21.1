@@ -23,6 +23,7 @@ import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.commands.PlayerLevelCommand;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
@@ -70,14 +71,6 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public static void onEntityDamageEvent(LivingDamageEvent.Pre event){
-        var entity = event.getEntity();
-
-        greaterFrostEffectDamageAmplifier(event, entity);
-        greaterVitalityEffect(event, entity);
-    }
-
-    @SubscribeEvent
     public static void shieldEvent(LivingShieldBlockEvent event){
         var entity = event.getEntity();
         shieldBlock(event, entity);
@@ -96,7 +89,36 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
+        for(int i = 0; i < 20; i++){
+            Helpers.hurtAndKeepItem(rightClickItem.getItemStack(), 1000, rightClickItem.getLevel(), rightClickItem.getEntity());
+        }
+
         removeShieldUse(rightClickItem);
+    }
+
+    @SubscribeEvent
+    public static void onEntityDamageEvent(LivingDamageEvent.Pre event){
+        var entity = event.getEntity();
+
+        //damage before armor
+        System.out.println(event.getOriginalDamage());
+        //damage after armor
+        System.out.println(event.getNewDamage());
+
+        greaterFrostEffectDamageAmplifier(event, entity);
+        greaterVitalityEffect(event, entity);
+    }
+
+    @SubscribeEvent
+    public static void armorEvent(ArmorHurtEvent event) {
+        for (var slot : event.getArmorMap().entrySet()) {
+            var stack = slot.getValue().armorItemStack;
+            var i = Helpers.durabilityDamageCount(stack);
+            if(i == 0){
+                //stop armor from breaking
+                event.setCanceled(true);
+            }
+        }
     }
 
     @SubscribeEvent

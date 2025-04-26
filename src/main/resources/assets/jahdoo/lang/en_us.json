@@ -7,9 +7,9 @@
   "item.jahdoo.gold_coin": "Gold Coin",
   "item.jahdoo.platinum_coin": "Platinum Coin",
   "item.jahdoo.nexite_powder": "Nexite Essence",
-  "item.jahdoo.augment_core": "Augment Core",
-  "item.jahdoo.advanced_augment_core": "Advanced Augment Core",
-  "item.jahdoo.augment_hyper_core": "Augment Hyper-Core",
+  "item.jahdoo.augment_core": "Gear Core",
+  "item.jahdoo.advanced_augment_core": "Advanced Gear Core",
+  "item.jahdoo.augment_hyper_core": "Gear Hyper-Core",
   "item.jahdoo.tome_of_unity": "Tome Of Unity",
   "item.jahdoo.battlemage_gauntlet": "Battlemage Gauntlet",
   "item.jahdoo.wizard_helmet": "Grand Wizard Hat",
@@ -122,28 +122,28 @@
   "attribute.name.jahdoo.mana.no_mana_cost": "Ignore Mana Cost",
   "attribute.name.jahdoo.no_cooldown_cost": "Ignore Cooldown Cost",
   "attribute.name.jahdoo.cast.healer": "Heal On Cast",
-  "attribute.name.jahdoo.cast.absorption": "Absorption Hearts On Cast",
+  "attribute.name.jahdoo.cast.absorption": "Absorption On Cast",
 
   "attribute.name.jahdoo.mana.mana_regen": "Mana Regen",
   "attribute.name.jahdoo.fixed.mana.mana_pool": "Mana",
 
-  "attribute.name.jahdoo.cooldown.cooldown_reduction": "All Cooldown Reduction",
+  "attribute.name.jahdoo.cooldown.cooldown_reduction": "All Cooldown",
   "attribute.name.jahdoo.damage.damage_multiplier": "All Magic Damage",
-  "attribute.name.jahdoo.mana.cost_reduction": "Mana Reduction",
+  "attribute.name.jahdoo.mana.cost_reduction": "All Mana",
 
-  "attribute.name.jahdoo.inferno_cooldown.cooldown_reduction": "Inferno Cooldown Reduction",
+  "attribute.name.jahdoo.inferno_cooldown.cooldown_reduction": "Inferno Cooldown",
   "attribute.name.jahdoo.inferno_damage.damage_multiplier": "Inferno Damage",
-  "attribute.name.jahdoo.inferno_mana.cost_reduction": "Inferno Mana Reduction",
+  "attribute.name.jahdoo.inferno_mana.cost_reduction": "Inferno Mana",
 
-  "attribute.name.jahdoo.vitality_cooldown.cooldown_reduction": "Vitality Cooldown Reduction",
+  "attribute.name.jahdoo.vitality_cooldown.cooldown_reduction": "Vitality Cooldown",
   "attribute.name.jahdoo.vitality_damage.damage_multiplier": "Vitality Damage",
-  "attribute.name.jahdoo.vitality_mana.cost_reduction": "Vitality Mana Reduction",
+  "attribute.name.jahdoo.vitality_mana.cost_reduction": "Vitality Mana",
 
-  "attribute.name.jahdoo.frost_cooldown.cooldown_reduction": "Frost Cooldown Reduction",
+  "attribute.name.jahdoo.frost_cooldown.cooldown_reduction": "Frost Cooldown",
   "attribute.name.jahdoo.frost_damage.damage_multiplier": "Frost Damage",
-  "attribute.name.jahdoo.frost_mana.cost_reduction": "Frost Mana Reduction",
+  "attribute.name.jahdoo.frost_mana.cost_reduction": "Frost Mana",
 
-  "attribute.name.jahdoo.mystic_cooldown.cooldown_reduction": "Mystic Cooldown Reduction",
+  "attribute.name.jahdoo.mystic_cooldown.cooldown_reduction": "Mystic Cooldown",
   "attribute.name.jahdoo.mystic_damage.damage_multiplier": "Mystic Damage",
-  "attribute.name.jahdoo.mystic_mana.cost_reduction": "Mystic Mana Reduction"
+  "attribute.name.jahdoo.mystic_mana.cost_reduction": "Mystic Mana"
 }

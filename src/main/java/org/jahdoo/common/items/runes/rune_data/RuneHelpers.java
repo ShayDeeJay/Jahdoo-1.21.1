@@ -19,7 +19,6 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
-import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
@@ -114,7 +113,7 @@ public class RuneHelpers {
     }
 
     public static Component standAloneAttributes(ItemAttributeModifiers.Entry entry) {
-        var colourPre = color(121, 187, 67);
+        var colourPre = ColourStore.PERK_GREEN;
         var descriptionId = entry.attribute().value().getDescriptionId();
         var amount = entry.modifier().amount();
         var typeColour = getColourBy(descriptionId);
@@ -140,7 +139,8 @@ public class RuneHelpers {
             return withStyleComponent("", colourPre).copy().append(compName);
         }
 
-        return withStyleComponent("+" + value + "%" + " ", colourPre).copy().append(compName);
+        var prefix = descriptionId.contains("reduction") ? "-" : "+";
+        return withStyleComponent(prefix + value + "%" + " ", colourPre).copy().append(compName);
     }
 
     public static Component standAloneAttributes(ItemStack itemStack) {
@@ -148,7 +148,7 @@ public class RuneHelpers {
         if (attributes.isEmpty()) return Component.empty();
 
         var data = getRuneData(itemStack);
-        var colourPre = color(121, 187, 67);
+        var colourPre = ColourStore.CHAMPION_GOLD;
         var entry = attributes.getFirst();
         var descriptionId = entry.attribute().value().getDescriptionId();
         var amount = entry.modifier().amount();

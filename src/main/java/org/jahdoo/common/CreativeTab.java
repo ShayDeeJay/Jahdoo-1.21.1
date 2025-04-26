@@ -168,7 +168,7 @@ public class CreativeTab {
 
     private static void registerAmulets(CreativeModeTab.Output pOutput) {
         var pendent = new ItemStack(PENDENT.get());
-        RuneHolder.createNewRuneSlots(pendent, 1, 0);
+        RuneHolder.createNewRuneSlots(pendent, 1, 0, 0);
         pOutput.accept(pendent);
 
         for (int i = 1; i < 4; i++){
@@ -176,7 +176,7 @@ public class CreativeTab {
             var customModelData = new CustomModelData(i);
 
             basePendent.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
-            RuneHolder.createNewRuneSlots(basePendent, i+1, 0);
+            RuneHolder.createNewRuneSlots(basePendent, i+1, 0, 0);
             pOutput.accept(basePendent);
         }
     }
