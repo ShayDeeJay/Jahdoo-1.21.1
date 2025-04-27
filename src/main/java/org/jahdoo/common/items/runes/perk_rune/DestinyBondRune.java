@@ -9,7 +9,7 @@ import static org.jahdoo.ascension.rarity.JahdooRarity.EPIC;
 import static org.jahdoo.common.items.runes.rune_data.RuneData.NO_VALUE;
 import static org.jahdoo.common.registers.AttributeReg.DESTINY_BOND;
 
-public class DestinyBondRune extends AbstractPerkRune{
+public class DestinyBondRune extends AbstractPerkRune {
 
     @Override
     public double baseValue() {

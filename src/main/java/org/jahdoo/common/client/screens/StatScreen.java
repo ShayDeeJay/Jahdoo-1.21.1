@@ -10,6 +10,7 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
+import static net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE;
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static net.minecraft.world.entity.ai.attributes.Attributes.*;
 import static org.jahdoo.ascension.boon.player_boons.BoonSelection.iconFromEffect;
@@ -67,10 +68,17 @@ public class StatScreen extends AbstractPanableScreen {
         playerLevelData(guiGraphics, player, (int) xSpacing, (int) ySpacing, data);
 
         getModStat(
+            guiGraphics, mc, xSpacing, ySpacing - 264,
+            "Protections",
+            iconFromEffect(DAMAGE_RESISTANCE),
+            NEGATIVE_RED,
+            player.getAttribute(RESILIENCE)
+        );
+
+        getModStat(
             guiGraphics, mc, xSpacing, ySpacing - 224,
             "Base Stats",
             iconFromEffect(REGENERATION),
-            color(166, 224, 65),
             color(123, 184, 17),
             player.getAttribute(MAX_HEALTH),
             player.getAttribute(MAX_ABSORPTION),
@@ -86,7 +94,6 @@ public class StatScreen extends AbstractPanableScreen {
             guiGraphics, mc, xSpacing, ySpacing - 114,
             "Mana",
             Icons.MANA,
-            AETHER_BLUE,
             color(39, 130, 196),
             player.getAttribute(MANA_POOL),
             player.getAttribute(MANA_REGEN),
@@ -98,7 +105,6 @@ public class StatScreen extends AbstractPanableScreen {
             guiGraphics, mc, xSpacing, ySpacing - 44,
             "Cooldown",
             Icons.CLOCK,
-            COOLDOWN_GREEN,
             color(0, 176, 129),
             player.getAttribute(COOLDOWN_REDUCTION),
             player.getAttribute(SKIP_COOLDOWN)
@@ -108,7 +114,6 @@ public class StatScreen extends AbstractPanableScreen {
             guiGraphics, mc, xSpacing, ySpacing + 6,
             "Magic Damage",
             Icons.EASY,
-            color(237, 199, 74),
             color(201, 154, 0),
             player.getAttribute(MAGIC_DAMAGE_MULTIPLIER)
         );

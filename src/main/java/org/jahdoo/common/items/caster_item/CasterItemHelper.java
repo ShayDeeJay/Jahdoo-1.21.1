@@ -35,8 +35,6 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.InteractionHand.OFF_HAND;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
-import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.common.particle.ParticleStore.rgbToInt;
 import static org.jahdoo.common.registers.ComponentReg.*;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
@@ -72,7 +70,7 @@ public class CasterItemHelper {
             var durabilityColourIndicator = damageTaken <= split ? PERK_GREEN : damageTaken <= split * 2.5 ? ABSORPTION_YELLOW : NEGATIVE_RED;
             var prefix = Helpers.withStyleComponent("Durability: ", SUB_HEADER_COLOUR);
             var currentDurability = Helpers.withStyleComponent(durabilityDamageCount(wandItem) + "", durabilityColourIndicator);
-            var maxDurability = Helpers.withStyleComponent("/" + maxDamage, SUB_HEADER_COLOUR);
+            var maxDurability = Helpers.withStyleComponent("/" + maxDamage, BORDER_COLOUR);
             return prefix.copy().append(currentDurability).copy().append(maxDurability);
         }
         return Component.empty();
@@ -275,22 +273,15 @@ public class CasterItemHelper {
             .modifiers()
             .stream()
             .toList();
-
         var newAttributes = wandOnlyAttributes.subList(0, Math.max(wandOnlyAttributes.size(), 1));
 
-
         if(!newAttributes.isEmpty()){
-            var colourSuf = rgbToInt(145, 145, 145);
             for (ItemAttributeModifiers.Entry entry : newAttributes) {
                 if(entry.modifier().id().getPath().contains("wand")){
-                    Component translatable;
-                    var value = roundNonWholeString(singleFormattedDouble(entry.modifier().amount()));
-                    var valueWithFix = "+" + value + "%";
-                    var descriptionId = entry.attribute().value().getDescriptionId();
-                    translatable = withStyleComponent(valueWithFix, colourSuf)
-                        .copy()
-                        .append(withStyleComponentTrans(descriptionId, colourSuf).getString().replace(element.name(), ""));
-                    appendComponents.add(translatable);
+                    var component = RuneHelpers.standAloneAttributes(entry);
+                    var x = withStyleComponent(component.getString().replace(element.name(), "").replaceFirst(" ", ""), element.textColourA());
+
+                    appendComponents.add(x);
                 }
             }
         }

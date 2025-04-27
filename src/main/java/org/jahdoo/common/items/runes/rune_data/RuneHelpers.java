@@ -3,6 +3,7 @@ package org.jahdoo.common.items.runes.rune_data;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
@@ -99,21 +100,23 @@ public class RuneHelpers {
             return inferno().textColourA();
         } else if (attributeName.contains("frost")) {
             return frost().textColourA();
-        } else if (attributeName.contains("mana.mana")) {
+        } else if (attributeName.contains("mana")) {
             return ColourStore.AETHER_BLUE;
         } else if (attributeName.contains("skills") || attributeName.contains("speed")) {
             return ColourStore.PERK_GREEN;
-        }else if (attributeName.contains("max_health")){
+        } else if (attributeName.contains("max_health")){
             return ColourStore.MAGNET_STRENGTH_RED;
-        }else if (attributeName.contains("max_absorption")){
+        } else if (attributeName.contains("max_absorption")){
             return ColourStore.ABSORPTION_YELLOW;
+        } else if (attributeName.contains("armor")){
+            return ColourStore.MAGNET_STRENGTH_RED;
         }
 
         return -1;
     }
 
     public static Component standAloneAttributes(ItemAttributeModifiers.Entry entry) {
-        var colourPre = ColourStore.PERK_GREEN;
+//        var colourPre = ColourStore.PERK_GREEN;
         var descriptionId = entry.attribute().value().getDescriptionId();
         var amount = entry.modifier().amount();
         var typeColour = getColourBy(descriptionId);
@@ -124,13 +127,27 @@ public class RuneHelpers {
 
         if(isSpeed) amount = amount * 1000;
         if(isAbsorption || isMaxHealth) amount = (amount/2);
-        return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, colourPre, compName);
+        return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, typeColour, compName);
+    }
+
+    public static Component standAloneAttributes(Attribute attribute, double amount) {
+//        var colourPre = ColourStore.PERK_GREEN;
+        var descriptionId = attribute.getDescriptionId();
+        var typeColour = getColourBy(descriptionId);
+        var compName = withStyleComponentTrans(descriptionId, typeColour);
+        var isAbsorption = descriptionId.contains("absorption");
+        var isMaxHealth = descriptionId.contains("health");
+        var isSpeed = descriptionId.contains("speed");
+
+        if(isSpeed) amount = amount * 1000;
+        if(isAbsorption || isMaxHealth) amount = (amount/2);
+        return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, typeColour, compName);
     }
 
     private static @NotNull MutableComponent getComponents(double amount, String descriptionId, boolean isAbsorption, boolean isMaxHealth, int colourPre, Component compName) {
         var value = roundNonWholeString(singleFormattedDouble(amount));
 
-        if(descriptionId.contains(FIXED_VALUE) || isAbsorption || isMaxHealth) {
+        if(descriptionId.contains(FIXED_VALUE) || isAbsorption || isMaxHealth || descriptionId.contains("armor")) {
             var text = "+" + value + " ";
             return withStyleComponent(text, colourPre).copy().append(compName);
         }
@@ -148,7 +165,7 @@ public class RuneHelpers {
         if (attributes.isEmpty()) return Component.empty();
 
         var data = getRuneData(itemStack);
-        var colourPre = ColourStore.CHAMPION_GOLD;
+//        var colourPre = ColourStore.CHAMPION_GOLD;
         var entry = attributes.getFirst();
         var descriptionId = entry.attribute().value().getDescriptionId();
         var amount = entry.modifier().amount();
@@ -161,7 +178,7 @@ public class RuneHelpers {
         if(isSpeed) amount = amount * 1000;
         if(isAbsorption || isMaxHealth) amount = (amount/2);
 
-        return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, colourPre, compName);
+        return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, typeColour, compName);
     }
 
     public static void generateRandomTypAttribute(

@@ -3,6 +3,7 @@ package org.jahdoo.common.event;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -15,6 +16,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.OverlayBlockTooltip;
 import org.jahdoo.common.client.RuneTooltipRenderer;
 import org.jahdoo.common.client.screens.AbilityUnlockScreen;
+import org.jahdoo.common.items.JahdooItem;
 
 import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import static net.neoforged.neoforge.client.event.RenderLivingEvent.Pre;
@@ -55,6 +57,24 @@ public class ClientEvents {
     public static void tooltipEvent(RenderTooltipEvent.GatherComponents e){
         var current = e.getTooltipElements();
         var itemStack = e.getItemStack();
+        var item = itemStack.getItem();
+
+        if(item instanceof ArmorItem && item instanceof JahdooItem){
+            var iterator = current.iterator();
+            while (iterator.hasNext()) {
+                var tooltipElement = iterator.next();
+                var left = tooltipElement.left();
+                if (left.isPresent()) {
+                    var string = left.get().toString();
+                    var neoforge = string.contains("neoforge");
+                    var whenOn = string.contains("item.modifiers");
+                    var empty = left.get().getString().isEmpty();
+                    if (neoforge || whenOn || empty) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
 
         var allSlots = getAllSlots(itemStack);
         if(allSlots.isEmpty()) return;

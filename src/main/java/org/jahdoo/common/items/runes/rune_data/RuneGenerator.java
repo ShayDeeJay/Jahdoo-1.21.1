@@ -4,9 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 
-import static org.jahdoo.ascension.rarity.JahdooRarity.*;
-import static org.jahdoo.ascension.utils.ColourStore.*;
-import static org.jahdoo.common.items.runes.rune_data.RuneCategories.*;
+import static org.jahdoo.ascension.rarity.JahdooRarity.COMMON;
 import static org.jahdoo.common.items.runes.rune_data.RuneData.*;
 
 public class RuneGenerator {
@@ -150,60 +148,5 @@ public class RuneGenerator {
         }
     }
 
-    public static RuneGenerator generateElementalRune(Holder<Attribute> type, double value, JahdooRarity rarity, int elementId, int tier) {
-        return new RuneGenerator.Builder(type)
-            .setValue(value)
-            .setName(ELEMENTAL.getName())
-            .setRarity(rarity)
-            .setElementId(elementId)
-            .setTier(tier)
-            .setModelData(elementId)
-            .build();
-    }
-
-    public static RuneGenerator generatePerkRune(Holder<Attribute> type, double value, JahdooRarity rarity, String description, int tier, double baseValue) {
-        return new RuneGenerator.Builder(type)
-            .setValue(value)
-            .setName(PERK.getName())
-            .setRarity(rarity)
-            .setDescription(description)
-            .setTier(tier)
-            .setColour(PERK_GREEN)
-            .setModelData(PERK.getModel())
-            .setConvertPercentage(baseValue)
-            .build();
-    }
-
-    public static RuneGenerator generateAetherRune(Holder<Attribute> type, double value, int tier) {
-        return new RuneGenerator.Builder(type)
-            .setValue(value)
-            .setName(AETHER.getName())
-            .setRarity(LEGENDARY)
-            .setTier(tier)
-            .setColour(AETHER_BLUE)
-            .setModelData(AETHER.getModel())
-            .build();
-    }
-
-    public static RuneGenerator.Builder generateCosmicRune(Holder<Attribute> type, double value, int tier) {
-        return new RuneGenerator.Builder(type)
-            .setValue(value)
-            .setName(COSMIC.getName())
-            .setRarity(ETERNAL)
-            .setTier(tier)
-            .setColour(COSMIC_PURPLE)
-            .setModelData(COSMIC.getModel());
-    }
-
-    public static RuneGenerator generateSympathiserRune(Holder<Attribute> type, double value, int tier) {
-        return new RuneGenerator.Builder(type)
-            .setValue(value)
-            .setName(INFINITY.getName())
-            .setRarity(ETERNAL)
-            .setTier(tier)
-            .setColour(SYMPATHISER_ORANGE)
-            .setModelData(INFINITY.getModel())
-            .build();
-    }
 
 }

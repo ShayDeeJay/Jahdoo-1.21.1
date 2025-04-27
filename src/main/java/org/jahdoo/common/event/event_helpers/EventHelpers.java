@@ -478,9 +478,8 @@ public class EventHelpers {
         for (ItemStack itemStack : slotAttributes.runeSlots()) {
             var mods = itemStack.getAttributeModifiers().modifiers();
             if (mods.isEmpty()) return;
+
             var acMod = mods.getFirst();
-            /* Would be nice if you could actually control the hand allowed. One way would be to add a component that changes
-             *  when swapped. Or just get slot context from inventory tick? */
             var slot = item.getItem() instanceof ArmorItem ? ARMOR : hand == 0 ? MAINHAND : OFFHAND;
 
             event.addModifier(acMod.attribute(), acMod.modifier(), slot);

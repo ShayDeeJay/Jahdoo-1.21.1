@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.items.runes.AbstractRune;
+import org.jahdoo.common.items.runes.ResilienceRune;
 import org.jahdoo.common.items.runes.aether_rune.ManaPoolRune;
 import org.jahdoo.common.items.runes.aether_rune.ManaRegenRune;
 import org.jahdoo.common.items.runes.cosmic_rune.CooldownReductionRune;
@@ -27,10 +28,7 @@ import org.jahdoo.common.items.runes.elemental_rune.mystic_runes.MysticManaRune;
 import org.jahdoo.common.items.runes.elemental_rune.vitality_runes.VitalityCooldownRune;
 import org.jahdoo.common.items.runes.elemental_rune.vitality_runes.VitalityDamageRune;
 import org.jahdoo.common.items.runes.elemental_rune.vitality_runes.VitalityManaRune;
-import org.jahdoo.common.items.runes.perk_rune.DestinyBondRune;
-import org.jahdoo.common.items.runes.perk_rune.MaxAbsorptionRune;
-import org.jahdoo.common.items.runes.perk_rune.MaxHealthRune;
-import org.jahdoo.common.items.runes.perk_rune.MovementSpeedRune;
+import org.jahdoo.common.items.runes.perk_rune.*;
 import org.jahdoo.common.items.runes.sympathiser_rune.AbsorptionHeartRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.CastHealRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.SkipCooldownRune;
@@ -138,6 +136,9 @@ public class RuneReg {
 
     public static final DeferredHolder<AbstractRune, AbstractRune> MOVEMENT_SPEED_RUNE =
         registerRune(MovementSpeedRune::new);
+
+    public static final DeferredHolder<AbstractRune, AbstractRune> RESILIENCE =
+        registerRune(ResilienceRune::new);
 
     //Sympathiser Rune
     public static final DeferredHolder<AbstractRune, AbstractRune> ABSORPTION_HEART_RUNE =

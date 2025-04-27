@@ -2,6 +2,8 @@ package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ArmorItem;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -24,9 +26,13 @@ import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.commands.PlayerLevelCommand;
+import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.registers.AttributeReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
+import static net.minecraft.world.item.component.ItemAttributeModifiers.Entry;
 import static org.jahdoo.ascension.utils.Helpers.syncCasterData;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_ITEM_DATA;
@@ -42,11 +48,26 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void attributeEvent(ItemAttributeModifierEvent event) {
+       event.removeIf(s -> doEvenStuff(s, event));
+
         useRuneAttributes(event);
+    }
+
+    public static boolean doEvenStuff(Entry entry, ItemAttributeModifierEvent event){
+        var item = event.getItemStack();
+        var durability = Helpers.durabilityDamageCount(item);
+        if(item.getItem() instanceof ArmorItem && item.getItem() instanceof JahdooItem){
+            return durability == 0 /*&& isArmor || isToughness*/;
+        }
+        return false;
     }
 
     @SubscribeEvent
     public static void attributeEvent(CurioAttributeModifierEvent event) {
+        for (var attributeModifier : event.getModifiers().get(Attributes.ARMOR)) {
+;
+        }
+
         useRuneAttributesCurios(event);
     }
 
@@ -89,10 +110,6 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
-        for(int i = 0; i < 20; i++){
-            Helpers.hurtAndKeepItem(rightClickItem.getItemStack(), 1000, rightClickItem.getLevel(), rightClickItem.getEntity());
-        }
-
         removeShieldUse(rightClickItem);
     }
 
@@ -100,10 +117,8 @@ public class ServerEvents {
     public static void onEntityDamageEvent(LivingDamageEvent.Pre event){
         var entity = event.getEntity();
 
-        //damage before armor
-        System.out.println(event.getOriginalDamage());
-        //damage after armor
-        System.out.println(event.getNewDamage());
+        var resilience = entity.getAttribute(AttributeReg.RESILIENCE).getValue();
+        event.setNewDamage((float) (event.getNewDamage() - (Maths.getPercentage(resilience, event.getNewDamage()))));
 
         greaterFrostEffectDamageAmplifier(event, entity);
         greaterVitalityEffect(event, entity);
@@ -113,10 +128,9 @@ public class ServerEvents {
     public static void armorEvent(ArmorHurtEvent event) {
         for (var slot : event.getArmorMap().entrySet()) {
             var stack = slot.getValue().armorItemStack;
-            var i = Helpers.durabilityDamageCount(stack);
-            if(i == 0){
-                //stop armor from breaking
-                event.setCanceled(true);
+            if(stack.getItem() instanceof JahdooItem){
+                var i = Helpers.durabilityDamageCount(stack);
+                if (i == 0) event.setCanceled(true);
             }
         }
     }

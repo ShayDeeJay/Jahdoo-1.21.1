@@ -60,6 +60,9 @@ public class AttributeReg {
     public static final DeferredHolder<Attribute, Attribute> TRIPLE_JUMP =
         register(MOD + ".skills.triple_jump", 0);
 
+    public static final DeferredHolder<Attribute, Attribute> RESILIENCE =
+        register(MOD + ".resilience.resilience", 0);
+
     //Cosmic attributes
     public static final DeferredHolder<Attribute, Attribute> COOLDOWN_REDUCTION =
         register(MOD + ".cooldown.cooldown_reduction", 0);
@@ -165,6 +168,7 @@ public class AttributeReg {
         event.add(PLAYER, MANA_REGEN);
         event.add(PLAYER, MAGE_FLIGHT);
         event.add(PLAYER, TRIPLE_JUMP);
+        event.add(PLAYER, RESILIENCE);
 
         event.add(PLAYER, SKIP_MANA);
         event.add(PLAYER, SKIP_COOLDOWN);
