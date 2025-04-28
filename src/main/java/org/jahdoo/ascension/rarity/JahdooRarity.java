@@ -76,6 +76,10 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return Arrays.stream(JahdooRarity.values()).toList();
     }
 
+    public static JahdooRarity getAllRarities(int index) {
+        return Arrays.stream(JahdooRarity.values()).toList().get(index);
+    }
+
     private static JahdooRarity getJahdooRarity(@Nullable JahdooRarity rarity) {
         var correctRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
         return correctRarity == JahdooRarity.UNIQUE ? JahdooRarity.EPIC : correctRarity;
@@ -142,7 +146,12 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     public static Component attachRuneTierTooltip(ItemStack wandItem) {
         var data = getRuneData(wandItem);
         var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(data.tier(), 0, 5));
-        var getTier = switch (getRarity.id){
+        var getTier = romanNumeralConverter(getRarity.id);
+        return withStyleComponent("Tier " + getTier, ColourStore.HEADER_COLOUR);
+    }
+
+    public static @NotNull String romanNumeralConverter(int number) {
+        return switch (number) {
             case 1 -> "II";
             case 2 -> "III";
             case 3 -> "IV";
@@ -150,7 +159,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             case 5 -> "VI";
             default -> "I";
         };
-        return withStyleComponent("Tier " + getTier, ColourStore.HEADER_COLOUR);
     }
 
     //Debug using use on item

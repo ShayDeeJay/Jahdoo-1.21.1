@@ -19,7 +19,6 @@ import org.jahdoo.ascension.utils.LocalLootBeamData;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
 import org.jahdoo.common.items.magnet.Magnet;
-import org.jahdoo.common.items.magnet.MagnetData;
 import org.jahdoo.common.items.pendent.Pendent;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
@@ -34,7 +33,6 @@ import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.core.registries.Registries.ENCHANTMENT;
 import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static net.minecraft.world.level.storage.loot.entries.LootItem.lootTableItem;
@@ -44,15 +42,11 @@ import static net.minecraft.world.level.storage.loot.providers.number.ConstantVa
 import static net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.between;
 import static org.jahdoo.ascension.trading_post.ShoppingArmor.enchantArmorItem;
 import static org.jahdoo.ascension.trading_post.ShoppingItems.*;
-import static org.jahdoo.ascension.trading_post.ShoppingItems.createTomeAttributes;
-import static org.jahdoo.ascension.trading_post.ShoppingItems.getRaritiesByChestRarity;
 import static org.jahdoo.ascension.trading_post.ShoppingWeapon.enchantSword;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.randomApplicableEnchantment;
 import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.ascension.utils.Helpers.setDurability;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.generateRandomTypAttribute;
-import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 
 public class RewardLootTables {
 
@@ -255,17 +249,6 @@ public class RewardLootTables {
         RuneHolder.createNewRuneSlots(pendent, min, 0, 25 * min);
     }
 
-    public static ItemStack magnetItem(JahdooRarity getRarity, ItemStack itemStack) {
-        var id = getRarity.getId() + 1;
-        var origin = id * 1000;
-
-        setDurability(itemStack, Random.nextInt(origin, origin * 3));
-        itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(id - 1));
-        itemStack.set(JAHDOO_RARITY, getRarity.getId());
-        MagnetData.setDataByType(itemStack);
-        attachLootBeam(itemStack, LocalLootBeamData.rarityLootBeam(getRarity));
-        return itemStack;
-    }
 
     private static void enchantedBook(ServerLevel serverLevel, ItemStack itemStack){
         var enchantments = List.of(
@@ -314,6 +297,7 @@ public class RewardLootTables {
         JahdooRarity runeRarity,
         int chestRarity
     ) {
+        var raritiesByChestRarity = getRaritiesByChestRarity(chestRarity);
         switch (itemStack.getItem()){
             case CasterItem ignored -> ShoppingItems.getRandomWand(null, itemStack, chestRarity);
             case TomeOfUnity ignored -> createTomeAttributes(itemStack, null, chestRarity);
@@ -321,10 +305,10 @@ public class RewardLootTables {
             case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem, isSpecial);
             case SwordItem ignored -> enchantSword(serverLevel, itemStack, isSpecial);
             case EnchantedBookItem ignored -> enchantedBook(serverLevel, itemStack);
-            case Magnet ignored -> magnetItem(rarity, itemStack);
+            case Magnet ignored -> magnetItem(itemStack, raritiesByChestRarity);
             case Pendent ignored -> amuletItem(itemStack, chestRarity);
-            case JahdooShieldItem ignored -> getShieldWithRarity(itemStack, getRaritiesByChestRarity(chestRarity));
-            case BattlemageGauntlet ignore -> getGauntletWithRarity(itemStack, getRaritiesByChestRarity(chestRarity));
+            case JahdooShieldItem ignored -> getShieldWithRarity(itemStack, raritiesByChestRarity);
+            case BattlemageGauntlet ignore -> getGauntletWithRarity(itemStack, raritiesByChestRarity);
             default -> { /*IGNORE*/ }
         }
     }

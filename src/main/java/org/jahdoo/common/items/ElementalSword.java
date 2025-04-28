@@ -19,7 +19,7 @@ import static org.jahdoo.common.items.caster_item.CasterItemHelper.canOffHand;
 import static org.jahdoo.common.registers.mod.ElementReg.fromId;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
 
-public class ElementalSword extends SwordItem implements JahdooItem{
+public class ElementalSword extends SwordItem implements JahdooItem {
 
     public ElementalSword() {
         super(Tiers.NETHERITE, new Properties().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 10, -2.4F)));
@@ -28,8 +28,8 @@ public class ElementalSword extends SwordItem implements JahdooItem{
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         appendItemToolTips(stack, context, tooltipComponents, false);
-//        appendWeaponToolTip(stack, context, tooltipComponents);
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        appendWeaponToolTip(stack, context, tooltipComponents);
+
     }
 
     private static AbstractElement element(ItemStack stack) {

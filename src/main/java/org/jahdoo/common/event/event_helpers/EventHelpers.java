@@ -79,6 +79,7 @@ import org.jahdoo.common.registers.*;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.QuestReg;
+import org.jahdoo.common.registers.mod.RuneReg;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
@@ -118,7 +119,7 @@ public class EventHelpers {
 
     public static int getColour(ItemStack stack){
         var colour = stack.get(ComponentReg.RUNE_DATA.get());
-        if(colour != null) return colour.colour();
+        if(colour != null && !colour.name().contains("blank")) return RuneReg.getRuneFromId(colour.name()).runeColour();
         return -1;
     }
 
@@ -471,7 +472,8 @@ public class EventHelpers {
         var slotAttributes = item.get(RUNE_HOLDER.get());
         var handComponent = item.get(INTERACTION_HAND);
         var hand = handComponent == null ? 2 : handComponent;
-        if(slotAttributes == null || item.getItem() instanceof ICurioItem) return;
+        var item1 = item.getItem();
+        if(slotAttributes == null || item1 instanceof ICurioItem) return;
 
         if(item.is(ModTags.Items.WAND_TAGS) && hand == 2) return;
 
@@ -480,7 +482,7 @@ public class EventHelpers {
             if (mods.isEmpty()) return;
 
             var acMod = mods.getFirst();
-            var slot = item.getItem() instanceof ArmorItem ? ARMOR : hand == 0 ? MAINHAND : OFFHAND;
+            var slot = item1 instanceof ArmorItem ? ARMOR : hand == 0 || item1 instanceof SwordItem ? MAINHAND : OFFHAND;
 
             event.addModifier(acMod.attribute(), acMod.modifier(), slot);
         }

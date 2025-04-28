@@ -2,16 +2,20 @@ package org.jahdoo.common.block.rune_table;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.AbstractInternalContainer;
 import org.jahdoo.common.client.slots.GeneralItemSlot;
 import org.jahdoo.common.client.slots.RuneSlot;
+import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.MenuReg;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,6 +41,8 @@ public class RuneTableMenu extends AbstractInternalContainer  {
         this.addSlots();
     }
 
+
+
     @Override
     protected Block getAssociatedBlock() {
         return BlockReg.RUNE_TABLE.get();
@@ -51,6 +57,18 @@ public class RuneTableMenu extends AbstractInternalContainer  {
     protected int getAllSlots() {
         int size = RuneHolder.getRuneholder(tableEntity().getItem().getStackInSlot(0)).runeSlots().size();
         return size + DEFAULT_SLOTS -1;
+    }
+
+    public void switchVisibility(boolean switchC) {
+        for (Slot slot :  slots) {
+            if(slot instanceof RuneSlot runeSlot){
+                if(runeSlot.getItem().getItem() instanceof RuneItem){
+                    runeSlot.setActive(switchC);
+                    runeSlot.setHighlight(switchC);
+                }
+            }
+
+        }
     }
 
     public void addSlots() {
@@ -82,4 +100,27 @@ public class RuneTableMenu extends AbstractInternalContainer  {
         );
     }
 
+    @Override
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int slotIndex) {
+        var vanilla = SLOT_A + SLOT_SIZE;
+        var beInventory = INV_SLOT_A + getAllSlots();
+        var sourceSlot = slots.get(slotIndex);
+        var sourceStack = sourceSlot.getItem();
+        var copyOfSourceStack = sourceStack.copy();
+        var empty = ItemStack.EMPTY;
+
+        if(!sourceSlot.hasItem() || sourceStack.getItem() instanceof RuneItem){
+            return empty;
+        } else if (slotIndex < vanilla) {
+            if (!moveItemStackTo(sourceStack, INV_SLOT_A, beInventory, false)) return empty;
+        } else if (slotIndex < beInventory) {
+            if (!moveItemStackTo(sourceStack, SLOT_A, vanilla, false)) return empty;
+        } else {
+            return empty;
+        }
+
+        if (sourceStack.getCount() == 0) sourceSlot.set(empty); else sourceSlot.setChanged();
+        sourceSlot.onTake(player, sourceStack);
+        return copyOfSourceStack;
+    }
 }

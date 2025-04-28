@@ -5,23 +5,24 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
-import org.jahdoo.common.items.runes.RuneItem;
-import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.block.AbstractBEInventory;
+import org.jahdoo.common.items.runes.RuneItem;
+import org.jahdoo.common.items.runes.rune_data.RuneHolder;
+import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getCostFromRune;
-import static org.jahdoo.common.registers.ComponentReg.*;
+import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
 
 public class RuneSlot extends SlotItemHandler {
 
     private final int maxStackSize;
     private final AbstractBEInventory entity;
     private boolean isActive = true;
+    private boolean highlight;
 
     public RuneSlot(
         IItemHandler inputItemHandler,
@@ -50,9 +51,13 @@ public class RuneSlot extends SlotItemHandler {
         return this.isActive;
     }
 
+    public void setHighlight(boolean highlight) {
+        this.highlight = highlight;
+    }
+
     @Override
     public boolean isHighlightable() {
-        return this.isActive && !this.getItem().isEmpty();
+        return this.highlight;
     }
 
     private void serverBoundPacket(ItemStack getAllSlots) {
@@ -76,6 +81,8 @@ public class RuneSlot extends SlotItemHandler {
 //            serverBoundPacket(getAllSlots);
         }
     }
+
+
 
     @Override
     public boolean mayPlace(ItemStack itemStack) {

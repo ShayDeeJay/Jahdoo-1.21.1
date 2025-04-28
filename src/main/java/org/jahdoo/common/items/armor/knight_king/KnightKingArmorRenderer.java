@@ -1,4 +1,4 @@
-package org.jahdoo.common.items.armor;
+package org.jahdoo.common.items.armor.knight_king;
 
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.ascension.utils.Helpers;

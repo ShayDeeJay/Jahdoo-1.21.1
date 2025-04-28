@@ -11,6 +11,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.items.magnet.MagnetData;
+import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 
 import static net.minecraft.world.item.CreativeModeTabs.SPAWN_EGGS;
@@ -59,7 +60,9 @@ public class CreativeTab {
                 registerCoins(outPut);
 
                 outPut.accept(EXIT_KEY.get());
-                outPut.accept(RUNE.get());
+
+                outPut.accept(RuneHelpers.generateBlankRune());
+
                 outPut.accept(AUGMENT_CORE.get());
                 outPut.accept(ADVANCED_AUGMENT_CORE.get());
                 outPut.accept(AUGMENT_HYPER_CORE.get());

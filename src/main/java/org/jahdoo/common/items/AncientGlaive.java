@@ -10,14 +10,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ascension.utils.Helpers;
 
+import java.util.List;
+
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 
-public class AncientGlaive extends SwordItem {
+public class AncientGlaive extends SwordItem implements JahdooItem{
 
     public AncientGlaive() {
         super(Tiers.NETHERITE, glaiveProperties());
@@ -26,6 +29,12 @@ public class AncientGlaive extends SwordItem {
     @Override
     public Component getName(ItemStack stack) {
         return withStyleComponent("Ancient Glaive", SUB_HEADER_COLOUR);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        appendItemToolTips(stack, context, tooltipComponents, false);
+        appendWeaponToolTip(stack, context, tooltipComponents);
     }
 
     @Override

@@ -17,7 +17,7 @@ public class MaxHealthRune extends AbstractPerkRune{
     }
 
     @Override
-    public String description() {
+    public String runeDescription() {
         return "Increase max health capacity";
     }
 

@@ -3,12 +3,14 @@ package org.jahdoo.ascension.trading_post;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.items.runes.AbstractRune;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.registers.ComponentReg;
@@ -25,17 +27,17 @@ import static net.minecraft.world.entity.EquipmentSlot.*;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.*;
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
-import static org.jahdoo.ascension.trading_post.RewardLootTables.magnetItem;
 import static org.jahdoo.ascension.trading_post.ShoppingArmor.*;
-import static org.jahdoo.ascension.trading_post.ShoppingWeapon.enchantSword;
 import static org.jahdoo.ascension.trading_post.ShoppingWeapon.getElementalSword;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.listRandom;
 import static org.jahdoo.ascension.utils.LocalLootBeamData.attachLootBeamComponent;
 import static org.jahdoo.ascension.utils.Maths.getPercentageTotal;
 import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
+import static org.jahdoo.common.items.magnet.MagnetData.*;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
+import static org.jahdoo.common.registers.ComponentReg.MAGNET_DATA;
 
 public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts){
 
@@ -49,12 +51,35 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
     }
 
     public static ShoppingItems shoppingMagnetItem() {
-        var getRarity = UNIQUE;
-        var magnetStack = new ItemStack(ItemReg.MAGNET.get());
-        var getMagnet = magnetItem(getRarity, magnetStack);
+        var getMagnet = magnetItem(null, UNIQUE);
 
-        addAttribute(getMagnet);
+        addAttribute(getMagnet, BODY, null, null);
         return new ShoppingItems(getMagnet, setGoldCost(110));
+    }
+
+    public static ItemStack magnetItem(@Nullable ItemStack itemStack, JahdooRarity jahdooRarity) {
+        var magnetStack = itemStack != null ? itemStack : new ItemStack(ItemReg.MAGNET.get());
+        var isUnique = jahdooRarity == UNIQUE;
+        ShoppingItems.attachSharedProperties(magnetStack, jahdooRarity.getId() >= 4 ? 1 : 0, jahdooRarity, -1, isUnique ? 20 : -50, isUnique ? 20 : -50);
+        var id = jahdooRarity.getId();
+
+        if(isUnique){
+            addAttribute(magnetStack, BODY, null, null);
+        }
+
+        if(id > 0){
+            magnetStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(id));
+        }
+        var dataType = switch (id) {
+            case 1 -> simpleMagnet();
+            case 2 -> greaterMagnet();
+            case 3 -> perfectMagnet();
+            case 4 -> ancientMagnet();
+            case 5 -> uniqueMagnet();
+            default -> DEFAULT;
+        };
+        magnetStack.set(MAGNET_DATA, dataType);
+        return magnetStack;
     }
 
     public static ShoppingItems shoppingAmuletItem(){
@@ -66,22 +91,22 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         return new ShoppingItems(itemStack, setGoldCost(100));
     }
 
-    public static ShoppingItems ingmasSword(ServerLevel serverLevel) {
+    public static ShoppingItems ingmasSword(@Nullable JahdooRarity rarity) {
         var ingmasSword = new ItemStack(ItemReg.INGMAS_SWORD);
-        enchantSword(serverLevel, ingmasSword, true);
+        attachSharedProperties(ingmasSword, 1, rarity, -1, 20, 20);
         return new ShoppingItems(ingmasSword, setGoldCost(110));
     }
 
-    public static ShoppingItems glaive(ServerLevel serverLevel) {
+    public static ShoppingItems glaive(@Nullable JahdooRarity rarity) {
         var glaive = new ItemStack(ItemReg.ANCIENT_GLAIVE);
-        enchantSword(serverLevel, glaive, true);
+        attachSharedProperties(glaive, 1, rarity, -1, 20, 20);
         return new ShoppingItems(glaive, setGoldCost(110));
     }
 
-    public static ShoppingItems elementalSword(ServerLevel serverLevel) {
+    public static ShoppingItems elementalSword(@Nullable JahdooRarity rarity) {
         var meleeWeapons = getElementalSword();
-
-        enchantSword(serverLevel, meleeWeapons, true);
+//        enchantSword(serverLevel, meleeWeapons, true);
+        attachSharedProperties(meleeWeapons, 1, rarity, -1, 20, 20);
         return new ShoppingItems(meleeWeapons, setGoldCost(110));
     }
 
@@ -91,7 +116,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
             shoppingTomeItem(),
             shoppingAmuletItem(),
             shoppingArmorItem(serverLevel),
-            elementalSword(serverLevel),
+//            elementalSword(serverLevel),
             shoppingMagnetItem(),
             shoppingGauntletItem(),
             shoppingRuneItem()
@@ -100,20 +125,33 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         return Helpers.listRandom(items);
     }
 
-    private static void addAttribute(ItemStack itemStack) {
-        var rarityAttribute = getRarity();
+    public static void addAttribute(ItemStack itemStack, EquipmentSlot equipmentSlot, @Nullable JahdooRarity runeRarity, @Nullable JahdooRarity tierRarity) {
+        var rarityAttribute = runeRarity == null ? getRarity() : runeRarity;
         var getTypeAttributes = RuneReg.getRuneWithRarity(rarityAttribute);
         getTypeAttributes.ifPresent(
             rune -> {
-                var newRarity = getRarity();
-                var gen = rune.runeGenerator(newRarity.getId(), newRarity.getAttributes());
-                var delegate = gen.getType();
+                var newRarity = tierRarity == null ? getRarity() : tierRarity;
+                var gen = rune.getAttribute(newRarity.getAttributes());
+                var delegate = rune.attributeHolder();
                 var registeredName = delegate.getRegisteredName();
-
-                var isPercentage = gen.getPercentage() > 0 ? (gen.getValue() * gen.getPercentage()) / 100 : gen.getValue();
-                replaceOrAddAttribute(itemStack, registeredName, delegate, isPercentage, MAINHAND, true, "bonus");
+                var isPercentage = rune.baseValue() > 0 ? (gen * rune.baseValue()) / 100 : gen;
+                replaceOrAddAttribute(itemStack, registeredName, delegate, isPercentage, equipmentSlot, true, "bonus");
             }
         );
+    }
+
+    public static void addSpecificAttribute(
+        ItemStack itemStack,
+        EquipmentSlot equipmentSlot,
+        @Nullable JahdooRarity tierRarity,
+        AbstractRune rune
+    ) {
+        var newRarity = tierRarity == null ? getRarity() : tierRarity;
+        var gen = rune.getAttribute(newRarity.getAttributes());
+        var delegate = rune.attributeHolder();
+        var registeredName = delegate.getRegisteredName();
+        var isPercentage = rune.baseValue() > 0 ? (gen * rune.baseValue()) / 100 : gen;
+        replaceOrAddAttribute(itemStack, registeredName, delegate, isPercentage, equipmentSlot, true, "bonus");
     }
 
     public static ShoppingItems shoppingRuneItem(){
@@ -170,9 +208,9 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var isUnique = rarity == UNIQUE;
         var rarityId = rarity.getId();
 
-        attachSharedProperties(itemStack, rarityId, rarity, isUnique ? 50 : 0);
+        attachSharedProperties(itemStack, rarityId, rarity, -1, isUnique ? 50 : 0, isUnique ? 50 : 0);
 
-        if(isUnique) addAttribute(itemStack);
+        if(isUnique) addAttribute(itemStack, MAINHAND, null, null);
 
         if(rarityId > 0){
             addDamageImplicit(rarity, itemStack, element, isUnique);
@@ -189,7 +227,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var manaRegen = MANA_REGEN;
         var manaPool = MANA_POOL;
 
-        attachSharedProperties(stack, 0, rarity, 0);
+        attachSharedProperties(stack, 0, rarity, -1, 0, 0);
 
         replaceOrAddAttribute(stack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue, MAINHAND, false, "");
         replaceOrAddAttribute(stack, manaPool.getRegisteredName(), manaPool, randomManaPool, OFFHAND, false, "");
@@ -248,27 +286,34 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
     public static ItemStack getGauntletWithRarity(@Nullable ItemStack itemStack, @Nullable JahdooRarity getRarity){
         var rarity = getRarity == null ? getRarity() : getRarity;
         var newStack = itemStack == null ? new ItemStack(ItemReg.BATTLEMAGE_GAUNTLET) : itemStack;
-        attachSharedProperties(newStack, 0, rarity, 0);
+        attachSharedProperties(newStack, 0, rarity, -1, 0, 0);
 
         return newStack;
     }
 
-    public static void attachSharedProperties(ItemStack itemStack, int runeSlots, @Nullable JahdooRarity getRarity, double uniqueMultiplier){
+    public static void attachSharedProperties(
+        ItemStack itemStack,
+        int runeSlots,
+        @Nullable JahdooRarity getRarity,
+        int repairSlots,
+        double adjustPotential,
+        double adjustDurability
+    ){
         var rarity = getRarity == null ? getRarity() : getRarity;
         attachLootBeamComponent(itemStack, rarity);
         itemStack.set(JAHDOO_RARITY, rarity.getId());
 
         var potential = rarity.getAttributes().getRandomPotential();
-        RuneHolder.createNewRuneSlots(itemStack, runeSlots,  JahdooRarity.getRarity().getId() + 1, (int) getPercentageTotal(uniqueMultiplier, potential));
+        RuneHolder.createNewRuneSlots(itemStack, runeSlots,  repairSlots == -1 ? JahdooRarity.getRarity().getId() + 1 : repairSlots, (int) getPercentageTotal(adjustPotential, potential));
 
         var durability = rarity.getAttributes().getRandomTime();
-        attachDurability(itemStack, (int) getPercentageTotal(uniqueMultiplier, durability));
+        attachDurability(itemStack, (int) getPercentageTotal(adjustDurability, durability));
     }
 
     public static ItemStack getShieldWithRarity(@Nullable ItemStack itemStack, @Nullable JahdooRarity getRarity){
         var rarity = getRarity == null ? getRarity() : getRarity;
         var newStack = itemStack == null ? new ItemStack(ItemReg.BASIC_SHIELD) : itemStack;
-        attachSharedProperties(newStack, 0, rarity, 0);
+        attachSharedProperties(newStack, 0, rarity, -1, 0, 0);
 
         newStack.set(ComponentReg.SHIELD_BLOCK_CHANCE, rarity.getAttributes().getRandomDamage());
 

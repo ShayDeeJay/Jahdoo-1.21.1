@@ -439,7 +439,8 @@ public class Helpers {
         var component = Component.empty();
         var split = text.split("");
         var nonSpaceIndices = new ArrayList<Integer>();
-
+//        var holderColour = ColourStore.CHAMPION_GOLD;
+//        component.append(withStyleComponent("❖ ", holderColour));
         for (var i = 0; i < split.length; i++) {
             if (!split[i].equals(" ")) nonSpaceIndices.add(i);
         }
@@ -456,6 +457,7 @@ public class Helpers {
                 component.append(withStyleComponent(split[i], colour));
             }
         }
+//        component.append(withStyleComponent(" ❖", holderColour));
         return component;
     }
 

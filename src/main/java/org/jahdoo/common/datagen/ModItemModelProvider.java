@@ -54,7 +54,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private void registerRuneModels() {
-        for (int i = 1; i < 11; i++) {
+        for (int i = 1; i < 7; i++) {
             createModel("rune" + i, "item/runes/rune" + i);
             createOverride(i, ItemReg.RUNE, "item/rune");
         }

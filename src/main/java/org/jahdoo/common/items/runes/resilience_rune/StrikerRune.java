@@ -1,28 +1,28 @@
-package org.jahdoo.common.items.runes.elemental_rune.frost_runes;
+package org.jahdoo.common.items.runes.resilience_rune;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.rarity.RarityAttributes;
 
-import static org.jahdoo.ascension.rarity.JahdooRarity.COMMON;
-
-public class FrostDamageRune extends AbstractFrostRune {
+public class StrikerRune extends ProtectorRune {
 
     @Override
     public Holder<Attribute> attributeHolder() {
-        return getElement().damageAmplifier();
+        return Attributes.ATTACK_DAMAGE;
     }
 
     @Override
     public JahdooRarity runeRarity() {
-        return COMMON;
+        return JahdooRarity.LEGENDARY;
     }
 
     @Override
     public String runeId() {
-        return prefix()+"_damage_rune";
+        return "striker_rune";
     }
+
 
     @Override
     public String runeDescription() {
@@ -31,7 +31,7 @@ public class FrostDamageRune extends AbstractFrostRune {
 
     @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
-        return rarityAttributes.getRandomDamage();
+        return rarityAttributes.getRandomHealChance();
     }
 
 }

@@ -15,8 +15,8 @@ import net.minecraft.world.level.Level;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.SoundReg;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
@@ -27,6 +27,7 @@ import java.util.List;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.entities.EntityMovers.entityMover;
+import static org.jahdoo.common.items.caster_item.CasterItemHelper.bonusModifierTooltip;
 import static org.jahdoo.common.registers.ComponentReg.MAGNET_DATA;
 
 public class Magnet extends Item implements ICurioItem, JahdooItem {
@@ -53,17 +54,17 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> toolTips, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, toolTips, tooltipFlag);
-        var list = stack.getAttributeModifiers().modifiers().stream().toList();
         var magnetData = MagnetData.getMagnetData(stack);
-        this.appendItemToolTips(stack, context, toolTips, true);
+        this.appendItemToolTips(stack, context, toolTips, false);
         toolTips.add(Component.empty());
+        bonusModifierTooltip(stack, toolTips, context, false);
 
-        if(!list.isEmpty()){
-            for (var entry : list) toolTips.add(RuneHelpers.standAloneAttributes(entry));
-            toolTips.add(Component.empty());
-        }
-        toolTips.add(Helpers.withStyleComponent("Range: "+magnetData.range(), MAGNET_RANGE_GREEN));
-        toolTips.add(Helpers.withStyleComponent("Strength: " + magnetData.strength(), MAGNET_STRENGTH_RED));
+        toolTips.add(Helpers.withStyleComponent("Range: " + magnetData.range(), MAGNET_RANGE_GREEN));
+        toolTips.add(Helpers.withStyleComponent("Strength: " + Maths.roundNonWholeString(magnetData.strength()), MAGNET_STRENGTH_RED));
+//        var runeHolder = stack.get(ComponentReg.RUNE_HOLDER.get());
+//        if(runeHolder != null && !runeHolder.runeSlots().isEmpty()){
+//            toolTips.add(Component.empty());
+//        }
     }
 
     @Override
@@ -90,11 +91,14 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
             case 1 -> "Simple ";
             case 2 -> "Greater ";
             case 3 -> "Perfect ";
-            default -> "Ancient ";
+            case 4 -> "Ancient ";
+            case 5 -> "Unique ";
+            default -> "Lesser ";
         };
-        var colour = id == 1 ? PERK_GREEN : id == 2 ? PENDENT_NAME : JahdooRarity.EPIC.getColour();
 
-        return withStyleComponent(typeName + suffix, colour);
+        var rarityColour = JahdooRarity.getAllRarities(id);
+
+        return withStyleComponent(typeName + suffix, rarityColour.getColour());
     }
 
     @Override

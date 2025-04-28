@@ -16,7 +16,7 @@ public class MovementSpeedRune extends AbstractPerkRune{
     }
 
     @Override
-    public String description() {
+    public String runeDescription() {
         return "Increase absorption heart capacity";
     }
 

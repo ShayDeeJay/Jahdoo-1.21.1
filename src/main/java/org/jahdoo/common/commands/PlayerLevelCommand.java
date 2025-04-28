@@ -245,6 +245,86 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
+                        Commands.literal("magnet")
+                            .then(
+                                Commands.argument("count", integer())
+                                    .then(
+                                        Commands.argument("targets", EntityArgument.players())
+                                            .then(
+                                                rarity(
+                                                    c -> getMagnet(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
+                                                    c -> getMagnet(c.getSource(), getInteger(c, "count"), JahdooRarity.RARE),
+                                                    c -> getMagnet(c.getSource(), getInteger(c, "count"), JahdooRarity.EPIC),
+                                                    c -> getMagnet(c.getSource(), getInteger(c, "count"), JahdooRarity.LEGENDARY),
+                                                    c -> getMagnet(c.getSource(), getInteger(c, "count"), JahdooRarity.ETERNAL),
+                                                    c -> getMagnet(c.getSource(), getInteger(c, "count"), JahdooRarity.UNIQUE),
+                                                    c -> getMagnet(c.getSource(), getInteger(c, "count"), null)
+                                                )
+                                            )
+                                    )
+                            )
+                    )
+                    .then(
+                        Commands.literal("elemental_sword")
+                            .then(
+                                Commands.argument("count", integer())
+                                    .then(
+                                        Commands.argument("targets", EntityArgument.players())
+                                            .then(
+                                                rarity(
+                                                    c -> elementalSword(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
+                                                    c -> elementalSword(c.getSource(), getInteger(c, "count"), JahdooRarity.RARE),
+                                                    c -> elementalSword(c.getSource(), getInteger(c, "count"), JahdooRarity.EPIC),
+                                                    c -> elementalSword(c.getSource(), getInteger(c, "count"), JahdooRarity.LEGENDARY),
+                                                    c -> elementalSword(c.getSource(), getInteger(c, "count"), JahdooRarity.ETERNAL),
+                                                    c -> elementalSword(c.getSource(), getInteger(c, "count"), JahdooRarity.UNIQUE),
+                                                    c -> elementalSword(c.getSource(), getInteger(c, "count"), null)
+                                                )
+                                            )
+                                    )
+                            )
+                    )
+                    .then(
+                        Commands.literal("ingmas_sword")
+                            .then(
+                                Commands.argument("count", integer())
+                                    .then(
+                                        Commands.argument("targets", EntityArgument.players())
+                                            .then(
+                                                rarity(
+                                                    c -> ingmasSword(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
+                                                    c -> ingmasSword(c.getSource(), getInteger(c, "count"), JahdooRarity.RARE),
+                                                    c -> ingmasSword(c.getSource(), getInteger(c, "count"), JahdooRarity.EPIC),
+                                                    c -> ingmasSword(c.getSource(), getInteger(c, "count"), JahdooRarity.LEGENDARY),
+                                                    c -> ingmasSword(c.getSource(), getInteger(c, "count"), JahdooRarity.ETERNAL),
+                                                    c -> ingmasSword(c.getSource(), getInteger(c, "count"), JahdooRarity.UNIQUE),
+                                                    c -> ingmasSword(c.getSource(), getInteger(c, "count"), null)
+                                                )
+                                            )
+                                    )
+                            )
+                    )
+                    .then(
+                        Commands.literal("glaive")
+                            .then(
+                                Commands.argument("count", integer())
+                                    .then(
+                                        Commands.argument("targets", EntityArgument.players())
+                                            .then(
+                                                rarity(
+                                                    c -> ancientGlaive(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
+                                                    c -> ancientGlaive(c.getSource(), getInteger(c, "count"), JahdooRarity.RARE),
+                                                    c -> ancientGlaive(c.getSource(), getInteger(c, "count"), JahdooRarity.EPIC),
+                                                    c -> ancientGlaive(c.getSource(), getInteger(c, "count"), JahdooRarity.LEGENDARY),
+                                                    c -> ancientGlaive(c.getSource(), getInteger(c, "count"), JahdooRarity.ETERNAL),
+                                                    c -> ancientGlaive(c.getSource(), getInteger(c, "count"), JahdooRarity.UNIQUE),
+                                                    c -> ancientGlaive(c.getSource(), getInteger(c, "count"), null)
+                                                )
+                                            )
+                                    )
+                            )
+                    )
+                    .then(
                         Commands.literal("knight_king_armor")
                             .then(
                                 Commands.argument("targets", EntityArgument.players())
@@ -257,6 +337,57 @@ public class PlayerLevelCommand {
                                             c -> getKnightKingArmor(c.getSource(), JahdooRarity.ETERNAL),
                                             c -> getKnightKingArmor(c.getSource(), JahdooRarity.UNIQUE),
                                             c -> getKnightKingArmor(c.getSource(), null)
+                                        )
+                                    )
+                            )
+                    )
+                    .then(
+                        Commands.literal("grand_wizard_armor")
+                            .then(
+                                Commands.argument("targets", EntityArgument.players())
+                                    .then(
+                                        rarity(
+                                            c -> getGrandWizardArmor(c.getSource(), JahdooRarity.COMMON),
+                                            c -> getGrandWizardArmor(c.getSource(), JahdooRarity.RARE),
+                                            c -> getGrandWizardArmor(c.getSource(), JahdooRarity.EPIC),
+                                            c -> getGrandWizardArmor(c.getSource(), JahdooRarity.LEGENDARY),
+                                            c -> getGrandWizardArmor(c.getSource(), JahdooRarity.ETERNAL),
+                                            c -> getGrandWizardArmor(c.getSource(), JahdooRarity.UNIQUE),
+                                            c -> getGrandWizardArmor(c.getSource(), null)
+                                        )
+                                    )
+                            )
+                    )
+                    .then(
+                        Commands.literal("mage_armor")
+                            .then(
+                                Commands.argument("targets", EntityArgument.players())
+                                    .then(
+                                        rarity(
+                                            c -> getMageArmor(c.getSource(), JahdooRarity.COMMON),
+                                            c -> getMageArmor(c.getSource(), JahdooRarity.RARE),
+                                            c -> getMageArmor(c.getSource(), JahdooRarity.EPIC),
+                                            c -> getMageArmor(c.getSource(), JahdooRarity.LEGENDARY),
+                                            c -> getMageArmor(c.getSource(), JahdooRarity.ETERNAL),
+                                            c -> getMageArmor(c.getSource(), JahdooRarity.UNIQUE),
+                                            c -> getMageArmor(c.getSource(), null)
+                                        )
+                                    )
+                            )
+                    )
+                    .then(
+                        Commands.literal("battle_mage_armor")
+                            .then(
+                                Commands.argument("targets", EntityArgument.players())
+                                    .then(
+                                        rarity(
+                                            c -> getBattleMageArmor(c.getSource(), JahdooRarity.COMMON),
+                                            c -> getBattleMageArmor(c.getSource(), JahdooRarity.RARE),
+                                            c -> getBattleMageArmor(c.getSource(), JahdooRarity.EPIC),
+                                            c -> getBattleMageArmor(c.getSource(), JahdooRarity.LEGENDARY),
+                                            c -> getBattleMageArmor(c.getSource(), JahdooRarity.ETERNAL),
+                                            c -> getBattleMageArmor(c.getSource(), JahdooRarity.UNIQUE),
+                                            c -> getBattleMageArmor(c.getSource(), null)
                                         )
                                     )
                             )
@@ -403,6 +534,46 @@ public class PlayerLevelCommand {
         return 1;
     }
 
+    private static int getMagnet(CommandSourceStack source, int count, JahdooRarity rarity) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (int i = 0; i < count; i++){
+            Helpers.throwOrAddItem(player, ShoppingItems.magnetItem(null, rarity == null ? JahdooRarity.getRarity() : rarity));
+        }
+        return 1;
+    }
+
+    private static int elementalSword(CommandSourceStack source, int count, JahdooRarity rarity) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (int i = 0; i < count; i++){
+            Helpers.throwOrAddItem(player, ShoppingItems.elementalSword(rarity == null ? JahdooRarity.getRarity() : rarity).ShoppingItem());
+        }
+        return 1;
+    }
+
+    private static int ancientGlaive(CommandSourceStack source, int count, JahdooRarity rarity) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (int i = 0; i < count; i++){
+            Helpers.throwOrAddItem(player, ShoppingItems.glaive(rarity == null ? JahdooRarity.getRarity() : rarity).ShoppingItem());
+        }
+        return 1;
+    }
+
+    private static int ingmasSword(CommandSourceStack source, int count, JahdooRarity rarity) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (int i = 0; i < count; i++){
+            Helpers.throwOrAddItem(player, ShoppingItems.ingmasSword(rarity == null ? JahdooRarity.getRarity() : rarity).ShoppingItem());
+        }
+        return 1;
+    }
+
     private static int getRune(CommandSourceStack source, int count) {
         var player = source.getPlayer();
         if(player == null) return 0;
@@ -417,11 +588,45 @@ public class PlayerLevelCommand {
         var player = source.getPlayer();
         if(player == null) return 0;
 
-        for (var itemStack : ShoppingArmor.attachDataArmor(rarity, ShoppingArmor.getKnightKingPiece())) {
+        for (var itemStack : ShoppingArmor.knightKingWithData(rarity)) {
             Helpers.throwOrAddItem(player, itemStack);
         }
 
         return 1;
     }
+
+    private static int getMageArmor(CommandSourceStack source, JahdooRarity rarity) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (var itemStack : ShoppingArmor.mageWithData(rarity)) {
+            Helpers.throwOrAddItem(player, itemStack);
+        }
+
+        return 1;
+    }
+
+    private static int getGrandWizardArmor(CommandSourceStack source, JahdooRarity rarity) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (var itemStack : ShoppingArmor.wizardWithData(rarity)) {
+            Helpers.throwOrAddItem(player, itemStack);
+        }
+
+        return 1;
+    }
+
+    private static int getBattleMageArmor(CommandSourceStack source, JahdooRarity rarity) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (var itemStack : ShoppingArmor.battleMageWithData(rarity)) {
+            Helpers.throwOrAddItem(player, itemStack);
+        }
+
+        return 1;
+    }
+
 
 }

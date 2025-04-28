@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.InteractionHand.OFF_HAND;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
@@ -214,17 +213,30 @@ public class CasterItemHelper {
         } else itemStack.set(hand, 2);
     }
 
-    static void bonusModifierTooltip(ItemStack stack, List<Component> toolTip, Item.TooltipContext context) {
+    public static void standAloneModifiersWithLabel(
+        ItemStack stack,
+        List<Component> toolTip,
+        Item.TooltipContext context,
+        String label,
+        int colourA,
+        int colourB,
+        double speed,
+        double duration,
+        boolean addSpace
+    ) {
         var list = stack.getAttributeModifiers().modifiers().stream().filter(e -> e.modifier().id().getPath().contains("bonus")).toList();
         if(list.isEmpty()) return;
-
-        var text = "Bonus Modifiers";
-        var gold = color(255, 215, 0);
-        var comp = highlightTextComponent(context.level(), text, HEADER_COLOUR, gold, 2, 20);
+        if(addSpace) toolTip.add(Component.literal(" "));
+        var comp = highlightTextComponent(context.level(), label, colourA, colourB, speed, duration);
         toolTip.add(comp);
 
         for (var entry : list) toolTip.add(RuneHelpers.standAloneAttributes(entry));
         toolTip.add(Component.empty());
+    }
+
+    public static void bonusModifierTooltip(ItemStack stack, List<Component> toolTip, Item.TooltipContext context, boolean addSpace) {
+        var text = "Bonus Modifiers";
+        standAloneModifiersWithLabel(stack, toolTip, context, text, HEADER_COLOUR, CHAMPION_GOLD, 1.5, 20, addSpace);
     }
 
     public static boolean canOffHand(

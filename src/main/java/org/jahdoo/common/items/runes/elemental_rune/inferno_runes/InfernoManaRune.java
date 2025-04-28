@@ -25,6 +25,11 @@ public class InfernoManaRune extends AbstractInfernoRune {
     }
 
     @Override
+    public String runeDescription() {
+        return "";
+    }
+
+    @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
         return rarityAttributes.getRandomManaReduction();
     }

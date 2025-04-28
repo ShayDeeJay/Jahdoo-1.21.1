@@ -1,33 +1,33 @@
-package org.jahdoo.common.items.runes.perk_rune;
+package org.jahdoo.common.items.runes;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.rarity.RarityAttributes;
+import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.common.items.runes.rune_data.RuneCategories;
 
-import static org.jahdoo.ascension.rarity.JahdooRarity.RARE;
-
-public class MaxAbsorptionRune extends AbstractPerkRune{
-
-    @Override
-    public double baseValue() {
-        return 0.1;
-    }
+public class BlankRune extends AbstractRune{
 
     @Override
     public Holder<Attribute> attributeHolder() {
-        return Attributes.MOVEMENT_SPEED;
+        return Attributes.SCALE;
     }
 
     @Override
     public JahdooRarity runeRarity() {
-        return RARE;
+        return JahdooRarity.COMMON;
     }
 
     @Override
     public String runeId() {
-        return "movement_speed_rune";
+        return "blank_rune";
+    }
+
+    @Override
+    public int runeColour() {
+        return ColourStore.SUB_HEADER_COLOUR;
     }
 
     @Override
@@ -37,7 +37,11 @@ public class MaxAbsorptionRune extends AbstractPerkRune{
 
     @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
-        return rarityAttributes.getRandomDamage();
+        return 0;
     }
 
+    @Override
+    public RuneCategories runeCategory() {
+        return RuneCategories.EMPTY;
+    }
 }

@@ -36,30 +36,6 @@
       "predicate": {
         "minecraft:custom_model_data": 6.0
       }
-    },
-    {
-      "model": "jahdoo:item/rune7",
-      "predicate": {
-        "minecraft:custom_model_data": 7.0
-      }
-    },
-    {
-      "model": "jahdoo:item/rune8",
-      "predicate": {
-        "minecraft:custom_model_data": 8.0
-      }
-    },
-    {
-      "model": "jahdoo:item/rune9",
-      "predicate": {
-        "minecraft:custom_model_data": 9.0
-      }
-    },
-    {
-      "model": "jahdoo:item/rune10",
-      "predicate": {
-        "minecraft:custom_model_data": 10.0
-      }
     }
   ],
   "textures": {

@@ -53,7 +53,6 @@ public class TomeOfUnity extends RelicItem implements JahdooItem {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltips, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltips, tooltipFlag);
         this.appendItemToolTips(stack, context, tooltips, false);
-        tooltips.add(Component.empty());
 
         var list = stack.getAttributeModifiers().modifiers().stream().toList();
         if(!list.isEmpty()){

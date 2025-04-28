@@ -26,6 +26,11 @@ public class SkipCooldownRune extends AbstractSympathiserRune {
     }
 
     @Override
+    public String runeDescription() {
+        return "";
+    }
+
+    @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
         return rarityAttributes.getRandomHealChance();
     }

@@ -2,7 +2,6 @@ package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -64,10 +63,6 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void attributeEvent(CurioAttributeModifierEvent event) {
-        for (var attributeModifier : event.getModifiers().get(Attributes.ARMOR)) {
-;
-        }
-
         useRuneAttributesCurios(event);
     }
 
@@ -117,8 +112,13 @@ public class ServerEvents {
     public static void onEntityDamageEvent(LivingDamageEvent.Pre event){
         var entity = event.getEntity();
 
-        var resilience = entity.getAttribute(AttributeReg.RESILIENCE).getValue();
-        event.setNewDamage((float) (event.getNewDamage() - (Maths.getPercentage(resilience, event.getNewDamage()))));
+        var attribute = entity.getAttribute(AttributeReg.RESILIENCE);
+        if(attribute != null){
+            var resilience = attribute.getValue();
+            var damageReduction = Maths.getPercentage(resilience, event.getNewDamage());
+            var damageWithResilience = event.getNewDamage() - damageReduction;
+            event.setNewDamage((float) damageWithResilience);
+        }
 
         greaterFrostEffectDamageAmplifier(event, entity);
         greaterVitalityEffect(event, entity);

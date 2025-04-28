@@ -110,7 +110,7 @@ public class OverlayHelpers {
             var value = syncableAttribute.getValue();
             var readableValues = roundNonWholeString(doubleFormattedDouble(value));
 
-            var x = RuneHelpers.standAloneAttributes(syncableAttribute.getAttribute().value(), roundNonWholeDouble(doubleFormattedDouble(value)));
+            var x = RuneHelpers.standAloneAttributes(syncableAttribute.getAttribute(), roundNonWholeDouble(doubleFormattedDouble(value)));
 
             var suffix = withStyleComponent(" " + readableValues, value > 0 ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED);
             var string = prefix.copy().append(Component.literal(":")).append(suffix);

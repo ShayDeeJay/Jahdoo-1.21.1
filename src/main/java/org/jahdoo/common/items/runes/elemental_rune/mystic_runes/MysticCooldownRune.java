@@ -25,6 +25,11 @@ public class MysticCooldownRune extends AbstractMysticRune {
     }
 
     @Override
+    public String runeDescription() {
+        return "";
+    }
+
+    @Override
     public double getAttribute(RarityAttributes rarityAttributes) {
         return rarityAttributes.getRandomCooldown();
     }

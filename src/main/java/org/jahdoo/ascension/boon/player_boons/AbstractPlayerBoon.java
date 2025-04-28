@@ -4,6 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.jahdoo.common.networking.client2server.AttributeC2SP;
+import org.jahdoo.common.registers.mod.RuneReg;
 
 import java.util.ArrayList;
 
@@ -15,7 +16,6 @@ import static org.jahdoo.ascension.utils.ColourStore.UNIQUE_A;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
 import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
-import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getColourBy;
 
 public abstract class AbstractPlayerBoon {
 
@@ -25,7 +25,7 @@ public abstract class AbstractPlayerBoon {
         var string = stream(split.split(" ")).toList();
         var getValue = roundNonWholeString(doubleFormattedDouble(value()));
         var formattedString = (value() < 0 ? "" : "+") + getValue + (isPercentage() ? "% " : " ");
-        var colourBy = getColourBy(attribute().getRegisteredName());
+        var colourBy = RuneReg.getRuneFromAttribute(attribute()).runeColour();
         var componentList = new ArrayList<net.minecraft.network.chat.Component>();
 
         componentList.add(withStyleComponent(formattedString, value() < 0 ? NEGATIVE_RED : UNIQUE_A));

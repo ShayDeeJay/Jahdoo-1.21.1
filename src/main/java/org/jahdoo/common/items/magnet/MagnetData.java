@@ -32,6 +32,10 @@ public record MagnetData(
         return new MagnetData(false, 15, 2);
     }
 
+    public static MagnetData uniqueMagnet() {
+        return new MagnetData(false, 20, 3);
+    }
+
     public MagnetData setActive(boolean active) {
         return new MagnetData(active, this.range, this.strength);
     }

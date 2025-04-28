@@ -8,8 +8,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.armor.BaseArmor;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -33,17 +35,17 @@ public class WizardArmor extends BaseArmor implements GeoItem, JahdooItem {
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return true;
+        return false;
     }
 
     @Override
     public Component getName(ItemStack stack) {
-        return super.getName(stack);
+        return Helpers.withStyleComponent(super.getName(stack).getString(), ElementReg.mystic().partColourA());
     }
 
     @Override
-    public EquipmentSlot getEquipmentSlot() {
-        return super.getEquipmentSlot();
+    public void appendItemToolTips(ItemStack stack, TooltipContext context, List<Component> toolTips, boolean addSpacer) {
+        super.appendItemToolTips(stack, context, toolTips, addSpacer);
     }
 
     @Override

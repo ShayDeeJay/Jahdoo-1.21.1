@@ -7,12 +7,10 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.items.caster_item.CasterItemHelper;
 import org.jahdoo.common.items.runes.RuneItem;
@@ -115,6 +113,15 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         }
     }
 
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
+
+    @Override
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {}
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partial, int mouseX, int mouseY) {}
+
     public void hideTooltip(){
         this.showTooltip = !this.showTooltip;
     }
@@ -176,23 +183,8 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     }
 
     private void switchVisibility() {
-        for (Slot slot : this.menu.slots) {
-            if(slot instanceof RuneSlot runeSlot){
-                if(runeSlot.getItem().getItem() instanceof RuneItem){
-                    runeSlot.setActive(showInventory);
-                }
-            }
-        }
+        this.menu.switchVisibility(showInventory);
     }
-
-    @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
-
-    @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {}
-
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partial, int mouseX, int mouseY) {}
 
     @Override
     protected void containerTick() {
@@ -283,10 +275,13 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         }
 
         overlayInventory(guiGraphics, startX, startY);
-        hoverCarried(guiGraphics, mouseX, mouseY);
         if(hSlot != null && !(hSlot.getItem().getItem() instanceof RuneItem)){
+
             this.renderTooltip(guiGraphics, mouseX, mouseY);
         }
+
+        super.render(guiGraphics, mouseX, mouseY, pPartialTick);
+        hoverCarried(guiGraphics, mouseX, mouseY);
 
         if(!this.hoverTooltip.isEmpty()){
             guiGraphics.renderTooltip(font, this.hoverTooltip, Optional.empty(), mouseX, mouseY + 10);
@@ -294,7 +289,6 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
         this.hoverTooltip = new ArrayList<>();
 
-        super.render(guiGraphics, mouseX, mouseY, pPartialTick);
     }
 
     private void runeSlotTexture(GuiGraphics guiGraphics) {
@@ -380,7 +374,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
                 default -> 20;
             };
 
-            renderEntityInInventoryFollowsMouse(guiGraphics, this.leftPos - 48, this.topPos, this.leftPos + 75, this.height / 2 + yOffset, 40, 0.0625F, mouseX, mouseY, stand,  320.0F);
+            renderEntityInInventoryFollowsMouse(guiGraphics, this.leftPos - 48, this.topPos, this.leftPos + 78, this.height / 2 + yOffset, 44, 0.0625F, mouseX, mouseY, stand,  320.0F);
         } else {
             SharedUI.renderItem(guiGraphics, width, height, getItem(), SCALED_ITEM, mouseX, mouseY, 16);
         }

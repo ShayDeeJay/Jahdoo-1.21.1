@@ -1,4 +1,4 @@
-package org.jahdoo.common.items.armor.mage;
+package org.jahdoo.common.items.armor.battle_mage;
 
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.ascension.utils.Helpers;

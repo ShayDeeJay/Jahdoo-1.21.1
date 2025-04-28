@@ -15,6 +15,7 @@ import org.jahdoo.common.networking.client2server.EffectC2SP;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.common.registers.mod.RuneReg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,6 @@ import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.ascension.utils.Maths.*;
-import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getColourBy;
 
 public class BoonSelection {
 
@@ -117,7 +117,7 @@ public class BoonSelection {
         var string = stream(split.split(" ")).toList();
         var getValue = roundNonWholeString(doubleFormattedDouble(value));
         var formattedString = (value < 0 ? "" : "+") + getValue + (isPercentage ? "% " : " ");
-        var colourBy = getColourBy(attribute.getRegisteredName());
+        var colourBy = RuneReg.getRuneFromAttribute(attribute).runeColour();
         var componentList = new ArrayList<Component>();
 
         componentList.add(withStyleComponent(formattedString, value < 0 ? NEGATIVE_RED : UNIQUE_A));

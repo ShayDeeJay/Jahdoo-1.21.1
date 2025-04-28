@@ -70,21 +70,24 @@ public class ModItemTagGenerator extends ItemTagsProvider {
         this.tag(SWORDS)
             .add(INGMAS_SWORD.get());
 
-        this.tag(HEAD_ARMOR_ENCHANTABLE)
-            .add(WIZARD_HELMET.get())
-            .add(MAGE_HELMET.get());
-
-        this.tag(CHEST_ARMOR_ENCHANTABLE)
-            .add(WIZARD_CHESTPLATE.get())
-            .add(MAGE_CHESTPLATE.get());
-
-        this.tag(LEG_ARMOR_ENCHANTABLE)
-            .add(WIZARD_CHESTPLATE.get())
-            .add(MAGE_LEGGINGS.get());
-
-        this.tag(FOOT_ARMOR_ENCHANTABLE)
-            .add(WIZARD_BOOTS.get())
-            .add(MAGE_BOOTS.get());
+//        this.tag(ARMOR_ENCHANTABLE)
+//            .add()
+//
+//        this.tag(HEAD_ARMOR_ENCHANTABLE)
+//            .add(WIZARD_HELMET.get())
+//            .add(MAGE_HELMET.get());
+//
+//        this.tag(CHEST_ARMOR_ENCHANTABLE)
+//            .add(WIZARD_CHESTPLATE.get())
+//            .add(MAGE_CHESTPLATE.get());
+//
+//        this.tag(LEG_ARMOR_ENCHANTABLE)
+//            .add(WIZARD_CHESTPLATE.get())
+//            .add(MAGE_LEGGINGS.get());
+//
+//        this.tag(FOOT_ARMOR_ENCHANTABLE)
+//            .add(WIZARD_BOOTS.get())
+//            .add(MAGE_BOOTS.get());
     }
 
 

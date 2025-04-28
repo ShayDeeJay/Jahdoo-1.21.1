@@ -1,4 +1,4 @@
-package org.jahdoo.common.items.armor;
+package org.jahdoo.common.items.armor.battle_mage;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.network.chat.Component;
@@ -6,8 +6,11 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.items.armor.BaseArmor;
 import org.jahdoo.common.registers.ArmorMaterialReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -21,11 +24,11 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class KnightKingArmor extends BaseArmor implements GeoItem, JahdooItem {
+public class BattleMageArmor extends BaseArmor implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    public KnightKingArmor(Type type) {
-        super(ArmorMaterialReg.KNIGHT_KING, type, getComponent());
+    public BattleMageArmor(Type type) {
+        super(ArmorMaterialReg.BATTLEMAGE, type, getComponent());
     }
 
     private static @NotNull Properties getComponent() {
@@ -34,17 +37,17 @@ public class KnightKingArmor extends BaseArmor implements GeoItem, JahdooItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        return super.getName(stack);
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return cache;
+        return Helpers.withStyleComponent(super.getName(stack).getString(), ElementReg.mystic().partColourB());
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
     }
 
     @Override
@@ -56,12 +59,12 @@ public class KnightKingArmor extends BaseArmor implements GeoItem, JahdooItem {
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
         consumer.accept(
               new GeoRenderProvider() {
-                  private KnightKingArmorRenderer renderer;
+                  private BattleMageArmorRenderer renderer;
 
                   @Override
                   public @Nullable <T extends LivingEntity> HumanoidModel<?> getGeoArmorRenderer(@Nullable T livingEntity, ItemStack itemStack, @Nullable EquipmentSlot equipmentSlot, @Nullable HumanoidModel<T> original) {
                       if (this.renderer == null)
-                          this.renderer = new KnightKingArmorRenderer();
+                          this.renderer = new BattleMageArmorRenderer();
 
                       return this.renderer;
                   }

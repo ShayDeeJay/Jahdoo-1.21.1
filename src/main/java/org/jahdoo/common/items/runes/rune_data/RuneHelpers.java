@@ -1,5 +1,6 @@
 package org.jahdoo.common.items.runes.rune_data;
 
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -9,8 +10,8 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.trading_post.ShoppingItems;
-import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.items.runes.AbstractRune;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.RuneReg;
@@ -29,17 +30,22 @@ import static org.jahdoo.common.items.runes.rune_data.RuneData.DEFAULT;
 import static org.jahdoo.common.items.runes.rune_data.RuneData.DEFAULT_NAME;
 import static org.jahdoo.common.registers.AttributeReg.*;
 import static org.jahdoo.common.registers.ComponentReg.RUNE_DATA;
-import static org.jahdoo.common.registers.mod.ElementReg.*;
 
 public class RuneHelpers {
 
     public static Component getDescription(ItemStack itemStack){
         var data = getRuneData(itemStack);
-        return Component.literal(data.description());
+        var fromCategory = RuneReg.getRuneFromId(data.name());
+        return Component.literal(fromCategory.runeDescription());
     }
 
     public static Component getNameWithStyle(ItemStack stack){
-        return withStyleComponent(getName(stack)+ " " + RuneData.SUFFIX, getColourDarker(getRuneData(stack).getTypeColourSecondary(), 1.6));
+        var name = getRuneData(stack);
+        if(!name.name().contains("blank")){
+            var fromCategory = RuneReg.getRuneFromId(name.name());
+            return withStyleComponent(stringIdToName(fromCategory.runeCategory().getName()) + " " + RuneData.SUFFIX, getColourDarker(fromCategory.runeColour(), 1.6));
+        }
+        return Helpers.withStyleComponent("Blank Rune", -1);
     }
 
     public static RuneData getRuneData(ItemStack stack){
@@ -47,9 +53,9 @@ public class RuneHelpers {
     }
 
     public static int getCostFromRune(@NotNull ItemStack itemStack) {
-        var name = RuneHelpers.getName(itemStack);
+        var name = RuneReg.getRuneFromId(RuneHelpers.getRuneData(itemStack).name());
         var tier = RuneHelpers.getTier(itemStack);
-        return fromName(name).getCost(tier);
+        return fromName(name.runeCategory().getName()).getCost(tier);
     }
 
     public static int getTier(ItemStack itemStack){
@@ -64,12 +70,13 @@ public class RuneHelpers {
         return DEFAULT_NAME;
     }
 
-    public static void generateFullRune(ItemStack stack, RuneGenerator runGen) {
-        var isPercentage = runGen.getPercentage() > 0 ? (runGen.getValue() * runGen.getPercentage()) / 100 : runGen.getValue();
+    public static void generateFullRune(ItemStack stack, JahdooRarity tierRarity, AbstractRune rune) {
+        var value = rune.getAttribute(tierRarity.getAttributes());
+        var isPercentage = rune.baseValue() > 0 ? (value * rune.baseValue()) / 100 : value;
 
-        replaceOrAddAttribute(stack, runGen.getType().getRegisteredName(), runGen.getType(), isPercentage, EquipmentSlot.MAINHAND, true, "rune");
-        stack.set(CUSTOM_MODEL_DATA, new CustomModelData(runGen.getModelData()));
-        stack.set(RUNE_DATA, new RuneData(runGen.getElementId(), runGen.getName(), runGen.getDescription(), runGen.getColour(), runGen.getRarity().getId(), runGen.getTier()));
+        replaceOrAddAttribute(stack, rune.attributeHolder().getRegisteredName(), rune.attributeHolder(), isPercentage, EquipmentSlot.MAINHAND, true, "rune");
+        stack.set(CUSTOM_MODEL_DATA, new CustomModelData(rune.runeCategory().getModel()));
+        stack.set(RUNE_DATA, new RuneData(rune.runeId(), tierRarity.getId()));
     }
 
     public static boolean hasDestinyBond(ItemStack itemStack){
@@ -90,50 +97,30 @@ public class RuneHelpers {
         return false;
     }
 
-    public static int getColourBy(String attributeName){
-
-        if(attributeName.contains("mystic")){
-            return mystic().textColourA();
-        } else if (attributeName.contains("vitality")) {
-            return vitality().textColourA();
-        } else if (attributeName.contains("inferno")) {
-            return inferno().textColourA();
-        } else if (attributeName.contains("frost")) {
-            return frost().textColourA();
-        } else if (attributeName.contains("mana")) {
-            return ColourStore.AETHER_BLUE;
-        } else if (attributeName.contains("skills") || attributeName.contains("speed")) {
-            return ColourStore.PERK_GREEN;
-        } else if (attributeName.contains("max_health")){
-            return ColourStore.MAGNET_STRENGTH_RED;
-        } else if (attributeName.contains("max_absorption")){
-            return ColourStore.ABSORPTION_YELLOW;
-        } else if (attributeName.contains("armor")){
-            return ColourStore.MAGNET_STRENGTH_RED;
-        }
-
-        return -1;
+    public static int getColourBy(Holder<Attribute> attributeHolder){
+        var runeFromAttribute = RuneReg.getRuneFromAttribute(attributeHolder.getDelegate());
+        return runeFromAttribute == null ? -1 : runeFromAttribute.runeColour();
     }
 
     public static Component standAloneAttributes(ItemAttributeModifiers.Entry entry) {
-//        var colourPre = ColourStore.PERK_GREEN;
-        var descriptionId = entry.attribute().value().getDescriptionId();
+        var attribute = entry.attribute();
+        var descriptionId = attribute.value().getDescriptionId();
         var amount = entry.modifier().amount();
-        var typeColour = getColourBy(descriptionId);
+        var typeColour = getColourBy(attribute);
         var compName = withStyleComponentTrans(descriptionId, typeColour);
         var isAbsorption = descriptionId.contains("absorption");
         var isMaxHealth = descriptionId.contains("health");
         var isSpeed = descriptionId.contains("speed");
+        var isAttackSpeed = descriptionId.contains("attack_speed");
 
-        if(isSpeed) amount = amount * 1000;
+        if(isSpeed || isAttackSpeed) amount = amount * 1000;
         if(isAbsorption || isMaxHealth) amount = (amount/2);
         return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, typeColour, compName);
     }
 
-    public static Component standAloneAttributes(Attribute attribute, double amount) {
-//        var colourPre = ColourStore.PERK_GREEN;
-        var descriptionId = attribute.getDescriptionId();
-        var typeColour = getColourBy(descriptionId);
+    public static Component standAloneAttributes(Holder<Attribute> attribute, double amount) {
+        var descriptionId = attribute.value().getDescriptionId();
+        var typeColour = getColourBy(attribute);
         var compName = withStyleComponentTrans(descriptionId, typeColour);
         var isAbsorption = descriptionId.contains("absorption");
         var isMaxHealth = descriptionId.contains("health");
@@ -165,17 +152,19 @@ public class RuneHelpers {
         if (attributes.isEmpty()) return Component.empty();
 
         var data = getRuneData(itemStack);
-//        var colourPre = ColourStore.CHAMPION_GOLD;
+        var abstractRune = RuneReg.getRuneFromId(data.name());
         var entry = attributes.getFirst();
         var descriptionId = entry.attribute().value().getDescriptionId();
         var amount = entry.modifier().amount();
-        var typeColour = data.elementId() < 1 ? data.colour() : fromId(data.elementId()).orElseThrow().textColourA();
+        var typeColour = abstractRune.runeColour();
         var compName = withStyleComponentTrans(descriptionId, typeColour);
         var isAbsorption = descriptionId.contains("absorption");
         var isMaxHealth = descriptionId.contains("health");
         var isSpeed = descriptionId.contains("speed");
+        var isAttackSpeed = descriptionId.contains("attack_speed");
 
-        if(isSpeed) amount = amount * 1000;
+        if(isAttackSpeed) amount = amount * 25;
+        if(isSpeed && !isAttackSpeed) amount = amount * 1000;
         if(isAbsorption || isMaxHealth) amount = (amount/2);
 
         return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, typeColour, compName);
@@ -194,7 +183,7 @@ public class RuneHelpers {
             RuneReg.getRuneWithRarity(getRuneRarity).ifPresent(
                 rune -> {
                     attachLootBeamComponent(stack, getTierRarity);
-                    generateFullRune(stack, rune.runeGenerator(getTierRarity.getId(), getTierRarity.getAttributes()));
+                    generateFullRune(stack, getTierRarity, rune);
                 }
             );
         }
@@ -209,9 +198,22 @@ public class RuneHelpers {
             var rune = Helpers.listRandom(RuneReg.getAllRuneWithRarity(jahdooRarities));
 
             attachLootBeamComponent(stack, tierRarity);
-            generateFullRune(stack, rune.runeGenerator(tierRarity.getId(), tierRarity.getAttributes()));
+            generateFullRune(stack, tierRarity , rune);
 
         }
+        return stack;
+    }
+
+    public static ItemStack generateBlankRune() {
+        var stack = new ItemStack(ItemReg.RUNE);
+        var tierRarity = JahdooRarity.COMMON;
+
+        if(stack.getAttributeModifiers().modifiers().isEmpty()){
+            var rune = RuneReg.BLANK_RUNE.get();
+            generateFullRune(stack, tierRarity, rune);
+
+        }
+
         return stack;
     }
 

@@ -3,7 +3,6 @@ package org.jahdoo.common.event;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -59,17 +58,21 @@ public class ClientEvents {
         var itemStack = e.getItemStack();
         var item = itemStack.getItem();
 
-        if(item instanceof ArmorItem && item instanceof JahdooItem){
+        if(item instanceof JahdooItem){
             var iterator = current.iterator();
             while (iterator.hasNext()) {
                 var tooltipElement = iterator.next();
                 var left = tooltipElement.left();
                 if (left.isPresent()) {
-                    var string = left.get().toString();
+                    var formattedText = left.get();
+                    var string = formattedText.toString();
                     var neoforge = string.contains("neoforge");
                     var whenOn = string.contains("item.modifiers");
-                    var empty = left.get().getString().isEmpty();
-                    if (neoforge || whenOn || empty) {
+                    var enchantment = string.contains("enchantment");
+                    var mcComponent = string.contains("literal{ }[style={color=dark_green}");
+                    var modNamePre = string.contains("creative_tab.jahdoo_tab");
+                    var empty = formattedText.getString().isEmpty();
+                    if (empty || neoforge || whenOn || enchantment || mcComponent || modNamePre) {
                         iterator.remove();
                     }
                 }
@@ -78,7 +81,6 @@ public class ClientEvents {
 
         var allSlots = getAllSlots(itemStack);
         if(allSlots.isEmpty()) return;
-
         var runeSockets = new RuneTooltipRenderer.RuneComponent(itemStack, allSlots);
         current.add(current.size(), Either.right(runeSockets));
     }

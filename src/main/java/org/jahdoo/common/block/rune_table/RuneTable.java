@@ -65,7 +65,7 @@ public class RuneTable extends BaseEntityBlock {
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
-        return  simpleCodec((x) -> new RuneTable());
+        return simpleCodec((x) -> new RuneTable());
     }
 
     @Override

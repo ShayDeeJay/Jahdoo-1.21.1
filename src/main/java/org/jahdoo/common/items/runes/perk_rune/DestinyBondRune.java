@@ -17,11 +17,6 @@ public class DestinyBondRune extends AbstractPerkRune {
     }
 
     @Override
-    public String description() {
-        return "Keep your item on death.";
-    }
-
-    @Override
     public Holder<Attribute> attributeHolder() {
         return DESTINY_BOND.getDelegate();
     }
@@ -34,6 +29,11 @@ public class DestinyBondRune extends AbstractPerkRune {
     @Override
     public String runeId() {
         return "destiny_bond_rune";
+    }
+
+    @Override
+    public String runeDescription() {
+        return "Keep your item on death.";
     }
 
     @Override

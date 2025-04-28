@@ -41,7 +41,10 @@ public class RuneItem extends Item implements JahdooItem {
         List<Component> tooltipComponents,
         TooltipFlag tooltipFlag
     ) {
-        tooltipComponents.addAll(hoverToolTip(stack, context, tooltipComponents));
+        var isNotBlank = !getNameWithStyle(stack).getString().contains("Blank");
+        if(isNotBlank){
+            tooltipComponents.addAll(hoverToolTip(stack, context, tooltipComponents));
+        }
     }
 
     @Override

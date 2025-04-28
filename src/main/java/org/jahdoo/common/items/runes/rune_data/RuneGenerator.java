@@ -2,35 +2,21 @@ package org.jahdoo.common.items.runes.rune_data;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import org.jahdoo.ascension.rarity.JahdooRarity;
 
-import static org.jahdoo.ascension.rarity.JahdooRarity.COMMON;
-import static org.jahdoo.common.items.runes.rune_data.RuneData.*;
+import static org.jahdoo.common.items.runes.rune_data.RuneData.NO_VALUE;
 
 public class RuneGenerator {
 
     private final Holder<Attribute> type;
     private final double value;
     private final String name;
-    private final JahdooRarity rarity;
-    private final String description;
-    private final int elementId;
     private final int tier;
-    private final int colour;
-    private final int modelData;
-    private final double percentage;
 
     private RuneGenerator(Builder builder) {
         this.type = builder.type;
         this.value = builder.value;
         this.name = builder.name;
-        this.rarity = builder.rarity;
-        this.description = builder.description;
-        this.elementId = builder.elementId;
         this.tier = builder.tier;
-        this.colour = builder.colour;
-        this.modelData = builder.modelData;
-        this.percentage = builder.percentage;
     }
 
     public Holder<Attribute> getType() {
@@ -41,36 +27,12 @@ public class RuneGenerator {
         return value;
     }
 
-    public double getPercentage() {
-        return percentage;
-    }
-
     public String getName() {
         return name;
     }
 
-    public JahdooRarity getRarity() {
-        return rarity;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public int getElementId() {
-        return elementId;
-    }
-
     public int getTier() {
         return tier;
-    }
-
-    public int getColour() {
-        return colour;
-    }
-
-    public int getModelData() {
-        return modelData;
     }
 
     public static class Builder {
@@ -78,24 +40,13 @@ public class RuneGenerator {
 
         private double value = NO_VALUE;
         private String name = "";
-        private JahdooRarity rarity = COMMON;
-        private String description = NO_DESCRIPTION;
-        private int elementId = NO_ELEMENT;
         private int tier = 1;
-        private int colour = -1;
-        private int modelData = 4;
-        private double percentage = 0;
 
         public Builder(Holder<Attribute> type) {
             if (type == null) {
                 throw new IllegalArgumentException("Type cannot be null.");
             }
             this.type = type;
-        }
-
-        public Builder setConvertPercentage(double percentage) {
-            this.percentage = percentage;
-            return this;
         }
 
         public Builder setType(Holder<Attribute> type) {
@@ -113,33 +64,8 @@ public class RuneGenerator {
             return this;
         }
 
-        public Builder setRarity(JahdooRarity rarity) {
-            this.rarity = rarity;
-            return this;
-        }
-
-        public Builder setDescription(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public Builder setElementId(int elementId) {
-            this.elementId = elementId;
-            return this;
-        }
-
         public Builder setTier(int tier) {
             this.tier = tier;
-            return this;
-        }
-
-        public Builder setColour(int colour) {
-            this.colour = colour;
-            return this;
-        }
-
-        public Builder setModelData(int modelData) {
-            this.modelData = modelData;
             return this;
         }
 

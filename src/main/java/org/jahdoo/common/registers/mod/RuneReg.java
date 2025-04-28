@@ -1,7 +1,9 @@
 package org.jahdoo.common.registers.mod;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -9,8 +11,11 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.runes.AbstractRune;
-import org.jahdoo.common.items.runes.ResilienceRune;
+import org.jahdoo.common.items.runes.BlankRune;
+import org.jahdoo.common.items.runes.resilience_rune.FlurryRune;
+import org.jahdoo.common.items.runes.resilience_rune.ResilienceRune;
 import org.jahdoo.common.items.runes.aether_rune.ManaPoolRune;
 import org.jahdoo.common.items.runes.aether_rune.ManaRegenRune;
 import org.jahdoo.common.items.runes.cosmic_rune.CooldownReductionRune;
@@ -28,15 +33,19 @@ import org.jahdoo.common.items.runes.elemental_rune.mystic_runes.MysticManaRune;
 import org.jahdoo.common.items.runes.elemental_rune.vitality_runes.VitalityCooldownRune;
 import org.jahdoo.common.items.runes.elemental_rune.vitality_runes.VitalityDamageRune;
 import org.jahdoo.common.items.runes.elemental_rune.vitality_runes.VitalityManaRune;
-import org.jahdoo.common.items.runes.perk_rune.*;
+import org.jahdoo.common.items.runes.perk_rune.DestinyBondRune;
+import org.jahdoo.common.items.runes.perk_rune.MaxAbsorptionRune;
+import org.jahdoo.common.items.runes.perk_rune.MaxHealthRune;
+import org.jahdoo.common.items.runes.perk_rune.MovementSpeedRune;
+import org.jahdoo.common.items.runes.resilience_rune.StrikerRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.AbsorptionHeartRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.CastHealRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.SkipCooldownRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.SkipManaRune;
-import org.jahdoo.ascension.utils.Helpers;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -56,15 +65,24 @@ public class RuneReg {
     }
 
     public static List<AbstractRune> getAllRunes() {
-        return REGISTRY.stream().toList();
+        return REGISTRY.stream().filter(s -> !Objects.equals(s.runeId(), "blank_rune")).toList();
+    }
+
+    public static AbstractRune getRuneFromId(String runeId) {
+        return Optional.of(Helpers.listRandom(getAllRunes().stream().filter(s -> s.runeId().equals(runeId)).toList())).orElseThrow();
+    }
+
+    public static AbstractRune getRuneFromAttribute(Holder<Attribute> attributeHolder) {
+        var list = getAllRunes().stream().filter(s -> s.attributeHolder().equals(attributeHolder)).toList();
+        return list.isEmpty() ? null : Helpers.listRandom(list);
     }
 
     public static Optional<AbstractRune> getRuneWithRarity(JahdooRarity rarity) {
-        return Optional.of(Helpers.listRandom(REGISTRY.stream().filter(s -> s.runeRarity().equals(rarity)).toList()));
+        return Optional.of(Helpers.listRandom(getAllRunes().stream().filter(s -> s.runeRarity().equals(rarity)).toList()));
     }
 
     public static List<AbstractRune> getAllRuneWithRarity(JahdooRarity...rarity) {
-        return REGISTRY.stream().filter(s -> Arrays.stream(rarity).toList().contains(s.runeRarity())).toList();
+        return getAllRunes().stream().filter(s -> Arrays.stream(rarity).toList().contains(s.runeRarity())).toList();
     }
 
     //Aether Runes
@@ -140,6 +158,12 @@ public class RuneReg {
     public static final DeferredHolder<AbstractRune, AbstractRune> RESILIENCE =
         registerRune(ResilienceRune::new);
 
+    public static final DeferredHolder<AbstractRune, AbstractRune> STRIKER =
+        registerRune(StrikerRune::new);
+
+    public static final DeferredHolder<AbstractRune, AbstractRune> FLURRY =
+        registerRune(FlurryRune::new);
+
     //Sympathiser Rune
     public static final DeferredHolder<AbstractRune, AbstractRune> ABSORPTION_HEART_RUNE =
         registerRune(AbsorptionHeartRune::new);
@@ -152,6 +176,9 @@ public class RuneReg {
 
     public static final DeferredHolder<AbstractRune, AbstractRune> SKIP_MANA_RUNE =
         registerRune(SkipManaRune::new);
+
+    public static final DeferredHolder<AbstractRune, AbstractRune> BLANK_RUNE =
+        registerRune(BlankRune::new);
 
     public static void register(IEventBus eventBus) {
         RUNE.register(eventBus);

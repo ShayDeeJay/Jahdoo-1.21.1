@@ -25,29 +25,32 @@ public class ArmorMaterialReg {
         ARMOR_MATERIALS.register(eventBus);
     }
 
-    public static DeferredHolder<ArmorMaterial, ArmorMaterial> WIZARD =
-        register("wizard_armor", makeArmorMap(3, 8, 6, 3));
-
     public static DeferredHolder<ArmorMaterial, ArmorMaterial> MAGE =
-        register("mage_armor", makeArmorMap(3, 8, 6, 3));
+        register("mage_armor", makeArmorMap(2, 5, 6, 2, 5), 9, 0F, 0F);
+
+    public static DeferredHolder<ArmorMaterial, ArmorMaterial> WIZARD =
+        register("wizard_armor", makeArmorMap(3, 6, 8, 3, 11), 10, 2F, 0F);
 
     public static DeferredHolder<ArmorMaterial, ArmorMaterial> BATTLEMAGE =
-        register("battlemage_armor", makeArmorMap(3, 8, 6, 3));
+        register("battlemage_armor", makeArmorMap(3, 6, 8, 3, 15), 15, 3F, 0F);
 
     public static DeferredHolder<ArmorMaterial, ArmorMaterial> KNIGHT_KING =
-        register("knight_king_armor", makeArmorMap(3, 8, 6, 3));
+        register("knight_king_armor", makeArmorMap(4, 8, 14, 4, 20), 20, 5F, 0F);
 
     private static DeferredHolder<ArmorMaterial, ArmorMaterial> register(
         String name,
-        EnumMap<ArmorItem.Type, Integer> defense
+        EnumMap<ArmorItem.Type, Integer> defense,
+        int enchantmentValue,
+        float toughness,
+        float knockBack
     ) {
         var list = List.of(new ArmorMaterial.Layer(Helpers.res(name)));
-        var material = new ArmorMaterial(defense, 15, ARMOR_EQUIP_DIAMOND, () -> of(Tags.Items.INGOTS_IRON), list, 3F, 0F);
+        var material = new ArmorMaterial(defense, enchantmentValue, ARMOR_EQUIP_DIAMOND, () -> of(Tags.Items.INGOTS_IRON), list, toughness, knockBack);
 
         return ARMOR_MATERIALS.register(name, ()-> material);
     }
 
-    static public EnumMap<ArmorItem.Type, Integer> makeArmorMap(int helmet, int chestplate, int leggings, int boots) {
+    static public EnumMap<ArmorItem.Type, Integer> makeArmorMap(int boots, int leggings, int chestplate, int helmet, int body) {
         return Util.make(
             new EnumMap<>(ArmorItem.Type.class),
             (enumMap) -> {
@@ -55,6 +58,7 @@ public class ArmorMaterialReg {
                 enumMap.put(ArmorItem.Type.LEGGINGS, leggings);
                 enumMap.put(ArmorItem.Type.CHESTPLATE, chestplate);
                 enumMap.put(ArmorItem.Type.HELMET, helmet);
+                enumMap.put(ArmorItem.Type.BODY, body);
             }
         );
     }

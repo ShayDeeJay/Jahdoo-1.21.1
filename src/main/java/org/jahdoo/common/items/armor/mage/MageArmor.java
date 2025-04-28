@@ -6,9 +6,11 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.armor.BaseArmor;
 import org.jahdoo.common.registers.ArmorMaterialReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -35,17 +37,17 @@ public class MageArmor extends BaseArmor implements GeoItem, JahdooItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        return super.getName(stack);
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return cache;
+        return Helpers.withStyleComponent(super.getName(stack).getString(), ElementReg.vitality().textColourB());
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
     }
 
     @Override
