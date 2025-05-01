@@ -3,7 +3,6 @@ package org.jahdoo.common.items.armor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
@@ -13,16 +12,12 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
-import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 
 import java.util.List;
-
-import static org.jahdoo.common.items.caster_item.CasterItemHelper.bonusModifierTooltip;
 
 public abstract class BaseArmor extends ArmorItem implements JahdooItem {
 
@@ -57,21 +52,16 @@ public abstract class BaseArmor extends ArmorItem implements JahdooItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        var empty = Component.literal(" ");
         appendItemToolTips(stack, context, tooltipComponents, false);
-        enchantmentTooltip(stack, tooltipComponents, empty);
-        tooltipComponents.add(empty);
+        if(isItemBroken(stack)){
+            brokenGearMessage(tooltipComponents, stack);
+            return;
+        }
+        enchantmentTooltip(stack, tooltipComponents, true);
+        tooltipComponents.add(Component.literal(" "));
         baseArmorTooltip(stack, tooltipComponents);
         bonusModifierTooltip(stack, tooltipComponents, context, true);
-        runeSpacer(stack, tooltipComponents, empty);
-
-    }
-
-    private static void runeSpacer(ItemStack stack, List<Component> tooltipComponents, MutableComponent empty) {
-        var runeHolder = RuneHolder.getRuneholder(stack);
-        if(runeHolder != null && !runeHolder.runeSlots().isEmpty()){
-            tooltipComponents.add(empty);
-        }
+        runeSpacer(stack, tooltipComponents);
     }
 
     private static void baseArmorTooltip(ItemStack stack, List<Component> tooltipComponents) {
@@ -84,20 +74,6 @@ public abstract class BaseArmor extends ArmorItem implements JahdooItem {
             }
             if(modifier.attribute() == Attributes.ARMOR_TOUGHNESS){
                 tooltipComponents.add(Helpers.withStyleComponent("+"+value+" Armor Toughness", ColourStore.MAGNET_STRENGTH_RED));
-            }
-        }
-    }
-
-    private static void enchantmentTooltip(ItemStack stack, List<Component> tooltipComponents, MutableComponent empty) {
-        var itemEnchantments = stack.get(DataComponents.ENCHANTMENTS);
-        if(itemEnchantments != null && !itemEnchantments.entrySet().isEmpty()){
-            tooltipComponents.add(empty);
-            tooltipComponents.add(Helpers.withStyleComponent("Enchantments", ColourStore.SUB_HEADER_COLOUR));
-            for (var holderEntry : itemEnchantments.entrySet()) {
-                var value = holderEntry.getKey().value();
-                var string = value.description().getString();
-                var s = JahdooRarity.romanNumeralConverter(holderEntry.getIntValue() - 1);
-                tooltipComponents.add(Helpers.withStyleComponent(string + " " + s, ColourStore.NETHERITE_BOX));
             }
         }
     }

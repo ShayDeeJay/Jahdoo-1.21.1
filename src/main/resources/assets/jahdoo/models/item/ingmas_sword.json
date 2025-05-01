@@ -1,10 +1,10 @@
 {
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
-	"textures": {
-		"1": "jahdoo:item/ingmas_sword",
-		"particle": "jahdoo:item/ingmas_sword"
-	},
+    "textures": {
+      "1": "jahdoo:item/ingmas_sword",
+      "particle": "jahdoo:item/ingmas_sword"
+    },
 	"elements": [
 		{
 			"from": [5.75, 4, 7.4875],
@@ -192,41 +192,38 @@
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [0, -90, 0],
-			"translation": [0, 7.75, 1.75],
-			"scale": [1.2, 1.2, 1.2]
+			"translation": [0, 6, 1.5]
 		},
 		"thirdperson_lefthand": {
 			"rotation": [0, -90, 0],
-			"translation": [0, 7.75, 1.75],
-			"scale": [1.2, 1.2, 1.2]
+			"translation": [0, 6, 1.5]
 		},
 		"firstperson_righthand": {
-			"rotation": [13, 87, 7],
+			"rotation": [13, 87, 0],
 			"translation": [1.75, 4.25, 0.5],
 			"scale": [0.75, 0.75, 0.75]
 		},
 		"firstperson_lefthand": {
-			"rotation": [13, 87, 7],
+			"rotation": [13, 87, 0],
 			"translation": [1.75, 4.25, 0.5],
 			"scale": [0.75, 0.75, 0.75]
 		},
 		"ground": {
-			"rotation": [-90, 0, 0],
-			"translation": [0, 2, 0],
-			"scale": [0.5, 0.5, 0.5]
+			"rotation": [90, 0, 0],
+			"translation": [0, 1.25, 0],
+			"scale": [0.55, 0.55, 0.55]
 		},
 		"gui": {
 			"rotation": [0, 0, -45],
-			"translation": [0.25, 0.25, 1],
-			"scale": [0.86, 0.86, 0.86]
+			"translation": [0, 0, 1],
+			"scale": [0.8, 0.8, 0.8]
 		},
 		"head": {
 			"translation": [0, 12.25, 0]
 		},
 		"fixed": {
 			"rotation": [0, 0, 45],
-			"translation": [-0.25, 0.25, 1],
-			"scale": [1.07, 1.07, 1.07]
+			"translation": [0, 0, 0.5]
 		}
 	}
 }

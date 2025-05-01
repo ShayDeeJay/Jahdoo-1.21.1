@@ -21,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
@@ -60,6 +61,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
+import org.jahdoo.common.block.loot_chest.LootChestBlock;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.CustomSkeleton;
@@ -68,6 +70,7 @@ import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
+import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.networking.client2server.ChaosCubeC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
@@ -89,7 +92,6 @@ import java.util.ArrayList;
 import static com.mojang.blaze3d.platform.InputConstants.*;
 import static java.util.Objects.requireNonNull;
 import static net.minecraft.client.Minecraft.getInstance;
-import static net.minecraft.sounds.SoundEvents.SHIELD_BLOCK;
 import static net.minecraft.sounds.SoundSource.PLAYERS;
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
@@ -100,6 +102,7 @@ import static org.jahdoo.ascension.attachments.ChaosCubeData.getRelativePosition
 import static org.jahdoo.ascension.attachments.ChaosCubeData.updateAll;
 import static org.jahdoo.ascension.attachments.RunData.*;
 import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedArmor;
+import static org.jahdoo.ascension.trading_post.RewardLootTables.getCompletionLoot;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.storeBlockType;
@@ -107,7 +110,7 @@ import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttachmentReg.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
-import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
 
 public class EventHelpers {
 
@@ -292,14 +295,14 @@ public class EventHelpers {
             var damage = (int) (event.getBlockedDamage());
 
             hurtAndKeepItem(shieldSlots, damage, event.getEntity().level(), entity);
-            getSoundWithPositionV(entity.level(), entity.position(), SHIELD_BLOCK, 1, 1);
+            getSoundWithPositionV(entity.level(), entity.position(), SoundReg.BLOCK.get(), 1, 1);
         }
     }
 
     public static void setChaosCubeAbility(PlayerInteractEvent.LeftClickBlock event, Level level, BlockPos pos, ItemStack item) {
         if(level.getBlockEntity(pos) instanceof ChaosCubeEntity entity && item.getItem() instanceof CasterItem){
             var player = event.getEntity();
-            var casterData = player.getData(AttachmentReg.CASTER_DATA.get());
+            var casterData = player.getData(CASTER_DATA.get());
             var ability = AbilityReg.getFirstSpellByTypeId(casterData.getSelectedAbility());
 
             if(ability.isPresent()) {
@@ -412,6 +415,31 @@ public class EventHelpers {
         }
     }
 
+    public static void championLootCalculator(LivingDamageEvent.Pre event, LivingEntity entity) {
+        if(entity.level() instanceof CustomLevel customLevel){
+            var isChampion = entity.hasEffect(EffectReg.CHAMPION_EFFECT);
+            if (isChampion && event.getSource().getEntity() != null) {
+                var position = entity.position();
+                var instanceData = customLevel.getData(INSTANCE_DATA.get());
+                var difficulty = InstanceDifficulty.getFromName(instanceData.getDifficulty());
+                var chestRarity = difficulty.getId();
+                var type = difficulty.getSerializedName();
+                var rewards = getCompletionLoot(customLevel, position, type, chestRarity);
+                LootChestBlock.itemBehaviour(position, customLevel, Helpers.getRgb(), true, 10, chestRarity, Helpers.listRandom(rewards));
+            }
+        }
+    }
+
+    public static void resilienceDamageRecalculate(LivingDamageEvent.Pre event, LivingEntity entity) {
+        var attribute = entity.getAttribute(AttributeReg.RESILIENCE);
+        if(attribute != null){
+            var resilience = attribute.getValue();
+            var damageReduction = Maths.getPercentage(resilience, event.getNewDamage());
+            var damageWithResilience = event.getNewDamage() - damageReduction;
+            event.setNewDamage((float) damageWithResilience);
+        }
+    }
+
     public static void greaterFrostEffectDamageAmplifier(LivingDamageEvent.Pre event, LivingEntity entity) {
         if(entity.hasEffect(EffectReg.GREATER_FROST_EFFECT)){
             var origin = event.getOriginalDamage();
@@ -448,7 +476,7 @@ public class EventHelpers {
 
     public static void useRuneAttributesCurios(CurioAttributeModifierEvent event) {
         var item = event.getItemStack();
-        var slotAttributes = item.get(RUNE_HOLDER.get());
+        var slotAttributes = item.get(JAHDOO_GEAR_DATA.get());
         if(slotAttributes != null) {
             for (var itemStack : slotAttributes.runeSlots()) {
                 var mods = itemStack.getAttributeModifiers().modifiers();
@@ -462,14 +490,25 @@ public class EventHelpers {
             }
         }
 
-        for (var modifier : item.getAttributeModifiers().modifiers()) {
-            event.addModifier(modifier.attribute(), modifier.modifier());
+        if(Helpers.durabilityDamageCount(item) > 0){
+            for (var modifier : item.getAttributeModifiers().modifiers()) {
+                event.addModifier(modifier.attribute(), modifier.modifier());
+            }
         }
+    }
+
+    public static boolean removeArmorAttributes(ItemAttributeModifiers.Entry entry, ItemAttributeModifierEvent event){
+        var item = event.getItemStack();
+        var durability = Helpers.durabilityDamageCount(item);
+        if(item.has(DataComponents.DAMAGE) && item.getItem() instanceof JahdooItem){
+            return durability == 0;
+        }
+        return false;
     }
 
     public static void useRuneAttributes(ItemAttributeModifierEvent event) {
         var item = event.getItemStack();
-        var slotAttributes = item.get(RUNE_HOLDER.get());
+        var slotAttributes = item.get(JAHDOO_GEAR_DATA.get());
         var handComponent = item.get(INTERACTION_HAND);
         var hand = handComponent == null ? 2 : handComponent;
         var item1 = item.getItem();
@@ -477,14 +516,17 @@ public class EventHelpers {
 
         if(item.is(ModTags.Items.WAND_TAGS) && hand == 2) return;
 
-        for (ItemStack itemStack : slotAttributes.runeSlots()) {
-            var mods = itemStack.getAttributeModifiers().modifiers();
-            if (mods.isEmpty()) return;
+        var durability = Helpers.durabilityDamageCount(item);
+        if(item.has(DataComponents.DAMAGE) && item.getItem() instanceof JahdooItem && durability > 0){
+            for (ItemStack itemStack : slotAttributes.runeSlots()) {
+                var mods = itemStack.getAttributeModifiers().modifiers();
+                if (mods.isEmpty()) return;
 
-            var acMod = mods.getFirst();
-            var slot = item1 instanceof ArmorItem ? ARMOR : hand == 0 || item1 instanceof SwordItem ? MAINHAND : OFFHAND;
+                var acMod = mods.getFirst();
+                var slot = item1 instanceof ArmorItem ? ARMOR : hand == 0 || item1 instanceof SwordItem ? MAINHAND : OFFHAND;
 
-            event.addModifier(acMod.attribute(), acMod.modifier(), slot);
+                event.addModifier(acMod.attribute(), acMod.modifier(), slot);
+            }
         }
 
     }
@@ -687,7 +729,7 @@ public class EventHelpers {
     public static void discardLevelOnEnd(LevelTickEvent.Pre tickEvent) {
         if(tickEvent.getLevel() instanceof ServerLevel serverLevel){
             if(serverLevel instanceof CustomLevel customLevel){
-                var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA.get());
+                var data = serverLevel.getData(INSTANCE_DATA.get());
                 var players = customLevel.players();
                 if(!data.getDifficulty().isEmpty() && players.isEmpty()){
                     var i = data.getMaxTime() - data.getTicks();
@@ -704,7 +746,7 @@ public class EventHelpers {
         var player = Minecraft.getInstance().player;
         if(player == null) return;
 
-        var casterData = player.getData(AttachmentReg.CASTER_DATA.get());
+        var casterData = player.getData(CASTER_DATA.get());
         var getAbility = casterData.abilitySlots.get(keyNum - 1);
         var b = withStyleComponent(String.valueOf(keyNum), ColourStore.PERK_GREEN);
         var a = withStyleComponentTrans("abilitySelector.jahdoo.non_assigned", ColourStore.SUB_HEADER_COLOUR, b);
@@ -768,7 +810,7 @@ public class EventHelpers {
         if(!(level instanceof CustomLevel)) return;
         if(!(player instanceof ServerPlayer serverPlayer)) return;
 
-        var runData = serverPlayer.getData(AttachmentReg.RUN_DATA.get());
+        var runData = serverPlayer.getData(RUN_DATA.get());
         var getQuestId = runData.getCurrentQuestId();
         if(getQuestId == null) return;
 

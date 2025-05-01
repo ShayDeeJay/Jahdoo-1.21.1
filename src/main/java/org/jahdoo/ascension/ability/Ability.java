@@ -91,7 +91,7 @@ public abstract class Ability {
         return 0;
     }
 
-    public void fireUtilityProjectile(Projectile projectile, BlockPos pos, Vec3i direction){
+    public static void fireUtilityProjectile(Projectile projectile, BlockPos pos, Vec3i direction){
         if (projectile.level() instanceof ServerLevel serverLevel) {
             Vec3 eastDirection = Vec3.atCenterOf(direction).subtract(pos.getCenter()).normalize(); // Vector pointing east
             projectile.shoot(eastDirection.x, eastDirection.y, eastDirection.z, 0.5f, 0);

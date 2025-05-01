@@ -27,7 +27,6 @@ import java.util.List;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.entities.EntityMovers.entityMover;
-import static org.jahdoo.common.items.caster_item.CasterItemHelper.bonusModifierTooltip;
 import static org.jahdoo.common.registers.ComponentReg.MAGNET_DATA;
 
 public class Magnet extends Item implements ICurioItem, JahdooItem {
@@ -55,16 +54,12 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> toolTips, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, toolTips, tooltipFlag);
         var magnetData = MagnetData.getMagnetData(stack);
-        this.appendItemToolTips(stack, context, toolTips, false);
-        toolTips.add(Component.empty());
-        bonusModifierTooltip(stack, toolTips, context, false);
+        this.appendItemToolTips(stack, context, toolTips, true);
 
         toolTips.add(Helpers.withStyleComponent("Range: " + magnetData.range(), MAGNET_RANGE_GREEN));
         toolTips.add(Helpers.withStyleComponent("Strength: " + Maths.roundNonWholeString(magnetData.strength()), MAGNET_STRENGTH_RED));
-//        var runeHolder = stack.get(ComponentReg.RUNE_HOLDER.get());
-//        if(runeHolder != null && !runeHolder.runeSlots().isEmpty()){
-//            toolTips.add(Component.empty());
-//        }
+        bonusModifierTooltip(stack, toolTips, context, true);
+        runeSpacer(stack, toolTips);
     }
 
     @Override

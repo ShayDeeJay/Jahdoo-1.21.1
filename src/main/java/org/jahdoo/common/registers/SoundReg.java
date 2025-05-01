@@ -114,6 +114,9 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> VITALITY_ABILITY =
         registerSoundEvent("vitality_ability");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOCK =
+        registerSoundEvent("block");
+
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));
     }

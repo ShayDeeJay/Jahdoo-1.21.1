@@ -16,4 +16,18 @@ public class RelicItem extends Item implements ICurioItem, JahdooItem {
         ICurioItem.super.curioTick(slotContext, stack);
     }
 
+    @Override
+    public void curioBreak(SlotContext slotContext, ItemStack stack) {
+        ICurioItem.super.curioBreak(slotContext, stack);
+    }
+
+    @Override
+    public boolean canSync(SlotContext slotContext, ItemStack stack) {
+
+
+        return ICurioItem.super.canSync(slotContext, stack);
+    }
+
+
+
 }

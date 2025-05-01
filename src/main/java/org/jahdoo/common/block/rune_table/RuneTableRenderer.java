@@ -8,14 +8,11 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
-import static net.minecraft.client.renderer.texture.OverlayTexture.*;
+import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 import static net.minecraft.core.Direction.*;
-import static net.minecraft.world.item.ItemDisplayContext.*;
+import static net.minecraft.world.item.ItemDisplayContext.FIXED;
 import static org.jahdoo.common.block.rune_table.RuneTable.FACING;
 
 public class RuneTableRenderer implements BlockEntityRenderer<RuneTableEntity>{
@@ -79,7 +76,7 @@ public class RuneTableRenderer implements BlockEntityRenderer<RuneTableEntity>{
     ) {
         var renderItem = entity.getItem().getStackInSlot(0);
         if(!renderItem.isEmpty()){
-            var height = 0.83F;
+            var height = 0.67F;
             var scale = 0.5f;
             var direction = entity.getBlockState().getValue(FACING);
             var directionAd = direction == EAST ? 90 : direction == WEST ? 270 : direction == NORTH ? 180 : 0;

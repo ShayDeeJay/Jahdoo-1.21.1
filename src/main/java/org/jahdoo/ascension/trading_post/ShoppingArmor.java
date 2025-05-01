@@ -5,9 +5,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.Maths;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
+import org.jahdoo.common.items.armor.battle_mage.BattleMageArmor;
+import org.jahdoo.common.items.armor.knight_king.KnightKingArmor;
+import org.jahdoo.common.items.armor.mage.MageArmor;
+import org.jahdoo.common.items.armor.wizard.WizardArmor;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.RuneReg;
 
@@ -17,9 +19,12 @@ import java.util.List;
 import static net.minecraft.world.entity.EquipmentSlot.*;
 import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
-import static org.jahdoo.ascension.rarity.JahdooRarity.getRarity;
 import static org.jahdoo.ascension.trading_post.RewardLootTables.attachEnchantmentWithChance;
+import static org.jahdoo.ascension.trading_post.ShoppingItems.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.Helpers.listRandom;
+import static org.jahdoo.common.items.runes.rune_data.RuneCategories.*;
+import static org.jahdoo.common.items.runes.rune_data.RuneCategories.INFINITY;
 
 public class ShoppingArmor {
 
@@ -30,7 +35,7 @@ public class ShoppingArmor {
                 new ItemStack(ItemReg.MAGE_LEGGINGS),
                 new ItemStack(ItemReg.MAGE_BOOTS)
         );
-        return Helpers.listRandom(mageArmor);
+        return listRandom(mageArmor);
     }
 
     public static ItemStack getWizardArmorPiece() {
@@ -40,7 +45,7 @@ public class ShoppingArmor {
                 new ItemStack(ItemReg.WIZARD_LEGGINGS),
                 new ItemStack(ItemReg.WIZARD_BOOTS)
         );
-        return Helpers.listRandom(mageArmor);
+        return listRandom(mageArmor);
     }
 
     public static List<ItemStack> getMageArmorAll() {
@@ -84,14 +89,8 @@ public class ShoppingArmor {
         var withGearData = new ArrayList<ItemStack>();
 
         for (var itemStack : getMageArmorAll()) {
-            ShoppingItems.attachSharedProperties(itemStack, Maths.percentageChance(30) ? 1 : 0, jahdooRarity, -1, -15, -65);
-            if(itemStack.getItem() instanceof ArmorItem armorItem){
-                if(Maths.percentageChance(30)){
-                    var rarity = getRarity(List.of(Pair.of(COMMON, 1), Pair.of(RARE, 5000)));
-                    var tier = getRarity(List.of(Pair.of(COMMON, 1), Pair.of(RARE, 5000)));
-                    ShoppingItems.addAttribute(itemStack, armorItem.getEquipmentSlot(), rarity, tier);
-                }
-            }
+            attachMageData(jahdooRarity, itemStack);
+
             withGearData.add(itemStack);
         }
 
@@ -102,14 +101,9 @@ public class ShoppingArmor {
         var withGearData = new ArrayList<ItemStack>();
 
         for (var itemStack : getWizardArmorAll()) {
-            ShoppingItems.attachSharedProperties(itemStack, 1, jahdooRarity, -1, 0, -50);
-            if(itemStack.getItem() instanceof ArmorItem armorItem){
-                ShoppingItems.addAttribute(itemStack, armorItem.getEquipmentSlot(), null, jahdooRarity);
-                ShoppingItems.addAttribute(itemStack, armorItem.getEquipmentSlot(), null, jahdooRarity);
-            }
+            attachWizardData(jahdooRarity, itemStack);
             withGearData.add(itemStack);
         }
-
         return withGearData;
     }
 
@@ -117,16 +111,7 @@ public class ShoppingArmor {
         var withGearData = new ArrayList<ItemStack>();
 
         for (var itemStack : getBattleMageAll()) {
-            ShoppingItems.attachSharedProperties(itemStack, 1, jahdooRarity, -1, -20, -30);
-            if(itemStack.getItem() instanceof ArmorItem armorItem){
-                var rarity = getRarity(List.of(Pair.of(COMMON, 1), Pair.of(RARE, 1000), Pair.of(EPIC, 5000)));
-                ShoppingItems.addAttribute(itemStack, armorItem.getEquipmentSlot(), rarity, jahdooRarity);
-
-                if(Maths.percentageChance(40)){
-                    var rarity1 = getRarity(List.of(Pair.of(COMMON, 1), Pair.of(RARE, 1000), Pair.of(EPIC, 5000)));
-                    ShoppingItems.addAttribute(itemStack, armorItem.getEquipmentSlot(), rarity1, jahdooRarity);
-                }
-            }
+            attachBattleMageData(jahdooRarity, itemStack);
             withGearData.add(itemStack);
         }
 
@@ -137,36 +122,88 @@ public class ShoppingArmor {
         var withGearData = new ArrayList<ItemStack>();
 
         for (var itemStack : getKnightKingAll()) {
-            ShoppingItems.attachSharedProperties(itemStack, 2, jahdooRarity, -1, -50, 0);
 
-            if(itemStack.getItem() instanceof ArmorItem armorItem){
-                if(Maths.percentageChance(30)){
-                    ShoppingItems.addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, RuneReg.RESILIENCE.get());
-                }
-            }
-
+            attachKnightKingData(jahdooRarity, itemStack);
             withGearData.add(itemStack);
         }
 
         return withGearData;
     }
 
+    private static void attachWizardData(JahdooRarity jahdooRarity, ItemStack itemStack) {
+        if(itemStack.getItem() instanceof ArmorItem armorItem){
+            var getAllAllowed = RuneReg.runesWithoutCategoryAndRarity(PERK, RESILIENCE, INFINITY);
+
+            addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, listRandom(getAllAllowed));
+            addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, listRandom(getAllAllowed));
+        }
+
+        sharedArmorData(jahdooRarity, itemStack, 1, 0, -50);
+    }
+
+    private static void attachMageData(JahdooRarity jahdooRarity, ItemStack itemStack) {
+        var i = jahdooRarity.getId() + 1;
+        if(itemStack.getItem() instanceof ArmorItem armorItem){
+            if(Maths.percentageChance(10 * i)){
+                var tier = getRarity(List.of(Pair.of(COMMON, 1), Pair.of(RARE, 5000)));
+                var getAllAllowed = RuneReg.runesWithoutCategoryAndRarity(PERK, RESILIENCE, INFINITY, COSMIC);
+                if(!getAllAllowed.isEmpty()){
+                    addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), tier, listRandom(getAllAllowed));
+                }
+            }
+        }
+
+        var attachRuneSlots = Maths.percentageChance(10 * i) ? 1 : 0;
+        sharedArmorData(jahdooRarity, itemStack, attachRuneSlots, -15, -50);
+    }
+
+    private static void attachBattleMageData(JahdooRarity jahdooRarity, ItemStack itemStack) {
+        if(itemStack.getItem() instanceof ArmorItem armorItem){
+            var getAllAllowed = RuneReg.runesWithoutCategoryAndRarity(INFINITY, COSMIC);
+            addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, listRandom(getAllAllowed));
+
+            if(Maths.percentageChance(5 * (jahdooRarity.getId()+1))){
+                addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, listRandom(getAllAllowed));
+            }
+        }
+
+        sharedArmorData(jahdooRarity, itemStack, 1, -20, -30);
+    }
+
+    private static void attachKnightKingData(JahdooRarity jahdooRarity, ItemStack itemStack) {
+        if(itemStack.getItem() instanceof ArmorItem armorItem){
+            if(Maths.percentageChance(5 * (jahdooRarity.getId()+1))){
+                addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, RuneReg.RESILIENCE.get());
+            }
+        }
+
+        sharedArmorData(jahdooRarity, itemStack, 2, -50, 0);
+    }
+
+    private static void sharedArmorData(
+        JahdooRarity jahdooRarity,
+        ItemStack itemStack,
+        int runeSlots,
+        int adjustPotential,
+        int adjustDurability
+    ) {
+        var isUnique = jahdooRarity == UNIQUE;
+        var getRuneSlots = isUnique ? runeSlots + 1 : runeSlots;
+        var repairSlots = isUnique ? Random.nextInt(4, 8) : -1;
+        attachSharedProperties(itemStack, getRuneSlots, jahdooRarity, repairSlots, adjustPotential, adjustDurability);
+        if(isUnique) preInsertRunes(itemStack);
+    }
 
     public static void enchantArmorItem(
         ServerLevel serverLevel,
         ItemStack itemStack,
         ArmorItem armorItem,
-        boolean isSpecial
+        JahdooRarity jahdooRarity
     ) {
-        var runeSlots = Random.nextInt(3);
         var slot = armorItem.getEquipmentSlot();
+        var isSpecial = jahdooRarity == UNIQUE;
 
-        if(runeSlots > 0){
-            var refinementPotential = Random.nextInt(80, 320);
-            RuneHolder.createNewRuneSlots(itemStack, runeSlots, JahdooRarity.getRarity().getId() + 1, refinementPotential);
-        }
-
-        if (Random.nextInt(isSpecial ? 20 : 50) != 0) return;
+        if (Maths.percentageChance(isSpecial ? 60 : 10)) return;
 
         attachEnchantmentWithChance(itemStack, serverLevel, BLAST_PROTECTION, 5, 10, isSpecial);
         attachEnchantmentWithChance(itemStack, serverLevel, PROJECTILE_PROTECTION, 5, 10, isSpecial);
@@ -181,6 +218,19 @@ public class ShoppingArmor {
 
         if(slot == LEGS) attachEnchantmentWithChance(itemStack, serverLevel, SWIFT_SNEAK, 4, 9, isSpecial);
         if(slot == HEAD) attachEnchantmentWithChance(itemStack, serverLevel, RESPIRATION, 4, 9, isSpecial);
+    }
+
+    public static void attachCustomArmorData(ServerLevel serverLevel, ItemStack itemStack, JahdooRarity jahdooRarity) {
+        switch (itemStack.getItem()){
+            case KnightKingArmor ignored -> attachKnightKingData(jahdooRarity, itemStack);
+            case MageArmor ignored -> attachMageData(jahdooRarity, itemStack);
+            case BattleMageArmor ignored -> attachBattleMageData(jahdooRarity, itemStack);
+            case WizardArmor ignored -> attachWizardData(jahdooRarity, itemStack);
+            default -> {/* IGNORED */}
+        }
+
+        if(!(itemStack.getItem() instanceof ArmorItem armorItem)) return;
+        enchantArmorItem(serverLevel, itemStack, armorItem, jahdooRarity);
     }
 
 }

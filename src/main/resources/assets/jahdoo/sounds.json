@@ -202,5 +202,11 @@
     "sounds": [
       "jahdoo:vitality_ability"
     ]
+  },
+  "block": {
+    "subtitles": "sounds.jahdoo.block",
+    "sounds": [
+      "jahdoo:block"
+    ]
   }
 }

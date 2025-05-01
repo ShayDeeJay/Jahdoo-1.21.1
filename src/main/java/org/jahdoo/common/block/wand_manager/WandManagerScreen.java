@@ -19,7 +19,7 @@ import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.items.caster_item.CasterItemHelper;
 import org.jahdoo.common.items.runes.RuneItem;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
+import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
 import org.jahdoo.common.networking.client2server.PlayerExpC2SP;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +78,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     private int getPotential() {
-        return  RuneHolder.getItemPotential(getWand());
+        return  JahdooGearData.getItemPotential(getWand());
     }
 
     @Override
@@ -305,7 +305,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             }
         }
 
-        RuneHolder.updateRefinementPotential(wandItemCopy, Math.max(0, RuneHolder.getItemPotential(wandItemCopy) - 20));
+        JahdooGearData.updateRefinementPotential(wandItemCopy, Math.max(0, JahdooGearData.getItemPotential(wandItemCopy) - 20));
         PacketDistributor.sendToServer(new ItemInBlockC2SP(wandItemCopy, wandManager.getWandManagerEntity().getBlockPos(), 0));
 
         var player = Minecraft.getInstance().player;
@@ -415,7 +415,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             baseWandProperties(guiGraphics, shiftX, spacer, shiftY, startX, startY);
         } else {
             remainingPotential(guiGraphics, shiftX, spacer, shiftY);
-            var getRunes = RuneHolder.getRuneholder(getWand());
+            var getRunes = JahdooGearData.getRuneholder(getWand());
             handleSlotsInGridLayout(
                 (slotX, slotY, index) -> {
                     for (ItemStack ignored : getRunes.runeSlots()) {

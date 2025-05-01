@@ -17,6 +17,7 @@ import org.jahdoo.common.block.enchanted_block.EnchantedBlockRenderer;
 import org.jahdoo.common.block.lock.LockRenderer;
 import org.jahdoo.common.block.loot_chest.LootChestRenderer;
 import org.jahdoo.common.block.perk_table.PerkTableRenderer;
+import org.jahdoo.common.block.power_up_station.PowerUpStationRenderer;
 import org.jahdoo.common.block.rune_table.RuneTableRenderer;
 import org.jahdoo.common.block.rune_table.RuneTableScreen;
 import org.jahdoo.common.block.shopping_table.ShoppingTableRenderer;
@@ -111,6 +112,7 @@ public class ClientBusEvents {
     @SubscribeEvent
     public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
         //Block entities
+        event.registerBlockEntityRenderer(POWER_UP_BE.get(), PowerUpStationRenderer::new);
         event.registerBlockEntityRenderer(TANK_BE.get(), TankRenderer::new);
         event.registerBlockEntityRenderer(LOCK_BE.get(), LockRenderer::new);
         event.registerBlockEntityRenderer(INFUSER_BE.get(), DisassemblerRenderer::new);

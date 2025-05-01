@@ -15,8 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.jahdoo.common.items.runes.rune_data.RuneHolder.DEFAULT;
-import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
+import static org.jahdoo.common.items.runes.rune_data.JahdooGearData.DEFAULT;
+import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
 
 public class GeneralItemSlot extends SlotItemHandler {
     Item item;
@@ -95,7 +95,7 @@ public class GeneralItemSlot extends SlotItemHandler {
         var entity = this.wandManagerTableEntity;
         if(entity == null) return;
         var getAllSlots = entity.getWandSlot();
-        var getData = getAllSlots.get(RUNE_HOLDER);
+        var getData = getAllSlots.get(JAHDOO_GEAR_DATA);
 
         if (getData == null) return;
         var index = new AtomicInteger(4);
@@ -106,7 +106,7 @@ public class GeneralItemSlot extends SlotItemHandler {
             index.set(index.get() + 1);
         }
 
-        getAllSlots.update(RUNE_HOLDER.get(), DEFAULT, data -> data.setRuneSlots(list));
+        getAllSlots.update(JAHDOO_GEAR_DATA.get(), DEFAULT, data -> data.setRuneSlots(list));
 
         PacketDistributor.sendToServer(new ItemInBlockC2SP(getAllSlots, entity.getBlockPos(), 0));
     }

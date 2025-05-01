@@ -43,7 +43,6 @@ public class RuneTableEntity extends AbstractBEInventory implements MenuProvider
         return false;
     }
 
-
     public ItemStackHandler getItem(){
         return this.inputItemHandler;
     }
@@ -82,4 +81,5 @@ public class RuneTableEntity extends AbstractBEInventory implements MenuProvider
             getItem().setStackInSlot(0, item);
         }
     }
+
 }

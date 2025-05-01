@@ -40,7 +40,6 @@ public class ModItemTagGenerator extends ItemTagsProvider {
             .add(RUNE.get())
             .add(INGMAS_SWORD.get())
             .add(ANCIENT_GLAIVE.get())
-            .add(PENDENT.get())
             .add(MAGNET.get())
             .add(ELEMENTAL_SWORD.get())
             .add(WIZARD_BOOTS.get())

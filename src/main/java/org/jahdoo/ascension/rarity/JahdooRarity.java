@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
@@ -106,30 +105,15 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return getJahdooRarity(listRandom(filteredList).getFirst());
     }
 
-
     public static JahdooRarity getRarity(@Nullable List<Pair<JahdooRarity, Integer>> rarities) {
         var getRandom = Random.nextInt(1, 6020);
-        var filteredList = new ArrayList<>(
-            rarities != null ? rarities : BASE_RARITY_CHANCES
-                .stream()
-                .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom)
-                .filter(rarity -> rarity.getFirst().id != 5)
-                .toList()
-        );
-
-        return listRandom(filteredList).getFirst();
-    }
-
-    public static JahdooRarity getRarity(@Nullable List<Pair<JahdooRarity, Integer>> rarities, long rarity) {
-        var getRandom = new Random(rarity).nextInt(1, 6020);
-        var filteredList = new ArrayList<>(
-            rarities != null ? rarities : BASE_RARITY_CHANCES
-                .stream()
-                .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom)
-                .filter(jahdooRarity -> jahdooRarity.getFirst().id != 5)
-                .toList()
-        );
-
+        var correctRarity = rarities == null ? BASE_RARITY_CHANCES : rarities;
+        var filteredList = correctRarity
+            .stream()
+            .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom)
+            .filter(jahdooRarity -> jahdooRarity.getFirst().id != 5)
+            .toList();
+        System.out.println(filteredList);
         return listRandom(filteredList).getFirst();
     }
 
@@ -147,7 +131,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         var data = getRuneData(wandItem);
         var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(data.tier(), 0, 5));
         var getTier = romanNumeralConverter(getRarity.id);
-        return withStyleComponent("Tier " + getTier, ColourStore.HEADER_COLOUR);
+        return withStyleComponent("Tier ", SUB_HEADER_COLOUR).copy().append(withStyleComponent(getTier, getRarity.getColour()));
     }
 
     public static @NotNull String romanNumeralConverter(int number) {

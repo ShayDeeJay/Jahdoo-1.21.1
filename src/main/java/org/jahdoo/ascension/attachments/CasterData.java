@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
@@ -16,10 +17,12 @@ import org.jahdoo.common.networking.server2client.CooldownsSyncS2CP;
 import org.jahdoo.common.networking.server2client.ManaSyncS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.AttributeReg;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.*;
 
@@ -295,7 +298,19 @@ public class CasterData implements IAttachment {
     }
 
     public void regenMana(Player player) {
-        this.manaPool = Math.min(manaPool + getModifiedMana(player), getMaxMana(player));
+        var manaRegen = manaPool + getModifiedMana(player);
+        var maxMana = getMaxMana(player);
+
+        this.manaPool = Math.min(manaRegen, maxMana);
+        if(this.manaPool < maxMana){
+            var curioSlotsItems = CuriosApi.getCuriosInventory(player);
+            if (curioSlotsItems.isPresent()) {
+                var shieldSlots = curioSlotsItems.get().getEquippedCurios().getStackInSlot(1);
+                if (Helpers.durabilityDamageCount(shieldSlots) > 0 && shieldSlots.is(ItemReg.TOME_OF_UNITY)) {
+                    Helpers.hurtAndKeepItemChanced(shieldSlots, 1, player.level(), player, 200);
+                }
+            }
+        }
     }
 
     public void addCooldown(String ability, int cooldown){
@@ -308,9 +323,9 @@ public class CasterData implements IAttachment {
         abilityCooldownsStatic.remove(ability);
     }
 
-    public int getMaxMana(Player player){
+    public double getMaxMana(Player player){
         var maxMana = player.getAttribute(AttributeReg.MANA_POOL);
-        return maxMana != null ? (int) maxMana.getValue() : 100;
+        return maxMana != null ? maxMana.getValue() : 100;
     }
 
     public void subtractMana(double regenMana, Player player) {
@@ -352,8 +367,7 @@ public class CasterData implements IAttachment {
 
         if(getRegen != null) {
             var regenPercentage = getRegen.getValue();
-            var calculatedRegen = (baseManaRegen * regenPercentage) / 100;
-            return calculatedRegen + baseManaRegen;
+            return (baseManaRegen * regenPercentage) / 100 + baseManaRegen;
         }
 
         return baseManaRegen;

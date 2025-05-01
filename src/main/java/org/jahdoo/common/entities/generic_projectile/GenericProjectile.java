@@ -1,6 +1,8 @@
 package org.jahdoo.common.entities.generic_projectile;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,13 +17,22 @@ import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
 import org.jahdoo.ascension.ability.ProjectileProperties;
 import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.block.power_up_station.PowerUpStationEntity;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.entities.IEntityProperties;
 import org.jahdoo.common.registers.EntityReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jetbrains.annotations.NotNull;
+
+import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
+import static org.jahdoo.common.particle.ParticleHandlers.*;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 
 public class GenericProjectile extends ProjectileProperties implements IEntityProperties {
 
@@ -92,6 +103,17 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     }
 
     public GenericProjectile(
+        Vec3 direction,
+        Level level
+    ) {
+        super(EntityReg.GENERIC_PROJECTILE.get(), level);
+        this.moveTo(direction.x, direction.y, direction.z, 0, 0);
+        this.reapplyPosition();
+        this.blockEntityPos = direction;
+    }
+
+
+    public GenericProjectile(
         Entity owner,
         double spawnX,
         double spawnY,
@@ -143,14 +165,42 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
 
     @Override
     protected void onHitBlock(@NotNull BlockHitResult blockHitResult) {
+        var pos = blockHitResult.getBlockPos();
+
+        if(level() instanceof ServerLevel){
+            if (this.level().getBlockEntity(pos) instanceof PowerUpStationEntity entity) {
+                var item = entity.inputItemHandler.getStackInSlot(0);
+                CoreData.increment(item);
+
+                entity.updateBlock();
+                getOuterRingOfRadiusRandom(pos.getCenter().subtract(0, 0.5, 0), 0.3, 20, this::particleSetter);
+                Helpers.getSoundWithPositionV(this.level(), pos.getCenter(), SoundReg.VITALITY_ABILITY.get(), 1, 1.8F);
+                Helpers.getSoundWithPositionV(this.level(), pos.getCenter(), SoundReg.LOOTBOX_OPEN.get(), 1, 1.8F);
+                this.discard();
+            }
+        }
+
         if(this.getProjectile != null){
             this.getProjectile.onBlockBlockHit(blockHitResult);
         }
     }
 
+    private void particleSetter(Vec3 positions) {
+        var primary = ColourStore.PERK_GREEN;
+        sendParticles(
+            level(), getNonBakedParticles(primary, primary, 20, 2F), positions.offsetRandom(RandomSource.create(), 0.2f),
+            0, 0, Random.nextDouble(0.02,0.2),0,1
+        );
+    }
+
     @Override
     public void tick() {
         super.tick();
+        if(this.tickCount > 1){
+            var primary = ColourStore.PERK_GREEN;
+            playParticles3(genericParticle(SOFT_PARTICLE, 2, 1F, primary, primary), this, 10, 0);
+        }
+
         if(getProjectile != null){
             this.getProjectile.onTickMethod();
             this.getProjectile.discardCondition();

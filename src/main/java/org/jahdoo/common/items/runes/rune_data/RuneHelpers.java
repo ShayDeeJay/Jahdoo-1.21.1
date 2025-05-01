@@ -9,7 +9,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.runes.AbstractRune;
 import org.jahdoo.common.registers.ComponentReg;
@@ -80,7 +79,7 @@ public class RuneHelpers {
     }
 
     public static boolean hasDestinyBond(ItemStack itemStack){
-        var getHolder = itemStack.get(ComponentReg.RUNE_HOLDER);
+        var getHolder = itemStack.get(ComponentReg.JAHDOO_GEAR_DATA);
         var getBonusDestiny = itemStack.getAttributeModifiers().modifiers().stream().toList();
         for (var entry : getBonusDestiny) {
             if(entry.attribute().value() == DESTINY_BOND.get()) return true;
@@ -102,39 +101,10 @@ public class RuneHelpers {
         return runeFromAttribute == null ? -1 : runeFromAttribute.runeColour();
     }
 
-    public static Component standAloneAttributes(ItemAttributeModifiers.Entry entry) {
-        var attribute = entry.attribute();
-        var descriptionId = attribute.value().getDescriptionId();
-        var amount = entry.modifier().amount();
-        var typeColour = getColourBy(attribute);
-        var compName = withStyleComponentTrans(descriptionId, typeColour);
-        var isAbsorption = descriptionId.contains("absorption");
-        var isMaxHealth = descriptionId.contains("health");
-        var isSpeed = descriptionId.contains("speed");
-        var isAttackSpeed = descriptionId.contains("attack_speed");
-
-        if(isSpeed || isAttackSpeed) amount = amount * 1000;
-        if(isAbsorption || isMaxHealth) amount = (amount/2);
-        return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, typeColour, compName);
-    }
-
-    public static Component standAloneAttributes(Holder<Attribute> attribute, double amount) {
-        var descriptionId = attribute.value().getDescriptionId();
-        var typeColour = getColourBy(attribute);
-        var compName = withStyleComponentTrans(descriptionId, typeColour);
-        var isAbsorption = descriptionId.contains("absorption");
-        var isMaxHealth = descriptionId.contains("health");
-        var isSpeed = descriptionId.contains("speed");
-
-        if(isSpeed) amount = amount * 1000;
-        if(isAbsorption || isMaxHealth) amount = (amount/2);
-        return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, typeColour, compName);
-    }
-
     private static @NotNull MutableComponent getComponents(double amount, String descriptionId, boolean isAbsorption, boolean isMaxHealth, int colourPre, Component compName) {
         var value = roundNonWholeString(singleFormattedDouble(amount));
 
-        if(descriptionId.contains(FIXED_VALUE) || isAbsorption || isMaxHealth || descriptionId.contains("armor")) {
+        if(descriptionId.contains(FIXED_VALUE) || isAbsorption || isMaxHealth || descriptionId.contains("armor") || descriptionId.contains("attack_damage")) {
             var text = "+" + value + " ";
             return withStyleComponent(text, colourPre).copy().append(compName);
         }
@@ -147,6 +117,13 @@ public class RuneHelpers {
         return withStyleComponent(prefix + value + "%" + " ", colourPre).copy().append(compName);
     }
 
+    public static Component standAloneAttributes(ItemAttributeModifiers.Entry entry) {
+        var attribute = entry.attribute();
+        var typeColour = getColourBy(attribute);
+
+        return sharedAttributes(entry, typeColour);
+    }
+
     public static Component standAloneAttributes(ItemStack itemStack) {
         var attributes = itemStack.getAttributeModifiers().modifiers().stream().toList();
         if (attributes.isEmpty()) return Component.empty();
@@ -154,10 +131,14 @@ public class RuneHelpers {
         var data = getRuneData(itemStack);
         var abstractRune = RuneReg.getRuneFromId(data.name());
         var entry = attributes.getFirst();
+
+        return sharedAttributes(entry, abstractRune.runeColour());
+    }
+
+    private static @NotNull MutableComponent sharedAttributes(ItemAttributeModifiers.Entry entry, int colour) {
         var descriptionId = entry.attribute().value().getDescriptionId();
         var amount = entry.modifier().amount();
-        var typeColour = abstractRune.runeColour();
-        var compName = withStyleComponentTrans(descriptionId, typeColour);
+        var compName = withStyleComponentTrans(descriptionId, colour);
         var isAbsorption = descriptionId.contains("absorption");
         var isMaxHealth = descriptionId.contains("health");
         var isSpeed = descriptionId.contains("speed");
@@ -167,26 +148,27 @@ public class RuneHelpers {
         if(isSpeed && !isAttackSpeed) amount = amount * 1000;
         if(isAbsorption || isMaxHealth) amount = (amount/2);
 
-        return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, typeColour, compName);
+        return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, colour, compName);
     }
 
-    public static void generateRandomTypAttribute(
-        ItemStack stack,
+    public static ItemStack generateRandomTypAttribute(
+        @Nullable ItemStack stack,
         @Nullable JahdooRarity tierRarity,
-        @Nullable JahdooRarity runeRarity,
-        int chestTier
+        @Nullable JahdooRarity runeRarity
     ) {
-        if(stack.getAttributeModifiers().modifiers().isEmpty()){
+        var correctStack = stack == null ? new ItemStack(ItemReg.RUNE) : stack;
+        if(correctStack.getAttributeModifiers().modifiers().isEmpty()){
             var getTierRarity = tierRarity != null ? tierRarity : JahdooRarity.getRarity();
-            var getRuneRarity = runeRarity != null ? runeRarity : ShoppingItems.getRaritiesByChestRarity(chestTier);
+            var getRuneRarity = runeRarity != null ? runeRarity : JahdooRarity.getRarity();
 
             RuneReg.getRuneWithRarity(getRuneRarity).ifPresent(
                 rune -> {
-                    attachLootBeamComponent(stack, getTierRarity);
-                    generateFullRune(stack, getTierRarity, rune);
+                    attachLootBeamComponent(correctStack, getTierRarity);
+                    generateFullRune(correctStack, getTierRarity, rune);
                 }
             );
         }
+        return correctStack;
     }
 
     public static ItemStack generateRandomTypAttribute(

@@ -28,6 +28,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -152,7 +153,7 @@ public class Helpers {
     }
 
     public static void getLocalSound(Level level, BlockPos position, SoundEvent audio, float volume, float pitch){
-        level.playLocalSound(position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume, pitch, false); ;
+        level.playLocalSound(position.getX(), position.getY(), position.getZ(), audio, SoundSource.BLOCKS,volume, pitch, false);
     }
 
     public static ItemStack getUsedItem(LivingEntity player){
@@ -477,7 +478,11 @@ public class Helpers {
     }
 
     public static void hurtAndKeepItem(ItemStack itemStack, int damage, Level level, LivingEntity livingEntity) {
-        var damageChance = Random.nextInt(10) == 0;
+        hurtAndKeepItemChanced(itemStack, damage, level, livingEntity, 10);
+    }
+
+    public static void hurtAndKeepItemChanced(ItemStack itemStack, int damage, Level level, LivingEntity livingEntity, int chance) {
+        var damageChance = Random.nextInt(chance) == 0;
         if (damageChance && itemStack.isDamageableItem()) {
             damage = itemStack.getItem().damageItem(itemStack, damage, livingEntity, (item) -> { });
 
@@ -592,5 +597,19 @@ public class Helpers {
         var spawnY = livingEntity.getY() + livingEntity.getEyeHeight() -0.7 ; // No vertical offset
         var spawnZ = livingEntity.getZ() + offsetZ;
         BehaviorUtils.throwItem(livingEntity, itemStack, new Vec3(spawnX, spawnY, spawnZ));
+    }
+
+    public static void throwItem(Level level, ItemStack stack, Vec3 offset) {
+        Vec3 vec3 = new Vec3(0.3F, 0.3F, 0.3F);
+        throwItem(offset, stack, offset, vec3, level);
+    }
+
+    public static void throwItem(Vec3 pos, ItemStack stack, Vec3 offset, Vec3 speedMultiplier, Level level) {
+        ItemEntity itementity = new ItemEntity(level, pos.x, pos.y, pos.z, stack);
+        Vec3 vec3 = offset.subtract(pos);
+        vec3 = vec3.normalize().multiply(speedMultiplier.x, speedMultiplier.y, speedMultiplier.z);
+        itementity.setDeltaMovement(vec3);
+        itementity.setDefaultPickUpDelay();
+        level.addFreshEntity(itementity);
     }
 }

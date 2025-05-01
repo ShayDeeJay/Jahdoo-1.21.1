@@ -129,6 +129,12 @@ public class Network {
             PerkTableSyncC2SP::handle
         );
 
+        payloadRegistrar.playToServer(
+            JahdooGearDataC2SP.TYPE,
+            JahdooGearDataC2SP.STREAM_CODEC,
+            JahdooGearDataC2SP::handle
+        );
+        
         //S2C
         payloadRegistrar.playToClient(
             PlayerTrialDataS2CP.TYPE,

@@ -2,7 +2,6 @@ package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ArmorItem;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -25,13 +24,11 @@ import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.commands.PlayerLevelCommand;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.registers.AttributeReg;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
+import top.theillusivec4.curios.api.event.CurioChangeEvent;
 
-import static net.minecraft.world.item.component.ItemAttributeModifiers.Entry;
 import static org.jahdoo.ascension.utils.Helpers.syncCasterData;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_ITEM_DATA;
@@ -47,18 +44,14 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void attributeEvent(ItemAttributeModifierEvent event) {
-       event.removeIf(s -> doEvenStuff(s, event));
+       event.removeIf(s -> removeArmorAttributes(s, event));
 
         useRuneAttributes(event);
     }
 
-    public static boolean doEvenStuff(Entry entry, ItemAttributeModifierEvent event){
-        var item = event.getItemStack();
-        var durability = Helpers.durabilityDamageCount(item);
-        if(item.getItem() instanceof ArmorItem && item.getItem() instanceof JahdooItem){
-            return durability == 0 /*&& isArmor || isToughness*/;
-        }
-        return false;
+    @SubscribeEvent
+    public static void curioEven(CurioChangeEvent event){
+
     }
 
     @SubscribeEvent
@@ -105,21 +98,15 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
+        var item = rightClickItem.getItemStack();
         removeShieldUse(rightClickItem);
     }
 
     @SubscribeEvent
     public static void onEntityDamageEvent(LivingDamageEvent.Pre event){
         var entity = event.getEntity();
-
-        var attribute = entity.getAttribute(AttributeReg.RESILIENCE);
-        if(attribute != null){
-            var resilience = attribute.getValue();
-            var damageReduction = Maths.getPercentage(resilience, event.getNewDamage());
-            var damageWithResilience = event.getNewDamage() - damageReduction;
-            event.setNewDamage((float) damageWithResilience);
-        }
-
+        championLootCalculator(event, entity);
+        resilienceDamageRecalculate(event, entity);
         greaterFrostEffectDamageAmplifier(event, entity);
         greaterVitalityEffect(event, entity);
     }
@@ -217,6 +204,7 @@ public class ServerEvents {
     public static void livingDeathEvent(LivingDeathEvent event){
         var entity = event.getEntity();
         var bonus = entity.tickCount / 10;
+
 
         coinDropCalc(entity, bonus);
         onDeathGreaterFrostEffect(entity);

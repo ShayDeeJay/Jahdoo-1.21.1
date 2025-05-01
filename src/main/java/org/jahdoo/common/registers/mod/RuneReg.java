@@ -14,8 +14,6 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.runes.AbstractRune;
 import org.jahdoo.common.items.runes.BlankRune;
-import org.jahdoo.common.items.runes.resilience_rune.FlurryRune;
-import org.jahdoo.common.items.runes.resilience_rune.ResilienceRune;
 import org.jahdoo.common.items.runes.aether_rune.ManaPoolRune;
 import org.jahdoo.common.items.runes.aether_rune.ManaRegenRune;
 import org.jahdoo.common.items.runes.cosmic_rune.CooldownReductionRune;
@@ -37,7 +35,10 @@ import org.jahdoo.common.items.runes.perk_rune.DestinyBondRune;
 import org.jahdoo.common.items.runes.perk_rune.MaxAbsorptionRune;
 import org.jahdoo.common.items.runes.perk_rune.MaxHealthRune;
 import org.jahdoo.common.items.runes.perk_rune.MovementSpeedRune;
+import org.jahdoo.common.items.runes.resilience_rune.FlurryRune;
+import org.jahdoo.common.items.runes.resilience_rune.ResilienceRune;
 import org.jahdoo.common.items.runes.resilience_rune.StrikerRune;
+import org.jahdoo.common.items.runes.rune_data.RuneCategories;
 import org.jahdoo.common.items.runes.sympathiser_rune.AbsorptionHeartRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.CastHealRune;
 import org.jahdoo.common.items.runes.sympathiser_rune.SkipCooldownRune;
@@ -45,7 +46,6 @@ import org.jahdoo.common.items.runes.sympathiser_rune.SkipManaRune;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -65,7 +65,7 @@ public class RuneReg {
     }
 
     public static List<AbstractRune> getAllRunes() {
-        return REGISTRY.stream().filter(s -> !Objects.equals(s.runeId(), "blank_rune")).toList();
+        return REGISTRY.stream().filter(s -> s != RuneReg.BLANK_RUNE.get()).toList();
     }
 
     public static AbstractRune getRuneFromId(String runeId) {
@@ -84,6 +84,23 @@ public class RuneReg {
     public static List<AbstractRune> getAllRuneWithRarity(JahdooRarity...rarity) {
         return getAllRunes().stream().filter(s -> Arrays.stream(rarity).toList().contains(s.runeRarity())).toList();
     }
+
+    public static List<AbstractRune> runesWithCategoryAndRarity(RuneCategories...categories) {
+        return getAllRunes()
+            .stream()
+            .filter(s -> Arrays.stream(categories).toList().contains(s.runeCategory()))
+            .filter(s -> s != DESTINY_BOND_RUNE.get())
+            .toList();
+    }
+
+    public static List<AbstractRune> runesWithoutCategoryAndRarity(RuneCategories...categories) {
+        return getAllRunes()
+            .stream()
+            .filter(s -> !Arrays.stream(categories).toList().contains(s.runeCategory()))
+            .filter(s -> s != DESTINY_BOND_RUNE.get())
+            .toList();
+    }
+
 
     //Aether Runes
     public static final DeferredHolder<AbstractRune, AbstractRune> MANA_POOL_RUNE =
@@ -143,7 +160,7 @@ public class RuneReg {
         registerRune(VitalityDamageRune::new);
 
     //Perk Runes
-    public static final DeferredHolder<AbstractRune, AbstractRune> DESTINY_BOND_RUNES =
+    public static final DeferredHolder<AbstractRune, AbstractRune> DESTINY_BOND_RUNE =
         registerRune(DestinyBondRune::new);
 
     public static final DeferredHolder<AbstractRune, AbstractRune> MAX_ABSORPTION_RUNE =

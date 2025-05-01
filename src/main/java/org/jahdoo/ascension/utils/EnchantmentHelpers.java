@@ -5,12 +5,18 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static net.minecraft.world.item.enchantment.EnchantmentHelper.getAvailableEnchantmentResults;
 import static net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction.randomEnchantment;
 
 public class EnchantmentHelpers {
@@ -36,6 +42,17 @@ public class EnchantmentHelpers {
             }
         }
         return null;
+    }
+
+    public static List<Enchantments> getItemsValidEnchantments(ItemStack itemStack, ServerLevel serverLevel){
+        //Find valid enchantment for item
+        var optional = serverLevel.registryAccess().registryOrThrow(Registries.ENCHANTMENT).entrySet();
+        var availableEnchantmentResults = getAvailableEnchantmentResults(50, itemStack, optional.stream().map(s -> Holder.direct(s.getValue())));
+        var newA = availableEnchantmentResults.stream().filter(s -> !s.enchantment.value().description().getString().contains("Mending")).toList();
+        for (var availableEnchantmentResult : newA) {
+            System.out.println(availableEnchantmentResult.enchantment.value());
+        }
+        return new ArrayList<>();
     }
 
 }

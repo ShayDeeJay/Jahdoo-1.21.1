@@ -11,10 +11,11 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.client.SharedUI;
+import org.jahdoo.common.client.screens.AbstractPanableScreen;
+import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.caster_item.CasterItem;
-import org.jahdoo.common.items.caster_item.CasterItemHelper;
-import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
+import org.jahdoo.common.networking.client2server.JahdooGearDataC2SP;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.minecraft.sounds.SoundEvents.ANVIL_USE;
+import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.ascension.utils.ColourStore.*;
@@ -35,8 +36,9 @@ import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
 import static org.jahdoo.common.client.screens.AbilityModificationScreen.WIDGET;
-import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
-import static org.jahdoo.common.items.runes.rune_data.RuneHolder.*;
+import static org.jahdoo.common.client.slots.RuneSlot.removeRuneCost;
+import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
+import static org.jahdoo.common.items.runes.rune_data.JahdooGearData.*;
 
 public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
@@ -51,20 +53,19 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     public RuneTableScreen(RuneTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         var element = ElementReg.fromWand(menu.tableEntity().itemSlot().getItem());
-        switchVisibility();
+        this.menu.switchVisibility(false);
         this.runeTableMenu = menu;
         this.element = element.orElse(ElementReg.mystic());
-        this.borderColour = color(200, element.map(AbstractElement::textColourA).orElseGet(() -> uiColour()));
+        this.borderColour = color(200, element.map(AbstractElement::textColourA).orElseGet(AbstractPanableScreen::uiColour));
     }
 
     @Override
     protected void init() {
         super.init();
-        keyboardButton();
+        setButtons();
     }
 
-    private void keyboardButton() {
-        var resourceLocation = !this.showInventory ? BLANK_RUNE : REPAIR;
+    private void setButtons() {
         var selected = new WidgetSprites(GUI_BUTTON_SELECTED, GUI_BUTTON_SELECTED);
         var posX = this.width/2 + 66;
         var posY = this.height / 2 - 112;
@@ -93,12 +94,12 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
         if(!this.showInventory && !this.getItem().isEmpty()){
             var canUpgrade = isCanUpgrade();
-            var posX1 = this.width / 2 + 7;
+            var posX1 = this.width / 2 + 9;
             var posY1 = this.height / 2 - 43;
             this.addRenderableWidget(
                 menuButtonSound(
                     posX1, posY1, (press) -> onRepair(), REPAIR,
-                    44, canUpgrade, 0, canUpgrade(getItem()) ? WIDGET : selected, !canUpgrade, this::onHoverRepair, null
+                    44, canUpgrade, 0, canUpgrade(getItem()) ? WIDGET : selected, !canUpgrade, this::onHoverRepair,  forUI(SoundReg.UPGRADE_MODIFIER.get(), 0F)
                 )
             );
 
@@ -149,26 +150,28 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     }
 
     private ItemStack coreCost() {
-        var coreType = getCoreType();
+        var coreType = getRepairCoreCost();
         return coreType < 0 ? ItemStack.EMPTY : new ItemStack(getCore().get(coreType));
     }
 
-    private int getCoreType() {
+    private int getRepairCoreCost() {
+        return Math.min(totalRepairs(getItem()), 2);
+    }
+
+    private int getRuneRemovalCost() {
         return Math.min(totalRepairs(getItem()), 2);
     }
 
     public void onRepair(){
-        getMinecraft().player.playSound(ANVIL_USE, 1, 2F);
+        getMinecraft().player.playSound(SoundReg.UNLOCK_NOTIFICATION.get(), 1F, 0.6F);
         getMinecraft().player.playSound(SoundReg.REJECT.get(), 1, 1.8F);
+        var handler = entity().inputItemHandler.getStackInSlot(getRepairCoreCost()+1);
 
-        var handler = entity().inputItemHandler.getStackInSlot(getCoreType()+1);
-        sendToServer(new ItemInBlockC2SP(handler.copyWithCount(handler.getCount()-1), entity().getBlockPos(), getCoreType()+1));
-
+        sendToServer(new ItemInBlockC2SP(handler.copyWithCount(handler.getCount()-1), entity().getBlockPos(), getRepairCoreCost()+1));
         repairDurability(getItem());
         updateRefinementPotential(getItem(), getItemPotential(getItem()) - repairPotentialCost());
         checkAndRepair(getItem());
-
-        sendToServer(new ItemInBlockC2SP(getItem(), entity().getBlockPos(), 0));
+        sendToServer(new JahdooGearDataC2SP(getRuneholder(getItem()), entity().getBlockPos(), 0));
         this.rebuildWidgets();
     }
 
@@ -178,6 +181,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
     public void inventoryHandler(boolean showInventory){
         this.showInventory = showInventory;
+        this.menu.switchVisibility(showInventory);
         switchVisibility();
         this.rebuildWidgets();
     }
@@ -199,10 +203,6 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         this.scaleItem = Math.min(140, scaleItem + 8);
     }
 
-    private int getPotential() {
-        return getItemPotential(getItem());
-    }
-
     public ItemStack getItem(){
         return entity().inputItemHandler.getStackInSlot(0);
     }
@@ -212,28 +212,39 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     }
 
     private int getExperienceCost() {
-        var potential = getPotential();
+        var potential = getItemPotential(getItem());
         return Math.max(10, 100 - potential);
     }
 
-    private void remainingPotential(GuiGraphics guiGraphics, int shiftX, AtomicInteger spacer, int shiftY) {
+    private void remainingPotential(GuiGraphics guiGraphics, int shiftX, AtomicInteger spacer, int shiftY, int mouseX, int mouseY) {
         var sharedX = this.width / 2 - 30 + shiftX;
         var posY = this.height / 2 - 85 + spacer.get() + shiftY;
 
-        CasterItemHelper.getPotentialComponent(getItem(), (s) -> guiGraphics.drawString(this.font, s, sharedX -1, posY + 2, 0));
+        getPotentialComponent(getItem(), (s) -> guiGraphics.drawString(this.font, s, sharedX -1, posY + 2, 0));
         if(!this.showInventory){
-            guiGraphics.drawString(font, CasterItemHelper.appendDurability(getItem()), sharedX - 1, posY + 14, -1);
-            CasterItemHelper.getRepairSlotsComponent(getItem(), (s) -> guiGraphics.drawString(font, s, sharedX - 1, posY + 26, -1));
+            guiGraphics.drawString(font, appendDurability(getItem()), sharedX - 1, posY + 14, -1);
+            getRepairSlotsComponent(getItem(), (s) -> guiGraphics.drawString(font, s, sharedX - 1, posY + 26, -1));
+        } else {
+            if(hoveredSlot instanceof RuneSlot && !hoveredSlot.getItem().isEmpty()){
+                var item = hoveredSlot.getItem();
+                var coreItemType = removeRuneCost(item);
+                var cost = new ItemStack(coreItemType).getHoverName();
+                var prefix = "Extraction Cost: ";
+                var text = cost.getString();
+                var quantityCost = withStyleComponent("1", borderColour);
+                var list = List.of(
+                    withStyleComponent(prefix, borderColour),
+                    withStyleComponent(text + ": ", entity().checkAndChargeCores(coreItemType, false) ? SUB_HEADER_COLOUR : NEGATIVE_RED).copy().append(quantityCost)
+                );
+                guiGraphics.renderTooltip(font, list, Optional.empty(), mouseX, mouseY - 30);
+            }
         }
     }
 
     private void hoverCarried(GuiGraphics guiGraphics, int x, int y){
         var carried = this.hoveredSlot == null || hoveredSlot.getItem().isEmpty() ? runeTableMenu.getCarried() : hoveredSlot.getItem();
-        if(carried.getItem() instanceof RuneItem){
-            var getTooltip = this.getTooltipFromContainerItem(carried);
-            if (!carried.isEmpty()) {
-                guiGraphics.renderTooltip(font, getTooltip, Optional.empty(), x, y);
-            }
+        if (!carried.isEmpty()) {
+            guiGraphics.renderTooltip(font, carried, x, y);
         }
     }
 
@@ -261,11 +272,10 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         var i1 = this.height / 2;
         var startX = i - 140;
         var startY = i1 + 22;
-        var hSlot = this.hoveredSlot;
 
         scaleItem();
         augmentCoreSlots(guiGraphics, adjustX, adjustY+1, borderColour, this.width + 6, this.height + 6, groupFade());
-        runeSlotTexture(guiGraphics);
+        runeSlotTexture(guiGraphics, mouseX, mouseY);
         renderItem(guiGraphics, mouseX, mouseY, startX, startY);
 
         if(!this.getItem().isEmpty() && this.showTooltip){
@@ -275,10 +285,6 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         }
 
         overlayInventory(guiGraphics, startX, startY);
-        if(hSlot != null && !(hSlot.getItem().getItem() instanceof RuneItem)){
-
-            this.renderTooltip(guiGraphics, mouseX, mouseY);
-        }
 
         super.render(guiGraphics, mouseX, mouseY, pPartialTick);
         hoverCarried(guiGraphics, mouseX, mouseY);
@@ -291,12 +297,12 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
     }
 
-    private void runeSlotTexture(GuiGraphics guiGraphics) {
+    private void runeSlotTexture(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         var shiftY = 0;
         var shiftX = -5;
         var spacer = new AtomicInteger();
 
-        remainingPotential(guiGraphics, shiftX, spacer, shiftY);
+        remainingPotential(guiGraphics, shiftX, spacer, shiftY, mouseX, mouseY);
         var getRunes = getRuneholder(getItem());
 
         handleSlotsInGridLayout(

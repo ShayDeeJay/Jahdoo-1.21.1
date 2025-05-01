@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.tank;
+package org.jahdoo.common.block.power_up_station;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -25,27 +24,35 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.block.BlockInteractionHandler;
 import org.jetbrains.annotations.Nullable;
 
-import static net.minecraft.sounds.SoundEvents.*;
-import static net.minecraft.sounds.SoundSource.*;
-import static org.jahdoo.common.block.BlockInteractionHandler.*;
+import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
 import static org.jahdoo.common.registers.AttachmentReg.BOOL;
-import static org.jahdoo.common.registers.BlockEntityReg.*;
-import static org.jahdoo.common.registers.ItemReg.*;
+import static org.jahdoo.common.registers.BlockEntityReg.POWER_UP_BE;
+import static org.jahdoo.common.registers.ItemReg.AUGMENT_CORE;
 
-public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
+public class PowerUpStation extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
-    public static final VoxelShape SHAPE_BASE = Block.box(1.95, 0, 1.95, 14.05, 2.75, 14.05);
-    public static final VoxelShape JAR = Block.box(3, 2.75, 3, 13, 12.75, 13);
-    public static final VoxelShape TOP = Block.box(3, 13.25, 3, 13, 16, 13);
-    public static final VoxelShape SHAPE_COMMON = Shapes.or(SHAPE_BASE, JAR, TOP);
+    public static final VoxelShape SHAPE_BASE = Shapes.or(
+        Block.box(4.5, -0.03254, 4.5, 11.5, 9.84246, 11.5),
+        Block.box(7, 8.025, 8.5, 9, 11.025, 10.5),
+        Block.box(7, 8.025, 8.5, 9, 11.025, 10.5),
+        Block.box(7, 8.025, 5.5, 9, 11.025, 7.5),
+        Block.box(8.5, 8.025, 7, 10.5, 11.025, 9),
+        Block.box(5.5, 8.025, 7, 7.5, 11.025, 9),
+        Block.box(6, 8.025, 6, 10, 12.025, 10),
+        Block.box(4, 3.425, 7, 6, 6.425, 9),
+        Block.box(10, 3.425, 7, 12, 6.425, 9),
+        Block.box(7, 3.425, 4, 9, 6.425, 6),
+        Block.box(7, 3.4, 10, 9, 6.4, 12)
+    );
     public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-    public TankBlock() {
+    public PowerUpStation() {
         super(
-            BlockBehaviour.Properties.of()
+            Properties.of()
                 .strength(1f)
                 .sound(SoundType.COPPER_BULB)
                 .lightLevel((state) -> state.getValue(LIT) ? 4 : 0)
@@ -60,12 +67,12 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
-        return  simpleCodec((x) -> new TankBlock());
+        return  simpleCodec((x) -> new PowerUpStation());
     }
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE_COMMON;
+        return SHAPE_BASE;
     }
 
     @Override
@@ -79,7 +86,7 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new TankBlockEntity(pos,state);
+        return new PowerUpStationEntity(pos,state);
     }
 
     @Override
@@ -91,16 +98,16 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
         return createTickerHelper(
-            entityType, TANK_BE.get(),
+            entityType, POWER_UP_BE.get(),
             (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }
 
-    private static void getItemInteractionResult(ItemStack heldItem, TankBlockEntity tankBlock, Player player, Level level) {
+    private static void getItemInteractionResult(ItemStack heldItem, PowerUpStationEntity powerUpStationEntity, Player player, Level level) {
         if (heldItem.getItem() == AUGMENT_CORE.get()) {
             if(player.isCreative()) {
-                Helpers.getSoundWithPosition(level, tankBlock.getBlockPos(), NOTE_BLOCK_BELL.value());
-                tankBlock.setData(BOOL, !tankBlock.getData(BOOL));
+                Helpers.getSoundWithPosition(level, powerUpStationEntity.getBlockPos(), NOTE_BLOCK_BELL.value());
+                powerUpStationEntity.setData(BOOL, !powerUpStationEntity.getData(BOOL));
             };
         }
     }
@@ -109,8 +116,8 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moveByPiston) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof TankBlockEntity tankBlockEntity)
-                tankBlockEntity.dropsAllInventory(level);
+            if (blockEntity instanceof PowerUpStationEntity PowerUpStationEntity)
+                PowerUpStationEntity.dropsAllInventory(level);
         }
         super.onRemove(state, level, pos, newState, moveByPiston);
     }
@@ -130,18 +137,10 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        var handItem = player.getItemInHand(hand);
         var entity = level.getBlockEntity(pos);
 
-        if (entity instanceof TankBlockEntity tank) {
-            getItemInteractionResult(handItem, tank, player, level);
-
-            if (stackHandlerWithFeedBack(tank.inputItemHandler, handItem, NEXITE_POWDER.get(), 0, tank.getMaxSlotSize(), player)) {
-                level.playSound(player, player.blockPosition(), SAND_PLACE, BLOCKS);
-                return ItemInteractionResult.SUCCESS;
-            } else {
-                RemoveItemsFromSlotToHand(tank.inputItemHandler,0,player,hand,level, pos, SAND_PLACE,1,1);
-            }
+        if (entity instanceof PowerUpStationEntity powerUpStation) {
+            BlockInteractionHandler.swapItemsWithHand(powerUpStation.inputItemHandler, 0, player, hand);
         }
 
         return ItemInteractionResult.SUCCESS;

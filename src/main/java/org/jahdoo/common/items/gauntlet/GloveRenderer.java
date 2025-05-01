@@ -40,32 +40,11 @@ public class GloveRenderer implements ICurioRenderer {
         poseStack.pushPose();
 
         humanoidModel.leftArm.translateAndRotate(poseStack);
-        poseStack.translate(0.088,0.5,0.015);
-        poseStack.mulPose(Axis.XP.rotation(1.57f));
+        poseStack.translate(0.12,0.5,-0.0);
+        poseStack.mulPose(Axis.YP.rotation(-1.57f));
         poseStack.mulPose(Axis.ZP.rotation(18.85f));
         poseStack.scale(scale, scale, scale);
         itemRenderer.renderStatic(itemStack, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, null, 0);
         poseStack.popPose();
-
-
-//        poseStack.pushPose();
-//        var scale1 = 0.2f;
-//        humanoidModel.rightArm.translateAndRotate(poseStack);
-//        poseStack.translate(-0.21,0.5,0.009);
-//        poseStack.mulPose(Axis.XP.rotation(1.6f));
-//        poseStack.mulPose(Axis.ZP.rotation(15.7f));
-//        poseStack.mulPose(Axis.YP.rotation(1.55f));
-//        poseStack.scale(scale1, scale1, scale1);
-//        itemRenderer.renderStatic(
-//            new ItemStack(ItemsRegister.RUNE.get()),
-//            ItemDisplayContext.FIXED,
-//            light,
-//            OverlayTexture.NO_OVERLAY,
-//            poseStack,
-//            renderTypeBuffer,
-//            Minecraft.getInstance().level,
-//            1
-//        );
-//        poseStack.popPose();
     }
 }

@@ -15,6 +15,7 @@ import org.jahdoo.common.block.dissembler.DisassemblerBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
+import org.jahdoo.common.block.power_up_station.PowerUpStationEntity;
 import org.jahdoo.common.block.rune_table.RuneTableEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.block.tank.TankBlockEntity;
@@ -34,6 +35,9 @@ public class BlockEntityReg {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LockBlockEntity>> LOCK_BE =
         registerBlockEntity("lock_be", LockBlockEntity::new, LOCK);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerUpStationEntity>> POWER_UP_BE =
+        registerBlockEntity("power_up_station", PowerUpStationEntity::new, POWER_UP_STATION);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnchantedBlockEntity>> ENCHANTED_BE =
         registerBlockEntity("enchanted_be", EnchantedBlockEntity::new, ENCHANTED_BLOCK);

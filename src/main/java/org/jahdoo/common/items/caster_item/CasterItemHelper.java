@@ -45,15 +45,15 @@ public class CasterItemHelper {
     public static Component defence = withStyleComponentTrans(PREFIX + "set_wizard_mode.defence", rgbToInt(102, 178, 255));
     public static Component attack = withStyleComponentTrans(PREFIX + "set_wizard_mode.attack", rgbToInt(255, 102, 102));
 
-    public static void appendPotentialComponent(List<Component> toolTips, ItemStack gearItem){
-        var wandData = gearItem.get(RUNE_HOLDER);
-        if(wandData == null) return;
-
-        getPotentialComponent(gearItem, (s) -> toolTips.add(toolTips.size(), s));
-    }
+//    public static void appendPotentialComponent(List<Component> toolTips, ItemStack gearItem){
+//        var wandData = gearItem.get(JAHDOO_GEAR_DATA);
+//        if(wandData == null) return;
+//
+//        getPotentialComponent(gearItem, (s) -> toolTips.add(toolTips.size(), s));
+//    }
 
     public static void getPotentialComponent(ItemStack gearItem, Consumer<Component> render){
-        var wandData = gearItem.get(RUNE_HOLDER);
+        var wandData = gearItem.get(JAHDOO_GEAR_DATA);
         if(wandData == null) return;
 
         var slot = withStyleComponent(String.valueOf(wandData.refinementPotential()), DIAMOND_BOX);
@@ -75,12 +75,8 @@ public class CasterItemHelper {
         return Component.empty();
     }
 
-    public static void appendRepairSlotsComponent(List<Component> toolTips, ItemStack gearItem) {
-        getRepairSlotsComponent(gearItem, (r) -> toolTips.add(toolTips.size(), r));
-    }
-
     public static void getRepairSlotsComponent(ItemStack gearItem, Consumer<Component> render) {
-        var wandData = gearItem.get(RUNE_HOLDER);
+        var wandData = gearItem.get(JAHDOO_GEAR_DATA);
         if(wandData == null) return;
 
         var repairSlots = wandData.repairSlots();
@@ -105,7 +101,7 @@ public class CasterItemHelper {
     }
 
     public static List<ItemStack> getAllSlots(ItemStack itemStack){
-        var wandData = itemStack.get(RUNE_HOLDER);
+        var wandData = itemStack.get(JAHDOO_GEAR_DATA);
         if(wandData != null) return wandData.runeSlots();
         return List.of();
     }
@@ -163,7 +159,7 @@ public class CasterItemHelper {
         var attributes = itemStack.getAttributeModifiers().modifiers().stream().toList();
 ;
         if(!attributes.isEmpty()){
-            appendComponents.add(Component.empty());
+            appendComponents.add(Component.literal(" "));
             appendComponents.add(withStyleComponentTrans(PREFIX + "get_modifiers", colourPre, type));
             appendComponents.addAll(standAloneAttributes(itemStack, abstractElement));
         }
@@ -185,10 +181,7 @@ public class CasterItemHelper {
     public static List<Component> getItemModifiers(ItemStack wandItem, Level level){
         var appendComponents = new ArrayList<Component>();
         var abstractElement = fromWand(wandItem.getItem());
-        if(abstractElement.isPresent()){
-            attributeToolTips(wandItem, appendComponents, abstractElement.get());
-            if (!getAllSlots(wandItem).isEmpty()) appendComponents.add(Component.empty());
-        }
+        abstractElement.ifPresent(element -> attributeToolTips(wandItem, appendComponents, element));
         return appendComponents;
     }
 
@@ -211,32 +204,6 @@ public class CasterItemHelper {
             }
 
         } else itemStack.set(hand, 2);
-    }
-
-    public static void standAloneModifiersWithLabel(
-        ItemStack stack,
-        List<Component> toolTip,
-        Item.TooltipContext context,
-        String label,
-        int colourA,
-        int colourB,
-        double speed,
-        double duration,
-        boolean addSpace
-    ) {
-        var list = stack.getAttributeModifiers().modifiers().stream().filter(e -> e.modifier().id().getPath().contains("bonus")).toList();
-        if(list.isEmpty()) return;
-        if(addSpace) toolTip.add(Component.literal(" "));
-        var comp = highlightTextComponent(context.level(), label, colourA, colourB, speed, duration);
-        toolTip.add(comp);
-
-        for (var entry : list) toolTip.add(RuneHelpers.standAloneAttributes(entry));
-        toolTip.add(Component.empty());
-    }
-
-    public static void bonusModifierTooltip(ItemStack stack, List<Component> toolTip, Item.TooltipContext context, boolean addSpace) {
-        var text = "Bonus Modifiers";
-        standAloneModifiersWithLabel(stack, toolTip, context, text, HEADER_COLOUR, CHAMPION_GOLD, 1.5, 20, addSpace);
     }
 
     public static boolean canOffHand(

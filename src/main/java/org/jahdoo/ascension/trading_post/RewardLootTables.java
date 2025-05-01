@@ -13,15 +13,15 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.attachments.InstanceData;
+import org.jahdoo.ascension.level_manager.InstanceDifficulty;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.LocalLootBeamData;
+import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
 import org.jahdoo.common.items.magnet.Magnet;
-import org.jahdoo.common.items.pendent.Pendent;
 import org.jahdoo.common.items.runes.RuneItem;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 import org.jahdoo.common.items.shields.JahdooShieldItem;
 import org.jahdoo.common.items.tome.TomeOfUnity;
 import org.jahdoo.common.registers.BlockReg;
@@ -40,9 +40,7 @@ import static net.minecraft.world.level.storage.loot.parameters.LootContextParam
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.minecraft.world.level.storage.loot.providers.number.ConstantValue.exactly;
 import static net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.between;
-import static org.jahdoo.ascension.trading_post.ShoppingArmor.enchantArmorItem;
 import static org.jahdoo.ascension.trading_post.ShoppingItems.*;
-import static org.jahdoo.ascension.trading_post.ShoppingWeapon.enchantSword;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.ascension.utils.EnchantmentHelpers.randomApplicableEnchantment;
 import static org.jahdoo.ascension.utils.Helpers.Random;
@@ -74,9 +72,6 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> DIAMOND_BUILDER =
         lootTableItem(Items.DIAMOND);
 
-    public static final LootPoolSingletonContainer.Builder<?> IRON_SWORD_BUILDER =
-        lootTableItem(Items.IRON_SWORD);
-
     public static final LootPoolSingletonContainer.Builder<?> DIAMOND_SWORD_BUILDER =
         lootTableItem(Items.DIAMOND_SWORD);
 
@@ -85,6 +80,9 @@ public class RewardLootTables {
 
     public static final LootPoolSingletonContainer.Builder<?> AUGMENT_CORE_BUILDER =
         lootTableItem(ItemReg.AUGMENT_CORE.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> ESSENCE_FRAGMENT =
+        lootTableItem(ItemReg.ESSENCE_FRAGMENT.get());
     
     public static final LootPoolSingletonContainer.Builder<?> NETHERITE_SWORD_BUILDER = 
         lootTableItem(Items.NETHERITE_SWORD);
@@ -97,7 +95,21 @@ public class RewardLootTables {
     
     public static final LootPoolSingletonContainer.Builder<?> AUGMENT_HYPER_CORE_BUILDER = 
         lootTableItem(ItemReg.AUGMENT_HYPER_CORE.get());
-    
+
+
+    public static final LootPoolSingletonContainer.Builder<?> KNIGHT_KING_HELM_BUILDER =
+        lootTableItem(ItemReg.KNIGHT_KING_HELMET.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> KNIGHT_KING_CHEST_BUILDER =
+        lootTableItem(ItemReg.KNIGHT_KING_CHESTPLATE.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> KNIGHT_KING_LEGGINGS_BUILDER =
+        lootTableItem(ItemReg.KNIGHT_KING_LEGGINGS.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> KNIGHT_KING_BOOTS_BUILDER =
+        lootTableItem(ItemReg.KNIGHT_KING_BOOTS.get());
+
+
     public static final LootPoolSingletonContainer.Builder<?> WIZARD_HELM_BUILDER = 
         lootTableItem(ItemReg.WIZARD_HELMET.get());
     
@@ -109,19 +121,34 @@ public class RewardLootTables {
     
     public static final LootPoolSingletonContainer.Builder<?> WIZARD_BOOTS_BUILDER = 
         lootTableItem(ItemReg.WIZARD_BOOTS.get());
-    
+
+
     public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_HELM_BUILDER = 
-        lootTableItem(ItemReg.MAGE_HELMET.get());
+        lootTableItem(ItemReg.BATTLEMAGE_HELMET.get());
     
     public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_CHEASTPLATE_BUILDER = 
-        lootTableItem(ItemReg.MAGE_CHESTPLATE.get());
+        lootTableItem(ItemReg.BATTLEMAGE_CHESTPLATE.get());
     
     public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_LEGGINGS_BUILDER = 
-        lootTableItem(ItemReg.MAGE_LEGGINGS.get());
+        lootTableItem(ItemReg.BATTLEMAGE_LEGGINGS.get());
     
     public static final LootPoolSingletonContainer.Builder<?> BATTLEMAGE_BOOTS_BUILDER = 
+        lootTableItem(ItemReg.BATTLEMAGE_BOOTS.get());
+
+
+    public static final LootPoolSingletonContainer.Builder<?> MAGE_HELM_BUILDER =
+        lootTableItem(ItemReg.MAGE_HELMET.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> MAGE_CHEST_BUILDER =
+        lootTableItem(ItemReg.MAGE_CHESTPLATE.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> MAGE_LEGGINGS_BUILDER =
+        lootTableItem(ItemReg.MAGE_LEGGINGS.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> MAGE_BOOTS_BUILDER =
         lootTableItem(ItemReg.MAGE_BOOTS.get());
-    
+
+
     public static final LootPoolSingletonContainer.Builder<?> ELYTRA_BUILDER = 
         lootTableItem(Items.ELYTRA);
     
@@ -142,9 +169,6 @@ public class RewardLootTables {
 
     public static final LootPoolSingletonContainer.Builder<?> EXIT_KEY =
         lootTableItem(ItemReg.EXIT_KEY.get());
-
-    public static final LootPoolSingletonContainer.Builder<?> AMULET =
-        lootTableItem(ItemReg.PENDENT.get());
     
     public static final LootPoolSingletonContainer.Builder<?> MAGNET =
         lootTableItem(ItemReg.MAGNET.get());
@@ -160,6 +184,10 @@ public class RewardLootTables {
 
     public static final LootPoolSingletonContainer.Builder<?> GAUNTLET =
         lootTableItem(ItemReg.BATTLEMAGE_GAUNTLET.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> ELEMENTAL_SWORD =
+        lootTableItem(ItemReg.ELEMENTAL_SWORD.get());
+
 
     public static List<ItemStack> getCoinItems(InstanceData data) {
         var lootCoins = new ArrayList<ItemStack>();
@@ -218,35 +246,16 @@ public class RewardLootTables {
     public static ObjectArrayList<ItemStack> getCompletionLoot(
         ServerLevel serverLevel,
         Vec3 pos,
-        int level,
+        String difficulty,
         int chestRarity
     ) {
-        var loot = LootTable.lootTable()
-            .withPool(commonPool(level, chestRarity))
-            .withPool(commonPoolSingle());
+        var loot = LootTable.lootTable();
+        var getDifficulty = InstanceDifficulty.getFromName(difficulty);
 
-        if(chestRarity >= 1){
-            loot.withPool(rarePoolSingle())
-                .withPool(rarePool(level, chestRarity));
-        }
-
-        if(chestRarity >= 2){
-            loot.withPool(epicPool());
-        }
-
-        if(chestRarity > 2){
-            loot.withPool(legendaryPool());
-        }
+        loot.withPool(multiPoolBuilder(getDifficulty, chestRarity));
+        loot.withPool(singlePoolBuilder(getDifficulty, chestRarity));
 
         return createLootParams(serverLevel, pos, loot);
-    }
-
-    public static void amuletItem(ItemStack pendent, int chestRarity) {
-        var min = Math.min(Math.max(1, chestRarity), 3);
-
-        if(min > 1) pendent.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(min));
-
-        RuneHolder.createNewRuneSlots(pendent, min, 0, 25 * min);
     }
 
 
@@ -254,20 +263,13 @@ public class RewardLootTables {
         var enchantments = List.of(
             PROTECTION,
             FEATHER_FALLING,
-            BLAST_PROTECTION,
             PROJECTILE_PROTECTION,
             RESPIRATION,
             AQUA_AFFINITY,
-            THORNS,
             DEPTH_STRIDER,
-            FROST_WALKER,
-            SOUL_SPEED,
             SWIFT_SNEAK,
             SHARPNESS,
-            SMITE,
-            BANE_OF_ARTHROPODS,
             KNOCKBACK,
-            FIRE_ASPECT,
             LOOTING,
             SWEEPING_EDGE,
             EFFICIENCY,
@@ -283,6 +285,8 @@ public class RewardLootTables {
             .registryOrThrow(ENCHANTMENT)
             .get(resourceKey);
 
+        if(randomEnchantment == null) return;
+
         var maxLevel = randomEnchantment.getMaxLevel();
         var minLevel = randomEnchantment.getMinLevel();
         enchant(itemStack, serverLevel.registryAccess(), resourceKey, maxLevel > minLevel ? Random.nextInt(minLevel, maxLevel) : 1);
@@ -291,107 +295,157 @@ public class RewardLootTables {
 
     public static void attachItemData(
         ServerLevel serverLevel,
-        JahdooRarity rarity,
         ItemStack itemStack,
-        boolean isSpecial,
         JahdooRarity runeRarity,
         int chestRarity
     ) {
         var raritiesByChestRarity = getRaritiesByChestRarity(chestRarity);
         switch (itemStack.getItem()){
-            case CasterItem ignored -> ShoppingItems.getRandomWand(null, itemStack, chestRarity);
-            case TomeOfUnity ignored -> createTomeAttributes(itemStack, null, chestRarity);
-            case RuneItem ignored -> generateRandomTypAttribute(itemStack, runeRarity, null, chestRarity);
-            case ArmorItem armorItem -> enchantArmorItem(serverLevel, itemStack, armorItem, isSpecial);
-            case SwordItem ignored -> enchantSword(serverLevel, itemStack, isSpecial);
+            case CasterItem ignored -> ShoppingItems.getRandomWand(raritiesByChestRarity, itemStack);
+            case TomeOfUnity ignored -> createTomeAttributes(itemStack, raritiesByChestRarity);
+            case RuneItem ignored -> generateRandomTypAttribute(itemStack, runeRarity, raritiesByChestRarity);
+            case ArmorItem ignored -> ShoppingArmor.attachCustomArmorData(serverLevel, itemStack, raritiesByChestRarity);
+            case SwordItem ignored -> ShoppingItems.attachWeaponData(itemStack, raritiesByChestRarity, serverLevel);
             case EnchantedBookItem ignored -> enchantedBook(serverLevel, itemStack);
             case Magnet ignored -> magnetItem(itemStack, raritiesByChestRarity);
-            case Pendent ignored -> amuletItem(itemStack, chestRarity);
             case JahdooShieldItem ignored -> getShieldWithRarity(itemStack, raritiesByChestRarity);
             case BattlemageGauntlet ignore -> getGauntletWithRarity(itemStack, raritiesByChestRarity);
             default -> { /*IGNORE*/ }
         }
     }
 
-    private static LootPool.Builder legendaryPool() {
-        var builder = LootPool.lootPool().setRolls(exactly(1.0F));
-
-        return builder
-            .add(AUGMENT_HYPER_CORE_BUILDER.setWeight(2))
-            .add(WIZARD_HELM_BUILDER.setWeight(1))
-            .add(WIZARD_CHEST_BUILDER.setWeight(1))
-            .add(WIZARD_LEGGINGS_BUILDER.setWeight(1))
-            .add(WIZARD_BOOTS_BUILDER.setWeight(1));
-    }
-
-    private static LootPool.Builder epicPool() {
-        var builder = LootPool.lootPool().setRolls(exactly(1.0F));
-
-        return builder
-            .add(GLAIVE.setWeight(10))
-            .add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight(5))
-            .add(EXIT_KEY.setWeight(1))
-            .add(BATTLEMAGE_HELM_BUILDER.setWeight(1))
-            .add(BATTLEMAGE_CHEASTPLATE_BUILDER.setWeight(1))
-            .add(BATTLEMAGE_LEGGINGS_BUILDER.setWeight(1))
-            .add(BATTLEMAGE_BOOTS_BUILDER.setWeight(1));
-    }
-
-    private static LootPool.Builder rarePoolSingle() {
-        var builder = LootPool.lootPool().setRolls(exactly(1.0F));
-
-        return builder
-            .add(RUNE.setWeight(15))
-            .add(AMULET.setWeight(5))
-            .add(MAGNET.setWeight(5))
-            .add(getRandomWand().setWeight(5))
-            .add(TOME_OF_UNITY_BUILDER.setWeight(4))
-            .add(SHIELD.setWeight(4))
-            .add(INGMAS_SWORD.setWeight(3))
-            .add(NETHERITE_SWORD_BUILDER.setWeight(2))
-            .add(CHALLENGER_TICKET.setWeight(1))
-            .add(GAUNTLET.setWeight(1));
-    }
-
-    private static LootPool.Builder rarePool(int level, int chestRarity) {
-        var lootMultiplier = getLootMultiplier(level, chestRarity);
+    private static LootPool.Builder multiPoolBuilder(InstanceDifficulty difficulty, int chestRarity) {
+        var lootMultiplier = getLootMultiplier(difficulty, chestRarity);
         var builder = LootPool.lootPool().setRolls(between(1.0F, lootMultiplier));
+        var newRarity = chestRarity+1;
 
-        return builder
-            .add(NEXITE_BLOCK_BUILDER.setWeight(20))
-            .add(BOOK_BUILDER.setWeight(15))
-            .add(AUGMENT_CORE_BUILDER.setWeight(5));
+        if(newRarity == 1){
+            //Common
+            builder.add(GOLDEN_CARROT_BUILDER.setWeight(50));
+            builder.add(IRON_BUILDER.setWeight(35));
+            builder.add(GOLD_BUILDER.setWeight(25));
+            builder.add(DIAMOND_BUILDER.setWeight(10));
+            builder.add(COIN.setWeight(10));
+            builder.add(XP.setWeight(8));
+            builder.add(SHULKER_SHELLS_BUILDER.setWeight(5));
+            builder.add(NETHERITE_BUILDER.setWeight(2));
+        }
+
+        if(newRarity >= 2){
+            //Rare
+            builder.add(NEXITE_BLOCK_BUILDER.setWeight(20));
+            builder.add(BOOK_BUILDER.setWeight(15));
+        }
+
+        return builder;
     }
 
-    private static LootPool.Builder commonPoolSingle() {
+    private static LootPool.Builder singlePoolBuilder(InstanceDifficulty difficulty, int chestRarity) {
         var builder = LootPool.lootPool().setRolls(exactly(1.0F));
+        var newRarity = chestRarity+1;
 
-        return builder
-            .add(DIAMOND_SWORD_BUILDER.setWeight(5))
-            .add(ELYTRA_BUILDER.setWeight(1))
-            .add(STARTER_PACK.setWeight(1));
+        if(newRarity == 1){
+            //Common
+            builder.add(DIAMOND_SWORD_BUILDER.setWeight(5));
+            builder.add(ELYTRA_BUILDER.setWeight(1));
+            builder.add(NETHERITE_SWORD_BUILDER.setWeight(1));
+            builder.add(STARTER_PACK.setWeight(1));
+        } else {
+            if(newRarity >=2){
+                //Rare
+                builder.add(ESSENCE_FRAGMENT.setWeight(5));
+
+                if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+                    builder.add(AUGMENT_CORE_BUILDER.setWeight(1));
+                }
+
+                if(Maths.percentageChance(calculateChance(10, difficulty, newRarity))){
+                    builder.add(RUNE.setWeight((int) calculateChance(15, difficulty, newRarity)));
+                    builder.add(MAGNET.setWeight((int) calculateChance(5, difficulty, newRarity)));
+                    builder.add(getRandomWand().setWeight((int) calculateChance(5, difficulty, newRarity)));
+                }
+            }
+
+            if(newRarity >= 3){
+                //Legendary
+                if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+                    builder.add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight(1));
+                }
+                if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+                    builder.add(CHALLENGER_TICKET.setWeight(1));
+                    builder.add(EXIT_KEY.setWeight(1));
+                }
+            }
+
+            if(newRarity == 4){
+                //Eternal
+                if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+                    builder.add(AUGMENT_HYPER_CORE_BUILDER.setWeight(1));
+                }
+            }
+
+            if(Maths.percentageChance(calculateChance(14, difficulty, newRarity))){
+                builder.add(TOME_OF_UNITY_BUILDER.setWeight(4));
+                builder.add(INGMAS_SWORD.setWeight(3));
+                addMageArmor(builder, newRarity);
+            }
+
+            if(Maths.percentageChance(calculateChance(8, difficulty, newRarity))){
+                builder.add(GLAIVE.setWeight(2));
+                builder.add(SHIELD.setWeight(4));
+            }
+
+            if(Maths.percentageChance(calculateChance(5, difficulty, newRarity))){
+                builder.add(ELEMENTAL_SWORD.setWeight(1));
+                builder.add(GAUNTLET.setWeight(1));
+                addBattlemageArmor(builder, newRarity);
+            }
+
+            if(Maths.percentageChance(calculateChance(1.5, difficulty, newRarity))){
+                addWizardArmor(builder, newRarity);
+            }
+
+            if(Maths.percentageChance(calculateChance(0.5, difficulty, newRarity))){
+                addKnightKingArmor(builder, newRarity);
+            }
+        }
+
+        return builder;
     }
 
-
-    private static LootPool.Builder commonPool(int level, int chestRarity) {
-        var lootMultiplier = getLootMultiplier(level, chestRarity);
-        var builder = LootPool.lootPool().setRolls(between(2.0F, lootMultiplier + 5));
-
-        return builder
-            .add(GOLDEN_CARROT_BUILDER.setWeight(50))
-            .add(IRON_BUILDER.setWeight(35))
-            .add(GOLD_BUILDER.setWeight(25))
-            .add(EMERALD_BUILDER.setWeight(20))
-            .add(DIAMOND_BUILDER.setWeight(10))
-            .add(COIN.setWeight(10))
-            .add(XP.setWeight(8))
-            .add(SHULKER_SHELLS_BUILDER.setWeight(5))
-            .add(NETHERITE_BUILDER.setWeight(2));
-
+    public static void addMageArmor(LootPool.Builder builder, int chestRarity){
+        builder.add(MAGE_HELM_BUILDER.setWeight(chestRarity));
+        builder.add(MAGE_CHEST_BUILDER.setWeight(chestRarity));
+        builder.add(MAGE_LEGGINGS_BUILDER.setWeight(chestRarity));
+        builder.add(MAGE_BOOTS_BUILDER.setWeight(chestRarity));
     }
 
-    private static int getLootMultiplier(int level, int chestRarity) {
-        return (((level / 5) + 1)) * (chestRarity + 1);
+    public static void addKnightKingArmor(LootPool.Builder builder, int chestRarity){
+        builder.add(KNIGHT_KING_HELM_BUILDER.setWeight(chestRarity));
+        builder.add(KNIGHT_KING_CHEST_BUILDER.setWeight(chestRarity));
+        builder.add(KNIGHT_KING_LEGGINGS_BUILDER.setWeight(chestRarity));
+        builder.add(KNIGHT_KING_BOOTS_BUILDER.setWeight(chestRarity));
     }
 
+    public static void addWizardArmor(LootPool.Builder builder, int chestRarity){
+        builder.add(WIZARD_HELM_BUILDER.setWeight(chestRarity));
+        builder.add(WIZARD_CHEST_BUILDER.setWeight(chestRarity));
+        builder.add(WIZARD_LEGGINGS_BUILDER.setWeight(chestRarity));
+        builder.add(WIZARD_BOOTS_BUILDER.setWeight(chestRarity));
+    }
+
+    public static void addBattlemageArmor(LootPool.Builder builder, int chestRarity){
+        builder.add(BATTLEMAGE_HELM_BUILDER.setWeight(chestRarity));
+        builder.add(BATTLEMAGE_CHEASTPLATE_BUILDER.setWeight(chestRarity));
+        builder.add(BATTLEMAGE_LEGGINGS_BUILDER.setWeight(chestRarity));
+        builder.add(BATTLEMAGE_BOOTS_BUILDER.setWeight(chestRarity));
+    }
+
+    private static int getLootMultiplier(InstanceDifficulty difficulty, int chestRarity) {
+        return ((difficulty.expMultiplier() + 1)) * (chestRarity + 1);
+    }
+
+    public static double calculateChance(double baseChance, InstanceDifficulty diff, int chestRarity) {
+        return baseChance * diff.expMultiplier() + chestRarity;
+    }
 }

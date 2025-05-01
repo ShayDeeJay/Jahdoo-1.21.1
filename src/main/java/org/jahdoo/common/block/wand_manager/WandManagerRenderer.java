@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
+import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 
 import static net.minecraft.core.Direction.*;
 
@@ -53,7 +53,7 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
         int overlay
     ){
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
-        var outputSlot = RuneHolder.getRuneholder(wandManagerTable.getWandSlot()).runeSlots();
+        var outputSlot = JahdooGearData.getRuneholder(wandManagerTable.getWandSlot()).runeSlots();
         var newSlots = outputSlot.stream().filter(itemStack -> !itemStack.isEmpty()).toList();
         var spacer = new AtomicDouble();
         var size = newSlots.size();

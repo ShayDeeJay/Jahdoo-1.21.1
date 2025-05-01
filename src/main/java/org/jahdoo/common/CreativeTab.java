@@ -12,7 +12,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.items.magnet.MagnetData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 
 import static net.minecraft.world.item.CreativeModeTabs.SPAWN_EGGS;
 import static org.jahdoo.common.registers.BlockReg.*;
@@ -54,7 +53,6 @@ public class CreativeTab {
                 outPut.accept(ANCIENT_GLAIVE.get());
                 outPut.accept(INGMAS_SWORD.get());
 
-                registerAmulets(outPut);
                 registerXpOrbs(outPut);
                 registerMagnets(outPut);
                 registerCoins(outPut);
@@ -166,21 +164,6 @@ public class CreativeTab {
             magnet.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
             MagnetData.setDataByType(magnet);
             pOutput.accept(magnet);
-        }
-    }
-
-    private static void registerAmulets(CreativeModeTab.Output pOutput) {
-        var pendent = new ItemStack(PENDENT.get());
-        RuneHolder.createNewRuneSlots(pendent, 1, 0, 0);
-        pOutput.accept(pendent);
-
-        for (int i = 1; i < 4; i++){
-            var basePendent = new ItemStack(PENDENT.get());
-            var customModelData = new CustomModelData(i);
-
-            basePendent.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
-            RuneHolder.createNewRuneSlots(basePendent, i+1, 0, 0);
-            pOutput.accept(basePendent);
         }
     }
 

@@ -6,10 +6,10 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.ascension.utils.Helpers;
 import org.joml.Matrix4f;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.client.Minecraft.getInstance;
 import static net.minecraft.client.gui.Font.DisplayMode.SEE_THROUGH;
@@ -20,7 +20,7 @@ import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.standAloneAttr
 
 public class RuneTooltipRenderer implements ClientTooltipComponent {
 
-    public record RuneComponent(ItemStack socket, List<ItemStack> runes) implements TooltipComponent {}
+    public record RuneComponent(ItemStack gearPiece, List<ItemStack> runes) implements TooltipComponent {}
     private final int spacing = getInstance().font.lineHeight + 4;
     private final RuneComponent component;
 
@@ -30,7 +30,11 @@ public class RuneTooltipRenderer implements ClientTooltipComponent {
 
     @Override
     public int getHeight() {
-        return this.spacing * this.component.runes.size() + 2;
+        return isArmorBroken() ? 0 : this.spacing * this.component.runes.size() + 2;
+    }
+
+    public boolean isArmorBroken(){
+        return Helpers.durabilityDamageCount(this.component.gearPiece()) == 0;
     }
 
     @Override
@@ -44,20 +48,22 @@ public class RuneTooltipRenderer implements ClientTooltipComponent {
 
     @Override
     public void renderText(Font font, int mouseX, int mouseY, Matrix4f matrix, BufferSource bufferSource) {
-        var spacer = new AtomicInteger();
+        if(isArmorBroken()) return;
+        var spacer = 0;
 
         for (var itemStack : this.component.runes()) {
             var components = standAloneAttributes(itemStack);
             var getLabel = itemStack.isEmpty() ? Component.literal("Empty Slot") : components;
-            var posY = mouseY + 3 + this.spacing * spacer.get();
+            var posY = mouseY + 3 + this.spacing * spacer;
 
             font.drawInBatch(getLabel, mouseX + 15, posY, HEADER_COLOUR, true, matrix, bufferSource, SEE_THROUGH, 0, FULL_BRIGHT);
-            spacer.set(spacer.get() + 1);
+            spacer++;
         }
     }
 
     @Override
     public void renderImage(Font font, int x, int y, GuiGraphics gfx) {
+        if(isArmorBroken()) return;
         var pose = gfx.pose();
 
         for (int i = 0; i < this.component.runes.size(); i++) {

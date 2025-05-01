@@ -8,14 +8,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.ascension.trading_post.RewardLootTables;
-import org.jahdoo.ascension.utils.Helpers;
 
-import static org.jahdoo.ascension.attachments.PlayerWallet.*;
+import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.*;
-import static org.jahdoo.common.registers.BlockEntityReg.*;
+import static org.jahdoo.common.registers.BlockEntityReg.SHOPPING_TABLE_BE;
 
 public class ShoppingTableEntity extends AbstractBEInventory {
 
@@ -82,13 +79,13 @@ public class ShoppingTableEntity extends AbstractBEInventory {
 
     public void insertRandomItem() {
         if(!(this.getLevel() instanceof ServerLevel serverLevel)) return;
-        var rewards = RewardLootTables.getCompletionLoot(serverLevel, this.worldPosition.getCenter(), 0, 4);
+//        var rewards = RewardLootTables.getCompletionLoot(serverLevel, this.worldPosition.getCenter(), 0, 4);
 
-        if(!rewards.isEmpty()){
-            var randomListElement = Helpers.listRandom(rewards);
-            RewardLootTables.attachItemData(serverLevel, JahdooRarity.getRarity(), randomListElement, false, null, 0);
-            getItem().setStackInSlot(0, randomListElement);
-        }
+//        if(!rewards.isEmpty()){
+//            var randomListElement = Helpers.listRandom(rewards);
+//            RewardLootTables.attachItemData(serverLevel, JahdooRarity.getRarity(), randomListElement, false, null, 0);
+//            getItem().setStackInSlot(0, randomListElement);
+//        }
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {

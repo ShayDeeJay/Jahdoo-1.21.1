@@ -11,7 +11,7 @@ import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.AbstractInternalContainer;
 import org.jahdoo.common.client.slots.GeneralItemSlot;
 import org.jahdoo.common.client.slots.RuneSlot;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
+import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.MenuReg;
@@ -66,7 +66,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
 
     @Override
     protected int getAllSlots() {
-        var size = RuneHolder.getRuneholder(getWandManagerEntity().getWandSlot()).runeSlots().size();
+        var size = JahdooGearData.getRuneholder(getWandManagerEntity().getWandSlot()).runeSlots().size();
         return size + DEFAULT_SLOTS;
     }
 
@@ -90,7 +90,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
         try{
 
             var getAllSlots = this.getWandManagerEntity().getWandSlot();
-            var getData = RuneHolder.getRuneholder(getAllSlots);
+            var getData = JahdooGearData.getRuneholder(getAllSlots);
             var iHandler = getWandManagerEntity().inputItemHandler;
             var indexOne = new AtomicInteger(4);
 
@@ -100,7 +100,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
             }
 
             handleSlotsInGridLayout(
-                (slotX, slotY, index) -> this.addSlot(new RuneSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, this.getWandManagerEntity(), 1)),
+                (slotX, slotY, index) -> this.addSlot(new RuneSlot(iHandler, index + 4, slotX + posX, slotY - posY + 82, this.getWandManagerEntity(), null, 1)),
                 getData.runeSlots().size(), 0,0, offSetX, offSetY
             );
 

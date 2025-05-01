@@ -2,10 +2,10 @@ package org.jahdoo.common.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.PlayerTrialData;
@@ -14,6 +14,8 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.trading_post.ShoppingArmor;
 import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.block.loot_chest.LootChestBlock;
+import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -22,39 +24,41 @@ import java.util.function.Function;
 
 import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
+import static net.minecraft.commands.Commands.argument;
+import static net.minecraft.commands.Commands.literal;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.JahdooMod.MOD_ID;
 
 public class PlayerLevelCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal(MOD_ID).requires(sender -> sender.hasPermission(2))
+        dispatcher.register(literal(MOD_ID).requires(sender -> sender.hasPermission(2))
             .then(
-                Commands.literal("caster_data")
+                literal("caster_data")
                     .then(
-                        Commands.literal("regret_abilities")
+                        literal("regret_abilities")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .executes(
                                         context -> regretAbilities(context.getSource())
                                     )
                             )
                     )
                     .then(
-                        Commands.literal("reset_player_data")
+                        literal("reset_player_data")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .executes(
                                         context -> resetPlayerData(context.getSource())
                                     )
                             )
                     )
                     .then(
-                        Commands.literal("set_player_level")
+                        literal("set_player_level")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .then(
-                                        Commands.argument("amount", integer())
+                                        argument("amount", integer())
                                             .executes(
                                                 context -> setPlayerLevel(context.getSource(), getInteger(context, "amount"))
                                             )
@@ -62,11 +66,11 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("add_experience")
+                        literal("add_experience")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .then(
-                                        Commands.argument("amount", integer())
+                                        argument("amount", integer())
                                             .executes(
                                                 context -> addExperience(context.getSource(), getInteger(context, "amount"))
                                             )
@@ -74,11 +78,11 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("add_skill_points")
+                        literal("add_skill_points")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .then(
-                                        Commands.argument("amount", integer())
+                                        argument("amount", integer())
                                             .executes(
                                                 context -> addSkillPoints(context.getSource(), getInteger(context, "amount"))
                                             )
@@ -86,11 +90,11 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("remove_skill_points")
+                        literal("remove_skill_points")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .then(
-                                        Commands.argument("amount", integer())
+                                        argument("amount", integer())
                                             .executes(
                                                 context -> removeSkillPoints(context.getSource(), getInteger(context, "amount"))
                                             )
@@ -101,17 +105,17 @@ public class PlayerLevelCommand {
         );
 
 
-        dispatcher.register(Commands.literal(MOD_ID).requires(sender -> sender.hasPermission(2))
+        dispatcher.register(literal(MOD_ID).requires(sender -> sender.hasPermission(2))
             .then(
-                Commands.literal("trial_data")
+                literal("trial_data")
                     .then(
-                        Commands.literal("add_dummy_trial_data")
+                        literal("add_dummy_trial_data")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .then(
-                                        Commands.argument("entries", integer())
+                                        argument("entries", integer())
                                             .then(
-                                                Commands.argument("clear_all_data", BoolArgumentType.bool())
+                                                argument("clear_all_data", BoolArgumentType.bool())
                                                     .executes(
                                                         context -> addDummyTrialData(context.getSource(), getInteger(context, "entries"), BoolArgumentType.getBool(context, "clear_all_data"))
                                                     )
@@ -122,17 +126,17 @@ public class PlayerLevelCommand {
             )
         );
 
-        dispatcher.register(Commands.literal(MOD_ID).requires(sender -> sender.hasPermission(2))
+        dispatcher.register(literal(MOD_ID).requires(sender -> sender.hasPermission(2))
             .then(
-                Commands.literal("trial_data")
+                literal("trial_data")
                     .then(
-                        Commands.literal("add_dummy_trial_data")
+                        literal("add_dummy_trial_data")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .then(
-                                        Commands.argument("entries", integer())
+                                        argument("entries", integer())
                                             .then(
-                                                Commands.argument("clear_all_data", BoolArgumentType.bool())
+                                                argument("clear_all_data", BoolArgumentType.bool())
                                                     .executes(
                                                         context -> addDummyTrialData(context.getSource(), getInteger(context, "entries"), BoolArgumentType.getBool(context, "clear_all_data"))
                                                     )
@@ -143,15 +147,15 @@ public class PlayerLevelCommand {
             )
         );
 
-        dispatcher.register(Commands.literal(MOD_ID).requires(sender -> sender.hasPermission(2))
+        dispatcher.register(literal(MOD_ID).requires(sender -> sender.hasPermission(2))
             .then(
-                Commands.literal("run_data")
+                literal("run_data")
                     .then(
-                        Commands.literal("end_run")
+                        literal("end_run")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .then(
-                                        Commands.argument("keep_rewards", BoolArgumentType.bool())
+                                        argument("keep_rewards", BoolArgumentType.bool())
                                             .executes(
                                                 context -> endRun(context.getSource(), BoolArgumentType.getBool(context, "keep_rewards"))
                                             )
@@ -161,15 +165,27 @@ public class PlayerLevelCommand {
             )
         );
 
-        dispatcher.register(Commands.literal(MOD_ID).requires(sender -> sender.hasPermission(2))
+        dispatcher.register(literal(MOD_ID).requires(sender -> sender.hasPermission(2))
             .then(
-                Commands.literal("give_items")
+                literal("give_items")
                     .then(
-                        Commands.literal("shield")
+                        literal("random_unique_armor")
                             .then(
-                                Commands.argument("count", integer())
+                                argument("count", integer())
                                     .then(
-                                        Commands.argument("targets", EntityArgument.players())
+                                        argument("targets", EntityArgument.players())
+                                            .executes(
+                                                context -> randomUniqueArmor(context.getSource(), getInteger(context, "count"))
+                                            )
+                                    )
+                            )
+                    )
+                    .then(
+                        literal("shield")
+                            .then(
+                                argument("count", integer())
+                                    .then(
+                                        argument("targets", EntityArgument.players())
                                             .then(
                                                 rarity(
                                                     c -> getShield(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
@@ -185,11 +201,11 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("wand")
+                        literal("wand")
                             .then(
-                                Commands.argument("count", integer())
+                                argument("count", integer())
                                     .then(
-                                        Commands.argument("targets", EntityArgument.players())
+                                        argument("targets", EntityArgument.players())
                                             .then(
                                                 rarity(
                                                     c -> getWand(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
@@ -205,11 +221,11 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("battlemage_gauntlet")
+                        literal("battlemage_gauntlet")
                             .then(
-                                Commands.argument("count", integer())
+                                argument("count", integer())
                                     .then(
-                                        Commands.argument("targets", EntityArgument.players())
+                                        argument("targets", EntityArgument.players())
                                             .then(
                                                 rarity(
                                                     c -> getGauntlet(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
@@ -225,11 +241,11 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("tome_of_unity")
+                        literal("tome_of_unity")
                             .then(
-                                Commands.argument("count", integer())
+                                argument("count", integer())
                                     .then(
-                                        Commands.argument("targets", EntityArgument.players())
+                                        argument("targets", EntityArgument.players())
                                             .then(
                                                 rarity(
                                                     c -> getTome(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
@@ -245,11 +261,11 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("magnet")
+                        literal("magnet")
                             .then(
-                                Commands.argument("count", integer())
+                                argument("count", integer())
                                     .then(
-                                        Commands.argument("targets", EntityArgument.players())
+                                        argument("targets", EntityArgument.players())
                                             .then(
                                                 rarity(
                                                     c -> getMagnet(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
@@ -265,11 +281,11 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("elemental_sword")
+                        literal("elemental_sword")
                             .then(
-                                Commands.argument("count", integer())
+                                argument("count", integer())
                                     .then(
-                                        Commands.argument("targets", EntityArgument.players())
+                                        argument("targets", EntityArgument.players())
                                             .then(
                                                 rarity(
                                                     c -> elementalSword(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
@@ -285,11 +301,11 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("ingmas_sword")
+                        literal("ingmas_sword")
                             .then(
-                                Commands.argument("count", integer())
+                                argument("count", integer())
                                     .then(
-                                        Commands.argument("targets", EntityArgument.players())
+                                        argument("targets", EntityArgument.players())
                                             .then(
                                                 rarity(
                                                     c -> ingmasSword(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
@@ -305,11 +321,11 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("glaive")
+                        literal("glaive")
                             .then(
-                                Commands.argument("count", integer())
+                                argument("count", integer())
                                     .then(
-                                        Commands.argument("targets", EntityArgument.players())
+                                        argument("targets", EntityArgument.players())
                                             .then(
                                                 rarity(
                                                     c -> ancientGlaive(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON),
@@ -325,9 +341,9 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("knight_king_armor")
+                        literal("knight_king_armor")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .then(
                                         rarity(
                                             c -> getKnightKingArmor(c.getSource(), JahdooRarity.COMMON),
@@ -342,9 +358,9 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("grand_wizard_armor")
+                        literal("grand_wizard_armor")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .then(
                                         rarity(
                                             c -> getGrandWizardArmor(c.getSource(), JahdooRarity.COMMON),
@@ -359,9 +375,9 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("mage_armor")
+                        literal("mage_armor")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .then(
                                         rarity(
                                             c -> getMageArmor(c.getSource(), JahdooRarity.COMMON),
@@ -376,9 +392,9 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("battle_mage_armor")
+                        literal("battle_mage_armor")
                             .then(
-                                Commands.argument("targets", EntityArgument.players())
+                                argument("targets", EntityArgument.players())
                                     .then(
                                         rarity(
                                             c -> getBattleMageArmor(c.getSource(), JahdooRarity.COMMON),
@@ -393,21 +409,65 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
-                        Commands.literal("rune")
+                        literal("rune")
                             .then(
-                                Commands.argument("count", integer())
+                                argument("count", integer())
                                     .then(
-                                        Commands.argument("targets", EntityArgument.players())
-                                            .executes(
-                                                context -> getRune(context.getSource(), getInteger(context, "count"))
+                                        argument("targets", EntityArgument.players())
+                                            .then(
+                                                argument("tier", IntegerArgumentType.integer(1, 6))
+                                                    .then(
+                                                        rarity(
+                                                            c -> getRune(c.getSource(), getInteger(c, "count"), JahdooRarity.COMMON, getInteger(c, "tier")),
+                                                            c -> getRune(c.getSource(), getInteger(c, "count"), JahdooRarity.RARE, getInteger(c, "tier")),
+                                                            c -> getRune(c.getSource(), getInteger(c, "count"), JahdooRarity.EPIC, getInteger(c, "tier")),
+                                                            c -> getRune(c.getSource(), getInteger(c, "count"), JahdooRarity.LEGENDARY, getInteger(c, "tier")),
+                                                            c -> getRune(c.getSource(), getInteger(c, "count"), JahdooRarity.ETERNAL, getInteger(c, "tier")),
+                                                            c -> getRune(c.getSource(), getInteger(c, "count"), JahdooRarity.UNIQUE, getInteger(c, "tier")),
+                                                            c -> getRune(c.getSource(), getInteger(c, "count"), null, getInteger(c, "tier"))
+                                                        )
+                                                    )
                                             )
                                     )
                             )
+                    )
+                    .then(
+                        registerLootChestCommand()
                     )
             )
         );
     }
 
+    public static LiteralArgumentBuilder<CommandSourceStack> registerLootChestCommand() {
+        return literal("loot_chest")
+            .then(literal(Helpers.EASY)
+                .then(argument("key", IntegerArgumentType.integer(0, 3))
+                    .executes(context -> lootChestTest(
+                        context.getSource(),
+                        Helpers.EASY,
+                        IntegerArgumentType.getInteger(context, "key")
+                    ))
+                )
+            )
+            .then(literal(Helpers.MEDIUM)
+                .then(argument("key", IntegerArgumentType.integer(0, 3))
+                    .executes(context -> lootChestTest(
+                        context.getSource(),
+                        Helpers.MEDIUM,
+                        IntegerArgumentType.getInteger(context, "key")
+                    ))
+                )
+            )
+            .then(literal(Helpers.HARD)
+                .then(argument("key", IntegerArgumentType.integer(0, 3))
+                    .executes(context -> lootChestTest(
+                        context.getSource(),
+                        Helpers.HARD,
+                        IntegerArgumentType.getInteger(context, "key")
+                    ))
+                )
+            );
+    }
 
     private static LiteralArgumentBuilder<CommandSourceStack> rarity(
         Function<CommandContext<CommandSourceStack>, Integer> common,
@@ -418,14 +478,14 @@ public class PlayerLevelCommand {
         Function<CommandContext<CommandSourceStack>, Integer> unique,
         Function<CommandContext<CommandSourceStack>, Integer> random
     ) {
-        return Commands.literal("rarity")
-            .then(Commands.literal("common").executes(common::apply))
-            .then(Commands.literal("rare").executes(rare::apply))
-            .then(Commands.literal("epic").executes(epic::apply))
-            .then(Commands.literal("legendary").executes(legendary::apply))
-            .then(Commands.literal("eternal").executes(eternal::apply))
-            .then(Commands.literal("unique").executes(unique::apply))
-            .then(Commands.literal("random").executes(random::apply));
+        return literal("rarity")
+            .then(literal("common").executes(common::apply))
+            .then(literal("rare").executes(rare::apply))
+            .then(literal("epic").executes(epic::apply))
+            .then(literal("legendary").executes(legendary::apply))
+            .then(literal("eternal").executes(eternal::apply))
+            .then(literal("unique").executes(unique::apply))
+            .then(literal("random").executes(random::apply));
     }
 
     private static int endRun(CommandSourceStack source, boolean died){
@@ -529,7 +589,7 @@ public class PlayerLevelCommand {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.createTomeAttributes(null, rarity == null ? JahdooRarity.getRarity() : rarity, 0));
+            Helpers.throwOrAddItem(player, ShoppingItems.createTomeAttributes(null, rarity == null ? JahdooRarity.getRarity() : rarity));
         }
         return 1;
     }
@@ -549,7 +609,7 @@ public class PlayerLevelCommand {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.elementalSword(rarity == null ? JahdooRarity.getRarity() : rarity).ShoppingItem());
+            Helpers.throwOrAddItem(player, ShoppingItems.elementalSword(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
         }
         return 1;
     }
@@ -559,7 +619,7 @@ public class PlayerLevelCommand {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.glaive(rarity == null ? JahdooRarity.getRarity() : rarity).ShoppingItem());
+            Helpers.throwOrAddItem(player, ShoppingItems.glaive(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
         }
         return 1;
     }
@@ -569,18 +629,22 @@ public class PlayerLevelCommand {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.ingmasSword(rarity == null ? JahdooRarity.getRarity() : rarity).ShoppingItem());
+            Helpers.throwOrAddItem(player, ShoppingItems.ingmasSword(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
         }
         return 1;
     }
 
-    private static int getRune(CommandSourceStack source, int count) {
+    private static int getRune(CommandSourceStack source, int count, JahdooRarity rarity, int tier) {
         var player = source.getPlayer();
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.shoppingRuneItem().ShoppingItem());
+            var runeRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
+            var index = tier - 1;
+            var rarity1 = index == 5 ? JahdooRarity.getRarity() : JahdooRarity.getAllRarities(index);
+            Helpers.throwOrAddItem(player, RuneHelpers.generateRandomTypAttribute(null, rarity1, runeRarity));
         }
+
         return 1;
     }
 
@@ -628,5 +692,25 @@ public class PlayerLevelCommand {
         return 1;
     }
 
+    private static int randomUniqueArmor(CommandSourceStack source, int count) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (int i = 0; i < count; i++){
+            Helpers.throwOrAddItem(player, ShoppingItems.shoppingArmorItem(source.getLevel()).ShoppingItem());
+        }
+        return 1;
+    }
+
+    private static int lootChestTest(CommandSourceStack source, String difficulty, int keyType) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for(int i = 0; i < 10; i++){
+            LootChestBlock.standAloneLoot(source.getLevel(), player.position(), difficulty, keyType, Helpers.getRgb());
+        }
+
+        return 1;
+    }
 
 }

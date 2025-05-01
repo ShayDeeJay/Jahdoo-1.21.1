@@ -55,8 +55,13 @@ public class CasterItem extends Item implements JahdooItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> toolTip, TooltipFlag flag) {
         appendItemToolTips(stack, context, toolTip, false);
+        if(isItemBroken(stack)){
+            brokenGearMessage(toolTip, stack);
+            return;
+        }
         toolTip.addAll(CasterItemHelper.getItemModifiers(stack, context.level()));
-        bonusModifierTooltip(stack, toolTip, context, false);
+        bonusModifierTooltip(stack, toolTip, context, true);
+        runeSpacer(stack, toolTip);
     }
 
     public static Properties wandProperties(){
@@ -108,16 +113,6 @@ public class CasterItem extends Item implements JahdooItem {
         }
 
         return null;
-    }
-
-    private static void debugKillAll(Level level, Player player) {
-        if(level instanceof ServerLevel serverLevel && player.isCreative() && player.isShiftKeyDown()){
-            for (var entity : serverLevel.getEntities().getAll()) {
-                if(!(entity instanceof Player)){
-                    entity.kill();
-                }
-            }
-        }
     }
 
 }

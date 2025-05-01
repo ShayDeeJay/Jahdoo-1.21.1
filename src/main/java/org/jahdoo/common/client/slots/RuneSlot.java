@@ -1,28 +1,37 @@
 package org.jahdoo.common.client.slots;
 
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.AbstractBEInventory;
+import org.jahdoo.common.block.rune_table.RuneTableEntity;
+import org.jahdoo.common.block.rune_table.RuneTableMenu;
+import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.runes.RuneItem;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
+import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
+import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.RuneReg;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getCostFromRune;
-import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
 
 public class RuneSlot extends SlotItemHandler {
 
     private final int maxStackSize;
     private final AbstractBEInventory entity;
+    private RuneTableMenu menu;
     private boolean isActive = true;
-    private boolean highlight;
 
     public RuneSlot(
         IItemHandler inputItemHandler,
@@ -30,11 +39,13 @@ public class RuneSlot extends SlotItemHandler {
         int xPosition,
         int yPosition,
         AbstractBEInventory entity,
+        RuneTableMenu menu,
         int maxStackSize
     ) {
         super(inputItemHandler, index, xPosition, yPosition);
         this.entity = entity;
         this.maxStackSize = maxStackSize;
+        this.menu = menu;
     }
 
     public void setActive(boolean active) {
@@ -48,16 +59,12 @@ public class RuneSlot extends SlotItemHandler {
 
     @Override
     public boolean isActive() {
-        return this.isActive;
-    }
-
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
+        return menu.hideSlot;
     }
 
     @Override
     public boolean isHighlightable() {
-        return this.highlight;
+        return canPlace(menu.getCarried(), entity);
     }
 
     private void serverBoundPacket(ItemStack getAllSlots) {
@@ -68,7 +75,7 @@ public class RuneSlot extends SlotItemHandler {
     public void setChanged() {
         if(this.entity == null) return;
         var getAllSlots = this.entity.inputItemHandler.getStackInSlot(0);
-        var getData = getAllSlots.get(RUNE_HOLDER);
+        var getData = getAllSlots.get(JAHDOO_GEAR_DATA);
 
         if (getData != null) {
             var index = new AtomicInteger(4);
@@ -77,32 +84,73 @@ public class RuneSlot extends SlotItemHandler {
                 list.add(this.entity.inputItemHandler.getStackInSlot(index.get()));
                 index.set(index.get() + 1);
             }
-            RuneHolder.updateRuneSlots(getAllSlots, list);
-//            serverBoundPacket(getAllSlots);
+            JahdooGearData.updateRuneSlots(getAllSlots, list);
         }
     }
 
+    @Override
+    public void onTake(Player player, ItemStack stack) {
+        var level = player.level();
+        var pos = entity.getBlockPos();
+        Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_INSERT_ITEM, 1F, 1.6F);
+        Helpers.getSoundWithPosition(level, pos, SoundReg.UNLOCK_NOTIFICATION.get(), 1F, 1.4F);
+        super.onTake(player, stack);
+    }
 
 
     @Override
+    public Optional<ItemStack> tryRemove(int count, int decrement, Player player) {
+        if(entity instanceof RuneTableEntity runeTable){
+            var coreCost = removeRuneCost(getItem());
+            var canRemove = runeTable.checkAndChargeCores(coreCost, true);
+            if(canRemove) {
+                return super.tryRemove(count, decrement, player);
+            } else {
+                Helpers.getSoundWithPosition(player.level(), runeTable.getBlockPos(), SoundReg.REJECT.get(), 0.4F, 1F);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public static Item removeRuneCost(ItemStack stack) {
+        var runeData = RuneHelpers.getRuneData(stack);
+        var runeReg = RuneReg.getRuneFromId(runeData.name());
+        var rarity = runeReg.runeRarity().getId();
+        return SharedUI.getCore().get(Math.min(rarity/2, 2));
+    }
+
+    @Override
+    public ItemStack safeTake(int count, int decrement, Player player) {
+        return super.safeTake(count, decrement, player);
+    }
+
+    @Override
     public boolean mayPlace(ItemStack itemStack) {
-        if(!(itemStack.getItem() instanceof RuneItem && isActive && this.getItem().isEmpty())) return false;
+        var getEntity = entity;
+        var level = getEntity.getLevel();
+        var pos = getEntity.getBlockPos();
+        if (level == null || level.isClientSide) return false;
 
-        var wandManager = entity;
+        if (itemStack.getItem() instanceof RuneItem && isActive && getItem().isEmpty()) {
+            if (canPlace(itemStack, getEntity)) {
+                var cost = getCostFromRune(itemStack);
+                var potential = JahdooGearData.getItemPotential(getEntity.inputItemHandler.getStackInSlot(0));
+                Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_INSERT_ITEM, 0.4F, 1.2F);
+                Helpers.getSoundWithPosition(level, pos, SoundReg.UNLOCK_NOTIFICATION.get(), 1F, 0.6F);
+                JahdooGearData.updateRefinementPotential(getEntity.inputItemHandler.getStackInSlot(0), potential - cost);
+                return true;
+            }
+        }
+
+        if(getItem().isEmpty()) Helpers.getSoundWithPosition(level, pos, SoundReg.REJECT.get(), 0.4F, 1F);
+        return false;
+    }
+
+    private static boolean canPlace(ItemStack itemStack, AbstractBEInventory getEntity) {
+        if(!(itemStack.getItem() instanceof RuneItem) || getEntity == null) return false;
+
         var cost = getCostFromRune(itemStack);
-
-        if(wandManager == null) return false;
-        var potential = RuneHolder.getItemPotential(wandManager.inputItemHandler.getStackInSlot(0));
-
-        if(cost > potential) return false;
-        var level = wandManager.getLevel();
-        var pos = wandManager.getBlockPos();
-
-        if(level == null || !this.getItem().isEmpty() || level.isClientSide) return false;
-
-        Helpers.getSoundWithPosition(level, pos, SoundEvents.VAULT_INSERT_ITEM, 0.4F, 1.2F);
-        Helpers.getSoundWithPosition(level, pos, SoundEvents.APPLY_EFFECT_TRIAL_OMEN, 0.4F, 2F);
-        RuneHolder.updateRefinementPotential(wandManager.inputItemHandler.getStackInSlot(0), potential - cost);
-        return true;
+        var potential = JahdooGearData.getItemPotential(getEntity.inputItemHandler.getStackInSlot(0));
+        return potential >= cost;
     }
 }

@@ -26,8 +26,6 @@ public class BattlemageGauntlet extends Item implements ICurioItem, JahdooItem {
         return true;
     }
 
-
-
     @Override
     public List<Component> getSlotsTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
         return ICurioItem.super.getSlotsTooltip(tooltips, context, stack);
@@ -41,8 +39,9 @@ public class BattlemageGauntlet extends Item implements ICurioItem, JahdooItem {
     @Override
     public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
         this.appendItemToolTips(stack, context, tooltips, false);
-        tooltips.add(Component.empty());
-        tooltips.add(Helpers.withStyleComponent("Offhand Wands", ColourStore.SUB_HEADER_COLOUR));
+//        tooltips.add(Helpers.withStyleComponent("Offhand Wands", ColourStore.SUB_HEADER_COLOUR));
+        bonusModifierTooltip(stack, tooltips, context,  false);
+        runeSpacer(stack, tooltips);
         return tooltips;
     }
 

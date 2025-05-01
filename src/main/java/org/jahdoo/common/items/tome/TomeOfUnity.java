@@ -51,15 +51,17 @@ public class TomeOfUnity extends RelicItem implements JahdooItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltips, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltips, tooltipFlag);
         this.appendItemToolTips(stack, context, tooltips, false);
+
 
         var list = stack.getAttributeModifiers().modifiers().stream().toList();
         if(!list.isEmpty()){
-            for (var entry : list) {
-                tooltips.add(RuneHelpers.standAloneAttributes(entry));
-            }
+            tooltips.add(Component.literal(" "));
+            tooltips.add(Helpers.withStyleComponent("Implicit Modifiers", ColourStore.SUB_HEADER_COLOUR));
+            for (var entry : list) tooltips.add(RuneHelpers.standAloneAttributes(entry));
         }
+
+        runeSpacer(stack, tooltips);
     }
 
 }

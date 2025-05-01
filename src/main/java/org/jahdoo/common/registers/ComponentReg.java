@@ -9,9 +9,10 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.magnet.MagnetData;
+import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
-import org.jahdoo.common.items.runes.rune_data.RuneHolder;
 
 import java.util.function.UnaryOperator;
 
@@ -82,11 +83,11 @@ public class ComponentReg {
                 .cacheEncoding()
         );
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<RuneHolder>> RUNE_HOLDER =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<JahdooGearData>> JAHDOO_GEAR_DATA =
         register("rune_holder", builder ->
             builder
-                .persistent(RuneHolder.CODEC)
-                .networkSynchronized(RuneHolder.STREAM_CODEC)
+                .persistent(JahdooGearData.CODEC)
+                .networkSynchronized(JahdooGearData.STREAM_CODEC)
                 .cacheEncoding()
         );
 
@@ -98,13 +99,14 @@ public class ComponentReg {
                 .cacheEncoding()
         );
 
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<AbilityData>> ABILITY_HOLDER =
-//        register("ability_holder", builder ->
-//            builder
-//                .persistent(AbilityData.CODEC)
-//                .networkSynchronized(AbilityData.STREAM_CODEC)
-//                .cacheEncoding()
-//        );
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CoreData>> CORE_DATA =
+        register("core_data", builder ->
+            builder
+                .persistent(CoreData.CODEC)
+                .networkSynchronized(CoreData.STREAM_CODEC)
+                .cacheEncoding()
+        );
+
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name, UnaryOperator<DataComponentType.Builder<T>> builderUnaryOperator) {
         return COMPONENTS.register(name, () -> builderUnaryOperator.apply(DataComponentType.builder()).build());

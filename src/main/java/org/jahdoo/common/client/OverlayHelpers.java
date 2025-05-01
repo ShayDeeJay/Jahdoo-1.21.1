@@ -7,7 +7,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -109,8 +108,6 @@ public class OverlayHelpers {
             var prefix = withStyleComponentTrans(text, SUB_HEADER_COLOUR);
             var value = syncableAttribute.getValue();
             var readableValues = roundNonWholeString(doubleFormattedDouble(value));
-
-            var x = RuneHelpers.standAloneAttributes(syncableAttribute.getAttribute(), roundNonWholeDouble(doubleFormattedDouble(value)));
 
             var suffix = withStyleComponent(" " + readableValues, value > 0 ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED);
             var string = prefix.copy().append(Component.literal(":")).append(suffix);

@@ -7,30 +7,34 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.*;
-import org.jahdoo.common.items.armor.knight_king.KnightKingArmor;
 import org.jahdoo.common.items.armor.battle_mage.BattleMageArmor;
+import org.jahdoo.common.items.armor.knight_king.KnightKingArmor;
 import org.jahdoo.common.items.armor.mage.MageArmor;
 import org.jahdoo.common.items.armor.wizard.WizardArmor;
 import org.jahdoo.common.items.block_items.ChallengeAltarBlockItem;
 import org.jahdoo.common.items.block_items.DisassemblerBlockItem;
 import org.jahdoo.common.items.block_items.LootChestBlockItem;
 import org.jahdoo.common.items.block_items.ModularChaosCubeItem;
-import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
-import org.jahdoo.common.items.magnet.Magnet;
-import org.jahdoo.common.items.pendent.Pendent;
-import org.jahdoo.common.items.runes.RuneItem;
-import org.jahdoo.common.items.shields.JahdooShieldItem;
-import org.jahdoo.common.items.tome.TomeOfUnity;
 import org.jahdoo.common.items.caster_item.elemental_wand.FrostWand;
 import org.jahdoo.common.items.caster_item.elemental_wand.InfernoWand;
 import org.jahdoo.common.items.caster_item.elemental_wand.MysticWand;
 import org.jahdoo.common.items.caster_item.elemental_wand.VitalityWand;
+import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
+import org.jahdoo.common.items.magnet.Magnet;
+import org.jahdoo.common.items.runes.RuneItem;
+import org.jahdoo.common.items.shields.JahdooShieldItem;
+import org.jahdoo.common.items.tome.TomeOfUnity;
+import org.jahdoo.common.items.weapon.AncientGlaive;
+import org.jahdoo.common.items.weapon.ElementalSword;
+import org.jahdoo.common.items.weapon.IngmasSword;
 
 import java.util.function.Supplier;
 
 import static net.minecraft.world.item.ArmorItem.Type.*;
 import static org.jahdoo.common.registers.BlockReg.*;
+import static org.jahdoo.common.registers.ComponentReg.*;
 
 public class ItemReg {
 
@@ -44,8 +48,6 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> NEXITE_POWDER =
         basicItem("nexite_powder");
 
-    public static final DeferredHolder<Item, Item> AUGMENT_CORE =
-        basicItem("augment_core");
 
     public static final DeferredHolder<Item, Item> CHAMPIONS_CROWN =
         basicItem("champions_crown");
@@ -72,11 +74,14 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> EXIT_KEY =
         complexItem("exit_key", KeyItem::new);
 
+    public static final DeferredHolder<Item, Item> AUGMENT_CORE =
+        complexItem("augment_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(50, 0))));
+
     public static final DeferredHolder<Item, Item> ADVANCED_AUGMENT_CORE =
-        complexItem("advanced_augment_core", CoreItem::new);
+        complexItem("advanced_augment_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(150, 0))));
 
     public static final DeferredHolder<Item, Item> AUGMENT_HYPER_CORE =
-        complexItem("augment_hyper_core", CoreItem::new);
+        complexItem("augment_hyper_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(500, 0))));
 
     public static final DeferredHolder<Item, Item> TOME_OF_UNITY =
         complexItem("tome_of_unity", TomeOfUnity::new);
@@ -95,9 +100,6 @@ public class ItemReg {
 
     public static final DeferredHolder<Item, Item> ANCIENT_GLAIVE =
         complexItem("ancient_glaive", AncientGlaive::new);
-
-    public static final DeferredHolder<Item, Item> PENDENT =
-        complexItem("pendent", Pendent::new);
 
     public static final DeferredHolder<Item, Item> EXPERIENCE_ORB =
         complexItem("xp_orb", ExperienceOrb::new);

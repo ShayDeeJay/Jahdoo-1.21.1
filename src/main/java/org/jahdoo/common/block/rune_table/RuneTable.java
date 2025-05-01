@@ -30,30 +30,30 @@ import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.common.block.BlockInteractionHandler.removeItemsFromSlotToHand;
 import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
-import static org.jahdoo.common.registers.ComponentReg.RUNE_HOLDER;
+import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
 
 public class RuneTable extends BaseEntityBlock {
 
     public static final VoxelShape SHAPE_COMBINED = Shapes.or(
-            Block.box(0, 9, 0, 16, 12, 16),
-            Block.box(10, 0, 1, 15, 2, 6),
-            Block.box(11, 2, 2, 14, 9, 5),
-            Block.box(1, 0, 1, 6, 2, 6),
-            Block.box(2, 2, 2, 5, 9, 5),
-            Block.box(1, 0, 10, 6, 2, 15),
-            Block.box(2, 2, 11, 5, 9, 14),
-            Block.box(10, 0, 10, 15, 2, 15),
-            Block.box(11, 2, 11, 14, 9, 14),
-            Block.box(4.5, 11, 4.5, 11.5, 13, 11.5),
-            Block.box(11.25, 4, 5, 13.75, 6.5, 11),
-            Block.box(5, 4, 11.25, 11, 6.5, 13.75),
-            Block.box(5, 4, 2.25, 11, 6.5, 4.75),
-            Block.box(2.25, 4, 5, 4.75, 6.5, 11),
-            Block.box(5.5, 7, 0, 10.5, 9, 0),
-            Block.box(5.5, 7, 0, 10.5, 9, 0),
-            Block.box(5.5, 7, 16, 10.5, 9, 16),
-            Block.box(0, 7, 5.5, 0, 9, 10.5),
-            Block.box(16, 7, 5.5, 16, 9, 10.5)
+        Block.box(0, 7, 0, 16, 10, 16),
+        Block.box(11, 2, 2, 14, 7, 5),
+        Block.box(4.5, 8.5, 4.5, 11.5, 10.5, 11.5),
+        Block.box(11.25, 3, 5, 13.75, 5.5, 11),
+        Block.box(5, 3, 11.25, 11, 5.5, 13.75),
+        Block.box(5, 3, 2.25, 11, 5.5, 4.75),
+        Block.box(2.25, 3, 5, 4.75, 5.5, 11),
+        Block.box(5.5, 5, 0, 10.5, 7, 0),
+        Block.box(5.5, 5, 0, 10.5, 7, 0),
+        Block.box(5.5, 5, 16, 10.5, 7, 16),
+        Block.box(0, 5, 5.5, 0, 7, 10.5),
+        Block.box(16, 5, 5.5, 16, 7, 10.5),
+        Block.box(11.5, 0, 2.5, 13.5, 2, 4.5),
+        Block.box(2, 2, 2, 5, 7, 5),
+        Block.box(2.5, 0, 2.5, 4.5, 2, 4.5),
+        Block.box(11, 2, 11, 14, 7, 14),
+        Block.box(11.5, 0, 11.5, 13.5, 2, 13.5),
+        Block.box(2.5, 0, 11.5, 4.5, 2, 13.5),
+        Block.box(2, 2, 11, 5, 7, 14)
     );
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
@@ -122,7 +122,7 @@ public class RuneTable extends BaseEntityBlock {
     ) {
         if (level.getBlockEntity(pos) instanceof RuneTableEntity runeTable) {
             var handler = runeTable.inputItemHandler;
-            for(int i = 0; i < handler.getSlots(); i++){
+            for(int i = 0; i < 4; i++){
                 var inputInventory = new SimpleContainer(1);
                 inputInventory.addItem(handler.getStackInSlot(i));
                 Containers.dropContents(level, pos, inputInventory);
@@ -150,7 +150,7 @@ public class RuneTable extends BaseEntityBlock {
         if(!hasItem && player.isShiftKeyDown()){
             removeItemsFromSlotToHand(runeTable.inputItemHandler, 0, player, hand);
             return SUCCESS;
-        } else if (stack.has(RUNE_HOLDER) && hasItem) {
+        } else if (stack.has(JAHDOO_GEAR_DATA) && hasItem) {
             swapItemsWithHand(runeTable.inputItemHandler, 0, player, hand);
             return SUCCESS;
         } else {

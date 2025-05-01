@@ -130,7 +130,7 @@ public class LootChestBlock extends BaseEntityBlock {
             if(cEntity.isCoinChest()){
                 return coinChestGetter(pos, serverLevel, cEntity, player);
             } else {
-                var success = lootChestGetter(stack, serverLevel, pos, cEntity, data.getClearedRooms(), player);
+                var success = lootChestGetter(stack, serverLevel, pos, cEntity, data.getDifficulty(), player);
                 if (success != null) return success;
             }
 
@@ -149,7 +149,7 @@ public class LootChestBlock extends BaseEntityBlock {
         var coinItems = getCoinItems(lootChestEntity.getData(INSTANCE_DATA));
         if(!coinItems.isEmpty()){
             lootChestEntity.setOpen(true);
-            lootsplosian(pos.getCenter(), serverLevel, 10, ColourStore.ABSORPTION_YELLOW, coinItems, false, 20, 0);
+            lootsplosian(pos.getCenter(), serverLevel, ColourStore.ABSORPTION_YELLOW, coinItems, false, 20, 0);
             openingSoundEffect(pos, serverLevel, false);
         } else {
             player.displayClientMessage(withStyleComponent("Chest is empty!", ColourStore.NEGATIVE_RED), true);
@@ -162,7 +162,7 @@ public class LootChestBlock extends BaseEntityBlock {
         ServerLevel serverLevel,
         BlockPos pos,
         LootChestEntity lootChestEntity,
-        int clearedRooms,
+        String difficulty,
         Player player
     ) {
         var keyData = stack.get(CUSTOM_MODEL_DATA);
@@ -176,11 +176,7 @@ public class LootChestBlock extends BaseEntityBlock {
                 lootChestEntity.setOpen(true);
                 var getId = new CustomModelData(lootChestEntity.getRarity);
                 var colour = KeyItem.getJahdooRarity(getId).getColour();
-                var setLootValue = clearedRooms + (value * value);
-                var lootMultiplier = value + 1;
-                var rewards = getCompletionLoot(serverLevel, pos.getCenter(), setLootValue, value);
-
-                lootsplosian(pos.getCenter(), serverLevel, lootMultiplier, colour, rewards, true, 30, value);
+                standAloneLoot(serverLevel, pos.getCenter(), difficulty, value, colour);
                 openingSoundEffect(pos, serverLevel, true);
                 stack.shrink(1);
                 return SUCCESS;
@@ -190,10 +186,14 @@ public class LootChestBlock extends BaseEntityBlock {
         return null;
     }
 
+    public static void standAloneLoot(ServerLevel serverLevel, Vec3 pos, String difficulty, int keyValue, int colour) {
+        var rewards = getCompletionLoot(serverLevel, pos, difficulty, keyValue);
+        lootsplosian(pos, serverLevel, colour, rewards, true, 30, keyValue);
+    }
+
     public static void lootsplosian(
         Vec3 pos,
         ServerLevel serverLevel,
-        int level,
         int colour,
         List<ItemStack> rewards,
         boolean shouldDropExperience,
@@ -201,39 +201,43 @@ public class LootChestBlock extends BaseEntityBlock {
         int chestRarity
     ) {
         for (var reward : rewards) {
-            var itemEntity = new ItemEntity(serverLevel, pos.x(), pos.y() + 0.2, pos.z(), reward);
-            var angle = Random.nextDouble() * 2 * Math.PI;
-            var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
-            var offsetX = Math.cos(angle) * horizontalOffset;
-            var offsetZ = Math.sin(angle) * horizontalOffset;
-            var velocity = new Vec3(offsetX * (Math.random() - 0.5), 0.35, offsetZ * (Math.random() - 0.5));
-            var itemStackMain= itemEntity.getItem();
-            var rarity = JahdooRarity.getRarity();
-
-            itemEntity.setDeltaMovement(velocity);
-            itemEntity.setPickUpDelay(pickupDelay);
-
-            if(shouldDropExperience && Random.nextInt(10) == 0) {
-                var exp = ItemReg.EXPERIENCE_ORB.get();
-                var itemStack = new ItemStack(exp);
-
-                switch (JahdooRarity.getRarity()) {
-                    case COMMON, RARE -> itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(1));
-                    case EPIC -> itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(2));
-                    case LEGENDARY, ETERNAL -> { /*No Data*/ }
-                }
-
-                var itemEntity1 = new ItemEntity(serverLevel, pos.x(), pos.y() + 0.2, pos.z(), itemStack);
-                itemEntity1.setDeltaMovement(velocity);
-                itemEntity1.setPickUpDelay(pickupDelay);
-                serverLevel.addFreshEntity(itemEntity1);
-            }
-
-            particleBurst(serverLevel, pos, colour, level);
-            attachItemData(serverLevel, rarity, itemStackMain, false, null, chestRarity);
-            serverLevel.addFreshEntity(itemEntity);
+            itemBehaviour(pos, serverLevel, colour, shouldDropExperience, pickupDelay, chestRarity, reward);
         }
     }
+
+    public static void itemBehaviour(Vec3 pos, ServerLevel serverLevel, int colour, boolean shouldDropExperience, int pickupDelay, int chestRarity, ItemStack reward) {
+        var itemEntity = new ItemEntity(serverLevel, pos.x(), pos.y() + 0.2, pos.z(), reward);
+        var angle = Random.nextDouble() * 2 * Math.PI;
+        var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
+        var offsetX = Math.cos(angle) * horizontalOffset;
+        var offsetZ = Math.sin(angle) * horizontalOffset;
+        var velocity = new Vec3(offsetX * (Math.random() - 0.5), 0.35, offsetZ * (Math.random() - 0.5));
+        var itemStackMain= itemEntity.getItem();
+
+        itemEntity.setDeltaMovement(velocity);
+        itemEntity.setPickUpDelay(pickupDelay);
+
+        if(shouldDropExperience && Random.nextInt(10) == 0) {
+            var exp = ItemReg.EXPERIENCE_ORB.get();
+            var itemStack = new ItemStack(exp);
+
+            switch (JahdooRarity.getRarity()) {
+                case COMMON, RARE -> itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(1));
+                case EPIC -> itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(2));
+                case LEGENDARY, ETERNAL -> { /*No Data*/ }
+            }
+
+            var itemEntity1 = new ItemEntity(serverLevel, pos.x(), pos.y() + 0.2, pos.z(), itemStack);
+            itemEntity1.setDeltaMovement(velocity);
+            itemEntity1.setPickUpDelay(pickupDelay);
+            serverLevel.addFreshEntity(itemEntity1);
+        }
+
+        particleBurst(serverLevel, pos, colour, chestRarity);
+        attachItemData(serverLevel, itemStackMain, null, chestRarity);
+        serverLevel.addFreshEntity(itemEntity);
+    }
+
 
     private static void openingSoundEffect(BlockPos pos, ServerLevel serverLevel, boolean isLootChest) {
         getSoundWithPosition(serverLevel, pos, VAULT_EJECT_ITEM, 2F, 0.8F);

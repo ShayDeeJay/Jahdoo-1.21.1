@@ -20,7 +20,7 @@ import org.jahdoo.common.registers.ComponentReg;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
+import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.*;
 
@@ -61,7 +61,6 @@ public class RuneItem extends Item implements JahdooItem {
         if(!player.level().isClientSide){
             var newStack = stack.copyWithCount(1);
             stack.shrink(1);
-//            generateRandomTypAttribute(newStack, tierRarity, runeRarity);
             Helpers.throwOrAddItem(player, newStack);
         }
     }
@@ -73,8 +72,8 @@ public class RuneItem extends Item implements JahdooItem {
         var hasTier = RuneHelpers.getTier(stack);
         var componentRune = JahdooRarity.attachRuneTierTooltip(stack);
         var carriedRuneCost = String.valueOf(RuneHelpers.getCostFromRune(stack));
-        var carriedCostComponent = withStyleComponent(carriedRuneCost, -1);
-        var potentialCostPreFix = withStyleComponent("Potential Cost: ", HEADER_COLOUR);
+        var carriedCostComponent = withStyleComponent(carriedRuneCost, DIAMOND_BOX);
+        var potentialCostPreFix = withStyleComponent("Potential Cost: ", SUB_HEADER_COLOUR);
 
         if (!component.getString().isEmpty()) {
             tooltipComponents.add(potentialCostPreFix.copy().append(carriedCostComponent));
@@ -82,7 +81,6 @@ public class RuneItem extends Item implements JahdooItem {
             tooltipComponents.add(Component.empty());
             tooltipComponents.add(component);
         }
-
 
         if(!description.getString().isEmpty() && !AbilityComponentHelper.shiftForDetails(tooltipComponents, false)) {
             tooltipComponents.add(Helpers.withStyleComponent(description.getString(), ColourStore.HEADER_COLOUR));
