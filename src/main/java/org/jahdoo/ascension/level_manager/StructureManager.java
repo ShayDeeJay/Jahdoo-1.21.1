@@ -27,8 +27,6 @@ import static net.minecraft.core.BlockPos.withinManhattan;
 import static org.jahdoo.ascension.level_manager.BlockSetupManager.setBlockGenerator;
 import static org.jahdoo.ascension.level_manager.BlockSetupManager.setLocks;
 import static org.jahdoo.ascension.level_manager.InstanceDifficulty.*;
-import static org.jahdoo.ascension.level_manager.InstanceDifficulty.NOVICE;
-import static org.jahdoo.ascension.level_manager.InstanceDifficulty.EXPERT;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.PositionFinders.innerRadiusRandom;
@@ -194,16 +192,27 @@ public class StructureManager {
             };
 
             setBlockGenerator(serverLevel, findBlock, direction, roomId);
+            var alreadyPlaced = false;
 
             for (var blockPos : findBlock) {
-                if (level.getBlockState(blockPos).is(Blocks.DIAMOND_BLOCK)) {
+                var state1 = level.getBlockState(blockPos);
+                if (state1.is(Blocks.DIAMOND_BLOCK)) {
                     level.setBlockAndUpdate(blockPos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
                     if(level.getBlockEntity(blockPos) instanceof AltarBlockEntity e){
                         e.roomId = roomId;
                         e.direction = direction;
                     }
                 }
-                if(level.getBlockState(blockPos).is(Blocks.OBSERVER)){
+
+                if (state1.is(Blocks.PINK_CONCRETE)) {
+                    var spawnChance = Maths.percentageChance(20) && !alreadyPlaced;
+                    var station = BlockReg.POWER_UP_STATION.get().defaultBlockState();
+                    var air = Blocks.AIR.defaultBlockState();
+                    if(spawnChance) alreadyPlaced = true;
+                    level.setBlockAndUpdate(blockPos, spawnChance ? station : air);
+                }
+
+                if(state1.is(Blocks.OBSERVER)){
                     setLocks(serverLevel, blockPos, true);
                 }
             }

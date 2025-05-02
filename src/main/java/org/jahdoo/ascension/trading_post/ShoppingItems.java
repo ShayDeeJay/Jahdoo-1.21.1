@@ -70,7 +70,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
 
         if(isUnique){
             addAttribute(magnetStack, BODY, null, null);
-            preInsertRunes(itemStack);
+            preInsertRunes(magnetStack);
         }
 
         if(id > 0){
@@ -211,7 +211,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var isUnique = rarity == UNIQUE;
         var rarityId = rarity.getId();
 
-        attachSharedProperties(itemStack, rarityId, rarity, -1, isUnique ? 50 : 0, isUnique ? 50 : 0);
+        attachSharedProperties(itemStack, rarityId, rarity, isUnique ? Random.nextInt(4,8) : -1, isUnique ? 50 : 0, isUnique ? 50 : 0);
 
         if(isUnique) {
             addAttribute(itemStack, MAINHAND, null, null);

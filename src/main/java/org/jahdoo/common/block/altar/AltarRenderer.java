@@ -6,13 +6,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
-import static net.minecraft.client.renderer.blockentity.BeaconRenderer.*;
-import static org.jahdoo.ascension.utils.ColourStore.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static net.minecraft.client.renderer.blockentity.BeaconRenderer.renderBeaconBeam;
+import static org.jahdoo.ascension.utils.ColourStore.PERK_GREEN;
+import static org.jahdoo.ascension.utils.Helpers.getColourLight;
+import static org.jahdoo.ascension.utils.Helpers.res;
 
 public class AltarRenderer extends GeoBlockRenderer<AltarBlockEntity>{
 
@@ -22,14 +24,14 @@ public class AltarRenderer extends GeoBlockRenderer<AltarBlockEntity>{
         super(new AltarModel());
     }
 
-    private static void activeBeam(
+    public static void activeBeam(
         PoseStack poseStack,
-        AltarBlockEntity entity,
+        Level level,
         MultiBufferSource source,
         float partialTick,
         long i
     ) {
-        var rad =  Math.min(0.1f, (float) entity.privateTicks / 300);
+        var rad =  Math.min(0.1f, (float) level.getGameTime() / 300);
         var height = 500;
         var colourLight = getColourLight(PERK_GREEN, 1.2);
 
@@ -67,7 +69,7 @@ public class AltarRenderer extends GeoBlockRenderer<AltarBlockEntity>{
 
         poseStack.pushPose();
         poseStack.translate(-0.5, 0, -0.5);
-        if(entity.started) activeBeam(poseStack, entity, source, partialTick, i);
+        if(entity.started) activeBeam(poseStack, level, source, partialTick, i);
         poseStack.popPose();
 
         super.actuallyRender(poseStack, entity, model, renderType, source, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);

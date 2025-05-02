@@ -2,6 +2,7 @@ package org.jahdoo.common.datagen;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jahdoo.JahdooMod;
@@ -38,6 +39,14 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(SHOPPING_TABLE.value())
             .add(LOOT_CHEST.value())
             .add(LOCK.value());
+
+        this.tag(POWER_UP_SUPPORT)
+            .add(GRASS_BLOCK)
+            .add(Blocks.STONE_BRICKS)
+            .add(MOSSY_STONE_BRICKS)
+            .add(CRIMSON_NYLIUM)
+            .add(SAND)
+            .add(SANDSTONE);
 
         this.tag(RARE_BLOCKS)
             .add(BEACON)

@@ -8,6 +8,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.networking.client2server.AttributeC2SP;
@@ -117,7 +118,8 @@ public class BoonSelection {
         var string = stream(split.split(" ")).toList();
         var getValue = roundNonWholeString(doubleFormattedDouble(value));
         var formattedString = (value < 0 ? "" : "+") + getValue + (isPercentage ? "% " : " ");
-        var colourBy = RuneReg.getRuneFromAttribute(attribute).runeColour();
+        var runeFromAttribute = RuneReg.getRuneFromAttribute(attribute);
+        var colourBy = runeFromAttribute == null ? ColourStore.COOLDOWN_GREEN : runeFromAttribute.runeColour();
         var componentList = new ArrayList<Component>();
 
         componentList.add(withStyleComponent(formattedString, value < 0 ? NEGATIVE_RED : UNIQUE_A));

@@ -16,7 +16,6 @@ import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.List;
 
-import static org.jahdoo.ascension.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.ascension.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility.CASTING_TIME;
 import static org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility.abilityId;
@@ -48,7 +47,6 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
         var getTeleportSound = SoundEvents.CHORUS_FRUIT_TELEPORT;
         var getSuccessSound = SoundEvents.ILLUSIONER_CAST_SPELL;
         var getManaCost = CasterData.getSpecificValue(abilityHolder, MANA_COST);
-        var getCooldownCost = CasterData.getSpecificValue(abilityHolder, COOLDOWN);
         var getLevelDimension = serverPlayer.getServer().getLevel(dimension);
 
         if(getLevelDimension != null){
@@ -56,8 +54,8 @@ public class DimensionalRecall extends AbstractHoldUseAttachment {
                 this.startedUsing = false;
                 serverPlayer.stopUsingItem();
                 serverPlayer.teleportTo(getLevelDimension, pos.getX(), pos.getY(), pos.getZ(), serverPlayer.yya, serverPlayer.rotA);
-                CastHelper.chargeMana(abilityName, getManaCost, serverPlayer);
-                CastHelper.chargeCooldown(abilityName, getCooldownCost, serverPlayer);
+                CastHelper.chargeMana(abilityName, serverPlayer);
+                CastHelper.chargeCooldown(abilityName, serverPlayer);
                 getSoundWithPosition(serverPlayer.level(), serverPlayer.blockPosition(), getTeleportSound, 0.8f);
                 getSoundWithPosition(serverPlayer.level(), serverPlayer.blockPosition(), getSuccessSound, 1, 1.2f);
             }

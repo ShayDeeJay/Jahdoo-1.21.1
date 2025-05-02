@@ -102,7 +102,7 @@ public abstract class Ability {
     public static void fireProjectileDirection(Projectile projectile, LivingEntity player, float velocity, Vec3 direction){
         if(player != null){
             if(player.level() instanceof ServerLevel serverLevel){
-                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, hexedEffect(player));
+                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, hexedEffect(player) + 10);
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
             }
@@ -139,13 +139,13 @@ public abstract class Ability {
                 projectile.shoot(direction.x(), direction.y(), direction.z(), 1.2f, hexedEffect(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
-                Helpers.getSoundWithPositionV(projectile.level(), player.position(), SoundEvents.BREEZE_CHARGE , 0.05f,1.4f);
+                Helpers.getSoundWithPositionV(projectile.level(), player.position(), SoundEvents.BREEZE_CHARGE , 0.05f, 1.4f);
             }
         }
     }
 
     public static void fireMultiShotProjectile(int numberOfProjectile, float velocities, Player player, double adjustSpread, Supplier<Projectile> projectileSupplier){
-        var totalWidth = (numberOfProjectile - 1) * adjustSpread; // Adjust the total width as needed
+        var totalWidth = (numberOfProjectile - 1) * adjustSpread;
         var startOffset = -totalWidth / 2.0;
 
         for (int i = 0; i < numberOfProjectile; i++) {

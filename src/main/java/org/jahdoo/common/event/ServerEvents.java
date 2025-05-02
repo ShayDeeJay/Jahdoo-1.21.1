@@ -1,7 +1,9 @@
 package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.component.CustomModelData;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -99,6 +101,9 @@ public class ServerEvents {
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
         var item = rightClickItem.getItemStack();
+
+        item.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(2));
+
         removeShieldUse(rightClickItem);
     }
 

@@ -20,7 +20,6 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.jahdoo.ascension.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility.CAST_DELAY;
 import static org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility.MAX_ABSORPTION;
 import static org.jahdoo.ascension.utils.Helpers.Random;
@@ -52,8 +51,7 @@ public class VitalRejuvenation extends AbstractHoldUseAttachment {
     }
 
     private void successfulCast(Player player, AbilityHolder wandAbilityHolder) {
-        var mana = CasterData.getSpecificValue(wandAbilityHolder, MANA_COST);
-        CastHelper.chargeMana(name, mana, player);
+        CastHelper.chargeMana(name, player);
         applyHeal(player, wandAbilityHolder);
         successfulCastAnimation(player);
         counter = 0;

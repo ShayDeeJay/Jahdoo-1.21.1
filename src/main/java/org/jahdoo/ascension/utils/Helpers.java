@@ -537,12 +537,14 @@ public class Helpers {
         var getAbility = AbilityReg.getFirstSpellByTypeId(abilityName.getSelectedAbility());
         if(getAbility.isEmpty()) return initialValue;
 
+
         var reCalculatedDamage = initialValue;
 
         for (var attributeHolder : attribute) {
             var attributes = player.getAttributes();
             if(attributes.hasAttribute(attributeHolder)) {
-                getAttribute += (float) attributes.getValue(attributeHolder);
+                var value = (float) attributes.getValue(attributeHolder);
+                getAttribute += value;
             }
         }
 

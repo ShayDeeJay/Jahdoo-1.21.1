@@ -24,10 +24,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.block.BlockInteractionHandler;
+import org.jahdoo.common.components.CoreData;
+import org.jahdoo.common.items.CoreItem;
+import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
+import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.registers.AttachmentReg.BOOL;
 import static org.jahdoo.common.registers.BlockEntityReg.POWER_UP_BE;
 import static org.jahdoo.common.registers.ItemReg.AUGMENT_CORE;
@@ -35,17 +38,9 @@ import static org.jahdoo.common.registers.ItemReg.AUGMENT_CORE;
 public class PowerUpStation extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
     public static final VoxelShape SHAPE_BASE = Shapes.or(
-        Block.box(4.5, -0.03254, 4.5, 11.5, 9.84246, 11.5),
-        Block.box(7, 8.025, 8.5, 9, 11.025, 10.5),
-        Block.box(7, 8.025, 8.5, 9, 11.025, 10.5),
-        Block.box(7, 8.025, 5.5, 9, 11.025, 7.5),
-        Block.box(8.5, 8.025, 7, 10.5, 11.025, 9),
-        Block.box(5.5, 8.025, 7, 7.5, 11.025, 9),
-        Block.box(6, 8.025, 6, 10, 12.025, 10),
-        Block.box(4, 3.425, 7, 6, 6.425, 9),
-        Block.box(10, 3.425, 7, 12, 6.425, 9),
-        Block.box(7, 3.425, 4, 9, 6.425, 6),
-        Block.box(7, 3.4, 10, 9, 6.4, 12)
+        Block.box(5.25, 0, 5.25, 10.75, 2, 10.75),
+        Block.box(6.75, 1.5, 6.75, 9.25, 5, 9.25),
+        Block.box(4.5, 3.7674599999999985, 4.5, 11.5, 13.642460000000003, 11.5)
     );
     public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -140,7 +135,17 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
         var entity = level.getBlockEntity(pos);
 
         if (entity instanceof PowerUpStationEntity powerUpStation) {
-            BlockInteractionHandler.swapItemsWithHand(powerUpStation.inputItemHandler, 0, player, hand);
+            var handler = powerUpStation.inputItemHandler;
+            if(stack.getItem() instanceof CoreItem && !CoreData.isFull(stack) || stack.isEmpty()){
+                swapItemsWithHand(handler, 0, player, hand);
+                if(!stack.isEmpty()){
+                    Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.LEVEL_UP.get(), 1, 0.5F);
+                } else {
+                    Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.IMPACT.get(), 1, 0.85F);
+                }
+            } else {
+                Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.REJECT.get(), 1, 1);
+            }
         }
 
         return ItemInteractionResult.SUCCESS;

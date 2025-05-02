@@ -160,7 +160,7 @@ public class CasterItemHelper {
 ;
         if(!attributes.isEmpty()){
             appendComponents.add(Component.literal(" "));
-            appendComponents.add(withStyleComponentTrans(PREFIX + "get_modifiers", colourPre, type));
+            appendComponents.add(withStyleComponentTrans("Implicit Modifiers", colourPre, type));
             appendComponents.addAll(standAloneAttributes(itemStack, abstractElement));
         }
     }
@@ -258,7 +258,7 @@ public class CasterItemHelper {
             for (ItemAttributeModifiers.Entry entry : newAttributes) {
                 if(entry.modifier().id().getPath().contains("wand")){
                     var component = RuneHelpers.standAloneAttributes(entry);
-                    var x = withStyleComponent(component.getString().replace(element.name(), "").replaceFirst(" ", ""), element.textColourA());
+                    var x = withStyleComponent(component.getString(), element.textColourA());
 
                     appendComponents.add(x);
                 }

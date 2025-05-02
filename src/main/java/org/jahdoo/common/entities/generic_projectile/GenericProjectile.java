@@ -167,26 +167,34 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     protected void onHitBlock(@NotNull BlockHitResult blockHitResult) {
         var pos = blockHitResult.getBlockPos();
 
-        if(level() instanceof ServerLevel){
-            if (this.level().getBlockEntity(pos) instanceof PowerUpStationEntity entity) {
-                var item = entity.inputItemHandler.getStackInSlot(0);
-                CoreData.increment(item);
-
-                entity.updateBlock();
-                getOuterRingOfRadiusRandom(pos.getCenter().subtract(0, 0.5, 0), 0.3, 20, this::particleSetter);
-                Helpers.getSoundWithPositionV(this.level(), pos.getCenter(), SoundReg.VITALITY_ABILITY.get(), 1, 1.8F);
-                Helpers.getSoundWithPositionV(this.level(), pos.getCenter(), SoundReg.LOOTBOX_OPEN.get(), 1, 1.8F);
-                this.discard();
-            }
-        }
-
         if(this.getProjectile != null){
             this.getProjectile.onBlockBlockHit(blockHitResult);
+        } else {
+            if(level() instanceof ServerLevel){
+                if (this.level().getBlockEntity(pos) instanceof PowerUpStationEntity entity) {
+                    var item = entity.inputItemHandler.getStackInSlot(0);
+                    if(item.isEmpty() || !CoreData.isFull(item)){
+                        CoreData.increment(item);
+                        var filled = CoreData.getFilled(item);
+                        var needed = CoreData.getRequired(item);
+
+                        var percent = (float) filled / needed;
+                        percent = (float) Math.min(1.0, Math.max(0.0, percent));
+                        var volume = (float) (1.0 + percent);
+
+                        entity.updateBlock();
+                        getOuterRingOfRadiusRandom(pos.getCenter().subtract(0, 0.5, 0), 0.6, 20, this::particleSetter);
+                        Helpers.getSoundWithPositionV(this.level(), pos.getCenter(), SoundReg.VITALITY_ABILITY.get(), 1, 1.8F);
+                        Helpers.getSoundWithPositionV(this.level(), pos.getCenter(), SoundReg.LOOTBOX_OPEN.get(), 1, volume);
+                    }
+                    this.discard();
+                }
+            }
         }
     }
 
     private void particleSetter(Vec3 positions) {
-        var primary = ColourStore.PERK_GREEN;
+        var primary = ColourStore.RATING_4_YELLOW;
         sendParticles(
             level(), getNonBakedParticles(primary, primary, 20, 2F), positions.offsetRandom(RandomSource.create(), 0.2f),
             0, 0, Random.nextDouble(0.02,0.2),0,1
@@ -196,14 +204,14 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     @Override
     public void tick() {
         super.tick();
-        if(this.tickCount > 1){
-            var primary = ColourStore.PERK_GREEN;
-            playParticles3(genericParticle(SOFT_PARTICLE, 2, 1F, primary, primary), this, 10, 0);
-        }
-
         if(getProjectile != null){
             this.getProjectile.onTickMethod();
             this.getProjectile.discardCondition();
+        } else {
+            if(this.tickCount > 1){
+                var primary = ColourStore.RATING_4_YELLOW;
+                playParticles3(genericParticle(SOFT_PARTICLE, 2, 1F, primary, primary), this, 10, 0);
+            }
         }
     }
 
@@ -219,7 +227,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putString("projectileIndex", this.projectileSelectionIndex);
+        if(projectileSelectionIndex != null) tag.putString("projectileIndex", this.projectileSelectionIndex);
         tag.putString("abilityId", this.abilityId);
         AbilityHolder.writeTag(this.abilityHolder, tag);
         if(this.getElement != null) tag.putInt("elementId", this.getElement.id());

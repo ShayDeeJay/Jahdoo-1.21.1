@@ -5,6 +5,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -12,6 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.components.CoreData;
@@ -23,6 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.minecraft.world.entity.ai.targeting.TargetingConditions.DEFAULT;
+import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
+import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
+import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 
 
 public class PowerUpStationEntity extends AbstractBEInventory {
@@ -49,7 +56,7 @@ public class PowerUpStationEntity extends AbstractBEInventory {
     }
 
     public int getCount(){
-        return this.inputItemHandler.getStackInSlot(0).getCount();
+        return getItem().getCount();
     }
 
     public ItemStack getItem() {
@@ -67,18 +74,33 @@ public class PowerUpStationEntity extends AbstractBEInventory {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if(getItem().isEmpty()) return;
+        if(getItem().isEmpty()) {
+            if(Random.nextInt(5) == 0){
+                getOuterRingOfRadiusRandom(pos.getCenter().subtract(0, 0.5, 0), 0.4, 20, this::particleSetter);
+            }
+            return;
+        }
 
         onFilledCore(level, pos);
         resetData();
         getNearbyTargets(level, pos);
     }
 
+    private void particleSetter(Vec3 positions) {
+        if(getLevel() instanceof ServerLevel serverLevel){
+            var primary = ColourStore.RATING_4_YELLOW;
+            sendParticles(
+                serverLevel, getNonBakedParticles(primary, primary, 20, 1.2F), positions.offsetRandom(RandomSource.create(), 0.2f),
+                0, 0, Random.nextDouble(0.02, 0.2), 0, 1
+            );
+        }
+    }
+
     private void getNearbyTargets(Level level, BlockPos pos) {
         if(getItem().isEmpty() || CoreData.isFull(getItem())) return;
         if (!(level instanceof ServerLevel serverLevel)) return;
 
-        var scale = 20;
+        var scale = 5;
         var area = new AABB(pos).inflate(scale, scale, scale);
         var getNearby = level.getNearbyEntities(LivingEntity.class, DEFAULT, null, area);
 
@@ -106,7 +128,6 @@ public class PowerUpStationEntity extends AbstractBEInventory {
             var pos1 = pos.getCenter();
             Helpers.getSoundWithPositionV(serverLevel, pos1, SoundReg.QUEST_COMPLETE.get(), 4, 0.8F);
             var newItemEntity = new ItemEntity(serverLevel, pos1.x, pos1.y+0.5, pos1.z, getItem());
-//            newItemEntity.setDeltaMovement(0, 1, 0);
             serverLevel.addFreshEntity(newItemEntity);
             this.inputItemHandler.setStackInSlot(0, ItemStack.EMPTY);
         }

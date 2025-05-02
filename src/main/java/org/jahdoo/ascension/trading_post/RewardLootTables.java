@@ -319,7 +319,7 @@ public class RewardLootTables {
         var builder = LootPool.lootPool().setRolls(between(1.0F, lootMultiplier));
         var newRarity = chestRarity+1;
 
-        if(newRarity == 1){
+        if(newRarity >= 1){
             //Common
             builder.add(GOLDEN_CARROT_BUILDER.setWeight(50));
             builder.add(IRON_BUILDER.setWeight(35));
@@ -344,70 +344,70 @@ public class RewardLootTables {
         var builder = LootPool.lootPool().setRolls(exactly(1.0F));
         var newRarity = chestRarity+1;
 
-        if(newRarity == 1){
+        if(newRarity >= 1){
             //Common
             builder.add(DIAMOND_SWORD_BUILDER.setWeight(5));
             builder.add(ELYTRA_BUILDER.setWeight(1));
             builder.add(NETHERITE_SWORD_BUILDER.setWeight(1));
             builder.add(STARTER_PACK.setWeight(1));
-        } else {
-            if(newRarity >=2){
-                //Rare
-                builder.add(ESSENCE_FRAGMENT.setWeight(5));
+        }
 
-                if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
-                    builder.add(AUGMENT_CORE_BUILDER.setWeight(1));
-                }
+        if(newRarity >=2){
+            //Rare
+            builder.add(ESSENCE_FRAGMENT.setWeight(5));
 
-                if(Maths.percentageChance(calculateChance(10, difficulty, newRarity))){
-                    builder.add(RUNE.setWeight((int) calculateChance(15, difficulty, newRarity)));
-                    builder.add(MAGNET.setWeight((int) calculateChance(5, difficulty, newRarity)));
-                    builder.add(getRandomWand().setWeight((int) calculateChance(5, difficulty, newRarity)));
-                }
+            if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+                builder.add(AUGMENT_CORE_BUILDER.setWeight(1));
             }
 
-            if(newRarity >= 3){
-                //Legendary
-                if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
-                    builder.add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight(1));
-                }
-                if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
-                    builder.add(CHALLENGER_TICKET.setWeight(1));
-                    builder.add(EXIT_KEY.setWeight(1));
-                }
+            if(Maths.percentageChance(calculateChance(10, difficulty, newRarity))){
+                builder.add(RUNE.setWeight((int) calculateChance(15, difficulty, newRarity)));
+                builder.add(MAGNET.setWeight((int) calculateChance(5, difficulty, newRarity)));
+                builder.add(getRandomWand().setWeight((int) calculateChance(5, difficulty, newRarity)));
             }
+        }
 
-            if(newRarity == 4){
-                //Eternal
-                if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
-                    builder.add(AUGMENT_HYPER_CORE_BUILDER.setWeight(1));
-                }
+        if(newRarity >= 3){
+            //Legendary
+            if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+                builder.add(ADVANCED_AUGMENT_CORE_BUILDER.setWeight(1));
             }
+            if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+                builder.add(CHALLENGER_TICKET.setWeight(1));
+                builder.add(EXIT_KEY.setWeight(1));
+            }
+        }
 
-            if(Maths.percentageChance(calculateChance(14, difficulty, newRarity))){
-                builder.add(TOME_OF_UNITY_BUILDER.setWeight(4));
-                builder.add(INGMAS_SWORD.setWeight(3));
-                addMageArmor(builder, newRarity);
+        if(newRarity == 4){
+            //Eternal
+            if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
+                builder.add(AUGMENT_HYPER_CORE_BUILDER.setWeight(1));
             }
+        }
 
-            if(Maths.percentageChance(calculateChance(8, difficulty, newRarity))){
-                builder.add(GLAIVE.setWeight(2));
-                builder.add(SHIELD.setWeight(4));
-            }
+        if(Maths.percentageChance(calculateChance(14, difficulty, newRarity))){
+            builder.add(TOME_OF_UNITY_BUILDER.setWeight(4));
+            builder.add(INGMAS_SWORD.setWeight(3));
+            addMageArmor(builder, newRarity);
+        }
 
-            if(Maths.percentageChance(calculateChance(5, difficulty, newRarity))){
-                builder.add(ELEMENTAL_SWORD.setWeight(1));
-                builder.add(GAUNTLET.setWeight(1));
-                addBattlemageArmor(builder, newRarity);
-            }
+        if(Maths.percentageChance(calculateChance(8, difficulty, newRarity))){
+            builder.add(GLAIVE.setWeight(2));
+            builder.add(SHIELD.setWeight(4));
+        }
 
-            if(Maths.percentageChance(calculateChance(1.5, difficulty, newRarity))){
-                addWizardArmor(builder, newRarity);
-            }
+        if(Maths.percentageChance(calculateChance(5, difficulty, newRarity))){
+            builder.add(ELEMENTAL_SWORD.setWeight(1));
+            builder.add(GAUNTLET.setWeight(1));
+            addBattlemageArmor(builder, newRarity);
+        }
 
-            if(Maths.percentageChance(calculateChance(0.5, difficulty, newRarity))){
-                addKnightKingArmor(builder, newRarity);
-            }
+        if(Maths.percentageChance(calculateChance(1.5, difficulty, newRarity))){
+            addWizardArmor(builder, newRarity);
+        }
+
+        if(Maths.percentageChance(calculateChance(0.5, difficulty, newRarity))){
+            addKnightKingArmor(builder, newRarity);
         }
 
         return builder;

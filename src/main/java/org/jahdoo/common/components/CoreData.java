@@ -2,9 +2,11 @@ package org.jahdoo.common.components;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.common.registers.ComponentReg;
 
 public record CoreData(int required, int filled) {
@@ -37,6 +39,9 @@ public record CoreData(int required, int filled) {
             var required = data.required();
             var newData = new CoreData(required, Math.min(data.filled()+1, required));
             itemStack.set(ComponentReg.CORE_DATA, newData);
+            if(data.filled+1 == required){
+                itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
+            }
         }
     }
 

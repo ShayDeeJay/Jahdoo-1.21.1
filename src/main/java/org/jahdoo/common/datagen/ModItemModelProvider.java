@@ -9,8 +9,8 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;
 
@@ -33,6 +33,10 @@ public class ModItemModelProvider extends ItemModelProvider {
         registerCoins();
         registerCarePackages();
         registerRecoveryReceipts();
+        registerAugmentCoreFilled();
+        registerAdvancedAugmentCoreFilled();
+        registerAugmentHyperCoreFilled();
+        registerAbilityAugments();
     }
 
     private void createSimpleItemModel(DeferredHolder<Item, Item> item) {
@@ -102,6 +106,54 @@ public class ModItemModelProvider extends ItemModelProvider {
         }
     }
 
+    private void registerAbilityAugments() {
+//
+//        for (int i = 1; i < 5; i++) {
+//            var element = ElementReg.fromId(i);
+//            var s = element.get().setAbilityId() + "_augment";
+//            var prefix = "item/augments/"+s;
+//            createModel(prefix, prefix);
+//            getWithParent(ItemReg.ABILITY_AUGMENT, "item/augments/unidentified_augment")
+//                .override()
+//                .predicate(MODEL_DATA, i)
+//                .model(modelFile(prefix))
+//                .end();
+//        };
+    }
+
+    private void registerAugmentHyperCoreFilled() {
+        createModel("augment_hyper_core_filled", "item/augment_hyper_core_filled");
+        var item = ItemReg.AUGMENT_HYPER_CORE;
+        var prefix = "item/augment_hyper_core";
+        getWithParent(item, prefix)
+            .override()
+            .predicate(MODEL_DATA, 1)
+            .model(modelFile(prefix+"_filled"))
+            .end();
+    }
+
+    private void registerAdvancedAugmentCoreFilled() {
+        createModel("advanced_augment_core_filled", "item/advanced_augment_core_filled");
+        var item = ItemReg.ADVANCED_AUGMENT_CORE;
+        var prefix = "item/advanced_augment_core";
+        getWithParent(item, prefix)
+            .override()
+            .predicate(MODEL_DATA, 1)
+            .model(modelFile(prefix+"_filled"))
+            .end();
+    }
+
+    private void registerAugmentCoreFilled() {
+        createModel("augment_core_filled", "item/augment_core_filled");
+        var item = ItemReg.AUGMENT_CORE;
+        var prefix = "item/augment_core";
+        getWithParent(item, prefix)
+            .override()
+            .predicate(MODEL_DATA, 1)
+            .model(modelFile(prefix+"_filled"))
+            .end();
+    }
+
     private void createOverride(int runeId, DeferredHolder<Item, Item> item, String prefix) {
         getWithParent(item, prefix + "s/" + item.getId().getPath())
             .override()
@@ -112,8 +164,8 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     private void registerSimpleItems() {
         var simpleItems = List.of(
-            ItemReg.NEXITE_POWDER, ItemReg.AUGMENT_CORE, ItemReg.ESSENCE_FRAGMENT,
-            ItemReg.ADVANCED_AUGMENT_CORE, ItemReg.AUGMENT_HYPER_CORE,
+            ItemReg.NEXITE_POWDER, ItemReg.ESSENCE_FRAGMENT, ItemReg.INFERNO_AUGMENT,
+            ItemReg.FROST_AUGMENT, ItemReg.MYSTIC_AUGMENT, ItemReg.VITALITY_AUGMENT,
             ItemReg.CHALLENGER_TICKET, ItemReg.SKILL_POINT, ItemReg.EXIT_KEY
         );
 

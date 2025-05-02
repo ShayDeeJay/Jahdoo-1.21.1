@@ -48,11 +48,22 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> NEXITE_POWDER =
         basicItem("nexite_powder");
 
-
     public static final DeferredHolder<Item, Item> CHAMPIONS_CROWN =
         basicItem("champions_crown");
 
     //Complex Items
+    public static final DeferredHolder<Item, Item> INFERNO_AUGMENT =
+        complexItem("inferno_augment", AbilityAugment::new);
+
+    public static final DeferredHolder<Item, Item> FROST_AUGMENT =
+        complexItem("frost_augment", AbilityAugment::new);
+
+    public static final DeferredHolder<Item, Item> VITALITY_AUGMENT =
+        complexItem("vitality_augment", AbilityAugment::new);
+
+    public static final DeferredHolder<Item, Item> MYSTIC_AUGMENT =
+        complexItem("mystic_augment", AbilityAugment::new);
+
     public static final DeferredHolder<Item, Item> SKILL_POINT =
         complexItem("skill_point", SkillPointItem::new);
 

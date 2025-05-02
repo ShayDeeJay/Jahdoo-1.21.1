@@ -20,6 +20,7 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 
+import static net.minecraft.world.entity.ai.targeting.TargetingConditions.DEFAULT;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
@@ -79,6 +80,7 @@ public class ElementalMissile extends DefaultEntityBehaviour {
 
     private void setDamageByOwner(LivingEntity target){
         DamageUtils.damageWithJahdoo(target, this.generic.getOwner(), this.damage, getElement().damageTypeResourceKey());
+        this.applyEffect(target, getElement().effect());
     }
 
     @Override
@@ -106,21 +108,44 @@ public class ElementalMissile extends DefaultEntityBehaviour {
 
     @Override
     public void discardCondition() {
+        if(!(this.generic.level() instanceof ServerLevel serverLevel)) return;
+
+        if(generic.tickCount == 6){
+            altOnHit(serverLevel);
+        }
+
         if (this.generic.getOwner() != null && this.generic.distanceTo(this.generic.getOwner()) > 30f) {
-            if(!(this.generic.level() instanceof ServerLevel serverLevel)) return;
             ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 1, getElement().getParticleGroup().bakedSlow());
             this.generic.discard();
         }
     }
 
+    private void altOnHit(ServerLevel serverLevel) {
+        Helpers.getSoundWithPositionV(generic.level(), this.generic.position(), getElement().sound(), 0.2F, 1.4F);
+        Helpers.getSoundWithPositionV(generic.level(), this.generic.position(), SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
+        ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 10, ParticleHandlers.bakedParticle(this.getElement().id(), 6, 1, false), 0.12F);
+        var targets = serverLevel.getNearbyEntities(
+            LivingEntity.class,
+            DEFAULT,
+            null,
+            this.generic.getBoundingBox().inflate(3,3,3)
+        );
+
+        for (var target : targets) {
+            this.setDamageByOwner(target);
+        }
+
+        this.generic.discard();
+    }
+
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
-        this.applyEffect(hitEntity, getElement().effect());
         if(!(this.generic.level() instanceof ServerLevel serverLevel)) return;
-        Helpers.getSoundWithPositionV(this.generic.level(), hitEntity.position(), SoundReg.ELEMENTAL_BULLET.get(), 1, 0.8F);
-        ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 1, getElement().getParticleGroup().bakedSlow());
-        this.setDamageByOwner(hitEntity);
-        this.generic.discard();
+        altOnHit(serverLevel);
+//        Helpers.getSoundWithPositionV(this.generic.level(), hitEntity.position(), SoundReg.ELEMENTAL_BULLET.get(), 1, 0.8F);
+//        ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 1, getElement().getParticleGroup().bakedSlow());
+//        this.setDamageByOwner(hitEntity);
+//        this.generic.discard();
     }
 
     @Override

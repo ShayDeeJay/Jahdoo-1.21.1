@@ -13,9 +13,11 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.screens.AbstractPanableScreen;
 import org.jahdoo.common.client.slots.RuneSlot;
+import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
 import org.jahdoo.common.networking.client2server.JahdooGearDataC2SP;
+import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
@@ -99,7 +101,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
             this.addRenderableWidget(
                 menuButtonSound(
                     posX1, posY1, (press) -> onRepair(), REPAIR,
-                    44, canUpgrade, 0, canUpgrade(getItem()) ? WIDGET : selected, !canUpgrade, this::onHoverRepair,  forUI(SoundReg.UPGRADE_MODIFIER.get(), 0F)
+                    44, canUpgrade, 0, canUpgrade(getItem()) ? WIDGET : selected, !canUpgrade, this::onHoverRepair, forUI(SoundReg.UPGRADE_MODIFIER.get(), 0F)
                 )
             );
 
@@ -151,7 +153,13 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
     private ItemStack coreCost() {
         var coreType = getRepairCoreCost();
-        return coreType < 0 ? ItemStack.EMPTY : new ItemStack(getCore().get(coreType));
+        if (coreType < 0) {
+            return ItemStack.EMPTY;
+        } else {
+            var set = new ItemStack(getCore().get(coreType));
+            set.set(ComponentReg.CORE_DATA, new CoreData(100, 100));
+            return set;
+        }
     }
 
     private int getRepairCoreCost() {
