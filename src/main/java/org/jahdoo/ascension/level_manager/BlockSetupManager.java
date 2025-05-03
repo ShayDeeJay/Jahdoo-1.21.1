@@ -13,6 +13,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
+import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -200,7 +201,9 @@ public class BlockSetupManager {
             var blockEntity = level.getBlockEntity(pos);
             if(blockEntity instanceof ShoppingTableEntity entity){
                 var randomLootItem = new ItemStack(RUNE);
-//                RuneHelpers.generateRandomTypAttribute(randomLootItem, null, null, Random.nextInt(0, 4));
+                var tier = ShoppingItems.getRaritiesByChestRarity(1);
+                var rarity = ShoppingItems.getRaritiesByChestRarity(0);
+                RuneHelpers.generateRandomTypAttribute(randomLootItem, tier, rarity);
                 entity.setItem(randomLootItem);
                 entity.setCost(setGoldCost(10));
             }

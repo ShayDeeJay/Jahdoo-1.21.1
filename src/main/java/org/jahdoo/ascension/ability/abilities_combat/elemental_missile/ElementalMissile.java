@@ -110,9 +110,9 @@ public class ElementalMissile extends DefaultEntityBehaviour {
     public void discardCondition() {
         if(!(this.generic.level() instanceof ServerLevel serverLevel)) return;
 
-        if(generic.tickCount == 6){
-            altOnHit(serverLevel);
-        }
+//        if(generic.tickCount == 6){
+//            altOnHit(serverLevel);
+//        }
 
         if (this.generic.getOwner() != null && this.generic.distanceTo(this.generic.getOwner()) > 30f) {
             ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 1, getElement().getParticleGroup().bakedSlow());
@@ -125,27 +125,21 @@ public class ElementalMissile extends DefaultEntityBehaviour {
         Helpers.getSoundWithPositionV(generic.level(), this.generic.position(), SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
         ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 10, ParticleHandlers.bakedParticle(this.getElement().id(), 6, 1, false), 0.12F);
         var targets = serverLevel.getNearbyEntities(
-            LivingEntity.class,
-            DEFAULT,
-            null,
-            this.generic.getBoundingBox().inflate(3,3,3)
+            LivingEntity.class, DEFAULT, null, this.generic.getBoundingBox().inflate(3,3,3)
         );
 
-        for (var target : targets) {
-            this.setDamageByOwner(target);
-        }
-
+        for (var target : targets) this.setDamageByOwner(target);
         this.generic.discard();
     }
 
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
         if(!(this.generic.level() instanceof ServerLevel serverLevel)) return;
-        altOnHit(serverLevel);
-//        Helpers.getSoundWithPositionV(this.generic.level(), hitEntity.position(), SoundReg.ELEMENTAL_BULLET.get(), 1, 0.8F);
-//        ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 1, getElement().getParticleGroup().bakedSlow());
-//        this.setDamageByOwner(hitEntity);
-//        this.generic.discard();
+//        altOnHit(serverLevel);
+        Helpers.getSoundWithPositionV(this.generic.level(), hitEntity.position(), SoundReg.ELEMENTAL_BULLET.get(), 1, 0.8F);
+        ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 1, getElement().getParticleGroup().bakedSlow());
+        this.setDamageByOwner(hitEntity);
+        this.generic.discard();
     }
 
     @Override

@@ -76,20 +76,14 @@ public class LockBlockEntity extends SyncedBlockEntity {
         );
 
         if(level instanceof ServerLevel serverLevel){
-            for (var player : serverLevel.players()) {
-                setDateAndTime(player);
-            }
+            for (var player : serverLevel.players()) setDateAndTime(player);
         }
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if(!(level instanceof ServerLevel serverLevel)) return;
-        if(clicked){
-            this.counter++;
-        }
-        if(counter > 1){
-            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-        }
+        if(!(level instanceof ServerLevel)) return;
+        if(clicked) this.counter++;
+        if(counter > 0) level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
     }
 
     public boolean isInitialized(){

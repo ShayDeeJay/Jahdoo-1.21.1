@@ -69,7 +69,7 @@ public class RuneReg {
     }
 
     public static AbstractRune getRuneFromId(String runeId) {
-        return Optional.of(Helpers.listRandom(getAllRunes().stream().filter(s -> s.runeId().equals(runeId)).toList())).orElseThrow();
+        return Optional.of(getAllRunes().stream().filter(s -> s.runeId().equals(runeId)).toList().getFirst()).orElseThrow();
     }
 
     public static AbstractRune getRuneFromAttribute(Holder<Attribute> attributeHolder) {
@@ -78,7 +78,7 @@ public class RuneReg {
     }
 
     public static Optional<AbstractRune> getRuneWithRarity(JahdooRarity rarity) {
-        return Optional.of(Helpers.listRandom(getAllRunes().stream().filter(s -> s.runeRarity().equals(rarity)).toList()));
+        return Optional.of(getAllRunes().stream().filter(s -> s.runeRarity().equals(rarity)).toList().getFirst());
     }
 
     public static List<AbstractRune> getAllRuneWithRarity(JahdooRarity...rarity) {

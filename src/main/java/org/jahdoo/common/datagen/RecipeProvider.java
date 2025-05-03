@@ -98,7 +98,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     protected void runeManager(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
-            .define('X', RUNE.get())
+            .define('X', AUGMENT_CORE.get())
             .define('M', Items.MUD_BRICKS)
             .pattern("MMM")
             .pattern("MXM")

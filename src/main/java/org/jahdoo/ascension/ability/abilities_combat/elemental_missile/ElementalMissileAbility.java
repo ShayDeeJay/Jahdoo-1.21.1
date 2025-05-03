@@ -41,8 +41,7 @@ abstract public class ElementalMissileAbility extends Ability {
     public AbstractElement getElemenType() {
         return null;
     }
-
-
+    
     @Override
     public JahdooRarity rarity() {
         return JahdooRarity.COMMON;
@@ -67,7 +66,7 @@ abstract public class ElementalMissileAbility extends Ability {
         var projectileCount = getTag(player, SHOT_MULTIPLIER);
         var index = ELEMENTAL_SHOOTER.get().setAbilityId();
 
-        fireMultiShotProjectile((int) projectileCount * 2, 1.2f, player, 0.03, () -> new GenericProjectile(player, 0, index, name));
+        fireMultiShotProjectile((int) projectileCount, 1.2f, player, 0.1, () -> new GenericProjectile(player, 0, index, name));
         Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.ELEMENTAL_BULLET.get(), 0.8F, 1.2F);
     }
 

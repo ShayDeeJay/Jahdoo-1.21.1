@@ -129,9 +129,9 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         var alwaysShow = CUSTOM_UI_ALWAYS_SHOW_HUNGER.get();
 
         if (food.needsFood() || alwaysShow) {
-            if (this.fadeInFood < 1) this.fadeInFood += 0.05F;
+            if (this.fadeInFood < 1) this.fadeInFood += 0.3F;
         } else {
-            if (this.fadeInFood > -14) this.fadeInFood -= 0.1F;
+            if (this.fadeInFood > -14) this.fadeInFood -= 0.3F;
         }
 
         this.fadeFoodTimer = Math.max(this.fadeFoodTimer - 0.5F, 0);
@@ -200,6 +200,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         }
     }
 
+
     private void cooldownOverlay(Ability ability, CasterData casterData){
         if(this.fadeIn < 0 && !CUSTOM_UI.get() || ability == null) return;
         alignedGui.displayGuiLayer(4, 26, 0, 0, 23, ability.getAbilityIconLocation());
@@ -220,6 +221,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
     private static void renderSlot(GuiGraphics graphics, ItemStack next, int x, int y, ResourceLocation lit, int index, int textColour, float alpha) {
         var count = next.getCount();
         graphics.renderItem(next, x, y);
+
         int size = 24;
         inventoryIndex(graphics, x, y, index,textColour);
         enableBlend();
@@ -311,6 +313,8 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         alignedGui.displayGuiLayer(25, 18, 0, 43, manaProgress + 3, 8, MANA_LEVEL_BAR);
         this.manaPoolCount(casterData.getManaPool(), graphics, minecraft, -5 , 0, AETHER_BLUE);
 
+        quickSelectBar(graphics, casterData, minecraft);
+
         abilityRegistrars.ifPresent(
             location -> {
                 this.cooldownOverlay(location, casterData);
@@ -320,6 +324,61 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
 
         setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         pose.popPose();
+    }
+
+    private void quickSelectBar(GuiGraphics graphics, CasterData casterData, Minecraft minecraft) {
+        var spacer = 0;
+        var abilitySlots = casterData.abilitySlots.subList(0, 6);
+        var counter = 0;
+
+        if(abilitySlots.isEmpty()) return;
+
+        for (var abilitySlot : abilitySlots) {
+            var x = AbilityReg.getFirstSpellByTypeId(abilitySlot);
+            var splitCenter =  counter > 2 ? 32 : 0;
+            var spaceWithSplit = spacer + splitCenter;
+
+            var v = -(this.fadeInFood - 12);
+
+            this.cooldownHotbarIcons(x.orElse(null), casterData, spaceWithSplit - 43, (int) (Math.min(v, 24) - 46));
+
+            var vc = 0.5F;
+            var literal = literal(valueOf(counter+1));
+            graphics.pose().pushPose();
+            graphics.pose().scale(vc, vc, vc);
+            graphics.pose().translate(0, 0, 100);
+
+            var x1 = (int) (((float) graphics.guiWidth() / 2 + spaceWithSplit) / vc) - 98;
+            var y = (int) ((graphics.guiHeight() + this.fadeInFood ) / vc) + 18;
+
+            centeredStringNoShadow(graphics, minecraft.font, literal, x1, y, SUB_HEADER_COLOUR, false);
+            graphics.pose().popPose();
+
+            spacer += 13;
+            counter++;
+        }
+    }
+
+    private void cooldownHotbarIcons(Ability ability, CasterData casterData, int x, int y){
+        var iconSize = 12;
+        var scaleHolder = iconSize/2;
+        alignedGui.displayGuiLayer(4 + x - scaleHolder/2, 26 + y + scaleHolder/2, 0, 0, iconSize + scaleHolder, GUI_GENERAL_SLOT);
+
+        if(this.fadeIn < 0 && !CUSTOM_UI.get() || ability == null) return;
+        alignedGui.displayGuiLayer(4 + x, 26 + y, 0, 0, iconSize, ability.getAbilityIconLocation());
+
+        if (casterData.isAbilityOnCooldown(ability.setAbilityId())) {
+            var cooldownCost = casterData.getStaticCooldown(ability.setAbilityId());
+            var cooldownStatus = casterData.getCooldown(ability.setAbilityId());
+            var cooldownOverlaySize = iconSize - 4;
+            if(cooldownCost > 0){
+                var currentOverlayHeight = ((cooldownStatus * cooldownOverlaySize) / cooldownCost) + 1;
+                enableBlend();
+                setShaderColor(1f, 1f, 1f, 0.9F);
+                alignedGui.displayGuiLayer(4 + x + 2, 16 + currentOverlayHeight + y, 0, 98, cooldownOverlaySize, currentOverlayHeight);
+                setShaderColor(1f, 1f, 1f, 1f);
+            }
+        }
     }
 
     private void foodBar(PoseStack pose, int foodProgress) {

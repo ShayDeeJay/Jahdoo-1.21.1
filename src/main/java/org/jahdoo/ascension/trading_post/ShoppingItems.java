@@ -249,7 +249,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var isUnique = rarity == UNIQUE;
 
         attachSharedProperties(stack, isUnique ? 1 : 0, rarity, isUnique ? Random.nextInt(3, 6) : -1, 25, 25);
-        if(isUnique) preInsertRunes(itemStack);
+        if(isUnique) preInsertRunes(stack);
         replaceOrAddAttribute(stack, manaRegen.getRegisteredName(), manaRegen, randomRegenValue * 1.5, MAINHAND, false, "");
         replaceOrAddAttribute(stack, manaPool.getRegisteredName(), manaPool, randomManaPool * 1.5, OFFHAND, false, "");
 
@@ -309,7 +309,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var newStack = itemStack == null ? new ItemStack(ItemReg.BATTLEMAGE_GAUNTLET) : itemStack;
         var isUnique = rarity.equals(UNIQUE);
         attachSharedProperties(newStack, isUnique ? 1 : 0, rarity, isUnique ? Random.nextInt(3, 6) : -1, 25, 25);
-        if(isUnique) preInsertRunes(itemStack);
+        if(isUnique) preInsertRunes(newStack);
         return newStack;
     }
 

@@ -102,7 +102,7 @@ public abstract class Ability {
     public static void fireProjectileDirection(Projectile projectile, LivingEntity player, float velocity, Vec3 direction){
         if(player != null){
             if(player.level() instanceof ServerLevel serverLevel){
-                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, hexedEffect(player) + 10);
+                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, hexedEffect(player));
                 projectile.setOwner(player);
                 serverLevel.addFreshEntity(projectile);
             }
