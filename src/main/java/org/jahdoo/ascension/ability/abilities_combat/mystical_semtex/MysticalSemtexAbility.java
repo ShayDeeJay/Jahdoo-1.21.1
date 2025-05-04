@@ -18,7 +18,7 @@ import org.jahdoo.common.registers.mod.EntityDataReg;
 public class MysticalSemtexAbility extends Ability {
 
     public static final ResourceLocation abilityId = Helpers.res("mystical_semtex");
-    public static final String ADDITIONAL_PROJECTILE = "Additional Projectiles";
+    public static final String CLUSTER_COUNT = "Cluster Count";
     public static final String EXPLOSION_DELAYS = "Explosion Delay";
     public static final String CLUSTER_CHANCE = "Cluster Chance";
     public static final String EXPLOSION_RADIUS = "Explosion Radius";
@@ -83,10 +83,9 @@ public class MysticalSemtexAbility extends Ability {
             .setStaticMana(60)
             .setStaticCooldown(500)
             .setDamage(45, 25, 5, 1)
-            .setAbilityTagModifiersRandom(ADDITIONAL_PROJECTILE, 10,4, true, 1, 1)
-            .setAbilityTagModifiersRandom(EXPLOSION_DELAYS, 50,20, false, 5, 1)
-            .setAbilityTagModifiersRandom(CLUSTER_CHANCE, 10,1, false, 1, 1)
-            .setAbilityTagModifiersRandom(EXPLOSION_RADIUS, 8,3, true, 1, 1)
+            .setAbilityTagModifiersRandom(CLUSTER_COUNT, 10,4, true, 1, 1)
+            .setAbilityTagModifiersRandom(CLUSTER_CHANCE, 10, 2, false, 2, 2)
+            .setAbilityTagModifiersRandom(EXPLOSION_RADIUS, 8, 4, true, 1, 2)
             .buildAndReturn();
     }
 

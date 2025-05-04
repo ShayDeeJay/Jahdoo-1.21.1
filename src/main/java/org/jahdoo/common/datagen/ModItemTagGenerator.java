@@ -57,7 +57,11 @@ public class ModItemTagGenerator extends ItemTagsProvider {
             .add(KNIGHT_KING_HELMET.get())
             .add(KNIGHT_KING_CHESTPLATE.get())
             .add(KNIGHT_KING_LEGGINGS.get())
-            .add(KNIGHT_KING_BOOTS.get());
+            .add(KNIGHT_KING_BOOTS.get())
+            .add(ANCIENT_GOLEM_HELMET.get())
+            .add(ANCIENT_GOLEM_CHESTPLATE.get())
+            .add(ANCIENT_GOLEM_LEGGINGS.get())
+            .add(ANCIENT_GOLEM_BOOTS.get());
 
 
         this.tag(ModTags.Items.WAND_TAGS)

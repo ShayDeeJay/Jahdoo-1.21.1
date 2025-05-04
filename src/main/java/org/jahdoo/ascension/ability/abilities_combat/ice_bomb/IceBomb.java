@@ -3,7 +3,6 @@ package org.jahdoo.ascension.ability.abilities_combat.ice_bomb;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.level.Level;
@@ -20,17 +19,17 @@ import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static net.minecraft.util.RandomSource.create;
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.ascension.utils.Helpers.getRandomParticleVelocity;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
-import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.FROST_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 
@@ -45,8 +44,9 @@ public class IceBomb extends DefaultEntityBehaviour {
 
     private double effectDuration;
     private double effectStrength;
-    private double radScale;
+    private double ricochets;
     private double damage;
+    private int currentRicochets;
 
     @Override
     public void getElementProjectile(ElementProjectile elementProjectile) {
@@ -64,6 +64,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         }
         this.effectStrength = this.getTag(EFFECT_STRENGTH);
         this.effectDuration = this.getTag(EFFECT_DURATION);
+        this.ricochets = this.getTag(NUMBER_OF_RICOCHET);
     }
 
     @Override
@@ -78,12 +79,22 @@ public class IceBomb extends DefaultEntityBehaviour {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
-        this.element.setDeltaMovement(0,0,0);
+        var velocity = element.getDeltaMovement();
+        var hitDirection = blockHitResult.getDirection();
+        var normal = Vec3.atLowerCornerOf(hitDirection.getNormal());
+        var reflected = velocity.subtract(normal.scale(2 * velocity.dot(normal)));
+        var damping = 0.9;
+        currentRicochets++;
+        reflected = reflected.scale(damping);
+        onDetonate();
+        this.applyDamageAndEffectNova();
+        element.setDeltaMovement(reflected);
+        if(this.ricochets == currentRicochets) this.element.discard();
     }
 
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
-        this.element.setDeltaMovement(0,0,0);
+//        this.element.setDeltaMovement(0,0,0);
     }
 
     private Level level(){
@@ -92,7 +103,7 @@ public class IceBomb extends DefaultEntityBehaviour {
 
     @Override
     public void discardCondition() {
-        if(currentLifetime > 50) this.element.discard();
+//        if(currentLifetime > 50) this.element.discard();
     }
 
     @Override
@@ -121,8 +132,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         Level lvl,
         ParticleOptions particle
     ){
-        var min = Math.min((float) this.element.tickCount / 300, 0.12);
-        ParticleHandlers.sendParticles(lvl, particle, nPos.add(0,0.15,0), 1, pos2.x, pos2.y, pos2.z, min);
+        ParticleHandlers.sendParticles(lvl, particle, nPos.add(0,0.15,0), 1, pos2.x, pos2.y, pos2.z, 0.1F);
     }
 
     private void freezeAndDamageEnemiesNearby(){
@@ -130,22 +140,17 @@ public class IceBomb extends DefaultEntityBehaviour {
             LivingEntity.class,
             TargetingConditions.DEFAULT,
             (LivingEntity) this.element.getOwner(),
-            this.element.getBoundingBox().inflate(aoe)
+            this.element.getBoundingBox().inflate(this.currentRicochets)
         ).forEach(this::entityFreezeEffectAndDamage);
     }
 
     private void onDetonate() {
-        if(this.hasHitBlock){
-            this.element.setDeltaMovement(0, 0, 0);
-            element.setShowTrailParticles(false);
-            element.setAnimation(2);
-
-            Helpers.getSoundWithPosition(level(), this.element.blockPosition(), SoundReg.EXPLOSION.get());
-            Helpers.getSoundWithPosition(level(), this.element.blockPosition(), SoundReg.FROST_ABILITY.get());
-            PositionFinders.getOuterRingOfRadiusRandom(this.element.position(), 0.5, 150,
-                worldPosition -> this.setParticleNova(worldPosition, 0.7)
-            );
-        }
+        element.setShowTrailParticles(false);
+        Helpers.getSoundWithPosition(level(), this.element.blockPosition(), SoundReg.IMPACT.get(), 1, 1 + ((float) this.currentRicochets /10));
+        Helpers.getSoundWithPosition(level(), this.element.blockPosition(), SoundReg.FROST_ABILITY.get(), 1, 1 + ((float) this.currentRicochets /10));
+        PositionFinders.getOuterRingOfRadiusRandom(this.element.position(), 0.5, 150 * currentRicochets,
+            worldPosition -> this.setParticleNova(worldPosition, 0.7)
+        );
     }
 
     private void entityFreezeEffectAndDamage(LivingEntity hitEntity){
@@ -172,6 +177,8 @@ public class IceBomb extends DefaultEntityBehaviour {
         compoundTag.putDouble(EFFECT_DURATION, this.effectDuration);
         compoundTag.putDouble(EFFECT_STRENGTH, this.effectStrength);
         compoundTag.putDouble(DAMAGE, this.damage);
+        compoundTag.putDouble(NUMBER_OF_RICOCHET, this.ricochets);
+        compoundTag.putInt("current_ricochets", this.currentRicochets);
     }
 
     @Override
@@ -185,21 +192,16 @@ public class IceBomb extends DefaultEntityBehaviour {
         this.effectDuration = compoundTag.getDouble(EFFECT_DURATION);
         this.effectStrength = compoundTag.getDouble(EFFECT_STRENGTH);
         this.damage = compoundTag.getDouble(DAMAGE);
+        this.ricochets = compoundTag.getDouble(NUMBER_OF_RICOCHET);
+        this.currentRicochets = compoundTag.getInt("current_ricochets");
     }
 
     @Override
     public void onTickMethod() {
-        applyInertia(this.element, 0.955f);
-        this.hasHitBlock = this.element.tickCount > INT - 30;
-        if(!hasHitBlock){
-            element.setAnimation(3);
-            this.iceBombIdleParticles();
-            this.playPeriodicIdleSound();
-        } else {
-            if(currentLifetime == 0) this.onDetonate();
-            this.applyDamageAndEffectNova();
-            this.currentLifetime++;
-        }
+        var deltaMovement = this.element.getDeltaMovement();
+        this.element.setDeltaMovement(deltaMovement.x, deltaMovement.y - 0.05, deltaMovement.z);
+        element.setAnimation(1);
+        this.iceBombIdleParticles();
     }
 
     void iceBombIdleParticles(){
@@ -208,9 +210,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         var genericParticle = ParticleHandlers.genericParticle(ParticleStore.GENERIC_PARTICLE, this.getElementType(), 3, 1);
 
         PositionFinders.getRandomSphericalPositions(
-            this.element,
-            this.element.getBbWidth() + 0.2 + radScale,
-            Math.min(14 + (this.radScale * 50), 20),
+            this.element, this.element.getBbWidth() + 0.2, 8,
             position -> {
                 var getPositions = getRandomParticleVelocity(this.element, 0.05);
                 var newPosition = position.add(this.element.getDeltaMovement().scale(-1.5));
@@ -221,20 +221,16 @@ public class IceBomb extends DefaultEntityBehaviour {
     }
 
     private void setParticleNova(Vec3 worldPosition, double particleMultiplier){
-        var positionScrambler = worldPosition.offsetRandom(RandomSource.create(), (float) particleMultiplier/2);
+        var positionScrambler = worldPosition.offsetRandom(create(), (float) particleMultiplier/2);
         var directions = positionScrambler.subtract(this.element.position()).normalize();
-        var part1 = this.getElementType().partColourA();
-        var part2 = this.getElementType().textColourA();
-        var lifetime = (int) (particleMultiplier * 10);
-        var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, 5, part1, part2, false);
-        var bakedParticle = bakedParticle(this.getElementType().id(), lifetime, 5, false);
-        var getRandomParticle = List.of(bakedParticle, genericParticle).get(Helpers.Random.nextInt(2));
-        var randSpeed = Helpers.Random.nextDouble(0.3, 0.5);
-        var positions = worldPosition.offsetRandom(RandomSource.create(), 0.5f);
+        var rico = this.currentRicochets;
+        var i = rico / 2;
+        var getParticle = ParticleHandlers.getAllParticleTypes(getElementType(), 10 + (rico), 3 + i);
+        var i1 = (float) rico / 8;
+        var randSpeed = Helpers.Random.nextDouble(0.1 + i1, 0.2 + i1);
+        var positions = worldPosition.offsetRandom(create(), 0.2f);
 
-        ParticleHandlers.sendParticles(
-            level(), getRandomParticle , positions, 0, directions.x, directions.y, directions.z, randSpeed
-        );
+        ParticleHandlers.sendParticles(level(), getParticle , positions, 0, directions.x, directions.y, directions.z, randSpeed);
     }
 
     private void playPeriodicIdleSound(){
@@ -246,11 +242,7 @@ public class IceBomb extends DefaultEntityBehaviour {
                 0.8f, 0.1f
             );
         }
-
-        var isIdle = this.element.tickCount < (INT - 45);
-        if(!isIdle) this.element.setDeltaMovement(0,0,0);
-        if (this.element.tickCount % (isIdle ? 21 : 2) == 0) {
-            this.radScale += 0.07f;
+        if (this.element.tickCount % (21) == 0) {
             Helpers.getSoundWithPosition(
                 level(),
                 this.element.blockPosition(),

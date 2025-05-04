@@ -38,4 +38,7 @@ public class EntityAnimations {
     public static final RawAnimation OPEN_LOOT = RawAnimation.begin().thenPlay("open_animation");
     public static final RawAnimation SPAWN_CHEST = RawAnimation.begin().thenPlay("spawn");
 
+    //Ice Spear
+    public static final RawAnimation ICE_SPEAR = RawAnimation.begin().thenPlay("spawn");
+
 }

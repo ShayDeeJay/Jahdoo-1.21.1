@@ -7,6 +7,7 @@
     "jahdoo:perk_table",
     "jahdoo:shopping_table",
     "jahdoo:loot_chest",
-    "jahdoo:lock"
+    "jahdoo:lock",
+    "jahdoo:power_up_station"
   ]
 }

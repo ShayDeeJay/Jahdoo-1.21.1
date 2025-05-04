@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.*;
+import org.jahdoo.common.items.armor.ancient_golem_armor.AncientGolemArmor;
 import org.jahdoo.common.items.armor.battle_mage.BattleMageArmor;
 import org.jahdoo.common.items.armor.knight_king.KnightKingArmor;
 import org.jahdoo.common.items.armor.mage.MageArmor;
@@ -212,6 +213,18 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> KNIGHT_KING_BOOTS =
         complexItem("knight_king_boots", () -> new KnightKingArmor(BOOTS));
 
+    //Ancient Golem
+    public static final DeferredHolder<Item, Item> ANCIENT_GOLEM_HELMET =
+        complexItem("ancient_golem_helmet", () -> new AncientGolemArmor(HELMET));
+
+    public static final DeferredHolder<Item, Item> ANCIENT_GOLEM_CHESTPLATE =
+        complexItem("ancient_golem_chestplate", () -> new AncientGolemArmor(CHESTPLATE));
+
+    public static final DeferredHolder<Item, Item> ANCIENT_GOLEM_LEGGINGS =
+        complexItem("ancient_golem_leggings", () -> new AncientGolemArmor(LEGGINGS));
+
+    public static final DeferredHolder<Item, Item> ANCIENT_GOLEM_BOOTS =
+        complexItem("ancient_golem_boots", () -> new AncientGolemArmor(BOOTS));
 
     public static DeferredHolder<Item, Item> complexItem(String name, Supplier<? extends Item> sup){
         return ITEMS.register(name, sup);

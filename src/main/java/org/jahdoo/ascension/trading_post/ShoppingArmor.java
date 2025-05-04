@@ -2,6 +2,7 @@ package org.jahdoo.ascension.trading_post;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.rarity.JahdooRarity;
@@ -25,6 +26,7 @@ import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.listRandom;
 import static org.jahdoo.common.items.runes.rune_data.RuneCategories.*;
 import static org.jahdoo.common.items.runes.rune_data.RuneCategories.INFINITY;
+import static org.jahdoo.common.registers.AttributeReg.replaceOrAddAttribute;
 
 public class ShoppingArmor {
 
@@ -85,6 +87,15 @@ public class ShoppingArmor {
         );
     }
 
+    public static List<ItemStack> getAncientGolemAll() {
+        return List.of(
+            new ItemStack(ItemReg.ANCIENT_GOLEM_HELMET),
+            new ItemStack(ItemReg.ANCIENT_GOLEM_CHESTPLATE),
+            new ItemStack(ItemReg.ANCIENT_GOLEM_LEGGINGS),
+            new ItemStack(ItemReg.ANCIENT_GOLEM_BOOTS)
+        );
+    }
+
     public static List<ItemStack> mageWithData(JahdooRarity jahdooRarity){
         var withGearData = new ArrayList<ItemStack>();
 
@@ -124,6 +135,18 @@ public class ShoppingArmor {
         for (var itemStack : getKnightKingAll()) {
 
             attachKnightKingData(jahdooRarity, itemStack);
+            withGearData.add(itemStack);
+        }
+
+        return withGearData;
+    }
+
+    public static List<ItemStack> ancientGolemWithData(JahdooRarity jahdooRarity){
+        var withGearData = new ArrayList<ItemStack>();
+
+        for (var itemStack : getAncientGolemAll()) {
+
+            attachAncientGolemData(jahdooRarity, itemStack);
             withGearData.add(itemStack);
         }
 
@@ -175,6 +198,17 @@ public class ShoppingArmor {
             if(Maths.percentageChance(5 * (jahdooRarity.getId()+1))){
                 addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, RuneReg.RESILIENCE.get());
             }
+        }
+
+        sharedArmorData(jahdooRarity, itemStack, 2, -50, 0);
+    }
+
+    private static void attachAncientGolemData(JahdooRarity jahdooRarity, ItemStack itemStack) {
+        if(itemStack.getItem() instanceof ArmorItem armorItem){
+            addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, RuneReg.RESILIENCE.get());
+            addSpecificAttribute(itemStack, armorItem.getEquipmentSlot(), jahdooRarity, RuneReg.STRIKER.get());
+            var movementSpeed = Attributes.MOVEMENT_SPEED;
+            replaceOrAddAttribute(itemStack, movementSpeed.getRegisteredName(), movementSpeed, -0.01, armorItem.getEquipmentSlot(), true, "bonus");
         }
 
         sharedArmorData(jahdooRarity, itemStack, 2, -50, 0);

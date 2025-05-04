@@ -78,11 +78,11 @@ public class ArmageddonAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(150)
             .setStaticCooldown(4800)
-            .setDamage(40, 20, 5, 2)
-            .setCastingDistance(30, 10, 5, 2)
-            .setLifetime(400, 200, 40, 1)
-            .setAoe(6, 4, 0.5, 2)
-            .setAbilityTagModifiersRandom(SPAWNING_SPEED, 30, 5, false, 5, 2)
+            .setDamage(60, 30, 10, 2)
+            .setCastingDistance(30, 10, 10, 2)
+            .setLifetime(400, 200, 100, 3)
+            .setAoe(6, 4, 1, 3)
+            .setAbilityTagModifiersRandom(SPAWNING_SPEED, 20, 5, false, 5, 2)
             .buildAndReturn();
     }
 

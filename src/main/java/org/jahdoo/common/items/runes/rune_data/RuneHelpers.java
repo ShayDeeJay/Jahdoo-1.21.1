@@ -102,7 +102,8 @@ public class RuneHelpers {
     }
 
     private static @NotNull MutableComponent getComponents(double amount, String descriptionId, boolean isAbsorption, boolean isMaxHealth, int colourPre, Component compName) {
-        var value = roundNonWholeString(singleFormattedDouble(amount));
+        var number = singleFormattedDouble(amount);
+        var value = roundNonWholeString(number);
 
         if(descriptionId.contains(FIXED_VALUE) || isAbsorption || isMaxHealth || descriptionId.contains("armor") || descriptionId.contains("attack_damage")) {
             var text = "+" + value + " ";
@@ -113,7 +114,7 @@ public class RuneHelpers {
             return withStyleComponent("", colourPre).copy().append(compName);
         }
 
-        var prefix = descriptionId.contains("reduction") ? "-" : "+";
+        var prefix = number < 0 ? "" : descriptionId.contains("reduction") ? "-" : "+";
         return withStyleComponent(prefix + value + "%" + " ", colourPre).copy().append(compName);
     }
 

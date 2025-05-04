@@ -4,8 +4,8 @@ import net.minecraft.Util;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
@@ -15,7 +15,6 @@ import java.util.EnumMap;
 import java.util.List;
 
 import static net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_DIAMOND;
-import static net.minecraft.world.item.crafting.Ingredient.of;
 
 public class ArmorMaterialReg {
 
@@ -37,6 +36,9 @@ public class ArmorMaterialReg {
     public static DeferredHolder<ArmorMaterial, ArmorMaterial> KNIGHT_KING =
         register("knight_king_armor", makeArmorMap(4, 8, 14, 4, 20), 20, 5F, 0F);
 
+    public static DeferredHolder<ArmorMaterial, ArmorMaterial> ANCIENT_GOLEM_ARMOR =
+        register("ancient_golem_armor", makeArmorMap(4, 8, 14, 4, 20), 20, 5F, 0F);
+
     private static DeferredHolder<ArmorMaterial, ArmorMaterial> register(
         String name,
         EnumMap<ArmorItem.Type, Integer> defense,
@@ -45,7 +47,7 @@ public class ArmorMaterialReg {
         float knockBack
     ) {
         var list = List.of(new ArmorMaterial.Layer(Helpers.res(name)));
-        var material = new ArmorMaterial(defense, enchantmentValue, ARMOR_EQUIP_DIAMOND, () -> of(Tags.Items.INGOTS_IRON), list, toughness, knockBack);
+        var material = new ArmorMaterial(defense, enchantmentValue, ARMOR_EQUIP_DIAMOND, Ingredient::of, list, toughness, knockBack);
 
         return ARMOR_MATERIALS.register(name, ()-> material);
     }

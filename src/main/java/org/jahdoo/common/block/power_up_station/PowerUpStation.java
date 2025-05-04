@@ -136,6 +136,7 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
 
         if (entity instanceof PowerUpStationEntity powerUpStation) {
             var handler = powerUpStation.inputItemHandler;
+
             if(stack.getItem() instanceof CoreItem && !CoreData.isFull(stack) || stack.isEmpty()){
                 swapItemsWithHand(handler, 0, player, hand);
                 if(!stack.isEmpty()){
@@ -144,6 +145,10 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
                     Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.IMPACT.get(), 1, 0.85F);
                 }
             } else {
+                if(!handler.getStackInSlot(0).isEmpty()){
+                    Helpers.throwOrAddItem(player, handler.getStackInSlot(0));
+                    handler.setStackInSlot(0, ItemStack.EMPTY);
+                }
                 Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.REJECT.get(), 1, 1);
             }
         }

@@ -30,6 +30,7 @@ public class RunData implements IAttachment {
     public static final String EXPERIENCE = "experience";
     public static final String MOBS_KILLED = "mobs_killed";
     public static final String ROOMS_CLEARED = "rooms_cleared";
+    public static final String CHAMPIONS_KILLED = "champions_killed";
 
     public static final String CHESTS_COMMON = "chests_common";
     public static final String CHESTS_RARE = "chests_rare";
@@ -208,6 +209,14 @@ public class RunData implements IAttachment {
         }
     }
 
+    public static void incrementChampionsKilled(LivingEntity player) {
+        var runData = player.getData(RUN_DATA.get());
+        runData.incrementStat(CHAMPIONS_KILLED);
+
+        if (player instanceof ServerPlayer serverPlayer) {
+            sendToPlayer(serverPlayer, new RunDataS2CP(runData));
+        }
+    }
 
     public static void incrementChestOpenedExp(ServerLevel level, LivingEntity player, int chestValue) {
         var instanceData = level.getData(INSTANCE_DATA.get());

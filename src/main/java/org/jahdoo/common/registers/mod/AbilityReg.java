@@ -20,6 +20,7 @@ import org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.Dimensio
 import org.jahdoo.ascension.ability.abilities_combat.elemental_missile.*;
 import org.jahdoo.ascension.ability.abilities_combat.eternal_wizard.SummonEternalWizardAbility;
 import org.jahdoo.ascension.ability.abilities_combat.fireball.FireballAbility;
+import org.jahdoo.ascension.ability.abilities_combat.frost_spear.IceSpearAbility;
 import org.jahdoo.ascension.ability.abilities_combat.frostbolts.FrostboltsAbility;
 import org.jahdoo.ascension.ability.abilities_combat.hellfire.HellfireAbility;
 import org.jahdoo.ascension.ability.abilities_combat.ice_bomb.IceBombAbility;
@@ -181,6 +182,9 @@ public class AbilityReg {
 
     public static final DeferredHolder<Ability, Ability> FROST_MISSILE =
         registerSpell(new FrostMissileAbility());
+
+    public static final DeferredHolder<Ability, Ability> ICE_SPEAR =
+        registerSpell(new IceSpearAbility());
 
     //Vitality
     public static final DeferredHolder<Ability, Ability> SUMMON_ETERNAL_WIZARD =

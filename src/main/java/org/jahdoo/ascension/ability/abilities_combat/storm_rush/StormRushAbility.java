@@ -66,11 +66,10 @@ public class StormRushAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(30)
             .setStaticCooldown(300)
-            .setDamage(30, 10, 5, 2)
-            .setEffectChance(10, 1, 1, 1)
+            .setEffectChance(10, 2, 2, 2)
             .setEffectDuration(300, 100, 50, 1)
-            .setEffectStrength(10, 1, 1, 1)
-            .setAbilityTagModifiersRandom(LAUNCH_DISTANCE, 2.5, 1.5, true, 0.2, 1)
+            .setEffectStrength(4, 0, 1, 1)
+            .setAbilityTagModifiersRandom(LAUNCH_DISTANCE, 3, 1, true, 1, 2)
             .buildAndReturn();
     }
 

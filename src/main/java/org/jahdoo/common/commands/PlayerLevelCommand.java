@@ -358,6 +358,23 @@ public class PlayerLevelCommand {
                             )
                     )
                     .then(
+                        literal("ancient_golem_armor")
+                            .then(
+                                argument("targets", EntityArgument.players())
+                                    .then(
+                                        rarity(
+                                            c -> getAncientGolem(c.getSource(), JahdooRarity.COMMON),
+                                            c -> getAncientGolem(c.getSource(), JahdooRarity.RARE),
+                                            c -> getAncientGolem(c.getSource(), JahdooRarity.EPIC),
+                                            c -> getAncientGolem(c.getSource(), JahdooRarity.LEGENDARY),
+                                            c -> getAncientGolem(c.getSource(), JahdooRarity.ETERNAL),
+                                            c -> getAncientGolem(c.getSource(), JahdooRarity.UNIQUE),
+                                            c -> getAncientGolem(c.getSource(), null)
+                                        )
+                                    )
+                            )
+                    )
+                    .then(
                         literal("grand_wizard_armor")
                             .then(
                                 argument("targets", EntityArgument.players())
@@ -658,6 +675,18 @@ public class PlayerLevelCommand {
 
         return 1;
     }
+
+    private static int getAncientGolem(CommandSourceStack source, JahdooRarity rarity) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for (var itemStack : ShoppingArmor.ancientGolemWithData(rarity)) {
+            Helpers.throwOrAddItem(player, itemStack);
+        }
+
+        return 1;
+    }
+
 
     private static int getMageArmor(CommandSourceStack source, JahdooRarity rarity) {
         var player = source.getPlayer();

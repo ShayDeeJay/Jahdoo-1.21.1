@@ -55,7 +55,7 @@ public class BlockBreakerAbility extends AbstractBlockAbility {
     @Override
     public AbilityHolder setModifiers() {
        return new AbilityBuilder(abilityId.getPath().intern())
-            .setMana(5, 1, 1, 1)
+           .setStaticMana(1)
             .buildAndReturn();
     }
 

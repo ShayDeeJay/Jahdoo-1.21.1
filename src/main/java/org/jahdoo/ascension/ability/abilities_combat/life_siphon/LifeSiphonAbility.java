@@ -79,8 +79,8 @@ public class LifeSiphonAbility extends Ability {
             .setStaticCooldown(1200)
             .setDamage(20, 10, 2, 1)
             .setRange(2.5, 1.5, 0.2, 2)
-            .setAbilityTagModifiersRandom(HEAL_VALUE, 1.5, 0.5, true, 0.2, 3)
-            .setAbilityTagModifiersRandom(PULSES, 5,1, true, 1, 3)
+            .setAbilityTagModifiersRandom(HEAL_VALUE, 1.5, 0.5, true, 0.25, 3)
+            .setAbilityTagModifiersRandom(PULSES, 5, 1, true, 1, 3)
             .buildAndReturn();
     }
 

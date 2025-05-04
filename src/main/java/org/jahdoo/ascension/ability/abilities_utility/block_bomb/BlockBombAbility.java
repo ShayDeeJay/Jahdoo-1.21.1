@@ -77,10 +77,10 @@ public class BlockBombAbility extends AbstractBlockAbility {
     @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
-            .setMana(30, 20, 2, 1)
-            .setCooldown(800, 400, 50, 2)
+            .setStaticMana(20)
+            .setStaticCooldown(400)
             .setAbilityTagModifiersRandom(EXPLOSION_RANGE, 20, 5, true, 5, 3)
-            .setAbilityTagModifiersRandom(BLOCK_DROP_CHANCE, 100,40, false, 20, 1)
+            .setAbilityTagModifiersRandom(BLOCK_DROP_CHANCE, 100, 40, false, 20, 3)
             .buildAndReturn();
     }
 

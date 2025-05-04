@@ -35,7 +35,8 @@
 					"parent": "bipedBody",
 					"pivot": [0, 24.25, 0],
 					"cubes": [
-						{"origin": [-4.25, 12, -2.25], "size": [8.5, 12, 4.5], "inflate": 0.41, "uv": [32, 15]}
+						{"origin": [-4.25, 12, -2.25], "size": [8.5, 12, 4.5], "inflate": 0.41, "uv": [32, 15]},
+						{"origin": [-4.36, 12.34, -2.46], "size": [8.725, 2, 4.925], "uv": [104, 101]}
 					]
 				},
 				{
@@ -61,15 +62,14 @@
 					"parent": "bipedLeftArm",
 					"pivot": [4, 22.25, 0],
 					"cubes": [
-						{"origin": [4, 12.25, -2.1], "size": [4, 12, 4.2], "inflate": 0.44, "uv": [32, 47]}
+						{"origin": [4, 12, -2.1], "size": [4, 12, 4.2], "inflate": 0.44, "uv": [48, 31], "mirror": true},
+						{"origin": [5, 12.5, -2.35], "size": [4, 12, 4.7], "inflate": 0.44, "uv": [0, 63], "mirror": true},
+						{"origin": [4.58564, 13.80161, -2.45], "size": [4, 12, 4.9], "inflate": 0.44, "pivot": [6.58564, 26.30161, 0], "rotation": [0, 0, -32.5], "uv": [0, 63], "mirror": true}
 					]
 				},
 				{
 					"name": "bipedLeftLeg",
-					"pivot": [2, 12.25, 0],
-					"cubes": [
-						{"origin": [-4.36, 12.34, -2.46], "size": [8.725, 2, 4.925], "uv": [104, 101]}
-					]
+					"pivot": [2, 12.25, 0]
 				},
 				{
 					"name": "armorLeftLeg",

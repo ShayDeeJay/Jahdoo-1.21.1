@@ -69,7 +69,7 @@ public class EscapeDecoyAbility extends Ability {
             .setStaticCooldown(1200)
             .setLifetime(300, 100, 50, 1)
             .setEffectDuration(200, 50, 50, 1)
-            .setRange(15, 5, 2, 2)
+            .setRange(25, 5, 5, 2)
             .buildAndReturn();
     }
 

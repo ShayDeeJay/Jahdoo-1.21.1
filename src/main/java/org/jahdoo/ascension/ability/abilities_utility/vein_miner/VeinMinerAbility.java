@@ -57,7 +57,7 @@ public class VeinMinerAbility extends AbstractBlockAbility {
     @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
-            .setMana(30, 20, 2, 1)
+            .setStaticMana(10)
             .setAbilityTagModifiersRandom(VEIN_MINE_SIZE, 256, 32, true, 32, 2)
             .buildAndReturn();
     }
@@ -74,12 +74,12 @@ public class VeinMinerAbility extends AbstractBlockAbility {
 
     @Override
     public int levelRequirement() {
-        return 15;
+        return 25;
     }
 
     @Override
     public int getAbilityCost() {
-        return 8;
+        return 2;
     }
 
 }

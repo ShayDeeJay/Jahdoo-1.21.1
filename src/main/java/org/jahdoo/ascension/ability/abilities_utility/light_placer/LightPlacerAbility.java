@@ -56,7 +56,7 @@ public class LightPlacerAbility extends AbstractBlockAbility {
     @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
-            .setMana(15, 5, 2, 1)
+            .setStaticMana(1)
             .buildAndReturn();
     }
 

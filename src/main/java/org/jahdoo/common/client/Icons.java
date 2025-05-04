@@ -307,6 +307,9 @@ public class Icons {
     public static final ResourceLocation IN_INVENTORY =
         res(PREFIX + "in_inventory.png");
 
+    public static final ResourceLocation CHAMPIONS_CROWN =
+        res(PREFIX + "champions_crown.png");
+
     public static final ResourceLocation BRONZE_COIN =
         res(ITEMS_PREFIX + "coins/coin.png");
 

@@ -83,7 +83,7 @@ public abstract class ProjectileProperties extends Projectile {
         this.lerpSteps = 2;
     }
 
-    public void setProjectileWithOffsets(Projectile projectile, LivingEntity owner, double spacing, double distance){
+    public static void setProjectileWithOffsets(Projectile projectile, LivingEntity owner, double spacing, double distance){
         var forwardHorizontalOffset = -Math.sin(Math.toRadians(owner.yRotO)) * Math.cos(Math.toRadians(owner.xRotO)) * distance;
         var forwardVerticalOffset = Math.sin(-Math.toRadians(owner.xRotO)) * distance;
         var forwardOffsetX = owner.getX() + forwardHorizontalOffset;

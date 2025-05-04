@@ -54,11 +54,11 @@ public class SummonAncientGolemAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(200)
             .setStaticCooldown(6000)
-            .setDamage(40, 10, 5, 2)
-            .setEffectStrength(10, 0, 1, 1)
-            .setEffectDuration(600, 200, 50, 1)
-            .setEffectChance(60, 20, 10, 1)
-            .setCastingDistance(30, 10, 5, 2)
+            .setDamage(40, 10, 10, 2)
+            .setEffectStrength(10, 0, 2, 1)
+            .setEffectDuration(600, 200, 100, 1)
+            .setEffectChance(60, 20, 20, 1)
+            .setCastingDistance(30, 10, 10, 2)
             .setLifetime(12000, 2400, 1200, 1)
             .buildAndReturn();
     }

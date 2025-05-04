@@ -16,6 +16,7 @@ import org.jahdoo.common.entities.decoy.Decoy;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.jahdoo.common.entities.ice_spear.IceSpear;
 import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 
@@ -101,12 +102,18 @@ public class EntityReg {
             .passengerAttachments(0.765F)
             .clientTrackingRange(8)
         );
-
     public static final DeferredHolder<EntityType<?>, EntityType<CustomSkeleton>> CUSTOM_SKELETON =
         regEntity("jahdoo_skeleton", Builder.<CustomSkeleton>of(CustomSkeleton::new, MONSTER)
             .sized(0.6F, 1.99F)
             .eyeHeight(1.74F)
             .ridingOffset(-0.7F)
+            .clientTrackingRange(10)
+        );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<IceSpear>> ICE_SPEAR =
+        regEntity("ice_spear", Builder.<IceSpear>of(IceSpear::new, MISC)
+            .sized(0.5F, 0.5F)
+            .eyeHeight(0.13F)
             .clientTrackingRange(10)
         );
 

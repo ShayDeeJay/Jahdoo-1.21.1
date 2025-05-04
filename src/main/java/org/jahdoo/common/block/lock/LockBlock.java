@@ -27,7 +27,6 @@ import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
-import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.sounds.SoundEvents.*;
@@ -119,57 +118,48 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     ) {
         if(!(level.getBlockEntity(pos) instanceof LockBlockEntity entity)) return FAIL;
         if(!(level instanceof ServerLevel serverLevel)) return FAIL;
+        if(!entity.isInitialized()) return FAIL;
 
-        if(entity.isInitialized()){
-            if(stack.is(ItemReg.EXIT_KEY)) {
-                var getKeyId = stack.get(ComponentReg.ID);
-                if(getKeyId != null && getKeyId.equals(level.getDescriptionKey())){
-                    entity.setRoomData(StructureManager.EXIT_ROOM_COMPONENT);
-                    stack.shrink(1);
-                } else {
-                    return FAIL;
-                }
-            }
-
-            var getState = state.getValue(FACING);
-            var doesntHaveDifficulty = serverLevel.getData(INSTANCE_DATA).getDifficulty().isEmpty();
-
-            if ((!entity.getDifficulty.isEmpty() && !doesntHaveDifficulty)) {
-                var message = "Difficulty already selected";
-                player.displayClientMessage(withStyleComponent(message, ColourStore.NEGATIVE_RED), true);
-                getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
+        if(stack.is(ItemReg.EXIT_KEY)) {
+            var getKeyId = stack.get(ComponentReg.ID);
+            if(getKeyId != null && getKeyId.equals(level.getDescriptionKey())){
+                entity.setRoomData(StructureManager.EXIT_ROOM_COMPONENT);
+                stack.shrink(1);
+            } else {
                 return FAIL;
             }
-
-            if (!entity.isStartingRoom() && !entity.canPlace()) {
-                var message = "Can't place, room already generated";
-                player.displayClientMessage(withStyleComponent(message, ColourStore.NEGATIVE_RED), true);
-                getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
-                return FAIL;
-            }
-
-            if(doesntHaveDifficulty) entity.setDifficulty();
-
-            getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, 1, 1.4F);
-            getSoundWithPosition(serverLevel, pos, VAULT_ACTIVATE, 1, 0.6F);
-            placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()));
-            destroyDoors(serverLevel, pos);
-            if(entity.isStartingRoom()) destroyDoors(serverLevel, pos.relative(getState, 12));
-            onUnlock(pos, entity, serverLevel);
-            entity.clicked = true;
-            return SUCCESS;
         }
 
-        return FAIL;
-    }
+        var getState = state.getValue(FACING);
+        var noDifficultySelected = serverLevel.getData(INSTANCE_DATA).getDifficulty().isEmpty();
+        if(noDifficultySelected) entity.setDifficulty();
 
-    //For debug only
-    private static @NotNull ItemInteractionResult manuallySetData(LockBlockEntity entity) {
-//        entity.setRoomData();
+        if ((!entity.getDifficulty.isEmpty() && !noDifficultySelected)) {
+            var message = "Difficulty already selected";
+            player.displayClientMessage(withStyleComponent(message, ColourStore.NEGATIVE_RED), true);
+            getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
+            return FAIL;
+        }
+
+        if (!entity.isStartingRoom() && !entity.canPlace()) {
+            var message = "Can't place, room already generated";
+            player.displayClientMessage(withStyleComponent(message, ColourStore.NEGATIVE_RED), true);
+            getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
+            return FAIL;
+        }
+
+        getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, 1, 1.4F);
+        getSoundWithPosition(serverLevel, pos, VAULT_ACTIVATE, 1, 0.6F);
+        placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()));
+        onUnlock(entity, serverLevel);
+
+        if(entity.isStartingRoom()) destroyDoors(serverLevel, pos.relative(getState, 12));
+        destroyDoors(serverLevel, pos);
+        entity.clicked = true;
         return SUCCESS;
     }
 
-    private static void onUnlock(BlockPos pos, LockBlockEntity entity, ServerLevel level) {
+    private static void onUnlock(LockBlockEntity entity, ServerLevel level) {
 
         if(entity.negativeBoon != EMPTY){
             var getBoonNeg = LevelBoonReg.fromId(entity.negativeBoon.id());

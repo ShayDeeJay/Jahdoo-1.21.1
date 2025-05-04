@@ -21,7 +21,7 @@ public class IceBombAbility extends Ability {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.RARE;
+        return JahdooRarity.LEGENDARY;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class IceBombAbility extends Ability {
 
     @Override
     public int levelRequirement() {
-        return 15;
+        return 30;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class IceBombAbility extends Ability {
                 offsetShoot(player),
                 abilityId.getPath().intern()
             ),
-            player, 0.35f
+            player, 0.5F
         );
     }
 
@@ -79,8 +79,9 @@ public class IceBombAbility extends Ability {
             .setStaticMana(45)
             .setStaticCooldown(400)
             .setDamage(20, 10, 2, 1)
+            .ricochets(6, 2, 1, 1)
             .setEffectStrength(10, 5, 1, 1)
-            .setEffectDuration(600, 200, 100, 1)
+            .setEffectDuration(600, 300, 100, 2)
             .buildAndReturn();
     }
 

@@ -47,7 +47,8 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var randomBattleMage = new ShoppingItems(listRandom(ShoppingArmor.battleMageWithData(UNIQUE)), setGoldCost(300));
         var randomWizard = new ShoppingItems(listRandom(ShoppingArmor.wizardWithData(UNIQUE)), setPlatinumCost(150));
         var randomKnightKing = new ShoppingItems(listRandom(ShoppingArmor.knightKingWithData(UNIQUE)), setPlatinumCost(150));
-        var getRandomArmor = listRandom(List.of(randomMage, randomBattleMage, randomWizard, randomKnightKing));
+        var randomAncientGolem = new ShoppingItems(listRandom(ShoppingArmor.ancientGolemWithData(UNIQUE)), setPlatinumCost(300));
+        var getRandomArmor = listRandom(List.of(randomMage, randomBattleMage, randomWizard, randomKnightKing, randomAncientGolem));
 
         var stack = getRandomArmor.ShoppingItem;
         if (stack.getItem() instanceof ArmorItem armorItem) {

@@ -71,15 +71,15 @@ public class HammerAbility extends AbstractBlockAbility {
 
     @Override
     public int getAbilityCost() {
-        return 6;
+        return 2;
     }
 
     @Override
     public AbilityHolder setModifiers() {
         int high = 13;
         return new AbilityBuilder(abilityId.getPath().intern())
-            .setMana(30, 15, 5, 1)
-            .setBlockSize(high, 3, 2, 2)
+            .setStaticMana(10)
+            .setBlockSize(high, 3, 2, 1)
             .setModifierWithStepSet(OFFSET, high, 0, true, high, 1, 1, 1)
             .buildAndReturn();
     }

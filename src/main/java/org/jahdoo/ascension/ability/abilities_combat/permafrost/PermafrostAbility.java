@@ -74,10 +74,10 @@ public class PermafrostAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(60)
             .setStaticCooldown(1200)
-            .setEffectDuration(300, 100, 50, 1)
-            .setEffectStrength(10, 5,1, 1)
-            .setLifetime(200, 100, 20, 1)
-            .setAoe(4, 2, 0.5, 2)
+            .setEffectDuration(500, 100, 100, 1)
+            .setEffectStrength(10, 6, 2, 2)
+            .setLifetime(400, 200, 50, 1)
+            .setAoe(6, 2, 1, 2)
             .buildAndReturn();
     }
 

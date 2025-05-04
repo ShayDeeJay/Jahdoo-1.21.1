@@ -70,7 +70,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
     ) {
         super(EntityReg.FLAMING_SKULL.get(), owner.level());
         if(target != null && hasLineOfSight(this, target)) this.target = target;
-        this.setProjectileWithOffsets(this, owner, spacing, 1);
+        setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
 

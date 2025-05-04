@@ -20,7 +20,7 @@ public class AbilityBuilder {
     public static final String DAMAGE = "Damage";
     public static final String EFFECT_CHANCE = "Effect Apply Chance";
     public static final String EFFECT_DURATION = "Effect Duration";
-    public static final String EFFECT_STRENGTH = "Effect Multiplier";
+    public static final String EFFECT_STRENGTH = "Effect Strength";
     public static final String RANGE = "Range";
     public static final String CASTING_DISTANCE = "Cast Distance";
     public static final String SET_ELEMENT_TYPE = "Element Type";
@@ -29,8 +29,8 @@ public class AbilityBuilder {
     public static final String SIZE = "Block Size";
     public static final String OFFSET = "Offset";
     public static final String GRAVITATIONAL_PULL = "Gravitational Pull";
-    public static final String ENTITY_MULTIPLIER = "Shot Multiplier";
     public static final String SHOT_MULTIPLIER = "Shot Multiplier";
+    public static final String VELOCITY = "Projectile Velocity";
     public static final String NUMBER_OF_RICOCHET = "Ricochets";
     private ItemStack item = null;
     private final String abilityId;
@@ -129,7 +129,17 @@ public class AbilityBuilder {
     }
 
     public AbilityBuilder shotMultiplier(double high, double low, double step, double baseCost){
-        this.setAbilityTagModifiersRandom(ENTITY_MULTIPLIER, high, low, true, step, baseCost);
+        this.setAbilityTagModifiersRandom(SHOT_MULTIPLIER, high, low, true, step, baseCost);
+        return this;
+    }
+
+    public AbilityBuilder shotVelocity(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(VELOCITY, high, low, true, step, baseCost);
+        return this;
+    }
+
+    public AbilityBuilder ricochets(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(NUMBER_OF_RICOCHET, high, low, true, step, baseCost);
         return this;
     }
 

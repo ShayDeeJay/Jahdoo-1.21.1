@@ -38,7 +38,8 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(PERK_TABLE.value())
             .add(SHOPPING_TABLE.value())
             .add(LOOT_CHEST.value())
-            .add(LOCK.value());
+            .add(LOCK.value())
+            .add(POWER_UP_STATION.value());
 
         this.tag(POWER_UP_SUPPORT)
             .add(GRASS_BLOCK)

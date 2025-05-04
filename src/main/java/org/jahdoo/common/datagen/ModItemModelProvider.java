@@ -181,7 +181,9 @@ public class ModItemModelProvider extends ItemModelProvider {
             ItemReg.BATTLEMAGE_HELMET, ItemReg.BATTLEMAGE_CHESTPLATE,
             ItemReg.BATTLEMAGE_LEGGINGS, ItemReg.BATTLEMAGE_BOOTS,
             ItemReg.KNIGHT_KING_HELMET, ItemReg.KNIGHT_KING_CHESTPLATE,
-            ItemReg.KNIGHT_KING_LEGGINGS, ItemReg.KNIGHT_KING_BOOTS
+            ItemReg.KNIGHT_KING_LEGGINGS, ItemReg.KNIGHT_KING_BOOTS,
+            ItemReg.ANCIENT_GOLEM_HELMET, ItemReg.ANCIENT_GOLEM_CHESTPLATE,
+            ItemReg.ANCIENT_GOLEM_LEGGINGS, ItemReg.ANCIENT_GOLEM_BOOTS
         );
 
         armorItems.forEach(this::createSimpleItemModel);

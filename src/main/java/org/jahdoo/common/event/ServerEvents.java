@@ -98,9 +98,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
-        var item = rightClickItem.getItemStack();
-
-//        item.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(2));
+        var stack = rightClickItem.getItemStack();
 
         removeShieldUse(rightClickItem);
     }

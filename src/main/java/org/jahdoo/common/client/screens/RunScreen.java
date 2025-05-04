@@ -261,6 +261,7 @@ public class RunScreen extends AbstractPanableScreen {
         allComponents.add(new StatEntry(componentTemplate("Eternal Chest", runData.getStat(CHESTS_ETERNAL) + "", ETERNAL.getColour()), CHEST_ETERNAL));
 
         allComponents.add(new StatEntry(componentTemplate("Mobs Killed", runData.getStat(MOBS_KILLED) + "", MAGNET_STRENGTH_RED), Icons.HORDE));
+        allComponents.add(new StatEntry(componentTemplate("Champions Killed", runData.getStat(CHAMPIONS_KILLED) + "", CHAMPION_GOLD), CHAMPIONS_CROWN));
         allComponents.add(new StatEntry(componentTemplate("Bronze Coins", runData.getStat(RunData.BRONZE_COIN) + "", BRONZE_COIN), Icons.BRONZE_COIN));
         allComponents.add(new StatEntry(componentTemplate("Silver Coins", runData.getStat(RunData.SILVER_COIN) + "", SILVER_COIN), Icons.SILVER_COIN));
         allComponents.add(new StatEntry(componentTemplate("Gold Coins", runData.getStat(RunData.GOLD_COIN) + "", GOLD_COIN), Icons.GOLD_COIN));

@@ -67,7 +67,7 @@ public class WallPlacerAbility extends AbstractBlockAbility {
 
     @Override
     public int getAbilityCost() {
-        return 2;
+        return 1;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class WallPlacerAbility extends AbstractBlockAbility {
     public AbilityHolder setModifiers() {
         int high = 13;
         return new AbilityBuilder(abilityId.getPath().intern())
-            .setMana(30, 15, 5, 1)
+            .setStaticMana(5)
             .setBlockSize(high, 1, 2, 1)
             .setModifierWithStepSet(OFFSET, high, 0, true, high, 1, 1, 1)
             .buildAndReturn();

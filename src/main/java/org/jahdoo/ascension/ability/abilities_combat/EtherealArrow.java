@@ -128,7 +128,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
                 spawnElectrifiedParticles(serverLevel, hitEntity.position(), generic,3, hitEntity, 0.2);
             }
 
-            if (Helpers.Random.nextInt(0, (int) Math.max(effectChance, 1)) == 0) {
+            if (Helpers.Random.nextInt(0, (int) Math.max(effectChance, 1)) == 0 || effectChance == -1) {
                 var effect = new JahdooMobEffect(element.effect(), (int) effectDuration, (int) effectStrength);
                 hitEntity.addEffect(effect);
             }

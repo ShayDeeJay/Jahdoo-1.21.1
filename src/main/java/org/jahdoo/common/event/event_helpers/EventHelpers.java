@@ -636,7 +636,10 @@ public class EventHelpers {
 
         if(modelData > 0) stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(modelData));
         throwItem(entity, stack.copyWithCount(withChampionCoins), entity.position());
-        if(getKiller != null) incrementKilledMobsExp(level, getKiller, withChampionExp);
+        if(getKiller != null) {
+            incrementKilledMobsExp(level, getKiller, withChampionExp);
+            if(isChampion) incrementChampionsKilled(getKiller);
+        }
     }
 
 

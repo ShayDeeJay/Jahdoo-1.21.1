@@ -10,15 +10,9 @@ import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.MoveClientEntityS2CP;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 
-import static org.jahdoo.ascension.ability.AbilityBuilder.DAMAGE;
-import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.ascension.utils.Helpers.attributeModifierCalculator;
-import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.SoundReg.DASH_EFFECT_INSTANT;
 import static org.jahdoo.common.registers.SoundReg.FROST_ABILITY;
 
@@ -47,12 +41,7 @@ public class StormRush extends AbstractAbility {
     }
 
     public void launchPlayerDirection() {
-        var damage = getTag(DAMAGE);
-        var damageModified = attributeModifierCalculator(player, (float) damage, true, MAGIC_DAMAGE_MULTIPLIER, getType().damageAmplifier());
-        var particleOptions = ParticleHandlers.genericParticle(ParticleStore.ELECTRIC_PARTICLE, this.getType(), Random.nextInt(10,18), 1f, 0.3);
         var level = player.level();
-        var pos = player.position();
-
         if(player instanceof ServerPlayer serverPlayer) {
             serverPlayer.getAbilities().mayfly = true;
             var launchDistances = getTag(StormRushAbility.LAUNCH_DISTANCE);

@@ -42,7 +42,6 @@ public class FrostBolts  extends DefaultEntityBehaviour {
     private double effectDuration;
     private double effectStrength;
     private int currentShotCount;
-    private double effectChance;
     private double castDistance;
     private LivingEntity hitTarget;
     private double cooldown;
@@ -61,7 +60,6 @@ public class FrostBolts  extends DefaultEntityBehaviour {
             );
         }
 
-        this.effectChance = this.getTag(EFFECT_CHANCE);
         this.effectStrength = this.getTag(EFFECT_STRENGTH);
         this.effectDuration = this.getTag(EFFECT_DURATION);
         this.castDistance = this.getTag(CASTING_DISTANCE);
@@ -200,7 +198,6 @@ public class FrostBolts  extends DefaultEntityBehaviour {
 
     @Override
     public void addAdditionalDetails(CompoundTag compoundTag) {
-        compoundTag.putDouble(EFFECT_CHANCE, this.effectChance);
         compoundTag.putDouble(EFFECT_DURATION, this.effectDuration);
         compoundTag.putDouble(EFFECT_STRENGTH, this.effectStrength);
         compoundTag.putDouble(DAMAGE, this.damage);
@@ -214,7 +211,6 @@ public class FrostBolts  extends DefaultEntityBehaviour {
 
     @Override
     public void readCompoundTag(CompoundTag compoundTag) {
-        this.effectChance = compoundTag.getDouble(EFFECT_CHANCE);
         this.effectDuration = compoundTag.getDouble(EFFECT_DURATION);
         this.effectStrength = compoundTag.getDouble(EFFECT_STRENGTH);
         this.damage = compoundTag.getDouble(DAMAGE);
@@ -237,7 +233,7 @@ public class FrostBolts  extends DefaultEntityBehaviour {
             var arrow = new GenericProjectile(
                 player, arrowX, arrowY, arrowZ,
                 EntityDataReg.ETHEREAL_ARROW.get().setAbilityId(),
-                EtherealArrow.setArrowProperties(damage, effectDuration, effectStrength, effectChance, this.getElementType().id()),
+                EtherealArrow.setArrowProperties(damage, effectDuration, effectStrength, -1, this.getElementType().id()),
                 this.getElementType(),
                 FrostboltsAbility.abilityId.getPath()
             );

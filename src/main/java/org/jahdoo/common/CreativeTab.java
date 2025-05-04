@@ -87,6 +87,11 @@ public class CreativeTab {
                 outPut.accept(KNIGHT_KING_LEGGINGS.get());
                 outPut.accept(KNIGHT_KING_BOOTS.get());
 
+                outPut.accept(ANCIENT_GOLEM_HELMET.get());
+                outPut.accept(ANCIENT_GOLEM_CHESTPLATE.get());
+                outPut.accept(ANCIENT_GOLEM_LEGGINGS.get());
+                outPut.accept(ANCIENT_GOLEM_BOOTS.get());
+
                 outPut.accept(WAND_MANAGER_TABLE.get());
                 outPut.accept(WAND_ITEM_MYSTIC.get());
                 outPut.accept(WAND_ITEM_FROST.get());

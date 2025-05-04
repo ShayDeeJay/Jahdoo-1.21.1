@@ -72,16 +72,16 @@ public class FarmersTouchAbility extends AbstractBlockAbility {
 
     @Override
     public int getAbilityCost() {
-        return 4;
+        return 2;
     }
 
     @Override
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
-            .setMana(30, 15, 5, 1)
-            .setRange(10, 1, 1, 1)
-            .setAbilityTagModifiersRandom(GROWTH_CHANCE, 30, 5, false, 5, 1)
-            .setAbilityTagModifiersRandom(HARVEST_CHANCE, 30, 5, false, 5, 1)
+            .setStaticMana(15)
+            .setRange(10, 2, 2, 1)
+            .setAbilityTagModifiersRandom(GROWTH_CHANCE, 20, 5, false, 5, 1)
+            .setAbilityTagModifiersRandom(HARVEST_CHANCE, 20, 5, false, 5, 1)
             .buildAndReturn();
     }
 
