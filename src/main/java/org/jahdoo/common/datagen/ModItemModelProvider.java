@@ -36,7 +36,6 @@ public class ModItemModelProvider extends ItemModelProvider {
         registerAugmentCoreFilled();
         registerAdvancedAugmentCoreFilled();
         registerAugmentHyperCoreFilled();
-        registerAbilityAugments();
     }
 
     private void createSimpleItemModel(DeferredHolder<Item, Item> item) {
@@ -106,20 +105,6 @@ public class ModItemModelProvider extends ItemModelProvider {
         }
     }
 
-    private void registerAbilityAugments() {
-//
-//        for (int i = 1; i < 5; i++) {
-//            var element = ElementReg.fromId(i);
-//            var s = element.get().setAbilityId() + "_augment";
-//            var prefix = "item/augments/"+s;
-//            createModel(prefix, prefix);
-//            getWithParent(ItemReg.ABILITY_AUGMENT, "item/augments/unidentified_augment")
-//                .override()
-//                .predicate(MODEL_DATA, i)
-//                .model(modelFile(prefix))
-//                .end();
-//        };
-    }
 
     private void registerAugmentHyperCoreFilled() {
         createModel("augment_hyper_core_filled", "item/augment_hyper_core_filled");
@@ -166,7 +151,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         var simpleItems = List.of(
             ItemReg.NEXITE_POWDER, ItemReg.ESSENCE_FRAGMENT, ItemReg.INFERNO_AUGMENT,
             ItemReg.FROST_AUGMENT, ItemReg.MYSTIC_AUGMENT, ItemReg.VITALITY_AUGMENT,
-            ItemReg.CHALLENGER_TICKET, ItemReg.SKILL_POINT, ItemReg.EXIT_KEY
+            ItemReg.CHALLENGER_TICKET, ItemReg.SKILL_POINT, ItemReg.EXIT_KEY, ItemReg.COIN_SACK
         );
 
         simpleItems.forEach(this::createSimpleItemModel);

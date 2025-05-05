@@ -9,11 +9,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.PlayerWallet;
 import org.jahdoo.ascension.quests.AbstractQuest;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.client.overlay.WalletOverlay;
+import org.jahdoo.common.items.CoinSack;
 import org.jahdoo.common.networking.client2server.AddQuestC2SP;
 import org.jahdoo.common.networking.client2server.PerkTableSyncC2SP;
 import org.jahdoo.common.networking.client2server.WalletSyncC2SP;
@@ -87,13 +89,15 @@ public class QuestSelectionScreen extends Screen  {
         if(table.isPresent()){
             var getTable = table.get();
             var counter = getTable.getReRollCounter();
+            var playerLevel = CasterData.getLevel(getMinecraft().player);
 
             if(counter == 0){
-                getToolTip.add(Helpers.withStyleComponent("1 Free " + roll, uiColour()));
+                getToolTip.add(Helpers.withStyleComponent("Free", uiColour()));
                 this.converter = new CurrencyConverter(0,0,0,0);
             } else {
-                var wallet = 100 * (counter * counter + 2);
+                var wallet = playerLevel * (counter * counter + 2);
                 this.converter = convertToCoins(wallet);
+                CoinSack.coinToolTip(getToolTip, wallet);
             }
         }
     }

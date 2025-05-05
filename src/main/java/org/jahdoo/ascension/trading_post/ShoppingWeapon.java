@@ -8,7 +8,7 @@ import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.registers.ItemReg;
 
 import static net.minecraft.world.item.enchantment.Enchantments.*;
-import static org.jahdoo.ascension.trading_post.RewardLootTables.attachEnchantment;
+import static org.jahdoo.ascension.loot.RewardLootTables.attachEnchantment;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 
 public class ShoppingWeapon {

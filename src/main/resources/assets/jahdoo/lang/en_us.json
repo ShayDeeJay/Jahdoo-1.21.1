@@ -53,6 +53,7 @@
   "block.jahdoo.wand_manager_table": "Wand Manager",
   "blocks.jahdoo.screen.wand.compare": "Hold shift to compare",
   "block.jahdoo.modular_chaos_cube": "Modular Chaos Cube",
+  "block.jahdoo.loot_crate": "Loot Crate",
 
   "effect.jahdoo.step_boost": "Step Assist",
   "effect.jahdoo.amplify_block_reach": "Block Reach",

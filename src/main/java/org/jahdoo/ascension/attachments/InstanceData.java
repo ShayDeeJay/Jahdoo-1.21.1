@@ -31,6 +31,7 @@ public class InstanceData implements IAttachment {
     public static final String KEY_SPEED = "speed";
     public static final String KEY_ARMOR = "armor";
     public static final String KEY_ATTACK_DAMAGE = "attack_damage";
+    public static final String KEY_QUEST_CRATE_MULTIPLIER = "quest_crate_multiplier";
 
     private final Map<String, Double> values = new HashMap<>();
     private String difficulty;
@@ -121,6 +122,10 @@ public class InstanceData implements IAttachment {
         return get(KEY_ARMOR);
     }
 
+    public int getQuestCrateMultiplier() {
+        return (int) get(KEY_QUEST_CRATE_MULTIPLIER);
+    }
+
     public double getAttackDamage() {
         return get(KEY_ATTACK_DAMAGE);
     }
@@ -192,6 +197,10 @@ public class InstanceData implements IAttachment {
 
     public void setPlatinumCoin(int goldCoin) {
         increment(KEY_PLATINUM_COIN, goldCoin);
+    }
+
+    public void setQuestCrateMultiplier(int crateMultiplier) {
+        increment(KEY_QUEST_CRATE_MULTIPLIER, crateMultiplier);
     }
 
     public static InstanceData setEasyData() {

@@ -266,6 +266,7 @@ public class RunScreen extends AbstractPanableScreen {
         allComponents.add(new StatEntry(componentTemplate("Silver Coins", runData.getStat(RunData.SILVER_COIN) + "", SILVER_COIN), Icons.SILVER_COIN));
         allComponents.add(new StatEntry(componentTemplate("Gold Coins", runData.getStat(RunData.GOLD_COIN) + "", GOLD_COIN), Icons.GOLD_COIN));
         allComponents.add(new StatEntry(componentTemplate("Platinum Coins", runData.getStat(RunData.PLATINUM_COIN) + "", PLATINUM_COIN), Icons.PLATINUM_COIN));
+        allComponents.add(new StatEntry(componentTemplate("Quest Crate Multiplier", instanceData.getQuestCrateMultiplier() + "", WALLET_BROWN), QUEST_CRATE));
 
         allComponents.add(spacer);
 //        allComponents.add(new StatEntry(componentTemplate("Max Time", ticksToTime(instanceData.getMaxTime() + ""), PERK_GREEN), CLOCK));

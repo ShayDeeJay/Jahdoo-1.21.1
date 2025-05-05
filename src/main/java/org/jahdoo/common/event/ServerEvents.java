@@ -99,7 +99,6 @@ public class ServerEvents {
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
         var stack = rightClickItem.getItemStack();
-
         removeShieldUse(rightClickItem);
     }
 
@@ -141,7 +140,6 @@ public class ServerEvents {
     public static void onPlayerTickEvent(PlayerTickEvent.Pre event){
         var player = event.getEntity();
         var level = player.level();
-
         questTracker(level, player);
 
         if(player instanceof ServerPlayer serverPlayer){
@@ -197,15 +195,13 @@ public class ServerEvents {
     public static void livingDropsEvent(LivingDropsEvent event){
         var entity = event.getEntity();
 
-        if(entity.level() instanceof CustomLevel)
-            event.setCanceled(true);
+        if(entity.level() instanceof CustomLevel) event.setCanceled(true);
     }
 
     @SubscribeEvent
     public static void livingDeathEvent(LivingDeathEvent event){
         var entity = event.getEntity();
         var bonus = entity.tickCount / 10;
-
 
         coinDropCalc(entity, bonus);
         onDeathGreaterFrostEffect(entity);

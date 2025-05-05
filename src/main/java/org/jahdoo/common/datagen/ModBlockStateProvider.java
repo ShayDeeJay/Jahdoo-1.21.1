@@ -38,6 +38,11 @@ public class ModBlockStateProvider extends BlockStateProvider {
         );
 
         simpleBlockWithItem(
+            LOOT_CRATE.get(),
+            new UncheckedModelFile(modLoc("block/loot_crate"))
+        );
+
+        simpleBlockWithItem(
             POWER_UP_STATION.get(),
             new UncheckedModelFile(modLoc("block/power_up_station"))
         );

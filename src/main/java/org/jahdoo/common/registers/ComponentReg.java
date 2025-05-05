@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.CoreData;
+import org.jahdoo.common.components.LootCrateData;
 import org.jahdoo.common.items.magnet.MagnetData;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
@@ -104,6 +105,14 @@ public class ComponentReg {
             builder
                 .persistent(CoreData.CODEC)
                 .networkSynchronized(CoreData.STREAM_CODEC)
+                .cacheEncoding()
+        );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<LootCrateData>> LOOT_CRATE_DATA =
+        register("loot_crate_data", builder ->
+            builder
+                .persistent(LootCrateData.CODEC)
+                .networkSynchronized(LootCrateData.STREAM_CODEC)
                 .cacheEncoding()
         );
 

@@ -3,7 +3,6 @@ package org.jahdoo.ascension.attachments.player_abilities;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -17,8 +16,10 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.EffectReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 
+import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
@@ -104,9 +105,12 @@ public class MageFlight implements IAttachment {
             }
         );
 
-        if (player.tickCount % 3 == 0) {
+        if (player.tickCount % 6 == 0) {
             Helpers.getSoundWithPosition(
-                player.level(), player.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE, 0.03f, (float) player.getDeltaMovement().y
+                player.level(), player.blockPosition(), SoundReg.LEVITATE.get(), 1f, Random.nextFloat(1, 1.5F)
+            );
+            Helpers.getSoundWithPosition(
+                player.level(), player.blockPosition(), SoundReg.HEAL.get(), 0.5f, Random.nextFloat(1, 1.5F)
             );
         }
     }

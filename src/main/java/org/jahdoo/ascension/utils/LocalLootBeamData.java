@@ -8,8 +8,7 @@ import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 import java.awt.*;
 
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
-import static org.jahdoo.ascension.utils.ColourStore.UNIQUE_A;
-import static org.jahdoo.ascension.utils.ColourStore.UNIQUE_B;
+import static org.jahdoo.ascension.utils.ColourStore.*;
 
 public class LocalLootBeamData {
 
@@ -54,6 +53,15 @@ public class LocalLootBeamData {
         var shadowRadius = 0.4f + ((float) rarity.getId() / 10);
         var renderDistance = 250;
         return new LootBeamComponent(UNIQUE_B, UNIQUE_A, beamHeight, 0.8F,  0.2F, true, beamRadius, 0.4F, shadowRadius, true, renderDistance,  true, 5, 0.25, 1.5, true);
+    }
+
+    public static void attachCoinSackLootBeam(ItemStack stack){
+        var beamHeight = 0.5F;
+        var beamRadius = 0.35F;
+        var shadowRadius = 0.4f;
+        var renderDistance = 48;
+        var lootBeamComponent = new LootBeamComponent(GOLD_COIN, SILVER_COIN, beamHeight, 0.8F, 0.2F, true, beamRadius, 0.4F, shadowRadius, true, renderDistance, true, 5, 0.25, 1.5, true);
+        stack.set(DataComponentsReg.INSTANCE.getLOOT_BEAM_DATA(), lootBeamComponent);
     }
 
     public static void attachLootBeamComponent(ItemStack itemStack, JahdooRarity rarity) {

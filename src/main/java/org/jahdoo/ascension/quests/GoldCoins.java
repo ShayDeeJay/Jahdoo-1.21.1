@@ -16,7 +16,7 @@ public class GoldCoins extends CollectCoinQuest {
 
     @Override
     public int questQuantity(Player player) {
-        return questValueMultiplier(player, 20, 5, 5);
+        return questValueMultiplier(player, 15, 7, 10);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class GoldCoins extends CollectCoinQuest {
 
     @Override
     public int questXp(Player player) {
-        return questValueMultiplier(player, 50, 150, 5);
+        return questValueMultiplier(player, 150, 650, 10);
     }
 
     @Override

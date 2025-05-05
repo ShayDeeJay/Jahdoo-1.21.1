@@ -208,5 +208,17 @@
     "sounds": [
       "jahdoo:block"
     ]
+  },
+  "crate_open": {
+    "subtitles": "sounds.jahdoo.crate_open",
+    "sounds": [
+      "jahdoo:crate_open"
+    ]
+  },
+  "levitate": {
+    "subtitles": "sounds.jahdoo.levitate",
+    "sounds": [
+      "jahdoo:levitate"
+    ]
   }
 }

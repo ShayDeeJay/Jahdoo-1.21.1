@@ -122,6 +122,9 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> BASIC_SHIELD =
         complexItem("basic_shield", JahdooShieldItem::new);
 
+    public static final DeferredHolder<Item, Item> COIN_SACK =
+        complexItem("coin_sack", CoinSack::new);
+
     //Block Items
     public static final DeferredHolder<Item, Item> DISASSEMBLER_ITEM =
         complexItem("disassembler", () -> new DisassemblerBlockItem(DISSEMBLER.get()));

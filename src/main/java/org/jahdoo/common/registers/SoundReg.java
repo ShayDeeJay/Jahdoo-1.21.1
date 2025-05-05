@@ -117,6 +117,12 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> BLOCK =
         registerSoundEvent("block");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> CRATE_OPEN =
+        registerSoundEvent("crate_open");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> LEVITATE =
+        registerSoundEvent("levitate");
+
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));
     }

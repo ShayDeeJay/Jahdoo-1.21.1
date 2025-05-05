@@ -2,6 +2,7 @@ package org.jahdoo.common.items.magnet;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -100,16 +101,22 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
     public void curioTick(SlotContext slotContext, ItemStack stack) {
         var player = slotContext.entity();
         var level = player.level();
+        if(!(level instanceof ServerLevel serverLevel)) return;
+
         var magnetData = MagnetData.getMagnetData(stack);
         var bounding = player.getBoundingBox().inflate(magnetData.range());
-        var itemEntities = level.getEntitiesOfClass(ItemEntity.class, bounding);
-        var expEntities = level.getEntitiesOfClass(ExperienceOrb.class, bounding);
+        var itemEntities = serverLevel.getEntitiesOfClass(ItemEntity.class, bounding);
+        var expEntities = serverLevel.getEntitiesOfClass(ExperienceOrb.class, bounding);
         var durability = stackDurability(stack);
         var isPullingItem = !itemEntities.isEmpty() || !expEntities.isEmpty();
 
         if(magnetData.active() && durability > 0){
-            if(isPullingItem) hurtAndKeepItem(stack, 1, level, player);
-            for (var item : itemEntities) entityMover(player, item, magnetData.strength());
+            if(isPullingItem) hurtAndKeepItem(stack, 1, serverLevel, player);
+            for (var item : itemEntities) {
+                if(!item.hasPickUpDelay()){
+                    entityMover(player, item, magnetData.strength());
+                }
+            }
             for (var xp : expEntities) entityMover(player, xp, magnetData.strength());
         }
 

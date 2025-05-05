@@ -142,8 +142,8 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         }
 
         if (!entity.isStartingRoom() && !entity.canPlace()) {
-            var message = "Can't place, room already generated";
-            player.displayClientMessage(withStyleComponent(message, ColourStore.NEGATIVE_RED), true);
+//            var message = "Can't place, room already generated";
+//            player.displayClientMessage(withStyleComponent(message, ColourStore.NEGATIVE_RED), true);
             getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
             return FAIL;
         }

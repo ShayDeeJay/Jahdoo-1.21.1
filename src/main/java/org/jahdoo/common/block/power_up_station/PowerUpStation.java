@@ -30,6 +30,7 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
+import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.registers.AttachmentReg.BOOL;
 import static org.jahdoo.common.registers.BlockEntityReg.POWER_UP_BE;
@@ -137,23 +138,49 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
         if (entity instanceof PowerUpStationEntity powerUpStation) {
             var handler = powerUpStation.inputItemHandler;
 
-            if(stack.getItem() instanceof CoreItem && !CoreData.isFull(stack) || stack.isEmpty()){
+            if(stack.getItem() instanceof CoreItem && !CoreData.isFull(stack)){
                 swapItemsWithHand(handler, 0, player, hand);
                 if(!stack.isEmpty()){
                     Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.LEVEL_UP.get(), 1, 0.5F);
                 } else {
                     Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.IMPACT.get(), 1, 0.85F);
                 }
-            } else {
-                if(!handler.getStackInSlot(0).isEmpty()){
-                    Helpers.throwOrAddItem(player, handler.getStackInSlot(0));
-                    handler.setStackInSlot(0, ItemStack.EMPTY);
-                }
-                Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.REJECT.get(), 1, 1);
+                return SUCCESS;
             }
+
+            if(handler.getStackInSlot(0).isEmpty()){
+                for (var item : player.getInventory().items) {
+                    if (!CoreData.isFull(item) && CoreData.getFilled(item) > 0) {
+                        var success = sharedPlace(level, pos, powerUpStation, item);
+                        if (success != null) return success;
+                    }
+                }
+
+                for (var item : player.getInventory().items) {
+                    if (!CoreData.isFull(item)) {
+                        var success = sharedPlace(level, pos, powerUpStation, item);
+                        if (success != null) return success;
+                    }
+                }
+            } else {
+                Helpers.throwOrAddItem(player, handler.getStackInSlot(0));
+                handler.setStackInSlot(0, ItemStack.EMPTY);
+            }
+
+            Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.REJECT.get(), 1, 1);
         }
 
-        return ItemInteractionResult.SUCCESS;
+        return SUCCESS;
+    }
+
+    private static @Nullable ItemInteractionResult sharedPlace(Level level, BlockPos pos, PowerUpStationEntity powerUpStation, ItemStack item) {
+        if (item.getItem() instanceof CoreItem) {
+            powerUpStation.inputItemHandler.insertItem(0, item.copyWithCount(1), false);
+            Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.LEVEL_UP.get(), 1, 0.5F);
+            item.shrink(1);
+            return SUCCESS;
+        }
+        return null;
     }
 }
 

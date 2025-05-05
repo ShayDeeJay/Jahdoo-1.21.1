@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.attachments.IAttachment;
 import org.jahdoo.common.registers.EffectReg;
+import org.jahdoo.common.registers.SoundReg;
 
 import static org.jahdoo.common.registers.AttachmentReg.TRIPLE_JUMP;
 
@@ -39,7 +40,10 @@ public class TripleJump implements IAttachment {
             if(!clientIsJumpHeld && clientJumpCount <= MAX_JUMPS){
                 clientJumpCount++;
                 var delta = player.getDeltaMovement();
-                player.setDeltaMovement(delta.x, Math.max(delta.y, 0.54D), delta.z);
+                player.setDeltaMovement(delta.x, Math.max(delta.y, 0.74D), delta.z);
+                if(clientJumpCount > 1){
+                    player.playSound(SoundReg.BLOCK.get(), 1, 0.8F);
+                }
             }
             clientIsJumpHeld = true;
         } else {

@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.level_manager.InstanceDifficulty;
+import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public abstract class AbstractQuest {
 
     public List<ItemStack> questRewards(){
         var rewards = new ArrayList<ItemStack>();
-        rewards.add(new ItemStack(ItemReg.CHALLENGER_TICKET));
+        rewards.add(new ItemStack(BlockReg.LOOT_CRATE.get()));
         rewards.add(new ItemStack(ItemReg.EXIT_KEY));
         return rewards;
     }
@@ -44,10 +45,7 @@ public abstract class AbstractQuest {
         int level = CasterData.getLevel(player);
 
         // Calculate base quantity: increases by 'scaler' every 'scaleLevel' levels
-        int baseQuantity = baseValue + scaler * (level / scaleLevel);
-
-        // Round down to nearest 10 (ensuring divisibility)
-        int quantity = (baseQuantity / 5) * 5 * (level / 5);
+        int quantity = baseValue + scaler * (level / scaleLevel);
 
         // Ensure it never goes below the base value
         return Math.max(quantity, baseValue);

@@ -61,9 +61,9 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
-import org.jahdoo.common.block.loot_chest.LootChestBlock;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.components.LootCrateData;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.SharedEntityBehaviours;
@@ -101,8 +101,9 @@ import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.ascension.attachments.ChaosCubeData.getRelativePosition;
 import static org.jahdoo.ascension.attachments.ChaosCubeData.updateAll;
 import static org.jahdoo.ascension.attachments.RunData.*;
+import static org.jahdoo.ascension.loot.LootHelpers.itemBehaviour;
+import static org.jahdoo.ascension.loot.RewardLootTables.getCompletionLoot;
 import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedArmor;
-import static org.jahdoo.ascension.trading_post.RewardLootTables.getCompletionLoot;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.storeBlockType;
@@ -143,13 +144,11 @@ public class EventHelpers {
 
     public static void disallowEffectsInCustomDim(MobEffectEvent.Applicable event) {
         if(!(event.getEntity() instanceof Player player)) return;
-
         if(event.getEntity().level() instanceof CustomLevel && !player.isCreative()){
             if(!(event.getEffectInstance() instanceof JahdooMobEffect) && event.getEffectInstance().getEffect().value().isBeneficial()){
                 event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
             }
         }
-
     }
 
     public static void removeNonAllowedEffects(EntityJoinLevelEvent event) {
@@ -195,7 +194,6 @@ public class EventHelpers {
                 if(serverPlayer.gameMode.getGameModeForPlayer() == GameType.ADVENTURE){
                     serverPlayer.setGameMode(GameType.SURVIVAL);
                 }
-
                 RunData.endRun(serverPlayer, true);
             }
         }
@@ -425,7 +423,7 @@ public class EventHelpers {
                 var chestRarity = difficulty.getId();
                 var type = difficulty.getSerializedName();
                 var rewards = getCompletionLoot(customLevel, position, type, chestRarity);
-                LootChestBlock.itemBehaviour(position, customLevel, Helpers.getRgb(), true, 10, chestRarity, Helpers.listRandom(rewards));
+                itemBehaviour(position, customLevel, Helpers.getRgb(), true, 10, chestRarity, Helpers.listRandom(rewards));
             }
         }
     }
@@ -810,7 +808,7 @@ public class EventHelpers {
     }
 
     public static void questTracker(Level level, Player player) {
-        if(!(level instanceof CustomLevel)) return;
+        if(!(level instanceof CustomLevel customLevel)) return;
         if(!(player instanceof ServerPlayer serverPlayer)) return;
 
         var runData = serverPlayer.getData(RUN_DATA.get());
@@ -839,10 +837,18 @@ public class EventHelpers {
                 ParticleHandlers.sendParticles(level, particle, new Vec3(x,y,z), 1, xSpeed, ySpeed, zSpeed, 0.1);
             }
 
-            for (var questReward : quest.questRewards()) {
-                Helpers.throwOrAddItem(serverPlayer, questReward);
-            }
+            var item = BlockReg.LOOT_CRATE.get();
+            var newBlock = new ItemStack(item);
+            var playerLevel = CasterData.getLevel(serverPlayer);
+            var instanceData = customLevel.getData(INSTANCE_DATA.get());
+            var lootMultiplier = Math.max(1, instanceData.getQuestCrateMultiplier());
+            var completionTime = instanceData.getMaxTime() - instanceData.getTicks();
+            var difficulty = instanceData.getDifficulty();
+            var value = new LootCrateData(playerLevel, lootMultiplier, completionTime, difficulty);
 
+            newBlock.set(ComponentReg.LOOT_CRATE_DATA, value);
+            Helpers.throwOrAddItem(serverPlayer, newBlock);
+            Helpers.throwOrAddItem(serverPlayer, new ItemStack(ItemReg.EXIT_KEY));
             addExperienceToTotal(quest.questXp(serverPlayer), serverPlayer);
             runData.setCompletedQuest(true);
         }

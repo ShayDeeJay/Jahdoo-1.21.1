@@ -20,7 +20,7 @@ import java.util.List;
 import static net.minecraft.world.entity.EquipmentSlot.*;
 import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
-import static org.jahdoo.ascension.trading_post.RewardLootTables.attachEnchantmentWithChance;
+import static org.jahdoo.ascension.loot.RewardLootTables.attachEnchantmentWithChance;
 import static org.jahdoo.ascension.trading_post.ShoppingItems.*;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.Helpers.listRandom;

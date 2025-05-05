@@ -5,13 +5,10 @@ import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -24,28 +21,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.attachments.RunData;
-import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.common.items.KeyItem;
-import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.common.registers.ItemReg;
-import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.sounds.SoundEvents.LODESTONE_COMPASS_LOCK;
-import static net.minecraft.sounds.SoundEvents.VAULT_EJECT_ITEM;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
-import static org.jahdoo.ascension.trading_post.RewardLootTables.*;
+import static org.jahdoo.ascension.loot.LootHelpers.coinChestGetter;
+import static org.jahdoo.ascension.loot.LootHelpers.lootChestGetter;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
@@ -103,14 +89,6 @@ public class LootChestBlock extends BaseEntityBlock {
         );
     }
 
-    public static void particleBurst(ServerLevel serverLevel, Vec3 center, int colour, int multiplier) {
-        var fade = getColourDarker(colour, 0.5);
-        var randomColouredParticle = getRandomColouredParticle(colour, fade, Random.nextInt(10, 20), 1f, false);
-        var pos = center.add(0, 0.3f, 0);
-
-        ParticleHandlers.particleBurst(serverLevel, pos, 2 * multiplier, randomColouredParticle, 0, 0.3, 0, 0.2f, 3);
-    }
-
     @Override
     protected @NotNull ItemInteractionResult useItemOn(
         ItemStack stack,
@@ -140,115 +118,5 @@ public class LootChestBlock extends BaseEntityBlock {
         return SUCCESS;
     }
 
-    private static @NotNull ItemInteractionResult coinChestGetter(
-        BlockPos pos,
-        ServerLevel serverLevel,
-        LootChestEntity lootChestEntity,
-        Player player
-    ) {
-        var coinItems = getCoinItems(lootChestEntity.getData(INSTANCE_DATA));
-        if(!coinItems.isEmpty()){
-            lootChestEntity.setOpen(true);
-            lootsplosian(pos.getCenter(), serverLevel, ColourStore.ABSORPTION_YELLOW, coinItems, false, 20, 0);
-            openingSoundEffect(pos, serverLevel, false);
-        } else {
-            player.displayClientMessage(withStyleComponent("Chest is empty!", ColourStore.NEGATIVE_RED), true);
-        }
-        return SUCCESS;
-    }
-
-    private static ItemInteractionResult lootChestGetter(
-        ItemStack stack,
-        ServerLevel serverLevel,
-        BlockPos pos,
-        LootChestEntity lootChestEntity,
-        String difficulty,
-        Player player
-    ) {
-        var keyData = stack.get(CUSTOM_MODEL_DATA);
-
-        if (stack.is(ItemReg.LOOT_KEY) && keyData != null) {
-            var value = keyData.value();
-            var isValid = value == lootChestEntity.getRarity;
-
-            RunData.incrementChestOpenedExp(serverLevel, player, value);
-            if (isValid) {
-                lootChestEntity.setOpen(true);
-                var getId = new CustomModelData(lootChestEntity.getRarity);
-                var colour = KeyItem.getJahdooRarity(getId).getColour();
-                standAloneLoot(serverLevel, pos.getCenter(), difficulty, value, colour);
-                openingSoundEffect(pos, serverLevel, true);
-                stack.shrink(1);
-                return SUCCESS;
-            }
-        }
-
-        return null;
-    }
-
-    public static void standAloneLoot(ServerLevel serverLevel, Vec3 pos, String difficulty, int keyValue, int colour) {
-        var rewards = getCompletionLoot(serverLevel, pos, difficulty, keyValue);
-        lootsplosian(pos, serverLevel, colour, rewards, true, 30, keyValue);
-    }
-
-    public static void lootsplosian(
-        Vec3 pos,
-        ServerLevel serverLevel,
-        int colour,
-        List<ItemStack> rewards,
-        boolean shouldDropExperience,
-        int pickupDelay,
-        int chestRarity
-    ) {
-        for (var reward : rewards) {
-            itemBehaviour(pos, serverLevel, colour, shouldDropExperience, pickupDelay, chestRarity, reward);
-        }
-    }
-
-    public static void itemBehaviour(Vec3 pos, ServerLevel serverLevel, int colour, boolean shouldDropExperience, int pickupDelay, int chestRarity, ItemStack reward) {
-        var itemEntity = new ItemEntity(serverLevel, pos.x(), pos.y() + 0.2, pos.z(), reward);
-        var angle = Random.nextDouble() * 2 * Math.PI;
-        var horizontalOffset = 0.2 + Random.nextDouble() * 0.35;
-        var offsetX = Math.cos(angle) * horizontalOffset;
-        var offsetZ = Math.sin(angle) * horizontalOffset;
-        var velocity = new Vec3(offsetX * (Math.random() - 0.5), 0.35, offsetZ * (Math.random() - 0.5));
-        var itemStackMain= itemEntity.getItem();
-
-        itemEntity.setDeltaMovement(velocity);
-        itemEntity.setPickUpDelay(pickupDelay);
-
-        if(shouldDropExperience && Random.nextInt(10) == 0) {
-            var exp = ItemReg.EXPERIENCE_ORB.get();
-            var itemStack = new ItemStack(exp);
-
-            switch (JahdooRarity.getRarity()) {
-                case COMMON, RARE -> itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(1));
-                case EPIC -> itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(2));
-                case LEGENDARY, ETERNAL -> { /*No Data*/ }
-            }
-
-            var itemEntity1 = new ItemEntity(serverLevel, pos.x(), pos.y() + 0.2, pos.z(), itemStack);
-            itemEntity1.setDeltaMovement(velocity);
-            itemEntity1.setPickUpDelay(pickupDelay);
-            serverLevel.addFreshEntity(itemEntity1);
-        }
-
-        particleBurst(serverLevel, pos, colour, chestRarity);
-        attachItemData(serverLevel, itemStackMain, null, chestRarity);
-        serverLevel.addFreshEntity(itemEntity);
-    }
-
-
-    private static void openingSoundEffect(BlockPos pos, ServerLevel serverLevel, boolean isLootChest) {
-        getSoundWithPosition(serverLevel, pos, VAULT_EJECT_ITEM, 2F, 0.8F);
-        getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, 2F, 1.4F);
-        getSoundWithPosition(serverLevel, pos, SoundEvents.VAULT_PLACE, 2F, 0.4F);
-
-        if(isLootChest) {
-            getSoundWithPosition(serverLevel, pos, SoundReg.LOOTBOX_OPEN.get(), 2F, 1F);
-        } else {
-            getSoundWithPosition(serverLevel, pos, SoundReg.COINBOX_OPEN.get(), 0.6F, 1F);
-        }
-    }
 }
 

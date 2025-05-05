@@ -30,6 +30,9 @@ public class BlockEntityReg {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TankBlockEntity>> TANK_BE =
         registerBlockEntity("tank_be", TankBlockEntity::new, TANK);
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<org.jahdoo.common.block.loot_crate.LootCrateEntity>> LOOT_CRATE_BE =
+        registerBlockEntity("loot_crate_be", org.jahdoo.common.block.loot_crate.LootCrateEntity::new, LOOT_CRATE);
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PerkTableEntity>> PERK_TABLE_BE =
         registerBlockEntity("perk_table_be", PerkTableEntity::new, PERK_TABLE);
 

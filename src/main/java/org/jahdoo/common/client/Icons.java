@@ -55,6 +55,9 @@ public class Icons {
     public static final ResourceLocation CHEST_COMMON =
         res(PREFIX + "chest_common.png");
 
+    public static final ResourceLocation QUEST_CRATE =
+        res(PREFIX + "quest_crate_icon.png");
+
     public static final ResourceLocation CHEST_RARE =
         res(PREFIX + "chest_rare.png");
 

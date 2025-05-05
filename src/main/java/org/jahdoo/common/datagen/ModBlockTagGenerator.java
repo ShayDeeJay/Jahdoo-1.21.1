@@ -82,6 +82,7 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .addTag(REPLACEABLE);
 
         this.tag(MINEABLE_WITH_PICKAXE)
+            .add(LOOT_CRATE.value())
             .add(TANK.get())
             .add(CHALLENGE_ALTAR.get())
             .add(NEXITE_ORE.get())

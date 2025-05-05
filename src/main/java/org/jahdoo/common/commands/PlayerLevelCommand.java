@@ -14,7 +14,6 @@ import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.trading_post.ShoppingArmor;
 import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.block.loot_chest.LootChestBlock;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
@@ -28,6 +27,7 @@ import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.JahdooMod.MOD_ID;
+import static org.jahdoo.ascension.loot.LootHelpers.standAloneLoot;
 
 public class PlayerLevelCommand {
 
@@ -736,7 +736,7 @@ public class PlayerLevelCommand {
         if(player == null) return 0;
 
         for(int i = 0; i < 10; i++){
-            LootChestBlock.standAloneLoot(source.getLevel(), player.position(), difficulty, keyType, Helpers.getRgb());
+            standAloneLoot(source.getLevel(), player.position(), difficulty, keyType, Helpers.getRgb());
         }
 
         return 1;

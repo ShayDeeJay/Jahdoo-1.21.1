@@ -30,7 +30,7 @@ public class KillHordeQuest extends AbstractQuest{
 
     @Override
     public int questQuantity(Player player) {
-        return questValueMultiplier(player, 50, 5, 5);
+        return questValueMultiplier(player, 150, 50, 10);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class KillHordeQuest extends AbstractQuest{
 
     @Override
     public int questXp(Player player) {
-        return questValueMultiplier(player, 50, 40, 5);
+        return questValueMultiplier(player, 150, 100, 5);
     }
 
     @Override

@@ -50,6 +50,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(MODULAR_CHAOS_CUBE.get());
         this.dropSelf(SHOPPING_TABLE.get());
         this.dropSelf(RUNE_TABLE.get());
+        this.dropSelf(LOOT_CRATE.value());
         this.dropOther(POWER_UP_STATION.get(), Items.AIR);
         this.dropOther(LIGHTING.get(), Items.AIR);
         this.dropOther(ENCHANTED_BLOCK.get(), Items.AIR);

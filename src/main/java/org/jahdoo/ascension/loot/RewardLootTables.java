@@ -1,4 +1,4 @@
-package org.jahdoo.ascension.trading_post;
+package org.jahdoo.ascension.loot;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.component.DataComponents;
@@ -15,6 +15,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.level_manager.InstanceDifficulty;
 import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.ascension.trading_post.ShoppingArmor;
+import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.LocalLootBeamData;
 import org.jahdoo.ascension.utils.Maths;

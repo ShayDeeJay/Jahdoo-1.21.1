@@ -30,7 +30,7 @@ public class ClearRoomsQuest extends AbstractQuest{
 
     @Override
     public int questQuantity(Player player) {
-        return questValueMultiplier(player, 5, 1, 10);
+        return questValueMultiplier(player, 10, 10, 10);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ClearRoomsQuest extends AbstractQuest{
 
     @Override
     public int questXp(Player player) {
-        return questValueMultiplier(player, 40, 25, 5);
+        return questValueMultiplier(player, 140, 125, 5);
     }
 
     @Override

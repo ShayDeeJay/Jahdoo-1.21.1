@@ -124,6 +124,9 @@ public class LevelBoonReg {
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> GOLD_COIN =
         registerElement(GoldCoins::new);
 
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> QUEST_MULTIPLIER =
+        registerElement(LootMultiplier::new);
+
     public static void register(IEventBus eventBus) {
         LEVEL_BOON.register(eventBus);
     }
