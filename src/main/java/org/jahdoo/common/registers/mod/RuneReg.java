@@ -78,7 +78,7 @@ public class RuneReg {
     }
 
     public static Optional<AbstractRune> getRuneWithRarity(JahdooRarity rarity) {
-        return Optional.of(getAllRunes().stream().filter(s -> s.runeRarity().equals(rarity)).toList().getFirst());
+        return Optional.of(Helpers.listRandom(getAllRunes().stream().filter(s -> s.runeRarity().equals(rarity)).toList()));
     }
 
     public static List<AbstractRune> getAllRuneWithRarity(JahdooRarity...rarity) {

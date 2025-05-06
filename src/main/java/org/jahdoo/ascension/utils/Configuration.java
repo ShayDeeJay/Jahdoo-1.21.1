@@ -14,6 +14,7 @@ public class Configuration {
     public static ModConfigSpec.DoubleValue CUSTOM_UI_HEIGHT;
     public static ModConfigSpec.DoubleValue CUSTOM_UI_SCALE;
     public static ModConfigSpec.BooleanValue BRIGHT_PARTICLE;
+    public static ModConfigSpec.BooleanValue DISPLAY_DURABILITY_OVERLAY;
 
     public static ModConfigSpec.BooleanValue QUICK_SELECT;
     public static ModConfigSpec.BooleanValue LOCK_ON_TARGET;
@@ -32,6 +33,7 @@ public class Configuration {
         BRIGHT_PARTICLE = CLIENT_BUILDER.comment("Alternate particle render").define("particle_render", true);
         QUICK_SELECT = CLIENT_BUILDER.comment("Hold to keep open Quick Select menu").define("quickSelect", false);
         LOCK_ON_TARGET = CLIENT_BUILDER.comment("Allow player to lock on to nearest entity").define("lockOn", false);
+        DISPLAY_DURABILITY_OVERLAY = CLIENT_BUILDER.comment("Overlay equipped item durability").define("durability", false);
         CLIENT_CONFIG = CLIENT_BUILDER.build();
     }
 

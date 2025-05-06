@@ -45,6 +45,16 @@ public record CoreData(int required, int filled) {
         }
     }
 
+    public static void setFilled(ItemStack itemStack){
+        var data = itemStack.get(ComponentReg.CORE_DATA);
+        if(data != null){
+            var required = data.required();
+            var newData = new CoreData(required, required);
+            itemStack.set(ComponentReg.CORE_DATA, newData);
+            itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
+        }
+    }
+
     public static int getRequired(ItemStack itemStack){
         var data = itemStack.get(ComponentReg.CORE_DATA);
         if(data != null){

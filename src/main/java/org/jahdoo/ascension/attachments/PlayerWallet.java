@@ -127,6 +127,11 @@ public class PlayerWallet implements IAttachment {
             return wallet >= convertToWallet(converter);
         }
 
+        public static boolean canPurchase(int amount, Player player) {
+            var wallet = PlayerWallet.getWalletValue(player);
+            return wallet >= amount;
+        }
+
         public static CurrencyConverter convertToCoins(int wallet) {
             int platinumConversion = 1000000;
             int goldConversion = 10000;

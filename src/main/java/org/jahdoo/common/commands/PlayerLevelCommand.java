@@ -7,17 +7,22 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.attachments.PlayerTrialData;
+import org.jahdoo.ascension.attachments.PlayerWallet;
 import org.jahdoo.ascension.attachments.RunData;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.trading_post.ShoppingArmor;
 import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
+import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.ItemReg;
 
 import java.util.function.Function;
 
@@ -165,6 +170,23 @@ public class PlayerLevelCommand {
             )
         );
 
+
+        dispatcher.register(literal(MOD_ID).requires(sender -> sender.hasPermission(2))
+            .then(
+                literal("player_wallet")
+                    .then(
+                        argument("targets", EntityArgument.players())
+                            .then(
+                                literal("clear_wallet")
+                                    .executes(
+                                        context -> clearWallet(context.getSource())
+                                    )
+                            )
+                    )
+            )
+        );
+
+
         dispatcher.register(literal(MOD_ID).requires(sender -> sender.hasPermission(2))
             .then(
                 literal("give_items")
@@ -178,6 +200,13 @@ public class PlayerLevelCommand {
                                                 context -> randomUniqueArmor(context.getSource(), getInteger(context, "count"))
                                             )
                                     )
+                            )
+                    )
+                    .then(
+                        literal("charged_cores")
+                            .then(
+                                argument("targets", EntityArgument.players())
+                                    .executes(context -> giveChargedCores(context.getSource()))
                             )
                     )
                     .then(
@@ -608,6 +637,34 @@ public class PlayerLevelCommand {
         for (int i = 0; i < count; i++){
             Helpers.throwOrAddItem(player, ShoppingItems.createTomeAttributes(null, rarity == null ? JahdooRarity.getRarity() : rarity));
         }
+        return 1;
+    }
+
+    private static int giveChargedCores(CommandSourceStack source) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        var core = new ItemStack(ItemReg.AUGMENT_CORE);
+        CoreData.setFilled(core);
+
+        var aCore = new ItemStack(ItemReg.ADVANCED_AUGMENT_CORE);
+        CoreData.setFilled(aCore);
+
+        var hCore = new ItemStack(ItemReg.AUGMENT_HYPER_CORE);
+        CoreData.setFilled(hCore);
+
+        Helpers.throwOrAddItem(player, core.copyWithCount(64));
+        Helpers.throwOrAddItem(player, aCore.copyWithCount(64));
+        Helpers.throwOrAddItem(player, hCore.copyWithCount(64));
+
+        return 1;
+    }
+
+    private static int clearWallet(CommandSourceStack source) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+        PlayerWallet.updateWallet(player, 0);
+        sendToPlayer(player, new WalletSyncS2CP(PlayerWallet.getWalletValue(player)));
         return 1;
     }
 

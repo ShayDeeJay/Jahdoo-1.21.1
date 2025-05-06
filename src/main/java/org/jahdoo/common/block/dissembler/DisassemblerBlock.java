@@ -31,6 +31,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.block.BlockInteractionHandler;
+import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.registers.BlockEntityReg;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
@@ -142,7 +143,7 @@ public class DisassemblerBlock extends BaseEntityBlock {
         double speed,
         double radius
     ) {
-        if (stack.is(ModTags.Items.ESSENCE_FRAGMENT) || stack.is(AUGMENT_CORE) || stack.isEmpty() && player.isShiftKeyDown()) {
+        if (stack.getItem() instanceof JahdooItem || stack.is(ModTags.Items.ESSENCE_FRAGMENT) || stack.is(AUGMENT_CORE) || stack.isEmpty() && player.isShiftKeyDown()) {
             if(!stack.isEmpty()) Helpers.getSoundWithPosition(level, pos, soundEvent, 1, 1.2f);
             BlockInteractionHandler.swapItemsWithHand(augmentStation.inputItemHandler, 0, player, hand);
             var stackInSlot = augmentStation.inputItemHandler.getStackInSlot(0);

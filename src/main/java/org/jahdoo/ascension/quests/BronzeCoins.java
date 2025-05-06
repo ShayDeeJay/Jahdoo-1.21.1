@@ -16,7 +16,7 @@ public class BronzeCoins extends CollectCoinQuest {
 
     @Override
     public int questQuantity(Player player) {
-        return questValueMultiplier(player, 150, 150, 10);
+        return questValueMultiplier(player, 150, 350, 10);
     }
 
     @Override

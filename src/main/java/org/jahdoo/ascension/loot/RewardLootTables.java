@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -17,7 +18,6 @@ import org.jahdoo.ascension.level_manager.InstanceDifficulty;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.trading_post.ShoppingArmor;
 import org.jahdoo.ascension.trading_post.ShoppingItems;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.LocalLootBeamData;
 import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.items.caster_item.CasterItem;
@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.minecraft.core.registries.Registries.ENCHANTMENT;
-import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static net.minecraft.world.level.storage.loot.entries.LootItem.lootTableItem;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
@@ -70,6 +69,12 @@ public class RewardLootTables {
 
     public static final LootPoolSingletonContainer.Builder<?> EMERALD_BUILDER =
         lootTableItem(Items.EMERALD);
+
+    public static final LootPoolSingletonContainer.Builder<?> REDSTONE =
+        lootTableItem(Items.REDSTONE);
+
+    public static final LootPoolSingletonContainer.Builder<?> LAPIS =
+        lootTableItem(Items.LAPIS_LAZULI);
 
     public static final LootPoolSingletonContainer.Builder<?> DIAMOND_BUILDER =
         lootTableItem(Items.DIAMOND);
@@ -260,39 +265,21 @@ public class RewardLootTables {
         return createLootParams(serverLevel, pos, loot);
     }
 
-
     private static void enchantedBook(ServerLevel serverLevel, ItemStack itemStack){
-        var enchantments = List.of(
-            PROTECTION,
-            FEATHER_FALLING,
-            PROJECTILE_PROTECTION,
-            RESPIRATION,
-            AQUA_AFFINITY,
-            DEPTH_STRIDER,
-            SWIFT_SNEAK,
-            SHARPNESS,
-            KNOCKBACK,
-            LOOTING,
-            SWEEPING_EDGE,
-            EFFICIENCY,
-            SILK_TOUCH,
-            UNBREAKING,
-            FORTUNE,
-            MENDING
-        );
-
-        var resourceKey = Helpers.listRandom(enchantments);
-        var randomEnchantment = serverLevel
+        serverLevel
             .registryAccess()
             .registryOrThrow(ENCHANTMENT)
-            .get(resourceKey);
+            .getRandom(RandomSource.create())
+            .ifPresent(
+                key -> {
+                    var value = key.getDelegate().value();
+                    var maxLevel = value.getMaxLevel();
+                    var minLevel = value.getMinLevel();
 
-        if(randomEnchantment == null) return;
-
-        var maxLevel = randomEnchantment.getMaxLevel();
-        var minLevel = randomEnchantment.getMinLevel();
-        enchant(itemStack, serverLevel.registryAccess(), resourceKey, maxLevel > minLevel ? Random.nextInt(minLevel, maxLevel) : 1);
-        attachLootBeam(itemStack, LocalLootBeamData.SPECIALLY_ENCHANTED_BOOK);
+                    enchant(itemStack, serverLevel.registryAccess(), key.getKey(), maxLevel > minLevel ? Random.nextInt(minLevel, maxLevel) : 1);
+                    attachLootBeam(itemStack, LocalLootBeamData.SPECIALLY_ENCHANTED_BOOK);
+                }
+            );
     }
 
     public static void attachItemData(
@@ -325,7 +312,10 @@ public class RewardLootTables {
             //Common
             builder.add(GOLDEN_CARROT_BUILDER.setWeight(50));
             builder.add(IRON_BUILDER.setWeight(35));
+            builder.add(REDSTONE.setWeight(30));
+            builder.add(LAPIS.setWeight(30));
             builder.add(GOLD_BUILDER.setWeight(25));
+            builder.add(EMERALD_BUILDER.setWeight(15));
             builder.add(DIAMOND_BUILDER.setWeight(10));
             builder.add(COIN.setWeight(10));
             builder.add(XP.setWeight(8));

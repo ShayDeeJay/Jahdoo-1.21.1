@@ -30,7 +30,7 @@ public class GetXPQuest extends AbstractQuest{
 
     @Override
     public int questQuantity(Player player) {
-        return questValueMultiplier(player, 200, 350, 10);
+        return questValueMultiplier(player, 200, 400, 5);
     }
 
     @Override

@@ -223,7 +223,7 @@ public class ShoppingArmor {
     ) {
         var isUnique = jahdooRarity == UNIQUE;
         var getRuneSlots = isUnique ? runeSlots + 1 : runeSlots;
-        var repairSlots = isUnique ? Random.nextInt(4, 8) : -1;
+        var repairSlots = isUnique ? Random.nextInt(4, 7) : -1;
         attachSharedProperties(itemStack, getRuneSlots, jahdooRarity, repairSlots, adjustPotential, adjustDurability);
         if(isUnique) preInsertRunes(itemStack);
     }

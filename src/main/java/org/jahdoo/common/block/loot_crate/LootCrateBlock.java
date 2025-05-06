@@ -63,12 +63,7 @@ public class LootCrateBlock extends BaseEntityBlock implements SimpleWaterlogged
     );
 
     public LootCrateBlock() {
-        super(
-            Properties.of()
-                .strength(1f)
-                .sound(SoundType.WOOD)
-                .noOcclusion()
-        );
+        super(Properties.of().strength(1f).sound(SoundType.WOOD).noOcclusion());
     }
 
     @Override
@@ -108,7 +103,6 @@ public class LootCrateBlock extends BaseEntityBlock implements SimpleWaterlogged
 
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
-        var entity = level.getBlockEntity(pos);
         super.onPlace(state, level, pos, oldState, movedByPiston);
     }
 
@@ -171,7 +165,7 @@ public class LootCrateBlock extends BaseEntityBlock implements SimpleWaterlogged
     private static void additionalRewards(BlockPos pos, ServerLevel serverLevel, int playerLevel, InstanceDifficulty difficulty, LootCrateData crateData, int chestRarity) {
         var individualAddons = new ArrayList<ItemStack>();
         var coinSack = new ItemStack(ItemReg.COIN_SACK);
-        var coinCalc = (playerLevel + difficulty.expMultiplier()) * (crateData.completionTime()/10);
+        var coinCalc = (playerLevel + difficulty.expMultiplier() * crateData.completionTime()) / 10;
         coinSack.set(ComponentReg.STORE_INTEGER, coinCalc);
         LocalLootBeamData.attachCoinSackLootBeam(coinSack);
         individualAddons.add(coinSack);

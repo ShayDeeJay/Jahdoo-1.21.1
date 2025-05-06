@@ -53,7 +53,7 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
         int overlay
     ){
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
-        var outputSlot = JahdooGearData.getRuneholder(wandManagerTable.getWandSlot()).runeSlots();
+        var outputSlot = JahdooGearData.getGearData(wandManagerTable.getWandSlot()).runeSlots();
         var newSlots = outputSlot.stream().filter(itemStack -> !itemStack.isEmpty()).toList();
         var spacer = new AtomicDouble();
         var size = newSlots.size();

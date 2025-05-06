@@ -286,8 +286,8 @@ public class EventHelpers {
         var shieldDurability = durabilityDamageCount(shieldSlots);
         var blockPercentage = shieldSlots.get(ComponentReg.SHIELD_BLOCK_CHANCE);
         if(blockPercentage == null) return;
-
         var blockChance = Maths.percentageChance(blockPercentage);
+
         if (blockChance && shieldDurability > 0) {
             event.setBlocked(true);
             var damage = (int) (event.getBlockedDamage());
@@ -434,6 +434,8 @@ public class EventHelpers {
             var resilience = attribute.getValue();
             var damageReduction = Maths.getPercentage(resilience, event.getNewDamage());
             var damageWithResilience = event.getNewDamage() - damageReduction;
+            System.out.println(event.getNewDamage());
+            System.out.println(damageWithResilience);
             event.setNewDamage((float) damageWithResilience);
         }
     }

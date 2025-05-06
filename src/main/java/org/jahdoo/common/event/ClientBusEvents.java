@@ -19,7 +19,7 @@ import org.jahdoo.common.block.loot_chest.LootChestRenderer;
 import org.jahdoo.common.block.perk_table.PerkTableRenderer;
 import org.jahdoo.common.block.power_up_station.PowerUpStationRenderer;
 import org.jahdoo.common.block.rune_table.RuneTableRenderer;
-import org.jahdoo.common.block.rune_table.RuneTableScreen;
+import org.jahdoo.common.block.rune_table.enchanted_forge.RuneTableScreen;
 import org.jahdoo.common.block.shopping_table.ShoppingTableRenderer;
 import org.jahdoo.common.block.tank.TankRenderer;
 import org.jahdoo.common.block.wand_manager.WandManagerRenderer;

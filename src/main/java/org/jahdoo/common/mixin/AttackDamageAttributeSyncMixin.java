@@ -26,24 +26,12 @@ public abstract class AttackDamageAttributeSyncMixin {
         RangedAttribute attribute = new RangedAttribute(description, defaultValue, min, max);
 
         attribute = switch (description) {
-            case "attribute.name.generic.attack_damage" -> {
-                System.out.println("IM HERE: DAMAGE");
-                yield new RangedAttribute(description, defaultValue, min, 2048.0);
-            }
-            case "attribute.name.generic.armor" -> {
-                System.out.println("IM HERE: ARMOR");
-                yield new RangedAttribute(description, defaultValue, min, 500.0);
-            }
-            case "attribute.name.generic.armor_toughness" -> {
-                System.out.println("IM HERE: TOUGHNESS");
-                yield new RangedAttribute(description, defaultValue, min, 300.0);
-
-                // Add more cases if needed
-            }
+            case "attribute.name.generic.attack_damage" -> new RangedAttribute(description, defaultValue, min, 2048.0);
+            case "attribute.name.generic.armor" -> new RangedAttribute(description, defaultValue, min, 500.0);
+            case "attribute.name.generic.armor_toughness" -> new RangedAttribute(description, defaultValue, min, 300.0);
             default -> attribute;
         };
 
-        System.out.println(attribute);
         attribute = (RangedAttribute) attribute.setSyncable(true);
         return attribute;
     }

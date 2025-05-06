@@ -238,6 +238,7 @@ public class RunScreen extends AbstractPanableScreen {
         allComponents.add(new StatEntry(componentTemplate("Date", runData.getDateAndTime().split(" ")[0], uiColour()), null));
         allComponents.add(new StatEntry(componentTemplate("Time", runData.getDateAndTime().split(" ")[1], uiColour()), null));
         allComponents.add(new StatEntry(componentTemplate("Difficulty", Helpers.stringIdToName(instanceData.getDifficulty()), uiColour()), null));
+        allComponents.add(new StatEntry(componentTemplate("Player Level", String.valueOf(runData.getStat(PLAYER_LEVEL)), uiColour()), null));
 
         var died = runData.died();
         allComponents.add(new StatEntry(componentTemplate("Fate", died ? "Died!" : "Survived!", died ? RATING_2_RED : RATING_5_GREEN), null));

@@ -1,13 +1,16 @@
 package org.jahdoo.common.client.overlay;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -15,14 +18,18 @@ import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
+import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jetbrains.annotations.NotNull;
+import top.theillusivec4.curios.api.CuriosApi;
 
-import static com.mojang.blaze3d.systems.RenderSystem.enableBlend;
-import static com.mojang.blaze3d.systems.RenderSystem.setShaderColor;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.mojang.blaze3d.systems.RenderSystem.*;
 import static java.lang.String.valueOf;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.util.FastColor.ARGB32.color;
@@ -219,21 +226,15 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
     }
 
     private static void renderSlot(GuiGraphics graphics, ItemStack next, int x, int y, ResourceLocation lit, int index, int textColour, float alpha) {
-        var count = next.getCount();
-        graphics.renderItem(next, x, y);
-
         int size = 24;
         inventoryIndex(graphics, x, y, index,textColour);
         enableBlend();
         setShaderColor(1f, 1f, 1f, alpha);
         graphics.blit(lit, x-4,y-4,0,0, size, size, size, size);
         setShaderColor(1f, 1f, 1f, 1f);
-        if(count > 1){
-            graphics.pose().pushPose();
-            graphics.pose().translate(0,0,170);
-            graphics.drawCenteredString(Minecraft.getInstance().font, valueOf(count), x + 15, y + 10, -6710887);
-            graphics.pose().popPose();
-        }
+        graphics.renderFakeItem(next, x, y);
+        graphics.renderItemDecorations(Minecraft.getInstance().font, next, x, y);
+        disableBlend();
     }
 
     private  void inventory(GuiGraphics graphics, LocalPlayer player) {
@@ -243,7 +244,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         var previous = player.getInventory().getItem(prevIndex);
         var nextIndex = selectedIndex + 1 > 8 ? 0 : selectedIndex + 1;
         var next = player.getInventory().getItem(nextIndex);
-        var y = graphics.guiHeight() - 68 + (int) (-this.fadeInAbility);
+        var y = graphics.guiHeight() - 64 + (int) (-this.fadeInAbility);
         var x = graphics.guiWidth() / 2 - 9;
         var unSelected = GUI_ITEM_SLOT;
         var alpha = 0.6f;
@@ -293,16 +294,19 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
 
         if(CUSTOM_UI.get()){
             minecraft.gui.renderSelectedItemName(graphics, (int) (100 + this.fadeInAbility));
-            inventory(graphics, player);
             foodBar(pose, foodProgress);
             abilityBar(graphics, pose, centerY, minecraft, player, center);
             xpBar(graphics, pose, minecraft);
             alignedGui.displayGuiLayer(-53, 29, 0, 0, 137, 29);
+            inventory(graphics, player);
 
             this.healthAndAbsorptionCount(graphics, minecraft);
             this.progressOverlays(alignedGui, 19, (int) (healthProgress + 3));
             this.progressOverlays(alignedGui, 27, (int) (absorptionProgress + 3));
         }
+
+
+        if(DISPLAY_DURABILITY_OVERLAY.get()) overlayDurability(graphics, player, minecraft);
 
         if(!CUSTOM_UI.get()){
             pose.translate(0, -fadeIn, 0);
@@ -324,6 +328,73 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
 
         setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         pose.popPose();
+    }
+
+    private static void overlayDurability(GuiGraphics graphics, LocalPlayer player, Minecraft minecraft) {
+        var items = new ArrayList<ItemStack>();
+
+        var itemStack5 = player.getItemBySlot(EquipmentSlot.HEAD);
+        if(!itemStack5.isEmpty()) items.add(itemStack5);
+
+        var itemStack4 = player.getItemBySlot(EquipmentSlot.CHEST);
+        if(!itemStack4.isEmpty()) items.add(itemStack4);
+
+        var itemStack3 = player.getItemBySlot(EquipmentSlot.LEGS);
+        if(!itemStack3.isEmpty()) items.add(itemStack3);
+
+        var itemStack2 = player.getItemBySlot(EquipmentSlot.FEET);
+        if(!itemStack2.isEmpty()) items.add(itemStack2);
+
+        var itemStack = player.getItemBySlot(EquipmentSlot.OFFHAND);
+        if(itemStack.has(DataComponents.MAX_DAMAGE) && !itemStack.isEmpty()) items.add(itemStack);
+
+        var itemStack1 = player.getItemBySlot(EquipmentSlot.MAINHAND);
+        if(itemStack1.has(DataComponents.MAX_DAMAGE) && !itemStack1.isEmpty()) items.add(itemStack1);
+
+        var curioSlotsItems = CuriosApi.getCuriosInventory(player);
+        var withSlots = curioSlotsItems.get().getEquippedCurios();
+
+        for (int i = 0; i < withSlots.getSlots(); i++){
+            var stackInSlot = withSlots.getStackInSlot(i);
+            if(stackInSlot.getItem() instanceof JahdooItem){
+                items.add(stackInSlot);
+            }
+        }
+
+        displayItemDura(graphics, items, graphics.guiHeight(), minecraft);
+    }
+
+    private static void displayItemDura(GuiGraphics graphics, List<@NotNull ItemStack> listOfSlots, int y, Minecraft minecraft) {
+        int baseY = y - 20;
+        int spacer = 0;
+
+        for (ItemStack stack : listOfSlots) {
+            int drawX = 16 + spacer;
+            var cooldownWithDurability = getDurabilityWithColor(stack);
+            graphics.renderItem(stack, drawX, baseY);
+            graphics.drawCenteredString(minecraft.font, withStyleComponent(cooldownWithDurability.getFirst() + "%", cooldownWithDurability.getSecond()), drawX + 8, baseY + 18, -1);
+            spacer += 27;
+        }
+
+    }
+
+    public static Pair<Integer, Integer> getDurabilityWithColor(ItemStack stack) {
+        int maxDurability = stack.getMaxDamage();
+        int currentDamage = stack.getDamageValue();
+        int remainingDurability = maxDurability - currentDamage;
+
+        var percent = (int) ((remainingDurability * 100.0) / maxDurability);
+        int color;
+
+        if (percent <= 25.0) {
+            color = RATING_2_RED;
+        } else if (percent >= 75.0) {
+            color = RATING_5_GREEN;
+        } else {
+            color = RATING_4_YELLOW;
+        }
+
+        return new Pair<>(percent, color);
     }
 
     private void quickSelectBar(GuiGraphics graphics, CasterData casterData, Minecraft minecraft) {

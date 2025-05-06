@@ -33,6 +33,10 @@ public class GeneralItemSlot extends SlotItemHandler {
         return maxStackSize == 0 ? 64 : maxStackSize;
     }
 
+    public Item getSlotType(){
+        return this.item;
+    }
+
     @Override
     public boolean isActive() {
         return this.isActive;

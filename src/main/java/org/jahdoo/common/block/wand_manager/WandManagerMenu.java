@@ -66,7 +66,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
 
     @Override
     protected int getAllSlots() {
-        var size = JahdooGearData.getRuneholder(getWandManagerEntity().getWandSlot()).runeSlots().size();
+        var size = JahdooGearData.getGearData(getWandManagerEntity().getWandSlot()).runeSlots().size();
         return size + DEFAULT_SLOTS;
     }
 
@@ -90,7 +90,7 @@ public class WandManagerMenu extends AbstractInternalContainer {
         try{
 
             var getAllSlots = this.getWandManagerEntity().getWandSlot();
-            var getData = JahdooGearData.getRuneholder(getAllSlots);
+            var getData = JahdooGearData.getGearData(getAllSlots);
             var iHandler = getWandManagerEntity().inputItemHandler;
             var indexOne = new AtomicInteger(4);
 

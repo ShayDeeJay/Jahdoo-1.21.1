@@ -220,5 +220,11 @@
     "sounds": [
       "jahdoo:levitate"
     ]
+  },
+  "spell_sound": {
+    "subtitles": "sounds.jahdoo.spell_sound",
+    "sounds": [
+      "jahdoo:spell_sound"
+    ]
   }
 }

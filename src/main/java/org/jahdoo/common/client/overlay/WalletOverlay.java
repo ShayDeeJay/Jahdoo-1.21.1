@@ -20,7 +20,6 @@ import static net.minecraft.network.chat.Component.empty;
 import static org.jahdoo.ascension.attachments.PlayerWallet.*;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.convertToCoins;
 import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.convertToWallet;
-import static org.jahdoo.ascension.utils.ColourStore.MAGNET_RANGE_GREEN;
 import static org.jahdoo.ascension.utils.ColourStore.NEGATIVE_RED;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
@@ -139,11 +138,10 @@ public class WalletOverlay implements LayeredDraw.Layer {
         if(shoppingTable != null || converter != null){
             var currencyConverter = shoppingTable != null ? shoppingTable.itemCosts : converter;
             var cantPurchase = canPurchase(wallet, currencyConverter) <= 0;
-            var purchaseText = cantPurchase ? "Can't" : "Can";
-            var purchaseColour = cantPurchase ? NEGATIVE_RED : MAGNET_RANGE_GREEN;
-            var comp = withStyleComponent(purchaseText + " Purchase!", purchaseColour);
-
-            graphics.drawString(minecraft.font, comp, getX + 15, getY + 84 + spacer, -1, false);
+            if(cantPurchase){
+                var comp = withStyleComponent("Insufficient Funds!", NEGATIVE_RED);
+                graphics.drawString(minecraft.font, comp, getX + 15, getY + 84 + spacer, -1, false);
+            }
         }
 
         if(!hideBackground){

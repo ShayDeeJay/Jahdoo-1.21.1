@@ -28,7 +28,7 @@ public class JahdooShieldItem extends Item implements JahdooItem, ICurioItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        return Helpers.withStyleComponent("Soldiers Battle Shield", ColourStore.SUB_HEADER_COLOUR);
+        return Helpers.withStyleComponent(super.getName(stack).getString(), ColourStore.BRONZE_COIN);
     }
 
     @Override
@@ -38,9 +38,12 @@ public class JahdooShieldItem extends Item implements JahdooItem, ICurioItem {
         if(blockChance != null){
             var newValue = roundNonWholeDouble(doubleFormattedDouble(blockChance)) + "%";
             var value = Helpers.withStyleComponent(newValue + " Block Chance", ColourStore.GOLD_COIN);
+            var prefix = Helpers.withStyleComponent("Implicit Modifiers", ColourStore.SUB_HEADER_COLOUR);
 
-            tooltipComponents.add(Component.empty());
+            tooltipComponents.add(Component.literal(" "));
+            tooltipComponents.add(prefix);
             tooltipComponents.add(value);
+            runeSpacer(stack, tooltipComponents);
         }
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }

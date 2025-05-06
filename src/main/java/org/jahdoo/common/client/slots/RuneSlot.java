@@ -6,7 +6,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
-import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.ascension.attachments.PlayerWallet;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.block.rune_table.RuneTableEntity;
@@ -15,7 +15,6 @@ import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
-import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.RuneReg;
 
@@ -67,10 +66,6 @@ public class RuneSlot extends SlotItemHandler {
         return canPlace(menu.getCarried(), entity);
     }
 
-    private void serverBoundPacket(ItemStack getAllSlots) {
-        PacketDistributor.sendToServer(new ItemInBlockC2SP(getAllSlots, this.entity.getBlockPos(), 0));
-    }
-
     @Override
     public void setChanged() {
         if(this.entity == null) return;
@@ -97,13 +92,13 @@ public class RuneSlot extends SlotItemHandler {
         super.onTake(player, stack);
     }
 
-
     @Override
     public Optional<ItemStack> tryRemove(int count, int decrement, Player player) {
         if(entity instanceof RuneTableEntity runeTable){
             var coreCost = removeRuneCost(getItem());
             var canRemove = runeTable.checkAndChargeCores(coreCost, true);
-            if(canRemove) {
+            var hasCoins = PlayerWallet.CurrencyConverter.checkAndPurchase(PlayerWallet.CurrencyConverter.convertToCoins(removeCurrencyCost(getItem())), player);
+            if(canRemove && hasCoins) {
                 return super.tryRemove(count, decrement, player);
             } else {
                 Helpers.getSoundWithPosition(player.level(), runeTable.getBlockPos(), SoundReg.REJECT.get(), 0.4F, 1F);
@@ -119,9 +114,14 @@ public class RuneSlot extends SlotItemHandler {
         return SharedUI.getCore().get(Math.min(rarity/2, 2));
     }
 
-    @Override
-    public ItemStack safeTake(int count, int decrement, Player player) {
-        return super.safeTake(count, decrement, player);
+    public static int removeCurrencyCost(ItemStack stack) {
+        var runeData = RuneHelpers.getRuneData(stack);
+        var runeReg = RuneReg.getRuneFromId(runeData.name());
+        var rarity = runeReg.runeRarity().getId()+1;
+        var baseCost = (rarity * 10) * 25;
+        var tierMultiplier = ((runeData.tier()+1) * 2);
+
+        return baseCost * tierMultiplier;
     }
 
     @Override

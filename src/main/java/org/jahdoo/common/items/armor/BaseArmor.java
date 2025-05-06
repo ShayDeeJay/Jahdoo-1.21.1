@@ -50,6 +50,8 @@ public abstract class BaseArmor extends ArmorItem implements JahdooItem {
         return true;
     }
 
+
+
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         appendItemToolTips(stack, context, tooltipComponents, false);

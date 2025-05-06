@@ -41,13 +41,13 @@ public record JahdooGearData(
         return new JahdooGearData(runeSlots, repairSlots, refinementPotential);
     }
 
-    public static boolean canUpgrade(ItemStack itemStack){
-        var holder = getRuneholder(itemStack);
+    public static boolean canRepair(ItemStack itemStack){
+        var holder = getGearData(itemStack);
         return holder.repairSlots.contains(1);
     }
 
     public static int checkAndRepair(ItemStack itemStack){
-        var holder = getRuneholder(itemStack);
+        var holder = getGearData(itemStack);
         var originalSlots = holder.repairSlots;
         var hasRepairSlots = originalSlots.contains(1);
         var newRepair = new ArrayList<Integer>();
@@ -72,7 +72,7 @@ public record JahdooGearData(
     }
 
     public static int totalRepairs(ItemStack itemStack){
-        var holder = getRuneholder(itemStack);
+        var holder = getGearData(itemStack);
         var originalSlots = holder.repairSlots;
         var hasRepairSlots = originalSlots.contains(1);
 
@@ -87,7 +87,7 @@ public record JahdooGearData(
         return -1;
     }
 
-    public static JahdooGearData getRuneholder(ItemStack itemStack){
+    public static JahdooGearData getGearData(ItemStack itemStack){
         return itemStack.has(JAHDOO_GEAR_DATA) ? itemStack.get(JAHDOO_GEAR_DATA) : DEFAULT;
     }
 

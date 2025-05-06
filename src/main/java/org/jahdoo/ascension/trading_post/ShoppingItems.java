@@ -212,7 +212,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var isUnique = rarity == UNIQUE;
         var rarityId = rarity.getId();
 
-        attachSharedProperties(itemStack, rarityId, rarity, isUnique ? Random.nextInt(4,8) : -1, isUnique ? 50 : 0, isUnique ? 50 : 0);
+        attachSharedProperties(itemStack, rarityId, rarity, isUnique ? Random.nextInt(4, 7) : -1, isUnique ? 50 : 0, isUnique ? 50 : 0);
 
         if(isUnique) {
             addAttribute(itemStack, MAINHAND, null, null);
@@ -228,7 +228,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
 
     public static void preInsertRunes(ItemStack itemStack) {
         var addRune = new ArrayList<ItemStack>();
-        var getRuneHolderSize = JahdooGearData.getRuneholder(itemStack).runeSlots().size();
+        var getRuneHolderSize = JahdooGearData.getGearData(itemStack).runeSlots().size();
         for(int i = 0; i < getRuneHolderSize; i++){
             if(Maths.percentageChance(10)){
                 var getRandomRun = RuneHelpers.generateRandomTypAttribute(null, null, null);
@@ -336,8 +336,8 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
     public static ItemStack getShieldWithRarity(@Nullable ItemStack itemStack, @Nullable JahdooRarity getRarity){
         var rarity = getRarity == null ? getRarity() : getRarity;
         var newStack = itemStack == null ? new ItemStack(ItemReg.BASIC_SHIELD) : itemStack;
-        attachSharedProperties(newStack, 0, rarity, -1, 0, 0);
-
+        var isUnique = rarity == UNIQUE;
+        attachSharedProperties(newStack, isUnique ? 1 : 0, rarity, isUnique ? Random.nextInt(3, 6) : -1, 25, 25);
         newStack.set(ComponentReg.SHIELD_BLOCK_CHANCE, rarity.getAttributes().getRandomDamage());
 
         return newStack;

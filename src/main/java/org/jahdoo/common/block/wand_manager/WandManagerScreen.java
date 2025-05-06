@@ -415,7 +415,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
             baseWandProperties(guiGraphics, shiftX, spacer, shiftY, startX, startY);
         } else {
             remainingPotential(guiGraphics, shiftX, spacer, shiftY);
-            var getRunes = JahdooGearData.getRuneholder(getWand());
+            var getRunes = JahdooGearData.getGearData(getWand());
             handleSlotsInGridLayout(
                 (slotX, slotY, index) -> {
                     for (ItemStack ignored : getRunes.runeSlots()) {

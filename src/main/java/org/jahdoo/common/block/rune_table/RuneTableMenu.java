@@ -53,7 +53,7 @@ public class RuneTableMenu extends AbstractInternalContainer  {
 
     @Override
     protected int getAllSlots() {
-        int size = JahdooGearData.getRuneholder(tableEntity().getItem().getStackInSlot(0)).runeSlots().size();
+        int size = JahdooGearData.getGearData(tableEntity().getItem().getStackInSlot(0)).runeSlots().size();
         return size + DEFAULT_SLOTS -1;
     }
 
@@ -76,7 +76,7 @@ public class RuneTableMenu extends AbstractInternalContainer  {
 
     private void insertRuneSlots() {
         var getAllSlots = this.tableEntity().getItem().getStackInSlot(0);
-        var getData = JahdooGearData.getRuneholder(getAllSlots);
+        var getData = JahdooGearData.getGearData(getAllSlots);
         var iHandler = tableEntity().inputItemHandler;
         var indexOne = new AtomicInteger(4);
         for (ItemStack itemStack : getData.runeSlots()) {

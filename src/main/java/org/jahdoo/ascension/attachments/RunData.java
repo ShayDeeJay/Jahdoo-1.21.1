@@ -31,6 +31,7 @@ public class RunData implements IAttachment {
     public static final String MOBS_KILLED = "mobs_killed";
     public static final String ROOMS_CLEARED = "rooms_cleared";
     public static final String CHAMPIONS_KILLED = "champions_killed";
+    public static final String PLAYER_LEVEL = "player_level";
 
     public static final String CHESTS_COMMON = "chests_common";
     public static final String CHESTS_RARE = "chests_rare";
@@ -121,7 +122,6 @@ public class RunData implements IAttachment {
         if(!this.dateAndTime.isEmpty()){
             var data = player.level().getData(INSTANCE_DATA);
             var runData = player.level().getData(PLAYER_TRIAL_DATA);
-
             addStat(TIME_IN_TRIAL, data.getTicks());
             PlayerTrialData.addNewInstance(player, new InstanceData(data.getDifficulty(), data.getInstance()));
             runData.addInstance(data);
@@ -162,6 +162,7 @@ public class RunData implements IAttachment {
         var runData = player.getData(AttachmentReg.RUN_DATA.get());
         var castData = PlayerTrialData.getData(player);
         if (runData.dateAndTime != null) {
+            setPlayerLevel(CasterData.getLevel(player), player);
             runData.onEndRun(player, died);
             sendToPlayer(player, new PlayerTrialDataS2CP(castData));
             if(player.level() instanceof CustomLevel customLevel){
@@ -170,6 +171,12 @@ public class RunData implements IAttachment {
                 }
             }
         }
+    }
+
+    public static void setPlayerLevel(int value, ServerPlayer player) {
+        var data = player.getData(RUN_DATA.get());
+        data.addStat(RunData.PLAYER_LEVEL, value);
+        sendToPlayer(player, new RunDataS2CP(data));
     }
 
     public static void addExperienceToTotal(int value, ServerPlayer player) {

@@ -28,7 +28,7 @@ public class TomeOfUnity extends RelicItem implements JahdooItem {
     @Override
     public Component getName(ItemStack stack) {
         var name = super.getName(stack).getString();
-        return Helpers.withStyleComponent(name, ColourStore.SUB_HEADER_COLOUR);
+    return Helpers.withStyleComponent(name, ColourStore.PERK_GREEN);
     }
 
     @Override

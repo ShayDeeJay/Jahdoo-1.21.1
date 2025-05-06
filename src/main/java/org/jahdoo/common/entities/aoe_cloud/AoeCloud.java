@@ -44,6 +44,19 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
     public AoeCloud(
         Level level,
         LivingEntity livingEntity,
+        float setWidth
+    )  {
+        super(EntityReg.CUSTOM_AOE_CLOUD.get(), level);
+        this.reapplyPosition();
+        this.setRadius(setWidth);
+        this.owner = livingEntity;
+        this.getRandomCloudRadius = Helpers.Random.nextDouble(setWidth + 1, setWidth + 1.5);
+    }
+
+
+    public AoeCloud(
+        Level level,
+        LivingEntity livingEntity,
         float setWidth,
         String selectedAbility,
         String abilityId
@@ -52,7 +65,6 @@ public class AoeCloud extends Entity implements TraceableEntity, IEntityProperti
         this.reapplyPosition();
         this.setRadius(setWidth);
         this.owner = livingEntity;
-//        this.abilityHolder = livingEntity.getItemInHand(livingEntity.getUsedItemHand()).get(ABILITY_HOLDER.get());
         this.abilityHolder = livingEntity.getData(AttachmentReg.CASTER_DATA).getHolder(abilityId);
         this.setEntityType(selectedAbility);
         this.abilityId = abilityId;

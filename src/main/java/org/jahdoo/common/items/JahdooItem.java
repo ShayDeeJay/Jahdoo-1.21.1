@@ -95,7 +95,7 @@ public interface JahdooItem {
     }
 
     default void runeSpacer(ItemStack stack, List<Component> tooltipComponents) {
-        var runeHolder = JahdooGearData.getRuneholder(stack);
+        var runeHolder = JahdooGearData.getGearData(stack);
         if(runeHolder != null && !runeHolder.runeSlots().isEmpty()){
             tooltipComponents.add(Component.literal(" "));
         }

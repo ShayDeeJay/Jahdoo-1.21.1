@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractTankUser;
+import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ItemReg;
@@ -139,7 +140,7 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
         var handler = this.inputItemHandler;
         var itemFragment = ESSENCE_FRAGMENT.get();
         var itemCore = ItemReg.AUGMENT_CORE.get();
-        var stack = new ItemStack(handler.getStackInSlot(0).is(Items.ESSENCE_FRAGMENT) ? itemFragment : itemCore);
+        var stack = new ItemStack(handler.getStackInSlot(0).is(AUGMENT_CORE) ? itemCore : itemFragment);
 
         this.outputItemHandler.setStackInSlot(0, stack);
         handler.setStackInSlot(0, ItemStack.EMPTY);
@@ -165,7 +166,7 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
     private void recyclingProcess(){
         var isInputAugment = this.inputItemHandler.getStackInSlot(0);
         var isOutputEmpty = this.outputItemHandler.getStackInSlot(0).isEmpty();
-        if (isOutputEmpty && isInputAugment.is(Items.ESSENCE_FRAGMENT) || isInputAugment.is(AUGMENT_CORE)){
+        if (isOutputEmpty && isInputAugment.is(Items.ESSENCE_FRAGMENT) || isInputAugment.is(AUGMENT_CORE) || isInputAugment.getItem() instanceof JahdooItem){
             this.progress++;
 
             if (this.getTankEntity().inputItemHandler.getStackInSlot(0).getCount() >= 6) {

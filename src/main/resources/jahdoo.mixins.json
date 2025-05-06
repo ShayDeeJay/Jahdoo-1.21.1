@@ -8,6 +8,7 @@
     "AttackDamageAttributeSyncMixin",
     "DisableSpinAttackLayerMixin",
     "ItemEntityMixin",
+    "ItemStackMixin",
     "LivingEntityMixin",
     "PlayerSpinAttackMixin"
   ],

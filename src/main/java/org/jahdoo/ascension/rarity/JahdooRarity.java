@@ -113,7 +113,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom)
             .filter(jahdooRarity -> jahdooRarity.getFirst().id != 5)
             .toList();
-        System.out.println(filteredList);
         return listRandom(filteredList).getFirst();
     }
 
