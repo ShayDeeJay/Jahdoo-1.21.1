@@ -84,7 +84,7 @@ public class AbilityComponentHelper {
         return false;
     }
 
-    public static List<Component> shiftForDetails(Boolean showSpacer){
+    public static List<Component> shiftForDetails(boolean showSpacer, boolean canUpgrade){
         var comps = new ArrayList<Component>();
 
         if(!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 73)){
@@ -94,8 +94,15 @@ public class AbilityComponentHelper {
             comps.add(holdToDiscover);
 
             if(showSpacer){
-                var holdToDiscover2 = Helpers.withStyleComponentTrans("Shift + Left Click To Add", SUB_HEADER_COLOUR, hotkey);
-                comps.add(holdToDiscover2);
+                if(!canUpgrade){
+                    var component = withStyleComponent("[Click] ", OFF_WHITE);
+                    var sibling = withStyleComponent("To Upgrade", HEADER_COLOUR);
+                    comps.add(component.copy().append(sibling));
+                }
+
+                var component = withStyleComponent("[Shift + Click] ", OFF_WHITE);
+                var sibling = withStyleComponent("To Add", HEADER_COLOUR);
+                comps.add(component.copy().append(sibling));
             }
 
             return comps;

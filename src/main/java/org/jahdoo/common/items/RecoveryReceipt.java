@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +32,7 @@ import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.throwNewItem;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 
-public class RecoveryReceipt extends Item {
+public class RecoveryReceipt extends Item implements JahdooItem {
 
     public RecoveryReceipt() { super(new Properties()); }
 
@@ -43,6 +44,11 @@ public class RecoveryReceipt extends Item {
 
     public static final Pair<CoinProperties, CurrencyConverter> PLATINUM_CHARGE =
         Pair.of(PLATINUM, setPlatinumCost(20));
+
+    @Override
+    public ItemStack getRecycleItem() {
+        return new ItemStack(ItemReg.AUGMENT_CORE);
+    }
 
     @Override
     public Component getName(ItemStack stack) {

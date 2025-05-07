@@ -2,6 +2,7 @@ package org.jahdoo.common.block.dissembler;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -10,20 +11,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractTankUser;
+import org.jahdoo.common.client.overlay.CustomHudOverlay;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.ComponentReg;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 
-import static org.jahdoo.ascension.utils.ModTags.Items;
-import static org.jahdoo.ascension.utils.ModTags.Items.AUGMENT_CORE;
 import static org.jahdoo.common.registers.ItemReg.ESSENCE_FRAGMENT;
 import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
@@ -138,15 +139,51 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
 
     private void completedRecycling(Level level){
         var handler = this.inputItemHandler;
-        var itemFragment = ESSENCE_FRAGMENT.get();
-        var itemCore = ItemReg.AUGMENT_CORE.get();
-        var stack = new ItemStack(handler.getStackInSlot(0).is(AUGMENT_CORE) ? itemCore : itemFragment);
+        var originalItem = handler.getStackInSlot(0);
+        if(!(originalItem.getItem() instanceof JahdooItem jahdooItem)) return;
+        var recycleItem = getRecycleWithChance(jahdooItem, originalItem);
 
-        this.outputItemHandler.setStackInSlot(0, stack);
+        this.outputItemHandler.setStackInSlot(0, recycleItem);
         handler.setStackInSlot(0, ItemStack.EMPTY);
         this.chargeTankFuel(RECYCLING_COST);
         level.sendBlockUpdated(this.tankPosition, level.getBlockState(this.tankPosition), this.getBlockState(), 3);
         this.progress = 0;
+    }
+
+    private static ItemStack getRecycleWithChance(JahdooItem jahdooItem, ItemStack originalItem) {
+        // Tries to get the rarity level from the item (likely an int or enum stored in a component).
+        var getRarity = originalItem.get(ComponentReg.JAHDOO_RARITY);
+
+        // If the item doesn't have a rarity set, always return the default recycle item.
+        if(getRarity == null) return jahdooItem.getRecycleItem();
+
+        // Gets the durability percent. We're using just the percent here.
+        var getPercent = CustomHudOverlay.getDurabilityWithColor(originalItem);
+
+        // Checks if the item has a durability component (can be damaged).
+        var hasDurability = originalItem.has(DataComponents.MAX_DAMAGE);
+
+        // Base percentage chance: each rarity level increases the chance by 10%
+        var percentageChance = ((getRarity + 1) * 10);
+
+        // i is a decimal representation of the chance (e.g., 0.6 for 60%)
+        var i = (double) percentageChance / 100;
+
+        // i1 is how much durability is missing (e.g., 100 - 80% durability = 20% missing)
+        var i1 = 100 - getPercent.getFirst();
+
+        // If the item has durability, we reduce the chance based on missing durability
+        // The more it's damaged, the lower the recycle chance.
+        var durabilityAdjustment = hasDurability ? (i * i1) : 0;
+
+        // Final adjusted chance, ensuring it's not negative.
+        var actualChance = Math.max(percentageChance - durabilityAdjustment, 0);
+
+        // Performs the random roll. Returns true with `actualChance` percent chance.
+        var recycleChance = Maths.percentageChance(actualChance);
+
+        // If the roll succeeded, return the recycled item. Otherwise, return nothing.
+        return recycleChance ? jahdooItem.getRecycleItem() : ItemStack.EMPTY;
     }
 
     private void tableProcessingParticle(Level level, ServerLevel serverLevel, BlockPos pPos){
@@ -166,7 +203,7 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
     private void recyclingProcess(){
         var isInputAugment = this.inputItemHandler.getStackInSlot(0);
         var isOutputEmpty = this.outputItemHandler.getStackInSlot(0).isEmpty();
-        if (isOutputEmpty && isInputAugment.is(Items.ESSENCE_FRAGMENT) || isInputAugment.is(AUGMENT_CORE) || isInputAugment.getItem() instanceof JahdooItem){
+        if (isOutputEmpty && isInputAugment.getItem() instanceof JahdooItem jahdooItem){
             this.progress++;
 
             if (this.getTankEntity().inputItemHandler.getStackInSlot(0).getCount() >= 6) {

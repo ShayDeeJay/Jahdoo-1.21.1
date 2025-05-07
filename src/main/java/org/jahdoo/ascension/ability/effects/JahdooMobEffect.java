@@ -10,13 +10,15 @@ import static org.jahdoo.ascension.utils.Helpers.sendEffectPacketsToPlayer;
 
 public class JahdooMobEffect extends MobEffectInstance {
 
+    private boolean isSkill;
+
     public JahdooMobEffect(Holder<MobEffect> pEffect, int pDuration, int pAmplifier) {
         super(pEffect, pDuration, pAmplifier, false, false, true);
     }
 
-    @Override
-    public void onEffectAdded(LivingEntity pLivingEntity) {
-        super.onEffectAdded(pLivingEntity);
+    public JahdooMobEffect(Holder<MobEffect> pEffect, int pDuration, int pAmplifier, boolean isSkill) {
+        super(pEffect, pDuration, pAmplifier, false, false, true);
+        this.isSkill = isSkill;
     }
 
     @Override
@@ -28,10 +30,7 @@ public class JahdooMobEffect extends MobEffectInstance {
         super.onEffectStarted(entity);
     }
 
-    @Override
-    public boolean update(MobEffectInstance other) {
-        return super.update(other);
+    public boolean isSkill() {
+        return isSkill;
     }
-
-
 }

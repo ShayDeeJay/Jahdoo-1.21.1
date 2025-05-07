@@ -11,13 +11,14 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.ascension.ability.Ability;
+import org.jahdoo.ascension.ability.AbilityBuilder;
+import org.jahdoo.ascension.ability.AbilityComponentHelper;
 import org.jahdoo.ascension.ability.skills.AbstractSkill;
 import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.ascension.ability.AbilityComponentHelper;
 import org.jahdoo.common.networking.client2server.*;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -28,19 +29,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
 import static com.mojang.blaze3d.platform.InputConstants.isKeyDown;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
+import static org.jahdoo.ascension.ability.AbilityComponentHelper.getAllAbilityModifiers;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.res;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSoundAbilities;
-import static org.jahdoo.ascension.ability.AbilityComponentHelper.getAllAbilityModifiers;
 
 public class AbilityUnlockScreen extends AbstractPanableScreen {
     List<Component> components = new ArrayList<>();
@@ -291,7 +293,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         this.pos = new Vec3(posX, posY, 0);
 
         if(!isDummy) {
-            var components = AbilityComponentHelper.shiftForDetails(isLocked);
+            var components = AbilityComponentHelper.shiftForDetails(isLocked, modifiableHolder(holder));
             var allAbilityModifiers = getAllAbilityModifiers(ability, holder, components.isEmpty(), true, player);
 
             allAbilityModifiers.addAll(!isLocked ? 1 : allAbilityModifiers.size(), components);
@@ -344,7 +346,10 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                     sendToServer(new AddAbilityC2SP(ability.setAbilityId()));
                 }
             } else {
-                getMinecraft().setScreen(guiScreen);
+                var entryStream = modifiableHolder(abilityHolder);
+                if(!entryStream){
+                    getMinecraft().setScreen(guiScreen);
+                }
             }
         } else {
             var abilityCost = ability.getAbilityCost();
@@ -355,6 +360,17 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 player.playSound(SoundReg.REJECT.get(), 0.5F, 1.2F);
             }
         }
+    }
+
+    private static boolean modifiableHolder(AbilityHolder abilityHolder) {
+        return abilityHolder.data()
+            .abilityProperties()
+            .entrySet()
+            .stream()
+            .filter(s -> !Objects.equals(s.getKey(), AbilityBuilder.MANA_COST))
+            .filter(s -> !Objects.equals(s.getKey(), AbilityBuilder.COOLDOWN))
+            .toList()
+            .isEmpty();
     }
 
     @Override
@@ -398,7 +414,6 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 100);
-//        boxMaker(guiGraphics, i1, 20 + i2, 22, 10, uiColour(), 0, 0);
         guiGraphics.drawCenteredString(font, withStyleComponent(skillPoints + "", PERK_GREEN), i1 + 30, 27 + i2, -1);
         guiGraphics.blit(SKILL_POINT, i1 - 1, 18 + i2, 0, 0, size, size, size, size);
         guiGraphics.pose().popPose();

@@ -320,7 +320,8 @@ public class RewardLootTables {
 
     private static LootPool.Builder multiPoolBuilder(InstanceDifficulty difficulty, int chestRarity) {
         var lootMultiplier = getLootMultiplier(difficulty, chestRarity);
-        var builder = LootPool.lootPool().setRolls(between(1.0F, lootMultiplier));
+        var min = 3F;
+        var builder = LootPool.lootPool().setRolls(between(min, min + lootMultiplier));
         var newRarity = chestRarity+1;
 
         if(newRarity >= 1){

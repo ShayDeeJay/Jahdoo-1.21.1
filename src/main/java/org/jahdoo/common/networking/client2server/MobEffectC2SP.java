@@ -40,7 +40,7 @@ public class MobEffectC2SP implements CustomPacketPayload {
                     if(serverPlayer.hasEffect(effectHolder)){
                         serverPlayer.removeEffect(effectHolder);
                     } else {
-                        serverPlayer.addEffect(new JahdooMobEffect(effectHolder, MobEffectInstance.INFINITE_DURATION, 1));
+                        serverPlayer.addEffect(new JahdooMobEffect(effectHolder, MobEffectInstance.INFINITE_DURATION, 1, true));
                     }
                 }
             }

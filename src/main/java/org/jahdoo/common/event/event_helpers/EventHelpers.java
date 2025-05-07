@@ -286,7 +286,9 @@ public class EventHelpers {
                 event.setBlocked(true);
                 var damage = (int) (event.getBlockedDamage());
 
-                hurtAndKeepItem(getTome, damage, event.getEntity().level(), entity);
+                if(event.getEntity().level() instanceof ServerLevel serverLevel){
+                    hurtAndKeepItem(getTome, damage, serverLevel, entity);
+                }
                 getSoundWithPositionV(entity.level(), entity.position(), SoundReg.BLOCK.get(), 1, 1);
             }
         }

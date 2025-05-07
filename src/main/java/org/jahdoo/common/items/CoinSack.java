@@ -17,7 +17,7 @@ import org.jahdoo.common.registers.SoundReg;
 
 import java.util.List;
 
-public class CoinSack extends Item {
+public class CoinSack extends Item implements JahdooItem {
     public CoinSack() {
         super(new Properties());
     }

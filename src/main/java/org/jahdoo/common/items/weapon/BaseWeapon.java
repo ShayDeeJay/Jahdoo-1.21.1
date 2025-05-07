@@ -3,6 +3,7 @@ package org.jahdoo.common.items.weapon;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
@@ -60,6 +61,8 @@ public class BaseWeapon extends SwordItem implements JahdooItem {
 
     @Override
     public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        Helpers.hurtAndKeepItem(stack, 1, attacker.level(), attacker);
+        if(attacker.level() instanceof ServerLevel serverLevel){
+            Helpers.hurtAndKeepItem(stack, 1, serverLevel, attacker);
+        }
     }
 }

@@ -10,6 +10,7 @@ import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
+import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;
 
@@ -22,6 +23,10 @@ import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
 
 public interface JahdooItem {
+
+    default ItemStack getRecycleItem(){
+        return new ItemStack(ItemReg.ESSENCE_FRAGMENT);
+    };
 
     default void appendItemToolTips(ItemStack stack, Item.TooltipContext context, List<Component> toolTips, boolean addSpacer){
         addRarity(stack, context, toolTips);

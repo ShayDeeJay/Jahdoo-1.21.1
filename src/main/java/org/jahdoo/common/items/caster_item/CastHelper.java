@@ -130,10 +130,12 @@ public class CastHelper {
                         }
                         onCast(player, getAbility);
                         OnCastPerks.onCastPerkApply(player);
-                        Helpers.hurtAndKeepItem(wandItem, 5, player.level(), player);
-                        if(CasterItemHelper.canOffHand(player, false)) {
-                            var gauntlet = CasterItemHelper.getGauntlet(player);
-                            Helpers.hurtAndKeepItem(gauntlet, 5, player.level(), player);
+                        if(player.level() instanceof ServerLevel serverLevel){
+                            Helpers.hurtAndKeepItem(wandItem, 5, serverLevel, player);
+                            if (CasterItemHelper.canOffHand(player, false)) {
+                                var gauntlet = CasterItemHelper.getGauntlet(player);
+                                Helpers.hurtAndKeepItem(gauntlet, 5, serverLevel, player);
+                            }
                         }
                     } else failedCastNotification(player);
                 } else brokenWandNotification(player, getElement);

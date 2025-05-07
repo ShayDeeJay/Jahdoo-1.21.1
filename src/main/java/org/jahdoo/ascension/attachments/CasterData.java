@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
@@ -425,6 +426,11 @@ public class CasterData implements IAttachment {
             sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
             sendToPlayer(serverPlayer, new ClientSoundS2CP(SoundReg.REJECT.get(), 1, 1, false));
             sendToPlayer(serverPlayer, new ClientSoundS2CP(SoundReg.ORB_CREATE.get(), 0.4F, 2, false));
+            for (var activeEffect : livingEntity.getActiveEffects()) {
+                if(activeEffect instanceof JahdooMobEffect jahdooMobEffect && jahdooMobEffect.isSkill()){
+                    livingEntity.removeEffect(activeEffect.getEffect());
+                }
+            }
         }
     }
 

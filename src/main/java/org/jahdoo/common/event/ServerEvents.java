@@ -98,7 +98,6 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
-        var stack = rightClickItem.getItemStack();
         removeShieldUse(rightClickItem);
     }
 

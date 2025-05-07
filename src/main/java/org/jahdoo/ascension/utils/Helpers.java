@@ -477,7 +477,7 @@ public class Helpers {
         return 0;
     }
 
-    public static void hurtAndKeepItem(ItemStack itemStack, int damage, Level level, LivingEntity livingEntity) {
+    public static void hurtAndKeepItem(ItemStack itemStack, int damage, ServerLevel level, LivingEntity livingEntity) {
         hurtAndKeepItemChanced(itemStack, damage, level, livingEntity, 10);
     }
 

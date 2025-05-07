@@ -14,7 +14,7 @@ import java.util.List;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.utils.Helpers.getColorTransition;
 
-public class CoreItem extends Item {
+public class CoreItem extends Item implements JahdooItem{
 
     public CoreItem(Properties properties) {
         super(properties);

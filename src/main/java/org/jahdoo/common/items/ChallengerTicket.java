@@ -27,7 +27,7 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.ascension.level_manager.LevelGenerator.createLevelAndStartingRoom;
 import static org.jahdoo.ascension.utils.Helpers.getSoundWithPositionV;
 
-public class ChallengerTicket extends Item {
+public class ChallengerTicket extends Item implements JahdooItem {
 
     public ChallengerTicket() { super(new Properties()); }
 

@@ -19,7 +19,7 @@ import java.util.List;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 
-public class KeyItem extends Item {
+public class KeyItem extends Item implements JahdooItem {
 
     public KeyItem() {
         super(new Properties());

@@ -1,5 +1,3 @@
-// 1.21.1	2025-05-05T21:33:55.5138022	Tags for minecraft:item mod id jahdoo
-e873d7c32d5e40706acc0785507a017429c49b44 data/jahdoo/tags/item/augment_core.json
-16e6440a73ceb7c372199df76223701661494ff3 data/jahdoo/tags/item/essence_fragment.json
-8f98c69a8faa573c033a8107eb072f66f0bbb168 data/jahdoo/tags/item/wand_tag.json
+// 1.21.1	2025-05-07T16:21:22.1789591	Tags for minecraft:item mod id jahdoo
+7cb3c71a77405fec40f4779a50a23eedd8198c85 data/jahdoo/tags/item/wand_tag.json
 d6f6f1e2ae5e2c6a5a2c9125aea0658dec972867 data/minecraft/tags/item/swords.json
