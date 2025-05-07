@@ -76,6 +76,18 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> LAPIS =
         lootTableItem(Items.LAPIS_LAZULI);
 
+    public static final LootPoolSingletonContainer.Builder<?> QUARTZ =
+        lootTableItem(Items.QUARTZ);
+
+    public static final LootPoolSingletonContainer.Builder<?> SLIME =
+        lootTableItem(Items.SLIME_BALL);
+
+    public static final LootPoolSingletonContainer.Builder<?> NETHERITE_INGOT =
+        lootTableItem(Items.NETHERITE_INGOT);
+
+    public static final LootPoolSingletonContainer.Builder<?> ENDER_PEARL =
+        lootTableItem(Items.ENDER_PEARL);
+
     public static final LootPoolSingletonContainer.Builder<?> DIAMOND_BUILDER =
         lootTableItem(Items.DIAMOND);
 
@@ -186,8 +198,11 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> STARTER_PACK =
         lootTableItem(ItemReg.CARE_PACKAGE.get());
 
-    public static final LootPoolSingletonContainer.Builder<?> SHIELD =
+    public static final LootPoolSingletonContainer.Builder<?> BASIC_SHIELD =
         lootTableItem(ItemReg.BASIC_SHIELD.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> UNDEAD_PROTECTOR_SHIELD =
+        lootTableItem(ItemReg.UNDEAD_PROTECTOR.get());
 
     public static final LootPoolSingletonContainer.Builder<?> GAUNTLET =
         lootTableItem(ItemReg.BATTLEMAGE_GAUNTLET.get());
@@ -297,7 +312,7 @@ public class RewardLootTables {
             case SwordItem ignored -> ShoppingItems.attachWeaponData(itemStack, raritiesByChestRarity, serverLevel);
             case EnchantedBookItem ignored -> enchantedBook(serverLevel, itemStack);
             case Magnet ignored -> magnetItem(itemStack, raritiesByChestRarity);
-            case JahdooShieldItem ignored -> getShieldWithRarity(itemStack, raritiesByChestRarity);
+            case JahdooShieldItem ignored -> basicShieldWithRarity(itemStack, raritiesByChestRarity);
             case BattlemageGauntlet ignore -> getGauntletWithRarity(itemStack, raritiesByChestRarity);
             default -> { /*IGNORE*/ }
         }
@@ -315,12 +330,16 @@ public class RewardLootTables {
             builder.add(REDSTONE.setWeight(30));
             builder.add(LAPIS.setWeight(30));
             builder.add(GOLD_BUILDER.setWeight(25));
+            builder.add(ENDER_PEARL.setWeight(20));
             builder.add(EMERALD_BUILDER.setWeight(15));
             builder.add(DIAMOND_BUILDER.setWeight(10));
+            builder.add(SLIME.setWeight(10));
+            builder.add(QUARTZ.setWeight(10));
             builder.add(COIN.setWeight(10));
             builder.add(XP.setWeight(8));
+            builder.add(NETHERITE_BUILDER.setWeight(5));
             builder.add(SHULKER_SHELLS_BUILDER.setWeight(5));
-            builder.add(NETHERITE_BUILDER.setWeight(2));
+            builder.add(NETHERITE_INGOT.setWeight(2));
         }
 
         if(newRarity >= 2){
@@ -385,10 +404,11 @@ public class RewardLootTables {
 
         if(Maths.percentageChance(calculateChance(8, difficulty, newRarity))){
             builder.add(GLAIVE.setWeight(2));
-            builder.add(SHIELD.setWeight(4));
+            builder.add(BASIC_SHIELD.setWeight(4));
         }
 
         if(Maths.percentageChance(calculateChance(5, difficulty, newRarity))){
+            builder.add(UNDEAD_PROTECTOR_SHIELD.setWeight(2));
             builder.add(ELEMENTAL_SWORD.setWeight(1));
             builder.add(GAUNTLET.setWeight(1));
             addBattlemageArmor(builder, newRarity);

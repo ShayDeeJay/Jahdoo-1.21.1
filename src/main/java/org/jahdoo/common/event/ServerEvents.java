@@ -122,7 +122,6 @@ public class ServerEvents {
         }
     }
 
-
     @SubscribeEvent
     public static void commandRegister(RegisterCommandsEvent event) {
         PlayerLevelCommand.register(event.getDispatcher());

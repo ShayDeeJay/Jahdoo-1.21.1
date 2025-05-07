@@ -101,20 +101,21 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
     public void curioTick(SlotContext slotContext, ItemStack stack) {
         var player = slotContext.entity();
         var level = player.level();
-        if(!(level instanceof ServerLevel serverLevel)) return;
 
         var magnetData = MagnetData.getMagnetData(stack);
         var bounding = player.getBoundingBox().inflate(magnetData.range());
-        var itemEntities = serverLevel.getEntitiesOfClass(ItemEntity.class, bounding);
-        var expEntities = serverLevel.getEntitiesOfClass(ExperienceOrb.class, bounding);
+        var itemEntities = level.getEntitiesOfClass(ItemEntity.class, bounding);
+        var expEntities = level.getEntitiesOfClass(ExperienceOrb.class, bounding);
         var durability = stackDurability(stack);
         var isPullingItem = !itemEntities.isEmpty() || !expEntities.isEmpty();
 
         if(magnetData.active() && durability > 0){
-            if(isPullingItem) hurtAndKeepItem(stack, 1, serverLevel, player);
+            if(isPullingItem) hurtAndKeepItem(stack, 1, level, player);
             for (var item : itemEntities) {
-                if(!item.hasPickUpDelay()){
-                    entityMover(player, item, magnetData.strength());
+                if(level instanceof ServerLevel){
+                    if (!item.hasPickUpDelay()) {
+                        entityMover(player, item, magnetData.strength());
+                    }
                 }
             }
             for (var xp : expEntities) entityMover(player, xp, magnetData.strength());

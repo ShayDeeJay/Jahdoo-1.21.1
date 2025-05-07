@@ -18,6 +18,7 @@ import org.jahdoo.common.items.block_items.ChallengeAltarBlockItem;
 import org.jahdoo.common.items.block_items.DisassemblerBlockItem;
 import org.jahdoo.common.items.block_items.LootChestBlockItem;
 import org.jahdoo.common.items.block_items.ModularChaosCubeItem;
+import org.jahdoo.common.items.caster_item.basic_wand.StarterWand;
 import org.jahdoo.common.items.caster_item.elemental_wand.FrostWand;
 import org.jahdoo.common.items.caster_item.elemental_wand.InfernoWand;
 import org.jahdoo.common.items.caster_item.elemental_wand.MysticWand;
@@ -122,6 +123,9 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> BASIC_SHIELD =
         complexItem("basic_shield", JahdooShieldItem::new);
 
+    public static final DeferredHolder<Item, Item> UNDEAD_PROTECTOR =
+        complexItem("undead_protector", JahdooShieldItem::new);
+
     public static final DeferredHolder<Item, Item> COIN_SACK =
         complexItem("coin_sack", CoinSack::new);
 
@@ -140,6 +144,9 @@ public class ItemReg {
 
     //Wands needed their own subclass as animations do not fire for all wand instances otherwise.
     //UPDATE: Above should now be fixed in latest update, should now be able
+    public static final DeferredHolder<Item, Item> STARTER_WAND =
+        complexItem("wand_basic", StarterWand::new);
+
     public static final DeferredHolder<Item, Item> WAND_ITEM_MYSTIC =
         complexItem("wand_mystic", MysticWand::new);
 

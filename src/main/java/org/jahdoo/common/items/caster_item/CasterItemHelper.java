@@ -30,6 +30,7 @@ import top.theillusivec4.curios.api.CuriosApi;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static net.minecraft.world.InteractionHand.OFF_HAND;
 import static org.jahdoo.ascension.utils.ColourStore.*;
@@ -142,7 +143,7 @@ public class CasterItemHelper {
         }
     }
 
-    public static Component getItemName(ItemStack wandType){
+    public static Component getItemName(ItemStack wandType, Supplier<Component> originalName){
         var getElement = fromWand(wandType.getItem());
         return getElement.map(
             element -> withStyleComponentTrans(
@@ -150,7 +151,7 @@ public class CasterItemHelper {
                 element.partColourB(),
                 element.name()
             )
-        ).orElseGet(Component::empty);
+        ).orElseGet(originalName);
     }
 
     public static void attributeToolTips(ItemStack itemStack, List<Component> appendComponents, AbstractElement abstractElement) {
@@ -238,8 +239,12 @@ public class CasterItemHelper {
         if(offHand.getItem() instanceof CasterItem){
             if(curio.isEmpty()) return empty;
             var isGauntletEquipped = curio.get().isEquipped(ItemReg.BATTLEMAGE_GAUNTLET.get());
-            if(isGauntletEquipped) return curio.get().getEquippedCurios().getStackInSlot(1);
-
+            if(isGauntletEquipped) {
+                var gauntlet = curio.get().findCurios("relic");
+                if(!gauntlet.isEmpty()){
+                    return gauntlet.getFirst().stack();
+                }
+            }
         }
 
         return empty;

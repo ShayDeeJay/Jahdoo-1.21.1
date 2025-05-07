@@ -27,7 +27,6 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -90,20 +89,16 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 import java.util.ArrayList;
 
 import static com.mojang.blaze3d.platform.InputConstants.*;
-import static java.util.Objects.requireNonNull;
 import static net.minecraft.client.Minecraft.getInstance;
 import static net.minecraft.sounds.SoundSource.PLAYERS;
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
-import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
-import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.ascension.attachments.ChaosCubeData.getRelativePosition;
 import static org.jahdoo.ascension.attachments.ChaosCubeData.updateAll;
 import static org.jahdoo.ascension.attachments.RunData.*;
 import static org.jahdoo.ascension.loot.LootHelpers.itemBehaviour;
 import static org.jahdoo.ascension.loot.RewardLootTables.getCompletionLoot;
-import static org.jahdoo.ascension.mobs.MobItemHandler.getEnchantedArmor;
 import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.storeBlockType;
@@ -156,7 +151,7 @@ public class EventHelpers {
         if(entity instanceof ServerPlayer player){
             if(event.getLevel() instanceof CustomLevel){
                 for (var activeEffect : player.getActiveEffects()) {
-                    if(!(activeEffect instanceof JahdooMobEffect)){
+                    if(!(activeEffect instanceof JahdooMobEffect)){;
                         player.removeEffect(activeEffect.getEffect());
                     }
                 }
@@ -279,21 +274,21 @@ public class EventHelpers {
         var curioSlotsItems = CuriosApi.getCuriosInventory(entity);
         if(curioSlotsItems.isEmpty()) return;
 
-        var withSlots = curioSlotsItems.get().getEquippedCurios();
-        var shieldSlots = withSlots.getStackInSlot(2);
-        if (shieldSlots.isEmpty()) return;
+        var shieldSlots = curioSlotsItems.get().findCurios("shield");
+        if(!shieldSlots.isEmpty()){
+            var getTome = shieldSlots.getFirst().stack();
+            var shieldDurability = durabilityDamageCount(getTome);
+            var blockPercentage = getTome.get(ComponentReg.SHIELD_BLOCK_CHANCE);
+            if(blockPercentage == null) return;
+            var blockChance = Maths.percentageChance(blockPercentage);
 
-        var shieldDurability = durabilityDamageCount(shieldSlots);
-        var blockPercentage = shieldSlots.get(ComponentReg.SHIELD_BLOCK_CHANCE);
-        if(blockPercentage == null) return;
-        var blockChance = Maths.percentageChance(blockPercentage);
+            if (blockChance && shieldDurability > 0) {
+                event.setBlocked(true);
+                var damage = (int) (event.getBlockedDamage());
 
-        if (blockChance && shieldDurability > 0) {
-            event.setBlocked(true);
-            var damage = (int) (event.getBlockedDamage());
-
-            hurtAndKeepItem(shieldSlots, damage, event.getEntity().level(), entity);
-            getSoundWithPositionV(entity.level(), entity.position(), SoundReg.BLOCK.get(), 1, 1);
+                hurtAndKeepItem(getTome, damage, event.getEntity().level(), entity);
+                getSoundWithPositionV(entity.level(), entity.position(), SoundReg.BLOCK.get(), 1, 1);
+            }
         }
     }
 
@@ -354,45 +349,17 @@ public class EventHelpers {
 
     public static void getStarterKit(Player player, ServerLevel serverLevel) {
         var freeItems = new ArrayList<ItemStack>();
-        var element = ElementReg.random();
+        for (int i = 0; i < 9; i++) freeItems.add(ItemStack.EMPTY);
 
-        for (int i = 0; i < 2; i++){
-            freeItems.add(ItemStack.EMPTY);
-        }
-
-        var params = new LootParams.Builder(serverLevel).withParameter(ORIGIN, player.position()).create(VAULT);
-        freeItems.addAll(
-            getEnchantedArmor(
-                serverLevel,
-                element,
-                Items.IRON_HELMET,
-                Items.IRON_CHESTPLATE,
-                Items.IRON_LEGGINGS,
-                Items.IRON_BOOTS,
-                Items.IRON_SWORD
-            ).getRandomItems(params)
-        );
-
-        for (int i = 0; i < 5; i++) freeItems.add(ItemStack.EMPTY);
+        for (int i = 0; i < 3; i++) freeItems.add(ItemStack.EMPTY);
 
         freeItems.add(new ItemStack(ItemReg.CHALLENGER_TICKET));
-        freeItems.add(new ItemStack(requireNonNull(element.getWand())));
+        freeItems.add(new ItemStack(ItemReg.CARE_PACKAGE));
         freeItems.add(new ItemStack(ItemReg.CHALLENGER_TICKET));
 
-        for (int i = 0; i < 6; i++) freeItems.add(ItemStack.EMPTY);
+        var shulkerBox = new ItemStack(Items.LIGHT_GRAY_SHULKER_BOX);
 
-        freeItems.add(ItemStack.EMPTY);
-
-        var shulkerBox = new ItemStack(
-            switch (element.id()){
-                case 1 -> Items.LIGHT_BLUE_SHULKER_BOX;
-                case 2 -> Items.ORANGE_SHULKER_BOX;
-                case 3 -> Items.PURPLE_SHULKER_BOX;
-                default -> Items.RED_SHULKER_BOX;
-            }
-        );
-
-        shulkerBox.set(DataComponents.CUSTOM_NAME, withStyleComponent(element.name() + " Starter Box", element.textColourB()));
+        shulkerBox.set(DataComponents.CUSTOM_NAME, withStyleComponent("Starter Box", ColourStore.HEADER_COLOUR));
         shulkerBox.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(freeItems));
         ItemHandlerHelper.giveItemToPlayer(player, shulkerBox);
     }
@@ -434,8 +401,6 @@ public class EventHelpers {
             var resilience = attribute.getValue();
             var damageReduction = Maths.getPercentage(resilience, event.getNewDamage());
             var damageWithResilience = event.getNewDamage() - damageReduction;
-            System.out.println(event.getNewDamage());
-            System.out.println(damageWithResilience);
             event.setNewDamage((float) damageWithResilience);
         }
     }

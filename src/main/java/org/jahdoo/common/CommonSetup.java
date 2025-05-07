@@ -36,6 +36,7 @@ public class CommonSetup {
         CuriosRendererRegistry.register(ItemReg.TOME_OF_UNITY.get(), TomeRenderer::new);
         CuriosRendererRegistry.register(ItemReg.BATTLEMAGE_GAUNTLET.get(), GloveRenderer::new);
         CuriosRendererRegistry.register(ItemReg.BASIC_SHIELD.get(), ShieldRenderer::new);
+        CuriosRendererRegistry.register(ItemReg.UNDEAD_PROTECTOR.get(), ShieldRenderer::new);
     }
 
     public static void registers(IEventBus modEventBus){

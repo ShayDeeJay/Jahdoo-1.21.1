@@ -94,6 +94,7 @@ public class CreativeTab {
 
                 outPut.accept(WAND_MANAGER_TABLE.get());
                 outPut.accept(WAND_ITEM_MYSTIC.get());
+                outPut.accept(STARTER_WAND.get());
                 outPut.accept(WAND_ITEM_FROST.get());
                 outPut.accept(WAND_ITEM_INFERNO.get());
                 outPut.accept(WAND_ITEM_VITALITY.get());

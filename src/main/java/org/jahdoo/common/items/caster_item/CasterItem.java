@@ -44,7 +44,7 @@ public class CasterItem extends Item implements JahdooItem {
 
     @Override
     public @NotNull Component getName(@NotNull ItemStack stack) {
-        return CasterItemHelper.getItemName(stack);
+        return CasterItemHelper.getItemName(stack, () -> super.getName(stack));
     }
 
     @Override

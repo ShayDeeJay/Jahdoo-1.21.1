@@ -305,9 +305,12 @@ public class CasterData implements IAttachment {
         if(this.manaPool < maxMana){
             var curioSlotsItems = CuriosApi.getCuriosInventory(player);
             if (curioSlotsItems.isPresent()) {
-                var shieldSlots = curioSlotsItems.get().getEquippedCurios().getStackInSlot(1);
-                if (Helpers.durabilityDamageCount(shieldSlots) > 0 && shieldSlots.is(ItemReg.TOME_OF_UNITY)) {
-                    Helpers.hurtAndKeepItemChanced(shieldSlots, 1, player.level(), player, 200);
+                var shieldSlots = curioSlotsItems.get().findCurios("relic");
+                if(!shieldSlots.isEmpty()){
+                    var getTome = shieldSlots.getFirst().stack();
+                    if (Helpers.durabilityDamageCount(getTome) > 0 && getTome.is(ItemReg.TOME_OF_UNITY)) {
+                        Helpers.hurtAndKeepItemChanced(getTome, 1, player.level(), player, 200);
+                    }
                 }
             }
         }

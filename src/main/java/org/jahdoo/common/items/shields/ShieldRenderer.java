@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.common.registers.ItemReg;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.client.ICurioRenderer;
 
@@ -32,12 +33,13 @@ public class ShieldRenderer implements ICurioRenderer {
     ) {
         if (!(renderLayerParent.getModel() instanceof HumanoidModel<?> humanoidModel)) return;
 
-        var scale = 1.2f;
+        var isUndead = itemStack.is(ItemReg.UNDEAD_PROTECTOR);
+        var scale = isUndead ? 1.6F : 1.2F;
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
         poseStack.pushPose();
 
         humanoidModel.body.translateAndRotate(poseStack);
-        poseStack.translate(0, 0.4, 0.3);
+        poseStack.translate(0, isUndead ? 0.25 : 0.4, 0.3);
         poseStack.mulPose(Axis.YP.rotation(3.125F));
         poseStack.mulPose(Axis.ZP.rotation(3.125F));
         poseStack.scale(scale, scale, scale);

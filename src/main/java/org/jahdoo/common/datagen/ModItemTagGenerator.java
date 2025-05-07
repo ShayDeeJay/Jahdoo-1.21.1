@@ -34,6 +34,7 @@ public class ModItemTagGenerator extends ItemTagsProvider {
             .add(RUNE.get());
 
         this.tag(ModTags.Items.WAND_TAGS)
+            .add(STARTER_WAND.get())
             .add(WAND_ITEM_INFERNO.get())
             .add(WAND_ITEM_MYSTIC.get())
             .add(WAND_ITEM_FROST.get())

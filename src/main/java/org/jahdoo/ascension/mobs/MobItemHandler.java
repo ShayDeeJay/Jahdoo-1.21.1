@@ -158,9 +158,7 @@ public class MobItemHandler {
         var params = new LootParams.Builder(serverLevel).withParameter(ORIGIN, player.position()).create(VAULT);
 
         var freeItems = new ArrayList<>(getEnchantedArmor(serverLevel, element, helmet, chestplate, leggings, boots, weapon).getRandomItems(params));
-        freeItems.add(new ItemStack(Objects.requireNonNull(element.getWand())));
-//        freeItems.add(getAugmentWithAbility(elementalWithType(element.id())));
-
+        freeItems.add(new ItemStack(ItemReg.STARTER_WAND));
         return freeItems;
     }
 
