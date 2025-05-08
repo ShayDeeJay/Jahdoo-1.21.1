@@ -12,6 +12,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.TrialPortalBlock;
 import org.jahdoo.common.block.altar.AltarBlock;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeBlock;
+import org.jahdoo.common.block.creator.CreatorBlock;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlock;
 import org.jahdoo.common.block.lock.LockBlock;
 import org.jahdoo.common.block.loot_chest.LootChestBlock;
@@ -79,6 +80,9 @@ public class BlockReg {
 
     public static DeferredHolder<Block, Block> TRAIL_PORTAL =
         registerBlockWithItem("trial_portal", TrialPortalBlock::new);
+
+    public static DeferredHolder<Block, Block> CREATOR_BLOCK =
+        registerBlockWithItem("creator", CreatorBlock::new);
 
     public static DeferredHolder<Block, Block> NEXITE_ORE = registerBlockWithItem("nexite_ore",
         () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DIAMOND_ORE))

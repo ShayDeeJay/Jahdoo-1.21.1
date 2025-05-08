@@ -51,7 +51,12 @@ public class PowerUpStationEntity extends AbstractBEInventory {
     }
 
     @Override
-    public int getMaxSlotSize() {
+    public int getMaxSlotSizeOutput() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxSlotSizeInput() {
         return 1;
     }
 

@@ -7,14 +7,13 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.common.block.lock.LockBlockEntity;
-import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.items.BaseItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -22,11 +21,12 @@ import java.util.List;
 import static net.minecraft.world.InteractionResultHolder.fail;
 import static net.minecraft.world.InteractionResultHolder.pass;
 import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
-import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
+import static org.jahdoo.common.items.caster_item.CasterItemHelper.canOffHand;
+import static org.jahdoo.common.items.caster_item.CasterItemHelper.canOffhandWand;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 
-public class CasterItem extends Item implements JahdooItem {
+public class CasterItem extends BaseItem {
 
     public CasterItem() {
         super(wandProperties());

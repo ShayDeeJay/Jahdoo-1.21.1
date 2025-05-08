@@ -49,7 +49,12 @@ public class TankBlockEntity extends AbstractBEInventory {
     }
 
     @Override
-    public int getMaxSlotSize() {
+    public int getMaxSlotSizeInput() {
+        return 64;
+    }
+
+    @Override
+    public int getMaxSlotSizeOutput() {
         return 64;
     }
 
@@ -109,7 +114,7 @@ public class TankBlockEntity extends AbstractBEInventory {
     }
 
     private void beamParticlesToUser(ServerLevel serverLevel, BlockPos pos, int tankSlotSize){
-        if(tankSlotSize < this.getMaxSlotSize() && this.counter > 0){
+        if(tankSlotSize < this.getMaxSlotSizeInput() && this.counter > 0){
             PositionFinders.getOuterRingOfRadiusRandom(pos.getCenter().subtract(0, 0.5, 0), 0.5, 2,
                 positions -> {
                     Vec3 direction = pos.getCenter().add(0, 1, 0).subtract(positions).normalize();
@@ -143,7 +148,7 @@ public class TankBlockEntity extends AbstractBEInventory {
             counter = 0;
         }
 
-        if(tankSlotSize < this.getMaxSlotSize()) counter++;
+        if(tankSlotSize < this.getMaxSlotSizeInput()) counter++;
     }
 
 }

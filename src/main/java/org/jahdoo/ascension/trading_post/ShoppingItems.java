@@ -66,7 +66,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
     public static ItemStack magnetItem(@Nullable ItemStack itemStack, JahdooRarity jahdooRarity) {
         var magnetStack = itemStack != null ? itemStack : new ItemStack(ItemReg.MAGNET.get());
         var isUnique = jahdooRarity == UNIQUE;
-        ShoppingItems.attachSharedProperties(magnetStack, jahdooRarity.getId() >= 4 ? 1 : 0, jahdooRarity, -1, isUnique ? 20 : -50, isUnique ? 20 : -50);
+        ShoppingItems.attachSharedProperties(magnetStack, jahdooRarity.getId() >= 4 ? 1 : 0, jahdooRarity, -1, isUnique ? 20 : 0, isUnique ? 20 : 0);
         var id = jahdooRarity.getId();
 
         if(isUnique){

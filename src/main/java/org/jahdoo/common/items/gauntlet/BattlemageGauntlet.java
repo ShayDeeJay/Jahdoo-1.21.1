@@ -1,17 +1,16 @@
 package org.jahdoo.common.items.gauntlet;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.items.BaseItem;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.List;
 
-public class BattlemageGauntlet extends Item implements ICurioItem, JahdooItem {
+public class BattlemageGauntlet extends BaseItem implements ICurioItem {
 
     public BattlemageGauntlet() {
         super(
@@ -27,25 +26,14 @@ public class BattlemageGauntlet extends Item implements ICurioItem, JahdooItem {
     }
 
     @Override
-    public List<Component> getSlotsTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
-        return ICurioItem.super.getSlotsTooltip(tooltips, context, stack);
-    }
-
-    @Override
     public Component getName(ItemStack stack) {
         return Helpers.withStyleComponent(super.getName(stack).getString(), ColourStore.GOLD_COIN);
     }
 
     @Override
-    public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
-        this.appendItemToolTips(stack, context, tooltips, false);
-        tooltips.add(Component.literal(" "));
-
-        tooltips.add(Helpers.withStyleComponent("Implicit Modifiers", ColourStore.SUB_HEADER_COLOUR));
-        tooltips.add(Helpers.withStyleComponent("Offhand Wands", ColourStore.SYMPATHISER_ORANGE));
-        bonusModifierTooltip(stack, tooltips, context,  false);
-        runeSpacer(stack, tooltips);
-        return tooltips;
+    public void implicitModifiers(ItemStack stack, List<Component> tooltipComponents) {
+        super.implicitModifiers(stack, tooltipComponents);
+        tooltipComponents.add(Helpers.withStyleComponent("Offhand Wands", ColourStore.SYMPATHISER_ORANGE));
     }
 
 }

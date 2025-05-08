@@ -34,8 +34,13 @@ public class ShoppingTableEntity extends AbstractBEInventory {
     }
 
     @Override
-    public int getMaxSlotSize() {
+    public int getMaxSlotSizeInput() {
         return 64;
+    }
+
+    @Override
+    public int getMaxSlotSizeOutput() {
+        return 0;
     }
 
     public void setCost(CurrencyConverter cost) {

@@ -74,7 +74,7 @@ public class RuneScreenShared {
 
             renderEntityInInventoryFollowsMouse(guiGraphics, leftPos - 48, topPos, leftPos + 78, height / 2 + yOffset + 50, 44, 0.0625F, mouseX, mouseY, stand,  320.0F);
         } else {
-            SharedUI.renderItem(guiGraphics, width, height, getItem, SCALED_ITEM, mouseX, mouseY, 16);
+            SharedUI.renderItem(guiGraphics, width+4, height, getItem, SCALED_ITEM, mouseX, mouseY, 16);
         }
 
         var heightOffset = OFFSET_Y - 41;

@@ -44,7 +44,12 @@ public class WandManagerEntity extends AbstractBEInventory implements MenuProvid
     }
 
     @Override
-    public int getMaxSlotSize() {
+    public int getMaxSlotSizeInput() {
+        return 1;
+    }
+
+    @Override
+    public int getMaxSlotSizeOutput() {
         return 1;
     }
 

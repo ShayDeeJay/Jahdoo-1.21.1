@@ -42,6 +42,7 @@ public class CreativeTab {
                 outPut.accept(TANK.get());
                 outPut.accept(WAND_MANAGER_TABLE.get());
                 outPut.accept(RUNE_TABLE.get());
+                outPut.accept(CREATOR_BLOCK.get());
                 outPut.accept(DISASSEMBLER_ITEM.get());
                 outPut.accept(NEXITE_POWDER.get());
                 outPut.accept(CHALLENGER_TICKET.get());

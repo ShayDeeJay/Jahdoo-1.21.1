@@ -24,16 +24,18 @@ public abstract class AbstractBEInventory extends SyncedBlockEntity {
     protected ContainerData data;
 
     public final ItemStackHandler inputItemHandler =
-        this.setStackHandler(this.setInputSlots(), this.getMaxSlotSize());
+        this.setStackHandler(this.setInputSlots(), this.getMaxSlotSizeInput());
 
     public final ItemStackHandler outputItemHandler =
-        this.setStackHandler(this.setOutputSlots(), this.getMaxSlotSize());
+        this.setStackHandler(this.setOutputSlots(), this.getMaxSlotSizeInput());
 
     public abstract int setInputSlots();
 
     public abstract int setOutputSlots();
 
-    public abstract int getMaxSlotSize();
+    public abstract int getMaxSlotSizeInput();
+
+    public abstract int getMaxSlotSizeOutput();
 
     public ContainerData getData() {
         return data;
@@ -87,7 +89,7 @@ public abstract class AbstractBEInventory extends SyncedBlockEntity {
 
             @Override
             public int getSlotLimit(int slot) {
-                return getMaxSlotSize();
+                return getMaxSlotSizeInput();
             }
         };
     }

@@ -136,7 +136,7 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         if (entity instanceof TankBlockEntity tank) {
             getItemInteractionResult(handItem, tank, player, level);
 
-            if (stackHandlerWithFeedBack(tank.inputItemHandler, handItem, NEXITE_POWDER.get(), 0, tank.getMaxSlotSize(), player)) {
+            if (stackHandlerWithFeedBack(tank.inputItemHandler, handItem, NEXITE_POWDER.get(), 0, tank.getMaxSlotSizeInput(), player)) {
                 level.playSound(player, player.blockPosition(), SAND_PLACE, BLOCKS);
                 return ItemInteractionResult.SUCCESS;
             } else {

@@ -62,8 +62,13 @@ public class RuneTableEntity extends AbstractBEInventory implements MenuProvider
     }
 
     @Override
-    public int getMaxSlotSize() {
+    public int getMaxSlotSizeInput() {
         return 64;
+    }
+
+    @Override
+    public int getMaxSlotSizeOutput() {
+        return 0;
     }
 
     @Override

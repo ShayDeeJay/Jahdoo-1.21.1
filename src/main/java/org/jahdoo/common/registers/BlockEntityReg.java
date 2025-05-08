@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
+import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.common.block.dissembler.DisassemblerBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
@@ -65,6 +66,9 @@ public class BlockEntityReg {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WandManagerEntity>> WAND_MANAGER_TABLE_BE =
         registerBlockEntity("wand_manager_table_be", WandManagerEntity::new, WAND_MANAGER_TABLE);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreatorEntity>> CREATOR_BE =
+        registerBlockEntity("creator_be", CreatorEntity::new, CREATOR_BLOCK);
 
     public static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> registerBlockEntity(
         String name,

@@ -9,15 +9,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.ascension.utils.Maths;
-import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.registers.SoundReg;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
@@ -30,7 +28,7 @@ import static org.jahdoo.ascension.utils.Helpers.*;
 import static org.jahdoo.common.entities.EntityMovers.entityMover;
 import static org.jahdoo.common.registers.ComponentReg.MAGNET_DATA;
 
-public class Magnet extends Item implements ICurioItem, JahdooItem {
+public class Magnet extends BaseItem implements ICurioItem {
     public Magnet() {
         super(
             new Properties()
@@ -50,17 +48,12 @@ public class Magnet extends Item implements ICurioItem, JahdooItem {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
     }
 
-
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> toolTips, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, toolTips, tooltipFlag);
+    public void implicitModifiers(ItemStack stack, List<Component> toolTips) {
+        super.implicitModifiers(stack, toolTips);
         var magnetData = MagnetData.getMagnetData(stack);
-        this.appendItemToolTips(stack, context, toolTips, true);
-
         toolTips.add(Helpers.withStyleComponent("Range: " + magnetData.range(), MAGNET_RANGE_GREEN));
         toolTips.add(Helpers.withStyleComponent("Strength: " + Maths.roundNonWholeString(magnetData.strength()), MAGNET_STRENGTH_RED));
-        bonusModifierTooltip(stack, toolTips, context, true);
-        runeSpacer(stack, toolTips);
     }
 
     @Override

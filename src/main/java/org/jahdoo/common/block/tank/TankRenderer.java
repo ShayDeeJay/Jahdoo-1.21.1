@@ -34,7 +34,7 @@ public class TankRenderer implements BlockEntityRenderer<TankBlockEntity>{
         var rotation = 0;
 
         setGlow(entity);
-        for (var i = 0; i < itemStack.getCount(); i += entity.getMaxSlotSize()/10) {
+        for (var i = 0; i < itemStack.getCount(); i += entity.getMaxSlotSizeInput()/10) {
             stack.pushPose();
             stack.translate(0.5f, number, 0.5f);
             stack.scale(0.9f,0.9f,0.9f);

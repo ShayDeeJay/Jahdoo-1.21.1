@@ -224,17 +224,16 @@ public class MobManager {
             var ob = instanceDiff.get();
             var duration = -1;
             var id = ob.getId();
-            var amplifier = id + 1;
 
-            entity.addEffect(new JahdooMobEffect(EffectReg.CHAMPION_EFFECT, duration, amplifier));
+            entity.addEffect(new JahdooMobEffect(EffectReg.CHAMPION_EFFECT, duration, id));
             entity.addEffect(new JahdooMobEffect(MobEffects.GLOWING, duration, 1));
-            entity.addEffect(new JahdooMobEffect(MobEffects.DAMAGE_BOOST, duration, amplifier));
-            entity.addEffect(new JahdooMobEffect(MobEffects.DAMAGE_RESISTANCE, duration, amplifier + 1));
-            entity.addEffect(new JahdooMobEffect(MobEffects.HEALTH_BOOST, duration, amplifier + 1));
-            entity.addEffect(new JahdooMobEffect(MobEffects.MOVEMENT_SPEED, duration, id));
+            entity.addEffect(new JahdooMobEffect(MobEffects.DAMAGE_BOOST, duration, id));
+            entity.addEffect(new JahdooMobEffect(MobEffects.DAMAGE_RESISTANCE, duration, id));
+            entity.addEffect(new JahdooMobEffect(MobEffects.HEALTH_BOOST, duration, id));
+            entity.addEffect(new JahdooMobEffect(MobEffects.MOVEMENT_SPEED, duration, Math.min(id, 1)));
 
             if (Objects.equals(data.getDifficulty(), MASTER.getSerializedName())) {
-                entity.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, duration, amplifier));
+                entity.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, duration, 1));
             }
 
             entity.setHealth(entity.getMaxHealth());

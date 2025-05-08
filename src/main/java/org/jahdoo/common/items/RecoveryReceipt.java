@@ -11,7 +11,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.BundleTooltip;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
@@ -32,7 +31,7 @@ import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.Helpers.throwNewItem;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 
-public class RecoveryReceipt extends Item implements JahdooItem {
+public class RecoveryReceipt extends BaseItem {
 
     public RecoveryReceipt() { super(new Properties()); }
 

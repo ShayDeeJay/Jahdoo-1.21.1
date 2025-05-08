@@ -66,7 +66,7 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
 
     @Override
     public int setInputSlots() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -75,8 +75,13 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
     }
 
     @Override
-    public int getMaxSlotSize() {
-        return 64;
+    public int getMaxSlotSizeInput() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxSlotSizeOutput() {
+        return 0;
     }
 
     @Override

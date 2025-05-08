@@ -12,6 +12,7 @@ import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.altar.AltarRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
+import org.jahdoo.common.block.creator.CreatorRenderer;
 import org.jahdoo.common.block.dissembler.DisassemblerRenderer;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockRenderer;
 import org.jahdoo.common.block.lock.LockRenderer;
@@ -124,6 +125,7 @@ public class ClientBusEvents {
         event.registerBlockEntityRenderer(ENCHANTED_BE.get(), EnchantedBlockRenderer::new);
         event.registerBlockEntityRenderer(SHOPPING_TABLE_BE.get(), ShoppingTableRenderer::new);
         event.registerBlockEntityRenderer(WAND_MANAGER_TABLE_BE.get(), WandManagerRenderer::new);
+        event.registerBlockEntityRenderer(CREATOR_BE.get(), CreatorRenderer::new);
         event.registerBlockEntityRenderer(MODULAR_CHAOS_CUBE_BE.get(), ChaosCubeRenderer::new);
 
         //Entities

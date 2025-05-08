@@ -4,7 +4,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -12,7 +11,7 @@ import org.jahdoo.ascension.ability.AbilityComponentHelper;
 import org.jahdoo.ascension.rarity.JahdooRarity;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.ComponentReg;
@@ -20,11 +19,13 @@ import org.jahdoo.common.registers.ComponentReg;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.ascension.utils.ColourStore.DIAMOND_BOX;
+import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
 import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.*;
+import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getNameWithStyle;
+import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.standAloneAttributes;
 
-public class RuneItem extends Item implements JahdooItem {
+public class RuneItem extends BaseItem {
     public RuneItem() {
         super(new Properties().component(ComponentReg.RUNE_DATA.get(), RuneData.DEFAULT));
     }

@@ -61,6 +61,7 @@ public class CommonSetup {
         SkillReg.register(modEventBus);
         QuestReg.register(modEventBus);
         RuneReg.register(modEventBus);
+        RecipeRegistry.register(modEventBus);
     }
 
 }

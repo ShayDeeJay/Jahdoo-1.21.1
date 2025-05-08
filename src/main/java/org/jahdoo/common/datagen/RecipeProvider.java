@@ -9,6 +9,7 @@ import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import org.jahdoo.ascension.utils.ModTags;
+import org.jahdoo.common.block.creator.recipe.CreatorRecipeBuilder;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -38,6 +39,11 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         oreSmelting(recipeOutput, List.of(Items.ROTTEN_FLESH), RecipeCategory.MISC, Items.LEATHER, 2.0F, 200, "leather");
         nineBlockStorageRecipes(recipeOutput, RecipeCategory.MISC, ESSENCE_FRAGMENT.get(), RecipeCategory.MISC, AUGMENT_CORE.get());
         ticket(recipeOutput, CHALLENGER_TICKET.get());
+        //Test
+//        wands(recipeOutput, WAND_ITEM_VITALITY.get(), Items.RED_DYE, "vitality");
+        core(recipeOutput, AUGMENT_CORE.get());
+        advanceCore(recipeOutput, ADVANCED_AUGMENT_CORE.get());
+        hyperCore(recipeOutput, AUGMENT_HYPER_CORE.get());
     }
 
     protected void ticket(RecipeOutput output, Item result) {
@@ -73,6 +79,43 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .unlockedBy("glass", has(Items.GLASS))
             .save(output);
     }
+
+    protected void core(RecipeOutput output, Item result) {
+        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 32)
+            .requires(ESSENCE_FRAGMENT.get(), 8)
+            .unlockedBy("augment_core", has(AUGMENT_CORE.get()))
+            .group("augment_core")
+            .save(output);
+    }
+
+    protected void advanceCore(RecipeOutput output, Item result) {
+        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 44)
+            .requires(AUGMENT_CORE.get(), 8)
+            .unlockedBy("advance_augment_core", has(ADVANCED_AUGMENT_CORE.get()))
+            .group("advance_augment_core")
+            .save(output);
+    }
+
+    protected void hyperCore(RecipeOutput output, Item result) {
+        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 64)
+            .requires(ADVANCED_AUGMENT_CORE.get(), 8)
+            .unlockedBy("hyper_augment_core", has(AUGMENT_HYPER_CORE.get()))
+            .group("hyper_augment_core")
+            .save(output);
+    }
+
+
+//    //Wands
+//    protected void wands(RecipeOutput output, Item result, Item unique, String type) {
+//        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 12)
+//            .requires(AUGMENT_CORE.get())
+//            .requires(Items.DIAMOND)
+//            .requires(Items.STICK)
+//            .requires(unique)
+//            .unlockedBy("augment_core", has(AUGMENT_CORE.get()))
+//            .group("wand"+type)
+//            .save(output);
+//    }
 
     protected void chaosCube(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)

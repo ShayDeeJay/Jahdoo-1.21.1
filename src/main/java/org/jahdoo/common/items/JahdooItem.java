@@ -124,7 +124,6 @@ public interface JahdooItem {
         toolTip.add(comp);
 
         for (var entry : list) toolTip.add(RuneHelpers.standAloneAttributes(entry));
-//        toolTip.add(Component.literal(" "));
     }
 
     default void bonusModifierTooltip(ItemStack stack, List<Component> toolTip, Item.TooltipContext context, boolean addSpace) {

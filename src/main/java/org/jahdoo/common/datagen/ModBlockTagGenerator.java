@@ -33,6 +33,7 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
         this.tag(ALLOWED_BLOCK_INTERACTIONS)
             .add(WAND_MANAGER_TABLE.value())
             .add(RUNE_TABLE.value())
+            .add(CREATOR_BLOCK.value())
             .add(DISSEMBLER.value())
             .add(CHALLENGE_ALTAR.value())
             .add(PERK_TABLE.value())

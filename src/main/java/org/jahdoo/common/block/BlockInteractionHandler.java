@@ -44,6 +44,20 @@ public class BlockInteractionHandler {
         }
     }
 
+    public static boolean removeItemsFromHandToSlot(
+        ItemStackHandler itemStackHandler,
+        int outputSlot,
+        Player player,
+        int itemCount
+    ){
+        ItemStack mainHandItems = player.getMainHandItem();
+        if(mainHandItems.isEmpty()) return false;
+        itemStackHandler.setStackInSlot(outputSlot, mainHandItems.copyWithCount(itemCount));
+        /*if(!player.isCreative())*/ mainHandItems.shrink(itemCount);
+        return true;
+    }
+
+
     public static boolean removeItemsFromSlotToHand(
         ItemStackHandler itemStackHandler,
         int outputSlot,

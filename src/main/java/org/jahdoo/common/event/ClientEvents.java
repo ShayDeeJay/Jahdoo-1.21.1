@@ -71,8 +71,9 @@ public class ClientEvents {
                     var enchantment = string.contains("enchantment");
                     var mcComponent = string.contains("literal{ }[style={color=dark_green}");
                     var modNamePre = string.contains("creative_tab.jahdoo_tab");
+                    var curio = string.contains("curios.modifiers");
                     var empty = formattedText.getString().isEmpty();
-                    if (empty || neoforge || whenOn || enchantment || mcComponent || modNamePre) {
+                    if (empty || neoforge || whenOn || enchantment || mcComponent || modNamePre || curio) {
                         iterator.remove();
                     }
                 }

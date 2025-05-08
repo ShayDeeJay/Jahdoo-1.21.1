@@ -63,6 +63,11 @@ public class ModBlockStateProvider extends BlockStateProvider {
         );
 
         simpleBlockWithItem(
+            CREATOR_BLOCK.get(),
+            new UncheckedModelFile(modLoc("block/creator"))
+        );
+
+        simpleBlockWithItem(
             DISSEMBLER.get(),
             new UncheckedModelFile(modLoc("block/disassembler"))
         );

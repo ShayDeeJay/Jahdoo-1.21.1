@@ -73,8 +73,13 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
     }
 
     @Override
-    public int getMaxSlotSize() {
+    public int getMaxSlotSizeInput() {
         return 1;
+    }
+
+    @Override
+    public int getMaxSlotSizeOutput() {
+        return 64;
     }
 
     @Override

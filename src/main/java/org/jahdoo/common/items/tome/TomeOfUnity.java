@@ -3,18 +3,17 @@ package org.jahdoo.common.items.tome;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.items.RelicItem;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import top.theillusivec4.curios.api.SlotContext;
+import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class TomeOfUnity extends RelicItem implements JahdooItem {
+public class TomeOfUnity extends BaseItem implements ICurioItem, JahdooItem {
 
     public TomeOfUnity() {
         super(new Item.Properties().stacksTo(1));
@@ -27,41 +26,16 @@ public class TomeOfUnity extends RelicItem implements JahdooItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        var name = super.getName(stack).getString();
-    return Helpers.withStyleComponent(name, ColourStore.PERK_GREEN);
+        return Helpers.withStyleComponent(super.getName(stack).getString(), ColourStore.PERK_GREEN);
     }
 
     @Override
-    public List<Component> getSlotsTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
-        return super.getSlotsTooltip(tooltips, context, stack);
-    }
-
-    @Override
-    public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext context, ItemStack stack) {
-        var list = new ArrayList<Component>();
-
-        var lists = stack.getAttributeModifiers().modifiers().stream().toList();
-        if(!lists.isEmpty()){
-            for (var entry : lists) {
-                tooltips.add(RuneHelpers.standAloneAttributes(entry));
-            }
-        }
-        return list;
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltips, TooltipFlag tooltipFlag) {
-        this.appendItemToolTips(stack, context, tooltips, false);
-
-
+    public void implicitModifiers(ItemStack stack, List<Component> toolTips) {
+        super.implicitModifiers(stack, toolTips);
         var list = stack.getAttributeModifiers().modifiers().stream().toList();
         if(!list.isEmpty()){
-            tooltips.add(Component.literal(" "));
-            tooltips.add(Helpers.withStyleComponent("Implicit Modifiers", ColourStore.SUB_HEADER_COLOUR));
-            for (var entry : list) tooltips.add(RuneHelpers.standAloneAttributes(entry));
+            for (var entry : list) toolTips.add(RuneHelpers.standAloneAttributes(entry));
         }
-
-        runeSpacer(stack, tooltips);
     }
 
 }
