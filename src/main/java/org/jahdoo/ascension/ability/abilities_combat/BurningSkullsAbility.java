@@ -99,7 +99,7 @@ public class BurningSkullsAbility extends Ability {
     public void invokeAbility(Player player) {
         var projectileCount = CasterData.getSpecificValue(player, SHOT_MULTIPLIER);
         var adjustSpread = 1.8 - (projectileCount / 4);
-        var getLocalEntities = new ArrayList<>(BurningSkull.getValidTargets(player, player, 10));
+        var getLocalEntities = new ArrayList<>(BurningSkull.getValidTargets(player, player, 50));
         var totalWidth = (projectileCount - 1) * adjustSpread;
         var startOffset = -totalWidth / 2.0;
         infernoSoundEffect(player);
@@ -107,8 +107,9 @@ public class BurningSkullsAbility extends Ability {
         if(!player.level().isClientSide){
             for (int i = 0; i < projectileCount; i++) {
                 var isValid = !getLocalEntities.isEmpty();
-                var skull = new BurningSkull(player, 0, isValid ? getLocalEntities.getFirst() : null);
-                if (isValid) getLocalEntities.removeFirst();
+                var randomTarget = Helpers.listRandom(getLocalEntities);
+                var skull = new BurningSkull(player, 0, isValid ? randomTarget : null);
+                if (isValid) getLocalEntities.remove(randomTarget);
                 var offset = projectileCount == 1 ? 0 : startOffset + i * (totalWidth / (projectileCount - 1));
                 var directionOffset = calculateDirectionOffset(player, offset);
                 var direction = player.getLookAngle().add(directionOffset).normalize();

@@ -24,6 +24,7 @@ import java.util.List;
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.sounds.SoundEvents.LODESTONE_COMPASS_LOCK;
 import static net.minecraft.sounds.SoundEvents.VAULT_EJECT_ITEM;
+import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.ascension.loot.RewardLootTables.*;
 import static org.jahdoo.ascension.utils.Helpers.*;
@@ -57,25 +58,27 @@ public class LootHelpers {
         String difficulty,
         Player player
     ) {
-        var keyData = stack.get(CUSTOM_MODEL_DATA);
 
-        if (stack.is(ItemReg.LOOT_KEY) && keyData != null) {
-            var value = keyData.value();
-            var isValid = value == lootChestEntity.getRarity;
+        for (var item : player.getInventory().items) {
+            var keyData = item.get(CUSTOM_MODEL_DATA);
+            if (item.is(ItemReg.LOOT_KEY) && keyData != null && KeyItem.isValidKey(item, player.level())) {
+                var value = keyData.value();
+                var isValid = value == lootChestEntity.getRarity;
 
-            RunData.incrementChestOpenedExp(serverLevel, player, value);
-            if (isValid) {
-                lootChestEntity.setOpen(true);
-                var getId = new CustomModelData(lootChestEntity.getRarity);
-                var colour = KeyItem.getJahdooRarity(getId).getColour();
-                standAloneLoot(serverLevel, pos.getCenter(), difficulty, value, colour);
-                openingSoundEffect(pos, serverLevel, true);
-                stack.shrink(1);
-                return SUCCESS;
+                RunData.incrementChestOpenedExp(serverLevel, player, value);
+                if (isValid) {
+                    lootChestEntity.setOpen(true);
+                    var getId = new CustomModelData(lootChestEntity.getRarity);
+                    var colour = KeyItem.getJahdooRarity(getId).getColour();
+                    standAloneLoot(serverLevel, pos.getCenter(), difficulty, value, colour);
+                    openingSoundEffect(pos, serverLevel, true);
+                    item.shrink(1);
+                    return SUCCESS;
+                }
             }
         }
 
-        return null;
+        return FAIL;
     }
 
     public static void standAloneLoot(ServerLevel serverLevel, Vec3 pos, String difficulty, int keyValue, int colour) {

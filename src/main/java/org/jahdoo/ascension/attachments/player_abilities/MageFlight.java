@@ -81,7 +81,7 @@ public class MageFlight implements IAttachment {
     private void flying(Player player, CasterData manaSystem, ItemStack wandItem) {
         if (manaSystem.getManaPool() > manaCost) {
             var getPool = player.getAttribute(AttributeReg.MANA_POOL);
-            var manaCost = (getPool != null ? getPool.getValue() : 1) / 150;
+            var manaCost = (getPool != null ? getPool.getValue() : 1) / 200;
             var getDelta = player.getDeltaMovement();
             var speedModifier = 0.02;
 

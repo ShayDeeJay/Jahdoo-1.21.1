@@ -28,6 +28,10 @@ public interface JahdooItem {
         return new ItemStack(ItemReg.ESSENCE_FRAGMENT);
     };
 
+    default double customRecycleChance(ItemStack itemStack){
+        return -1;
+    }
+
     default void appendItemToolTips(ItemStack stack, Item.TooltipContext context, List<Component> toolTips, boolean addSpacer){
         addRarity(stack, context, toolTips);
         appendPotentialComponent(toolTips, stack);

@@ -151,7 +151,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         var simpleItems = List.of(
             ItemReg.NEXITE_POWDER, ItemReg.ESSENCE_FRAGMENT, ItemReg.INFERNO_AUGMENT,
             ItemReg.FROST_AUGMENT, ItemReg.MYSTIC_AUGMENT, ItemReg.VITALITY_AUGMENT,
-            ItemReg.CHALLENGER_TICKET, ItemReg.SKILL_POINT, ItemReg.EXIT_KEY, ItemReg.COIN_SACK
+            ItemReg.CHALLENGER_TICKET, ItemReg.SKILL_POINT, ItemReg.EXIT_KEY, ItemReg.COIN_SACK,
+            ItemReg.STONE_OF_REGRET
         );
 
         simpleItems.forEach(this::createSimpleItemModel);

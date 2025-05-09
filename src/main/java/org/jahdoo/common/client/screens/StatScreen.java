@@ -51,7 +51,7 @@ public class StatScreen extends AbstractPanableScreen {
     protected void renderWithScale(GuiGraphics graphics, int mouseX, int mouseY, LocalPlayer player, float centerX, float centerY, Minecraft mc) {
         var withPanX =  (centerX + this.panX);
         var withPanY =  (centerY + 43 + this.panY);
-        var shiftY = 34;
+        var shiftY = 44;
 
         otherMagicStats(graphics, centerX, centerY - 28 + shiftY, player, mc);
         elementalStats(graphics, player, centerX - 280, centerY + shiftY, mc);

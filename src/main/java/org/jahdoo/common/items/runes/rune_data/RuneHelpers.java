@@ -42,7 +42,7 @@ public class RuneHelpers {
         var name = getRuneData(stack);
         if(!name.name().contains("blank")){
             var fromCategory = RuneReg.getRuneFromId(name.name());
-            return withStyleComponent(stringIdToName(fromCategory.runeCategory().getName()) + " " + RuneData.SUFFIX, getColourDarker(fromCategory.runeColour(), 1.6));
+            return withStyleComponent(stringIdToName(fromCategory.runeCategory().getName()) + " " + RuneData.SUFFIX, getColourLight(fromCategory.runeColour(), 1.6));
         }
         return Helpers.withStyleComponent("Blank Rune", -1);
     }

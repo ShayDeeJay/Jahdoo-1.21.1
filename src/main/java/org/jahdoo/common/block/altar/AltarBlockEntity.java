@@ -56,7 +56,6 @@ import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntity {
 
     public final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    public int privateTicks;
     public int mobsSpawned;
     public double animateTick;
     public boolean started;
@@ -180,9 +179,9 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         );
 
         if(clearedRooms % 2 == 0) {
-            setPerkTable(serverLevel, pos, 3);
+            setAttributePerkTable(serverLevel, pos, clearedRooms);
         } else {
-            setLootChests(serverLevel, pos, direction, -1, true);
+            setCoinLootChest(serverLevel, pos, direction, -1, true, clearedRooms);
         }
 
         for (var player : serverLevel.players()) {
@@ -193,7 +192,6 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
-        tag.putInt("private_ticks", privateTicks);
         tag.putBoolean("beginSpawn", beginSpawning);
         tag.putDouble("animate", animateTick);
         tag.putBoolean("started", started);
@@ -219,7 +217,6 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
-        privateTicks = tag.getInt("private_ticks");
         beginSpawning = tag.getBoolean("beginSpawning");
         animateTick = tag.getDouble("animate");
         started = tag.getBoolean("started");

@@ -30,7 +30,6 @@ import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
 public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity {
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    public int privateTicks;
     public boolean isOpen = false;
     public int getRarity;
 
@@ -80,6 +79,8 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         isOpen = tag.getBoolean("isOpen");
         getRarity = tag.getInt("getRarity");
     }
+
+
 
     public void tick(Level level, BlockPos pos, BlockState blockState) {
 

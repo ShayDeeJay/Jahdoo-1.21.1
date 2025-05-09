@@ -38,8 +38,6 @@ import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 
 
 public class PerkTableEntity extends SyncedBlockEntity {
-
-    public int counter;
     private String getQuestId;
     private int reRollCounter;
     private List<UUID> usedBy = new ArrayList<>();
@@ -84,12 +82,12 @@ public class PerkTableEntity extends SyncedBlockEntity {
 
     public void tick(Level level, BlockPos pos, BlockState state) {
         idleEffect(level, pos.getCenter(), state);
-        counter++;
+        privateTicks++;
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putInt("counter", this.counter);
+        tag.putInt("counter", this.privateTicks);
         tag.putString("quest_id", this.getQuestId);
 
         var tags = new CompoundTag();
@@ -101,7 +99,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        this.counter = tag.getInt("counter");
+        this.privateTicks = tag.getInt("counter");
         this.getQuestId = tag.getString("quest_id");
 
         var getUsed = tag.getCompound("interacted");
@@ -111,7 +109,7 @@ public class PerkTableEntity extends SyncedBlockEntity {
     }
 
     private void idleEffect(Level level, Vec3 pos, BlockState state) {
-        if(!level.isClientSide || counter % 4 != 0) return;
+        if(!level.isClientSide || privateTicks % 4 != 0) return;
         var getPositions = innerRadiusRandom(pos.subtract(0, 0.45, 0), 0.38, 3);
 
         for (var vec3 : getPositions) {

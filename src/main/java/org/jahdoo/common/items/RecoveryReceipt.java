@@ -50,6 +50,11 @@ public class RecoveryReceipt extends BaseItem {
     }
 
     @Override
+    public double customRecycleChance(ItemStack itemStack) {
+        return 100;
+    }
+
+    @Override
     public Component getName(ItemStack stack) {
         return withStyleComponent("Recovery Receipt", SUB_HEADER_COLOUR);
     }

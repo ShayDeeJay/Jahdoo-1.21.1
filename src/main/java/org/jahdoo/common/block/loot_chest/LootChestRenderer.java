@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.ascension.utils.ColourStore;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.items.KeyItem;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
@@ -33,6 +34,14 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
     }
 
     @Override
+    public void render(LootChestEntity animatable, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        super.render(animatable, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
+        if(animatable.isCoinChest()){
+            roomData(animatable, poseStack, bufferSource, entityRenderDispatcher, partialTick);
+        }
+    }
+
+    @Override
     public void actuallyRender(PoseStack poseStack, LootChestEntity chestEntity, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
         var blockState = chestEntity.getBlockState();
         var direction =  blockState.getValue(LootChestBlock.FACING);
@@ -43,7 +52,35 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
             renderName(chestEntity, displayName, poseStack, bufferSource, direction, partialTick);
             renderNameReverse(chestEntity, displayName, poseStack, bufferSource, direction, partialTick);
         }
+
         super.actuallyRender(poseStack, chestEntity, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+    }
+
+    public static void roomData(SyncedBlockEntity entity, PoseStack pPoseStack, MultiBufferSource bufferSource, EntityRenderDispatcher dispatcher, float partialTicks) {
+        var offWhite = ColourStore.EXPERIENCE_GREEN;
+        var displayName = Helpers.withStyleComponent("" + (entity.saveInt + 1), offWhite);
+        pPoseStack.pushPose();
+
+        var scale = Math.sin(((entity.privateTicks + partialTicks) / 10.0F)) * 0.2F + 5;
+        pPoseStack.translate(0.5, scale, 0.5);
+        var scale1 = (float) scale * 2;
+        pPoseStack.scale(scale1, scale1, scale1);
+        pPoseStack.mulPose(dispatcher.camera.rotation());
+
+        var x = 0.020F;
+        pPoseStack.scale(x, -x, x);
+        Matrix4f matrix4f = pPoseStack.last().pose();
+
+        var font = Minecraft.getInstance().font;
+        var f1 = (float)(-font.width(displayName) / 2);
+
+        var text = Helpers.withStyleComponent("Room", ColourStore.SUB_HEADER_COLOUR);
+        var f2 = (float)(-font.width(text) / 2);
+
+        font.drawInBatch(text, f2, -10, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
+        font.drawInBatch(displayName, f1, 0, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
+        pPoseStack.popPose();
+
     }
 
     protected void renderName(LootChestEntity entity, Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource, Direction direction, float partialTicks) {

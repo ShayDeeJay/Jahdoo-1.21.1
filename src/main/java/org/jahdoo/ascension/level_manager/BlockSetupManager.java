@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.ascension.attachments.InstanceData;
 import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
@@ -38,6 +39,22 @@ import static org.jahdoo.common.registers.ItemReg.RUNE;
 
 public class BlockSetupManager {
 
+    public static void setAttributePerkTable(ServerLevel level, BlockPos pos, int roomId){
+        setPerkTable(level, pos, 3);
+        if(level.getBlockEntity(pos) instanceof SyncedBlockEntity syncedBlockEntity){
+            syncedBlockEntity.saveInt = roomId;
+        }
+    }
+
+
+    public static void setCoinLootChest(ServerLevel level, BlockPos pos, Direction direction, int type, boolean ignore, int roomId){
+        setLootChests(level, pos, direction, type, ignore);
+        if(level.getBlockEntity(pos) instanceof SyncedBlockEntity syncedBlockEntity){
+            syncedBlockEntity.saveInt = roomId;
+        }
+    }
+
+
     public static void setLootChests(ServerLevel level, BlockPos pos, Direction direction, int type, boolean ignore) {
         var chestState = LOOT_CHEST.get().defaultBlockState().setValue(FACING, direction);
         if(ignore || level.getBlockState(pos).is(MAGENTA_CONCRETE)){
@@ -49,16 +66,16 @@ public class BlockSetupManager {
         }
     }
 
+    public static void setPerkTable(ServerLevel level, BlockPos blockPos, int state) {
+        level.setBlockAndUpdate(blockPos, PERK_TABLE.get().defaultBlockState().setValue(TEXTURE, state));
+        level.setBlockAndUpdate(blockPos.above(1), BARRIER.defaultBlockState());
+    }
+
     public static void placePerkTables(ServerLevel level, BlockPos blockPos) {
         var blockState = level.getBlockState(blockPos);
 
         if(blockState.is(WHITE_CONCRETE)) setPerkTable(level, blockPos, 0);
         if(blockState.is(LIGHT_GRAY_CONCRETE)) setPerkTable(level, blockPos, 1);
-    }
-
-    public static void setPerkTable(ServerLevel level, BlockPos blockPos, int state) {
-        level.setBlockAndUpdate(blockPos, PERK_TABLE.get().defaultBlockState().setValue(TEXTURE, state));
-        level.setBlockAndUpdate(blockPos.above(1), BARRIER.defaultBlockState());
     }
 
     public static void setBlockGenerator(ServerLevel level, Iterable<BlockPos> pos, Direction direction, String id) {

@@ -55,6 +55,9 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
     float fadeAbilityTimer;
     float fadeInFood;
     float fadeFoodTimer;
+    float fadeHotbarTimer;
+    float fadeInHotbar;
+    int storedSelectedIndex;
     AlignedGui alignedGui;
 
     private static void inventoryIndex(@NotNull GuiGraphics graphics, int x, int y, int index, int textColour) {
@@ -131,6 +134,22 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         }
     }
 
+    private void setFadeInHotbar(Player player){
+        var xp = player.getInventory().selected;
+        var alwaysShow = !AUTO_HIDE_HOTBAR.get();
+
+        if(this.storedSelectedIndex != xp) this.fadeHotbarTimer = 100;
+
+        if (this.fadeHotbarTimer > 0 || alwaysShow) {
+            if (this.fadeInHotbar < 1) this.fadeInHotbar += 1F;
+        } else {
+            if (this.fadeInHotbar > -5) this.fadeInHotbar -= 0.5F;
+        }
+
+        this.fadeHotbarTimer = Math.max(this.fadeHotbarTimer - 0.5F, 0);
+        this.storedSelectedIndex = xp;
+    }
+
     private void setFadeInFood(Player player){
         var food = player.getFoodData();
         var alwaysShow = CUSTOM_UI_ALWAYS_SHOW_HUNGER.get();
@@ -167,7 +186,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         if(this.storedAbilityExp != xp) this.fadeAbilityTimer = 200;
 
         if (this.fadeAbilityTimer > 0 || alwaysShow) {
-            if (this.fadeInAbility < 1) this.fadeInAbility += 0.8F;
+            if (this.fadeInAbility < 2.5) this.fadeInAbility += 0.8F;
         } else {
             if (this.fadeInAbility > -6) this.fadeInAbility -= 0.5F;
         }
@@ -227,32 +246,49 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
 
     private static void renderSlot(GuiGraphics graphics, ItemStack next, int x, int y, ResourceLocation lit, int index, int textColour, float alpha) {
         int size = 24;
-        inventoryIndex(graphics, x, y, index,textColour);
+
         enableBlend();
         setShaderColor(1f, 1f, 1f, alpha);
-        graphics.blit(lit, x-4,y-4,0,0, size, size, size, size);
+        graphics.blit(lit, x-4, y-4, 0, 0, size, size, size, size);
         setShaderColor(1f, 1f, 1f, 1f);
-        graphics.renderFakeItem(next, x, y);
-        graphics.renderItemDecorations(Minecraft.getInstance().font, next, x, y);
         disableBlend();
+
+        graphics.renderItem(next, x, y);
+        graphics.renderItemDecorations(Minecraft.getInstance().font, next, x, y);
     }
 
-    private  void inventory(GuiGraphics graphics, LocalPlayer player) {
+    private void inventory(GuiGraphics graphics, LocalPlayer player) {
         var selectedIndex = player.getInventory().selected;
-        var current = player.getInventory().getItem(selectedIndex);
-        var prevIndex = selectedIndex - 1 < 0 ? 8 : selectedIndex - 1;
-        var previous = player.getInventory().getItem(prevIndex);
-        var nextIndex = selectedIndex + 1 > 8 ? 0 : selectedIndex + 1;
-        var next = player.getInventory().getItem(nextIndex);
-        var y = graphics.guiHeight() - 64 + (int) (-this.fadeInAbility);
-        var x = graphics.guiWidth() / 2 - 9;
-        var unSelected = GUI_ITEM_SLOT;
-        var alpha = 0.6f;
+        var alpha = Math.min(0.5F, fadeInHotbar);
         var textColour = -7303024;
+        var scale = HOTBAR_SCALED.get().floatValue();
+        var baseGap = 20f;
+        var y = (int) (graphics.guiHeight() - this.fadeInAbility - 72 - this.fadeInHotbar) - (scale);
+        var scaledGap = baseGap * scale;
+        var spacing = scale + scaledGap;
+        var totalWidth = 9 * spacing - scaledGap;
+        var startX = graphics.guiWidth() / 2f - totalWidth / 2f;
 
-        renderSlot(graphics, next, x + 20, y, unSelected, nextIndex + 1, textColour, alpha);
-        renderSlot(graphics, current, x , y, GUI_GENERAL_SLOT, selectedIndex + 1, -12698050, 1f);
-        renderSlot(graphics, previous, x - 20, y, unSelected, prevIndex + 1, textColour, alpha);
+        if (fadeInHotbar > -2) {
+            for (int i = 0; i < 9; i++) {
+                var item = player.getInventory().getItem(i);
+                var isSelected = i == selectedIndex;
+                var slotX = startX + i * spacing - (scale * 8);
+
+                graphics.pose().pushPose();
+
+                var offset = (1 - scale)  / 2f;
+                graphics.pose().translate(slotX + offset, y + offset, 0);
+                graphics.pose().scale(scale, scale, scale);
+
+                renderSlot(graphics, item, 0, 0,
+                    isSelected ? GUI_GENERAL_SLOT : GUI_ITEM_SLOT,
+                    0, textColour, isSelected ? fadeInHotbar : alpha
+                );
+
+                graphics.pose().popPose();
+            }
+        }
     }
 
     @Override
@@ -279,6 +315,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         this.setFadeInExperience(player);
         this.setFadeInAbility(player);
         this.setFadeInFood(player);
+        this.setFadeInHotbar(player);
 
         pose.pushPose();
         enableBlend();
@@ -303,10 +340,11 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             this.healthAndAbsorptionCount(graphics, minecraft);
             this.progressOverlays(alignedGui, 19, (int) (healthProgress + 3));
             this.progressOverlays(alignedGui, 27, (int) (absorptionProgress + 3));
+            if(DISPLAY_DURABILITY_OVERLAY.get()) overlayDurability(graphics, player, minecraft);
+            quickSelectBar(graphics, casterData, minecraft);
         }
 
 
-        if(DISPLAY_DURABILITY_OVERLAY.get()) overlayDurability(graphics, player, minecraft);
 
         if(!CUSTOM_UI.get()){
             pose.translate(0, -fadeIn, 0);
@@ -316,8 +354,6 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
 
         alignedGui.displayGuiLayer(25, 18, 0, 43, manaProgress + 3, 8, MANA_LEVEL_BAR);
         this.manaPoolCount(casterData.getManaPool(), graphics, minecraft, -5 , 0, AETHER_BLUE);
-
-        quickSelectBar(graphics, casterData, minecraft);
 
         abilityRegistrars.ifPresent(
             location -> {
@@ -361,10 +397,10 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             }
         }
 
-        displayItemDura(graphics, items, graphics.guiHeight(), minecraft);
+        displayItemDurability(graphics, items, graphics.guiHeight(), minecraft);
     }
 
-    private static void displayItemDura(GuiGraphics graphics, List<@NotNull ItemStack> listOfSlots, int y, Minecraft minecraft) {
+    private static void displayItemDurability(GuiGraphics graphics, List<@NotNull ItemStack> listOfSlots, int y, Minecraft minecraft) {
         int baseY = y - 20;
         int spacer = 0;
 
@@ -379,9 +415,9 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
     }
 
     public static Pair<Integer, Integer> getDurabilityWithColor(ItemStack stack) {
-        int maxDurability = stack.getMaxDamage();
-        int currentDamage = stack.getDamageValue();
-        int remainingDurability = maxDurability - currentDamage;
+        var maxDurability = stack.getMaxDamage();
+        var currentDamage = stack.getDamageValue();
+        var remainingDurability = maxDurability - currentDamage;
 
         var percent = (int) ((remainingDurability * 100.0) / maxDurability);
         int color;
@@ -408,10 +444,9 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             var x = AbilityReg.getFirstSpellByTypeId(abilitySlot);
             var splitCenter =  counter > 2 ? 32 : 0;
             var spaceWithSplit = spacer + splitCenter;
+            var v = (17 + (int) this.fadeInAbility);
 
-            var v = -(this.fadeInFood - 12);
-
-            this.cooldownHotbarIcons(x.orElse(null), casterData, spaceWithSplit - 43, (int) (Math.min(v, 24) - 46));
+            this.cooldownHotbarIcons(x.orElse(null), casterData, spaceWithSplit - 43, v);
 
             var vc = 0.5F;
             var literal = literal(valueOf(counter+1));
@@ -420,8 +455,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             graphics.pose().translate(0, 0, 100);
 
             var x1 = (int) (((float) graphics.guiWidth() / 2 + spaceWithSplit) / vc) - 98;
-            var y = (int) ((graphics.guiHeight() + this.fadeInFood ) / vc) + 18;
-
+            var y = (int) ((graphics.guiHeight() - this.fadeInAbility ) / vc) - 110;
             centeredStringNoShadow(graphics, minecraft.font, literal, x1, y, SUB_HEADER_COLOUR, false);
             graphics.pose().popPose();
 

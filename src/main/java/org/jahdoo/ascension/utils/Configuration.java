@@ -19,6 +19,8 @@ public class Configuration {
     public static ModConfigSpec.BooleanValue QUICK_SELECT;
     public static ModConfigSpec.BooleanValue LOCK_ON_TARGET;
 
+    public static ModConfigSpec.DoubleValue HOTBAR_SCALED;
+    public static ModConfigSpec.BooleanValue AUTO_HIDE_HOTBAR;
     
     static {
         var CLIENT_BUILDER = new ModConfigSpec.Builder();
@@ -34,6 +36,10 @@ public class Configuration {
         QUICK_SELECT = CLIENT_BUILDER.comment("Hold to keep open Quick Select menu").define("quickSelect", false);
         LOCK_ON_TARGET = CLIENT_BUILDER.comment("Allow player to lock on to nearest entity").define("lockOn", false);
         DISPLAY_DURABILITY_OVERLAY = CLIENT_BUILDER.comment("Overlay equipped item durability").define("durability", false);
+
+        HOTBAR_SCALED = CLIENT_BUILDER.comment("Adjust hotbar UI scale").defineInRange("scale_hotbar", 1.0, 0, 2);
+        AUTO_HIDE_HOTBAR = CLIENT_BUILDER.comment("Hide hotbar while not used").define("auto_hide_hotbar", false);
+
         CLIENT_CONFIG = CLIENT_BUILDER.build();
     }
 

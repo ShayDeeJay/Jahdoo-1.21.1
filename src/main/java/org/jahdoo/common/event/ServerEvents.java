@@ -45,14 +45,11 @@ public class ServerEvents {
     @SubscribeEvent
     public static void attributeEvent(ItemAttributeModifierEvent event) {
        event.removeIf(s -> removeArmorAttributes(s, event));
-
-        useRuneAttributes(event);
+       useRuneAttributes(event);
     }
 
     @SubscribeEvent
-    public static void curioEven(CurioChangeEvent event){
-
-    }
+    public static void curioEven(CurioChangeEvent event){}
 
     @SubscribeEvent
     public static void attributeEvent(CurioAttributeModifierEvent event) {

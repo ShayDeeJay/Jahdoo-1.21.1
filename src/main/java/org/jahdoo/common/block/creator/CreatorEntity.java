@@ -19,6 +19,7 @@ import org.jahdoo.ascension.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.block.creator.recipe.CreatorRecipe;
 import org.jahdoo.common.components.CoreData;
+import org.jahdoo.common.items.CoreItem;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ItemReg;
@@ -156,10 +157,19 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         if(output.is(ItemReg.WAND_ITEM_VITALITY)) {
             for (int i = 0; i < slots; i++){
                 var item = inputItemHandler.getStackInSlot(i);
-                System.out.println(item);
                 if(CoreData.isFull(item)) return true;
             }
             return false;
+        }
+
+        if(output.is(ItemReg.STONE_OF_REGRET)) {
+            for (int i = 0; i < slots; i++){
+                var item = inputItemHandler.getStackInSlot(i);
+                if(item.getItem() instanceof CoreItem){
+                    if(!CoreData.isFull(item)) return false;
+                }
+            }
+            return true;
         }
 
         return true;

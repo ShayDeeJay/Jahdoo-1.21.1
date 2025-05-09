@@ -7,6 +7,9 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -67,6 +70,7 @@ import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
+import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.items.JahdooItem;
@@ -150,11 +154,14 @@ public class EventHelpers {
         var entity = event.getEntity();
         if(entity instanceof ServerPlayer player){
             if(event.getLevel() instanceof CustomLevel){
-                for (var activeEffect : player.getActiveEffects()) {
-                    if(!(activeEffect instanceof JahdooMobEffect)){;
-                        player.removeEffect(activeEffect.getEffect());
+                var effects = player.getActiveEffects().iterator();
+                effects.forEachRemaining(
+                    s -> {
+                        if(!(s instanceof JahdooMobEffect)){;
+                            player.removeEffect(s.getEffect());
+                        }
                     }
-                }
+                );
             }
         }
     }
@@ -593,6 +600,7 @@ public class EventHelpers {
     private static void onKillExpAndCoin(LivingEntity entity, CustomLevel level, ItemStack stack, LivingEntity getKiller, int exp, int modelData) {
         var isChampion = entity.hasEffect(EffectReg.CHAMPION_EFFECT);
         var championMultiplier = 5;
+        entity.getPersistentData().putInt(GenericProjectile.POWER_UP_KEY, exp * (isChampion ? championMultiplier : 1));
         var data = InstanceData.difficultyFromInstance(level.getData(INSTANCE_DATA.get()));
 
         var originalCount = stack.getCount() * (data.map(InstanceDifficulty::expMultiplier).orElse(1));
@@ -674,6 +682,15 @@ public class EventHelpers {
                     var remaining = data.getMaxTime() - data.getTicks();
                     var lessThan20Seconds = remaining <= 400;
                     var lessThan10Seconds = remaining <= 200;
+                    var warning1Minute = remaining == 1200;
+
+                    if(warning1Minute){
+                        player.connection.send(new ClientboundSetTitlesAnimationPacket(5, 30, 5));
+                        player.connection.send(new ClientboundSetTitleTextPacket(Helpers.withStyleComponent("WARNING", ColourStore.NEGATIVE_RED)));
+                        player.connection.send(new ClientboundSetSubtitleTextPacket(Helpers.withStyleComponent("60 seconds Remaining", ColourStore.OFF_WHITE)));
+                        getSoundWithPositionV(player.level(), player.position(), SoundReg.END_TRIAL.get(), 0.5F, 1.8F);
+                        getSoundWithPositionV(player.level(), player.position(), SoundReg.REJECT.get(), 0.5F, 1.8F);
+                    }
 
                     if (lessThan20Seconds && (data.getTicks() % 20) == 0) {
                         var pitch = (float) Math.abs((remaining / 10) - 38) / 19;

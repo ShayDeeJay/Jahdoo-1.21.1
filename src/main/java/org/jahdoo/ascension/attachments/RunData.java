@@ -161,8 +161,8 @@ public class RunData implements IAttachment {
     public static void endRun(ServerPlayer player, boolean died) {
         var runData = player.getData(AttachmentReg.RUN_DATA.get());
         var castData = PlayerTrialData.getData(player);
+        setPlayerLevel(CasterData.getLevel(player), player);
         if (runData.dateAndTime != null) {
-            setPlayerLevel(CasterData.getLevel(player), player);
             runData.onEndRun(player, died);
             sendToPlayer(player, new PlayerTrialDataS2CP(castData));
             if(player.level() instanceof CustomLevel customLevel){
@@ -176,7 +176,7 @@ public class RunData implements IAttachment {
     public static void setPlayerLevel(int value, ServerPlayer player) {
         var data = player.getData(RUN_DATA.get());
         data.addStat(RunData.PLAYER_LEVEL, value);
-        sendToPlayer(player, new RunDataS2CP(data));
+//        sendToPlayer(player, new RunDataS2CP(data));
     }
 
     public static void addExperienceToTotal(int value, ServerPlayer player) {

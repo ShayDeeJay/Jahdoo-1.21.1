@@ -33,11 +33,11 @@ public record CoreData(int required, int filled) {
         return false;
     }
 
-    public static void increment(ItemStack itemStack){
+    public static void increment(ItemStack itemStack, int fillAmount){
         var data = itemStack.get(ComponentReg.CORE_DATA);
         if(data != null){
             var required = data.required();
-            var newData = new CoreData(required, Math.min(data.filled()+1, required));
+            var newData = new CoreData(required, Math.min(data.filled()+fillAmount, required));
             itemStack.set(ComponentReg.CORE_DATA, newData);
             if(data.filled+1 == required){
                 itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));

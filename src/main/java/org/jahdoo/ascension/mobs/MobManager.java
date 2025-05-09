@@ -222,18 +222,19 @@ public class MobManager {
 
         if(instanceDiff.isPresent() && Maths.percentageChance(instanceDiff.get().getSpecialSpawnChance())) {
             var ob = instanceDiff.get();
-            var duration = -1;
-            var id = ob.getId();
+            var id = ob.getId() * 3;
 
-            entity.addEffect(new JahdooMobEffect(EffectReg.CHAMPION_EFFECT, duration, id));
-            entity.addEffect(new JahdooMobEffect(MobEffects.GLOWING, duration, 1));
-            entity.addEffect(new JahdooMobEffect(MobEffects.DAMAGE_BOOST, duration, id));
-            entity.addEffect(new JahdooMobEffect(MobEffects.DAMAGE_RESISTANCE, duration, id));
-            entity.addEffect(new JahdooMobEffect(MobEffects.HEALTH_BOOST, duration, id));
-            entity.addEffect(new JahdooMobEffect(MobEffects.MOVEMENT_SPEED, duration, Math.min(id, 1)));
+            entity.addEffect(new JahdooMobEffect(EffectReg.CHAMPION_EFFECT, INFINITE_LIFE, id));
+            entity.addEffect(new JahdooMobEffect(MobEffects.GLOWING, INFINITE_LIFE, 1));
+
+            addBaseAttribute(MAX_HEALTH, entity, entity.getAttributeValue(MAX_HEALTH) * id);
+            addBaseAttribute(ARMOR, entity, entity.getAttributeValue(ARMOR) * id);
+            addBaseAttribute(ATTACK_DAMAGE, entity, entity.getAttributeValue(ATTACK_DAMAGE) * id);
+            addBaseAttribute(MOVEMENT_SPEED, entity, entity.getAttributeValue(MOVEMENT_SPEED) * id);
+
 
             if (Objects.equals(data.getDifficulty(), MASTER.getSerializedName())) {
-                entity.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, duration, 1));
+                entity.addEffect(new JahdooMobEffect(MobEffects.REGENERATION, INFINITE_LIFE, 1));
             }
 
             entity.setHealth(entity.getMaxHealth());

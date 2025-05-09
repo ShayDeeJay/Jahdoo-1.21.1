@@ -22,6 +22,7 @@
   "item.jahdoo.basic_shield": "Soldiers Shield",
   "item.jahdoo.undead_protector": "The Undead Protector",
   "item.jahdoo.wand_basic": "Apprentice Wand",
+  "item.jahdoo.stone_of_regret": "Stone Of Regret",
 
 
   "item.jahdoo.mage_helmet": "Mage Hood",
@@ -106,6 +107,10 @@
   "jahdoo.configuration.lockOn": "Lock To Target",
   "jahdoo.configuration.show_hunger": "Always Show Hunger Bar",
   "jahdoo.configuration.show_xp": "Always Show XP Bar",
+  "jahdoo.configuration.show_ability": "Always Show Ability Experience Bar",
+  "jahdoo.configuration.mana_bar": "Always Show Stand Alone Mana Bar",
+  "jahdoo.configuration.particle_render": "Alternate Particle Type",
+  "jahdoo.configuration.durability": "Equipped Durability",
 
   "key.assets.jahdoo.slot_1": "Wand Slot 01",
   "key.assets.jahdoo.slot_2": "Wand Slot 02",
@@ -123,7 +128,10 @@
   "key.assets.jahdoo.magnet_state": "Magnet State",
   "key.jahdoo.switch_type": "Switch Mode",
   "key.assets.jahdoo.quick_select_menu": "Ability Wheel Menu",
-  "key.assets.jahdoo.stat_screen": "Menu",
+
+  "key.assets.jahdoo.stat_screen": "Player Statistics",
+  "key.assets.jahdoo.ability_screen": "Ability Selection",
+  "key.assets.jahdoo.run_screen": "Run History",
 
   "attribute.name.jahdoo.skills.mage_flight": "Mage Flight",
   "attribute.name.jahdoo.skills.destiny_bond": "Destiny Bond",

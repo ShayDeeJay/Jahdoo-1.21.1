@@ -37,10 +37,10 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         runeManager(recipeOutput, RUNE_TABLE.get().asItem());
         wandManager(recipeOutput, WAND_MANAGER_TABLE.get().asItem());
         oreSmelting(recipeOutput, List.of(Items.ROTTEN_FLESH), RecipeCategory.MISC, Items.LEATHER, 2.0F, 200, "leather");
-        nineBlockStorageRecipes(recipeOutput, RecipeCategory.MISC, ESSENCE_FRAGMENT.get(), RecipeCategory.MISC, AUGMENT_CORE.get());
         ticket(recipeOutput, CHALLENGER_TICKET.get());
         //Test
 //        wands(recipeOutput, WAND_ITEM_VITALITY.get(), Items.RED_DYE, "vitality");
+        stoneOfRegret(recipeOutput, STONE_OF_REGRET.get());
         core(recipeOutput, AUGMENT_CORE.get());
         advanceCore(recipeOutput, ADVANCED_AUGMENT_CORE.get());
         hyperCore(recipeOutput, AUGMENT_HYPER_CORE.get());
@@ -85,6 +85,16 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .requires(ESSENCE_FRAGMENT.get(), 8)
             .unlockedBy("augment_core", has(AUGMENT_CORE.get()))
             .group("augment_core")
+            .save(output);
+    }
+
+    protected void stoneOfRegret(RecipeOutput output, Item result) {
+        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 32)
+            .requires(ADVANCED_AUGMENT_CORE.get(), 2)
+            .requires(Items.ENDER_EYE, 1)
+            .requires(ESSENCE_FRAGMENT.get(), 5)
+            .unlockedBy("stone_of_regret", has(AUGMENT_CORE.get()))
+            .group("stone_of_regret")
             .save(output);
     }
 

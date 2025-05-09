@@ -148,7 +148,7 @@ public class IceBomb extends DefaultEntityBehaviour {
         element.setShowTrailParticles(false);
         Helpers.getSoundWithPosition(level(), this.element.blockPosition(), SoundReg.IMPACT.get(), 1, 1 + ((float) this.currentRicochets /10));
         Helpers.getSoundWithPosition(level(), this.element.blockPosition(), SoundReg.FROST_ABILITY.get(), 1, 1 + ((float) this.currentRicochets /10));
-        PositionFinders.getOuterRingOfRadiusRandom(this.element.position(), 0.5, 150 * currentRicochets,
+        PositionFinders.getOuterRingOfRadiusRandom(this.element.position(), 0.5, 60 * currentRicochets,
             worldPosition -> this.setParticleNova(worldPosition, 0.7)
         );
     }

@@ -78,7 +78,7 @@ public abstract class AbstractPanableScreen extends Screen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         double scaleFactor = Math.max(0.1, Math.abs(zoomX) * 0.5); // Scale dynamically
-        this.zoomX = Math.max(-0.1, Math.min(Math.max(this.zoomX + (scrollY * scaleFactor), -0.6), 1));
+        this.zoomX = Math.min(Math.max(this.zoomX + (scrollY * scaleFactor), -0.6), 1);
         return true;
     }
 
@@ -115,7 +115,7 @@ public abstract class AbstractPanableScreen extends Screen {
         var mc = getMinecraft();
         var player = mc.player;
         var window = getMinecraft().getWindow();
-        var zoom = (float) (this.smoothToX + 3 / (window.getGuiScale() ));
+        var zoom = Math.max(0.1F, (float) (this.smoothToX + 3 / (window.getGuiScale() )));
 
         baseRender(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
 

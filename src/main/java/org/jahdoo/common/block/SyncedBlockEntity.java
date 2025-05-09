@@ -8,11 +8,12 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
 public class SyncedBlockEntity extends BlockEntity {
+    public int privateTicks;
+    public int saveInt;
 
     public SyncedBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -49,4 +50,17 @@ public class SyncedBlockEntity extends BlockEntity {
         handleUpdateTag(pkt.getTag(), lookupProvider);
     }
 
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putInt("private_ticks", privateTicks);
+        tag.putInt("save_int", this.saveInt);
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.privateTicks = tag.getInt("private_ticks");
+        this.saveInt = tag.getInt("save_int");
+    }
 }

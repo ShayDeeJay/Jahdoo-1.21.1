@@ -36,6 +36,7 @@ import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 
 public class GenericProjectile extends ProjectileProperties implements IEntityProperties {
 
+    public static final String POWER_UP_KEY = "power_up_value";
     private String projectileSelectionIndex;
     private DefaultEntityBehaviour getProjectile;
     private AbilityHolder abilityHolder;
@@ -55,7 +56,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         String abilityId
     ) {
         super(EntityReg.GENERIC_PROJECTILE.get(), player.level());
-        this.setProjectileWithOffsets(this, player, offset, 1);
+        setProjectileWithOffsets(this, player, offset, 1);
         this.reapplyPosition();
         this.setOwner(player);
         this.abilityHolder = CasterData.entityHolderWithSelected(player);
@@ -73,7 +74,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
         AbstractElement element
     ) {
         super(EntityReg.GENERIC_PROJECTILE.get(), player.level());
-        this.setProjectileWithOffsets(this, player, offset, 1);
+        setProjectileWithOffsets(this, player, offset, 1);
         this.reapplyPosition();
         this.setOwner(player);
         this.abilityHolder = CasterData.entityHolder(player, abilityId);
@@ -174,7 +175,8 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
                 if (this.level().getBlockEntity(pos) instanceof PowerUpStationEntity entity) {
                     var item = entity.inputItemHandler.getStackInSlot(0);
                     if(item.isEmpty() || !CoreData.isFull(item)){
-                        CoreData.increment(item);
+                        var powerUpValue = this.getPersistentData().getInt(POWER_UP_KEY);
+                        CoreData.increment(item, powerUpValue);
                         var filled = CoreData.getFilled(item);
                         var needed = CoreData.getRequired(item);
 
@@ -228,7 +230,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     protected void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         if(projectileSelectionIndex != null) tag.putString("projectileIndex", this.projectileSelectionIndex);
-        tag.putString("abilityId", this.abilityId);
+        if(abilityId != null) tag.putString("abilityId", this.abilityId);
         AbilityHolder.writeTag(this.abilityHolder, tag);
         if(this.getElement != null) tag.putInt("elementId", this.getElement.id());
         if(this.getProjectile != null) getProjectile.addAdditionalDetails(tag);

@@ -84,7 +84,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     protected void init() {
         super.init();
         var window = getMinecraft().getWindow();
-        this.size = (int) (((double) window.getWidth() / 500) / (window.getGuiScale()/ 4) + (30 * this.zoomX));
+        this.size = Math.max(3, (int) (((double) window.getWidth() / 500) / (window.getGuiScale()/ 4) + (30 * this.zoomX)));
         this.scaledSpacing = baseSpacing * (size / 90.0);
         this.scaledXOffset = baseXOffset * (size / 10.0);
         this.centerX = (double) this.width / 2 + panX + 2;

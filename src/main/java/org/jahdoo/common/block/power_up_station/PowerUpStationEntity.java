@@ -28,6 +28,7 @@ import java.util.List;
 import static net.minecraft.world.entity.ai.targeting.TargetingConditions.DEFAULT;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
+import static org.jahdoo.common.entities.generic_projectile.GenericProjectile.*;
 import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 
@@ -143,6 +144,9 @@ public class PowerUpStationEntity extends AbstractBEInventory {
             var add = livingEntity.position().add(0, livingEntity.getBbHeight()/2, 0);
             var genericProjectile = new GenericProjectile(add, level);
             var eastDirection = pos.getCenter().subtract(add).normalize();
+            var entityValue = livingEntity.getPersistentData().getInt(POWER_UP_KEY);
+
+            genericProjectile.getPersistentData().putInt(POWER_UP_KEY, Math.max(1, entityValue));
             genericProjectile.shoot(eastDirection.x, eastDirection.y, eastDirection.z, 0.5f, 0);
             Helpers.getSoundWithPositionV(level, add, SoundReg.VITALITY_ABILITY.get(), 1, 1.4F);
             Helpers.getSoundWithPositionV(level, add, SoundEvents.SOUL_ESCAPE.value(), 2, 1);

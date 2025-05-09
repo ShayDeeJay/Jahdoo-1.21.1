@@ -26,6 +26,14 @@ public class KeyItem extends Item implements JahdooItem {
     }
 
     @Override
+    public double customRecycleChance(ItemStack itemStack) {
+        var getId = itemStack.get(DataComponents.CUSTOM_MODEL_DATA);
+        if(getId == null) return -1;
+
+        return (getId.value() + 1) * 20;
+    }
+
+    @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         var s = stack.get(ComponentReg.ID);
         var level = context.level();
@@ -66,6 +74,11 @@ public class KeyItem extends Item implements JahdooItem {
             case 3 -> JahdooRarity.ETERNAL;
             default -> JahdooRarity.COMMON;
         };
+    }
+
+    public static boolean isValidKey(ItemStack stack, Level level){
+        var getKeyId = stack.get(ComponentReg.ID);
+        return getKeyId != null && getKeyId.equals(level.getDescriptionKey());
     }
 
 }

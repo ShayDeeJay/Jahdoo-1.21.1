@@ -92,7 +92,9 @@ public class ClientBusEvents {
         event.register(WAND_SLOT_9A);
         event.register(WAND_SLOT_10A);
         event.register(QUICK_SELECT);
+        event.register(ABILITY_SCREEN);
         event.register(STAT_SCREEN);
+        event.register(RUN_SCREEN);
         event.register(MAGNET);
     }
 

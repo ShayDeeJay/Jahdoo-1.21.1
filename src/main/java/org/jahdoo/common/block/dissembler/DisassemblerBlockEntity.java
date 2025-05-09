@@ -160,7 +160,10 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
         var getRarity = originalItem.get(ComponentReg.JAHDOO_RARITY);
 
         // If the item doesn't have a rarity set, always return the default recycle item.
-        if(getRarity == null) return jahdooItem.getRecycleItem();
+        if(getRarity == null || jahdooItem.customRecycleChance(originalItem) >= 0) {
+            var v = jahdooItem.customRecycleChance(originalItem);
+            return Maths.percentageChance(v) ? jahdooItem.getRecycleItem() : ItemStack.EMPTY;
+        }
 
         // Gets the durability percent. We're using just the percent here.
         var getPercent = CustomHudOverlay.getDurabilityWithColor(originalItem);
@@ -185,7 +188,8 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
         var actualChance = Math.max(percentageChance - durabilityAdjustment, 0);
 
         // Performs the random roll. Returns true with `actualChance` percent chance.
-        var recycleChance = Maths.percentageChance(actualChance);
+        var v = jahdooItem.customRecycleChance(originalItem);
+        var recycleChance = Maths.percentageChance(v == -1 ? actualChance : v);
 
         // If the roll succeeded, return the recycled item. Otherwise, return nothing.
         return recycleChance ? jahdooItem.getRecycleItem() : ItemStack.EMPTY;
