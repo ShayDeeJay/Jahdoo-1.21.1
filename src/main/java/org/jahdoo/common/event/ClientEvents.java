@@ -1,6 +1,7 @@
 package org.jahdoo.common.event;
 
 import com.mojang.datafixers.util.Either;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -22,6 +23,7 @@ import org.jahdoo.common.items.JahdooItem;
 import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import static net.neoforged.neoforge.client.event.RenderLivingEvent.Pre;
 import static org.jahdoo.common.client.KeyBinding.*;
+import static org.jahdoo.common.client.RenderHelpers.drawHealthBar;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.mysticEffectClient;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.selectAbilitySlot;
 import static org.jahdoo.common.event.event_helpers.KeyBindHelper.quickSelectBehaviour;
@@ -36,6 +38,23 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void entityRenderer(Pre event) {
+        var poseStack = event.getPoseStack();
+        var entity = event.getEntity();
+        var instance = Minecraft.getInstance();
+
+        if(entity != instance.player){
+            var z = entity.getBbWidth() / 1.5F;
+            poseStack.pushPose();
+            poseStack.translate(0, entity.getBbHeight() + 0.4, 0);
+            poseStack.mulPose(instance.getEntityRenderDispatcher().cameraOrientation());
+            poseStack.mulPose(Axis.XP.rotation(-1.5f));
+            poseStack.scale(z, z, z);
+            drawHealthBar(
+                poseStack.last(), event.getMultiBufferSource(), entity.getHealth(), entity.getMaxHealth()
+            );
+            poseStack.popPose();
+        }
+
         mysticEffectClient(event);
         renderChampionVisual(event);
     }

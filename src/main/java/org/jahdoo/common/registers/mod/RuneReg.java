@@ -69,7 +69,8 @@ public class RuneReg {
     }
 
     public static AbstractRune getRuneFromId(String runeId) {
-        return Optional.of(getAllRunes().stream().filter(s -> s.runeId().equals(runeId)).toList().getFirst()).orElseThrow();
+        var list = getAllRunes().stream().filter(s -> s.runeId().equals(runeId)).toList();
+        return list.isEmpty() ? BLANK_RUNE.get() : list.getFirst();
     }
 
     public static AbstractRune getRuneFromAttribute(Holder<Attribute> attributeHolder) {
@@ -83,14 +84,6 @@ public class RuneReg {
 
     public static List<AbstractRune> getAllRuneWithRarity(JahdooRarity...rarity) {
         return getAllRunes().stream().filter(s -> Arrays.stream(rarity).toList().contains(s.runeRarity())).toList();
-    }
-
-    public static List<AbstractRune> runesWithCategoryAndRarity(RuneCategories...categories) {
-        return getAllRunes()
-            .stream()
-            .filter(s -> Arrays.stream(categories).toList().contains(s.runeCategory()))
-            .filter(s -> s != DESTINY_BOND_RUNE.get())
-            .toList();
     }
 
     public static List<AbstractRune> runesWithoutCategoryAndRarity(RuneCategories...categories) {

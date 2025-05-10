@@ -13,6 +13,12 @@ public class Icons {
     public static final String ABILITY_PREFIX = "textures/ability_icons/";
     private static final String SKILLS = "textures/skill/";
 
+    public static final ResourceLocation HEALTH_HOLDER =
+        res(PREFIX + "health/health_holder.png");
+
+    public static final ResourceLocation HEALTH_BAR =
+        res(PREFIX + "health/health_bar.png");
+
     public static final ResourceLocation FROST_BOLTZ =
         res(ABILITY_PREFIX + "frostbolts.png");
 

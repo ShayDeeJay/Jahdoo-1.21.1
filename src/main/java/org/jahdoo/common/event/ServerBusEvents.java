@@ -37,6 +37,7 @@ public class ServerBusEvents {
         event.put(EntityReg.INFERNO_CREEPER.get(), InfernoCreeper.createAttributes().build());
         event.put(EntityReg.VOID_SPIDER.get(), VoidSpider.createMain().build());
         event.put(EntityReg.VOID_SPIDER_SPAWN.get(), VoidSpider.createBaby().build());
+        event.put(EntityReg.SAFE.get(), VoidSpider.createBaby().build());
     }
 
     @SubscribeEvent

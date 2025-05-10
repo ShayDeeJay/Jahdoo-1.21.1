@@ -17,6 +17,7 @@ import org.jahdoo.ascension.trading_post.ShoppingArmor;
 import org.jahdoo.ascension.trading_post.ShoppingItems;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.components.CoreData;
+import org.jahdoo.common.entities.safe.Safe;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
@@ -34,7 +35,7 @@ import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.JahdooMod.MOD_ID;
 import static org.jahdoo.ascension.loot.LootHelpers.standAloneLoot;
 
-public class PlayerLevelCommand {
+public class JahdooCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(literal(MOD_ID).requires(sender -> sender.hasPermission(2))
@@ -109,6 +110,19 @@ public class PlayerLevelCommand {
             )
         );
 
+        dispatcher.register(literal(MOD_ID).requires(sender -> sender.hasPermission(2))
+            .then(
+                literal("entities").then(
+                    argument("time_between", integer())
+                        .then(
+                            argument("damage_required", integer())
+                                .executes(
+                                    context -> spawnSafe(context.getSource(), getInteger(context, "time_between"),  getInteger(context, "damage_required"))
+                                )
+                        )
+                )
+            )
+        );
 
         dispatcher.register(literal(MOD_ID).requires(sender -> sender.hasPermission(2))
             .then(
@@ -796,6 +810,16 @@ public class PlayerLevelCommand {
             standAloneLoot(source.getLevel(), player.position(), difficulty, keyType, Helpers.getRgb());
         }
 
+        return 1;
+    }
+
+    private static int spawnSafe(CommandSourceStack source, int timeBetween, int damageRequired) {
+        var level = source.getLevel();
+        var getSafe = new Safe(level, damageRequired, timeBetween);
+        var player = source.getPlayer();
+        if(player == null) return 0;
+        getSafe.moveTo(player.position());
+        level.addFreshEntity(getSafe);
         return 1;
     }
 

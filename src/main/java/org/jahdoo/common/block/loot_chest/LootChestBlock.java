@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -24,9 +23,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +32,7 @@ import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.ascension.loot.LootHelpers.coinChestGetter;
 import static org.jahdoo.ascension.loot.LootHelpers.lootChestGetter;
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class LootChestBlock extends BaseEntityBlock {
@@ -71,18 +68,6 @@ public class LootChestBlock extends BaseEntityBlock {
     @Override
     public @NotNull RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
-    }
-
-    @Override
-    protected void attack(BlockState state, Level level, BlockPos pos, Player player) {
-        System.out.println(player);
-        Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.BLOCK.get(), 1, Random.nextFloat(0.8F, 1.2F));
-        super.attack(state, level, pos, player);
-    }
-
-    @Override
-    protected void onProjectileHit(Level level, BlockState state, BlockHitResult hit, Projectile projectile) {
-        super.onProjectileHit(level, state, hit, projectile);
     }
 
     @Override

@@ -25,6 +25,7 @@ import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.SoundReg;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,6 +44,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
     private LivingEntity target;
     private Vec3 localOffset;
     private UUID targetId;
+    private List<UUID> damagedTargets = new ArrayList<>();
 
     private double additionalProjectiles;
     private double additionalProjectileChance;
@@ -142,8 +144,11 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
                 .deflate(0,1,0 )
         ).forEach(
             livingEntity -> {
-                if(!isOpp(livingEntity)) return;
-                DamageUtils.damageWithJahdoo(livingEntity, this.element.getOwner(), Math.max(damage - aoe, 1), getElementType().damageTypeResourceKey());
+                if(!this.damagedTargets.contains(livingEntity.getUUID())){
+                    if (!isOpp(livingEntity)) return;
+                    DamageUtils.damageWithJahdoo(livingEntity, this.element.getOwner(), Math.max(damage - aoe, 1), getElementType().damageTypeResourceKey());
+                    this.damagedTargets.add(livingEntity.getUUID());
+                }
             }
         );
     }

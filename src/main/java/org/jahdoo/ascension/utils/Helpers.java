@@ -601,16 +601,38 @@ public class Helpers {
         BehaviorUtils.throwItem(livingEntity, itemStack, new Vec3(spawnX, spawnY, spawnZ));
     }
 
-    public static void throwItem(Level level, ItemStack stack, Vec3 offset) {
-        Vec3 vec3 = new Vec3(0.3F, 0.3F, 0.3F);
-        throwItem(offset, stack, offset, vec3, level);
+    public static void throwItem(LivingEntity livingEntity, ItemStack stack) {
+        // Calculate spawn position in front of the entity
+        var yaw = Math.toRadians(livingEntity.yRotO);
+        var offsetX = -Math.sin(yaw) * 0.5;
+        var offsetZ = Math.cos(yaw) * 0.5;
+
+        var spawnX = livingEntity.getX() + offsetX;
+        var spawnY = livingEntity.getY() + 0.5;
+        var spawnZ = livingEntity.getZ() + offsetZ;
+
+        var spawnPos = new Vec3(spawnX, spawnY, spawnZ);
+        var x = 0.4;
+        var speedMultiplier = new Vec3(x, x, x); // Tweak as needed
+
+        throwItem(livingEntity.position(), stack, spawnPos, speedMultiplier, livingEntity.level());
     }
 
     public static void throwItem(Vec3 pos, ItemStack stack, Vec3 offset, Vec3 speedMultiplier, Level level) {
-        ItemEntity itementity = new ItemEntity(level, pos.x, pos.y, pos.z, stack);
-        Vec3 vec3 = offset.subtract(pos);
-        vec3 = vec3.normalize().multiply(speedMultiplier.x, speedMultiplier.y, speedMultiplier.z);
-        itementity.setDeltaMovement(vec3);
+        var itementity = new ItemEntity(level, pos.x, pos.y, pos.z, stack);
+        var direction = offset.subtract(pos).normalize();
+        var v = 0.4;
+        var randX = (Random.nextDouble() - 0.5) * v;
+        var randY = (Random.nextDouble() - 0.5) * v;
+        var randZ = (Random.nextDouble() - 0.5) * v;
+
+        var finalVelocity = new Vec3(
+            (direction.x + randX) * speedMultiplier.x,
+            (direction.y + randY) * speedMultiplier.y,
+            (direction.z + randZ) * speedMultiplier.z
+        );
+
+        itementity.setDeltaMovement(finalVelocity);
         itementity.setDefaultPickUpDelay();
         level.addFreshEntity(itementity);
     }

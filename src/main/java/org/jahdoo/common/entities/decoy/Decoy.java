@@ -56,7 +56,6 @@ public class Decoy extends Mob {
         return this.entityData.get(SCALE);
     }
 
-
     public void setScale(float getSelectedAbility) {
         this.entityData.set(SCALE, getSelectedAbility);
     }

@@ -24,7 +24,7 @@ import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
 import org.jahdoo.ascension.attachments.player_abilities.Rebound;
 import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
 import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.common.commands.PlayerLevelCommand;
+import org.jahdoo.common.commands.JahdooCommands;
 import org.jahdoo.common.items.JahdooItem;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.event.CurioChangeEvent;
@@ -120,7 +120,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void commandRegister(RegisterCommandsEvent event) {
-        PlayerLevelCommand.register(event.getDispatcher());
+        JahdooCommands.register(event.getDispatcher());
     }
 
     @SubscribeEvent

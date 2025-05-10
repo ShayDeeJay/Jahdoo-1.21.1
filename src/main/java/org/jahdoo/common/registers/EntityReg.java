@@ -18,6 +18,7 @@ import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.entities.ice_spear.IceSpear;
 import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
+import org.jahdoo.common.entities.safe.Safe;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 
 import static net.minecraft.world.entity.EntityType.*;
@@ -123,6 +124,13 @@ public class EntityReg {
             .updateInterval(1)
         );
     }
+
+    public static final DeferredHolder<EntityType<?>, EntityType<Safe>> SAFE =
+        regEntity("safe", Builder.<Safe>of(Safe::new, MISC)
+            .sized(0.8f, 0.8f)
+            .updateInterval(1)
+        );
+
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

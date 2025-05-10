@@ -20,6 +20,12 @@ public class EntityAnimations {
     //Burning Skull
     public static final RawAnimation IDLE_SKULL = RawAnimation.begin().thenLoop("idle");
 
+    //Safe
+    public static final RawAnimation KNOCK_LEFT = RawAnimation.begin().thenPlay("knock_left");
+    public static final RawAnimation KNOCK_RIGHT = RawAnimation.begin().thenPlay("knock_right");
+    public static final RawAnimation OPEN = RawAnimation.begin().thenPlay("open");
+    public static final RawAnimation CLOSE = RawAnimation.begin().thenPlay("close");
+
     //Chaos Cube
     public static final RawAnimation IDLE_BLOCK = RawAnimation.begin().thenPlay("idle");
     public static final RawAnimation WEST = RawAnimation.begin().thenPlay("direction1");

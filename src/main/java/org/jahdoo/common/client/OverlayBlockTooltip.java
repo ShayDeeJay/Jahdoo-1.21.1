@@ -32,18 +32,19 @@ public class OverlayBlockTooltip {
         BlockPos pos
     ) {
         var instance = Minecraft.getInstance();
-//        if(instance.screen != null) return;;
+        if(instance.screen != null) return;
 
-        var entity = player.level().getBlockEntity(pos);
+        var lookingAt = player.level().getBlockEntity(pos);
 
-        if (entity instanceof ShoppingTableEntity tableEntity){
+        if (lookingAt instanceof ShoppingTableEntity tableEntity){
             var graphics = event.getGuiGraphics();
             var width = graphics.guiWidth() / 2;
             var height = graphics.guiHeight() / 2;
             var itemStack = tableEntity.getItem().getStackInSlot(0);
             var tooltip = getTooltipFromItem(instance, itemStack);
             var getState = tableEntity.getBlockState().getValue(ShoppingTableBlock.TEXTURE);
-            var canRender = /*instance.screen == null && */tooltip.size() > 1 && getState != 3 && !itemStack.isEmpty();
+            var canRender = tooltip.size() > 1 && getState != 3 && !itemStack.isEmpty();
+
 
             if (canRender) {
                 var mouseY = height - (tooltip.size() * 5);

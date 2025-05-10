@@ -147,7 +147,7 @@ public class RuneHelpers {
 
         if(isAttackSpeed) amount = amount * 25;
         if(isSpeed && !isAttackSpeed) amount = amount * 1000;
-        if(isAbsorption || isMaxHealth) amount = (amount/2);
+//        if(isAbsorption || isMaxHealth) amount = (amount/2);
 
         return getComponents(amount, descriptionId, isAbsorption, isMaxHealth, colour, compName);
     }
