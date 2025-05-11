@@ -3,6 +3,8 @@ package org.jahdoo.common.event;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -13,12 +15,17 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.OverlayBlockTooltip;
 import org.jahdoo.common.client.RuneTooltipRenderer;
 import org.jahdoo.common.client.screens.AbilityUnlockScreen;
 import org.jahdoo.common.client.screens.RunScreen;
 import org.jahdoo.common.client.screens.StatScreen;
+import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.items.JahdooItem;
+
+import java.util.Optional;
+import java.util.UUID;
 
 import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import static net.neoforged.neoforge.client.event.RenderLivingEvent.Pre;
@@ -41,22 +48,32 @@ public class ClientEvents {
         var poseStack = event.getPoseStack();
         var entity = event.getEntity();
         var instance = Minecraft.getInstance();
+        if(!entity.isAlive()) return;
 
         if(entity != instance.player){
-            var z = entity.getBbWidth() / 1.5F;
+            var z = Math.min(entity.getBbWidth()/2F, 0.7F);
             poseStack.pushPose();
             poseStack.translate(0, entity.getBbHeight() + 0.4, 0);
             poseStack.mulPose(instance.getEntityRenderDispatcher().cameraOrientation());
             poseStack.mulPose(Axis.XP.rotation(-1.5f));
-            poseStack.scale(z, z, z);
-            drawHealthBar(
-                poseStack.last(), event.getMultiBufferSource(), entity.getHealth(), entity.getMaxHealth()
-            );
+            poseStack.scale(z, z, z);;
+            var getByAllied = getHealthHolderIcon(entity, instance.player);
+            drawHealthBar(poseStack.last(), event.getMultiBufferSource(), entity.getHealth(), entity.getMaxHealth(), getByAllied);
             poseStack.popPose();
         }
 
         mysticEffectClient(event);
         renderChampionVisual(event);
+    }
+
+    public static ResourceLocation getHealthHolderIcon(Entity entity, Player player) {
+        if (entity instanceof ITamableEntity tamable) {
+            Optional<UUID> ownerUUID = tamable.getOwnerUUIDOptional();
+            if (ownerUUID.isPresent() && ownerUUID.get().equals(player.getUUID())) {
+                return Icons.HEALTH_HOLDER_ALLIED;
+            }
+        }
+        return Icons.HEALTH_HOLDER;
     }
 
     @SubscribeEvent

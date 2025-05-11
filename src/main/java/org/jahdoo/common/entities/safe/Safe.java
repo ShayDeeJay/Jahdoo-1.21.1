@@ -4,19 +4,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.level_manager.InstanceDifficulty;
+import org.jahdoo.ascension.attachments.RunData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -26,15 +27,17 @@ import software.bernie.geckolib.animation.PlayState;
 
 import java.util.ArrayList;
 
-import static net.minecraft.network.syncher.EntityDataSerializers.FLOAT;
-import static net.minecraft.network.syncher.EntityDataSerializers.INT;
+import static net.minecraft.network.syncher.EntityDataSerializers.*;
 import static net.minecraft.network.syncher.SynchedEntityData.defineId;
 import static net.minecraft.world.entity.ai.attributes.Attributes.SCALE;
+import static org.jahdoo.ascension.level_manager.InstanceDifficulty.NOVICE;
+import static org.jahdoo.ascension.level_manager.InstanceDifficulty.getFromName;
 import static org.jahdoo.ascension.loot.RewardLootTables.attachItemData;
 import static org.jahdoo.ascension.loot.RewardLootTables.getCompletionLoot;
 import static org.jahdoo.ascension.mobs.MobManager.addBaseAttribute;
 import static org.jahdoo.ascension.utils.Helpers.Random;
 import static org.jahdoo.common.entities.EntityAnimations.*;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
 public class Safe extends LivingEntity implements GeoEntity {
@@ -44,8 +47,9 @@ public class Safe extends LivingEntity implements GeoEntity {
     private static final EntityDataAccessor<Integer> TIME_SINCE_DAMAGED = defineId(Safe.class, INT);
     private static final EntityDataAccessor<Float> DAMAGE_COUNTER = defineId(Safe.class, FLOAT);
     private static final EntityDataAccessor<Integer> DAMAGE_REQUIRED = defineId(Safe.class, INT);
+    private static final EntityDataAccessor<Long> TIME_SINCE_SPAWNED = defineId(Safe.class, LONG);
 
-    int requiredTimeBetweenDamage;
+    int requiredTimeBetweenDamage = 15;
 
     public Safe(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
@@ -60,6 +64,7 @@ public class Safe extends LivingEntity implements GeoEntity {
         this.requiredTimeBetweenDamage = timeBetweenDamage;
         setDamageRequired(setKillMultiplier);
         addBaseAttribute(SCALE, this, setKillMultiplier);
+        setTimeSinceSpawned(level.getGameTime());
     }
 
     @Override
@@ -83,6 +88,19 @@ public class Safe extends LivingEntity implements GeoEntity {
 
         animTest.getController().forceAnimationReset();
         return PlayState.CONTINUE;
+    }
+
+    public int getTimer(){
+        var currentTimePassed = level().getGameTime() - getTimeSinceSpawned();
+        return Math.max(0, (int) (600 - currentTimePassed));
+    }
+
+    public long getTimeSinceSpawned() {
+        return this.entityData.get(TIME_SINCE_SPAWNED);
+    }
+
+    public void setTimeSinceSpawned(long value) {
+        this.entityData.set(TIME_SINCE_SPAWNED, value);
     }
 
     public int getCurrentState() {
@@ -124,6 +142,7 @@ public class Safe extends LivingEntity implements GeoEntity {
         builder.define(TIME_SINCE_DAMAGED, 20);
         builder.define(DAMAGE_COUNTER, 0f);
         builder.define(DAMAGE_REQUIRED, 200);
+        builder.define(TIME_SINCE_SPAWNED, 0L);
     }
 
     @Override
@@ -133,6 +152,8 @@ public class Safe extends LivingEntity implements GeoEntity {
 
     @Override
     public void kill() {
+        Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.REJECT.get(), 1, 1);
+        Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.ORB_CREATE.get(), 1, 2);
         this.remove(RemovalReason.KILLED);
     }
 
@@ -147,6 +168,7 @@ public class Safe extends LivingEntity implements GeoEntity {
                 setCurrentState(3);
             }
             if (getDamageCounter() >= 40) {
+
                 this.remove(RemovalReason.KILLED);
             }
             setDamageCounter(getDamageCounter() + 1);
@@ -160,6 +182,10 @@ public class Safe extends LivingEntity implements GeoEntity {
                 this.playSound(SoundReg.REJECT.get(), 1, 1.8F);
             }
             setDamageCounter(0);
+        }
+
+        if(getTimer() == 0 && getCurrentState() < 2){
+           kill();
         }
     }
 
@@ -193,7 +219,7 @@ public class Safe extends LivingEntity implements GeoEntity {
 
     @Override
     public void setDeltaMovement(double x, double y, double z) {
-        super.setDeltaMovement(0, 0, 0);
+        super.setDeltaMovement(0, -1, 0);
     }
 
     @Override
@@ -207,14 +233,24 @@ public class Safe extends LivingEntity implements GeoEntity {
     }
 
     @Override
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        return false;
+    }
+
+    @Override
+    protected void onEffectAdded(MobEffectInstance effectInstance, @Nullable Entity entity) {
+        super.onEffectAdded(effectInstance, entity);
+    }
+
+    @Override
     protected SoundEvent getHurtSound(DamageSource source) {
         return SoundEvents.AMETHYST_BLOCK_BREAK;
     }
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (getCurrentState() < 2) {
-            Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.BLOCK.get(), 1, Random.nextFloat(1.4F, (float) Math.max(1.45, getDamageCounter() / 10)));
+        if (getCurrentState() < 2 && source.getEntity() instanceof Player player) {
+            Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.BLOCK.get(), 1, Random.nextFloat(0.8F, Math.max(0.85F, getDamageCounter() / 10)));
             Helpers.getSoundWithPositionV(level(), this.position(), SoundEvents.CHAIN_BREAK, 1, Random.nextFloat(1F, 1.2F));
             setCurrentState(1);
             setTimeSinceDamaged(requiredTimeBetweenDamage);
@@ -226,12 +262,19 @@ public class Safe extends LivingEntity implements GeoEntity {
                 Helpers.getSoundWithPositionV(level(), this.position(), SoundReg.CRATE_OPEN.get(), 2, 2F);
                 setCurrentState(2);
                 if (getCurrentState() == 2) {
-                    for (int i = 0; i < 10; i++) {
-                        if (level() instanceof ServerLevel serverLevel) {
-                            var expert = InstanceDifficulty.EXPERT;
-                            var rewards = getCompletionLoot(serverLevel, this.position(), expert.getSerializedName(), expert.getId());
+                    if (level() instanceof ServerLevel serverLevel) {
+                        var hasInstanceData = serverLevel.hasData(INSTANCE_DATA.get());
+                        var getInstanceDifficulty = serverLevel.getData(INSTANCE_DATA.get());
+                        var difficulty = hasInstanceData ? getFromName(getInstanceDifficulty.getDifficulty()) : NOVICE;
+                        var instanceLootMultiplier = Math.max(1, getInstanceDifficulty.getSafeMultiplier());
+                        if(source.getEntity() instanceof ServerPlayer serverPlayer){
+                            RunData.addExperienceToTotal((difficulty.getId() * 10) * difficulty.expMultiplier(), serverPlayer);
+                            RunData.incrementSafeOpened(player);
+                        }
+                        for (int i = 0; i < instanceLootMultiplier; i++) {
+                            var rewards = getCompletionLoot(serverLevel, this.position(), difficulty.getSerializedName(), difficulty.getId());
                             for (var reward : rewards) {
-                                attachItemData(serverLevel, reward, null, expert.getId());
+                                attachItemData(serverLevel, reward, null, difficulty.getId());
                                 Helpers.throwItem(this, reward);
                             }
                         }

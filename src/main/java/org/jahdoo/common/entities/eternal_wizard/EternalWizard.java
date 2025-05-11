@@ -15,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -41,6 +42,7 @@ import org.jahdoo.common.registers.mod.EntityDataReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
@@ -56,14 +58,15 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
     private static final EntityDataAccessor<Float> SCALE = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> LIFETIMES = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> PRIVATE_TICKS = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(EternalWizard.class, EntityDataSerializers.OPTIONAL_UUID);
     private final RangedCustomAttackGoal<AbstractSkeleton> wandGoal = new RangedCustomAttackGoal<>(this, 1.0D, 0, 60.0F);
 
     private LivingEntity owner;
-    private UUID ownerUUID;
     private double damage;
     private double effectDuration;
     private double effectStrength;
     private double effectChance;
+    private double leechChance;
     private int lifeTime;
     private int privateTicks;
 
@@ -85,7 +88,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         this.setLifetimes(lifeTime);
     }
 
-    public EternalWizard(Level level, Player player, double damage, double effectDuration, double effectStrength, int lifeTime, double effectChance) {
+    public EternalWizard(Level level, Player player, double damage, double effectDuration, double effectStrength, int lifeTime, double effectChance, double leechChance) {
         super(EntityReg.ETERNAL_WIZARD.get(), level);
         this.owner = player;
         this.reassessWeaponGoal();
@@ -94,6 +97,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         this.effectStrength = effectStrength;
         this.lifeTime = lifeTime;
         this.effectChance = effectChance;
+        this.leechChance = leechChance;
         this.setLifetimes(lifeTime);
     }
 
@@ -134,6 +138,11 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
     }
 
     @Override
+    public void setOwner(LivingEntity livingEntity) {
+        this.owner = livingEntity;
+    }
+
+    @Override
     protected @NotNull SoundEvent getStepSound() {
         return SoundEvents.WITHER_SKELETON_STEP;
     }
@@ -169,6 +178,24 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         return false;
     }
 
+
+    @Override
+    public Optional<UUID> getOwnerUUIDOptional() {
+        return this.entityData.get(OWNER_UUID);
+
+    }
+
+    @Override
+    public void setOwnerUUIDOptional(UUID uuid) {
+        this.entityData.set(OWNER_UUID, Optional.ofNullable(uuid));
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if(this.owner != null && source.getEntity() == owner || source.getEntity() instanceof ITamableEntity iTamableEntity && iTamableEntity.getOwner() != null) return false;
+        return super.hurt(source, amount);
+    }
+
     @Override
     protected @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         if(this.owner != null) CasterItemHelper.setWizardMode(this, player);
@@ -189,14 +216,22 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
     }
 
     @Override
+    public void load(CompoundTag compound) {
+        super.load(compound);
+    }
+
+    @Override
     public void tick() {
         super.tick();
         privateTicks++;
         if(!(this.level() instanceof ServerLevel serverLevel)) return;
-//        if(this.getTarget() == this.owner) this.setTarget(null);
         this.setPrivateTicks(this.privateTicks);
-        if(owner == null && this.ownerUUID != null) this.owner = serverLevel.getPlayerByUUID(this.ownerUUID);
+        if(owner == null && this.getOwnerUUIDOptional().isPresent()) this.owner = serverLevel.getPlayerByUUID(this.getOwnerUUIDOptional().get());
         if(this.lifeTime != -1) if (this.privateTicks >= lifeTime) this.discard();
+        var nearestTarget = serverLevel.getNearestEntity(LivingEntity.class, TargetingConditions.DEFAULT, null, getX(), getY(), getZ(), this.getBoundingBox().inflate(20, 20, 20));
+        if(this.getMode()){
+            if (this.getTarget() == null && nearestTarget != null) this.setTarget(nearestTarget);
+        }
     }
 
     @Override
@@ -206,6 +241,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         builder.define(SCALE, 0f);
         builder.define(LIFETIMES, this.lifeTime);
         builder.define(PRIVATE_TICKS, this.privateTicks);
+        builder.define(OWNER_UUID, Optional.empty());
     }
 
     private void fireballAbility(LivingEntity target) {
@@ -234,11 +270,11 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         GenericProjectile arrow = new GenericProjectile(
             this, this.getX(), this.getY() + 2, this.getZ(),
             EntityDataReg.ETHEREAL_ARROW.get().setAbilityId(),
-            EtherealArrow.setArrowProperties(this.damage, this.effectDuration, this.effectStrength, this.effectChance, ElementReg.vitality().id()),
+            EtherealArrow.setArrowProperties(this.damage, this.effectDuration, this.effectStrength, this.effectChance, ElementReg.vitality().id(), leechChance),
             ElementReg.vitality(),
             FrostboltsAbility.abilityId.getPath().intern()
         );
-        fireProjectile(target, arrow, 0.9, 1.6F);
+        fireProjectile(target, arrow, 0, 1.6F);
     }
 
     @Override
@@ -262,7 +298,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
             double d1 = target.getY(0.3333333333333333D) - projectile.getY() - offset;
             double d2 = target.getZ() - this.getZ();
             double d3 = Math.sqrt(d0 * d0 + d2 * d2);
-            projectile.shoot(d0, d1 + d3 * (double)0.2F, d2, velocity, 0);
+            projectile.shoot(d0, d1 + d3 * (double)0.1F, d2, velocity, 0);
 
             this.playSound(SoundReg.ELEMENTAL_BULLET.get(), 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
             castAnimation(this, SINGLE_CAST_ID);
@@ -278,7 +314,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
 //        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, false));
-        this.targetSelector.addGoal(1, new AttackNearbyMonsters<>(this, LivingEntity.class, false, true, null));
+        this.targetSelector.addGoal(1, new AttackNearbyMonsters<>(this, LivingEntity.class, false, false, null));
         this.targetSelector.addGoal(2, new GenericHurtByTargetGoal(this));
         this.targetSelector.addGoal(3, new GenericOwnerHurtByTargetGoal(this, this::getOwner));
         this.targetSelector.addGoal(3, new GenericOwnerHurtTargetGoal(this, this::getOwner));
@@ -294,19 +330,20 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
         tag.putDouble(EFFECT_STRENGTH, this.effectStrength);
         tag.putDouble(EFFECT_CHANCE, this.effectChance);
         tag.putInt(LIFETIME, this.lifeTime);
+        tag.putDouble(LIFE_LEECH, this.leechChance);
         tag.putInt("private_ticks", this.privateTicks);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.ownerUUID = tag.getUUID("owner");
-
+        this.setOwnerUUIDOptional(tag.getUUID("owner"));
         this.setMode(tag.getBoolean("mode"));
         this.damage = tag.getDouble(DAMAGE);
         this.effectDuration = tag.getDouble(EFFECT_DURATION);
         this.effectStrength = tag.getDouble(EFFECT_STRENGTH);
         this.effectChance = tag.getDouble(EFFECT_CHANCE);
+        this.leechChance = tag.getDouble(LIFE_LEECH);
         this.lifeTime = tag.getInt(LIFETIME);
         this.privateTicks = tag.getInt("private_ticks");
         this.setLifetimes(this.lifeTime);

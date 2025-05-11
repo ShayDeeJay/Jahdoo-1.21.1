@@ -125,7 +125,22 @@ public class LevelBoonReg {
         registerElement(GoldCoins::new);
 
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> QUEST_MULTIPLIER =
-        registerElement(LootMultiplier::new);
+        registerElement(QuestLootMultiplier::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> SAFE_LOOT_MULTIPLIER =
+        registerElement(SafeLootMultiplier::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> COMMON_LOOT_MULTIPLIER =
+        registerElement(CommonLootMultiplier::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> RARE_LOOT_MULTIPLIER =
+        registerElement(RareLootMultiplier::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> LEGENDARY_LOOT_MULTIPLIER =
+        registerElement(LegendaryLootMultiplier::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> ETERNAL_LOOT_MULTIPLIER =
+        registerElement(EternalLootMultiplier::new);
 
     public static void register(IEventBus eventBus) {
         LEVEL_BOON.register(eventBus);

@@ -25,6 +25,7 @@ import static net.minecraft.world.effect.MobEffects.*;
 import static org.jahdoo.ascension.attachments.RunData.*;
 import static org.jahdoo.ascension.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.ascension.rarity.JahdooRarity.*;
+import static org.jahdoo.ascension.rarity.JahdooRarity.ETERNAL;
 import static org.jahdoo.ascension.utils.ColourStore.*;
 import static org.jahdoo.ascension.utils.ColourStore.BRONZE_COIN;
 import static org.jahdoo.ascension.utils.ColourStore.GOLD_COIN;
@@ -32,6 +33,7 @@ import static org.jahdoo.ascension.utils.ColourStore.PLATINUM_COIN;
 import static org.jahdoo.ascension.utils.ColourStore.SILVER_COIN;
 import static org.jahdoo.ascension.utils.Maths.*;
 import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.common.client.Icons.SAFE;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
 
@@ -255,28 +257,24 @@ public class RunScreen extends AbstractPanableScreen {
         allComponents.add(new StatEntry(componentTemplate("Run Time", ticksToTime(runData.getStat(TIME_IN_TRIAL) + ""), PERK_GREEN), CLOCK));
         allComponents.add(new StatEntry(componentTemplate("Total Exp", runData.getStat(EXPERIENCE) + "XP", COSMIC_PURPLE), TRIAL_EXPERIENCE));
         allComponents.add(new StatEntry(componentTemplate("Rooms Cleared", runData.getStat(RunData.ROOMS_CLEARED) + "", AETHER_BLUE), Icons.ROOMS_CLEARED));
-
-        allComponents.add(new StatEntry(componentTemplate("Common Chest", runData.getStat(CHESTS_COMMON) + "", COMMON.getColour()), CHEST_COMMON));
-        allComponents.add(new StatEntry(componentTemplate("Rare Chest", runData.getStat(CHESTS_RARE) + "", RARE.getColour()), CHEST_RARE));
-        allComponents.add(new StatEntry(componentTemplate("Legendary Chest", runData.getStat(CHESTS_LEGENDARY) + "", LEGENDARY.getColour()), CHEST_LEGENDARY));
-        allComponents.add(new StatEntry(componentTemplate("Eternal Chest", runData.getStat(CHESTS_ETERNAL) + "", ETERNAL.getColour()), CHEST_ETERNAL));
-
         allComponents.add(new StatEntry(componentTemplate("Mobs Killed", runData.getStat(MOBS_KILLED) + "", MAGNET_STRENGTH_RED), Icons.HORDE));
         allComponents.add(new StatEntry(componentTemplate("Champions Killed", runData.getStat(CHAMPIONS_KILLED) + "", CHAMPION_GOLD), CHAMPIONS_CROWN));
         allComponents.add(new StatEntry(componentTemplate("Bronze Coins", runData.getStat(RunData.BRONZE_COIN) + "", BRONZE_COIN), Icons.BRONZE_COIN));
         allComponents.add(new StatEntry(componentTemplate("Silver Coins", runData.getStat(RunData.SILVER_COIN) + "", SILVER_COIN), Icons.SILVER_COIN));
         allComponents.add(new StatEntry(componentTemplate("Gold Coins", runData.getStat(RunData.GOLD_COIN) + "", GOLD_COIN), Icons.GOLD_COIN));
         allComponents.add(new StatEntry(componentTemplate("Platinum Coins", runData.getStat(RunData.PLATINUM_COIN) + "", PLATINUM_COIN), Icons.PLATINUM_COIN));
-        allComponents.add(new StatEntry(componentTemplate("Quest Crate Multiplier", instanceData.getQuestCrateMultiplier() + "", WALLET_BROWN), QUEST_CRATE));
+        allComponents.add(new StatEntry(componentTemplate("Quest Loot Multiplier", instanceData.getQuestCrateMultiplier() + "", WALLET_BROWN), QUEST_CRATE));
+
+        addChestStats(allComponents, "Common Chest", COMMON.getColour(), CHESTS_COMMON, instanceData.getCommonLootMultiplier(), CHEST_COMMON, runData);
+        addChestStats(allComponents, "Rare Chest", RARE.getColour(), CHESTS_RARE, instanceData.getRareLootMultiplier(), CHEST_RARE, runData);
+        addChestStats(allComponents, "Legendary Chest", LEGENDARY.getColour(), CHESTS_LEGENDARY, instanceData.getLegendaryLootMultiplier(), CHEST_LEGENDARY, runData);
+        addChestStats(allComponents, "Eternal Chest", ETERNAL.getColour(), CHESTS_ETERNAL, instanceData.getEternalLootMultiplier(), CHEST_ETERNAL, runData);
+
+        allComponents.add(new StatEntry(componentTemplate("Safe", "", GOLD_COIN, GOLD_COIN), SAFE));
+        allComponents.add(new StatEntry(componentTemplate("Opened", runData.getStat(RunData.SAFE) + "", GOLD_COIN), BLANK));
+        allComponents.add(new StatEntry(componentTemplate("Multiplier", instanceData.getSafeMultiplier() + "", GOLD_COIN), BLANK));
 
         allComponents.add(spacer);
-//        allComponents.add(new StatEntry(componentTemplate("Max Time", ticksToTime(instanceData.getMaxTime() + ""), PERK_GREEN), CLOCK));
-//        allComponents.add(new StatEntry(componentTemplate("Bonus Exp", instanceData.getExperience() + "XP", ABSORPTION_YELLOW), TRIAL_EXPERIENCE));
-
-        // Coin rewards
-//        allComponents.add(new StatEntry(componentTemplate("Bronze Coins", instanceData.getBronzeCoin() + "", BRONZE_COIN), Icons.BRONZE_COIN));
-//        allComponents.add(new StatEntry(componentTemplate("Silver Coins", instanceData.getSilverCoin() + "", SILVER_COIN), Icons.SILVER_COIN));
-//        allComponents.add(new StatEntry(componentTemplate("Gold Coins", instanceData.getGoldCoin() + "", GOLD_COIN), Icons.GOLD_COIN));
 
         // Mob multipliers
         allComponents.add(new StatEntry(componentTemplate("Mob Health", "+" + roundNonWholeString(doubleFormattedDouble(instanceData.getHealth())) + "%", uiColour()), iconFromEffect(HEAL)));
@@ -294,8 +292,18 @@ public class RunScreen extends AbstractPanableScreen {
         return allComponents;
     }
 
+    private static void addChestStats(List<StatEntry> allComponents, String name, int colour, String chestStat, int multiplier, ResourceLocation buttonType, RunData runData) {
+        allComponents.add(new StatEntry(componentTemplate(name, "", colour, colour), buttonType));
+        allComponents.add(new StatEntry(componentTemplate("Opened", runData.getStat(chestStat) + "", colour), BLANK));
+        allComponents.add(new StatEntry(componentTemplate("Multiplier", multiplier + "", colour), BLANK));
+    }
+
     public static MutableComponent componentTemplate(String header, String stat, int statColour){
-        var preMob = Helpers.withStyleComponent(header + ": ", HEADER_COLOUR);
+        return componentTemplate(header, stat, statColour, SUB_HEADER_COLOUR);
+    }
+
+    public static MutableComponent componentTemplate(String header, String stat, int statColour, int headerColour){
+        var preMob = Helpers.withStyleComponent(header + ": ", headerColour);
         var valueMob = Helpers.withStyleComponent(stat, statColour);
         return preMob.copy().append(valueMob);
     }

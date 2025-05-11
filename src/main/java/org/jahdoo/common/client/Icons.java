@@ -16,6 +16,9 @@ public class Icons {
     public static final ResourceLocation HEALTH_HOLDER =
         res(PREFIX + "health/health_holder.png");
 
+    public static final ResourceLocation HEALTH_HOLDER_ALLIED =
+        res(PREFIX + "health/health_holder_allied.png");
+
     public static final ResourceLocation HEALTH_BAR =
         res(PREFIX + "health/health_bar.png");
 
@@ -57,6 +60,9 @@ public class Icons {
 
     public static final ResourceLocation DATA =
         res(PREFIX + "data.png");
+
+    public static final ResourceLocation SAFE =
+        res(PREFIX + "safe.png");
 
     public static final ResourceLocation CHEST_COMMON =
         res(PREFIX + "chest_common.png");

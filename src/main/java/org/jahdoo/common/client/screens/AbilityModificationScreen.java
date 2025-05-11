@@ -10,6 +10,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.ascension.ability.Ability;
@@ -106,7 +107,7 @@ public class AbilityModificationScreen extends Screen {
             new Overlay() {
                 @Override
                 public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
-                    guiGraphics.enableScissor(3, 90, width - 3, height - 4);
+                    guiGraphics.enableScissor(3, height/2 - 68, width - 3, height/2 + 110);
                 }
             }
         );
@@ -308,17 +309,32 @@ public class AbilityModificationScreen extends Screen {
         var heightFrom = i1 - heightOffset;
         var widthTo = i + widthOffset;
         var heightTo = i1 + heightOffset - 5;
-        return mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 35 && mouseY < heightTo -  5;
+
+        var b = mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 35 && mouseY < heightTo - 5;
+        return b;
     }
 
     private void windowMoveVertical(double dragY) {
-        var size = componentsWithBounds(ability, holder, getMinecraft().player).size();
-        if (size > 14) {
-            int b = 7 * size * size - 135 * size + 578;
-            this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, b   -120));
-            this.rebuildWidgets();
-            this.selectedY = 0;
-        } else this.yScroll = 0;
+        var components = componentsWithBounds(ability, holder, getMinecraft().player);
+        int entryCount = components.size();
+
+        System.out.println(entryCount);
+        if (entryCount < 14) {
+            this.yScroll = 0;
+            return;
+        }
+
+        // Approximate spacing: either 17 (with brackets) or 10 (regular), default average
+        int averageSpacing = 12; // You can fine-tune this based on actual proportions
+        int visibleArea = 145;   // The scissor height from init(): 110 - (-70) = 180, minus padding
+        int totalContentHeight = entryCount * averageSpacing;
+
+        double maxScroll = 0; // top (no scroll)
+        double minScroll = Math.min(0, visibleArea - totalContentHeight); // bottom (fully scrolled)
+
+        this.yScroll = Mth.clamp(this.yScroll + dragY, minScroll, maxScroll);
+        this.rebuildWidgets();
+        this.selectedY = 0;
     }
 
     @Override
@@ -398,7 +414,9 @@ public class AbilityModificationScreen extends Screen {
 
             guiGraphics.renderTooltip(font, compValues, Optional.empty(), (int) mouseX, (int) mouseY);
             guiGraphics.pose().pushPose();
+            guiGraphics.enableScissor(3, height/2 - 70, width - 3, height/2 + 110);
             boxMaker(guiGraphics, this.width / 2 - 97, (int) (this.selectedY + 8 + yScroll), 97, 14, colour, semiTransLayer);
+            guiGraphics.disableScissor();
             guiGraphics.pose().popPose();
         }
         this.compValues = new ArrayList<>();

@@ -12,14 +12,18 @@ import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
 import org.jahdoo.ascension.element.AbstractElement;
 import org.jahdoo.ascension.utils.DamageUtils;
 import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 
 import static org.jahdoo.ascension.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
+import static org.jahdoo.common.particle.ParticleStore.PLUS_PARTICLE;
 
 public class EtherealArrow extends DefaultEntityBehaviour {
 
@@ -30,6 +34,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
     double effectStrength;
     double effectChance;
     double elementType;
+    double lifeLeechChance;
 
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
@@ -39,6 +44,7 @@ public class EtherealArrow extends DefaultEntityBehaviour {
         this.effectStrength = this.getTag(EFFECT_STRENGTH);
         this.effectChance = this.getTag(EFFECT_CHANCE);
         this.elementType =  this.getTag(SET_ELEMENT_TYPE);
+        this.lifeLeechChance = this.getTag(LIFE_LEECH);
     }
 
 
@@ -111,6 +117,18 @@ public class EtherealArrow extends DefaultEntityBehaviour {
             .setModifierWithoutBounds(EFFECT_STRENGTH, effectStrength)
             .setModifierWithoutBounds(EFFECT_CHANCE, effectChance)
             .setModifierWithoutBounds(SET_ELEMENT_TYPE, elementType)
+            .setModifierWithoutBounds(LIFE_LEECH, 0)
+            .buildAndReturn();
+    }
+
+    public static AbilityHolder setArrowProperties(double damage, double effectDuration, double effectStrength, double effectChance, int elementType, double lifeLeechChance){
+        return new AbilityBuilder(null, EtherealArrow.abilityId.getPath().intern())
+            .setModifierWithoutBounds(DAMAGE, damage)
+            .setModifierWithoutBounds(EFFECT_DURATION, effectDuration)
+            .setModifierWithoutBounds(EFFECT_STRENGTH, effectStrength)
+            .setModifierWithoutBounds(EFFECT_CHANCE, effectChance)
+            .setModifierWithoutBounds(SET_ELEMENT_TYPE, elementType)
+            .setModifierWithoutBounds(LIFE_LEECH, lifeLeechChance)
             .buildAndReturn();
     }
 
@@ -118,6 +136,22 @@ public class EtherealArrow extends DefaultEntityBehaviour {
     public void onEntityHit(LivingEntity hitEntity) {
         if(this.generic != null){
             var element = generic.getElementType();
+
+            if (element.equals(ElementReg.vitality())) {
+                if(Maths.percentageChance(this.lifeLeechChance)){
+                    if (generic.getOwner() instanceof EternalWizard eternalWizard) {
+                        eternalWizard.heal(2);
+                        Helpers.getSoundWithPositionV(eternalWizard.level(), eternalWizard.position(), ElementReg.vitality().sound(), 1f, 1.2f);
+                        Helpers.getSoundWithPositionV(eternalWizard.level(), eternalWizard.position(), SoundReg.IMPACT.get(), 1f, 0.8f);
+                        particleBurst(
+                            eternalWizard.level(), eternalWizard.position().add(0, 0.2, 0), 15,
+                            genericParticle(PLUS_PARTICLE, element, 5, 1.4f),
+                            0, 1.5, 0, 0.1f
+                        );
+                    }
+                }
+            }
+
             Helpers.getSoundWithPosition(this.generic.level(), hitEntity.blockPosition(), element.sound(),0.4f);
             if (hitEntity.isAlive()) {
                 if (!(this.generic.level() instanceof ServerLevel serverLevel)) return;

@@ -8,17 +8,17 @@ import org.jahdoo.common.client.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
-public class LootMultiplier extends AbstractLevelBoon {
+public class EternalLootMultiplier extends AbstractLevelBoon {
 
     @Override
     public String id() {
-        return "quest_crate_multiplier";
+        return "multiply_eternal_loot";
     }
 
     @Override
     public void execute(ServerLevel level, double value) {
         var data = level.getData(INSTANCE_DATA);
-        data.setQuestCrateMultiplier((int) value);
+        data.setLegendaryLootMultiplier((int) value);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class LootMultiplier extends AbstractLevelBoon {
 
     @Override
     public ResourceLocation getIcon() {
-        return Icons.QUEST_CRATE;
+        return Icons.CHEST_ETERNAL;
     }
 
     @Override

@@ -82,6 +82,7 @@ public class SummonEternalWizardAbility extends Ability {
             .setStaticMana(100)
             .setStaticCooldown(6000)
             .setDamage(40, 10, 10, 1)
+            .setLifeLeechChance(25, 5, 5, 2)
             .setEffectStrength(4, 0, 2, 3)
             .setEffectDuration(600, 200, 100, 1)
             .setEffectChance(50, 20, 10, 2)

@@ -53,6 +53,11 @@ public class VoidSpider extends Spider implements ITamableEntity {
         return false;
     }
 
+
+    @Override
+    public void setOwner(LivingEntity livingEntity) {
+    }
+
     @Override
     protected boolean shouldDropLoot() {
         return false;

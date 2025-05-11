@@ -37,6 +37,7 @@ public class RunData implements IAttachment {
     public static final String CHESTS_RARE = "chests_rare";
     public static final String CHESTS_LEGENDARY = "chests_legendary";
     public static final String CHESTS_ETERNAL = "chests_eternal";
+    public static final String SAFE = "safe";
 
     public static final String TIME_IN_TRIAL = "time_in_trial";
     public static final String BRONZE_COIN = "bronze_coin";
@@ -211,6 +212,15 @@ public class RunData implements IAttachment {
 
         runData.addStat(type, coinValue);
         runData.setExperienceGained(instanceData.getDifficulty(), coinValue);
+        if (player instanceof ServerPlayer serverPlayer) {
+            sendToPlayer(serverPlayer, new RunDataS2CP(runData));
+        }
+    }
+
+    public static void incrementSafeOpened(LivingEntity player) {
+        var runData = player.getData(RUN_DATA.get());
+        runData.incrementStat(SAFE);
+
         if (player instanceof ServerPlayer serverPlayer) {
             sendToPlayer(serverPlayer, new RunDataS2CP(runData));
         }

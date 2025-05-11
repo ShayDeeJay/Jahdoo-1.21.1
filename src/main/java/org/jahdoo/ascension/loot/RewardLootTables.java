@@ -372,8 +372,11 @@ public class RewardLootTables {
                 builder.add(AUGMENT_CORE_BUILDER.setWeight(1));
             }
 
-            if(Maths.percentageChance(calculateChance(10, difficulty, newRarity))){
+            if(Maths.percentageChance(calculateChance(20, difficulty, newRarity))){
                 builder.add(RUNE.setWeight((int) calculateChance(15, difficulty, newRarity)));
+            }
+
+            if(Maths.percentageChance(calculateChance(15, difficulty, newRarity))){
                 builder.add(MAGNET.setWeight((int) calculateChance(5, difficulty, newRarity)));
                 builder.add(getRandomWand().setWeight((int) calculateChance(5, difficulty, newRarity)));
             }
@@ -397,7 +400,7 @@ public class RewardLootTables {
             }
         }
 
-        if(Maths.percentageChance(calculateChance(14, difficulty, newRarity))){
+        if(Maths.percentageChance(calculateChance(15, difficulty, newRarity))){
             builder.add(TOME_OF_UNITY_BUILDER.setWeight(4));
             builder.add(INGMAS_SWORD.setWeight(3));
             addMageArmor(builder, newRarity);
@@ -409,7 +412,7 @@ public class RewardLootTables {
         }
 
         if(Maths.percentageChance(calculateChance(5, difficulty, newRarity))){
-            builder.add(UNDEAD_PROTECTOR_SHIELD.setWeight(2));
+//            builder.add(UNDEAD_PROTECTOR_SHIELD.setWeight(2));
             builder.add(ELEMENTAL_SWORD.setWeight(1));
             builder.add(GAUNTLET.setWeight(1));
             addBattlemageArmor(builder, newRarity);

@@ -100,9 +100,7 @@ public class Decoy extends Mob {
 
 
     private void onAttract(Mob mob) {
-        if(mob.getTarget() == this.player){
-            mob.setTarget(this);
-        }
+        mob.setTarget(this);
     }
 
     @Override

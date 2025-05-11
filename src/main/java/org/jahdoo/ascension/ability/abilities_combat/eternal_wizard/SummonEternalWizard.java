@@ -5,6 +5,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -20,8 +21,8 @@ import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.UUID;
 
@@ -42,6 +43,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     private double effectStrength;
     private double effectChance;
     private double lifeTime;
+    private double leechChance;
     private double damage;
     private double height;
     private int position;
@@ -63,6 +65,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         this.effectStrength = getTag(EFFECT_STRENGTH);
         this.effectChance = getTag(EFFECT_CHANCE);
         this.lifeTime = getTag(LIFETIME);
+        this.leechChance = getTag(LIFE_LEECH);
     }
 
     @Override
@@ -137,6 +140,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         this.effectDuration = compoundTag.getDouble(EFFECT_DURATION);
         this.effectStrength = compoundTag.getDouble(EFFECT_STRENGTH);
         this.lifeTime = compoundTag.getDouble(LIFETIME);
+        this.leechChance = compoundTag.getDouble(LIFE_LEECH);
     }
 
     @Override
@@ -149,6 +153,8 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
         compoundTag.putDouble(EFFECT_STRENGTH, this.effectStrength);
         compoundTag.putDouble(EFFECT_CHANCE, this.effectChance);
         compoundTag.putDouble(LIFETIME, this.lifeTime);
+        compoundTag.putDouble(LIFE_LEECH, this.leechChance);
+
         if(eternalWizard != null) compoundTag.putUUID("spawnedWizard", eternalWizard.getUUID());
     }
 
@@ -191,7 +197,7 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
     private void spawnEternalWizard(){
         if (this.eternalWizard == null && cloud.getOwner() != null) {
 
-            var eternalWizard = new EternalWizard(cloud.level(), (Player) cloud.getOwner(), damage, effectDuration, effectStrength, (int) lifeTime, effectChance);
+            var eternalWizard = new EternalWizard(cloud.level(), (Player) cloud.getOwner(), damage, effectDuration, effectStrength, (int) lifeTime, effectChance, leechChance);
             var spawnPosition = cloud.position().add(0, -1, 0);
             eternalWizard.setInvulnerable(true);
             eternalWizard.moveTo(spawnPosition);
@@ -212,6 +218,10 @@ public class SummonEternalWizard extends DefaultEntityBehaviour {
             eternalWizard.yHeadRotO = (float) yaw;
             eternalWizard.setPersistenceRequired();
             cloud.level().addFreshEntity(eternalWizard);
+            if(cloud.getOwner() instanceof ServerPlayer player){
+                eternalWizard.setOwnerUUIDOptional(player.getUUID());
+
+            }
             eternalWizard.setNoAi(true);
             this.eternalWizard = eternalWizard;
 

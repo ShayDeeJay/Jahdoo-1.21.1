@@ -209,11 +209,14 @@ public class AbilityComponentHelper {
         var time = List.of("Duration", "Speed", "Delay", "Time");
         var probability = List.of("Chance");
         var distance = List.of("Radius", "Distance", "Range");
+        var leech = List.of("Leech");
         var multiplier = List.of("Multiplier");
         var by = List.of("Block Size");
 
         if (time.stream().anyMatch(keys::contains)) {
             displayValue = isRange ? rangeString(ticksToTime(min, true), ticksToTime(max, true)) : ticksToTime(current, true);
+        }  else if (leech.stream().anyMatch(keys::contains)) {
+            displayValue = isRange ? rangeString(min + "%", max + "%") : current + "%";
         } else if (probability.stream().anyMatch(keys::contains)) {
             displayValue = isRange ? rangeString(toPercent(Double.parseDouble(min)), toPercent(Double.parseDouble(max))) + "%" : toPercent(Double.parseDouble(current)) + "%";
         } else if (distance.stream().anyMatch(keys::contains)) {

@@ -143,6 +143,12 @@ public class Network {
         );
 
         payloadRegistrar.playToClient(
+            OwnerSyncS2CP.TYPE,
+            OwnerSyncS2CP.STREAM_CODEC,
+            OwnerSyncS2CP::handle
+        );
+
+        payloadRegistrar.playToClient(
             ManaSyncS2CP.TYPE,
             ManaSyncS2CP.STREAM_CODEC,
             ManaSyncS2CP::handle

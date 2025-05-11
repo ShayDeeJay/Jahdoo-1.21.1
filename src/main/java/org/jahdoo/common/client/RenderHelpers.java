@@ -10,6 +10,8 @@ import net.minecraft.world.phys.AABB;
 
 import java.awt.*;
 
+import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
+
 public class RenderHelpers {
 
     public static void drawTexture(PoseStack.Pose pose, MultiBufferSource bufferSource, int light, float width, ResourceLocation texture, int colour) {
@@ -22,59 +24,59 @@ public class RenderHelpers {
         consumer.addVertex(poseMatrix, -halfWidth, -.1f, halfWidth).setColor(colour).setUv(0f, 0f).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(0f, 1f, 0f);
     }
 
-    public static void drawHealthBar(PoseStack.Pose pose, MultiBufferSource bufferSource, float health, float maxHealth) {
+    public static void drawHealthBar(PoseStack.Pose pose, MultiBufferSource bufferSource, float health, float maxHealth, ResourceLocation holder) {
 
-        float healthPercent = health / maxHealth;
+        var healthPercent = Mth.clamp(health / maxHealth, 0f, 1f);
         var poseMatrix = pose.pose();
+        var packedLight = FULL_BRIGHT;
 
-        var width = 3;
-        float halfWidth = width * 0.5f;
-        float halfHeight = 0.5F * 0.5f;
+        // --- Define logical sizes (in world units) ---
+        var containerWidth = 3.5f;
+        var containerHeight = 0.5f;
+        var barWidth = containerWidth - 0.25F;
+        var barHeight = containerHeight/2;
+
+        var containerHalfWidth = containerWidth / 2f;
+        var containerHalfHeight = containerHeight / 2f;
 
         // --- Draw container background ---
-        var containerConsumer = bufferSource.getBuffer(RenderType.entityCutout(Icons.HEALTH_HOLDER));
-        float containerExpand = 0.25f; // optional extra padding
-        float bgHalfWidth = halfWidth + containerExpand;
-        float bgHalfHeight = halfHeight + containerExpand;
-
-        var packedLight = 255;
-        containerConsumer.addVertex(poseMatrix, -bgHalfWidth, -.1f, -bgHalfHeight).setColor(1F, 1F, 1F, 1F).setUv(0f, 1f)
+        var containerConsumer = bufferSource.getBuffer(RenderType.entityCutout(holder));
+        containerConsumer.addVertex(poseMatrix, -containerHalfWidth, -.1f, -containerHalfHeight)
+            .setColor(1F, 1F, 1F, 1F).setUv(0f, 1f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
-        containerConsumer.addVertex(poseMatrix, bgHalfWidth, -.1f, -bgHalfHeight).setColor(1F, 1F, 1F, 1F).setUv(1f, 1f)
+        containerConsumer.addVertex(poseMatrix, containerHalfWidth, -.1f, -containerHalfHeight)
+            .setColor(1F, 1F, 1F, 1F).setUv(1f, 1f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
-        containerConsumer.addVertex(poseMatrix, bgHalfWidth, -.1f, bgHalfHeight).setColor(1F, 1F, 1F, 1F).setUv(1f, 0f)
+        containerConsumer.addVertex(poseMatrix, containerHalfWidth, -.1f, containerHalfHeight)
+            .setColor(1F, 1F, 1F, 1F).setUv(1f, 0f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
-        containerConsumer.addVertex(poseMatrix, -bgHalfWidth, -.1f, bgHalfHeight).setColor(1F, 1F, 1F, 1F).setUv(0f, 0f)
+        containerConsumer.addVertex(poseMatrix, -containerHalfWidth, -.1f, containerHalfHeight)
+            .setColor(1F, 1F, 1F, 1F).setUv(0f, 0f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
 
         // --- Draw health bar ---
-        healthPercent = Mth.clamp(healthPercent, 0f, 1f);
-        float barWidth = width * healthPercent; // Health bar width based on health percentage
+        var barConsumer = bufferSource.getBuffer(RenderType.entityCutout(Icons.HEALTH_BAR));
+        var barHalfHeight = barHeight / 2f;
+        var barActualWidth = barWidth * healthPercent;
+        var barLeft = -barWidth / 2f;
+        var barRight = barLeft + barActualWidth;
+        var zOffset = -0.0005f;
+        var yBase = -.1f;
 
-        float left = -halfWidth;
-        float right = left + barWidth;
-
-        // Adjust UV mapping based on health percentage
-        float uMax = healthPercent;
-
-        var healthConsumer = bufferSource.getBuffer(RenderType.entityCutout(Icons.HEALTH_BAR));
-
-        // Adjust the Y position (height) of the health bar
-        var withAdjust = halfHeight + 0.25F;
-
-        // Slight Z-offset (0.01f) to move the health bar forward and resolve Z-fighting
-        float zOffset = -0.0001f;
-
-        // Draw health bar without tint (using the original texture color)
-        healthConsumer.addVertex(poseMatrix, left, -.1f + zOffset, -withAdjust).setColor(1F, 1F, 1F, 1F).setUv(0f, 1f)
+        barConsumer.addVertex(poseMatrix, barLeft, yBase + zOffset, -barHalfHeight)
+            .setColor(1F, 1F, 1F, 1F).setUv(0f, 1f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
-        healthConsumer.addVertex(poseMatrix, right, -.1f + zOffset, -withAdjust).setColor(1F, 1F, 1F, 1F).setUv(uMax, 1f)
+        barConsumer.addVertex(poseMatrix, barRight, yBase + zOffset, -barHalfHeight)
+            .setColor(1F, 1F, 1F, 1F).setUv(healthPercent, 1f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
-        healthConsumer.addVertex(poseMatrix, right, -.1f + zOffset, withAdjust).setColor(1F, 1F, 1F, 1F).setUv(uMax, 0f)
+        barConsumer.addVertex(poseMatrix, barRight, yBase + zOffset, barHalfHeight)
+            .setColor(1F, 1F, 1F, 1F).setUv(healthPercent, 0f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
-        healthConsumer.addVertex(poseMatrix, left, -.1f + zOffset, withAdjust).setColor(1F, 1F, 1F, 1F).setUv(0f, 0f)
+        barConsumer.addVertex(poseMatrix, barLeft, yBase + zOffset, barHalfHeight)
+            .setColor(1F, 1F, 1F, 1F).setUv(0f, 0f)
             .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(0f, 1f, 0f);
     }
+
 
     public static void renderLines(PoseStack matrix, AABB aabb, Color color, MultiBufferSource buffer) {
         var x = (float) aabb.minX;

@@ -170,7 +170,7 @@ public class RenderEventHelper {
         var itemRenderer = instance.getItemRenderer();
         var rotate = entity.tickCount + livingEvent.getPartialTick();
         var animate = rotate / 5;
-        var height = entity.getBbHeight();
+        var height = entity.getBbHeight() + 0.3;
         var width = entity.getBbWidth();
         var scale = Math.min(Math.max(width/2, 0.5F), animate);
         var bobOff = Math.sin(rotate / 10.0F) * 0.05F + height * 1.1;

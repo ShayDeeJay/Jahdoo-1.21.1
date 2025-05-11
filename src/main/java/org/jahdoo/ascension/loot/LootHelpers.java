@@ -64,13 +64,25 @@ public class LootHelpers {
             if (item.is(ItemReg.LOOT_KEY) && keyData != null && KeyItem.isValidKey(item, player.level())) {
                 var value = keyData.value();
                 var isValid = value == lootChestEntity.getRarity;
-
+                System.out.println(value);
                 RunData.incrementChestOpenedExp(serverLevel, player, value);
+                var getInstance = serverLevel.getData(INSTANCE_DATA);
                 if (isValid) {
                     lootChestEntity.setOpen(true);
                     var getId = new CustomModelData(lootChestEntity.getRarity);
                     var colour = KeyItem.getJahdooRarity(getId).getColour();
-                    standAloneLoot(serverLevel, pos.getCenter(), difficulty, value, colour);
+                    var getBy = switch (value){
+                        case 1 -> getInstance.getRareLootMultiplier();
+                        case 2 -> getInstance.getLegendaryLootMultiplier();
+                        case 3 -> getInstance.getEternalLootMultiplier();
+                        default -> getInstance.getCommonLootMultiplier();
+                    };
+
+                    System.out.println(getBy);
+                    for(int i = 0; i < Math.max(getBy, 1); i++){
+                        standAloneLoot(serverLevel, pos.getCenter(), difficulty, value, colour);
+                    }
+
                     openingSoundEffect(pos, serverLevel, true);
                     item.shrink(1);
                     return SUCCESS;

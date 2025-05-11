@@ -3,11 +3,19 @@ package org.jahdoo.common.entities.safe;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.network.chat.Component;
+import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.ascension.utils.Maths;
+import org.jahdoo.common.client.Icons;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
@@ -42,15 +50,43 @@ public class SafeRenderer extends GeoEntityRenderer<Safe> {
         super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
         poseStack.popPose();
 
-        var z = 0.5F;
-        poseStack.pushPose();
-        poseStack.translate(0, animatable.getBbHeight()+0.5, 0);
-        poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-        poseStack.mulPose(Axis.XP.rotation(-1.5f));
-        poseStack.scale(z, z, z);
-        drawHealthBar(
-            poseStack.last(), bufferSource, animatable.getDamageRequired() - animatable.getDamageCounter(), animatable.getDamageRequired()
-        );
-        poseStack.popPose();
+        if(animatable.getCurrentState() < 2){
+            var z = 0.5F;
+            poseStack.pushPose();
+            poseStack.translate(0, animatable.getBbHeight() + 0.5, 0);
+            poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+            poseStack.mulPose(Axis.XP.rotation(-1.5f));
+            poseStack.scale(z, z, z);
+            drawHealthBar(poseStack.last(), bufferSource, animatable.getDamageRequired() - animatable.getDamageCounter(), animatable.getDamageRequired(), Icons.HEALTH_HOLDER);
+            poseStack.popPose();
+
+            roomData(animatable, poseStack, bufferSource, entityRenderDispatcher, partialTick);
+        }
+    }
+
+    public static void roomData(Safe entity, PoseStack pPoseStack, MultiBufferSource bufferSource, EntityRenderDispatcher dispatcher, float partialTicks) {
+        var offWhite = ColourStore.NEGATIVE_RED;
+        var displayName = Helpers.withStyleComponent(Maths.ticksToTime(String.valueOf(entity.getTimer())), offWhite);
+        pPoseStack.pushPose();
+        var scale = Math.sin(((entity.tickCount + partialTicks) / 10.0F)) * 0.2F + 3.5;
+        pPoseStack.translate(0, scale, 0);
+        var scale1 = (float) scale/1.4F;
+        pPoseStack.scale(scale1, scale1, scale1);
+        pPoseStack.mulPose(dispatcher.camera.rotation());
+
+        var x = 0.020F;
+        pPoseStack.scale(x, -x, x);
+        Matrix4f matrix4f = pPoseStack.last().pose();
+
+        var font = Minecraft.getInstance().font;
+        var f1 = (float)(-font.width(displayName) / 2);
+
+        var text = Helpers.withStyleComponent("HURRY!", offWhite);
+        var f2 = (float)(-font.width(text) / 2);
+
+        font.drawInBatch(text, f2, -10, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
+        font.drawInBatch(displayName, f1, 0, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
+        pPoseStack.popPose();
+
     }
 }

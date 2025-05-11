@@ -38,23 +38,28 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         wandManager(recipeOutput, WAND_MANAGER_TABLE.get().asItem());
         oreSmelting(recipeOutput, List.of(Items.ROTTEN_FLESH), RecipeCategory.MISC, Items.LEATHER, 2.0F, 200, "leather");
         ticket(recipeOutput, CHALLENGER_TICKET.get());
-        //Test
-//        wands(recipeOutput, WAND_ITEM_VITALITY.get(), Items.RED_DYE, "vitality");
+        starterWand(recipeOutput, STARTER_WAND.get());
         stoneOfRegret(recipeOutput, STONE_OF_REGRET.get());
         core(recipeOutput, AUGMENT_CORE.get());
         advanceCore(recipeOutput, ADVANCED_AUGMENT_CORE.get());
         hyperCore(recipeOutput, AUGMENT_HYPER_CORE.get());
     }
 
+    protected void starterWand(RecipeOutput output, Item result) {
+        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 32)
+            .requires(Items.STICK, 4)
+            .requires(Items.LAPIS_LAZULI, 1)
+            .unlockedBy("starter_wand", has(Items.STICK))
+            .group("starter_wand")
+            .save(output);
+    }
+
     protected void ticket(RecipeOutput output, Item result) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
-            .define('M', Items.PAPER)
-            .define('X', AUGMENT_CORE.get())
-            .pattern(" M ")
-            .pattern("MXM")
-            .pattern(" M ")
-            .unlockedBy("paper", has(Items.PAPER))
-            .unlockedBy("core", has(AUGMENT_CORE.get()))
+        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 32)
+            .requires(Items.PAPER, 4)
+            .requires(AUGMENT_CORE.get(), 1)
+            .unlockedBy("ticket", has(AUGMENT_CORE.get()))
+            .group("ticket")
             .save(output);
     }
 

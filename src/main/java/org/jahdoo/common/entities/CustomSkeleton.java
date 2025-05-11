@@ -71,6 +71,11 @@ public class CustomSkeleton extends Skeleton implements ITamableEntity {
     }
 
     @Override
+    public void setOwner(LivingEntity livingEntity) {
+        this.owner = livingEntity;
+    }
+
+    @Override
     public boolean canAttackType(EntityType<?> type) {
         return super.canAttackType(type);
     }

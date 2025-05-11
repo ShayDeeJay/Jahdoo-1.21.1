@@ -815,9 +815,9 @@ public class JahdooCommands {
 
     private static int spawnSafe(CommandSourceStack source, int timeBetween, int damageRequired) {
         var level = source.getLevel();
-        var getSafe = new Safe(level, damageRequired, timeBetween);
         var player = source.getPlayer();
         if(player == null) return 0;
+        var getSafe = new Safe(level, damageRequired, timeBetween);
         getSafe.moveTo(player.position());
         level.addFreshEntity(getSafe);
         return 1;

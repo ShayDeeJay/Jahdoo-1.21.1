@@ -24,7 +24,7 @@ public class AbilityBuilder {
     public static final String RANGE = "Range";
     public static final String CASTING_DISTANCE = "Cast Distance";
     public static final String SET_ELEMENT_TYPE = "Element Type";
-    public static final String LIFETIME = "Duration";
+    public static final String LIFETIME = "Lifetime";
     public static final String AOE = "Area of Effect";
     public static final String SIZE = "Block Size";
     public static final String OFFSET = "Offset";
@@ -32,6 +32,7 @@ public class AbilityBuilder {
     public static final String SHOT_MULTIPLIER = "Shot Multiplier";
     public static final String VELOCITY = "Projectile Velocity";
     public static final String NUMBER_OF_RICOCHET = "Ricochets";
+    public static final String LIFE_LEECH = "Life Leech Chance";
     private ItemStack item = null;
     private final String abilityId;
     private final AbilityData abilityData = new AbilityData(new LinkedHashMap<>());
@@ -125,6 +126,11 @@ public class AbilityBuilder {
 
     public AbilityBuilder setEffectChance(double high, double low, double step, double baseCost){
         this.setAbilityTagModifiersRandom(EFFECT_CHANCE, high, low, false, step, baseCost);
+        return this;
+    }
+
+    public AbilityBuilder setLifeLeechChance(double high, double low, double step, double baseCost){
+        this.setAbilityTagModifiersRandom(LIFE_LEECH, high, low, true, step, baseCost);
         return this;
     }
 

@@ -43,6 +43,11 @@ public class CustomZombie extends Zombie implements ITamableEntity {
     }
 
     @Override
+    public void setOwner(LivingEntity livingEntity) {
+        this.owner = livingEntity;
+    }
+
+    @Override
     protected void registerGoals() {
         addBehaviourGoals();
     }
