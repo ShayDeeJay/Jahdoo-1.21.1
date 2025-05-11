@@ -206,7 +206,7 @@ public class AbilityComponentHelper {
 
     public static Component getModifierContext(String keys, String current, int getComparison, boolean isRange, String min, String max) {
         String displayValue;
-        var time = List.of("Duration", "Speed", "Delay", "Time");
+        var time = List.of("Duration", "Speed", "Delay", "Time", "Lifetime");
         var probability = List.of("Chance");
         var distance = List.of("Radius", "Distance", "Range");
         var leech = List.of("Leech");

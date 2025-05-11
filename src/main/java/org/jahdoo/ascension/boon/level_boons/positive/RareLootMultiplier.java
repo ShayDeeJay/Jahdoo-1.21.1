@@ -43,7 +43,7 @@ public class RareLootMultiplier extends AbstractLevelBoon {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.EPIC;
+        return JahdooRarity.EPIC ;
     }
 
 }

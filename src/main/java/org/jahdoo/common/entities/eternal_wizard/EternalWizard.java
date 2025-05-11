@@ -192,7 +192,7 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if(this.owner != null && source.getEntity() == owner || source.getEntity() instanceof ITamableEntity iTamableEntity && iTamableEntity.getOwner() != null) return false;
+//        if(this.owner != null && source.getEntity() == owner || source.getEntity() instanceof ITamableEntity iTamableEntity && iTamableEntity.getOwner() != null) return false;
         return super.hurt(source, amount);
     }
 

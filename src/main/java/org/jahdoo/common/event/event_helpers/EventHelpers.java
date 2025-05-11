@@ -335,6 +335,7 @@ public class EventHelpers {
     public static void dontDamageAlliedMobs(ProjectileImpactEvent event) {
         var projectile = event.getProjectile();
         var type = event.getRayTraceResult();
+
         if(projectile.level() instanceof CustomLevel){
             if (projectile instanceof Arrow) {
                 if(type instanceof BlockHitResult) projectile.discard();
