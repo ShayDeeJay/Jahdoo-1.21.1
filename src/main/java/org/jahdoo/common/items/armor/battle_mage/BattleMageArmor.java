@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.armor.BaseArmor;
@@ -21,7 +20,6 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public class BattleMageArmor extends BaseArmor implements GeoItem, JahdooItem {
@@ -38,11 +36,6 @@ public class BattleMageArmor extends BaseArmor implements GeoItem, JahdooItem {
     @Override
     public Component getName(ItemStack stack) {
         return Helpers.withStyleComponent(super.getName(stack).getString(), ElementReg.mystic().partColourB());
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 
     @Override

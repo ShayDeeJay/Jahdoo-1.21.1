@@ -191,12 +191,6 @@ public class EternalWizard extends AbstractSkeleton implements ITamableEntity {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-//        if(this.owner != null && source.getEntity() == owner || source.getEntity() instanceof ITamableEntity iTamableEntity && iTamableEntity.getOwner() != null) return false;
-        return super.hurt(source, amount);
-    }
-
-    @Override
     protected @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         if(this.owner != null) CasterItemHelper.setWizardMode(this, player);
         return InteractionResult.CONSUME;

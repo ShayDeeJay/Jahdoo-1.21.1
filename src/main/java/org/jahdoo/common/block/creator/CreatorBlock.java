@@ -20,7 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
+import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.block.BlockInteractionHandler;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jetbrains.annotations.NotNull;
@@ -70,38 +70,34 @@ public class CreatorBlock extends BaseEntityBlock{
     @Override
     protected @NotNull ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
         if(!(pLevel.getBlockEntity(pPos) instanceof CreatorEntity wandManager)) return ItemInteractionResult.FAIL;
-        ItemStack stack = pPlayer.getItemInHand(pHand);
+        var stack = pPlayer.getMainHandItem();
         var inputItemHandler = wandManager.inputItemHandler;
         var outputItemHandler = wandManager.outputItemHandler;
 
         if(!stack.isEmpty()){
             for (int i = 0; i < inputItemHandler.getSlots(); i++) {
                 if(inputItemHandler.getStackInSlot(i).isEmpty()){
-                    if (BlockInteractionHandler.removeItemsFromHandToSlot(inputItemHandler, i, pPlayer, 1)) {
+                    if (BlockInteractionHandler.removeItemsFromHandToSlot(inputItemHandler, i, pPlayer, 1, pHand)) {
                         return ItemInteractionResult.SUCCESS;
                     }
                 }
             }
+            return ItemInteractionResult.FAIL;
         } else {
             if(!outputItemHandler.getStackInSlot(0).isEmpty()){
-                for (int i = 0; i < outputItemHandler.getSlots(); i++) {
-                    if(BlockInteractionHandler.removeItemsFromSlotToHand(outputItemHandler, i, pPlayer, pHand)){
-                        return ItemInteractionResult.CONSUME;
-                    }
-                }
+                Helpers.throwOrAddItem(pPlayer, outputItemHandler.getStackInSlot(0));
+                return ItemInteractionResult.SUCCESS;
             } else {
                 for (int i = 0; i < inputItemHandler.getSlots(); i++) {
                     int entry = inputItemHandler.getSlots() - (i+1);
                     if(!inputItemHandler.getStackInSlot(entry).isEmpty()){
-                        if (BlockInteractionHandler.removeItemsFromSlotToHand(inputItemHandler, entry, pPlayer, pHand)) {
-                            return ItemInteractionResult.CONSUME;
-                        }
+                        Helpers.throwOrAddItem(pPlayer, outputItemHandler.getStackInSlot(0));
+                        return ItemInteractionResult.SUCCESS;
                     }
                 }
+                return ItemInteractionResult.FAIL;
             }
         }
-
-        return ItemInteractionResult.FAIL;
     }
 
     private Optional<CreatorEntity> getEntity(Level level, BlockPos blockPos) {

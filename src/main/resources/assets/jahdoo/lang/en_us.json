@@ -111,6 +111,7 @@
   "jahdoo.configuration.mana_bar": "Always Show Stand Alone Mana Bar",
   "jahdoo.configuration.particle_render": "Alternate Particle Type",
   "jahdoo.configuration.durability": "Equipped Durability",
+  "jahdoo.configuration.health_display": "Health Bar Render",
 
   "key.assets.jahdoo.slot_1": "Wand Slot 01",
   "key.assets.jahdoo.slot_2": "Wand Slot 02",

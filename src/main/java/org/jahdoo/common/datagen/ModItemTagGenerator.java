@@ -39,6 +39,41 @@ public class ModItemTagGenerator extends ItemTagsProvider {
             .add(ANCIENT_GLAIVE.value())
             .add(INGMAS_SWORD.get());
 
+        this.tag(HEAD_ARMOR)
+            .add(MAGE_HELMET.get())
+            .add(BATTLEMAGE_HELMET.get())
+            .add(KNIGHT_KING_HELMET.get())
+            .add(WIZARD_HELMET.get())
+            .add(ANCIENT_GOLEM_HELMET.get());
+
+        this.tag(CHEST_ARMOR)
+            .add(MAGE_CHESTPLATE.get())
+            .add(BATTLEMAGE_CHESTPLATE.get())
+            .add(KNIGHT_KING_CHESTPLATE.get())
+            .add(WIZARD_CHESTPLATE.get())
+            .add(ANCIENT_GOLEM_CHESTPLATE.get());
+
+        this.tag(LEG_ARMOR)
+            .add(MAGE_LEGGINGS.get())
+            .add(BATTLEMAGE_LEGGINGS.get())
+            .add(KNIGHT_KING_LEGGINGS.get())
+            .add(WIZARD_LEGGINGS.get())
+            .add(ANCIENT_GOLEM_LEGGINGS.get());
+
+        this.tag(FOOT_ARMOR)
+            .add(MAGE_BOOTS.get())
+            .add(BATTLEMAGE_BOOTS.get())
+            .add(KNIGHT_KING_BOOTS.get())
+            .add(WIZARD_BOOTS.get())
+            .add(ANCIENT_GOLEM_BOOTS.get());
+
+        this.tag(DURABILITY_ENCHANTABLE)
+            .add(BASIC_SHIELD.get())
+            .add(UNDEAD_PROTECTOR_SHIELD.get())
+            .add(TOME_OF_UNITY.get())
+            .add(BATTLEMAGE_GAUNTLET.get())
+            .add(MAGNET.get());
+
     }
 
 

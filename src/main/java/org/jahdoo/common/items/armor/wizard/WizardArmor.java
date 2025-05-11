@@ -2,12 +2,9 @@ package org.jahdoo.common.items.armor.wizard;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.armor.BaseArmor;
@@ -21,7 +18,6 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import static org.jahdoo.common.registers.ArmorMaterialReg.WIZARD;
@@ -34,33 +30,13 @@ public class WizardArmor extends BaseArmor implements GeoItem, JahdooItem {
     }
 
     @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return false;
-    }
-
-    @Override
     public Component getName(ItemStack stack) {
         return Helpers.withStyleComponent(super.getName(stack).getString(), ElementReg.mystic().partColourA());
     }
 
     @Override
-    public void appendItemToolTips(ItemStack stack, TooltipContext context, List<Component> toolTips, boolean addSpacer) {
-        super.appendItemToolTips(stack, context, toolTips, addSpacer);
-    }
-
-    @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-    }
-
-    @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
     }
 
     @Override

@@ -32,7 +32,8 @@ public abstract class BaseItem extends Item implements JahdooItem {
 
     @Override
     public ItemStack applyEnchantments(ItemStack stack, List<EnchantmentInstance> enchantments) {
-        return ItemStack.EMPTY;
+        enchantments.removeIf(s -> s.enchantment.equals(Enchantments.MENDING));
+        return super.applyEnchantments(stack, enchantments);
     }
 
     @Override
@@ -43,11 +44,6 @@ public abstract class BaseItem extends Item implements JahdooItem {
         bonusModifierTooltip(stack, tooltipComponents, context, true);
         enchantmentTooltip(stack, tooltipComponents, true);
         runeSpacer(stack, tooltipComponents);
-    }
-
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return false;
     }
 
     @Override

@@ -123,7 +123,7 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> BASIC_SHIELD =
         complexItem("basic_shield", JahdooShieldItem::new);
 
-    public static final DeferredHolder<Item, Item> UNDEAD_PROTECTOR =
+    public static final DeferredHolder<Item, Item> UNDEAD_PROTECTOR_SHIELD =
         complexItem("undead_protector", JahdooShieldItem::new);
 
     public static final DeferredHolder<Item, Item> COIN_SACK =

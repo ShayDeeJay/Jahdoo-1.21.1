@@ -33,7 +33,7 @@ public class ShieldRenderer implements ICurioRenderer {
     ) {
         if (!(renderLayerParent.getModel() instanceof HumanoidModel<?> humanoidModel)) return;
 
-        var isUndead = itemStack.is(ItemReg.UNDEAD_PROTECTOR);
+        var isUndead = itemStack.is(ItemReg.UNDEAD_PROTECTOR_SHIELD);
         var scale = isUndead ? 1.6F : 1.2F;
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
         poseStack.pushPose();

@@ -18,6 +18,7 @@ import org.jahdoo.ascension.ability.Ability;
 import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
+import org.jahdoo.common.items.ExperienceOrb;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
@@ -165,14 +166,15 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
 
     private void setFadeInExperience(Player player){
         var xp = player.totalExperience;
+        var holdingXp = player.getMainHandItem().getItem() instanceof ExperienceOrb;
         var alwaysShow = CUSTOM_UI_ALWAYS_SHOW_XP.get();
 
         if(this.storedExp != xp) this.fadeXpTimer = 200;
 
-        if (this.fadeXpTimer > 0 || alwaysShow) {
+        if (this.fadeXpTimer > 0 || alwaysShow || holdingXp) {
             if (this.fadeInExperience < 1) this.fadeInExperience += 0.8F;
         } else {
-            if (this.fadeInExperience > -16) this.fadeInExperience -= 0.5F;
+            if (this.fadeInExperience > -5) this.fadeInExperience -= 0.5F;
         }
 
         this.fadeXpTimer = Math.max(this.fadeXpTimer - 0.5F, 0);

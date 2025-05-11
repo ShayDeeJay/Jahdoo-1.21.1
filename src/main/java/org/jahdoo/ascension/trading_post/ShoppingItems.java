@@ -337,7 +337,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
     public static ItemStack basicShieldWithRarity(@Nullable ItemStack itemStack, @Nullable JahdooRarity getRarity){
         var rarity = getRarity == null ? getRarity() : getRarity;
         var isUnique = rarity == UNIQUE;
-        var newStack = itemStack == null ? new ItemStack(isUnique ? ItemReg.UNDEAD_PROTECTOR : ItemReg.BASIC_SHIELD) : itemStack;
+        var newStack = itemStack == null ? new ItemStack(isUnique ? ItemReg.UNDEAD_PROTECTOR_SHIELD : ItemReg.BASIC_SHIELD) : itemStack;
         attachSharedProperties(newStack, isUnique ? 1 : 0, rarity, isUnique ? Random.nextInt(3, 6) : -1, 25, 25);
         newStack.set(ComponentReg.SHIELD_BLOCK_CHANCE, rarity.getAttributes().getRandomDamage());
 
@@ -347,7 +347,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
     public static ItemStack undeadProtectorShieldWithRarity(@Nullable ItemStack itemStack, @Nullable JahdooRarity getRarity){
         var rarity = getRarity == null ? getRarity() : getRarity;
         var isUnique = rarity == UNIQUE;
-        var newStack = itemStack == null ? new ItemStack(isUnique ? ItemReg.UNDEAD_PROTECTOR : ItemReg.BASIC_SHIELD) : itemStack;
+        var newStack = itemStack == null ? new ItemStack(isUnique ? ItemReg.UNDEAD_PROTECTOR_SHIELD : ItemReg.BASIC_SHIELD) : itemStack;
         attachSharedProperties(newStack, isUnique ? 1 : 0, rarity, isUnique ? Random.nextInt(3, 6) : -1, 25, 25);
         newStack.set(ComponentReg.SHIELD_BLOCK_CHANCE, rarity.getAttributes().getRandomDamage());
 

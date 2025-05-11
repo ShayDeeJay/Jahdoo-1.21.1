@@ -205,7 +205,7 @@ public class EventHelpers {
         if(entity.hasEffect(EffectReg.GREATER_VITALITY_EFFECT)){
             var getAttacker = event.getSource().getEntity();
             if(Random.nextInt(4) == 0){
-                if(getAttacker instanceof Player player){
+                if(getAttacker instanceof LivingEntity player){
                     VitalRejuvenation.successfulCastAnimation(player);
                     player.heal(2);
                 }
@@ -613,8 +613,9 @@ public class EventHelpers {
         if(modelData > 0) stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(modelData));
         throwItem(entity, stack.copyWithCount(withChampionCoins), entity.position());
         if(getKiller != null) {
-            incrementKilledMobsExp(level, getKiller, withChampionExp);
-            if(isChampion) incrementChampionsKilled(getKiller);
+            var correct = getKiller instanceof ITamableEntity tamable && tamable.getOwner() != null ? tamable.getOwner() : getKiller;
+            incrementKilledMobsExp(level, correct, withChampionExp);
+            if(isChampion) incrementChampionsKilled(correct);
         }
     }
 

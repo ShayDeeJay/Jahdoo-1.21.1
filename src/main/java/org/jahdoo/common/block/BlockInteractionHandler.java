@@ -48,11 +48,12 @@ public class BlockInteractionHandler {
         ItemStackHandler itemStackHandler,
         int outputSlot,
         Player player,
-        int itemCount
+        int itemCount,
+        InteractionHand interactionHand
     ){
-        ItemStack mainHandItems = player.getMainHandItem();
+        var mainHandItems = player.getItemInHand(interactionHand);
         if(mainHandItems.isEmpty()) return false;
-        itemStackHandler.setStackInSlot(outputSlot, mainHandItems.copyWithCount(itemCount));
+        itemStackHandler.setStackInSlot(outputSlot, mainHandItems.copyWithCount(1));
         /*if(!player.isCreative())*/ mainHandItems.shrink(itemCount);
         return true;
     }

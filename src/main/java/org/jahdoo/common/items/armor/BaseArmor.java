@@ -32,12 +32,33 @@ public abstract class BaseArmor extends ArmorItem implements JahdooItem {
 
     @Override
     public ItemStack applyEnchantments(ItemStack stack, List<EnchantmentInstance> enchantments) {
-        return ItemStack.EMPTY;
+        enchantments.removeIf(s -> s.enchantment.equals(Enchantments.MENDING));
+        return super.applyEnchantments(stack, enchantments);
     }
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public boolean canGrindstoneRepair(ItemStack stack) {
         return false;
+    }
+
+    @Override
+    public boolean isRepairable(ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+        return false;
+    }
+
+    @Override
+    public float getXpRepairRatio(ItemStack stack) {
+        return -1;
     }
 
     @Override

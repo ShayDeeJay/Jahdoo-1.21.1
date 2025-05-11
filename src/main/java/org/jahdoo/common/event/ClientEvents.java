@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -14,6 +15,7 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.ascension.utils.Configuration;
 import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.OverlayBlockTooltip;
@@ -49,17 +51,30 @@ public class ClientEvents {
         var entity = event.getEntity();
         var instance = Minecraft.getInstance();
         if(!entity.isAlive()) return;
+        var getConfig = Configuration.SHOW_HOSTILE_ONLY.get().getFirst();
+        var getCheck = switch (getConfig){
+            case "Hostile" -> entity instanceof Monster;
+            case "Instance Only" -> entity.level().getDescription().getString().contains("ascension");
+            case "All" -> true;
+            default -> false;
+        };
 
-        if(entity != instance.player){
-            var z = Math.min(entity.getBbWidth()/2F, 0.7F);
-            poseStack.pushPose();
-            poseStack.translate(0, entity.getBbHeight() + 0.4, 0);
-            poseStack.mulPose(instance.getEntityRenderDispatcher().cameraOrientation());
-            poseStack.mulPose(Axis.XP.rotation(-1.5f));
-            poseStack.scale(z, z, z);;
-            var getByAllied = getHealthHolderIcon(entity, instance.player);
-            drawHealthBar(poseStack.last(), event.getMultiBufferSource(), entity.getHealth(), entity.getMaxHealth(), getByAllied);
-            poseStack.popPose();
+        if(getCheck){
+            var d0 = instance.getEntityRenderDispatcher().distanceToSqr(entity);
+            if (!(d0 > (double) 3096.0F)) {
+                if (entity != instance.player) {
+                    var z = Math.min(entity.getBbWidth() / 2F, 0.7F);
+                    poseStack.pushPose();
+                    poseStack.translate(0, entity.getBbHeight() + 0.4, 0);
+                    poseStack.mulPose(instance.getEntityRenderDispatcher().cameraOrientation());
+                    poseStack.mulPose(Axis.XP.rotation(-1.5f));
+                    poseStack.scale(z, z, z);
+                    ;
+                    var getByAllied = getHealthHolderIcon(entity, instance.player);
+                    drawHealthBar(poseStack.last(), event.getMultiBufferSource(), entity.getHealth(), entity.getMaxHealth(), getByAllied);
+                    poseStack.popPose();
+                }
+            }
         }
 
         mysticEffectClient(event);

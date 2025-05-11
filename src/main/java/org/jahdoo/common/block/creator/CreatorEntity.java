@@ -60,7 +60,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
 
     public void tick(Level level, BlockPos blockPos, BlockState pState) {
         this.assignTankBlockInRange(level, blockPos, this.getCraftingCost());
-        if(this.canCraft()){
+            if(this.canCraft()){
             this.progress++;
             this.tableProcessingParticle();
             this.onCompleteCraft(level, blockPos);
@@ -98,15 +98,16 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         if(!this.isCompletedCraft()) return;
 
         this.chargeTankFuel(getCraftingCost());
-        successfulCraftVisual(level, blockPos, this.getOutputResult());
-        this.outputItemHandler.setStackInSlot(0, this.getOutputResult());
+        var copy = this.getOutputResult().copy();
+        this.outputItemHandler.insertItem(0, copy, false);
         this.clearContentsOnCompletion();
 
         this.progress = 0;
     }
 
     public void clearContentsOnCompletion(){
-        for(int i = 0; i < this.inputItemHandler.getSlots(); i++) this.inputItemHandler.getStackInSlot(i).shrink(1);
+        var handler = this.inputItemHandler;
+        for(int i = 0; i < handler.getSlots(); i++) handler.getStackInSlot(i).shrink(1);
     }
 
     public ItemStack getOutputResult(){
