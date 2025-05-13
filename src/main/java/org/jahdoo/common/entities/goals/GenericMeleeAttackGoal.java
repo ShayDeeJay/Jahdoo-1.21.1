@@ -8,16 +8,16 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
-import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
-import org.jahdoo.ascension.utils.DamageUtils;
+import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.common.registers.mod.ElementReg;
 
 import java.util.EnumSet;
 
 import static net.minecraft.world.entity.EntitySelector.NO_CREATIVE_OR_SPECTATOR;
 import static org.jahdoo.common.registers.EffectReg.*;
-import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class GenericMeleeAttackGoal extends Goal {
     protected final PathfinderMob mob;

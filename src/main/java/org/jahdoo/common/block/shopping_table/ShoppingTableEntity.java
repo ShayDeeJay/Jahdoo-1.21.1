@@ -10,8 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jahdoo.common.block.AbstractBEInventory;
 
-import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter;
-import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.*;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.*;
 import static org.jahdoo.common.registers.BlockEntityReg.SHOPPING_TABLE_BE;
 
 public class ShoppingTableEntity extends AbstractBEInventory {

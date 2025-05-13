@@ -15,17 +15,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.registers.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.jahdoo.ascension.mobs.MobManager.spawnAroundEntity;
+import static org.jahdoo.trial_nexus.mobs.MobManager.spawnAroundEntity;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.registers.mod.ElementReg.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.ascension.utils.PositionFinders.getOuterRingOfRadiusRandom;
+import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 
 public class VoidSpider extends Spider implements ITamableEntity {
     protected boolean triggerDeathSpawn;

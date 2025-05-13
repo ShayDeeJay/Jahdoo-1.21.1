@@ -1,6 +1,6 @@
 package org.jahdoo.common.items.runes.elemental_rune.mystic_runes;
 
-import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.common.items.runes.AbstractRune;
 import org.jahdoo.common.items.runes.rune_data.RuneCategories;
 import org.jahdoo.common.registers.mod.ElementReg;

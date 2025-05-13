@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.layers.CreeperPowerLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.monster.Creeper;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 public class InfernoCreeperRenderer extends MobRenderer<Creeper, CreeperModel<Creeper>> {
 

@@ -22,11 +22,11 @@ import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static net.minecraft.core.Direction.*;
 import static net.minecraft.world.effect.MobEffects.*;
-import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
-import static org.jahdoo.ascension.boon.player_boons.BoonSelection.iconFromEffect;
-import static org.jahdoo.ascension.level_manager.InstanceDifficulty.getFromName;
-import static org.jahdoo.ascension.utils.Helpers.stringIdToName;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
+import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
+import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromName;
+import static org.jahdoo.trial_nexus.utils.Helpers.stringIdToName;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 
 public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{

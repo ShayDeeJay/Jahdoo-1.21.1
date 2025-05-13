@@ -42,26 +42,12 @@ import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
-import org.jahdoo.ascension.ability.abilities_utility.block_placer.BlockPlacerAbility;
-import org.jahdoo.ascension.ability.abilities_utility.wall_placer.WallPlacerAbility;
-import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.attachments.CasterData;
-import org.jahdoo.ascension.attachments.InstanceData;
-import org.jahdoo.ascension.attachments.RunData;
-import org.jahdoo.ascension.level_manager.InstanceDifficulty;
-import org.jahdoo.ascension.level_manager.LevelGenerator;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.Maths;
-import org.jahdoo.ascension.utils.ModTags;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.components.AbilityHolder;
@@ -86,6 +72,19 @@ import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.common.registers.mod.RuneReg;
+import org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
+import org.jahdoo.trial_nexus.ability.abilities_utility.block_placer.BlockPlacerAbility;
+import org.jahdoo.trial_nexus.ability.abilities_utility.wall_placer.WallPlacerAbility;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Maths;
+import org.jahdoo.trial_nexus.utils.ModTags;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
@@ -98,19 +97,19 @@ import static net.minecraft.sounds.SoundSource.PLAYERS;
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
-import static org.jahdoo.ascension.attachments.ChaosCubeData.getRelativePosition;
-import static org.jahdoo.ascension.attachments.ChaosCubeData.updateAll;
-import static org.jahdoo.ascension.attachments.RunData.*;
-import static org.jahdoo.ascension.loot.LootHelpers.itemBehaviour;
-import static org.jahdoo.ascension.loot.RewardLootTables.getCompletionLoot;
-import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.storeBlockType;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttachmentReg.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
+import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.getRelativePosition;
+import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.updateAll;
+import static org.jahdoo.trial_nexus.attachments.RunData.*;
+import static org.jahdoo.trial_nexus.loot.LootHelpers.itemBehaviour;
+import static org.jahdoo.trial_nexus.loot.RewardLootTables.getCompletionLoot;
+import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 
 public class EventHelpers {
 
@@ -506,37 +505,12 @@ public class EventHelpers {
 
     }
 
-    public static void setGameModeOnDimChange(PlayerEvent.PlayerChangedDimensionEvent event, Player player) {
-        var toMCDim = event.getTo().location().toString().contains("minecraft:");
-        var fromCustomDim = event.getFrom().location().toString().contains("jahdoo:");
-        var fromMCDim = event.getFrom().location().toString().contains("minecraft:");
-        var toCustomDim = event.getTo().location().toString().contains("jahdoo:");
-
-        // Set adventure mode on dim join
-        if(fromMCDim && toCustomDim){
-            if(player instanceof ServerPlayer serverPlayer){
-                if(serverPlayer.gameMode.isSurvival()){
-                    serverPlayer.setGameMode(GameType.ADVENTURE);
-                }
-            }
-        }
-
-        // Reset game mode when leaving custom dim
-        if(toMCDim && fromCustomDim){
-            if(player instanceof ServerPlayer serverPlayer){
-                if(serverPlayer.gameMode.isSurvival()){
-                    serverPlayer.setGameMode(GameType.SURVIVAL);
-                }
-            }
-        }
-    }
-
     public static Entity getEntityPlayerIsLookingAt(Player player, double maxDistance) {
         var eyePosition = player.getEyePosition(1.0F);
         var lookVector = player.getViewVector(1.0F).scale(maxDistance);
         var endPoint = eyePosition.add(lookVector);
         var searchBox = player.getBoundingBox().expandTowards(lookVector).inflate(1.0D);
-        var entities = player.level().getEntities(player, searchBox, entity -> entity.isPickable());
+        var entities = player.level().getEntities(player, searchBox, Entity::isPickable);
         Entity closestEntity = null;
         var closestDistance = maxDistance;
 

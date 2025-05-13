@@ -14,7 +14,7 @@ import static net.minecraft.tags.BlockTags.SNOW;
 import static net.minecraft.world.level.block.Blocks.*;
 import static net.minecraft.world.level.block.Blocks.AIR;
 import static net.minecraft.world.level.block.Blocks.SAND;
-import static org.jahdoo.ascension.utils.ModTags.Block.*;
+import static org.jahdoo.trial_nexus.utils.ModTags.Block.*;
 import static org.jahdoo.common.registers.BlockReg.*;
 
 public class ModBlockTagGenerator extends BlockTagsProvider {

@@ -10,27 +10,27 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
-import org.jahdoo.ascension.ability.Ability;
-import org.jahdoo.ascension.attachments.CasterData;
-import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.items.caster_item.elemental_wand.ElementalWand;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.Ability;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.Nullable;
 
-import static org.jahdoo.ascension.ability.Ability.DISTANCE_CAST;
-import static org.jahdoo.ascension.ability.Ability.HOLD_CAST;
-import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
-import static org.jahdoo.ascension.utils.Maths.getFormattedFloat;
 import static org.jahdoo.common.items.caster_item.ItemAnimations.*;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttributeReg.COOLDOWN_REDUCTION;
 import static org.jahdoo.common.registers.AttributeReg.MANA_COST_REDUCTION;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
+import static org.jahdoo.trial_nexus.ability.Ability.DISTANCE_CAST;
+import static org.jahdoo.trial_nexus.ability.Ability.HOLD_CAST;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.Maths.getFormattedFloat;
 
 
 public class CastHelper {
@@ -151,12 +151,12 @@ public class CastHelper {
 
     public static InteractionResultHolder<ItemStack> use(Player player) {
         var itemStack = Helpers.getUsedItem(player);
+        var canUse = getCanApplyDistanceAbility(player, itemStack);
+
         var typeId = CasterData.selectedAbility(player);
         var getAbility = AbilityReg.getFirstSpellByTypeId(typeId);
-        var canUse = getCanApplyDistanceAbility(player, itemStack);
-        var cantUseInDim = player.level() instanceof CustomLevel && getAbility.isPresent() && !getAbility.get().isMultiType() && getAbility.get().getElemenType().equals(ElementReg.utility());
+        var cantUseInDim = player.level() instanceof CustomLevel && getAbility.isPresent() && getAbility.get().getElemenType().equals(ElementReg.utility()) && getAbility.get() != AbilityReg.BLOCK_BREAKER.get();
         var fail = InteractionResultHolder.fail(itemStack);
-
         if(cantUseInDim) {
             player.displayClientMessage(Component.literal("You cant use that here"), true);
             failedCastNotification(player);

@@ -4,7 +4,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.ascension.utils.ModTags;
+import org.jahdoo.trial_nexus.utils.ModTags;
 
 public enum ConverterValues {
 

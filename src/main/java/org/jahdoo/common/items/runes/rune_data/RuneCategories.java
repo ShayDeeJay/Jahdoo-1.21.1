@@ -1,6 +1,6 @@
 package org.jahdoo.common.items.runes.rune_data;
 
-import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 
 public enum RuneCategories {
 

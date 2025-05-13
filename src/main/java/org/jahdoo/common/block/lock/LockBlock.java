@@ -22,8 +22,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.level_manager.StructureManager;
-import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.trial_nexus.level_manager.StructureManager;
+import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
@@ -34,9 +34,9 @@ import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK;
 import static net.minecraft.world.level.block.Blocks.OBSERVER;
-import static org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
-import static org.jahdoo.ascension.level_manager.StructureManager.placeNewSide;
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
+import static org.jahdoo.trial_nexus.level_manager.StructureManager.placeNewSide;
+import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
 
@@ -119,6 +119,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         if(!(level.getBlockEntity(pos) instanceof LockBlockEntity entity)) return FAIL;
         if(!(level instanceof ServerLevel serverLevel)) return FAIL;
         if(!entity.isInitialized()) return FAIL;
+
 
         if(stack.is(ItemReg.EXIT_KEY)) {
             if(KeyItem.isValidKey(stack, level)){

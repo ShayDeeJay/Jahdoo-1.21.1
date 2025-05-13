@@ -13,7 +13,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.joml.Matrix4f;
 
-import static org.jahdoo.ascension.utils.Maths.ticksToTime;
+import static org.jahdoo.trial_nexus.utils.Maths.ticksToTime;
 
 @OnlyIn(Dist.CLIENT)
 public class EternalWizardRenderer extends EternalWizardBodyRenderer {

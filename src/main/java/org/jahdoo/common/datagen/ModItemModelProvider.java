@@ -9,7 +9,7 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;

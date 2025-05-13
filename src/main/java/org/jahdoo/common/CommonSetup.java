@@ -6,7 +6,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import org.jahdoo.ascension.utils.Configuration;
+import org.jahdoo.trial_nexus.utils.Configuration;
 import org.jahdoo.common.datagen.loot.ModLootModifiers;
 import org.jahdoo.common.items.gauntlet.GloveRenderer;
 import org.jahdoo.common.items.shields.ShieldRenderer;

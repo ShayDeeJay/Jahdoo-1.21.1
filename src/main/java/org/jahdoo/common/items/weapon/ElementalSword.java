@@ -6,13 +6,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
-import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 
 import java.util.Objects;
 
-import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.canOffHand;
 import static org.jahdoo.common.registers.mod.ElementReg.fromId;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;

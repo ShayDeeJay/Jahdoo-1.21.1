@@ -13,14 +13,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.networking.server2client.EnchantedBlockS2CP;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.BlockReg;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.List;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
-import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 
 public class EnchantedBlockEntity extends BlockEntity {

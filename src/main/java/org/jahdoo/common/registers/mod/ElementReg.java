@@ -9,9 +9,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.element.AbstractElement;
-import org.jahdoo.ascension.element.*;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.element.*;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.*;
 import java.util.function.Supplier;

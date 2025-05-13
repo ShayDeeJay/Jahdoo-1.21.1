@@ -3,10 +3,10 @@ package org.jahdoo.common.items.runes.perk_rune;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.rarity.RarityAttributes;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.rarity.RarityAttributes;
 
-import static org.jahdoo.ascension.rarity.JahdooRarity.LEGENDARY;
+import static org.jahdoo.trial_nexus.rarity.JahdooRarity.LEGENDARY;
 import static org.jahdoo.common.items.runes.rune_data.RuneData.NO_VALUE;
 
 public class MaxHealthRune extends AbstractPerkRune{

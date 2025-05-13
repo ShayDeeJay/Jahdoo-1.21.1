@@ -11,10 +11,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
-import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 
 public class AncientGlaive extends BaseWeapon {
 

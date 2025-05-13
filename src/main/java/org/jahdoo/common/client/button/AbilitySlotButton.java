@@ -8,9 +8,9 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
-import org.jahdoo.ascension.attachments.CasterData;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.client.screens.AbstractPanableScreen;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -19,8 +19,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
-import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
 import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 

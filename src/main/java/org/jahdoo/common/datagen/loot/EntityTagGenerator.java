@@ -9,7 +9,7 @@ import org.jahdoo.JahdooMod;
 
 import java.util.concurrent.CompletableFuture;
 
-import static org.jahdoo.ascension.utils.ModTags.Entities.*;
+import static org.jahdoo.trial_nexus.utils.ModTags.Entities.*;
 import static org.jahdoo.common.registers.EntityReg.*;
 
 public class EntityTagGenerator extends EntityTypeTagsProvider {

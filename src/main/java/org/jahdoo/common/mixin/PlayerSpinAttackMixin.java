@@ -7,16 +7,16 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.attachments.CasterData;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 import static org.jahdoo.common.registers.EffectReg.FROST_EFFECT;
 
 @Mixin(Player.class)

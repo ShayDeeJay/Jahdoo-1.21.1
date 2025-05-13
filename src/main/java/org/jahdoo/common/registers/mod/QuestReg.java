@@ -8,8 +8,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.quests.*;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.quests.*;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.List;
 import java.util.Objects;

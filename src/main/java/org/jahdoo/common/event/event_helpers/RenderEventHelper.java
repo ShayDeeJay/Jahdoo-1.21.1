@@ -1,5 +1,6 @@
 package org.jahdoo.common.event.event_helpers;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -11,6 +12,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -19,11 +21,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
-import org.jahdoo.ascension.ability.abilities_combat.arcane_shift.ArcaneShiftAbility;
-import org.jahdoo.ascension.ability.abilities_combat.frostbolts.FrostboltsAbility;
-import org.jahdoo.ascension.attachments.CasterData;
-import org.jahdoo.ascension.utils.Configuration;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.ability.abilities_combat.arcane_shift.ArcaneShiftAbility;
+import org.jahdoo.trial_nexus.ability.abilities_combat.frostbolts.FrostboltsAbility;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.Configuration;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.client.RenderHelpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.caster_item.CasterItem;
@@ -37,8 +39,11 @@ import java.util.List;
 import java.util.Objects;
 
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
-import static org.jahdoo.ascension.ability.AbilityBuilder.*;
+import static org.jahdoo.common.client.RenderHelpers.drawHealthBar;
+import static org.jahdoo.common.event.ClientEvents.getHealthHolderIcon;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
+import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.LEVEL_PREFIX;
 
 public class RenderEventHelper {
 
@@ -158,6 +163,35 @@ public class RenderEventHelper {
         player.setYRot(currentYaw + yawDifference * smoothFactor);
         player.setXRot(player.getXRot() + (desiredPitch - player.getXRot()) * smoothFactor);
     }
+
+    public static void renderHealthBar(RenderLivingEvent.Pre event, LivingEntity entity, Minecraft instance, PoseStack poseStack) {
+        var getConfig = Configuration.SHOW_HOSTILE_ONLY.get();
+        var getCheck = switch (getConfig){
+            case "Hostile" -> entity instanceof Monster;
+            case "Nexus Trial Only" -> entity.level().getDescription().getString().contains(LEVEL_PREFIX);
+            case "All" -> true;
+            default -> false;
+        };
+
+        if(getCheck){
+            var d0 = instance.getEntityRenderDispatcher().distanceToSqr(entity);
+            if (!(d0 > (double) 3096.0F)) {
+                if (entity != instance.player) {
+                    var z = Math.min(entity.getBbWidth() / 2F, 0.7F);
+                    var getByAllied = getHealthHolderIcon(entity, instance.player);
+
+                    poseStack.pushPose();
+                    poseStack.translate(0, entity.getBbHeight() + 0.4, 0);
+                    poseStack.mulPose(instance.getEntityRenderDispatcher().cameraOrientation());
+                    poseStack.mulPose(Axis.XP.rotation(-1.5f));
+                    poseStack.scale(z, z, z);
+                    drawHealthBar(poseStack.last(), event.getMultiBufferSource(), entity.getHealth(), entity.getMaxHealth(), getByAllied);
+                    poseStack.popPose();
+                }
+            }
+        }
+    }
+
 
     public static void renderChampionVisual(RenderLivingEvent.Pre livingEvent) {
         var entity = livingEvent.getEntity();

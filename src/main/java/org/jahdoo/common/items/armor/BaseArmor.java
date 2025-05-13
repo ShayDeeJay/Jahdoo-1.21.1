@@ -12,9 +12,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.Maths;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Maths;
 import org.jahdoo.common.items.JahdooItem;
 
 import java.util.List;

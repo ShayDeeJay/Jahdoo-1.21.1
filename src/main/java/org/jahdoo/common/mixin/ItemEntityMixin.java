@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.items.CoinItem;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.IItemEntityBehaviour;
+import org.jahdoo.trial_nexus.utils.IItemEntityBehaviour;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;

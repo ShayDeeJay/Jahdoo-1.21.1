@@ -12,11 +12,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.particle.ParticleHandlers;
 
-import static org.jahdoo.ascension.utils.ColourStore.EXPERIENCE_GREEN;
-import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.ColourStore.EXPERIENCE_GREEN;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 
 public class ExperienceOrb extends Item {

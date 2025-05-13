@@ -6,7 +6,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.creator.recipe.CreatorRecipe;
 
 import static org.jahdoo.JahdooMod.MOD_ID;

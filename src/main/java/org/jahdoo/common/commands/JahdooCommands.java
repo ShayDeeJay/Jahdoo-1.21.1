@@ -8,14 +8,14 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.ascension.attachments.CasterData;
-import org.jahdoo.ascension.attachments.PlayerTrialData;
-import org.jahdoo.ascension.attachments.PlayerWallet;
-import org.jahdoo.ascension.attachments.RunData;
-import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.trading_post.ShoppingArmor;
-import org.jahdoo.ascension.trading_post.ShoppingItems;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
+import org.jahdoo.trial_nexus.attachments.PlayerWallet;
+import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.trading_post.ShoppingArmor;
+import org.jahdoo.trial_nexus.trading_post.ShoppingItems;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.entities.safe.Safe;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
@@ -33,7 +33,7 @@ import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.JahdooMod.MOD_ID;
-import static org.jahdoo.ascension.loot.LootHelpers.standAloneLoot;
+import static org.jahdoo.trial_nexus.loot.LootHelpers.standAloneLoot;
 
 public class JahdooCommands {
 

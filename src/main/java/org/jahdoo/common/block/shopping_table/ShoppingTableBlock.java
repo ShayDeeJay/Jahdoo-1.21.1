@@ -23,17 +23,17 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
-import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.EMPTY;
-import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.checkAndPurchase;
-import static org.jahdoo.ascension.utils.Helpers.throwOrAddItem;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.EMPTY;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.checkAndPurchase;
+import static org.jahdoo.trial_nexus.utils.Helpers.throwOrAddItem;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 
 public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 

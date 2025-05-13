@@ -6,8 +6,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.ascension.attachments.CasterData;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.registers.AttachmentReg;
 
 public class CastingDataSyncS2CP implements CustomPacketPayload {

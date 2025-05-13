@@ -1,7 +1,7 @@
 package org.jahdoo.common.items.caster_item.elemental_wand;
 
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import software.bernie.geckolib.model.GeoModel;
 
 public class ElementalWandItemModel extends GeoModel<ElementalWand> {

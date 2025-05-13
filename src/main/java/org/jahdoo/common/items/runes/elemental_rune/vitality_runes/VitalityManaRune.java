@@ -2,10 +2,10 @@ package org.jahdoo.common.items.runes.elemental_rune.vitality_runes;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.rarity.RarityAttributes;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.rarity.RarityAttributes;
 
-import static org.jahdoo.ascension.rarity.JahdooRarity.COMMON;
+import static org.jahdoo.trial_nexus.rarity.JahdooRarity.COMMON;
 
 public class VitalityManaRune extends AbstractVitalityRune {
 

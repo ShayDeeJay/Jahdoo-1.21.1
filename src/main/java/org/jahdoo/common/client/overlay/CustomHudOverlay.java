@@ -14,9 +14,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.ascension.ability.Ability;
-import org.jahdoo.ascension.attachments.CasterData;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.ExperienceOrb;
 import org.jahdoo.common.items.JahdooItem;
@@ -24,6 +21,8 @@ import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
+import org.jahdoo.trial_nexus.ability.Ability;
+import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
 
@@ -34,16 +33,16 @@ import static com.mojang.blaze3d.systems.RenderSystem.*;
 import static java.lang.String.valueOf;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.attachments.CasterData.selectedAbility;
-import static org.jahdoo.ascension.utils.ColourStore.*;
-import static org.jahdoo.ascension.utils.Configuration.*;
-import static org.jahdoo.ascension.utils.Helpers.getUsedItem;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.ascension.utils.Maths.ticksToTime;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.centeredStringNoShadow;
 import static org.jahdoo.common.client.SharedUI.drawStringWithBackground;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
+import static org.jahdoo.trial_nexus.attachments.CasterData.selectedAbility;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
+import static org.jahdoo.trial_nexus.utils.Configuration.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.getUsedItem;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.Maths.ticksToTime;
 
 public class CustomHudOverlay implements LayeredDraw.Layer {
 
@@ -167,7 +166,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
     private void setFadeInExperience(Player player){
         var xp = player.totalExperience;
         var holdingXp = player.getMainHandItem().getItem() instanceof ExperienceOrb;
-        var alwaysShow = CUSTOM_UI_ALWAYS_SHOW_XP.get();
+        boolean alwaysShow = CUSTOM_UI_ALWAYS_SHOW_XP.get();
 
         if(this.storedExp != xp) this.fadeXpTimer = 200;
 
@@ -346,8 +345,6 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             quickSelectBar(graphics, casterData, minecraft);
         }
 
-
-
         if(!CUSTOM_UI.get()){
             pose.translate(0, -fadeIn, 0);
             setShaderColor(1f, 1f, 1f, fadeIn);
@@ -520,15 +517,19 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         pose.popPose();
     }
 
-
     private void xpBar(GuiGraphics graphics, PoseStack pose, Minecraft minecraft) {
-        pose.pushPose();
-        pose.translate(0, -fadeInExperience + 10, 0);
-        setShaderColor(1f, 1f, 1f, Math.max(0, fadeInExperience));
-        graphics.drawCenteredString(minecraft.font, Helpers.withStyleComponent("", -1), graphics.guiWidth()/2, graphics.guiHeight()/2, -1);
-        SharedUI.renderMiniXPBar(graphics, graphics.guiWidth()/2 - 42, graphics.guiHeight() - 5, Minecraft.getInstance());
-        setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        pose.popPose();
+        if(fadeInExperience > 0){
+            pose.pushPose();
+            pose.translate(0, -fadeInExperience + 10, 0);
+            setShaderColor(1f, 1f, 1f, Math.max(0, fadeInExperience));
+            xpAndAmount(graphics, minecraft);
+            setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            pose.popPose();
+        }
+    }
+
+    public static void xpAndAmount(GuiGraphics graphics, Minecraft minecraft) {
+        SharedUI.renderMiniXPBar(graphics, graphics.guiWidth() / 2 - 42, graphics.guiHeight() - 5, Minecraft.getInstance());
     }
 
     public static class AlignedGui {

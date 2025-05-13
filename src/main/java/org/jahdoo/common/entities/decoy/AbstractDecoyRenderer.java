@@ -1,10 +1,9 @@
 package org.jahdoo.common.entities.decoy;
 
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static net.minecraft.client.renderer.entity.EntityRendererProvider.*;
 

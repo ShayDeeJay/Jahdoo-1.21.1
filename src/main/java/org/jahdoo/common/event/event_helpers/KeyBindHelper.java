@@ -3,7 +3,7 @@ package org.jahdoo.common.event.event_helpers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.ascension.utils.Configuration;
+import org.jahdoo.trial_nexus.utils.Configuration;
 import org.jahdoo.common.client.screens.AbilityWheelScreen;
 import org.jahdoo.common.client.screens.AugmentScreen;
 import org.jahdoo.common.networking.client2server.MagnetActiveC2SP;

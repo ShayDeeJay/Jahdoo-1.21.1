@@ -8,9 +8,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.MutableComponent;
-import org.jahdoo.ascension.attachments.InstanceData;
-import org.jahdoo.ascension.level_manager.LevelGenerator;
-import org.jahdoo.ascension.quests.AbstractQuest;
+import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
+import org.jahdoo.trial_nexus.quests.AbstractQuest;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -20,9 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 import static java.lang.String.valueOf;
-import static org.jahdoo.ascension.utils.ColourStore.*;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.ascension.utils.Maths.ticksToTime;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.Maths.ticksToTime;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiFade;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 

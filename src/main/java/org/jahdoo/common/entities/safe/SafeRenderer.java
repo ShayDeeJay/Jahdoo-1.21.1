@@ -10,12 +10,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.network.chat.Component;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.Maths;
 import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Maths;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
@@ -67,23 +66,21 @@ public class SafeRenderer extends GeoEntityRenderer<Safe> {
     public static void roomData(Safe entity, PoseStack pPoseStack, MultiBufferSource bufferSource, EntityRenderDispatcher dispatcher, float partialTicks) {
         var offWhite = ColourStore.NEGATIVE_RED;
         var displayName = Helpers.withStyleComponent(Maths.ticksToTime(String.valueOf(entity.getTimer())), offWhite);
-        pPoseStack.pushPose();
         var scale = Math.sin(((entity.tickCount + partialTicks) / 10.0F)) * 0.2F + 3.5;
-        pPoseStack.translate(0, scale, 0);
         var scale1 = (float) scale/1.4F;
-        pPoseStack.scale(scale1, scale1, scale1);
-        pPoseStack.mulPose(dispatcher.camera.rotation());
-
         var x = 0.020F;
-        pPoseStack.scale(x, -x, x);
-        Matrix4f matrix4f = pPoseStack.last().pose();
-
+        var matrix4f = pPoseStack.last().pose();
         var font = Minecraft.getInstance().font;
         var f1 = (float)(-font.width(displayName) / 2);
-
         var text = Helpers.withStyleComponent("HURRY!", offWhite);
         var f2 = (float)(-font.width(text) / 2);
 
+        pPoseStack.pushPose();
+        pPoseStack.translate(0, entity.getBbHeight(), 0);
+        pPoseStack.translate(0, scale, 0);
+        pPoseStack.scale(scale1, scale1, scale1);
+        pPoseStack.mulPose(dispatcher.camera.rotation());
+        pPoseStack.scale(x, -x, x);
         font.drawInBatch(text, f2, -10, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         font.drawInBatch(displayName, f1, 0, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         pPoseStack.popPose();

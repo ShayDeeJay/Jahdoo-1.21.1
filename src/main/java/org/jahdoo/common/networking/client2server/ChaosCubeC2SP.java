@@ -7,9 +7,9 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.ascension.attachments.ChaosCubeData;
+import org.jahdoo.trial_nexus.attachments.ChaosCubeData;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 

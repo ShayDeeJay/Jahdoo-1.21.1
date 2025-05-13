@@ -16,22 +16,22 @@ import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecall;
-import org.jahdoo.ascension.ability.abilities_combat.nova_smash.NovaSmash;
-import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
-import org.jahdoo.ascension.attachments.CasterData;
-import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
-import org.jahdoo.ascension.attachments.player_abilities.Rebound;
-import org.jahdoo.ascension.attachments.player_abilities.TripleJump;
-import org.jahdoo.ascension.utils.Helpers;
 import org.jahdoo.common.commands.JahdooCommands;
 import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.DimensionalRecall;
+import org.jahdoo.trial_nexus.ability.abilities_combat.nova_smash.NovaSmash;
+import org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
+import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
+import org.jahdoo.trial_nexus.attachments.player_abilities.TripleJump;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.event.CurioChangeEvent;
 
-import static org.jahdoo.ascension.utils.Helpers.syncCasterData;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_ITEM_DATA;
+import static org.jahdoo.trial_nexus.utils.Helpers.syncCasterData;
 
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID)
@@ -60,7 +60,6 @@ public class ServerEvents {
     public static void dimChange(PlayerEvent.PlayerChangedDimensionEvent event) {
         var player = event.getEntity();
 
-        setGameModeOnDimChange(event, player);
     }
 
     @SubscribeEvent
@@ -136,6 +135,7 @@ public class ServerEvents {
     public static void onPlayerTickEvent(PlayerTickEvent.Pre event){
         var player = event.getEntity();
         var level = player.level();
+
         questTracker(level, player);
 
         if(player instanceof ServerPlayer serverPlayer){
@@ -153,10 +153,16 @@ public class ServerEvents {
         Rebound.staticTickEvent(player);
     }
 
+
     @SubscribeEvent
     public static void levelTickEvent(LevelTickEvent.Pre tickEvent){
         instanceEndingWarning(tickEvent);
         discardLevelOnEnd(tickEvent);
+    }
+
+    @SubscribeEvent
+    public static void onBlockBreak(PlayerEvent.BreakSpeed event) {
+        TrailNexusDimensionEvents.useItemBlockEvent(event);
     }
 
     @SubscribeEvent
@@ -167,6 +173,7 @@ public class ServerEvents {
         var level = event.getLevel();
         var getBlock = level.getBlockState(pos);
 
+        TrailNexusDimensionEvents.useItemBlockEvent(event);
         perkTableInteraction(getBlock, level, pos, player, event);
         removeWandInteractionWithBlocks(event, player, item, getBlock);
     }

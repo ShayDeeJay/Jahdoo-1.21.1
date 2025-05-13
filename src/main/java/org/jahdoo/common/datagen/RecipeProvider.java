@@ -8,7 +8,7 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import org.jahdoo.ascension.utils.ModTags;
+import org.jahdoo.trial_nexus.utils.ModTags;
 import org.jahdoo.common.block.creator.recipe.CreatorRecipeBuilder;
 
 import java.util.List;

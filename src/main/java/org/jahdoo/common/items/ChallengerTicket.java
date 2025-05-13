@@ -17,15 +17,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.registers.SoundReg;
 
 import java.util.List;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.level_manager.LevelGenerator.createLevelAndStartingRoom;
-import static org.jahdoo.ascension.utils.Helpers.getSoundWithPositionV;
+import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.createLevelAndStartingRoom;
+import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPositionV;
 
 public class ChallengerTicket extends Item implements JahdooItem {
 

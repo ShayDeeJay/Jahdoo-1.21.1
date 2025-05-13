@@ -6,8 +6,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.ascension.attachments.RunData;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 public class AddQuestC2SP implements CustomPacketPayload {
 

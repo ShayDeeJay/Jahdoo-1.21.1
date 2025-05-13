@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.common.block.rune_table.RuneTableEntity;
 import org.jahdoo.common.block.rune_table.RuneTableMenu;
 import org.jahdoo.common.client.SharedUI;
@@ -22,7 +22,7 @@ import java.util.Optional;
 
 import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 import static org.jahdoo.common.block.rune_table.enchanted_forge.RepairManager.*;
 import static org.jahdoo.common.block.rune_table.enchanted_forge.RuneManager.*;
 import static org.jahdoo.common.block.rune_table.enchanted_forge.RuneScreenShared.overlayInventory;

@@ -1,7 +1,7 @@
 package org.jahdoo.common.items.armor.ancient_golem_armor;
 
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import software.bernie.geckolib.model.DefaultedItemGeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 

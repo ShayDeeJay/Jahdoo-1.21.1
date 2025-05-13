@@ -21,8 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.ItemInteractionResult.*;

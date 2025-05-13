@@ -15,8 +15,8 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 
 import java.util.ArrayList;
 import java.util.List;

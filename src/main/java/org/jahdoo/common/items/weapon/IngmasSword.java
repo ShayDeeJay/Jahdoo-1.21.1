@@ -4,8 +4,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
 
-import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 
 public class IngmasSword extends BaseWeapon {
 

@@ -2,8 +2,8 @@ package org.jahdoo.common.items.gauntlet;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.items.BaseItem;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;

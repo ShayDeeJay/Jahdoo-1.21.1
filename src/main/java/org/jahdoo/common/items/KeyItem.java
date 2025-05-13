@@ -9,15 +9,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static org.jahdoo.ascension.utils.ColourStore.*;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 
 public class KeyItem extends Item implements JahdooItem {
 

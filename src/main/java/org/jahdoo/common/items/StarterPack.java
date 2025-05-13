@@ -12,12 +12,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.mobs.MobItemHandler;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.mobs.MobItemHandler;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.List;
 
-import static org.jahdoo.ascension.utils.ColourStore.*;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 
 public class StarterPack extends Item {
 

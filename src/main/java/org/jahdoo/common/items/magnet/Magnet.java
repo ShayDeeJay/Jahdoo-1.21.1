@@ -11,10 +11,10 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.Maths;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Maths;
 import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.registers.SoundReg;
 import top.theillusivec4.curios.api.SlotContext;
@@ -23,8 +23,8 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jahdoo.ascension.utils.ColourStore.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.common.entities.EntityMovers.entityMover;
 import static org.jahdoo.common.registers.ComponentReg.MAGNET_DATA;
 

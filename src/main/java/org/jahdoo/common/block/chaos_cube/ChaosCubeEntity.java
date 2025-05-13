@@ -16,11 +16,11 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.ascension.ability.AbilityBuilder;
-import org.jahdoo.ascension.ability.AbstractBlockAbility;
-import org.jahdoo.ascension.attachments.CasterData;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.trial_nexus.ability.AbilityBuilder;
+import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.components.AbilityHolder;
@@ -44,8 +44,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.jahdoo.ascension.attachments.ChaosCubeData.getActionDirection;
-import static org.jahdoo.ascension.attachments.ChaosCubeData.getActive;
+import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.getActionDirection;
+import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.getActive;
 import static org.jahdoo.common.block.BlockInteractionHandler.getItemHandlerAt;
 import static org.jahdoo.common.entities.EntityAnimations.*;
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
@@ -61,7 +61,7 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
 
     public ChaosCubeEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.MODULAR_CHAOS_CUBE_BE.get(), pos, state, 1);
-        this.setData(MODULAR_CHAOS_CUBE, org.jahdoo.ascension.attachments.ChaosCubeData.initData(this.getBlockPos()));
+        this.setData(MODULAR_CHAOS_CUBE, org.jahdoo.trial_nexus.attachments.ChaosCubeData.initData(this.getBlockPos()));
     }
 
     @Override

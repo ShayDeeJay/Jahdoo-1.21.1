@@ -2,8 +2,8 @@ package org.jahdoo.common.items.runes.resilience_rune;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.rarity.RarityAttributes;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.rarity.RarityAttributes;
 import org.jahdoo.common.registers.AttributeReg;
 
 public class ResilienceRune extends ProtectorRune {

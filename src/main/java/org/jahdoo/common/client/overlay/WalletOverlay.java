@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.client.SharedUI;
 import org.jetbrains.annotations.Nullable;
@@ -17,11 +17,11 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import static net.minecraft.network.chat.Component.empty;
-import static org.jahdoo.ascension.attachments.PlayerWallet.*;
-import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.convertToCoins;
-import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter.convertToWallet;
-import static org.jahdoo.ascension.utils.ColourStore.NEGATIVE_RED;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.*;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.convertToCoins;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.convertToWallet;
+import static org.jahdoo.trial_nexus.utils.ColourStore.NEGATIVE_RED;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
 
 public class WalletOverlay implements LayeredDraw.Layer {

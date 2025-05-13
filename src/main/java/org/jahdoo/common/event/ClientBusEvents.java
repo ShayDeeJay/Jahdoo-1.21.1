@@ -8,7 +8,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.altar.AltarRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;

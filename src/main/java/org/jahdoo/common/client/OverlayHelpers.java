@@ -6,7 +6,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,10 +14,10 @@ import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static net.minecraft.network.chat.Component.translatable;
-import static org.jahdoo.ascension.utils.ColourStore.*;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponentTrans;
-import static org.jahdoo.ascension.utils.Maths.*;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponentTrans;
+import static org.jahdoo.trial_nexus.utils.Maths.*;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.screens.StatScreen.fadeBackground;
 

@@ -1,6 +1,6 @@
 package org.jahdoo.common.block.chaos_cube;
 
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 
 public class ChaosCubeModel extends DefaultedBlockGeoModel<ChaosCubeEntity> {

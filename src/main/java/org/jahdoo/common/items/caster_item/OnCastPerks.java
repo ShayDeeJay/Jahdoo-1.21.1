@@ -4,9 +4,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.common.registers.AttributeReg;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
-import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class OnCastPerks {
 

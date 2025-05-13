@@ -12,8 +12,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static net.minecraft.client.Minecraft.getInstance;
 import static org.jahdoo.common.block.loot_chest.LootChestRenderer.roomData;

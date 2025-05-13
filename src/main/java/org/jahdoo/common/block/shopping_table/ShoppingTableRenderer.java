@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.joml.Matrix4f;
 
@@ -18,8 +18,8 @@ import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 import static net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 import static net.minecraft.world.item.ItemDisplayContext.FIXED;
-import static org.jahdoo.ascension.attachments.PlayerWallet.CurrencyConverter;
-import static org.jahdoo.ascension.utils.ColourStore.OFF_WHITE;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
+import static org.jahdoo.trial_nexus.utils.ColourStore.OFF_WHITE;
 import static org.jahdoo.common.block.shopping_table.DisplayDirection.*;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 

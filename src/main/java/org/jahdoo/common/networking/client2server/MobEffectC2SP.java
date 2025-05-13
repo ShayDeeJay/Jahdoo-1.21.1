@@ -9,8 +9,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 public class MobEffectC2SP implements CustomPacketPayload {
 

@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.ascension.boon.player_boons.Boon;
+import org.jahdoo.trial_nexus.boon.player_boons.Boon;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.networking.client2server.PerkTableSyncC2SP;
 import org.jahdoo.common.registers.SoundReg;
@@ -19,8 +19,8 @@ import java.util.function.Consumer;
 
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.utils.ColourStore.MAGNET_RANGE_GREEN;
-import static org.jahdoo.ascension.utils.ColourStore.MAGNET_STRENGTH_RED;
+import static org.jahdoo.trial_nexus.utils.ColourStore.MAGNET_RANGE_GREEN;
+import static org.jahdoo.trial_nexus.utils.ColourStore.MAGNET_STRENGTH_RED;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.registers.ItemReg.WAND_ITEM_FROST;
 

@@ -10,8 +10,8 @@ import org.jahdoo.common.items.magnet.MagnetData;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import top.theillusivec4.curios.api.CuriosApi;
 
 public class MagnetActiveC2SP implements CustomPacketPayload {

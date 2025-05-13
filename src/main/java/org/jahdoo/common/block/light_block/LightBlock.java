@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.mod.ElementReg;
 

@@ -28,14 +28,14 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 
-import static org.jahdoo.ascension.utils.Helpers.Random;
-import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
 

@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.common.registers.BlockReg;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 public class EnchantedBlockS2CP implements CustomPacketPayload{
     public static final Type<EnchantedBlockS2CP> TYPE = new Type<>(Helpers.res("block_sync"));

@@ -30,9 +30,9 @@ import org.jetbrains.annotations.Nullable;
 import static net.minecraft.sounds.SoundEvents.LODESTONE_COMPASS_LOCK;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
-import static org.jahdoo.ascension.loot.LootHelpers.coinChestGetter;
-import static org.jahdoo.ascension.loot.LootHelpers.lootChestGetter;
-import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.trial_nexus.loot.LootHelpers.coinChestGetter;
+import static org.jahdoo.trial_nexus.loot.LootHelpers.lootChestGetter;
+import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class LootChestBlock extends BaseEntityBlock {

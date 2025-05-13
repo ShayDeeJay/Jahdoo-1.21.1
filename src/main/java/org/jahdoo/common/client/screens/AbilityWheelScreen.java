@@ -16,10 +16,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
-import org.jahdoo.ascension.ability.Ability;
-import org.jahdoo.ascension.attachments.CasterData;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.ability.Ability;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
 import org.jahdoo.common.registers.mod.AbilityReg;
@@ -32,11 +32,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static org.jahdoo.ascension.attachments.CasterData.entityHolderWithSelected;
-import static org.jahdoo.ascension.utils.Helpers.syncSelectedAbility;
+import static org.jahdoo.trial_nexus.attachments.CasterData.entityHolderWithSelected;
+import static org.jahdoo.trial_nexus.utils.Helpers.syncSelectedAbility;
 import static org.jahdoo.common.client.Icons.COG;
-import static org.jahdoo.ascension.ability.AbilityComponentHelper.getAugmentModificationScreenWand;
-import static org.jahdoo.ascension.ability.AbilityComponentHelper.isConfigAbility;
+import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAugmentModificationScreenWand;
+import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.isConfigAbility;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class AbilityWheelScreen extends Screen  {

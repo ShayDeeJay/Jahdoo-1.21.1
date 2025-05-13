@@ -7,9 +7,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.PositionFinders;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import java.util.function.BiConsumer;
 
 import static net.minecraft.sounds.SoundEvents.TRIAL_SPAWNER_AMBIENT;
 import static net.minecraft.sounds.SoundEvents.TRIAL_SPAWNER_AMBIENT_OMINOUS;
-import static org.jahdoo.ascension.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 
 public class AltarAnim {

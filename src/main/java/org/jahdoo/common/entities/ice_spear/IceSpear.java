@@ -16,10 +16,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.ability.effects.JahdooMobEffect;
-import org.jahdoo.ascension.attachments.CasterData;
-import org.jahdoo.ascension.utils.DamageUtils;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.DamageUtils;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.registers.*;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -28,8 +28,8 @@ import software.bernie.geckolib.animation.AnimationController;
 
 import javax.annotation.Nullable;
 
-import static org.jahdoo.ascension.ability.AbilityBuilder.*;
-import static org.jahdoo.ascension.ability.ProjectileProperties.setProjectileWithOffsets;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.ability.ProjectileProperties.setProjectileWithOffsets;
 import static org.jahdoo.common.entities.EntityAnimations.ICE_SPEAR;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;

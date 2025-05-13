@@ -20,7 +20,7 @@ import java.util.List;
 
 import static net.minecraft.world.InteractionResultHolder.fail;
 import static net.minecraft.world.InteractionResultHolder.pass;
-import static org.jahdoo.ascension.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
+import static org.jahdoo.trial_nexus.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTIONS;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.canOffHand;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.canOffhandWand;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
@@ -94,7 +94,7 @@ public class CasterItem extends BaseItem {
                 var state = level.getBlockState(result.getBlockPos());
                 var below = level.getBlockState(result.getBlockPos().below(1));
 
-                if(entity instanceof LockBlockEntity block && !block.canPlace() ||  state.is(ALLOWED_BLOCK_INTERACTIONS) || below.is(ALLOWED_BLOCK_INTERACTIONS)){
+                if(entity instanceof LockBlockEntity block && !block.canPlace() || state.is(ALLOWED_BLOCK_INTERACTIONS) || below.is(ALLOWED_BLOCK_INTERACTIONS)){
                     return fail(item);
                 }
             }

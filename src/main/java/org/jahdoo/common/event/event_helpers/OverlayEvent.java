@@ -6,9 +6,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import org.jahdoo.ascension.attachments.CasterData;
-import org.jahdoo.ascension.utils.Configuration;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.Configuration;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.client.screens.AbilityWheelScreen;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static net.neoforged.neoforge.client.gui.VanillaGuiLayers.*;
-import static org.jahdoo.ascension.ability.AbilityBuilder.CASTING_DISTANCE;
-import static org.jahdoo.ascension.ability.abilities_combat.arcane_shift.ArcaneShiftAbility.abilityId;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.CASTING_DISTANCE;
+import static org.jahdoo.trial_nexus.ability.abilities_combat.arcane_shift.ArcaneShiftAbility.abilityId;
 
 public class OverlayEvent {
 

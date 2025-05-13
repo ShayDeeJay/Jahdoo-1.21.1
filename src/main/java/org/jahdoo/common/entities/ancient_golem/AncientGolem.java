@@ -26,7 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.ascension.element.AbstractElement;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.goals.*;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -42,7 +42,7 @@ import static net.minecraft.network.syncher.EntityDataSerializers.*;
 import static net.minecraft.network.syncher.SynchedEntityData.*;
 import static net.minecraft.world.entity.ai.targeting.TargetingConditions.*;
 import static net.neoforged.neoforge.common.CommonHooks.onLivingKnockBack;
-import static org.jahdoo.ascension.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.common.entities.SharedEntityBehaviours.canTarget;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 

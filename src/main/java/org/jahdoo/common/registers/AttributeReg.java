@@ -23,7 +23,7 @@ import java.util.UUID;
 import static net.minecraft.resources.ResourceLocation.*;
 import static net.minecraft.world.entity.EntityType.*;
 import static net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.*;
-import static org.jahdoo.ascension.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.*;
 
 public class AttributeReg {
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, JahdooMod.MOD_ID);

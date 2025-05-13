@@ -7,10 +7,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.ability.AbilityComponentHelper;
-import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
@@ -19,9 +19,9 @@ import org.jahdoo.common.registers.ComponentReg;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jahdoo.ascension.utils.ColourStore.DIAMOND_BOX;
-import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.ColourStore.DIAMOND_BOX;
+import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getNameWithStyle;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.standAloneAttributes;
 

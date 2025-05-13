@@ -1,7 +1,7 @@
 package org.jahdoo.common.entities.burning_skull;
 
 import net.minecraft.resources.ResourceLocation;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 

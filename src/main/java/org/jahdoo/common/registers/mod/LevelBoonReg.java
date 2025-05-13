@@ -8,11 +8,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.boon.level_boons.AbstractLevelBoon;
-import org.jahdoo.ascension.boon.level_boons.negative.*;
-import org.jahdoo.ascension.boon.level_boons.positive.*;
-import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
+import org.jahdoo.trial_nexus.boon.level_boons.negative.*;
+import org.jahdoo.trial_nexus.boon.level_boons.positive.*;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.Objects;
 import java.util.Optional;

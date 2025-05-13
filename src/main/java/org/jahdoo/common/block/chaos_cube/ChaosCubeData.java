@@ -7,7 +7,7 @@ import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 public class ChaosCubeData {
 
     // Toggle the power state
-    public static void selectDirection(ChaosCubeEntity entity, org.jahdoo.ascension.attachments.ChaosCubeData newDirection) {
+    public static void selectDirection(ChaosCubeEntity entity, org.jahdoo.trial_nexus.attachments.ChaosCubeData newDirection) {
         PacketDistributor.sendToServer(new ChaosCubeC2SP(entity.getBlockPos(), newDirection));
         entity.setData(MODULAR_CHAOS_CUBE, newDirection);
         entity.setChanged();

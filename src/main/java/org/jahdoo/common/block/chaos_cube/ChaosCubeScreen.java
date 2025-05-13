@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import org.jahdoo.ascension.ability.AbstractBlockAbility;
+import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jetbrains.annotations.NotNull;
@@ -19,16 +19,16 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static org.jahdoo.ascension.attachments.ChaosCubeData.*;
-import static org.jahdoo.ascension.utils.ColourStore.BORDER_COLOUR;
-import static org.jahdoo.ascension.utils.ColourStore.BOX_COLOUR;
+import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.*;
+import static org.jahdoo.trial_nexus.utils.ColourStore.BORDER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.ColourStore.BOX_COLOUR;
 import static org.jahdoo.common.block.chaos_cube.ChaosCubeData.selectDirection;
 import static org.jahdoo.common.block.chaos_cube.ChaosCubeEntity.AUGMENT_SLOT;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
 import static org.jahdoo.common.client.button.ToggleComponent.textWithBackground;
-import static org.jahdoo.ascension.ability.AbilityComponentHelper.isValidAugmentUtil;
+import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.isValidAugmentUtil;
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 
 public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {

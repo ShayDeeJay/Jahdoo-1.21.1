@@ -2,16 +2,16 @@ package org.jahdoo.common.items.shields;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.items.BaseItem;
 import org.jahdoo.common.registers.ComponentReg;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.List;
 
-import static org.jahdoo.ascension.utils.Maths.doubleFormattedDouble;
-import static org.jahdoo.ascension.utils.Maths.roundNonWholeDouble;
+import static org.jahdoo.trial_nexus.utils.Maths.doubleFormattedDouble;
+import static org.jahdoo.trial_nexus.utils.Maths.roundNonWholeDouble;
 
 public class JahdooShieldItem extends BaseItem implements ICurioItem {
 

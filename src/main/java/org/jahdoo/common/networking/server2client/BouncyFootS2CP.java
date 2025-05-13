@@ -7,10 +7,10 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
-import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
+import static org.jahdoo.trial_nexus.utils.Maths.singleFormattedDouble;
 
 public class BouncyFootS2CP implements CustomPacketPayload {
     public static final Type<BouncyFootS2CP> TYPE = new Type<>(Helpers.res("sync_bouncy_foot"));

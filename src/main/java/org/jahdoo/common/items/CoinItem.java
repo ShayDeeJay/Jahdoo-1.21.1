@@ -11,17 +11,17 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jahdoo.ascension.attachments.RunData;
-import org.jahdoo.ascension.utils.IItemEntityBehaviour;
+import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.utils.IItemEntityBehaviour;
 import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
-import static org.jahdoo.ascension.attachments.PlayerWallet.CoinProperties;
-import static org.jahdoo.ascension.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
-import static org.jahdoo.ascension.utils.LocalLootBeamData.COIN;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CoinProperties;
+import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.LocalLootBeamData.COIN;
 import static org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg.INSTANCE;
 
 public class CoinItem extends Item implements IItemEntityBehaviour {

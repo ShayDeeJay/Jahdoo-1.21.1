@@ -20,16 +20,16 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.portal.DimensionTransition;
-import org.jahdoo.ascension.attachments.RunData;
-import org.jahdoo.ascension.level_manager.LevelGenerator;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
-import static org.jahdoo.ascension.level_manager.LevelGenerator.createLevelAndStartingRoom;
-import static org.jahdoo.ascension.utils.ColourStore.COSMIC_PURPLE;
-import static org.jahdoo.ascension.utils.ColourStore.PERK_GREEN;
+import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.createLevelAndStartingRoom;
+import static org.jahdoo.trial_nexus.utils.ColourStore.COSMIC_PURPLE;
+import static org.jahdoo.trial_nexus.utils.ColourStore.PERK_GREEN;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 
 public class TrialPortalBlock extends NetherPortalBlock {

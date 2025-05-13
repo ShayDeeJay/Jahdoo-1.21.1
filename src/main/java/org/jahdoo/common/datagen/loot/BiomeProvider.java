@@ -5,17 +5,15 @@ import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static org.jahdoo.common.registers.DamageTypeReg.BIOME_SOURCE;
-import static org.jahdoo.common.registers.DamageTypeReg.JAHDOO_SOURCE;
 
 public class BiomeProvider extends DatapackBuiltinEntriesProvider {
 

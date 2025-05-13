@@ -2,7 +2,7 @@ package org.jahdoo.common.client;
 
 import net.minecraft.resources.ResourceLocation;
 
-import static org.jahdoo.ascension.utils.Helpers.res;
+import static org.jahdoo.trial_nexus.utils.Helpers.res;
 
 public class Icons {
 

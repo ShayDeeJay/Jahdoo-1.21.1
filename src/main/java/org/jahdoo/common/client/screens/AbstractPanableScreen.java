@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import org.jahdoo.ascension.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.common.client.SharedUI;
 
 import static net.minecraft.network.chat.Component.empty;

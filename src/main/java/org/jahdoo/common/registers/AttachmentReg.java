@@ -7,12 +7,12 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.ascension.ability.abilities_combat.dimensional_recall.DimensionalRecall;
-import org.jahdoo.ascension.ability.abilities_combat.nova_smash.NovaSmash;
-import org.jahdoo.ascension.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
-import org.jahdoo.ascension.attachments.*;
-import org.jahdoo.ascension.attachments.player_abilities.MageFlight;
-import org.jahdoo.ascension.attachments.player_abilities.*;
+import org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.DimensionalRecall;
+import org.jahdoo.trial_nexus.ability.abilities_combat.nova_smash.NovaSmash;
+import org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
+import org.jahdoo.trial_nexus.attachments.*;
+import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
+import org.jahdoo.trial_nexus.attachments.player_abilities.*;
 
 import java.util.function.Supplier;
 

@@ -6,7 +6,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.phys.AABB;
-import org.jahdoo.ascension.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.ITamableEntity;
 

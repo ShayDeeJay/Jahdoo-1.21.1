@@ -22,9 +22,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.ascension.level_manager.InstanceDifficulty;
-import org.jahdoo.ascension.utils.Helpers;
-import org.jahdoo.ascension.utils.LocalLootBeamData;
+import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.LocalLootBeamData;
 import org.jahdoo.common.components.LootCrateData;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
@@ -36,8 +36,8 @@ import java.util.List;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
-import static org.jahdoo.ascension.loot.LootHelpers.lootsplosian;
-import static org.jahdoo.ascension.loot.RewardLootTables.getCompletionLoot;
+import static org.jahdoo.trial_nexus.loot.LootHelpers.lootsplosian;
+import static org.jahdoo.trial_nexus.loot.RewardLootTables.getCompletionLoot;
 import static org.jahdoo.common.registers.BlockEntityReg.LOOT_CRATE_BE;
 
 public class LootCrateBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{

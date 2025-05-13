@@ -13,9 +13,9 @@ import org.jahdoo.common.registers.SoundReg;
 import java.util.List;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
-import static org.jahdoo.ascension.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.ascension.utils.Helpers.repairDurability;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
+import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.Helpers.repairDurability;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.SharedUI.getCore;
 import static org.jahdoo.common.items.runes.rune_data.JahdooGearData.*;
 

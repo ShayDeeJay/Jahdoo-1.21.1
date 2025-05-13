@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 public class ItemInBlockC2SP implements CustomPacketPayload {
     public static final Type<ItemInBlockC2SP> TYPE = new Type<>(Helpers.res("wand_data_sync"));

@@ -4,7 +4,7 @@ import net.minecraft.client.model.SpiderModel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.world.entity.Entity;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.entities.inferno_creeper.GlowLayer;
 
 public class VoidSpiderEyesLayer <T extends Entity, M extends SpiderModel<T>> extends GlowLayer<T, M> {

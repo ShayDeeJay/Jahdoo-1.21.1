@@ -5,14 +5,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.components.CoreData;
 
 import java.util.List;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.ascension.utils.Helpers.getColorTransition;
+import static org.jahdoo.trial_nexus.utils.Helpers.getColorTransition;
 
 public class CoreItem extends Item implements JahdooItem{
 

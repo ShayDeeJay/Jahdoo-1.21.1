@@ -12,9 +12,9 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 import static net.minecraft.client.renderer.blockentity.BeaconRenderer.renderBeaconBeam;
-import static org.jahdoo.ascension.utils.ColourStore.PERK_GREEN;
-import static org.jahdoo.ascension.utils.Helpers.getColourLight;
-import static org.jahdoo.ascension.utils.Helpers.res;
+import static org.jahdoo.trial_nexus.utils.ColourStore.PERK_GREEN;
+import static org.jahdoo.trial_nexus.utils.Helpers.getColourLight;
+import static org.jahdoo.trial_nexus.utils.Helpers.res;
 
 public class AltarRenderer extends GeoBlockRenderer<AltarBlockEntity>{
 

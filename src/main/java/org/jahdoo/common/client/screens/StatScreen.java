@@ -3,25 +3,25 @@ package org.jahdoo.common.client.screens;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
-import org.jahdoo.ascension.attachments.CasterData;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE;
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static net.minecraft.world.entity.ai.attributes.Attributes.*;
-import static org.jahdoo.ascension.boon.player_boons.BoonSelection.iconFromEffect;
-import static org.jahdoo.ascension.utils.ColourStore.*;
-import static org.jahdoo.ascension.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.OverlayHelpers.elementalModStat;
 import static org.jahdoo.common.client.OverlayHelpers.getModStat;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.overlay.WalletOverlay.renderWallet;
 import static org.jahdoo.common.registers.AttributeReg.*;
+import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 public class StatScreen extends AbstractPanableScreen {
 
     public static int fadeBackground = fadeBlack(0.6F);
@@ -57,6 +57,7 @@ public class StatScreen extends AbstractPanableScreen {
         elementalStats(graphics, player, centerX - 280, centerY + shiftY, mc);
         renderPlayer(graphics, mouseX, mouseY, (int) withPanX, (int) withPanY + shiftY, player);
         renderWallet(graphics, mc, 10, withPanX - 49, withPanY - 200 + shiftY, false, null);
+        SharedUI.renderMiniXPBar(graphics, (int) withPanX - 41, (int) withPanY + 118, Minecraft.getInstance());
     }
 
     private void otherMagicStats(GuiGraphics guiGraphics, float i, float j, LocalPlayer player, Minecraft mc) {

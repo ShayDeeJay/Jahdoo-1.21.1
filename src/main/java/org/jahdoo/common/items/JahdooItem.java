@@ -5,20 +5,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.ascension.rarity.JahdooRarity;
-import org.jahdoo.ascension.utils.ColourStore;
-import org.jahdoo.ascension.utils.Helpers;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;
 
-import static org.jahdoo.ascension.utils.ColourStore.CHAMPION_GOLD;
-import static org.jahdoo.ascension.utils.ColourStore.HEADER_COLOUR;
-import static org.jahdoo.ascension.utils.Helpers.highlightTextComponent;
-import static org.jahdoo.ascension.utils.Maths.roundNonWholeString;
-import static org.jahdoo.ascension.utils.Maths.singleFormattedDouble;
+import static org.jahdoo.trial_nexus.utils.ColourStore.CHAMPION_GOLD;
+import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.Helpers.highlightTextComponent;
+import static org.jahdoo.trial_nexus.utils.Maths.roundNonWholeString;
+import static org.jahdoo.trial_nexus.utils.Maths.singleFormattedDouble;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
 

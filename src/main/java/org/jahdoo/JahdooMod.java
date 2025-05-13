@@ -14,7 +14,7 @@ import static org.jahdoo.common.CommonSetup.*;
 public class JahdooMod {
 
     public static final String MOD_ID = "jahdoo";
-    public static final Logger LOGGER = LogManager.getLogger("jahdoo_mod");
+    public static final Logger LOGGER = LogManager.getLogger(MOD_ID+"_mod");
 
     public JahdooMod(IEventBus modEventBus, ModContainer container) {
         modEventBus.addListener(this::commonSetup);
