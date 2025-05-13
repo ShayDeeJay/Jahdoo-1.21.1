@@ -73,7 +73,7 @@ public class Safe extends LivingEntity implements GeoEntity {
         controllers.add(animation);
     }
 
-    protected <E extends Safe> PlayState flyAnimController(final AnimationState<Safe> animTest) {
+    protected PlayState flyAnimController(final AnimationState<Safe> animTest) {
         if (getCurrentState() == 1) {
             return animTest.setAndContinue(Random.nextInt(2) == 0 ? KNOCK_LEFT : KNOCK_RIGHT);
         }

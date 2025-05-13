@@ -91,7 +91,7 @@ public class CreatorBlock extends BaseEntityBlock{
                 for (int i = 0; i < inputItemHandler.getSlots(); i++) {
                     int entry = inputItemHandler.getSlots() - (i+1);
                     if(!inputItemHandler.getStackInSlot(entry).isEmpty()){
-                        Helpers.throwOrAddItem(pPlayer, outputItemHandler.getStackInSlot(0));
+                        Helpers.throwOrAddItem(pPlayer, inputItemHandler.getStackInSlot(entry));
                         return ItemInteractionResult.SUCCESS;
                     }
                 }

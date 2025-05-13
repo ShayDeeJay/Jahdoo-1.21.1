@@ -34,18 +34,22 @@ public class CreativeTab {
             .icon(() -> new ItemStack(WAND_ITEM_MYSTIC.get()))
             .title(Component.translatable("creative_tab.jahdoo_tab"))
             .displayItems((parameters, outPut) -> {
+                outPut.accept(NEXITE_POWDER.get());
                 outPut.accept(NEXITE_ORE.get());
                 outPut.accept(NEXITE_DEEPSLATE_ORE.get());
                 outPut.accept(NEXITE_BLOCK.get());
                 outPut.accept(RAW_NEXITE_BLOCK.get());
+
                 outPut.accept(MODULAR_CHAOS_CUBE_ITEM.get());
                 outPut.accept(TANK.get());
-                outPut.accept(WAND_MANAGER_TABLE.get());
+//                outPut.accept(WAND_MANAGER_TABLE.get());
                 outPut.accept(RUNE_TABLE.get());
                 outPut.accept(CREATOR_BLOCK.get());
                 outPut.accept(DISASSEMBLER_ITEM.get());
-                outPut.accept(NEXITE_POWDER.get());
                 outPut.accept(CHALLENGER_TICKET.get());
+                outPut.accept(EXIT_KEY.get());
+                outPut.accept(STONE_OF_REGRET.get());
+
 
                 registerRecoveryReceipts(outPut);
                 registerCarePackages(outPut);
@@ -53,15 +57,17 @@ public class CreativeTab {
                 registerElementalSwords(outPut);
                 outPut.accept(ANCIENT_GLAIVE.get());
                 outPut.accept(INGMAS_SWORD.get());
+                outPut.accept(BASIC_SHIELD.get());
+                outPut.accept(UNDEAD_PROTECTOR_SHIELD.get());
 
                 registerXpOrbs(outPut);
                 registerMagnets(outPut);
                 registerCoins(outPut);
-
+                outPut.accept(COIN_SACK.get());
                 outPut.accept(EXIT_KEY.get());
 
                 outPut.accept(RuneHelpers.generateBlankRune());
-
+                outPut.accept(ESSENCE_FRAGMENT.get());
                 outPut.accept(AUGMENT_CORE.get());
                 outPut.accept(ADVANCED_AUGMENT_CORE.get());
                 outPut.accept(AUGMENT_HYPER_CORE.get());
@@ -94,8 +100,8 @@ public class CreativeTab {
                 outPut.accept(ANCIENT_GOLEM_BOOTS.get());
 
                 outPut.accept(WAND_MANAGER_TABLE.get());
-                outPut.accept(WAND_ITEM_MYSTIC.get());
                 outPut.accept(STARTER_WAND.get());
+                outPut.accept(WAND_ITEM_MYSTIC.get());
                 outPut.accept(WAND_ITEM_FROST.get());
                 outPut.accept(WAND_ITEM_INFERNO.get());
                 outPut.accept(WAND_ITEM_VITALITY.get());

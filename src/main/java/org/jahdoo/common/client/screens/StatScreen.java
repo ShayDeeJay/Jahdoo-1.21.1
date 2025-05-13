@@ -38,6 +38,7 @@ public class StatScreen extends AbstractPanableScreen {
         var trimWidth = 60;
         var trimHeight = 18;
         var size = 100;
+
         boxMaker(guiGraphics, i - size + trimWidth, j - size + trimHeight, size - trimWidth, size - trimHeight - 6, 0, fadeBackground, fadeBackground);
         SharedUI.renderEntityInInventoryFollowsMouse(guiGraphics, i, j - 10, i, j, 50, 0.0625F, mouseX, mouseY, player, 1500);
     }

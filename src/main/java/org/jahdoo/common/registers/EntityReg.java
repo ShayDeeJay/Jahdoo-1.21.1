@@ -127,7 +127,7 @@ public class EntityReg {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Safe>> SAFE =
         regEntity("safe", Builder.<Safe>of(Safe::new, MISC)
-            .sized(0.8f, 0.8f)
+            .sized(0.8f, 0.9f)
             .updateInterval(1)
         );
 

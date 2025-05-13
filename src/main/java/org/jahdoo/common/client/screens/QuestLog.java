@@ -1,5 +1,6 @@
 package org.jahdoo.common.client.screens;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Overlay;
@@ -7,13 +8,13 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import org.jahdoo.common.client.Icons;
+import org.jahdoo.common.client.button.QuestLogButton;
+import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.client.Icons;
-import org.jahdoo.common.client.button.FlexiButton;
-import org.jahdoo.common.registers.mod.QuestReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,22 +23,21 @@ import java.util.List;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffects.*;
+import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.common.client.Icons.SAFE;
+import static org.jahdoo.common.client.SharedUI.boxMaker;
+import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.trial_nexus.attachments.RunData.*;
 import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
-import static org.jahdoo.trial_nexus.rarity.JahdooRarity.ETERNAL;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.BRONZE_COIN;
 import static org.jahdoo.trial_nexus.utils.ColourStore.GOLD_COIN;
 import static org.jahdoo.trial_nexus.utils.ColourStore.PLATINUM_COIN;
 import static org.jahdoo.trial_nexus.utils.ColourStore.SILVER_COIN;
 import static org.jahdoo.trial_nexus.utils.Maths.*;
-import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.Icons.SAFE;
-import static org.jahdoo.common.client.SharedUI.boxMaker;
-import static org.jahdoo.common.client.SharedUI.fadeBlack;
 
-public class RunScreen extends AbstractPanableScreen {
+public class QuestLog extends AbstractPanableScreen {
 
     public static final int WIDTH_OFFSET = 80;
     private RunData runData;
@@ -49,27 +49,34 @@ public class RunScreen extends AbstractPanableScreen {
     @Override
     protected void init() {
         super.init();
-        var trialData = getPlayerTrialData().getPastRuns().reversed();
+        var trialData = new ArrayList<Pair<ResourceLocation, List<Component>>>();
+        trialData.add(
+            Pair.of(HORDE,
+                List.of(
+                    Helpers.withStyleComponent("Assassin Of The Nexus", uiColour()),
+                    Helpers.withStyleComponent("Kill 1000 Mobs", SUB_HEADER_COLOUR)
+                )
+            )
+        );
+
         var instanceData = getPlayerTrialData().getInstanceData().reversed();
         var spacer = 0;
-        var moveX = -5;
 
         this.addRenderableOnly(
             new Overlay() {
                 @Override
                 public void render(@NotNull GuiGraphics graphics, int i, int i1, float v) {
                     var start = canScrollSelections(mouseX, mouseY, width) ? fadeBlack(0.8F): uiFade();
-                    boxMaker(graphics, width/2 - WIDTH_OFFSET * 2 + moveX, 63, WIDTH_OFFSET, height/2 - 38, canScrollSelections(mouseX, mouseY, width) ? color(180, uiColour()) : 0, start, start);
+                    boxMaker(graphics, 14, 63, WIDTH_OFFSET, height/2 - 38, canScrollSelections(mouseX, mouseY, width) ? color(180, uiColour()) : 0, start, start);
                     graphics.enableScissor(3, 69, width - 3, height - 20);
                 }
             }
         );
 
         for (var pastRun : trialData) {
-            this.addRenderableWidget(new FlexiButton(width/2 - WIDTH_OFFSET * 2 + 15 + moveX, (int) (this.panY + spacer  + 78), 130, 36, runData == pastRun, pastRun, (s) -> doOnClick(pastRun, instanceData.get(trialData.indexOf(pastRun)))));
+            this.addRenderableWidget(new QuestLogButton(28, (int) (this.panY + spacer  + 78), 130, 36, false, (button) -> {}, pastRun.getFirst(), pastRun.getSecond()));
             spacer += 47;
         }
-
 
         this.addRenderableOnly(
             new Overlay() {
@@ -158,7 +165,7 @@ public class RunScreen extends AbstractPanableScreen {
 
     private static boolean canScrollSelections(double mouseX, double mouseY, int width) {
         var v = (double) width / 2-5;
-        return mouseX > v - WIDTH_OFFSET * 2 && mouseX < v;
+        return mouseX > 13 && mouseX < WIDTH_OFFSET * 2 + 14;
     }
 
     private static boolean canScrollDetails(double mouseX, double mouseY, int width) {
@@ -166,11 +173,6 @@ public class RunScreen extends AbstractPanableScreen {
         var canScrollX = mouseX > v + 4 && mouseX < v + WIDTH_OFFSET * 2;
         var canScrollY = mouseY > v + 4 && mouseY < v + WIDTH_OFFSET * 2;
         return canScrollX;
-    }
-
-    @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-//        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     @Override
@@ -195,23 +197,23 @@ public class RunScreen extends AbstractPanableScreen {
 
         super.render(graphics, mouseX, mouseY, partialTick);
         var colourBorder = canScrollDetails(mouseX, mouseY, width) ? color(180, uiColour()) : 0;
-        boxMaker(graphics, startX, startY+1, 80, this.height/2 - 38, colourBorder, start, start);
-        graphics.enableScissor(startX, startY+8, this.width/2 + 200, this.height - 18);
+
+        var widthOffset = width / 2 - 99;
+        var startX1 = WIDTH_OFFSET * 2 + 24;
+        boxMaker(graphics, startX1, startY+1, widthOffset, this.height/2 - 38, colourBorder, start, start);
+        graphics.enableScissor(0, startY+8, this.width, this.height - 18);
 
         pose.pushPose();
         pose.scale(scale, scale, scale);
-        graphics.drawCenteredString(getMinecraft().font, Helpers.withStyleComponentTrans("Run Data", uiColour()), startX/2 + 27, y, -1);
+        graphics.drawCenteredString(getMinecraft().font, Helpers.withStyleComponentTrans("Run Data", uiColour()), 119, y, -1);
         pose.popPose();
 
         if(runData != null) {
             var getAllComponents = getComponents(instanceData, runData, getPlayerTrialData());
             for (var component : getAllComponents) {
                 var hasIcon = component.icon != null;
-                if(hasIcon){
-                    var size = 14;
-                    graphics.blit(component.icon, startAllX - 4, startAllY + spacer - 3, 0, 0, size, size, size, size);
-                }
-                graphics.drawString(getMinecraft().font, component.component(), startAllX + (hasIcon ? 10 : 0), startAllY + spacer, -1, true);
+
+                graphics.drawString(getMinecraft().font, component.component(), startX1 + 10, startAllY + spacer, -1, true);
                 spacer += 14;
             }
         }

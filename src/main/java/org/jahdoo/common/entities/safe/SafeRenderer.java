@@ -66,21 +66,25 @@ public class SafeRenderer extends GeoEntityRenderer<Safe> {
     public static void roomData(Safe entity, PoseStack pPoseStack, MultiBufferSource bufferSource, EntityRenderDispatcher dispatcher, float partialTicks) {
         var offWhite = ColourStore.NEGATIVE_RED;
         var displayName = Helpers.withStyleComponent(Maths.ticksToTime(String.valueOf(entity.getTimer())), offWhite);
+        pPoseStack.pushPose();
+        pPoseStack.translate(0, entity.getBbHeight() - 2, 0);
+
         var scale = Math.sin(((entity.tickCount + partialTicks) / 10.0F)) * 0.2F + 3.5;
+        pPoseStack.translate(0, scale, 0);
+
         var scale1 = (float) scale/1.4F;
+        pPoseStack.scale(scale1, scale1, scale1);
+        pPoseStack.mulPose(dispatcher.camera.rotation());
+
         var x = 0.020F;
+        pPoseStack.scale(x, -x, x);
+
         var matrix4f = pPoseStack.last().pose();
         var font = Minecraft.getInstance().font;
         var f1 = (float)(-font.width(displayName) / 2);
         var text = Helpers.withStyleComponent("HURRY!", offWhite);
         var f2 = (float)(-font.width(text) / 2);
 
-        pPoseStack.pushPose();
-        pPoseStack.translate(0, entity.getBbHeight(), 0);
-        pPoseStack.translate(0, scale, 0);
-        pPoseStack.scale(scale1, scale1, scale1);
-        pPoseStack.mulPose(dispatcher.camera.rotation());
-        pPoseStack.scale(x, -x, x);
         font.drawInBatch(text, f2, -10, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         font.drawInBatch(displayName, f1, 0, offWhite, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);
         pPoseStack.popPose();
