@@ -39,17 +39,21 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.networking.client2server.PlayerTrialDataC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
-import org.jahdoo.common.networking.server2client.*;
+import org.jahdoo.common.networking.server2client.AbilityHolderS2CP;
+import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
+import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
+import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 
 import java.awt.*;
 import java.util.*;
@@ -92,14 +96,13 @@ public class Helpers {
         }
     }
 
-    public static void syncCasterData(Entity player) {
+    public static void syncClientData(Entity player) {
         if(player instanceof ServerPlayer serverPlayer){
             var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
-            var trialData = serverPlayer.getData(AttachmentReg.PLAYER_TRIAL_DATA);
             var wallet = player.getData(PLAYER_WALLET).getWallet();
             sendToPlayer(serverPlayer, new WalletSyncS2CP(wallet));
             sendToPlayer(serverPlayer, new CastingDataSyncS2CP(casterData));
-            sendToPlayer(serverPlayer, new PlayerTrialDataS2CP(trialData));
+            PlayerTrialData.updateClientData(serverPlayer);
         }
     }
 

@@ -31,7 +31,7 @@ import top.theillusivec4.curios.api.event.CurioChangeEvent;
 
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_ITEM_DATA;
-import static org.jahdoo.trial_nexus.utils.Helpers.syncCasterData;
+import static org.jahdoo.trial_nexus.utils.Helpers.syncClientData;
 
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID)
@@ -72,7 +72,7 @@ public class ServerEvents {
     public static void playerCloneEvent(PlayerEvent.PlayerRespawnEvent event){
         var player = event.getEntity();
         player.getData(SAVE_ITEM_DATA).takeAllItems(player);
-        syncCasterData(event.getEntity());
+        syncClientData(event.getEntity());
     }
 
     @SubscribeEvent
@@ -126,7 +126,6 @@ public class ServerEvents {
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         var player = event.getEntity();
 
-        syncCasterData(player);
         syncPlayerAttributes(player);
         onFirstTimeJoined(player);
     }
@@ -180,7 +179,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void joinEvent(EntityJoinLevelEvent event){
-        syncCasterData(event.getEntity());
+        syncClientData(event.getEntity());
         removeNonAllowedEffects(event);
     }
 

@@ -6,13 +6,10 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.registers.SoundReg;
-
-import java.util.List;
+import org.jahdoo.trial_nexus.tasks.AbstractTask;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
@@ -26,9 +23,7 @@ public class QuestLogButton extends ImageButton {
     private final float height;
     private final boolean isSelected;
     private final OnPress pOnPress;
-    private final ResourceLocation questIcon;
-    private final List<Component> questDetails;
-
+    private final AbstractTask task;
 
     public QuestLogButton(
         int pX,
@@ -37,16 +32,14 @@ public class QuestLogButton extends ImageButton {
         int height,
         boolean isSelected,
         OnPress pOnPress,
-        ResourceLocation questIcon,
-        List<Component> questDetails
+        AbstractTask task
     ) {
         super(pX, pY, width, height, new WidgetSprites(Icons.BLANK,Icons.BLANK), pOnPress);
         this.width = width;
         this.height = height;
         this.pOnPress = pOnPress;
         this.isSelected = isSelected;
-        this.questIcon = questIcon;
-        this.questDetails = questDetails;
+        this.task = task;
     }
 
     @Override
@@ -78,14 +71,9 @@ public class QuestLogButton extends ImageButton {
         var size = 32;
 
         boxMaker(graphics, this.getX(), this.getY(), width, height, borderColour, isSelected, isSelected);
-        graphics.blit(questIcon, getXStart, startY2, 0, 0, size, size, size, size);
-        for (var getAllComponent : questDetails) {
-            var componentText = minecraft.font.ellipsize(FormattedText.of(getAllComponent.getString()), 95).getString();
-            var componentColour = getAllComponent.getStyle().getColor().getValue();
-
-            graphics.drawString(minecraft.font, componentText, getXStart + 32, startY2 + spacer + 8, componentColour, true);
-            spacer += 10;
-        }
+        graphics.blit(task.taskIcon(), getXStart, startY2, 0, 0, size, size, size, size);
+        var string = minecraft.font.ellipsize(FormattedText.of(task.taskName()), 95).getString();
+        graphics.drawString(minecraft.font, string, getXStart + 32, startY2 + spacer + 12, uiColour(), true);
     }
 
 

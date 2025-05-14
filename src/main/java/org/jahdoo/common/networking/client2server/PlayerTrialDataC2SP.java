@@ -5,11 +5,9 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.networking.server2client.PlayerTrialDataS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 public class PlayerTrialDataC2SP implements CustomPacketPayload {
 
@@ -44,7 +42,7 @@ public class PlayerTrialDataC2SP implements CustomPacketPayload {
                         trialData.getPastRuns().remove(index);
                     }
 
-                    PacketDistributor.sendToPlayer(serverPlayer, new PlayerTrialDataS2CP(trialData));
+//                    PacketDistributor.sendToPlayer(serverPlayer, new PlayerTrialDataS2CP(trialData.getPastRuns(), trialData.getPastRuns()));
                 }
             }
         );

@@ -4,6 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 
 import java.util.HashMap;
@@ -288,6 +290,23 @@ public class InstanceData implements IAttachment {
 
     public static Optional<InstanceDifficulty> difficultyFromInstance(InstanceData instanceData){
         return InstanceDifficulty.getDifficulties().stream().filter(s -> s.getSerializedName().equals(instanceData.getDifficulty())).findFirst();
+    }
+
+    public static final StreamCodec<FriendlyByteBuf, InstanceData> STREAM_CODEC = StreamCodec.ofMember(
+        InstanceData::serialise,
+        InstanceData::deserialise
+    );
+
+    private void serialise(FriendlyByteBuf friendlyByteBuf){
+        friendlyByteBuf.writeUtf(difficulty);
+        friendlyByteBuf.writeMap(values, FriendlyByteBuf::writeUtf, FriendlyByteBuf::writeDouble);
+    }
+
+    private static InstanceData deserialise(FriendlyByteBuf friendlyByteBuf){
+        return new InstanceData(
+            friendlyByteBuf.readUtf(),
+            friendlyByteBuf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readDouble)
+        );
     }
 
     public static final Codec<InstanceData> CODEC = RecordCodecBuilder.create(

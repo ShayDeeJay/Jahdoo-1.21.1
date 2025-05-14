@@ -118,11 +118,6 @@ public class ChaosCubeData implements IAttachment {
         return new ChaosCubeData(action, input, output, active, speed, worldPosition, chained);
     }
 
-    public static final StreamCodec<FriendlyByteBuf, ChaosCubeData> STREAM_CODEC = StreamCodec.ofMember(
-        ChaosCubeData::serialise,
-        ChaosCubeData::deserialise
-    );
-
     public static void setActionDirection(BlockEntity entity, BlockPos actionDirection){
         var auto = entity.getData(AttachmentReg.MODULAR_CHAOS_CUBE);
         auto.updateActionDirection(actionDirection);
@@ -139,6 +134,11 @@ public class ChaosCubeData implements IAttachment {
             case DOWN -> blockPos.below();
         };
     }
+
+    public static final StreamCodec<FriendlyByteBuf, ChaosCubeData> STREAM_CODEC = StreamCodec.ofMember(
+        ChaosCubeData::serialise,
+        ChaosCubeData::deserialise
+    );
 
     private void serialise(FriendlyByteBuf friendlyByteBuf){
         friendlyByteBuf.writeBlockPos(actionDirection);

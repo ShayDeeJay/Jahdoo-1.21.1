@@ -5,15 +5,16 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
-import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
-import org.jahdoo.common.networking.server2client.PlayerTrialDataS2CP;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
+import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -22,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
-import static org.jahdoo.trial_nexus.attachments.CasterData.addExperience;
 import static org.jahdoo.common.registers.AttachmentReg.*;
+import static org.jahdoo.trial_nexus.attachments.CasterData.addExperience;
 
 public class RunData implements IAttachment {
 
@@ -67,6 +68,10 @@ public class RunData implements IAttachment {
         this.currentQuestId = currentQuestId;
         this.completedQuest = completedQuest;
         this.died = died;
+    }
+
+    public int getMobsKilled(){
+        return getStat(MOBS_KILLED);
     }
 
     public int getStat(String key) {
@@ -122,12 +127,12 @@ public class RunData implements IAttachment {
 
         if(!this.dateAndTime.isEmpty()){
             var data = player.level().getData(INSTANCE_DATA);
-            var runData = player.level().getData(PLAYER_TRIAL_DATA);
             addStat(TIME_IN_TRIAL, data.getTicks());
-            PlayerTrialData.addNewInstance(player, new InstanceData(data.getDifficulty(), data.getInstance()));
-            runData.addInstance(data);
-            var pastRun = new RunData(new HashMap<>(stats), dateAndTime, currentQuestId, completedQuest, died);
-            PlayerTrialData.addNewRun(player, pastRun);
+
+            var thisInstance = new InstanceData(data.getDifficulty(), data.getInstance());
+            var thisRun = new RunData(new HashMap<>(stats), dateAndTime, currentQuestId, completedQuest, died);
+
+            PlayerTrialData.addNewTrialData(player, thisRun, thisInstance);
             if (!died) addExperience(player, getStat(EXPERIENCE));
         }
 
@@ -155,6 +160,11 @@ public class RunData implements IAttachment {
         sendToPlayer(player, new RunDataS2CP(runData));
     }
 
+    public static int getStat(Player player, String getStat) {
+        var runData = player.getData(RUN_DATA.get());
+        return runData.getStat(getStat);
+    }
+
     public static RunData emptyRun(){
         return new RunData(new HashMap<>(), "", "", false, false);
     }
@@ -165,7 +175,6 @@ public class RunData implements IAttachment {
         setPlayerLevel(CasterData.getLevel(player), player);
         if (runData.dateAndTime != null) {
             runData.onEndRun(player, died);
-            sendToPlayer(player, new PlayerTrialDataS2CP(castData));
             if(player.level() instanceof CustomLevel customLevel){
                 if(customLevel.players().isEmpty()){
                     LevelGenerator.removeLevel(customLevel);
@@ -244,6 +253,29 @@ public class RunData implements IAttachment {
         if (player instanceof ServerPlayer serverPlayer) {
             sendToPlayer(serverPlayer, new RunDataS2CP(runData));
         }
+    }
+
+    public static final StreamCodec<FriendlyByteBuf, RunData> STREAM_CODEC = StreamCodec.ofMember(
+        RunData::serialise,
+        RunData::deserialise
+    );
+
+    private void serialise(FriendlyByteBuf friendlyByteBuf){
+        friendlyByteBuf.writeMap(stats, FriendlyByteBuf::writeUtf, FriendlyByteBuf::writeInt);
+        friendlyByteBuf.writeUtf(dateAndTime);
+        friendlyByteBuf.writeUtf(currentQuestId);
+        friendlyByteBuf.writeBoolean(completedQuest);
+        friendlyByteBuf.writeBoolean(died);
+    }
+
+    private static RunData deserialise(FriendlyByteBuf friendlyByteBuf){
+        return new RunData(
+            friendlyByteBuf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readInt),
+            friendlyByteBuf.readUtf(),
+            friendlyByteBuf.readUtf(),
+            friendlyByteBuf.readBoolean(),
+            friendlyByteBuf.readBoolean()
+        );
     }
 
     public static final Codec<RunData> CODEC = RecordCodecBuilder.create(

@@ -6,23 +6,22 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
+import org.jahdoo.common.client.Icons;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.client.Icons;
-import org.jahdoo.common.registers.SoundReg;
 
 import java.util.HashMap;
 
 import static com.mojang.blaze3d.platform.InputConstants.KEY_DELETE;
 import static com.mojang.blaze3d.platform.InputConstants.isKeyDown;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiFade;
 import static org.jahdoo.common.client.screens.RunScreen.getComponents;
+import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 
 public class FlexiButton extends ImageButton {
 
@@ -86,7 +85,7 @@ public class FlexiButton extends ImageButton {
 //            graphics.renderTooltip(minecraft.font, List.of(literal), Optional.empty(), mouseX, mouseY);
             if(isKeyDown(window, KEY_DELETE)){
                 var index = trialData.getPastRuns().indexOf(pastRun);
-                Helpers.syncPlayerTrialData(index);
+//                Helpers.syncPlayerTrialData(index);
             }
         }
 

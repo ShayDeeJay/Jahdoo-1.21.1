@@ -1,6 +1,5 @@
 package org.jahdoo.common.client.screens;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Overlay;
@@ -14,6 +13,8 @@ import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.tasks.AbstractTask;
+import org.jahdoo.trial_nexus.tasks.BabyAssassin;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +41,7 @@ import static org.jahdoo.trial_nexus.utils.Maths.*;
 public class QuestLog extends AbstractPanableScreen {
 
     public static final int WIDTH_OFFSET = 80;
+    private AbstractTask task;
     private RunData runData;
     private InstanceData instanceData;
     private double panYMain;
@@ -49,17 +51,7 @@ public class QuestLog extends AbstractPanableScreen {
     @Override
     protected void init() {
         super.init();
-        var trialData = new ArrayList<Pair<ResourceLocation, List<Component>>>();
-        trialData.add(
-            Pair.of(HORDE,
-                List.of(
-                    Helpers.withStyleComponent("Assassin Of The Nexus", uiColour()),
-                    Helpers.withStyleComponent("Kill 1000 Mobs", SUB_HEADER_COLOUR)
-                )
-            )
-        );
-
-        var instanceData = getPlayerTrialData().getInstanceData().reversed();
+        var trialData = List.of(new BabyAssassin());
         var spacer = 0;
 
         this.addRenderableOnly(
@@ -74,7 +66,7 @@ public class QuestLog extends AbstractPanableScreen {
         );
 
         for (var pastRun : trialData) {
-            this.addRenderableWidget(new QuestLogButton(28, (int) (this.panY + spacer  + 78), 130, 36, false, (button) -> {}, pastRun.getFirst(), pastRun.getSecond()));
+            this.addRenderableWidget(new QuestLogButton(28, (int) (this.panY + spacer  + 78), 130, 36, false, (button) -> { this.task = pastRun; }, pastRun));
             spacer += 47;
         }
 
@@ -203,27 +195,19 @@ public class QuestLog extends AbstractPanableScreen {
         boxMaker(graphics, startX1, startY+1, widthOffset, this.height/2 - 38, colourBorder, start, start);
         graphics.enableScissor(0, startY+8, this.width, this.height - 18);
 
-        pose.pushPose();
-        pose.scale(scale, scale, scale);
-        graphics.drawCenteredString(getMinecraft().font, Helpers.withStyleComponentTrans("Run Data", uiColour()), 119, y, -1);
-        pose.popPose();
+        if(task != null){
+            pose.pushPose();
+            pose.scale(scale, scale, scale);
+            var size = 24;
+            graphics.blit(task.taskIcon(), 94, y - 4, 0, 0, size, size, size, size);
+            graphics.drawString(getMinecraft().font, Helpers.withStyleComponentTrans(task.taskName(), uiColour()), 120, y + 6, -1);
+            pose.popPose();
 
-        if(runData != null) {
-            var getAllComponents = getComponents(instanceData, runData, getPlayerTrialData());
-            for (var component : getAllComponents) {
-                var hasIcon = component.icon != null;
+            graphics.drawString(getMinecraft().font, Helpers.withStyleComponentTrans(task.taskDescription(), uiColour()), 200, 120, -1);
 
-                graphics.drawString(getMinecraft().font, component.component(), startX1 + 10, startAllY + spacer, -1, true);
-                spacer += 14;
-            }
+            graphics.drawString(getMinecraft().font, Helpers.withStyleComponentTrans("Progress", SUB_HEADER_COLOUR), 200, 140, -1);
+            graphics.drawString(getMinecraft().font, Helpers.withStyleComponentTrans(task.trackedValue(getMinecraft().player) +"/"+ task.countRequired(), SUB_HEADER_COLOUR), 200, 150, -1);
         }
-
-        if(runData == null || !PlayerTrialData.getData(getMinecraft().player).getPastRuns().contains(runData)){
-            var player = getMinecraft().player;
-            PlayerTrialData.getLastRun(player).ifPresent(x -> this.runData = x);
-            PlayerTrialData.getLastInstance(player).ifPresent(x -> this.instanceData = x);
-        }
-
         graphics.disableScissor();
         this.rebuildWidgets();
     }

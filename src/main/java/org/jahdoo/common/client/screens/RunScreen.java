@@ -49,8 +49,8 @@ public class RunScreen extends AbstractPanableScreen {
     @Override
     protected void init() {
         super.init();
-        var trialData = getPlayerTrialData().getPastRuns().reversed();
-        var instanceData = getPlayerTrialData().getInstanceData().reversed();
+        var reversed = getPlayerTrialData().getPastRuns().reversed();
+        var instanceData1 = getPlayerTrialData().getInstanceData().reversed();
         var spacer = 0;
         var moveX = -5;
 
@@ -65,11 +65,11 @@ public class RunScreen extends AbstractPanableScreen {
             }
         );
 
-        for (var pastRun : trialData) {
-            this.addRenderableWidget(new FlexiButton(width/2 - WIDTH_OFFSET * 2 + 15 + moveX, (int) (this.panY + spacer  + 78), 130, 36, runData == pastRun, pastRun, (s) -> doOnClick(pastRun, instanceData.get(trialData.indexOf(pastRun)))));
+        for (var pastRun : reversed) {
+            var x = this.addRenderableWidget(new FlexiButton(width/2 - WIDTH_OFFSET * 2 + 15 + moveX, (int) (this.panY + spacer  + 78), 130, 36, runData == pastRun, pastRun, (s) -> doOnClick(pastRun, instanceData1.get(reversed.indexOf(pastRun)))));
+            x.visible = x.getY() < this.height && x.getY() > 0;
             spacer += 47;
         }
-
 
         this.addRenderableOnly(
             new Overlay() {

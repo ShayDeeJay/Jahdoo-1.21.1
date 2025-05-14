@@ -68,9 +68,53 @@ public class PlayerTrialData implements IAttachment{
         ).apply(instance, PlayerTrialData::new)
     );
 
+    public static PlayerTrialData getWithRange(Player player){
+        var currentTrialData = getData(player);
+        var allRuns = currentTrialData.getPastRuns();
+        var allInstance = currentTrialData.getInstanceData();
+        var maxLastFiftyRuns = allRuns.subList(Math.max(0, allRuns.size() - 50), allRuns.size());
+        var maxLastFiftyInstance = allInstance.subList(Math.max(0, allInstance.size() - 50), allInstance.size());
+
+        return new PlayerTrialData(maxLastFiftyRuns, maxLastFiftyInstance);
+    }
+
     public static PlayerTrialData getData(Player player){
         return player.getData(AttachmentReg.PLAYER_TRIAL_DATA.get());
     }
+
+    public static void addNewEntry(Player player, List<RunData> runData, List<InstanceData> instanceData){
+        var data = getData(player);
+        var updateInstance = new ArrayList<>(data.getInstanceData());
+        var updateRunData = new ArrayList<>(data.getPastRuns());
+        updateInstance.addAll(instanceData);
+        updateRunData.addAll(runData);
+
+        player.setData(PLAYER_TRIAL_DATA.get(), new PlayerTrialData(updateRunData, updateInstance));
+    }
+
+    public static void updateClientData(ServerPlayer serverPlayer){
+        var data = getData(serverPlayer);
+        var past = data.getPastRuns();
+        var instance = data.getInstanceData();
+
+        if (past.size() > 5000 && instance.size() > 5000) {
+            var toIndex = 1000;
+            past.subList(0, toIndex).clear();
+            instance.subList(0, toIndex).clear();
+        }
+
+        var size = past.size();
+        var chunkSize = 5;
+
+        for (int i = 0; i < size; i += chunkSize) {
+            int end = Math.min(i + chunkSize, size);
+            var pastChunk = past.subList(i, end);
+            var instanceChunk = instance.subList(i, end);
+
+            PacketDistributor.sendToPlayer(serverPlayer, new PlayerTrialDataS2CP(pastChunk, instanceChunk));
+        }
+    }
+
 
     public static Optional<InstanceData> getLastInstance(Player player){
         var runs = getData(player).getInstanceData();
@@ -90,12 +134,18 @@ public class PlayerTrialData implements IAttachment{
     public static void clearAllData(ServerPlayer player){
         var data = player.getData(PLAYER_TRIAL_DATA);
         data.clearAllData();
-        PacketDistributor.sendToPlayer(player, new PlayerTrialDataS2CP(data));
+//        PacketDistributor.sendToPlayer(player, new PlayerTrialDataS2CP(data));
     }
 
     public static void addNewInstance(Player player, InstanceData instanceData){
         var data = player.getData(PLAYER_TRIAL_DATA);
         data.addInstance(instanceData);
+    }
+
+    public static void addNewTrialData(Player player, RunData runData, InstanceData instanceData){
+        var data = player.getData(PLAYER_TRIAL_DATA);
+        data.addInstance(instanceData);
+        data.addNewRun(runData);
     }
 
     @Override
@@ -152,6 +202,7 @@ public class PlayerTrialData implements IAttachment{
                 var x = serverPlayer.getData(AttachmentReg.PLAYER_TRIAL_DATA);
 
                 if(eraseData){
+                    System.out.println("imerer");
                     x.getPastRuns().clear();
                     x.getInstanceData().clear();
                 }
@@ -197,11 +248,12 @@ public class PlayerTrialData implements IAttachment{
                     newRunData.addStat(GOLD_COIN, Random.nextInt(10, 50));
                     newRunData.addStat(PLATINUM_COIN, Random.nextInt(5, 30));
 
+
                     x.addInstance(newInstance);
                     x.addNewRun(newRunData);
                 }
 
-                PacketDistributor.sendToPlayer(serverPlayer, new PlayerTrialDataS2CP(x));
+                updateClientData(serverPlayer);
             }
         }
     }
