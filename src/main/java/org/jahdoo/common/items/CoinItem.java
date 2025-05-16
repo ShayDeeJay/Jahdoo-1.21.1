@@ -39,7 +39,7 @@ public class CoinItem extends Item implements IItemEntityBehaviour {
     private static void addCoinToWallet(ItemStack stack, Level level, Entity entity) {
         if(level instanceof ServerLevel serverLevel){
             var data = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-            var getWallet = entity.getData(AttachmentReg.PLAYER_WALLET);
+            var getWallet = entity.getData(AttachmentReg.PLAYER_WALLET_DATA);
             var count = stack.getCount();
 
             if (data != null) {

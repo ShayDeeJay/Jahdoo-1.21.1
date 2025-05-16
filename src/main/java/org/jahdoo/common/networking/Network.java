@@ -134,6 +134,12 @@ public class Network {
             JahdooGearDataC2SP.STREAM_CODEC,
             JahdooGearDataC2SP::handle
         );
+
+        payloadRegistrar.playToServer(
+            QuestTrackerC2SP.TYPE,
+            QuestTrackerC2SP.STREAM_CODEC,
+            QuestTrackerC2SP::handle
+        );
         
         //S2C
         payloadRegistrar.playToClient(
@@ -236,6 +242,12 @@ public class Network {
             RunDataS2CP.TYPE,
             RunDataS2CP.STREAM_CODEC,
             RunDataS2CP::handle
+        );
+
+        payloadRegistrar.playToClient(
+            QuestTrackerS2CP.TYPE,
+            QuestTrackerS2CP.STREAM_CODEC,
+            QuestTrackerS2CP::handle
         );
     }
 

@@ -20,7 +20,8 @@ import static net.neoforged.neoforge.attachment.AttachmentType.*;
 
 public class AttachmentReg {
 
-    private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, JahdooMod.MOD_ID);
+    private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
+        DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, JahdooMod.MOD_ID);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<MageFlight>> MAGE_FLIGHT =
         withProvider("mage_flight",MageFlight::new);
@@ -55,7 +56,7 @@ public class AttachmentReg {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<SaveItemData>> SAVE_ITEM_DATA =
         withProviderCopyDeath("save_item_data", SaveItemData::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerWallet>> PLAYER_WALLET =
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerWallet>> PLAYER_WALLET_DATA =
         withProviderCopyDeath("player_wallet", PlayerWallet::new);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<RunData>> RUN_DATA =
@@ -63,6 +64,9 @@ public class AttachmentReg {
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerTrialData>> PLAYER_TRIAL_DATA =
         withProviderCopyDeath("player_trial_data", PlayerTrialData::new);
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<QuestTracker>> QUEST_TRACKER_DATA=
+        withProviderCopyDeath("quest_tracker_data", QuestTracker::new);
 
     //HELPERS
     public static void register(IEventBus eventBus) {

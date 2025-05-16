@@ -50,8 +50,6 @@ public class InstanceData implements IAttachment {
         this.values.putAll(values);
     }
 
-    // Core map access
-
     public Map<String, Double> getInstance(){
         return this.values;
     }

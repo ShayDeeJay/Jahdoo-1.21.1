@@ -44,16 +44,14 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
 import org.jahdoo.common.networking.client2server.PlayerTrialDataC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
-import org.jahdoo.common.networking.server2client.AbilityHolderS2CP;
-import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
-import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
-import org.jahdoo.common.networking.server2client.WalletSyncS2CP;
+import org.jahdoo.common.networking.server2client.*;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
+import org.jahdoo.trial_nexus.attachments.QuestTracker;
 
 import java.awt.*;
 import java.util.*;
@@ -67,7 +65,7 @@ import static net.minecraft.sounds.SoundEvents.ITEM_BREAK;
 import static net.minecraft.world.item.enchantment.EnchantmentHelper.processDurabilityChange;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
-import static org.jahdoo.common.registers.AttachmentReg.PLAYER_WALLET;
+import static org.jahdoo.common.registers.AttachmentReg.PLAYER_WALLET_DATA;
 
 public class Helpers {
     public static final String EASY = "novice";
@@ -99,9 +97,10 @@ public class Helpers {
     public static void syncClientData(Entity player) {
         if(player instanceof ServerPlayer serverPlayer){
             var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
-            var wallet = player.getData(PLAYER_WALLET).getWallet();
+            var wallet = player.getData(PLAYER_WALLET_DATA).getWallet();
             sendToPlayer(serverPlayer, new WalletSyncS2CP(wallet));
             sendToPlayer(serverPlayer, new CastingDataSyncS2CP(casterData));
+            sendToPlayer(serverPlayer, new QuestTrackerS2CP(QuestTracker.getQuestTracker(serverPlayer)));
             PlayerTrialData.updateClientData(serverPlayer);
         }
     }

@@ -87,6 +87,13 @@ public class SharedUI {
         guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
     }
 
+    public static void boxMaker2(GuiGraphics guiGraphics, int startX, int startY, int widthOffset, int heightOffset, int colourBorder, int start, int end) {
+        int widthTo = startX + widthOffset;
+        int heightTo = startY + heightOffset;
+
+        guiGraphics.fillGradient(startX, startY, widthTo, heightTo, start, end);
+        guiGraphics.renderOutline(startX, startY, widthTo - startX, heightTo - startY, colourBorder);
+    }
     public static void header(@NotNull GuiGraphics guiGraphics, int width, int height, Ability ability, AbilityHolder holder, Font font, Player player, ResourceLocation slot) {
         var yOff = 102;
         int xOff = width/2 - 55;

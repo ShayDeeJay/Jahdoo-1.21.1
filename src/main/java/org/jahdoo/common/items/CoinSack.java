@@ -28,7 +28,7 @@ public class CoinSack extends Item implements JahdooItem {
         var getCoins = item.get(ComponentReg.STORE_INTEGER);
         if(getCoins != null) {
             player.playSound(SoundReg.COIN.get());
-            player.getData(AttachmentReg.PLAYER_WALLET.get()).addBronze(getCoins);
+            player.getData(AttachmentReg.PLAYER_WALLET_DATA.get()).addBronze(getCoins);
             item.shrink(1);
         }
         return super.use(level, player, usedHand);

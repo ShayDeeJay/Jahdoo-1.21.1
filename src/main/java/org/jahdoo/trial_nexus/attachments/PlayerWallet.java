@@ -32,22 +32,22 @@ public class PlayerWallet implements IAttachment {
     public int getWallet() { return wallet; }
 
     public static void updateWallet(Player player, CurrencyConverter converter){
-        var getWallet = player.getData(AttachmentReg.PLAYER_WALLET);
+        var getWallet = player.getData(AttachmentReg.PLAYER_WALLET_DATA);
         getWallet.setWallet(CurrencyConverter.convertToWallet(converter));
     }
 
     public static void updateWallet(Player player, int newWallet){
-        var getWallet = player.getData(AttachmentReg.PLAYER_WALLET);
+        var getWallet = player.getData(AttachmentReg.PLAYER_WALLET_DATA);
         getWallet.setWallet(newWallet);
     }
 
     public static CurrencyConverter getWalletCoins(Player player){
-        var getWallet = player.getData(AttachmentReg.PLAYER_WALLET);
+        var getWallet = player.getData(AttachmentReg.PLAYER_WALLET_DATA);
         return CurrencyConverter.convertToCoins(getWallet.wallet);
     }
 
     public static int getWalletValue(Player player){
-        return player.getData(AttachmentReg.PLAYER_WALLET).wallet;
+        return player.getData(AttachmentReg.PLAYER_WALLET_DATA).wallet;
     }
 
     @Override

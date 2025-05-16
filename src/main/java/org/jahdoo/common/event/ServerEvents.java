@@ -22,6 +22,7 @@ import org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.Dimens
 import org.jahdoo.trial_nexus.ability.abilities_combat.nova_smash.NovaSmash;
 import org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.QuestTracker;
 import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
 import org.jahdoo.trial_nexus.attachments.player_abilities.TripleJump;
@@ -94,6 +95,10 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
+        var player = rightClickItem.getEntity();
+        if(player instanceof ServerPlayer serverPlayer){
+            QuestTracker.clearClaimedQuest(serverPlayer);
+        }
         removeShieldUse(rightClickItem);
     }
 

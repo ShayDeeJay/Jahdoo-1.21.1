@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 import static java.lang.String.valueOf;
+import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 import static org.jahdoo.trial_nexus.utils.Maths.ticksToTime;
@@ -104,12 +105,7 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
             var offset = 3;
             var colourBorder = quest.questColour();
 
-            SharedUI.boxMaker(graphics, offsetX, startY, baseWidth, height, SUB_HEADER_COLOUR, uiFade(), uiFade());
-            if (current > 0) {
-                var progressRatio = (float) Math.min(current, needed) / (float) needed;
-                var barWidth = (baseWidth - offset) * progressRatio;
-                SharedUI.boxMaker(graphics, offsetX + offset, startY + offset, Math.max((int) barWidth, 1), height - offset, colourBorder, colourBorder, colourBorder);
-            }
+            progressBar(graphics, offsetX, startY, baseWidth, height, current, needed, offset, colourBorder, uiColour());
 
             graphics.drawCenteredString(font, appendStat("Quest: ", quest.getDisplayName(), quest.questColour()), offsetX + baseWidth, startY - 12, -1);
             graphics.drawCenteredString(font, withStyleComponent(display, colour), offsetX + baseWidth, startY + (height * 2) + 3, -1);
@@ -122,6 +118,15 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         graphics.blit(Icons.ROOMS_CLEARED, clockX - 3 + i, (int) (fade), 0, 0, size, size, size, size);
         graphics.drawString(font, "" + roomsCleared, clockX + 16 + i, (int) (6 + fade), -1, false);
         return getQuest;
+    }
+
+    public static void progressBar(GuiGraphics graphics, int offsetX, int startY, int baseWidth, int height, int current, int needed, int offset, int barColour, int containerBorder) {
+        SharedUI.boxMaker(graphics, offsetX, startY, baseWidth, height, containerBorder, uiFade(), uiFade());
+        if (current > 0) {
+            var progressRatio = (float) Math.min(current, needed) / (float) needed;
+            var barWidth = (baseWidth - offset) * progressRatio;
+            SharedUI.boxMaker(graphics, offsetX + offset, startY + offset, Math.max((int) barWidth, 1), height - offset, barColour, barColour, barColour);
+        }
     }
 
     private static @NotNull MutableComponent appendStat(String prefix, String value, int colour) {

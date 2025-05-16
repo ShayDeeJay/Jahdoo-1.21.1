@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
-import static org.jahdoo.common.registers.AttachmentReg.PLAYER_WALLET;
+import static org.jahdoo.common.registers.AttachmentReg.PLAYER_WALLET_DATA;
 
 public class WalletSyncS2CP implements CustomPacketPayload {
     public static final Type<WalletSyncS2CP> TYPE = new Type<>(Helpers.res("sync_client_wallet"));
@@ -35,7 +35,7 @@ public class WalletSyncS2CP implements CustomPacketPayload {
                 @Override
                 public void run() {
                     if(ctx.player() instanceof LocalPlayer localPlayer) {
-                        localPlayer.getData(PLAYER_WALLET).setWallet(wallet);
+                        localPlayer.getData(PLAYER_WALLET_DATA).setWallet(wallet);
                     }
                 }
             }

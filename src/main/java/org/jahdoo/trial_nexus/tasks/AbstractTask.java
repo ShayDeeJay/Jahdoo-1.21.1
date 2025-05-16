@@ -2,6 +2,12 @@ package org.jahdoo.trial_nexus.tasks;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import org.jahdoo.trial_nexus.utils.Helpers;
+
+import java.util.List;
+
+import static org.jahdoo.JahdooMod.MOD_ID;
 
 public abstract class AbstractTask {
 
@@ -18,5 +24,11 @@ public abstract class AbstractTask {
     public abstract int trackedValue(Player player);
 
     public abstract int countRequired();
+
+    public abstract List<ItemStack> rewards();
+
+    public String taskId() {
+        return MOD_ID +"-"+ Helpers.nameToId(taskName()) + "-task";
+    }
 
 }
