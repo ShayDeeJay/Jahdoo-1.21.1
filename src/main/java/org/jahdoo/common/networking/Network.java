@@ -140,7 +140,13 @@ public class Network {
             QuestTrackerC2SP.STREAM_CODEC,
             QuestTrackerC2SP::handle
         );
-        
+
+        payloadRegistrar.playToServer(
+            GivePlayerItemsC2SP.TYPE,
+            GivePlayerItemsC2SP.STREAM_CODEC,
+            GivePlayerItemsC2SP::handle
+        );
+
         //S2C
         payloadRegistrar.playToClient(
             PlayerTrialDataS2CP.TYPE,
@@ -248,6 +254,18 @@ public class Network {
             QuestTrackerS2CP.TYPE,
             QuestTrackerS2CP.STREAM_CODEC,
             QuestTrackerS2CP::handle
+        );
+
+        payloadRegistrar.playToClient(
+            ClearPlayerTrialDataS2CP.TYPE,
+            ClearPlayerTrialDataS2CP.STREAM_CODEC,
+            ClearPlayerTrialDataS2CP::handle
+        );
+
+        payloadRegistrar.playToClient(
+            JahdooToastS2CP.TYPE,
+            JahdooToastS2CP.STREAM_CODEC,
+            JahdooToastS2CP::handle
         );
     }
 

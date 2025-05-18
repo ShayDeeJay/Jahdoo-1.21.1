@@ -72,7 +72,7 @@ public class LightPlacerAbility extends AbstractBlockAbility {
 
     @Override
     public int levelRequirement() {
-        return 0;
+        return 5;
     }
 
     @Override

@@ -26,6 +26,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(NEXITE_BLOCK);
         blockWithItem(RAW_NEXITE_BLOCK);
         blockWithItem(ENCHANTED_BLOCK);
+        blockWithItem(LOCK_SUPPORT);
 
         simpleBlockWithItem(
             WAND_MANAGER_TABLE.get(),

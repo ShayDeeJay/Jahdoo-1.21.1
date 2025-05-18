@@ -5,30 +5,28 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.components.CoreData;
-import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 
 import java.util.List;
 
-import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
-
-public class RookieAssassin extends AbstractTask {
+public class FiftyFirstTrials extends AbstractTask {
 
     @Override
     public ResourceLocation taskIcon() {
-        return Icons.HORDE;
+        return Icons.CHEST_COMMON;
     }
 
     @Override
     public String taskName() {
-        return "Rookie Assassin";
+        return "Fifty First Trials";
     }
 
     @Override
     public String taskDescription() {
-        return "Kill 1000 mobs";
+        return "Clear 50 rooms in Novice difficulty";
     }
 
     @Override
@@ -38,32 +36,32 @@ public class RookieAssassin extends AbstractTask {
 
     @Override
     public int trackedValue(Player player) {
-        var x = PlayerTrialData.getData(player).getPastRuns().stream().mapToInt(RunData::getMobsKilled).sum();
-        var current = RunData.getStat(player, RunData.MOBS_KILLED);
-
-        return x + current;
+        var x = PlayerTrialData.getData(player).getInstanceData()
+            .stream()
+            .filter(s -> s.getDifficulty().equals(InstanceDifficulty.NOVICE.getSerializedName()))
+            .filter(s -> s.getClearedRooms() >= 50)
+            .toList();
+        var current = RunData.getRunData(player).getRoomsCleared();
+        return x.size() + current;
     }
 
     @Override
     public int countRequired() {
-        return 1000;
+        return 1;
     }
 
     @Override
     public List<ItemStack> rewards() {
         var x = new ItemStack(ItemReg.AUGMENT_CORE);
         var y = new ItemStack(ItemReg.SKILL_POINT);
-        var z = new ItemStack(ItemReg.COIN_SACK);
-
-        z.set(ComponentReg.STORE_INTEGER, CurrencyConverter.convertToWallet(new CurrencyConverter(0, 1, 0, 0)));
         CoreData.setFilled(x);
 
-        return List.of(x, y, z);
+        return List.of(x, y);
     }
 
     @Override
     public TriggerType type() {
-        return TriggerType.KIll;
+        return TriggerType.USE;
     }
 
 }

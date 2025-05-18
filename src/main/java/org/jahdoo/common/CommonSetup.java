@@ -30,6 +30,7 @@ public class CommonSetup {
         modEventBus.addListener(SkillReg::registerRegistry);
         modEventBus.addListener(QuestReg::registerRegistry);
         modEventBus.addListener(RuneReg::registerRegistry);
+        modEventBus.addListener(TaskReg::registerRegistry);
     }
 
     public static void common(final FMLCommonSetupEvent event){
@@ -59,6 +60,7 @@ public class CommonSetup {
         ElementReg.register(modEventBus);
         LevelBoonReg.register(modEventBus);
         SkillReg.register(modEventBus);
+        TaskReg.register(modEventBus);
         QuestReg.register(modEventBus);
         RuneReg.register(modEventBus);
         RecipeRegistry.register(modEventBus);

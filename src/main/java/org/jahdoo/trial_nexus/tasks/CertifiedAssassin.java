@@ -9,12 +9,14 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.trading_post.ShoppingItems;
 
 import java.util.List;
 
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
 
-public class RookieAssassin extends AbstractTask {
+public class CertifiedAssassin extends AbstractTask {
 
     @Override
     public ResourceLocation taskIcon() {
@@ -23,12 +25,12 @@ public class RookieAssassin extends AbstractTask {
 
     @Override
     public String taskName() {
-        return "Rookie Assassin";
+        return "Certified Assassin";
     }
 
     @Override
     public String taskDescription() {
-        return "Kill 1000 mobs";
+        return "Kill 100000 mobs in the trial dimension";
     }
 
     @Override
@@ -46,19 +48,20 @@ public class RookieAssassin extends AbstractTask {
 
     @Override
     public int countRequired() {
-        return 1000;
+        return 100000;
     }
 
     @Override
     public List<ItemStack> rewards() {
-        var x = new ItemStack(ItemReg.AUGMENT_CORE);
-        var y = new ItemStack(ItemReg.SKILL_POINT);
+        var w = ShoppingItems.getRandomWand(JahdooRarity.ETERNAL, null);
+        var x = new ItemStack(ItemReg.AUGMENT_HYPER_CORE);
+        var y = new ItemStack(ItemReg.SKILL_POINT).copyWithCount(5);
         var z = new ItemStack(ItemReg.COIN_SACK);
 
-        z.set(ComponentReg.STORE_INTEGER, CurrencyConverter.convertToWallet(new CurrencyConverter(0, 1, 0, 0)));
+        z.set(ComponentReg.STORE_INTEGER, CurrencyConverter.convertToWallet(new CurrencyConverter(10, 0, 0, 0)));
         CoreData.setFilled(x);
 
-        return List.of(x, y, z);
+        return List.of(w, x, y, z);
     }
 
     @Override

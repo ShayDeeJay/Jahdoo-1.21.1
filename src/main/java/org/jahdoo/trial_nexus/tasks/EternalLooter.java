@@ -14,21 +14,21 @@ import java.util.List;
 
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
 
-public class RookieAssassin extends AbstractTask {
+public class EternalLooter extends AbstractTask {
 
     @Override
     public ResourceLocation taskIcon() {
-        return Icons.HORDE;
+        return Icons.CHEST_ETERNAL;
     }
 
     @Override
     public String taskName() {
-        return "Rookie Assassin";
+        return "Eternal Looter";
     }
 
     @Override
     public String taskDescription() {
-        return "Kill 1000 mobs";
+        return "Open 500 eternal chests";
     }
 
     @Override
@@ -38,24 +38,23 @@ public class RookieAssassin extends AbstractTask {
 
     @Override
     public int trackedValue(Player player) {
-        var x = PlayerTrialData.getData(player).getPastRuns().stream().mapToInt(RunData::getMobsKilled).sum();
-        var current = RunData.getStat(player, RunData.MOBS_KILLED);
-
+        var x = PlayerTrialData.getData(player).getPastRuns().stream().mapToInt(RunData::getEternalChests).sum();
+        var current = RunData.getRunData(player).getEternalChests();
         return x + current;
     }
 
     @Override
     public int countRequired() {
-        return 1000;
+        return 500;
     }
 
     @Override
     public List<ItemStack> rewards() {
-        var x = new ItemStack(ItemReg.AUGMENT_CORE);
-        var y = new ItemStack(ItemReg.SKILL_POINT);
+        var x = new ItemStack(ItemReg.AUGMENT_HYPER_CORE).copyWithCount(5);
+        var y = new ItemStack(ItemReg.SKILL_POINT).copyWithCount(5);
         var z = new ItemStack(ItemReg.COIN_SACK);
 
-        z.set(ComponentReg.STORE_INTEGER, CurrencyConverter.convertToWallet(new CurrencyConverter(0, 1, 0, 0)));
+        z.set(ComponentReg.STORE_INTEGER, CurrencyConverter.convertToWallet(new CurrencyConverter(5, 0, 0, 0)));
         CoreData.setFilled(x);
 
         return List.of(x, y, z);
@@ -63,7 +62,7 @@ public class RookieAssassin extends AbstractTask {
 
     @Override
     public TriggerType type() {
-        return TriggerType.KIll;
+        return TriggerType.USE;
     }
 
 }

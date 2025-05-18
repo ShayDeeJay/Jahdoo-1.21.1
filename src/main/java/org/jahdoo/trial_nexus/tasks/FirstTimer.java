@@ -14,21 +14,21 @@ import java.util.List;
 
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
 
-public class RookieAssassin extends AbstractTask {
+public class FirstTimer extends AbstractTask {
 
     @Override
     public ResourceLocation taskIcon() {
-        return Icons.HORDE;
+        return Icons.TRIAL_EXPERIENCE;
     }
 
     @Override
     public String taskName() {
-        return "Rookie Assassin";
+        return "First Time";
     }
 
     @Override
     public String taskDescription() {
-        return "Kill 1000 mobs";
+        return "Complete your first quest";
     }
 
     @Override
@@ -38,15 +38,14 @@ public class RookieAssassin extends AbstractTask {
 
     @Override
     public int trackedValue(Player player) {
-        var x = PlayerTrialData.getData(player).getPastRuns().stream().mapToInt(RunData::getMobsKilled).sum();
-        var current = RunData.getStat(player, RunData.MOBS_KILLED);
-
+        var x = PlayerTrialData.getData(player).getPastRuns().stream().map(RunData::isCompletedQuest).toList().size();
+        var current = RunData.getRunData(player).isCompletedQuest() ? 1 : 0;
         return x + current;
     }
 
     @Override
     public int countRequired() {
-        return 1000;
+        return 1;
     }
 
     @Override
@@ -55,7 +54,7 @@ public class RookieAssassin extends AbstractTask {
         var y = new ItemStack(ItemReg.SKILL_POINT);
         var z = new ItemStack(ItemReg.COIN_SACK);
 
-        z.set(ComponentReg.STORE_INTEGER, CurrencyConverter.convertToWallet(new CurrencyConverter(0, 1, 0, 0)));
+        z.set(ComponentReg.STORE_INTEGER, CurrencyConverter.convertToWallet(new CurrencyConverter(0, 0, 5, 0)));
         CoreData.setFilled(x);
 
         return List.of(x, y, z);
@@ -63,7 +62,7 @@ public class RookieAssassin extends AbstractTask {
 
     @Override
     public TriggerType type() {
-        return TriggerType.KIll;
+        return TriggerType.QUEST_COMPLETION;
     }
 
 }

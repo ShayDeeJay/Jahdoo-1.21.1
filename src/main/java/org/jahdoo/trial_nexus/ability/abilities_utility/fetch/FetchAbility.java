@@ -20,7 +20,7 @@ public class FetchAbility extends AbstractBlockAbility {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.COMMON;
+        return JahdooRarity.RARE;
     }
 
     @Override
@@ -66,12 +66,12 @@ public class FetchAbility extends AbstractBlockAbility {
 
     @Override
     public int levelRequirement() {
-        return 0;
+        return 10;
     }
 
     @Override
     public int getAbilityCost() {
-        return 1;
+        return 2;
     }
 
     @Override

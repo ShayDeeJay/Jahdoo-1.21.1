@@ -34,6 +34,7 @@ public class UseAbilityC2SP implements CustomPacketPayload {
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
                     var mainHand = serverPlayer.getMainHandItem().getItem();
                     var offHand = serverPlayer.getOffhandItem().getItem();
+
                     InteractionHand hand = null;
                     if(mainHand instanceof CasterItem) hand = MAIN_HAND;
                     if(offHand instanceof CasterItem) hand = OFF_HAND;

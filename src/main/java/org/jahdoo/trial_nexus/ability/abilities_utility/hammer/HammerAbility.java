@@ -21,7 +21,7 @@ public class HammerAbility extends AbstractBlockAbility {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.LEGENDARY;
+        return JahdooRarity.COMMON;
     }
 
     @Override
@@ -66,12 +66,12 @@ public class HammerAbility extends AbstractBlockAbility {
 
     @Override
     public int levelRequirement() {
-        return 20;
+        return 0;
     }
 
     @Override
     public int getAbilityCost() {
-        return 2;
+        return 1;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class HammerAbility extends AbstractBlockAbility {
         int high = 13;
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(10)
-            .setBlockSize(high, 3, 2, 1)
+            .setBlockSize(high, 1, 2, 1)
             .setModifierWithStepSet(OFFSET, high, 0, true, high, 1, 1, 1)
             .buildAndReturn();
     }

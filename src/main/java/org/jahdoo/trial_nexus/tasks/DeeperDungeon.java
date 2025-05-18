@@ -5,30 +5,27 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.components.CoreData;
-import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 
 import java.util.List;
 
-import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
-
-public class RookieAssassin extends AbstractTask {
+public class DeeperDungeon extends AbstractTask {
 
     @Override
     public ResourceLocation taskIcon() {
-        return Icons.HORDE;
+        return Icons.ROOMS_CLEARED;
     }
 
     @Override
     public String taskName() {
-        return "Rookie Assassin";
+        return "Deepest Dungeon";
     }
 
     @Override
     public String taskDescription() {
-        return "Kill 1000 mobs";
+        return "Clear 500 rooms";
     }
 
     @Override
@@ -38,32 +35,28 @@ public class RookieAssassin extends AbstractTask {
 
     @Override
     public int trackedValue(Player player) {
-        var x = PlayerTrialData.getData(player).getPastRuns().stream().mapToInt(RunData::getMobsKilled).sum();
-        var current = RunData.getStat(player, RunData.MOBS_KILLED);
-
+        var x = PlayerTrialData.getData(player).getPastRuns().stream().mapToInt(RunData::getRoomsCleared).sum();
+        var current = RunData.getStat(player, RunData.ROOMS_CLEARED);
         return x + current;
     }
 
     @Override
     public int countRequired() {
-        return 1000;
+        return 500;
     }
 
     @Override
     public List<ItemStack> rewards() {
         var x = new ItemStack(ItemReg.AUGMENT_CORE);
         var y = new ItemStack(ItemReg.SKILL_POINT);
-        var z = new ItemStack(ItemReg.COIN_SACK);
 
-        z.set(ComponentReg.STORE_INTEGER, CurrencyConverter.convertToWallet(new CurrencyConverter(0, 1, 0, 0)));
         CoreData.setFilled(x);
-
-        return List.of(x, y, z);
+        return List.of(x, y);
     }
 
     @Override
     public TriggerType type() {
-        return TriggerType.KIll;
+        return TriggerType.ROOM_CLEAR;
     }
 
 }

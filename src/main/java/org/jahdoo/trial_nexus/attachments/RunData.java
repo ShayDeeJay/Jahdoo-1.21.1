@@ -70,8 +70,33 @@ public class RunData implements IAttachment {
         this.died = died;
     }
 
+    public int getChampionsKilled(){
+        return getStat(CHAMPIONS_KILLED);
+    }
+
+    public int getRoomsCleared(){
+        return getStat(ROOMS_CLEARED);
+    }
+
     public int getMobsKilled(){
         return getStat(MOBS_KILLED);
+    }
+
+    public int getCommonChests(){
+        return getStat(CHESTS_COMMON);
+    }
+
+
+    public int getRareChests(){
+        return getStat(CHESTS_RARE);
+    }
+
+    public int getLegendaryChests(){
+        return getStat(CHESTS_LEGENDARY);
+    }
+
+    public int getEternalChests(){
+        return getStat(CHESTS_ETERNAL);
     }
 
     public int getStat(String key) {
@@ -85,6 +110,7 @@ public class RunData implements IAttachment {
     public boolean died() {
         return died;
     }
+
 
     public boolean isCompletedQuest() {
         return completedQuest;
@@ -116,6 +142,10 @@ public class RunData implements IAttachment {
 
     public void setCurrentQuestId(String currentQuestId) {
         this.currentQuestId = currentQuestId;
+    }
+
+    public static RunData getRunData(Player player){
+        return player.getData(RUN_DATA.get());
     }
 
     public void setExperienceGained(String difficulty, int baseExp) {

@@ -75,7 +75,6 @@ public class ClientBusEvents {
     @SubscribeEvent
     public static void onClientSetup(RegisterMenuScreensEvent event) {
         event.register(MODULAR_CHAOS_CUBE_MENU.get(), ChaosCubeScreen::new);
-//        event.register(AUGMENT_MODIFICATION_MENU.get(), AugmentModificationScreen::new);
         event.register(WAND_MANAGER_MENU.get(), WandManagerScreen::new);
         event.register(RUNE_TABLE_MENU.get(), RuneTableScreen::new);
     }

@@ -17,7 +17,10 @@ import org.jahdoo.trial_nexus.ability.abilities_combat.ancient_golem.SummonAncie
 import org.jahdoo.trial_nexus.ability.abilities_combat.arcane_shift.ArcaneShiftAbility;
 import org.jahdoo.trial_nexus.ability.abilities_combat.armageddon.ArmageddonAbility;
 import org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.DimensionalRecallAbility;
-import org.jahdoo.trial_nexus.ability.abilities_combat.elemental_missile.*;
+import org.jahdoo.trial_nexus.ability.abilities_combat.elemental_missile.FrostMissileAbility;
+import org.jahdoo.trial_nexus.ability.abilities_combat.elemental_missile.InfernoMissileAbility;
+import org.jahdoo.trial_nexus.ability.abilities_combat.elemental_missile.MysticMissileAbility;
+import org.jahdoo.trial_nexus.ability.abilities_combat.elemental_missile.VitalityMissileAbility;
 import org.jahdoo.trial_nexus.ability.abilities_combat.eternal_wizard.SummonEternalWizardAbility;
 import org.jahdoo.trial_nexus.ability.abilities_combat.fireball.FireballAbility;
 import org.jahdoo.trial_nexus.ability.abilities_combat.frost_spear.IceSpearAbility;
@@ -32,8 +35,6 @@ import org.jahdoo.trial_nexus.ability.abilities_combat.quantum_destroyer.Quantum
 import org.jahdoo.trial_nexus.ability.abilities_combat.storm_rush.StormRushAbility;
 import org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenationAbility;
 import org.jahdoo.trial_nexus.ability.abilities_utility.block_bomb.BlockBombAbility;
-import org.jahdoo.trial_nexus.ability.abilities_utility.block_breaker.BlockBreakerAbility;
-import org.jahdoo.trial_nexus.ability.abilities_utility.block_placer.BlockPlacerAbility;
 import org.jahdoo.trial_nexus.ability.abilities_utility.enchanted_fusion.EnchantedFusionAbility;
 import org.jahdoo.trial_nexus.ability.abilities_utility.farmers_touch.FarmersTouchAbility;
 import org.jahdoo.trial_nexus.ability.abilities_utility.fetch.FetchAbility;
@@ -206,14 +207,14 @@ public class AbilityReg {
         registerSpell(new VitalityMissileAbility());
 
     //Utility
+//    public static final DeferredHolder<Ability, Ability> BLOCK_BREAKER =
+//        registerSpell(new BlockBreakerAbility());
+
+//    public static final DeferredHolder<Ability, Ability> BLOCK_PLACER =
+//        registerSpell(new BlockPlacerAbility());
+
     public static final DeferredHolder<Ability, Ability> BLOCK_BOMB =
         registerSpell(new BlockBombAbility());
-
-    public static final DeferredHolder<Ability, Ability> BLOCK_BREAKER =
-        registerSpell(new BlockBreakerAbility());
-
-    public static final DeferredHolder<Ability, Ability> BLOCK_PLACER =
-        registerSpell(new BlockPlacerAbility());
 
     public static final DeferredHolder<Ability, Ability> FARMERS_TOUCH =
         registerSpell(new FarmersTouchAbility());

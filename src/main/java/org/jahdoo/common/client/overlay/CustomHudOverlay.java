@@ -14,6 +14,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.common.client.NumberText;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.ExperienceOrb;
 import org.jahdoo.common.items.JahdooItem;
@@ -68,8 +69,10 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
     }
 
     public void progressOverlays(AlignedGui alignedGui, int startY, int manaProgress){
-        alignedGui.displayGuiLayer(-manaProgress + 3, 18, 0, startY, manaProgress, 8, MANA_LEVEL_BAR);
+//        alignedGui.displayGuiLayer(-manaProgress + 3, 18, 0, startY, manaProgress, 8, MANA_LEVEL_BAR);
+        alignedGui.displayGuiLayer(-44 + (47 - manaProgress), 18, 50 - manaProgress, startY, manaProgress, 8, MANA_LEVEL_BAR);
     }
+
 
     private void healthAndAbsorptionCount(GuiGraphics graphics, Minecraft mc){
         var height = graphics.guiHeight();
@@ -80,10 +83,10 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         var absorption = player.getAbsorptionAmount();
         var manaPoolCount = withStyleComponent(valueOf(Math.round(playerHealth)), MAGNET_STRENGTH_RED).copy();
 
-        if(absorption > 0){
-            manaPoolCount.append(withStyleComponent(" + ", SUB_HEADER_COLOUR));
-            manaPoolCount.append(withStyleComponent("" + Math.round(absorption), ABSORPTION_TEXT_YELLOW));
-        }
+//        if(absorption > 0){
+//            manaPoolCount.append(withStyleComponent(" + ", SUB_HEADER_COLOUR));
+//            manaPoolCount.append(withStyleComponent("" + Math.round(absorption), ABSORPTION_TEXT_YELLOW));
+//        }
 
         var colourBack = -13816531;
         var pose = graphics.pose();
@@ -102,23 +105,24 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             pose.popPose();
         }
 
-        pose.scale(0.5f,0.5f,0.5f);
-        pose.translate(0, 0, 1000);
-        centeredStringNoShadow(graphics, mc.font, manaPoolCount, 0, 0, colourBack, false);
+        pose.translate(-1, -1, 1000);
+        NumberText.drawCenteredNumber(graphics, Math.round(playerHealth), 0, 0, 0.4F);
+
+//        centeredStringNoShadow(graphics, mc.font, manaPoolCount, 0, 0, colourBack, false);
         pose.popPose();
     }
 
     private void manaPoolCount(double data, GuiGraphics graphics, Minecraft mc, double x, double y, int colour){
         var height = graphics.guiHeight();
-        var manaPoolCount = withStyleComponent(valueOf(Math.round(data)), colour);
-        var colourBack = -13816531;
+//        var manaPoolCount = withStyleComponent(valueOf(Math.round(data)), colour);
+//        var colourBack = -13816531;
         var pose = graphics.pose();
 
         pose.pushPose();
         pose.translate(57 + this.alignedGui.shiftGuiX + x, height - 16.2 - this.alignedGui.shiftGuiY + y, 10D);
-        pose.scale(0.5f,0.5f,0.5f);
-        pose.translate(0, 0, 1000);
-        centeredStringNoShadow(graphics, mc.font, manaPoolCount, 0, 0, colourBack, false);
+        pose.translate(0, -0.9, 1000);
+
+        NumberText.drawCenteredNumber(graphics, (int) Math.round(data), 0, 0, 0.4F);
         pose.popPose();
     }
 
@@ -321,6 +325,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         pose.pushPose();
         enableBlend();
 
+
         var scale = CUSTOM_UI_SCALE.get().floatValue();
         var yOffset = CUSTOM_UI_HEIGHT.get().floatValue() + (CUSTOM_UI.get() ? 0 : 10) ;
         var center = this.alignedGui.screenWidth / 2;
@@ -329,6 +334,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         pose.translate(center, centerY + yOffset, 0);
         pose.scale(scale, scale, 1);
         pose.translate(-center, -centerY + yOffset, 0);
+
 
         if(CUSTOM_UI.get()){
             minecraft.gui.renderSelectedItemName(graphics, (int) (100 + this.fadeInAbility));
@@ -447,17 +453,14 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
 
             this.cooldownHotbarIcons(x.orElse(null), casterData, spaceWithSplit - 43, v);
 
-            var vc = 0.5F;
-            var literal = literal(valueOf(counter+1));
+            var vc = 1F;
             graphics.pose().pushPose();
             graphics.pose().scale(vc, vc, vc);
             graphics.pose().translate(0, 0, 100);
-
-            var x1 = (int) (((float) graphics.guiWidth() / 2 + spaceWithSplit) / vc) - 98;
-            var y = (int) ((graphics.guiHeight() - this.fadeInAbility ) / vc) - 110;
-            centeredStringNoShadow(graphics, minecraft.font, literal, x1, y, SUB_HEADER_COLOUR, false);
+            var x1 = (int) (((float) graphics.guiWidth() / 2 + spaceWithSplit) / vc) - 50;
+            var y = (int) ((graphics.guiHeight() - this.fadeInAbility ) / vc) - 56;
+            NumberText.drawCenteredNumber(graphics, counter+1, x1, y, 0.6F);
             graphics.pose().popPose();
-
             spacer += 13;
             counter++;
         }

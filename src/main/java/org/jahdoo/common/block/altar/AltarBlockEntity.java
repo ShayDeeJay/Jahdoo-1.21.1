@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import org.jahdoo.common.event.TriggerEvents;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.mobs.MobManager;
 import org.jahdoo.trial_nexus.utils.ColourStore;
@@ -179,6 +180,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
             (serverPlayer) -> {
                 serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(5, 20, 20));
                 serverPlayer.connection.send(new ClientboundSetTitleTextPacket(Helpers.withStyleComponent("ALTAR COMPLETE", ColourStore.MAGNET_RANGE_GREEN)));
+                TriggerEvents.triggerRoomClearEvent(serverPlayer, serverLevel);
             }
         );
 

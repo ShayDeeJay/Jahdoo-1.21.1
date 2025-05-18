@@ -30,6 +30,7 @@ public class DataGenerators {
         generator.addProvider(event.includeServer(), new JahdooCuriosProvider(packOutput, event.getExistingFileHelper(), lookupProvider));
         generator.addProvider(event.includeClient(), new DamageTypesProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeClient(), new BiomeProvider(packOutput, lookupProvider));
+        generator.addProvider(event.includeServer(), new ModAdvancementProvider(packOutput, lookupProvider, event.getExistingFileHelper()));
 
     }
 

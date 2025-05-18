@@ -22,6 +22,9 @@ public class Icons {
     public static final ResourceLocation HEALTH_BAR =
         res(PREFIX + "health/health_bar.png");
 
+    public static final ResourceLocation NUMERIC =
+        res(PREFIX + "numeric.png");
+
     public static final ResourceLocation FROST_BOLTZ =
         res(ABILITY_PREFIX + "frostbolts.png");
 
@@ -154,8 +157,8 @@ public class Icons {
     public static final ResourceLocation GUI_BUTTON_SKILL =
         res(BUTTON_PREFIX + "gui_button_skill.png");
 
-    public static final ResourceLocation GUI_BUTTON_CENTER =
-        res(BUTTON_PREFIX + "center_view.png");
+    public static final ResourceLocation TICK =
+        res(BUTTON_PREFIX + "gui_button_tick.png");
 
     public static final ResourceLocation MAGE_FLIGHT =
         res(SKILLS + "mage_flight.png");

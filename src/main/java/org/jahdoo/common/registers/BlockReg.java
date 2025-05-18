@@ -96,6 +96,9 @@ public class BlockReg {
         () -> new Block(of().strength(DIAMOND_BLOCK.defaultDestroyTime()).sound(SoundType.STONE).noOcclusion())
     );
 
+    public static DeferredHolder<Block, Block> LOCK_SUPPORT =
+        registerBlockWithItem("lock_support", () -> new Block(of()));
+
     public static DeferredHolder<Block, Block> RAW_NEXITE_BLOCK = registerBlockWithItem("raw_nexite_block",
         () -> new Block(of().strength(RAW_GOLD_BLOCK.defaultDestroyTime()).noOcclusion())
     );

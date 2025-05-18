@@ -22,7 +22,6 @@ import org.jahdoo.trial_nexus.ability.abilities_combat.dimensional_recall.Dimens
 import org.jahdoo.trial_nexus.ability.abilities_combat.nova_smash.NovaSmash;
 import org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
 import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.attachments.QuestTracker;
 import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
 import org.jahdoo.trial_nexus.attachments.player_abilities.TripleJump;
@@ -30,6 +29,8 @@ import org.jahdoo.trial_nexus.utils.Helpers;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.event.CurioChangeEvent;
 
+import static org.jahdoo.common.event.TriggerEvents.triggerKillEvent;
+import static org.jahdoo.common.event.TriggerEvents.triggerUseEvent;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_ITEM_DATA;
 import static org.jahdoo.trial_nexus.utils.Helpers.syncClientData;
@@ -60,6 +61,7 @@ public class ServerEvents {
     @SubscribeEvent
     public static void dimChange(PlayerEvent.PlayerChangedDimensionEvent event) {
         var player = event.getEntity();
+
 
     }
 
@@ -96,9 +98,8 @@ public class ServerEvents {
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
         var player = rightClickItem.getEntity();
-        if(player instanceof ServerPlayer serverPlayer){
-            QuestTracker.clearClaimedQuest(serverPlayer);
-        }
+
+        triggerUseEvent(player, player.level());
         removeShieldUse(rightClickItem);
     }
 
@@ -186,6 +187,7 @@ public class ServerEvents {
     public static void joinEvent(EntityJoinLevelEvent event){
         syncClientData(event.getEntity());
         removeNonAllowedEffects(event);
+        TriggerEvents.onPlayerJoined(event.getEntity());
     }
 
     @SubscribeEvent
@@ -210,6 +212,7 @@ public class ServerEvents {
         var entity = event.getEntity();
         var bonus = entity.tickCount / 10;
 
+        triggerKillEvent(event.getSource().getEntity(), entity.level());
         coinDropCalc(entity, bonus);
         onDeathGreaterFrostEffect(entity);
         resetGameModeOnDeath(entity);

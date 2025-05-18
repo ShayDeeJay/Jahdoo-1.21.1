@@ -103,8 +103,8 @@ public class BlockSetupManager {
 
             if(ignoreCheck && level.getBlockEntity(blockPos) instanceof LockBlockEntity lockBlockEntity){
                 if(!lockBlockEntity.canPlace()){
-                    level.setBlockAndUpdate(blockPos, NETHERITE_BLOCK.defaultBlockState());
-                    level.setBlockAndUpdate(blockPos.relative(blockState.getValue(FACING), 1), NETHERITE_BLOCK.defaultBlockState());
+                    level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
+                    level.setBlockAndUpdate(blockPos.relative(blockState.getValue(FACING), 1), LOCK_SUPPORT.get().defaultBlockState());
                 }
             }
         }

@@ -14,21 +14,21 @@ import java.util.List;
 
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
 
-public class RookieAssassin extends AbstractTask {
+public class ChampionOfChampions extends AbstractTask {
 
     @Override
     public ResourceLocation taskIcon() {
-        return Icons.HORDE;
+        return Icons.CHAMPIONS_CROWN;
     }
 
     @Override
     public String taskName() {
-        return "Rookie Assassin";
+        return "Champion Of Champions";
     }
 
     @Override
     public String taskDescription() {
-        return "Kill 1000 mobs";
+        return "Kill 500 champions";
     }
 
     @Override
@@ -38,20 +38,20 @@ public class RookieAssassin extends AbstractTask {
 
     @Override
     public int trackedValue(Player player) {
-        var x = PlayerTrialData.getData(player).getPastRuns().stream().mapToInt(RunData::getMobsKilled).sum();
-        var current = RunData.getStat(player, RunData.MOBS_KILLED);
+        var x = PlayerTrialData.getData(player).getPastRuns().stream().mapToInt(RunData::getChampionsKilled).sum();
+        var current = RunData.getStat(player, RunData.CHAMPIONS_KILLED);
 
         return x + current;
     }
 
     @Override
     public int countRequired() {
-        return 1000;
+        return 500;
     }
 
     @Override
     public List<ItemStack> rewards() {
-        var x = new ItemStack(ItemReg.AUGMENT_CORE);
+        var x = new ItemStack(ItemReg.ADVANCED_AUGMENT_CORE).copyWithCount(5);
         var y = new ItemStack(ItemReg.SKILL_POINT);
         var z = new ItemStack(ItemReg.COIN_SACK);
 
@@ -63,7 +63,7 @@ public class RookieAssassin extends AbstractTask {
 
     @Override
     public TriggerType type() {
-        return TriggerType.KIll;
+        return TriggerType.KIll ;
     }
 
 }

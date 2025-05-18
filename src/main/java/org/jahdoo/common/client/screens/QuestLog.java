@@ -4,24 +4,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.client.button.QuestLogButton;
 import org.jahdoo.common.client.button.SimpleButton;
-import org.jahdoo.common.client.overlay.InstanceDataOverlay;
+import org.jahdoo.common.networking.client2server.GivePlayerItemsC2SP;
 import org.jahdoo.common.networking.client2server.QuestTrackerC2SP;
-import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
+import org.jahdoo.common.registers.mod.TaskReg;
 import org.jahdoo.trial_nexus.attachments.QuestTracker;
 import org.jahdoo.trial_nexus.tasks.AbstractTask;
-import org.jahdoo.trial_nexus.tasks.RookieAssassin;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.common.client.SharedUI.boxMaker;
-import static org.jahdoo.common.client.SharedUI.fadeBlack;
+import static org.jahdoo.common.client.SharedUI.*;
+import static org.jahdoo.common.client.overlay.InstanceDataOverlay.progressBar;
 import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.Helpers.colourByPercentReversed;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponentTrans;
 
 public class QuestLog extends AbstractPanableScreen {
 
@@ -29,42 +29,34 @@ public class QuestLog extends AbstractPanableScreen {
     private AbstractTask task;
     private double mouseX;
     private double mouseY;
+    private final List<AbstractTask> getAllTasks = TaskReg.getAllTasks();
 
     @Override
     protected void init() {
         super.init();
-        var trialData = List.of(new RookieAssassin());
         var spacer = 0;
+        var player = getMinecraft().player;
 
         this.addRenderableOnly(
             new Overlay() {
                 @Override
                 public void render(@NotNull GuiGraphics graphics, int i, int i1, float v) {
-                    var start = canScrollSelections(mouseX, mouseY, width) ? fadeBlack(0.8F): uiFade();
-                    boxMaker(graphics, 14, 63, WIDTH_OFFSET, height/2 - 38, canScrollSelections(mouseX, mouseY, width) ? color(180, uiColour()) : 0, start, start);
-
-                    if(task != null){
-                        var spacer = 0;
-                        graphics.drawString(font, Helpers.withStyleComponentTrans("Rewards", uiColour()), 200, 190, -1);
-                        for (var reward : task.rewards()) {
-                            graphics.renderItem(reward, 196 + spacer, 200);
-                            spacer += 20;
-                        }
-                    }
+                    var start = fadeBlack(0.8F);
+                    boxMaker(graphics, 14, 63, WIDTH_OFFSET, height/2 - 38,  uiColour(), start, start);
                     graphics.enableScissor(3, 69, width - 3, height - 20);
                 }
             }
         );
 
-        for (var pastRun : trialData) {
-            this.addRenderableWidget(new QuestLogButton(28, spacer + 78, 130, 36, false, (button) -> doOnClick(pastRun), pastRun));
+        for (var quests : getAllTasks) {
+            this.addRenderableWidget(new QuestLogButton(28, (int) (panY + spacer + 78), 130, 36,  QuestTracker.claimedQuest(player, quests.taskId()), (button) -> doOnClick(quests), quests));
             spacer += 47;
         }
 
-        var player = getMinecraft().player;
         if(player != null && task != null){
-            var isSelected = task.completionPredicate(player) && !QuestTracker.claimedQuest(player, task.taskId());
-            this.addRenderableWidget(new SimpleButton(192, height - 45, width - 214, 22, isSelected, (button) -> claimReward(task.taskId()), "Claim Reward"));
+            var claimedQuest = QuestTracker.claimedQuest(player, task.taskId());
+            var isSelected = task.completionPredicate(player) && !claimedQuest;
+            this.addRenderableWidget(new SimpleButton(192, height - 45, width - 214, 22, isSelected, (button) -> claimReward(task.taskId(), task.rewards()), claimedQuest ? "Reward Claimed" : "Claim Reward"));
         }
 
         this.addRenderableOnly(
@@ -77,17 +69,39 @@ public class QuestLog extends AbstractPanableScreen {
         );
     }
 
-    @Override
-    public void onClose() {
-        super.onClose();
+    private void renderRewards(@NotNull GuiGraphics graphics) {
+        if(task != null){
+            var spacer = 0;
+            var rewards = task.rewards();
+            var startX = 192;
+            var startY = -52;
+
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 100);
+            boxMaker(graphics, startX, startY + 185, rewards.size() * 16, 19,  uiColour(),  fadeBlack(0.8F),  fadeBlack(0.8F));
+            graphics.drawString(font, withStyleComponentTrans("Rewards", uiColour()), startX + 4, startY + 190, -1);
+            for (var reward : rewards) {
+                var x = startX + spacer + 14;
+                var y = 204;
+                graphics.drawString(font, withStyleComponentTrans(reward.getCount() + "x ", SUB_HEADER_COLOUR), x - 10, startY + y + 4, -1);
+                var y1 = startY + y;
+                var x1 = x + 2;
+                graphics.renderItem(reward, x1, y1);
+                if(mouseX >= x1 && mouseX <= x1 + 15 && mouseY >= y1 && mouseY <= y1 + 15){
+                    graphics.renderTooltip(font, reward, (int) mouseX, (int) mouseY);
+                }
+                spacer += 30;
+            }
+            graphics.pose().popPose();
+        }
     }
 
-    private @NotNull PlayerTrialData getPlayerTrialData() {
-        return PlayerTrialData.getData(getMinecraft().player);
-    }
 
-    private void claimReward(String id){
+    private void claimReward(String id, List<ItemStack> rewards){
         PacketDistributor.sendToServer(new QuestTrackerC2SP(id));
+        for (var reward : rewards) {
+            PacketDistributor.sendToServer(new GivePlayerItemsC2SP(reward));
+        }
     }
 
     private void doOnClick(AbstractTask task){
@@ -101,7 +115,7 @@ public class QuestLog extends AbstractPanableScreen {
             panY += Math.round(dragY / zoomScale);
             panY = Math.min(panY, 0); // Clamp to top
 
-            int entryCount = getPlayerTrialData().getPastRuns().size();
+            int entryCount = this.getAllTasks.size();
             int totalHeight = entryCount * 47;
             int visibleHeight = (height - 13) - 64; // Bottom - Top
             int minPanY = Math.min(0, visibleHeight - totalHeight - 18); // Extra 10 for bottom padding
@@ -120,11 +134,11 @@ public class QuestLog extends AbstractPanableScreen {
             var scrollAmount = Math.round(scrollSpeed / zoomScale);
             panY = Math.min(panY + scrollAmount, 0); // Upper limit still 1 (top)
 
-            int entryCount = getPlayerTrialData().getPastRuns().size();
+            int entryCount = this.getAllTasks.size();
             int totalHeight = entryCount * 47;
             int visibleHeight = (height - 13) - 64; // Bottom - Top of scroll box
             int minPanY = Math.min(0, visibleHeight - totalHeight - 18); // Extra 10 for bottom padding
-
+            System.out.println("2323");
             panY = Math.max(panY, minPanY); // Clamp to prevent overscroll
         }
 
@@ -133,13 +147,6 @@ public class QuestLog extends AbstractPanableScreen {
 
     private static boolean canScrollSelections(double mouseX, double mouseY, int width) {
         return mouseX > 13 && mouseX < WIDTH_OFFSET * 2 + 14;
-    }
-
-    private static boolean canScrollDetails(double mouseX, double mouseY, int width) {
-        var v = (double) width / 2;
-        var canScrollX = mouseX > v + 4 && mouseX < v + WIDTH_OFFSET * 2;
-        var canScrollY = mouseY > v + 4 && mouseY < v + WIDTH_OFFSET * 2;
-        return canScrollX;
     }
 
     @Override
@@ -171,22 +178,23 @@ public class QuestLog extends AbstractPanableScreen {
 
             pose.pushPose();
             pose.scale(scale, scale, scale);
-            graphics.blit(task.taskIcon(), 94, y - 4, 0, 0, size, size, size, size);
-            graphics.drawString(font, Helpers.withStyleComponentTrans(task.taskName(), uiColour()), 120, y + 6, -1);
+            graphics.blit(task.taskIcon(), 90, y - 6, 0, 0, size, size, size, size);
+            graphics.drawString(font, withStyleComponentTrans(task.taskName(), uiColour()), 112, y-2, -1);
             pose.popPose();
 
             var player = mc.player;
-            var isComplete = task.completionPredicate(player);
+            var isComplete = task.completionPredicate(player) || QuestTracker.claimedQuest(player, task.taskId());
             var currentValue = task.trackedValue(player);
             var requiredValue = task.countRequired();
             var tracker = Math.min(currentValue, requiredValue) + "/" + requiredValue;
             var complete = "Complete";
-            var colour = isComplete ? uiColour() : SUB_HEADER_COLOUR;
+            var startX = 192;
+            var text = withStyleComponentTrans(isComplete ? complete : tracker, isComplete ? 0 : SUB_HEADER_COLOUR);
 
-            InstanceDataOverlay.progressBar(graphics, 200, 160, 50, 8, currentValue, requiredValue, 3, uiColour(), colour);
-            graphics.drawString(font, Helpers.withStyleComponentTrans(task.taskDescription(), uiColour()), 200, 120, -1);
-            graphics.drawString(font, Helpers.withStyleComponentTrans("Progress", SUB_HEADER_COLOUR), 200, 140, -1);
-            graphics.drawString(font, Helpers.withStyleComponentTrans(isComplete ? complete : tracker, colour), 200, 150, -1);
+            progressBar(graphics, startX, 110, 100, 8, currentValue, requiredValue, 3, colourByPercentReversed(requiredValue, currentValue), SUB_HEADER_COLOUR);
+            graphics.drawString(font, withStyleComponentTrans(task.taskDescription(), SUB_HEADER_COLOUR), startX + 32, 96, -1);
+            centeredStringNoShadow(graphics, font, text,  startX + 98, 114, -1, false);
+            renderRewards(graphics);
         }
 
         graphics.disableScissor();

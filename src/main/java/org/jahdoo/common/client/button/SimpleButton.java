@@ -13,7 +13,7 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.SharedUI.boxMaker2;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
-import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 
 public class SimpleButton extends ImageButton {
 
@@ -59,7 +59,7 @@ public class SimpleButton extends ImageButton {
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
         var fade = isSelected && isHovered ? color(60, uiColour()) : fadeBlack(0.8f);
         var minecraft = Minecraft.getInstance();
-        var isSelected = !this.isSelected ? SUB_HEADER_COLOUR : uiColour();
+        var isSelected = !this.isSelected ? HEADER_COLOUR : uiColour();
 
         graphics.pose().pushPose();
         graphics.pose().translate(0, 0, 1);

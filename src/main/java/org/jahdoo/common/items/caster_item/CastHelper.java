@@ -155,7 +155,7 @@ public class CastHelper {
 
         var typeId = CasterData.selectedAbility(player);
         var getAbility = AbilityReg.getFirstSpellByTypeId(typeId);
-        var cantUseInDim = player.level() instanceof CustomLevel && getAbility.isPresent() && getAbility.get().getElemenType().equals(ElementReg.utility()) && getAbility.get() != AbilityReg.BLOCK_BREAKER.get();
+        var cantUseInDim = player.level() instanceof CustomLevel && getAbility.isPresent() && getAbility.get().getElemenType().equals(ElementReg.utility());
         var fail = InteractionResultHolder.fail(itemStack);
         if(cantUseInDim) {
             player.displayClientMessage(Component.literal("You cant use that here"), true);
@@ -176,9 +176,9 @@ public class CastHelper {
             var allowedDistance = getAbility.get(CASTING_DISTANCE).setValue();
             var lookAtLocation = player.pick(allowedDistance, 0, false);
             var isValidCastLocation = lookAtLocation.getType() == HitResult.Type.MISS;
-            var getWandElement = fromWand(itemStack.getItem()).orElseThrow();
+            var getWandElement = fromWand(itemStack.getItem()).orElse(null);
             var distance = String.valueOf(Math.round(allowedDistance));
-            var colour = getWandElement.partColourB();
+            var colour = getWandElement == null ? ColourStore.WALLET_BROWN : getWandElement.partColourB();
             var distanceCompo = Helpers.withStyleComponent(distance, colour);
             var notAllowedDistanceMessage = Component.translatable("casting.jahdoo.distance", distanceCompo);
 

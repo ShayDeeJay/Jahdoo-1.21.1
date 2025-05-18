@@ -66,6 +66,7 @@ import static net.minecraft.world.item.enchantment.EnchantmentHelper.processDura
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.common.registers.AttachmentReg.PLAYER_WALLET_DATA;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 
 public class Helpers {
     public static final String EASY = "novice";
@@ -273,6 +274,16 @@ public class Helpers {
 
     public static Component withStyleComponentTrans(String text, int colour, Object... args){
         return Component.translatable(text,args).withStyle(style -> style.withColor(colour));
+    }
+
+    public static int colourByPercent(int targetNumber, int currentNumber) {
+        var split = targetNumber /3;
+        return currentNumber <= split ? PERK_GREEN : currentNumber <= split * 2.5 ? ABSORPTION_YELLOW : NEGATIVE_RED;
+    }
+
+    public static int colourByPercentReversed(int targetNumber, int currentNumber) {
+        var split = targetNumber /3;
+        return currentNumber <= split ? NEGATIVE_RED : currentNumber <= split * 2.5 ? ABSORPTION_YELLOW : PERK_GREEN;
     }
 
     public static void playDebugMessage(Player player, Object... info){

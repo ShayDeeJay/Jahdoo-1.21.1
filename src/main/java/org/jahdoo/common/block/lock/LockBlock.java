@@ -20,36 +20,29 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.trial_nexus.level_manager.StructureManager;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.common.items.KeyItem;
+import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
+import org.jahdoo.trial_nexus.level_manager.StructureManager;
+import org.jahdoo.trial_nexus.utils.ColourStore;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.sounds.SoundEvents.*;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
-import static net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK;
 import static net.minecraft.world.level.block.Blocks.OBSERVER;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
 import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.placeNewSide;
 import static org.jahdoo.trial_nexus.utils.Helpers.*;
-import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
-import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
 
 public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
-    public static final VoxelShape SHAPE_BASE = Shapes.or(
-        Block.box(0, 0, 1, 16, 16, 16),
-        Block.box(4, 3, 0, 12, 9, 1),
-        Block.box(15, 0, 0, 16, 16, 1),
-        Block.box(0, 0, 0, 1, 16, 1),
-        Block.box(1, 0, 0, 15, 1, 1),
-        Block.box(1, 15, 0, 15, 16, 1)
-    );
+    public static final VoxelShape SHAPE_BASE = Block.box(0, 0, 0, 16, 16, 16);
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
 
@@ -76,6 +69,17 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        var test = context.isHoldingItem(ItemReg.EXIT_KEY.get());
+
+        if(context instanceof EntityCollisionContext entityCollisionContext){
+        }
+
+        var noCol = Block.box(0, 0, 0, 0, 0, 0);
+        return super.getCollisionShape(state, level, pos, context);
     }
 
     @Override
@@ -119,7 +123,6 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         if(!(level.getBlockEntity(pos) instanceof LockBlockEntity entity)) return FAIL;
         if(!(level instanceof ServerLevel serverLevel)) return FAIL;
         if(!entity.isInitialized()) return FAIL;
-
 
         if(stack.is(ItemReg.EXIT_KEY)) {
             if(KeyItem.isValidKey(stack, level)){
@@ -177,11 +180,11 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         var range = betweenClosed(pos.getX() - 2, pos.getY() - 1, pos.getZ() - 2, pos.getX() + 2, pos.getY() + 3, pos.getZ() + 2);
 
         for (var blockPos : range) {
-            var netherite = serverLevel.getBlockState(blockPos).is(NETHERITE_BLOCK);
+            var netherite = serverLevel.getBlockState(blockPos).is(BlockReg.LOCK_SUPPORT);
             var observer = serverLevel.getBlockState(blockPos).is(OBSERVER);
-
             if (observer || netherite) serverLevel.destroyBlock(blockPos, false);
         }
     }
+
 }
 

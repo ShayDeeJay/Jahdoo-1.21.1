@@ -220,7 +220,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
             spacer += (int) (scaledSpacing * 8);
         }
 
-        for (Ability ability : withElement) {
+        for (var ability : withElement) {
             var res = res(ABILITY_PREFIX + ability.setAbilityId() + ".png");
             var buttonX = centerX - ((double) size /2) + radius * Math.cos(currentAngle);
             var buttonY = centerY - ((double) size /2)  + radius * Math.sin(currentAngle);

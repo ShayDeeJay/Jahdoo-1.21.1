@@ -24,8 +24,10 @@ import java.util.List;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.core.BlockPos.withinManhattan;
+import static net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.common.registers.BlockReg.LOCK_SUPPORT;
 import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setBlockGenerator;
 import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setLocks;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.*;
@@ -62,7 +64,6 @@ public class StructureManager {
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
-        System.out.println(roomId);
         templates.ifPresent(template -> template.placeInWorld(level, pos, new BlockPos(-22, 0, -22), settings, level.random, 2));
     }
 
@@ -76,7 +77,7 @@ public class StructureManager {
 
     public static Iterable<BlockPos> roomBoundingFromCenter(BlockPos pos) {
         return betweenClosed(
-            pos.getX() - 25, pos.getY(), pos.getZ() - 25,
+            pos.getX() - 25, pos.getY() - 4, pos.getZ() - 25,
             pos.getX() + 25, pos.getY() + 10, pos.getZ() + 25
         );
     }
@@ -137,6 +138,7 @@ public class StructureManager {
         }
 
         for (var blockPos : range) {
+
             BlockSetupManager.generateExit(level, blockPos, Direction.EAST);
             setLocks(level, blockPos, false);
             if(level.getBlockState(blockPos).is(Blocks.TINTED_GLASS)){
@@ -159,6 +161,10 @@ public class StructureManager {
                     var particle = ParticleHandlers.getNonBakedParticles(colour, colour, 16, Random.nextInt(2, 4));
                     sendParticles(level, particle, vec3, 0, 0, 0.5, 0, Random.nextDouble(0.3, 1.2));
                 }
+            }
+
+            if(level.getBlockState(blockPos).is(NETHERITE_BLOCK)){
+                level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
             }
         }
     }
@@ -186,10 +192,9 @@ public class StructureManager {
                 }
             }
 
-            System.out.println(newPos);
             placeStructure(serverLevel, newPos, settings, roomId);
 
-            var relative = newPos.relative(direction, 26).above(19);
+            var relative = newPos.relative(direction, 25).above(19);
             var findBlock = switch (direction){
                 case Direction.NORTH -> withinManhattan(relative.west(25), 25, 19, 25);
                 case Direction.SOUTH -> withinManhattan(relative.east(25), 25, 19, 25);
@@ -220,6 +225,11 @@ public class StructureManager {
 
                 if(state1.is(Blocks.OBSERVER)){
                     setLocks(serverLevel, blockPos, true);
+                }
+
+                if(state1.is(NETHERITE_BLOCK)){
+
+                    level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
                 }
             }
         }

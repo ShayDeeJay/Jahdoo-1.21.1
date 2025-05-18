@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jahdoo.common.networking.server2client.ClearPlayerTrialDataS2CP;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.networking.server2client.PlayerTrialDataS2CP;
@@ -134,7 +135,7 @@ public class PlayerTrialData implements IAttachment{
     public static void clearAllData(ServerPlayer player){
         var data = player.getData(PLAYER_TRIAL_DATA);
         data.clearAllData();
-//        PacketDistributor.sendToPlayer(player, new PlayerTrialDataS2CP(data));
+        PacketDistributor.sendToPlayer(player, new ClearPlayerTrialDataS2CP());
     }
 
     public static void addNewInstance(Player player, InstanceData instanceData){
@@ -193,18 +194,15 @@ public class PlayerTrialData implements IAttachment{
                 pastRuns.add(pastRun);
             }
         }
-
     }
 
     public static void addDummyData(Level level, Player player, int multiplier, boolean eraseData) {
         if(level instanceof ServerLevel){
             if(player instanceof ServerPlayer serverPlayer){
                 var x = serverPlayer.getData(AttachmentReg.PLAYER_TRIAL_DATA);
-
                 if(eraseData){
-                    System.out.println("imerer");
-                    x.getPastRuns().clear();
-                    x.getInstanceData().clear();
+                    x.clearAllData();
+                    PacketDistributor.sendToPlayer(serverPlayer, new ClearPlayerTrialDataS2CP());
                 }
 
                 for(int i = 0; i < multiplier; i++){

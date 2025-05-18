@@ -46,6 +46,7 @@ public class CasterData implements IAttachment {
     private int allowedSlots;
     private int abilityPoints;
     private double manaPool;
+    private int refundableSkillPoints;
 
     private Map<String, Integer> abilityCooldowns = new Object2IntOpenHashMap<>();
     private Map<String, Integer> abilityCooldownsStatic = new Object2IntOpenHashMap<>();
@@ -59,6 +60,7 @@ public class CasterData implements IAttachment {
         int xp,
         int allowedSlots,
         int abilityPoints,
+        int refundableSkillPoints,
         double manaPool,
         String selectedAbility,
         Map<String, Integer> abilityCooldowns,
@@ -70,6 +72,7 @@ public class CasterData implements IAttachment {
         this.xp = xp;
         this.allowedSlots = allowedSlots;
         this.abilityPoints = abilityPoints;
+        this.refundableSkillPoints = refundableSkillPoints;
         this.manaPool = manaPool;
         this.selectedAbility = selectedAbility;
         this.abilityCooldowns = abilityCooldowns;
@@ -119,8 +122,13 @@ public class CasterData implements IAttachment {
         return this.abilityPoints;
     }
 
+    public int getRefundableSkillPoints(){
+        return this.refundableSkillPoints;
+    }
+
     public void incrementAbilityPoints(int points){
         this.abilityPoints += points;
+        this.refundableSkillPoints += points;
     }
 
     public void decrementAbilityPoints(int points){
@@ -210,6 +218,7 @@ public class CasterData implements IAttachment {
         this.abilityPoints = 0;
         this.allowedSlots = 2;
         this.xp = 0;
+        this.refundableSkillPoints = 0;
     }
 
     public List<String> getAbilitySlots(){
@@ -422,7 +431,8 @@ public class CasterData implements IAttachment {
             data.unlockedSkills.clear();
             data.unlockedAbilities.clear();
             data.selectedAbility = "";
-            data.incrementAbilityPoints(data.getLevel() - data.abilityPoints);
+            data.abilityPoints = data.refundableSkillPoints;
+
             sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
             sendToPlayer(serverPlayer, new ClientSoundS2CP(SoundReg.REJECT.get(), 1, 1, false));
             sendToPlayer(serverPlayer, new ClientSoundS2CP(SoundReg.ORB_CREATE.get(), 0.4F, 2, false));
@@ -535,6 +545,7 @@ public class CasterData implements IAttachment {
             Codec.INT.fieldOf("xp").forGetter(CasterData::getExp),
             Codec.INT.fieldOf("available_slots").forGetter(CasterData::getAllowedSlots),
             Codec.INT.fieldOf("ability_points").forGetter(CasterData::getAbilityPoints),
+            Codec.INT.fieldOf("refundable_skill_points").forGetter(CasterData::getRefundableSkillPoints),
             Codec.DOUBLE.fieldOf("mana_pool").forGetter(CasterData::getManaPool),
             Codec.STRING.fieldOf("selected_ability").forGetter(CasterData::getSelectedAbility),
             Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("ability_cooldowns").forGetter(CasterData::getAllCooldowns),
@@ -574,6 +585,7 @@ public class CasterData implements IAttachment {
         nbt.putDouble(MANA, manaPool);
         nbt.putInt("level", this.xp);
         nbt.putInt("ability_points", this.abilityPoints);
+        nbt.putInt("refundable_skill_points", this.refundableSkillPoints);
         nbt.putString("selected_ability", this.selectedAbility);
         AbilityHolder.saveListHolders(this.unlockedAbilities, nbt);
     }
@@ -609,6 +621,7 @@ public class CasterData implements IAttachment {
         this.allowedSlots = nbt.getInt("allowed_slots");
         this.xp = nbt.getInt("level");
         this.abilityPoints = nbt.getInt("ability_points");
+        this.refundableSkillPoints = nbt.getInt("refundable_skill_points");
         this.unlockedAbilities = AbilityHolder.readListHolders(nbt);
 
     }

@@ -66,8 +66,7 @@ public class CasterItemHelper {
         var maxDamage = wandItem.get(DataComponents.MAX_DAMAGE);
         var damageTaken = wandItem.get(DataComponents.DAMAGE);
         if(maxDamage != null && damageTaken != null){
-            var split = maxDamage/3;
-            var durabilityColourIndicator = damageTaken <= split ? PERK_GREEN : damageTaken <= split * 2.5 ? ABSORPTION_YELLOW : NEGATIVE_RED;
+            var durabilityColourIndicator = colourByPercent(maxDamage, damageTaken);
             var prefix = Helpers.withStyleComponent("Durability: ", SUB_HEADER_COLOUR);
             var currentDurability = Helpers.withStyleComponent(durabilityDamageCount(wandItem) + "", durabilityColourIndicator);
             var maxDurability = Helpers.withStyleComponent("/" + maxDamage, BORDER_COLOUR);
@@ -75,6 +74,7 @@ public class CasterItemHelper {
         }
         return Component.empty();
     }
+
 
     public static void getRepairSlotsComponent(ItemStack gearItem, Consumer<Component> render) {
         var wandData = gearItem.get(JAHDOO_GEAR_DATA);

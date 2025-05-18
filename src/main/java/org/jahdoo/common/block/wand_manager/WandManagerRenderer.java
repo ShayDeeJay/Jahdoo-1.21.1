@@ -1,6 +1,5 @@
 package org.jahdoo.common.block.wand_manager;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -15,7 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 
-import static net.minecraft.core.Direction.*;
+import static net.minecraft.core.Direction.NORTH;
+import static net.minecraft.core.Direction.SOUTH;
 
 public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntity> {
 
@@ -31,14 +31,15 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
         return 0;
     }
 
-    private void rotateAllItems(PoseStack poseStack, WandManagerEntity entity, Runnable stuff, int index, int totalItems, float partialTicks) {
+    public static void rotateAllItems(PoseStack poseStack, Runnable stuff, int index, int totalItems, float partialTicks) {
         poseStack.pushPose();
 
+        var minecraft = Minecraft.getInstance().level.getGameTime();
         var angleOffset = 360.0f / totalItems;
         var itemAngle = angleOffset * index;
 
-        poseStack.translate(0.5, 0.5, 0.5);
-        poseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (entity.privateTicks + partialTicks) ));
+        poseStack.translate(0.5, 0.8F, 0.5);
+        poseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (minecraft + partialTicks) ));
         stuff.run();
         poseStack.popPose();
     }
@@ -55,16 +56,14 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
         var outputSlot = JahdooGearData.getGearData(wandManagerTable.getWandSlot()).runeSlots();
         var newSlots = outputSlot.stream().filter(itemStack -> !itemStack.isEmpty()).toList();
-        var spacer = new AtomicDouble();
-        var size = newSlots.size();
-
         focusedItem(poseStack, wandManagerTable, itemRenderer, source, packedLight, partialTick);
+
+        var size = newSlots.size();
         for (int i = 0; i < size; i++) {
             var slot = newSlots.get(i);
             poseStack.pushPose();
-            rotateAllItems(poseStack, wandManagerTable, () -> rotateItem(poseStack, wandManagerTable, itemRenderer, slot, source, partialTick, packedLight, size), i, size, partialTick);
+            rotateAllItems(poseStack, () -> rotateItem(poseStack, itemRenderer, slot, source, partialTick, packedLight, size), i, size, partialTick);
             poseStack.popPose();
-            spacer.set(spacer.get() + 0.12);
         }
     }
 
@@ -102,9 +101,8 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
         poseStack.popPose();
     }
 
-    private void rotateItem(
+    public static void rotateItem(
         PoseStack poseStack,
-        WandManagerEntity entity,
         ItemRenderer renderer,
         ItemStack itemStack,
         MultiBufferSource source,
@@ -113,9 +111,10 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
         int distance
     ){
         poseStack.pushPose();
-
-        var getCurrentTime = entity.privateTicks + partialTicks;
-        var scaleItem = 0.1f;
+        var mc = Minecraft.getInstance();
+        var level = mc.level;
+        var getCurrentTime = level.getGameTime() + partialTicks;
+        var scaleItem = 0.2f;
         var bobOff = Math.sin(getCurrentTime / 20.0F) * 0.02F + 1.15f - 0.51;
         var animateRunes = Math.min(Math.max((double) distance / 44, 0.1), getCurrentTime / 20);
 
@@ -129,7 +128,7 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
             OverlayTexture.NO_OVERLAY,
             poseStack,
             source,
-            entity.getLevel(),
+            level,
             1
         );
 

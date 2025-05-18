@@ -10,7 +10,7 @@ import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import static net.minecraft.client.gui.screens.Screen.getTooltipFromItem;
 import static net.neoforged.neoforge.client.event.RenderGuiLayerEvent.Post;
 
-public class OverlayBlockTooltip {
+public class  OverlayBlockTooltip {
 
     public static void overlayEvent(Post event) {
         var instance = Minecraft.getInstance();

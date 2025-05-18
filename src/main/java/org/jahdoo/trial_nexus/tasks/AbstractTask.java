@@ -19,16 +19,20 @@ public abstract class AbstractTask {
 
     public abstract boolean completionPredicate(Player player);
 
-    public abstract void triggerAchievement();
-
     public abstract int trackedValue(Player player);
 
     public abstract int countRequired();
+
+    public abstract TriggerType type();
 
     public abstract List<ItemStack> rewards();
 
     public String taskId() {
         return MOD_ID +"-"+ Helpers.nameToId(taskName()) + "-task";
+    }
+
+    public enum TriggerType {
+        KIll, USE, ROOM_CLEAR, QUEST_COMPLETION
     }
 
 }

@@ -11,25 +11,25 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.trial_nexus.attachments.InstanceData;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.Maths;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Maths;
 
 import java.util.List;
 import java.util.Objects;
 
+import static org.jahdoo.common.block.lock.LockBlock.FACING;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.common.registers.mod.LevelBoonReg.*;
 import static org.jahdoo.trial_nexus.attachments.RunData.setDateAndTime;
 import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData;
 import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.*;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromLevel;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.getBattleRoom;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
-import static org.jahdoo.common.block.lock.LockBlock.FACING;
-import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
-import static org.jahdoo.common.registers.mod.LevelBoonReg.*;
 
 
 public class LockBlockEntity extends SyncedBlockEntity {
@@ -83,6 +83,7 @@ public class LockBlockEntity extends SyncedBlockEntity {
     public void tick(Level level, BlockPos pos, BlockState state) {
         if(!(level instanceof ServerLevel)) return;
         if(clicked) this.counter++;
+
         if(counter > 1) level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
     }
 

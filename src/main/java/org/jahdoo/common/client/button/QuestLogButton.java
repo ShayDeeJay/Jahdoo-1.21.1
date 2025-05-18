@@ -13,15 +13,14 @@ import org.jahdoo.trial_nexus.tasks.AbstractTask;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
+import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
-import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiFade;
-import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 
 public class QuestLogButton extends ImageButton {
 
     private final float width;
     private final float height;
-    private final boolean isSelected;
+    private final boolean questComplete;
     private final OnPress pOnPress;
     private final AbstractTask task;
 
@@ -30,7 +29,7 @@ public class QuestLogButton extends ImageButton {
         int pY,
         int width,
         int height,
-        boolean isSelected,
+        boolean questComplete,
         OnPress pOnPress,
         AbstractTask task
     ) {
@@ -38,13 +37,13 @@ public class QuestLogButton extends ImageButton {
         this.width = width;
         this.height = height;
         this.pOnPress = pOnPress;
-        this.isSelected = isSelected;
+        this.questComplete = questComplete;
         this.task = task;
     }
 
     @Override
     protected boolean isValidClickButton(int button) {
-        return !isSelected;
+        return true;
     }
 
     @Override
@@ -59,21 +58,26 @@ public class QuestLogButton extends ImageButton {
 
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
-        var fade = isHovered ? color(60, uiColour()) : uiFade();
+        var fade = isHovered ? color(60, uiColour()) : fadeBlack(1);
         var minecraft = Minecraft.getInstance();
         var getXStart = this.getX();
         var startY2 = this.getY() + 2;
-        var isSelected = !this.isSelected ? fade : color(160, HEADER_COLOUR);
-        var borderColour =  0;
         var spacer = 0;
         var width = (int) this.width / 2;
         var height = (int) this.height / 2;
-        var size = 32;
+        var sizeIcon = 32;
+        var sizeComplete = 16;
 
-        boxMaker(graphics, this.getX(), this.getY(), width, height, borderColour, isSelected, isSelected);
-        graphics.blit(task.taskIcon(), getXStart, startY2, 0, 0, size, size, size, size);
+        graphics.pose().pushPose();
+        graphics.pose().translate(0, 0, 1);
+        boxMaker(graphics, this.getX(), this.getY(), width, height, color(100, uiColour()), fade, fade);
+        graphics.blit(task.taskIcon(), getXStart, startY2, 0, 0, sizeIcon, sizeIcon, sizeIcon, sizeIcon);
+        if(this.questComplete){
+            graphics.blit(Icons.TICK, getXStart + 112, startY2 - 2, 0, 0, sizeComplete, sizeComplete, sizeComplete, sizeComplete);
+        }
         var string = minecraft.font.ellipsize(FormattedText.of(task.taskName()), 95).getString();
         graphics.drawString(minecraft.font, string, getXStart + 32, startY2 + spacer + 12, uiColour(), true);
+        graphics.pose().popPose();
     }
 
 

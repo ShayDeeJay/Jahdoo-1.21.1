@@ -59,6 +59,7 @@ import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
+import org.jahdoo.common.event.TriggerEvents;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.networking.client2server.ChaosCubeC2SP;
@@ -808,6 +809,7 @@ public class EventHelpers {
             var difficulty = instanceData.getDifficulty();
             var value = new LootCrateData(playerLevel, lootMultiplier, completionTime, difficulty);
 
+            TriggerEvents.triggerQuestCompleteEvent(serverPlayer, customLevel);
             newBlock.set(ComponentReg.LOOT_CRATE_DATA, value);
             Helpers.throwOrAddItem(serverPlayer, newBlock);
             Helpers.throwOrAddItem(serverPlayer, new ItemStack(ItemReg.EXIT_KEY));
