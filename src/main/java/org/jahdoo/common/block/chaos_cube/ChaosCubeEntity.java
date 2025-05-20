@@ -278,10 +278,13 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
 
     public void externalOutputInventory(Level level, ItemEntity itemEntity){
         var getPos = this.getData(MODULAR_CHAOS_CUBE).output();
+        outputItemsDown(level, itemEntity.getItem(), getPos);
+    }
+
+    public static void outputItemsDown(Level level, ItemStack entityStack, BlockPos getPos) {
         var handler = getItemHandlerAt(level, getPos.getX(), getPos.getY(), getPos.getZ(), Direction.UP);
         handler.ifPresent(
             iItemHandlerObjectPair -> {
-                var entityStack = itemEntity.getItem();
                 int remainingAmount = entityStack.getCount();
                 var itemHandler = iItemHandlerObjectPair.getKey();
                 for(int i = 0; i < itemHandler.getSlots(); i++){

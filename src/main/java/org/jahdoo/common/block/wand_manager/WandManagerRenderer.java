@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 
 import static net.minecraft.core.Direction.NORTH;
@@ -25,21 +26,20 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
         this.entityRenderDispatcher = context.getBlockEntityRenderDispatcher();
     }
 
-    private int direction(BlockEntity blockEntity){
+    private static int direction(BlockEntity blockEntity){
         var direction = blockEntity.getBlockState().getValue(WandManagerBlock.FACING);
         if(direction == SOUTH || direction == NORTH) return 90;
         return 0;
     }
 
-    public static void rotateAllItems(PoseStack poseStack, Runnable stuff, int index, int totalItems, float partialTicks) {
+    public static void rotateAllItems(PoseStack poseStack, Runnable stuff, int index, int totalItems, float partialTicks, int ticks) {
         poseStack.pushPose();
 
-        var minecraft = Minecraft.getInstance().level.getGameTime();
         var angleOffset = 360.0f / totalItems;
         var itemAngle = angleOffset * index;
 
         poseStack.translate(0.5, 0.8F, 0.5);
-        poseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (minecraft + partialTicks) ));
+        poseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (ticks + partialTicks) ));
         stuff.run();
         poseStack.popPose();
     }
@@ -56,29 +56,30 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
         var itemRenderer = Minecraft.getInstance().getItemRenderer();
         var outputSlot = JahdooGearData.getGearData(wandManagerTable.getWandSlot()).runeSlots();
         var newSlots = outputSlot.stream().filter(itemStack -> !itemStack.isEmpty()).toList();
-        focusedItem(poseStack, wandManagerTable, itemRenderer, source, packedLight, partialTick);
+        focusedItem(poseStack, wandManagerTable, itemRenderer, source, packedLight, partialTick, wandManagerTable.getWandSlot());
+        var ticks = wandManagerTable.privateTicks;
 
         var size = newSlots.size();
         for (int i = 0; i < size; i++) {
             var slot = newSlots.get(i);
             poseStack.pushPose();
-            rotateAllItems(poseStack, () -> rotateItem(poseStack, itemRenderer, slot, source, partialTick, packedLight, size), i, size, partialTick);
+            rotateAllItems(poseStack, () -> rotateItem(poseStack, itemRenderer, slot, source, partialTick, packedLight, size, ticks), i, size, partialTick, ticks);
             poseStack.popPose();
         }
     }
 
-    private void focusedItem(
+    public static void focusedItem(
         PoseStack poseStack,
-        WandManagerEntity entity,
+        AbstractBEInventory entity,
         ItemRenderer renderer,
         MultiBufferSource source,
         int packedLight,
-        float partialTicks
+        float partialTicks,
+        ItemStack outputSlot
     ){
         poseStack.pushPose();
 
         var scaleItem = 0.80f;
-        var outputSlot = entity.getWandSlot();
         var getItem = outputSlot.isEmpty() ? ItemStack.EMPTY : outputSlot;
         var ticks = ((entity.privateTicks + partialTicks) / 18) ;
         var animatePlace = Math.max(1.1, 1.4 - ticks) ;
@@ -108,7 +109,8 @@ public class WandManagerRenderer implements BlockEntityRenderer<WandManagerEntit
         MultiBufferSource source,
         float partialTicks,
         int light,
-        int distance
+        int distance,
+        int ticks
     ){
         poseStack.pushPose();
         var mc = Minecraft.getInstance();

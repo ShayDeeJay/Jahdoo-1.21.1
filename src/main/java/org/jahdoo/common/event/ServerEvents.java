@@ -217,6 +217,12 @@ public class ServerEvents {
         onDeathGreaterFrostEffect(entity);
         resetGameModeOnDeath(entity);
         saveDestinyBondItems(entity);
+
+//        var x = SpawnEggItem.byId(event.getEntity().getType());
+//        if(x != null){
+//            var level = event.getEntity().level();
+//            level.addFreshEntity(new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), new ItemStack(x)));
+//        }
     }
 
 }

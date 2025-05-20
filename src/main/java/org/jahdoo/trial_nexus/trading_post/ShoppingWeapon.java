@@ -35,4 +35,6 @@ public class ShoppingWeapon {
         if(Maths.percentageChance(40)) attachEnchantment(itemStack, serverLevel, UNBREAKING, 4, 8);
     }
 
+
+
 }

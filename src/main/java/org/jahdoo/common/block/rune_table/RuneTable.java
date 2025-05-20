@@ -8,6 +8,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -37,68 +38,33 @@ import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
 
 public class RuneTable extends BaseEntityBlock {
 
-//    public static final VoxelShape SHAPE_COMBINED = Shapes.or(
-//        Block.box(0, 7, 0, 16, 10, 16),
-//        Block.box(11, 2, 2, 14, 7, 5),
-//        Block.box(4.5, 8.5, 4.5, 11.5, 10.5, 11.5),
-//        Block.box(11.25, 3, 5, 13.75, 5.5, 11),
-//        Block.box(5, 3, 11.25, 11, 5.5, 13.75),
-//        Block.box(5, 3, 2.25, 11, 5.5, 4.75),
-//        Block.box(2.25, 3, 5, 4.75, 5.5, 11),
-//        Block.box(5.5, 5, 0, 10.5, 7, 0),
-//        Block.box(5.5, 5, 0, 10.5, 7, 0),
-//        Block.box(5.5, 5, 16, 10.5, 7, 16),
-//        Block.box(0, 5, 5.5, 0, 7, 10.5),
-//        Block.box(16, 5, 5.5, 16, 7, 10.5),
-//        Block.box(11.5, 0, 2.5, 13.5, 2, 4.5),
-//        Block.box(2, 2, 2, 5, 7, 5),
-//        Block.box(2.5, 0, 2.5, 4.5, 2, 4.5),
-//        Block.box(11, 2, 11, 14, 7, 14),
-//        Block.box(11.5, 0, 11.5, 13.5, 2, 13.5),
-//        Block.box(2.5, 0, 11.5, 4.5, 2, 13.5),
-//        Block.box(2, 2, 11, 5, 7, 14)
-//    );
-
     public static final VoxelShape SHAPE_COMBINED = Shapes.or(
-        Block.box(5, 13, -4, 11, 16, 0),
         Block.box(3, 10, 0, 13, 16, 16),
-        Block.box(4, 12, 17, 12, 16, 19),
         Block.box(6, 5, 4, 10, 10, 12),
         Block.box(3, 3, 3, 13, 5, 13),
-        Block.box(0, 0, 0, 16, 3, 16),
-        Block.box(5, 12.5, 13, 11, 15.5, 17)
+        Block.box(0, 0, 0, 16, 3, 16)
     );
 
     public static final VoxelShape SHAPE_COMBINED_1 = Shapes.or(
-        Block.box(16, 13, 5, 20, 16, 11),
         Block.box(0, 10, 3, 16, 16, 13),
-        Block.box(-3, 12, 4, -1, 16, 12),
         Block.box(4, 5, 6, 12, 10, 10),
         Block.box(3, 3, 3, 13, 5, 13),
-        Block.box(0, 0, 0, 16, 3, 16),
-        Block.box(-1, 12.5, 5, 3, 15.5, 11)
+        Block.box(0, 0, 0, 16, 3, 16)
     );
 
     public static final VoxelShape SHAPE_COMBINED_2 = Shapes.or(
-        Block.box(5, 13, 16, 11, 16, 20),
         Block.box(3, 10, 0, 13, 16, 16),
-        Block.box(4, 12, -3, 12, 16, -1),
         Block.box(6, 5, 4, 10, 10, 12),
         Block.box(3, 3, 3, 13, 5, 13),
-        Block.box(0, 0, 0, 16, 3, 16),
-        Block.box(5, 12.5, -1, 11, 15.5, 3)
+        Block.box(0, 0, 0, 16, 3, 16)
     );
 
     public static final VoxelShape SHAPE_COMBINED_4 = Shapes.or(
-        Block.box(-4, 13, 5, 0, 16, 11),
         Block.box(0, 10, 3, 16, 16, 13),
-        Block.box(17, 12, 4, 19, 16, 12),
         Block.box(4, 5, 6, 12, 10, 10),
         Block.box(3, 3, 3, 13, 5, 13),
-        Block.box(0, 0, 0, 16, 3, 16),
-        Block.box(13, 12.5, 5, 17, 15.5, 11)
+        Block.box(0, 0, 0, 16, 3, 16)
     );
-
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
 
@@ -207,6 +173,7 @@ public class RuneTable extends BaseEntityBlock {
             return SUCCESS;
         } else if (stack.has(JAHDOO_GEAR_DATA) && hasItem) {
             swapItemsWithHand(runeTable.inputItemHandler, 0, player, hand);
+            runeTable.stand = EntityType.ARMOR_STAND.create(level);
             return SUCCESS;
         } else {
             if(!(player instanceof ServerPlayer serverPlayer)) return SUCCESS;

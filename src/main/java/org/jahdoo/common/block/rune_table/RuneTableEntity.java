@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -22,11 +24,15 @@ import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLO
 
 public class RuneTableEntity extends AbstractBEInventory implements MenuProvider {
 
+    public ArmorStand stand;
+
     public RuneTableEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.RUNE_TABLE_BE.get(), pPos, pBlockState, 64);
     }
 
-    public void tick(Level pLevel, BlockPos pPos, BlockState pState) {}
+    public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
+        if(itemSlot().isEmpty()) privateTicks = 0; else privateTicks++;
+    }
 
     public boolean checkAndChargeCores(Item item, boolean charge){
         var handler = this.inputItemHandler;
@@ -41,6 +47,13 @@ public class RuneTableEntity extends AbstractBEInventory implements MenuProvider
             }
         }
         return false;
+    }
+
+    public ArmorStand getStand(Level level){
+        if(this.stand == null){
+            stand = EntityType.ARMOR_STAND.create(level);
+        }
+        return stand;
     }
 
     public ItemStackHandler getItem(){
