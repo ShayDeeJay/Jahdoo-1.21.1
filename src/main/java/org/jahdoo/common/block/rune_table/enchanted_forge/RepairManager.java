@@ -3,7 +3,7 @@ package org.jahdoo.common.block.rune_table.enchanted_forge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.block.rune_table.RuneTableEntity;
+import org.jahdoo.common.block.rune_table.DivineForgeEntity;
 import org.jahdoo.common.block.rune_table.RuneTableMenu;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
@@ -52,7 +52,7 @@ public class RepairManager {
         }
     }
 
-    public static boolean repairable(ItemStack item, RuneTableEntity entity) {
+    public static boolean repairable(ItemStack item, DivineForgeEntity entity) {
         var canUpgrade = canRepair(item);
         var insufficientPotential = !(getItemPotential(item) >= repairPotentialCost(item));
         var coresCharge = !(entity.checkAndChargeCores(coreCost(item).getItem(), false));

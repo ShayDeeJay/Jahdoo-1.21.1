@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.common.block.rune_table.RuneTableEntity;
+import org.jahdoo.common.block.rune_table.DivineForgeEntity;
 import org.jahdoo.common.block.rune_table.RuneTableMenu;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.screens.AbstractPanableScreen;
@@ -143,7 +143,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         this.rebuildWidgets();
     }
 
-    public RuneTableEntity entity(){
+    public DivineForgeEntity entity(){
         return this.runeTableMenu.tableEntity();
     }
 

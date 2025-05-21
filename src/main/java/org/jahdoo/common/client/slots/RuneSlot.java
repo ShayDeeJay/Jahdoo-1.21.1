@@ -9,7 +9,7 @@ import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jahdoo.trial_nexus.attachments.PlayerWallet;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.common.block.rune_table.RuneTableEntity;
+import org.jahdoo.common.block.rune_table.DivineForgeEntity;
 import org.jahdoo.common.block.rune_table.RuneTableMenu;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.runes.RuneItem;
@@ -94,7 +94,7 @@ public class RuneSlot extends SlotItemHandler {
 
     @Override
     public Optional<ItemStack> tryRemove(int count, int decrement, Player player) {
-        if(entity instanceof RuneTableEntity runeTable){
+        if(entity instanceof DivineForgeEntity runeTable){
             var coreCost = removeRuneCost(getItem());
             var canRemove = runeTable.checkAndChargeCores(coreCost, true);
             var hasCoins = PlayerWallet.CurrencyConverter.checkAndPurchase(PlayerWallet.CurrencyConverter.convertToCoins(removeCurrencyCost(getItem())), player);

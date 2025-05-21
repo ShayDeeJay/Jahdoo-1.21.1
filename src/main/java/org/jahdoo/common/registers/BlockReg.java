@@ -21,7 +21,7 @@ import org.jahdoo.common.block.light_block.LightBlock;
 import org.jahdoo.common.block.loot_crate.LootCrateBlock;
 import org.jahdoo.common.block.perk_table.PerkTable;
 import org.jahdoo.common.block.power_up_station.PowerUpStation;
-import org.jahdoo.common.block.rune_table.RuneTable;
+import org.jahdoo.common.block.rune_table.DivineForge;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.common.block.tank.TankBlock;
 import org.jahdoo.common.block.wand_manager.WandManagerBlock;
@@ -76,7 +76,7 @@ public class BlockReg {
         registerBlockWithItem("perk_table", PerkTable::new);
 
     public static DeferredHolder<Block, Block> RUNE_TABLE =
-        registerBlockWithItem("rune_table", RuneTable::new);
+        registerBlockWithItem("rune_table", DivineForge::new);
 
     public static DeferredHolder<Block, Block> TRAIL_PORTAL =
         registerBlockWithItem("trial_portal", TrialPortalBlock::new);

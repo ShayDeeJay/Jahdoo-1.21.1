@@ -8,6 +8,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.common.particle.MovingParticle;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.altar.AltarRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeRenderer;
@@ -19,7 +20,7 @@ import org.jahdoo.common.block.lock.LockRenderer;
 import org.jahdoo.common.block.loot_chest.LootChestRenderer;
 import org.jahdoo.common.block.perk_table.PerkTableRenderer;
 import org.jahdoo.common.block.power_up_station.PowerUpStationRenderer;
-import org.jahdoo.common.block.rune_table.RuneTableRenderer;
+import org.jahdoo.common.block.rune_table.DivineForgeRenderer;
 import org.jahdoo.common.block.rune_table.enchanted_forge.RuneTableScreen;
 import org.jahdoo.common.block.shopping_table.ShoppingTableRenderer;
 import org.jahdoo.common.block.tank.TankRenderer;
@@ -111,6 +112,7 @@ public class ClientBusEvents {
         event.registerSpriteSet(BAKED_MYSTIC.get(), BakedProvider::new);
         event.registerSpriteSet(BAKED_VITALITY.get(), BakedProvider::new);
         event.registerSpriteSet(BAKED_UTILITY.get(), BakedProvider::new);
+        event.registerSpriteSet(ENCHANT.get(), MovingParticle.EnchantProvider::new);
     }
 
     @SubscribeEvent
@@ -121,7 +123,7 @@ public class ClientBusEvents {
         event.registerBlockEntityRenderer(LOCK_BE.get(), LockRenderer::new);
         event.registerBlockEntityRenderer(INFUSER_BE.get(), DisassemblerRenderer::new);
         event.registerBlockEntityRenderer(LOOT_CHEST_BE.get(), LootChestRenderer::new);
-        event.registerBlockEntityRenderer(RUNE_TABLE_BE.get(), RuneTableRenderer::new);
+        event.registerBlockEntityRenderer(RUNE_TABLE_BE.get(), DivineForgeRenderer::new);
         event.registerBlockEntityRenderer(PERK_TABLE_BE.get(), PerkTableRenderer::new);
         event.registerBlockEntityRenderer(CHALLENGE_ALTAR_BE.get(), AltarRenderer::new);
         event.registerBlockEntityRenderer(ENCHANTED_BE.get(), EnchantedBlockRenderer::new);

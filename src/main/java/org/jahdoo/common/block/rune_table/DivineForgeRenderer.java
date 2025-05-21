@@ -17,21 +17,21 @@ import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 import static net.minecraft.core.Direction.*;
 import static net.minecraft.world.item.ItemDisplayContext.FIXED;
-import static org.jahdoo.common.block.rune_table.RuneTable.FACING;
+import static org.jahdoo.common.block.rune_table.DivineForge.FACING;
 import static org.jahdoo.common.block.wand_manager.WandManagerRenderer.rotateAllItems;
 import static org.jahdoo.common.block.wand_manager.WandManagerRenderer.rotateItem;
 
-public class RuneTableRenderer implements BlockEntityRenderer<RuneTableEntity>{
+public class DivineForgeRenderer implements BlockEntityRenderer<DivineForgeEntity>{
 
     private final BlockEntityRenderDispatcher entityRenderDispatcher;
 
-    public RuneTableRenderer(BlockEntityRendererProvider.Context context) {
+    public DivineForgeRenderer(BlockEntityRendererProvider.Context context) {
         this.entityRenderDispatcher = context.getBlockEntityRenderDispatcher();
     }
 
     @Override
     public void render(
-        RuneTableEntity entity,
+        DivineForgeEntity entity,
         float partial,
         PoseStack poseStack,
         MultiBufferSource source,
@@ -59,7 +59,7 @@ public class RuneTableRenderer implements BlockEntityRenderer<RuneTableEntity>{
     }
 
     private void renderPrimaryItem(
-        RuneTableEntity entity,
+        DivineForgeEntity entity,
         PoseStack poseStack,
         MultiBufferSource source,
         int packedLight,
@@ -72,12 +72,12 @@ public class RuneTableRenderer implements BlockEntityRenderer<RuneTableEntity>{
             var directionAd = direction == EAST ? 270 : direction == WEST ? 90 : direction == SOUTH ? 180 : 0;
 
             var mc = Minecraft.getInstance();
-            var rotate = mc.level.getGameTime() + partialTick;
+            var rotate = entity.privateTicks + partialTick;
             var bobOff = Math.sin(rotate / 10.0F) * 0.02F + 2F - 0.51;
 
             if(renderItem.getItem() instanceof ArmorItem armorItem){
                 var stand = entity.getStand(mc.level);
-                var scale = Math.min(0.4F, rotate / 30);
+                var scale = Math.min(0.4F, rotate / 10);
                 stand.setInvisible(true);
                 poseStack.pushPose();
                 var yOffset = switch (armorItem.getEquipmentSlot()) {
@@ -97,13 +97,12 @@ public class RuneTableRenderer implements BlockEntityRenderer<RuneTableEntity>{
                 entityrenderdispatcher.getRenderer(stand).render(stand, 0, 0 , poseStack, source, FULL_BRIGHT);
                 poseStack.popPose();
             } else {
-                var scale = Math.min(0.7F, rotate / 10);
+                var scale = Math.min(0.7F, rotate / 5);
                 poseStack.pushPose();
                 poseStack.translate(0.5, bobOff, 0.5);
                 poseStack.scale(scale, scale, scale);
                 poseStack.mulPose(Axis.YP.rotationDegrees(directionAd));
-                poseStack.mulPose(Axis.XP.rotationDegrees(0));
-                poseStack.mulPose(Axis.ZP.rotationDegrees(0));
+                poseStack.mulPose(Axis.YP.rotationDegrees(180));
                 itemRenderer.renderStatic(renderItem, FIXED, packedLight, NO_OVERLAY, poseStack, source, entity.getLevel(), 1);
                 poseStack.popPose();
             }

@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.trial_nexus.attachments.PlayerWallet;
-import org.jahdoo.common.block.rune_table.RuneTableEntity;
+import org.jahdoo.common.block.rune_table.DivineForgeEntity;
 import org.jahdoo.common.block.rune_table.RuneTableMenu;
 import org.jahdoo.common.client.overlay.WalletOverlay;
 import org.jahdoo.common.client.slots.RuneSlot;
@@ -98,7 +98,7 @@ public class RuneManager {
         Slot hoveredSlot,
         int coinCost,
         int borderColour,
-        RuneTableEntity entity,
+        DivineForgeEntity entity,
         Minecraft minecraft
     ) {
         if(hoveredSlot instanceof RuneSlot && !hoveredSlot.getItem().isEmpty()){

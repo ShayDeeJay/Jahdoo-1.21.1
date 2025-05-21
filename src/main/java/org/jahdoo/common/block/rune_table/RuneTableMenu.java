@@ -46,8 +46,8 @@ public class RuneTableMenu extends AbstractInternalContainer  {
         return BlockReg.RUNE_TABLE.get();
     }
 
-    public RuneTableEntity tableEntity(){
-        if(this.blockEntity instanceof RuneTableEntity runeTable) return runeTable;
+    public DivineForgeEntity tableEntity(){
+        if(this.blockEntity instanceof DivineForgeEntity runeTable) return runeTable;
         return null;
     }
 

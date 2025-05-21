@@ -22,15 +22,31 @@ import org.jetbrains.annotations.Nullable;
 import static org.jahdoo.common.block.wand_manager.WandManagerEntity.ADDITIONAL_RUNE_SLOTS;
 import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLOTS;
 
-public class RuneTableEntity extends AbstractBEInventory implements MenuProvider {
+public class DivineForgeEntity extends AbstractBEInventory implements MenuProvider {
 
     public ArmorStand stand;
 
-    public RuneTableEntity(BlockPos pPos, BlockState pBlockState) {
+    public DivineForgeEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.RUNE_TABLE_BE.get(), pPos, pBlockState, 64);
     }
 
-    public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
+    public void tick(Level pLevel, BlockPos pos, BlockState pState) {
+
+//        for(BlockPos blockpos : BOOKSHELF_OFFSETS) {
+//            if (Random.nextInt(16) == 0) {
+//                var pPos = new BlockPos(0, 1, 0);
+//                level.addParticle(
+//                    new GenericParticleOptions(ParticleStore.ENCHANT_PARTICLE, ColourStore.NEGATIVE_RED, 0, 20, 3, false,0 ),
+//                    (double)pos.getX() + (double)0.5F,
+//                    (double)pos.getY() + (double)3.0F,
+//                    (double)pos.getZ() + (double)0.5F,
+//                    (double)((float)pPos.getX() + Random.nextFloat()) - (double)0.5F,
+//                    (double)((float)pPos.getY() - Random.nextFloat() - 1.0F),
+//                    (double)((float)pPos.getZ() + Random.nextFloat()) - (double)0.5F
+//                );
+//            }
+//        }
+
         if(itemSlot().isEmpty()) privateTicks = 0; else privateTicks++;
     }
 

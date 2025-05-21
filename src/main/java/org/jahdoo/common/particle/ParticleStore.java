@@ -6,7 +6,6 @@ import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 
 import java.util.List;
 
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.registers.ParticleReg.*;
 
 public record ParticleStore(int r, int g, int b){
@@ -15,13 +14,14 @@ public record ParticleStore(int r, int g, int b){
     public static final int SOFT_PARTICLE = 2;
     public static final int ELECTRIC_PARTICLE = 3;
     public static final int PLUS_PARTICLE = 4;
+    public static final int ENCHANT_PARTICLE = 5;
 
     public static final List<ParticleType<?>> getBakedByType = List.of(
         BAKED_FROST.get(), BAKED_INFERNO.get(), BAKED_MYSTIC.get(), BAKED_VITALITY.get(), BAKED_UTILITY.get(), HEAL.get()
     );
 
     public static final List<ParticleType<?>> getColouredParticle = List.of(
-        GENERIC.get(), MAGIC.get(), SOFT.get(), ELECTRIC.get(), PLUS.get()
+        GENERIC.get(), MAGIC.get(), SOFT.get(), ELECTRIC.get(), PLUS.get(), ENCHANT.get()
     );
 
     public static GenericParticleOptions genericParticleFast(int colour, int fade){

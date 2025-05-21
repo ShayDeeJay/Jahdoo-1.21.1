@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -27,16 +28,21 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 
 import static net.minecraft.core.Direction.*;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.common.block.BlockInteractionHandler.removeItemsFromSlotToHand;
 import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
-public class RuneTable extends BaseEntityBlock {
+public class DivineForge extends BaseEntityBlock {
 
     public static final VoxelShape SHAPE_COMBINED = Shapes.or(
         Block.box(3, 10, 0, 13, 16, 16),
@@ -68,14 +74,14 @@ public class RuneTable extends BaseEntityBlock {
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
 
-    public RuneTable() {
+    public DivineForge() {
         super(Properties.of().strength(1f).sound(SoundType.DEEPSLATE_BRICKS).noOcclusion());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, SOUTH));
     }
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec((x) -> new RuneTable());
+        return simpleCodec((x) -> new DivineForge());
     }
 
     @Override
@@ -87,22 +93,21 @@ public class RuneTable extends BaseEntityBlock {
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if(!level.isClientSide){
-            Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundEvents.ANVIL_PLACE, 0.05F, 0.6F);
-            Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.SPELL_SOUND.get(), 1F, 1.2F);
+            Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundEvents.ANVIL_PLACE, 0.1F, 0.6F);
+            Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.SPELL_SOUND.get(), 0.6F, 1.2F);
         }
         super.onPlace(state, level, pos, oldState, movedByPiston);
     }
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new RuneTableEntity(pos,state);
+        return new DivineForgeEntity(pos,state);
     }
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
-
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -141,7 +146,7 @@ public class RuneTable extends BaseEntityBlock {
         BlockState newState,
         boolean movedByPiston
     ) {
-        if (level.getBlockEntity(pos) instanceof RuneTableEntity runeTable) {
+        if (level.getBlockEntity(pos) instanceof DivineForgeEntity runeTable) {
             var handler = runeTable.inputItemHandler;
             for(int i = 0; i < 4; i++){
                 var inputInventory = new SimpleContainer(1);
@@ -165,22 +170,63 @@ public class RuneTable extends BaseEntityBlock {
     ) {
 
         var entity = level.getBlockEntity(pos);
-        if(!(entity instanceof RuneTableEntity runeTable)) return FAIL;
-        var hasItem = runeTable.getItem().getStackInSlot(0).isEmpty();
+        if(!(entity instanceof DivineForgeEntity divineForge)) return FAIL;
+        var hasItem = divineForge.getItem().getStackInSlot(0).isEmpty();
 
         if(!hasItem && player.isShiftKeyDown()){
-            removeItemsFromSlotToHand(runeTable.inputItemHandler, 0, player, hand);
+            removeItemsFromSlotToHand(divineForge.inputItemHandler, 0, player, hand);
             return SUCCESS;
         } else if (stack.has(JAHDOO_GEAR_DATA) && hasItem) {
-            swapItemsWithHand(runeTable.inputItemHandler, 0, player, hand);
-            runeTable.stand = EntityType.ARMOR_STAND.create(level);
+            swapItemsWithHand(divineForge.inputItemHandler, 0, player, hand);
+            divineForge.stand = EntityType.ARMOR_STAND.create(level);
+            setOuterRingPulse(level, pos, 0.8, 20, 1.5, 0.2);
+            Helpers.getSoundWithPosition(level, pos, SoundReg.SPELL_SOUND.get(), 0.4F);
+            Helpers.getSoundWithPosition(level, pos, SoundReg.SUSPEND.get());
+
+//            for (int i = 0; i < 20; i++){
+//                for(BlockPos blockpos : BOOKSHELF_OFFSETS) {
+//                    if (Random.nextInt(16) == 0) {
+//                        var pPos = new BlockPos(0, 1, 0);
+//                        level.addParticle(
+//                            new GenericParticleOptions(ParticleStore.ENCHANT_PARTICLE, ColourStore.NEGATIVE_RED, 0, 20, 3, false,0 ),
+//                            (double)pos.getX() + (double)0.5F,
+//                            (double)pos.getY() + (double)2.0F,
+//                            (double)pos.getZ() + (double)0.5F,
+//                            (double)((float)blockpos.getX() + Random.nextFloat()) - (double)0.5F,
+//                            (double)((float)blockpos.getY() - Random.nextFloat() - 2.0F),
+//                            (double)((float)blockpos.getZ() + Random.nextFloat()) - (double)0.5F
+//                        );
+//
+//                    }
+//                }
+//            }
+
             return SUCCESS;
         } else {
             if(!(player instanceof ServerPlayer serverPlayer)) return SUCCESS;
-            serverPlayer.openMenu(runeTable, pos);
+            serverPlayer.openMenu(divineForge, pos);
             return SUCCESS;
         }
 
+    }
+
+    public static void setOuterRingPulse(
+        Level level,
+        BlockPos blockPos,
+        double yOffset,
+        int lifetime,
+        double speed,
+        double radius
+    ){
+        var particle = genericParticle(lifetime, 1, ColourStore.NEGATIVE_RED, ColourStore.NEGATIVE_RED);
+        PositionFinders.getOuterRingOfRadiusRandom(blockPos.getBottomCenter().add(0,yOffset,0), radius, 80,
+            positions -> {
+                sendParticles(
+                    level, particle, positions.offsetRandom(RandomSource.create(), 0.2f),
+                    0, 0, Random.nextDouble(0.02,0.1),0,speed
+                );
+            }
+        );
     }
 
 }

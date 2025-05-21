@@ -17,7 +17,7 @@ import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.block.power_up_station.PowerUpStationEntity;
-import org.jahdoo.common.block.rune_table.RuneTableEntity;
+import org.jahdoo.common.block.rune_table.DivineForgeEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.block.tank.TankBlockEntity;
 import org.jahdoo.common.block.wand_manager.WandManagerEntity;
@@ -61,8 +61,8 @@ public class BlockEntityReg {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ShoppingTableEntity>> SHOPPING_TABLE_BE =
         registerBlockEntity("shopping_table_be", ShoppingTableEntity::new, SHOPPING_TABLE);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RuneTableEntity>> RUNE_TABLE_BE =
-        registerBlockEntity("rune_table_be", RuneTableEntity::new, RUNE_TABLE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DivineForgeEntity>> RUNE_TABLE_BE =
+        registerBlockEntity("rune_table_be", DivineForgeEntity::new, RUNE_TABLE);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WandManagerEntity>> WAND_MANAGER_TABLE_BE =
         registerBlockEntity("wand_manager_table_be", WandManagerEntity::new, WAND_MANAGER_TABLE);
