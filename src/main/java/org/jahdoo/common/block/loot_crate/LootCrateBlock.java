@@ -169,7 +169,7 @@ public class LootCrateBlock extends BaseEntityBlock implements SimpleWaterlogged
         coinSack.set(ComponentReg.STORE_INTEGER, coinCalc);
         LocalLootBeamData.attachCoinSackLootBeam(coinSack);
         individualAddons.add(coinSack);
-        individualAddons.add(new ItemStack(ItemReg.CHALLENGER_TICKET));
+        individualAddons.add(new ItemStack(ItemReg.TRIAL_TICKET));
         lootsplosian(pos.getCenter(), serverLevel, Helpers.getRgb(), individualAddons, true, 50, chestRarity);
     }
 }

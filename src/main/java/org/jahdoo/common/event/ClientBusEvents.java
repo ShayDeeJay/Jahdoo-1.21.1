@@ -8,6 +8,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.common.client.tooltip_renderer.RarityTooltipRenderer;
 import org.jahdoo.common.particle.MovingParticle;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.altar.AltarRenderer;
@@ -26,7 +27,7 @@ import org.jahdoo.common.block.shopping_table.ShoppingTableRenderer;
 import org.jahdoo.common.block.tank.TankRenderer;
 import org.jahdoo.common.block.wand_manager.WandManagerRenderer;
 import org.jahdoo.common.block.wand_manager.WandManagerScreen;
-import org.jahdoo.common.client.RuneTooltipRenderer;
+import org.jahdoo.common.client.tooltip_renderer.RuneTooltipRenderer;
 import org.jahdoo.common.client.overlay.CustomHudOverlay;
 import org.jahdoo.common.client.overlay.InstanceDataOverlay;
 import org.jahdoo.common.client.overlay.WalletOverlay;
@@ -64,6 +65,7 @@ public class ClientBusEvents {
     @SubscribeEvent
     public static void tooltipEvent(RegisterClientTooltipComponentFactoriesEvent event){
         event.register(RuneTooltipRenderer.RuneComponent.class, RuneTooltipRenderer::new);
+        event.register(RarityTooltipRenderer.RarityTag.class, RarityTooltipRenderer::new);
     }
 
     @SubscribeEvent

@@ -37,7 +37,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         runeManager(recipeOutput, RUNE_TABLE.get().asItem());
         wandManager(recipeOutput, WAND_MANAGER_TABLE.get().asItem());
         oreSmelting(recipeOutput, List.of(Items.ROTTEN_FLESH), RecipeCategory.MISC, Items.LEATHER, 2.0F, 200, "leather");
-        ticket(recipeOutput, CHALLENGER_TICKET.get());
+        ticket(recipeOutput, TRIAL_TICKET.get());
         starterWand(recipeOutput, STARTER_WAND.get());
         stoneOfRegret(recipeOutput, STONE_OF_REGRET.get());
         core(recipeOutput, AUGMENT_CORE.get());

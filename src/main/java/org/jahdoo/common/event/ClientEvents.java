@@ -15,10 +15,10 @@ import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.OverlayBlockTooltip;
-import org.jahdoo.common.client.RuneTooltipRenderer;
 import org.jahdoo.common.client.screens.AbilityUnlockScreen;
 import org.jahdoo.common.client.screens.RunScreen;
 import org.jahdoo.common.client.screens.StatScreen;
+import org.jahdoo.common.client.tooltip_renderer.RuneTooltipRenderer;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.trial_nexus.utils.Helpers;
@@ -103,6 +103,11 @@ public class ClientEvents {
                 }
             }
         }
+//
+//        if(itemStack.has(ComponentReg.JAHDOO_RARITY)){
+//            var runeSockets = new RarityTooltipRenderer.RarityTag(itemStack, current);
+//            current.addFirst(Either.right(runeSockets));
+//        }
 
         var allSlots = getAllSlots(itemStack);
         if(allSlots.isEmpty()) return;

@@ -9,9 +9,28 @@ public class Icons {
     private static final String PREFIX = "textures/gui/";
     private static final String BUTTON_PREFIX = PREFIX + "gui_buttons/";
     private static final String SLOTS_PREFIX = PREFIX + "slots/";
+    private static final String RARITY_TAG_PREFIX = PREFIX + "rarity_tags/";
     private static final String ITEMS_PREFIX = "textures/item/";
     public static final String ABILITY_PREFIX = "textures/ability_icons/";
     private static final String SKILLS = "textures/skill/";
+
+    public static final ResourceLocation COMMON_TAG =
+        res(RARITY_TAG_PREFIX + "common.png");
+
+    public static final ResourceLocation RARE_TAG =
+        res(RARITY_TAG_PREFIX + "rare.png");
+
+    public static final ResourceLocation EPIC_TAG =
+        res(RARITY_TAG_PREFIX + "epic.png");
+
+    public static final ResourceLocation LEGENDARY_TAG =
+        res(RARITY_TAG_PREFIX + "legendary.png");
+
+    public static final ResourceLocation ETERNAL_TAG =
+        res(RARITY_TAG_PREFIX + "eternal.png");
+
+    public static final ResourceLocation UNIQUE_TAG =
+        res(RARITY_TAG_PREFIX + "unique.png");
 
     public static final ResourceLocation HEALTH_HOLDER =
         res(PREFIX + "health/health_holder.png");

@@ -36,6 +36,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         registerAugmentCoreFilled();
         registerAdvancedAugmentCoreFilled();
         registerAugmentHyperCoreFilled();
+        registerTickets();
     }
 
     private void createSimpleItemModel(DeferredHolder<Item, Item> item) {
@@ -105,6 +106,12 @@ public class ModItemModelProvider extends ItemModelProvider {
         }
     }
 
+    private void registerTickets() {
+        for (int i = 1; i < 5; i++) {
+            createModel("trial_ticket" + i, "item/trial_tickets/trial_ticket" + i);
+            createOverride(i, ItemReg.TRIAL_TICKET, "item/trial_ticket");
+        }
+    }
 
     private void registerAugmentHyperCoreFilled() {
         createModel("augment_hyper_core_filled", "item/augment_hyper_core_filled");
@@ -151,7 +158,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         var simpleItems = List.of(
             ItemReg.NEXITE_POWDER, ItemReg.ESSENCE_FRAGMENT, ItemReg.INFERNO_AUGMENT,
             ItemReg.FROST_AUGMENT, ItemReg.MYSTIC_AUGMENT, ItemReg.VITALITY_AUGMENT,
-            ItemReg.CHALLENGER_TICKET, ItemReg.SKILL_POINT, ItemReg.EXIT_KEY, ItemReg.COIN_SACK,
+            ItemReg.SKILL_POINT, ItemReg.EXIT_KEY, ItemReg.COIN_SACK,
             ItemReg.STONE_OF_REGRET
         );
 

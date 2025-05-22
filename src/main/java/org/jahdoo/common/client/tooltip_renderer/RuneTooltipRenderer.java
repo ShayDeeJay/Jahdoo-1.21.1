@@ -1,4 +1,4 @@
-package org.jahdoo.common.client;
+package org.jahdoo.common.client.tooltip_renderer;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.joml.Matrix4f;
 
@@ -15,8 +16,8 @@ import static net.minecraft.client.Minecraft.getInstance;
 import static net.minecraft.client.gui.Font.DisplayMode.SEE_THROUGH;
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.standAloneAttributes;
+import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 
 public class RuneTooltipRenderer implements ClientTooltipComponent {
 

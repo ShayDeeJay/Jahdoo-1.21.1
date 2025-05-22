@@ -363,9 +363,9 @@ public class EventHelpers {
 
         for (int i = 0; i < 3; i++) freeItems.add(ItemStack.EMPTY);
 
-        freeItems.add(new ItemStack(ItemReg.CHALLENGER_TICKET));
+        freeItems.add(new ItemStack(ItemReg.TRIAL_TICKET));
         freeItems.add(new ItemStack(ItemReg.CARE_PACKAGE));
-        freeItems.add(new ItemStack(ItemReg.CHALLENGER_TICKET));
+        freeItems.add(new ItemStack(ItemReg.TRIAL_TICKET));
 
         var shulkerBox = new ItemStack(Items.LIGHT_GRAY_SHULKER_BOX);
 

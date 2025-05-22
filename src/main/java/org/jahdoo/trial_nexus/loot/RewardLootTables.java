@@ -193,7 +193,7 @@ public class RewardLootTables {
         lootTableItem(ItemReg.MAGNET.get());
 
     public static final LootPoolSingletonContainer.Builder<?> CHALLENGER_TICKET =
-        lootTableItem(ItemReg.CHALLENGER_TICKET.get());
+        lootTableItem(ItemReg.TRIAL_TICKET.get());
 
     public static final LootPoolSingletonContainer.Builder<?> STARTER_PACK =
         lootTableItem(ItemReg.CARE_PACKAGE.get());

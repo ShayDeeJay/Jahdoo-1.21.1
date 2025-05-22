@@ -1,6 +1,7 @@
 package org.jahdoo.common.items;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
@@ -25,11 +27,12 @@ import java.util.List;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.createLevelAndStartingRoom;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPositionV;
 
-public class ChallengerTicket extends Item implements JahdooItem {
+public class TrialNexusTicket extends Item implements JahdooItem {
 
-    public ChallengerTicket() { super(new Properties()); }
+    public TrialNexusTicket() { super(new Properties()); }
 
     @Override
     public Component getName(ItemStack stack) {
@@ -52,6 +55,10 @@ public class ChallengerTicket extends Item implements JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         player.startUsingItem(usedHand);
+        var item = player.getMainHandItem();
+
+        item.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(Random.nextInt(1,5)));
+
         return InteractionResultHolder.success(player.getItemInHand(usedHand));
     }
 

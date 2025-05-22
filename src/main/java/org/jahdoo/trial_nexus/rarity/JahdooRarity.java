@@ -2,12 +2,14 @@ package org.jahdoo.trial_nexus.rarity;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
+import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.trial_nexus.rarity.RarityAttributes.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.ColourStore.UNIQUE_B;
 import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getRuneData;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
@@ -27,12 +30,12 @@ import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 @IndexedEnum
 public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
 
-    COMMON(0, "Common", color(120, 203, 83), COMMON_ATTRIBUTES),
-    RARE(1, "Rare", color(67, 164, 222), RARE_ATTRIBUTES),
-    EPIC(2, "Epic", color(222, 136, 255), EPIC_ATTRIBUTES),
-    LEGENDARY(3, "Legendary", color(241, 194, 50), LEGENDARY_ATTRIBUTES),
-    ETERNAL(4, "Eternal", color(225,92,199), ETERNAL_ATTRIBUTES),
-    UNIQUE(5, "Unique", color(104, 243, 252), ETERNAL_ATTRIBUTES);
+    COMMON(0, "Common", color(120, 203, 83), COMMON_ATTRIBUTES, Icons.COMMON_TAG),
+    RARE(1, "Rare", color(67, 164, 222), RARE_ATTRIBUTES, Icons.RARE_TAG),
+    EPIC(2, "Epic", color(222, 136, 255), EPIC_ATTRIBUTES, Icons.EPIC_TAG),
+    LEGENDARY(3, "Legendary", color(241, 194, 50), LEGENDARY_ATTRIBUTES, Icons.LEGENDARY_TAG),
+    ETERNAL(4, "Eternal", color(225, 92, 112), ETERNAL_ATTRIBUTES, Icons.ETERNAL_TAG),
+    UNIQUE(5, "Unique", UNIQUE_B, ETERNAL_ATTRIBUTES, Icons.UNIQUE_TAG);
 
     public static final List<Pair<JahdooRarity, Integer>> BASE_RARITY_CHANCES = List.of(
         Pair.of(COMMON, 1),
@@ -46,12 +49,20 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     private final String name;
     private final int color;
     private final RarityAttributes attributes;
+    private final ResourceLocation tag;
 
-    JahdooRarity(int id, String name, int color, RarityAttributes attributes) {
+    JahdooRarity(
+        int id,
+        String name,
+        int color,
+        RarityAttributes attributes,
+        ResourceLocation tag
+    ) {
         this.id = id;
         this.name = name;
         this.color = color;
         this.attributes = attributes;
+        this.tag = tag;
     }
 
     @Override
@@ -69,6 +80,10 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
 
     public RarityAttributes getAttributes() {
         return this.attributes;
+    }
+
+    public ResourceLocation getTag() {
+        return this.tag;
     }
 
     public static List<JahdooRarity> getAllRarities() {

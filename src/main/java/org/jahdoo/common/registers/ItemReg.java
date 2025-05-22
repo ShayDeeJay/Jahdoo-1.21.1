@@ -60,8 +60,8 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> RECOVERY_RECEIPT =
         complexItem("recovery_receipt", RecoveryReceipt::new);
 
-    public static final DeferredHolder<Item, Item> CHALLENGER_TICKET =
-        complexItem("challenger_ticket", ChallengerTicket::new);
+    public static final DeferredHolder<Item, Item> TRIAL_TICKET =
+        complexItem("trial_ticket", TrialNexusTicket::new);
 
     public static final DeferredHolder<Item, Item> COIN =
         complexItem("coin", CoinItem::new);

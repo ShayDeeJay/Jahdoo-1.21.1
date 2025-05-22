@@ -46,7 +46,7 @@ public class CreativeTab {
                 outPut.accept(RUNE_TABLE.get());
                 outPut.accept(CREATOR_BLOCK.get());
                 outPut.accept(DISASSEMBLER_ITEM.get());
-                outPut.accept(CHALLENGER_TICKET.get());
+                outPut.accept(TRIAL_TICKET.get());
                 outPut.accept(EXIT_KEY.get());
                 outPut.accept(STONE_OF_REGRET.get());
 
