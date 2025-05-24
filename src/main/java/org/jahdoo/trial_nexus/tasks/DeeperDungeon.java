@@ -46,7 +46,7 @@ public class DeeperDungeon extends AbstractTask {
     }
 
     @Override
-    public List<ItemStack> rewards() {
+    public List<ItemStack> rewards(int tick) {
         var x = new ItemStack(ItemReg.AUGMENT_CORE);
         var y = new ItemStack(ItemReg.SKILL_POINT);
 

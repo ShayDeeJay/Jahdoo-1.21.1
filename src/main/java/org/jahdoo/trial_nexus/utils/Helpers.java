@@ -276,14 +276,9 @@ public class Helpers {
         return Component.translatable(text,args).withStyle(style -> style.withColor(colour));
     }
 
-    public static int colourByPercent(int targetNumber, int currentNumber) {
-        var split = targetNumber /3;
-        return currentNumber <= split ? PERK_GREEN : currentNumber <= split * 2.5 ? ABSORPTION_YELLOW : NEGATIVE_RED;
-    }
-
-    public static int colourByPercentReversed(int targetNumber, int currentNumber) {
-        var split = targetNumber /3;
-        return currentNumber <= split ? NEGATIVE_RED : currentNumber <= split * 2.5 ? ABSORPTION_YELLOW : PERK_GREEN;
+    public static int colourByPercent(int targetNumber, int currentNumber, boolean reversed) {
+        var split = targetNumber / 3;
+        return currentNumber <= split ? reversed ? NEGATIVE_RED : PERK_GREEN : currentNumber <= split * 2.5 ? ABSORPTION_YELLOW : reversed ? PERK_GREEN : NEGATIVE_RED;
     }
 
     public static void playDebugMessage(Player player, Object... info){

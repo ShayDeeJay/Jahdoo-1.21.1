@@ -66,7 +66,7 @@ public class CasterItemHelper {
         var maxDamage = wandItem.get(DataComponents.MAX_DAMAGE);
         var damageTaken = wandItem.get(DataComponents.DAMAGE);
         if(maxDamage != null && damageTaken != null){
-            var durabilityColourIndicator = colourByPercent(maxDamage, damageTaken);
+            var durabilityColourIndicator = colourByPercent(maxDamage, damageTaken, false);
             var prefix = Helpers.withStyleComponent("Durability: ", SUB_HEADER_COLOUR);
             var currentDurability = Helpers.withStyleComponent(durabilityDamageCount(wandItem) + "", durabilityColourIndicator);
             var maxDurability = Helpers.withStyleComponent("/" + maxDamage, BORDER_COLOUR);

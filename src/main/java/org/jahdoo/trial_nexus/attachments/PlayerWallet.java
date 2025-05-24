@@ -179,7 +179,7 @@ public class PlayerWallet implements IAttachment {
     public enum CoinProperties implements StringRepresentable, IExtensibleEnum {
         BRONZE(Icons.BRONZE_COIN, "Bronze", BRONZE_COIN),
         SILVER(Icons.SILVER_COIN, "Silver", SILVER_COIN),
-        GOLD(Icons.GOLD_COIN, "Gold", GOLD_COIN),
+        GOLD(Icons.GOLD_COIN, "Gold", CHAMPION_GOLD),
         PLATINUM(Icons.PLATINUM_COIN, "Platinum", PLATINUM_COIN);
 
         private final ResourceLocation location;

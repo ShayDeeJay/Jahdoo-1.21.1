@@ -26,6 +26,8 @@ import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
 import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.createLevelAndStartingRoom;
 import static org.jahdoo.trial_nexus.utils.ColourStore.COSMIC_PURPLE;
@@ -89,7 +91,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
         if(level instanceof CustomLevel cLevel) LevelGenerator.removeLevel(cLevel);
         level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 
-        return createLevelAndStartingRoom(player, level);
+        return createLevelAndStartingRoom(player, level, new HashMap<>());
     }
 
     @Override

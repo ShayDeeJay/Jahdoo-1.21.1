@@ -14,6 +14,7 @@ import net.minecraft.world.level.portal.DimensionTransition;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -87,7 +88,7 @@ public class LevelGenerator {
         ArcadeDimensions.add(serverLevel.getServer(), builder);
     }
 
-    public static DimensionTransition createLevelAndStartingRoom(Player player, ServerLevel serverLevel) {
+    public static DimensionTransition createLevelAndStartingRoom(Player player, ServerLevel serverLevel, Map<String, Double> buffs) {
         var levelKey = LEVEL_PREFIX + "-" + UUID.randomUUID();
         var getLevel = new AtomicReference<ServerLevel>();
 
@@ -95,8 +96,11 @@ public class LevelGenerator {
 
         findLevel(levelKey, serverLevel).ifPresent(
             level -> {
+                var data = new InstanceData();
+                if(!buffs.isEmpty()) buffs.forEach(data::set);
                 generateStartingRoom(level);
-                level.setData(INSTANCE_DATA, new InstanceData());
+                System.out.println(data);
+                level.setData(INSTANCE_DATA, data);
                 getLevel.set(level);
             }
         );

@@ -25,7 +25,7 @@ public abstract class AbstractTask {
 
     public abstract TriggerType type();
 
-    public abstract List<ItemStack> rewards();
+    public abstract List<ItemStack> rewards(int tick);
 
     public String taskId() {
         return MOD_ID +"-"+ Helpers.nameToId(taskName()) + "-task";

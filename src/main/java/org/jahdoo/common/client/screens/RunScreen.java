@@ -7,13 +7,13 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import org.jahdoo.common.client.Icons;
+import org.jahdoo.common.client.button.FlexiButton;
+import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.client.Icons;
-import org.jahdoo.common.client.button.FlexiButton;
-import org.jahdoo.common.registers.mod.QuestReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,20 +22,19 @@ import java.util.List;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.effect.MobEffects.*;
+import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.common.client.Icons.SAFE;
+import static org.jahdoo.common.client.SharedUI.boxMaker;
+import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.trial_nexus.attachments.RunData.*;
 import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
-import static org.jahdoo.trial_nexus.rarity.JahdooRarity.ETERNAL;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.BRONZE_COIN;
 import static org.jahdoo.trial_nexus.utils.ColourStore.GOLD_COIN;
 import static org.jahdoo.trial_nexus.utils.ColourStore.PLATINUM_COIN;
 import static org.jahdoo.trial_nexus.utils.ColourStore.SILVER_COIN;
 import static org.jahdoo.trial_nexus.utils.Maths.*;
-import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.Icons.SAFE;
-import static org.jahdoo.common.client.SharedUI.boxMaker;
-import static org.jahdoo.common.client.SharedUI.fadeBlack;
 
 public class RunScreen extends AbstractPanableScreen {
 
@@ -272,10 +271,10 @@ public class RunScreen extends AbstractPanableScreen {
         allComponents.add(spacer);
 
         // Mob multipliers
-        allComponents.add(new StatEntry(componentTemplate("Mob Health", "+" + roundNonWholeString(doubleFormattedDouble(instanceData.getHealth())) + "%", uiColour()), iconFromEffect(HEAL)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Armor", "+" + roundNonWholeString(doubleFormattedDouble(instanceData.getArmor())) + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Damage", "+" + roundNonWholeString(doubleFormattedDouble(instanceData.getAttackDamage())) + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
-        allComponents.add(new StatEntry(componentTemplate("Mob Speed", "+" + roundNonWholeString(doubleFormattedDouble(instanceData.getSpeed())) + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Health","+" + roundNonWholeString(doubleFormattedDouble(instanceData.getHealth())) + "%", uiColour()), iconFromEffect(HEAL)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Armor","+" + roundNonWholeString(doubleFormattedDouble(instanceData.getArmor())) + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Damage","+" + roundNonWholeString(doubleFormattedDouble(instanceData.getAttackDamage())) + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
+        allComponents.add(new StatEntry(componentTemplate("Mob Speed","+" + roundNonWholeString(doubleFormattedDouble(instanceData.getSpeed())) + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
 
         // Mob counts / composition
         allComponents.add(new StatEntry(componentTemplate("Horde Mobs", instanceData.getHorde() + "", AETHER_BLUE), Icons.HORDE));

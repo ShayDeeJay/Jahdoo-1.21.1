@@ -11,6 +11,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.components.LootCrateData;
+import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.items.magnet.MagnetData;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.items.runes.rune_data.RuneData;
@@ -113,6 +114,14 @@ public class ComponentReg {
             builder
                 .persistent(LootCrateData.CODEC)
                 .networkSynchronized(LootCrateData.STREAM_CODEC)
+                .cacheEncoding()
+        );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<TicketData>> TICKET_DATA =
+        register("ticket_data", builder ->
+            builder
+                .persistent(TicketData.CODEC)
+                .networkSynchronized(TicketData.STREAM_CODEC)
                 .cacheEncoding()
         );
 

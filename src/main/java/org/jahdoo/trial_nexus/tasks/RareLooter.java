@@ -49,7 +49,7 @@ public class RareLooter extends AbstractTask {
     }
 
     @Override
-    public List<ItemStack> rewards() {
+    public List<ItemStack> rewards(int tick) {
         var x = new ItemStack(ItemReg.AUGMENT_CORE).copyWithCount(3);
         var y = new ItemStack(ItemReg.SKILL_POINT).copyWithCount(2);
         var z = new ItemStack(ItemReg.COIN_SACK);

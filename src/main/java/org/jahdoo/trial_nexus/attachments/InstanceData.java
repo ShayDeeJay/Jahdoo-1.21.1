@@ -43,6 +43,7 @@ public class InstanceData implements IAttachment {
     private final Map<String, Double> values = new HashMap<>();
     private String difficulty;
 
+
     public InstanceData() {}
 
     public InstanceData(String difficulty, Map<String, Double> values) {
@@ -58,7 +59,7 @@ public class InstanceData implements IAttachment {
         return values.getOrDefault(key, 0.0);
     }
 
-    private void set(String key, double value) {
+    public void set(String key, double value) {
         values.put(key, value);
     }
 
@@ -252,16 +253,16 @@ public class InstanceData implements IAttachment {
         increment(KEY_QUEST_CRATE_MULTIPLIER, crateMultiplier);
     }
 
-    public static InstanceData setEasyData() {
-        InstanceData data = new InstanceData();
+    public static InstanceData setEasyData(InstanceData instanceData) {
+        var data = instanceData == null ? new InstanceData() : instanceData;
         data.setDifficulty(EASY);
         data.incrementHorde(5);
         data.setMaxTime(24000);
         return data;
     }
 
-    public static InstanceData setMediumData() {
-        InstanceData data = new InstanceData();
+    public static InstanceData setMediumData(InstanceData instanceData) {
+        var data = instanceData == null ? new InstanceData() : instanceData;
         data.setDifficulty(MEDIUM);
         data.incrementHorde(10);
         data.incrementHealth(10);
@@ -270,8 +271,8 @@ public class InstanceData implements IAttachment {
         return data;
     }
 
-    public static InstanceData setHardData() {
-        InstanceData data = new InstanceData();
+    public static InstanceData setHardData(InstanceData instanceData) {
+        var data = instanceData == null ? new InstanceData() : instanceData;
         data.setDifficulty(HARD);
         data.incrementHorde(10);
         data.incrementSkeleton(10);

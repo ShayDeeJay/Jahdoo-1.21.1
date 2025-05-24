@@ -46,8 +46,8 @@ public abstract class AbstractPanableScreen extends Screen {
         var posY = 8;
         this.addRenderableWidget(
             menuButtonAbility(
-                width/2 + 55, posY, (Button) -> getMinecraft().setScreen(new QuestLog()),
-                DATA, 30, false, () -> {}, 0, getMinecraft().screen instanceof QuestLog, "History"
+                width/2 + 55, posY, (Button) -> getMinecraft().setScreen(new QuestLogScreen()),
+                DATA, 30, false, () -> {}, 0, getMinecraft().screen instanceof QuestLogScreen, "History"
             )
         );
 

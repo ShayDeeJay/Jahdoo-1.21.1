@@ -49,7 +49,7 @@ public class LegendaryLooter extends AbstractTask {
     }
 
     @Override
-    public List<ItemStack> rewards() {
+    public List<ItemStack> rewards(int tick) {
         var x = new ItemStack(ItemReg.ADVANCED_AUGMENT_CORE.get()).copyWithCount(5);
         var y = new ItemStack(ItemReg.SKILL_POINT).copyWithCount(2);
         var z = new ItemStack(ItemReg.COIN_SACK);

@@ -59,11 +59,11 @@ public class LockBlockEntity extends SyncedBlockEntity {
     public void setDifficulty(){
         var level = this.getLevel();
         if(level == null) return;
-
+        var instance = level.getData(INSTANCE_DATA);
         var instanceData = switch (getDifficulty){
-            case Helpers.MEDIUM -> InstanceData.setMediumData();
-            case Helpers.HARD -> InstanceData.setHardData();
-            default -> InstanceData.setEasyData();
+            case Helpers.MEDIUM -> InstanceData.setMediumData(instance);
+            case Helpers.HARD -> InstanceData.setHardData(instance);
+            default -> InstanceData.setEasyData(instance);
         };
 
         level.setData(INSTANCE_DATA, instanceData);

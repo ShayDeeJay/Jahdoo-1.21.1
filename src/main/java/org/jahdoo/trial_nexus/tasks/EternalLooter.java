@@ -49,7 +49,7 @@ public class EternalLooter extends AbstractTask {
     }
 
     @Override
-    public List<ItemStack> rewards() {
+    public List<ItemStack> rewards(int tick) {
         var x = new ItemStack(ItemReg.AUGMENT_HYPER_CORE).copyWithCount(5);
         var y = new ItemStack(ItemReg.SKILL_POINT).copyWithCount(5);
         var z = new ItemStack(ItemReg.COIN_SACK);

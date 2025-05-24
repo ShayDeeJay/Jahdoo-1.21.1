@@ -50,7 +50,7 @@ public class RookieAssassin extends AbstractTask {
     }
 
     @Override
-    public List<ItemStack> rewards() {
+    public List<ItemStack> rewards(int tick) {
         var x = new ItemStack(ItemReg.AUGMENT_CORE);
         var y = new ItemStack(ItemReg.SKILL_POINT);
         var z = new ItemStack(ItemReg.COIN_SACK);

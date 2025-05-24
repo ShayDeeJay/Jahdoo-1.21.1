@@ -20,11 +20,10 @@ import java.util.List;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.overlay.InstanceDataOverlay.progressBar;
 import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.Helpers.colourByPercentReversed;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponentTrans;
+import static org.jahdoo.trial_nexus.utils.Helpers.*;
 
-public class QuestLog extends AbstractPanableScreen {
-
+public class QuestLogScreen extends AbstractPanableScreen {
+    public static int frameTicks;
     public static final int WIDTH_OFFSET = 80;
     private AbstractTask task;
     private double mouseX;
@@ -56,7 +55,7 @@ public class QuestLog extends AbstractPanableScreen {
         if(player != null && task != null){
             var claimedQuest = QuestTracker.claimedQuest(player, task.taskId());
             var isSelected = task.completionPredicate(player) && !claimedQuest;
-            this.addRenderableWidget(new SimpleButton(192, height - 45, width - 214, 22, isSelected, (button) -> claimReward(task.taskId(), task.rewards()), claimedQuest ? "Reward Claimed" : "Claim Reward"));
+            this.addRenderableWidget(new SimpleButton(192, height - 45, width - 214, 22, isSelected, (button) -> claimReward(task.taskId(), task.rewards((int) getMinecraft().level.getGameTime())), claimedQuest ? "Reward Claimed" : "Claim Reward"));
         }
 
         this.addRenderableOnly(
@@ -72,7 +71,7 @@ public class QuestLog extends AbstractPanableScreen {
     private void renderRewards(@NotNull GuiGraphics graphics) {
         if(task != null){
             var spacer = 0;
-            var rewards = task.rewards();
+            var rewards = task.rewards(frameTicks);
             var startX = 192;
             var startY = -52;
 
@@ -138,7 +137,6 @@ public class QuestLog extends AbstractPanableScreen {
             int totalHeight = entryCount * 47;
             int visibleHeight = (height - 13) - 64; // Bottom - Top of scroll box
             int minPanY = Math.min(0, visibleHeight - totalHeight - 18); // Extra 10 for bottom padding
-            System.out.println("2323");
             panY = Math.max(panY, minPanY); // Clamp to prevent overscroll
         }
 
@@ -156,6 +154,7 @@ public class QuestLog extends AbstractPanableScreen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        frameTicks++;
         super.render(graphics, mouseX, mouseY, partialTick);
         this.mouseX = mouseX;
         this.mouseY = mouseY;
@@ -191,7 +190,7 @@ public class QuestLog extends AbstractPanableScreen {
             var startX = 192;
             var text = withStyleComponentTrans(isComplete ? complete : tracker, isComplete ? 0 : SUB_HEADER_COLOUR);
 
-            progressBar(graphics, startX, 110, 100, 8, currentValue, requiredValue, 3, colourByPercentReversed(requiredValue, currentValue), SUB_HEADER_COLOUR);
+            progressBar(graphics, startX, 110, 100, 8, currentValue, requiredValue, 3, colourByPercent(requiredValue, currentValue, true), SUB_HEADER_COLOUR);
             graphics.drawString(font, withStyleComponentTrans(task.taskDescription(), SUB_HEADER_COLOUR), startX + 32, 96, -1);
             centeredStringNoShadow(graphics, font, text,  startX + 98, 114, -1, false);
             renderRewards(graphics);

@@ -10,13 +10,19 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.trading_post.ShoppingItems;
 
 import java.util.List;
 
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
+import static org.jahdoo.trial_nexus.trading_post.ShoppingItems.getRandomWand;
 
 public class CertifiedAssassin extends AbstractTask {
+    public static ItemStack wandExample;
+
+    public ItemStack getThisItem(int x){
+        if(wandExample == null || x % 80 == 0) wandExample = getRandomWand(JahdooRarity.ETERNAL, null);
+        return wandExample;
+    }
 
     @Override
     public ResourceLocation taskIcon() {
@@ -52,8 +58,7 @@ public class CertifiedAssassin extends AbstractTask {
     }
 
     @Override
-    public List<ItemStack> rewards() {
-        var w = ShoppingItems.getRandomWand(JahdooRarity.ETERNAL, null);
+    public List<ItemStack> rewards(int tick) {
         var x = new ItemStack(ItemReg.AUGMENT_HYPER_CORE);
         var y = new ItemStack(ItemReg.SKILL_POINT).copyWithCount(5);
         var z = new ItemStack(ItemReg.COIN_SACK);
@@ -61,7 +66,7 @@ public class CertifiedAssassin extends AbstractTask {
         z.set(ComponentReg.STORE_INTEGER, CurrencyConverter.convertToWallet(new CurrencyConverter(10, 0, 0, 0)));
         CoreData.setFilled(x);
 
-        return List.of(w, x, y, z);
+        return List.of(getThisItem(tick), x, y, z);
     }
 
     @Override

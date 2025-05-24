@@ -50,7 +50,7 @@ public class ChampionOfChampions extends AbstractTask {
     }
 
     @Override
-    public List<ItemStack> rewards() {
+    public List<ItemStack> rewards(int tick) {
         var x = new ItemStack(ItemReg.ADVANCED_AUGMENT_CORE).copyWithCount(5);
         var y = new ItemStack(ItemReg.SKILL_POINT);
         var z = new ItemStack(ItemReg.COIN_SACK);
