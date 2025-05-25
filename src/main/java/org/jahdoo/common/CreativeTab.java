@@ -43,6 +43,7 @@ public class CreativeTab {
                 outPut.accept(MODULAR_CHAOS_CUBE_ITEM.get());
                 outPut.accept(TANK.get());
 //                outPut.accept(WAND_MANAGER_TABLE.get());
+                outPut.accept(TICKET_BUREAU.get());
                 outPut.accept(RUNE_TABLE.get());
                 outPut.accept(CREATOR_BLOCK.get());
                 outPut.accept(DISASSEMBLER_ITEM.get());
@@ -100,6 +101,7 @@ public class CreativeTab {
                 outPut.accept(ANCIENT_GOLEM_BOOTS.get());
 
                 outPut.accept(WAND_MANAGER_TABLE.get());
+                outPut.accept(ELEMENTAL_STAFF.get());
                 outPut.accept(STARTER_WAND.get());
                 outPut.accept(WAND_ITEM_MYSTIC.get());
                 outPut.accept(WAND_ITEM_FROST.get());

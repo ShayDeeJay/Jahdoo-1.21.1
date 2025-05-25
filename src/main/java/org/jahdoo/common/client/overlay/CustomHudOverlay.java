@@ -18,7 +18,7 @@ import org.jahdoo.common.client.NumberText;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.ExperienceOrb;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
@@ -205,7 +205,7 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         var wandItem = getUsedItem(player).getItem();
         var alwaysShow = CUSTOM_UI_SHOW_MANA.get();
 
-        if (wandItem instanceof CasterItem || alwaysShow) {
+        if (CastHelper.validCasterType(wandItem) || alwaysShow) {
             if (this.fadeIn < 1) this.fadeIn += fadeAmount;
         } else {
             if (this.fadeIn > 0) this.fadeIn -= fadeAmount;

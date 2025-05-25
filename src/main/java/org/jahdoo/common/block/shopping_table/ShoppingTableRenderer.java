@@ -10,18 +10,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.items.caster_item.CasterItem;
 import org.joml.Matrix4f;
 
 import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 import static net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 import static net.minecraft.world.item.ItemDisplayContext.FIXED;
-import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
-import static org.jahdoo.trial_nexus.utils.ColourStore.OFF_WHITE;
 import static org.jahdoo.common.block.shopping_table.DisplayDirection.*;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
+import static org.jahdoo.trial_nexus.utils.ColourStore.OFF_WHITE;
 
 public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableEntity>{
 
@@ -73,7 +73,7 @@ public class ShoppingTableRenderer implements BlockEntityRenderer<ShoppingTableE
             var rotate = entity.ticks + partialTick;
             var animate = rotate / 12;
             var bobOff = Math.sin(rotate / 20.0F) * 0.02F + 1.9F - 0.51;
-            var scale = itemStack1.getItem() instanceof CasterItem ? 0.75F : 0.5f;
+            var scale = CastHelper.validCasterType(itemStack1.getItem()) ? 0.75F : 0.5f;
 
             renderName(entity, itemStack1.getHoverName(), poseStack, source, direction);
             poseStack.pushPose();

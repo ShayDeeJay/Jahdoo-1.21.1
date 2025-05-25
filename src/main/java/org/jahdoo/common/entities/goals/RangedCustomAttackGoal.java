@@ -6,7 +6,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
-import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.items.caster_item.CastHelper;
 
 import java.util.EnumSet;
 
@@ -39,7 +39,7 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
     }
 
     protected boolean isHoldingCasterItem() {
-        return this.mob.isHolding(is -> is.getItem() instanceof CasterItem);
+        return this.mob.isHolding(is -> CastHelper.validCasterType(is.getItem()));
     }
 
     public boolean requiresUpdateEveryTick() {
@@ -123,7 +123,7 @@ public class RangedCustomAttackGoal <T extends Mob & RangedAttackMob> extends Go
                     }
                 }
             } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
-                this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof CasterItem));
+                this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, CastHelper::validCasterType));
             }
 
         }

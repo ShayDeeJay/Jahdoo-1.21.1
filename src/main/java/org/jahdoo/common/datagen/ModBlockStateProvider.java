@@ -44,6 +44,11 @@ public class ModBlockStateProvider extends BlockStateProvider {
         );
 
         simpleBlockWithItem(
+            TICKET_BUREAU.get(),
+            new UncheckedModelFile(modLoc("block/ticket_bureau"))
+        );
+
+        simpleBlockWithItem(
             POWER_UP_STATION.get(),
             new UncheckedModelFile(modLoc("block/power_up_station"))
         );

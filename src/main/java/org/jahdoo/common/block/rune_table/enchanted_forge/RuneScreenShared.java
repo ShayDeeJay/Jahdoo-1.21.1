@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.slots.GeneralItemSlot;
 import org.jahdoo.common.components.CoreData;
-import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class RuneScreenShared {
         final var ITEM_OFFSET_X = 40;
         final var ITEM_OFFSET_Y = -17;
         final var SHIFT_X = 75;
-        final var WAND_ITEM_OFFSET = getItem.getItem() instanceof CasterItem ? 75 : 80;
+        final var WAND_ITEM_OFFSET = CastHelper.validCasterType(getItem.getItem()) ? 75 : 80;
         final var SCALED_ITEM = scaleItem - WAND_ITEM_OFFSET;
         final var OFFSET_Y = 91;
 

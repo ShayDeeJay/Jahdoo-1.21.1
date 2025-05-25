@@ -61,7 +61,7 @@ import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.event.TriggerEvents;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.networking.client2server.ChaosCubeC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.client2server.UseAbilityC2SP;
@@ -170,7 +170,7 @@ public class EventHelpers {
         if(player != null){
             var isAllowed = !getBlock.is(ALLOWED_BLOCK_INTERACTIONS);
             var isShift = !player.isShiftKeyDown();
-            var isWand = item instanceof CasterItem;
+            var isWand = CastHelper.validCasterType(item);
 
             if (isWand && isShift && isAllowed) {
                 event.cancelWithResult(SKIP_DEFAULT_BLOCK_INTERACTION);
@@ -256,7 +256,7 @@ public class EventHelpers {
     }
 
     public static void saveBlockType(PlayerInteractEvent.LeftClickBlock event, ItemStack item, BlockState blockState, BlockPos pos) {
-        if(event.getItemStack().getItem() instanceof CasterItem){
+        if(CastHelper.validCasterType(event.getItemStack().getItem())){
             if(event.getEntity().isShiftKeyDown()){
                 var name = CasterData.selectedAbility(event.getEntity());
                 var wallPlacer = WallPlacerAbility.abilityId.getPath().intern();
@@ -302,7 +302,7 @@ public class EventHelpers {
     }
 
     public static void setChaosCubeAbility(PlayerInteractEvent.LeftClickBlock event, Level level, BlockPos pos, ItemStack item) {
-        if(level.getBlockEntity(pos) instanceof ChaosCubeEntity entity && item.getItem() instanceof CasterItem){
+        if(level.getBlockEntity(pos) instanceof ChaosCubeEntity entity && CastHelper.validCasterType(item.getItem())){
             var player = event.getEntity();
             var casterData = player.getData(CASTER_DATA.get());
             var ability = AbilityReg.getFirstSpellByTypeId(casterData.getSelectedAbility());

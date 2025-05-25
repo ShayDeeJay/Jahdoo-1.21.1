@@ -186,7 +186,7 @@ public class CasterItemHelper {
         return appendComponents;
     }
 
-    static void canOffhandWand(
+    public static void canOffhandWand(
         ItemStack itemStack,
         Player player,
         Integer interactState,
@@ -214,7 +214,7 @@ public class CasterItemHelper {
         var curio = CuriosApi.getCuriosInventory(entity);
         var offHand = entity.getItemInHand(OFF_HAND);
 
-        if(offHand.getItem() instanceof CasterItem){
+        if(CastHelper.validCasterType(offHand.getItem())){
             if(curio.isEmpty()) return false;
 
             var isGauntletEquipped = curio.get().isEquipped(ItemReg.BATTLEMAGE_GAUNTLET.get());
@@ -236,7 +236,7 @@ public class CasterItemHelper {
         var curio = CuriosApi.getCuriosInventory(entity);
         var offHand = entity.getItemInHand(OFF_HAND);
 
-        if(offHand.getItem() instanceof CasterItem){
+        if(CastHelper.validCasterType(offHand.getItem())){
             if(curio.isEmpty()) return empty;
             var isGauntletEquipped = curio.get().isEquipped(ItemReg.BATTLEMAGE_GAUNTLET.get());
             if(isGauntletEquipped) {

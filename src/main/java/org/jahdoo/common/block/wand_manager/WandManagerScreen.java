@@ -11,17 +11,17 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.common.client.slots.InventorySlots;
 import org.jahdoo.common.client.slots.RuneSlot;
-import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.items.caster_item.CasterItemHelper;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
 import org.jahdoo.common.networking.client2server.PlayerExpC2SP;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -32,9 +32,6 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
 import static net.minecraft.world.item.TooltipFlag.ADVANCED;
 import static net.neoforged.neoforge.client.ClientTooltipFlag.of;
-import static org.jahdoo.trial_nexus.utils.ColourStore.BORDER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.Helpers.filterList;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
@@ -42,6 +39,9 @@ import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
 import static org.jahdoo.common.registers.AttributeReg.replaceOrAddAttribute;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
+import static org.jahdoo.trial_nexus.utils.ColourStore.BORDER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.Helpers.filterList;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 
 public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> {
 
@@ -207,7 +207,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
     }
 
     private void remainingPotential(GuiGraphics guiGraphics, int shiftX, AtomicInteger spacer, int shiftY) {
-        if (getWand().getItem() instanceof CasterItem) {
+        if (CastHelper.validCasterType(getWand().getItem())) {
             var itemModifiers = CasterItemHelper.getItemModifiers(getWand(), getMinecraft().level);
             var potentialList = filterList(itemModifiers, "Potential");
             var sharedX = this.width / 2 - 30 + shiftX;
@@ -359,7 +359,7 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
         int startX,
         int startY
     ) {
-        if(getWand().getItem() instanceof CasterItem){
+        if(CastHelper.validCasterType(getWand().getItem())){
             var level = getMinecraft().level;
             var player = getMinecraft().player;
             var itemModifiers = getWand().getTooltipLines(Item.TooltipContext.of(level), player, of(ADVANCED));

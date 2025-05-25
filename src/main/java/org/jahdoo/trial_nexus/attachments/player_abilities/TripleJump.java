@@ -43,7 +43,8 @@ public class TripleJump implements IAttachment {
             if(!clientIsJumpHeld && clientJumpCount <= MAX_JUMPS){
                 clientJumpCount++;
                 var delta = player.getDeltaMovement();
-                player.setDeltaMovement(delta.x, Math.max(delta.y, 0.54D), delta.z);
+                var playerSpeed = player.getSpeed();
+                player.setDeltaMovement(delta.x*(1+playerSpeed), Math.max(delta.y, 0.54D), delta.z*(1+playerSpeed));
                 if(clientJumpCount > 1){
                     var type = ParticleHandlers.genericParticle(GENERIC_PARTICLE, ElementReg.frost(), 6, 2f);
                     PositionFinders.innerRadiusRandom(player.position(), player.getBbWidth() * 1.5, 50,

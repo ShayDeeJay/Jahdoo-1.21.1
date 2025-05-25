@@ -24,6 +24,7 @@ import org.jahdoo.common.block.power_up_station.PowerUpStation;
 import org.jahdoo.common.block.rune_table.DivineForge;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.common.block.tank.TankBlock;
+import org.jahdoo.common.block.ticket_bureau.TicketBureauBlock;
 import org.jahdoo.common.block.wand_manager.WandManagerBlock;
 
 import java.util.function.Supplier;
@@ -59,6 +60,9 @@ public class BlockReg {
 
     public static DeferredHolder<Block, Block> TANK =
         registerBlockWithItem("tank", TankBlock::new);
+
+    public static DeferredHolder<Block, Block> TICKET_BUREAU =
+        registerBlockWithItem("ticket_bureau", TicketBureauBlock::new);
 
     public static DeferredHolder<Block, Block> LOOT_CRATE =
         registerBlockWithItem("loot_crate", LootCrateBlock::new);

@@ -23,6 +23,7 @@ import org.jahdoo.common.items.caster_item.elemental_wand.FrostWand;
 import org.jahdoo.common.items.caster_item.elemental_wand.InfernoWand;
 import org.jahdoo.common.items.caster_item.elemental_wand.MysticWand;
 import org.jahdoo.common.items.caster_item.elemental_wand.VitalityWand;
+import org.jahdoo.common.items.caster_item.staff.ElementalStaff;
 import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
 import org.jahdoo.common.items.magnet.Magnet;
 import org.jahdoo.common.items.runes.RuneItem;
@@ -132,6 +133,9 @@ public class ItemReg {
 
     //Wands needed their own subclass as animations do not fire for all wand instances otherwise.
     //UPDATE: Above should now be fixed in latest update, should now be able
+    public static final DeferredHolder<Item, Item> ELEMENTAL_STAFF =
+        complexItem("elemental_staff", ElementalStaff::new);
+
     public static final DeferredHolder<Item, Item> STARTER_WAND =
         complexItem("wand_basic", StarterWand::new);
 

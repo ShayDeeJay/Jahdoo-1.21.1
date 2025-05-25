@@ -2,9 +2,11 @@ package org.jahdoo.common.components;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.common.registers.ComponentReg;
 
 import java.util.HashMap;
@@ -13,6 +15,11 @@ import java.util.Map;
 public record TicketData(
     Map<String, Double> values
 ) {
+
+    public static void initTicket(ItemStack itemStack, int setType){
+        itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(setType));
+        itemStack.set(ComponentReg.STORE_INTEGER, setType);
+    }
 
     public static void addNewEntry(ItemStack itemStack, String tag, double value){
         var getFromStack = itemStack.get(ComponentReg.TICKET_DATA);

@@ -6,12 +6,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import org.jahdoo.common.client.screens.AbilityWheelScreen;
+import org.jahdoo.common.items.caster_item.CastHelper;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.utils.Configuration;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.client.screens.AbilityWheelScreen;
-import org.jahdoo.common.items.caster_item.CasterItem;
-import org.jahdoo.common.registers.AttachmentReg;
 
 import java.util.List;
 import java.util.Objects;
@@ -56,7 +56,7 @@ public class OverlayEvent {
         if(Objects.equals(getSelectedAbility.getSelectedAbility(), abilityId.getPath().intern())){
             var pickDistance = CasterData.getSpecificValue(player, CASTING_DISTANCE);
             var pick = player.pick(pickDistance, 1, false);
-            if (stack.getItem() instanceof CasterItem) {
+            if (CastHelper.validCasterType(stack.getItem())) {
                 if (pick.getType() != HitResult.Type.MISS) {
                     if (pick instanceof BlockHitResult && event.getName().equals(VanillaGuiLayers.CROSSHAIR)) {
                         event.setCanceled(true);

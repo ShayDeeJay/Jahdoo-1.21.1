@@ -125,7 +125,6 @@ public class ComponentReg {
                 .cacheEncoding()
         );
 
-
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name, UnaryOperator<DataComponentType.Builder<T>> builderUnaryOperator) {
         return COMPONENTS.register(name, () -> builderUnaryOperator.apply(DataComponentType.builder()).build());
     }

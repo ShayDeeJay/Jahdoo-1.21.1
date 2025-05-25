@@ -28,16 +28,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.jahdoo.common.items.caster_item.CasterItem;
+import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
 import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
 
 public class WandManagerBlock extends BaseEntityBlock {
 
@@ -163,7 +163,7 @@ public class WandManagerBlock extends BaseEntityBlock {
         double speed,
         double radius
     ) {
-        if (hand.getItem() instanceof CasterItem || hand.isEmpty() && pPlayer.isShiftKeyDown()) {
+        if (CastHelper.validCasterType(hand.getItem()) || hand.isEmpty() && pPlayer.isShiftKeyDown()) {
             if(!hand.isEmpty()) getSoundWithPosition(pLevel, pPos, soundEvent, 1, 1.2f);
             swapItemsWithHand(wandManagerTable.inputItemHandler, 0, pPlayer, pHand);
 

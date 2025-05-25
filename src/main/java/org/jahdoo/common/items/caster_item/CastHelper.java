@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
 import org.jahdoo.common.items.caster_item.elemental_wand.ElementalWand;
@@ -34,6 +35,10 @@ import static org.jahdoo.trial_nexus.utils.Maths.getFormattedFloat;
 
 
 public class CastHelper {
+
+    public static boolean validCasterType(Item item){
+        return item instanceof CasterItem || item instanceof BaseMagicWeapon;
+    }
 
     public static void onCast(Player player, Ability ability){
         if(!ability.selfChargeAbility()) castAnimation(player, SINGLE_CAST_ID);

@@ -21,18 +21,18 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
+import org.jahdoo.common.client.RenderHelpers;
+import org.jahdoo.common.client.SharedUI;
+import org.jahdoo.common.items.caster_item.CastHelper;
+import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.EffectReg;
+import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.trial_nexus.ability.abilities_combat.arcane_shift.ArcaneShiftAbility;
 import org.jahdoo.trial_nexus.ability.abilities_combat.frostbolts.FrostboltsAbility;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.utils.Configuration;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.client.RenderHelpers;
-import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.items.caster_item.CasterItem;
-import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.ItemReg;
-import org.jahdoo.common.registers.mod.AbilityReg;
 
 import java.awt.*;
 import java.util.List;
@@ -40,9 +40,9 @@ import java.util.Objects;
 
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static org.jahdoo.common.client.RenderHelpers.drawHealthBar;
+import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 import static org.jahdoo.common.event.ClientEvents.getHealthHolderIcon;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.LEVEL_PREFIX;
 
 public class RenderEventHelper {
@@ -52,7 +52,7 @@ public class RenderEventHelper {
         if(Objects.equals(ability, ArcaneShiftAbility.abilityId.getPath().intern())){
             var pickDistance = CasterData.getSpecificValue(player, CASTING_DISTANCE);
             var pick = player.pick(pickDistance, 1, false);
-            if (stack.getItem() instanceof CasterItem) {
+            if (CastHelper.validCasterType(stack.getItem())) {
                 if (pick.getType() != HitResult.Type.MISS) {
                     if (pick instanceof BlockHitResult blockHitResult) {
                         renderSelectedBlock(event, new AABB(blockHitResult.getBlockPos()), new Color(193, 97, 228));
@@ -111,7 +111,7 @@ public class RenderEventHelper {
         var scale = Math.sin((event.getRenderTick() + event.getPartialTick().getRealtimeDeltaTicks()) / 4.0F) * Math.max((radius/10), 0.1) + Math.max(radius, 1);
         var pick = player.pick(pickDistance, event.getPartialTick().getGameTimeDeltaTicks(), false);
         var item = stack.getItem();
-        var isCaterItem = item instanceof CasterItem;
+        var isCaterItem = CastHelper.validCasterType(item);
         var hitSurface = pick.getType() != HitResult.Type.MISS;
         var elementByWandType = SharedUI.getElementWithType(ability.get(), stack);
         if (!isCaterItem || !hitSurface || elementByWandType == null) return;
@@ -134,7 +134,7 @@ public class RenderEventHelper {
         var player = (Player) event.getCamera().getEntity();
         var target = getEntityInRange(player, 15, 25);
         if (target == null || !player.hasLineOfSight(target)) return;
-        if (!(Helpers.getUsedItem(player).getItem() instanceof CasterItem)) return;
+        if (!(CastHelper.validCasterType(Helpers.getUsedItem(player).getItem()))) return;
 
         target.addEffect(new MobEffectInstance(MobEffects.GLOWING.getDelegate(), 20, 1, false, false), player);
 
@@ -229,7 +229,7 @@ public class RenderEventHelper {
 
     public static void renderUtilityOverlay(RenderLevelStageEvent event, Player player, ItemStack stack) {
         var pick = player.pick(15, 1, false);
-        if(stack.getItem() instanceof CasterItem){
+        if(CastHelper.validCasterType(stack.getItem())){
             if (pick.getType() != HitResult.Type.MISS) {
                 if (pick instanceof BlockHitResult blockHitResult) {
 

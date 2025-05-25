@@ -8,6 +8,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.common.block.ticket_bureau.TicketBureauRenderer;
 import org.jahdoo.common.client.tooltip_renderer.RarityTooltipRenderer;
 import org.jahdoo.common.particle.MovingParticle;
 import org.jahdoo.trial_nexus.utils.Helpers;
@@ -122,6 +123,7 @@ public class ClientBusEvents {
         //Block entities
         event.registerBlockEntityRenderer(POWER_UP_BE.get(), PowerUpStationRenderer::new);
         event.registerBlockEntityRenderer(TANK_BE.get(), TankRenderer::new);
+        event.registerBlockEntityRenderer(TICKET_BUREAU_BE.get(), TicketBureauRenderer::new);
         event.registerBlockEntityRenderer(LOCK_BE.get(), LockRenderer::new);
         event.registerBlockEntityRenderer(INFUSER_BE.get(), DisassemblerRenderer::new);
         event.registerBlockEntityRenderer(LOOT_CHEST_BE.get(), LootChestRenderer::new);

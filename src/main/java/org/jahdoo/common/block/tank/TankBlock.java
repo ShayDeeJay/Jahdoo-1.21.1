@@ -35,11 +35,12 @@ import static org.jahdoo.common.registers.BlockEntityReg.*;
 import static org.jahdoo.common.registers.ItemReg.*;
 
 public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
+    public static final VoxelShape SHAPE_COMMON = Shapes.or(
+        Block.box(1.95, 0, 1.95, 14.05, 2.75, 14.05),
+        Block.box(3, 2.75, 3, 13, 12.75, 13),
+        Block.box(3, 13.25, 3, 13, 16, 13)
+    );
 
-    public static final VoxelShape SHAPE_BASE = Block.box(1.95, 0, 1.95, 14.05, 2.75, 14.05);
-    public static final VoxelShape JAR = Block.box(3, 2.75, 3, 13, 12.75, 13);
-    public static final VoxelShape TOP = Block.box(3, 13.25, 3, 13, 16, 13);
-    public static final VoxelShape SHAPE_COMMON = Shapes.or(SHAPE_BASE, JAR, TOP);
     public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 

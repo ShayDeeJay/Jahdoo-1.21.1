@@ -11,15 +11,17 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.block.creator.CreatorEntity;
-import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.common.block.dissembler.DisassemblerBlockEntity;
+import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
+import org.jahdoo.common.block.loot_crate.LootCrateEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.block.power_up_station.PowerUpStationEntity;
 import org.jahdoo.common.block.rune_table.DivineForgeEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.block.tank.TankBlockEntity;
+import org.jahdoo.common.block.ticket_bureau.TicketBureauBlockEntity;
 import org.jahdoo.common.block.wand_manager.WandManagerEntity;
 
 import static org.jahdoo.common.registers.BlockReg.*;
@@ -31,8 +33,11 @@ public class BlockEntityReg {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TankBlockEntity>> TANK_BE =
         registerBlockEntity("tank_be", TankBlockEntity::new, TANK);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<org.jahdoo.common.block.loot_crate.LootCrateEntity>> LOOT_CRATE_BE =
-        registerBlockEntity("loot_crate_be", org.jahdoo.common.block.loot_crate.LootCrateEntity::new, LOOT_CRATE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TicketBureauBlockEntity>> TICKET_BUREAU_BE =
+        registerBlockEntity("ticket_bureau_be", TicketBureauBlockEntity::new, TICKET_BUREAU);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LootCrateEntity>> LOOT_CRATE_BE =
+        registerBlockEntity("loot_crate_be", LootCrateEntity::new, LOOT_CRATE);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PerkTableEntity>> PERK_TABLE_BE =
         registerBlockEntity("perk_table_be", PerkTableEntity::new, PERK_TABLE);

@@ -34,7 +34,7 @@ public class StaffArmPose {
             }
         }, ITEMS.getEntries()
             .stream()
-            .filter(item -> item.get() instanceof CasterItem)
+            .filter(item -> CastHelper.validCasterType(item.get()))
             .map(holder -> (Item) holder.get())
             .toArray(Item[]::new));
     }

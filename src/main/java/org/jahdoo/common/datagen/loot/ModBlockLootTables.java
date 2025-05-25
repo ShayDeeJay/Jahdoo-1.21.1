@@ -44,6 +44,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
         this.dropSelf(WAND_MANAGER_TABLE.get());
         this.dropSelf(TANK.value());
+        this.dropSelf(TICKET_BUREAU.value());
         this.dropSelf(DISSEMBLER.get());
         this.dropSelf(CHALLENGE_ALTAR.get());
         this.dropSelf(LOOT_CHEST.get());
