@@ -17,6 +17,7 @@ import org.jahdoo.trial_nexus.ability.SharedFireProperties;
 import org.jahdoo.trial_nexus.ability.abilities_combat.armageddon.ArmageddonModule;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
@@ -142,13 +143,13 @@ public class FireBall extends DefaultEntityBehaviour {
 
     private void setShockwaveNova(Vec3 worldPosition){
         var directions = worldPosition.subtract(this.element.position()).normalize();
-        var lifetime = 3;
-        var col1 = -1;
-        var col2 = ElementReg.inferno().partColourA();
-        var genericParticle = ParticleHandlers.genericParticle(SOFT_PARTICLE, lifetime, 0.04f, col1, col2, true);
+        var lifetime = Random.nextInt(4, 6);
+        var col1 = ColourStore.SUB_HEADER_COLOUR;
+        var col2 = ColourStore.HEADER_COLOUR;
+        var genericParticle = ParticleHandlers.genericParticle(GENERIC_PARTICLE, lifetime, 0.2f, col1, col2, true);
 
         ParticleHandlers.sendParticles(
-            level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, 1.5
+            level(), genericParticle, worldPosition, 0, directions.x, directions.y, directions.z, Random.nextDouble(0.5, 1.5)
         );
     }
 
@@ -261,7 +262,7 @@ public class FireBall extends DefaultEntityBehaviour {
         float speed = (float) (this.novaMaxSize/10);
         getOuterRingOfRadiusRandom(this.element.position(), 1.5, this.novaMaxSize * 30, this::setParticleNova);
         if(!this.isBuddy){
-            getOuterRingOfRadius(this.element.position(), 0.5, 300, this::setShockwaveNova);
+            getOuterRingOfRadius(this.element.position(), 0.1, 50, this::setShockwaveNova);
         }
         var maxPart = Math.max((int) this.maxRadius / 2, 1);
 

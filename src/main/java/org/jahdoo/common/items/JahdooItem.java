@@ -121,7 +121,9 @@ public interface JahdooItem {
         double duration,
         boolean addSpace
     ) {
-        var list = stack.getAttributeModifiers().modifiers().stream().filter(e -> e.modifier().id().getPath().contains("bonus")).toList();
+        var list = stack.getAttributeModifiers().modifiers().stream()
+            .filter(e -> e.modifier().id().getPath().contains("bonus") || e.modifier().id().getPath().contains("boon"))
+            .toList();
         if(list.isEmpty()) return;
         if(addSpace) toolTip.add(Component.literal(" "));
         var comp = highlightTextComponent(context.level(), label, colourA, colourB, speed, duration);

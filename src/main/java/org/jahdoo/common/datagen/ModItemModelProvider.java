@@ -37,6 +37,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         registerAdvancedAugmentCoreFilled();
         registerAugmentHyperCoreFilled();
         registerTickets();
+        registerPerkaSoda();
     }
 
     private void createSimpleItemModel(DeferredHolder<Item, Item> item) {
@@ -107,9 +108,16 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private void registerTickets() {
-        for (int i = 1; i < 5; i++) {
+        for (int i = 1; i < 6; i++) {
             createModel("trial_ticket" + i, "item/trial_tickets/trial_ticket" + i);
             createOverride(i, ItemReg.TRIAL_TICKET, "item/trial_ticket");
+        }
+    }
+
+    private void registerPerkaSoda() {
+        for (int i = 1; i < 5; i++) {
+            createModel("perka_soda" + i, "item/perka_sodas/perka_soda" + i);
+            createOverride(i, ItemReg.PERKA_SODA, "item/perka_soda");
         }
     }
 

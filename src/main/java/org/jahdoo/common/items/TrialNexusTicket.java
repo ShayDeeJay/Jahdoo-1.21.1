@@ -53,7 +53,7 @@ public class TrialNexusTicket extends Item implements JahdooItem {
     public Component getName(ItemStack stack) {
         var type = "Trial Ticket";
         var getType = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        return getType == null ? withStyleComponent(type, color(225, 176, 73)) :
+        return getType == null ? withStyleComponent("Empty "+type, SUB_HEADER_COLOUR) :
         withStyleComponent(
             type, switch (getType.value()){
                 case 1 -> JahdooRarity.RARE.getColour();
@@ -87,28 +87,30 @@ public class TrialNexusTicket extends Item implements JahdooItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltips, TooltipFlag tooltipFlag) {
-        var getTicketMods = stack.get(ComponentReg.TICKET_DATA);
-        var getUses = stack.get(STORE_INTEGER);
         var getType = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        var getTypeValue = getType == null ? 1 : getType.value() + 1;
-        var getUseValue = getUses == null ? 0 : getUses + 1;
+        if(getType != null){
+            var getTicketMods = stack.get(ComponentReg.TICKET_DATA);
+            var getUses = stack.get(STORE_INTEGER);
 
-        tooltips.add(withStyleComponent("Teleports you to the trial nexus", ColourStore.SUB_HEADER_COLOUR));
-        usesTooltips(tooltips, getTypeValue, getUseValue);
-        modifierTooltips(tooltips, getTicketMods);
+            tooltips.add(withStyleComponent("Teleports you to the trial nexus", ColourStore.SUB_HEADER_COLOUR));
+            usesTooltips(tooltips, getType.value(), getUses);
+            modifierTooltips(tooltips, getTicketMods);
+        }
     }
 
     @Override
     public void onUseTick(Level level, LivingEntity player, ItemStack stack, int remainingUseDuration) {
         if (!(player instanceof ServerPlayer serverPlayer) || level instanceof CustomLevel) return;
         var i1 = stack.get(STORE_INTEGER);
-        if(player.isUsingItem() && i1 != null && i1 + 1 > 0){
+        if(player.isUsingItem() && i1 != null && i1 > 0){
             var getCastTime = 80;
             var ticksUsingItem = serverPlayer.getTicksUsingItem();
             loading(player, serverPlayer, getCastTime, ticksUsingItem);
             onComplete(level, player, serverPlayer, ticksUsingItem, getCastTime);
+            return;
         }
 
+        player.stopUsingItem();
         super.onUseTick(level, player, stack, remainingUseDuration);
     }
 
@@ -179,7 +181,8 @@ public class TrialNexusTicket extends Item implements JahdooItem {
                 var i = serverStack.get(STORE_INTEGER);
                 serverStack.set(STORE_INTEGER, i - 1);
 
-                if(i == 0) serverStack.shrink(1);
+                System.out.println(i);
+                if(i-1 == 0) serverStack.shrink(1);
                 serverPlayer.playNotifySound(SoundReg.START_TRIAL.get(), SoundSource.AMBIENT, 1, 1);
             }
         }

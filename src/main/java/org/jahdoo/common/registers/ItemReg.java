@@ -26,6 +26,7 @@ import org.jahdoo.common.items.caster_item.elemental_wand.VitalityWand;
 import org.jahdoo.common.items.caster_item.staff.ElementalStaff;
 import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
 import org.jahdoo.common.items.magnet.Magnet;
+import org.jahdoo.common.items.perk_soda.PerkaSoda;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.shields.JahdooShieldItem;
 import org.jahdoo.common.items.tome.TomeOfUnity;
@@ -55,6 +56,9 @@ public class ItemReg {
         basicItem("champions_crown");
 
     //Complex Items
+    public static final DeferredHolder<Item, Item> PERKA_SODA =
+        complexItem("perka_soda", PerkaSoda::new);
+
     public static final DeferredHolder<Item, Item> CARE_PACKAGE =
         complexItem("starter_pack", StarterPack::new);
 

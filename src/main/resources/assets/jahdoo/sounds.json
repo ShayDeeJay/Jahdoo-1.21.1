@@ -226,5 +226,11 @@
     "sounds": [
       "jahdoo:spell_sound"
     ]
+  },
+  "can_open": {
+    "subtitles": "sounds.jahdoo.can_open",
+    "sounds": [
+      "jahdoo:can_open"
+    ]
   }
 }

@@ -121,7 +121,7 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
 
             if (handItem.is(Items.REDSTONE)) {
                 var copy = entity1.getTicketItem().copy();
-                var setType = Random.nextInt(0, 5);
+                var setType = Random.nextInt(1, 6);
                 TicketData.initTicket(copy, setType);
                 entity1.inputItemHandler.setStackInSlot(0, copy);
             }

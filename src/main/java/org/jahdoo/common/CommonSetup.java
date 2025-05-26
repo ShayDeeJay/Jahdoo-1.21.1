@@ -27,6 +27,7 @@ public class CommonSetup {
         modEventBus.addListener(ElementReg::registerRegistry);
         modEventBus.addListener(EntityDataReg::registerRegistry);
         modEventBus.addListener(LevelBoonReg::registerRegistry);
+        modEventBus.addListener(PlayerBoonReg::registerRegistry);
         modEventBus.addListener(SkillReg::registerRegistry);
         modEventBus.addListener(QuestReg::registerRegistry);
         modEventBus.addListener(RuneReg::registerRegistry);
@@ -59,6 +60,7 @@ public class CommonSetup {
         AbilityReg.register(modEventBus);
         ElementReg.register(modEventBus);
         LevelBoonReg.register(modEventBus);
+        PlayerBoonReg.register(modEventBus);
         SkillReg.register(modEventBus);
         TaskReg.register(modEventBus);
         QuestReg.register(modEventBus);

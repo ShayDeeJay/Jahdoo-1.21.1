@@ -1,0 +1,54 @@
+package org.jahdoo.trial_nexus.boon.player_boons.boons;
+
+import net.minecraft.core.Holder;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoons;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jetbrains.annotations.Nullable;
+
+public class CooldownBoon extends AbstractPlayerBoons {
+
+    @Override
+    public @Nullable AbstractElement element() {
+        return ElementReg.random();
+    }
+
+    @Override
+    public String getLabel() {
+        return ELEMENTAL_ENERGY;
+    }
+
+    @Override
+    public String id() {
+        return "cooldown_boon";
+    }
+
+    @Override
+    public int colour() {
+        return ColourStore.COOLDOWN_GREEN;
+    }
+
+    @Override
+    public int getTextureId() {
+        return 1;
+    }
+
+    @Override
+    public Holder<Attribute> attributeHolder() {
+        return element().cooldownReduction();
+    }
+
+    @Override
+    public boolean isPercentage() {
+        return true;
+    }
+
+    @Override
+    public double getValue(JahdooRarity getRarity) {
+        return getRarity.getAttributes().getRandomCooldown();
+    }
+
+}
