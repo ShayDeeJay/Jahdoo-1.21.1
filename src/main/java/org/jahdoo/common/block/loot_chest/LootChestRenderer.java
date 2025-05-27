@@ -36,7 +36,7 @@ public class LootChestRenderer extends GeoBlockRenderer<LootChestEntity>{
     @Override
     public void render(LootChestEntity animatable, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         super.render(animatable, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
-        if(animatable.isCoinChest()){
+        if(animatable.isCoinChest() && !animatable.showHover){
             roomData(animatable, poseStack, bufferSource, entityRenderDispatcher, partialTick);
         }
     }

@@ -99,6 +99,16 @@ public class ServerEvents {
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
         var player = rightClickItem.getEntity();
 
+//        if(player.level() instanceof ServerLevel servereLevel){
+//            var villager = EntityType.VILLAGER.create(servereLevel);
+//            var direction = Direction.EAST;
+//            villager.absRotateTo(direction.toYRot(), direction.toYRot());
+//            villager.moveTo(player.position());
+//            servereLevel.addFreshEntity(villager);
+//            villager.removeFreeWill();
+//            var clockWise = direction.getClockWise();
+//        }
+
         triggerUseEvent(player, player.level());
         removeShieldUse(rightClickItem);
     }

@@ -2,14 +2,14 @@ package org.jahdoo.trial_nexus.boon.player_boons.boons;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import org.jahdoo.common.registers.AttributeReg;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoons;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jetbrains.annotations.Nullable;
 
-public class ManaPoolBoon extends AbstractPlayerBoons {
+public class MaxAbsorptionBoon extends AbstractPlayerBoons {
 
     @Override
     public @Nullable AbstractElement element() {
@@ -18,32 +18,32 @@ public class ManaPoolBoon extends AbstractPlayerBoons {
 
     @Override
     public String getLabel() {
-        return MANA_MOJITO;
+        return JUGGERNOG;
     }
 
     @Override
     public String id() {
-        return "mana_pool_boon";
+        return "max_absorption_boon";
     }
 
     @Override
     public int colour() {
-        return ColourStore.AETHER_BLUE;
+        return ColourStore.ABSORPTION_TEXT_YELLOW;
     }
 
     @Override
     public int getTextureId() {
-        return 2;
+        return 3;
     }
 
     @Override
     public Holder<Attribute> attributeHolder() {
-        return AttributeReg.MANA_POOL;
+        return Attributes.MAX_ABSORPTION;
     }
 
     @Override
     public double getValue(JahdooRarity getRarity) {
-        return getRarity.getAttributes().getRandomManaPool();
+        return getRarity.getAttributes().getRandomMaxAbsorption();
     }
 
 }

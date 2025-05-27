@@ -184,11 +184,11 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
             }
         );
 
-        if(clearedRooms % 2 == 0) {
-            setAttributePerkTable(serverLevel, pos, clearedRooms);
-        } else {
-            setCoinLootChest(serverLevel, pos, direction, -1, true, clearedRooms);
-        }
+//        if(clearedRooms % 2 == 0) {
+//            setAttributePerkTable(serverLevel, pos, clearedRooms);
+//        } else {
+//        }
+        setCoinLootChest(serverLevel, pos, direction, -1, true, clearedRooms);
 
         for (var entity : serverLevel.getEntities().getAll()) {
             if(entity instanceof Safe safe) safe.kill();

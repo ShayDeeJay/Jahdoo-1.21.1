@@ -8,12 +8,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -22,14 +22,15 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.common.entities.EntityAnimations.OPEN_LOOT;
 import static org.jahdoo.common.entities.EntityAnimations.SPAWN_CHEST;
 import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
+import static org.jahdoo.trial_nexus.utils.Helpers.*;
 
 public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity {
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    public boolean showHover;
     public boolean isOpen = false;
     public int getRarity;
 
@@ -39,6 +40,12 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
 
     public void setOpen(boolean open) {
         isOpen = open;
+        updateBlock();
+    }
+
+    public void setShowHover(boolean showHover){
+        this.showHover = showHover;
+        updateBlock();
     }
 
     public boolean canRender() {
@@ -70,6 +77,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         tag.putInt("loot_chest.private", privateTicks);
         tag.putBoolean("isOpen", isOpen);
         tag.putInt("getRarity", getRarity);
+        tag.putBoolean("showHover", showHover);
     }
 
     @Override
@@ -78,13 +86,10 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         privateTicks = tag.getInt("loot_chest.private");
         isOpen = tag.getBoolean("isOpen");
         getRarity = tag.getInt("getRarity");
+        showHover = tag.getBoolean("showHover");
     }
 
-
-
     public void tick(Level level, BlockPos pos, BlockState blockState) {
-
-        updateBlock();
         privateTicks++;
         var id = getRarity;
 
@@ -107,8 +112,7 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
         }
 
         if(privateTicks == 1){
-            getSoundWithPosition(level, pos, SoundEvents.ENDER_EYE_LAUNCH, 1f, 2f);
-            getSoundWithPosition(level, pos, SoundEvents.ENDER_EYE_DEATH, 1f, 2f);
+            getSoundWithPosition(level, pos, SoundReg.TELEPORT.get(), 1f, 2f);
         }
 
         if(privateTicks == 7){
@@ -119,8 +123,16 @@ public class LootChestEntity extends SyncedBlockEntity implements GeoBlockEntity
             getSoundWithPosition(level, pos, SoundEvents.IRON_GOLEM_STEP, volume, pitch2);
         }
 
+
         if(level instanceof ServerLevel serverLevel){
+//            if(privateTicks > 10){
+//                var scale = 5;
+//                var area = new AABB(pos).inflate(scale, 1, scale);
+//                var getNearby = serverLevel.getNearbyEntities(LivingEntity.class, DEFAULT, null, area);
+//                if(!getNearby.isEmpty()) this.setOpen(true);
+//            }
             serverLevel.sendBlockUpdated(pos, blockState, blockState, 2);
+//            updateBlock();
         }
     }
 

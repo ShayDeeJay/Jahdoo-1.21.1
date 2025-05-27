@@ -8,9 +8,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.boon.player_boons.Boon;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.client.screens.BoonSelectionScreen;
 import org.jahdoo.common.client.screens.QuestSelectionScreen;
@@ -18,6 +15,9 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.QuestReg;
+import org.jahdoo.trial_nexus.boon.player_boons.Boon;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +27,12 @@ import java.util.UUID;
 import static net.minecraft.sounds.SoundEvents.BREWING_STAND_BREW;
 import static net.minecraft.sounds.SoundEvents.PLAYER_LEVELUP;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.getNegativeBoon;
-import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.getPositiveBoon;
-import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
 import static org.jahdoo.common.block.perk_table.PerkTable.TEXTURE;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.particle.ParticleStore.PLUS_PARTICLE;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
+import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
 
 
 public class PerkTableEntity extends SyncedBlockEntity {
@@ -48,8 +46,8 @@ public class PerkTableEntity extends SyncedBlockEntity {
         super(BlockEntityReg.PERK_TABLE_BE.get(), pos, state);
         if(getQuestId == null) getQuestId = QuestReg.getRandomQuest().questName();
         for (var i = 0; i < 3; i++){
-            boonsPositive.add(getPositiveBoon());
-            boonsNegative.add(getNegativeBoon());
+//            boonsPositive.add(getPositiveBoon());
+//            boonsNegative.add(getNegativeBoon());
         }
     }
 

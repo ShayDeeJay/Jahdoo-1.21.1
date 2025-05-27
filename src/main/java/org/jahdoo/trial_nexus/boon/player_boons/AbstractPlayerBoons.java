@@ -27,8 +27,6 @@ public abstract class AbstractPlayerBoons {
 
     public abstract Holder<Attribute> attributeHolder();
 
-    public abstract boolean isPercentage();
-
     public abstract double getValue(JahdooRarity rarity);
 
 

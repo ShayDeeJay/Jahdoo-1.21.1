@@ -1,23 +1,27 @@
 package org.jahdoo.trial_nexus.level_manager;
 
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.npc.VillagerData;
+import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.trial_nexus.attachments.InstanceData;
-import org.jahdoo.trial_nexus.trading_post.ShoppingItems;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
-import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
+import org.jahdoo.common.entities.custom_villager.CustomVillager;
+import org.jahdoo.common.items.perk_soda.PerkaSoda;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -26,16 +30,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static net.minecraft.world.level.block.Blocks.*;
-import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.*;
-import static org.jahdoo.trial_nexus.level_manager.StructureManager.*;
-import static org.jahdoo.trial_nexus.trading_post.ShoppingItems.getEliteShoppingItem;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 import static org.jahdoo.common.block.TrialPortalBlock.*;
 import static org.jahdoo.common.block.loot_chest.LootChestBlock.FACING;
 import static org.jahdoo.common.block.shopping_table.ShoppingTableBlock.TEXTURE;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockReg.*;
-import static org.jahdoo.common.registers.ItemReg.RUNE;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.*;
+import static org.jahdoo.trial_nexus.level_manager.StructureManager.*;
+import static org.jahdoo.trial_nexus.trading_post.ShoppingItems.getEliteShoppingItem;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class BlockSetupManager {
 
@@ -46,7 +49,6 @@ public class BlockSetupManager {
         }
     }
 
-
     public static void setCoinLootChest(ServerLevel level, BlockPos pos, Direction direction, int type, boolean ignore, int roomId){
         setLootChests(level, pos, direction, type, ignore);
         if(level.getBlockEntity(pos) instanceof SyncedBlockEntity syncedBlockEntity){
@@ -54,10 +56,41 @@ public class BlockSetupManager {
         }
     }
 
+    public static void setCryptCoinChest(ServerLevel level, BlockPos pos, Direction direction, int type, boolean ignore) {
+        var chestState = LOOT_CHEST.get().defaultBlockState().setValue(FACING, direction.getCounterClockWise());
+        if(ignore || level.getBlockState(pos).is(YELLOW_CONCRETE)){
+            level.setBlockAndUpdate(pos, chestState);
+            if(level.getBlockEntity(pos) instanceof LootChestEntity l){
+                l.setShowHover(true);
+                l.getRarity = type;
+                l.setData(INSTANCE_DATA, InstanceData.copyInstance(level.getData(INSTANCE_DATA)));
+            }
+        }
+
+        var chestState1 = LOOT_CHEST.get().defaultBlockState().setValue(FACING, direction.getClockWise());
+        if(ignore || level.getBlockState(pos).is(PINK_CONCRETE)){
+            level.setBlockAndUpdate(pos, chestState1);
+            if(level.getBlockEntity(pos) instanceof LootChestEntity l){
+                l.setShowHover(true);
+                l.getRarity = type;
+                l.setData(INSTANCE_DATA, InstanceData.copyInstance(level.getData(INSTANCE_DATA)));
+            }
+        }
+
+        var chestState2 = LOOT_CHEST.get().defaultBlockState().setValue(FACING, direction);
+        if(ignore || level.getBlockState(pos).is(GREEN_CONCRETE)){
+            level.setBlockAndUpdate(pos, chestState2);
+            if(level.getBlockEntity(pos) instanceof LootChestEntity l){
+                l.setShowHover(true);
+                l.getRarity = type;
+                l.setData(INSTANCE_DATA, InstanceData.copyInstance(level.getData(INSTANCE_DATA)));
+            }
+        }
+    }
 
     public static void setLootChests(ServerLevel level, BlockPos pos, Direction direction, int type, boolean ignore) {
         var chestState = LOOT_CHEST.get().defaultBlockState().setValue(FACING, direction);
-        if(ignore || level.getBlockState(pos).is(MAGENTA_CONCRETE)){
+        if(ignore || level.getBlockState(pos).is(WHITE_CONCRETE)){
             level.setBlockAndUpdate(pos, chestState);
             if(level.getBlockEntity(pos) instanceof LootChestEntity l){
                 l.getRarity = type;
@@ -84,9 +117,12 @@ public class BlockSetupManager {
             if(Objects.equals(id, EASY_EXIT)) generateExit(level, blockPos, direction.getOpposite());
             if(Objects.equals(id, SANCTUARY)) placePerkTables(level, blockPos);
             if(id.contains("the") || id.contains("boss")) setLocks(level, blockPos, true);
+            if(Objects.equals(id, LOOT_CRYPT)){
+                setLootChests(level, blockPos, direction, Random.nextInt(4), false);
+                setCryptCoinChest(level, blockPos, direction, -1, false);
+            }
             if(Objects.equals(id, BAZAAR)){
                 var table = SHOPPING_TABLE.get().defaultBlockState();
-                setLootChests(level, blockPos, direction, Random.nextInt(4), false);
                 uniqueItems(level, table, blockPos, direction);
                 otherShopping(level, table, blockPos, direction);
                 keyTable(level, table, blockPos, direction);
@@ -108,6 +144,7 @@ public class BlockSetupManager {
                 }
             }
         }
+
     }
 
     //Don't delete as useful for generating exit in entry room
@@ -151,7 +188,7 @@ public class BlockSetupManager {
     }
 
     private static void starterPack(ServerLevel level, BlockState shoppingTableState, BlockPos pos, Direction direction, AtomicInteger counter) {
-        var keyState = shoppingTableState.setValue(FACING, direction.getOpposite()).setValue(TEXTURE, 1);
+        var keyState = shoppingTableState.setValue(FACING, direction.getCounterClockWise()).setValue(TEXTURE, 1);
 
         if(level.getBlockState(pos).is(RED_CONCRETE)){
             level.setBlockAndUpdate(pos, keyState);
@@ -176,7 +213,7 @@ public class BlockSetupManager {
     }
 
     private static void keyTable(ServerLevel level, BlockState shoppingTableState, BlockPos pos, Direction direction) {
-        var keyState = shoppingTableState.setValue(FACING, direction.getCounterClockWise()).setValue(TEXTURE, 1);
+        var keyState = shoppingTableState.setValue(FACING, direction.getOpposite()).setValue(TEXTURE, 1);
 
         if(level.getBlockState(pos).is(YELLOW_CONCRETE)){
             level.setBlockAndUpdate(pos, keyState);
@@ -203,36 +240,47 @@ public class BlockSetupManager {
     private static void otherShopping(ServerLevel level, BlockState shoppingTableState, BlockPos pos, Direction direction) {
         var normalState = shoppingTableState.setValue(FACING, direction.getClockWise());
 
-        if(level.getBlockState(pos).is(PURPLE_CONCRETE)){
+        if (level.getBlockState(pos).is(PURPLE_CONCRETE)) {
             level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, 0));
             var blockEntity = level.getBlockEntity(pos);
-            if(blockEntity instanceof ShoppingTableEntity entity){
-                var randomWandForSale = ShoppingItems.soldWands(null);
-                entity.setItem(randomWandForSale.ShoppingItem());
-                entity.setCost(randomWandForSale.itemCosts());
+            if (blockEntity instanceof ShoppingTableEntity entity) {
+                var item = new ItemStack(ItemReg.PERKA_SODA);
+                PerkaSoda.addPerk(item);
+                entity.setItem(item);
+                entity.setCost(setBronzeCost(50));
             }
         }
 
-        if(level.getBlockState(pos).is(BROWN_CONCRETE)){
-            level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, 0));
-            var blockEntity = level.getBlockEntity(pos);
-            if(blockEntity instanceof ShoppingTableEntity entity){
-                var randomLootItem = new ItemStack(RUNE);
-                var tier = ShoppingItems.getRaritiesByChestRarity(1);
-                var rarity = ShoppingItems.getRaritiesByChestRarity(0);
-                RuneHelpers.generateRandomTypAttribute(randomLootItem, tier, rarity);
-                entity.setItem(randomLootItem);
-                entity.setCost(setGoldCost(10));
-            }
+        if (level.getBlockState(pos).is(LIGHT_BLUE_CONCRETE)) {
+            var direction1 = direction.getClockWise();
+            var profession = VillagerProfession.LIBRARIAN;
+
+            spawnShopOwner(level, pos, direction, profession, direction1);
         }
 
-        if(level.getBlockState(pos).is(LIGHT_BLUE_CONCRETE)){
-            level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, 3));
-            var blockEntity = level.getBlockEntity(pos);
-            if(blockEntity instanceof ShoppingTableEntity entity){
-                entity.setCost(setGoldCost(1));
-            }
+        if (level.getBlockState(pos).is(BLACK_CONCRETE)) {
+            var direction1 = direction.getClockWise().getOpposite();
+            var profession = VillagerProfession.CLERIC;
+
+            spawnShopOwner(level, pos, direction, profession, direction1);
         }
+
+        if (level.getBlockState(pos).is(LIGHT_GRAY_CONCRETE)) {
+            var direction1 = direction.getOpposite();
+            var profession = VillagerProfession.ARMORER;
+
+            spawnShopOwner(level, pos, direction, profession, direction1);
+        }
+    }
+
+    private static void spawnShopOwner(ServerLevel level, BlockPos pos, Direction direction, VillagerProfession profession, Direction direction1) {
+        level.setBlockAndUpdate(pos, AIR.defaultBlockState());
+        var villager = new CustomVillager(level);
+        level.addFreshEntity(villager);
+        villager.removeFreeWill();
+        villager.setVillagerData(new VillagerData(VillagerType.PLAINS, profession, 1));
+        villager.moveTo(pos.getCenter(), direction.toYRot(), 0);
+        villager.lookAt(EntityAnchorArgument.Anchor.EYES, pos.relative(direction1, 1).getCenter());
     }
 
     public static void blockExitBarrier(Level level, BlockPos pos) {

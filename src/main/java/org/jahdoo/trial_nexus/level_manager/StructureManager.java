@@ -49,8 +49,8 @@ public class StructureManager {
     public static final String EASY_EXIT = "emergency_exit";
     public static final Component EXIT_ROOM_COMPONENT = withStyleComponent(stringIdToName(EASY_EXIT), MAGNET_RANGE_GREEN);
 
-    public static final String BRIDGE = "bridge";
-    public static final Component BRIDGE_COMPONENT = withStyleComponent(stringIdToName(BRIDGE), SILVER_COIN);
+    public static final String LOOT_CRYPT = "loot_crypt";
+    public static final Component LOOT_CRYPT_COMPONENT = withStyleComponent(stringIdToName(LOOT_CRYPT), COOLDOWN_GREEN);
 
     public static final String THE_HALL = "serene";
     public static final String THE_CHAMBERS = "camp";
@@ -61,6 +61,7 @@ public class StructureManager {
     public static final int GLOBAL_Y = 60;
     public static final Vec3 SPAWN_POSITION = new Vec3(33.5, GLOBAL_Y + 2, 27.5);
     public static final long SEED = /*Random.nextLong()*/ 874095743;
+    public static final List<String> allBattleRooms = List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION);
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
@@ -68,7 +69,7 @@ public class StructureManager {
     }
 
     public static String getValidRooms(){
-        return Helpers.listRandom(List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION));
+        return Helpers.listRandom(allBattleRooms);
     }
 
     public static Component getBattleRoom(){
@@ -109,6 +110,8 @@ public class StructureManager {
 
         if(!isStarter){
             if (Maths.percentageChance(forSanctuary)) roomGen.add(SANCTUARY_COMPONENT);
+
+            if (Maths.percentageChance(50)) roomGen.add(LOOT_CRYPT_COMPONENT);
 
             if (Maths.percentageChance(50)) roomGen.add(BAZAAR_COMPONENT);
 
@@ -175,7 +178,7 @@ public class StructureManager {
             var settings = new StructurePlaceSettings();
             var newPos = new BlockPos(0, 0, 0);
 
-            final var globalY = roomId.equals(BRIDGE) ? GLOBAL_Y - 14 : GLOBAL_Y;
+            final var globalY = roomId.equals(LOOT_CRYPT) ? GLOBAL_Y - 6 : GLOBAL_Y;
             switch (direction) {
                 case Direction.SOUTH -> newPos = new BlockPos(pos.getX() - 25, globalY, pos.getZ());
                 case Direction.NORTH -> {
@@ -207,20 +210,22 @@ public class StructureManager {
 
             for (var blockPos : findBlock) {
                 var state1 = level.getBlockState(blockPos);
-                if (state1.is(Blocks.DIAMOND_BLOCK)) {
-                    level.setBlockAndUpdate(blockPos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
-                    if(level.getBlockEntity(blockPos) instanceof AltarBlockEntity e){
-                        e.roomId = roomId;
-                        e.direction = direction;
+                if(allBattleRooms.contains(roomId)){
+                    if (state1.is(Blocks.DIAMOND_BLOCK)) {
+                        level.setBlockAndUpdate(blockPos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
+                        if (level.getBlockEntity(blockPos) instanceof AltarBlockEntity e) {
+                            e.roomId = roomId;
+                            e.direction = direction;
+                        }
                     }
-                }
 
-                if (state1.is(Blocks.PINK_CONCRETE)) {
-                    var spawnChance = Maths.percentageChance(20) && !alreadyPlaced;
-                    var station = BlockReg.POWER_UP_STATION.get().defaultBlockState();
-                    var air = Blocks.AIR.defaultBlockState();
-                    if(spawnChance) alreadyPlaced = true;
-                    level.setBlockAndUpdate(blockPos, spawnChance ? station : air);
+                    if (state1.is(Blocks.PINK_CONCRETE)) {
+                        var spawnChance = Maths.percentageChance(20) && !alreadyPlaced;
+                        var station = BlockReg.POWER_UP_STATION.get().defaultBlockState();
+                        var air = Blocks.AIR.defaultBlockState();
+                        if (spawnChance) alreadyPlaced = true;
+                        level.setBlockAndUpdate(blockPos, spawnChance ? station : air);
+                    }
                 }
 
                 if(state1.is(Blocks.OBSERVER)){

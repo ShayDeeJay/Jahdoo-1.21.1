@@ -6,17 +6,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.networking.client2server.AttributeC2SP;
 import org.jahdoo.common.networking.client2server.EffectC2SP;
-import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.RuneReg;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,17 +96,17 @@ public class BoonSelection {
         var randomElement = ElementReg.random();
         var attributes = getRarity().getAttributes();
 
-        boonCollection.add(attributeBoon(randomElement.manaReduction(), isNegativeValue(attributes.getRandomManaReduction(), isNegative), true, randomElement.iconTexture()));
-        boonCollection.add(attributeBoon(randomElement.damageAmplifier(), isNegativeValue(attributes.getRandomDamage(), isNegative), true, randomElement.iconTexture()));
-        boonCollection.add(attributeBoon(randomElement.cooldownReduction(), isNegativeValue(attributes.getRandomCooldown(), isNegative), true, randomElement.iconTexture()));
+//        boonCollection.add(attributeBoon(randomElement.manaReduction(), isNegativeValue(attributes.getRandomManaReduction(), isNegative), true, randomElement.iconTexture()));
+//        boonCollection.add(attributeBoon(randomElement.damageAmplifier(), isNegativeValue(attributes.getRandomDamage(), isNegative), true, randomElement.iconTexture()));
+//        boonCollection.add(attributeBoon(randomElement.cooldownReduction(), isNegativeValue(attributes.getRandomCooldown(), isNegative), true, randomElement.iconTexture()));
 
-        boonCollection.add(attributeBoon(AttributeReg.MANA_POOL, isNegativeValue(attributes.getRandomManaPool(), isNegative), true, Icons.MANA));
-        boonCollection.add(attributeBoon(AttributeReg.MANA_REGEN, isNegativeValue(attributes.getRandomManaRegen(), isNegative), true, Icons.MANA_REGEN));
+//        boonCollection.add(attributeBoon(AttributeReg.MANA_POOL, isNegativeValue(attributes.getRandomManaPool(), isNegative), true, Icons.MANA));
+//        boonCollection.add(attributeBoon(AttributeReg.MANA_REGEN, isNegativeValue(attributes.getRandomManaRegen(), isNegative), true, Icons.MANA_REGEN));
 
-        boonCollection.add(attributeBoon(Attributes.MAX_HEALTH, isNegativeValue(attributes.getRandomMaxHealth(), isNegative), false, iconFromEffect(MobEffects.HEAL)));
-        boonCollection.add(attributeBoon(Attributes.MAX_ABSORPTION, isNegativeValue(attributes.getRandomMaxAbsorption(), isNegative), false, iconFromEffect(MobEffects.ABSORPTION)));
-        boonCollection.add(attributeBoon(Attributes.ATTACK_DAMAGE, isNegativeValue(attributes.getRandomMaxHealth(), isNegative), false, iconFromEffect(MobEffects.DAMAGE_BOOST)));
-        boonCollection.add(attributeBoon(Attributes.ATTACK_SPEED, isNegativeValue(attributes.getRandomCooldown() / 10, isNegative), false, Icons.ATTACK_SPEED));
+//        boonCollection.add(attributeBoon(Attributes.MAX_HEALTH, isNegativeValue(attributes.getRandomMaxHealth(), isNegative), false, iconFromEffect(MobEffects.HEAL)));
+//        boonCollection.add(attributeBoon(Attributes.MAX_ABSORPTION, isNegativeValue(attributes.getRandomMaxAbsorption(), isNegative), false, iconFromEffect(MobEffects.ABSORPTION)));
+//        boonCollection.add(attributeBoon(Attributes.ATTACK_DAMAGE, isNegativeValue(attributes.getRandomMaxHealth(), isNegative), false, iconFromEffect(MobEffects.DAMAGE_BOOST)));
+//        boonCollection.add(attributeBoon(Attributes.ATTACK_SPEED, isNegativeValue(attributes.getRandomCooldown() / 10, isNegative), false, Icons.ATTACK_SPEED));
     }
 
     public static Boon attributeBoon(Holder<Attribute> attribute, double value, boolean isPercentage, ResourceLocation icon){

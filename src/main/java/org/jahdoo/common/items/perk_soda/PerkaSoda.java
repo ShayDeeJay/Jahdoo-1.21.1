@@ -16,7 +16,6 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.items.JahdooItem;
-import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.PlayerBoonReg;
@@ -34,7 +33,7 @@ public class PerkaSoda extends Item implements JahdooItem {
     }
 
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return 32;
+        return 24;
     }
 
     @Override
@@ -47,7 +46,7 @@ public class PerkaSoda extends Item implements JahdooItem {
         var customModelData = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         if(customModelData != null){
             var getId = stack.get(ComponentReg.ID);
-            var getNameById = PlayerBoonReg.getFromAttribute(getId);
+            var getNameById = PlayerBoonReg.getFromId(getId);
             this.standAloneModifiersWithLabel(stack, tooltipComponents, context, getNameById.getLabel(), ColourStore.HEADER_COLOUR, getNameById.colour(), 2, 20, false);
         }
     }
@@ -57,27 +56,25 @@ public class PerkaSoda extends Item implements JahdooItem {
         var item = player.getItemInHand(usedHand);
         if(!(level instanceof ServerLevel serverLevel)) return InteractionResultHolder.fail(item);
 
-        var manaPool = PlayerBoonReg.COOLDOWN.get();
-        var rarity = JahdooRarity.getRarity();
-        var value = manaPool.getValue(rarity);
-        item.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(manaPool.getTextureId()));
-//        System.out.println(rarity);
-//        System.out.println(value);
+        addPerk(item);
 
-        var boon = new AttributeModifier(Helpers.res("boon"), value, AttributeModifier.Operation.ADD_VALUE);
-        var x = ItemAttributeModifiers.builder().add(manaPool.attributeHolder(), boon, EquipmentSlotGroup.ARMOR);
-        item.set(DataComponents.ATTRIBUTE_MODIFIERS, x.build());
-        item.set(ComponentReg.ID, manaPool.id());
-
-//        attachAttributeData(item);
         Helpers.getSoundWithPositionV(serverLevel, player.position(), SoundReg.CAN_OPEN.get(), 1, 1.6F);
         return ItemUtils.startUsingInstantly(level, player, usedHand);
     }
 
-    private static void attachAttributeData(ItemStack item) {
-        var boon = new AttributeModifier(Helpers.res("boon"), 10, AttributeModifier.Operation.ADD_VALUE);
-        var x = ItemAttributeModifiers.builder().add(AttributeReg.MANA_POOL, boon, EquipmentSlotGroup.BODY);
-        item.set(DataComponents.ATTRIBUTE_MODIFIERS, x.build());
+    public static void addPerk(ItemStack item) {
+        var customModelData = DataComponents.CUSTOM_MODEL_DATA;
+        if(!item.has(customModelData)){
+            var manaPool = PlayerBoonReg.randomBoon();
+            var rarity = JahdooRarity.getRarity();
+            var value = manaPool.getValue(rarity);
+            item.set(customModelData, new CustomModelData(manaPool.getTextureId()));
+
+            var boon = new AttributeModifier(Helpers.res("boon"), value, AttributeModifier.Operation.ADD_VALUE);
+            var x = ItemAttributeModifiers.builder().add(manaPool.attributeHolder(), boon, EquipmentSlotGroup.ARMOR);
+            item.set(DataComponents.ATTRIBUTE_MODIFIERS, x.build());
+            item.set(ComponentReg.ID, manaPool.id());
+        }
     }
 
     @Override

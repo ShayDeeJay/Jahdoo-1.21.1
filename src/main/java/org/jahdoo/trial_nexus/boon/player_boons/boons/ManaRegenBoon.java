@@ -9,7 +9,7 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jetbrains.annotations.Nullable;
 
-public class ManaPoolBoon extends AbstractPlayerBoons {
+public class ManaRegenBoon extends AbstractPlayerBoons {
 
     @Override
     public @Nullable AbstractElement element() {
@@ -23,7 +23,7 @@ public class ManaPoolBoon extends AbstractPlayerBoons {
 
     @Override
     public String id() {
-        return "mana_pool_boon";
+        return "mana_regen_boon";
     }
 
     @Override
@@ -38,12 +38,12 @@ public class ManaPoolBoon extends AbstractPlayerBoons {
 
     @Override
     public Holder<Attribute> attributeHolder() {
-        return AttributeReg.MANA_POOL;
+        return AttributeReg.MANA_REGEN;
     }
 
     @Override
     public double getValue(JahdooRarity getRarity) {
-        return getRarity.getAttributes().getRandomManaPool();
+        return getRarity.getAttributes().getRandomManaRegen();
     }
 
 }

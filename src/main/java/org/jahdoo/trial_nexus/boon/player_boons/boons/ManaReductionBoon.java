@@ -2,28 +2,28 @@ package org.jahdoo.trial_nexus.boon.player_boons.boons;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import org.jahdoo.common.registers.AttributeReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoons;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jetbrains.annotations.Nullable;
 
-public class ManaPoolBoon extends AbstractPlayerBoons {
+public class ManaReductionBoon extends AbstractPlayerBoons {
 
     @Override
     public @Nullable AbstractElement element() {
-        return null;
+        return ElementReg.random();
     }
 
     @Override
     public String getLabel() {
-        return MANA_MOJITO;
+        return ELEMENTAL_ENERGY;
     }
 
     @Override
     public String id() {
-        return "mana_pool_boon";
+        return "mana_reduction_boon";
     }
 
     @Override
@@ -33,17 +33,17 @@ public class ManaPoolBoon extends AbstractPlayerBoons {
 
     @Override
     public int getTextureId() {
-        return 2;
+        return 1;
     }
 
     @Override
     public Holder<Attribute> attributeHolder() {
-        return AttributeReg.MANA_POOL;
+        return element().manaReduction();
     }
 
     @Override
     public double getValue(JahdooRarity getRarity) {
-        return getRarity.getAttributes().getRandomManaPool();
+        return getRarity.getAttributes().getRandomManaReduction();
     }
 
 }

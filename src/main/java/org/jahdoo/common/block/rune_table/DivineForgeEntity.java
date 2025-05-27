@@ -47,7 +47,12 @@ public class DivineForgeEntity extends AbstractBEInventory implements MenuProvid
 //            }
 //        }
 
-        if(itemSlot().isEmpty()) privateTicks = 0; else privateTicks++;
+        if(itemSlot().isEmpty()) privateTicks = 0; else {
+            if(getLevel() instanceof ServerLevel){
+                privateTicks++;
+                updateBlock();
+            }
+        }
     }
 
     public boolean checkAndChargeCores(Item item, boolean charge){

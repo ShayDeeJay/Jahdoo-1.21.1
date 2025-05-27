@@ -42,11 +42,6 @@ public class CooldownBoon extends AbstractPlayerBoons {
     }
 
     @Override
-    public boolean isPercentage() {
-        return true;
-    }
-
-    @Override
     public double getValue(JahdooRarity getRarity) {
         return getRarity.getAttributes().getRandomCooldown();
     }

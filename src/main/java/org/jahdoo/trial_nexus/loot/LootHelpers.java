@@ -78,7 +78,6 @@ public class LootHelpers {
                         default -> getInstance.getCommonLootMultiplier();
                     };
 
-                    System.out.println(getBy);
                     for(int i = 0; i < Math.max(getBy, 1); i++){
                         standAloneLoot(serverLevel, pos.getCenter(), difficulty, value, colour);
                     }

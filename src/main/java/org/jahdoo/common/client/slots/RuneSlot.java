@@ -6,8 +6,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
-import org.jahdoo.trial_nexus.attachments.PlayerWallet;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.block.rune_table.DivineForgeEntity;
 import org.jahdoo.common.block.rune_table.RuneTableMenu;
@@ -17,6 +15,7 @@ import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.RuneReg;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -24,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getCostFromRune;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
+import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter.*;
 
 public class RuneSlot extends SlotItemHandler {
 
@@ -96,9 +96,11 @@ public class RuneSlot extends SlotItemHandler {
     public Optional<ItemStack> tryRemove(int count, int decrement, Player player) {
         if(entity instanceof DivineForgeEntity runeTable){
             var coreCost = removeRuneCost(getItem());
-            var canRemove = runeTable.checkAndChargeCores(coreCost, true);
-            var hasCoins = PlayerWallet.CurrencyConverter.checkAndPurchase(PlayerWallet.CurrencyConverter.convertToCoins(removeCurrencyCost(getItem())), player);
+            var canRemove = runeTable.checkAndChargeCores(coreCost, false);
+            var hasCoins = canPurchase(removeCurrencyCost(getItem()), player);
             if(canRemove && hasCoins) {
+                runeTable.checkAndChargeCores(coreCost, true);
+                purchase(convertToCoins(removeCurrencyCost(getItem())), player);
                 return super.tryRemove(count, decrement, player);
             } else {
                 Helpers.getSoundWithPosition(player.level(), runeTable.getBlockPos(), SoundReg.REJECT.get(), 0.4F, 1F);

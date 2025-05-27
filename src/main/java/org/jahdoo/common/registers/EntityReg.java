@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.entities.CustomSkeleton;
+import org.jahdoo.common.entities.custom_villager.CustomVillager;
 import org.jahdoo.common.entities.CustomZombie;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
@@ -103,8 +104,16 @@ public class EntityReg {
             .passengerAttachments(0.765F)
             .clientTrackingRange(8)
         );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<CustomVillager>> CUSTOM_VILLAGER =
+        regEntity("jahdoo_villager", Builder.<CustomVillager>of(CustomVillager::new, MONSTER)
+            .sized(0.6F, 1.95F)
+            .eyeHeight(1.62F)
+            .clientTrackingRange(10)
+        );
+
     public static final DeferredHolder<EntityType<?>, EntityType<CustomSkeleton>> CUSTOM_SKELETON =
-        regEntity("jahdoo_skeleton", Builder.<CustomSkeleton>of(CustomSkeleton::new, MONSTER)
+        regEntity("jahdoo_skeleton", Builder.<CustomSkeleton>of(CustomSkeleton::new, MISC)
             .sized(0.6F, 1.99F)
             .eyeHeight(1.74F)
             .ridingOffset(-0.7F)

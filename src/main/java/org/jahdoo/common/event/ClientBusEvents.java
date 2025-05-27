@@ -1,6 +1,7 @@
 package org.jahdoo.common.event;
 
 import net.minecraft.client.renderer.entity.SkeletonRenderer;
+import net.minecraft.client.renderer.entity.VillagerRenderer;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -147,6 +148,7 @@ public class ClientBusEvents {
         event.registerEntityRenderer(DECOY.get(), DecoyRenderer::new);
         event.registerEntityRenderer(CUSTOM_ZOMBIE.get(), ZombieRenderer::new);
         event.registerEntityRenderer(CUSTOM_SKELETON.get(), SkeletonRenderer::new);
+        event.registerEntityRenderer(CUSTOM_VILLAGER.get(), VillagerRenderer::new);
         event.registerEntityRenderer(ANCIENT_GOLEM.get(), AncientGolemRenderer::new);
         event.registerEntityRenderer(FLAMING_SKULL.get(), BurningSkullRenderer::new);
         event.registerEntityRenderer(ICE_SPEAR.get(), IceSpearRenderer::new);

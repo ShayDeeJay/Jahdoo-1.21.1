@@ -8,6 +8,7 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.entities.CustomSkeleton;
+import org.jahdoo.common.entities.custom_villager.CustomVillager;
 import org.jahdoo.common.entities.CustomZombie;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
 import org.jahdoo.common.entities.decoy.Decoy;
@@ -33,6 +34,7 @@ public class ServerBusEvents {
         event.put(EntityReg.DECOY.get(), Decoy.createMobAttributes().build());
         event.put(EntityReg.CUSTOM_ZOMBIE.get(), CustomZombie.createMobAttributes().build());
         event.put(EntityReg.CUSTOM_SKELETON.get(), CustomSkeleton.createMobAttributes().build());
+        event.put(EntityReg.CUSTOM_VILLAGER.get(), CustomVillager.createMobAttributes().build());
         event.put(EntityReg.ANCIENT_GOLEM.get(), AncientGolem.createAttributes().build());
         event.put(EntityReg.INFERNO_CREEPER.get(), InfernoCreeper.createAttributes().build());
         event.put(EntityReg.VOID_SPIDER.get(), VoidSpider.createMain().build());

@@ -176,12 +176,14 @@ public class DivineForge extends BaseEntityBlock {
         if(!hasItem && player.isShiftKeyDown()){
             removeItemsFromSlotToHand(divineForge.inputItemHandler, 0, player, hand);
             return SUCCESS;
-        } else if (stack.has(JAHDOO_GEAR_DATA) && hasItem) {
+        } else if (stack.has(JAHDOO_GEAR_DATA)) {
+
             swapItemsWithHand(divineForge.inputItemHandler, 0, player, hand);
             divineForge.stand = EntityType.ARMOR_STAND.create(level);
             setOuterRingPulse(level, pos, 0.8, 20, 1.5, 0.2);
             Helpers.getSoundWithPosition(level, pos, SoundReg.SPELL_SOUND.get(), 0.4F);
             Helpers.getSoundWithPosition(level, pos, SoundReg.SUSPEND.get());
+            divineForge.privateTicks = 0;
 
 //            for (int i = 0; i < 20; i++){
 //                for(BlockPos blockpos : BOOKSHELF_OFFSETS) {

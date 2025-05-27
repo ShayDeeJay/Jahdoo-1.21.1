@@ -23,6 +23,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.registers.BlockEntityReg;
@@ -125,6 +126,7 @@ public class ShoppingTableBlock extends BaseEntityBlock implements SimpleWaterlo
                 throwOrAddItem(player, stackInSlot);
                 item.setStackInSlot(1, ItemStack.EMPTY);
                 table.itemCosts = EMPTY;
+                Helpers.getSoundWithPosition(level, pos, SoundReg.COINBOX_OPEN.get(), 1F, 2F);
             }
 
         } else {

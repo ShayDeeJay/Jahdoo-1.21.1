@@ -115,6 +115,10 @@
   "jahdoo.configuration.durability": "Equipped Durability",
   "jahdoo.configuration.health_display": "Health Bar Render",
 
+  "jahdoo.message.villager_smith": "I deal in keys and relics born of flame. If it was shaped in fire, you'll find it here",
+  "jahdoo.message.villager_perk": "I brew Perka Sodas—potent elixirs with a pop. Each can fizzes with magical might.",
+  "jahdoo.message.villager_unique": "You won’t find these in any guild shop. Enchanted, forbidden, and worth every coin—if you can afford the price.",
+
   "key.assets.jahdoo.slot_1": "Wand Slot 01",
   "key.assets.jahdoo.slot_2": "Wand Slot 02",
   "key.assets.jahdoo.slot_3": "Wand Slot 03",

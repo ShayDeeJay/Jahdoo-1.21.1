@@ -9,8 +9,7 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.boon.player_boons.AbstractPlayerBoons;
-import org.jahdoo.trial_nexus.boon.player_boons.boons.CooldownBoon;
-import org.jahdoo.trial_nexus.boon.player_boons.boons.ManaPoolBoon;
+import org.jahdoo.trial_nexus.boon.player_boons.boons.*;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.function.Supplier;
@@ -30,14 +29,14 @@ public class PlayerBoonReg {
         return PLAYER_BOON.register(levelBoon.get().id(), levelBoon);
     }
 
-    public static AbstractPlayerBoons randomPositive() {
+    public static AbstractPlayerBoons randomBoon() {
         var element = REGISTRY
             .stream()
             .toList();
         return Helpers.listRandom(element);
     }
 
-    public static AbstractPlayerBoons getFromAttribute(String id) {
+    public static AbstractPlayerBoons getFromId(String id) {
         var element = REGISTRY
             .stream()
             .filter(a -> a.id().equals(id))
@@ -80,9 +79,29 @@ public class PlayerBoonReg {
     public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> MANA_POOL =
         registerElement(ManaPoolBoon::new);
 
+    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> MANA_REGEN =
+        registerElement(ManaRegenBoon::new);
+
     public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> COOLDOWN =
         registerElement(CooldownBoon::new);
 
+    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> DAMAGE =
+        registerElement(DamageAmplifierBoon::new);
+
+    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> MANA_REDUCTION =
+        registerElement(ManaReductionBoon::new);
+
+    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> MAX_HEALTH =
+        registerElement(MaxHealthBoon::new);
+
+    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> MAX_ABSORPTION =
+        registerElement(MaxAbsorptionBoon::new);
+
+    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> ATTACK_DAMAGE =
+        registerElement(AttackDamageBoon::new);
+
+    public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> ATTACK_SPEED =
+        registerElement(AttackSpeedBoon::new);
 
     public static void register(IEventBus eventBus) {
         PLAYER_BOON.register(eventBus);
