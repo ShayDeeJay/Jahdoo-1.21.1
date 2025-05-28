@@ -44,37 +44,6 @@ public class PlayerBoonReg {
         return Helpers.listRandom(element);
     }
 
-//    public static AbstractLevelBoon withRarityNegative(JahdooRarity rarity) {
-//        var element = REGISTRY
-//            .stream()
-//            .filter(a -> !a.isPositive())
-//            .filter(a -> a.rarity() == rarity)
-//            .toList();
-//        return Helpers.listRandom(element);
-//    }
-//
-//    public static AbstractLevelBoon withRarityPositive(JahdooRarity rarity) {
-//        var element = REGISTRY
-//            .stream()
-//            .filter(AbstractLevelBoon::isPositive)
-//            .filter(a -> a.rarity() == rarity)
-//            .toList();
-//        return Helpers.listRandom(element);
-//    }
-//
-//    public static Optional<AbstractLevelBoon> fromId(String typeId) {
-//        var element = REGISTRY
-//            .stream()
-//            .filter(a -> Objects.equals(a.id(), typeId))
-//            .toList();
-//        return element.isEmpty() ? Optional.empty() : Optional.of(element.getFirst());
-//    }
-//
-//    public static AbstractLevelBoon random() {
-//        var list = REGISTRY.stream().toList();
-//        return Helpers.listRandom(list);
-//    }
-
     //Negative
     public static final DeferredHolder<AbstractPlayerBoons, AbstractPlayerBoons> MANA_POOL =
         registerElement(ManaPoolBoon::new);

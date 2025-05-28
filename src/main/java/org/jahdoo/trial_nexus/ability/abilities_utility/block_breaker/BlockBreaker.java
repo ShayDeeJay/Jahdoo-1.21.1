@@ -4,12 +4,12 @@ import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.UtilityHelpers;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 
 public class BlockBreaker extends AbstractUtilityProjectile {
 

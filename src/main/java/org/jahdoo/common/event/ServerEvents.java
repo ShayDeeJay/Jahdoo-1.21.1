@@ -27,7 +27,6 @@ import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
 import org.jahdoo.trial_nexus.attachments.player_abilities.TripleJump;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
-import top.theillusivec4.curios.api.event.CurioChangeEvent;
 
 import static org.jahdoo.common.event.TriggerEvents.triggerKillEvent;
 import static org.jahdoo.common.event.TriggerEvents.triggerUseEvent;
@@ -51,18 +50,8 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public static void curioEven(CurioChangeEvent event){}
-
-    @SubscribeEvent
     public static void attributeEvent(CurioAttributeModifierEvent event) {
         useRuneAttributesCurios(event);
-    }
-
-    @SubscribeEvent
-    public static void dimChange(PlayerEvent.PlayerChangedDimensionEvent event) {
-        var player = event.getEntity();
-
-
     }
 
     @SubscribeEvent
@@ -98,16 +87,6 @@ public class ServerEvents {
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
         var player = rightClickItem.getEntity();
-
-//        if(player.level() instanceof ServerLevel servereLevel){
-//            var villager = EntityType.VILLAGER.create(servereLevel);
-//            var direction = Direction.EAST;
-//            villager.absRotateTo(direction.toYRot(), direction.toYRot());
-//            villager.moveTo(player.position());
-//            servereLevel.addFreshEntity(villager);
-//            villager.removeFreeWill();
-//            var clockWise = direction.getClockWise();
-//        }
 
         triggerUseEvent(player, player.level());
         removeShieldUse(rightClickItem);
@@ -167,7 +146,6 @@ public class ServerEvents {
         TripleJump.tripleJumpTickEvent(player);
         Rebound.staticTickEvent(player);
     }
-
 
     @SubscribeEvent
     public static void levelTickEvent(LevelTickEvent.Pre tickEvent){

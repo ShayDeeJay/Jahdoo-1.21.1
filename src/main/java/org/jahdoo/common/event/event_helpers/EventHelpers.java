@@ -2,6 +2,7 @@ package org.jahdoo.common.event.event_helpers;
 
 import com.mojang.math.Axis;
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -35,6 +36,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
+import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
@@ -154,14 +156,15 @@ public class EventHelpers {
         var entity = event.getEntity();
         if(entity instanceof ServerPlayer player){
             if(event.getLevel() instanceof CustomLevel){
-                var effects = player.getActiveEffects().iterator();
-                effects.forEachRemaining(
-                    s -> {
-                        if(!(s instanceof JahdooMobEffect)){;
-                            player.removeEffect(s.getEffect());
-                        }
+                var iterator = new ArrayList<>(player.getActiveEffects().stream().filter(s -> !(s instanceof JahdooMobEffect)).toList()).iterator();
+                while (iterator.hasNext()) {
+                    var effect = iterator.next();
+                    if (!EventHooks.onEffectRemoved(player, effect, null)) {
+                        CriteriaTriggers.EFFECTS_CHANGED.trigger(player, null);
+                        player.removeEffect(effect.getEffect());
+                        iterator.remove();
                     }
-                );
+                }
             }
         }
     }

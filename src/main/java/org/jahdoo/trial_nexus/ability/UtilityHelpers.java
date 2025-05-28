@@ -9,10 +9,15 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
@@ -24,6 +29,9 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.Range;
 import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.trial_nexus.ability.abilities_utility.fetch.Fetch;
+
+import java.util.Optional;
 
 import static net.minecraft.world.level.block.Blocks.AIR;
 
@@ -88,7 +96,15 @@ public class UtilityHelpers {
         level.removeBlock(pos, false);
     }
 
-    public static void dropItemsOrBlock(Projectile newProjectile, BlockPos pos, boolean isSilkTouch, boolean voidBlocks){
+    public static void dropItemsOrBlock(
+        Projectile newProjectile,
+        BlockPos pos,
+        int fortune,
+        boolean isSilkTouch,
+        boolean voidBlocks,
+        boolean smelt,
+        boolean autoCollect
+    ){
         var fluidState = newProjectile.level().getFluidState(pos);
         if(UtilityHelpers.range.contains(UtilityHelpers.destroySpeed(pos, newProjectile.level())) || !fluidState.isEmpty()){
             var blockstate = newProjectile.level().getBlockState(pos);
@@ -108,11 +124,21 @@ public class UtilityHelpers {
                         .withParameter(LootContextParams.TOOL, new ItemStack(Items.DIAMOND_PICKAXE))
                         .withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
 
+
+
                     var drops = blockstate.getDrops(lootBuilder);
                     for (ItemStack itemStack : drops) {
-                        ItemEntity item;
-                        item = new ItemEntity(level, centre.x, centre.y, centre.z, itemStack);
-                        level.addFreshEntity(item);
+//                        var fortuneLevel = 3;
+//                        var fortuneMultiplier = (1 /(fortuneLevel+2))+((fortuneLevel + 1)/2);
+//                        var withFortune = itemStack.copyWithCount(itemStack.getCount() + fortuneMultiplier);
+                        var canBurn = smeltable(serverLevel, itemStack);
+                        var item = new ItemEntity(level, centre.x, centre.y, centre.z, smelt ? canBurn : itemStack);
+                        if(autoCollect){
+                            var owner = (Player) newProjectile.getOwner();
+                            if(owner != null && !Fetch.handlePlayerPickup(item, owner)) item.moveTo(owner.position());
+                        } else {
+                            level.addFreshEntity(item);
+                        }
                     }
                 }
             }
@@ -121,5 +147,22 @@ public class UtilityHelpers {
             level.removeBlock(pos, false);
         }
     }
+
+    private static ItemStack smeltable(Level level, ItemStack stack) {
+        if (!stack.isEmpty()) {
+            Optional<RecipeHolder<SmeltingRecipe>> optional = level
+                .getRecipeManager()
+                .getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), level);
+            if (optional.isPresent()) {
+                ItemStack itemstack = optional.get().value().getResultItem(level.registryAccess());
+                if (!itemstack.isEmpty()) {
+                    return itemstack.copyWithCount(stack.getCount() * itemstack.getCount()); // Forge: Support smelting returning multiple
+                }
+            }
+
+        }
+        return stack;
+    }
+
 
 }

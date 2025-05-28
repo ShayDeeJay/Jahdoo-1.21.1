@@ -4,21 +4,20 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.List;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.RANGE;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.RANGE;
 
 public class Fetch extends AbstractUtilityProjectile {
 
@@ -46,8 +45,8 @@ public class Fetch extends AbstractUtilityProjectile {
         this.range = (int) this.getTag(RANGE);
     }
 
-    private static boolean handlePlayerPickup(ItemEntity itemEntity, Container inv, Player player) {
-        if(inv == null) return false;
+    public static boolean handlePlayerPickup(ItemEntity itemEntity, Player player) {
+        var inv = player.getInventory();
         var entityStack = itemEntity.getItem();
         int maxStackSize = 64;
         int remainingAmount = entityStack.getCount();
@@ -101,7 +100,7 @@ public class Fetch extends AbstractUtilityProjectile {
 
             ParticleHandlers.invisibleLight(generic.level(), itemEntity.position().add(0,0.5,0), genericParticle, 0.03, 0.04, 8);
             if (player != null) {
-                var isPicked = handlePlayerPickup(itemEntity, player.getInventory(), player);
+                var isPicked = handlePlayerPickup(itemEntity, player);
                 if(isPicked){
                     if(!pickedUpItem) pickedUpItem = true;
                 }

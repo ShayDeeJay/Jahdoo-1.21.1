@@ -15,6 +15,7 @@ import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
+import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 
 public class QuestLogButton extends ImageButton {
 
@@ -58,6 +59,7 @@ public class QuestLogButton extends ImageButton {
 
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
+        var fade1 = HEADER_COLOUR;
         var fade = isHovered ? color(60, uiColour()) : fadeBlack(1);
         var minecraft = Minecraft.getInstance();
         var getXStart = this.getX();
@@ -70,13 +72,15 @@ public class QuestLogButton extends ImageButton {
 
         graphics.pose().pushPose();
         graphics.pose().translate(0, 0, 1);
-        boxMaker(graphics, this.getX(), this.getY(), width, height, color(100, uiColour()), fade, fade);
+        boxMaker(graphics, this.getX(), this.getY(), width, height, questComplete ? fade1 : color(100, uiColour()), fade, fade);
         graphics.blit(task.taskIcon(), getXStart, startY2, 0, 0, sizeIcon, sizeIcon, sizeIcon, sizeIcon);
-        if(this.questComplete){
+
+        if(!this.questComplete && task.completionPredicate(minecraft.player)){
             graphics.blit(Icons.TICK, getXStart + 112, startY2 - 2, 0, 0, sizeComplete, sizeComplete, sizeComplete, sizeComplete);
         }
+
         var string = minecraft.font.ellipsize(FormattedText.of(task.taskName()), 95).getString();
-        graphics.drawString(minecraft.font, string, getXStart + 32, startY2 + spacer + 12, uiColour(), true);
+        graphics.drawString(minecraft.font, string, getXStart + 32, startY2 + spacer + 12, questComplete ? fade1 : uiColour(), true);
         graphics.pose().popPose();
     }
 

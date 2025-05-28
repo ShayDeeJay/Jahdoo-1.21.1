@@ -32,8 +32,14 @@ public class PerkaSoda extends Item implements JahdooItem {
         super(new Properties());
     }
 
+    @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return 24;
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.DRINK;
     }
 
     @Override
@@ -52,6 +58,16 @@ public class PerkaSoda extends Item implements JahdooItem {
     }
 
     @Override
+    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
+        var getBoons = getDrinkBoon(stack);
+        var value = getBoons.modifier().amount();
+        var attribute = getBoons.attribute();
+        addTrailNexusAttribute((Player) livingEntity, value, attribute);
+        stack.shrink(1);
+        return super.finishUsingItem(stack, level, livingEntity);
+    }
+
+    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         var item = player.getItemInHand(usedHand);
         if(!(level instanceof ServerLevel serverLevel)) return InteractionResultHolder.fail(item);
@@ -60,31 +76,6 @@ public class PerkaSoda extends Item implements JahdooItem {
 
         Helpers.getSoundWithPositionV(serverLevel, player.position(), SoundReg.CAN_OPEN.get(), 1, 1.6F);
         return ItemUtils.startUsingInstantly(level, player, usedHand);
-    }
-
-    public static void addPerk(ItemStack item) {
-        var customModelData = DataComponents.CUSTOM_MODEL_DATA;
-        if(!item.has(customModelData)){
-            var manaPool = PlayerBoonReg.randomBoon();
-            var rarity = JahdooRarity.getRarity();
-            var value = manaPool.getValue(rarity);
-            item.set(customModelData, new CustomModelData(manaPool.getTextureId()));
-
-            var boon = new AttributeModifier(Helpers.res("boon"), value, AttributeModifier.Operation.ADD_VALUE);
-            var x = ItemAttributeModifiers.builder().add(manaPool.attributeHolder(), boon, EquipmentSlotGroup.ARMOR);
-            item.set(DataComponents.ATTRIBUTE_MODIFIERS, x.build());
-            item.set(ComponentReg.ID, manaPool.id());
-        }
-    }
-
-    @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
-        var getBoons = getDrinkBoon(stack);
-        var value = getBoons.modifier().amount();
-        var attribute = getBoons.attribute();
-        addTrailNexusAttribute((Player) livingEntity, value, attribute);
-        stack.shrink(1);
-        return super.finishUsingItem(stack, level, livingEntity);
     }
 
     private static void addTrailNexusAttribute(Player livingEntity, double value, Holder<Attribute> attribute) {
@@ -100,13 +91,19 @@ public class PerkaSoda extends Item implements JahdooItem {
             .getFirst();
     }
 
-    public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.DRINK;
-    }
+    public static void addPerk(ItemStack item) {
+        var customModelData = DataComponents.CUSTOM_MODEL_DATA;
+        if(!item.has(customModelData)){
+            var manaPool = PlayerBoonReg.randomBoon();
+            var rarity = JahdooRarity.getRarity();
+            var value = manaPool.getValue(rarity);
+            item.set(customModelData, new CustomModelData(manaPool.getTextureId()));
 
-    @Override
-    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int remainingUseDuration) {
-        super.onUseTick(level, livingEntity, stack, remainingUseDuration);
+            var boon = new AttributeModifier(Helpers.res("boon"), value, AttributeModifier.Operation.ADD_VALUE);
+            var x = ItemAttributeModifiers.builder().add(manaPool.attributeHolder(), boon, EquipmentSlotGroup.ARMOR);
+            item.set(DataComponents.ATTRIBUTE_MODIFIERS, x.build());
+            item.set(ComponentReg.ID, manaPool.id());
+        }
     }
 
 }

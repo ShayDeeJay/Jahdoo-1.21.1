@@ -18,7 +18,7 @@ public class FirstTimer extends AbstractTask {
 
     @Override
     public ResourceLocation taskIcon() {
-        return Icons.TRIAL_EXPERIENCE;
+        return Icons.QUEST_CRATE;
     }
 
     @Override
