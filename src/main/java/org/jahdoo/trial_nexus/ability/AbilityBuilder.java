@@ -33,6 +33,14 @@ public class AbilityBuilder {
     public static final String VELOCITY = "Projectile Velocity";
     public static final String NUMBER_OF_RICOCHET = "Ricochets";
     public static final String LIFE_LEECH = "Life Leech Chance";
+    public static final String FORTUNE = "Fortune";
+    public static final String VOID_BLOCKS = "Toggle Void";
+    public static final String SILK_TOUCH = "Toggle Silk Touch";
+    public static final String SMELTER = "Toggle Smelt";
+    public static final String AUTO_COLLECT = "Toggle Collector";
+    public static final String REINFORCED = "Toggle Reinforced";
+
+
     private ItemStack item = null;
     private final String abilityId;
     private final AbilityData abilityData = new AbilityData(new LinkedHashMap<>());
@@ -121,6 +129,38 @@ public class AbilityBuilder {
 
     public AbilityBuilder setEffectDurationWithValue(double high, double low, double value){
         this.setModifier(EFFECT_DURATION, high, low, false, value);
+        return this;
+    }
+
+    public AbilityBuilder toggleVoid(double baseCost){
+        this.setAbilityTagModifiersRandom(VOID_BLOCKS, 2, 1, true, 1, baseCost);
+        return this;
+    }
+
+    public AbilityBuilder toggleSilk(double baseCost){
+        this.setAbilityTagModifiersRandom(SILK_TOUCH, 2, 1, true, 1, baseCost);
+        return this;
+    }
+
+
+    public AbilityBuilder toggleSmelt(double baseCost){
+        this.setAbilityTagModifiersRandom(SMELTER, 2, 1, true, 1, baseCost);
+        return this;
+    }
+
+
+    public AbilityBuilder toggleCollect(double baseCost){
+        this.setAbilityTagModifiersRandom(AUTO_COLLECT, 2, 1, true, 1, baseCost);
+        return this;
+    }
+
+    public AbilityBuilder toggleReinforced(double baseCost){
+        this.setAbilityTagModifiersRandom(REINFORCED, 2, 1, true, 1, baseCost);
+        return this;
+    }
+
+    public AbilityBuilder setFortune(double baseCost){
+        this.setAbilityTagModifiersRandom(FORTUNE, 5, 0, true, 1, baseCost);
         return this;
     }
 

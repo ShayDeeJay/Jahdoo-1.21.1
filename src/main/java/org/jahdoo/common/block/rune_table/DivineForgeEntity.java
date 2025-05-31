@@ -32,17 +32,21 @@ public class DivineForgeEntity extends AbstractBEInventory implements MenuProvid
 
     public void tick(Level pLevel, BlockPos pos, BlockState pState) {
 
+//        var getNearest = pLevel.players().stream().findFirst().get();
+//        System.out.println(getNearest);
 //        for(BlockPos blockpos : BOOKSHELF_OFFSETS) {
 //            if (Random.nextInt(16) == 0) {
-//                var pPos = new BlockPos(0, 1, 0);
+//                var center = pos.getCenter();
+//                var playerP = getNearest.position();
+//                var pPos = new Vec3(playerP.x - center.x, playerP.y - center.y, playerP.z - center.z);
 //                level.addParticle(
-//                    new GenericParticleOptions(ParticleStore.ENCHANT_PARTICLE, ColourStore.NEGATIVE_RED, 0, 20, 3, false,0 ),
+//                    new GenericParticleOptions(ParticleStore.ENCHANT_PARTICLE, ElementReg.random().textColourA(), 0, 20, 3, false, 5),
 //                    (double)pos.getX() + (double)0.5F,
-//                    (double)pos.getY() + (double)3.0F,
+//                    (double)pos.getY() + (double)2.0F,
 //                    (double)pos.getZ() + (double)0.5F,
-//                    (double)((float)pPos.getX() + Random.nextFloat()) - (double)0.5F,
-//                    (double)((float)pPos.getY() - Random.nextFloat() - 1.0F),
-//                    (double)((float)pPos.getZ() + Random.nextFloat()) - (double)0.5F
+//                    (double)((float)pPos.x + Random.nextFloat()) - (double)0.5F,
+//                    (double)((float)pPos.y - Random.nextFloat() - 0.0F),
+//                    (double)((float)pPos.z + Random.nextFloat()) - (double)0.5F
 //                );
 //            }
 //        }

@@ -19,11 +19,16 @@ import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.AUTO_COLLECT;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.REINFORCED;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SMELTER;
 import static org.jahdoo.trial_nexus.ability.UtilityHelpers.*;
 import static org.jahdoo.trial_nexus.ability.abilities_utility.block_bomb.BlockBombAbility.BLOCK_DROP_CHANCE;
 import static org.jahdoo.trial_nexus.ability.abilities_utility.block_bomb.BlockBombAbility.EXPLOSION_RANGE;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
+import static org.jahdoo.trial_nexus.ability.abilities_utility.hammer.Hammer.valueToBool;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class BlockBomb extends AbstractUtilityProjectile {
@@ -36,12 +41,24 @@ public class BlockBomb extends AbstractUtilityProjectile {
     private int explosionTimer;
     private int totalRadiusMax;
     private int blockDropChance;
+    private double voidBlocks;
+    private double fortune;
+    private double silkTouch;
+    private double smelter;
+    private double collector;
+    private double reinforced;
 
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
         this.totalRadiusMax = (int) this.getTag(EXPLOSION_RANGE);
         this.blockDropChance = (int) this.getTag(BLOCK_DROP_CHANCE);
+        this.voidBlocks = this.getTag(VOID_BLOCKS);
+        this.fortune = this.getTag(FORTUNE);
+        this.silkTouch = this.getTag(SILK_TOUCH);
+        this.smelter = this.getTag(SMELTER);
+        this.collector = this.getTag(AUTO_COLLECT);
+        this.reinforced = this.getTag(REINFORCED);
     }
 
     private Level level(){
@@ -156,7 +173,17 @@ public class BlockBomb extends AbstractUtilityProjectile {
                 if (!UtilityHelpers.range.contains(range)) return;
 
                 if (Random.nextInt(0, this.blockDropChance) == 0) {
-                    dropItemsOrBlock(generic, radiusPosition, false, false);
+                    var breakSpeed = reinforced == 2 ? 50 : 0;
+                    dropItemsOrBlock(
+                        generic,
+                        radiusPosition,
+                        breakSpeed,
+                        (int) fortune,
+                        valueToBool(silkTouch),
+                        valueToBool(voidBlocks),
+                        valueToBool(smelter),
+                        valueToBool(collector)
+                    );
                 }
 
                 var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);

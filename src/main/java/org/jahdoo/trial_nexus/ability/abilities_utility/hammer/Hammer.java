@@ -16,14 +16,19 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.OFFSET;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SIZE;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.ability.UtilityHelpers.*;
 
 public class Hammer extends AbstractUtilityProjectile {
 
     private static final ResourceLocation abilityId = Helpers.res("hammer_property");
     private double breakerSize;
+    private double voidBlocks;
+    private double fortune;
+    private double silkTouch;
+    private double smelter;
+    private double collector;
+    private double reinforced;
     private int size;
 
     @Override
@@ -32,6 +37,12 @@ public class Hammer extends AbstractUtilityProjectile {
         this.breakerSize = this.getTag(SIZE);
         var offset = (int) this.getTag(OFFSET);
         this.size = (int) ((breakerSize/2) - offset);
+        this.voidBlocks = this.getTag(VOID_BLOCKS);
+        this.fortune = this.getTag(FORTUNE);
+        this.silkTouch = this.getTag(SILK_TOUCH);
+        this.smelter = this.getTag(SMELTER);
+        this.collector = this.getTag(AUTO_COLLECT);
+        this.reinforced = this.getTag(REINFORCED);
     }
 
     @Override
@@ -75,35 +86,47 @@ public class Hammer extends AbstractUtilityProjectile {
         var isPos = projectile.blockEntityPos != null;
         pos = pos.relative(lookAngleY < -0.8 ? direction.getOpposite() : direction, !isLookingUpOrDown || isPos ? 0 : size).above(isLookingUpOrDown || isPos ? 0 : size);
 
-        if (range.contains(destroySpeed(blockHitResult.getBlockPos(), projectile.level()))) {
-            for (int x = -radius; x <= radius; x++) {
-                for (int y = -radius; y <= radius; y++) {
-                    for (int z = -radius; z <= radius; z++) {
-                        BlockPos offsetPos = pos.offset(
-                            x * (isLookingUpOrDown || axisZ ? 1 : 0),
-                            y * (isLookingUpOrDown ? 0 : 1),
-                            z * (isLookingUpOrDown || axisX ? 1 : 0)
-                        );
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    BlockPos offsetPos = pos.offset(
+                        x * (isLookingUpOrDown || axisZ ? 1 : 0),
+                        y * (isLookingUpOrDown ? 0 : 1),
+                        z * (isLookingUpOrDown || axisX ? 1 : 0)
+                    );
 
-                        dropItemsOrBlock(projectile, offsetPos, false, false);
+                    var breakSpeed = reinforced == 2 ? 50 : 0;
+                    dropItemsOrBlock(
+                        projectile,
+                        offsetPos,
+                        breakSpeed,
+                        (int) fortune,
+                        valueToBool(silkTouch),
+                        valueToBool(voidBlocks),
+                        valueToBool(smelter),
+                        valueToBool(collector)
+                    );
 
-                        var particle = new GenericParticleOptions(
-                            ParticleStore.SOFT_PARTICLE,
-                            this.getElementType().partColourA(),
-                            this.getElementType().partColourFade(),
-                            3, 1, false, 0
-                        );
+                    var particle = new GenericParticleOptions(
+                        ParticleStore.SOFT_PARTICLE,
+                        this.getElementType().partColourA(),
+                        this.getElementType().partColourFade(),
+                        3, 1, false, 0
+                    );
 
-                        ParticleHandlers.particleBurst(serverLevel, offsetPos.getCenter(), 1,
-                            particle,
-                            !(isLookingUpOrDown && axisX) ? 0 : 0.15, isLookingUpOrDown ? 0 : 0.15, !(isLookingUpOrDown && axisZ) ? 0 : 0.15,
-                            0.005f, 1
-                        );
-                    }
+                    ParticleHandlers.particleBurst(serverLevel, offsetPos.getCenter(), 1,
+                        particle,
+                        !(isLookingUpOrDown && axisX) ? 0 : 0.15, isLookingUpOrDown ? 0 : 0.15, !(isLookingUpOrDown && axisZ) ? 0 : 0.15,
+                        0.005f, 1
+                    );
                 }
             }
         }
         projectile.discard();
+    }
+
+    public static boolean valueToBool(double value){
+        return value == 2;
     }
 
 }

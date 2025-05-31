@@ -81,6 +81,12 @@ public class HammerAbility extends AbstractBlockAbility {
             .setStaticMana(10)
             .setBlockSize(high, 1, 2, 1)
             .setModifierWithStepSet(OFFSET, high, 0, true, high, 1, 1, 1)
+            .toggleVoid(1)
+            .toggleSilk(1)
+            .toggleSmelt(1)
+            .toggleCollect(1)
+            .toggleReinforced(1)
+            .setFortune(1)
             .buildAndReturn();
     }
 

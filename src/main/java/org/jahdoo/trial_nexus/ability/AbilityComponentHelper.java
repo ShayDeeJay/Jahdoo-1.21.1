@@ -7,27 +7,28 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.Maths;
 import org.jahdoo.common.client.screens.AugmentScreen;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Maths;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.ability.AbilityRating.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 import static org.jahdoo.trial_nexus.utils.Maths.*;
-import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
 
 public class AbilityComponentHelper {
 
@@ -212,6 +213,7 @@ public class AbilityComponentHelper {
         var leech = List.of("Leech");
         var multiplier = List.of("Multiplier");
         var by = List.of("Block Size");
+        var toggle = List.of("Toggle");
 
         if (time.stream().anyMatch(keys::contains)) {
             displayValue = isRange ? rangeString(ticksToTime(min, true), ticksToTime(max, true)) : ticksToTime(current, true);
@@ -225,6 +227,8 @@ public class AbilityComponentHelper {
             displayValue = isRange ? rangeString(min, max) + "x" : current + "x";
         } else if (by.stream().anyMatch(keys::contains)) {
             displayValue = isRange ? rangeString(min + "x" + min, max + "x" + max) : current + " x " + current;
+        } else if (toggle.stream().anyMatch(keys::contains)) {
+            displayValue = isRange ? rangeString("False", "True") : current.equals("1") ? "Locked" : "Unlocked";
         } else {
             displayValue = isRange ? rangeString(min, max) : current;
         }
@@ -263,6 +267,13 @@ public class AbilityComponentHelper {
             var filteredSuffix = holder.data().abilityProperties().keySet()
                 .stream()
                 .filter(abilityModifiers -> !exceptions.contains(abilityModifiers))
+                .sorted(
+                    Comparator.comparing(
+                        String::new,
+                        Comparator.comparing((String key) -> key.startsWith("Toggle") ? 1 : 0) // Put "Toggle" last
+                            .thenComparing(Comparator.naturalOrder()) // Then sort alphabetically
+                    )
+                )
                 .toList();
 
             if (holder.data().abilityProperties().containsKey(MANA_COST)) {

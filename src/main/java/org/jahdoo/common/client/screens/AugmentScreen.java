@@ -3,34 +3,35 @@ package org.jahdoo.common.client.screens;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.trial_nexus.ability.Ability;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.button.AbilityIconButton;
 import org.jahdoo.common.client.button.ToggleComponent;
 import org.jahdoo.common.components.AbilityData;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.AbilityHolderC2SP;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.Ability;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.common.client.button.ToggleComponent.textWithBackgroundLarge;
+import static org.jahdoo.common.client.screens.AbilityModificationScreen.headerWithBorder;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.COOLDOWN;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.MANA_COST;
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getModifierContextSingle;
 import static org.jahdoo.trial_nexus.utils.Maths.roundNonWholeString;
-import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.button.ToggleComponent.textWithBackgroundLarge;
-import static org.jahdoo.common.client.screens.AbilityModificationScreen.headerWithBorder;
 
 public class AugmentScreen extends Screen  {
 
@@ -83,10 +84,21 @@ public class AugmentScreen extends Screen  {
     }
 
     private void windowMoveVertical(double dragY) {
+//        int listSize = this.getModifiableList().size();
+//        if (listSize > 4) {
+//            var maxScroll = -20;
+//            this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, maxScroll * (listSize-4)));
+//            this.rebuildWidgets();
+//        }
         int listSize = this.getModifiableList().size();
-        if (listSize > 4) {
-            var maxScroll = -20;
-            this.yScroll = Math.min(0, Math.max(this.yScroll + dragY, maxScroll * (listSize-4)));
+        int entryHeight = 40;
+        int visibleEntries = 5; // You can adjust based on screen size
+        int totalHeight = listSize * entryHeight;
+        int visibleHeight = visibleEntries * entryHeight;
+
+        if (listSize > visibleEntries) {
+            double maxScroll = totalHeight - visibleHeight;
+            this.yScroll = Math.max(-maxScroll, Math.min(0, this.yScroll + dragY));
             this.rebuildWidgets();
         }
     }
@@ -105,8 +117,17 @@ public class AugmentScreen extends Screen  {
         copy1.forEach(
             (e, v) -> {
                 var value = getModifierContextSingle(e, roundNonWholeString(v.setValue()), 1).getString();
-                buildCarouselComponent(this.width/2 - 70, verticalSpacing.get(), e, ()-> buttonReduce(e, v), ()-> buttonIncrease(e,v), value);
-                verticalSpacing.set(verticalSpacing.get() + 36);
+                if(e.contains("Toggle")){
+//                    System.out.println(e);
+//                    System.out.println(v.);
+                    if(v.actualValue() == v.highestValue()){
+                        buildBooleanComponent(this.width / 2 - 70, verticalSpacing.get() - 8, e, () -> buttonReduce(e, v), () -> buttonIncrease(e, v), value);
+                        verticalSpacing.set(verticalSpacing.get() + 36);
+                    }
+                } else {
+                    buildCarouselComponent(this.width / 2 - 70, verticalSpacing.get() - 8, e, () -> buttonReduce(e, v), () -> buttonIncrease(e, v), value);
+                    verticalSpacing.set(verticalSpacing.get() + 36);
+                }
             }
         );
     }
@@ -114,9 +135,20 @@ public class AugmentScreen extends Screen  {
     public void buildCarouselComponent(int posX, int posY, String label, Runnable onLeft, Runnable onRight, String value){
         var widget = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
         var adjustX = 2;
-        this.addRenderableOnly(textWithBackgroundLarge(posX + 25 + adjustX, (int) (posY + yScroll),  Helpers.withStyleComponent(value, -1381654), this.getMinecraft(), Component.literal(label), 10));
+        this.addRenderableOnly(textWithBackgroundLarge(posX + 25 + adjustX, (int) (posY + yScroll),  Helpers.withStyleComponent(value, ElementReg.utility().textColourB()), this.getMinecraft(), Component.literal(label), 10, true));
         this.addRenderableWidget(ToggleComponent.menuButton(posX + 10 + adjustX, (int) (posY + yScroll), (press) -> onLeft.run(), DIRECTION_ARROW_BACK, 22, false,0, widget, true));
         this.addRenderableWidget(ToggleComponent.menuButton(posX + 104 + adjustX, (int) (posY+ yScroll), (press) -> onRight.run(), DIRECTION_ARROW_FORWARD,  22,  false, 0, widget, true));
+    }
+
+    public void buildBooleanComponent(int posX, int posY, String label, Runnable onLeft, Runnable onRight, String value){
+        var widget = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
+        var adjustX = 2;
+        var locked = Objects.equals(value, "Locked");
+        var height = 22;
+
+        this.addRenderableOnly(textWithBackgroundLarge(posX + 25 + adjustX, (int) (posY + yScroll), Component.empty(), this.getMinecraft(), Component.literal(label), 10, false));
+        this.addRenderableWidget(ToggleComponent.menuButton(posX + 44 + adjustX, (int) (posY + yScroll) + 2, (press) -> onLeft.run(), POWER_OFF, height, locked,0,  widget, true));
+        this.addRenderableWidget(ToggleComponent.menuButton(posX + 69 + adjustX, (int) (posY+ yScroll) + 2, (press) -> onRight.run(), POWER_ON, height,  !locked, 0, widget, true));
     }
 
     @Override
@@ -124,7 +156,23 @@ public class AugmentScreen extends Screen  {
         var initialVerticalOffset = this.height / 2 - 50;
         var verticalSpacing = new AtomicInteger(initialVerticalOffset);
         navigationButtons();
+        this.addRenderableOnly(
+            new Overlay() {
+                @Override
+                public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
+                    guiGraphics.enableScissor(3, height/2 - 68, width - 3, height/2 + 110);
+                }
+            }
+        );
         displayButtons(getModifiableList(), verticalSpacing);
+        this.addRenderableOnly(
+            new Overlay() {
+                @Override
+                public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
+                    guiGraphics.disableScissor();
+                }
+            }
+        );
     }
 
     private LinkedHashMap<String, AbilityData.AbilityModifiers> getModifiableList() {
@@ -132,11 +180,24 @@ public class AugmentScreen extends Screen  {
         var copy = new HashMap<>(mainHolderValues.abilityProperties());
         copy.remove(MANA_COST);
         copy.remove(COOLDOWN);
-        return copy.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(
-            Collectors.toMap(
-                Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new
+
+        return copy.entrySet().stream()
+            .sorted(
+                Comparator.comparing(
+                    Map.Entry<String, AbilityData.AbilityModifiers>::getKey,
+                    Comparator.comparing((String key) -> key.startsWith("Toggle") ? 1 : 0) // Put "Toggle" last
+                        .thenComparing(Comparator.naturalOrder()) // Then sort alphabetically
+                )
             )
-        );
+            .filter(s -> s.getValue().actualValue() >= s.getValue().lowestValue() + s.getValue().step())
+            .collect(
+                Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue,
+                    (e1, e2) -> e1,
+                    LinkedHashMap::new
+                )
+            );
     }
 
     @Override

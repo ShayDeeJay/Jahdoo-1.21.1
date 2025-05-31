@@ -18,6 +18,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
@@ -30,7 +31,10 @@ import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.Range;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.trial_nexus.ability.abilities_utility.fetch.Fetch;
+import org.jahdoo.trial_nexus.utils.EnchantmentHelpers;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 
 import static net.minecraft.world.level.block.Blocks.AIR;
@@ -99,46 +103,31 @@ public class UtilityHelpers {
     public static void dropItemsOrBlock(
         Projectile newProjectile,
         BlockPos pos,
-        int fortune,
+        float breakSpeed,
+        int fortuneLevel,
         boolean isSilkTouch,
         boolean voidBlocks,
         boolean smelt,
         boolean autoCollect
     ){
         var fluidState = newProjectile.level().getFluidState(pos);
-        if(UtilityHelpers.range.contains(UtilityHelpers.destroySpeed(pos, newProjectile.level())) || !fluidState.isEmpty()){
+        if( Range.of(0.0f, 10 + breakSpeed).contains(UtilityHelpers.destroySpeed(pos, newProjectile.level())) || !fluidState.isEmpty()){
             var blockstate = newProjectile.level().getBlockState(pos);
             var level = newProjectile.level();
             newProjectile.level().setBlock(pos, AIR.defaultBlockState(), 3);
             if(!voidBlocks){
                 var centre = pos.getCenter();
+                if(!(level instanceof ServerLevel serverLevel)) return;
                 if (isSilkTouch) {
                     var getBlock = new ItemStack(blockstate.getBlock());
                     var itementity = new ItemEntity(level, centre.x, centre.y, centre.z, getBlock);
-                    level.addFreshEntity(itementity);
+                    collectOrDrop(newProjectile, autoCollect, itementity, level);
                 } else {
-                    if(!(level instanceof ServerLevel serverLevel)) return;
-                    var lootBuilder = new LootParams
-                        .Builder(serverLevel)
-                        .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
-                        .withParameter(LootContextParams.TOOL, new ItemStack(Items.DIAMOND_PICKAXE))
-                        .withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
-
-
-
-                    var drops = blockstate.getDrops(lootBuilder);
+                    var drops = lootBuilder(pos, fortuneLevel, serverLevel, blockstate, level);
                     for (ItemStack itemStack : drops) {
-//                        var fortuneLevel = 3;
-//                        var fortuneMultiplier = (1 /(fortuneLevel+2))+((fortuneLevel + 1)/2);
-//                        var withFortune = itemStack.copyWithCount(itemStack.getCount() + fortuneMultiplier);
                         var canBurn = smeltable(serverLevel, itemStack);
                         var item = new ItemEntity(level, centre.x, centre.y, centre.z, smelt ? canBurn : itemStack);
-                        if(autoCollect){
-                            var owner = (Player) newProjectile.getOwner();
-                            if(owner != null && !Fetch.handlePlayerPickup(item, owner)) item.moveTo(owner.position());
-                        } else {
-                            level.addFreshEntity(item);
-                        }
+                        collectOrDrop(newProjectile, autoCollect, item, level);
                     }
                 }
             }
@@ -146,6 +135,28 @@ public class UtilityHelpers {
             ParticleHandlers.sendParticles(level, blockPart,  pos.getCenter(), 5,0, 0, 0, 1);
             level.removeBlock(pos, false);
         }
+    }
+
+    private static void collectOrDrop(Projectile newProjectile, boolean autoCollect, ItemEntity item, Level level) {
+        if(autoCollect){
+            var owner = (Player) newProjectile.getOwner();
+            if(owner != null) Fetch.handlePlayerPickup(item, owner);
+        } else {
+            level.addFreshEntity(item);
+        }
+    }
+
+    private static @NotNull List<ItemStack> lootBuilder(BlockPos pos, int fortuneLevel, ServerLevel serverLevel, BlockState blockstate, Level level) {
+        var value = new ItemStack(Items.DIAMOND_PICKAXE);
+        EnchantmentHelpers.enchant(value, serverLevel.registryAccess(), Enchantments.FORTUNE, fortuneLevel);
+        var lootBuilder = new LootParams
+            .Builder(serverLevel)
+            .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+            .withParameter(LootContextParams.TOOL, value)
+            .withOptionalParameter(LootContextParams.BLOCK_STATE, blockstate)
+            .withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
+
+        return blockstate.getDrops(lootBuilder);
     }
 
     private static ItemStack smeltable(Level level, ItemStack stack) {
@@ -156,7 +167,7 @@ public class UtilityHelpers {
             if (optional.isPresent()) {
                 ItemStack itemstack = optional.get().value().getResultItem(level.registryAccess());
                 if (!itemstack.isEmpty()) {
-                    return itemstack.copyWithCount(stack.getCount() * itemstack.getCount()); // Forge: Support smelting returning multiple
+                    return itemstack.copyWithCount(stack.getCount() * itemstack.getCount());
                 }
             }
 

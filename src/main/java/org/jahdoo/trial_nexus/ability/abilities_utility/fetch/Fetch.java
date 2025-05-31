@@ -74,6 +74,10 @@ public class Fetch extends AbstractUtilityProjectile {
             } else if (player.isCreative()) {
                 player.addItem(entityStack);
                 pickedUpItems = true;
+            } else {
+                itemEntity.moveTo(player.position());
+                player.level().addFreshEntity(itemEntity);
+                return false;
             }
         }
 

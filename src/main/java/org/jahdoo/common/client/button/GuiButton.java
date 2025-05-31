@@ -99,7 +99,7 @@ public class GuiButton extends ImageButton {
         }
 
         if(buttonOverlay != null){
-            var i = easedValue/3;
+            var i = easedValue/5;
             var uWidth = easedValue - i;
             graphics.blit(buttonOverlay, this.getX() - offset + i/2, this.getY() - offset + i/2, 1, 0, 0, uWidth, uWidth, uWidth, uWidth);
         }

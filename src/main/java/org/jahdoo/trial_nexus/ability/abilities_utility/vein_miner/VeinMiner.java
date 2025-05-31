@@ -9,13 +9,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.ability.UtilityHelpers;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.ArrayDeque;
@@ -24,9 +23,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import static org.jahdoo.trial_nexus.ability.abilities_utility.vein_miner.VeinMinerAbility.VEIN_MINE_SIZE;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.ability.UtilityHelpers.dropItemsOrBlock;
+import static org.jahdoo.trial_nexus.ability.abilities_utility.hammer.Hammer.valueToBool;
+import static org.jahdoo.trial_nexus.ability.abilities_utility.vein_miner.VeinMinerAbility.VEIN_MINE_SIZE;
 
 public class VeinMiner extends AbstractUtilityProjectile {
 
@@ -34,6 +36,12 @@ public class VeinMiner extends AbstractUtilityProjectile {
     private static final Direction[] HORIZONTAL_DIRECTIONS = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
     private final ResourceLocation abilityId = Helpers.res("vein_miner_property");
     private int veinSize;
+    private double voidBlocks;
+    private double fortune;
+    private double silkTouch;
+    private double smelter;
+    private double collector;
+    private double reinforced;
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -54,6 +62,12 @@ public class VeinMiner extends AbstractUtilityProjectile {
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
         this.veinSize = (int) this.getTag(VEIN_MINE_SIZE);
+        this.voidBlocks = this.getTag(VOID_BLOCKS);
+        this.fortune = this.getTag(FORTUNE);
+        this.silkTouch = this.getTag(SILK_TOUCH);
+        this.smelter = this.getTag(SMELTER);
+        this.collector = this.getTag(AUTO_COLLECT);
+        this.reinforced = this.getTag(REINFORCED);
     }
 
     private void forAllBlocksAroundOf(
@@ -99,7 +113,17 @@ public class VeinMiner extends AbstractUtilityProjectile {
         var part2 = ParticleHandlers.genericParticle(GENERIC_PARTICLE, ElementReg.utility(), 3, 4f, false);
         this.forAllBlocksAroundOf(start, generic.level(), target.getBlock(), veinSize,
             (pos, state) -> {
-                UtilityHelpers.dropItemsOrBlock(generic, pos, false, false);
+                var breakSpeed = reinforced == 2 ? 50 : 0;
+                dropItemsOrBlock(
+                    generic,
+                    pos,
+                    breakSpeed,
+                    (int) fortune,
+                    valueToBool(silkTouch),
+                    valueToBool(voidBlocks),
+                    valueToBool(smelter),
+                    valueToBool(collector)
+                );
                 ParticleHandlers.particleBurst(generic.level(), pos.getCenter(), 1, part, 0, 0, 0, 0.005f, 1);
                 ParticleHandlers.particleBurst(generic.level(), pos.getCenter(), 1, part2, 0, 0, 0, 0.05f, 2);
             }

@@ -27,10 +27,7 @@ import org.jahdoo.common.networking.client2server.AbilityPointC2SP;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static java.lang.String.valueOf;
@@ -149,19 +146,21 @@ public class AbilityModificationScreen extends Screen {
         for (var comp : components){
             var mod = getAbilityModifiers(comp, this.holder);
             var regex = ".*\\d.*";
-            var ySpacer = (this.height / 2 - 92) + spacer;
+            var ySpacer = (this.height / 2 - 84) + spacer;
             var selectedY1 = (int) (ySpacer + this.yScroll);
 
             if(mod.highestValue() != -1){
                 buildPropertiesWithHighlight(comp, width, selectedY1);
-
-                if (Pattern.matches(regex, comp.getString()) && !comp.getString().contains(")")) {
+                var isRange = Pattern.matches(regex, comp.getString());
+                var getIsBool = comp.getString().contains("Locked");
+                var canDisplay = isRange || getIsBool;
+                if (canDisplay && !comp.getString().contains(")")) {
                     var correctAdjustment = mod.isHigherBetter() ? mod.actualValue() == mod.highestValue() : mod.actualValue() == mod.lowestValue();
                     var nexUpgrade = mod.isHigherBetter() ? mod.actualValue() + mod.step() == mod.highestValue() : mod.actualValue() - mod.step() == mod.lowestValue();
                     upgradeButton(comp, width, ySpacer, nexUpgrade, correctAdjustment, mod);
                 }
 
-                spacer += (comp.getString().contains(")") || !Pattern.matches(regex, comp.getString()) ? 17 : 10);
+                spacer += (comp.getString().contains(")") ? 17 : 10);
             }
         }
     }
@@ -255,7 +254,6 @@ public class AbilityModificationScreen extends Screen {
         var lowestValue = doubleFormattedDouble(mod.lowestValue());
         var baseCost = doubleFormattedDouble(mod.baseCost());
         var correctAdjustment = higherBetter ? actualValue + step : actualValue - step;
-
         var valueWithinRange = higherBetter && actualValue < highestValue ? correctAdjustment : !higherBetter && actualValue > lowestValue ? correctAdjustment : actualValue;
         var abilityModifier = new AbilityData.AbilityModifiers(valueWithinRange, highestValue, lowestValue, step, valueWithinRange, baseCost, higherBetter);
 
@@ -310,15 +308,13 @@ public class AbilityModificationScreen extends Screen {
         var widthTo = i + widthOffset;
         var heightTo = i1 + heightOffset - 5;
 
-        var b = mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 35 && mouseY < heightTo - 5;
-        return b;
+        return mouseX > widthFrom && mouseX < widthTo && mouseY > heightFrom + 35 && mouseY < heightTo - 5;
     }
 
     private void windowMoveVertical(double dragY) {
         var components = componentsWithBounds(ability, holder, getMinecraft().player);
         int entryCount = components.size();
 
-        System.out.println(entryCount);
         if (entryCount < 14) {
             this.yScroll = 0;
             return;

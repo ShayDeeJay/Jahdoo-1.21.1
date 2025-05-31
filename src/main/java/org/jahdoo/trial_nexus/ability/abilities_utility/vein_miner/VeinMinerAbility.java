@@ -59,6 +59,12 @@ public class VeinMinerAbility extends AbstractBlockAbility {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(10)
             .setAbilityTagModifiersRandom(VEIN_MINE_SIZE, 256, 32, true, 32, 2)
+            .toggleVoid(1)
+            .toggleSilk(1)
+            .toggleSmelt(1)
+            .toggleCollect(1)
+            .toggleReinforced(1)
+            .setFortune(1)
             .buildAndReturn();
     }
 

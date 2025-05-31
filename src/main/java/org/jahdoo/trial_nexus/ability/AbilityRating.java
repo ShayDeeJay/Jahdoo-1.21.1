@@ -78,6 +78,7 @@ public class AbilityRating {
                 case 4 -> chatFormatting = RATING_4_YELLOW;
                 default -> chatFormatting = RATING_5_GREEN;
             }
+
         } else {
             getRating = 0;
             chatFormatting = -1;

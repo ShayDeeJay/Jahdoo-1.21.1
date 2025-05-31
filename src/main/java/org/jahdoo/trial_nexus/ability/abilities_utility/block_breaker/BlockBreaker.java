@@ -26,7 +26,7 @@ public class BlockBreaker extends AbstractUtilityProjectile {
         var breakSound = generic.level().getBlockState(blockHitResult.getBlockPos()).getSoundType().getBreakSound();
 
         generic.level().playSound(null, generic.getX(), generic.getY(), generic.getZ(), breakSound, SoundSource.BLOCKS, 1,1);
-        UtilityHelpers.dropItemsOrBlock(generic, blockHitResult.getBlockPos(), false, false);
+        UtilityHelpers.dropItemsOrBlock(generic, blockHitResult.getBlockPos(), 0, 0, false, false, false, false);
         generic.discard();
     }
 

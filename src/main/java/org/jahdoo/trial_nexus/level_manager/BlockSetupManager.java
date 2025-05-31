@@ -251,6 +251,17 @@ public class BlockSetupManager {
             }
         }
 
+        if (level.getBlockState(pos).is(LIME_CONCRETE)) {
+            level.setBlockAndUpdate(pos, normalState.setValue(TEXTURE, 0));
+            var blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ShoppingTableEntity entity) {
+                var item = new ItemStack(ItemReg.PERKA_SODA);
+                PerkaSoda.addPerk(item);
+                entity.setItem(item);
+                entity.setCost(setBronzeCost(50));
+            }
+        }
+
         if (level.getBlockState(pos).is(LIGHT_BLUE_CONCRETE)) {
             var direction1 = direction.getClockWise();
             var profession = VillagerProfession.LIBRARIAN;
