@@ -117,6 +117,9 @@ public class ClientBusEvents {
         event.registerSpriteSet(BAKED_VITALITY.get(), BakedProvider::new);
         event.registerSpriteSet(BAKED_UTILITY.get(), BakedProvider::new);
         event.registerSpriteSet(ENCHANT.get(), MovingParticle.EnchantProvider::new);
+        event.registerSpriteSet(MAGIC_MOVE.get(), MovingParticle.EnchantProvider::new);
+        event.registerSpriteSet(GENERIC_MOVE.get(), MovingParticle.EnchantProvider::new);
+        event.registerSpriteSet(SOFT_MOVE.get(), MovingParticle.EnchantProvider::new);
     }
 
     @SubscribeEvent

@@ -180,28 +180,10 @@ public class DivineForge extends BaseEntityBlock {
 
             swapItemsWithHand(divineForge.inputItemHandler, 0, player, hand);
             divineForge.stand = EntityType.ARMOR_STAND.create(level);
-            setOuterRingPulse(level, pos, 0.8, 20, 1.5, 0.2);
+            setOuterRingPulse(level, pos, 0.8, 20, 1.5, 0.2, ColourStore.NEGATIVE_RED, 80);
             Helpers.getSoundWithPosition(level, pos, SoundReg.SPELL_SOUND.get(), 0.4F);
             Helpers.getSoundWithPosition(level, pos, SoundReg.SUSPEND.get());
             divineForge.privateTicks = 0;
-
-//            for (int i = 0; i < 20; i++){
-//                for(BlockPos blockpos : BOOKSHELF_OFFSETS) {
-//                    if (Random.nextInt(16) == 0) {
-//                        var pPos = new BlockPos(0, 1, 0);
-//                        level.addParticle(
-//                            new GenericParticleOptions(ParticleStore.ENCHANT_PARTICLE, ColourStore.NEGATIVE_RED, 0, 20, 3, false,0 ),
-//                            (double)pos.getX() + (double)0.5F,
-//                            (double)pos.getY() + (double)2.0F,
-//                            (double)pos.getZ() + (double)0.5F,
-//                            (double)((float)blockpos.getX() + Random.nextFloat()) - (double)0.5F,
-//                            (double)((float)blockpos.getY() - Random.nextFloat() - 2.0F),
-//                            (double)((float)blockpos.getZ() + Random.nextFloat()) - (double)0.5F
-//                        );
-//
-//                    }
-//                }
-//            }
 
             return SUCCESS;
         } else {
@@ -218,10 +200,12 @@ public class DivineForge extends BaseEntityBlock {
         double yOffset,
         int lifetime,
         double speed,
-        double radius
+        double radius,
+        int colour,
+        int points
     ){
-        var particle = genericParticle(lifetime, 1, ColourStore.NEGATIVE_RED, ColourStore.NEGATIVE_RED);
-        PositionFinders.getOuterRingOfRadiusRandom(blockPos.getBottomCenter().add(0,yOffset,0), radius, 80,
+        var particle = genericParticle(lifetime, 1, colour, colour);
+        PositionFinders.getOuterRingOfRadiusRandom(blockPos.getBottomCenter().add(0,yOffset,0), radius, points,
             positions -> {
                 sendParticles(
                     level, particle, positions.offsetRandom(RandomSource.create(), 0.2f),

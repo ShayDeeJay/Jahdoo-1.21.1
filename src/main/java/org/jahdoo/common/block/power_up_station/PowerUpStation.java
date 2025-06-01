@@ -17,16 +17,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.CoreItem;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL;
@@ -34,6 +37,7 @@ import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.common.block.BlockInteractionHandler.swapItemsWithHand;
 import static org.jahdoo.common.registers.AttachmentReg.BOOL;
 import static org.jahdoo.common.registers.BlockEntityReg.POWER_UP_BE;
+import static org.jahdoo.common.registers.ComponentReg.CORE_DATA;
 import static org.jahdoo.common.registers.ItemReg.AUGMENT_CORE;
 
 public class PowerUpStation extends BaseEntityBlock implements SimpleWaterloggedBlock{
@@ -45,6 +49,7 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
     );
     public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    public static final IntegerProperty TYPE = BlockStateProperties.LEVEL;
 
     public PowerUpStation() {
         super(
@@ -58,7 +63,12 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
             this.defaultBlockState()
                 .setValue(LIT, false)
                 .setValue(WATERLOGGED, false)
+                .setValue(TYPE, 1)
         );
+    }
+
+    public static int colourByState(int state){
+        return state == 0 ? ElementReg.utility().partColourB() : ColourStore.RATING_4_YELLOW;
     }
 
     @Override
@@ -89,6 +99,7 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(LIT);
         builder.add(WATERLOGGED);
+        builder.add(TYPE);
     }
 
     @Override
@@ -138,7 +149,7 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
         if (entity instanceof PowerUpStationEntity powerUpStation) {
             var handler = powerUpStation.inputItemHandler;
 
-            if(stack.getItem() instanceof CoreItem && !CoreData.isFull(stack)){
+            if(stack.has(CORE_DATA) && !CoreData.isFull(stack)){
                 swapItemsWithHand(handler, 0, player, hand);
                 if(!stack.isEmpty()){
                     Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.LEVEL_UP.get(), 1, 0.5F);

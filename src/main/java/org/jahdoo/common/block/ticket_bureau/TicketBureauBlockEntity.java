@@ -3,14 +3,25 @@ package org.jahdoo.common.block.ticket_bureau;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.common.block.AbstractBEInventory;
+import org.jahdoo.common.block.AbstractTankUser;
+import org.jahdoo.common.components.CoreData;
+import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
-public class TicketBureauBlockEntity extends AbstractBEInventory {
+import static org.jahdoo.common.block.rune_table.DivineForge.setOuterRingPulse;
+import static org.jahdoo.common.registers.mod.ElementReg.utility;
+import static org.jahdoo.trial_nexus.utils.ColourStore.NEGATIVE_RED;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+
+public class TicketBureauBlockEntity extends AbstractTankUser {
 
     public TicketBureauBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.TICKET_BUREAU_BE.get(), pos, state, 1);
@@ -18,6 +29,11 @@ public class TicketBureauBlockEntity extends AbstractBEInventory {
 
     public TicketBureauBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int stackSize) {
         super(type, pos, state, stackSize);
+    }
+
+    @Override
+    public int setCraftingCost() {
+        return 10;
     }
 
     public ItemStack getTicketItem(){
@@ -45,7 +61,30 @@ public class TicketBureauBlockEntity extends AbstractBEInventory {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-
+        this.assignTankBlockInRange(level, pos, setCraftingCost());
+        var item = getTicketItem();
+        if (!item.isEmpty() && this.hasTankAndFuel() && !CoreData.isFull(item)) {
+            this.getTankEntity().usingThisTank.add(this);
+            if(level instanceof ServerLevel serverLevel){
+                if (Random.nextInt(10) == 0) {
+                    var success = Random.nextInt(2) == 0;
+                    setOuterRingPulse(serverLevel, pos, 0.5, success ? 10 : 2, 1.5, 0.3, success ? utility().textColourB() : NEGATIVE_RED, 40);
+                    if(success){
+                        Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.LEVEL_UP.get(), 1, 1.8F);
+                        var copy = item.copy();
+                        CoreData.increment(copy, 10);
+                        if(CoreData.isFull(copy)){
+                            Helpers.getSoundWithPosition(serverLevel, pos, SoundEvents.PLAYER_LEVELUP, 1, 1.8F);
+                            TicketData.initTicket(copy, 1);
+                        }
+                        this.inputItemHandler.setStackInSlot(0, copy);
+                    } else {
+                        Helpers.getSoundWithPosition(serverLevel, pos, SoundReg.REJECT.get(), 1, 0.5F);
+                    }
+                    chargeTankFuel(this.setCraftingCost());
+                }
+            }
+        }
     }
 
     @Override

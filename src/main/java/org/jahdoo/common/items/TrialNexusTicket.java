@@ -19,6 +19,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
+import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
+import static org.jahdoo.common.registers.ComponentReg.CORE_DATA;
 import static org.jahdoo.common.registers.ComponentReg.STORE_INTEGER;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.*;
 import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.createLevelAndStartingRoom;
@@ -82,12 +84,22 @@ public class TrialNexusTicket extends Item implements JahdooItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         player.startUsingItem(usedHand);
         var itemInHand = player.getItemInHand(usedHand);
+        if(!itemInHand.has(CORE_DATA)){
+            itemInHand.set(ComponentReg.CORE_DATA, new CoreData(100, 0));
+        }
         return InteractionResultHolder.success(itemInHand);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltips, TooltipFlag tooltipFlag) {
         var getType = stack.get(DataComponents.CUSTOM_MODEL_DATA);
+
+        if(stack.has(CORE_DATA) && !CoreData.isFull(stack)){
+            var current = CoreData.getFilled(stack);
+            var max = CoreData.getRequired(stack);
+            tooltips.add(Helpers.withStyleComponent(current + "/" + max, ColourStore.PERK_GREEN));
+        }
+
         if(getType != null){
             var getTicketMods = stack.get(ComponentReg.TICKET_DATA);
             var getUses = stack.get(STORE_INTEGER);

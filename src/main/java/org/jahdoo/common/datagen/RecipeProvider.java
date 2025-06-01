@@ -35,7 +35,6 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         nexite(recipeOutput, NEXITE_BLOCK.get().asItem());
         chaosCube(recipeOutput, MODULAR_CHAOS_CUBE.get().asItem());
         runeManager(recipeOutput, RUNE_TABLE.get().asItem());
-        wandManager(recipeOutput, WAND_MANAGER_TABLE.get().asItem());
         oreSmelting(recipeOutput, List.of(Items.ROTTEN_FLESH), RecipeCategory.MISC, Items.LEATHER, 2.0F, 200, "leather");
         ticket(recipeOutput, TRIAL_TICKET.get());
         starterWand(recipeOutput, STARTER_WAND.get());
@@ -57,8 +56,8 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     protected void ticket(RecipeOutput output, Item result) {
         CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 32)
             .requires(Items.PAPER, 4)
-            .requires(AUGMENT_CORE.get(), 1)
-            .unlockedBy("ticket", has(AUGMENT_CORE.get()))
+            .requires(Items.DIAMOND, 4)
+            .unlockedBy("ticket", has(Items.DIAMOND))
             .group("ticket")
             .save(output);
     }
@@ -143,16 +142,16 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .save(output);
     }
 
-    protected void wandManager(RecipeOutput output, Item result) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
-            .define('X', ModTags.Items.WAND_TAGS)
-            .define('M', Items.MUD_BRICKS)
-            .pattern(" M ")
-            .pattern(" X ")
-            .pattern(" M ")
-            .unlockedBy("wand_item", has(ModTags.Items.WAND_TAGS))
-            .save(output);
-    }
+//    protected void wandManager(RecipeOutput output, Item result) {
+//        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+//            .define('X', ModTags.Items.WAND_TAGS)
+//            .define('M', Items.MUD_BRICKS)
+//            .pattern(" M ")
+//            .pattern(" X ")
+//            .pattern(" M ")
+//            .unlockedBy("wand_item", has(ModTags.Items.WAND_TAGS))
+//            .save(output);
+//    }
 
     protected void runeManager(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)

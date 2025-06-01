@@ -60,7 +60,8 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
 
     public void tick(Level level, BlockPos blockPos, BlockState pState) {
         this.assignTankBlockInRange(level, blockPos, this.getCraftingCost());
-            if(this.canCraft()){
+
+        if(this.canCraft()){
             this.progress++;
             this.tableProcessingParticle();
             this.onCompleteCraft(level, blockPos);
@@ -117,18 +118,6 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     }
 
     public static void successfulCraftVisual(Level level, BlockPos blockPos, ItemStack itemStack){
-        if(!(level instanceof ServerLevel serverLevel)) return;
-//        if(itemStack.getItem() instanceof CasterItem) {
-//            ParticleHandlers.particleBurst(
-//                serverLevel, blockPos.getCenter().add(0, 0.5f, 0), 10,
-//                ParticleHandlers.genericParticleOptions(
-//                    ParticleStore.SOFT_PARTICLE_SELECTION,
-//                    ElementRegistry.getElementByWandType(itemStack.getItem()).getFirst(), 30, 0.6f
-//                ),
-//                0, 0.5, 0, 0.1f
-//            );
-//        };
-
         Helpers.getSoundWithPosition(level, blockPos, SoundEvents.BEACON_POWER_SELECT, 0.5f, 0.8f);
     }
 

@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.mod.ElementReg;
@@ -22,11 +23,11 @@ public class EntityBarrier {
 
     // NOT AN ATTACHMENT
 
-    private double expandRadius = 0;
+    private double expandRadius = 5;
 
     public void entityBarrier(
         Level level,
-        BlockPos blockPos,
+        Vec3 blockPos,
         AbstractElement getType
     ){
 
@@ -34,12 +35,11 @@ public class EntityBarrier {
         if(expandRadius < radius) expandRadius += 0.5;
         if (!(level instanceof ServerLevel serverLevel)) return;
 
-        var blockPosAdjusted = blockPos.getCenter();
-        var pPosX = blockPosAdjusted.x;
-        var pPosZ = blockPosAdjusted.z;
-        var entities = level.getEntities(null, new AABB(blockPos).inflate(expandRadius - 1));
+        var pPosX = blockPos.x;
+        var pPosZ = blockPos.z;
+        var entities = level.getEntities(null, new AABB(BlockPos.containing(blockPos)).inflate(expandRadius - 1));
 
-        getRandomSphericalPositions(blockPosAdjusted, expandRadius, expandRadius * 20,
+        getRandomSphericalPositions(blockPos, expandRadius, expandRadius * 20,
             positions -> level.addParticle(getType.getParticleGroup().magicSlow(), positions.x, positions.y, positions.z, 0,0,0)
         );
 

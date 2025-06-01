@@ -10,17 +10,17 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.common.components.CoreData;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.common.components.CoreData;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 import static java.lang.Math.min;
 import static net.minecraft.client.Minecraft.getInstance;
+import static org.jahdoo.common.block.power_up_station.PowerUpStation.TYPE;
 import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 
 public class PowerUpStationRenderer implements BlockEntityRenderer<PowerUpStationEntity>{
@@ -60,7 +60,8 @@ public class PowerUpStationRenderer implements BlockEntityRenderer<PowerUpStatio
         var required = CoreData.getRequired(render);
         var current = CoreData.getFilled(render);
 
-        renderName(entity, Helpers.withStyleComponent(current + "/" + required, ColourStore.RATING_4_YELLOW), stack, source);
+        var colour = PowerUpStation.colourByState(entity.getBlockState().getValue(TYPE));
+        renderName(dispatcher.camera.rotation(), Helpers.withStyleComponent(current + "/" + required, colour), stack, source, 1.8);
 
         stack.pushPose();
         var ticks = getInstance().level.getGameTime();
@@ -79,7 +80,7 @@ public class PowerUpStationRenderer implements BlockEntityRenderer<PowerUpStatio
             source,
             255,
             min(1.4f,  ticks + partialTick),
-            Helpers.res("textures/entity/shield.png"), FastColor.ARGB32.color(150, ColourStore.RATING_4_YELLOW)
+            Helpers.res("textures/entity/shield.png"), colour
         );
         stack.popPose();
 
@@ -109,13 +110,13 @@ public class PowerUpStationRenderer implements BlockEntityRenderer<PowerUpStatio
         }
     }
 
-    protected void renderName(AbstractBEInventory pos, Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource) {
+    public static void renderName(Quaternionf rotation , Component displayName, PoseStack pPoseStack, MultiBufferSource bufferSource, double adjustHeight) {
         var x = 0.020F;
         var font = Minecraft.getInstance().font;
         var f1 = (float)(-font.width(displayName) / 2);
         pPoseStack.pushPose();
-        pPoseStack.translate(0.5, 1.8, 0.5);
-        pPoseStack.mulPose(dispatcher.camera.rotation());
+        pPoseStack.translate(0.5, adjustHeight, 0.5);
+        pPoseStack.mulPose(rotation);
         pPoseStack.scale(x, -x, x);
         Matrix4f matrix4f = pPoseStack.last().pose();
         font.drawInBatch(displayName, f1, 0, ColourStore.OFF_WHITE, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL , 0, 255);

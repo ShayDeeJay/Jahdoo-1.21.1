@@ -14,23 +14,24 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static net.minecraft.world.entity.ai.targeting.TargetingConditions.DEFAULT;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
-import static org.jahdoo.common.entities.generic_projectile.GenericProjectile.*;
+import static org.jahdoo.common.block.power_up_station.PowerUpStation.TYPE;
+import static org.jahdoo.common.block.power_up_station.PowerUpStation.colourByState;
+import static org.jahdoo.common.entities.generic_projectile.GenericProjectile.POWER_UP_KEY;
 import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 
 
 public class PowerUpStationEntity extends AbstractBEInventory {
@@ -94,7 +95,7 @@ public class PowerUpStationEntity extends AbstractBEInventory {
 
     private void particleSetter(Vec3 positions) {
         if(getLevel() instanceof ServerLevel serverLevel){
-            var primary = ColourStore.RATING_4_YELLOW;
+            var primary = colourByState(this.getBlockState().getValue(TYPE));
             sendParticles(
                 serverLevel, getNonBakedParticles(primary, primary, 20, 1.2F), positions.offsetRandom(RandomSource.create(), 0.2f),
                 0, 0, Random.nextDouble(0.02, 0.2), 0, 1

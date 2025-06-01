@@ -55,6 +55,7 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
     private List<BlockPos> getTankBlockInRange(Level level, BlockPos pos) {
         var allBlocks = new ArrayList<BlockPos>();
 
+
         for (BlockPos adjacentPos : findInRange(pos)) {
             var adjacentState = level.getBlockState(adjacentPos);
             if (adjacentState.is(BlockReg.TANK.get())) allBlocks.add(adjacentPos);

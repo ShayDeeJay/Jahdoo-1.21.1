@@ -15,13 +15,16 @@ public record ParticleStore(int r, int g, int b){
     public static final int ELECTRIC_PARTICLE = 3;
     public static final int PLUS_PARTICLE = 4;
     public static final int ENCHANT_PARTICLE = 5;
+    public static final int MAGIC_MOVE_PARTICLE = 6;
+    public static final int GENERIC_MOVE_PARTICLE = 7;
+    public static final int SOFT_MOVE_PARTICLE = 8;
 
     public static final List<ParticleType<?>> getBakedByType = List.of(
         BAKED_FROST.get(), BAKED_INFERNO.get(), BAKED_MYSTIC.get(), BAKED_VITALITY.get(), BAKED_UTILITY.get(), HEAL.get()
     );
 
     public static final List<ParticleType<?>> getColouredParticle = List.of(
-        GENERIC.get(), MAGIC.get(), SOFT.get(), ELECTRIC.get(), PLUS.get(), ENCHANT.get()
+        GENERIC.get(), MAGIC.get(), SOFT.get(), ELECTRIC.get(), PLUS.get(), ENCHANT.get(), MAGIC_MOVE.get(), GENERIC_MOVE.get(), SOFT_MOVE.get()
     );
 
     public static GenericParticleOptions genericParticleFast(int colour, int fade){

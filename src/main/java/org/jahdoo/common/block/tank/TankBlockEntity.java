@@ -10,11 +10,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.block.AbstractTankUser;
+import org.jahdoo.common.block.ticket_bureau.TicketBureauBlockEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 
@@ -23,6 +26,8 @@ import java.util.List;
 
 import static org.jahdoo.common.block.AbstractTankUser.findInRange;
 import static org.jahdoo.common.block.tank.TankBlock.LIT;
+import static org.jahdoo.common.particle.ParticleStore.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 
 public class TankBlockEntity extends AbstractBEInventory {
@@ -94,6 +99,24 @@ public class TankBlockEntity extends AbstractBEInventory {
     public void tick(Level level, BlockPos pos, BlockState state) {
         getTankBlockInRange(level, pos);
         this.setState(level, pos, state);
+
+        if(!this.usingThisTank.isEmpty()){
+            for (var abstractTankUser : usingThisTank) {
+                var center = pos.getCenter();
+                var playerP = abstractTankUser.getBlockPos().getCenter();
+                var pPos = new Vec3(center.x - playerP.x, center.y - playerP.y, center.z - playerP.z);
+                var isBureau = abstractTankUser instanceof TicketBureauBlockEntity;
+                level.addParticle(
+                    new GenericParticleOptions(SOFT_MOVE_PARTICLE, ElementReg.utility().partColourA(), 0, Random.nextInt(10, 40), Random.nextFloat(2, 3.5F), false, 0),
+                    playerP.x + 0.0,
+                    playerP.y + (isBureau ? 1.4 : 2),
+                    playerP.z + 0.0,
+                    pPos.x + Random.nextFloat(0.3F, 0.7F) - 0.5,
+                    pPos.y - Random.nextFloat(0.3F, 0.7F) - (isBureau ? 0.8 : 1.6),
+                    pPos.z + Random.nextFloat(0.3F, 0.7F) - 0.5
+                );
+            }
+        }
 
         if(!(level instanceof ServerLevel serverLevel)) return;
         int tankSlotSize = this.inputItemHandler.getStackInSlot(INPUT).getCount();

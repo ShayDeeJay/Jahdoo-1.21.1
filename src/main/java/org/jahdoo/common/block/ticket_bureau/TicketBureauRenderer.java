@@ -5,16 +5,23 @@ import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import org.jahdoo.common.block.tank.TankBlockEntity;
+import org.jahdoo.common.components.CoreData;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static net.minecraft.client.Minecraft.getInstance;
 import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 import static net.minecraft.core.Direction.*;
 import static net.minecraft.world.item.ItemDisplayContext.FIXED;
+import static org.jahdoo.common.block.power_up_station.PowerUpStationRenderer.renderName;
 
 public class TicketBureauRenderer implements BlockEntityRenderer<TicketBureauBlockEntity>{
-
-    public TicketBureauRenderer(BlockEntityRendererProvider.Context context) {}
+    EntityRenderDispatcher dispatcher;
+    public TicketBureauRenderer(BlockEntityRendererProvider.Context context) {
+        dispatcher = context.getEntityRenderer();
+    }
 
     public void setGlow(TankBlockEntity tank){
         if(tank.usingThisTank.isEmpty()){
@@ -35,6 +42,14 @@ public class TicketBureauRenderer implements BlockEntityRenderer<TicketBureauBlo
         var z = direction == EAST || direction == WEST ? 0.5f : direction == SOUTH ? 0.82f : 0.18;
         var rotation = direction == SOUTH ? 0 : direction == WEST ? 270 : direction == NORTH ? 180 : 90;
         var scale = 0.50f;
+        var render = entity.getTicketItem();
+        var required = CoreData.getRequired(render);
+        var current = CoreData.getFilled(render);
+        if(!itemStack1.isEmpty()){
+            var displayName = Helpers.withStyleComponent(current + "/" + required, Helpers.colourByPercent(required, current, true));
+            var complete = Helpers.withStyleComponent("Complete", ColourStore.MAGNET_RANGE_GREEN);
+            renderName(dispatcher.camera.rotation(), CoreData.isFull(itemStack1) ? complete : displayName, stack, source, 1.4);
+        }
 
         stack.pushPose();
         stack.translate(x, number, z);

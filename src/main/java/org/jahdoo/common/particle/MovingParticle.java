@@ -11,6 +11,9 @@ import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 
 import java.util.List;
 
+import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
+import static org.jahdoo.trial_nexus.utils.Configuration.BRIGHT_PARTICLE;
+
 public class MovingParticle extends TextureSheetParticle {
     private final double xStart;
     private final double yStart;
@@ -62,7 +65,7 @@ public class MovingParticle extends TextureSheetParticle {
     }
 
     public ParticleRenderType getRenderType() {
-        return this.lifetimeAlpha.isOpaque() ? ParticleRenderType.PARTICLE_SHEET_OPAQUE : ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        return BRIGHT_PARTICLE.get() ? ParticleRenderTypes.ABILITY_RENDERER : ParticleRenderTypes.ABILITY_RENDERER_ALT;
     }
 
     public void move(double x, double y, double z) {
@@ -71,7 +74,7 @@ public class MovingParticle extends TextureSheetParticle {
     }
 
     public int getLightColor(float partialTick) {
-        return 240;
+        return FULL_BRIGHT;
     }
 
     public void tick() {
@@ -115,10 +118,28 @@ public class MovingParticle extends TextureSheetParticle {
             double ySpeed,
             double zSpeed
         ) {
-            var movingParticle = new MovingParticle(level, x, y, z, xSpeed, ySpeed, zSpeed);
-            var ints = intToRGB(type.colour());
+            var movingParticle = new MovingParticle(level, x, y, z, xSpeed, ySpeed, zSpeed){
+                int tick;
+                @Override
+                public void tick() {
+                    super.tick();
+                    tick++;
+                    if(!type.setStaticSize()) this.quadSize *= 0.9f;
+                    this.speedUpWhenYMotionIsBlocked = true;
+                }
+
+            };
+            int[] utility = {39, 236, 144};
+
+            var colourByType = type.colour() == 0 ? utility : utility;
+
+            if(type.setStaticSize()){
+                movingParticle.quadSize = type.size();
+            } else {
+                movingParticle.quadSize *= type.size();
+            }
             movingParticle.pickSprite(this.sprite);
-            movingParticle.setColor(ints.getFirst(), ints.get(1), ints.get(2));
+            movingParticle.setColor(colourByType[0]/ 255.0f, colourByType[1]/ 255.0f, colourByType[2]/ 255.0f);
             movingParticle.setLifetime(type.lifetime());
             return movingParticle;
         }

@@ -38,6 +38,15 @@ public class ParticleReg {
     public static final Supplier<ParticleType<GenericParticleOptions>> ENCHANT =
         register("enchant", GenericParticleOptions.MAP_CODEC, GenericParticleOptions.STREAM_CODEC);
 
+    public static final Supplier<ParticleType<GenericParticleOptions>> MAGIC_MOVE =
+        register("magic_move", GenericParticleOptions.MAP_CODEC, GenericParticleOptions.STREAM_CODEC);
+
+    public static final Supplier<ParticleType<GenericParticleOptions>> SOFT_MOVE =
+        register("soft_move", GenericParticleOptions.MAP_CODEC, GenericParticleOptions.STREAM_CODEC);
+
+    public static final Supplier<ParticleType<GenericParticleOptions>> GENERIC_MOVE =
+        register("generic_move", GenericParticleOptions.MAP_CODEC, GenericParticleOptions.STREAM_CODEC);
+
     //Colour baked particles
     public static final Supplier<ParticleType<BakedParticleOptions>> BAKED_INFERNO =
         register("baked_inferno", BakedParticleOptions.MAP_CODEC, BakedParticleOptions.STREAM_CODEC);
