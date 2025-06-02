@@ -5,8 +5,12 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import org.jahdoo.trial_nexus.utils.ColourStore;
+import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.client.SharedUI;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+
+import java.util.List;
+import java.util.function.Supplier;
 
 import static net.minecraft.network.chat.Component.empty;
 import static net.minecraft.network.chat.Component.literal;
@@ -42,28 +46,39 @@ public abstract class AbstractPanableScreen extends Screen {
         return fadeBlack(0.6f);
     }
 
+    public record ScreenType(Supplier<Screen> supplier, String label, ResourceLocation icon){}
+
     private void screenTab() {
-        var posY = 8;
-        this.addRenderableWidget(
-            menuButtonAbility(
-                width/2 + 55, posY, (Button) -> getMinecraft().setScreen(new QuestLogScreen()),
-                DATA, 30, false, () -> {}, 0, getMinecraft().screen instanceof QuestLogScreen, "History"
-            )
+        var buttonWidth = 30;
+        var gap = 20;
+
+        var types = List.of(
+            new ScreenType(AbilityUnlockScreen::new, "Abilities", ABILITY),
+            new ScreenType(StatScreen::new, "Statistics", STAT),
+            new ScreenType(RunScreen::new, "History", DATA),
+            new ScreenType(QuestLogScreen::new, "Quests", QUEST_CRATE)
         );
 
-        this.addRenderableWidget(
-            menuButtonAbility(
-                width/2 - 15, posY, (Button) -> getMinecraft().setScreen(new StatScreen()),
-                STAT, 30, false, () -> {}, 0, getMinecraft().screen instanceof StatScreen, "Player Stats"
-            )
-        );
+        var numButtons = types.size();
+        var totalWidth = numButtons * buttonWidth + (numButtons - 1) * gap;
+        var startX = (width - totalWidth) / 2;
 
-        this.addRenderableWidget(
-            menuButtonAbility(
-                width/2 - 85, posY, (Button) -> getMinecraft().setScreen(new AbilityUnlockScreen()),
-                ABILITY, 30, false, () -> {}, 0, getMinecraft().screen instanceof AbilityUnlockScreen, "Abilities"
-            )
-        );
+        for (int i = 0; i < numButtons; i++) {
+            int x = startX + i * (buttonWidth + gap);
+            var getType = types.get(i);
+
+            this.addRenderableWidget(menuButtonAbility(
+                x, 8,
+                (Button) -> getMinecraft().setScreen(getType.supplier.get()),
+                getType.icon,
+                buttonWidth,
+                false,
+                () -> {},
+                0,
+                getType.supplier.get().getClass().isInstance(getMinecraft().screen),
+                getType.label
+            ));
+        }
     }
 
     @Override

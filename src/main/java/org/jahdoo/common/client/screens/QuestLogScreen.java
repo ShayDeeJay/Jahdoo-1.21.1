@@ -4,12 +4,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.client.button.QuestLogButton;
 import org.jahdoo.common.client.button.SimpleButton;
 import org.jahdoo.common.networking.client2server.GivePlayerItemsC2SP;
 import org.jahdoo.common.networking.client2server.QuestTrackerC2SP;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.TaskReg;
 import org.jahdoo.trial_nexus.attachments.QuestTracker;
 import org.jahdoo.trial_nexus.tasks.AbstractTask;
@@ -20,7 +23,8 @@ import java.util.List;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.overlay.InstanceDataOverlay.progressBar;
 import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.colourByPercent;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponentTrans;
 
 public class QuestLogScreen extends AbstractPanableScreen {
     public static int frameTicks;
@@ -48,7 +52,10 @@ public class QuestLogScreen extends AbstractPanableScreen {
         );
 
         for (var quests : getAllTasks) {
-            this.addRenderableWidget(new QuestLogButton(28, (int) (panY + spacer + 78), 130, 36,  QuestTracker.claimedQuest(player, quests.taskId()), (button) -> doOnClick(quests), quests));
+            var questComplete = QuestTracker.claimedQuest(player, quests.taskId());
+            var pY = (int) (panY + spacer + 78);
+            var selected = quests.equals(this.task);
+            this.addRenderableWidget(new QuestLogButton(28, pY, 130, 36, questComplete, selected, (button) -> doOnClick(quests), quests));
             spacer += 47;
         }
 
@@ -98,6 +105,8 @@ public class QuestLogScreen extends AbstractPanableScreen {
 
     private void claimReward(String id, List<ItemStack> rewards){
         PacketDistributor.sendToServer(new QuestTrackerC2SP(id));
+        getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundReg.QUEST_COMPLETE, 1));
+        getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 0.6F));
         for (var reward : rewards) {
             PacketDistributor.sendToServer(new GivePlayerItemsC2SP(reward));
         }

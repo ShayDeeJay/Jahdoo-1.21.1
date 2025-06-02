@@ -2,10 +2,21 @@ package org.jahdoo.common.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
+import org.jahdoo.common.block.tank.TankBlockEntity;
+import org.jahdoo.common.block.ticket_bureau.TicketBureauBlock;
+import org.jahdoo.common.block.ticket_bureau.TicketBureauBlockEntity;
+import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.utils.Helpers;
+
+import java.util.ArrayList;
+import java.util.Optional;
 
 import static net.minecraft.client.gui.screens.Screen.getTooltipFromItem;
 import static net.neoforged.neoforge.client.event.RenderGuiLayerEvent.Post;
@@ -36,19 +47,48 @@ public class  OverlayBlockTooltip {
 
         var lookingAt = player.level().getBlockEntity(pos);
 
-        if (lookingAt instanceof ShoppingTableEntity tableEntity){
+        if (lookingAt instanceof AbstractBEInventory tableEntity){
             var graphics = event.getGuiGraphics();
             var width = graphics.guiWidth() / 2;
             var height = graphics.guiHeight() / 2;
-            var itemStack = tableEntity.getItem().getStackInSlot(0);
-            var tooltip = getTooltipFromItem(instance, itemStack);
-            var getState = tableEntity.getBlockState().getValue(ShoppingTableBlock.TEXTURE);
-            var canRender = tooltip.size() > 1 && getState != 3 && !itemStack.isEmpty();
+            var handler = tableEntity.inputItemHandler;
+            var stackInSlot = handler.getStackInSlot(0);
+            var tooltip = getTooltipFromItem(instance, stackInSlot);
 
+            var font = instance.font;
 
-            if (canRender) {
+            if(lookingAt instanceof TankBlockEntity){
                 var mouseY = height - (tooltip.size() * 5);
-                graphics.renderTooltip(instance.font, itemStack, width + 60, mouseY);
+                var components = new ArrayList<Component>();
+                var slotLimit = handler.getSlotLimit(0);
+                var count = stackInSlot.getCount();
+                components.add(Helpers.withStyleComponentTrans("block.jahdoo.tank", ElementReg.utility().textColourB()));
+                components.add(Helpers.withStyleComponent(count +"/"+ slotLimit, Helpers.colourByPercent(slotLimit, count, true)));
+                graphics.renderTooltip(font, components, Optional.empty(), width + 10, mouseY + 6);
+            }
+
+            if(stackInSlot.isEmpty()) return;
+
+            if(lookingAt instanceof ShoppingTableEntity){
+                var getState = tableEntity.getBlockState().getValue(ShoppingTableBlock.TEXTURE);
+                var canRender = tooltip.size() > 1 && getState != 3 && !stackInSlot.isEmpty();
+
+
+                if (canRender) {
+                    var mouseY = height - (tooltip.size() * 5);
+                    graphics.renderTooltip(font, stackInSlot, width + 60, mouseY);
+                }
+            }
+
+            if(lookingAt instanceof TicketBureauBlockEntity){
+                var mouseY = height - (tooltip.size() * 5);
+                graphics.renderTooltip(font, stackInSlot, width - 250, mouseY);
+                var mainHandItem = player.getMainHandItem();
+                if(mainHandItem.is(ItemReg.STAMP)){
+                    var copy = stackInSlot.copy();
+                    TicketBureauBlock.addStampToTicket(mainHandItem, copy);
+                    graphics.renderTooltip(font, copy, width + 60, mouseY);
+                }
             }
         }
     }

@@ -8,11 +8,11 @@ import org.jahdoo.common.client.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
-public class EternalLootMultiplier extends AbstractLevelBoon {
+public class MythicLootMultiplier extends AbstractLevelBoon {
 
     @Override
     public String id() {
-        return "multiply_eternal_loot";
+        return "multiply_mythic_loot";
     }
 
     @Override
@@ -33,7 +33,7 @@ public class EternalLootMultiplier extends AbstractLevelBoon {
 
     @Override
     public ResourceLocation getIcon() {
-        return Icons.CHEST_ETERNAL;
+        return Icons.CHEST_MYTHIC;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class EternalLootMultiplier extends AbstractLevelBoon {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.ETERNAL;
+        return JahdooRarity.MYTHIC;
     }
 
 }

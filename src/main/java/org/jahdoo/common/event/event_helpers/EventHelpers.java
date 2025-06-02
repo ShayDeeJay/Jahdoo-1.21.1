@@ -694,16 +694,14 @@ public class EventHelpers {
     //Remove custom levels when time runs out, level should already be discarded on end of run
     //this is more for safety incase something has been left behind
     public static void discardLevelOnEnd(LevelTickEvent.Pre tickEvent) {
-        if(tickEvent.getLevel() instanceof ServerLevel serverLevel){
-            if(serverLevel instanceof CustomLevel customLevel){
-                var data = serverLevel.getData(INSTANCE_DATA.get());
-                var players = customLevel.players();
-                if(!data.getDifficulty().isEmpty() && players.isEmpty()){
-                    var i = data.getMaxTime() - data.getTicks();
-                    if (i <= 0) {
-                        for (var player : players) player.kill();
-                        LevelGenerator.removeLevel(customLevel);
-                    }
+        if(tickEvent.getLevel() instanceof CustomLevel customLevel){
+            var data = customLevel.getData(INSTANCE_DATA.get());
+            var players = customLevel.players();
+            if(!data.getDifficulty().isEmpty() && players.isEmpty()){
+                var i = data.getMaxTime() - data.getTicks();
+                if (i <= 0) {
+                    for (var player : players) player.kill();
+                    LevelGenerator.removeLevel(customLevel);
                 }
             }
         }

@@ -12,6 +12,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.portal.DimensionTransition;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -20,10 +21,10 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
-import static org.jahdoo.trial_nexus.level_manager.StructureManager.generateStartingRoom;
-import static org.jahdoo.trial_nexus.utils.Helpers.res;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.DamageTypeReg.BIOME_SOURCE;
+import static org.jahdoo.trial_nexus.level_manager.StructureManager.generateStartingRoom;
+import static org.jahdoo.trial_nexus.utils.Helpers.res;
 
 public class LevelGenerator {
 
@@ -33,16 +34,20 @@ public class LevelGenerator {
         ArcadeDimensions.delete(customLevel.getServer(), customLevel);
     }
 
-    public static void debugLevels(ServerLevel serverLevel) {
+    public static void debugLevels(ServerLevel serverLevel, Player player) {
         for (ServerLevel allLevel : serverLevel.getServer().getAllLevels()) {
-            if (allLevel instanceof CustomLevel cLevel) System.out.println(cLevel.getDescription());
+            if (allLevel instanceof CustomLevel cLevel) {
+                var rgb = Helpers.getRgb();
+                player.sendSystemMessage(Helpers.withStyleComponent(cLevel.getDescription().getString(), rgb));
+                player.sendSystemMessage(Helpers.withStyleComponent(cLevel.getData(INSTANCE_DATA).toString(), rgb));
+            }
         }
     }
 
     public static void removeCustomLevels(ServerLevel serverLevel) {
         var levelsToRemove = new ArrayList<CustomLevel>();
         for (ServerLevel allLevel : serverLevel.getServer().getAllLevels()) {
-            if (allLevel instanceof CustomLevel cLevel) levelsToRemove.add(cLevel);
+            if (allLevel instanceof CustomLevel cLevel && cLevel.players().isEmpty()) levelsToRemove.add(cLevel);
         }
         for (CustomLevel cLevel : levelsToRemove) removeLevel(cLevel);
     }

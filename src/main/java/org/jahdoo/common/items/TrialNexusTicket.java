@@ -60,7 +60,7 @@ public class TrialNexusTicket extends Item implements JahdooItem {
             type, switch (getType.value()){
                 case 1 -> JahdooRarity.RARE.getColour();
                 case 2 -> JahdooRarity.EPIC.getColour();
-                case 3 -> JahdooRarity.ETERNAL.getColour();
+                case 3 -> JahdooRarity.MYTHIC.getColour();
                 case 4 -> JahdooRarity.COMMON.getColour();
                 default ->  color(225, 176, 73);
             }
@@ -84,9 +84,9 @@ public class TrialNexusTicket extends Item implements JahdooItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         player.startUsingItem(usedHand);
         var itemInHand = player.getItemInHand(usedHand);
-        if(!itemInHand.has(CORE_DATA)){
+        if(!itemInHand.has(CORE_DATA))
             itemInHand.set(ComponentReg.CORE_DATA, new CoreData(100, 0));
-        }
+
         return InteractionResultHolder.success(itemInHand);
     }
 
@@ -106,6 +106,10 @@ public class TrialNexusTicket extends Item implements JahdooItem {
 
             tooltips.add(withStyleComponent("Teleports you to the trial nexus", ColourStore.SUB_HEADER_COLOUR));
             usesTooltips(tooltips, getType.value(), getUses);
+            if(getTicketMods != null && !getTicketMods.values().isEmpty()){
+                tooltips.add(Component.literal(" "));
+                tooltips.add(withStyleComponent("⏮ Trail Modifiers ⏭", ColourStore.OFF_WHITE));
+            }
             modifierTooltips(tooltips, getTicketMods);
         }
     }
@@ -140,11 +144,8 @@ public class TrialNexusTicket extends Item implements JahdooItem {
         }
     }
 
-    private static void modifierTooltips(List<Component> tooltips, TicketData getTicketMods) {
+    public static void modifierTooltips(List<Component> tooltips, TicketData getTicketMods) {
         if(getTicketMods != null && !getTicketMods.values().isEmpty()){
-            tooltips.add(Component.literal(" "));
-            tooltips.add(withStyleComponent("⏮ Trail Modifiers ⏭", ColourStore.OFF_WHITE));
-
             var keyMaxTime = KEY_MAX_TIME;
             if (getTicketMods.get(keyMaxTime) > 0) {
                 var v = getTicketMods.get(keyMaxTime);
@@ -157,7 +158,7 @@ public class TrialNexusTicket extends Item implements JahdooItem {
             comp(tooltips, getTicketMods, KEY_COMMON_LOOT_MULTIPLIER, COMMON.getColour());
             comp(tooltips, getTicketMods, KEY_RARE_LOOT_MULTIPLIER, RARE.getColour());
             comp(tooltips, getTicketMods, KEY_LEGENDARY_LOOT_MULTIPLIER, LEGENDARY.getColour());
-            comp(tooltips, getTicketMods, KEY_ETERNAL_LOOT_MULTIPLIER, ETERNAL.getColour());
+            comp(tooltips, getTicketMods, KEY_MYTHIC_LOOT_MULTIPLIER, MYTHIC.getColour());
             comp(tooltips, getTicketMods, KEY_QUEST_CRATE_MULTIPLIER, WALLET_BROWN);
             comp(tooltips, getTicketMods, KEY_SAFE_LOOT_MULTIPLIER, GOLD_COIN);
         }
@@ -174,7 +175,7 @@ public class TrialNexusTicket extends Item implements JahdooItem {
             TicketData.addNewEntry(item, KEY_COMMON_LOOT_MULTIPLIER, 10);
             TicketData.addNewEntry(item, KEY_RARE_LOOT_MULTIPLIER, 10);
             TicketData.addNewEntry(item, KEY_LEGENDARY_LOOT_MULTIPLIER, 10);
-            TicketData.addNewEntry(item, KEY_ETERNAL_LOOT_MULTIPLIER, 10);
+            TicketData.addNewEntry(item, KEY_MYTHIC_LOOT_MULTIPLIER, 10);
             TicketData.addNewEntry(item, KEY_QUEST_CRATE_MULTIPLIER, 10);
             TicketData.addNewEntry(item, KEY_SAFE_LOOT_MULTIPLIER, 10);
         }

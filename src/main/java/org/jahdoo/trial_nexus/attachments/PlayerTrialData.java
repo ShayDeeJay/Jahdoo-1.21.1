@@ -236,7 +236,7 @@ public class PlayerTrialData implements IAttachment{
                     newRunData.addStat(CHESTS_COMMON, Random.nextInt(0, 10));
                     newRunData.addStat(CHESTS_RARE, Random.nextInt(0, 10));
                     newRunData.addStat(CHESTS_LEGENDARY, Random.nextInt(0, 10));
-                    newRunData.addStat(CHESTS_ETERNAL, Random.nextInt(0, 10));
+                    newRunData.addStat(CHESTS_MYTHIC, Random.nextInt(0, 10));
 
                     newRunData.addStat(MOBS_KILLED, Random.nextInt(300, 700));
                     newRunData.addStat(TIME_IN_TRIAL, Random.nextInt(38400, 43000));

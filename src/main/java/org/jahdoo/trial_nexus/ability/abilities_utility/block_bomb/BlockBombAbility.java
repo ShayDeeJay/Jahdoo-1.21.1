@@ -26,7 +26,7 @@ public class BlockBombAbility extends AbstractBlockAbility {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.ETERNAL;
+        return JahdooRarity.MYTHIC;
     }
 
     @Override

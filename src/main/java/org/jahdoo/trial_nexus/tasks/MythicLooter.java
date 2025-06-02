@@ -9,26 +9,27 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 
 import java.util.List;
 
 import static org.jahdoo.trial_nexus.attachments.PlayerWallet.CurrencyConverter;
 
-public class EternalLooter extends AbstractTask {
+public class MythicLooter extends AbstractTask {
 
     @Override
     public ResourceLocation taskIcon() {
-        return Icons.CHEST_ETERNAL;
+        return Icons.CHEST_MYTHIC;
     }
 
     @Override
     public String taskName() {
-        return "Eternal Looter";
+        return JahdooRarity.MYTHIC.getSerializedName() +  " Looter";
     }
 
     @Override
     public String taskDescription() {
-        return "Open 500 eternal chests";
+        return "Open 500 mythic chests";
     }
 
     @Override
@@ -38,8 +39,8 @@ public class EternalLooter extends AbstractTask {
 
     @Override
     public int trackedValue(Player player) {
-        var x = PlayerTrialData.getData(player).getPastRuns().stream().mapToInt(RunData::getEternalChests).sum();
-        var current = RunData.getRunData(player).getEternalChests();
+        var x = PlayerTrialData.getData(player).getPastRuns().stream().mapToInt(RunData::getMythicChests).sum();
+        var current = RunData.getRunData(player).getMythicChests();
         return x + current;
     }
 

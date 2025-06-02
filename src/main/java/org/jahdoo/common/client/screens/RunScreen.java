@@ -262,7 +262,7 @@ public class RunScreen extends AbstractPanableScreen {
         addChestStats(allComponents, "Common Chest", COMMON.getColour(), CHESTS_COMMON, instanceData.getCommonLootMultiplier(), CHEST_COMMON, runData);
         addChestStats(allComponents, "Rare Chest", RARE.getColour(), CHESTS_RARE, instanceData.getRareLootMultiplier(), CHEST_RARE, runData);
         addChestStats(allComponents, "Legendary Chest", LEGENDARY.getColour(), CHESTS_LEGENDARY, instanceData.getLegendaryLootMultiplier(), CHEST_LEGENDARY, runData);
-        addChestStats(allComponents, "Eternal Chest", ETERNAL.getColour(), CHESTS_ETERNAL, instanceData.getEternalLootMultiplier(), CHEST_ETERNAL, runData);
+        addChestStats(allComponents, "Eternal Chest", MYTHIC.getColour(), CHESTS_MYTHIC, instanceData.getMythicLootMultiplier(), CHEST_MYTHIC, runData);
 
         allComponents.add(new StatEntry(componentTemplate("Safe", "", GOLD_COIN, GOLD_COIN), SAFE));
         allComponents.add(new StatEntry(componentTemplate("Opened", runData.getStat(RunData.SAFE) + "", GOLD_COIN), BLANK));

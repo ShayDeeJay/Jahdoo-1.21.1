@@ -180,9 +180,9 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
     }
 
     public static ShoppingItems shoppingRuneItem(){
-        var med = new ShoppingItems(RuneHelpers.generateRandomTypAttribute(ETERNAL, EPIC), setGoldCost(300));
-        var high = new ShoppingItems(RuneHelpers.generateRandomTypAttribute(ETERNAL, LEGENDARY), setPlatinumCost(150));
-        var best = new ShoppingItems(RuneHelpers.generateRandomTypAttribute(ETERNAL, ETERNAL), setPlatinumCost((300)));
+        var med = new ShoppingItems(RuneHelpers.generateRandomTypAttribute(MYTHIC, EPIC), setGoldCost(300));
+        var high = new ShoppingItems(RuneHelpers.generateRandomTypAttribute(MYTHIC, LEGENDARY), setPlatinumCost(150));
+        var best = new ShoppingItems(RuneHelpers.generateRandomTypAttribute(MYTHIC, MYTHIC), setPlatinumCost((300)));
         var getAll = List.of(med, high, best);
         return listRandom(getAll);
     }
@@ -268,7 +268,7 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         var common = List.of(Pair.of(COMMON, 1), Pair.of(RARE, 5000));
         var rare = List.of(Pair.of(COMMON, 1), Pair.of(RARE, 1000), Pair.of(EPIC, 5800));
         var legendary = List.of(Pair.of(RARE, 1), Pair.of(EPIC, 3000), Pair.of(LEGENDARY, 5800));
-        var eternal = List.of(Pair.of(EPIC, 1), Pair.of(LEGENDARY, 3000), Pair.of(ETERNAL, 5800));
+        var eternal = List.of(Pair.of(EPIC, 1), Pair.of(LEGENDARY, 3000), Pair.of(MYTHIC, 5800));
         var withDone = switch (chestRarity){
             case 1 -> rare;
             case 2 -> legendary;

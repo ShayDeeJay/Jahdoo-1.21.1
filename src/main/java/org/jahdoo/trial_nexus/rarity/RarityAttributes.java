@@ -182,7 +182,7 @@ public class RarityAttributes {
             Pair.of(1800, 3600)    // Time
         );
 
-    public static final RarityAttributes ETERNAL_ATTRIBUTES =
+    public static final RarityAttributes MYTHIC_ATTRIBUTES =
         new RarityAttributes(
             Pair.of(50.0, 60.0),   // Mana Pool
             Pair.of(12.5, 15.0),   // Mana Regen

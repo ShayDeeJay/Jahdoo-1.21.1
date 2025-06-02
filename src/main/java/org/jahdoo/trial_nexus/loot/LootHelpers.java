@@ -74,7 +74,7 @@ public class LootHelpers {
                     var getBy = switch (value){
                         case 1 -> getInstance.getRareLootMultiplier();
                         case 2 -> getInstance.getLegendaryLootMultiplier();
-                        case 3 -> getInstance.getEternalLootMultiplier();
+                        case 3 -> getInstance.getMythicLootMultiplier();
                         default -> getInstance.getCommonLootMultiplier();
                     };
 
@@ -130,7 +130,7 @@ public class LootHelpers {
             switch (JahdooRarity.getRarity()) {
                 case COMMON, RARE -> itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(1));
                 case EPIC -> itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(2));
-                case LEGENDARY, ETERNAL -> { /*No Data*/ }
+                case LEGENDARY, MYTHIC -> { /*No Data*/ }
             }
 
             var itemEntity1 = new ItemEntity(serverLevel, pos.x, pos.y, pos.z, itemStack);

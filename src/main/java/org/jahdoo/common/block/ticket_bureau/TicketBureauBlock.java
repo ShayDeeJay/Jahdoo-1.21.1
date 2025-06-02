@@ -2,7 +2,6 @@ package org.jahdoo.common.block.ticket_bureau;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -24,11 +23,12 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.block.BlockInteractionHandler;
 import org.jahdoo.common.components.TicketData;
+import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 
 import static net.minecraft.core.Direction.SOUTH;
-import static net.minecraft.world.ItemInteractionResult.*;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
+import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.common.registers.BlockEntityReg.TICKET_BUREAU_BE;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
@@ -110,24 +110,43 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        var handItem = player.getItemInHand(hand);
+        var handItem = player.getMainHandItem();
         var entity = level.getBlockEntity(pos);
-        if(!(level instanceof ServerLevel)) return FAIL;
+//        if(!(level instanceof ServerLevel)) return FAIL;
 
         if(entity instanceof TicketBureauBlockEntity entity1){
-            if ((handItem.is(ItemReg.TRIAL_TICKET) || handItem.isEmpty())) {
+            var ticket = entity1.getTicketItem();
+            if(handItem.is(ItemReg.STAMP) && !ticket.isEmpty()){
+                addStampToTicket(handItem, ticket);
+                handItem.shrink(1);
+                return SUCCESS;
+            }
+
+            if (handItem.is(ItemReg.TRIAL_TICKET) || handItem.isEmpty()) {
                 BlockInteractionHandler.swapItemsWithHand(entity1.inputItemHandler, 0, player, hand);
+                return SUCCESS;
             }
 
             if (handItem.is(Items.REDSTONE)) {
-                var copy = entity1.getTicketItem().copy();
+                var copy = ticket.copy();
                 var setType = Random.nextInt(1, 6);
                 TicketData.initTicket(copy, setType);
                 entity1.inputItemHandler.setStackInSlot(0, copy);
+                return SUCCESS;
             }
+
+            return FAIL;
         }
 
-        return SUCCESS;
+        return FAIL;
+    }
+
+    public static void addStampToTicket(ItemStack handItem, ItemStack ticket) {
+        var getData = handItem.get(ComponentReg.TICKET_DATA);
+        if(getData == null) return;
+        for (var stringDoubleEntry : getData.values().entrySet()) {
+            TicketData.addNewEntry(ticket, stringDoubleEntry.getKey(), stringDoubleEntry.getValue());
+        }
     }
 }
 

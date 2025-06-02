@@ -38,7 +38,7 @@ public class InstanceData implements IAttachment {
     public static final String KEY_COMMON_LOOT_MULTIPLIER = "common_loot_multiplier";
     public static final String KEY_RARE_LOOT_MULTIPLIER = "rare_loot_multiplier";
     public static final String KEY_LEGENDARY_LOOT_MULTIPLIER = "legendary_loot_multiplier";
-    public static final String KEY_ETERNAL_LOOT_MULTIPLIER = "eternal_loot_multiplier";
+    public static final String KEY_MYTHIC_LOOT_MULTIPLIER = "mythic_loot_multiplier";
 
     private final Map<String, Double> values = new HashMap<>();
     private String difficulty;
@@ -152,13 +152,13 @@ public class InstanceData implements IAttachment {
         return (int) get(KEY_LEGENDARY_LOOT_MULTIPLIER);
     }
 
-    public int getEternalLootMultiplier() {
-        return (int) get(KEY_ETERNAL_LOOT_MULTIPLIER);
+    public int getMythicLootMultiplier() {
+        return (int) get(KEY_MYTHIC_LOOT_MULTIPLIER);
     }
 
     // Original increment/setters
-    public void setEternalLootMultiplier(int multiplier) {
-        increment(KEY_ETERNAL_LOOT_MULTIPLIER, multiplier);
+    public void setMythicLootMultiplier(int multiplier) {
+        increment(KEY_MYTHIC_LOOT_MULTIPLIER, multiplier);
     }
 
     // Original increment/setters

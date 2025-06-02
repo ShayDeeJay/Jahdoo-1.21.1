@@ -71,6 +71,9 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> COIN =
         complexItem("coin", CoinItem::new);
 
+    public static final DeferredHolder<Item, Item> STAMP =
+        complexItem("stamp", Stamp::new);
+
     public static final DeferredHolder<Item, Item> LOOT_KEY =
         complexItem("key", KeyItem::new);
 

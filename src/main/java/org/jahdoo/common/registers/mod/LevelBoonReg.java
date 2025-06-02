@@ -139,8 +139,8 @@ public class LevelBoonReg {
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> LEGENDARY_LOOT_MULTIPLIER =
         registerElement(LegendaryLootMultiplier::new);
 
-    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> ETERNAL_LOOT_MULTIPLIER =
-        registerElement(EternalLootMultiplier::new);
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> MYTHIC_LOOT_MULTIPLIER =
+        registerElement(MythicLootMultiplier::new);
 
     public static void register(IEventBus eventBus) {
         LEVEL_BOON.register(eventBus);

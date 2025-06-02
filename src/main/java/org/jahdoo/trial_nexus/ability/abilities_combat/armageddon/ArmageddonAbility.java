@@ -25,7 +25,7 @@ public class ArmageddonAbility extends Ability {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.ETERNAL;
+        return JahdooRarity.MYTHIC;
     }
 
     @Override

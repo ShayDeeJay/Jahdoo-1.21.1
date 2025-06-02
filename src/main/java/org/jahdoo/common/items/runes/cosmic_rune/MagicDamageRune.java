@@ -15,7 +15,7 @@ public class MagicDamageRune extends AbstractCosmicRune{
 
     @Override
     public JahdooRarity runeRarity() {
-        return JahdooRarity.ETERNAL;
+        return JahdooRarity.MYTHIC;
     }
 
     @Override

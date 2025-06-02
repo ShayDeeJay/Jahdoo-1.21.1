@@ -20,7 +20,7 @@ public class LocalLootBeamData {
     private static final LootBeamComponent RARE_ITEM = rarityLootBeam(RARE);
     private static final LootBeamComponent EPIC_ITEM = rarityLootBeam(EPIC);
     private static final LootBeamComponent LEGENDARY_ITEM = rarityLootBeam(LEGENDARY);
-    private static final LootBeamComponent ETERNAL_ITEM = rarityLootBeam(ETERNAL);
+    private static final LootBeamComponent MYTHIC_ITEM = rarityLootBeam(MYTHIC);
     private static final LootBeamComponent UNIQUE_ITEM = uniqueLootBeam(UNIQUE);
 
     public static LootBeamComponent coinLootBeamWithColour(int colour){
@@ -69,7 +69,7 @@ public class LocalLootBeamData {
             case 1 -> RARE_ITEM;
             case 2 -> EPIC_ITEM;
             case 3 -> LEGENDARY_ITEM;
-            case 4 -> ETERNAL_ITEM;
+            case 4 -> MYTHIC_ITEM;
             case 5 -> UNIQUE_ITEM;
             default -> COMMON_ITEM;
         };

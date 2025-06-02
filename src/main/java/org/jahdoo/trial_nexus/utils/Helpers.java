@@ -278,7 +278,10 @@ public class Helpers {
 
     public static int colourByPercent(int targetNumber, int currentNumber, boolean reversed) {
         var split = targetNumber / 3;
-        return currentNumber <= split ? reversed ? NEGATIVE_RED : PERK_GREEN : currentNumber <= split * 2.5 ? ABSORPTION_YELLOW : reversed ? PERK_GREEN : NEGATIVE_RED;
+        var green = PERK_GREEN;
+        var yellow = ABSORPTION_YELLOW;
+        var red = NEGATIVE_RED;
+        return currentNumber <= split ? reversed ? red : green : currentNumber <= split * 2.5 ? yellow : reversed ? green : red;
     }
 
     public static void playDebugMessage(Player player, Object... info){

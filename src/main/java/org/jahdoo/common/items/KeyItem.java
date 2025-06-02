@@ -71,7 +71,7 @@ public class KeyItem extends Item implements JahdooItem {
         return switch (getId.value()){
             case 1 -> JahdooRarity.RARE;
             case 2 -> JahdooRarity.LEGENDARY;
-            case 3 -> JahdooRarity.ETERNAL;
+            case 3 -> JahdooRarity.MYTHIC;
             default -> JahdooRarity.COMMON;
         };
     }

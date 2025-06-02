@@ -5,7 +5,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.rarity.RarityAttributes;
 
-import static org.jahdoo.trial_nexus.rarity.JahdooRarity.ETERNAL;
+import static org.jahdoo.trial_nexus.rarity.JahdooRarity.MYTHIC;
 import static org.jahdoo.common.registers.AttributeReg.ABSORPTION_HEARTS;
 
 public class AbsorptionHeartRune extends AbstractSympathiserRune {
@@ -17,7 +17,7 @@ public class AbsorptionHeartRune extends AbstractSympathiserRune {
 
     @Override
     public JahdooRarity runeRarity() {
-        return ETERNAL;
+        return MYTHIC;
     }
 
     @Override

@@ -20,7 +20,7 @@ public class GoldCoins extends Coins{
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.ETERNAL;
+        return JahdooRarity.MYTHIC;
     }
 
     @Override

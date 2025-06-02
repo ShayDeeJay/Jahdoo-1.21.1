@@ -2,6 +2,7 @@ package org.jahdoo.common.registers.mod;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -11,6 +12,7 @@ import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.tasks.*;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -31,6 +33,12 @@ public class TaskReg {
 
     public static List<AbstractTask> getAllTasks() {
         return REGISTRY.stream().toList();
+    }
+
+    public static List<AbstractTask> getAllTasksSorted(Player player) {
+        return REGISTRY.stream()
+            .sorted(Comparator.comparing(s -> !player.getTags().contains(s.taskId())))
+            .toList();
     }
 
     public static List<AbstractTask> getTasksByTriggerType(AbstractTask.TriggerType type){
@@ -62,8 +70,8 @@ public class TaskReg {
     public static final DeferredHolder<AbstractTask, AbstractTask> LEGENDARY_CHEST =
         registerTask(LegendaryLooter::new);
 
-    public static final DeferredHolder<AbstractTask, AbstractTask> ETERNAL_ASSASSIN =
-        registerTask(EternalLooter::new);
+    public static final DeferredHolder<AbstractTask, AbstractTask> MYTHIC_ASSASSIN =
+        registerTask(MythicLooter::new);
 
     public static void register(IEventBus eventBus) {
         TASK.register(eventBus);

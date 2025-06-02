@@ -20,7 +20,7 @@ public class CertifiedAssassin extends AbstractTask {
     public static ItemStack wandExample;
 
     public ItemStack getThisItem(int x){
-        if(wandExample == null || x % 80 == 0) wandExample = getRandomWand(JahdooRarity.ETERNAL, null);
+        if(wandExample == null || x % 80 == 0) wandExample = getRandomWand(JahdooRarity.MYTHIC, null);
         return wandExample;
     }
 

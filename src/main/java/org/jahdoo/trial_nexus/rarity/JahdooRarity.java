@@ -34,15 +34,15 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     RARE(1, "Rare", color(67, 164, 222), RARE_ATTRIBUTES, Icons.RARE_TAG),
     EPIC(2, "Epic", color(222, 136, 255), EPIC_ATTRIBUTES, Icons.EPIC_TAG),
     LEGENDARY(3, "Legendary", color(241, 194, 50), LEGENDARY_ATTRIBUTES, Icons.LEGENDARY_TAG),
-    ETERNAL(4, "Eternal", color(225, 92, 112), ETERNAL_ATTRIBUTES, Icons.ETERNAL_TAG),
-    UNIQUE(5, "Unique", UNIQUE_B, ETERNAL_ATTRIBUTES, Icons.UNIQUE_TAG);
+    MYTHIC(4, "Mythic", color(225, 92, 112), MYTHIC_ATTRIBUTES, Icons.MYTHIC_TAG),
+    UNIQUE(5, "Unique", UNIQUE_B, MYTHIC_ATTRIBUTES, Icons.UNIQUE_TAG);
 
     public static final List<Pair<JahdooRarity, Integer>> BASE_RARITY_CHANCES = List.of(
         Pair.of(COMMON, 1),
         Pair.of(RARE, 1500),
         Pair.of(EPIC, 4500),
         Pair.of(LEGENDARY, 5500),
-        Pair.of(ETERNAL, 6000)
+        Pair.of(MYTHIC, 6000)
     );
 
     private final int id;
@@ -182,7 +182,7 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
                     epic.set(epic.get() + 1);
                 } else if (rarity == JahdooRarity.LEGENDARY) {
                     legendary.set(legendary.get() + 1);
-                } else if (rarity == JahdooRarity.ETERNAL) {
+                } else if (rarity == JahdooRarity.MYTHIC) {
                     ethereal.set(ethereal.get() + 1);
                 }
             }

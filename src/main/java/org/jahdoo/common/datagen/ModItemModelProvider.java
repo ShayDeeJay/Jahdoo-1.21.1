@@ -38,6 +38,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         registerAugmentHyperCoreFilled();
         registerTickets();
         registerPerkaSoda();
+        registerStamps();
     }
 
     private void createSimpleItemModel(DeferredHolder<Item, Item> item) {
@@ -118,6 +119,13 @@ public class ModItemModelProvider extends ItemModelProvider {
         for (int i = 1; i < 5; i++) {
             createModel("perka_soda" + i, "item/perka_sodas/perka_soda" + i);
             createOverride(i, ItemReg.PERKA_SODA, "item/perka_soda");
+        }
+    }
+
+    private void registerStamps() {
+        for (int i = 1; i < 11; i++) {
+            createModel("stamp" + i, "item/stamps/stamp" + i);
+            createOverride(i, ItemReg.STAMP, "item/stamp");
         }
     }
 

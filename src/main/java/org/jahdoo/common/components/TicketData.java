@@ -24,7 +24,7 @@ public record TicketData(
     public static void addNewEntry(ItemStack itemStack, String tag, double value){
         var getFromStack = itemStack.get(ComponentReg.TICKET_DATA);
         var newMap = new HashMap<>(getFromStack != null ? getFromStack.values() : new HashMap<>());
-        newMap.put(tag, value);
+        newMap.put(tag, newMap.getOrDefault(tag, 0.0) + value);
         itemStack.set(ComponentReg.TICKET_DATA, new TicketData(newMap));
     }
 

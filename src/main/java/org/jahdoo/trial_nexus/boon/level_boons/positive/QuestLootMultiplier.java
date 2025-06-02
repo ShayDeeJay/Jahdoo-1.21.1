@@ -43,7 +43,7 @@ public class QuestLootMultiplier extends AbstractLevelBoon {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.ETERNAL;
+        return JahdooRarity.MYTHIC;
     }
 
 }

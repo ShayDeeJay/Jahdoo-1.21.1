@@ -151,6 +151,7 @@ public class ServerEvents {
     public static void levelTickEvent(LevelTickEvent.Pre tickEvent){
         instanceEndingWarning(tickEvent);
         discardLevelOnEnd(tickEvent);
+
     }
 
     @SubscribeEvent

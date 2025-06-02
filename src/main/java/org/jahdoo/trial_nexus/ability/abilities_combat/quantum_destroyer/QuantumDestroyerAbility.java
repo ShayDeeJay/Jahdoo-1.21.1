@@ -23,7 +23,7 @@ public class QuantumDestroyerAbility extends Ability {
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.ETERNAL;
+        return JahdooRarity.MYTHIC;
     }
 
     @Override

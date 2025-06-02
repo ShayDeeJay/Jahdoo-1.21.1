@@ -37,7 +37,7 @@ public class RunData implements IAttachment {
     public static final String CHESTS_COMMON = "chests_common";
     public static final String CHESTS_RARE = "chests_rare";
     public static final String CHESTS_LEGENDARY = "chests_legendary";
-    public static final String CHESTS_ETERNAL = "chests_eternal";
+    public static final String CHESTS_MYTHIC = "chests_mythic";
     public static final String SAFE = "safe";
 
     public static final String TIME_IN_TRIAL = "time_in_trial";
@@ -95,8 +95,8 @@ public class RunData implements IAttachment {
         return getStat(CHESTS_LEGENDARY);
     }
 
-    public int getEternalChests(){
-        return getStat(CHESTS_ETERNAL);
+    public int getMythicChests(){
+        return getStat(CHESTS_MYTHIC);
     }
 
     public int getStat(String key) {
@@ -277,7 +277,7 @@ public class RunData implements IAttachment {
     public static void incrementChestOpenedExp(ServerLevel level, LivingEntity player, int chestValue) {
         var instanceData = level.getData(INSTANCE_DATA.get());
         var runData = player.getData(RUN_DATA.get());
-        var key = chestValue == 0 ? CHESTS_COMMON : chestValue == 1 ? CHESTS_RARE : chestValue == 2 ? CHESTS_LEGENDARY : CHESTS_ETERNAL;
+        var key = chestValue == 0 ? CHESTS_COMMON : chestValue == 1 ? CHESTS_RARE : chestValue == 2 ? CHESTS_LEGENDARY : CHESTS_MYTHIC;
         runData.incrementStat(key);
         runData.setExperienceGained(instanceData.getDifficulty(), chestValue);
         if (player instanceof ServerPlayer serverPlayer) {

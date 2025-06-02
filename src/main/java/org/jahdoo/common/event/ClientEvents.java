@@ -103,7 +103,7 @@ public class ClientEvents {
                 }
             }
         }
-//
+
 //        if(itemStack.has(ComponentReg.JAHDOO_RARITY)){
 //            var runeSockets = new RarityTooltipRenderer.RarityTag(itemStack, current);
 //            current.addFirst(Either.right(runeSockets));

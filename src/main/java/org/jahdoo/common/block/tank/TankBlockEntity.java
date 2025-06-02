@@ -34,7 +34,8 @@ public class TankBlockEntity extends AbstractBEInventory {
 
     public int glowStrength = 150;
     public List<AbstractTankUser> usingThisTank = new ArrayList<>();
-
+    private static final int INIT_TANK_CAPACITY = 64;
+    private int maxTankSize;
     private int counter;
     private static final int INPUT = 0;
 
@@ -50,17 +51,21 @@ public class TankBlockEntity extends AbstractBEInventory {
 
     @Override
     public int setOutputSlots() {
-        return 1;
+        return 0;
     }
 
     @Override
     public int getMaxSlotSizeInput() {
-        return 64;
+        return INIT_TANK_CAPACITY;
     }
 
     @Override
     public int getMaxSlotSizeOutput() {
-        return 64;
+        return 0;
+    }
+
+    public void increaseTankSize(int increment){
+        maxTankSize += increment;
     }
 
     public int getCount(){
@@ -74,12 +79,14 @@ public class TankBlockEntity extends AbstractBEInventory {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putInt("counter", this.counter);
+        tag.putInt("tankSize", maxTankSize);
         super.saveAdditional(tag, registries);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         this.counter = tag.getInt("counter");
+        this.maxTankSize = tag.getInt("tankSize");
         super.loadAdditional(tag, registries);
     }
 
