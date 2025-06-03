@@ -33,6 +33,10 @@ public abstract class AbstractLevelBoon {
 
     abstract public void execute(ServerLevel level, double value);
 
+    public int getStampIndex(){
+        return -1;
+    }
+
     public int textColour(){
         return isPositive() ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED;
     }

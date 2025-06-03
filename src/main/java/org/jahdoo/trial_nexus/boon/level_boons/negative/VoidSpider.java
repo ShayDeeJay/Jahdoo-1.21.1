@@ -7,12 +7,13 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_VOID_SPIDER;
 
 public class VoidSpider extends MobLevelBoon {
 
     @Override
     public String id() {
-        return "void_spider";
+        return KEY_VOID_SPIDER;
     }
 
     @Override

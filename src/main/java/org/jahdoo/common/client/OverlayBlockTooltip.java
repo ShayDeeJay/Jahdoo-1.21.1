@@ -81,13 +81,18 @@ public class  OverlayBlockTooltip {
             }
 
             if(lookingAt instanceof TicketBureauBlockEntity){
-                var mouseY = height - (tooltip.size() * 5);
-                graphics.renderTooltip(font, stackInSlot, width - 250, mouseY);
+                var mouseY = height - ((tooltip.size() + font.lineHeight)) * 2;
                 var mainHandItem = player.getMainHandItem();
-                if(mainHandItem.is(ItemReg.STAMP)){
+                var hasComparator = mainHandItem.is(ItemReg.STAMP);
+                graphics.renderTooltip(font, stackInSlot, !hasComparator ? (width + 30) : (width - 230), mouseY);
+                if(hasComparator){
+                    var size = 32;
+                    graphics.blit(Icons.DIRECTION_ARROW_FORWARD, width - size/2 - 1, height - size/2, 0, 0, size, size, size, size);
                     var copy = stackInSlot.copy();
                     TicketBureauBlock.addStampToTicket(mainHandItem, copy);
-                    graphics.renderTooltip(font, copy, width + 60, mouseY);
+                    var tooltip1 = getTooltipFromItem(instance, copy);
+                    var mouseY1 = height - ((tooltip1.size() + font.lineHeight)) * 2;
+                    graphics.renderTooltip(font, copy, width + 30, mouseY1);
                 }
             }
         }

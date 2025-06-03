@@ -6,7 +6,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -30,7 +29,6 @@ import static net.minecraft.core.Direction.SOUTH;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static org.jahdoo.common.registers.BlockEntityReg.TICKET_BUREAU_BE;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -112,7 +110,6 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         var handItem = player.getMainHandItem();
         var entity = level.getBlockEntity(pos);
-//        if(!(level instanceof ServerLevel)) return FAIL;
 
         if(entity instanceof TicketBureauBlockEntity entity1){
             var ticket = entity1.getTicketItem();
@@ -124,14 +121,6 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
 
             if (handItem.is(ItemReg.TRIAL_TICKET) || handItem.isEmpty()) {
                 BlockInteractionHandler.swapItemsWithHand(entity1.inputItemHandler, 0, player, hand);
-                return SUCCESS;
-            }
-
-            if (handItem.is(Items.REDSTONE)) {
-                var copy = ticket.copy();
-                var setType = Random.nextInt(1, 6);
-                TicketData.initTicket(copy, setType);
-                entity1.inputItemHandler.setStackInSlot(0, copy);
                 return SUCCESS;
             }
 

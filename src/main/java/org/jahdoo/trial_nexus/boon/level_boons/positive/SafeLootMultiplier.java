@@ -7,12 +7,13 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_SAFE_LOOT_MULTIPLIER;
 
 public class SafeLootMultiplier extends AbstractLevelBoon {
 
     @Override
     public String id() {
-        return "multiply_safe_loot";
+        return KEY_SAFE_LOOT_MULTIPLIER;
     }
 
     @Override
@@ -46,4 +47,8 @@ public class SafeLootMultiplier extends AbstractLevelBoon {
         return JahdooRarity.LEGENDARY;
     }
 
+    @Override
+    public int getStampIndex() {
+        return 8;
+    }
 }

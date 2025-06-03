@@ -7,12 +7,13 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_HORDE;
 
 public class Horde extends MobLevelBoon {
 
     @Override
     public String id() {
-        return "horde";
+        return KEY_HORDE;
     }
 
     @Override

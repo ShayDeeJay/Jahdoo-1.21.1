@@ -137,10 +137,17 @@ public class TrialNexusTicket extends Item implements JahdooItem {
         tooltips.add(prefix.copy().append(suffix));
     }
 
-    private static void comp(List<Component> tooltipComponents, @Nullable TicketData getTicketMods, String keyBronzeCoin, int colour) {
+    private static void comp(List<Component> tooltipComponents, @Nullable TicketData getTicketMods, String keyBronzeCoin, int colour, boolean isPercent) {
         if(getTicketMods != null && getTicketMods.get(keyBronzeCoin) > 0){
             var v = getTicketMods.get(keyBronzeCoin);
-            tooltipComponents.add(withStyleComponent("+" + roundNonWholeString(doubleFormattedDouble(v)) + " " + stringIdToName(keyBronzeCoin), colour));
+            tooltipComponents.add(withStyleComponent("+" + roundNonWholeString(doubleFormattedDouble(v)) + (isPercent ? "% " : " ") + stringIdToName(keyBronzeCoin), colour));
+        }
+    }
+
+    private static void mobComp(List<Component> tooltipComponents, @Nullable TicketData getTicketMods, String keyBronzeCoin, boolean isPercent) {
+        if(getTicketMods != null && getTicketMods.get(keyBronzeCoin) > 0){
+            var v = getTicketMods.get(keyBronzeCoin);
+            tooltipComponents.add(withStyleComponent("+" + roundNonWholeString(doubleFormattedDouble(v)) + (isPercent ? "% " : " ") + stringIdToName(keyBronzeCoin), NEGATIVE_RED));
         }
     }
 
@@ -152,15 +159,24 @@ public class TrialNexusTicket extends Item implements JahdooItem {
                 tooltips.add(withStyleComponent("+" + ticksToTime(v + "") + " " + Helpers.stringIdToName(keyMaxTime),  PERK_GREEN));
             }
 
-            comp(tooltips, getTicketMods, KEY_BRONZE_COIN, ColourStore.BRONZE_COIN);
-            comp(tooltips, getTicketMods, KEY_SILVER_COIN, ColourStore.SILVER_COIN);
-            comp(tooltips, getTicketMods, KEY_GOLD_COIN, ColourStore.CHAMPION_GOLD);
-            comp(tooltips, getTicketMods, KEY_COMMON_LOOT_MULTIPLIER, COMMON.getColour());
-            comp(tooltips, getTicketMods, KEY_RARE_LOOT_MULTIPLIER, RARE.getColour());
-            comp(tooltips, getTicketMods, KEY_LEGENDARY_LOOT_MULTIPLIER, LEGENDARY.getColour());
-            comp(tooltips, getTicketMods, KEY_MYTHIC_LOOT_MULTIPLIER, MYTHIC.getColour());
-            comp(tooltips, getTicketMods, KEY_QUEST_CRATE_MULTIPLIER, WALLET_BROWN);
-            comp(tooltips, getTicketMods, KEY_SAFE_LOOT_MULTIPLIER, GOLD_COIN);
+            comp(tooltips, getTicketMods, KEY_BRONZE_COIN, ColourStore.BRONZE_COIN, false);
+            comp(tooltips, getTicketMods, KEY_SILVER_COIN, ColourStore.SILVER_COIN, false);
+            comp(tooltips, getTicketMods, KEY_GOLD_COIN, ColourStore.CHAMPION_GOLD, false);
+            comp(tooltips, getTicketMods, KEY_COMMON_LOOT_MULTIPLIER, COMMON.getColour(), false);
+            comp(tooltips, getTicketMods, KEY_RARE_LOOT_MULTIPLIER, RARE.getColour(), false);
+            comp(tooltips, getTicketMods, KEY_LEGENDARY_LOOT_MULTIPLIER, LEGENDARY.getColour(), false);
+            comp(tooltips, getTicketMods, KEY_MYTHIC_LOOT_MULTIPLIER, MYTHIC.getColour(), false);
+            comp(tooltips, getTicketMods, KEY_QUEST_CRATE_MULTIPLIER, WALLET_BROWN, false);
+            comp(tooltips, getTicketMods, KEY_SAFE_LOOT_MULTIPLIER, GOLD_COIN, false);
+
+            mobComp(tooltips, getTicketMods, KEY_HEALTH, true);
+            mobComp(tooltips, getTicketMods, KEY_ARMOR, true);
+            mobComp(tooltips, getTicketMods, KEY_SPEED, true);
+            mobComp(tooltips, getTicketMods, KEY_HORDE, false);
+            mobComp(tooltips, getTicketMods, KEY_SKELETON, false);
+            mobComp(tooltips, getTicketMods, KEY_ETERNAL_WIZARD, false);
+            mobComp(tooltips, getTicketMods, KEY_VOID_SPIDER, false);
+            mobComp(tooltips, getTicketMods, KEY_INFERNO_CREEPER, false);
         }
     }
 

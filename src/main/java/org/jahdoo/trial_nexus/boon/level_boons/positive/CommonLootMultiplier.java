@@ -7,12 +7,13 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_COMMON_LOOT_MULTIPLIER;
 
 public class CommonLootMultiplier extends AbstractLevelBoon {
 
     @Override
     public String id() {
-        return "multiply_common_loot";
+        return KEY_COMMON_LOOT_MULTIPLIER;
     }
 
     @Override
@@ -44,6 +45,11 @@ public class CommonLootMultiplier extends AbstractLevelBoon {
     @Override
     public JahdooRarity rarity() {
         return JahdooRarity.RARE;
+    }
+
+    @Override
+    public int getStampIndex() {
+        return 3;
     }
 
 }

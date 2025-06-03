@@ -6,11 +6,12 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_BRONZE_COIN;
 
 public class BronzeCoins extends Coins{
     @Override
     public String id() {
-        return "bronze_coin";
+        return KEY_BRONZE_COIN;
     }
 
     @Override
@@ -27,5 +28,10 @@ public class BronzeCoins extends Coins{
     public void execute(ServerLevel level, double value) {
         var data = level.getData(INSTANCE_DATA);
         data.setBronzeCoin((int) value);
+    }
+
+    @Override
+    public int getStampIndex() {
+        return 0;
     }
 }

@@ -29,16 +29,17 @@ public class InstanceData implements IAttachment {
     public static final String KEY_SILVER_COIN = "silver_coin";
     public static final String KEY_GOLD_COIN = "gold_coin";
     public static final String KEY_PLATINUM_COIN = "platinum_coin";
-    public static final String KEY_HEALTH = "health";
-    public static final String KEY_SPEED = "speed";
-    public static final String KEY_ARMOR = "armor";
-    public static final String KEY_ATTACK_DAMAGE = "attack_damage";
+    public static final String KEY_HEALTH = "mob_health";
+    public static final String KEY_SPEED = "mob_speed";
+    public static final String KEY_ARMOR = "mob_armor";
+    public static final String KEY_ATTACK_DAMAGE = "mob_attack_damage";
     public static final String KEY_QUEST_CRATE_MULTIPLIER = "quest_crate_multiplier";
     public static final String KEY_SAFE_LOOT_MULTIPLIER = "safe_loot_multiplier";
     public static final String KEY_COMMON_LOOT_MULTIPLIER = "common_loot_multiplier";
     public static final String KEY_RARE_LOOT_MULTIPLIER = "rare_loot_multiplier";
     public static final String KEY_LEGENDARY_LOOT_MULTIPLIER = "legendary_loot_multiplier";
     public static final String KEY_MYTHIC_LOOT_MULTIPLIER = "mythic_loot_multiplier";
+    public static final String KEY_EXPERIENCE = "xp";
 
     private final Map<String, Double> values = new HashMap<>();
     private String difficulty;

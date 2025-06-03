@@ -143,15 +143,10 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 //            getItemInteractionResult(handItem, tank, player, level);
 
             var handler = tank.inputItemHandler;
-
             var itemStack = new ItemStack(AUGMENT_CORE);
             CoreData.setFilled(itemStack);
 
-            if(CoreData.isFull(itemStack)){
-                System.out.println("£iemre");
-                tank.increaseTankSize(64);
-            }
-
+            if(CoreData.isFull(itemStack)) tank.increaseTankSize(64);
             if(handItem.is(BlockReg.NEXITE_BLOCK.get().asItem())){
                 if(handler.getStackInSlot(0).getCount() < handler.getSlotLimit(0) - 9){
                     handler.setStackInSlot(0,  new ItemStack(NEXITE_POWDER.get()).copyWithCount(handler.getStackInSlot(0).getCount() + 9));

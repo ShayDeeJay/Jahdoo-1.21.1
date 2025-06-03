@@ -7,12 +7,13 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_SKELETON;
 
 public class Skeleton extends MobLevelBoon {
 
     @Override
     public String id() {
-        return "skeleton";
+        return KEY_SKELETON;
     }
 
     @Override

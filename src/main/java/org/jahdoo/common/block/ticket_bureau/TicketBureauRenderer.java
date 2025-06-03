@@ -51,6 +51,16 @@ public class TicketBureauRenderer implements BlockEntityRenderer<TicketBureauBlo
             renderName(dispatcher.camera.rotation(), CoreData.isFull(itemStack1) ? complete : displayName, stack, source, 1.4);
         }
 
+        for (var currentStamp : entity.currentStamps) {
+            stack.pushPose();
+            stack.translate(x, number, z);
+            stack.scale(scale, scale, scale);
+            stack.mulPose(Axis.YP.rotationDegrees(rotation));
+            stack.mulPose(Axis.XP.rotationDegrees(22));
+            itemRenderer.renderStatic(currentStamp, FIXED, packedLight, NO_OVERLAY, stack, source, entity.getLevel(), 1);
+            stack.popPose();
+        }
+
         stack.pushPose();
         stack.translate(x, number, z);
         stack.scale(scale, scale, scale);

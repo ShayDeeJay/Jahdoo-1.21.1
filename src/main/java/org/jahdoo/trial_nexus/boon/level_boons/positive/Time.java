@@ -6,6 +6,7 @@ import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 
+import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_MAX_TIME;
 import static org.jahdoo.trial_nexus.utils.Maths.doubleFormattedDouble;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
@@ -13,7 +14,7 @@ public class Time extends AbstractLevelBoon {
 
     @Override
     public String id() {
-        return "time";
+        return KEY_MAX_TIME;
     }
 
     @Override
@@ -46,6 +47,11 @@ public class Time extends AbstractLevelBoon {
     @Override
     public JahdooRarity rarity() {
         return JahdooRarity.RARE;
+    }
+
+    @Override
+    public int getStampIndex() {
+        return 9;
     }
 
 }

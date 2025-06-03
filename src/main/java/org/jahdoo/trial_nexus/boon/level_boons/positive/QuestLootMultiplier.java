@@ -7,12 +7,13 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_QUEST_CRATE_MULTIPLIER;
 
 public class QuestLootMultiplier extends AbstractLevelBoon {
 
     @Override
     public String id() {
-        return "multiply_quest_loot";
+        return KEY_QUEST_CRATE_MULTIPLIER;
     }
 
     @Override
@@ -44,6 +45,11 @@ public class QuestLootMultiplier extends AbstractLevelBoon {
     @Override
     public JahdooRarity rarity() {
         return JahdooRarity.MYTHIC;
+    }
+
+    @Override
+    public int getStampIndex() {
+        return 8;
     }
 
 }

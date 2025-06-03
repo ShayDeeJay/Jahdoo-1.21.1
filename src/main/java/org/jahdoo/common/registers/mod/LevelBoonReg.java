@@ -49,6 +49,14 @@ public class LevelBoonReg {
         return Helpers.listRandom(element);
     }
 
+    public static AbstractLevelBoon getStampBoons(JahdooRarity rarity) {
+        var element = REGISTRY
+            .stream()
+            .filter(a -> a.getStampIndex() != -1)
+            .toList();
+        return Helpers.listRandom(element);
+    }
+
     public static AbstractLevelBoon withRarityNegative(JahdooRarity rarity) {
         var element = REGISTRY
             .stream()

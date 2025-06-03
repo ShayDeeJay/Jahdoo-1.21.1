@@ -6,13 +6,14 @@ import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 
+import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_EXPERIENCE;
 import static org.jahdoo.trial_nexus.attachments.RunData.addExperienceToTotal;
 
 public class Experience extends AbstractLevelBoon {
 
     @Override
     public String id() {
-        return "xp";
+        return KEY_EXPERIENCE;
     }
 
     @Override

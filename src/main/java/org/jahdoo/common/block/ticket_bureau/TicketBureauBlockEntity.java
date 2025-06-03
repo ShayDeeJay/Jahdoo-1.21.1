@@ -16,12 +16,17 @@ import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.jahdoo.common.block.rune_table.DivineForge.setOuterRingPulse;
 import static org.jahdoo.common.registers.mod.ElementReg.utility;
 import static org.jahdoo.trial_nexus.utils.ColourStore.NEGATIVE_RED;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class TicketBureauBlockEntity extends AbstractTankUser {
+
+    public List<ItemStack> currentStamps = new ArrayList<>();
 
     public TicketBureauBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.TICKET_BUREAU_BE.get(), pos, state, 1);

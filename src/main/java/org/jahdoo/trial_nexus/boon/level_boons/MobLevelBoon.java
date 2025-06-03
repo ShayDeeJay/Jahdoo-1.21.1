@@ -24,4 +24,6 @@ public abstract class MobLevelBoon extends AbstractLevelBoon {
         return isTrashMob()? doubleFormattedDouble(getRarity.getRandomMaxAbsorption()) : 1;
     }
 
+
+
 }

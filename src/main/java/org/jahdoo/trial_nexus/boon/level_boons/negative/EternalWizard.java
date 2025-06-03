@@ -7,12 +7,13 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
+import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_ETERNAL_WIZARD;
 
 public class EternalWizard extends MobLevelBoon {
 
     @Override
     public String id() {
-        return "eternal_wizard";
+        return KEY_ETERNAL_WIZARD;
     }
 
     @Override
