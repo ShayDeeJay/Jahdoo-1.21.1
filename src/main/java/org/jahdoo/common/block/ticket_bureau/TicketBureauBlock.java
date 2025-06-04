@@ -2,6 +2,7 @@ package org.jahdoo.common.block.ticket_bureau;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -21,14 +22,22 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.block.BlockInteractionHandler;
+import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.components.TicketData;
+import org.jahdoo.common.particle.ParticleStore;
+import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static net.minecraft.core.Direction.SOUTH;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static net.minecraft.world.level.block.EnchantingTableBlock.BOOKSHELF_OFFSETS;
 import static org.jahdoo.common.registers.BlockEntityReg.TICKET_BUREAU_BE;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -114,7 +123,26 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
         if(entity instanceof TicketBureauBlockEntity entity1){
             var ticket = entity1.getTicketItem();
             if(handItem.is(ItemReg.STAMP) && !ticket.isEmpty()){
+                var comp = handItem.get(DataComponents.CUSTOM_NAME);
+                var x = comp.getStyle().getColor();
+                System.out.println(x);
+                for (BlockPos blockpos : BOOKSHELF_OFFSETS) {
+                    level.addParticle(
+                        new GenericParticleOptions(ParticleStore.MAGIC_MOVE_PARTICLE, ElementReg.random().textColourA(), 0, Random.nextInt(10, 30), Random.nextInt(2,5), false, 5),
+                        (double)pos.getX() + 0.5,
+                        (double)pos.getY() + 2.0,
+                        (double)pos.getZ() + 0.5,
+                        (double)((float)blockpos.getX() + Random.nextFloat()) - 0.5,
+                        (double)((float)blockpos.getY() - Random.nextFloat() - 1.0F),
+                        (double)((float)blockpos.getZ() + Random.nextFloat()) - 0.5
+                    );
+                }
+                Helpers.getSoundWithPosition(level,pos, SoundReg.DASH_EFFECT.get(), 1, 0.5F);
+                Helpers.getSoundWithPosition(level,pos, SoundReg.UNLOCK_NOTIFICATION.get(), 1, 0.2F);
                 addStampToTicket(handItem, ticket);
+                var filled = CoreData.getFilled(ticket);
+                var required = CoreData.getRequired(ticket);
+                ticket.set(ComponentReg.CORE_DATA, new CoreData(required + 30, filled));
                 handItem.shrink(1);
                 return SUCCESS;
             }

@@ -17,7 +17,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.components.TicketData;
@@ -48,6 +47,7 @@ public class TrialNexusTicket extends Item implements JahdooItem {
             new Properties()
                 .component(ComponentReg.TICKET_DATA, new TicketData(new HashMap<>()))
                 .component(STORE_INTEGER, 0)
+                .component(CORE_DATA, new CoreData(100, 0))
         );
     }
 
@@ -82,12 +82,10 @@ public class TrialNexusTicket extends Item implements JahdooItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        player.startUsingItem(usedHand);
-        var itemInHand = player.getItemInHand(usedHand);
-        if(!itemInHand.has(CORE_DATA))
-            itemInHand.set(ComponentReg.CORE_DATA, new CoreData(100, 0));
+        if(CoreData.isFull(player.getItemInHand(usedHand)))
+            player.startUsingItem(usedHand);
 
-        return InteractionResultHolder.success(itemInHand);
+        return super.use(level, player, usedHand);
     }
 
     @Override
@@ -117,8 +115,7 @@ public class TrialNexusTicket extends Item implements JahdooItem {
     @Override
     public void onUseTick(Level level, LivingEntity player, ItemStack stack, int remainingUseDuration) {
         if (!(player instanceof ServerPlayer serverPlayer) || level instanceof CustomLevel) return;
-        var i1 = stack.get(STORE_INTEGER);
-        if(player.isUsingItem() && i1 != null && i1 > 0){
+        if(player.isUsingItem()){
             var getCastTime = 80;
             var ticksUsingItem = serverPlayer.getTicksUsingItem();
             loading(player, serverPlayer, getCastTime, ticksUsingItem);
@@ -177,23 +174,6 @@ public class TrialNexusTicket extends Item implements JahdooItem {
             mobComp(tooltips, getTicketMods, KEY_ETERNAL_WIZARD, false);
             mobComp(tooltips, getTicketMods, KEY_VOID_SPIDER, false);
             mobComp(tooltips, getTicketMods, KEY_INFERNO_CREEPER, false);
-        }
-    }
-
-    private static void testData(ItemStack item) {
-        if(!item.has(DataComponents.CUSTOM_MODEL_DATA)){
-            var value = Random.nextInt(1, 5);
-            item.set(STORE_INTEGER, value);
-            item.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(value));
-            TicketData.addNewEntry(item, KEY_MAX_TIME, 3200);
-            TicketData.addNewEntry(item, KEY_BRONZE_COIN, 10);
-            TicketData.addNewEntry(item, KEY_SILVER_COIN, 10);
-            TicketData.addNewEntry(item, KEY_COMMON_LOOT_MULTIPLIER, 10);
-            TicketData.addNewEntry(item, KEY_RARE_LOOT_MULTIPLIER, 10);
-            TicketData.addNewEntry(item, KEY_LEGENDARY_LOOT_MULTIPLIER, 10);
-            TicketData.addNewEntry(item, KEY_MYTHIC_LOOT_MULTIPLIER, 10);
-            TicketData.addNewEntry(item, KEY_QUEST_CRATE_MULTIPLIER, 10);
-            TicketData.addNewEntry(item, KEY_SAFE_LOOT_MULTIPLIER, 10);
         }
     }
 

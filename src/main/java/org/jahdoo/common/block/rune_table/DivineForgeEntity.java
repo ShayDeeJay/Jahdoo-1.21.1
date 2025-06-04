@@ -13,14 +13,20 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jahdoo.common.block.AbstractBEInventory;
+import org.jahdoo.common.particle.ParticleStore;
+import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static net.minecraft.world.level.block.EnchantingTableBlock.BOOKSHELF_OFFSETS;
 import static org.jahdoo.common.block.wand_manager.WandManagerEntity.ADDITIONAL_RUNE_SLOTS;
 import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLOTS;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class DivineForgeEntity extends AbstractBEInventory implements MenuProvider {
 
@@ -32,24 +38,22 @@ public class DivineForgeEntity extends AbstractBEInventory implements MenuProvid
 
     public void tick(Level pLevel, BlockPos pos, BlockState pState) {
 
-//        var getNearest = pLevel.players().stream().findFirst().get();
-//        System.out.println(getNearest);
-//        for(BlockPos blockpos : BOOKSHELF_OFFSETS) {
-//            if (Random.nextInt(16) == 0) {
-//                var center = pos.getCenter();
-//                var playerP = getNearest.position();
-//                var pPos = new Vec3(playerP.x - center.x, playerP.y - center.y, playerP.z - center.z);
-//                level.addParticle(
-//                    new GenericParticleOptions(ParticleStore.ENCHANT_PARTICLE, ElementReg.random().textColourA(), 0, 20, 3, false, 5),
-//                    (double)pos.getX() + (double)0.5F,
-//                    (double)pos.getY() + (double)2.0F,
-//                    (double)pos.getZ() + (double)0.5F,
-//                    (double)((float)pPos.x + Random.nextFloat()) - (double)0.5F,
-//                    (double)((float)pPos.y - Random.nextFloat() - 0.0F),
-//                    (double)((float)pPos.z + Random.nextFloat()) - (double)0.5F
-//                );
-//            }
-//        }
+        var getNearest = pLevel.players().stream().findFirst().get();
+        System.out.println(getNearest);
+        for(BlockPos blockpos : BOOKSHELF_OFFSETS) {
+            var center = pos.getCenter();
+            var playerP = getNearest.position();
+            var pPos = new Vec3(playerP.x - center.x, playerP.y - center.y, playerP.z - center.z);
+            level.addParticle(
+                new GenericParticleOptions(ParticleStore.ENCHANT_PARTICLE, ElementReg.random().textColourA(), 0, 20, 3, false, 5),
+                (double)pos.getX() + (double)0.5F,
+                (double)pos.getY() + (double)2.0F,
+                (double)pos.getZ() + (double)0.5F,
+                (double)((float)pPos.x + Random.nextFloat()) - (double)0.5F,
+                (double)((float)pPos.y - Random.nextFloat() - 0.0F),
+                (double)((float)pPos.z + Random.nextFloat()) - (double)0.5F
+            );
+        }
 
         if(itemSlot().isEmpty()) privateTicks = 0; else {
             if(getLevel() instanceof ServerLevel){
