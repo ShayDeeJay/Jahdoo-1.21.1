@@ -2,7 +2,6 @@ package org.jahdoo.common.block.ticket_bureau;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +28,7 @@ import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static net.minecraft.core.Direction.SOUTH;
@@ -117,37 +116,39 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        var handItem = player.getMainHandItem();
+        var stamp = player.getMainHandItem();
         var entity = level.getBlockEntity(pos);
 
         if(entity instanceof TicketBureauBlockEntity entity1){
             var ticket = entity1.getTicketItem();
-            if(handItem.is(ItemReg.STAMP) && !ticket.isEmpty()){
-                var comp = handItem.get(DataComponents.CUSTOM_NAME);
-                var x = comp.getStyle().getColor();
-                System.out.println(x);
+            if(stamp.is(ItemReg.STAMP) && !ticket.isEmpty()){
+                var newId = stack.get(ComponentReg.ID);
+                var getBoon = LevelBoonReg.fromId(newId).orElseThrow();
+                var colour = getBoon.getHeaderColour();
+                var partType = ParticleStore.MAGIC_MOVE_PARTICLE;
                 for (BlockPos blockpos : BOOKSHELF_OFFSETS) {
+                    var lifetime = Random.nextInt(10, 30);
+                    var size = Random.nextInt(2, 5);
+                    var particleData = new GenericParticleOptions(partType, colour, 0, lifetime, size, false, 5);
                     level.addParticle(
-                        new GenericParticleOptions(ParticleStore.MAGIC_MOVE_PARTICLE, ElementReg.random().textColourA(), 0, Random.nextInt(10, 30), Random.nextInt(2,5), false, 5),
-                        (double)pos.getX() + 0.5,
-                        (double)pos.getY() + 2.0,
-                        (double)pos.getZ() + 0.5,
-                        (double)((float)blockpos.getX() + Random.nextFloat()) - 0.5,
-                        (double)((float)blockpos.getY() - Random.nextFloat() - 1.0F),
-                        (double)((float)blockpos.getZ() + Random.nextFloat()) - 0.5
+                        particleData,
+                        pos.getX() + 0.5, pos.getY() + 2.0, pos.getZ() + 0.5,
+                        (float)blockpos.getX() + Random.nextFloat() - 0.5,
+                        (float)blockpos.getY() - Random.nextFloat() - 1.0F,
+                        (float)blockpos.getZ() + Random.nextFloat() - 0.5
                     );
                 }
-                Helpers.getSoundWithPosition(level,pos, SoundReg.DASH_EFFECT.get(), 1, 0.5F);
+                Helpers.getSoundWithPosition(level,pos, SoundReg.DASH_EFFECT.get(), 1, 0.6F);
                 Helpers.getSoundWithPosition(level,pos, SoundReg.UNLOCK_NOTIFICATION.get(), 1, 0.2F);
-                addStampToTicket(handItem, ticket);
+                addStampToTicket(stamp, ticket);
                 var filled = CoreData.getFilled(ticket);
                 var required = CoreData.getRequired(ticket);
-                ticket.set(ComponentReg.CORE_DATA, new CoreData(required + 30, filled));
-                handItem.shrink(1);
+                ticket.set(ComponentReg.CORE_DATA, new CoreData(required + stamp.get(ComponentReg.STORE_INTEGER).intValue(), filled));
+                stamp.shrink(1);
                 return SUCCESS;
             }
 
-            if (handItem.is(ItemReg.TRIAL_TICKET) || handItem.isEmpty()) {
+            if (stamp.is(ItemReg.TRIAL_TICKET) || stamp.isEmpty()) {
                 BlockInteractionHandler.swapItemsWithHand(entity1.inputItemHandler, 0, player, hand);
                 return SUCCESS;
             }

@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.entities.safe.Safe;
+import org.jahdoo.common.items.Stamp;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.RunDataS2CP;
@@ -25,7 +26,6 @@ import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.trading_post.ShoppingArmor;
 import org.jahdoo.trial_nexus.trading_post.ShoppingItems;
-import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.function.Function;
 
@@ -36,6 +36,7 @@ import static net.minecraft.commands.Commands.literal;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.JahdooMod.MOD_ID;
 import static org.jahdoo.trial_nexus.loot.LootHelpers.standAloneLoot;
+import static org.jahdoo.trial_nexus.utils.Helpers.*;
 
 public class JahdooCommands {
 
@@ -224,6 +225,19 @@ public class JahdooCommands {
         dispatcher.register(literal(MOD_ID).requires(sender -> sender.hasPermission(2))
             .then(
                 literal("give_items")
+                    .then(
+                        literal("stamp")
+                            .then(
+                                argument("count", integer())
+                                    .then(
+                                        argument("with_negative", BoolArgumentType.bool())
+                                            .executes(
+                                                context -> getStamp(context.getSource(), BoolArgumentType.getBool(context, "with_negative"), getInteger(context, "count"))
+                                            )
+                                    )
+                            )
+
+                    )
                     .then(
                         literal("random_unique_armor")
                             .then(
@@ -520,29 +534,29 @@ public class JahdooCommands {
 
     public static LiteralArgumentBuilder<CommandSourceStack> registerLootChestCommand() {
         return literal("loot_chest")
-            .then(literal(Helpers.EASY)
+            .then(literal(EASY)
                 .then(argument("key", IntegerArgumentType.integer(0, 3))
                     .executes(context -> lootChestTest(
                         context.getSource(),
-                        Helpers.EASY,
+                        EASY,
                         IntegerArgumentType.getInteger(context, "key")
                     ))
                 )
             )
-            .then(literal(Helpers.MEDIUM)
+            .then(literal(MEDIUM)
                 .then(argument("key", IntegerArgumentType.integer(0, 3))
                     .executes(context -> lootChestTest(
                         context.getSource(),
-                        Helpers.MEDIUM,
+                        MEDIUM,
                         IntegerArgumentType.getInteger(context, "key")
                     ))
                 )
             )
-            .then(literal(Helpers.HARD)
+            .then(literal(HARD)
                 .then(argument("key", IntegerArgumentType.integer(0, 3))
                     .executes(context -> lootChestTest(
                         context.getSource(),
-                        Helpers.HARD,
+                        HARD,
                         IntegerArgumentType.getInteger(context, "key")
                     ))
                 )
@@ -639,7 +653,7 @@ public class JahdooCommands {
         var player = source.getPlayer();
         if(player == null) return 0;
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.basicShieldWithRarity(null, rarity));
+            throwOrAddItem(player, ShoppingItems.basicShieldWithRarity(null, rarity));
         }
         return 1;
     }
@@ -649,7 +663,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.soldWands(rarity).ShoppingItem());
+            throwOrAddItem(player, ShoppingItems.soldWands(rarity).ShoppingItem());
         }
         return 1;
     }
@@ -659,7 +673,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.getGauntletWithRarity(null, rarity));
+            throwOrAddItem(player, ShoppingItems.getGauntletWithRarity(null, rarity));
         }
         return 1;
     }
@@ -669,7 +683,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.createTomeAttributes(null, rarity == null ? JahdooRarity.getRarity() : rarity));
+            throwOrAddItem(player, ShoppingItems.createTomeAttributes(null, rarity == null ? JahdooRarity.getRarity() : rarity));
         }
         return 1;
     }
@@ -687,9 +701,9 @@ public class JahdooCommands {
         var hCore = new ItemStack(ItemReg.AUGMENT_HYPER_CORE);
         CoreData.setFilled(hCore);
 
-        Helpers.throwOrAddItem(player, core.copyWithCount(64));
-        Helpers.throwOrAddItem(player, aCore.copyWithCount(64));
-        Helpers.throwOrAddItem(player, hCore.copyWithCount(64));
+        throwOrAddItem(player, core.copyWithCount(64));
+        throwOrAddItem(player, aCore.copyWithCount(64));
+        throwOrAddItem(player, hCore.copyWithCount(64));
 
         return 1;
     }
@@ -707,7 +721,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.magnetItem(null, rarity == null ? JahdooRarity.getRarity() : rarity));
+            throwOrAddItem(player, ShoppingItems.magnetItem(null, rarity == null ? JahdooRarity.getRarity() : rarity));
         }
         return 1;
     }
@@ -717,7 +731,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++){
-            Helpers.throwOrAddItem(player, ShoppingItems.elementalSword(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
+            throwOrAddItem(player, ShoppingItems.elementalSword(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
         }
         return 1;
     }
@@ -727,7 +741,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++)
-            Helpers.throwOrAddItem(player, ShoppingItems.glaive(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
+            throwOrAddItem(player, ShoppingItems.glaive(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
 
         return 1;
     }
@@ -737,7 +751,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++)
-            Helpers.throwOrAddItem(player, ShoppingItems.ingmasSword(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
+            throwOrAddItem(player, ShoppingItems.ingmasSword(rarity == null ? JahdooRarity.getRarity() : rarity, source.getLevel()).ShoppingItem());
 
         return 1;
     }
@@ -750,7 +764,7 @@ public class JahdooCommands {
             var runeRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
             var index = tier - 1;
             var rarity1 = index == 5 ? JahdooRarity.getRarity() : JahdooRarity.getAllRarities(index);
-            Helpers.throwOrAddItem(player, RuneHelpers.generateRandomTypAttribute(null, rarity1, runeRarity));
+            throwOrAddItem(player, RuneHelpers.generateRandomTypAttribute(null, rarity1, runeRarity));
         }
 
         return 1;
@@ -761,7 +775,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (var itemStack : ShoppingArmor.knightKingWithData(rarity))
-            Helpers.throwOrAddItem(player, itemStack);
+            throwOrAddItem(player, itemStack);
 
         return 1;
     }
@@ -771,7 +785,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (var itemStack : ShoppingArmor.ancientGolemWithData(rarity))
-            Helpers.throwOrAddItem(player, itemStack);
+            throwOrAddItem(player, itemStack);
 
         return 1;
     }
@@ -782,7 +796,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (var itemStack : ShoppingArmor.mageWithData(rarity))
-            Helpers.throwOrAddItem(player, itemStack);
+            throwOrAddItem(player, itemStack);
 
         return 1;
     }
@@ -792,7 +806,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (var itemStack : ShoppingArmor.wizardWithData(rarity))
-            Helpers.throwOrAddItem(player, itemStack);
+            throwOrAddItem(player, itemStack);
 
         return 1;
     }
@@ -802,7 +816,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (var itemStack : ShoppingArmor.battleMageWithData(rarity))
-            Helpers.throwOrAddItem(player, itemStack);
+            throwOrAddItem(player, itemStack);
 
         return 1;
     }
@@ -812,7 +826,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for (int i = 0; i < count; i++)
-            Helpers.throwOrAddItem(player, ShoppingItems.shoppingArmorItem(source.getLevel()).ShoppingItem());
+            throwOrAddItem(player, ShoppingItems.shoppingArmorItem(source.getLevel()).ShoppingItem());
 
         return 1;
     }
@@ -822,7 +836,7 @@ public class JahdooCommands {
         if(player == null) return 0;
 
         for(int i = 0; i < 10; i++)
-            standAloneLoot(source.getLevel(), player.position(), difficulty, keyType, Helpers.getRgb());
+            standAloneLoot(source.getLevel(), player.position(), difficulty, keyType, getRgb());
 
         return 1;
     }
@@ -850,4 +864,20 @@ public class JahdooCommands {
 
         return 1;
     }
+
+    private static int getStamp(CommandSourceStack source, boolean addNegative, int count) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        for(int i = 0; i < count; i++){
+            if (source.getLevel() instanceof ServerLevel) {
+                var stamp = new ItemStack(ItemReg.STAMP);
+                Stamp.addBoon(stamp, addNegative);
+                throwOrAddItem(player, stamp);
+            }
+        }
+
+        return 1;
+    }
+
 }

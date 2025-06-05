@@ -2,9 +2,10 @@ package org.jahdoo.trial_nexus.boon.level_boons.positive;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.ColourStore;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_SAFE_LOOT_MULTIPLIER;
@@ -49,6 +50,11 @@ public class SafeLootMultiplier extends AbstractLevelBoon {
 
     @Override
     public int getStampIndex() {
-        return 8;
+        return 7;
+    }
+
+    @Override
+    public int getHeaderColour() {
+        return ColourStore.RATING_5_GREEN;
     }
 }

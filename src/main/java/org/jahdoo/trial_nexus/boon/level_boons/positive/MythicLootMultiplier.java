@@ -2,12 +2,13 @@ package org.jahdoo.trial_nexus.boon.level_boons.positive;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.common.client.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_MYTHIC_LOOT_MULTIPLIER;
+import static org.jahdoo.trial_nexus.rarity.JahdooRarity.MYTHIC;
 
 public class MythicLootMultiplier extends AbstractLevelBoon {
 
@@ -39,7 +40,7 @@ public class MythicLootMultiplier extends AbstractLevelBoon {
 
     @Override
     public double value(JahdooRarity rarity) {
-        return 6;
+        return 1;
     }
 
     @Override
@@ -52,5 +53,8 @@ public class MythicLootMultiplier extends AbstractLevelBoon {
         return 6;
     }
 
-
+    @Override
+    public int getHeaderColour() {
+        return MYTHIC.getColour();
+    }
 }

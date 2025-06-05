@@ -33,6 +33,10 @@ public abstract class AbstractLevelBoon {
 
     abstract public void execute(ServerLevel level, double value);
 
+    public int getHeaderColour(){
+        return -1;
+    };
+
     public int getStampIndex(){
         return -1;
     }

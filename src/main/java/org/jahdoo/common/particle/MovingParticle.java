@@ -4,12 +4,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.core.particles.SimpleParticleType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
-
-import java.util.List;
 
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static org.jahdoo.trial_nexus.utils.Configuration.BRIGHT_PARTICLE;
@@ -44,24 +41,18 @@ public class MovingParticle extends TextureSheetParticle {
         this.z = this.zo;
         this.quadSize = 0.1F * (this.random.nextFloat() * 0.5F + 0.2F);
         float f = this.random.nextFloat() * 0.6F + 0.4F;
-//        this.rCol = f;
-//        this.gCol = f;
-//        this.bCol = f;
+        this.rCol = f;
+        this.gCol = f;
+        this.bCol = f;
         this.hasPhysics = false;
         this.lifetime = (int)(Math.random() * (double)10.0F) + 30;
     }
 
-    public static List<Float> intToRGB(int color) {
-        int red   = (color >> 16) & 0xFF;
+    public static int[] intToRGB(int color) {
+        int red = (color >> 16) & 0xFF;
         int green = (color >> 8) & 0xFF;
-        int blue  = color & 0xFF;
-
-        // Convert to float range 0.0 - 1.0
-        float fRed = red / 255.0f;
-        float fGreen = green / 255.0f;
-        float fBlue = blue / 255.0f;
-
-        return List.of(fRed, fBlue, fGreen);
+        int blue = color & 0xFF;
+        return new int[] { red, green, blue };
     }
 
     public ParticleRenderType getRenderType() {
@@ -129,49 +120,22 @@ public class MovingParticle extends TextureSheetParticle {
                 }
 
             };
-            int[] utility = {39, 236, 144};
 
-            var colourByType = type.colour() == 0 ? utility : utility;
+            var colour = type.colour();
+            var cType = intToRGB(colour);
 
             if(type.setStaticSize()){
                 movingParticle.quadSize = type.size();
             } else {
                 movingParticle.quadSize *= type.size();
             }
+
             movingParticle.pickSprite(this.sprite);
-            movingParticle.setColor(colourByType[0]/ 255.0f, colourByType[1]/ 255.0f, colourByType[2]/ 255.0f);
+            var a = cType[0];
+            var b = cType[1];
+            var c = cType[2];
+            movingParticle.setColor(a/255.0F, b/255.0F, c/255.0F);
             movingParticle.setLifetime(type.lifetime());
-            return movingParticle;
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static class NautilusProvider implements ParticleProvider<SimpleParticleType> {
-        private final SpriteSet sprite;
-
-        public NautilusProvider(SpriteSet sprite) {
-            this.sprite = sprite;
-        }
-
-        public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            var movingParticle = new MovingParticle(level, x, y, z, xSpeed, ySpeed, zSpeed);
-            movingParticle.pickSprite(this.sprite);
-            return movingParticle;
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static class VaultConnectionProvider implements ParticleProvider<SimpleParticleType> {
-        private final SpriteSet sprite;
-
-        public VaultConnectionProvider(SpriteSet sprite) {
-            this.sprite = sprite;
-        }
-
-        public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            var movingParticle = new MovingParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, true, new Particle.LifetimeAlpha(0.0F, 0.6F, 0.25F, 1.0F));
-            movingParticle.scale(1.5F);
-            movingParticle.pickSprite(this.sprite);
             return movingParticle;
         }
     }

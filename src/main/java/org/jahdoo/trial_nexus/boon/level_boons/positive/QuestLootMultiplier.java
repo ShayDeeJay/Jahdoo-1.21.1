@@ -2,9 +2,10 @@ package org.jahdoo.trial_nexus.boon.level_boons.positive;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.ColourStore;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_QUEST_CRATE_MULTIPLIER;
@@ -52,4 +53,8 @@ public class QuestLootMultiplier extends AbstractLevelBoon {
         return 8;
     }
 
+    @Override
+    public int getHeaderColour() {
+        return ColourStore.WALLET_BROWN;
+    }
 }

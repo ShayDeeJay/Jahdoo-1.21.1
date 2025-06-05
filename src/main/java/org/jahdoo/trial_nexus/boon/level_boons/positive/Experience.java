@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.ColourStore;
 
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_EXPERIENCE;
 import static org.jahdoo.trial_nexus.attachments.RunData.addExperienceToTotal;
@@ -49,4 +50,8 @@ public class Experience extends AbstractLevelBoon {
         return JahdooRarity.EPIC;
     }
 
+    @Override
+    public int getHeaderColour() {
+        return ColourStore.COSMIC_PURPLE;
+    }
 }

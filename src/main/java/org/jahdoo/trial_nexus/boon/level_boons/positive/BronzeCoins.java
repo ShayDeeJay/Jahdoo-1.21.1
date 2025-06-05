@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.utils.ColourStore;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_BRONZE_COIN;
@@ -34,4 +35,10 @@ public class BronzeCoins extends Coins{
     public int getStampIndex() {
         return 0;
     }
+
+    @Override
+    public int getHeaderColour() {
+        return ColourStore.BRONZE_COIN;
+    }
+
 }

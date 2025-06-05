@@ -2,12 +2,13 @@ package org.jahdoo.trial_nexus.boon.level_boons.positive;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.common.client.Icons;
 
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_COMMON_LOOT_MULTIPLIER;
+import static org.jahdoo.trial_nexus.rarity.JahdooRarity.COMMON;
 
 public class CommonLootMultiplier extends AbstractLevelBoon {
 
@@ -50,6 +51,12 @@ public class CommonLootMultiplier extends AbstractLevelBoon {
     @Override
     public int getStampIndex() {
         return 3;
+    }
+
+
+    @Override
+    public int getHeaderColour() {
+        return COMMON.getColour();
     }
 
 }
