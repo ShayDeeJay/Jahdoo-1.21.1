@@ -64,6 +64,8 @@ public class MovingParticle extends TextureSheetParticle {
         this.setLocationFromBoundingbox();
     }
 
+
+
     public int getLightColor(float partialTick) {
         return FULL_BRIGHT;
     }
@@ -116,9 +118,9 @@ public class MovingParticle extends TextureSheetParticle {
                     super.tick();
                     tick++;
                     if(!type.setStaticSize()) this.quadSize *= 0.9f;
+                    this.getQuadSize(Math.min(type.size(), (float) tick / 100));
                     this.speedUpWhenYMotionIsBlocked = true;
                 }
-
             };
 
             var colour = type.colour();
@@ -130,6 +132,7 @@ public class MovingParticle extends TextureSheetParticle {
                 movingParticle.quadSize *= type.size();
             }
 
+            movingParticle.setAlpha(1f);
             movingParticle.pickSprite(this.sprite);
             var a = cType[0];
             var b = cType[1];

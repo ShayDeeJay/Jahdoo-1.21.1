@@ -15,7 +15,6 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.List;
 
@@ -37,31 +36,31 @@ public class Stamp extends Item implements JahdooItem{
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         var item = player.getItemInHand(usedHand);
 
-        if(!level.isClientSide) addBoon(item, true);
+//        if(!level.isClientSide) addBoon(item, true);
 
         return super.use(level, player, usedHand);
     }
 
     @Override
     public Component getName(ItemStack stack) {
-        var type = stack.get(DataComponents.CUSTOM_MODEL_DATA);
-        var name = super.getName(stack);
-        if(type == null) return name;
-
-        var newId = stack.get(ComponentReg.ID);
-        var withName = Helpers.stringIdToName(newId)+" "+ name.getString();
-        var getBoon = LevelBoonReg.fromId(newId).orElseThrow();
-        var colour = getBoon.getHeaderColour();
-        return Helpers.withStyleComponent(withName, colour);
+        return Component.empty();
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         var getTicketMods = stack.get(ComponentReg.TICKET_DATA);
-        TrialNexusTicket.modifierTooltips(tooltipComponents, getTicketMods);
-        var capacity = withStyleComponent("Ticket Capacity: ", ColourStore.SUB_HEADER_COLOUR);
-        var capacity1 = withStyleComponent("+" + stack.get(ComponentReg.STORE_INTEGER), ColourStore.UNIQUE_A);
-        tooltipComponents.add(capacity.copy().append(capacity1));
+        TrialNexusTicket.modifierTooltips(tooltipComponents, getTicketMods, stack);
+        var i = stack.get(ComponentReg.STORE_INTEGER);
+        if(i != null){
+            appendCapacity(tooltipComponents, i.intValue());
+        }
+    }
+
+    public static void appendCapacity(List<Component> tooltipComponents, int i) {
+        var capacity = withStyleComponent("Capacity: ", ColourStore.SUB_HEADER_COLOUR);
+        var capacity1 = withStyleComponent("+" + i, ColourStore.UNIQUE_A);
+        var append = capacity.copy().append(capacity1);
+        tooltipComponents.add(append);
     }
 
     public static void addBoon(ItemStack itemStack, boolean addNegativeModifier){

@@ -6,11 +6,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
@@ -20,6 +19,9 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,9 @@ import java.util.*;
 import static java.lang.String.valueOf;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 
 public class CasterData implements IAttachment {
 
@@ -45,8 +48,9 @@ public class CasterData implements IAttachment {
     private int xp;
     private int allowedSlots;
     private int abilityPoints;
-    private double manaPool;
     private int refundableSkillPoints;
+    private int multiKill;
+    private double manaPool;
 
     private Map<String, Integer> abilityCooldowns = new Object2IntOpenHashMap<>();
     private Map<String, Integer> abilityCooldownsStatic = new Object2IntOpenHashMap<>();
@@ -61,6 +65,7 @@ public class CasterData implements IAttachment {
         int allowedSlots,
         int abilityPoints,
         int refundableSkillPoints,
+        int multiKill,
         double manaPool,
         String selectedAbility,
         Map<String, Integer> abilityCooldowns,
@@ -73,6 +78,7 @@ public class CasterData implements IAttachment {
         this.allowedSlots = allowedSlots;
         this.abilityPoints = abilityPoints;
         this.refundableSkillPoints = refundableSkillPoints;
+        this.multiKill = multiKill;
         this.manaPool = manaPool;
         this.selectedAbility = selectedAbility;
         this.abilityCooldowns = abilityCooldowns;
@@ -178,6 +184,31 @@ public class CasterData implements IAttachment {
         }
 
         this.unlockedAbilities.add(holder);
+    }
+
+    public void checkMultiKill(Player player, int multiKillTarget){
+        if(this.multiKill > 0){
+            if(multiKill > multiKillTarget){
+                player.sendSystemMessage(withStyleComponent("MULTIKILL!!", ColourStore.MAGNET_RANGE_GREEN).copy());
+                Helpers.getSoundWithPositionV(player.level(), player.position(), SoundReg.QUEST_COMPLETE.get(), 1, 1.6F);
+            }
+            this.multiKill = 0;
+        }
+    }
+
+    public void incrementMultiKill(){
+        this.multiKill += 1;
+    }
+
+
+    public static void checkMultiKillStatic(Player player, int multiKillCount){
+        player.getData(CASTER_DATA).checkMultiKill(player, multiKillCount);
+    }
+
+    public static void incrementMultiKillStatic(Entity entity){
+        if(entity instanceof Player player){
+            player.getData(CASTER_DATA).incrementMultiKill();
+        }
     }
 
     public boolean hasAbility(String ability){
@@ -546,6 +577,7 @@ public class CasterData implements IAttachment {
             Codec.INT.fieldOf("available_slots").forGetter(CasterData::getAllowedSlots),
             Codec.INT.fieldOf("ability_points").forGetter(CasterData::getAbilityPoints),
             Codec.INT.fieldOf("refundable_skill_points").forGetter(CasterData::getRefundableSkillPoints),
+            Codec.INT.fieldOf("multi_kill").forGetter(CasterData::getRefundableSkillPoints),
             Codec.DOUBLE.fieldOf("mana_pool").forGetter(CasterData::getManaPool),
             Codec.STRING.fieldOf("selected_ability").forGetter(CasterData::getSelectedAbility),
             Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("ability_cooldowns").forGetter(CasterData::getAllCooldowns),
@@ -582,6 +614,7 @@ public class CasterData implements IAttachment {
         nbt.put(CasterData.COOLDOWNS_STATIC, cooldownsStatic);
         nbt.put("ability_slots", abilitySlots);
         nbt.put("unlocked_skills", unlockedSkills);
+        nbt.putInt("multi_kill", multiKill);
         nbt.putDouble(MANA, manaPool);
         nbt.putInt("level", this.xp);
         nbt.putInt("ability_points", this.abilityPoints);
@@ -620,6 +653,7 @@ public class CasterData implements IAttachment {
 
         this.allowedSlots = nbt.getInt("allowed_slots");
         this.xp = nbt.getInt("level");
+        this.multiKill = nbt.getInt("multi_kill");
         this.abilityPoints = nbt.getInt("ability_points");
         this.refundableSkillPoints = nbt.getInt("refundable_skill_points");
         this.unlockedAbilities = AbilityHolder.readListHolders(nbt);

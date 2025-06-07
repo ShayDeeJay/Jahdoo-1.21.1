@@ -3,6 +3,7 @@ package org.jahdoo.common.items;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
@@ -22,6 +23,7 @@ import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
@@ -91,23 +93,31 @@ public class TrialNexusTicket extends Item implements JahdooItem {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltips, TooltipFlag tooltipFlag) {
         var getType = stack.get(DataComponents.CUSTOM_MODEL_DATA);
 
-        if(stack.has(CORE_DATA) && !CoreData.isFull(stack)){
-            var current = CoreData.getFilled(stack);
-            var max = CoreData.getRequired(stack);
-            tooltips.add(Helpers.withStyleComponent(current + "/" + max, ColourStore.PERK_GREEN));
-        }
-
         if(getType != null){
             var getTicketMods = stack.get(ComponentReg.TICKET_DATA);
             var getUses = stack.get(STORE_INTEGER);
 
             tooltips.add(withStyleComponent("Teleports you to the trial nexus", ColourStore.SUB_HEADER_COLOUR));
+            tooltips.add(Component.literal(" "));
+            appendCapacity(tooltips, stack);
             usesTooltips(tooltips, getType.value(), getUses);
             if(getTicketMods != null && !getTicketMods.values().isEmpty()){
                 tooltips.add(Component.literal(" "));
-                tooltips.add(withStyleComponent("⏮ Trail Modifiers ⏭", ColourStore.OFF_WHITE));
+                tooltips.add(withStyleComponent("⏮ Trial Modifier ⏭", ColourStore.OFF_WHITE).copy().setStyle(Style.EMPTY.withBold(true)));
             }
-            modifierTooltips(tooltips, getTicketMods);
+            modifierTooltips(tooltips, getTicketMods, stack);
+        }
+    }
+
+    public static void appendCapacity(List<Component> toolTips, ItemStack stack) {
+
+        if(stack.has(CORE_DATA) && !CoreData.isFull(stack)){
+            var current = CoreData.getFilled(stack);
+            var max = CoreData.getRequired(stack);
+            var capacity = withStyleComponent("Capacity: ", ColourStore.SUB_HEADER_COLOUR);
+            var capacity1 = withStyleComponent(current + "/" + max, Helpers.colourByPercent(max, current, true));
+            var append = capacity.copy().append(capacity1);
+            toolTips.add(append);
         }
     }
 
@@ -133,10 +143,12 @@ public class TrialNexusTicket extends Item implements JahdooItem {
         tooltips.add(prefix.copy().append(suffix));
     }
 
-    private static void comp(List<Component> tooltipComponents, @Nullable TicketData getTicketMods, String key, boolean isPercent) {
+    private static void comp(List<Component> tooltipComponents, @Nullable TicketData getTicketMods, String key, boolean isPercent, ItemStack stack) {
+        var getBoon = LevelBoonReg.fromId(key).orElseThrow();
+        var colour = getBoon.getHeaderColour();
         if(getTicketMods != null && getTicketMods.get(key) > 0){
             var v = getTicketMods.get(key);
-            tooltipComponents.add(withStyleComponent("+" + roundNonWholeString(doubleFormattedDouble(v)) + (isPercent ? "% " : " ") + stringIdToName(key), MAGNET_RANGE_GREEN));
+            tooltipComponents.add(withStyleComponent("+" + roundNonWholeString(doubleFormattedDouble(v)) + (isPercent ? "% " : " ") + stringIdToName(key), colour));
         }
     }
 
@@ -147,23 +159,25 @@ public class TrialNexusTicket extends Item implements JahdooItem {
         }
     }
 
-    public static void modifierTooltips(List<Component> tooltips, TicketData getTicketMods) {
+    public static void modifierTooltips(List<Component> tooltips, TicketData getTicketMods, ItemStack stack) {
         if(getTicketMods != null && !getTicketMods.values().isEmpty()){
             var keyMaxTime = KEY_MAX_TIME;
             if (getTicketMods.get(keyMaxTime) > 0) {
                 var v = getTicketMods.get(keyMaxTime);
-                tooltips.add(withStyleComponent("+" + ticksToTime(v + "") + " " + Helpers.stringIdToName(keyMaxTime), MAGNET_RANGE_GREEN));
+                var getBoon = LevelBoonReg.fromId(keyMaxTime).orElseThrow();
+                var colour = getBoon.getHeaderColour();
+                tooltips.add(withStyleComponent("+" + ticksToTime(v + "") + " " + Helpers.stringIdToName(keyMaxTime), colour));
             }
 
-            comp(tooltips, getTicketMods, KEY_BRONZE_COIN, false);
-            comp(tooltips, getTicketMods, KEY_SILVER_COIN, false);
-            comp(tooltips, getTicketMods, KEY_GOLD_COIN, false);
-            comp(tooltips, getTicketMods, KEY_COMMON_LOOT_MULTIPLIER, false);
-            comp(tooltips, getTicketMods, KEY_RARE_LOOT_MULTIPLIER, false);
-            comp(tooltips, getTicketMods, KEY_LEGENDARY_LOOT_MULTIPLIER, false);
-            comp(tooltips, getTicketMods, KEY_MYTHIC_LOOT_MULTIPLIER, false);
-            comp(tooltips, getTicketMods, KEY_QUEST_CRATE_MULTIPLIER, false);
-            comp(tooltips, getTicketMods, KEY_SAFE_LOOT_MULTIPLIER, false);
+            comp(tooltips, getTicketMods, KEY_BRONZE_COIN, false, stack);
+            comp(tooltips, getTicketMods, KEY_SILVER_COIN, false, stack);
+            comp(tooltips, getTicketMods, KEY_GOLD_COIN, false, stack);
+            comp(tooltips, getTicketMods, KEY_COMMON_LOOT_MULTIPLIER, false, stack);
+            comp(tooltips, getTicketMods, KEY_RARE_LOOT_MULTIPLIER, false, stack);
+            comp(tooltips, getTicketMods, KEY_LEGENDARY_LOOT_MULTIPLIER, false, stack);
+            comp(tooltips, getTicketMods, KEY_MYTHIC_LOOT_MULTIPLIER, false, stack);
+            comp(tooltips, getTicketMods, KEY_QUEST_CRATE_MULTIPLIER, false, stack);
+            comp(tooltips, getTicketMods, KEY_SAFE_LOOT_MULTIPLIER, false, stack);
 
             mobComp(tooltips, getTicketMods, KEY_HEALTH, true);
             mobComp(tooltips, getTicketMods, KEY_ARMOR, true);

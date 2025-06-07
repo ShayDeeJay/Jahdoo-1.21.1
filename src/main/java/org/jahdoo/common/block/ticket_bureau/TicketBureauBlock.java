@@ -2,6 +2,7 @@ package org.jahdoo.common.block.ticket_bureau;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -32,9 +33,9 @@ import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static net.minecraft.core.Direction.SOUTH;
+import static net.minecraft.sounds.SoundEvents.BOOK_PUT;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
-import static net.minecraft.world.level.block.EnchantingTableBlock.BOOKSHELF_OFFSETS;
 import static org.jahdoo.common.registers.BlockEntityReg.TICKET_BUREAU_BE;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
@@ -122,27 +123,32 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
         if(entity instanceof TicketBureauBlockEntity entity1){
             var ticket = entity1.getTicketItem();
             if(stamp.is(ItemReg.STAMP) && !ticket.isEmpty()){
+                entity1.lastItem = stamp.copy();
                 var newId = stack.get(ComponentReg.ID);
                 var getBoon = LevelBoonReg.fromId(newId).orElseThrow();
                 var colour = getBoon.getHeaderColour();
                 var partType = ParticleStore.MAGIC_MOVE_PARTICLE;
-                for (BlockPos blockpos : BOOKSHELF_OFFSETS) {
-                    var lifetime = Random.nextInt(10, 30);
-                    var size = Random.nextInt(2, 5);
+                for (int i = 0; i < 30; i++) {
+                    var x = new BlockPos(0, 1, 0);
+                    var lifetime = Random.nextInt(2, 30);
+                    var size = Random.nextFloat(0.8F, 1.2F);
                     var particleData = new GenericParticleOptions(partType, colour, 0, lifetime, size, false, 5);
                     level.addParticle(
                         particleData,
                         pos.getX() + 0.5, pos.getY() + 2.0, pos.getZ() + 0.5,
-                        (float)blockpos.getX() + Random.nextFloat() - 0.5,
-                        (float)blockpos.getY() - Random.nextFloat() - 1.0F,
-                        (float)blockpos.getZ() + Random.nextFloat() - 0.5
+                        (float)x.getX() + Random.nextFloat() - 0.5,
+                        (float)x.getY() - Random.nextFloat() - 1.0F,
+                        (float)x.getZ() + Random.nextFloat() - 0.5
                     );
                 }
-                Helpers.getSoundWithPosition(level,pos, SoundReg.DASH_EFFECT.get(), 1, 0.6F);
-                Helpers.getSoundWithPosition(level,pos, SoundReg.UNLOCK_NOTIFICATION.get(), 1, 0.2F);
+                Helpers.getSoundWithPosition(level,pos, SoundReg.HEAL.get(), 0.2F, 1.6F);
+                Helpers.getSoundWithPosition(level,pos, SoundEvents.BEACON_POWER_SELECT, 0.2F, 1.6F);
+                Helpers.getSoundWithPosition(level,pos, BOOK_PUT, 3, 1F);
                 addStampToTicket(stamp, ticket);
                 var filled = CoreData.getFilled(ticket);
                 var required = CoreData.getRequired(ticket);
+                entity1.updateBlock();
+                entity1.privateTicks = 25;
                 ticket.set(ComponentReg.CORE_DATA, new CoreData(required + stamp.get(ComponentReg.STORE_INTEGER).intValue(), filled));
                 stamp.shrink(1);
                 return SUCCESS;
@@ -150,6 +156,7 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
 
             if (stamp.is(ItemReg.TRIAL_TICKET) || stamp.isEmpty()) {
                 BlockInteractionHandler.swapItemsWithHand(entity1.inputItemHandler, 0, player, hand);
+                Helpers.getSoundWithPosition(level,pos, BOOK_PUT, 1, 1.6F);
                 return SUCCESS;
             }
 

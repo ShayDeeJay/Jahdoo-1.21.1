@@ -136,6 +136,7 @@ public class ServerEvents {
             restrictElytra(serverPlayer, level);
             CasterData.cooldownTickEvent(serverPlayer);
             CasterData.manaTickEvent(serverPlayer);
+            CasterData.checkMultiKillStatic(serverPlayer, 3);
         }
 
         copyPasteBlockProperties(player);
@@ -151,7 +152,6 @@ public class ServerEvents {
     public static void levelTickEvent(LevelTickEvent.Pre tickEvent){
         instanceEndingWarning(tickEvent);
         discardLevelOnEnd(tickEvent);
-
     }
 
     @SubscribeEvent
@@ -200,18 +200,15 @@ public class ServerEvents {
     public static void livingDeathEvent(LivingDeathEvent event){
         var entity = event.getEntity();
         var bonus = entity.tickCount / 10;
+        var killer = event.getSource().getEntity();
 
-        triggerKillEvent(event.getSource().getEntity(), entity.level());
+        CasterData.incrementMultiKillStatic(killer);
+        triggerKillEvent(killer, entity.level());
         coinDropCalc(entity, bonus);
         onDeathGreaterFrostEffect(entity);
         resetGameModeOnDeath(entity);
         saveDestinyBondItems(entity);
 
-//        var x = SpawnEggItem.byId(event.getEntity().getType());
-//        if(x != null){
-//            var level = event.getEntity().level();
-//            level.addFreshEntity(new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), new ItemStack(x)));
-//        }
     }
 
 }

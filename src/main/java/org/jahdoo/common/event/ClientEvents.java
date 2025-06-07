@@ -1,6 +1,7 @@
 package org.jahdoo.common.event;
 
 import com.mojang.datafixers.util.Either;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -23,6 +24,8 @@ import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -137,27 +140,31 @@ public class ClientEvents {
         quickSelectBehaviour(player, instance);
         toggleLockAbility(player);
 
-        if(WAND_SLOT_1A.consumeClick()) selectAbilitySlot(1);
-        if(WAND_SLOT_2A.consumeClick()) selectAbilitySlot(2);
-        if(WAND_SLOT_3A.consumeClick()) selectAbilitySlot(3);
-        if(WAND_SLOT_4A.consumeClick()) selectAbilitySlot(4);
-        if(WAND_SLOT_5A.consumeClick()) selectAbilitySlot(5);
-        if(WAND_SLOT_6A.consumeClick()) selectAbilitySlot(6);
-        if(WAND_SLOT_7A.consumeClick()) selectAbilitySlot(7);
-        if(WAND_SLOT_8A.consumeClick()) selectAbilitySlot(8);
-        if(WAND_SLOT_9A.consumeClick()) selectAbilitySlot(9);
-        if(WAND_SLOT_10A.consumeClick()) selectAbilitySlot(10);
-        if(STAT_SCREEN.consumeClick()) {
-            instance.setScreen(new StatScreen());
-        }
-        if(ABILITY_SCREEN.consumeClick()) {
-            instance.setScreen(new AbilityUnlockScreen());
-        }
-        if(RUN_SCREEN.consumeClick()) {
-            instance.setScreen(new RunScreen());
-        }
+        checkKey(WAND_SLOT_1A, () -> selectAbilitySlot(1));
+        checkKey(WAND_SLOT_2A, () -> selectAbilitySlot(2));
+        checkKey(WAND_SLOT_3A, () -> selectAbilitySlot(3));
+        checkKey(WAND_SLOT_4A, () -> selectAbilitySlot(4));
+        checkKey(WAND_SLOT_5A, () -> selectAbilitySlot(5));
+        checkKey(WAND_SLOT_6A, () -> selectAbilitySlot(6));
+        checkKey(WAND_SLOT_7A, () -> selectAbilitySlot(7));
+        checkKey(WAND_SLOT_8A, () -> selectAbilitySlot(8));
+        checkKey(WAND_SLOT_9A, () -> selectAbilitySlot(9));
+        checkKey(WAND_SLOT_10A, () -> selectAbilitySlot(10));
+
+        checkKey(STAT_SCREEN, () -> instance.setScreen(new StatScreen()));
+        checkKey(ABILITY_SCREEN, () -> instance.setScreen(new AbilityUnlockScreen()));
+        checkKey(RUN_SCREEN, () -> instance.setScreen(new RunScreen()));
+
     }
 
+    private static final Map<KeyMapping, Boolean> keyWasDown = new HashMap<>();
+    private static void checkKey(KeyMapping key, Runnable action) {
+        var isDown = key.isDown();
+        var wasDown = keyWasDown.getOrDefault(key, false);
+
+        if (isDown && !wasDown) action.run();
+        keyWasDown.put(key, isDown);
+    }
 }
 
 

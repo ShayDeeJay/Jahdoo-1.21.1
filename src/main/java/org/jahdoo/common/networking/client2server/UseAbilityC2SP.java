@@ -6,14 +6,12 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static net.minecraft.world.InteractionHand.MAIN_HAND;
 import static net.minecraft.world.InteractionHand.OFF_HAND;
-import static org.jahdoo.common.items.caster_item.elemental_wand.ElementalWand.castAbility;
 
 public class UseAbilityC2SP implements CustomPacketPayload {
 
@@ -39,7 +37,9 @@ public class UseAbilityC2SP implements CustomPacketPayload {
 
                     if(CastHelper.validCasterType(mainHand)) hand = MAIN_HAND;
                     if(CastHelper.validCasterType(offHand)) hand = OFF_HAND;
-                    if(hand != null) castAbility(serverPlayer, hand, ItemStack.EMPTY);
+
+                    var item = serverPlayer.getItemInHand(hand);
+                    item.use(serverPlayer.level(), serverPlayer, hand);
                 }
             }
         );

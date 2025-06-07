@@ -16,9 +16,6 @@ import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.jahdoo.common.block.rune_table.DivineForge.setOuterRingPulse;
 import static org.jahdoo.common.registers.mod.ElementReg.utility;
 import static org.jahdoo.trial_nexus.utils.ColourStore.NEGATIVE_RED;
@@ -26,7 +23,7 @@ import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class TicketBureauBlockEntity extends AbstractTankUser {
 
-    public List<ItemStack> currentStamps = new ArrayList<>();
+    public ItemStack lastItem;
 
     public TicketBureauBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.TICKET_BUREAU_BE.get(), pos, state, 1);
@@ -66,6 +63,8 @@ public class TicketBureauBlockEntity extends AbstractTankUser {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
+        if(privateTicks > 0) privateTicks--; else lastItem = null;
+
         this.assignTankBlockInRange(level, pos, setCraftingCost());
         var item = getTicketItem();
         if (!item.isEmpty() && this.hasTankAndFuel() && !CoreData.isFull(item)) {
@@ -94,11 +93,17 @@ public class TicketBureauBlockEntity extends AbstractTankUser {
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        if(this.lastItem != null && !this.lastItem.isEmpty()){
+            tag.put("stack", lastItem.save(registries));
+        }
         super.saveAdditional(tag, registries);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        if(tag.contains("stack")){
+            this.lastItem = ItemStack.parse(registries, tag.getCompound("stack")).orElse(ItemStack.EMPTY);
+        }
         super.loadAdditional(tag, registries);
     }
 
