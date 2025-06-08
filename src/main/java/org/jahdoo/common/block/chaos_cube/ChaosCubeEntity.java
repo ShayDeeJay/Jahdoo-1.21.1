@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,12 +16,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.trial_nexus.ability.AbilityBuilder;
-import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.components.AbilityHolder;
@@ -29,6 +26,11 @@ import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.AbilityBuilder;
+import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -44,11 +46,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.getActionDirection;
-import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.getActive;
 import static org.jahdoo.common.block.BlockInteractionHandler.getItemHandlerAt;
 import static org.jahdoo.common.entities.EntityAnimations.*;
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
+import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.getActionDirection;
+import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.getActive;
 
 
 public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, GeoBlockEntity {
@@ -182,7 +184,7 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
     private void triggerBlock(ChaosCubeEntity blockE, Set<BlockPos> visited) {
         var active = this.getData(MODULAR_CHAOS_CUBE).active();
         var active1 = blockE.getData(MODULAR_CHAOS_CUBE).active();
-        if (active != active1) ChaosCubeData.togglePower(blockE);
+        if (active != active1) ChaosCubeHelpers.togglePower(blockE);
         if (blockE.getLevel() == null) return;
 
         for (Pair<ResourceLocation, BlockPos> posPair : blockE.direction()) {
@@ -281,34 +283,16 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
         outputItemsDown(level, itemEntity.getItem(), getPos);
     }
 
-    public static void outputItemsDown(Level level, ItemStack entityStack, BlockPos getPos) {
-        var handler = getItemHandlerAt(level, getPos.getX(), getPos.getY(), getPos.getZ(), Direction.UP);
-        handler.ifPresent(
-            iItemHandlerObjectPair -> {
-                int remainingAmount = entityStack.getCount();
-                var itemHandler = iItemHandlerObjectPair.getKey();
-                for(int i = 0; i < itemHandler.getSlots(); i++){
-                    int maxStackSize = itemHandler.getSlotLimit(i) == 99 ? 64 : itemHandler.getSlotLimit(i);
-                    if (remainingAmount <= 0) break;
-                    var slotStack = itemHandler.getStackInSlot(i);
-                    int slotSpace = maxStackSize - slotStack.getCount(); // Use maxStackSize variable
-                    boolean isStack = slotStack.getItem() == entityStack.getItem() && slotStack.getCount() < maxStackSize;
-                    boolean emptySlot = slotStack.isEmpty();
+    public static void outputItemsDown(Level level, ItemStack entityStack, BlockPos pos) {
+        var blockEntity = level.getBlockEntity(pos);
 
-                    if (isStack) {
-                        int addAmount = Math.min(remainingAmount, slotSpace);
-                        slotStack.grow(addAmount);
-                        remainingAmount -= addAmount;
-                        entityStack.shrink(addAmount);
-                    } else if (emptySlot) {
-                        int addAmount = Math.min(remainingAmount, maxStackSize);
-                        itemHandler.insertItem(i, entityStack.copy().split(addAmount), false);
-                        remainingAmount -= addAmount;
-                        entityStack.shrink(addAmount);
-                    }
-                }
+        if(blockEntity instanceof Container container){
+            if(entityStack != null){
+                var getReturned = HopperBlockEntity.addItem(null, container, entityStack.copy(), Direction.DOWN);
+                entityStack.setCount(getReturned.getCount());
             }
-        );
+        }
+
     }
 }
 

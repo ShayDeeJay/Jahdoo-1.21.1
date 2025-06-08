@@ -3,19 +3,17 @@ package org.jahdoo.trial_nexus.ability.abilities_utility.enchanted_fusion;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
+import org.jahdoo.common.block.enchanted_block.ConverterValues;
+import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
+import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.abilities_utility.block_breaker.BlockBreakerAbility;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.jahdoo.common.block.enchanted_block.ConverterValues;
-import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
-import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
-import org.jahdoo.common.networking.server2client.EnchantedBlockS2CP;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.BlockReg;
 
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 import static org.jahdoo.common.registers.mod.ElementReg.utility;
@@ -53,7 +51,6 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
                 level.setBlockAndUpdate(pos, BlockReg.ENCHANTED_BLOCK.get().defaultBlockState());
                 if (level.getBlockEntity(pos) instanceof EnchantedBlockEntity enchantedBlockEntity) {
                     if (!state.isAir()) {
-                        Helpers.sendPacketsToPlayer(serverLevel, new EnchantedBlockS2CP(pos, state, 0, 1000, 0));
                         enchantedBlockEntity.setBlockType(state.getBlock(), 0);
                     }
                 }

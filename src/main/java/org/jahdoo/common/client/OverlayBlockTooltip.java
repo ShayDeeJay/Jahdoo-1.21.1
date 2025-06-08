@@ -59,6 +59,8 @@ public class  OverlayBlockTooltip {
         var width = graphics.guiWidth() / 2;
         var height = graphics.guiHeight() / 2;
         var handler = tableEntity.inputItemHandler;
+        if(handler.getSlots() == 0) return;
+
         var stackInSlot = handler.getStackInSlot(0);
         var tooltip = getTooltipFromItem(instance, stackInSlot);
 
@@ -71,7 +73,11 @@ public class  OverlayBlockTooltip {
             var count = stackInSlot.getCount();
             components.add(Helpers.withStyleComponentTrans("block.jahdoo.tank", ElementReg.utility().textColourB()));
             components.add(Helpers.withStyleComponent(count +"/"+ slotLimit, Helpers.colourByPercent(slotLimit, count, true)));
+            var pose = graphics.pose();
+            pose.pushPose();
+            pose.translate(0,0,1);
             graphics.renderTooltip(font, components, Optional.empty(), width + 10, mouseY + 6);
+            pose.popPose();
         }
 
         if(stackInSlot.isEmpty()) return;
@@ -79,8 +85,6 @@ public class  OverlayBlockTooltip {
         if(tableEntity instanceof ShoppingTableEntity){
             var getState = tableEntity.getBlockState().getValue(ShoppingTableBlock.TEXTURE);
             var canRender = tooltip.size() > 1 && getState != 3 && !stackInSlot.isEmpty();
-
-
             if (canRender) {
                 var mouseY = height - (tooltip.size() * 5);
                 graphics.renderTooltip(font, stackInSlot, width + 60, mouseY);

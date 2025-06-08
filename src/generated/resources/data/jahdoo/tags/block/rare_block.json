@@ -1,8 +1,10 @@
 {
   "values": [
-    "minecraft:beacon",
     "minecraft:emerald_block",
-    "minecraft:netherite_block",
-    "minecraft:diamond_block"
+    "minecraft:diamond_block",
+    "minecraft:oxidized_copper",
+    "minecraft:ancient_debris",
+    "minecraft:gold_block",
+    "minecraft:gilded_blackstone"
   ]
 }

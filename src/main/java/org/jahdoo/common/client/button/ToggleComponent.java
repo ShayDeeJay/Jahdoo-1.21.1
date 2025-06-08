@@ -46,10 +46,11 @@ public class ToggleComponent  {
         Button.OnPress action,
         ResourceLocation location,
         int size,
-        int scale
+        int scale,
+        String label
     ) {
         var button = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
-        return new GuiButton(posX, posY, button, size, action, false, location, "", scale, true);
+        return new GuiButton(posX, posY, button, size, action, false, location, label, scale, true);
     }
 
     public static GuiButton menuButton(

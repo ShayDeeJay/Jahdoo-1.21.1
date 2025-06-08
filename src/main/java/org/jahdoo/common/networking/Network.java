@@ -209,12 +209,6 @@ public class Network {
         );
 
         payloadRegistrar.playToClient(
-            EnchantedBlockS2CP.TYPE,
-            EnchantedBlockS2CP.STREAM_CODEC,
-            EnchantedBlockS2CP::handle
-        );
-
-        payloadRegistrar.playToClient(
             MoveClientEntityS2CP.TYPE,
             MoveClientEntityS2CP.STREAM_CODEC,
             MoveClientEntityS2CP::handle

@@ -14,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.monster.Husk;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.ZombieVillager;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.item.ArmorItem;
@@ -23,10 +24,6 @@ import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.attachments.InstanceData;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.Maths;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.entities.CustomSkeleton;
 import org.jahdoo.common.entities.CustomZombie;
@@ -40,6 +37,10 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Maths;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,8 @@ import static net.minecraft.world.item.enchantment.Enchantments.*;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.VAULT;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.THIS_ENTITY;
+import static org.jahdoo.common.entities.ancient_golem.AncientGolem.INFINITE_LIFE;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.difficultyFromInstance;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.MASTER;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.*;
@@ -68,8 +71,6 @@ import static org.jahdoo.trial_nexus.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.getRandomSphericalBlockPositions;
-import static org.jahdoo.common.entities.ancient_golem.AncientGolem.INFINITE_LIFE;
-import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 public class MobManager {
 
@@ -159,12 +160,23 @@ public class MobManager {
     }
 
     public static LivingEntity getReadyZombie(ServerLevel serverLevel, String id, InstanceData data){
-        var entity = switch (id){
-            case THE_HALL -> new CustomZombie(serverLevel, null);
-            case THE_CHAMBERS -> new ZombieVillager(EntityType.ZOMBIE_VILLAGER, serverLevel)  ;
-            case THE_OASIS -> new Husk(EntityType.HUSK, serverLevel);
-            default -> new ZombifiedPiglin(EntityType.ZOMBIFIED_PIGLIN, serverLevel);
-        };
+//        var entity = switch (id){
+//            case THE_HALL::contains -> new CustomZombie(serverLevel, null);
+//            case THE_CHAMBERS -> new ZombieVillager(EntityType.ZOMBIE_VILLAGER, serverLevel)  ;
+//            case THE_OASIS -> new Husk(EntityType.HUSK, serverLevel);
+//            default -> new ZombifiedPiglin(EntityType.ZOMBIFIED_PIGLIN, serverLevel);
+//        };
+
+        Monster entity;
+        if(THE_HALL.contains(id)){
+            entity = new CustomZombie(serverLevel, null);
+        } else if (THE_CHAMBERS.contains(id)) {
+            entity = new ZombieVillager(EntityType.ZOMBIE_VILLAGER, serverLevel);
+        } else if (THE_OASIS.contains(id)) {
+            entity = new Husk(EntityType.HUSK, serverLevel);
+        } else {
+            entity = new ZombifiedPiglin(EntityType.ZOMBIFIED_PIGLIN, serverLevel);
+        }
 
         attachEquipment(entity, serverLevel, data);
 

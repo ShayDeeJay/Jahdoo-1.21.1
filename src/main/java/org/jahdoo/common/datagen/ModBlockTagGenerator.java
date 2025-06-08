@@ -50,28 +50,6 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(SAND)
             .add(SANDSTONE);
 
-        this.tag(RARE_BLOCKS)
-            .add(BEACON)
-            .add(EMERALD_BLOCK)
-            .add(NETHERITE_BLOCK)
-            .add(DIAMOND_BLOCK);
-
-        this.tag(RARE_ORE)
-            .add(NETHER_QUARTZ_ORE)
-            .add(ANCIENT_DEBRIS)
-            .addTag(GOLD_ORES)
-            .addTag(DIAMOND_ORES)
-            .addTag(EMERALD_ORES);
-
-        this.tag(COMMON_ORE)
-            .add(NEXITE_DEEPSLATE_ORE.get())
-            .add(NEXITE_ORE.get())
-            .addTag(IRON_ORES)
-            .addTag(LAPIS_ORES)
-            .addTag(COPPER_ORES)
-            .addTag(REDSTONE_ORES)
-            .addTag(COAL_ORES);
-
         this.tag(CAN_REPLACE_BLOCK)
             .add(AIR)
             .add(SHORT_GRASS)
@@ -90,6 +68,34 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(NEXITE_DEEPSLATE_ORE.get())
             .add(NEXITE_BLOCK.get())
             .add(RAW_NEXITE_BLOCK.get());
+
+        this.tag(RARE_BLOCKS)
+            .add(EMERALD_BLOCK)
+            .add(DIAMOND_BLOCK)
+            .add(OXIDIZED_COPPER)
+            .add(ANCIENT_DEBRIS)
+            .add(GOLD_BLOCK)
+            .add(GILDED_BLACKSTONE);
+
+        this.tag(OPULENT_BLOCKS)
+            .add(BEACON)
+            .add(NETHERITE_BLOCK);
+
+        this.tag(RARE_ORE)
+            .add(NETHER_QUARTZ_ORE)
+            .add(ANCIENT_DEBRIS)
+            .addTag(GOLD_ORES)
+            .addTag(DIAMOND_ORES)
+            .addTag(EMERALD_ORES);
+
+        this.tag(COMMON_ORE)
+            .add(NEXITE_DEEPSLATE_ORE.get())
+            .add(NEXITE_ORE.get())
+            .addTag(IRON_ORES)
+            .addTag(LAPIS_ORES)
+            .addTag(COPPER_ORES)
+            .addTag(REDSTONE_ORES)
+            .addTag(COAL_ORES);
 
         this.tag(GARBAGE_BLOCKS)
             .add(COBBLESTONE)

@@ -2,12 +2,13 @@ package org.jahdoo.common.block.chaos_cube;
 
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.networking.client2server.ChaosCubeC2SP;
+import org.jahdoo.trial_nexus.attachments.ChaosCubeData;
 
 import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
-public class ChaosCubeData {
+public class ChaosCubeHelpers {
 
     // Toggle the power state
-    public static void selectDirection(ChaosCubeEntity entity, org.jahdoo.trial_nexus.attachments.ChaosCubeData newDirection) {
+    public static void selectDirection(ChaosCubeEntity entity, ChaosCubeData newDirection) {
         PacketDistributor.sendToServer(new ChaosCubeC2SP(entity.getBlockPos(), newDirection));
         entity.setData(MODULAR_CHAOS_CUBE, newDirection);
         entity.setChanged();

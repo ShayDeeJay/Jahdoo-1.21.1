@@ -52,28 +52,32 @@ public class StructureManager {
     public static final String LOOT_CRYPT = "loot_crypt";
     public static final Component LOOT_CRYPT_COMPONENT = withStyleComponent(stringIdToName(LOOT_CRYPT), COOLDOWN_GREEN);
 
-    public static final String THE_HALL = "serene";
-    public static final String THE_CHAMBERS = "camp";
-    public static final String THE_OASIS = "wasteland";
-    public static final String THE_BASTION = "hellscape";
+    public static final List<String> THE_HALL = List.of("serene_1", "serene_2", "serene_3", "serene_4");
+    public static final List<String>  THE_CHAMBERS = List.of("camp_1", "camp_2", "camp_3", "camp_4");
+    public static final List<String>  THE_OASIS = List.of("wastland_1", "wastland_2", "wastland_3", "wastland_4");
+    public static final List<String>  THE_BASTION = List.of("hellscape_1", "hellscape_2", "hellscape_3", "hellscape_4");
     public static final String STARTING_ROOM = "starting_room";
 
     public static final int GLOBAL_Y = 60;
     public static final Vec3 SPAWN_POSITION = new Vec3(33.5, GLOBAL_Y + 2, 27.5);
     public static final long SEED = /*Random.nextLong()*/ 874095743;
-    public static final List<String> allBattleRooms = List.of(THE_HALL, THE_CHAMBERS, THE_OASIS, THE_BASTION);
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
         templates.ifPresent(template -> template.placeInWorld(level, pos, new BlockPos(-22, 0, -22), settings, level.random, 2));
     }
 
-    public static String getValidRooms(){
-        return Helpers.listRandom(allBattleRooms);
+    public static List<String> getValidRooms(){
+        var newList = new ArrayList<String>();
+        newList.addAll(THE_HALL);
+        newList.addAll(THE_CHAMBERS);
+        newList.addAll(THE_OASIS);
+        newList.addAll(THE_BASTION);
+        return newList;
     }
 
     public static Component getBattleRoom(){
-        return withStyleComponent(stringIdToName(getValidRooms()), SYMPATHISER_ORANGE);
+        return withStyleComponent(stringIdToName(Helpers.listRandom(getValidRooms())), SYMPATHISER_ORANGE);
     }
 
     public static Iterable<BlockPos> roomBoundingFromCenter(BlockPos pos) {
@@ -110,18 +114,16 @@ public class StructureManager {
 
         if(!isStarter){
             if (Maths.percentageChance(forSanctuary)) roomGen.add(SANCTUARY_COMPONENT);
-
-            if (Maths.percentageChance(50)) roomGen.add(LOOT_CRYPT_COMPONENT);
-
             if (Maths.percentageChance(50)) roomGen.add(BAZAAR_COMPONENT);
 
             if(roomGen.size() == 3) return roomGen;
-
             if(Maths.percentageChance(20)) roomGen.add(EXIT_ROOM_COMPONENT);
 
             if(roomGen.size() == 3) return roomGen;
-
             if (Maths.percentageChance(forBoss)) roomGen.add(BOSS_COMPONENT);
+
+            if(roomGen.size() == 3) return roomGen;
+            if (Maths.percentageChance(90)) roomGen.add(LOOT_CRYPT_COMPONENT);
         }
 
         while (roomGen.size() < 4) roomGen.add(getBattleRoom());
@@ -210,7 +212,7 @@ public class StructureManager {
 
             for (var blockPos : findBlock) {
                 var state1 = level.getBlockState(blockPos);
-                if(allBattleRooms.contains(roomId)){
+                if(getValidRooms().contains(roomId)){
                     if (state1.is(Blocks.DIAMOND_BLOCK)) {
                         level.setBlockAndUpdate(blockPos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
                         if (level.getBlockEntity(blockPos) instanceof AltarBlockEntity e) {

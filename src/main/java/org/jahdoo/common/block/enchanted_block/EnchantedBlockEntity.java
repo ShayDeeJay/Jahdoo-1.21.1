@@ -8,22 +8,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.common.networking.server2client.EnchantedBlockS2CP;
+import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.BlockReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.List;
 
-import static net.minecraft.util.FastColor.ARGB32.color;
 import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 
-public class EnchantedBlockEntity extends BlockEntity {
+public class EnchantedBlockEntity extends SyncedBlockEntity {
 
     public static final int MAX_STAGE = 6;
     public int stage;
@@ -37,13 +33,9 @@ public class EnchantedBlockEntity extends BlockEntity {
     }
 
     private void onStageProgression() {
+        this.updateBlock();
         if(growthChance == 0) return;
         if (Random.nextInt(0, growthChance) == 0) stage++;
-    }
-
-    private void updatePacket(ServerLevel serverLevel, BlockPos pos){
-        var payload = new EnchantedBlockS2CP(pos, this.block.defaultBlockState(), stage, growthChance, spreadChance);
-        Helpers.sendPacketsToPlayerDistance(pos.getCenter(), 64, serverLevel, payload);
     }
 
     private void updateState(BlockPos pos, ServerLevel serverLevel){
@@ -103,7 +95,6 @@ public class EnchantedBlockEntity extends BlockEntity {
     public void tick(Level level, BlockPos pos, BlockState state) {
         counter++;
         if(level instanceof ServerLevel serverLevel && this.block != null){
-            updatePacket(serverLevel, pos);
             if(stage < MAX_STAGE){
                 onStageProgression();
             } else {

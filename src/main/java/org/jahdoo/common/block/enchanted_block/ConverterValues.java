@@ -8,12 +8,13 @@ import org.jahdoo.trial_nexus.utils.ModTags;
 
 public enum ConverterValues {
 
-    GARBAGE("garbage", ModTags.Block.GARBAGE_BLOCKS, 300, 3),
-    LEAVES("leaves", BlockTags.LEAVES, 200, 3),
-    LOGS("logs", BlockTags.LOGS, 140, 2),
-    COMMON_ORE("common_ore", ModTags.Block.COMMON_ORE, 80, 2),
-    RARE_ORES("rare_ore", ModTags.Block.RARE_ORE, 40, 1),
-    OPULENT("opulent", ModTags.Block.RARE_BLOCKS, 10, 0);;
+    GARBAGE("garbage", ModTags.Block.GARBAGE_BLOCKS, 600, 4),
+    LEAVES("leaves", BlockTags.LEAVES, 400, 4),
+    LOGS("logs", BlockTags.LOGS, 280, 3),
+    COMMON_ORE("common_ore", ModTags.Block.COMMON_ORE, 160, 3),
+    RARE_ORES("rare_ore", ModTags.Block.RARE_ORE, 80, 2),
+    RARE_BLOCKS("rare_blocks", ModTags.Block.RARE_BLOCKS, 50, 1),
+    OPULENT_BLOCKS("opulent", ModTags.Block.OPULENT_BLOCKS, 10, 0);
 
     private final String name;
     private final TagKey<Block> type;

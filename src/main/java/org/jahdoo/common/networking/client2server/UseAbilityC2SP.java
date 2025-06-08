@@ -38,6 +38,7 @@ public class UseAbilityC2SP implements CustomPacketPayload {
                     if(CastHelper.validCasterType(mainHand)) hand = MAIN_HAND;
                     if(CastHelper.validCasterType(offHand)) hand = OFF_HAND;
 
+                    if(hand == null) return;
                     var item = serverPlayer.getItemInHand(hand);
                     item.use(serverPlayer.level(), serverPlayer, hand);
                 }

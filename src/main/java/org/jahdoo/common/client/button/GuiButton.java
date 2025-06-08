@@ -6,10 +6,15 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.jahdoo.common.client.Icons.GUI_BUTTON_SELECTED;
 import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
@@ -74,11 +79,13 @@ public class GuiButton extends ImageButton {
         var easedTick = easeInOutCubic(normalizedTick);
         var easedValue = (int) (easedTick * (totalSize - defaultSize)) + defaultSize;
         var offset = (easedValue - defaultSize) / 2;
+        var mc = Minecraft.getInstance();
+        var font = mc.font;
 
         if(isSelected) sizes = totalSize;
         this.setSize((int) sizes-4, (int) sizes-4);
 
-        graphics.drawCenteredString(Minecraft.getInstance().font, label, this.getX() + 17, this.getY()-8, -1);
+//        graphics.drawCenteredString(font, label, this.getX() + 17, this.getY()-8, -1);
         graphics.blit(this.sprites.enabled(), this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
 
         if (this.isMouseOver(mouseX, mouseY)) {
@@ -86,6 +93,12 @@ public class GuiButton extends ImageButton {
             int i = 4;
             graphics.pose().pushPose();
             graphics.pose().translate(0,0,2);
+            var tooltipLines = new ArrayList<Component>();
+            if(!label.isEmpty()){
+                tooltipLines.add(Helpers.withStyleComponent(label, ColourStore.SUB_HEADER_COLOUR));
+            }
+            graphics.renderTooltip(font, tooltipLines, Optional.empty(), mouseX, mouseY);
+
             if(showHover){
                 graphics.blit(SELECTED_GUI_BUTTON_OVERLAY, this.getX() - offset + i / 2, this.getY() - offset + i / 2, 0, 0, 0, easedValue - i, easedValue - i, easedValue - i, easedValue - i);
             }
@@ -105,4 +118,8 @@ public class GuiButton extends ImageButton {
         }
     }
 
+    @Override
+    public boolean isHovered() {
+        return super.isHovered();
+    }
 }

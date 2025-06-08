@@ -2,6 +2,9 @@ package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -166,6 +169,18 @@ public class ServerEvents {
         var pos = event.getPos();
         var level = event.getLevel();
         var getBlock = level.getBlockState(pos);
+
+        //Used for speeding up ticks
+        for (int i = 0; i < 10; i++){
+            var blockEntity = level.getBlockEntity(pos);
+            if(blockEntity instanceof BlockEntity entity) {
+//                entity.setData(AttachmentReg.)
+                BlockEntityTicker<BlockEntity> ticker = entity.getBlockState().getTicker(level, (BlockEntityType<BlockEntity>) entity.getType());
+                if(ticker != null){
+                    ticker.tick(level, pos, entity.getBlockState(), blockEntity);
+                }
+            }
+        }
 
         TrailNexusDimensionEvents.useItemBlockEvent(event);
         perkTableInteraction(getBlock, level, pos, player, event);
