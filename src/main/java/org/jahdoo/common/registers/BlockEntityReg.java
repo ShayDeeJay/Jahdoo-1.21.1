@@ -16,6 +16,7 @@ import org.jahdoo.common.block.enchanted_block.EnchantedBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.loot_crate.LootCrateEntity;
+import org.jahdoo.common.block.loot_pot.LootPotBlockEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.block.power_up_station.PowerUpStationEntity;
 import org.jahdoo.common.block.rune_table.DivineForgeEntity;
@@ -32,6 +33,9 @@ public class BlockEntityReg {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TankBlockEntity>> TANK_BE =
         registerBlockEntity("tank_be", TankBlockEntity::new, TANK);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LootPotBlockEntity>> LOOT_POT_BE =
+        registerBlockEntity("loot_pot_be", LootPotBlockEntity::new, LOOT_POT);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TicketBureauBlockEntity>> TICKET_BUREAU_BE =
         registerBlockEntity("ticket_bureau_be", TicketBureauBlockEntity::new, TICKET_BUREAU);

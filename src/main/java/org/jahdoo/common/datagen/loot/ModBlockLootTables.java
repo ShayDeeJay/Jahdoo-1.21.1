@@ -53,6 +53,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(RUNE_TABLE.get());
         this.dropSelf(CREATOR_BLOCK.get());
         this.dropSelf(LOOT_CRATE.value());
+        this.dropOther(LOOT_POT.value(), Items.AIR);
         this.dropOther(POWER_UP_STATION.get(), Items.AIR);
         this.dropOther(LIGHTING.get(), Items.AIR);
         this.dropOther(ENCHANTED_BLOCK.get(), Items.AIR);

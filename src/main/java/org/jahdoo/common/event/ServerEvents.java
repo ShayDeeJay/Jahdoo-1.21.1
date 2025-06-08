@@ -2,9 +2,8 @@ package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -28,13 +27,13 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.player_abilities.MageFlight;
 import org.jahdoo.trial_nexus.attachments.player_abilities.Rebound;
 import org.jahdoo.trial_nexus.attachments.player_abilities.TripleJump;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
 import static org.jahdoo.common.event.TriggerEvents.triggerKillEvent;
 import static org.jahdoo.common.event.TriggerEvents.triggerUseEvent;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.registers.AttachmentReg.SAVE_ITEM_DATA;
+import static org.jahdoo.trial_nexus.utils.Helpers.durabilityDamageCount;
 import static org.jahdoo.trial_nexus.utils.Helpers.syncClientData;
 
 
@@ -91,6 +90,17 @@ public class ServerEvents {
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
         var player = rightClickItem.getEntity();
 
+        var pot = new ItemStack(Blocks.DECORATED_POT);
+//        var x = BuiltInRegistries.ITEM.get(listRandom(DECORATED_POT_PATTERN.stream().toList()));
+//        var value = new PotDecorations(
+//            x,
+//            Items.SHELTER_POTTERY_SHERD,
+//            Items.SHELTER_POTTERY_SHERD,
+//            Items.SHELTER_POTTERY_SHERD
+//        );
+//        pot.set(DataComponents.POT_DECORATIONS, value);
+//        throwOrAddItem(player, pot);
+
         triggerUseEvent(player, player.level());
         removeShieldUse(rightClickItem);
     }
@@ -109,7 +119,7 @@ public class ServerEvents {
         for (var slot : event.getArmorMap().entrySet()) {
             var stack = slot.getValue().armorItemStack;
             if(stack.getItem() instanceof JahdooItem){
-                var i = Helpers.durabilityDamageCount(stack);
+                var i = durabilityDamageCount(stack);
                 if (i == 0) event.setCanceled(true);
             }
         }
@@ -171,16 +181,15 @@ public class ServerEvents {
         var getBlock = level.getBlockState(pos);
 
         //Used for speeding up ticks
-        for (int i = 0; i < 10; i++){
-            var blockEntity = level.getBlockEntity(pos);
-            if(blockEntity instanceof BlockEntity entity) {
-//                entity.setData(AttachmentReg.)
-                BlockEntityTicker<BlockEntity> ticker = entity.getBlockState().getTicker(level, (BlockEntityType<BlockEntity>) entity.getType());
-                if(ticker != null){
-                    ticker.tick(level, pos, entity.getBlockState(), blockEntity);
-                }
-            }
-        }
+//        for (int i = 0; i < 10; i++){
+//            var blockEntity = level.getBlockEntity(pos);
+//            if(blockEntity instanceof BlockEntity entity) {
+//                BlockEntityTicker<BlockEntity> ticker = entity.getBlockState().getTicker(level, (BlockEntityType<BlockEntity>) entity.getType());
+//                if(ticker != null){
+//                    ticker.tick(level, pos, entity.getBlockState(), blockEntity);
+//                }
+//            }
+//        }
 
         TrailNexusDimensionEvents.useItemBlockEvent(event);
         perkTableInteraction(getBlock, level, pos, player, event);

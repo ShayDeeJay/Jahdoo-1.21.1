@@ -1,5 +1,6 @@
 package org.jahdoo.common.entities.generic_projectile;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -165,6 +166,16 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
     }
 
     @Override
+    public boolean mayInteract(Level level, BlockPos pos) {
+        return true;
+    }
+
+    @Override
+    public boolean mayBreak(Level level) {
+        return true;
+    }
+
+    @Override
     protected void onHitBlock(@NotNull BlockHitResult blockHitResult) {
         var pos = blockHitResult.getBlockPos();
 
@@ -193,6 +204,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
                 }
             }
         }
+        super.onHitBlock(blockHitResult);
     }
 
     private void particleSetter(Vec3 positions) {

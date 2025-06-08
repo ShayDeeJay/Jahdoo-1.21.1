@@ -1,5 +1,6 @@
 package org.jahdoo.common.entities.ice_spear;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
@@ -73,6 +74,16 @@ public class IceSpear extends AbstractArrow implements GeoEntity {
 
     public double getProperty(String name){
         return CasterData.getSpecificValue((Player) getOwner(), name);
+    }
+
+    @Override
+    public boolean mayInteract(Level level, BlockPos pos) {
+        return true;
+    }
+
+    @Override
+    public boolean mayBreak(Level level) {
+        return true;
     }
 
     public void tick() {

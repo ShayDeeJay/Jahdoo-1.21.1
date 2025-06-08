@@ -19,6 +19,7 @@ import org.jahdoo.common.block.loot_chest.LootChestBlock;
 import org.jahdoo.common.block.dissembler.DisassemblerBlock;
 import org.jahdoo.common.block.light_block.LightBlock;
 import org.jahdoo.common.block.loot_crate.LootCrateBlock;
+import org.jahdoo.common.block.loot_pot.LootPotBlock;
 import org.jahdoo.common.block.perk_table.PerkTable;
 import org.jahdoo.common.block.power_up_station.PowerUpStation;
 import org.jahdoo.common.block.rune_table.DivineForge;
@@ -57,6 +58,9 @@ public class BlockReg {
 
     public static DeferredHolder<Block, Block> ENCHANTED_BLOCK =
         registerBlockWithItem("enchanted_block", EnchantedBlock::new);
+
+    public static DeferredHolder<Block, Block> LOOT_POT =
+        registerBlockWithItem("loot_pot", LootPotBlock::new);
 
     public static DeferredHolder<Block, Block> TANK =
         registerBlockWithItem("tank", TankBlock::new);

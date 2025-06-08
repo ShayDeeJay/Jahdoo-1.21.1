@@ -1,5 +1,6 @@
 package org.jahdoo.common.entities.element_projectile;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -151,6 +152,16 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
     }
 
     @Override
+    public boolean mayBreak(Level level) {
+        return true;
+    }
+
+    @Override
+    public boolean mayInteract(Level level, BlockPos pos) {
+        return true;
+    }
+
+    @Override
     protected void onHitBlock(BlockHitResult blockHitResult) {
         if(!(level() instanceof ServerLevel serverLevel) || getProjectile == null) return;
         getProjectile.onBlockBlockHit(blockHitResult);
@@ -158,6 +169,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
             var splashParticles = bakedParticle(this.getElementType().id(),5,2f, false);
             ParticleHandlers.particleBurst(serverLevel, blockHitResult.getLocation(), 10, splashParticles);
         }
+        super.onHitBlock(blockHitResult);
     }
 
     @Override
@@ -188,16 +200,6 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         }
 
         if (this.getOwner() != null && distanceTo(this.getOwner()) > 70f) this.discard();
-    }
-
-    @Override
-    public float getPickRadius() {
-        return 0;
-    }
-
-    @Override
-    public boolean isPickable() {
-        return false;
     }
 
     public void setShowTrailParticles(boolean setShowTrailParticles){
