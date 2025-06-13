@@ -68,7 +68,11 @@ public class KeyItem extends Item implements JahdooItem {
     }
 
     public static @NotNull JahdooRarity getJahdooRarity(CustomModelData getId) {
-        return switch (getId.value()){
+        return getLootRarity(getId.value());
+    }
+
+    public static @NotNull JahdooRarity getLootRarity(int getId) {
+        return switch (getId) {
             case 1 -> JahdooRarity.RARE;
             case 2 -> JahdooRarity.LEGENDARY;
             case 3 -> JahdooRarity.MYTHIC;

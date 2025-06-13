@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "level=0": {
+      "model": "jahdoo:block/power_up_station_overworld"
+    },
+    "level=1": {
+      "model": "jahdoo:block/power_up_station"
+    }
+  }
+}

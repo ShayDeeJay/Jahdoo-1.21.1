@@ -67,6 +67,7 @@ public class LevelGenerator {
             .dimensionType(BuiltinDimensionTypes.OVERWORLD)
             .chunkGenerator(new VoidChunkGenerator(serverLevel.getServer(), BIOME_SOURCE))
             .dimensionKey(res(key == null ? UUID.randomUUID().toString() : key))
+
             .difficulty(
                 difficulty -> {
                     difficulty.setValue(Difficulty.HARD);
@@ -86,6 +87,7 @@ public class LevelGenerator {
                     gameRules.getRule(GameRules.RULE_WEATHER_CYCLE).set(false, null);
                     gameRules.getRule(GameRules.RULE_NATURAL_REGENERATION).set(false, null);
                     gameRules.getRule(GameRules.RULE_MOBGRIEFING).set(false, null);
+                    gameRules.getRule(GameRules.RULE_DOFIRETICK).set(false, null);
                     return null;
                 }
             );

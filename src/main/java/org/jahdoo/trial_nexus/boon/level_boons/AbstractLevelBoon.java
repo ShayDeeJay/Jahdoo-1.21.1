@@ -48,7 +48,7 @@ public abstract class AbstractLevelBoon {
     public Component boonLabel(double value, String id){
         var displayValue = Maths.roundNonWholeString(value);
         var displayTime = Maths.ticksToTime(valueOf(value));
-        var getBy = Objects.equals(id, "time") ? displayTime : displayValue;
+        var getBy = Objects.equals(id, "max_time") ? displayTime : displayValue;
 
         return withStyleComponent("+" + getBy + (isPercentageOf() ? "% " : " ") + stringIdToName(id), textColour());
     }

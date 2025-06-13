@@ -17,6 +17,7 @@ import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -95,6 +96,13 @@ public class LootHelpers {
     public static void standAloneLoot(ServerLevel serverLevel, Vec3 pos, String difficulty, int keyValue, int colour) {
         var rewards = getCompletionLoot(serverLevel, pos, difficulty, keyValue);
         lootsplosian(pos, serverLevel, colour, rewards, true, 30, keyValue);
+    }
+
+    public static ItemStack potLoot(ServerLevel serverLevel, Vec3 pos, String difficulty, int keyValue){
+        var rewards = getCompletionLoot(serverLevel, pos, difficulty, keyValue);
+        var getItem = Helpers.listRandom(rewards);
+        attachItemData(serverLevel, getItem, null, keyValue);
+        return getItem;
     }
 
     public static void lootsplosian(

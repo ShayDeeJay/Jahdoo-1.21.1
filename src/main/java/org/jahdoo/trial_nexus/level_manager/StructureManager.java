@@ -1,20 +1,25 @@
 package org.jahdoo.trial_nexus.level_manager;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
+import org.jahdoo.common.block.loot_pot.LootPotBlockEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.loot.LootHelpers;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.Maths;
 
@@ -22,15 +27,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.mojang.datafixers.util.Pair.of;
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.core.BlockPos.withinManhattan;
 import static net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK;
+import static org.jahdoo.common.block.perk_table.PerkTable.TEXTURE;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockReg.LOCK_SUPPORT;
 import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setBlockGenerator;
 import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setLocks;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.*;
+import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
@@ -64,7 +72,8 @@ public class StructureManager {
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
-        templates.ifPresent(template -> template.placeInWorld(level, pos, new BlockPos(-22, 0, -22), settings, level.random, 2));
+        settings.setKnownShape(true);
+        templates.ifPresent(template -> template.placeInWorld(level, pos, new BlockPos(-22, 0, -22), settings, level.random, Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS));
     }
 
     public static List<String> getValidRooms(){
@@ -174,6 +183,8 @@ public class StructureManager {
         }
     }
 
+    public static final List<Pair<JahdooRarity, Integer>> potRarityGetter = List.of(of(COMMON, 1), of(RARE, 1000), of(EPIC, 5800),  of(LEGENDARY, 6000));
+
     public static void placeNewSide(Level level, Direction direction, BlockPos pos, String roomId) {
         if (level instanceof ServerLevel serverLevel) {
 
@@ -211,9 +222,9 @@ public class StructureManager {
             var alreadyPlaced = false;
 
             for (var blockPos : findBlock) {
-                var state1 = level.getBlockState(blockPos);
+                var placerState = level.getBlockState(blockPos);
                 if(getValidRooms().contains(roomId)){
-                    if (state1.is(Blocks.DIAMOND_BLOCK)) {
+                    if (placerState.is(Blocks.DIAMOND_BLOCK)) {
                         level.setBlockAndUpdate(blockPos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
                         if (level.getBlockEntity(blockPos) instanceof AltarBlockEntity e) {
                             e.roomId = roomId;
@@ -221,20 +232,46 @@ public class StructureManager {
                         }
                     }
 
-                    if (state1.is(Blocks.PINK_CONCRETE)) {
+                    if (placerState.is(Blocks.MAGENTA_STAINED_GLASS)) {
                         var spawnChance = Maths.percentageChance(20) && !alreadyPlaced;
                         var station = BlockReg.POWER_UP_STATION.get().defaultBlockState();
                         var air = Blocks.AIR.defaultBlockState();
                         if (spawnChance) alreadyPlaced = true;
                         level.setBlockAndUpdate(blockPos, spawnChance ? station : air);
                     }
+
+                    if (placerState.is(Blocks.ORANGE_STAINED_GLASS)) {
+                        if(level instanceof ServerLevel sLevel){
+                            var value = JahdooRarity.getRarity(potRarityGetter);
+                            var id = value.getId();
+                            var state = BlockReg.LOOT_POT.get().defaultBlockState().setValue(TEXTURE, id);
+                            var getLoot = LootHelpers.potLoot(sLevel, blockPos.getCenter(), NOVICE.getSerializedName(), id);
+                            var spawnChance = Maths.percentageChance(20);
+                            var air = Blocks.AIR.defaultBlockState();
+                            level.setBlockAndUpdate(blockPos, spawnChance ? state : air);
+                            if(level.getBlockEntity(blockPos) instanceof LootPotBlockEntity potBlockEntity){
+                                potBlockEntity.setTheItem(getLoot);
+                            }
+                        }
+                    }
+
+                    if (placerState.is(Blocks.PINK_STAINED_GLASS)) {
+                        if(level instanceof ServerLevel sLevel){
+                            var state = BlockReg.NEXITE_ORE.get().defaultBlockState();
+                            var spawnChance = Maths.percentageChance(20);
+                            var air = Blocks.AIR.defaultBlockState();
+                            if(!sLevel.getBlockState(blockPos.below()).isAir()){
+                                level.setBlockAndUpdate(blockPos, spawnChance ? state : air);
+                            }
+                        }
+                    }
                 }
 
-                if(state1.is(Blocks.OBSERVER)){
+                if(placerState.is(Blocks.OBSERVER)){
                     setLocks(serverLevel, blockPos, true);
                 }
 
-                if(state1.is(NETHERITE_BLOCK)){
+                if(placerState.is(NETHERITE_BLOCK)){
 
                     level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
                 }

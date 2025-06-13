@@ -2,8 +2,6 @@ package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -90,16 +88,16 @@ public class ServerEvents {
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
         var player = rightClickItem.getEntity();
 
-        var pot = new ItemStack(Blocks.DECORATED_POT);
-//        var x = BuiltInRegistries.ITEM.get(listRandom(DECORATED_POT_PATTERN.stream().toList()));
-//        var value = new PotDecorations(
-//            x,
-//            Items.SHELTER_POTTERY_SHERD,
-//            Items.SHELTER_POTTERY_SHERD,
-//            Items.SHELTER_POTTERY_SHERD
-//        );
-//        pot.set(DataComponents.POT_DECORATIONS, value);
-//        throwOrAddItem(player, pot);
+//        var level = rightClickItem.getLevel();
+//        if(level instanceof ServerLevel sLevel){
+//            var value = Random.nextInt(0, 4);
+//            var state = BlockReg.LOOT_POT.get().defaultBlockState().setValue(TEXTURE, value);
+//            var getLoot = LootHelpers.potLoot(sLevel, player.position(), NOVICE.getSerializedName(), value);
+//            level.setBlockAndUpdate(player.blockPosition(), state);
+//            if(level.getBlockEntity(player.blockPosition()) instanceof LootPotBlockEntity potBlockEntity){
+//                potBlockEntity.setTheItem(getLoot);
+//            }
+//        }
 
         triggerUseEvent(player, player.level());
         removeShieldUse(rightClickItem);

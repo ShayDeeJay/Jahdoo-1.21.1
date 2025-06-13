@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
-import org.jahdoo.common.block.tank.TankBlockEntity;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
@@ -23,16 +22,9 @@ import static net.minecraft.world.item.ItemDisplayContext.FIXED;
 
 public class TicketBureauRenderer implements BlockEntityRenderer<TicketBureauBlockEntity>{
     EntityRenderDispatcher dispatcher;
+
     public TicketBureauRenderer(BlockEntityRendererProvider.Context context) {
         dispatcher = context.getEntityRenderer();
-    }
-
-    public void setGlow(TankBlockEntity tank){
-        if(tank.usingThisTank.isEmpty()){
-            if(tank.glowStrength > 150) tank.glowStrength -= 5;
-        } else {
-            if(tank.glowStrength < 255) tank.glowStrength += 5;
-        }
     }
 
     @Override

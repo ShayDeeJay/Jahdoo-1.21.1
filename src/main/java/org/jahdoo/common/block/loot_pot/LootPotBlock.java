@@ -30,10 +30,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -42,10 +43,10 @@ import org.jetbrains.annotations.Nullable;
 import static org.jahdoo.common.registers.BlockEntityReg.LOOT_POT_BE;
 
 public class LootPotBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
-    private static final VoxelShape BOUNDING_BOX = Block.box((double)1.0F, (double)0.0F, (double)1.0F, (double)15.0F, (double)16.0F, (double)15.0F);
+    private static final VoxelShape BOUNDING_BOX = Block.box(1.0F, 0.0F, 1.0F, 15.0F, 16.0F, 15.0F);
 
 
-    private static final DirectionProperty HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final IntegerProperty TEXTURE = BlockStateProperties.LEVEL;
     public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty CRACKED = BlockStateProperties.CRACKED;
@@ -53,15 +54,16 @@ public class LootPotBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     public LootPotBlock() {
         super(
             BlockBehaviour.Properties.of()
-                .strength(1f)
-                .sound(SoundType.COPPER_BULB)
                 .lightLevel((state) -> 10)
+                .strength(0.0F, 0.0F)
+                .pushReaction(PushReaction.DESTROY)
                 .noOcclusion()
         );
         this.registerDefaultState(
             this.defaultBlockState()
                 .setValue(CRACKED, false)
                 .setValue(LIT, false)
+                .setValue(TEXTURE, 0)
                 .setValue(WATERLOGGED, false)
         );
     }
@@ -95,6 +97,7 @@ public class LootPotBlock extends BaseEntityBlock implements SimpleWaterloggedBl
         builder.add(LIT);
         builder.add(WATERLOGGED);
         builder.add(CRACKED);
+        builder.add(TEXTURE);
     }
 
     @Override
@@ -105,12 +108,15 @@ public class LootPotBlock extends BaseEntityBlock implements SimpleWaterloggedBl
         );
     }
 
-    protected InteractionResult useWithoutItem(BlockState p_316866_, Level p_316544_, BlockPos p_316541_, Player p_316732_, BlockHitResult p_316860_) {
-        BlockEntity var7 = p_316544_.getBlockEntity(p_316541_);
+    protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos pos, Player player, BlockHitResult result) {
+        BlockEntity var7 = level.getBlockEntity(pos);
+        System.out.println(blockState);
+        blockState.setValue(TEXTURE, 2);
+        System.out.println(blockState);
         if (var7 instanceof DecoratedPotBlockEntity decoratedpotblockentity) {
-            p_316544_.playSound(null, p_316541_, SoundEvents.DECORATED_POT_INSERT_FAIL, SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(null, pos, SoundEvents.DECORATED_POT_INSERT_FAIL, SoundSource.BLOCKS, 1.0F, 1.0F);
             decoratedpotblockentity.wobble(DecoratedPotBlockEntity.WobbleStyle.NEGATIVE);
-            p_316544_.gameEvent(p_316732_, GameEvent.BLOCK_CHANGE, p_316541_);
+            level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
             return InteractionResult.SUCCESS;
         } else {
             return InteractionResult.PASS;
@@ -153,7 +159,9 @@ public class LootPotBlock extends BaseEntityBlock implements SimpleWaterloggedBl
         var blockstate = context.getLevel().getBlockState(blockpos);
 
         if (blockstate.is(this)) {
-            return blockstate.setValue(WATERLOGGED, false).setValue(CRACKED, false);
+            return blockstate
+                .setValue(WATERLOGGED, false)
+                .setValue(CRACKED, false);
         } else {
             var fluidstate = context.getLevel().getFluidState(blockpos);
             return this.defaultBlockState().setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
@@ -162,6 +170,7 @@ public class LootPotBlock extends BaseEntityBlock implements SimpleWaterloggedBl
 
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult p_316345_) {
         BlockEntity var9 = level.getBlockEntity(blockPos);
+
         if (var9 instanceof LootPotBlockEntity potBlock) {
             if (level.isClientSide) {
                 return ItemInteractionResult.CONSUME;

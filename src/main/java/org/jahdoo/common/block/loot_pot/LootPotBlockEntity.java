@@ -17,23 +17,23 @@ import net.minecraft.world.level.block.entity.PotDecorations;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.ticks.ContainerSingleItem;
+import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static org.jahdoo.common.block.loot_pot.LootPotBlock.TEXTURE;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class LootPotBlockEntity extends BlockEntity implements RandomizableContainer, ContainerSingleItem.BlockContainerSingleItem {
 
     private PotDecorations decorations;
     private ItemStack item;
-    @Nullable
-    protected ResourceKey<LootTable> lootTable;
-    protected long lootTableSeed;
+    private ResourceKey<LootTable> lootTable;
+    private long lootTableSeed;
 
     public LootPotBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.LOOT_POT_BE.get(), pos, state);
@@ -62,8 +62,9 @@ public class LootPotBlockEntity extends BlockEntity implements RandomizableConta
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
+
         if (level instanceof ServerLevel serverlevel && Random.nextInt(4) == 0) {
-            var green = JahdooRarity.COMMON.getColour();
+            var green = KeyItem.getLootRarity(state.getValue(TEXTURE)).getColour();
             var dustPlume = ParticleHandlers.genericParticle(ParticleStore.SOFT_PARTICLE, green, green, 10, 1, false, 1);
             var posX = (double) pos.getX() + Random.nextDouble(0.40, 0.60);
             var posY = (double) pos.getY() + 1.2;

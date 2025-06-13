@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "jahdoo:block/ticket_bureau",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "jahdoo:block/ticket_bureau",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "jahdoo:block/ticket_bureau",
+      "y": 0
+    },
+    "facing=west": {
+      "model": "jahdoo:block/ticket_bureau",
+      "y": 90
+    }
+  }
+}
