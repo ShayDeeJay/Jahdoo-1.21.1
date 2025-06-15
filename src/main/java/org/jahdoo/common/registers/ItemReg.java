@@ -52,6 +52,12 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> NEXITE_POWDER =
         basicItem("nexite_powder");
 
+    public static final DeferredHolder<Item, Item> ROSE_QUARTZ =
+        basicItem("rose_quartz");
+
+    public static final DeferredHolder<Item, Item> ENCHANTED_DIAMOND =
+        basicItem("enchanted_diamond");
+
     public static final DeferredHolder<Item, Item> CHAMPIONS_CROWN =
         basicItem("champions_crown");
 

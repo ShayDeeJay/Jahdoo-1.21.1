@@ -66,6 +66,18 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(RAW_NEXITE_BLOCK.get());
 
         this.add(
+            ENCHANTED_DIAMOND_ORE.get(),
+            block -> createCopperLikeOreDrops(ENCHANTED_DIAMOND_ORE.get(), ENCHANTED_DIAMOND.get())
+                .withPool(LootPool.lootPool().setRolls(between(0f, 1.0F)))
+        );
+
+        this.add(
+            ROSE_QUARTZ_ORE.get(),
+            block -> createCopperLikeOreDrops(ROSE_QUARTZ_ORE.get(), ROSE_QUARTZ.get())
+                .withPool(LootPool.lootPool().setRolls(between(0f, 1.0F)))
+        );
+
+        this.add(
             NEXITE_ORE.get(),
             block -> createCopperLikeOreDrops(NEXITE_ORE.get(), NEXITE_POWDER.get())
                 .withPool(LootPool.lootPool().setRolls(between(0f, 1.0F)))

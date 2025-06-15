@@ -311,7 +311,7 @@ public class MobManager {
             var above = level.getBlockState(blockPos.above(2));
             var main = level.getBlockState(blockPos.above());
             var below = level.getBlockState(blockPos);
-            if (above.isAir() && main.isAir() && !below.isAir()) spawn.accept(blockPos);
+            if (above.isAir() && main.isAir() && !(below.isAir() || !below.getFluidState().isEmpty())) spawn.accept(blockPos);
         }
     }
 

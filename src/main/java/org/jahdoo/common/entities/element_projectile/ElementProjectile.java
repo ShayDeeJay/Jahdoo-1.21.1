@@ -162,6 +162,11 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
     }
 
     @Override
+    public boolean isPickable() {
+        return false;
+    }
+
+    @Override
     protected void onHitBlock(BlockHitResult blockHitResult) {
         if(!(level() instanceof ServerLevel serverLevel) || getProjectile == null) return;
         getProjectile.onBlockBlockHit(blockHitResult);

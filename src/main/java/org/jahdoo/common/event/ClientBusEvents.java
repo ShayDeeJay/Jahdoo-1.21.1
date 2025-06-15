@@ -13,6 +13,7 @@ import org.jahdoo.common.block.altar.AltarRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeRenderer;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeScreen;
 import org.jahdoo.common.block.creator.CreatorRenderer;
+import org.jahdoo.common.block.dissembler.DisassemblerRenderer;
 import org.jahdoo.common.block.enchanted_block.EnchantedBlockRenderer;
 import org.jahdoo.common.block.lock.LockRenderer;
 import org.jahdoo.common.block.loot_chest.LootChestRenderer;
@@ -128,6 +129,7 @@ public class ClientBusEvents {
         event.registerBlockEntityRenderer(TANK_BE.get(), TankRenderer::new);
         event.registerBlockEntityRenderer(TICKET_BUREAU_BE.get(), TicketBureauRenderer::new);
         event.registerBlockEntityRenderer(LOCK_BE.get(), LockRenderer::new);
+        event.registerBlockEntityRenderer(INFUSER_BE.get(), DisassemblerRenderer::new);
         event.registerBlockEntityRenderer(LOOT_CHEST_BE.get(), LootChestRenderer::new);
         event.registerBlockEntityRenderer(RUNE_TABLE_BE.get(), DivineForgeRenderer::new);
         event.registerBlockEntityRenderer(PERK_TABLE_BE.get(), PerkTableRenderer::new);

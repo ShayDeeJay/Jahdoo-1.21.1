@@ -96,6 +96,14 @@ public class BlockReg {
         () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DIAMOND_ORE))
     );
 
+    public static DeferredHolder<Block, Block> ENCHANTED_DIAMOND_ORE = registerBlockWithItem("enchanted_diamond_ore",
+        () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DIAMOND_ORE))
+    );
+
+    public static DeferredHolder<Block, Block> ROSE_QUARTZ_ORE = registerBlockWithItem("rose_quartz_ore",
+        () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DIAMOND_ORE))
+    );
+
     public static DeferredHolder<Block, Block> NEXITE_DEEPSLATE_ORE = registerBlockWithItem("nexite_deepslate_ore",
         () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DEEPSLATE_DIAMOND_ORE))
     );

@@ -13,21 +13,24 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import org.jahdoo.common.block.SyncedBlockEntity;
+import org.jahdoo.common.block.loot_pot.LootPotBlockEntity;
+import org.jahdoo.common.entities.ITamableEntity;
+import org.jahdoo.common.entities.safe.Safe;
 import org.jahdoo.common.event.TriggerEvents;
+import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.BlockReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.mobs.MobManager;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.Maths;
-import org.jahdoo.common.block.SyncedBlockEntity;
-import org.jahdoo.common.entities.ITamableEntity;
-import org.jahdoo.common.entities.safe.Safe;
-import org.jahdoo.common.registers.AttachmentReg;
-import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -44,17 +47,19 @@ import java.util.UUID;
 import static net.minecraft.core.BlockPos.containing;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static net.minecraft.world.level.block.Blocks.STONE;
+import static org.jahdoo.common.block.altar.AltarAnim.idleParticleAnim;
+import static org.jahdoo.common.block.altar.AltarAnim.onActivationAnim;
+import static org.jahdoo.common.entities.EntityAnimations.ALTAR_IDLE;
+import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.RunData.incrementClearedRoomExp;
-import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.*;
+import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.blockExitBarrier;
+import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setCoinLootChest;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.placeLocksWithData;
 import static org.jahdoo.trial_nexus.mobs.MobManager.addAndPositionEntity;
 import static org.jahdoo.trial_nexus.mobs.MobManager.championSpawn;
 import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
-import static org.jahdoo.common.block.altar.AltarAnim.idleParticleAnim;
-import static org.jahdoo.common.block.altar.AltarAnim.onActivationAnim;
-import static org.jahdoo.common.entities.EntityAnimations.ALTAR_IDLE;
-import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 
 
 public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntity {
@@ -70,6 +75,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     public List<UUID> onField = new ArrayList<>();
     public boolean spawnedChampion;
     public boolean spawnedSafe;
+    public boolean placedFloor;
 
     public AltarBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.CHALLENGE_ALTAR_BE.get(), pos, state);
@@ -108,9 +114,23 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
 
     private static @NotNull AABB roomBounding(BlockPos pos) {
         return new AABB(
-            pos.getX() - 23, pos.getY() - 3, pos.getZ() - 23,
-            pos.getX() + 24, pos.getY(), pos.getZ() + 24
+            pos.getX() - 24, pos.getY() - 2, pos.getZ() - 24,
+            pos.getX() + 24, pos.getY() + 10, pos.getZ() + 24
         );
+    }
+
+    private static @NotNull AABB support(BlockPos pos) {
+        return new AABB(
+            pos.getX() - 24, pos.getY() - 4, pos.getZ() - 24,
+            pos.getX() + 24, pos.getY() - 4, pos.getZ() + 24
+        );
+    }
+
+    private static @NotNull AABB spawnFloor(BlockPos pos) {
+        var x = pos.getX();
+        var y = pos.getY() - 2;
+        var z = pos.getZ();
+        return new AABB(x - 10, y, z - 10, x + 10, y, z + 10);
     }
 
     private void autoStartAltar(ServerLevel serverLevel, BlockPos pos) {
@@ -153,7 +173,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
                     livEnt -> livEnt instanceof ITamableEntity t && t.getOwner() != null || livEnt instanceof Player
                 ).toList();
 
-                if(!validTargets.isEmpty()) entity.setTarget((LivingEntity) Helpers.listRandom(validTargets));
+                if(!validTargets.isEmpty()) entity.setTarget((LivingEntity) listRandom(validTargets));
             }
         }
     }
@@ -161,8 +181,8 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
     public int getMaxAllowedMobsOnField(ServerLevel serverLevel){
         var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
         return switch (data.getDifficulty()){
-            case Helpers.MEDIUM -> 40;
-            case Helpers.HARD -> 60;
+            case MEDIUM -> 40;
+            case HARD -> 60;
             default -> 20;
         };
     }
@@ -176,18 +196,28 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         serverLevel.destroyBlock(pos, false);
         getSoundWithPosition(serverLevel, pos, SoundReg.END_TRIAL.get(), 2, 1.5F);
 
-        Helpers.sendPacketsToPlayerDistance(getBlockPos().getCenter(), 400, serverLevel,
+        sendPacketsToPlayerDistance(getBlockPos().getCenter(), 400, serverLevel,
             (serverPlayer) -> {
-                serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(5, 20, 20));
-                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(Helpers.withStyleComponent("ALTAR COMPLETE", ColourStore.MAGNET_RANGE_GREEN)));
+                var connection = serverPlayer.connection;
+                connection.send(new ClientboundSetTitlesAnimationPacket(5, 20, 20));
+                connection.send(new ClientboundSetTitleTextPacket(withStyleComponent("ALTAR COMPLETE", ColourStore.MAGNET_RANGE_GREEN)));
                 TriggerEvents.triggerRoomClearEvent(serverPlayer, serverLevel);
             }
         );
 
-//        if(clearedRooms % 2 == 0) {
-//            setAttributePerkTable(serverLevel, pos, clearedRooms);
-//        } else {
-//        }
+        var box = roomBounding(pos);
+        var bounding = getAllBlockPos(box);
+        for (BlockPos blockPos : bounding) {
+            var state = serverLevel.getBlockState(blockPos);
+            if (state.is(BlockReg.NEXITE_ORE)) serverLevel.destroyBlock(blockPos, false);
+            if (state.is(BlockReg.LOOT_POT)) {
+                if(serverLevel.getBlockEntity(blockPos) instanceof LootPotBlockEntity potBlock){
+                    potBlock.setTheItem(ItemStack.EMPTY);
+                    serverLevel.destroyBlock(blockPos, false);
+                }
+            }
+        }
+
         setCoinLootChest(serverLevel, pos, direction, -1, true, clearedRooms);
 
         for (var entity : serverLevel.getEntities().getAll()) {
@@ -197,6 +227,12 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         for (var player : serverLevel.players()) {
             incrementClearedRoomExp(player, data.getDifficulty());
         }
+    }
+
+    private static Iterable<BlockPos> getAllBlockPos(AABB box) {
+        var start = new BlockPos((int) box.minX, (int) box.minY, (int) box.minZ);
+        var end = new BlockPos((int) box.maxX, (int) box.maxY, (int) box.maxZ);
+        return BlockPos.betweenClosed(start, end);
     }
 
     @Override
@@ -210,6 +246,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         tag.putString("direction", direction.name());
         tag.putBoolean("spawned_champion", spawnedChampion);
         tag.putBoolean("spawned_safe", spawnedSafe);
+        tag.putBoolean("placed_floor", placedFloor);
 
         var allowedMobs = new CompoundTag();
         for (var spawnedMob : spawnableMobs) {
@@ -235,6 +272,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         roomId = tag.getString("roomId");
         spawnedChampion = tag.getBoolean("spawned_champion");
         spawnedSafe = tag.getBoolean("spawned_safe");
+        placedFloor = tag.getBoolean("placed_floor");
 
         for (var direction1 : Direction.stream().toList()) {
             if(tag.getString("direction").equals(direction1.name())){
@@ -257,6 +295,14 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
 
     public void tick(Level level, BlockPos pos, BlockState state) {
         if(!(level instanceof ServerLevel serverLevel)) return;
+        if(!placedFloor){
+            var box = support(pos);
+            var bounding = getAllBlockPos(box);
+            for (BlockPos blockPos : bounding) {
+                serverLevel.setBlockAndUpdate(blockPos, STONE.defaultBlockState());
+            }
+            placedFloor = true;
+        }
 
         autoStartAltar(serverLevel, pos);
         if(this.started) {
@@ -264,15 +310,30 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
             this.reAssignTarget(level, pos);
             var randomPoses = innerRadiusRandom(pos.below(2).getCenter(), 20, 200)
                 .stream()
-                .filter(pos1 -> serverLevel.getBlockState(containing(pos1)).isAir() && serverLevel.getBlockState(containing(pos1).above()).isAir())
+                .filter(
+                    pos1 -> {
+                        var aPos = containing(pos1);
+                        var spotA = serverLevel.getBlockState(aPos);
+                        var spotB = serverLevel.getBlockState(aPos.above());
+                        return spotA.isAir() && spotB.isAir();
+                    }
+                )
+                .filter(
+                    pos1 -> {
+                        var aPos = containing(pos1);
+                        var spotC = serverLevel.getBlockState(aPos.below());
+                        return spotC.getFluidState().isEmpty();
+                    }
+                )
                 .toList();
+
+            var x = Helpers.listRandom(randomPoses);
 
             if(privateTicks % 2 == 0){
                 if(!this.spawnableMobs.isEmpty() && onField.size() < getMaxAllowedMobsOnField(serverLevel)){
 
                     var entity = listRandom(this.spawnableMobs);
-                    var position = listRandom(randomPoses);
-                    addAndPositionEntity(serverLevel, containing(position), entity);
+                    addAndPositionEntity(serverLevel, containing(x), entity);
 
                     if(!this.spawnedChampion){
                         this.spawnedChampion = championSpawn(serverLevel, entity);
@@ -287,14 +348,13 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
                 var difficulty = InstanceDifficulty.getFromLevel(serverLevel);
                 var id = difficulty.getId();
                 var percentageChance = (2 + id) * 10;
-                if(Maths.percentageChance(percentageChance)){
+                if (Maths.percentageChance(percentageChance)) {
                     var origin = id * 100;
                     var getSafe = new Safe(level, Random.nextInt(origin, origin * 2), 20);
-                    var getSafePos = listRandom(randomPoses);
-                    getSafe.moveTo(getSafePos);
+                    getSafe.moveTo(x);
                     getSafe.lookAt(EntityAnchorArgument.Anchor.EYES, this.getBlockPos().getCenter());
                     level.addFreshEntity(getSafe);
-                    Helpers.getSoundWithPositionV(serverLevel, getSafePos, SoundReg.SWORD_THUD.value(), 5, 1.8F);
+                    getSoundWithPositionV(serverLevel, x, SoundReg.SWORD_THUD.value(), 5, 1.8F);
                 }
                 this.spawnedSafe = true;
             }

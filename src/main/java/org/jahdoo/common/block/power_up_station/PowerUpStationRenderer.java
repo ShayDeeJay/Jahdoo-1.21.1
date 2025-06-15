@@ -40,6 +40,8 @@ public class PowerUpStationRenderer implements BlockEntityRenderer<PowerUpStatio
         return true;
     }
 
+
+
     @Override
     public void render(PowerUpStationEntity entity, float partialTick, PoseStack stack, MultiBufferSource source, int packedLight, int packed) {
         var render = entity.getItem();

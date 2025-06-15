@@ -14,8 +14,8 @@ import static net.minecraft.tags.BlockTags.SNOW;
 import static net.minecraft.world.level.block.Blocks.*;
 import static net.minecraft.world.level.block.Blocks.AIR;
 import static net.minecraft.world.level.block.Blocks.SAND;
-import static org.jahdoo.trial_nexus.utils.ModTags.Block.*;
 import static org.jahdoo.common.registers.BlockReg.*;
+import static org.jahdoo.trial_nexus.utils.ModTags.Block.*;
 
 public class ModBlockTagGenerator extends BlockTagsProvider {
 
@@ -65,6 +65,8 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(TANK.get())
             .add(CHALLENGE_ALTAR.get())
             .add(NEXITE_ORE.get())
+            .add(ROSE_QUARTZ_ORE.get())
+            .add(ENCHANTED_DIAMOND_ORE.get())
             .add(NEXITE_DEEPSLATE_ORE.get())
             .add(NEXITE_BLOCK.get())
             .add(RAW_NEXITE_BLOCK.get());
@@ -76,6 +78,12 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(ANCIENT_DEBRIS)
             .add(GOLD_BLOCK)
             .add(GILDED_BLACKSTONE);
+
+        this.tag(MINEABLE_NEXUS)
+            .add(NEXITE_ORE.get())
+            .add(ENCHANTED_DIAMOND_ORE.get())
+            .add(ROSE_QUARTZ_ORE.get())
+            .add(LOOT_POT.get());
 
         this.tag(OPULENT_BLOCKS)
             .add(BEACON)

@@ -163,6 +163,31 @@ public class Helpers {
         return player.getItemInHand(player.getUsedItemHand());
     }
 
+
+    private static double getX(Vec3 position, double size, double scale) {
+        return position.x + size * scale;
+    }
+
+    public static double getRandomX(Vec3 position, double size,double scale) {
+        return getX(position,size, ((double)2.0F * Random.nextDouble() - (double)1.0F) * scale);
+    }
+
+    private static double getY(Vec3 position, double size, double scale) {
+        return position.y + size * scale;
+    }
+
+    public static  double getRandomY(Vec3 position, double size) {
+        return getY(position, size, Random.nextDouble());
+    }
+
+    private static double getZ(Vec3 position, double size,double scale) {
+        return position.z + size * scale;
+    }
+
+    public static double getRandomZ(Vec3 position, double size,double scale) {
+        return getZ(position, size, ((double)2.0F * Random.nextDouble() - (double)1.0F) * scale);
+    }
+
     public static Color getCyclicColorVariant(int baseColor, int ticker, double range, double transitionDelay) {
         int red = (baseColor >> 16) & 0xFF;
         int green = (baseColor >> 8) & 0xFF;

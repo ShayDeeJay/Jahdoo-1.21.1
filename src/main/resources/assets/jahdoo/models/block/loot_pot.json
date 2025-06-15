@@ -3,7 +3,7 @@
 	"texture_size": [64, 64],
     "textures": {
       "5": "jahdoo:block/loot_pot",
-      "particle": "jahdoo:block/loot_pot"
+      "particle": "minecraft:block/terracotta"
     },
 	"elements": [
 		{

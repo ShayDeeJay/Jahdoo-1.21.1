@@ -25,7 +25,6 @@ import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
@@ -213,7 +212,7 @@ public class BlockSetupManager {
     }
 
     private static void keyTable(ServerLevel level, BlockState shoppingTableState, BlockPos pos, Direction direction) {
-        var keyState = shoppingTableState.setValue(FACING, direction.getOpposite()).setValue(TEXTURE, 1);
+        var keyState = shoppingTableState.setValue(FACING, direction.getCounterClockWise()).setValue(TEXTURE, 1);
 
         if(level.getBlockState(pos).is(YELLOW_CONCRETE)){
             level.setBlockAndUpdate(pos, keyState);
@@ -299,9 +298,6 @@ public class BlockSetupManager {
         list.remove(Direction.DOWN);
         list.remove(Direction.UP);
         var startPlace = new BlockPos(0,0,0);
-        var blocker = TINTED_GLASS;
-        var state = blocker.defaultBlockState();
-
 
         for (var blockPos : roomBoundingFromCenter(pos)) {
             if(level.getBlockState(blockPos).is(REDSTONE_BLOCK)){
@@ -311,21 +307,15 @@ public class BlockSetupManager {
                         for (var direction : list) {
                             var newPos = startPlace.below(i);
                             var relative = newPos.relative(direction);
-                            var canPlaceHere = new AtomicBoolean(false);
 
-                            level.setBlockAndUpdate(newPos, state);
+                            level.setBlockAndUpdate(newPos, blocker);
 
                             for (var direction1 : list) {
                                 var adjacentBlocks = relative.relative(direction1);
-                                var adjacentNotAir = !level.getBlockState(adjacentBlocks).isAir();
-                                var adjacentNotBlocker = level.getBlockState(adjacentBlocks).is(blocker);
-                                if(adjacentNotAir && !adjacentNotBlocker){
-                                    canPlaceHere.set(true);
+                                var adjacentNotAir = level.getBlockState(adjacentBlocks).is(LOCK_SUPPORT);
+                                if(adjacentNotAir){
+                                    level.setBlockAndUpdate(relative, blocker);
                                 }
-                            }
-
-                            if(canPlaceHere.get()){
-                                level.setBlockAndUpdate(relative, state);
                             }
                         }
                     }
@@ -334,7 +324,7 @@ public class BlockSetupManager {
             }
         }
 
-        Helpers.getSoundWithPosition(level, startPlace, blocker.defaultBlockState().getSoundType().getPlaceSound());
+        Helpers.getSoundWithPosition(level, startPlace, blocker.getSoundType().getPlaceSound());
         Helpers.getSoundWithPosition(level, startPlace, SoundReg.UNLOCK.get(), 1, 1.8F);
     }
 

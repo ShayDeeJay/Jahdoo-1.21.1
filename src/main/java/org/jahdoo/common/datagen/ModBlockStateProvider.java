@@ -22,6 +22,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         blockWithItem(NEXITE_ORE);
+        blockWithItem(ROSE_QUARTZ_ORE);
+        blockWithItem(ENCHANTED_DIAMOND_ORE);
         blockWithItem(NEXITE_DEEPSLATE_ORE);
         blockWithItem(NEXITE_BLOCK);
         blockWithItem(RAW_NEXITE_BLOCK);

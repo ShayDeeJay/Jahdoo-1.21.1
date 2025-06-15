@@ -36,6 +36,10 @@ public class CreativeTab {
             .displayItems((parameters, outPut) -> {
                 outPut.accept(NEXITE_POWDER.get());
                 outPut.accept(NEXITE_ORE.get());
+                outPut.accept(ROSE_QUARTZ.get());
+                outPut.accept(ROSE_QUARTZ_ORE.get());
+                outPut.accept(ENCHANTED_DIAMOND.get());
+                outPut.accept(ENCHANTED_DIAMOND_ORE.get());
                 outPut.accept(NEXITE_DEEPSLATE_ORE.get());
                 outPut.accept(NEXITE_BLOCK.get());
                 outPut.accept(RAW_NEXITE_BLOCK.get());

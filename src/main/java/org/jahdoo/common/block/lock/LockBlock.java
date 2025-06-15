@@ -177,7 +177,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     }
 
     private static void destroyDoors(ServerLevel serverLevel, BlockPos pos) {
-        var range = betweenClosed(pos.getX() - 2, pos.getY() - 1, pos.getZ() - 2, pos.getX() + 2, pos.getY() + 3, pos.getZ() + 2);
+        var range = betweenClosed(pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1, pos.getX() + 1, pos.getY() + 3, pos.getZ() + 1);
 
         for (var blockPos : range) {
             var netherite = serverLevel.getBlockState(blockPos).is(BlockReg.LOCK_SUPPORT);

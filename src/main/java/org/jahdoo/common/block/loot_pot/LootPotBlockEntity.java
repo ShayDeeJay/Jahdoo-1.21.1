@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.PotDecorations;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.ticks.ContainerSingleItem;
+import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
@@ -28,7 +29,7 @@ import java.util.List;
 import static org.jahdoo.common.block.loot_pot.LootPotBlock.TEXTURE;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
-public class LootPotBlockEntity extends BlockEntity implements RandomizableContainer, ContainerSingleItem.BlockContainerSingleItem {
+public class LootPotBlockEntity extends SyncedBlockEntity implements RandomizableContainer, ContainerSingleItem.BlockContainerSingleItem {
 
     private PotDecorations decorations;
     private ItemStack item;
