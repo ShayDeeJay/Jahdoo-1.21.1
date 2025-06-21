@@ -83,9 +83,6 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> LOOT_KEY =
         complexItem("key", KeyItem::new);
 
-    public static final DeferredHolder<Item, Item> EXIT_KEY =
-        complexItem("exit_key", KeyItem::new);
-
     public static final DeferredHolder<Item, Item> AUGMENT_CORE =
         complexItem("augment_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(50, 0))));
 

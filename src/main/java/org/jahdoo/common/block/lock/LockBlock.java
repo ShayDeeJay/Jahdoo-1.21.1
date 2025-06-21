@@ -24,9 +24,7 @@ import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.registers.BlockReg;
-import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
-import org.jahdoo.trial_nexus.level_manager.StructureManager;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
@@ -73,7 +71,6 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        var test = context.isHoldingItem(ItemReg.EXIT_KEY.get());
 
         if(context instanceof EntityCollisionContext entityCollisionContext){
         }
@@ -124,9 +121,9 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         if(!(level instanceof ServerLevel serverLevel)) return FAIL;
         if(!entity.isInitialized()) return FAIL;
 
-        if(stack.is(ItemReg.EXIT_KEY)) {
+        if(!KeyItem.isLockKey(stack).equals(KeyItem.KeyTypes.KEY_PIECE)) {
             if(KeyItem.isValidKey(stack, level)){
-                entity.setRoomData(StructureManager.EXIT_ROOM_COMPONENT);
+                entity.setRoomData(KeyItem.isLockKey(stack).getRoomId());
                 stack.shrink(1);
             } else {
                 return FAIL;

@@ -31,6 +31,7 @@ import org.jahdoo.trial_nexus.mobs.MobManager;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.Maths;
+import org.jahdoo.trial_nexus.utils.ModTags;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -209,13 +210,13 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         var bounding = getAllBlockPos(box);
         for (BlockPos blockPos : bounding) {
             var state = serverLevel.getBlockState(blockPos);
-            if (state.is(BlockReg.NEXITE_ORE)) serverLevel.destroyBlock(blockPos, false);
             if (state.is(BlockReg.LOOT_POT)) {
                 if(serverLevel.getBlockEntity(blockPos) instanceof LootPotBlockEntity potBlock){
                     potBlock.setTheItem(ItemStack.EMPTY);
                     serverLevel.destroyBlock(blockPos, false);
                 }
             }
+            if (state.is(ModTags.Block.MINEABLE_NEXUS)) serverLevel.destroyBlock(blockPos, false);
         }
 
         setCoinLootChest(serverLevel, pos, direction, -1, true, clearedRooms);

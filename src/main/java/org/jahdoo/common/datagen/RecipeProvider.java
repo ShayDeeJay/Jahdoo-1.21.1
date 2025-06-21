@@ -8,8 +8,8 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import org.jahdoo.trial_nexus.utils.ModTags;
 import org.jahdoo.common.block.creator.recipe.CreatorRecipeBuilder;
+import org.jahdoo.trial_nexus.utils.ModTags;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -39,7 +39,6 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         ticket(recipeOutput, TRIAL_TICKET.get());
         starterWand(recipeOutput, STARTER_WAND.get());
         stoneOfRegret(recipeOutput, STONE_OF_REGRET.get());
-        core(recipeOutput, AUGMENT_CORE.get());
         advanceCore(recipeOutput, ADVANCED_AUGMENT_CORE.get());
         hyperCore(recipeOutput, AUGMENT_HYPER_CORE.get());
     }
@@ -84,13 +83,6 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .save(output);
     }
 
-    protected void core(RecipeOutput output, Item result) {
-        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 32)
-            .requires(ESSENCE_FRAGMENT.get(), 8)
-            .unlockedBy("augment_core", has(AUGMENT_CORE.get()))
-            .group("augment_core")
-            .save(output);
-    }
 
     protected void stoneOfRegret(RecipeOutput output, Item result) {
         CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 32)

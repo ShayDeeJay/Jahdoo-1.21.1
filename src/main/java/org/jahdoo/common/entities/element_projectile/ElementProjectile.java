@@ -78,7 +78,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         String abilityId
     ) {
         super(entityType, owner.level());
-        this.setProjectileWithOffsets(this, owner, spacing, 1);
+        setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
         this.abilityHolder = CasterData.entityHolder(owner, abilityId);
@@ -97,7 +97,7 @@ public class ElementProjectile extends ProjectileProperties implements IEntityPr
         String abilityId
     ) {
         super(entityType, owner.level());
-        this.setProjectileWithOffsets(this, owner, spacing, 1);
+        setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
         this.abilityHolder = wandAbilityHolder;

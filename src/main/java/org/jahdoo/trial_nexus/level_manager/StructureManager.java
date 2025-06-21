@@ -58,7 +58,7 @@ public class StructureManager {
     public static final String BOSS_CRUCIBLE = "boss_crucible";
     public static final Component BOSS_COMPONENT = withStyleComponent(stringIdToName(BOSS_CRUCIBLE), NEGATIVE_RED);
 
-    public static final String EASY_EXIT = "emergency_exit";
+    public static final String EASY_EXIT = "exit";
     public static final Component EXIT_ROOM_COMPONENT = withStyleComponent(stringIdToName(EASY_EXIT), MAGNET_RANGE_GREEN);
 
     public static final String LOOT_CRYPT = "loot_crypt";
@@ -272,7 +272,7 @@ public class StructureManager {
 
                     if (placerState.is(Blocks.PINK_STAINED_GLASS)) {
                         if(level instanceof ServerLevel sLevel){
-                            var state = BlockReg.NEXITE_ORE.get().defaultBlockState();
+                            var state = Helpers.listRandom(List.of(BlockReg.ROSE_QUARTZ_ORE.get(), BlockReg.ENCHANTED_DIAMOND_ORE.get())).defaultBlockState();
                             var spawnChance = percentageChance(10);
                             placeOre(level, blockPos, sLevel, spawnChance, state);
                             var bPos = blockPos;
@@ -294,14 +294,9 @@ public class StructureManager {
                     }
                 }
 
-                if(placerState.is(Blocks.OBSERVER)){
-                    setLocks(serverLevel, blockPos, true);
-                }
+                if(placerState.is(Blocks.OBSERVER)) setLocks(serverLevel, blockPos, true);
 
-                if(placerState.is(NETHERITE_BLOCK)){
-
-                    level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
-                }
+                if(placerState.is(NETHERITE_BLOCK)) level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
             }
         }
     }

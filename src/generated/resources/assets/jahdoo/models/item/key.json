@@ -18,6 +18,42 @@
       "predicate": {
         "minecraft:custom_model_data": 3.0
       }
+    },
+    {
+      "model": "jahdoo:item/key4",
+      "predicate": {
+        "minecraft:custom_model_data": 4.0
+      }
+    },
+    {
+      "model": "jahdoo:item/key5",
+      "predicate": {
+        "minecraft:custom_model_data": 5.0
+      }
+    },
+    {
+      "model": "jahdoo:item/key6",
+      "predicate": {
+        "minecraft:custom_model_data": 6.0
+      }
+    },
+    {
+      "model": "jahdoo:item/key7",
+      "predicate": {
+        "minecraft:custom_model_data": 7.0
+      }
+    },
+    {
+      "model": "jahdoo:item/key8",
+      "predicate": {
+        "minecraft:custom_model_data": 8.0
+      }
+    },
+    {
+      "model": "jahdoo:item/key9",
+      "predicate": {
+        "minecraft:custom_model_data": 9.0
+      }
     }
   ],
   "textures": {

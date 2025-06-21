@@ -1,8 +1,11 @@
 package org.jahdoo.trial_nexus.quests;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomModelData;
+import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.common.registers.BlockReg;
@@ -32,7 +35,9 @@ public abstract class AbstractQuest {
     public List<ItemStack> questRewards(){
         var rewards = new ArrayList<ItemStack>();
         rewards.add(new ItemStack(BlockReg.LOOT_CRATE.get()));
-        rewards.add(new ItemStack(ItemReg.EXIT_KEY));
+        var exitKey = new ItemStack(ItemReg.LOOT_KEY);
+        exitKey.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(KeyItem.EXIT_KEY));
+        rewards.add(exitKey);
         return rewards;
     }
 

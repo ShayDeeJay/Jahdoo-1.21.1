@@ -63,6 +63,7 @@ import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
 import org.jahdoo.common.event.TriggerEvents;
 import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.networking.client2server.ChaosCubeC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
@@ -813,7 +814,9 @@ public class EventHelpers {
             TriggerEvents.triggerQuestCompleteEvent(serverPlayer, customLevel);
             newBlock.set(ComponentReg.LOOT_CRATE_DATA, value);
             Helpers.throwOrAddItem(serverPlayer, newBlock);
-            Helpers.throwOrAddItem(serverPlayer, new ItemStack(ItemReg.EXIT_KEY));
+            var exitKey = new ItemStack(ItemReg.LOOT_KEY);
+            exitKey.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(KeyItem.EXIT_KEY));
+            Helpers.throwOrAddItem(serverPlayer, exitKey);
             addExperienceToTotal(quest.questXp(serverPlayer), serverPlayer);
             runData.setCompletedQuest(true);
         }

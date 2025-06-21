@@ -67,7 +67,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private void registerKeyModels() {
-        for (int i = 1; i < 4; i++) {
+        for (int i = 1; i < 10; i++) {
             createModel("key" + i, "item/keys/key" + i);
             createOverride(i, ItemReg.LOOT_KEY, "item/key");
         }
@@ -174,7 +174,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         var simpleItems = List.of(
             ItemReg.NEXITE_POWDER, ItemReg.ESSENCE_FRAGMENT, ItemReg.INFERNO_AUGMENT,
             ItemReg.FROST_AUGMENT, ItemReg.MYSTIC_AUGMENT, ItemReg.VITALITY_AUGMENT,
-            ItemReg.SKILL_POINT, ItemReg.EXIT_KEY, ItemReg.COIN_SACK,
+            ItemReg.SKILL_POINT, ItemReg.COIN_SACK,
             ItemReg.STONE_OF_REGRET, ItemReg.ROSE_QUARTZ, ItemReg.ENCHANTED_DIAMOND
         );
 

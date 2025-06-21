@@ -6,26 +6,22 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractTankUser;
-import org.jahdoo.common.block.creator.recipe.CreatorRecipe;
-import org.jahdoo.common.components.CoreData;
-import org.jahdoo.common.items.CoreItem;
+import org.jahdoo.common.block.creator.recipe.CreatorRecipes;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
-import org.jahdoo.common.registers.ItemReg;
-import org.jahdoo.common.registers.RecipeRegistry;
+import org.jahdoo.common.registers.mod.CreatorRecipeReg;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class CreatorEntity extends AbstractTankUser implements RecipeInput {
@@ -33,172 +29,10 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     public double animationTicker;
     public double animateDistanceIncrement = 0.5f;
     private double animationTickerIncrement = 0.5f;
-
-    @Override
-    protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        this.progress = pTag.getInt("progress");
-        if(tankPosition != null){
-            int[] array = {tankPosition.getX(), tankPosition.getY(), tankPosition.getZ()};
-            pTag.putIntArray("blockPos", array);
-        }
-        super.loadAdditional(pTag, pRegistries);
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        pTag.putInt("progress", this.progress);
-        var array = pTag.getIntArray("blockPos");
-        if(!Arrays.stream(array).boxed().toList().isEmpty()){
-            this.tankPosition = new BlockPos(array[0], array[1], array[2]);
-        }
-        super.saveAdditional(pTag, pRegistries);
-    }
+    private ItemStack getResult;
 
     public CreatorEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.CREATOR_BE.get(), pPos, pBlockState, 1);
-    }
-
-    public void tick(Level level, BlockPos blockPos, BlockState pState) {
-        this.assignTankBlockInRange(level, blockPos, this.getCraftingCost());
-
-        if(this.canCraft()){
-            this.progress++;
-            this.tableProcessingParticle();
-            this.onCompleteCraft(level, blockPos);
-            this.setAnimationTickerIncrement(Math.min(this.animationTickerIncrement + 0.1, 2.5));
-        } else {
-            this.setAnimationTickerIncrement(Math.max(this.animationTickerIncrement - 0.1, 0.5));
-            if(this.progress > 0) this.progress = 0;
-        }
-    }
-
-    private void tableProcessingParticle(){
-        if(!(this.level instanceof ServerLevel serverLevel)) return;
-
-        if(this.progress % 4 == 0){
-            PositionFinders.getOuterRingOfRadiusRandom(this.getBlockPos().getCenter(), this.animationTickerIncrement / 5, 20,
-                worldPosition -> {
-                    Vec3 directions = this.getBlockPos()
-                        .getCenter()
-                        .subtract(worldPosition)
-                        .normalize()
-                        .offsetRandom(RandomSource.create(), 2f);
-                        ParticleHandlers.sendParticles(serverLevel, processingParticle(10, 0.45f, false, 0.1),
-                        worldPosition.add(0, 0.6f, 0), 0, directions.x, directions.y, directions.z, Math.min(0.06, (double) this.progress /(200 * 10))
-                    );
-                }
-            );
-        }
-
-        if(this.progress % 25 == 0){
-            Helpers.getSoundWithPosition(serverLevel, this.getBlockPos(), SoundEvents.BEACON_AMBIENT, 0.5f, 2f);
-        }
-    }
-
-    public void onCompleteCraft(Level level, BlockPos blockPos){
-        if(!this.isCompletedCraft()) return;
-
-        this.chargeTankFuel(getCraftingCost());
-        var copy = this.getOutputResult().copy();
-        this.outputItemHandler.insertItem(0, copy, false);
-        this.clearContentsOnCompletion();
-
-        this.progress = 0;
-    }
-
-    public void clearContentsOnCompletion(){
-        var handler = this.inputItemHandler;
-        for(int i = 0; i < handler.getSlots(); i++) handler.getStackInSlot(i).shrink(1);
-    }
-
-    public ItemStack getOutputResult(){
-        if(getLevel() == null) return ItemStack.EMPTY;
-        if(getCurrentRecipe(getLevel()).isEmpty()) return ItemStack.EMPTY;
-        return getCurrentRecipe(getLevel()).get().value().getResultItem(getLevel().registryAccess());
-    }
-
-    public static void successfulCraftVisual(Level level, BlockPos blockPos, ItemStack itemStack){
-        Helpers.getSoundWithPosition(level, blockPos, SoundEvents.BEACON_POWER_SELECT, 0.5f, 0.8f);
-    }
-
-    public boolean isCompletedCraft(){
-        return this.progress == 200;
-    }
-
-    public double getAnimationTickerIncrement(){
-        return this.animationTickerIncrement;
-    }
-
-    public void setAnimationTickerIncrement(double animationTickerIncrement){
-        this.animationTickerIncrement = animationTickerIncrement;
-    }
-
-    public boolean canCraft(){
-        return getCurrentRecipe(level).isPresent()
-            && this.hasTankAndFuel()
-            && this.outputItemHandler.getStackInSlot(0).isEmpty()
-            && hasData();
-    }
-
-    public boolean hasData(){
-        var slots = inputItemHandler.getSlots();
-        var output = getCurrentRecipe(getLevel()).get().value().getOutputItemWithData();
-
-        if(output.is(ItemReg.WAND_ITEM_VITALITY)) {
-            for (int i = 0; i < slots; i++){
-                var item = inputItemHandler.getStackInSlot(i);
-                if(CoreData.isFull(item)) return true;
-            }
-            return false;
-        }
-
-        if(output.is(ItemReg.STONE_OF_REGRET)) {
-            for (int i = 0; i < slots; i++){
-                var item = inputItemHandler.getStackInSlot(i);
-                if(item.getItem() instanceof CoreItem){
-                    if(!CoreData.isFull(item)) return false;
-                }
-            }
-            return true;
-        }
-
-        return true;
-    }
-
-    private int getCraftingCost(){
-        if(this.getCurrentRecipe(level).isPresent()){
-            return this.getCurrentRecipe(level).get().value().getCraftingCost();
-        }
-        return 1000;
-    }
-
-    private Optional<RecipeHolder<CreatorRecipe>> getCurrentRecipe(Level level) {
-        SimpleContainer inventory = new SimpleContainer(this.inputItemHandler.getSlots());
-        for(int i = 0; i < inputItemHandler.getSlots(); i++) {
-            inventory.setItem(i, inputItemHandler.getStackInSlot(i));
-        }
-
-        return level.getRecipeManager().getRecipeFor(RecipeRegistry.CREATOR_TYPE.get(), CraftingInput.of(3, 2, inventory.getItems()), level);
-    }
-
-    public void setAnimator(){
-        if(this.animationTicker >= 360) {
-            this.animationTicker = 0;
-        } else {
-            this.animationTicker += this.getAnimationTickerIncrement();
-        }
-    }
-
-    public double getAnimationTicker(){
-        return this.animationTicker;
-    }
-
-    public void setAnimatedDistance(){
-        if(this.canCraft()){
-            if(this.animateDistanceIncrement < 2.5) this.animateDistanceIncrement += 0.025;
-        } else {
-            if(this.animateDistanceIncrement > 0.5) this.animateDistanceIncrement -= 0.025;
-        }
     }
 
     @Override
@@ -234,5 +68,149 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     @Override
     public int setCraftingCost() {
         return getCraftingCost();
+    }
+
+    public double getAnimationTicker(){
+        return this.animationTicker;
+    }
+
+    public static void successfulCraftVisual(Level level, BlockPos blockPos){
+        Helpers.getSoundWithPosition(level, blockPos, SoundEvents.BEACON_POWER_SELECT, 0.5f, 0.8f);
+    }
+
+    public boolean isCompletedCraft(){
+        return this.progress == 200;
+    }
+
+    public void setAnimationTickerIncrement(double animationTickerIncrement){
+        this.animationTickerIncrement = animationTickerIncrement;
+    }
+
+    private Optional<CreatorRecipes> getRecipe() {
+        return CreatorRecipeReg.getSpellsByTypeId(getAllCraftables());
+    }
+
+    public int getProgress(){
+        return this.progress;
+    }
+
+    public void tick(Level level, BlockPos blockPos, BlockState pState) {
+        if(this.canCraft()){
+            var creatorRecipes = this.getRecipe();
+            if(this.getResult == null && creatorRecipes.isPresent()){
+                this.getResult = creatorRecipes.get().result();
+            }
+            this.progress++;
+            this.tableProcessingParticle();
+            this.onCompleteCraft(level, blockPos);
+            this.setAnimationTickerIncrement(Math.min(this.animationTickerIncrement + 0.1, 2.5));
+        } else {
+            this.setAnimationTickerIncrement(Math.max(this.animationTickerIncrement - 0.1, 0.5));
+            if(this.getResult != null) this.getResult = null;
+//            if(this.progress > 0 && this.outputItemHandler.getStackInSlot(0).isEmpty()) this.progress = 0;
+        }
+
+        this.assignTankBlockInRange(level, blockPos, this.getCraftingCost());
+    }
+
+    private void tableProcessingParticle(){
+        if(!(this.level instanceof ServerLevel serverLevel)) return;
+
+        if(this.progress % 4 == 0){
+            PositionFinders.getOuterRingOfRadiusRandom(this.getBlockPos().getCenter(), this.animationTickerIncrement / 5, (double) this.progress / 2,
+                worldPosition -> {
+                    Vec3 directions = this.getBlockPos()
+                        .getCenter()
+                        .subtract(worldPosition)
+                        .normalize()
+                        .offsetRandom(RandomSource.create(), 2f);
+                        ParticleHandlers.sendParticles(serverLevel, processingParticle(10, 0.45f, false, 0.1),
+                        worldPosition.add(0, 0.6f, 0), 0, directions.x, directions.y, directions.z, Math.min(0.06, (double) this.progress /(200 * 10))
+                    );
+                }
+            );
+        }
+
+        if(this.progress % 25 == 0){
+            Helpers.getSoundWithPosition(serverLevel, this.getBlockPos(), SoundEvents.BEACON_AMBIENT, 0.5f, 2f);
+        }
+    }
+
+    public void onCompleteCraft(Level level, BlockPos blockPos){
+        if(!this.isCompletedCraft()) return;
+
+        this.chargeTankFuel(getCraftingCost());
+        this.outputItemHandler.insertItem(0, this.getResult.copy(), false);
+        this.clearContentsOnCompletion();
+        successfulCraftVisual(level, blockPos);
+        //ADD COMPLETION PARTICLES
+//        this.progress = Math.max(0, progress - 20);
+    }
+
+    public void clearContentsOnCompletion(){
+        var handler = this.inputItemHandler;
+        for(int i = 0; i < handler.getSlots(); i++) handler.getStackInSlot(i).shrink(1);
+    }
+
+    public ItemStack getOutputResult(){
+        var recipe = this.getRecipe();
+        return recipe.isPresent() ? recipe.get().result() : ItemStack.EMPTY;
+    }
+
+    public boolean canCraft(){
+        var b = getRecipe().isPresent();
+        var b1 = this.hasTankAndFuel();
+        var b2 = this.outputItemHandler.getStackInSlot(0).isEmpty();
+        return b && b1 && b2;
+    }
+
+    public List<ItemStack> getAllCraftables(){
+        var x = new ArrayList<ItemStack>();
+        for (int i = 0; i < inputItemHandler.getSlots(); i++){
+            var stackInSlot = inputItemHandler.getStackInSlot(i);
+            if(!stackInSlot.isEmpty()) x.add(stackInSlot);
+        }
+        return x;
+    }
+
+    private int getCraftingCost(){
+        var getRecipe = this.getRecipe();
+        return getRecipe.map(CreatorRecipes::nexiteCost).orElse(65);
+    }
+
+    public void setAnimator(){
+        if(this.animationTicker >= 360) {
+            this.animationTicker = 0;
+        } else {
+            this.animationTicker += this.animationTickerIncrement;
+        }
+    }
+
+    public void setAnimatedDistance(){
+        if(this.canCraft()){
+            if(this.animateDistanceIncrement < 2.5) this.animateDistanceIncrement += 0.025;
+        } else {
+            if(this.animateDistanceIncrement > 0.5) this.animateDistanceIncrement -= 0.025;
+        }
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
+        this.progress = pTag.getInt("progress");
+        if(tankPosition != null){
+            int[] array = {tankPosition.getX(), tankPosition.getY(), tankPosition.getZ()};
+            pTag.putIntArray("blockPos", array);
+        }
+        super.loadAdditional(pTag, pRegistries);
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
+        pTag.putInt("progress", this.progress);
+        var array = pTag.getIntArray("blockPos");
+        if(!Arrays.stream(array).boxed().toList().isEmpty()){
+            this.tankPosition = new BlockPos(array[0], array[1], array[2]);
+        }
+        super.saveAdditional(pTag, pRegistries);
     }
 }

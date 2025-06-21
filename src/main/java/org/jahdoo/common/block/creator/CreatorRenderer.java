@@ -95,7 +95,7 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         var scaleItem = 0.4f;
         var maxLightLevel = getLightLevel(Objects.requireNonNull(pBlockEntity.getLevel()), pBlockEntity.getBlockPos());
 
-        pPoseStack.translate(0.5f, 1.3f, 0.5f);
+        pPoseStack.translate(0.5f, 1.3f + ((float) pBlockEntity.getProgress() / 1000), 0.5f);
         pPoseStack.scale(scaleItem, scaleItem, scaleItem);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(getCurrentTime));
 

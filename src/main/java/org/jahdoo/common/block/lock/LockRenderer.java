@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.block.shopping_table.DisplayDirection;
 import org.jahdoo.common.client.Icons;
+import org.jahdoo.common.items.KeyItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,12 +23,12 @@ import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static net.minecraft.core.Direction.*;
 import static net.minecraft.world.effect.MobEffects.*;
+import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromName;
 import static org.jahdoo.trial_nexus.utils.Helpers.stringIdToName;
 import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
-import static org.jahdoo.common.client.RenderHelpers.drawTexture;
 
 public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
 
@@ -116,20 +117,29 @@ public class LockRenderer implements BlockEntityRenderer<LockBlockEntity>{
     }
 
     private void newRoomSelection(LockBlockEntity entity, PoseStack pose, MultiBufferSource source, int light, LocalPlayer player, Font font, float adjustY, Direction facing, DisplayDirection direction, float x) {
-        if (entity.isInitialized() && player != null && player.distanceToSqr(entity.getBlockPos().getCenter()) < 2500) {
-            var id = entity.roomId.getString();
-            var getIcon = id.contains("Boss") ? "☠" : id.contains("Sanctuary") ? "\uD83E\uDDEA" : id.contains("Exit") ? "⚠" :  id.contains("Bazaar") ? "⇵" : "⚔";
-            var textColour = entity.roomId.getStyle().getColor().getValue();
+        if (entity.isInitialized() && player != null) {
+            var distance = player.distanceToSqr(entity.getBlockPos().getCenter());
+            if (distance < 2500) {
+                var lockKey = KeyItem.isLockKey(player.getMainHandItem());
+                var id1 = lockKey.equals(KeyItem.KeyTypes.KEY_PIECE) ? entity.roomId : lockKey.getRoomId();
+                var id = id1.getString();
+                var boss = id.contains("Boss");
+                var sanctuary = id.contains("Sanctuary");
+                var exit = id.contains("Exit");
+                var bazaar = id.contains("Bazaar");
+                var getIcon = boss ? "☠" : sanctuary ? "\uD83E\uDDEA" : exit ? "⚠" : bazaar ? "⇵" : "⚔";
+                var textColour = id1.getStyle().getColor().getValue();
 
-            renderName(withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);
-            renderName(entity.roomId, pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction, false);
-            var hasNegative = !Objects.equals(entity.negativeBoon, EMPTY);
-            if(hasNegative){
-                renderNewLine(font, pose, source, entity.negativeBoon.label(), entity.negativeBoon.icon(), x, facing, direction, 0.2F, light);
-            }
+                renderName(withStyleComponent(getIcon, textColour), pose, source, -1, font, 0.05F, 4F - adjustY, true, facing, direction, false);
+                renderName(id1, pose, source, -1, font, 0.04F, 3.35F - adjustY, true, facing, direction, false);
+                var hasNegative = !Objects.equals(entity.negativeBoon, EMPTY);
+                if (hasNegative) {
+                    renderNewLine(font, pose, source, entity.negativeBoon.label(), entity.negativeBoon.icon(), x, facing, direction, 0.2F, light);
+                }
 
-            if (!Objects.equals(entity.positiveBoon, EMPTY)) {
-                renderNewLine(font, pose, source, entity.positiveBoon.label(), entity.positiveBoon.icon(), x -(hasNegative ?  0.6F : 0), facing, direction, 0.2F, light);
+                if (!Objects.equals(entity.positiveBoon, EMPTY)) {
+                    renderNewLine(font, pose, source, entity.positiveBoon.label(), entity.positiveBoon.icon(), x - (hasNegative ? 0.6F : 0), facing, direction, 0.2F, light);
+                }
             }
         }
     }

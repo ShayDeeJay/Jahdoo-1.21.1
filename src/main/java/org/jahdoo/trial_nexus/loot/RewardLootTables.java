@@ -186,9 +186,6 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> GLAIVE =
         lootTableItem(ItemReg.ANCIENT_GLAIVE.get());
 
-    public static final LootPoolSingletonContainer.Builder<?> EXIT_KEY =
-        lootTableItem(ItemReg.EXIT_KEY.get());
-    
     public static final LootPoolSingletonContainer.Builder<?> MAGNET =
         lootTableItem(ItemReg.MAGNET.get());
 
@@ -386,7 +383,6 @@ public class RewardLootTables {
             }
             if(Maths.percentageChance(calculateChance(1, difficulty, newRarity))){
                 builder.add(CHALLENGER_TICKET.setWeight((int) calculateChance(1, difficulty, newRarity)));
-                builder.add(EXIT_KEY.setWeight((int) calculateChance(1, difficulty, newRarity)));
             }
         }
 

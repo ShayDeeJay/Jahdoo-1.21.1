@@ -52,7 +52,6 @@ public class CreativeTab {
                 outPut.accept(CREATOR_BLOCK.get());
                 outPut.accept(DISASSEMBLER_ITEM.get());
                 outPut.accept(TRIAL_TICKET.get());
-                outPut.accept(EXIT_KEY.get());
                 outPut.accept(STONE_OF_REGRET.get());
 
 
@@ -69,7 +68,6 @@ public class CreativeTab {
                 registerMagnets(outPut);
                 registerCoins(outPut);
                 outPut.accept(COIN_SACK.get());
-                outPut.accept(EXIT_KEY.get());
 
                 outPut.accept(RuneHelpers.generateBlankRune());
                 outPut.accept(ESSENCE_FRAGMENT.get());
