@@ -31,10 +31,12 @@ import java.util.Optional;
 
 public class CreatorBlock extends BaseEntityBlock{
 
-    public static final VoxelShape SHAPE_BASE = Block.box(3, 3, 3, 13, 13, 13);
-    public static final VoxelShape SHAPE_BASE_SECOND = Block.box(2, 0, 2, 14, 3, 14);
-    public static final VoxelShape SHAPE_BASE_THIRD = Block.box(0, 13, 0, 16, 16, 16);
-    public static final VoxelShape SHAPE_COMMON = Shapes.or(SHAPE_BASE_THIRD, SHAPE_BASE_SECOND, SHAPE_BASE);
+    public static VoxelShape SHAPE_COMMON = Shapes.or(
+        Block.box(6, 4, 6, 10, 7, 10),
+        Block.box(5.25, 0, 5.25, 10.75, 2, 10.75),
+        Block.box(6.25, 2, 6.25, 9.75, 5.5, 9.75),
+        Block.box(0, 13, 0, 16, 16, 16)
+    );
 
     public CreatorBlock() {
         super(Properties.of().strength(1f).sound(SoundType.DEEPSLATE_BRICKS).noOcclusion());

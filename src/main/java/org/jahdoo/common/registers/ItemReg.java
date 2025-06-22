@@ -61,6 +61,9 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> CHAMPIONS_CROWN =
         basicItem("champions_crown");
 
+    public static final DeferredHolder<Item, Item> CREATOR_TOP =
+        basicItem("creator_top");
+
     //Complex Items
     public static final DeferredHolder<Item, Item> PERKA_SODA =
         complexItem("perka_soda", PerkaSoda::new);

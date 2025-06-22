@@ -11,7 +11,6 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.creator.recipe.*;
-import org.jahdoo.common.block.creator.recipe.recipes.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,20 +41,29 @@ public class CreatorRecipeReg {
         return x.findFirst();
     }
 
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> EXIT_KEY =
-        registerSpell(new ExitKey());
+    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> EXIT_KEY_RECIPE =
+        registerSpell(new ExitKeyRecipe());
 
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> SANCTUARY_KEY =
-        registerSpell(new SanctuaryKey());
+    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> SANCTUARY_KEY_RECIPE =
+        registerSpell(new SanctuaryKeyRecipe());
 
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> BAZAAR_KEY =
-        registerSpell(new BazaarKey());
+    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> BAZAAR_KEY_RECIPE =
+        registerSpell(new BazaarKeyRecipe());
 
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> CRYPT_KEY =
-        registerSpell(new CryptKey());
+    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> CRYPT_KEY_RECIPE =
+        registerSpell(new CryptKeyRecipe());
 
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> AUGMENT_CORE =
-        registerSpell(new AugmentCore());
+    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> AUGMENT_CORE_RECIPE =
+        registerSpell(new AugmentCoreRecipe());
+
+    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> TICKET_RECIPE =
+        registerSpell(new TicketRecipe());
+
+    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> STONE_OF_REGRET_RECIPE =
+        registerSpell(new StoneOfRegretRecipe());
+
+    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> STARTER_WAND_RECIPE =
+        registerSpell(new StarterWandRecipe());
 
     private static DeferredHolder<CreatorRecipes, CreatorRecipes> registerSpell(CreatorRecipes recipe) {
         return ABILITIES.register(recipe.recipeId(), () -> recipe);

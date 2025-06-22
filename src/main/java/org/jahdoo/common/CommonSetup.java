@@ -66,7 +66,6 @@ public class CommonSetup {
         TaskReg.register(modEventBus);
         QuestReg.register(modEventBus);
         RuneReg.register(modEventBus);
-        RecipeRegistry.register(modEventBus);
         CreatorRecipeReg.register(modEventBus);
     }
 

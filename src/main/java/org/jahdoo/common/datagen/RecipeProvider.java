@@ -8,7 +8,6 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import org.jahdoo.common.block.creator.recipe.CreatorRecipeBuilder;
 import org.jahdoo.trial_nexus.utils.ModTags;
 
 import java.util.List;
@@ -36,29 +35,6 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         chaosCube(recipeOutput, MODULAR_CHAOS_CUBE.get().asItem());
         runeManager(recipeOutput, RUNE_TABLE.get().asItem());
         oreSmelting(recipeOutput, List.of(Items.ROTTEN_FLESH), RecipeCategory.MISC, Items.LEATHER, 2.0F, 200, "leather");
-        ticket(recipeOutput, TRIAL_TICKET.get());
-        starterWand(recipeOutput, STARTER_WAND.get());
-        stoneOfRegret(recipeOutput, STONE_OF_REGRET.get());
-        advanceCore(recipeOutput, ADVANCED_AUGMENT_CORE.get());
-        hyperCore(recipeOutput, AUGMENT_HYPER_CORE.get());
-    }
-
-    protected void starterWand(RecipeOutput output, Item result) {
-        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 32)
-            .requires(Items.STICK, 4)
-            .requires(Items.LAPIS_LAZULI, 1)
-            .unlockedBy("starter_wand", has(Items.STICK))
-            .group("starter_wand")
-            .save(output);
-    }
-
-    protected void ticket(RecipeOutput output, Item result) {
-        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 32)
-            .requires(Items.PAPER, 4)
-            .requires(Items.DIAMOND, 4)
-            .unlockedBy("ticket", has(Items.DIAMOND))
-            .group("ticket")
-            .save(output);
     }
 
     protected void dissembler(RecipeOutput output, Item result) {
@@ -83,46 +59,6 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .save(output);
     }
 
-
-    protected void stoneOfRegret(RecipeOutput output, Item result) {
-        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 32)
-            .requires(ADVANCED_AUGMENT_CORE.get(), 2)
-            .requires(Items.ENDER_EYE, 1)
-            .requires(ESSENCE_FRAGMENT.get(), 5)
-            .unlockedBy("stone_of_regret", has(AUGMENT_CORE.get()))
-            .group("stone_of_regret")
-            .save(output);
-    }
-
-    protected void advanceCore(RecipeOutput output, Item result) {
-        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 44)
-            .requires(AUGMENT_CORE.get(), 8)
-            .unlockedBy("advance_augment_core", has(ADVANCED_AUGMENT_CORE.get()))
-            .group("advance_augment_core")
-            .save(output);
-    }
-
-    protected void hyperCore(RecipeOutput output, Item result) {
-        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 64)
-            .requires(ADVANCED_AUGMENT_CORE.get(), 8)
-            .unlockedBy("hyper_augment_core", has(AUGMENT_HYPER_CORE.get()))
-            .group("hyper_augment_core")
-            .save(output);
-    }
-
-
-//    //Wands
-//    protected void wands(RecipeOutput output, Item result, Item unique, String type) {
-//        CreatorRecipeBuilder.shapeless(RecipeCategory.MISC, result, 12)
-//            .requires(AUGMENT_CORE.get())
-//            .requires(Items.DIAMOND)
-//            .requires(Items.STICK)
-//            .requires(unique)
-//            .unlockedBy("augment_core", has(AUGMENT_CORE.get()))
-//            .group("wand"+type)
-//            .save(output);
-//    }
-
     protected void chaosCube(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
             .define('X', ModTags.Items.WAND_TAGS)
@@ -133,17 +69,6 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .unlockedBy("wand_item", has(ModTags.Items.WAND_TAGS))
             .save(output);
     }
-
-//    protected void wandManager(RecipeOutput output, Item result) {
-//        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
-//            .define('X', ModTags.Items.WAND_TAGS)
-//            .define('M', Items.MUD_BRICKS)
-//            .pattern(" M ")
-//            .pattern(" X ")
-//            .pattern(" M ")
-//            .unlockedBy("wand_item", has(ModTags.Items.WAND_TAGS))
-//            .save(output);
-//    }
 
     protected void runeManager(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)

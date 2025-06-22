@@ -1,8 +1,7 @@
-package org.jahdoo.common.block.creator.recipe.recipes;
+package org.jahdoo.common.block.creator.recipe;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
-import org.jahdoo.common.block.creator.recipe.CreatorRecipes;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;

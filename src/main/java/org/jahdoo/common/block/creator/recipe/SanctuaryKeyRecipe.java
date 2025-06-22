@@ -1,24 +1,24 @@
-package org.jahdoo.common.block.creator.recipe.recipes;
+package org.jahdoo.common.block.creator.recipe;
 
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.registers.ItemReg;
 
-public class CryptKey extends KeyRecipe {
+public class SanctuaryKeyRecipe extends KeyRecipe {
 
     @Override
     ItemStack specialItem() {
-        return new ItemStack(ItemReg.ROSE_QUARTZ);
+        return new ItemStack(ItemReg.AUGMENT_CORE);
     }
 
     @Override
     int keyId() {
-        return KeyItem.CRYPT_KEY;
+        return KeyItem.SANCTUARY_KEY;
     }
 
     @Override
     public String recipeId() {
-        return "crypt_key";
+        return "sanctuary_key";
     }
 
 }

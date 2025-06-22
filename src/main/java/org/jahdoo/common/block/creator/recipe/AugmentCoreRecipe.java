@@ -1,10 +1,10 @@
-package org.jahdoo.common.block.creator.recipe.recipes;
+package org.jahdoo.common.block.creator.recipe;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.registers.ItemReg;
 
-public class AugmentCore extends SingleItemRecipe{
+public class AugmentCoreRecipe extends SingleItemRecipe{
 
     @Override
     Item item() {

@@ -7,7 +7,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.components.CoreData;
@@ -27,10 +26,6 @@ public class TicketBureauBlockEntity extends AbstractTankUser {
 
     public TicketBureauBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.TICKET_BUREAU_BE.get(), pos, state, 1);
-    }
-
-    public TicketBureauBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int stackSize) {
-        super(type, pos, state, stackSize);
     }
 
     @Override
