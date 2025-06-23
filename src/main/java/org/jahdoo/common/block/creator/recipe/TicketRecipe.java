@@ -2,6 +2,7 @@ package org.jahdoo.common.block.creator.recipe;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 public class TicketRecipe implements CreatorRecipes {
 
     @Override
-    public boolean canCraft(List<ItemStack> inputItems) {
+    public boolean canCraft(List<ItemStack> inputItems, CreatorEntity creator) {
        var totalDiamonds = 0;
        var totalPaper = 0;
         for (var inputItem : inputItems) {
@@ -21,7 +22,7 @@ public class TicketRecipe implements CreatorRecipes {
     }
 
     @Override
-    public ItemStack result() {
+    public ItemStack result(CreatorEntity creator) {
         return new ItemStack(ItemReg.TRIAL_TICKET);
     }
 

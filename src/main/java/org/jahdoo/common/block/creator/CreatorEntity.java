@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.block.creator.recipe.CreatorRecipes;
+import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.BlockEntityReg;
@@ -34,12 +35,12 @@ import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class CreatorEntity extends AbstractTankUser implements RecipeInput {
 
-
     public static final GenericParticleOptions particleTypeA = genericParticle(SOFT_PARTICLE, utility(), 2, 0.08F, true);
     public static final BakedParticleOptions particleTypeB = bakedParticle(utility().id(), 2, 1F, false);
     public double animateDistanceIncrement = 0.5f;
     private double animationTickerIncrement = 0.5f;
     private ItemStack getResult;
+    private AbilityHolder holder;
 
     public CreatorEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.CREATOR_BE.get(), pPos, pBlockState, 1);
@@ -80,7 +81,13 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         return getCraftingCost();
     }
 
+    public void setHolder(AbilityHolder holder){
+        this.holder = holder;
+    }
 
+    public AbilityHolder getHolder(){
+        return holder;
+    }
 
     public static void successfulCraftVisual(Level level, BlockPos blockPos){
         Helpers.getSoundWithPosition(level, blockPos, SoundEvents.BEACON_POWER_SELECT, 0.5f, 0.8f);
@@ -99,7 +106,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     }
 
     private Optional<CreatorRecipes> getRecipe() {
-        return CreatorRecipeReg.getSpellsByTypeId(getAllCraftables());
+        return CreatorRecipeReg.getSpellsByTypeId(getAllCraftables(), this);
     }
 
     private AbstractElement element(){
@@ -114,7 +121,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         if(this.canCraft()){
             var creatorRecipes = this.getRecipe();
             if(this.getResult == null && creatorRecipes.isPresent()){
-                this.getResult = creatorRecipes.get().result();
+                this.getResult = creatorRecipes.get().result(this);
             }
             this.progress++;
             this.tableProcessingParticle();
@@ -127,6 +134,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
             if(this.getResult != null) this.getResult = null;
             if(this.animateDistanceIncrement > 0.5) this.animateDistanceIncrement = 0.5;
             privateTicks--;
+            if(this.holder != null) holder = null;
         }
     }
 
@@ -195,7 +203,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
 
     public ItemStack getOutputResult(){
         var recipe = this.getRecipe();
-        return recipe.isPresent() ? recipe.get().result() : ItemStack.EMPTY;
+        return recipe.isPresent() ? recipe.get().result(this) : ItemStack.EMPTY;
     }
 
     public boolean canCraft(){
@@ -221,22 +229,25 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        this.progress = pTag.getInt("progress");
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
+        super.loadAdditional(tag, pRegistries);
+        this.progress = tag.getInt("progress");
+        AbilityHolder.writeTag(holder == null ? AbilityHolder.DEFAULT : holder, tag);
         if(tankPosition != null){
             int[] array = {tankPosition.getX(), tankPosition.getY(), tankPosition.getZ()};
-            pTag.putIntArray("blockPos", array);
+            tag.putIntArray("blockPos", array);
         }
-        super.loadAdditional(pTag, pRegistries);
+        this.updateBlock();
     }
 
     @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-        pTag.putInt("progress", this.progress);
-        var array = pTag.getIntArray("blockPos");
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
+        super.saveAdditional(tag, pRegistries);
+        tag.putInt("progress", this.progress);
+        this.holder = AbilityHolder.readTag(tag);
+        var array = tag.getIntArray("blockPos");
         if(!Arrays.stream(array).boxed().toList().isEmpty()){
             this.tankPosition = new BlockPos(array[0], array[1], array[2]);
         }
-        super.saveAdditional(pTag, pRegistries);
     }
 }

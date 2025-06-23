@@ -329,26 +329,19 @@ public class EventHelpers {
         }
     }
 
-    public static void setChaosCubeAbility(PlayerInteractEvent.LeftClickBlock event, Level level, BlockPos pos, ItemStack item) {
-        if(level.getBlockEntity(pos) instanceof ChaosCubeEntity entity && CastHelper.validCasterType(item.getItem())){
-            var player = event.getEntity();
+    public static boolean setChaosCubeAbility(Player player, Level level, BlockPos pos, ItemStack item) {
+        if(level.getBlockEntity(pos) instanceof CreatorEntity entity && CastHelper.validCasterType(item.getItem())){
             var casterData = player.getData(CASTER_DATA.get());
             var ability = AbilityReg.getFirstSpellByTypeId(casterData.getSelectedAbility());
 
             if(ability.isPresent()) {
                 var element = ElementReg.utility();
                 if (ability.get().getElemenType() == element) {
-                    event.setCanceled(true);
                     var holder = CasterData.entityHolderWithSelected(player);
                     if (holder != AbilityHolder.DEFAULT) {
                         entity.setHolder(holder);
-
-                        for (int i = 0; i < 10; i++) {
-                            var part = ParticleHandlers.getAllParticleTypes(element, 20, 2);
-                            ParticleHandlers.particleBurst(level, pos.getCenter(), 1, part);
-                        }
-
-                        getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), 1, 0.5F);
+                        System.out.println(entity.getHolder());
+                        return true;
                     } else {
                         var message = "You don't have this ability";
                         var messageComponent = withStyleComponent(message, element.textColourA());
@@ -357,6 +350,7 @@ public class EventHelpers {
                 }
             }
         }
+        return false;
     }
 
 

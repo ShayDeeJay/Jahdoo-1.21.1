@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jahdoo.common.client.screens.AugmentScreen;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.registers.AttachmentReg;
@@ -18,7 +19,6 @@ import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.Maths;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -71,8 +71,8 @@ public class AbilityComponentHelper {
         return Component.literal(keys)
             .withStyle(style -> style.withColor(element.partColourB()))
             .append(Component.literal(" | ")
-                .withStyle(ChatFormatting.GRAY)
-                .append(getModifierContextSingle(keys, format, comparison)));
+            .withStyle(ChatFormatting.GRAY)
+            .append(getModifierContextSingle(keys, format, comparison)));
     }
 
     public static boolean shiftForDetails(List<Component> toolTips, boolean spacer){
@@ -175,7 +175,7 @@ public class AbilityComponentHelper {
         if(abilityModifier == null) return Component.empty();
 
         // CHECK THIS IF ISSUE
-        var format = Maths.roundNonWholeString(Maths.doubleFormattedDouble(abilityModifier.actualValue()));
+        var format = Maths.roundNonWholeString(Maths.doubleFormattedDouble(abilityModifier.setValue()));
 
         if (itemStack1 != null) {
             int comparisonResult;
@@ -229,7 +229,7 @@ public class AbilityComponentHelper {
         } else if (by.stream().anyMatch(keys::contains)) {
             displayValue = isRange ? rangeString(min + "x" + min, max + "x" + max) : current + " x " + current;
         } else if (toggle.stream().anyMatch(keys::contains)) {
-            displayValue = isRange ? rangeString("False", "True") : current.equals("1") ? "Locked" : "Unlocked";
+            displayValue = isRange ? rangeString("False", "True") : current.equals("1") ? "False" : "True";
         } else {
             displayValue = isRange ? rangeString(min, max) : current;
         }
@@ -245,7 +245,7 @@ public class AbilityComponentHelper {
     }
 
     public static List<Component> getAllAbilityModifiers(
-          @Nullable Ability ability,
+          Ability ability,
           AbilityHolder holder,
           boolean hide,
           boolean showUnlockDetails,
@@ -255,10 +255,8 @@ public class AbilityComponentHelper {
         var data = player.getData(AttachmentReg.CASTER_DATA);
         var unlocked = holder != null && data.hasAbility(holder);
 
-        toolTips.add(getAbilityName(holder));
-
         if(hide || unlocked){
-            onlyToolTip(ability, holder, hide, player, toolTips);
+            onlyToolTip(ability, holder, hide, player.level(), toolTips);
         }
 
         if(!unlocked && showUnlockDetails){
@@ -278,12 +276,15 @@ public class AbilityComponentHelper {
         return toolTips;
     }
 
-    public static void onlyToolTip(@Nullable Ability ability, AbilityHolder holder, boolean hide, Player player, ArrayList<Component> toolTips) {
+    public static void onlyToolTip(Ability ability, AbilityHolder holder, boolean hide, Level level, List<Component> toolTips) {
         var subHeaderColour = -2434342;
         var exceptions = List.of(COOLDOWN, MANA_COST, SET_ELEMENT_TYPE, "index", OFFSET, "buddy");
         var curlyStart = String.valueOf((char) 171);
         var curlyEnd = String.valueOf((char) 187);
-        if(ability != null) toolTips.add(JahdooRarity.addRarityTooltip(ability.rarity(), player.level()));
+
+        toolTips.add(getAbilityName(holder));
+
+        toolTips.add(JahdooRarity.addRarityTooltip(ability.rarity(), level));
         toolTips.add(Component.empty());
 
         var filteredSuffix = holder.data().abilityProperties().keySet()

@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jahdoo.JahdooMod;
+import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.block.creator.recipe.*;
 
 import java.util.List;
@@ -34,10 +35,10 @@ public class CreatorRecipeReg {
         event.register(REGISTRY);
     }
 
-    public static Optional<CreatorRecipes> getSpellsByTypeId(List<ItemStack> currentRecipe) {
+    public static Optional<CreatorRecipes> getSpellsByTypeId(List<ItemStack> currentRecipe, CreatorEntity creator) {
         var x = CreatorRecipeReg.REGISTRY
             .stream()
-            .filter(a -> a.canCraft(currentRecipe));
+            .filter(a -> a.canCraft(currentRecipe, creator));
         return x.findFirst();
     }
 
@@ -64,6 +65,9 @@ public class CreatorRecipeReg {
 
     public static final DeferredHolder<CreatorRecipes, CreatorRecipes> STARTER_WAND_RECIPE =
         registerSpell(new StarterWandRecipe());
+
+    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> CHAOS_CUBE_WITH_HOLDER =
+        registerSpell(new ChaosCubeBlockRecipe());
 
     private static DeferredHolder<CreatorRecipes, CreatorRecipes> registerSpell(CreatorRecipes recipe) {
         return ABILITIES.register(recipe.recipeId(), () -> recipe);

@@ -20,6 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.common.event.event_helpers.EventHelpers;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.BlockInteractionHandler;
 import org.jahdoo.common.registers.BlockEntityReg;
@@ -70,16 +71,18 @@ public class CreatorBlock extends BaseEntityBlock{
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
-        if(!(pLevel.getBlockEntity(pPos) instanceof CreatorEntity wandManager)) return ItemInteractionResult.FAIL;
-        var stack = pPlayer.getMainHandItem();
+    protected @NotNull ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+        if(!(level.getBlockEntity(pos) instanceof CreatorEntity wandManager)) return ItemInteractionResult.FAIL;
+        var stack = player.getMainHandItem();
         var inputItemHandler = wandManager.inputItemHandler;
         var outputItemHandler = wandManager.outputItemHandler;
+
+        if(EventHelpers.setChaosCubeAbility(player, level, pos, stack)) return ItemInteractionResult.SUCCESS;
 
         if(!stack.isEmpty()){
             for (int i = 0; i < inputItemHandler.getSlots(); i++) {
                 if(inputItemHandler.getStackInSlot(i).isEmpty()){
-                    if (BlockInteractionHandler.removeItemsFromHandToSlot(inputItemHandler, i, pPlayer, 1, pHand)) {
+                    if (BlockInteractionHandler.removeItemsFromHandToSlot(inputItemHandler, i, player, 1, hand)) {
                         return ItemInteractionResult.SUCCESS;
                     }
                 }
@@ -87,13 +90,13 @@ public class CreatorBlock extends BaseEntityBlock{
             return ItemInteractionResult.FAIL;
         } else {
             if(!outputItemHandler.getStackInSlot(0).isEmpty()){
-                Helpers.throwOrAddItem(pPlayer, outputItemHandler.getStackInSlot(0));
+                Helpers.throwOrAddItem(player, outputItemHandler.getStackInSlot(0));
                 return ItemInteractionResult.SUCCESS;
             } else {
                 for (int i = 0; i < inputItemHandler.getSlots(); i++) {
                     int entry = inputItemHandler.getSlots() - (i+1);
                     if(!inputItemHandler.getStackInSlot(entry).isEmpty()){
-                        Helpers.throwOrAddItem(pPlayer, inputItemHandler.getStackInSlot(entry));
+                        Helpers.throwOrAddItem(player, inputItemHandler.getStackInSlot(entry));
                         return ItemInteractionResult.SUCCESS;
                     }
                 }

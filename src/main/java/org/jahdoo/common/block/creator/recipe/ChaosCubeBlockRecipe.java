@@ -3,12 +3,12 @@ package org.jahdoo.common.block.creator.recipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jahdoo.common.block.creator.CreatorEntity;
-import org.jahdoo.common.components.CoreData;
-import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.BlockReg;
+import org.jahdoo.common.registers.ComponentReg;
 
 import java.util.List;
 
-public class StoneOfRegretRecipe implements CreatorRecipes {
+public class ChaosCubeBlockRecipe implements CreatorRecipes {
 
     @Override
     public boolean canCraft(List<ItemStack> inputItems, CreatorEntity creator) {
@@ -16,21 +16,24 @@ public class StoneOfRegretRecipe implements CreatorRecipes {
         var eye = 0;
 
         for (var inputItem : inputItems) {
-            if(inputItem.is(ItemReg.ADVANCED_AUGMENT_CORE) && CoreData.isFull(inputItem)) core++;
-            if(inputItem.is(Items.ENDER_EYE)) eye++;
+            if(inputItem.is(BlockReg.MODULAR_CHAOS_CUBE.get().asItem())) core++;
+            if(inputItem.is(Items.DIAMOND)) eye++;
         }
 
-        return core == 4 && eye == 4;
+        System.out.println(core);
+        return core == 1 && eye == 7 && creator.getHolder() != null;
     }
 
     @Override
     public ItemStack result(CreatorEntity creator) {
-        return new ItemStack(ItemReg.STONE_OF_REGRET);
+        var stack = new ItemStack(BlockReg.MODULAR_CHAOS_CUBE.get().asItem());
+        stack.set(ComponentReg.ABILITY_HOLDER, creator.getHolder());
+        return stack;
     }
 
     @Override
     public String recipeId() {
-        return "stone_of_regret";
+        return "chaos_cube_with_holder";
     }
 
     @Override

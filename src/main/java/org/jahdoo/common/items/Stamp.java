@@ -6,7 +6,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomModelData;
-import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
@@ -14,6 +13,7 @@ import org.jahdoo.trial_nexus.utils.ColourStore;
 
 import java.util.List;
 
+import static org.jahdoo.common.components.TicketData.addNewEntry;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 
@@ -54,15 +54,14 @@ public class Stamp extends Item implements JahdooItem{
         var posRarity = JahdooRarity.getRarity();
         var posBoon = LevelBoonReg.getStampBoons(posRarity);
 
-        TicketData.addNewEntry(itemStack, posBoon.id(), posBoon.value(posRarity));
-
+        addNewEntry(itemStack, posBoon.id(), posBoon.value(posRarity));
         itemStack.set(ComponentReg.ID, posBoon.id());
         itemStack.set(ComponentReg.STORE_INTEGER, Random.nextInt(10, 50));
 
         if(addNegativeModifier){
             var negBoon = LevelBoonReg.randomNegative();
             var negRarity = JahdooRarity.getRarity();
-            TicketData.addNewEntry(itemStack, negBoon.id(), negBoon.value(negRarity));
+            addNewEntry(itemStack, negBoon.id(), negBoon.value(negRarity));
         }
 
         itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(posBoon.getStampIndex()+1));

@@ -14,6 +14,7 @@ import org.jahdoo.common.block.tank.TankBlockEntity;
 import org.jahdoo.common.block.ticket_bureau.TicketBureauBlock;
 import org.jahdoo.common.block.ticket_bureau.TicketBureauBlockEntity;
 import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.utils.Helpers;
@@ -63,15 +64,17 @@ public class  OverlayBlockTooltip {
         var height = graphics.guiHeight() / 2;
         var font = instance.font;
 
-        if(tableEntity instanceof ChaosCubeEntity chaosCubeEntity){
-            System.out.println("erer");
-            var canRender = chaosCubeEntity.getHolder() != null;
-            if (canRender) {
-                var list = new ArrayList<Component>();
-                AbilityComponentHelper.onlyToolTip(null, chaosCubeEntity.getHolder(), true, player, list);
-                var mouseY = height - (list.size() * 5);
-                graphics.renderTooltip(font, list, Optional.empty(), ItemStack.EMPTY, width + 60, mouseY);
-//                graphics.renderTooltip(font, stackInSlot, width + 60, mouseY);
+        if(player.isShiftKeyDown() && tableEntity instanceof ChaosCubeEntity chaosCubeEntity){
+            if (chaosCubeEntity.getHolder() != null) {
+
+                var ability = AbilityReg.getFirstSpellByTypeId(chaosCubeEntity.getHolder().abilityName());
+                if(ability.isPresent()){
+                    var list = new ArrayList<Component>();
+                    AbilityComponentHelper.onlyToolTip(ability.get(), chaosCubeEntity.getHolder(), false, player.level(), list);
+
+                    var mouseY = height - (list.size() * 5);
+                    graphics.renderTooltip(font, list, Optional.empty(), ItemStack.EMPTY, width + 60, mouseY);
+                }
             }
         }
 

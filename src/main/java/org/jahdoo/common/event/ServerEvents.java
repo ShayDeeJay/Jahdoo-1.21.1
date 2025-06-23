@@ -81,7 +81,7 @@ public class ServerEvents {
         var blockState = level.getBlockState(pos);
 
         setAbilityToItem(event, level, pos, item);
-        setChaosCubeAbility(event, level, pos, item);
+//        setChaosCubeAbility(event, level, pos, item);
         saveBlockType(event, item, blockState, pos);
     }
 

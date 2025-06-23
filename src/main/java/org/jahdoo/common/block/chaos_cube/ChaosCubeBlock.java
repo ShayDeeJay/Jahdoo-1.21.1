@@ -2,6 +2,7 @@ package org.jahdoo.common.block.chaos_cube;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -11,7 +12,9 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -30,19 +33,14 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ComponentReg;
-import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
+import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
-import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 
 public class ChaosCubeBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
@@ -78,30 +76,43 @@ public class ChaosCubeBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof ChaosCubeEntity entity) {
-            var ability = stack.get(ComponentReg.ABILITY_HOLDER);
-            var element = ElementReg.utility();
-            if(ability != null){
-                if (ability != AbilityHolder.DEFAULT) {
-                    entity.setHolder(ability);
-                    stack.shrink(1);
-                    for (int i = 0; i < 10; i++) {
-                        var part = ParticleHandlers.getAllParticleTypes(element, 20, 2);
-                        ParticleHandlers.particleBurst(level, pos.getCenter(), 1, part);
-                    }
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tComp, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tComp, tooltipFlag);
+        var holder = stack.get(ComponentReg.ABILITY_HOLDER);
+        if(holder == null) return;
+        var ability = AbilityReg.getFirstSpellByTypeId(holder.abilityName());
 
-                    getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), 1, 0.5F);
-                    entity.updateBlock();
-                    return ItemInteractionResult.SUCCESS;
-                } else {
-                    var message = "You don't have this ability";
-                    var messageComponent = withStyleComponent(message, element.textColourA());
-                    player.sendSystemMessage(messageComponent);
-                }
-            }
-        }
+        if(ability.isEmpty()) return;
+        AbilityComponentHelper.onlyToolTip(ability.get(), holder, false, context.level(), tComp);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        var blockEntity = level.getBlockEntity(pos);
+//        if(EventHelpers.setChaosCubeAbility(player, level, pos, stack)) return ItemInteractionResult.SUCCESS;
+//        if (blockEntity instanceof ChaosCubeEntity entity) {
+//            System.out.println(entity.getHolder());
+//            var ability = stack.get(ComponentReg.ABILITY_HOLDER);
+//            var element = ElementReg.utility();
+//            if(ability != null){
+//                if (ability != AbilityHolder.DEFAULT) {
+//                    entity.setHolder(ability);
+//                    stack.shrink(1);
+//                    for (int i = 0; i < 10; i++) {
+//                        var part = ParticleHandlers.getAllParticleTypes(element, 20, 2);
+//                        ParticleHandlers.particleBurst(level, pos.getCenter(), 1, part);
+//                    }
+//
+//                    getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), 1, 0.5F);
+//                    entity.updateBlock();
+//                    return ItemInteractionResult.SUCCESS;
+//                } else {
+//                    var message = "You don't have this ability";
+//                    var messageComponent = withStyleComponent(message, element.textColourA());
+//                    player.sendSystemMessage(messageComponent);
+//                }
+//            }
+//        }
         openWandGUI(player, pos, level);
         return ItemInteractionResult.SUCCESS;
     }
@@ -130,7 +141,6 @@ public class ChaosCubeBlock extends BaseEntityBlock {
             var drops = state.getDrops(lootBuilder);
             if (blockEntity instanceof ChaosCubeEntity automationBlock) {
                 for (var drop : drops) {
-                    System.out.println(blockEntity);
                     drop.set(ComponentReg.ABILITY_HOLDER, automationBlock.getHolder());
                     serverLevel.addFreshEntity(new ItemEntity(serverLevel, pos.getX(), pos.getY(), pos.getZ(), drop));
                 }
@@ -140,8 +150,7 @@ public class ChaosCubeBlock extends BaseEntityBlock {
 
     @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
-        ItemStack itemstack = super.getCloneItemStack(state, target, level, pos, player);
-        System.out.println(itemstack);
+        var itemstack = super.getCloneItemStack(state, target, level, pos, player);
         level.getBlockEntity(pos, BlockEntityReg.CREATOR_BE.get()).ifPresent(entity -> entity.saveToItem(itemstack, level.registryAccess()));
         return itemstack;
     }
@@ -162,11 +171,6 @@ public class ChaosCubeBlock extends BaseEntityBlock {
         if(!(player instanceof ServerPlayer serverPlayer)) return fail;
         serverPlayer.openMenu(cubeEntity, blockPos);
         return InteractionResult.SUCCESS;
-    }
-
-    @Override
-    protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
-        return super.getDrops(state, params);
     }
 
     @Override

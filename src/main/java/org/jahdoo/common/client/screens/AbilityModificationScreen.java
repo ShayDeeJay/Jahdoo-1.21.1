@@ -152,7 +152,7 @@ public class AbilityModificationScreen extends Screen {
             if(mod.highestValue() != -1){
                 buildPropertiesWithHighlight(comp, width, selectedY1);
                 var isRange = Pattern.matches(regex, comp.getString());
-                var getIsBool = comp.getString().contains("Locked");
+                var getIsBool = comp.getString().contains("False");
                 var canDisplay = isRange || getIsBool;
                 if (canDisplay && !comp.getString().contains(")")) {
                     var correctAdjustment = mod.isHigherBetter() ? mod.actualValue() == mod.highestValue() : mod.actualValue() == mod.lowestValue();

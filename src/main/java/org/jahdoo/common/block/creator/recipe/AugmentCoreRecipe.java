@@ -2,6 +2,7 @@ package org.jahdoo.common.block.creator.recipe;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.registers.ItemReg;
 
 public class AugmentCoreRecipe extends SingleItemRecipe{
@@ -22,7 +23,7 @@ public class AugmentCoreRecipe extends SingleItemRecipe{
     }
 
     @Override
-    public ItemStack result() {
+    public ItemStack result(CreatorEntity creator) {
         return new ItemStack(ItemReg.AUGMENT_CORE);
     }
 

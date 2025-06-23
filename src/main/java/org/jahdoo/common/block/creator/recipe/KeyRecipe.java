@@ -2,6 +2,7 @@ package org.jahdoo.common.block.creator.recipe;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
+import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public abstract class KeyRecipe implements CreatorRecipes {
     abstract int keyId();
 
     @Override
-    public boolean canCraft(List<ItemStack> inputItems) {
+    public boolean canCraft(List<ItemStack> inputItems, CreatorEntity creator) {
         if(!inputItems.stream().map(ItemStack::getItem).toList().contains(specialItem().getItem())) return false;
         var count = 0;
         for (var inputItem : inputItems) {
@@ -29,7 +30,7 @@ public abstract class KeyRecipe implements CreatorRecipes {
     }
 
     @Override
-    public ItemStack result() {
+    public ItemStack result(CreatorEntity creator) {
         var resultItem = new ItemStack(ItemReg.LOOT_KEY);
         resultItem.set(CUSTOM_MODEL_DATA, new CustomModelData(keyId()));
         return resultItem;

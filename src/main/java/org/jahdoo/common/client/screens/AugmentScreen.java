@@ -143,7 +143,7 @@ public class AugmentScreen extends Screen  {
     public void buildBooleanComponent(int posX, int posY, String label, Runnable onLeft, Runnable onRight, String value){
         var widget = new WidgetSprites(GUI_BUTTON, GUI_BUTTON);
         var adjustX = 2;
-        var locked = Objects.equals(value, "Locked");
+        var locked = Objects.equals(value, "False");
         var height = 22;
 
         this.addRenderableOnly(textWithBackgroundLarge(posX + 25 + adjustX, (int) (posY + yScroll), Component.empty(), this.getMinecraft(), Component.literal(label), 10, false));
