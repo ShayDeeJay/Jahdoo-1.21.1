@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.client.slots.InventorySlots;
+import org.jahdoo.common.client.slots.ModifierSlot;
 import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.items.caster_item.CasterItemHelper;
@@ -153,6 +154,9 @@ public class WandManagerScreen extends AbstractContainerScreen<WandManagerMenu> 
                 if(runeSlot.getItem().getItem() instanceof RuneItem){
                     runeSlot.setActive(showInventory);
                 }
+            }
+            if(slot instanceof ModifierSlot mSlot){
+                mSlot.setActive(showInventory);
             }
         }
     }

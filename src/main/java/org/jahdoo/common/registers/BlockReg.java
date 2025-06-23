@@ -22,7 +22,7 @@ import org.jahdoo.common.block.loot_crate.LootCrateBlock;
 import org.jahdoo.common.block.loot_pot.LootPotBlock;
 import org.jahdoo.common.block.perk_table.PerkTable;
 import org.jahdoo.common.block.power_up_station.PowerUpStation;
-import org.jahdoo.common.block.rune_table.DivineForge;
+import org.jahdoo.common.block.divine_forge.DivineForge;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.common.block.tank.TankBlock;
 import org.jahdoo.common.block.ticket_bureau.TicketBureauBlock;

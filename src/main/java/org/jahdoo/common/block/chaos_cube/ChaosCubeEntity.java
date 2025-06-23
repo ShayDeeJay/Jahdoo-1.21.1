@@ -24,6 +24,7 @@ import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
@@ -64,6 +65,12 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
     public ChaosCubeEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.MODULAR_CHAOS_CUBE_BE.get(), pos, state, 1);
         this.setData(MODULAR_CHAOS_CUBE, org.jahdoo.trial_nexus.attachments.ChaosCubeData.initData(this.getBlockPos()));
+    }
+
+    @Override
+    public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
+        if(this.holder != null) stack.set(ComponentReg.ABILITY_HOLDER, holder);
+        super.saveToItem(stack, registries);
     }
 
     @Override

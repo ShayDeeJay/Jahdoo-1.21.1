@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.rune_table;
+package org.jahdoo.common.block.divine_forge;
 
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -17,7 +17,7 @@ import static net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
 import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 import static net.minecraft.core.Direction.*;
 import static net.minecraft.world.item.ItemDisplayContext.FIXED;
-import static org.jahdoo.common.block.rune_table.DivineForge.FACING;
+import static org.jahdoo.common.block.divine_forge.DivineForge.FACING;
 import static org.jahdoo.common.block.wand_manager.WandManagerRenderer.rotateAllItems;
 import static org.jahdoo.common.block.wand_manager.WandManagerRenderer.rotateItem;
 

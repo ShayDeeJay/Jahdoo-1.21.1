@@ -7,8 +7,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jahdoo.common.block.AbstractBEInventory;
-import org.jahdoo.common.block.rune_table.DivineForgeEntity;
-import org.jahdoo.common.block.rune_table.RuneTableMenu;
+import org.jahdoo.common.block.divine_forge.DivineForgeEntity;
+import org.jahdoo.common.block.divine_forge.RuneTableMenu;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
@@ -29,7 +29,7 @@ public class RuneSlot extends SlotItemHandler {
 
     private final int maxStackSize;
     private final AbstractBEInventory entity;
-    private RuneTableMenu menu;
+    private final RuneTableMenu menu;
     private boolean isActive = true;
 
     public RuneSlot(
@@ -58,7 +58,7 @@ public class RuneSlot extends SlotItemHandler {
 
     @Override
     public boolean isActive() {
-        return menu.hideSlot;
+        return menu.hideRuneSlots;
     }
 
     @Override

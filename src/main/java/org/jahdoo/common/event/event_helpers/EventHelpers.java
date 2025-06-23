@@ -51,6 +51,7 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
+import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.LootCrateData;
@@ -301,6 +302,29 @@ public class EventHelpers {
                     hurtAndKeepItem(getTome, damage, serverLevel, entity);
                 }
                 getSoundWithPositionV(entity.level(), entity.position(), SoundReg.BLOCK.get(), 1, 1);
+            }
+        }
+    }
+
+    public static void setAbilityToItem(PlayerInteractEvent.LeftClickBlock event, Level level, BlockPos pos, ItemStack item) {
+        if(level.getBlockEntity(pos) instanceof CreatorEntity creatorEntity && CastHelper.validCasterType(item.getItem())){
+            var player = event.getEntity();
+            var casterData = player.getData(CASTER_DATA.get());
+            var ability = AbilityReg.getFirstSpellByTypeId(casterData.getSelectedAbility());
+
+            if(ability.isPresent()) {
+                var element = ElementReg.utility();
+                if (ability.get().getElemenType() == element) {
+                    event.setCanceled(true);
+                    var holder = CasterData.entityHolderWithSelected(player);
+                    if (holder != AbilityHolder.DEFAULT) {
+                        creatorEntity.inputItemHandler.getStackInSlot(0).set(ComponentReg.ABILITY_HOLDER, holder);
+                    } else {
+                        var message = "You don't have this ability";
+                        var messageComponent = withStyleComponent(message, element.textColourA());
+                        player.sendSystemMessage(messageComponent);
+                    }
+                }
             }
         }
     }

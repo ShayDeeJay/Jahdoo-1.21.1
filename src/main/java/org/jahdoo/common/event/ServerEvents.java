@@ -80,24 +80,15 @@ public class ServerEvents {
         var level = event.getLevel();
         var blockState = level.getBlockState(pos);
 
+        setAbilityToItem(event, level, pos, item);
         setChaosCubeAbility(event, level, pos, item);
         saveBlockType(event, item, blockState, pos);
     }
 
+
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
         var player = rightClickItem.getEntity();
-
-//        var level = rightClickItem.getLevel();
-//        if(level instanceof ServerLevel sLevel){
-//            var value = Random.nextInt(0, 4);
-//            var state = BlockReg.LOOT_POT.get().defaultBlockState().setValue(TEXTURE, value);
-//            var getLoot = LootHelpers.potLoot(sLevel, player.position(), NOVICE.getSerializedName(), value);
-//            level.setBlockAndUpdate(player.blockPosition(), state);
-//            if(level.getBlockEntity(player.blockPosition()) instanceof LootPotBlockEntity potBlockEntity){
-//                potBlockEntity.setTheItem(getLoot);
-//            }
-//        }
 
         triggerUseEvent(player, player.level());
         removeShieldUse(rightClickItem);
@@ -167,6 +158,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void onBlockBreak(PlayerEvent.BreakSpeed event) {
+
         TrailNexusDimensionEvents.useItemBlockEvent(event);
     }
 
@@ -177,7 +169,6 @@ public class ServerEvents {
         var pos = event.getPos();
         var level = event.getLevel();
         var getBlock = level.getBlockState(pos);
-
         //Used for speeding up ticks
 //        for (int i = 0; i < 10; i++){
 //            var blockEntity = level.getBlockEntity(pos);

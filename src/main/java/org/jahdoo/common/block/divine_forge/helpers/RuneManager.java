@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.rune_table.enchanted_forge;
+package org.jahdoo.common.block.divine_forge.helpers;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
@@ -7,8 +7,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.trial_nexus.attachments.PlayerWallet;
-import org.jahdoo.common.block.rune_table.DivineForgeEntity;
-import org.jahdoo.common.block.rune_table.RuneTableMenu;
+import org.jahdoo.common.block.divine_forge.DivineForgeEntity;
+import org.jahdoo.common.block.divine_forge.RuneTableMenu;
 import org.jahdoo.common.client.overlay.WalletOverlay;
 import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.components.CoreData;
@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
-import static org.jahdoo.common.block.rune_table.enchanted_forge.RuneTableScreen.groupFade;
+import static org.jahdoo.common.block.divine_forge.helpers.RuneTableScreen.groupFade;
 import static org.jahdoo.common.client.Icons.GUI_GENERAL_SLOT;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
 import static org.jahdoo.common.client.SharedUI.handleSlotsInGridLayout;

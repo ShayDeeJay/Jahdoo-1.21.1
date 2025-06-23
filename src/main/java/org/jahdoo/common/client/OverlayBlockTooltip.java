@@ -3,9 +3,11 @@ package org.jahdoo.common.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.common.block.AbstractBEInventory;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.block.tank.TankBlockEntity;
@@ -13,6 +15,7 @@ import org.jahdoo.common.block.ticket_bureau.TicketBureauBlock;
 import org.jahdoo.common.block.ticket_bureau.TicketBureauBlockEntity;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.ArrayList;
@@ -58,13 +61,25 @@ public class  OverlayBlockTooltip {
         var graphics = event.getGuiGraphics();
         var width = graphics.guiWidth() / 2;
         var height = graphics.guiHeight() / 2;
+        var font = instance.font;
+
+        if(tableEntity instanceof ChaosCubeEntity chaosCubeEntity){
+            System.out.println("erer");
+            var canRender = chaosCubeEntity.getHolder() != null;
+            if (canRender) {
+                var list = new ArrayList<Component>();
+                AbilityComponentHelper.onlyToolTip(null, chaosCubeEntity.getHolder(), true, player, list);
+                var mouseY = height - (list.size() * 5);
+                graphics.renderTooltip(font, list, Optional.empty(), ItemStack.EMPTY, width + 60, mouseY);
+//                graphics.renderTooltip(font, stackInSlot, width + 60, mouseY);
+            }
+        }
+
         var handler = tableEntity.inputItemHandler;
         if(handler.getSlots() == 0) return;
 
         var stackInSlot = handler.getStackInSlot(0);
         var tooltip = getTooltipFromItem(instance, stackInSlot);
-
-        var font = instance.font;
 
         if(tableEntity instanceof TankBlockEntity){
             var mouseY = height - (tooltip.size() * 5);
@@ -81,6 +96,7 @@ public class  OverlayBlockTooltip {
         }
 
         if(stackInSlot.isEmpty()) return;
+
 
         if(tableEntity instanceof ShoppingTableEntity){
             var getState = tableEntity.getBlockState().getValue(ShoppingTableBlock.TEXTURE);

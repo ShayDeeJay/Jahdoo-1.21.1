@@ -1,10 +1,10 @@
-package org.jahdoo.common.block.rune_table.enchanted_forge;
+package org.jahdoo.common.block.divine_forge.helpers;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.common.block.rune_table.DivineForgeEntity;
-import org.jahdoo.common.block.rune_table.RuneTableMenu;
+import org.jahdoo.common.block.divine_forge.DivineForgeEntity;
+import org.jahdoo.common.block.divine_forge.RuneTableMenu;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.networking.client2server.ItemInBlockC2SP;
 import org.jahdoo.common.networking.client2server.JahdooGearDataC2SP;

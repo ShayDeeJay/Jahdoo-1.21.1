@@ -5,9 +5,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import org.jahdoo.common.components.CoreData;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.components.CoreData;
 
 import java.util.List;
 
@@ -22,7 +22,9 @@ public class CoreItem extends Item implements JahdooItem{
 
     @Override
     public Component getName(ItemStack stack) {
-        var tick = Minecraft.getInstance().level.getGameTime();
+        var level = Minecraft.getInstance().level;
+        if(level == null) return Component.empty();
+        var tick = level.getGameTime();
         var isFilled = CoreData.isFull(stack);
         var color = color(233, 132, 148);
         var color1 = color(234, 144, 248);

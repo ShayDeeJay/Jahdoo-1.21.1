@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.rune_table;
+package org.jahdoo.common.block.divine_forge;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -25,6 +25,7 @@ import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLO
 public class DivineForgeEntity extends AbstractBEInventory implements MenuProvider {
 
     public ArmorStand stand;
+    public static final int MODIFICATION_SLOT = 16;
 
     public DivineForgeEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityReg.RUNE_TABLE_BE.get(), pPos, pBlockState, 64);
@@ -69,6 +70,10 @@ public class DivineForgeEntity extends AbstractBEInventory implements MenuProvid
     public ItemStack itemSlot(){
         return this.inputItemHandler.getStackInSlot(0);
     }
+
+    public ItemStack getModificationSlot(){
+        return inputItemHandler.getStackInSlot(MODIFICATION_SLOT);
+    };
 
     @Override
     public int setInputSlots() {

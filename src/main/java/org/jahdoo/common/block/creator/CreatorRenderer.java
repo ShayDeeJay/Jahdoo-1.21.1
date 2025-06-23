@@ -61,8 +61,8 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
             float angleOffset = 360.0f / totalItems;
             float itemAngle = angleOffset * index;
             pPoseStack.translate(0.5, -0.1, 0.5);
-            var frameTimeNs = Minecraft.getInstance().getFrameTimeNs() ;
-            pPoseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (frameTimeNs + partialTicks)));
+            var frameTimeNs = Minecraft.getInstance().level.getGameTime() ;
+            pPoseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (-frameTimeNs - partialTicks)));
         } else {
 
             float[][] positions = {
@@ -122,12 +122,12 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         var getCurrentTime = level.getGameTime() + partialTicks;
         var outputSlot = pBlockEntity.outputItemHandler.getStackInSlot(0);
         var itemStack = outputSlot.isEmpty() ? pBlockEntity.getOutputResult() : outputSlot;
-        var scaleItem = 0.4f;
+        var scaleItem = 0.5F;
         var maxLightLevel = getLightLevel(Objects.requireNonNull(pBlockEntity.getLevel()), pBlockEntity.getBlockPos());
 
         var scale = Math.sin(((level.getGameTime() + partialTicks) / 14.0F)) * 0.02F;
         pPoseStack.translate(0, scale, 0);
-        pPoseStack.translate(0.5f, 1.3f + ((float) pBlockEntity.getProgress() / 1000) + scale, 0.5f);
+        pPoseStack.translate(0.5f, 1.3f + scale, 0.5f);
         pPoseStack.scale(scaleItem, scaleItem, scaleItem);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(getCurrentTime));
 
@@ -150,7 +150,7 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         var level = Minecraft.getInstance().level;
         float getCurrentTime = level.getGameTime() + partialTicks;
         float scaleItem = 0.2f;
-        pPoseStack.translate(0, 1.25f, pBlockEntity.animateDistanceIncrement/5);
+        pPoseStack.translate(0, 1.25f, (pBlockEntity.animateDistanceIncrement/3)-0.07);
         pPoseStack.scale(scaleItem, scaleItem, scaleItem);
         if(!pBlockEntity.canCraft()) pPoseStack.mulPose(Axis.YP.rotationDegrees(getCurrentTime));
         var scale = Math.sin(((level.getGameTime() + partialTicks) / 14.0F)) * 0.15F;

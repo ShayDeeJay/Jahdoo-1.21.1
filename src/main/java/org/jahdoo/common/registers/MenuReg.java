@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.IContainerFactory;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeMenu;
-import org.jahdoo.common.block.rune_table.RuneTableMenu;
+import org.jahdoo.common.block.divine_forge.RuneTableMenu;
 import org.jahdoo.common.block.wand_manager.WandManagerMenu;
 
 import java.util.function.Supplier;

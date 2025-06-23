@@ -18,6 +18,7 @@ import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.Maths;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -244,51 +245,20 @@ public class AbilityComponentHelper {
     }
 
     public static List<Component> getAllAbilityModifiers(
-          Ability ability,
+          @Nullable Ability ability,
           AbilityHolder holder,
           boolean hide,
           boolean showUnlockDetails,
           Player player
     ){
         var toolTips = new ArrayList<Component>();
-        var exceptions = List.of(COOLDOWN, MANA_COST, SET_ELEMENT_TYPE, "index", OFFSET, "buddy");
         var data = player.getData(AttachmentReg.CASTER_DATA);
         var unlocked = holder != null && data.hasAbility(holder);
-        var subHeaderColour = -2434342;
-        var curlyStart = String.valueOf((char) 171);
-        var curlyEnd = String.valueOf((char) 187);
 
         toolTips.add(getAbilityName(holder));
 
         if(hide || unlocked){
-            toolTips.add(JahdooRarity.addRarityTooltip(ability.rarity(), player.level()));
-            toolTips.add(Component.empty());
-
-            var filteredSuffix = holder.data().abilityProperties().keySet()
-                .stream()
-                .filter(abilityModifiers -> !exceptions.contains(abilityModifiers))
-                .sorted(
-                    Comparator.comparing(
-                        String::new,
-                        Comparator.comparing((String key) -> key.startsWith("Toggle") ? 1 : 0) // Put "Toggle" last
-                            .thenComparing(Comparator.naturalOrder()) // Then sort alphabetically
-                    )
-                )
-                .toList();
-
-            if (holder.data().abilityProperties().containsKey(MANA_COST)) {
-                toolTipBase(toolTips, ability, holder, null, MANA_COST, ColourStore.AETHER_BLUE, hide);
-            }
-
-            if (holder.data().abilityProperties().containsKey(COOLDOWN)) {
-                toolTipBase(toolTips, ability, holder, null, COOLDOWN, ColourStore.COOLDOWN_GREEN, hide);
-            }
-
-            if (!filteredSuffix.isEmpty()) {
-                toolTips.add(Component.literal(" "));
-                toolTips.add(Helpers.withStyleComponentTrans("augmentHelper.jahdoo.attributes", subHeaderColour, curlyStart, curlyEnd));
-                filteredSuffix.forEach(keys -> toolTipBase(toolTips, ability, holder, null, keys, 0, hide));
-            }
+            onlyToolTip(ability, holder, hide, player, toolTips);
         }
 
         if(!unlocked && showUnlockDetails){
@@ -306,6 +276,41 @@ public class AbilityComponentHelper {
         }
 
         return toolTips;
+    }
+
+    public static void onlyToolTip(@Nullable Ability ability, AbilityHolder holder, boolean hide, Player player, ArrayList<Component> toolTips) {
+        var subHeaderColour = -2434342;
+        var exceptions = List.of(COOLDOWN, MANA_COST, SET_ELEMENT_TYPE, "index", OFFSET, "buddy");
+        var curlyStart = String.valueOf((char) 171);
+        var curlyEnd = String.valueOf((char) 187);
+        if(ability != null) toolTips.add(JahdooRarity.addRarityTooltip(ability.rarity(), player.level()));
+        toolTips.add(Component.empty());
+
+        var filteredSuffix = holder.data().abilityProperties().keySet()
+            .stream()
+            .filter(abilityModifiers -> !exceptions.contains(abilityModifiers))
+            .sorted(
+                Comparator.comparing(
+                    String::new,
+                    Comparator.comparing((String key) -> key.startsWith("Toggle") ? 1 : 0) // Put "Toggle" last
+                        .thenComparing(Comparator.naturalOrder()) // Then sort alphabetically
+                )
+            )
+            .toList();
+
+        if (holder.data().abilityProperties().containsKey(MANA_COST)) {
+            toolTipBase(toolTips, ability, holder, null, MANA_COST, ColourStore.AETHER_BLUE, hide);
+        }
+
+        if (holder.data().abilityProperties().containsKey(COOLDOWN)) {
+            toolTipBase(toolTips, ability, holder, null, COOLDOWN, ColourStore.COOLDOWN_GREEN, hide);
+        }
+
+        if (!filteredSuffix.isEmpty()) {
+            toolTips.add(Component.literal(" "));
+            toolTips.add(Helpers.withStyleComponentTrans("augmentHelper.jahdoo.attributes", subHeaderColour, curlyStart, curlyEnd));
+            filteredSuffix.forEach(keys -> toolTipBase(toolTips, ability, holder, null, keys, 0, hide));
+        }
     }
 
 }

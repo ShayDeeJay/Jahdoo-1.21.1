@@ -12,12 +12,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.block.creator.recipe.CreatorRecipes;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.particle.ParticleStore;
+import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.mod.CreatorRecipeReg;
-import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 
@@ -27,11 +26,17 @@ import java.util.List;
 import java.util.Optional;
 
 import static net.minecraft.world.level.block.EnchantingTableBlock.BOOKSHELF_OFFSETS;
-import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.*;
+import static org.jahdoo.common.particle.ParticleStore.MAGIC_MOVE_PARTICLE;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
+import static org.jahdoo.common.registers.mod.ElementReg.utility;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class CreatorEntity extends AbstractTankUser implements RecipeInput {
 
+
+    public static final GenericParticleOptions particleTypeA = genericParticle(SOFT_PARTICLE, utility(), 2, 0.08F, true);
+    public static final BakedParticleOptions particleTypeB = bakedParticle(utility().id(), 2, 1F, false);
     public double animateDistanceIncrement = 0.5f;
     private double animationTickerIncrement = 0.5f;
     private ItemStack getResult;
@@ -97,18 +102,15 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         return CreatorRecipeReg.getSpellsByTypeId(getAllCraftables());
     }
 
-    public void tick(Level level, BlockPos blockPos, BlockState pState) {
-        var element = ElementReg.utility();
-        var part1 = ParticleHandlers.genericParticle(ParticleStore.SOFT_PARTICLE, element, 2, 0.08f, true);
-        var part2 = bakedParticle(element.id(), 2, 1f, false);
-        var v = progress > 0 ? 0.12 : 0.08;
+    private AbstractElement element(){
+        return utility();
+    }
 
-        PositionFinders.innerRadiusRandom(blockPos.getCenter().add(0, 0.3, 0), 0.2, progress > 0 ? 5 : 2,
-            positions -> {
-                level.addParticle(part1, positions.x, positions.y, positions.z, 0, -v, 0);
-                level.addParticle(part2, positions.x, positions.y, positions.z, 0, -v, 0);
-            }
-        );
+    public void tick(Level level, BlockPos blockPos, BlockState pState) {
+        animParticle(level, blockPos);
+
+        this.assignTankBlockInRange(level, blockPos, this.getCraftingCost());
+
         if(this.canCraft()){
             var creatorRecipes = this.getRecipe();
             if(this.getResult == null && creatorRecipes.isPresent()){
@@ -126,8 +128,16 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
             if(this.animateDistanceIncrement > 0.5) this.animateDistanceIncrement = 0.5;
             privateTicks--;
         }
+    }
 
-        this.assignTankBlockInRange(level, blockPos, this.getCraftingCost());
+    private void animParticle(Level level, BlockPos blockPos) {
+        var particleSpeed =  progress > 0 ? 0.12 : 0.08;
+        PositionFinders.innerRadiusRandom(blockPos.getCenter().add(0, 0.3, 0), 0.2, progress > 0 ? 5 : 2,
+            positions -> {
+                level.addParticle(particleTypeA, positions.x, positions.y, positions.z, 0, -particleSpeed, 0);
+                level.addParticle(particleTypeB, positions.x, positions.y, positions.z, 0, -particleSpeed, 0);
+            }
+        );
     }
 
     private void tableProcessingParticle(){
@@ -144,7 +154,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
                     var type = processingParticle(10, 0.85f, false, 0.1);
                     var add = worldPosition.add(0, 0.6f, 0);
                     var min = Math.min(0.06, (double) this.progress / (200 * 10));
-                    ParticleHandlers.sendParticles(serverLevel, type, add, 0, directions.x, directions.y, directions.z, min);
+                    sendParticles(serverLevel, type, add, 0, directions.x, directions.y, directions.z, min);
                 }
             );
         }
@@ -164,8 +174,8 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         for(BlockPos blockpos : BOOKSHELF_OFFSETS) {
             var lifetime = Random.nextInt(10, 50);
             var size = Random.nextFloat(1.8F, 3.2F);
-            var partType = ParticleStore.MAGIC_MOVE_PARTICLE;
-            var particleData = new GenericParticleOptions(partType, ElementReg.utility().partColourB(), 0, lifetime, size, false, 5);
+            var partType = MAGIC_MOVE_PARTICLE;
+            var particleData = new GenericParticleOptions(partType, utility().partColourB(), 0, lifetime, size, false, 5);
             level.addParticle(
                 particleData,
                 blockPos.getX() + 0.5,
@@ -189,10 +199,11 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     }
 
     public boolean canCraft(){
+        var a = !getAllCraftables().isEmpty();
         var b = getRecipe().isPresent();
         var b1 = this.hasTankAndFuel();
         var b2 = this.outputItemHandler.getStackInSlot(0).isEmpty();
-        return b && b1 && b2;
+        return a && b && b1 && b2;
     }
 
     public List<ItemStack> getAllCraftables(){

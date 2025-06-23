@@ -15,7 +15,7 @@ import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
-import static org.jahdoo.common.block.rune_table.DivineForge.setOuterRingPulse;
+import static org.jahdoo.common.block.divine_forge.DivineForge.setOuterRingPulse;
 import static org.jahdoo.common.registers.mod.ElementReg.utility;
 import static org.jahdoo.trial_nexus.utils.ColourStore.NEGATIVE_RED;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;

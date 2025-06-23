@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.rune_table;
+package org.jahdoo.common.block.divine_forge;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;

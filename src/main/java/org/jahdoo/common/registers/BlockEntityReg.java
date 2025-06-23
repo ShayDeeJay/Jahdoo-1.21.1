@@ -19,7 +19,7 @@ import org.jahdoo.common.block.loot_crate.LootCrateEntity;
 import org.jahdoo.common.block.loot_pot.LootPotBlockEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.block.power_up_station.PowerUpStationEntity;
-import org.jahdoo.common.block.rune_table.DivineForgeEntity;
+import org.jahdoo.common.block.divine_forge.DivineForgeEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.block.tank.TankBlockEntity;
 import org.jahdoo.common.block.ticket_bureau.TicketBureauBlockEntity;

@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.rune_table;
+package org.jahdoo.common.block.divine_forge;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -8,7 +8,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.client.AbstractInternalContainer;
-import org.jahdoo.common.client.slots.GeneralItemSlot;
+import org.jahdoo.common.client.slots.CoreItemSlot;
+import org.jahdoo.common.client.slots.ModifierSlot;
 import org.jahdoo.common.client.slots.RuneSlot;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.runes.rune_data.JahdooGearData;
@@ -16,8 +17,7 @@ import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.MenuReg;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
+import static org.jahdoo.common.block.divine_forge.DivineForgeEntity.*;
 import static org.jahdoo.common.block.wand_manager.WandManagerEntity.DEFAULT_SLOTS;
 import static org.jahdoo.common.client.SharedUI.getCore;
 import static org.jahdoo.common.client.SharedUI.handleSlotsInGridLayout;
@@ -29,7 +29,8 @@ public class RuneTableMenu extends AbstractInternalContainer  {
     public int offSetX = 34;
     public int offSetY = 34;
     public int runeYSpacer = 33;
-    public boolean hideSlot = true;
+    public boolean hideRuneSlots = true;
+    public boolean hideModifierSlot = true;
 
     public RuneTableMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
         super(MenuReg.RUNE_TABLE_MENU.get(), id, inv, extraData);
@@ -57,20 +58,29 @@ public class RuneTableMenu extends AbstractInternalContainer  {
         return size + DEFAULT_SLOTS -1;
     }
 
-    public void switchVisibility(boolean switchC) {
-        this.hideSlot = switchC;
+    public void switchModifierVisibility(boolean switchC) {
+        this.hideModifierSlot = switchC;
+    }
+
+    public void switchRuneVisibility(boolean switchC) {
+        this.hideRuneSlots = switchC;
     }
 
     public void addSlots() {
+        insertModificationSlot();
         insertAugmentSlots();
         insertRuneSlots();
     }
 
+    private void insertModificationSlot() {
+        this.addSlot(new ModifierSlot(tableEntity().inputItemHandler, MODIFICATION_SLOT, posX + 77, posY - 78, this));
+    }
+
     private void insertAugmentSlots() {
-        var spacer = new AtomicInteger();
+        var spacer = 0;
         for (int i = 1; i < 4; i ++){
-            this.addSlot(new GeneralItemSlot(tableEntity().inputItemHandler, i, posX - 75, posY + spacer.get() - 96, getCore().get(i-1)));
-            spacer.set(spacer.get() + 28);
+            this.addSlot(new CoreItemSlot(tableEntity().inputItemHandler, i, posX - 75, posY + spacer - 96, getCore().get(i-1)));
+            spacer += 28;
         }
     }
 
@@ -78,10 +88,10 @@ public class RuneTableMenu extends AbstractInternalContainer  {
         var getAllSlots = this.tableEntity().getItem().getStackInSlot(0);
         var getData = JahdooGearData.getGearData(getAllSlots);
         var iHandler = tableEntity().inputItemHandler;
-        var indexOne = new AtomicInteger(4);
+        var indexOne = 4;
         for (ItemStack itemStack : getData.runeSlots()) {
-            iHandler.setStackInSlot(indexOne.get(), itemStack);
-            indexOne.set(indexOne.get() + 1);
+            iHandler.setStackInSlot(indexOne, itemStack);
+            indexOne++;
         }
 
         handleSlotsInGridLayout(

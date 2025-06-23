@@ -1,19 +1,20 @@
-package org.jahdoo.common.block.rune_table.enchanted_forge;
+package org.jahdoo.common.block.divine_forge.helpers;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.common.block.rune_table.DivineForgeEntity;
-import org.jahdoo.common.block.rune_table.RuneTableMenu;
+import org.jahdoo.common.block.divine_forge.DivineForgeEntity;
+import org.jahdoo.common.block.divine_forge.RuneTableMenu;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.screens.AbstractPanableScreen;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -22,11 +23,10 @@ import java.util.Optional;
 
 import static net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI;
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
-import static org.jahdoo.common.block.rune_table.enchanted_forge.RepairManager.*;
-import static org.jahdoo.common.block.rune_table.enchanted_forge.RuneManager.*;
-import static org.jahdoo.common.block.rune_table.enchanted_forge.RuneScreenShared.overlayInventory;
-import static org.jahdoo.common.block.rune_table.enchanted_forge.RuneScreenShared.tooltipSlots;
+import static org.jahdoo.common.block.divine_forge.helpers.RepairManager.*;
+import static org.jahdoo.common.block.divine_forge.helpers.RuneManager.*;
+import static org.jahdoo.common.block.divine_forge.helpers.RuneScreenShared.overlayInventory;
+import static org.jahdoo.common.block.divine_forge.helpers.RuneScreenShared.tooltipSlots;
 import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.augmentCoreSlots;
 import static org.jahdoo.common.client.SharedUI.fadeBlack;
@@ -35,11 +35,13 @@ import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSound;
 import static org.jahdoo.common.client.screens.AbilityModificationScreen.WIDGET;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.*;
 import static org.jahdoo.common.items.runes.rune_data.JahdooGearData.canRepair;
+import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 
 public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
     private static final int RUNE_MANAGE = 0;
     private static final int REPAIR_MANAGE = 1;
+    private static final int MODIFIER_MANAGE = 2;
     private List<Component> hoverTooltip = new ArrayList<>();
     private final RuneTableMenu runeTableMenu;
     private final int borderColour;
@@ -53,7 +55,8 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         var element = ElementReg.fromWand(menu.tableEntity().itemSlot().getItem());
 
         this.selection = REPAIR_MANAGE;
-        this.menu.switchVisibility(false);
+        this.menu.switchRuneVisibility(false);
+        this.menu.switchModifierVisibility(false);
         this.runeTableMenu = menu;
         this.borderColour = color(200, element.map(AbstractElement::textColourA).orElseGet(AbstractPanableScreen::uiColour));
     }
@@ -68,8 +71,10 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
         toggleRuneManager(posX, posY);
         toggleRepairManager(posX, posY);
+        toggleModifierManager(posX, posY);
         toggleFullItemToolTip(posX, posY2, selected);
         repairItem(selected);
+        modifyItem(selected);
     }
 
     private void repairItem(WidgetSprites selected) {
@@ -105,6 +110,41 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
         }
     }
 
+    private void modifyItem(WidgetSprites selected) {
+        if(isModifierManager() && !this.getItem().isEmpty()){
+            var canRepairItem = repairable(getItem(), entity());
+            var posX1 = this.width / 2 + 9;
+            var posY1 = this.height / 2 - 43;
+            var instance = forUI(SoundReg.UPGRADE_MODIFIER.get(), 0F);
+            var buttonType = canRepair(getItem()) ? WIDGET : selected;
+
+            var b = entity().getModificationSlot().isEmpty();
+            this.addRenderableWidget(
+                menuButtonSound(
+                    posX1, posY1,
+                    (press) -> {
+                        onRepair(getMinecraft(), menu);
+                        this.rebuildWidgets();
+                    }, COG,
+                    44, b, 0, buttonType, !b,
+                    () -> onHoverRepair(this.hoverTooltip, borderColour, getItem()),
+                    instance
+                )
+            );
+
+            this.addRenderableOnly(
+                new Overlay() {
+                    @Override
+                    public void render(GuiGraphics guiGraphics, int i, int i1, float v) {
+                        var color = color(200, canRepairItem ? HEADER_COLOUR : borderColour);
+                        SharedUI.boxMaker(guiGraphics, posX1 + 6, posY1 + 6, 16, 16, color, 0, 0);
+                        guiGraphics.blit(GUI_ITEM_SLOT, posX1 + 6, posY1 - 22, 0,0,32,32,32,32);
+                    }
+                }
+            );
+        }
+    }
+
     private void toggleFullItemToolTip(int posX, int posY2, WidgetSprites selected) {
         this.addRenderableWidget(
             menuButton(
@@ -114,17 +154,27 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
     }
 
     private void toggleRepairManager(int posX, int posY) {
-        this.addRenderableWidget(
-            menuButton(posX, posY, (press) -> inventoryHandler(REPAIR_MANAGE), REPAIR, 24, isRepairManager(), 0, WIDGET, false)
-        );
+        newTab(posX, posY, REPAIR_MANAGE, REPAIR, isRepairManager());
     }
 
     private void toggleRuneManager(int posX, int posY) {
+        newTab(posX - 19, posY, RUNE_MANAGE, BLANK_RUNE, isRuneManager());
+    }
+
+    private void toggleModifierManager(int posX, int posY) {
+        newTab(posX + 19, posY, MODIFIER_MANAGE, COG, isModifierManager());
+    }
+
+    private void newTab(int posX, int posY, int tab, ResourceLocation icon, boolean selected){
         this.addRenderableWidget(
-            menuButton(posX - 19, posY, (press) -> inventoryHandler(RUNE_MANAGE), BLANK_RUNE, 24, isRuneManager(), 0, WIDGET, false)
+            menuButton(posX - 19, posY, (press) -> inventoryHandler(tab), icon, 24, selected, 0, WIDGET, false)
         );
     }
 
+    private boolean isModifierManager() {
+        return selection == MODIFIER_MANAGE;
+    }
+    
     private boolean isRepairManager() {
         return selection == REPAIR_MANAGE;
     }
@@ -139,7 +189,8 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
     public void inventoryHandler(int selection){
         this.selection = selection;
-        this.menu.switchVisibility(isRuneManager());
+        this.menu.switchRuneVisibility(isRuneManager());
+        this.menu.switchModifierVisibility(isModifierManager());
         this.rebuildWidgets();
     }
 
@@ -218,7 +269,7 @@ public class RuneTableScreen extends AbstractContainerScreen<RuneTableMenu> {
 
     private void header(@NotNull GuiGraphics guiGraphics) {
         var header = Component.literal(isRuneManager() ? "Rune Manager" : "Gear Repair");
-        var x = width / 2 - 38 ;
+        var x = width / 2 - 70;
         var y1 = height / 2 - 102;
         guiGraphics.drawString(font, header, x, y1, borderColour);
     }

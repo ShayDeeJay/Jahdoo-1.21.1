@@ -2,12 +2,9 @@ package org.jahdoo.common.block.creator.recipe;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.CustomModelData;
 import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;
-
-import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 
 public class TicketRecipe implements CreatorRecipes {
 
@@ -25,9 +22,7 @@ public class TicketRecipe implements CreatorRecipes {
 
     @Override
     public ItemStack result() {
-        var resultItem = new ItemStack(ItemReg.TRIAL_TICKET);
-        resultItem.set(CUSTOM_MODEL_DATA, new CustomModelData(1));
-        return resultItem;
+        return new ItemStack(ItemReg.TRIAL_TICKET);
     }
 
     @Override

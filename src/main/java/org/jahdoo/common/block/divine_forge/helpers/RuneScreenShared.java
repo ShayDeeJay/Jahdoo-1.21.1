@@ -1,4 +1,4 @@
-package org.jahdoo.common.block.rune_table.enchanted_forge;
+package org.jahdoo.common.block.divine_forge.helpers;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -9,14 +9,14 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.client.SharedUI;
-import org.jahdoo.common.client.slots.GeneralItemSlot;
+import org.jahdoo.common.client.slots.CoreItemSlot;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static org.jahdoo.common.block.rune_table.enchanted_forge.RuneTableScreen.groupFade;
+import static org.jahdoo.common.block.divine_forge.helpers.RuneTableScreen.groupFade;
 import static org.jahdoo.common.client.SharedUI.*;
 
 public class RuneScreenShared {
@@ -87,7 +87,7 @@ public class RuneScreenShared {
 
 
     public static void tooltipSlots(List<Component> hoverTooltip, Slot hoveredSlot, ItemStack carried) {
-        if(hoveredSlot != null && hoveredSlot.getItem().isEmpty() && carried.isEmpty() && hoveredSlot instanceof GeneralItemSlot generalItemSlot){
+        if(hoveredSlot != null && hoveredSlot.getItem().isEmpty() && carried.isEmpty() && hoveredSlot instanceof CoreItemSlot generalItemSlot){
             var defaultInstance = generalItemSlot.getSlotType().getDefaultInstance();
             CoreData.setFilled(defaultInstance);
             hoverTooltip.add(defaultInstance.getHoverName());
