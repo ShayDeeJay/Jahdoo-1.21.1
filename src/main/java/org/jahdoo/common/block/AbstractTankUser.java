@@ -83,6 +83,7 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
         var tank = tankPosition;
 
         if(tank == null || !(level.getBlockEntity(tank) instanceof TankBlockEntity)){
+//            System.out.println(this.tankPosition);
             findTank(level, pos, craftingFuelCost);
         }
 

@@ -10,22 +10,27 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.Maths;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.client.overlay.CustomHudOverlay;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.ComponentReg;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Maths;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
 
+import static org.jahdoo.common.entities.EntityAnimations.IDLE_DIS;
+import static org.jahdoo.common.entities.EntityAnimations.SLAM;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.ItemReg.ESSENCE_FRAGMENT;
+import static org.jahdoo.trial_nexus.utils.ColourStore.ABSORPTION_YELLOW;
 import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
 
@@ -34,6 +39,7 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
     private static final int RECYCLING_COST = 6;
     private final AnimatableInstanceCache cache = createInstanceCache(this);
     private int maxProgress = 200;
+    private boolean shouldSlam;
 
     public DisassemblerBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.INFUSER_BE.get(), pos, state, 5);
@@ -94,7 +100,9 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, state ->  PlayState.STOP));
+        controllers.add(
+            new AnimationController<>(this, "idle", 10, state -> state.setAndContinue(progress > 0 ? SLAM : IDLE_DIS))
+        );
     }
 
     @Override
@@ -111,10 +119,11 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
     }
 
     public ItemStack getInputAndOutputRenderer() {
-        if(this.outputItemHandler.getStackInSlot(0).isEmpty()) {
+        var outHandler = this.outputItemHandler.getStackInSlot(0);
+        if(outHandler.isEmpty()) {
             return this.inputItemHandler.getStackInSlot(0);
         }
-        return this.outputItemHandler.getStackInSlot(0);
+        return outHandler;
     }
 
     private void shiftProcessedItemsToOutput(){
@@ -132,9 +141,14 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
         shiftProcessedItemsToOutput();
         assignTankBlockInRange(pLevel, pPos, RECYCLING_COST);
 
-        if(this.hasTankAndFuel()){
-            if (this.progress == maxProgress) {
+        if(this.progress == 0){
+            var yColour = ABSORPTION_YELLOW;
+            var particleOptions = genericParticle(SOFT_PARTICLE, yColour, yColour, 5, 0.3F, false, 0);
+            ParticleHandlers.particleBurst(level, pPos.getCenter().add(0,0.9,0), 1, particleOptions, 0.01f);
+        }
 
+        if(this.hasTankAndFuel()){
+            if (this.progress == 110) {
                 this.completedRecycling(pLevel);
             } else {
                 this.recyclingProcess();
@@ -196,8 +210,7 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
     }
 
     private void tableProcessingParticle(Level level, ServerLevel serverLevel, BlockPos pPos){
-        Helpers.getSoundWithPosition(level, pPos, SoundEvents.BEACON_ACTIVATE, 0.05f, 2f);
-        PositionFinders.getOuterRingOfRadiusRandom(pPos.getCenter(), 0.2, 50,
+        PositionFinders.getOuterRingOfRadiusRandom(pPos.getCenter(), 0.2, 150,
             worldPosition -> {
                 var directions = worldPosition.subtract(pPos.getCenter()).normalize();
                 ParticleHandlers.sendParticles(
@@ -216,7 +229,9 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
             this.progress++;
 
             if (this.getTankEntity().inputItemHandler.getStackInSlot(0).getCount() >= 6) {
-                if(progress % 21 == 0){
+                if((19+progress) % 40 == 0){
+                    Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BASALT_BREAK, 1, 1f);
+                    Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundReg.IMPACT.get(), 1, 1f);
                     if(!(this.level instanceof ServerLevel serverLevel)) return;
                     this.tableProcessingParticle(this.level, serverLevel, this.getBlockPos());
                 }

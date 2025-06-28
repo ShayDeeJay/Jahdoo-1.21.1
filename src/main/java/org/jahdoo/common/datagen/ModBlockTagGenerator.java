@@ -69,6 +69,7 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(ENCHANTED_DIAMOND_ORE.get())
             .add(NEXITE_DEEPSLATE_ORE.get())
             .add(NEXITE_BLOCK.get())
+            .add(PACKED_MUD_CLAY.get())
             .add(RAW_NEXITE_BLOCK.get());
 
         this.tag(RARE_BLOCKS)

@@ -3,7 +3,7 @@
   "parent": "builtin/entity",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "jahdoo:block/modular_chaos_cube"
+    "particle": "jahdoo:block/packed_mud_clay"
   },
   "texture_size": [
     64,
@@ -103,7 +103,7 @@
       "translation": [
         0,
         -8,
-        1.25
+        0
       ]
     }
   }

@@ -35,6 +35,18 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         chaosCube(recipeOutput, MODULAR_CHAOS_CUBE.get().asItem());
         runeManager(recipeOutput, RUNE_TABLE.get().asItem());
         oreSmelting(recipeOutput, List.of(Items.ROTTEN_FLESH), RecipeCategory.MISC, Items.LEATHER, 2.0F, 200, "leather");
+        packedMudClayBlock(recipeOutput, PACKED_MUD_CLAY.get().asItem());
+    }
+
+    protected void packedMudClayBlock(RecipeOutput output, Item result) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+            .define('M', Items.DIRT)
+            .define('X', Items.PACKED_MUD)
+            .pattern(" M ")
+            .pattern("MXM")
+            .pattern(" M ")
+            .unlockedBy("packed_mud_clay", has(Items.PACKED_MUD))
+            .save(output);
     }
 
     protected void dissembler(RecipeOutput output, Item result) {

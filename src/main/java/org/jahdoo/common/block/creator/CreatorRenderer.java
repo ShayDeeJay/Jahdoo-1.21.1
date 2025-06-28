@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -58,33 +59,59 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         pPoseStack.pushPose();
 
         if (pBlockEntity.canCraft()) {
-            float angleOffset = 360.0f / totalItems;
-            float itemAngle = angleOffset * index;
+            var angleOffset = 360.0f / totalItems;
+            var itemAngle = angleOffset * index;
             pPoseStack.translate(0.5, -0.1, 0.5);
-            var frameTimeNs = Minecraft.getInstance().level.getGameTime() ;
-            pPoseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (-frameTimeNs - partialTicks)));
-        } else {
 
+            var frameTime = Minecraft.getInstance().level.getGameTime();
+            pPoseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (-frameTime - partialTicks)));
+        } else {
             float[][] positions = {
-                {0.5f, 0.04f},  // Middle top (center of first row)
-                {0.16f, 0.40f}, // Middle row left
-                {0.86f, 0.40f}, // Middle row right
-                {0.5f, 0.76f}, // Middle bottom (center of last row)
-                {0.18f, 0.06f},  // Top-left corner
-                {0.84f, 0.06f},  // Top-right corner
-                {0.16f, 0.74f}, // Bottom-left corner
-                {0.84f, 0.74f}  // Bottom-right corner
+                {0.5f, 0.04f},
+                {0.16f, 0.40f},
+                {0.86f, 0.40f},
+                {0.5f, 0.76f},
+                {0.18f, 0.06f},
+                {0.84f, 0.06f},
+                {0.16f, 0.74f},
+                {0.84f, 0.74f}
             };
 
             if (index < positions.length) {
-                float xTranslation = positions[index][0];
-                float zTranslation = positions[index][1];
-                pPoseStack.translate(xTranslation, -0.1, zTranslation);
+                var dir = getPlayerRelativeDirection(pBlockEntity).getOpposite();
+                var rotated = rotateAroundCenter(positions[index][0], positions[index][1], dir);
+                pPoseStack.translate(rotated[0], -0.1, rotated[1]);
             }
         }
 
         stuff.run();
         pPoseStack.popPose();
+    }
+
+    private Direction getPlayerRelativeDirection(CreatorEntity blockEntity) {
+        var player = Minecraft.getInstance().player;
+        var blockPos = blockEntity.getBlockPos();
+
+        var dx = player.getX() - (blockPos.getX() + 0.5);
+        var dz = player.getZ() - (blockPos.getZ() + 0.5);
+
+        if (Math.abs(dx) > Math.abs(dz)) {
+            return dx > 0 ? Direction.EAST : Direction.WEST;
+        } else {
+            return dz > 0 ? Direction.SOUTH : Direction.NORTH;
+        }
+    }
+
+    private float[] rotateAroundCenter(float x, float z, Direction direction) {
+        var dx = x - 0.5f;
+        var dz = z - 0.5f;
+
+        return switch (direction) {
+            case SOUTH -> new float[]{0.5f - dx, 0.3f - dz}; // 180°
+            case WEST -> new float[]{0.6f + dz, 0.4f - dx}; // 90° CCW
+            case EAST -> new float[]{0.4f - dz, 0.4f + dx}; // 90° CW
+            default -> new float[]{x, z}; // No rotation
+        };
     }
 
     private void top(PoseStack stack, CreatorEntity creator, ItemRenderer iRenderer, MultiBufferSource pBuffer, float partialTicks, int packedLight){
@@ -119,22 +146,23 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
     private void focusedItem(PoseStack pPoseStack, CreatorEntity pBlockEntity, ItemRenderer itemRenderer, MultiBufferSource pBuffer, float partialTicks){
         pPoseStack.pushPose();
         var level = Minecraft.getInstance().level;
+        if(level == null) return;
+
         var getCurrentTime = level.getGameTime() + partialTicks;
-        var outputSlot = pBlockEntity.outputItemHandler.getStackInSlot(0);
-        var itemStack = outputSlot.isEmpty() ? pBlockEntity.getOutputResult() : outputSlot;
+        var outputSlot = pBlockEntity.getResult();
+        var itemStack = outputSlot == null ? pBlockEntity.outputItemHandler.getStackInSlot(0) : outputSlot;
         var scaleItem = 0.5F;
         var maxLightLevel = getLightLevel(Objects.requireNonNull(pBlockEntity.getLevel()), pBlockEntity.getBlockPos());
 
         var scale = Math.sin(((level.getGameTime() + partialTicks) / 14.0F)) * 0.02F;
-        pPoseStack.translate(0, scale, 0);
-        pPoseStack.translate(0.5f, 1.3f + scale, 0.5f);
+        pPoseStack.translate(0.5f, 1.32f + scale, 0.5f);
         pPoseStack.scale(scaleItem, scaleItem, scaleItem);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(getCurrentTime));
 
         itemRenderer.renderStatic(
             itemStack,
             ItemDisplayContext.FIXED,
-            outputSlot.isEmpty() ? maxLightLevel / 2 : 200,
+            outputSlot != null ? maxLightLevel / 2 : 200,
             OverlayTexture.NO_OVERLAY,
             pPoseStack,
             pBuffer,
@@ -148,17 +176,22 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
     private void rotateItem(PoseStack pPoseStack, CreatorEntity pBlockEntity, ItemRenderer itemRenderer, ItemStack itemStack, MultiBufferSource pBuffer, float partialTicks){
         pPoseStack.pushPose();
         var level = Minecraft.getInstance().level;
+        if(level == null) return;
+
         float getCurrentTime = level.getGameTime() + partialTicks;
         float scaleItem = 0.2f;
-        pPoseStack.translate(0, 1.25f, (pBlockEntity.animateDistanceIncrement/3)-0.07);
+
+        var inc = pBlockEntity.animIncrement;
+        pPoseStack.translate(0, 1.25f, (Math.min(0.9, inc))-0.4);
         pPoseStack.scale(scaleItem, scaleItem, scaleItem);
+
         if(!pBlockEntity.canCraft()) pPoseStack.mulPose(Axis.YP.rotationDegrees(getCurrentTime));
         var scale = Math.sin(((level.getGameTime() + partialTicks) / 14.0F)) * 0.15F;
         pPoseStack.translate(0, scale - 0.4, 0);
 
         itemRenderer.renderStatic(
             itemStack, ItemDisplayContext.FIXED,
-            getLightLevel(pBlockEntity.getLevel(), pBlockEntity.getBlockPos()),
+            getLightLevel(level, pBlockEntity.getBlockPos()),
             OverlayTexture.NO_OVERLAY,
             pPoseStack,
             pBuffer,

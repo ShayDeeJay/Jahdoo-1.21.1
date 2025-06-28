@@ -12,23 +12,26 @@ public class ChaosCubeBlockRecipe implements CreatorRecipes {
 
     @Override
     public boolean canCraft(List<ItemStack> inputItems, CreatorEntity creator) {
-        var core = 0;
-        var eye = 0;
+        var chaosCube = 0;
+        var diamonds = 0;
 
         for (var inputItem : inputItems) {
-            if(inputItem.is(BlockReg.MODULAR_CHAOS_CUBE.get().asItem())) core++;
-            if(inputItem.is(Items.DIAMOND)) eye++;
+            if(inputItem.is(BlockReg.MODULAR_CHAOS_CUBE.get().asItem())) chaosCube++;
+            if(inputItem.is(Items.DIAMOND)) diamonds++;
         }
 
-        System.out.println(core);
-        return core == 1 && eye == 7 && creator.getHolder() != null;
+        return chaosCube == 1 && diamonds == 7;
+    }
+
+    @Override
+    public boolean secondaryCheck(CreatorEntity creator) {
+        var stackInSlot = creator.getResult();
+        return !stackInSlot.isEmpty() && stackInSlot.has(ComponentReg.ABILITY_HOLDER);
     }
 
     @Override
     public ItemStack result(CreatorEntity creator) {
-        var stack = new ItemStack(BlockReg.MODULAR_CHAOS_CUBE.get().asItem());
-        stack.set(ComponentReg.ABILITY_HOLDER, creator.getHolder());
-        return stack;
+        return new ItemStack(BlockReg.MODULAR_CHAOS_CUBE.get().asItem());
     }
 
     @Override

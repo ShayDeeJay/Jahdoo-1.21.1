@@ -17,15 +17,6 @@ public class EntityAnimations {
     public static final RawAnimation BOLTZ = RawAnimation.begin().thenLoop("boltz");
     public static final RawAnimation ORB_END = RawAnimation.begin().thenLoop("energy_orb_end");
 
-    //Burning Skull
-    public static final RawAnimation IDLE_SKULL = RawAnimation.begin().thenLoop("idle");
-
-    //Safe
-    public static final RawAnimation KNOCK_LEFT = RawAnimation.begin().thenPlay("knock_left");
-    public static final RawAnimation KNOCK_RIGHT = RawAnimation.begin().thenPlay("knock_right");
-    public static final RawAnimation OPEN = RawAnimation.begin().thenPlay("open");
-    public static final RawAnimation CLOSE = RawAnimation.begin().thenPlay("close");
-
     //Chaos Cube
     public static final RawAnimation IDLE_BLOCK = RawAnimation.begin().thenPlay("idle");
     public static final RawAnimation WEST = RawAnimation.begin().thenPlay("direction1");
@@ -35,6 +26,12 @@ public class EntityAnimations {
     public static final RawAnimation DOWN = RawAnimation.begin().thenPlay("direction5");
     public static final RawAnimation NORTH = RawAnimation.begin().thenPlay("direction6");
 
+    //Safe
+    public static final RawAnimation KNOCK_LEFT = RawAnimation.begin().thenPlay("knock_left");
+    public static final RawAnimation KNOCK_RIGHT = RawAnimation.begin().thenPlay("knock_right");
+    public static final RawAnimation OPEN = RawAnimation.begin().thenPlay("open");
+    public static final RawAnimation CLOSE = RawAnimation.begin().thenPlay("close");
+
     //Altar
     public static final RawAnimation ALTAR_IDLE = RawAnimation.begin().thenPlay("idle");
     public static final RawAnimation ALTAR_INITIATE = RawAnimation.begin().thenPlay("initiate").thenPlay("idle");
@@ -43,6 +40,13 @@ public class EntityAnimations {
     //Loot Chest
     public static final RawAnimation OPEN_LOOT = RawAnimation.begin().thenPlay("open_animation");
     public static final RawAnimation SPAWN_CHEST = RawAnimation.begin().thenPlay("spawn");
+
+    //Disassembler
+    public static final RawAnimation IDLE_DIS = RawAnimation.begin().thenLoop("idle");
+    public static final RawAnimation SLAM = RawAnimation.begin().thenPlay("slam");
+
+    //Burning Skull
+    public static final RawAnimation IDLE_SKULL = RawAnimation.begin().thenLoop("idle");
 
     //Ice Spear
     public static final RawAnimation ICE_SPEAR = RawAnimation.begin().thenPlay("spawn");

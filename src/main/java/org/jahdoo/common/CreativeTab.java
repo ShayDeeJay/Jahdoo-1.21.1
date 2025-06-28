@@ -42,6 +42,7 @@ public class CreativeTab {
                 outPut.accept(ENCHANTED_DIAMOND_ORE.get());
                 outPut.accept(NEXITE_DEEPSLATE_ORE.get());
                 outPut.accept(NEXITE_BLOCK.get());
+                outPut.accept(PACKED_MUD_CLAY.get());
                 outPut.accept(RAW_NEXITE_BLOCK.get());
 
                 outPut.accept(MODULAR_CHAOS_CUBE_ITEM.get());

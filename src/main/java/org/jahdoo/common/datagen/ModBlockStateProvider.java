@@ -26,6 +26,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(ENCHANTED_DIAMOND_ORE);
         blockWithItem(NEXITE_DEEPSLATE_ORE);
         blockWithItem(NEXITE_BLOCK);
+        blockWithItem(PACKED_MUD_CLAY);
         blockWithItem(RAW_NEXITE_BLOCK);
         blockWithItem(ENCHANTED_BLOCK);
         blockWithItem(LOCK_SUPPORT);

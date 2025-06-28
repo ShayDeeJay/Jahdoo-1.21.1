@@ -3,9 +3,7 @@ package org.jahdoo.common.block.creator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
@@ -17,7 +15,6 @@ import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.mod.CreatorRecipeReg;
-import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 
@@ -26,9 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static net.minecraft.world.level.block.EnchantingTableBlock.BOOKSHELF_OFFSETS;
-import static org.jahdoo.common.particle.ParticleHandlers.*;
-import static org.jahdoo.common.particle.ParticleStore.MAGIC_MOVE_PARTICLE;
+import static org.jahdoo.common.components.AbilityHolder.DEFAULT;
+import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
+import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.mod.ElementReg.utility;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
@@ -37,8 +34,8 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
 
     public static final GenericParticleOptions particleTypeA = genericParticle(SOFT_PARTICLE, utility(), 2, 0.08F, true);
     public static final BakedParticleOptions particleTypeB = bakedParticle(utility().id(), 2, 1F, false);
-    public double animateDistanceIncrement = 0.5f;
-    private double animationTickerIncrement = 0.5f;
+    public double animIncrement = 0.5f;
+    private double animTickIncrement = 0.5f;
     private ItemStack getResult;
     private AbilityHolder holder;
 
@@ -81,6 +78,10 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         return getCraftingCost();
     }
 
+    public ItemStack getResult(){
+        return this.getResult;
+    }
+
     public void setHolder(AbilityHolder holder){
         this.holder = holder;
     }
@@ -97,8 +98,8 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         return this.progress == 360;
     }
 
-    public void setAnimationTickerIncrement(double animationTickerIncrement){
-        this.animationTickerIncrement = animationTickerIncrement;
+    public void setAnimTickIncrement(double animTickIncrement){
+        this.animTickIncrement = animTickIncrement;
     }
 
     public int getProgress(){
@@ -109,33 +110,30 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         return CreatorRecipeReg.getSpellsByTypeId(getAllCraftables(), this);
     }
 
-    private AbstractElement element(){
-        return utility();
-    }
-
     public void tick(Level level, BlockPos blockPos, BlockState pState) {
-        animParticle(level, blockPos);
-
-        this.assignTankBlockInRange(level, blockPos, this.getCraftingCost());
-
         if(this.canCraft()){
             var creatorRecipes = this.getRecipe();
-            if(this.getResult == null && creatorRecipes.isPresent()){
-                this.getResult = creatorRecipes.get().result(this);
+            if(creatorRecipes.isPresent()){
+                var getRecipe = creatorRecipes.get();
+                if(this.getResult == null) {
+                    this.getResult = getRecipe.result(this);
+                }
+                if(getRecipe.secondaryCheck(this)){
+                    this.progress++;
+                    this.tableProcessingParticle(level);
+                    this.setAnimTickIncrement(Math.min(this.animTickIncrement + 0.1, 2.5));
+                    if (this.animIncrement < 2.5) this.animIncrement += 0.05;
+                    this.onCompleteCraft(level, blockPos);
+                }
             }
-            this.progress++;
-            this.tableProcessingParticle();
-            this.onCompleteCraft(level, blockPos);
-            this.setAnimationTickerIncrement(Math.min(this.animationTickerIncrement + 0.1, 2.5));
-            if(this.animateDistanceIncrement < 2.5) this.animateDistanceIncrement += 0.025;
-            privateTicks++;
         } else {
-            this.setAnimationTickerIncrement(Math.max(this.animationTickerIncrement - 0.1, 0.5));
+            this.setAnimTickIncrement(Math.max(this.animTickIncrement - 0.1, 0.5));
             if(this.getResult != null) this.getResult = null;
-            if(this.animateDistanceIncrement > 0.5) this.animateDistanceIncrement = 0.5;
-            privateTicks--;
-            if(this.holder != null) holder = null;
+            if(this.animIncrement > 0.5) this.animIncrement = 0.5;
         }
+
+        animParticle(level, blockPos);
+        this.assignTankBlockInRange(level, blockPos, this.getCraftingCost());
     }
 
     private void animParticle(Level level, BlockPos blockPos) {
@@ -148,27 +146,9 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         );
     }
 
-    private void tableProcessingParticle(){
-        if(!(this.level instanceof ServerLevel serverLevel)) return;
-
-        if(this.progress % 4 == 0){
-            PositionFinders.getOuterRingOfRadiusRandom(this.getBlockPos().getCenter(), this.animationTickerIncrement / 5, (double) this.progress / 20,
-                worldPosition -> {
-                    var directions = this.getBlockPos()
-                        .getCenter()
-                        .subtract(worldPosition)
-                        .normalize()
-                        .offsetRandom(RandomSource.create(), 2f);
-                    var type = processingParticle(10, 0.85f, false, 0.1);
-                    var add = worldPosition.add(0, 0.6f, 0);
-                    var min = Math.min(0.06, (double) this.progress / (200 * 10));
-                    sendParticles(serverLevel, type, add, 0, directions.x, directions.y, directions.z, min);
-                }
-            );
-        }
-
-        if(this.progress % 25 == 0){
-            Helpers.getSoundWithPosition(serverLevel, this.getBlockPos(), SoundEvents.BEACON_AMBIENT, 0.5f, 2f);
+    private void tableProcessingParticle(Level level){
+        if(this.progress == 1 || this.progress % 25 == 0){
+            Helpers.getSoundWithPosition(level, this.getBlockPos(), SoundEvents.BEACON_AMBIENT, 0.1f, Random.nextFloat(1.5F, 2F));
         }
     }
 
@@ -179,21 +159,6 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         this.outputItemHandler.insertItem(0, this.getResult.copy(), false);
         this.clearContentsOnCompletion();
         successfulCraftVisual(level, blockPos);
-        for(BlockPos blockpos : BOOKSHELF_OFFSETS) {
-            var lifetime = Random.nextInt(10, 50);
-            var size = Random.nextFloat(1.8F, 3.2F);
-            var partType = MAGIC_MOVE_PARTICLE;
-            var particleData = new GenericParticleOptions(partType, utility().partColourB(), 0, lifetime, size, false, 5);
-            level.addParticle(
-                particleData,
-                blockPos.getX() + 0.5,
-                blockPos.getY() + 3.0,
-                blockPos.getZ() + 0.5,
-                (blockpos.getX() + Random.nextFloat()) - 0.5F,
-                blockpos.getY() - Random.nextFloat() - 1.0F,
-                (blockpos.getZ() + Random.nextFloat()) - 0.5F
-            );
-        }
     }
 
     public void clearContentsOnCompletion(){
@@ -201,17 +166,17 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         for(int i = 0; i < handler.getSlots(); i++) handler.getStackInSlot(i).shrink(1);
     }
 
-    public ItemStack getOutputResult(){
-        var recipe = this.getRecipe();
-        return recipe.isPresent() ? recipe.get().result(this) : ItemStack.EMPTY;
+    public int neededNexite(){
+        if (getRecipe().isPresent()) return getRecipe().get().nexiteCost();
+        return -1;
     }
 
     public boolean canCraft(){
         var a = !getAllCraftables().isEmpty();
         var b = getRecipe().isPresent();
-        var b1 = this.hasTankAndFuel();
-        var b2 = this.outputItemHandler.getStackInSlot(0).isEmpty();
-        return a && b && b1 && b2;
+        var c = this.hasTankAndFuel();
+        var d = this.outputItemHandler.getStackInSlot(0).isEmpty();
+        return a && b && c && d;
     }
 
     public List<ItemStack> getAllCraftables(){
@@ -232,12 +197,12 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
         super.loadAdditional(tag, pRegistries);
         this.progress = tag.getInt("progress");
-        AbilityHolder.writeTag(holder == null ? AbilityHolder.DEFAULT : holder, tag);
+        AbilityHolder.writeTag(holder == null ? DEFAULT : holder, tag);
         if(tankPosition != null){
             int[] array = {tankPosition.getX(), tankPosition.getY(), tankPosition.getZ()};
             tag.putIntArray("blockPos", array);
         }
-        this.updateBlock();
+//        this.updateBlock();
     }
 
     @Override

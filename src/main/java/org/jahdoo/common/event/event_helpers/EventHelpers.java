@@ -339,8 +339,15 @@ public class EventHelpers {
                 if (ability.get().getElemenType() == element) {
                     var holder = CasterData.entityHolderWithSelected(player);
                     if (holder != AbilityHolder.DEFAULT) {
-                        entity.setHolder(holder);
-                        System.out.println(entity.getHolder());
+                        var stackInSlot = entity.getResult();
+
+                        if(stackInSlot != null) stackInSlot.set(ComponentReg.ABILITY_HOLDER, holder);
+
+                        for (int i = 0; i < 10; i++) {
+                            var part = ParticleHandlers.getAllParticleTypes(element, 6, 2);
+                            ParticleHandlers.particleBurst(level, pos.getCenter().add(0,0.5,0), 1, part);
+                        }
+                        getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), 1, 0.5F);
                         return true;
                     } else {
                         var message = "You don't have this ability";

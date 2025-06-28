@@ -15,4 +15,8 @@ public interface CreatorRecipes {
 
     String recipeId();
 
+    default boolean secondaryCheck(CreatorEntity creator){
+        return true;
+    }
+
 }

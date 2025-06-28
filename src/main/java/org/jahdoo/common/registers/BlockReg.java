@@ -92,6 +92,9 @@ public class BlockReg {
     public static DeferredHolder<Block, Block> CREATOR_BLOCK =
         registerBlockWithItem("creator", CreatorBlock::new);
 
+    public static DeferredHolder<Block, Block> LOCK_SUPPORT =
+        registerBlockWithItem("lock_support", () -> new Block(of()));
+
     public static DeferredHolder<Block, Block> NEXITE_ORE = registerBlockWithItem("nexite_ore",
         () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DIAMOND_ORE))
     );
@@ -112,8 +115,9 @@ public class BlockReg {
         () -> new Block(of().strength(DIAMOND_BLOCK.defaultDestroyTime()).sound(SoundType.STONE).noOcclusion())
     );
 
-    public static DeferredHolder<Block, Block> LOCK_SUPPORT =
-        registerBlockWithItem("lock_support", () -> new Block(of()));
+    public static DeferredHolder<Block, Block> PACKED_MUD_CLAY = registerBlockWithItem("packed_mud_clay",
+        () -> new Block(of().strength(DIAMOND_BLOCK.defaultDestroyTime()).sound(SoundType.STONE).noOcclusion())
+    );
 
     public static DeferredHolder<Block, Block> RAW_NEXITE_BLOCK = registerBlockWithItem("raw_nexite_block",
         () -> new Block(of().strength(RAW_GOLD_BLOCK.defaultDestroyTime()).noOcclusion())

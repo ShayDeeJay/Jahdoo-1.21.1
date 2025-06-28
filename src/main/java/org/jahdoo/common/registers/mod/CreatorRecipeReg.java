@@ -36,10 +36,10 @@ public class CreatorRecipeReg {
     }
 
     public static Optional<CreatorRecipes> getSpellsByTypeId(List<ItemStack> currentRecipe, CreatorEntity creator) {
-        var x = CreatorRecipeReg.REGISTRY
+        return CreatorRecipeReg.REGISTRY
             .stream()
-            .filter(a -> a.canCraft(currentRecipe, creator));
-        return x.findFirst();
+            .filter(a -> a.canCraft(currentRecipe, creator))
+            .findFirst();
     }
 
     public static final DeferredHolder<CreatorRecipes, CreatorRecipes> EXIT_KEY_RECIPE =

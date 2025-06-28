@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
+import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableBlock;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.block.tank.TankBlockEntity;
@@ -15,7 +16,6 @@ import org.jahdoo.common.block.ticket_bureau.TicketBureauBlock;
 import org.jahdoo.common.block.ticket_bureau.TicketBureauBlockEntity;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
@@ -24,6 +24,9 @@ import java.util.Optional;
 
 import static net.minecraft.client.gui.screens.Screen.getTooltipFromItem;
 import static net.neoforged.neoforge.client.event.RenderGuiLayerEvent.Post;
+import static org.jahdoo.common.registers.mod.ElementReg.utility;
+import static org.jahdoo.trial_nexus.utils.ColourStore.MAGNET_RANGE_GREEN;
+import static org.jahdoo.trial_nexus.utils.ColourStore.MAGNET_STRENGTH_RED;
 
 public class  OverlayBlockTooltip {
 
@@ -57,12 +60,13 @@ public class  OverlayBlockTooltip {
         AbstractBEInventory tableEntity
     ) {
         var instance = Minecraft.getInstance();
-        if(instance.screen != null) return;
+//        if(instance.screen != null) return;
 
         var graphics = event.getGuiGraphics();
         var width = graphics.guiWidth() / 2;
         var height = graphics.guiHeight() / 2;
         var font = instance.font;
+        var pose = event.getGuiGraphics().pose();
 
         if(player.isShiftKeyDown() && tableEntity instanceof ChaosCubeEntity chaosCubeEntity){
             if (chaosCubeEntity.getHolder() != null) {
@@ -73,9 +77,32 @@ public class  OverlayBlockTooltip {
                     AbilityComponentHelper.onlyToolTip(ability.get(), chaosCubeEntity.getHolder(), false, player.level(), list);
 
                     var mouseY = height - (list.size() * 5);
-                    graphics.renderTooltip(font, list, Optional.empty(), ItemStack.EMPTY, width + 60, mouseY);
+                    pose.pushPose();
+                    pose.translate(0,0,1);
+                    graphics.renderTooltip(font, list, Optional.empty(), ItemStack.EMPTY, width + 30, mouseY);
+                    pose.popPose();
                 }
             }
+        }
+
+        if(tableEntity instanceof CreatorEntity cEntity){
+            var needed = cEntity.neededNexite();
+            var tank = cEntity.getTankEntity();
+            if(tank == null) return;
+            var count = tank.getCount();
+
+            if(needed == -1) return;
+            if(needed <= count) return;
+
+            var list = new ArrayList<Component>();
+            list.add(Helpers.withStyleComponent("Needed: " + needed, MAGNET_RANGE_GREEN));
+            list.add(Helpers.withStyleComponent("In Tank: " + count, MAGNET_STRENGTH_RED));
+
+            var mouseY = height - (list.size() * 5);
+            pose.pushPose();
+            pose.translate(0,0,1);
+            graphics.renderTooltip(font, list, Optional.empty(), ItemStack.EMPTY, width, mouseY + 12);
+            pose.popPose();
         }
 
         var handler = tableEntity.inputItemHandler;
@@ -89,24 +116,26 @@ public class  OverlayBlockTooltip {
             var components = new ArrayList<Component>();
             var slotLimit = handler.getSlotLimit(0);
             var count = stackInSlot.getCount();
-            components.add(Helpers.withStyleComponentTrans("block.jahdoo.tank", ElementReg.utility().textColourB()));
+            components.add(Helpers.withStyleComponentTrans("block.jahdoo.tank", utility().textColourB()));
             components.add(Helpers.withStyleComponent(count +"/"+ slotLimit, Helpers.colourByPercent(slotLimit, count, true)));
-            var pose = graphics.pose();
             pose.pushPose();
             pose.translate(0,0,1);
-            graphics.renderTooltip(font, components, Optional.empty(), width + 10, mouseY + 6);
+            graphics.renderTooltip(font, components, Optional.empty(), width, mouseY + 6);
             pose.popPose();
         }
 
         if(stackInSlot.isEmpty()) return;
-
 
         if(tableEntity instanceof ShoppingTableEntity){
             var getState = tableEntity.getBlockState().getValue(ShoppingTableBlock.TEXTURE);
             var canRender = tooltip.size() > 1 && getState != 3 && !stackInSlot.isEmpty();
             if (canRender) {
                 var mouseY = height - (tooltip.size() * 5);
+                pose.pushPose();
+                pose.translate(0,0,1);
                 graphics.renderTooltip(font, stackInSlot, width + 60, mouseY);
+                pose.popPose();
+
             }
         }
 

@@ -63,6 +63,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropOther(LOCK.get(), Items.AIR);
         this.dropOther(LOCK_SUPPORT.get(), Items.AIR);
         this.dropSelf(NEXITE_BLOCK.get());
+        this.dropSelf(PACKED_MUD_CLAY.get());
         this.dropSelf(RAW_NEXITE_BLOCK.get());
 
         this.add(
