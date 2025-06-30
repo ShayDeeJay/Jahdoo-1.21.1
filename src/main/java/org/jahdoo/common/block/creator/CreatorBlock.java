@@ -20,13 +20,14 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.common.block.BlockInteractionHandler;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static net.minecraft.world.ItemInteractionResult.*;
+import static net.minecraft.world.ItemInteractionResult.FAIL;
+import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static org.jahdoo.common.block.BlockInteractionHandler.removeItemsFromHandToSlot;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.setChaosCubeAbility;
 
 
@@ -47,7 +48,6 @@ public class CreatorBlock extends BaseEntityBlock{
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return simpleCodec((t) -> new CreatorBlock());
     }
-
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
@@ -82,9 +82,7 @@ public class CreatorBlock extends BaseEntityBlock{
         if(!stack.isEmpty()){
             for (int i = 0; i < inputItemHandler.getSlots(); i++) {
                 if(inputItemHandler.getStackInSlot(i).isEmpty()){
-                    if (BlockInteractionHandler.removeItemsFromHandToSlot(inputItemHandler, i, player, 1, hand)) {
-                        return SUCCESS;
-                    }
+                    if (removeItemsFromHandToSlot(inputItemHandler, i, player, 1, hand)) return SUCCESS;
                 }
             }
             return FAIL;

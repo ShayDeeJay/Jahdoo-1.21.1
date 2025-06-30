@@ -8,6 +8,7 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.common.Tags;
 import org.jahdoo.trial_nexus.utils.ModTags;
 
 import java.util.List;
@@ -36,12 +37,14 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         runeManager(recipeOutput, RUNE_TABLE.get().asItem());
         oreSmelting(recipeOutput, List.of(Items.ROTTEN_FLESH), RecipeCategory.MISC, Items.LEATHER, 2.0F, 200, "leather");
         packedMudClayBlock(recipeOutput, PACKED_MUD_CLAY.get().asItem());
+        ticketBureau(recipeOutput, TICKET_BUREAU.get().asItem());
+        creator(recipeOutput, CREATOR_BLOCK.get().asItem());
     }
 
     protected void packedMudClayBlock(RecipeOutput output, Item result) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result, 4)
             .define('M', Items.DIRT)
-            .define('X', Items.PACKED_MUD)
+            .define('X', Items.CLAY)
             .pattern(" M ")
             .pattern("MXM")
             .pattern(" M ")
@@ -51,7 +54,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     protected void dissembler(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
-            .define('M', Items.MUD_BRICKS)
+            .define('M', PACKED_MUD_CLAY.get())
             .define('X', AUGMENT_CORE.get())
             .pattern(" M ")
             .pattern("MXM")
@@ -64,9 +67,10 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
             .define('M', Items.GLASS)
             .define('X', Items.DEEPSLATE)
+            .define('Z', PACKED_MUD_CLAY.get())
+            .pattern("XZX")
             .pattern("MMM")
-            .pattern("MXM")
-            .pattern("MMM")
+            .pattern("XZX")
             .unlockedBy("glass", has(Items.GLASS))
             .save(output);
     }
@@ -74,7 +78,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     protected void chaosCube(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
             .define('X', ModTags.Items.WAND_TAGS)
-            .define('M', Items.MUD_BRICKS)
+            .define('M', PACKED_MUD_CLAY.get())
             .pattern("MMM")
             .pattern("MXM")
             .pattern("MMM")
@@ -85,7 +89,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     protected void runeManager(RecipeOutput output, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
             .define('X', AUGMENT_CORE.get())
-            .define('M', Items.MUD_BRICKS)
+            .define('M', PACKED_MUD_CLAY.get())
             .pattern("MMM")
             .pattern("MXM")
             .pattern("MMM")
@@ -93,9 +97,30 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
             .save(output);
     }
 
+    protected void ticketBureau(RecipeOutput output, Item result) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+            .define('X', TRIAL_TICKET.get())
+            .define('M', Tags.Items.STRIPPED_LOGS)
+            .pattern("MMM")
+            .pattern("MXM")
+            .pattern("MMM")
+            .unlockedBy("wand_item", has(RUNE.get()))
+            .save(output);
+    }
+
+    protected void creator(RecipeOutput output, Item result) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+            .define('M', PACKED_MUD_CLAY.get())
+            .define('X', NEXITE_BLOCK.get())
+            .pattern("MMM")
+            .pattern(" X ")
+            .pattern(" M ")
+            .unlockedBy("mud_bricks", has(Items.MUD_BRICKS))
+            .save(output);
+    }
+
     protected void nexite(RecipeOutput output, Item result) {
         nineBlockStorageRecipes(output, RecipeCategory.MISC, NEXITE_POWDER.get(), RecipeCategory.BUILDING_BLOCKS, NEXITE_BLOCK.get());
-
         oreSmelting(output, List.of(RAW_NEXITE_BLOCK.get()),RecipeCategory.BUILDING_BLOCKS, result, 2.0F, 200, "nexite");
     }
 

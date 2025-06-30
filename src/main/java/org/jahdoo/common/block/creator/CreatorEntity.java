@@ -112,12 +112,11 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
 
     public void tick(Level level, BlockPos blockPos, BlockState pState) {
         if(this.canCraft()){
+
             var creatorRecipes = this.getRecipe();
             if(creatorRecipes.isPresent()){
                 var getRecipe = creatorRecipes.get();
-                if(this.getResult == null) {
-                    this.getResult = getRecipe.result(this);
-                }
+                if(this.getResult == null) this.getResult = getRecipe.result(this);
                 if(getRecipe.secondaryCheck(this)){
                     this.progress++;
                     this.tableProcessingParticle(level);
@@ -126,10 +125,13 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
                     this.onCompleteCraft(level, blockPos);
                 }
             }
+
         } else {
+
             this.setAnimTickIncrement(Math.max(this.animTickIncrement - 0.1, 0.5));
             if(this.getResult != null) this.getResult = null;
             if(this.animIncrement > 0.5) this.animIncrement = 0.5;
+
         }
 
         animParticle(level, blockPos);

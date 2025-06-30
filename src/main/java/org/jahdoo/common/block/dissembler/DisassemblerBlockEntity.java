@@ -158,14 +158,17 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
 
     private void completedRecycling(Level level){
         var handler = this.inputItemHandler;
-        var originalItem = handler.getStackInSlot(0);
-        if(!(originalItem.getItem() instanceof JahdooItem jahdooItem)) return;
-        var recycleItem = getRecycleWithChance(jahdooItem, originalItem);
+        var oItem = handler.getStackInSlot(0);
+
+        if(!(oItem.getItem() instanceof JahdooItem jItem)) return;
+        var recycleItem = getRecycleWithChance(jItem, oItem);
+        var tank = this.tankPosition;
+
+        this.chargeTankFuel(RECYCLING_COST);
+        handler.setStackInSlot(0, ItemStack.EMPTY);
 
         this.outputItemHandler.setStackInSlot(0, recycleItem);
-        handler.setStackInSlot(0, ItemStack.EMPTY);
-        this.chargeTankFuel(RECYCLING_COST);
-        level.sendBlockUpdated(this.tankPosition, level.getBlockState(this.tankPosition), this.getBlockState(), 3);
+        level.sendBlockUpdated(tank, level.getBlockState(tank), this.getBlockState(), 3);
         this.progress = 0;
     }
 

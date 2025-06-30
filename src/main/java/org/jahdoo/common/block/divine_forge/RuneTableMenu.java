@@ -103,7 +103,8 @@ public class RuneTableMenu extends AbstractInternalContainer  {
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int slotIndex) {
         var vanilla = SLOT_A + SLOT_SIZE;
-        var beInventory = INV_SLOT_A + getAllSlots();
+        var slotA = INV_SLOT_A;
+        var beInventory = slotA + getAllSlots();
         var sourceSlot = slots.get(slotIndex);
         var sourceStack = sourceSlot.getItem();
         var copyOfSourceStack = sourceStack.copy();
@@ -112,7 +113,7 @@ public class RuneTableMenu extends AbstractInternalContainer  {
         if(!sourceSlot.hasItem() || sourceStack.getItem() instanceof RuneItem){
             return empty;
         } else if (slotIndex < vanilla) {
-            if (!moveItemStackTo(sourceStack, INV_SLOT_A, beInventory, false)) return empty;
+            if (!moveItemStackTo(sourceStack, slotA, beInventory, false)) return empty;
         } else if (slotIndex < beInventory) {
             if (!moveItemStackTo(sourceStack, SLOT_A, vanilla, false)) return empty;
         } else {

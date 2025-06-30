@@ -7,12 +7,15 @@
     },
     "X": {
       "item": "minecraft:deepslate"
+    },
+    "Z": {
+      "item": "jahdoo:packed_mud_clay"
     }
   },
   "pattern": [
+    "XZX",
     "MMM",
-    "MXM",
-    "MMM"
+    "XZX"
   ],
   "result": {
     "count": 1,

@@ -1,6 +1,9 @@
 {
   "creative_tab.jahdoo_tab": "Jahdoo",
 
+  "item.jahdoo.rose_quartz": "Rose Quartz",
+  "item.jahdoo.enchanted_diamond": "Enchanted Diamond",
+
   "item.jahdoo.essence_fragment": "Essence Fragment",
   "item.jahdoo.bronze_coin": "Bronze Coin",
   "item.jahdoo.silver_coin": "Silver Coin",
@@ -62,6 +65,10 @@
   "blocks.jahdoo.screen.wand.compare": "Hold shift to compare",
   "block.jahdoo.modular_chaos_cube": "Modular Chaos Cube",
   "block.jahdoo.loot_crate": "Loot Crate",
+  "block.jahdoo.ticket_bureau": "Ticket Bureau",
+  "block.jahdoo.packed_mud_clay": "Packed Mud Clay",
+  "block.jahdoo.rose_quartz_ore": "Rose Quartz Ore",
+  "block.jahdoo.enchanted_diamond_ore": "Enchanted Diamond Ore",
 
   "effect.jahdoo.step_boost": "Step Assist",
   "effect.jahdoo.amplify_block_reach": "Block Reach",
