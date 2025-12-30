@@ -6,6 +6,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import org.jahdoo.common.items.ability_augment.AugmentCrystalRenderer;
 import org.jahdoo.trial_nexus.utils.Configuration;
 import org.jahdoo.common.datagen.loot.ModLootModifiers;
 import org.jahdoo.common.items.gauntlet.GloveRenderer;
@@ -38,6 +39,7 @@ public class CommonSetup {
     public static void common(final FMLCommonSetupEvent event){
         CuriosRendererRegistry.register(ItemReg.TOME_OF_UNITY.get(), TomeRenderer::new);
         CuriosRendererRegistry.register(ItemReg.BATTLEMAGE_GAUNTLET.get(), GloveRenderer::new);
+        CuriosRendererRegistry.register(ItemReg.AUGMENT_CRYSTAL.get(), AugmentCrystalRenderer::new);
         CuriosRendererRegistry.register(ItemReg.BASIC_SHIELD.get(), ShieldRenderer::new);
         CuriosRendererRegistry.register(ItemReg.UNDEAD_PROTECTOR_SHIELD.get(), ShieldRenderer::new);
     }

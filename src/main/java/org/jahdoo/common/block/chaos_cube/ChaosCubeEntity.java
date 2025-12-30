@@ -207,7 +207,7 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
     public void tick(Level level, BlockPos pos, BlockState blockState) {
         if(holder == null && this.ticker > 0) this.ticker = 0; this.progress = 0;
         this.entityTicker ++;
-        useAugment(level, hasTankAndFuel());
+        useAugment(level, false);
         if(this.getData(MODULAR_CHAOS_CUBE).active()){
             var speed = this.getData(MODULAR_CHAOS_CUBE).speed();
             if (this.ticker >= (speed == 0 ? 100 : speed)) this.ticker = 0;
@@ -261,15 +261,16 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
         return PlayState.STOP;
     }
 
-    private void useAugment(Level level, boolean hasTank) {
-        if(!hasTank) return;
+    public void useAugment(Level level, boolean ignorePower) {
+        if(!hasTankAndFuel()) return;
         var hasDirection = getActionDirection(this) != null;
         var isOff = Objects.equals(getActionDirection(this),this.getBlockPos());
         var isPowered = getActive(this);
-        if(!isPowered) return;
+        if(!ignorePower) if (!isPowered) return;
+
         if (hasDirection && !isOff) {
             this.progress ++;
-            if(this.ticker == 1){
+            if(this.ticker == 1 || ignorePower){
                 positionalParticles(level, 30, 0.7);
                 useSound(0.05f,1.4f, level);
                 var getAbility = AbilityReg.getFirstSpellByTypeId(holder.abilityName());

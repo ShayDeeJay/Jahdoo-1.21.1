@@ -10,10 +10,15 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.FastColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
+
+import java.util.List;
 
 import static net.minecraft.client.Minecraft.getInstance;
 import static org.jahdoo.common.block.loot_chest.LootChestRenderer.roomData;
@@ -27,12 +32,16 @@ public class PerkTableRenderer implements BlockEntityRenderer<PerkTableEntity>{
         this.entityRenderDispatcher = context.getEntityRenderer();
     }
 
+    public static final List<Item> getByIndex = List.of(
+        HEALTH_CONTAINER.get(),MANA_CONTAINER.get(),QUEST_CONTAINER.get(),BOON_CONTAINER.get(),Blocks.BLACK_BED.asItem(),Items.DIAMOND_SWORD.asItem()
+    );
+
     @Override
     public void render(PerkTableEntity entity, float partialTick, PoseStack stack, MultiBufferSource source, int packedLight, int packed) {
         var mc = getInstance();
         var itemRenderer = mc.getItemRenderer();
         int state = entity.getBlockState().getValue(TEXTURE);
-        var render = new ItemStack(state == 0 ? HEALTH_CONTAINER : state == 1 ? MANA_CONTAINER : state == 2 ? QUEST_CONTAINER : BOON_CONTAINER);
+        var render = new ItemStack(getByIndex.get(state));
         var rotate = entity.privateTicks + partialTick;
         var animate = rotate / 12;
         var scale = Math.min(1.2F, animate);

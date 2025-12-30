@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.items.*;
+import org.jahdoo.common.items.ability_augment.AugmentCrystal;
 import org.jahdoo.common.items.armor.ancient_golem_armor.AncientGolemArmor;
 import org.jahdoo.common.items.armor.battle_mage.BattleMageArmor;
 import org.jahdoo.common.items.armor.knight_king.KnightKingArmor;
@@ -64,6 +65,9 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> CREATOR_TOP =
         basicItem("creator_top");
 
+    public static final DeferredHolder<Item, Item> DICE =
+        basicItem("dice");
+
     //Complex Items
     public static final DeferredHolder<Item, Item> PERKA_SODA =
         complexItem("perka_soda", PerkaSoda::new);
@@ -100,6 +104,9 @@ public class ItemReg {
 
     public static final DeferredHolder<Item, Item> BATTLEMAGE_GAUNTLET =
         complexItem("battlemage_gauntlet", BattlemageGauntlet::new);
+
+    public static final DeferredHolder<Item, Item> AUGMENT_CRYSTAL =
+        complexItem("augment_crystal", AugmentCrystal::new);
 
     public static final DeferredHolder<Item, Item> RUNE =
         complexItem("rune", RuneItem::new);

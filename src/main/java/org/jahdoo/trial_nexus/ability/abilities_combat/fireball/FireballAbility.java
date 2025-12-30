@@ -65,7 +65,8 @@ public class FireballAbility extends Ability {
                 EntityReg.INFERNO_ELEMENT_PROJECTILE.get(), player,
                 EntityDataReg.FIRE_BALL.get().setAbilityId(), projCount == 1 ? offsetShoot(player) : 0,
                 abilityId.getPath().intern()
-            )
+            ),
+            0
         );
         BurningSkullsAbility.infernoSoundEffect(player);
     }

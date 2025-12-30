@@ -123,7 +123,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private void registerStamps() {
-        for (int i = 1; i < 11; i++) {
+        for (int i = 1; i < 12; i++) {
             createModel("stamp" + i, "item/stamps/stamp" + i);
             createOverride(i, ItemReg.STAMP, "item/stamp");
         }
@@ -174,8 +174,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         var simpleItems = List.of(
             ItemReg.NEXITE_POWDER, ItemReg.ESSENCE_FRAGMENT, ItemReg.INFERNO_AUGMENT,
             ItemReg.FROST_AUGMENT, ItemReg.MYSTIC_AUGMENT, ItemReg.VITALITY_AUGMENT,
-            ItemReg.SKILL_POINT, ItemReg.COIN_SACK,
-            ItemReg.STONE_OF_REGRET, ItemReg.ROSE_QUARTZ, ItemReg.ENCHANTED_DIAMOND
+            ItemReg.SKILL_POINT, ItemReg.COIN_SACK, ItemReg.STONE_OF_REGRET,
+            ItemReg.ROSE_QUARTZ, ItemReg.ENCHANTED_DIAMOND, ItemReg.DICE
         );
 
         simpleItems.forEach(this::createSimpleItemModel);

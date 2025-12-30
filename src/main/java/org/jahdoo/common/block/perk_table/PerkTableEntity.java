@@ -4,8 +4,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.block.SyncedBlockEntity;
@@ -16,6 +18,8 @@ import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.trial_nexus.boon.player_boons.Boon;
+import org.jahdoo.trial_nexus.level_manager.BlockSetupManager;
+import org.jahdoo.trial_nexus.level_manager.StructureManager;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
@@ -31,7 +35,7 @@ import static org.jahdoo.common.block.perk_table.PerkTable.TEXTURE;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.particle.ParticleStore.PLUS_PARTICLE;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
-import static org.jahdoo.trial_nexus.utils.Helpers.getSoundWithPosition;
+import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
 
 
@@ -41,14 +45,12 @@ public class PerkTableEntity extends SyncedBlockEntity {
     private List<UUID> usedBy = new ArrayList<>();
     public final List<Boon> boonsPositive = new ArrayList<>();
     public final List<Boon> boonsNegative = new ArrayList<>();
+    public BlockPos returnLocation = null;
+    public static final BlockPos restPos = new BlockPos(23, 105, 27);
 
     public PerkTableEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.PERK_TABLE_BE.get(), pos, state);
         if(getQuestId == null) getQuestId = QuestReg.getRandomQuest().questName();
-        for (var i = 0; i < 3; i++){
-//            boonsPositive.add(getPositiveBoon());
-//            boonsNegative.add(getNegativeBoon());
-        }
     }
 
     public boolean interacted(Player player){
@@ -92,6 +94,10 @@ public class PerkTableEntity extends SyncedBlockEntity {
         for (var uuid : this.usedBy) tags.putUUID(uuid.toString(), uuid);
         tag.put("interacted", tags);
 
+        if(this.returnLocation != null){
+            saveBlockPosNBT(tag, this.returnLocation);
+        }
+
         super.saveAdditional(tag, registries);
     }
 
@@ -102,6 +108,8 @@ public class PerkTableEntity extends SyncedBlockEntity {
 
         var getUsed = tag.getCompound("interacted");
         for (var allKey : getUsed.getAllKeys()) this.usedBy.add(getUsed.getUUID(allKey));
+
+        this.returnLocation = loadBlockPosNBT(tag);
 
         super.loadAdditional(tag, registries);
     }
@@ -160,6 +168,29 @@ public class PerkTableEntity extends SyncedBlockEntity {
                     }
                 } else {
                     usedMessage(player, ColourStore.PERK_GREEN);
+                }
+            }
+            case 4 ->{
+                if(level instanceof ServerLevel cLevel){
+                    StructureManager.generateCooldownRoom(cLevel);
+                    var findBlock = cLevel.getBlockState(restPos);
+
+                    if(findBlock.is(Blocks.DIAMOND_BLOCK)) BlockSetupManager.setPerkTable(cLevel, restPos, 5);
+
+                    if(cLevel.getBlockEntity(restPos) instanceof PerkTableEntity perkTableEntity){
+                        perkTableEntity.returnLocation = player.blockPosition();
+                    }
+
+                    var home = restPos.north(3).getCenter();
+                    player.teleportTo(home.x, home.y, home.z);
+                }
+            }
+            case 5 ->{
+                if(level instanceof ServerLevel){
+                    var rLoc = this.returnLocation;
+                    if(rLoc != null){
+                        player.teleportTo(rLoc.getX() + 0.5, rLoc.getY(), rLoc.getZ() + 0.5);
+                    }
                 }
             }
         }

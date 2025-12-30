@@ -7,9 +7,9 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.entities.CustomSkeleton;
-import org.jahdoo.common.entities.custom_villager.CustomVillager;
-import org.jahdoo.common.entities.CustomZombie;
+import org.jahdoo.common.entities.custom_entities.CustomSkeleton;
+import org.jahdoo.common.entities.custom_entities.CustomVillager;
+import org.jahdoo.common.entities.custom_entities.CustomZombie;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
 import org.jahdoo.common.entities.decoy.Decoy;
 import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
@@ -40,6 +40,7 @@ public class ServerBusEvents {
         event.put(EntityReg.VOID_SPIDER.get(), VoidSpider.createMain().build());
         event.put(EntityReg.VOID_SPIDER_SPAWN.get(), VoidSpider.createBaby().build());
         event.put(EntityReg.SAFE.get(), VoidSpider.createBaby().build());
+        event.put(EntityReg.EXPLOSIVE_BARREL.get(), VoidSpider.createBaby().build());
     }
 
     @SubscribeEvent

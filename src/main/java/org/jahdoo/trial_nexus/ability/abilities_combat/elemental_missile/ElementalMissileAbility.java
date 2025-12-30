@@ -1,6 +1,10 @@
 package org.jahdoo.trial_nexus.ability.abilities_combat.elemental_missile;
 
 import net.minecraft.world.entity.player.Player;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.jahdoo.common.registers.AttributeReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.attachments.CasterData;
@@ -8,12 +12,10 @@ import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.GlobalStrings;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.registers.SoundReg;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.common.registers.mod.EntityDataReg.ELEMENTAL_SHOOTER;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SET_ELEMENT_TYPE;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SHOT_MULTIPLIER;
 
 abstract public class ElementalMissileAbility extends Ability {
 
@@ -63,10 +65,13 @@ abstract public class ElementalMissileAbility extends Ability {
     }
 
     protected void doOnCast(Player player, String name) {
-        var projectileCount = getTag(player, SHOT_MULTIPLIER);
+        var extraShots = player.getAttribute(AttributeReg.ELEMENTAL_SHOTGUN);
+        var shotMulti = extraShots != null ? extraShots.getValue() : 0;
+        var projectileCount = getTag(player, SHOT_MULTIPLIER) + shotMulti;
         var index = ELEMENTAL_SHOOTER.get().setAbilityId();
+        var isAlt = ElementalMissile.altOnHitCheck(player);
 
-        fireMultiShotProjectile((int) projectileCount, 1.2f, player, 0.1, () -> new GenericProjectile(player, 0, index, name));
+        fireMultiShotProjectile((int) projectileCount, 1.2f, player, 0.1, () -> new GenericProjectile(player, 0, index, name), isAlt ? 15 : 0);
         Helpers.getSoundWithPosition(player.level(), player.blockPosition(), SoundReg.ELEMENTAL_BULLET.get(), 0.8F, 1.2F);
     }
 

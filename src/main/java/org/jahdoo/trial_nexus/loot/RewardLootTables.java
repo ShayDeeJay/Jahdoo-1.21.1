@@ -13,6 +13,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
@@ -201,6 +202,9 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> UNDEAD_PROTECTOR_SHIELD =
         lootTableItem(ItemReg.UNDEAD_PROTECTOR_SHIELD.get());
 
+    public static final LootPoolSingletonContainer.Builder<?> KEY =
+        lootTableItem(ItemReg.LOOT_KEY.get());
+
     public static final LootPoolSingletonContainer.Builder<?> GAUNTLET =
         lootTableItem(ItemReg.BATTLEMAGE_GAUNTLET.get());
 
@@ -311,6 +315,7 @@ public class RewardLootTables {
             case Magnet ignored -> magnetItem(itemStack, raritiesByChestRarity);
             case JahdooShieldItem ignored -> basicShieldWithRarity(itemStack, raritiesByChestRarity);
             case BattlemageGauntlet ignore -> getGauntletWithRarity(itemStack, raritiesByChestRarity);
+            case KeyItem ignore ->keyPiece(itemStack, raritiesByChestRarity);
             default -> { /*IGNORE*/ }
         }
     }
@@ -344,6 +349,7 @@ public class RewardLootTables {
             //Rare
             builder.add(NEXITE_BLOCK_BUILDER.setWeight(20));
             builder.add(BOOK_BUILDER.setWeight(15));
+            builder.add(KEY.setWeight(1));
         }
 
         return builder;

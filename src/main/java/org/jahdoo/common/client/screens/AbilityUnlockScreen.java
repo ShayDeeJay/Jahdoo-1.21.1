@@ -180,7 +180,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         }
 
         if(haveSkill){
-            var skillActive = player.hasEffect(skill.skillEffect());
+            var skillActive = CasterData.hasSkill(player, skill.id());
             var prefix1 = withStyleComponent("Status: ", SUB_HEADER_COLOUR);
             var suffix1 = withStyleComponent(skillActive ? "Active" : "Inactive", skillActive ? MAGNET_RANGE_GREEN : MAGNET_STRENGTH_RED).copy();
             component.addLast(Component.empty());
@@ -295,7 +295,6 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         if(!isDummy) {
             var components = AbilityComponentHelper.shiftForDetails(isLocked, modifiableHolder(holder));
             var allAbilityModifiers = getAllAbilityModifiers(ability, holder, components.isEmpty(), true, player);
-
             allAbilityModifiers.addAll(!isLocked ? 1 : allAbilityModifiers.size(), components);
             this.components = allAbilityModifiers;
         } else {
@@ -323,7 +322,8 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var player = getMinecraft().player;
         if(player == null) return;
         if(unlocked) {
-            sendToServer(new MobEffectC2SP(skill.skillEffect()));
+            System.out.println("im here");
+            sendToServer(new UnlockedSkillsC2SP(skill.id(), skill.unlockCost()));
         } else {
             if(!dependency && CasterData.checkAndConsume(player, skill.unlockCost())){
                 sendToServer(new UnlockedSkillsC2SP(skill.id(), skill.unlockCost()));
@@ -336,10 +336,11 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
     private void onClickAbility(Ability ability, AbilityHolder abilityHolder, boolean unlocked, boolean dependency){
         var guiScreen = new AbilityModificationScreen(abilityHolder, ability, size, panX, panY, zoomX, scaledSpacing, scaledXOffset, centerX, centerY);
-        var player = getMinecraft().player;
+        var mc = getMinecraft();
+        var player = mc.player;
         if(player == null) return;
         if(unlocked) {
-            if(isKeyDown(getMinecraft().getWindow().getWindow(), KEY_LSHIFT)){
+            if(isKeyDown(mc.getWindow().getWindow(), KEY_LSHIFT)){
                 var data = player.getData(AttachmentReg.CASTER_DATA);
                 var validSlots = data.getAbilitySlots().stream().filter(i -> !i.isEmpty()).toList();
                 if(validSlots.size() < data.getAllowedSlots()){
@@ -347,9 +348,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 }
             } else {
                 var entryStream = modifiableHolder(abilityHolder);
-                if(!entryStream){
-                    getMinecraft().setScreen(guiScreen);
-                }
+                if(!entryStream) mc.setScreen(guiScreen);
             }
         } else {
             var abilityCost = ability.getAbilityCost();

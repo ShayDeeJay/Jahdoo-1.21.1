@@ -32,6 +32,9 @@ public class ParticleReg {
     public static final Supplier<ParticleType<GenericParticleOptions>> PLUS =
         register("plus", GenericParticleOptions.MAP_CODEC, GenericParticleOptions.STREAM_CODEC);
 
+    public static final Supplier<ParticleType<GenericParticleOptions>> SQUARE =
+        register("square", GenericParticleOptions.MAP_CODEC, GenericParticleOptions.STREAM_CODEC);
+
     public static final Supplier<ParticleType<GenericParticleOptions>> ELECTRIC =
         register("electric", GenericParticleOptions.MAP_CODEC, GenericParticleOptions.STREAM_CODEC);
 

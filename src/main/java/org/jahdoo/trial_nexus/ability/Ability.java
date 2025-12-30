@@ -109,6 +109,16 @@ public abstract class Ability {
         }
     }
 
+    public static void fireProjectileDirection(Projectile projectile, LivingEntity player, float velocity, Vec3 direction, float inaccuracy){
+        if(player != null){
+            if(player.level() instanceof ServerLevel serverLevel){
+                projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, hexedEffect(player) + inaccuracy);
+                projectile.setOwner(player);
+                serverLevel.addFreshEntity(projectile);
+            }
+        }
+    }
+
     public void fireProjectileNoSound(Projectile projectile, LivingEntity player, float velocity){
         if(player != null){
             if(player.level() instanceof ServerLevel serverLevel){
@@ -144,7 +154,14 @@ public abstract class Ability {
         }
     }
 
-    public static void fireMultiShotProjectile(int numberOfProjectile, float velocities, Player player, double adjustSpread, Supplier<Projectile> projectileSupplier){
+    public static void fireMultiShotProjectile(
+        int numberOfProjectile,
+        float velocities,
+        Player player,
+        double adjustSpread,
+        Supplier<Projectile> projectileSupplier,
+        float inaccuracy
+    ){
         var totalWidth = (numberOfProjectile - 1) * adjustSpread;
         var startOffset = -totalWidth / 2.0;
 
@@ -153,7 +170,7 @@ public abstract class Ability {
             var projectile  = projectileSupplier.get();
             var directionOffset = calculateDirectionOffset(player, offset);
             var direction = player.getLookAngle().add(directionOffset).normalize();
-            fireProjectileDirection(projectile, player, velocities, direction);
+            fireProjectileDirection(projectile, player, velocities, direction, inaccuracy);
         }
     }
 }

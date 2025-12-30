@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -42,11 +43,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static net.minecraft.world.level.block.CrafterBlock.TRIGGERED;
+
 public class ChaosCubeBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
 
     public ChaosCubeBlock() {
         super(Properties.of().strength(1f).sound(SoundType.DEEPSLATE_BRICKS).noOcclusion());
+        this.registerDefaultState(this.stateDefinition.any().setValue(TRIGGERED, false));
+    }
+
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(TRIGGERED);
     }
 
     @Override
@@ -84,6 +92,22 @@ public class ChaosCubeBlock extends BaseEntityBlock {
 
         if(ability.isEmpty()) return;
         AbilityComponentHelper.onlyToolTip(ability.get(), holder, false, context.level(), tComp);
+    }
+
+    @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        var flag = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above());
+        var flag1 = state.getValue(TRIGGERED);
+        if (flag && !flag1) {
+            level.scheduleTick(pos, this, 4);
+            level.setBlock(pos, state.setValue(TRIGGERED, true), 2);
+            var blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ChaosCubeEntity automationBlock) {
+                automationBlock.useAugment(level, true);
+            }
+        } else if (!flag && flag1) {
+            level.setBlock(pos, state.setValue(TRIGGERED, false), 2);
+        }
     }
 
     @Override

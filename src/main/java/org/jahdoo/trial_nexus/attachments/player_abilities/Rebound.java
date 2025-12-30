@@ -5,9 +5,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.trial_nexus.attachments.IAttachment;
 import org.jahdoo.common.networking.server2client.BouncyFootS2CP;
-import org.jahdoo.common.registers.EffectReg;
+import org.jahdoo.common.registers.mod.SkillReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.IAttachment;
 
 import static org.jahdoo.common.registers.AttachmentReg.BOUNCY_FOOT;
 
@@ -17,15 +18,18 @@ public class Rebound implements IAttachment {
     private double previousDelta;
     private int effectTimer;
     public float setHighestFallPoint;
+    public int bounceCount;
 
     public void saveNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         nbt.putInt("effect_timer", this.effectTimer);
+        nbt.putInt("bounce", this.bounceCount);
         nbt.putDouble("current_delta", this.currentDelta);
         nbt.putDouble("previous_data", this.previousDelta);
     }
 
     public void loadNBTData(CompoundTag nbt, HolderLookup.Provider provider) {
         this.effectTimer = nbt.getInt("effect_timer");
+        this.bounceCount = nbt.getInt("bounce");
         this.currentDelta = nbt.getDouble("current_delta");
         this.previousDelta = nbt.getDouble("previous_data");
     }
@@ -39,7 +43,7 @@ public class Rebound implements IAttachment {
     }
 
     public void onTick(Player player){
-        if(/*effectTimer > 0*/ player.hasEffect(EffectReg.REBOUND)){
+        if(/*effectTimer > 0*/ CasterData.hasSkill(player, SkillReg.REBOUND.get().id())){
             if(player instanceof ServerPlayer serverPlayer){
                 var payload = new BouncyFootS2CP(effectTimer, previousDelta, currentDelta, setHighestFallPoint);
                 PacketDistributor.sendToPlayer(serverPlayer, payload);
@@ -50,9 +54,16 @@ public class Rebound implements IAttachment {
             this.currentDelta = player.getDeltaMovement().y;
 
             var isJumping = this.currentDelta != this.previousDelta;
-            if(!isJumping ||player.verticalCollisionBelow) {
+            if(!isJumping || player.verticalCollisionBelow) {
                 this.setEffectTimer(0);
-                this.setSetHighestFallPoint(0);
+                var playerResetDelta = -0.0784000015258789;
+                if(this.currentDelta > playerResetDelta) {
+                    bounceCount++;
+                }
+                if(bounceCount >= 3) {
+                    this.currentDelta = 0;
+                }
+
             }
 
             effectTimer--;

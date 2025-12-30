@@ -106,6 +106,7 @@ public class LevelGenerator {
                 var data = new InstanceData();
                 if(!buffs.isEmpty()) buffs.forEach(data::set);
                 generateStartingRoom(level);
+//                generateCooldownRoom(level);
                 System.out.println(data);
                 level.setData(INSTANCE_DATA, data);
                 getLevel.set(level);

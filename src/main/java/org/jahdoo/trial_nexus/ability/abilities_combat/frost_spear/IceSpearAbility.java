@@ -69,7 +69,7 @@ public class IceSpearAbility extends Ability {
 
         if (!level.isClientSide) {
             Helpers.getSoundWithPositionV(level, player.position(), SoundEvents.TRIDENT_THROW.value(), 1, 1.4F);
-            Ability.fireMultiShotProjectile((int) projectileCount, (float) velocity, player, 0.25, () -> new IceSpear(player));
+            Ability.fireMultiShotProjectile((int) projectileCount, (float) velocity, player, 0.25, () -> new IceSpear(player), 0);
         }
     }
 

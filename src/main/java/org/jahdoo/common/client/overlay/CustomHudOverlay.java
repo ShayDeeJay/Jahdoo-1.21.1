@@ -22,6 +22,7 @@ import org.jahdoo.common.items.caster_item.CastHelper;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
+import org.jahdoo.common.registers.mod.SkillReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,7 @@ import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.mojang.blaze3d.systems.RenderSystem.*;
 import static java.lang.String.valueOf;
@@ -302,9 +304,10 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         var player = minecraft.player;
         if(player == null || minecraft.options.hideGui) return;
 
-        var manaBarWidth = 47;
         var typeId = selectedAbility(player);
         if(typeId == null) PacketDistributor.sendToServer(new SelectAbilityC2SP(""));
+
+        var manaBarWidth = 47;
         var abilityRegistrars = AbilityReg.getFirstSpellByTypeId(typeId);
         var casterData = player.getData(CASTER_DATA);
         var manaPool = casterData.getManaPool();
@@ -325,7 +328,6 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         pose.pushPose();
         enableBlend();
 
-
         var scale = CUSTOM_UI_SCALE.get().floatValue();
         var yOffset = CUSTOM_UI_HEIGHT.get().floatValue() + (CUSTOM_UI.get() ? 0 : 10) ;
         var center = this.alignedGui.screenWidth / 2;
@@ -334,7 +336,6 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         pose.translate(center, centerY + yOffset, 0);
         pose.scale(scale, scale, 1);
         pose.translate(-center, -centerY + yOffset, 0);
-
 
         if(CUSTOM_UI.get()){
             minecraft.gui.renderSelectedItemName(graphics, (int) (100 + this.fadeInAbility));
@@ -366,6 +367,20 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
                 this.cooldownTimer(location, casterData, graphics, minecraft);
             }
         );
+
+        var spread = 5;
+        var num = 24;
+        var skills = casterData.getActiveSkills();
+        for (var activeSkill : skills) {
+            var get = SkillReg.getAllSkills().stream().filter(abstractSkill -> Objects.equals(abstractSkill.id(), activeSkill)).findFirst();
+            var size = skills.size() - 1;
+            var iconSize = num - 3;
+            var xA = -(size * (num / 2)) + spread;
+            var yA = graphics.guiHeight() - 50;
+            alignedGui.displayGuiLayer(xA, yA, 0, 0, iconSize, GUI_BUTTON_SKILL);
+            alignedGui.displayGuiLayer(xA, yA, 0, 0, iconSize, get.orElseThrow().icon());
+            spread += num;
+        }
 
         setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         pose.popPose();
@@ -423,16 +438,13 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
         var maxDurability = stack.getMaxDamage();
         var currentDamage = stack.getDamageValue();
         var remainingDurability = maxDurability - currentDamage;
-
         var percent = (int) ((remainingDurability * 100.0) / maxDurability);
-        int color;
+        var color = RATING_4_YELLOW;
 
         if (percent <= 25.0) {
             color = RATING_2_RED;
         } else if (percent >= 75.0) {
             color = RATING_5_GREEN;
-        } else {
-            color = RATING_4_YELLOW;
         }
 
         return new Pair<>(percent, color);

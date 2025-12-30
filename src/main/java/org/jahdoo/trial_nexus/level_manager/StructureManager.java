@@ -5,15 +5,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
+import org.jahdoo.common.block.lock.LockBlock;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_pot.LootPotBlockEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -24,9 +27,7 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.ModTags;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.mojang.datafixers.util.Pair.of;
 import static net.minecraft.core.BlockPos.betweenClosed;
@@ -55,20 +56,23 @@ public class StructureManager {
     public static final String SANCTUARY = "sanctuary";
     public static final Component SANCTUARY_COMPONENT = withStyleComponent(stringIdToName(SANCTUARY), COSMIC_PURPLE);
 
+    public static final String LOOT_CRYPT = "loot_crypt";
+    public static final Component LOOT_CRYPT_COMPONENT = withStyleComponent(stringIdToName(LOOT_CRYPT), COOLDOWN_GREEN);
+
     public static final String BOSS_CRUCIBLE = "boss_crucible";
     public static final Component BOSS_COMPONENT = withStyleComponent(stringIdToName(BOSS_CRUCIBLE), NEGATIVE_RED);
 
     public static final String EASY_EXIT = "exit";
     public static final Component EXIT_ROOM_COMPONENT = withStyleComponent(stringIdToName(EASY_EXIT), MAGNET_RANGE_GREEN);
 
-    public static final String LOOT_CRYPT = "loot_crypt";
-    public static final Component LOOT_CRYPT_COMPONENT = withStyleComponent(stringIdToName(LOOT_CRYPT), COOLDOWN_GREEN);
 
     public static final List<String> THE_HALL = List.of("serene_1", "serene_2", "serene_3", "serene_4");
-    public static final List<String>  THE_CHAMBERS = List.of("camp_1", "camp_2", "camp_3", "camp_4");
-    public static final List<String>  THE_OASIS = List.of("wastland_1", "wastland_2", "wastland_3", "wastland_4");
-    public static final List<String>  THE_BASTION = List.of("hellscape_1", "hellscape_2", "hellscape_3", "hellscape_4");
+    public static final List<String> THE_CHAMBERS = List.of("camp_1", "camp_2", "camp_3", "camp_4");
+    public static final List<String> THE_OASIS = List.of("wasteland_1", "wasteland_2", "wasteland_3", "wasteland_4");
+    public static final List<String> THE_BASTION = List.of("hellscape_1", "hellscape_2", "hellscape_3", "hellscape_4");
+    public static final List<String> REST_ROOMS = List.of(BAZAAR, SANCTUARY, LOOT_CRYPT, EASY_EXIT);
     public static final String STARTING_ROOM = "starting_room";
+    public static final String BRIDGE = "bridge";
 
     public static final int GLOBAL_Y = 60;
     public static final Vec3 SPAWN_POSITION = new Vec3(33.5, GLOBAL_Y + 2, 27.5);
@@ -77,8 +81,10 @@ public class StructureManager {
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
-        settings.setKnownShape(true);
-        templates.ifPresent(template -> template.placeInWorld(level, pos, new BlockPos(-22, 0, -22), settings, level.random, Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS));
+        settings.setKnownShape(true).addProcessor(BlockIgnoreProcessor.AIR);
+        templates.ifPresent(
+            template -> template.placeInWorld(level, pos, new BlockPos(-22, 0, -22), settings, level.random, Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS)
+        );
     }
 
     public static List<String> getValidRooms(){
@@ -112,44 +118,63 @@ public class StructureManager {
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
 
         placeStructure(level, pos, settings, STARTING_ROOM);
-        placeLocksWithData(level, BlockPos.containing(SPAWN_POSITION.subtract(10,0,0)), true);
+        placeLocksWithData(level, BlockPos.containing(SPAWN_POSITION.subtract(10,0,0)), true, false);
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
         //Here we can pass the data from the previous altar to set up the next challenge stack.
     }
 
-    public static List<Component> getRandomRoomId(boolean isStarter, InstanceData data){
-        var roomGen = new ArrayList<Component>();
-        roomGen.add(getBattleRoom());
+    public static void generateCooldownRoom(ServerLevel level){
+        var pos = new BlockPos(0, GLOBAL_Y + 30, 0);
+        var getAllChunks = ChunkPos.rangeClosed(new ChunkPos(pos), 1).toList();
+        var settings = new StructurePlaceSettings();
 
-        var difficulty = data.getDifficulty();
-        var forSanctuary = NOVICE.getSerializedName().equals(difficulty) ? 80 : EXPERT.getSerializedName().equals(difficulty) ? 50 : 20 ;
-        var forBoss = NOVICE.getSerializedName().equals(difficulty) ? 10 : EXPERT.getSerializedName().equals(difficulty) ? 20 : 30 ;
+        settings.setRotationPivot(new BlockPos(pos.getX() + 23, pos.getY(), pos.getZ() + 25));
+        settings.setRotation(Rotation.CLOCKWISE_90);
 
-        if(!isStarter){
-            if (percentageChance(forSanctuary)) roomGen.add(SANCTUARY_COMPONENT);
-            if (percentageChance(50)) roomGen.add(BAZAAR_COMPONENT);
+        for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
 
-            if(roomGen.size() == 3) return roomGen;
-            if (percentageChance(10)) roomGen.add(LOOT_CRYPT_COMPONENT);
+//        var clearArea = betweenClosed(new BlockPos(-53, 156, -49), new BlockPos(97, 98, 103));
+//        for (var blockPos : clearArea) level.removeBlock(blockPos, false);
 
-            if(roomGen.size() == 3) return roomGen;
-            if(percentageChance(20)) roomGen.add(EXIT_ROOM_COMPONENT);
+        for (var allEntity : level.getAllEntities()) if(allEntity instanceof Villager villager) villager.kill();
 
-            if(roomGen.size() == 3) return roomGen;
-            if (percentageChance(forBoss)) roomGen.add(BOSS_COMPONENT);
+        placeStructure(level, pos, settings, BRIDGE);
+        placeLocksWithData(level, new BlockPos(23, 105, 27), false, true);
+
+//        placeLocksWithData(level, BlockPos.containing(SPAWN_POSITION.subtract(0,0,0)), true);
+
+        for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
+        //Here we can pass the data from the previous altar to set up the next challenge stack.
+    }
+
+    public static final Map<Integer, Component> getRestRooms = Map.of(
+        0, BAZAAR_COMPONENT, 1, LOOT_CRYPT_COMPONENT, 2, SANCTUARY_COMPONENT, 3, EXIT_ROOM_COMPONENT
+    );
+
+    public static Map<Integer, Component> getRandomRoomId(InstanceData data, boolean isRestRoom){
+        var roomGen = new HashMap<Integer, Component>();
+
+        if(isRestRoom) {
+            return getRestRooms;
+        } else {
+            var difficulty = data.getDifficulty();
+            var isNovice = NOVICE.getSerializedName().equals(difficulty);
+            var isExpert = EXPERT.getSerializedName().equals(difficulty);
+            var forBoss = isNovice ? 10 : isExpert ? 20 : 30 ;
+            roomGen.put(0, getBattleRoom());
+
+            if(percentageChance(forBoss)) roomGen.put(roomGen.size(), BOSS_COMPONENT);
         }
 
-        while (roomGen.size() < 4) roomGen.add(getBattleRoom());
-
-        Collections.shuffle(roomGen);
+        while (roomGen.size() < 4) roomGen.put(roomGen.size(), getBattleRoom());
         return roomGen;
     }
 
-    public static void placeLocksWithData(ServerLevel level, BlockPos pos, boolean isStarter) {
+    public static void placeLocksWithData(ServerLevel level, BlockPos pos, boolean isStarter, boolean isRestRoom) {
         var range = roomBoundingFromCenter(pos);
         var counter = 0;
-        var getRooms = getRandomRoomId(isStarter, level.getData(INSTANCE_DATA));
+        var getRooms = getRandomRoomId(level.getData(INSTANCE_DATA), isRestRoom);
 
         var pos1 = new BlockPos(23, 61, 27);
         if(level.getBlockState(pos1).is(Blocks.LIME_CONCRETE)){
@@ -168,6 +193,7 @@ public class StructureManager {
 
             if(getLock instanceof LockBlockEntity lock) {
                 lock.isStarting = isStarter;
+
                 if(lock.isStartingRoom()){
                     lock.getDifficulty = getDifficulties().reversed().get(counter).getSerializedName();
                 }
@@ -179,6 +205,10 @@ public class StructureManager {
                     var colour = lock.roomId.getStyle().getColor().getValue();
                     var particle = ParticleHandlers.getNonBakedParticles(colour, colour, 16, Random.nextInt(2, 4));
                     sendParticles(level, particle, vec3, 0, 0, 0.5, 0, Random.nextDouble(0.3, 1.2));
+                }
+
+                if(isRestRoom){
+                    LockBlock.getItemInteractionResult(getLock.getBlockState(), blockPos, lock, level);
                 }
             }
 
@@ -198,7 +228,8 @@ public class StructureManager {
             var settings = new StructurePlaceSettings();
             var newPos = new BlockPos(0, 0, 0);
 
-            final var globalY = roomId.equals(LOOT_CRYPT) ? GLOBAL_Y - 6 : GLOBAL_Y;
+            var globalY1 = GLOBAL_Y + (REST_ROOMS.contains(roomId) ? 44 : 0);
+            final var globalY = roomId.equals(LOOT_CRYPT) ? globalY1 - 6 : globalY1 + (roomId.equals(BRIDGE) ? 104 : 0);
             var spaceBy = 25;
             switch (direction) {
                 case SOUTH -> newPos = new BlockPos(pos.getX() - spaceBy, globalY, pos.getZ());

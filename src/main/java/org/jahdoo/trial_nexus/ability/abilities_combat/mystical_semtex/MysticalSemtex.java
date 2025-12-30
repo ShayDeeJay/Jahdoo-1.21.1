@@ -10,34 +10,37 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.DamageUtils;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.entities.EntityMovers;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
-import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.common.registers.mod.EntityDataReg;
+import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.common.registers.mod.EntityDataReg;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.DamageUtils;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.DAMAGE;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MYSTIC_MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.DAMAGE;
 
 public class MysticalSemtex extends DefaultEntityBehaviour {
 
+    ResourceLocation abilityId = Helpers.res("mystical_semtex_property");
     private boolean isAttached;
     private int explosionDelay;
     private double aoe = 0.1;
@@ -47,7 +50,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
     private List<UUID> damagedTargets = new ArrayList<>();
 
     private double additionalProjectiles;
-    private double additionalProjectileChance;
+    //    private double additionalProjectileChance;
     private double explosionRadius;
     private double damage;
 
@@ -55,7 +58,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
     public void getElementProjectile(ElementProjectile elementProjectile) {
         super.getElementProjectile(elementProjectile);
         var player = this.element.getOwner();
-        if(player != null && !(player instanceof Player)){
+        if(player instanceof Player){
             var damage = this.getTag(DAMAGE);
             this.damage = Helpers.attributeModifierCalculator(
                 (LivingEntity) player,
@@ -67,8 +70,9 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         } else {
             this.damage = this.getTag(DAMAGE);
         }
+
         this.additionalProjectiles = this.getTag(MysticalSemtexAbility.CLUSTER_COUNT);
-        this.additionalProjectileChance = this.getTag(MysticalSemtexAbility.CLUSTER_CHANCE);
+//        this.additionalProjectileChance = this.getTag(MysticalSemtexAbility.CLUSTER_CHANCE);
         this.explosionRadius = this.getTag(MysticalSemtexAbility.EXPLOSION_RADIUS);
     }
 
@@ -84,7 +88,10 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
 
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
+        if(!(this.element.getOwner() instanceof Player)) return;
         this.element.discard();
+//        this.element.setDeltaMovement(0,0,0);
+//        setArmed(player);
     }
 
     @Override
@@ -110,8 +117,6 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         return ElementReg.mystic();
     }
 
-    ResourceLocation abilityId = Helpers.res("mystical_semtex_property");
-
     @Override
     public ResourceLocation getAbilityResource() {
         return abilityId;
@@ -123,13 +128,15 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
     }
 
     private void targetHit(LivingEntity hitTarget) {
-        if(isOpp(hitTarget)){
-            explosionDelay = 30;
-            target = hitTarget;
-            element.setAnimation(6);
-            Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundEvents.SLIME_BLOCK_BREAK);
-            Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), getElementType().sound());
-        }
+        if(isOpp(hitTarget)) setArmed(hitTarget);
+    }
+
+    private void setArmed(@Nullable LivingEntity hitTarget) {
+        explosionDelay = 30;
+        target = hitTarget;
+        element.setAnimation(6);
+        Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), SoundEvents.SLIME_BLOCK_BREAK);
+        Helpers.getSoundWithPosition(this.element.level(), this.element.getOnPos(), getElementType().sound());
     }
 
     private void novaDamageBehaviour(){
@@ -188,7 +195,7 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
     public void readCompoundTag(CompoundTag compoundTag) {
         var listTag = compoundTag.getList("offset", 6);
         additionalProjectiles = compoundTag.getDouble(MysticalSemtexAbility.CLUSTER_COUNT);
-        additionalProjectileChance = compoundTag.getDouble(MysticalSemtexAbility.CLUSTER_CHANCE);
+//        additionalProjectileChance = compoundTag.getDouble(MysticalSemtexAbility.CLUSTER_CHANCE);
         explosionRadius = compoundTag.getDouble(MysticalSemtexAbility.EXPLOSION_RADIUS);
         damage = compoundTag.getDouble(DAMAGE);
         this.localOffset = new Vec3(listTag.getDouble(0), listTag.getDouble(1), listTag.getDouble(2));
@@ -266,30 +273,37 @@ public class MysticalSemtex extends DefaultEntityBehaviour {
         }
     }
 
+    public static boolean altOnHitCheck(Player player) {
+        var missileAtt = AttributeReg.CHAINED_SEMTEX;
+        return player.getAttributes().getValue(missileAtt) > 0;
+    }
+
     private void additionalProjectileSpread() {
         var projectile = this.element;
-        if(projectile.getAdditionalRestriction()) return;
-        if (Helpers.Random.nextInt(0, (int) this.additionalProjectileChance) != 0) return;
-        var getType = EntityReg.MYSTIC_ELEMENT_PROJECTILE.get();
-        var abilityId = EntityDataReg.MYSTICAL_SEMTEX.get().setAbilityId();
-        var abilityHolder = projectile.getAbilityHolder();
-        var abilityName = MysticalSemtexAbility.abilityId.getPath().intern();
+        var restriction = projectile.getAdditionalRestriction();
+        var b = altOnHitCheck((Player) projectile.getOwner());
 
-        EntityMovers.moveEntitiesRelativeToPlayer(this.target, additionalProjectiles,
-            positions -> {
-                if(!(projectile.getOwner() instanceof LivingEntity livingEntity)) return;
-                ElementProjectile newElementProjectile = new ElementProjectile(
-                    getType, livingEntity, abilityId, 0, abilityHolder, abilityName
-                );
-                newElementProjectile.setAdditionalRestrictionBound(true);
-                newElementProjectile.setOwner(projectile.getOwner());
-                newElementProjectile.moveTo(projectile.getX(), projectile.getY() + projectile.getBbHeight() - 0.35, projectile.getZ());
-                newElementProjectile.setPredicate(0);
-                newElementProjectile.shoot(positions.x, positions.y, positions.z, 0.8f, 0);
-                newElementProjectile.setDeltaMovement(newElementProjectile.getDeltaMovement());
-                this.target.level().addFreshEntity(newElementProjectile);
-            }
-        );
-        Helpers.getSoundWithPosition(projectile.level(), this.target.blockPosition(), getElementType().sound(), 0.05f);
+        if(!restriction || b && Helpers.Random.nextInt(0, 3) == 0) {
+            var getType = EntityReg.MYSTIC_ELEMENT_PROJECTILE.get();
+            var abilityId = EntityDataReg.MYSTICAL_SEMTEX.get().setAbilityId();
+            var abilityHolder = projectile.getAbilityHolder();
+            var abilityName = MysticalSemtexAbility.abilityId.getPath().intern();
+
+            EntityMovers.moveEntitiesRelativeToPlayer(this.target, additionalProjectiles,
+                positions -> {
+                    if(!(projectile.getOwner() instanceof LivingEntity livingEntity)) return;
+                    var newElementProjectile = new ElementProjectile(getType, livingEntity, abilityId, 0, abilityHolder, abilityName);
+
+                    newElementProjectile.setAdditionalRestrictionBound(true);
+                    newElementProjectile.setOwner(projectile.getOwner());
+                    newElementProjectile.moveTo(projectile.getX(), projectile.getY() + projectile.getBbHeight() - 0.35, projectile.getZ());
+                    newElementProjectile.setPredicate(0);
+                    newElementProjectile.shoot(positions.x, positions.y /*+ Helpers.Random.nextDouble(10, 15)*/, positions.z, 0.8f, 0);
+                    newElementProjectile.setDeltaMovement(newElementProjectile.getDeltaMovement());
+                    this.target.level().addFreshEntity(newElementProjectile);
+                }
+            );
+            Helpers.getSoundWithPosition(projectile.level(), this.target.blockPosition(), getElementType().sound(), 0.05f);
+        }
     }
 }

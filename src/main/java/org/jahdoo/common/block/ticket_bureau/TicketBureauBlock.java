@@ -62,7 +62,7 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
-        return  simpleCodec((x) -> new TicketBureauBlock());
+        return  simpleCodec(x -> new TicketBureauBlock());
     }
 
     @Override
@@ -100,8 +100,7 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
         return createTickerHelper(
-            entityType, TICKET_BUREAU_BE.get(),
-            (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
+            entityType, TICKET_BUREAU_BE.get(), (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)
         );
     }
 
@@ -122,34 +121,24 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
 
         if(entity instanceof TicketBureauBlockEntity entity1){
             var ticket = entity1.getTicketItem();
+
             if(stamp.is(ItemReg.STAMP) && !ticket.isEmpty()){
-                entity1.lastItem = stamp.copy();
                 var newId = stack.get(ComponentReg.ID);
                 var getBoon = LevelBoonReg.fromId(newId).orElseThrow();
                 var colour = getBoon.getHeaderColour();
                 var partType = ParticleStore.MAGIC_MOVE_PARTICLE;
-                for (int i = 0; i < 30; i++) {
-                    var x = new BlockPos(0, 1, 0);
-                    var lifetime = Random.nextInt(2, 30);
-                    var size = Random.nextFloat(0.8F, 1.2F);
-                    var particleData = new GenericParticleOptions(partType, colour, 0, lifetime, size, false, 5);
-                    level.addParticle(
-                        particleData,
-                        pos.getX() + 0.5, pos.getY() + 2.0, pos.getZ() + 0.5,
-                        (float)x.getX() + Random.nextFloat() - 0.5,
-                        (float)x.getY() - Random.nextFloat() - 1.0F,
-                        (float)x.getZ() + Random.nextFloat() - 0.5
-                    );
-                }
-                Helpers.getSoundWithPosition(level,pos, SoundReg.HEAL.get(), 0.2F, 1.6F);
-                Helpers.getSoundWithPosition(level,pos, SoundEvents.BEACON_POWER_SELECT, 0.2F, 1.6F);
-                Helpers.getSoundWithPosition(level,pos, BOOK_PUT, 3, 1F);
-                addStampToTicket(stamp, ticket);
                 var filled = CoreData.getFilled(ticket);
                 var required = CoreData.getRequired(ticket);
+
+                entity1.lastItem = stamp.copy();
+                acceptAnim(level, pos, partType, colour);
+                addStampToTicket(stamp, ticket);
                 entity1.updateBlock();
                 entity1.privateTicks = 25;
-                ticket.set(ComponentReg.CORE_DATA, new CoreData(required + stamp.get(ComponentReg.STORE_INTEGER).intValue(), filled));
+                var stampData = stamp.get(ComponentReg.STORE_INTEGER);
+
+                if(stampData != null) ticket.set(ComponentReg.CORE_DATA, new CoreData(required + stampData, filled));
+
                 stamp.shrink(1);
                 return SUCCESS;
             }
@@ -164,6 +153,29 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
         }
 
         return FAIL;
+    }
+
+    private static void acceptAnim(Level level, BlockPos pos, int partType, int colour) {
+        acceptParticle(level, pos, partType, colour);
+        Helpers.getSoundWithPosition(level, pos, SoundReg.HEAL.get(), 0.2F, 1.6F);
+        Helpers.getSoundWithPosition(level, pos, SoundEvents.BEACON_POWER_SELECT, 0.2F, 1.6F);
+        Helpers.getSoundWithPosition(level, pos, BOOK_PUT, 3, 1F);
+    }
+
+    private static void acceptParticle(Level level, BlockPos pos, int partType, int colour) {
+        for (int i = 0; i < 30; i++) {
+            var x = new BlockPos(0, 1, 0);
+            var lifetime = Random.nextInt(2, 30);
+            var size = Random.nextFloat(0.8F, 1.2F);
+            var particleData = new GenericParticleOptions(partType, colour, 0, lifetime, size, false, 5);
+            level.addParticle(
+                particleData,
+                pos.getX() + 0.5, pos.getY() + 2.0, pos.getZ() + 0.5,
+                (float)x.getX() + Random.nextFloat() - 0.5,
+                (float)x.getY() - Random.nextFloat() - 1.0F,
+                (float)x.getZ() + Random.nextFloat() - 0.5
+            );
+        }
     }
 
     public static void addStampToTicket(ItemStack handItem, ItemStack ticket) {

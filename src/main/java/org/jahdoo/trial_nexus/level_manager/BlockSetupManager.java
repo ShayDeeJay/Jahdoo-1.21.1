@@ -15,7 +15,7 @@ import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_chest.LootChestEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
-import org.jahdoo.common.entities.custom_villager.CustomVillager;
+import org.jahdoo.common.entities.custom_entities.CustomVillager;
 import org.jahdoo.common.items.perk_soda.PerkaSoda;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;

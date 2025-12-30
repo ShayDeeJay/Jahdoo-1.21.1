@@ -9,6 +9,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -671,5 +672,18 @@ public class Helpers {
         itementity.setDeltaMovement(finalVelocity);
         itementity.setDefaultPickUpDelay();
         level.addFreshEntity(itementity);
+    }
+
+    public static void saveBlockPosNBT(CompoundTag tag, BlockPos returnLocation) {
+        var bPos = new CompoundTag();
+        bPos.putInt("x", returnLocation.getX());
+        bPos.putInt("y", returnLocation.getY());
+        bPos.putInt("z", returnLocation.getZ());
+        tag.put("block_pos", bPos);
+    }
+
+    public static BlockPos loadBlockPosNBT(CompoundTag tag) {
+        var returnLocation = tag.getCompound("block_pos");
+        return new BlockPos(returnLocation.getInt("x"), returnLocation.getInt("y"), returnLocation.getInt("z"));
     }
 }

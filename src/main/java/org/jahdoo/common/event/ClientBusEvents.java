@@ -37,6 +37,7 @@ import org.jahdoo.common.entities.burning_skull.BurningSkullRenderer;
 import org.jahdoo.common.entities.decoy.DecoyRenderer;
 import org.jahdoo.common.entities.element_projectile.ElementProjectileRenderer;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizardRenderer;
+import org.jahdoo.common.entities.explosive_barrel.ExplosiveBarrelRenderer;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectileRenderer;
 import org.jahdoo.common.entities.ice_spear.IceSpearRenderer;
 import org.jahdoo.common.entities.inferno_creeper.InfernoCreeperRenderer;
@@ -100,6 +101,7 @@ public class ClientBusEvents {
         event.register(ABILITY_SCREEN);
         event.register(STAT_SCREEN);
         event.register(RUN_SCREEN);
+        event.register(ABILITY_MODIFICATION_SCREEN);
         event.register(MAGNET);
     }
 
@@ -110,6 +112,7 @@ public class ClientBusEvents {
         event.registerSpriteSet(HEAL.get(), BakedProvider::new);
         event.registerSpriteSet(MAGIC.get(), GenericProvider::new);
         event.registerSpriteSet(GENERIC.get(), GenericProvider::new);
+        event.registerSpriteSet(SQUARE.get(), GenericProvider::new);
         event.registerSpriteSet(ELECTRIC.get(), ElectricalParticle::new);
         event.registerSpriteSet(BAKED_INFERNO.get(), BakedProvider::new);
         event.registerSpriteSet(BAKED_FROST.get(), BakedProvider::new);
@@ -156,6 +159,7 @@ public class ClientBusEvents {
         event.registerEntityRenderer(FLAMING_SKULL.get(), BurningSkullRenderer::new);
         event.registerEntityRenderer(ICE_SPEAR.get(), IceSpearRenderer::new);
         event.registerEntityRenderer(SAFE.get(), SafeRenderer::new);
+        event.registerEntityRenderer(EXPLOSIVE_BARREL.get(), ExplosiveBarrelRenderer::new);
         event.registerEntityRenderer(INFERNO_CREEPER.get(), InfernoCreeperRenderer::new);
         event.registerEntityRenderer(VOID_SPIDER.get(), VoidSpiderRenderer::new);
         event.registerEntityRenderer(VOID_SPIDER_SPAWN.get(), VoidSpiderRenderer::new);

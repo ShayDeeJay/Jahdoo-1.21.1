@@ -4,12 +4,13 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
-import org.jahdoo.trial_nexus.attachments.IAttachment;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.common.registers.mod.SkillReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.IAttachment;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 import static org.jahdoo.common.registers.AttachmentReg.TRIPLE_JUMP;
@@ -36,7 +37,7 @@ public class TripleJump implements IAttachment {
     }
 
     private void onClientTick(Player player) {
-        if(!(player instanceof LocalPlayer localPlayer) || !player.hasEffect(EffectReg.TRIPLE_JUMP) || player.isCreative()) return;
+        if(!(player instanceof LocalPlayer localPlayer) || !CasterData.hasSkill(player, SkillReg.TRIPLE_JUMP.get().id()) || player.isCreative()) return;
         if(player.verticalCollisionBelow) {
             clientJumpCount = 0;
         } else if (localPlayer.input.jumping){

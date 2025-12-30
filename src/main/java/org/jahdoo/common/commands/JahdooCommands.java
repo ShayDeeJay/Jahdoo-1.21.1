@@ -10,6 +10,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import org.jahdoo.common.components.CoreData;
+import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.entities.safe.Safe;
 import org.jahdoo.common.items.Stamp;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
@@ -234,6 +235,16 @@ public class JahdooCommands {
                                             .executes(
                                                 context -> getStamp(context.getSource(), BoolArgumentType.getBool(context, "with_negative"), getInteger(context, "count"))
                                             )
+                                    )
+                            )
+
+                    )
+                    .then(
+                        literal("ticket")
+                            .then(
+                                argument("count", integer())
+                                    .executes(
+                                        context -> getFilledTicket(context.getSource())
                                     )
                             )
 
@@ -854,6 +865,20 @@ public class JahdooCommands {
     private static int clearEmptyLevels(CommandSourceStack source) {
         if(source.getLevel() instanceof ServerLevel serverLevel)
             LevelGenerator.removeCustomLevels(serverLevel);
+
+        return 1;
+    }
+
+    private static int getFilledTicket(CommandSourceStack source) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        if(source.getLevel() instanceof ServerLevel){
+            var makeTicket = new ItemStack(ItemReg.TRIAL_TICKET);
+            TicketData.initTicket(makeTicket, 1);
+            CoreData.setFilled(makeTicket);
+            throwOrAddItem(player, makeTicket);
+        }
 
         return 1;
     }

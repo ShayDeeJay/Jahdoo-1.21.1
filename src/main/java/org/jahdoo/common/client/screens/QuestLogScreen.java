@@ -7,7 +7,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.client.button.QuestLogButton;
 import org.jahdoo.common.client.button.SimpleButton;
 import org.jahdoo.common.networking.client2server.GivePlayerItemsC2SP;
@@ -20,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.overlay.InstanceDataOverlay.progressBar;
 import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
@@ -104,12 +104,10 @@ public class QuestLogScreen extends AbstractPanableScreen {
 
 
     private void claimReward(String id, List<ItemStack> rewards){
-        PacketDistributor.sendToServer(new QuestTrackerC2SP(id));
+        sendToServer(new QuestTrackerC2SP(id));
         getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundReg.QUEST_COMPLETE, 1));
         getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 0.6F));
-        for (var reward : rewards) {
-            PacketDistributor.sendToServer(new GivePlayerItemsC2SP(reward));
-        }
+        for (var reward : rewards) sendToServer(new GivePlayerItemsC2SP(reward));
     }
 
     private void doOnClick(AbstractTask task){

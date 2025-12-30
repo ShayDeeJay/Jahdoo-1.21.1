@@ -50,7 +50,7 @@ public class EnchantmentHelpers {
         var availableEnchantmentResults = getAvailableEnchantmentResults(50, itemStack, optional.stream().map(s -> Holder.direct(s.getValue())));
         var newA = availableEnchantmentResults.stream().filter(s -> !s.enchantment.value().description().getString().contains("Mending")).toList();
         for (var availableEnchantmentResult : newA) {
-            System.out.println(availableEnchantmentResult.enchantment.value());
+//            System.out.println(availableEnchantmentResult.enchantment.value());
         }
         return new ArrayList<>();
     }

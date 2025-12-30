@@ -36,7 +36,7 @@ public class EffectHelpers {
         boolean isChance = getRandomChance == 0;
         if(targetEntity.isAlive()){
             if (isChance) {
-                Helpers.getSoundWithPosition(targetEntity.level(), targetEntity.blockPosition(), soundEvents, 0.3f);
+                Helpers.getSoundWithPosition(targetEntity.level(), targetEntity.blockPosition(), soundEvents, 0.3f, 1);
                 spawnElectrifiedParticles(serverLevel, targetEntity.position(), particleGroup.getParticleGroup().magicSlow(), 3, targetEntity, -0.3, -1);
             }
             spawnElectrifiedParticles(serverLevel, targetEntity.position(), particleGroup.getParticleGroup().bakedSlow(), isChance ? 10 : 1, targetEntity, isChance ? 0.1 : 0.08);
@@ -44,6 +44,24 @@ public class EffectHelpers {
         }
     }
 
-
+    public static void setEffectParticle(
+        int getRandomChance,
+        LivingEntity targetEntity,
+        ServerLevel serverLevel,
+        AbstractElement particleGroup,
+        SoundEvent soundEvents,
+        Float volume,
+        Float pitch
+    ){
+        boolean isChance = getRandomChance == 0;
+        if(targetEntity.isAlive()){
+            if (isChance) {
+                Helpers.getSoundWithPosition(targetEntity.level(), targetEntity.blockPosition(), soundEvents, volume, pitch);
+                spawnElectrifiedParticles(serverLevel, targetEntity.position(), particleGroup.getParticleGroup().magicSlow(), 3, targetEntity, -0.3, -1);
+            }
+            spawnElectrifiedParticles(serverLevel, targetEntity.position(), particleGroup.getParticleGroup().bakedSlow(), isChance ? 10 : 1, targetEntity, isChance ? 0.1 : 0.08);
+            spawnElectrifiedParticles(serverLevel, targetEntity.position(), particleGroup.getParticleGroup().magic(), 1, targetEntity, 0.08);
+        }
+    }
 
 }

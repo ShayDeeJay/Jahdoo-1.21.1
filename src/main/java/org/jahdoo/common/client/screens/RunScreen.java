@@ -286,7 +286,7 @@ public class RunScreen extends AbstractPanableScreen {
         return allComponents;
     }
 
-    private static void addChestStats(List<StatEntry> allComponents, String name, int colour, String chestStat, int multiplier, ResourceLocation buttonType, RunData runData) {
+    public static void addChestStats(List<StatEntry> allComponents, String name, int colour, String chestStat, int multiplier, ResourceLocation buttonType, RunData runData) {
         allComponents.add(new StatEntry(componentTemplate(name, "", colour, colour), buttonType));
         allComponents.add(new StatEntry(componentTemplate("Opened", runData.getStat(chestStat) + "", colour), BLANK));
         allComponents.add(new StatEntry(componentTemplate("Multiplier", multiplier + "", colour), BLANK));

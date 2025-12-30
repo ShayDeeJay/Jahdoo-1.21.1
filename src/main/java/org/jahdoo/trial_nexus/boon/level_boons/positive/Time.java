@@ -52,7 +52,7 @@ public class Time extends AbstractLevelBoon {
 
     @Override
     public int getStampIndex() {
-        return 10;
+        return 9;
     }
 
     @Override

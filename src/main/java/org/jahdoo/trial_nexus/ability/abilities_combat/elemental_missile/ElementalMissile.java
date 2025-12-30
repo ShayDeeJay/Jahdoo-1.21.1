@@ -6,25 +6,27 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.AttributeReg;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 
 import static net.minecraft.world.entity.ai.targeting.TargetingConditions.DEFAULT;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 
 public class ElementalMissile extends DefaultEntityBehaviour {
 
@@ -109,18 +111,26 @@ public class ElementalMissile extends DefaultEntityBehaviour {
     @Override
     public void discardCondition() {
         if(!(this.generic.level() instanceof ServerLevel serverLevel)) return;
-
-//        if(generic.tickCount == 6){
-//            altOnHit(serverLevel);
-//        }
-
+        altOnHitWithResult(serverLevel);
         if (this.generic.getOwner() != null && this.generic.distanceTo(this.generic.getOwner()) > 30f) {
             ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 1, getElement().getParticleGroup().bakedSlow());
             this.generic.discard();
         }
     }
 
+    public static boolean altOnHitCheck(Player player) {
+        var missileAtt = AttributeReg.ELEMENTAL_SHOTGUN;
+        return player.getAttributes().getValue(missileAtt) > 0;
+    }
+
+    private void altOnHitWithResult(ServerLevel serverLevel){
+        if(generic.getOwner() instanceof Player player){
+            if (altOnHitCheck(player)) altOnHit(serverLevel);
+        }
+    }
+
     private void altOnHit(ServerLevel serverLevel) {
+        if(generic.tickCount < 6) return;
         Helpers.getSoundWithPositionV(generic.level(), this.generic.position(), getElement().sound(), 0.2F, 1.4F);
         Helpers.getSoundWithPositionV(generic.level(), this.generic.position(), SoundReg.ELEMENTAL_BULLET.get(), 0.6F, 1F);
         ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 10, ParticleHandlers.bakedParticle(this.getElement().id(), 6, 1, false), 0.12F);
@@ -135,7 +145,7 @@ public class ElementalMissile extends DefaultEntityBehaviour {
     @Override
     public void onEntityHit(LivingEntity hitEntity) {
         if(!(this.generic.level() instanceof ServerLevel serverLevel)) return;
-//        altOnHit(serverLevel);
+        altOnHitWithResult(serverLevel);
         Helpers.getSoundWithPositionV(this.generic.level(), hitEntity.position(), SoundReg.ELEMENTAL_BULLET.get(), 1, 0.8F);
         ParticleHandlers.particleBurst(serverLevel, this.generic.position(), 1, getElement().getParticleGroup().bakedSlow());
         this.setDamageByOwner(hitEntity);

@@ -3,6 +3,7 @@ package org.jahdoo.trial_nexus.attachments;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,6 +18,7 @@ import org.jahdoo.common.networking.server2client.CooldownsSyncS2CP;
 import org.jahdoo.common.networking.server2client.ManaSyncS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.AttributeReg;
+import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
@@ -59,6 +61,7 @@ public class CasterData implements IAttachment {
     private List<AbilityHolder> unlockedAbilities = new ArrayList<>();
     public List<String> abilitySlots = new ArrayList<>();
     private List<String> unlockedSkills = new ArrayList<>();
+    private List<String> activeSkills = new ArrayList<>();
 
     public CasterData(
         int xp,
@@ -72,7 +75,8 @@ public class CasterData implements IAttachment {
         Map<String, Integer> abilityCooldownsStatic,
         List<AbilityHolder> unlockedAbilities,
         List<String> abilitySlots,
-        List<String> unlockedSkills
+        List<String> unlockedSkills,
+        List<String> activeSkills
     ) {
         this.xp = xp;
         this.allowedSlots = allowedSlots;
@@ -86,10 +90,19 @@ public class CasterData implements IAttachment {
         this.unlockedAbilities = unlockedAbilities;
         this.abilitySlots = abilitySlots;
         this.unlockedSkills = unlockedSkills;
+        this.activeSkills = activeSkills;
     }
 
     public CasterData(){
         abilitySlots.addAll(EMPTY);
+    }
+
+    public List<String> getActiveSkills() {
+        return activeSkills;
+    }
+
+    public void setActiveSkills(List<String> activeSkills) {
+        this.activeSkills = activeSkills;
     }
 
     public double getManaPool() {
@@ -202,6 +215,7 @@ public class CasterData implements IAttachment {
 
 
     public static void checkMultiKillStatic(Player player, int multiKillCount){
+        if(!(player.level() instanceof CustomLevel)) return;
         player.getData(CASTER_DATA).checkMultiKill(player, multiKillCount);
     }
 
@@ -245,6 +259,7 @@ public class CasterData implements IAttachment {
         this.unlockedAbilities = new ArrayList<>();
         this.abilitySlots = new ArrayList<>(EMPTY);
         this.unlockedSkills = new ArrayList<>();
+        this.activeSkills = new ArrayList<>();
         this.selectedAbility = "";
         this.abilityPoints = 0;
         this.allowedSlots = 2;
@@ -260,14 +275,26 @@ public class CasterData implements IAttachment {
         return this.unlockedSkills;
     }
 
-    public void addSkill(String skillId){
-        if(!this.unlockedSkills.contains(skillId)){
+    public void toggleSkill(String skillId){
+        if(!this.activeSkills.contains(skillId)){
+            this.activeSkills.add(skillId);
+        } else {
+            this.activeSkills.remove(skillId);
+        }
+    }
+
+    public void addNewSkill(String skillId){
+        if(hasUnlockedSkill(skillId)){
             this.unlockedSkills.add(skillId);
         }
     }
 
+    public boolean hasUnlockedSkill(String skillId){
+        return !this.unlockedSkills.contains(skillId);
+    }
+
     public void addAbilitySlot(String selectedAbility){
-        if (!this.abilitySlots.contains(selectedAbility)) {
+        if (hasUnlockedSkill(selectedAbility)) {
             for (int i = 0; i < this.abilitySlots.size(); i++) {
                 if (this.abilitySlots.get(i).isEmpty()) {
                     this.abilitySlots.set(i, selectedAbility);
@@ -339,7 +366,7 @@ public class CasterData implements IAttachment {
     }
 
     public void regenMana(Player player) {
-        var manaRegen = manaPool + getModifiedMana(player);
+        var manaRegen = player.hasEffect(EffectReg.INFINITE_MANA) ? 100000 : manaPool + getModifiedMana(player);
         var maxMana = getMaxMana(player);
 
         this.manaPool = Math.min(manaRegen, maxMana);
@@ -369,7 +396,8 @@ public class CasterData implements IAttachment {
 
     public double getMaxMana(Player player){
         var maxMana = player.getAttribute(AttributeReg.MANA_POOL);
-        return maxMana != null ? maxMana.getValue() : 100;
+        var normalMana = maxMana != null ? maxMana.getValue() : 100;
+        return player.hasEffect(EffectReg.INFINITE_MANA) ? 100000 : normalMana;
     }
 
     public void subtractMana(double regenMana, Player player) {
@@ -415,6 +443,10 @@ public class CasterData implements IAttachment {
         }
 
         return baseManaRegen;
+    }
+
+    public static Boolean hasSkill(LivingEntity livingEntity,  String skill){
+        return livingEntity.getData(CASTER_DATA).getActiveSkills().contains(skill);
     }
 
     public static Boolean hasAbility(LivingEntity livingEntity,  String selectedAbility){
@@ -584,7 +616,8 @@ public class CasterData implements IAttachment {
             Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("ability_cooldowns_static").forGetter(CasterData::getAllCooldownsStatic),
             Codec.list(AbilityHolder.CODEC).fieldOf("unlocked_abilities").forGetter(CasterData::getUnlockedAbilities),
             Codec.list(Codec.STRING).fieldOf("ability_slots").forGetter(CasterData::getAbilitySlots),
-            Codec.list(Codec.STRING).fieldOf("unlocked_skills").forGetter(CasterData::getUnlockedSkills)
+            Codec.list(Codec.STRING).fieldOf("unlocked_skills").forGetter(CasterData::getUnlockedSkills),
+            Codec.list(Codec.STRING).fieldOf("active_skills").forGetter(CasterData::getActiveSkills)
         ).apply(instance, CasterData::new)
     );
 
@@ -594,6 +627,7 @@ public class CasterData implements IAttachment {
         var cooldownsStatic = new CompoundTag();
         var abilitySlots = new CompoundTag();
         var unlockedSkills = new CompoundTag();
+        var activeSkills = new CompoundTag();
 
         for (int i = 0; i < this.abilitySlots.size(); i++) {
             var abilitySlot = this.abilitySlots.get(i);
@@ -606,6 +640,10 @@ public class CasterData implements IAttachment {
             unlockedSkills.putString(unlockedSkill, unlockedSkill);
         }
 
+        for (var activeSkill : this.activeSkills) {
+            activeSkills.putString(activeSkill, activeSkill);
+        }
+
         this.abilityCooldowns.forEach(cooldowns::putInt);
         this.abilityCooldownsStatic.forEach(cooldownsStatic::putInt);
 
@@ -614,6 +652,7 @@ public class CasterData implements IAttachment {
         nbt.put(CasterData.COOLDOWNS_STATIC, cooldownsStatic);
         nbt.put("ability_slots", abilitySlots);
         nbt.put("unlocked_skills", unlockedSkills);
+        nbt.put("active_skills", activeSkills);
         nbt.putInt("multi_kill", multiKill);
         nbt.putDouble(MANA, manaPool);
         nbt.putInt("level", this.xp);
@@ -648,8 +687,8 @@ public class CasterData implements IAttachment {
             this.abilitySlots.add("");
         }
 
-        var skills = nbt.getCompound("unlocked_skills");
-        unlockedSkills.addAll(skills.getAllKeys());
+        this.unlockedSkills.addAll(nbt.getCompound("unlocked_skills").getAllKeys());
+        this.activeSkills.addAll(nbt.getCompound("active_skills").getAllKeys());
 
         this.allowedSlots = nbt.getInt("allowed_slots");
         this.xp = nbt.getInt("level");

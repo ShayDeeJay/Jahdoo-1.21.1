@@ -51,10 +51,9 @@ public class Stamp extends Item implements JahdooItem{
     }
 
     public static void addBoon(ItemStack itemStack, boolean addNegativeModifier){
-        var posRarity = JahdooRarity.getRarity();
-        var posBoon = LevelBoonReg.getStampBoons(posRarity);
+        var posBoon = LevelBoonReg.getStampBoons();
 
-        addNewEntry(itemStack, posBoon.id(), posBoon.value(posRarity));
+        addNewEntry(itemStack, posBoon.id(), posBoon.value(JahdooRarity.getRarity()));
         itemStack.set(ComponentReg.ID, posBoon.id());
         itemStack.set(ComponentReg.STORE_INTEGER, Random.nextInt(10, 50));
 

@@ -86,7 +86,7 @@ public class BurningSkullsAbility extends Ability {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(40)
             .setStaticCooldown(300)
-            .setDamage(32, 25, 2, 1)
+            .setDamage(32, 26, 2, 1)
             .setEffectDuration(200, 100, 20, 1)
             .setEffectStrength(4, 0, 1, 1)
             .setEffectChance(25, 0, 5, 1)

@@ -46,5 +46,30 @@
       <option name="name" value="OctoStudios" />
       <option name="url" value="https://maven.octo-studios.com/releases" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="Kotlin for Forge" />
+      <option name="name" value="Kotlin for Forge" />
+      <option name="url" value="https://thedarkcolour.github.io/KotlinForForge/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="Curios" />
+      <option name="name" value="Curios" />
+      <option name="url" value="https://maven.theillusivec4.top/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="Modrinth" />
+      <option name="name" value="Modrinth" />
+      <option name="url" value="https://api.modrinth.com/maven" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven" />
+      <option name="name" value="maven" />
+      <option name="url" value="https://maven.shedaniel.me/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="KosmX's maven" />
+      <option name="name" value="KosmX's maven" />
+      <option name="url" value="https://maven.kosmx.dev/" />
+    </remote-repository>
   </component>
 </project>

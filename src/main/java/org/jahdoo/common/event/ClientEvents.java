@@ -40,6 +40,7 @@ import static org.jahdoo.common.event.event_helpers.OverlayEvent.crosshairManage
 import static org.jahdoo.common.event.event_helpers.OverlayEvent.simpleGui;
 import static org.jahdoo.common.event.event_helpers.RenderEventHelper.*;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.getAllSlots;
+import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAugmentModificationScreenWand;
 
 @EventBusSubscriber(modid = JahdooMod.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
@@ -153,11 +154,12 @@ public class ClientEvents {
 
         checkKey(STAT_SCREEN, () -> instance.setScreen(new StatScreen()));
         checkKey(ABILITY_SCREEN, () -> instance.setScreen(new AbilityUnlockScreen()));
+        checkKey(ABILITY_MODIFICATION_SCREEN, () -> instance.setScreen(getAugmentModificationScreenWand(player, null)));
         checkKey(RUN_SCREEN, () -> instance.setScreen(new RunScreen()));
-
     }
 
     private static final Map<KeyMapping, Boolean> keyWasDown = new HashMap<>();
+
     private static void checkKey(KeyMapping key, Runnable action) {
         var isDown = key.isDown();
         var wasDown = keyWasDown.getOrDefault(key, false);

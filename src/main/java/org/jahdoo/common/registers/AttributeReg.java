@@ -50,6 +50,13 @@ public class AttributeReg {
     public static final DeferredHolder<Attribute, Attribute> ABSORPTION_HEARTS =
         register(MOD + ".cast.absorption", 0);
 
+    //Ability Augments
+    public static final DeferredHolder<Attribute, Attribute> ELEMENTAL_SHOTGUN =
+        register(MOD + ".abilities.shot_multiplier", 0);
+
+    public static final DeferredHolder<Attribute, Attribute> CHAINED_SEMTEX =
+        register(MOD + ".abilities.chained_semtex", 0);
+
     //Skill Attributes
     public static final DeferredHolder<Attribute, Attribute> DESTINY_BOND =
         register(MOD + ".skills.destiny_bond", 0);
@@ -169,6 +176,8 @@ public class AttributeReg {
         event.add(PLAYER, MAGE_FLIGHT);
         event.add(PLAYER, TRIPLE_JUMP);
         event.add(PLAYER, RESILIENCE);
+        event.add(PLAYER, ELEMENTAL_SHOTGUN);
+        event.add(PLAYER, CHAINED_SEMTEX);
 
         event.add(PLAYER, SKIP_MANA);
         event.add(PLAYER, SKIP_COOLDOWN);

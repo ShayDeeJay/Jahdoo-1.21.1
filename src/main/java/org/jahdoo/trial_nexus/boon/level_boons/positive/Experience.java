@@ -40,6 +40,11 @@ public class Experience extends AbstractLevelBoon {
     }
 
     @Override
+    public int getStampIndex() {
+        return 10;
+    }
+
+    @Override
     public double value(JahdooRarity rarity) {
         var getRarity = rarity.getAttributes();
         return (int) getRarity.getRandomManaPool();

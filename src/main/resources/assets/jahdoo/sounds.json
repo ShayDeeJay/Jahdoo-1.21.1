@@ -232,5 +232,11 @@
     "sounds": [
       "jahdoo:can_open"
     ]
+  },
+  "reroll": {
+    "subtitles": "sounds.jahdoo.reroll",
+    "sounds": [
+      "jahdoo:reroll"
+    ]
   }
 }

@@ -1,6 +1,7 @@
 package org.jahdoo.common.block.light_block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -8,12 +9,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 
+import static net.minecraft.world.level.block.CrafterBlock.TRIGGERED;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 
@@ -29,6 +32,32 @@ public class LightBlock extends Block {
                 .instabreak()
                 .lightLevel((blockState) -> 15)
         );
+        this.registerDefaultState(this.stateDefinition.any().setValue(TRIGGERED, false));
+
+    }
+
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(TRIGGERED);
+    }
+
+    @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+
+    }
+
+    @Override
+    protected boolean isSignalSource(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return 15;
     }
 
     @Override
@@ -57,6 +86,5 @@ public class LightBlock extends Block {
         ParticleHandlers.invisibleLight(level, pos, bakedParticle, 0.03, 0.04,50);
         ParticleHandlers.invisibleLight(level, pos, generic, 0.03, 0.04, 50);
     }
-
 
 }

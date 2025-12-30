@@ -7,15 +7,16 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
-import org.jahdoo.common.entities.CustomSkeleton;
-import org.jahdoo.common.entities.custom_villager.CustomVillager;
-import org.jahdoo.common.entities.CustomZombie;
+import org.jahdoo.common.entities.custom_entities.CustomSkeleton;
+import org.jahdoo.common.entities.custom_entities.CustomVillager;
+import org.jahdoo.common.entities.custom_entities.CustomZombie;
 import org.jahdoo.common.entities.ancient_golem.AncientGolem;
 import org.jahdoo.common.entities.aoe_cloud.AoeCloud;
 import org.jahdoo.common.entities.burning_skull.BurningSkull;
 import org.jahdoo.common.entities.decoy.Decoy;
 import org.jahdoo.common.entities.element_projectile.ElementProjectile;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
+import org.jahdoo.common.entities.explosive_barrel.ExplosiveBarrel;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.entities.ice_spear.IceSpear;
 import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
@@ -137,6 +138,12 @@ public class EntityReg {
     public static final DeferredHolder<EntityType<?>, EntityType<Safe>> SAFE =
         regEntity("safe", Builder.<Safe>of(Safe::new, MISC)
             .sized(0.8f, 0.9f)
+            .updateInterval(1)
+        );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ExplosiveBarrel>> EXPLOSIVE_BARREL =
+        regEntity("explosive_barrel", Builder.<ExplosiveBarrel>of(ExplosiveBarrel::new, MISC)
+            .sized(0.8f, 1.2f)
             .updateInterval(1)
         );
 

@@ -129,6 +129,9 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> CAN_OPEN =
         registerSoundEvent("can_open");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> RE_ROLL =
+        registerSoundEvent("reroll");
+
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Helpers.res(name)));
     }

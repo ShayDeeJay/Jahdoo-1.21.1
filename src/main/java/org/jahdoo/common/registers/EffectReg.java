@@ -7,6 +7,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.trial_nexus.ability.effects.GenericEffect;
+import org.jahdoo.trial_nexus.ability.effects.InfiniteManaEffect;
 import org.jahdoo.trial_nexus.ability.effects.ReplenishManaEffect;
 import org.jahdoo.trial_nexus.ability.effects.ChampionEffect;
 import org.jahdoo.trial_nexus.ability.effects.type_effects.frost.FrostEffect;
@@ -62,6 +63,9 @@ public class EffectReg {
 
     public static final DeferredHolder<MobEffect, MobEffect> HEXED  =
         mobEffect("hexed_effect", GenericEffect::new);
+
+    public static final DeferredHolder<MobEffect, MobEffect> INFINITE_MANA  =
+        mobEffect("infinite_mana", InfiniteManaEffect::new);
 
 //----------------------------------------------------------------------------------------------------------------------
     public static final DeferredHolder<MobEffect, MobEffect> FROST_EFFECT = mobEffect("frost_effect",

@@ -9,16 +9,16 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
-import org.jahdoo.trial_nexus.ability.effects.EffectHelpers;
 import org.jahdoo.common.networking.server2client.MoveClientEntityS2CP;
 import org.jahdoo.common.registers.EffectReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.ability.effects.EffectHelpers;
+import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jetbrains.annotations.NotNull;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class MysticEffect extends MobEffect {
 
@@ -51,9 +51,9 @@ public class MysticEffect extends MobEffect {
     }
 
     private static void idleAnim(LivingEntity targetEntity, ServerLevel serverLevel, AbstractElement element) {
-        var getRandomChance = Random.nextInt(0, 10);
-        var sound = SoundEvents.SOUL_ESCAPE.value();
-        EffectHelpers.setEffectParticle(getRandomChance, targetEntity, serverLevel, element, sound);
+        var getRandomChance = Random.nextInt(0, 30);
+        var sound = SoundEvents.BEACON_ACTIVATE;
+        EffectHelpers.setEffectParticle(getRandomChance, targetEntity, serverLevel, element, sound, 0.05F, 0F);
     }
 
     @Override

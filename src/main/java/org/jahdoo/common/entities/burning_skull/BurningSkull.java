@@ -170,7 +170,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
     private void entityMovement() {
         this.setLifetimes(getLifetime());
         var canPathFind = target != null && target.isAlive() && !level().isClientSide;
-        if (canPathFind) entityMover(target, this, 0.2);
+        if (canPathFind) entityMover(target, this, 0.5);
         flamingSkull(this, tickCount, 0.35f, this.getElementType());
     }
 
@@ -254,7 +254,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
         }
 
         DamageUtils.damageWithJahdoo(entity, this.getOwner(), damage, getElementType().damageTypeResourceKey());
-//        discardTask();
+        discardTask();
     }
 
     private void ambientSound() {

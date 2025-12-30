@@ -55,7 +55,7 @@ import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.LootCrateData;
-import org.jahdoo.common.entities.CustomSkeleton;
+import org.jahdoo.common.entities.custom_entities.CustomSkeleton;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;

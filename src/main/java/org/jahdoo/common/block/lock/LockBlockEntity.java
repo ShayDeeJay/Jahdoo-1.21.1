@@ -82,9 +82,8 @@ public class LockBlockEntity extends SyncedBlockEntity {
 
     public void tick(Level level, BlockPos pos, BlockState state) {
         if(!(level instanceof ServerLevel)) return;
-        if(clicked) this.counter++;
-
-        if(counter > 1) level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+        if (clicked) this.counter++;
+        if (counter > 1) level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
     }
 
     public boolean isInitialized(){
@@ -106,7 +105,7 @@ public class LockBlockEntity extends SyncedBlockEntity {
 
     }
 
-    private void setDataByDifficulty() {
+    public void setDataByDifficulty() {
         if(!this.isStartingRoom()){
             var data = getLevel();
             if(data == null) return;

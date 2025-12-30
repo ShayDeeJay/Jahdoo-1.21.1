@@ -25,6 +25,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.components.CoreData;
+import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.Nullable;
@@ -139,8 +140,12 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         var handItem = player.getItemInHand(hand);
         var entity = level.getBlockEntity(pos);
 
+
         if (entity instanceof TankBlockEntity tank) {
 //            getItemInteractionResult(handItem, tank, player, level);
+            if(handItem.is(AUGMENT_CORE)){
+                tank.setData(AttachmentReg.BOOL, true);
+            }
 
             var handler = tank.inputItemHandler;
             var itemStack = new ItemStack(AUGMENT_CORE);

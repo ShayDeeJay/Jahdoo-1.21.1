@@ -54,6 +54,7 @@ public class CreativeTab {
                 outPut.accept(DISASSEMBLER_ITEM.get());
                 outPut.accept(TRIAL_TICKET.get());
                 outPut.accept(STONE_OF_REGRET.get());
+                outPut.accept(DICE.get());
 
 
                 registerRecoveryReceipts(outPut);

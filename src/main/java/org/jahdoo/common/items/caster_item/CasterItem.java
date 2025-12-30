@@ -16,7 +16,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.items.BaseItem;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
 
@@ -92,15 +91,16 @@ public class CasterItem extends BaseItem {
         var item = player.getItemInHand(interactionHand);
         var pic = player.pick(player.blockInteractionRange(), 1, false);
 
-        addSlot(player, "relic", Helpers.res("new"), 1);
 
+//        addSlot(player, "relic", Helpers.res("new"), 1);
 //        removeSlot(player, "relic", Helpers.res("new"));
 
-        if(level instanceof ServerLevel){
+        if(level instanceof ServerLevel serverLevel){
             if(pic instanceof BlockHitResult result){
-                var entity = level.getBlockEntity(result.getBlockPos());
-                var state = level.getBlockState(result.getBlockPos());
-                var below = level.getBlockState(result.getBlockPos().below(1));
+                var bPos = result.getBlockPos();
+                var entity = level.getBlockEntity(bPos);
+                var state = level.getBlockState(bPos);
+                var below = level.getBlockState(bPos.below(1));
 
                 if(entity instanceof LockBlockEntity block && !block.canPlace() || state.is(ALLOWED_BLOCK_INTERACTIONS) || below.is(ALLOWED_BLOCK_INTERACTIONS)){
                     return fail(item);

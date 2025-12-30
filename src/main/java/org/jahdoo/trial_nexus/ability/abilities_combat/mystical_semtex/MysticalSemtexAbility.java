@@ -84,7 +84,7 @@ public class MysticalSemtexAbility extends Ability {
             .setStaticCooldown(500)
             .setDamage(45, 25, 5, 1)
             .setAbilityTagModifiersRandom(CLUSTER_COUNT, 10, 4, true, 2, 2)
-            .setAbilityTagModifiersRandom(CLUSTER_CHANCE, 10, 2, false, 2, 2)
+//            .setAbilityTagModifiersRandom(CLUSTER_CHANCE, 10, 2, false, 2, 2)
             .setAbilityTagModifiersRandom(EXPLOSION_RADIUS, 8, 4, true, 1, 2)
             .buildAndReturn();
     }

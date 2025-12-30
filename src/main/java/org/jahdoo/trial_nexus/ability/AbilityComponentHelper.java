@@ -18,6 +18,7 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.Maths;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.jahdoo.common.registers.ComponentReg.ABILITY_HOLDER;
+import static org.jahdoo.common.registers.mod.ElementReg.UTILITY;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
 import static org.jahdoo.trial_nexus.ability.AbilityRating.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
@@ -126,12 +128,18 @@ public class AbilityComponentHelper {
     }
 
     public static Screen getAugmentModificationScreenWand(Player player, Screen previousScreen) {
-        var data = player.getData(AttachmentReg.CASTER_DATA);
-        var ability = AbilityReg.getFirstSpellByTypeId(data.getSelectedAbility());
+        var ability = getAbility(player);
         if(ability.isPresent()){
-            if (isConfigAbility(player)) return new AugmentScreen(player, previousScreen, ability.get());
+            if (isConfigAbility(player)) {
+                return new AugmentScreen(player, previousScreen, ability.get());
+            }
         }
         return null;
+    }
+
+    private static @NotNull Optional<Ability> getAbility(Player player) {
+        var data = player.getData(AttachmentReg.CASTER_DATA);
+        return AbilityReg.getFirstSpellByTypeId(data.getSelectedAbility());
     }
 
     public static Optional<String> isValidAugmentUtil(ItemStack itemStack) {
@@ -160,12 +168,14 @@ public class AbilityComponentHelper {
     }
 
     public static boolean isConfigAbility(Player player) {
+        var ability = getAbility(player);
+        if(ability.isEmpty()) return false;
+
         var filterOutBase = CasterData.entityHolderWithSelected(player).data().abilityProperties()
             .keySet()
             .stream()
             .filter(name -> !name.equals(MANA_COST) && !name.equals(COOLDOWN));
-        return /*selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && */!filterOutBase.toList().isEmpty();
-//        return selectedAbility.getElemenType() == ElementRegistry.UTILITY.get() && !filterOutBase.toList().isEmpty();
+        return ability.get().getElemenType().equals(UTILITY.get()) && !filterOutBase.toList().isEmpty();
     }
 
 
@@ -260,9 +270,11 @@ public class AbilityComponentHelper {
         }
 
         if(!unlocked && showUnlockDetails){
+            toolTips.addLast(withStyleComponent(ability.getAbilityName(), ability.getElemenType().textColourA()));
             toolTips.addLast(Component.empty());
             var prefix = withStyleComponent("Cost: ", SUB_HEADER_COLOUR);
             var suffix = withStyleComponent("◆ " + ability.getAbilityCost() + " Skill Points", PERK_GREEN).copy();
+
             toolTips.addLast(prefix.copy().append(suffix));
             var hasDependency = ability.levelRequirement() <= data.getLevel();
 
@@ -283,11 +295,12 @@ public class AbilityComponentHelper {
         var curlyEnd = String.valueOf((char) 187);
 
         toolTips.add(getAbilityName(holder));
-
         toolTips.add(JahdooRarity.addRarityTooltip(ability.rarity(), level));
         toolTips.add(Component.empty());
 
-        var filteredSuffix = holder.data().abilityProperties().keySet()
+        var filteredSuffix = holder.data()
+            .abilityProperties()
+            .keySet()
             .stream()
             .filter(abilityModifiers -> !exceptions.contains(abilityModifiers))
             .sorted(

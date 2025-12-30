@@ -26,6 +26,7 @@ import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.level_manager.BlockSetupManager;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.mobs.MobManager;
 import org.jahdoo.trial_nexus.utils.ColourStore;
@@ -190,10 +191,9 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
 
     private void onCompleteAltar(BlockPos pos, ServerLevel serverLevel) {
         var data = serverLevel.getData(AttachmentReg.INSTANCE_DATA);
-        var clearedRooms = data.getClearedRooms();
 
         data.incrementClearedRooms();
-        placeLocksWithData(serverLevel, pos.below(2), false);
+        placeLocksWithData(serverLevel, pos.below(2), false, false);
         serverLevel.destroyBlock(pos, false);
         getSoundWithPosition(serverLevel, pos, SoundReg.END_TRIAL.get(), 2, 1.5F);
 
@@ -219,14 +219,19 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
             if (state.is(ModTags.Block.MINEABLE_NEXUS)) serverLevel.destroyBlock(blockPos, false);
         }
 
-        setCoinLootChest(serverLevel, pos, direction, -1, true, clearedRooms);
-
         for (var entity : serverLevel.getEntities().getAll()) {
             if(entity instanceof Safe safe) safe.kill();
         }
 
         for (var player : serverLevel.players()) {
             incrementClearedRoomExp(player, data.getDifficulty());
+        }
+
+        var clearedRooms = data.getClearedRooms();
+        if(clearedRooms % 5 == 0){
+            BlockSetupManager.setPerkTable(serverLevel, pos, 4);
+        } else {
+            setCoinLootChest(serverLevel, pos, direction, -1, true, clearedRooms-1);
         }
     }
 

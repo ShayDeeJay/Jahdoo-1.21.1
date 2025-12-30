@@ -7,9 +7,9 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
 import org.jahdoo.common.registers.AttachmentReg;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 public class UnlockedSkillsC2SP implements CustomPacketPayload {
 
@@ -41,8 +41,12 @@ public class UnlockedSkillsC2SP implements CustomPacketPayload {
             () -> {
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
                     var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
-                    casterData.addSkill(skillId);
-                    casterData.decrementAbilityPoints(skillCost);
+                    if(casterData.hasUnlockedSkill(skillId)){
+                        casterData.addNewSkill(skillId);
+                        casterData.decrementAbilityPoints(skillCost);
+                    } else {
+                        casterData.toggleSkill(skillId);
+                    }
                     PacketDistributor.sendToPlayer(serverPlayer, new CastingDataSyncS2CP(casterData));
                 }
             }

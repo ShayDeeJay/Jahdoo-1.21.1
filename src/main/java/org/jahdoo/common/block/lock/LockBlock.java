@@ -24,19 +24,25 @@ import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.registers.BlockReg;
+import org.jahdoo.common.registers.ItemReg;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.sounds.SoundEvents.*;
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
 import static net.minecraft.world.level.block.Blocks.OBSERVER;
+import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
+import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.common.registers.BlockEntityReg.LOCK_BE;
 import static org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon.SyncableData.EMPTY;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.placeNewSide;
 import static org.jahdoo.trial_nexus.utils.Helpers.*;
+import static org.jahdoo.trial_nexus.utils.PositionFinders.innerRadiusRandom;
 
 public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
 
@@ -117,9 +123,24 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         InteractionHand hand,
         BlockHitResult hitResult
     ) {
+        if(hand.equals(InteractionHand.OFF_HAND)) return FAIL;
         if(!(level.getBlockEntity(pos) instanceof LockBlockEntity entity)) return FAIL;
         if(!(level instanceof ServerLevel serverLevel)) return FAIL;
         if(!entity.isInitialized()) return FAIL;
+
+        if(stack.is(ItemReg.DICE)) {
+            entity.setDataByDifficulty();
+            entity.updateBlock();
+            Helpers.getSoundWithPosition(level, pos, SoundReg.RE_ROLL.get());
+            var getPositions = innerRadiusRandom(pos.getCenter().subtract(0, 1, 0), 2, 100);
+            for (var vec3 : getPositions) {
+                var colour = ColourStore.UNIQUE_B;
+                var particle = getNonBakedParticles(colour, colour, Random.nextInt(6, 12), Random.nextInt(2, 4));
+                sendParticles(level, particle, vec3, 0, 0, 0.5, 0, Random.nextDouble(0.6, 2.2));
+            }
+            stack.shrink(1);
+            return SUCCESS;
+        }
 
         if(!KeyItem.isLockKey(stack).equals(KeyItem.KeyTypes.KEY_PIECE)) {
             if(KeyItem.isValidKey(stack, level)){
@@ -132,7 +153,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
         var getState = state.getValue(FACING);
         var noDifficultySelected = serverLevel.getData(INSTANCE_DATA).getDifficulty().isEmpty();
-        if(noDifficultySelected) entity.setDifficulty();
+        if (noDifficultySelected) entity.setDifficulty();
 
         if ((!entity.getDifficulty.isEmpty() && !noDifficultySelected)) {
             var message = "Difficulty already selected";
@@ -142,8 +163,8 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         }
 
         if (!entity.isStartingRoom() && !entity.canPlace()) {
-//            var message = "Can't place, room already generated";
-//            player.displayClientMessage(withStyleComponent(message, ColourStore.NEGATIVE_RED), true);
+            var message = "Can't place, room already generated";
+            player.displayClientMessage(withStyleComponent(message, ColourStore.NEGATIVE_RED), true);
             getSoundWithPosition(level, pos, VAULT_REJECT_REWARDED_PLAYER, 0.3F, 2F);
             return FAIL;
         }
@@ -153,10 +174,21 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()));
         onUnlock(entity, serverLevel);
 
-        if(entity.isStartingRoom()) destroyDoors(serverLevel, pos.relative(getState, 12));
+        if (entity.isStartingRoom()) destroyDoors(serverLevel, pos.relative(getState, 12));
         destroyDoors(serverLevel, pos);
         entity.clicked = true;
         return SUCCESS;
+
+    }
+
+    public static void getItemInteractionResult(BlockState state, BlockPos pos, LockBlockEntity entity, ServerLevel serverLevel) {
+        var getState = state.getValue(FACING);
+        var noDifficultySelected = serverLevel.getData(INSTANCE_DATA).getDifficulty().isEmpty();
+        if (noDifficultySelected) entity.setDifficulty();
+
+        placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()));
+        destroyDoors(serverLevel, pos);
+        entity.clicked = true;
     }
 
     private static void onUnlock(LockBlockEntity entity, ServerLevel level) {
@@ -173,7 +205,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
     }
 
-    private static void destroyDoors(ServerLevel serverLevel, BlockPos pos) {
+    public static void destroyDoors(ServerLevel serverLevel, BlockPos pos) {
         var range = betweenClosed(pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1, pos.getX() + 1, pos.getY() + 3, pos.getZ() + 1);
 
         for (var blockPos : range) {

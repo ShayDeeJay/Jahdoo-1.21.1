@@ -214,20 +214,9 @@
 /run/screenshots/2024-10-17_21.50.44.png
 /src/generated/resources/.cache/09330168fccc0630dfd60cd3182cd23439cb3b38
 /src/main/resources/assets/jahdoo/textures/gui/ability_wheel_background.png
-/src/main/java/org/jahdoo/components/AbilityHolder.java
-/src/main/java/org/jahdoo/registers/AbilityRegister.java
-/src/main/java/org/jahdoo/client/entity_renderer/decoy/AbstractDecoyModel.java
-/src/main/java/org/jahdoo/all_magic/AbstractElement.java
-/src/main/java/org/jahdoo/all_magic/AbstractUtilityProjectile.java
 /src/generated/resources/data/jahdoo/neoforge/biome_modifier/add_crystal_ore.json
 /src/main/resources/assets/jahdoo/textures/ability_icons/arcane_shift.png
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/ArcaneShift.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/ArmageddonModule.java
-/src/main/java/org/jahdoo/registers/AttachmentRegister.java
-/src/main/java/org/jahdoo/registers/AttributesRegister.java
-/src/main/java/org/jahdoo/items/augments/Augment.java
 /src/main/resources/assets/jahdoo/textures/item/crystals/augment_fragment.png
-/src/main/java/org/jahdoo/items/augments/AugmentRatingSystem.java
 /src/generated/resources/data/jahdoo/loot_modifiers/augments_chest2.json
 /src/generated/resources/data/jahdoo/loot_modifiers/augments_chest3.json
 /src/generated/resources/data/jahdoo/loot_modifiers/augments_chest6.json
@@ -248,20 +237,10 @@
 /src/main/resources/assets/jahdoo/particles/baked_mystic.json
 /run/banned-ips.json
 /run/banned-players.json
-/src/main/java/org/jahdoo/all_magic/all_abilities/utility/raw_utilities/BlockBreaker.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/utility/BlockBreakerAbility.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/utility/raw_utilities/BlockPlacer.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/utility/BlockPlacerAbility.java
-/src/main/java/org/jahdoo/registers/BlocksRegister.java
 /src/main/resources/assets/minecraft/shaders/program/blur.vsh
 /src/main/resources/assets/jahdoo/sounds/bolt.ogg
-/src/main/java/org/jahdoo/all_magic/all_abilities/utility/raw_utilities/BoneMeal.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/utility/BoneMealAbility.java
-/src/main/java/org/jahdoo/event/CapabilityEvents.java
-/src/main/java/org/jahdoo/items/wand/CastHelper.java
 /run/command_history.txt
 /.idea/compiler.xml
-/src/main/java/org/jahdoo/networking/packet/CooldownsDataSyncS2CPacket.java
 /run/crash-reports/crash-2024-10-13_18.39.08-server.txt
 /run/crash-reports/crash-2024-10-14_00.19.11-server.txt
 /run/crash-reports/crash-2024-10-14_00.21.13-server.txt
@@ -278,9 +257,6 @@
 /src/generated/resources/data/jahdoo/advancement/recipes/misc/creator.json
 /src/generated/resources/data/jahdoo/loot_table/blocks/creator.json
 /src/generated/resources/data/jahdoo/recipe/creator.json
-/src/main/java/org/jahdoo/block/crafter/CreatorBlock.java
-/src/main/java/org/jahdoo/block/crafter/CreatorEntity.java
-/src/main/java/org/jahdoo/recipe/CreatorRecipe.java
 /src/main/resources/assets/jahdoo/textures/entity/cryo_projectile.png
 /src/main/resources/assets/jahdoo/textures/entity/cryo_projectile_glowmask.png
 /src/generated/resources/assets/jahdoo/blockstates/crystal_deepslate_ore.json
@@ -291,9 +267,6 @@
 /src/generated/resources/assets/jahdoo/models/item/crystal_ore.json
 /src/main/resources/assets/jahdoo/textures/block/crystal_ore.png
 /src/generated/resources/data/jahdoo/worldgen/placed_feature/crystal_ore_placed.json
-/src/main/java/org/jahdoo/utils/DataComponentHelper.java
-/src/main/java/org/jahdoo/registers/DataComponentRegistry.java
-/src/main/java/org/jahdoo/datagen/DataGenerators.java
 /run/world/playerdata/db910d76-949b-30a7-ab25-278b8fc81ec0.dat
 /run/world/playerdata/db910d76-949b-30a7-ab25-278b8fc81ec0.dat_old
 /run/world/advancements/db910d76-949b-30a7-ab25-278b8fc81ec0.json
@@ -304,9 +277,6 @@
 /run/logs/debug-3.log.gz
 /run/logs/debug-4.log.gz
 /run/logs/debug-5.log.gz
-/src/main/java/org/jahdoo/entities/Decoy.java
-/src/main/java/org/jahdoo/client/entity_renderer/decoy/DecoyModel.java
-/src/main/java/org/jahdoo/all_magic/DefaultEntityBehaviour.java
 /run/debug/disconnect-2024-10-13_20.19.39-client.txt
 /run/debug/disconnect-2024-10-13_20.48.53-client.txt
 /src/main/resources/assets/jahdoo/textures/item/crystals/edible_crystal_cooked_cod.png
@@ -315,57 +285,35 @@
 /src/main/resources/assets/jahdoo/textures/item/crystals/edible_crystal_dried_kelp.png
 /src/main/resources/assets/jahdoo/textures/item/crystals/edible_crystal_golden_apple.png
 /src/main/resources/assets/jahdoo/particles/electric.json
-/src/main/java/org/jahdoo/registers/ElementRegistry.java
 /src/main/resources/assets/jahdoo/sounds/empower_ice_armour.ogg
 /src/main/resources/assets/jahdoo/lang/en_us.json
-/src/main/java/org/jahdoo/registers/EntitiesRegister.java
-/src/main/java/org/jahdoo/datagen/loot/EntityTagGenerator.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/EscapeDecoyAbility.java
 /src/main/resources/assets/jahdoo/textures/entity/eternal_wizard/eternal_wizard.png
 /src/main/resources/assets/jahdoo/textures/entity/eternal_wizard/eternal_wizard_outer_top_1.png
-/src/main/java/org/jahdoo/all_magic/all_abilities/ability_components/EtherealArrow.java
 /src/main/resources/assets/jahdoo/sounds/explosion.ogg
 /src/main/resources/assets/jahdoo/textures/item/augments/old_augments/fire_augment.png.mcmeta
 /src/main/resources/assets/jahdoo/textures/entity/fire_projectile.png
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/FireBall.java
 /src/main/resources/assets/jahdoo/textures/ability_icons/fireball.png
 /src/main/resources/assets/jahdoo/player_animation/floating.json
 /run/config/fml.toml
-/src/main/java/org/jahdoo/entities/goals/FollowGoal.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/FrostboltsAbility.java
 /run/saves/New World/data/geckolib_id_cache.dat
 /src/main/resources/assets/jahdoo/particles/generic.json
-/src/main/java/org/jahdoo/entities/goals/GenericHurtByTargetGoal.java
-/src/main/java/org/jahdoo/entities/GenericProjectile.java
-/src/main/java/org/jahdoo/client/entity_renderer/GenericProjectileRenderer.java
 /gradle.properties
 /gradle/wrapper/gradle-wrapper.properties
-/src/main/java/org/jahdoo/all_magic/all_abilities/utility/raw_utilities/Hammer.java
 /src/main/resources/assets/jahdoo/textures/particle/heal_particle/health_container_1.png
-/src/main/java/org/jahdoo/items/heart_container/HealthContainer.java
 /src/main/resources/assets/jahdoo/textures/item/augments/ice_augment.png
 /src/main/resources/assets/jahdoo/sounds/ice_explosion.ogg
-/src/main/java/org/jahdoo/all_magic/effects/custom_effects/type_effects/IceEffect.java
 /run/saves/New World (1)/icon.png
 /run/saves/New World (2)/icon.png
 /src/main/resources/assets/jahdoo/player_animation/idle_wand.json
 /src/main/resources/assets/jahdoo/textures/gui/in_inventory.png
-/src/main/java/org/jahdoo/all_magic/elements/Inferno.java
 /src/generated/resources/data/jahdoo/tags/item/infuse.json
 /src/generated/resources/assets/jahdoo/blockstates/infuser.json
 /src/generated/resources/data/jahdoo/advancement/recipes/misc/infuser.json
 /src/generated/resources/data/jahdoo/loot_table/blocks/infuser.json
 /src/generated/resources/data/jahdoo/recipe/infuser.json
 /src/main/resources/assets/jahdoo/models/block/infuser.json
-/src/main/java/org/jahdoo/block/infuser/InfuserBlockEntity.java
-/src/main/java/org/jahdoo/client/block_models/InfuserModel.java
-/src/main/java/org/jahdoo/client/block_renderer/InfuserRenderer.java
 /src/generated/resources/data/jahdoo/loot_table/blocks/infusion_table.json
 /src/main/resources/assets/jahdoo/models/block/infusion_table.json
-/src/main/java/org/jahdoo/client/gui/infusion_table/InfusionTableScreen.java
-/src/main/java/org/jahdoo/utils/ItemEntityBehaviour.java
-/src/main/java/org/jahdoo/mixin/ItemEntityMixin.java
-/src/main/java/org/jahdoo/all_magic/effects/custom_effects/ItemMagnetEffect.java
 /src/main/resources/jahdoo.mixins.json
 /.idea/modules/Jahdoo Neoforge.Jahdoo_Neoforge.main.iml
 /src/generated/resources/assets/jahdoo/models/item/jide_powder.json
@@ -382,10 +330,8 @@
 /src/generated/resources/data/jahdoo/loot_table/blocks/lighting.json
 /src/main/resources/assets/jahdoo/models/block/lighting.json
 /src/main/resources/assets/jahdoo/textures/block/lighting.png
-/src/main/java/org/jahdoo/all_magic/elements/Lightning.java
 /src/main/resources/assets/jahdoo/textures/entity/lightning_projectile.png
 /src/main/resources/assets/jahdoo/textures/entity/lightning_projectile_glowmask.png
-/src/main/java/org/jahdoo/all_magic/all_abilities/utility/raw_utilities/LightPlacer.java
 /src/main/resources/assets/jahdoo/textures/particle/magic_mystical/magic2_1.png
 /src/main/resources/assets/jahdoo/textures/particle/magic_utility/magic2_1.png
 /src/main/resources/assets/jahdoo/textures/particle/magic_vitality/magic2_1.png
@@ -393,21 +339,11 @@
 /src/main/resources/assets/jahdoo/sounds/magic_explosion.ogg
 /src/main/resources/assets/jahdoo/textures/particle/magic_generic/magic_generic_1.png
 /src/main/resources/assets/jahdoo/textures/gui/man_type_overlay.png
-/src/main/java/org/jahdoo/worldgen/ModBiomeModifiers.java
-/src/main/java/org/jahdoo/event/ModEventHandler.java
-/src/main/java/org/jahdoo/datagen/ModItemModelProvider.java
-/src/main/java/org/jahdoo/datagen/ModItemTagGenerator.java
-/src/main/java/org/jahdoo/loot/ModLootModifiers.java
-/src/main/java/org/jahdoo/worldgen/ModOrePlacement.java
 /.idea/modules.xml
-/src/main/java/org/jahdoo/datagen/ModWorldGenProvider.java
-/src/main/java/org/jahdoo/all_magic/elements/Mystic.java
 /src/generated/resources/assets/jahdoo/models/item/mystic_augment.json
 /src/main/resources/assets/jahdoo/textures/item/augments/mystic_augment.png
 /src/main/resources/assets/jahdoo/textures/item/augments/old_augments/mystic_augment.png.mcmeta
 /src/main/resources/assets/jahdoo/textures/particle/mystic_projectile/mystic_projectile_2.png
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/MysticalSemtex.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/MysticalSemtexAbility.java
 /src/main/resources/META-INF/neoforge.mods.toml
 /run/config/neoforge-client.toml
 /run/config/neoforge-server.toml
@@ -424,14 +360,6 @@
 /src/main/resources/assets/jahdoo/textures/ability_icons/ominous_protector.png
 /run/ops.json
 /run/options.txt
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/Overcharge.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/OverchargedAbility.java
-/src/main/java/org/jahdoo/registers/OverlayRegistry.java
-/src/main/java/org/jahdoo/particle/ParticleStore.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/Permafrost.java
-/src/main/java/org/jahdoo/all_magic/ProjectileProperties.java
-/src/main/java/org/jahdoo/registers/ProjectilePropertyRegister.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/QuantumDestroyer.java
 /run/saves/New World/DIM-1/entities/r.0.0.mca
 /run/saves/New World/DIM-1/poi/r.0.0.mca
 /run/saves/New World/DIM-1/region/r.0.0.mca
@@ -522,13 +450,10 @@
 /run/saves/New World (1)/data/random_sequences.dat
 /run/saves/New World (2)/data/random_sequences.dat
 /run/world/data/random_sequences.dat
-/src/main/java/org/jahdoo/entities/goals/RangedCustomAttackGoal.java
 /run/saves/New World (1)/serverconfig/readme.txt
 /run/saves/New World (2)/serverconfig/readme.txt
 /run/world/serverconfig/readme.txt
 /run/realms_persistence.json
-/src/main/java/org/jahdoo/client/gui/ability_and_utility_menus/ScreenButton.java
-/src/main/java/org/jahdoo/networking/packet/SelectedAbilityC2SPacket.java
 /run/server.properties
 /run/servers.dat
 /run/servers.dat_old
@@ -537,7 +462,6 @@
 /run/saves/New World (2)/session.lock
 /run/world/session.lock
 /settings.gradle
-/src/main/java/org/jahdoo/all_magic/SharedFireProperties.java
 /src/main/resources/assets/jahdoo/textures/gui/slot.png
 /src/main/resources/assets/jahdoo/textures/gui/slot_selected_frost.png
 /src/main/resources/assets/jahdoo/textures/gui/slot_selected_inferno.png
@@ -545,13 +469,7 @@
 /src/main/resources/assets/jahdoo/textures/gui/slot_selected_mystic.png
 /src/main/resources/assets/jahdoo/textures/gui/slot_selected_utility.png
 /src/main/resources/assets/jahdoo/textures/gui/slot_selected_vitality.png
-/src/main/java/org/jahdoo/client/StaffArmPose.java
-/src/main/java/org/jahdoo/items/wand/StaffArmPose.java
 /src/main/resources/assets/jahdoo/textures/mob_effect/step_boost.png
-/src/main/java/org/jahdoo/networking/packet/StopUsingC2SPacket.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/StormRush.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/StormRushAbility.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/SummonEternalWizardAbility.java
 /src/main/resources/assets/jahdoo/player_animation/swipe_cast.json
 /src/generated/resources/assets/jahdoo/models/item/tank.json
 /src/generated/resources/data/jahdoo/advancement/recipes/misc/tank.json
@@ -579,15 +497,7 @@
 /src/main/resources/assets/jahdoo/textures/block/wand_mystic.png
 /src/main/resources/assets/jahdoo/textures/item/wand_mystic.png
 /src/main/resources/assets/jahdoo/textures/item/wand_vitality.png
-/src/main/java/org/jahdoo/block/wand/WandBlockEntity.java
-/src/main/java/org/jahdoo/client/gui/wand_block/WandBlockScreen.java
-/src/main/java/org/jahdoo/items/wand/WandItemHelper.java
-/src/main/java/org/jahdoo/block/wandBlockManager/WandManagerTableBlock.java
-/src/main/java/org/jahdoo/block/wandBlockManager/WandManagerTableEntity.java
-/src/main/java/org/jahdoo/client/block_renderer/WandManagerTableRenderer.java
-/src/main/java/org/jahdoo/items/wand/WandSlotManager.java
 /run/whitelist.json
-/src/main/java/org/jahdoo/client/entity_renderer/etneral_wizzard/WizardClothingLayerRenderer.java
 /run/logs/2024-10-17-55.log.gz
 /run/logs/2024-10-17-56.log.gz
 /run/logs/2024-10-18-2.log.gz
@@ -668,7 +578,6 @@
 /run/logs/2024-10-19-12.log.gz
 /run/logs/2024-10-19-13.log.gz
 /run/logs/2024-10-19-14.log.gz
-/src/main/java/org/jahdoo/client/gui/ability_and_utility_menus/AbilityIconButton.java
 /src/generated/resources/data/jahdoo/loot_modifiers/augments_core_chest0.json
 /src/generated/resources/data/jahdoo/loot_modifiers/augments_core_chest1.json
 /src/generated/resources/data/jahdoo/loot_modifiers/augments_core_chest2.json
@@ -1135,12 +1044,6 @@
 /run/logs/2024-10-28-22.log.gz
 /run/logs/2024-10-28-23.log.gz
 /run/logs/2024-10-28-24.log.gz
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/utility/BlockBreaker.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/Utility/BlockBreakerAbility.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/utility/BlockPlacer.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/Utility/BlockPlacerAbility.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/utility/BoneMeal.java
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/Utility/BoneMealAbility.java
 /src/generated/resources/.cache/c9690fd390256a434e1b93cae7099ce7c42299be
 /run/crash-reports/crash-2024-10-19_22.36.03-fml.txt
 /run/crash-reports/crash-2024-10-19_23.50.03-server.txt
@@ -1245,17 +1148,14 @@
 /run/debug/disconnect-2024-10-28_00.40.56-client.txt
 /run/debug/disconnect-2024-10-28_00.41.59-client.txt
 /run/debug/disconnect-2024-10-28_00.42.08-client.txt
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/utility/Hammer.java
 /run/saves/New World/icon.png
 /run/saves/New World (3)/icon.png
 /run/saves/New World (3)/level.dat
 /run/saves/New World (3)/level.dat_old
-/src/main/java/org/jahdoo/all_magic/all_abilities/abilities/raw_abilities/utility/LightPlacer.java
 /run/saves/New World (3)/data/neoforge_data_attachments.dat
 /run/saves/New World (3)/DIM1/data/neoforge_data_attachments.dat
 /run/saves/New World (3)/DIM-1/data/neoforge_data_attachments.dat
 /src/generated/resources/data/jahdoo/curios/entities/player.json
-/src/main/java/org/jahdoo/capabilities/player_abilities/PlayerScaleProvider.java
 /run/saves/New World (1)/entities/r.0.0.mca
 /run/saves/New World (1)/poi/r.0.0.mca
 /run/saves/New World (1)/region/r.0.0.mca

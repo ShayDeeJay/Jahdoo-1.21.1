@@ -11,7 +11,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -27,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.ItemInteractionResult.FAIL;
 import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static net.minecraft.world.level.block.SoundType.DEEPSLATE_BRICKS;
 import static org.jahdoo.common.block.BlockInteractionHandler.removeItemsFromHandToSlot;
 import static org.jahdoo.common.event.event_helpers.EventHelpers.setChaosCubeAbility;
 
@@ -41,7 +41,13 @@ public class CreatorBlock extends BaseEntityBlock{
     );
 
     public CreatorBlock() {
-        super(Properties.of().strength(1f).sound(SoundType.DEEPSLATE_BRICKS).noOcclusion());
+        super(
+            Properties
+                .of()
+                .strength(1f)
+                .sound(DEEPSLATE_BRICKS)
+                .noOcclusion()
+        );
     }
 
     @Override
@@ -60,7 +66,13 @@ public class CreatorBlock extends BaseEntityBlock{
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
+    public void onRemove(
+        BlockState pState,
+        Level pLevel,
+        BlockPos pPos,
+        BlockState pNewState,
+        boolean pMovedByPiston
+    ) {
         if (pState.getBlock() != pNewState.getBlock()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
             if (blockEntity instanceof CreatorEntity creatorEntity) {
@@ -71,30 +83,38 @@ public class CreatorBlock extends BaseEntityBlock{
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+    protected @NotNull ItemInteractionResult useItemOn(
+        ItemStack pStack,
+        BlockState pState,
+        Level level,
+        BlockPos pos,
+        Player player,
+        InteractionHand hand,
+        BlockHitResult result
+    ) {
         if(!(level.getBlockEntity(pos) instanceof CreatorEntity wandManager)) return FAIL;
         var stack = player.getMainHandItem();
-        var inputItemHandler = wandManager.inputItemHandler;
-        var outputItemHandler = wandManager.outputItemHandler;
+        var inputIHandler = wandManager.inputItemHandler;
+        var outputIHandler = wandManager.outputItemHandler;
 
         if(setChaosCubeAbility(player, level, pos, stack)) return SUCCESS;
 
         if(!stack.isEmpty()){
-            for (int i = 0; i < inputItemHandler.getSlots(); i++) {
-                if(inputItemHandler.getStackInSlot(i).isEmpty()){
-                    if (removeItemsFromHandToSlot(inputItemHandler, i, player, 1, hand)) return SUCCESS;
+            for (int i = 0; i < inputIHandler.getSlots(); i++) {
+                if(inputIHandler.getStackInSlot(i).isEmpty()){
+                    if (removeItemsFromHandToSlot(inputIHandler, i, player, 1, hand)) return SUCCESS;
                 }
             }
             return FAIL;
         } else {
-            if(!outputItemHandler.getStackInSlot(0).isEmpty()){
-                Helpers.throwOrAddItem(player, outputItemHandler.getStackInSlot(0));
+            if(!outputIHandler.getStackInSlot(0).isEmpty()){
+                Helpers.throwOrAddItem(player, outputIHandler.getStackInSlot(0));
                 return SUCCESS;
             } else {
-                for (int i = 0; i < inputItemHandler.getSlots(); i++) {
-                    int entry = inputItemHandler.getSlots() - (i+1);
-                    if(!inputItemHandler.getStackInSlot(entry).isEmpty()){
-                        Helpers.throwOrAddItem(player, inputItemHandler.getStackInSlot(entry));
+                for (int i = 0; i < inputIHandler.getSlots(); i++) {
+                    int entry = inputIHandler.getSlots() - (i+1);
+                    if(!inputIHandler.getStackInSlot(entry).isEmpty()){
+                        Helpers.throwOrAddItem(player, inputIHandler.getStackInSlot(entry));
                         return SUCCESS;
                     }
                 }
@@ -102,7 +122,6 @@ public class CreatorBlock extends BaseEntityBlock{
             }
         }
     }
-
 
     @Nullable
     @Override
@@ -113,7 +132,6 @@ public class CreatorBlock extends BaseEntityBlock{
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-
         return createTickerHelper(
             pBlockEntityType,
             BlockEntityReg.CREATOR_BE.get(),

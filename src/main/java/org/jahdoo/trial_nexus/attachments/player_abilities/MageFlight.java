@@ -6,24 +6,24 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.attachments.IAttachment;
-import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.trial_nexus.utils.PositionFinders;
 import org.jahdoo.common.networking.client2server.MageFlightC2SP;
 import org.jahdoo.common.networking.server2client.MageFlightSyncS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.registers.AttributeReg;
-import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.common.registers.mod.SkillReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.IAttachment;
+import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.PositionFinders;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.common.registers.AttachmentReg.MAGE_FLIGHT;
 import static org.jahdoo.common.registers.mod.ElementReg.fromWand;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class MageFlight implements IAttachment {
 
@@ -70,7 +70,8 @@ public class MageFlight implements IAttachment {
     }
 
     private boolean cancelAttempt(Player player) {
-        if(!player.hasEffect(EffectReg.MAGE_FLIGHT) || player.onGround() || player.isFallFlying()) {
+        var casterData = CasterData.hasSkill(player, SkillReg.MAGE_FLIGHT.get().id());
+        if(!casterData || player.onGround() || player.isFallFlying()) {
             player.getAbilities().mayfly = false;
             this.isFlying = false;
             return true;

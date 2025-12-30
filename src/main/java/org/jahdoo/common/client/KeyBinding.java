@@ -25,6 +25,8 @@ public class KeyBinding {
     public static final String STAT_SCREEN_KEY = "key.assets.jahdoo.stat_screen";
     public static final String ABILITY_SCREEN_KEY = "key.assets.jahdoo.ability_screen";
     public static final String RUN_SCREEN_KEY = "key.assets.jahdoo.run_screen";
+    public static final String ABILITY_MODIFICATION_KEY = "key.assets.jahdoo.ability_modification_screen";
+
 
     public static final KeyMapping WAND_SLOT_1A = map(WAND_SLOT_1);
     public static final KeyMapping WAND_SLOT_2A = map(WAND_SLOT_2);
@@ -41,6 +43,7 @@ public class KeyBinding {
     public static final KeyMapping STAT_SCREEN = map(STAT_SCREEN_KEY);
     public static final KeyMapping ABILITY_SCREEN = map(ABILITY_SCREEN_KEY);
     public static final KeyMapping RUN_SCREEN = map(RUN_SCREEN_KEY);
+    public static final KeyMapping ABILITY_MODIFICATION_SCREEN = map(ABILITY_MODIFICATION_KEY);
     public static final KeyMapping MAGNET = map(MAGNET_STATE);
 
     public static KeyMapping map(String description){
