@@ -3,7 +3,6 @@ package org.jahdoo.trial_nexus.ability.abilities_utility.light_placer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.registers.BlockReg;
@@ -17,7 +16,6 @@ public class LightPlacer extends AbstractUtilityProjectile {
     private final ResourceLocation abilityId = Helpers.res("light_placer_property");
     BlockPos hitPos;
     boolean hitBlock;
-    int timer;
 
     @Override
     public ResourceLocation getAbilityResource() {
@@ -30,18 +28,8 @@ public class LightPlacer extends AbstractUtilityProjectile {
     }
 
     @Override
-    public void onTickMethod() {
-        if(hitBlock) timer++;
-        if(timer == 20) {
-            getLevel().setBlockAndUpdate(hitPos, Blocks.AIR.defaultBlockState());
-            this.generic.discard();
-        };
-        super.onTickMethod();
-    }
-
-    @Override
     public void discardCondition() {
-        if(generic.tickCount > 500) generic.discard();
+        if(this.generic.tickCount > 500) this.generic.discard();
     }
 
     @Override
@@ -53,7 +41,7 @@ public class LightPlacer extends AbstractUtilityProjectile {
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
         if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
-        var level = generic.level();
+        var level = this.generic.level();
         var replaceBlock = BlockReg.LIGHTING.get().defaultBlockState();
         var blockPos = blockHitResult.getBlockPos();
         var side = blockHitResult.getDirection();
@@ -71,7 +59,7 @@ public class LightPlacer extends AbstractUtilityProjectile {
         var placeSound = level.getBlockState(blockHitResult.getBlockPos()).getSoundType().getPlaceSound();
         level.playSound(null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), placeSound, SoundSource.BLOCKS, 1,1);
 //        this.hitPos = blockPoseRelative;
-////        generic.discard();
+        this.generic.discard();
 //        generic.setDeltaMovement(0,0,0);
     }
 

@@ -54,6 +54,9 @@ public class CreatorRecipeReg {
     public static final DeferredHolder<CreatorRecipes, CreatorRecipes> CRYPT_KEY_RECIPE =
         registerSpell(new CryptKeyRecipe());
 
+    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> ENCHANTED_BOOK_RECIPE =
+        registerSpell(new EnchantedBookRecipe());
+
     public static final DeferredHolder<CreatorRecipes, CreatorRecipes> AUGMENT_CORE_RECIPE =
         registerSpell(new AugmentCoreRecipe());
 
@@ -62,6 +65,9 @@ public class CreatorRecipeReg {
 
     public static final DeferredHolder<CreatorRecipes, CreatorRecipes> STONE_OF_REGRET_RECIPE =
         registerSpell(new StoneOfRegretRecipe());
+
+    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> MYSTICAL_AUGMENTER_RECIPE =
+        registerSpell(new MysticalAugmenterRecipe());
 
     public static final DeferredHolder<CreatorRecipes, CreatorRecipes> STARTER_WAND_RECIPE =
         registerSpell(new StarterWandRecipe());

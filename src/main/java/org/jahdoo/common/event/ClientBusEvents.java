@@ -21,6 +21,7 @@ import org.jahdoo.common.block.perk_table.PerkTableRenderer;
 import org.jahdoo.common.block.power_up_station.PowerUpStationRenderer;
 import org.jahdoo.common.block.divine_forge.DivineForgeRenderer;
 import org.jahdoo.common.block.divine_forge.helpers.RuneTableScreen;
+import org.jahdoo.common.block.mystical_augmenter.MysticalAugmenterRenderer;
 import org.jahdoo.common.block.shopping_table.ShoppingTableRenderer;
 import org.jahdoo.common.block.tank.TankRenderer;
 import org.jahdoo.common.block.ticket_bureau.TicketBureauRenderer;
@@ -142,6 +143,7 @@ public class ClientBusEvents {
         event.registerBlockEntityRenderer(WAND_MANAGER_TABLE_BE.get(), WandManagerRenderer::new);
         event.registerBlockEntityRenderer(CREATOR_BE.get(), CreatorRenderer::new);
         event.registerBlockEntityRenderer(MODULAR_CHAOS_CUBE_BE.get(), ChaosCubeRenderer::new);
+        event.registerBlockEntityRenderer(MYSTICAL_AUGMENTER_BE.get(), MysticalAugmenterRenderer::new);
 
         //Entities
         event.registerEntityRenderer(FROST_ELEMENT_PROJECTILE.get(), context -> new ElementProjectileRenderer(context, ElementReg.frost().projectileTexture()));

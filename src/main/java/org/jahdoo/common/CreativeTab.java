@@ -44,8 +44,8 @@ public class CreativeTab {
                 outPut.accept(NEXITE_BLOCK.get());
                 outPut.accept(PACKED_MUD_CLAY.get());
                 outPut.accept(RAW_NEXITE_BLOCK.get());
-
                 outPut.accept(MODULAR_CHAOS_CUBE_ITEM.get());
+                outPut.accept(MYSTICAL_AUGMENTER_ITEM.get());
                 outPut.accept(TANK.get());
 //                outPut.accept(WAND_MANAGER_TABLE.get());
                 outPut.accept(TICKET_BUREAU.get());

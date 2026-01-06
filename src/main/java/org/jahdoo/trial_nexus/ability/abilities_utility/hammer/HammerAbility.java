@@ -30,6 +30,11 @@ public class HammerAbility extends AbstractBlockAbility {
     }
 
     @Override
+    public boolean isOutputUser() {
+        return true;
+    }
+
+    @Override
     public String getDescription() {
         return GlobalStrings.BLOCK_PLACER;
     }

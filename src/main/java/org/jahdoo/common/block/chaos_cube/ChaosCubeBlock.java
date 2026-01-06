@@ -198,14 +198,13 @@ public class ChaosCubeBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+    }
+
+    @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (state.getBlock() != newState.getBlock()) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof ChaosCubeEntity automationBlock) {
-                automationBlock.dropsAllInventory(level);
-            }
-        }
-        super.onRemove(state, level, pos, newState, movedByPiston);
+        super.onRemove(state,level,pos,newState,movedByPiston);
     }
 }
 

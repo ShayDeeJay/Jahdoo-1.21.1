@@ -15,10 +15,7 @@ import org.jahdoo.common.items.armor.battle_mage.BattleMageArmor;
 import org.jahdoo.common.items.armor.knight_king.KnightKingArmor;
 import org.jahdoo.common.items.armor.mage.MageArmor;
 import org.jahdoo.common.items.armor.wizard.WizardArmor;
-import org.jahdoo.common.items.block_items.ChallengeAltarBlockItem;
-import org.jahdoo.common.items.block_items.DisassemblerBlockItem;
-import org.jahdoo.common.items.block_items.LootChestBlockItem;
-import org.jahdoo.common.items.block_items.ModularChaosCubeItem;
+import org.jahdoo.common.items.block_items.*;
 import org.jahdoo.common.items.caster_item.basic_wand.StarterWand;
 import org.jahdoo.common.items.caster_item.elemental_wand.FrostWand;
 import org.jahdoo.common.items.caster_item.elemental_wand.InfernoWand;
@@ -150,6 +147,9 @@ public class ItemReg {
 
     public static final DeferredHolder<Item, Item> MODULAR_CHAOS_CUBE_ITEM =
         complexItem("modular_chaos_cube", () -> new ModularChaosCubeItem(MODULAR_CHAOS_CUBE.get()));
+
+    public static final DeferredHolder<Item, Item> MYSTICAL_AUGMENTER_ITEM =
+        complexItem("mystical_augmenter", () -> new MysticalAugmenterItem(MYSTICAL_AUGMENTER.get()));
 
     //Wands needed their own subclass as animations do not fire for all wand instances otherwise.
     //UPDATE: Above should now be fixed in latest update, should now be able

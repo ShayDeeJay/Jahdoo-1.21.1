@@ -88,4 +88,8 @@ public class VeinMinerAbility extends AbstractBlockAbility {
         return 2;
     }
 
+    @Override
+    public boolean isInputUser() {
+        return true;
+    }
 }

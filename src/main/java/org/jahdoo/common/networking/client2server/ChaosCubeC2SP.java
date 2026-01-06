@@ -7,11 +7,9 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jahdoo.trial_nexus.attachments.ChaosCubeData;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
+import org.jahdoo.trial_nexus.attachments.ChaosCubeData;
 import org.jahdoo.trial_nexus.utils.Helpers;
-
-import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
 
 public class ChaosCubeC2SP implements CustomPacketPayload {
     public static final Type<ChaosCubeC2SP> TYPE = new Type<>(Helpers.res("modular_chaos_data_sync"));
@@ -40,7 +38,7 @@ public class ChaosCubeC2SP implements CustomPacketPayload {
                 if(ctx.player().level() instanceof ServerLevel serverLevel){
                     var bEntity = serverLevel.getBlockEntity(blockPos);
                     if(bEntity instanceof ChaosCubeEntity entity){
-                        entity.setData(MODULAR_CHAOS_CUBE, this.autoBlock);
+                        entity.updateData(autoBlock);
                     }
                 }
             }

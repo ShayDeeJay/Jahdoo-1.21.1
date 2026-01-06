@@ -6,6 +6,7 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -29,8 +30,6 @@ import static org.jahdoo.common.client.Icons.*;
 import static org.jahdoo.common.client.SharedUI.*;
 import static org.jahdoo.common.client.button.ToggleComponent.menuButton;
 import static org.jahdoo.common.client.button.ToggleComponent.textWithBackground;
-import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
-import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.*;
 import static org.jahdoo.trial_nexus.utils.ColourStore.BORDER_COLOUR;
 import static org.jahdoo.trial_nexus.utils.ColourStore.BOX_COLOUR;
 import static org.jahdoo.trial_nexus.utils.Helpers.colourByPercent;
@@ -72,8 +71,19 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
     }
 
     private void selectDirectionActive(int posX, int posY){
-        var autoBlock = entity().getData(MODULAR_CHAOS_CUBE);
-        buildDirectionWidgets(posX - 109, posY - 100, "Direction", entity().direction(), (button) -> selectDirection(entity(), autoBlock.updateActionDirection(button)),autoBlock.action());
+        var autoBlock = entity().getData;
+        buildDirectionWidgets(posX - 109, posY - 100, "Direction", entity().direction(), (button) -> selectDirection(entity(), autoBlock.updateActionDirection(getDirectionBetween(entity().getBlockPos(), button))), entity().getDirectionPos(autoBlock.action()));
+    }
+
+    public static String getDirectionBetween(BlockPos from, BlockPos to) {
+        BlockPos diff = to.subtract(from);
+
+        for (Direction direction : Direction.values()) {
+            if (direction.getNormal().equals(diff)) {
+                return direction.getName();
+            }
+        }
+        return "north";
     }
 
     private void extendMenu(Runnable switchB){
@@ -101,7 +111,7 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
     }
 
     private void increaseSpeed(){
-        var autoBlock = entity().getData(MODULAR_CHAOS_CUBE);
+        var autoBlock = entity().getData;
         if(autoBlock.speed() < 100){
             selectDirection(entity(), autoBlock.updateSpeed(autoBlock.speed() + 5));
             this.rebuildWidgets();
@@ -109,7 +119,7 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
     }
 
     private void decreaseSpeed(){
-        var autoBlock = entity().getData(MODULAR_CHAOS_CUBE);
+        var autoBlock = entity().getData;
         if(autoBlock.speed() > 5) {
             selectDirection(entity(), autoBlock.updateSpeed(autoBlock.speed() - 5));
             this.rebuildWidgets();
@@ -118,7 +128,7 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
 
     public void buildCarouselComponent(int posX, int posY, String label){
         var widget = new WidgetSprites(BLANK, BLANK);
-        this.addRenderableOnly(textWithBackground(posX + 22, posY, Component.literal(String.valueOf(getSpeed(entity()))), this.getMinecraft(), Component.literal(label)));
+        this.addRenderableOnly(textWithBackground(posX + 22, posY, Component.literal(String.valueOf(entity().getData.speed())), this.getMinecraft(), Component.literal(label)));
         var size = 40;
         var i = size / 4;
         var setX = posX - i;
@@ -128,8 +138,11 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
     }
 
     private void modifyAugmentProperties(int posX, int posY){
-        var currentPower = getActive(entity());
-        var chained = getChained(entity());
+//        var currentPower = getActive(entity());
+//        var chained = getChained(entity());
+
+        var currentPower = entity().getData.active();
+        var chained = entity().getData.chained();
 
         var power = "Power: " + (currentPower ? "On" : "Off");
         var linked = "Linkage: " + (chained ? "On" : "Off");
@@ -144,6 +157,8 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
             accessor -> {
                 var isInsert = Objects.equals(label, "Insert");
                 if(isInsert ? accessor.isInputUser() : accessor.isOutputUser()){
+                    System.out.println("im here");
+
                     var sharedY = posY + 4;
                     var sharedX = posX + 4;
                     if(isInput) buildDirectionWidgets(sharedX + 94, sharedY - 68, label, entity().direction(), buttons, blockPos);
@@ -199,16 +214,16 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
         var posY = this.height / 2 ;
         this.modifyAugmentProperties(posX, posY);
         buildCarouselComponent(posX - 70, posY - 100, "Speed");
-        var autoBlock = entity().getData(MODULAR_CHAOS_CUBE);
+        var autoBlock = entity().getData;
 
         direction(posX, posY, this.input, "Insert",
-            (button) -> selectDirection(entity(), autoBlock.updateInput(button)),
-            () -> this.input = !input, entity().getData(MODULAR_CHAOS_CUBE).input()
+            (button) -> selectDirection(entity(), autoBlock.updateInput(getDirectionBetween(entity().getBlockPos(), button))),
+            () -> this.input = !input, entity().getDirectionPos(autoBlock.input())
         );
 
         direction(posX, posY, this.output, "Eject",
-            (button) -> selectDirection(entity(), autoBlock.updateOutput(button)),
-            () -> this.output = !output, entity().getData(MODULAR_CHAOS_CUBE).output()
+            (button) -> selectDirection(entity(), autoBlock.updateOutput(getDirectionBetween(entity().getBlockPos(), button))),
+            () -> this.output = !output, entity().getDirectionPos(autoBlock.output())
         );
 
         selectDirectionActive(posX, posY);

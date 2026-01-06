@@ -26,6 +26,14 @@ public class EntityAnimations {
     public static final RawAnimation DOWN = RawAnimation.begin().thenPlay("direction5");
     public static final RawAnimation NORTH = RawAnimation.begin().thenPlay("direction6");
 
+    //Mystical Augmenter
+    public static final RawAnimation MYS_WEST = RawAnimation.begin().thenPlay("direction_west");
+    public static final RawAnimation MYS_EAST = RawAnimation.begin().thenPlay("direction_east");
+    public static final RawAnimation MYS_SOUTH = RawAnimation.begin().thenPlay("direction_south");
+    public static final RawAnimation MYS_UP = RawAnimation.begin().thenPlay("direction_up");
+    public static final RawAnimation MYS_DOWN = RawAnimation.begin().thenPlay("direction_down");
+    public static final RawAnimation MYS_NORTH = RawAnimation.begin().thenPlay("direction_north");
+
     //Safe
     public static final RawAnimation KNOCK_LEFT = RawAnimation.begin().thenPlay("knock_left");
     public static final RawAnimation KNOCK_RIGHT = RawAnimation.begin().thenPlay("knock_right");

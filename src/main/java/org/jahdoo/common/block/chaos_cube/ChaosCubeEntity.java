@@ -8,7 +8,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.block.AbstractTankUser;
 import org.jahdoo.common.client.Icons;
@@ -30,8 +28,10 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.AbilityBuilder;
 import org.jahdoo.trial_nexus.ability.AbstractBlockAbility;
 import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.attachments.ChaosCubeData;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -43,34 +43,42 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static net.minecraft.core.Direction.*;
+import static net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 import static org.jahdoo.common.block.BlockInteractionHandler.getItemHandlerAt;
 import static org.jahdoo.common.entities.EntityAnimations.*;
-import static org.jahdoo.common.registers.AttachmentReg.MODULAR_CHAOS_CUBE;
-import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.getActionDirection;
-import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.getActive;
+import static org.jahdoo.common.entities.EntityAnimations.MYS_DOWN;
+import static org.jahdoo.common.entities.EntityAnimations.MYS_EAST;
+import static org.jahdoo.common.entities.EntityAnimations.MYS_NORTH;
+import static org.jahdoo.common.entities.EntityAnimations.MYS_SOUTH;
+import static org.jahdoo.common.entities.EntityAnimations.MYS_UP;
+import static org.jahdoo.common.entities.EntityAnimations.MYS_WEST;
 
 
 public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, GeoBlockEntity {
 
-    public static final int AUGMENT_SLOT = 0;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private int ticker;
     private int entityTicker;
     private AbilityHolder holder;
+    public ChaosCubeData getData = ChaosCubeData.initData();
 
     public ChaosCubeEntity(BlockPos pos, BlockState state) {
         super(BlockEntityReg.MODULAR_CHAOS_CUBE_BE.get(), pos, state, 1);
-        this.setData(MODULAR_CHAOS_CUBE, org.jahdoo.trial_nexus.attachments.ChaosCubeData.initData(this.getBlockPos()));
     }
+
 
     @Override
     public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
         if(this.holder != null) stack.set(ComponentReg.ABILITY_HOLDER, holder);
         super.saveToItem(stack, registries);
+    }
+
+    public void updateData(ChaosCubeData data) {
+        this.getData = data;
     }
 
     @Override
@@ -130,6 +138,7 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
         super.saveAdditional(tag, registries);
         tag.putInt("infuser.progress", progress);
         AbilityHolder.writeTag(holder == null ? AbilityHolder.DEFAULT : holder, tag);
+        if(this.getData != null) ChaosCubeData.saveChaosData(tag, this.getData);
     }
 
     @Override
@@ -137,7 +146,8 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
         super.loadAdditional(tag, registries);
         progress = tag.getInt("infuser.progress");
         this.holder = AbilityHolder.readTag(tag);
-        this.updateBlock();
+        var data1 = ChaosCubeData.loadChaosData(tag);
+        this.getData = data1 == null ? ChaosCubeData.initData() : data1;
     }
 
     @Override
@@ -179,9 +189,9 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
         var visited = new HashSet<BlockPos>();
         for (Pair<ResourceLocation, BlockPos> posPair : this.direction()) {
             BlockPos blockPos = posPair.getSecond();
-            if (!this.getData(MODULAR_CHAOS_CUBE).chained()) return;
+            if (!this.getData.chained()) return;
             if (!visited.contains(blockPos) && this.getLevel().getBlockEntity(blockPos) instanceof ChaosCubeEntity blockE) {
-                if(!blockE.getData(MODULAR_CHAOS_CUBE).chained()) continue;
+                if(!blockE.getData.chained()) continue;
                 visited.add(blockPos);
                 triggerBlock(blockE, visited);
             }
@@ -189,15 +199,15 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
     }
 
     private void triggerBlock(ChaosCubeEntity blockE, Set<BlockPos> visited) {
-        var active = this.getData(MODULAR_CHAOS_CUBE).active();
-        var active1 = blockE.getData(MODULAR_CHAOS_CUBE).active();
+        var active = this.getData.active();
+        var active1 = blockE.getData.active();
         if (active != active1) ChaosCubeHelpers.togglePower(blockE);
         if (blockE.getLevel() == null) return;
 
         for (Pair<ResourceLocation, BlockPos> posPair : blockE.direction()) {
             BlockPos blockPos = posPair.getSecond();
             if (!visited.contains(blockPos) && blockE.getLevel().getBlockEntity(blockPos) instanceof ChaosCubeEntity blockD) {
-                if(!blockD.getData(MODULAR_CHAOS_CUBE).chained()) continue;
+                if(!blockD.getData.chained()) continue;
                 visited.add(blockPos);
                 triggerBlock(blockD, visited);
             }
@@ -206,23 +216,26 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
 
     public void tick(Level level, BlockPos pos, BlockState blockState) {
         if(holder == null && this.ticker > 0) this.ticker = 0; this.progress = 0;
+
         this.entityTicker ++;
         useAugment(level, false);
-        if(this.getData(MODULAR_CHAOS_CUBE).active()){
-            var speed = this.getData(MODULAR_CHAOS_CUBE).speed();
+
+        if(this.getData != null && this.getData.active()){
+            var speed = this.getData.speed();
             if (this.ticker >= (speed == 0 ? 100 : speed)) this.ticker = 0;
             if(holder != null) this.ticker++;
         } else {
             if (this.ticker > 0) this.ticker = 0;
         }
+
         this.assignTankBlockInRange(level, pos, 1);
         particleAnimation(level, hasTankAndFuel());
 
     }
 
     public ItemStack externalInputInventory(Level level){
-        var getPos = this.getData(MODULAR_CHAOS_CUBE).input();
-        var handler = getItemHandlerAt(level, getPos.getX(), getPos.getY(), getPos.getZ(), Direction.DOWN);
+        var getNewPos = getDirectionPos(getData.input());
+        var handler = getItemHandlerAt(level, getNewPos.getX(), getNewPos.getY(), getNewPos.getZ(), Direction.DOWN);
         AtomicReference<ItemStack> itemStack = new AtomicReference<>(ItemStack.EMPTY);
         handler.ifPresent(
             iItemHandlerObjectPair -> {
@@ -239,68 +252,86 @@ public class ChaosCubeEntity extends AbstractTankUser implements MenuProvider, G
         return itemStack.get();
     }
 
+    public @NotNull BlockPos getDirectionPos(String directionName) {
+        var direction = byName(directionName);
+        return this.getBlockPos().relative(direction == null ? Direction.UP : direction);
+    }
+
     private PlayState getPlayState(AnimationState<ChaosCubeEntity> state) {
-        var getPos = this.getData(MODULAR_CHAOS_CUBE);
-        if(getPos.active()){
-            float speed = (float) getPos.speed() /50;
-            state.setControllerSpeed(2.1f - speed);
-            if (getPos.action().equals(this.getBlockPos().north())) {
-                return state.setAndContinue(NORTH);
-            } else if (getPos.action().equals(this.getBlockPos().south())) {
-                return state.setAndContinue(SOUTH);
-            } else if (getPos.action().equals(this.getBlockPos().east())) {
-                return state.setAndContinue(EAST);
-            } else if (getPos.action().equals(this.getBlockPos().west())) {
-                return state.setAndContinue(WEST);
-            } else if (getPos.action().equals(this.getBlockPos().above())) {
-                return state.setAndContinue(UP);
-            } else if(getPos.action().equals(this.getBlockPos().below())){
-                return state.setAndContinue(DOWN);
+        var data = this.getData;
+        if (!data.active()) return PlayState.STOP;
+
+        state.setControllerSpeed(2.1f - (data.speed() / 50f));
+
+        var direction = byName(data.action());
+        if (direction == null) return PlayState.STOP;
+
+        return state.setAndContinue(
+            switch (direction) {
+                case NORTH -> MYS_NORTH;
+                case SOUTH -> MYS_SOUTH;
+                case EAST  -> MYS_EAST;
+                case WEST  -> MYS_WEST;
+                case UP    -> MYS_UP;
+                case DOWN  -> MYS_DOWN;
             }
-        }
-        return PlayState.STOP;
+        );
     }
 
     public void useAugment(Level level, boolean ignorePower) {
         if(!hasTankAndFuel()) return;
-        var hasDirection = getActionDirection(this) != null;
-        var isOff = Objects.equals(getActionDirection(this),this.getBlockPos());
-        var isPowered = getActive(this);
+        var actionDirection = this.getDirectionPos(getData.action());
+        var isPowered = getData.active();
         if(!ignorePower) if (!isPowered) return;
 
-        if (hasDirection && !isOff) {
-            this.progress ++;
-            if(this.ticker == 1 || ignorePower){
-                positionalParticles(level, 30, 0.7);
-                useSound(0.05f,1.4f, level);
-                var getAbility = AbilityReg.getFirstSpellByTypeId(holder.abilityName());
-                if(getAbility.isPresent()){
-                    if(getAbility.get() instanceof AbstractBlockAbility abstractBlockAbility){
-                        abstractBlockAbility.invokeAbilityBlock(getActionDirection(this), this, this.holder);
-                    }
-                    this.chargeTankFuel(this.setCraftingCost());
+        this.progress++;
+        if(this.ticker == 1 || ignorePower){
+            positionalParticles(level, 30, 0.7);
+            useSound(0.05f,1.4f, level);
+            var getAbility = AbilityReg.getFirstSpellByTypeId(holder.abilityName());
+            if(getAbility.isPresent()){
+                if(getAbility.get() instanceof AbstractBlockAbility abstractBlockAbility){
+                    abstractBlockAbility.invokeAbilityBlock(actionDirection, this, this.holder);
                 }
+                this.chargeTankFuel(this.setCraftingCost());
             }
+        }
 
-        } else this.progress = 0;
         this.setChanged();
     }
 
     public void externalOutputInventory(Level level, ItemEntity itemEntity){
-        var getPos = this.getData(MODULAR_CHAOS_CUBE).output();
-        outputItemsDown(level, itemEntity.getItem(), getPos);
-    }
+        var pos = getDirectionPos(this.getData.output());
 
-    public static void outputItemsDown(Level level, ItemStack entityStack, BlockPos pos) {
         var blockEntity = level.getBlockEntity(pos);
+        var entityStack = itemEntity.getItem();
 
-        if(blockEntity instanceof Container container){
-            if(entityStack != null){
-                var getReturned = HopperBlockEntity.addItem(null, container, entityStack.copy(), Direction.DOWN);
-                entityStack.setCount(getReturned.getCount());
+        if (blockEntity == null) return;
+
+        var itemHandler = level.getCapability(ItemHandler.BLOCK, pos, byName(this.getData.output()));
+
+        if (itemHandler != null) {
+            var remaining = entityStack.copy();
+
+            for (int i = 0; i < itemHandler.getSlots(); i++) {
+                var slotStack = itemHandler.getStackInSlot(i);
+
+                if (!slotStack.isEmpty() && ItemStack.isSameItem(slotStack, remaining)) {
+                    remaining = itemHandler.insertItem(i, remaining, false);
+                    if (remaining.isEmpty()) return;
+                }
+            }
+
+            for (int i = 0; i < itemHandler.getSlots(); i++) {
+                var slotStack = itemHandler.getStackInSlot(i);
+
+                if (slotStack.isEmpty()) {
+                    remaining = itemHandler.insertItem(i, remaining, false);
+                    if (remaining.isEmpty()) return;
+                }
             }
         }
-
     }
+
 }
 

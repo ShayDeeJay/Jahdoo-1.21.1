@@ -7,8 +7,11 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.entities.safe.Safe;
@@ -24,6 +27,7 @@ import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.PlayerWallet;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
+import org.jahdoo.trial_nexus.loot.RewardLootTables;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.trading_post.ShoppingArmor;
 import org.jahdoo.trial_nexus.trading_post.ShoppingItems;
@@ -226,6 +230,13 @@ public class JahdooCommands {
         dispatcher.register(literal(MOD_ID).requires(sender -> sender.hasPermission(2))
             .then(
                 literal("give_items")
+                    .then(
+                        literal("enchanted_book")
+                            .executes(
+                                context -> getOverEnchantedBook(context.getSource())
+                            )
+
+                    )
                     .then(
                         literal("stamp")
                             .then(
@@ -900,6 +911,30 @@ public class JahdooCommands {
                 Stamp.addBoon(stamp, addNegative);
                 throwOrAddItem(player, stamp);
             }
+        }
+
+        return 1;
+    }
+
+    public static int getOverEnchantedBook(CommandSourceStack source){
+        var player = source.getPlayer();
+        if(player == null) return 0;
+
+        if(source.getLevel() instanceof ServerLevel serverLevel){
+            var enchantments = serverLevel.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+            var sharpness = enchantments.getHolderOrThrow(Enchantments.SHARPNESS);
+            var efficiency = enchantments.getHolderOrThrow(Enchantments.EFFICIENCY);
+            var unbreaking = enchantments.getHolderOrThrow(Enchantments.UNBREAKING);
+
+
+            var itemStack = new ItemStack(Items.ENCHANTED_BOOK);
+
+            RewardLootTables.bookGetter(serverLevel, itemStack, sharpness, 10);
+            throwOrAddItem(player, itemStack);
+            RewardLootTables.bookGetter(serverLevel, itemStack, efficiency, 10);
+            throwOrAddItem(player, itemStack);
+            RewardLootTables.bookGetter(serverLevel, itemStack, unbreaking, 10);
+            throwOrAddItem(player, itemStack);
         }
 
         return 1;

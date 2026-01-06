@@ -55,9 +55,9 @@ import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.LootCrateData;
-import org.jahdoo.common.entities.custom_entities.CustomSkeleton;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.SharedEntityBehaviours;
+import org.jahdoo.common.entities.custom_entities.CustomSkeleton;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
@@ -66,7 +66,6 @@ import org.jahdoo.common.event.TriggerEvents;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.items.KeyItem;
 import org.jahdoo.common.items.caster_item.CastHelper;
-import org.jahdoo.common.networking.client2server.ChaosCubeC2SP;
 import org.jahdoo.common.networking.client2server.SelectAbilityC2SP;
 import org.jahdoo.common.networking.client2server.UseAbilityC2SP;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
@@ -108,8 +107,6 @@ import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttachmentReg.*;
 import static org.jahdoo.common.registers.ComponentReg.INTERACTION_HAND;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_GEAR_DATA;
-import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.getRelativePosition;
-import static org.jahdoo.trial_nexus.attachments.ChaosCubeData.updateAll;
 import static org.jahdoo.trial_nexus.attachments.RunData.*;
 import static org.jahdoo.trial_nexus.loot.LootHelpers.itemBehaviour;
 import static org.jahdoo.trial_nexus.loot.RewardLootTables.getCompletionLoot;
@@ -766,35 +763,34 @@ public class EventHelpers {
         var keyDownV = isKeyDown(window, KEY_V);
 
         if(keyDownC && keyDownCtrl) {
-            if(modEntity.hasData(MODULAR_CHAOS_CUBE)){
-                var data = modEntity.getData(MODULAR_CHAOS_CUBE);
-                player.setData(MODULAR_CHAOS_CUBE, data);
+            if(modEntity.getData != null){
+                player.setData(MODULAR_CHAOS_CUBE, modEntity.getData);
                 player.displayClientMessage(Component.literal("Copied!"), true);
             } else {
                 player.displayClientMessage(Component.literal("No data to copy!"), true);
             }
         };
 
-        if(keyDownV && keyDownCtrl) {
-            if(player.hasData(MODULAR_CHAOS_CUBE)){
-                var chaosCubeProperties = player.getData(MODULAR_CHAOS_CUBE);
-                var action = chaosCubeProperties.getDirection(chaosCubeProperties.action());
-                var input = chaosCubeProperties.getDirection(chaosCubeProperties.input());
-                var output = chaosCubeProperties.getDirection(chaosCubeProperties.output());
-
-                var actionNew = getRelativePosition(action, modEntity.getBlockPos());
-                var inputNew = getRelativePosition(input, modEntity.getBlockPos());
-                var outputNew = getRelativePosition(output, modEntity.getBlockPos());
-                var update = updateAll(actionNew, inputNew, outputNew, chaosCubeProperties.active(), chaosCubeProperties.speed(), modEntity.getBlockPos(), chaosCubeProperties.chained());
-
-                PacketDistributor.sendToServer(new ChaosCubeC2SP(modEntity.getBlockPos(), update));
-                modEntity.setData(MODULAR_CHAOS_CUBE, update);
-                modEntity.setChanged();
-                player.displayClientMessage(Component.literal("Pasted!"), true);
-            } else {
-                player.displayClientMessage(Component.literal("Nothing to paste!"), true);
-            }
-        };
+//        if(keyDownV && keyDownCtrl) {
+//            if(player.hasData(MODULAR_CHAOS_CUBE)){
+//                var chaosCubeProperties = player.getData(MODULAR_CHAOS_CUBE);
+//                var action = chaosCubeProperties.getDirection(chaosCubeProperties.action());
+//                var input = chaosCubeProperties.getDirection(chaosCubeProperties.input());
+//                var output = chaosCubeProperties.getDirection(chaosCubeProperties.output());
+//
+//                var actionNew = getRelativePosition(action, modEntity.getBlockPos());
+//                var inputNew = getRelativePosition(input, modEntity.getBlockPos());
+//                var outputNew = getRelativePosition(output, modEntity.getBlockPos());
+//                var update = updateAll(actionNew, inputNew, outputNew, chaosCubeProperties.active(), chaosCubeProperties.speed(), modEntity.getBlockPos(), chaosCubeProperties.chained());
+//
+//                PacketDistributor.sendToServer(new ChaosCubeC2SP(modEntity.getBlockPos(), update));
+//                modEntity.getData = update;
+//                modEntity.setChanged();
+//                player.displayClientMessage(Component.literal("Pasted!"), true);
+//            } else {
+//                player.displayClientMessage(Component.literal("Nothing to paste!"), true);
+//            }
+//        };
     }
 
     public static void questTracker(Level level, Player player) {

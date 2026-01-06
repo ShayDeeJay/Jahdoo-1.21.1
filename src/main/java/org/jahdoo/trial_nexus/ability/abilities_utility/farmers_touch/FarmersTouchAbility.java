@@ -85,4 +85,8 @@ public class FarmersTouchAbility extends AbstractBlockAbility {
             .buildAndReturn();
     }
 
+    @Override
+    public boolean isOutputUser() {
+        return true;
+    }
 }

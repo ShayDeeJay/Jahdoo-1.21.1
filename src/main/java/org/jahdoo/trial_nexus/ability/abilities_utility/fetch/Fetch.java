@@ -116,6 +116,7 @@ public class Fetch extends AbstractUtilityProjectile {
                 var bE = level.getBlockEntity(BlockPos.containing(pos));
                 if(bE instanceof ChaosCubeEntity autoEntity){
                     autoEntity.externalOutputInventory(level, itemEntity);
+
                 }
             }
         };

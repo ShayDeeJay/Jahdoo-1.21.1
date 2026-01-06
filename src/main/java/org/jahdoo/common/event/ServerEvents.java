@@ -91,6 +91,7 @@ public class ServerEvents {
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
         var player = rightClickItem.getEntity();
 
+
         triggerUseEvent(player, player.level());
         removeShieldUse(rightClickItem);
     }
@@ -177,6 +178,8 @@ public class ServerEvents {
 //                serverPlayer.teleportTo(23.5, 107, 27.5);
             }
         }
+
+        System.out.println(getBlock);
 
         //Used for speeding up ticks
 //        for (int i = 0; i < 10; i++){

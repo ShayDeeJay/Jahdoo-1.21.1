@@ -102,6 +102,11 @@ public class ModBlockStateProvider extends BlockStateProvider {
         );
 
         simpleBlockWithItem(
+            MYSTICAL_AUGMENTER.get(),
+            new UncheckedModelFile(modLoc("block/mystical_augmenter"))
+        );
+
+        simpleBlockWithItem(
             LIGHTING.get(),
             new UncheckedModelFile(modLoc("block/lighting"))
         );

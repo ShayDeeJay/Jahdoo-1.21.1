@@ -42,7 +42,7 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         AtomicInteger atomicInteger = new AtomicInteger();
         top(pPoseStack, creatorEntity, itemRenderer, pBuffer, pPartialTick, pPackedLight);
-        focusedItem(pPoseStack, creatorEntity, itemRenderer, pBuffer, pPartialTick);
+        focusedItem(pPoseStack, creatorEntity, itemRenderer, pBuffer, pPartialTick, pPackedLight);
 
         for(int i = 0; i < creatorEntity.inputItemHandler.getSlots(); i++){
             ItemStack itemStack = creatorEntity.inputItemHandler.getStackInSlot(i);
@@ -143,7 +143,7 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         stack.popPose();
     }
 
-    private void focusedItem(PoseStack pPoseStack, CreatorEntity pBlockEntity, ItemRenderer itemRenderer, MultiBufferSource pBuffer, float partialTicks){
+    private void focusedItem(PoseStack pPoseStack, CreatorEntity pBlockEntity, ItemRenderer itemRenderer, MultiBufferSource pBuffer, float partialTicks, float packedLight){
         pPoseStack.pushPose();
         var level = Minecraft.getInstance().level;
         if(level == null) return;
@@ -162,7 +162,7 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         itemRenderer.renderStatic(
             itemStack,
             ItemDisplayContext.FIXED,
-            outputSlot != null ? maxLightLevel / 2 : 200,
+            outputSlot != null ? (int) packedLight : 255,
             OverlayTexture.NO_OVERLAY,
             pPoseStack,
             pBuffer,

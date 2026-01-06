@@ -20,6 +20,7 @@ import org.jahdoo.common.block.loot_pot.LootPotBlockEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.block.power_up_station.PowerUpStationEntity;
 import org.jahdoo.common.block.divine_forge.DivineForgeEntity;
+import org.jahdoo.common.block.mystical_augmenter.MysticalAugmenterEntity;
 import org.jahdoo.common.block.shopping_table.ShoppingTableEntity;
 import org.jahdoo.common.block.tank.TankBlockEntity;
 import org.jahdoo.common.block.ticket_bureau.TicketBureauBlockEntity;
@@ -63,6 +64,9 @@ public class BlockEntityReg {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ChaosCubeEntity>> MODULAR_CHAOS_CUBE_BE =
         registerBlockEntity("modular_chaos_cube_be", ChaosCubeEntity::new, MODULAR_CHAOS_CUBE);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MysticalAugmenterEntity>> MYSTICAL_AUGMENTER_BE =
+        registerBlockEntity("mystical_augmenter_be", MysticalAugmenterEntity::new, MYSTICAL_AUGMENTER);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LootChestEntity>> LOOT_CHEST_BE =
         registerBlockEntity("loot_chest_be", LootChestEntity::new, LOOT_CHEST);

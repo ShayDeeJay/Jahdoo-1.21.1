@@ -24,12 +24,24 @@ public class PlayerWallet implements IAttachment {
     public static final String WALLET_TOTAL = "wallet_total";
     int wallet;
 
-    public void addBronze(int multi) { wallet += multi; }
-    public void addSilver(int multi) { wallet += (100 * multi); }
-    public void addGold(int multi) { wallet += (10000 * multi); }
-    public void addPlatinum(int multi) { wallet += (1000000 * multi); }
-    public void setWallet(int newWallet) { wallet = newWallet; }
-    public int getWallet() { return wallet; }
+    public void addBronze(int multi) {
+        wallet += multi;
+    }
+    public void addSilver(int multi) {
+        wallet += (100 * multi);
+    }
+    public void addGold(int multi) {
+        wallet += (10000 * multi);
+    }
+    public void addPlatinum(int multi) {
+        wallet += (1000000 * multi);
+    }
+    public void setWallet(int newWallet) {
+        wallet = newWallet;
+    }
+    public int getWallet() {
+        return wallet;
+    }
 
     public static void updateWallet(Player player, CurrencyConverter converter){
         var getWallet = player.getData(AttachmentReg.PLAYER_WALLET_DATA);

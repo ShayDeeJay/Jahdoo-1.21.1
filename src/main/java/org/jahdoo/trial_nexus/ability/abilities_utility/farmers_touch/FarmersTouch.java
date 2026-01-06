@@ -10,25 +10,28 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.CommonHooks;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
+import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.UtilityHelpers;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
-import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.particle.ParticleHandlers;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.minecraft.world.level.block.SugarCaneBlock.AGE;
+import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.RANGE;
 import static org.jahdoo.trial_nexus.ability.abilities_utility.farmers_touch.FarmersTouchAbility.GROWTH_CHANCE;
 import static org.jahdoo.trial_nexus.ability.abilities_utility.farmers_touch.FarmersTouchAbility.HARVEST_CHANCE;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
 
 public class FarmersTouch extends AbstractUtilityProjectile {
 
@@ -82,7 +85,7 @@ public class FarmersTouch extends AbstractUtilityProjectile {
         );
     }
 
-    private void setParticleNova(Vec3 worldPosition, Level level){
+    public void setParticleNova(Vec3 worldPosition, Level level){
         int col1 = this.getElementType().partColourA();
         int col2 = this.getElementType().partColourFade();
         var directions = worldPosition.subtract(this.generic.position()).normalize();
@@ -101,12 +104,44 @@ public class FarmersTouch extends AbstractUtilityProjectile {
             counter = Math.min(counter + 0.5, novaMaxSize);
             PositionFinders.getOuterSquareOfRadius(projectile.position(), counter, counter*10,
                 positions -> {
-                    this.applyBoneMeal(projectile.level(), BlockPos.containing(positions));
-                    this.applyBoneMeal(projectile.level(), BlockPos.containing(positions).below());
+                    var level = projectile.level();
+                    var pos = BlockPos.containing(positions);
+                    this.applyBoneMeal(level, pos);
+                    this.applyBoneMeal(level, pos.below());
                 }
             );
         } else {
             projectile.discard();
+        }
+    }
+
+    private void growAgeRelatedCrops(Level level, BlockPos pos, BlockState state) {
+        var above = pos.above();
+        if (level.isEmptyBlock(above) && state.hasProperty(AGE)) {
+            int i;
+            var block = state.getBlock();
+            i = 1;
+            while (level.getBlockState(pos.below(i)).is(block)) ++i;
+
+            if (i < 3) {
+                int j = state.getValue(AGE);
+                if (CommonHooks.canCropGrow(level, pos, state, true)) {
+                    if (j == 15) {
+                        level.setBlockAndUpdate(above, block.defaultBlockState());
+                        CommonHooks.fireCropGrowPost(level, above, block.defaultBlockState());
+                        level.setBlock(pos, state.setValue(AGE, 0), 4);
+                        harvest(level, above, state);
+                    } else {
+                        level.setBlock(pos, state.setValue(AGE, j + 1), 4);
+                    }
+                    return;
+                }
+            }
+        }
+
+        var stateAbove = level.getBlockState(above);
+        if(!stateAbove.isAir()){
+            if (stateAbove.hasProperty(AGE)) harvest(level, above, state);
         }
     }
 
@@ -115,10 +150,10 @@ public class FarmersTouch extends AbstractUtilityProjectile {
         if (level instanceof ServerLevel && !this.effectedPos.contains(pos)) {
             if(Random.nextInt(0, (int) harvestChance) == 0) {
                 if(blockstate.getBlock() instanceof CropBlock cropBlock && cropBlock.isMaxAge(blockstate)){
-                    UtilityHelpers.harvestBreaker(generic, pos, false);
+                    harvest(level, pos, blockstate);
                     level.setBlockAndUpdate(pos, cropBlock.getStateForAge(0));
-                    utilityParticleBurst(level, pos.getCenter().add(0, 0.4, 0), 8, 1, 3, 0.1f);
-                    Helpers.getSoundWithPosition(generic.level(), pos, blockstate.getSoundType(level, pos, null).getBreakSound());
+                } else {
+                    growAgeRelatedCrops(level, pos, blockstate);
                 }
             } else {
                 if (!(blockstate.getBlock() instanceof BonemealableBlock bonemealableblock)) return;
@@ -130,6 +165,12 @@ public class FarmersTouch extends AbstractUtilityProjectile {
             }
             this.effectedPos.add(pos);
         }
+    }
+
+    private void harvest(Level level, BlockPos pos, BlockState blockstate) {
+        UtilityHelpers.harvestBreaker(generic, pos, false);
+        utilityParticleBurst(level, pos.getCenter().add(0, 0.4, 0), 8, 1, 3, 0.1f);
+        Helpers.getSoundWithPosition(generic.level(), pos, blockstate.getSoundType(level, pos, null).getBreakSound());
     }
 
 }

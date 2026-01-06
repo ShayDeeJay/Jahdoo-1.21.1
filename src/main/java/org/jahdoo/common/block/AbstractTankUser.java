@@ -42,6 +42,26 @@ public abstract class AbstractTankUser extends AbstractBEInventory {
         return null;
     }
 
+//    @Override
+//    public int setInputSlots() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public int setOutputSlots() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public int getMaxSlotSizeInput() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public int getMaxSlotSizeOutput() {
+//        return 0;
+//    }
+
     protected boolean hasTankAndFuel(){
         if(this.level == null || this.tankPosition == null) return false;
         if (!(this.level.getBlockEntity(this.tankPosition) instanceof TankBlockEntity tankBlockEntity)) return false;

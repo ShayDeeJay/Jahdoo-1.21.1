@@ -1,6 +1,7 @@
 package org.jahdoo.trial_nexus.loot;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -14,13 +15,6 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.items.KeyItem;
-import org.jahdoo.trial_nexus.attachments.InstanceData;
-import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
-import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.trial_nexus.trading_post.ShoppingArmor;
-import org.jahdoo.trial_nexus.trading_post.ShoppingItems;
-import org.jahdoo.trial_nexus.utils.LocalLootBeamData;
-import org.jahdoo.trial_nexus.utils.Maths;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
 import org.jahdoo.common.items.magnet.Magnet;
@@ -30,6 +24,13 @@ import org.jahdoo.common.items.tome.TomeOfUnity;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
+import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.trading_post.ShoppingArmor;
+import org.jahdoo.trial_nexus.trading_post.ShoppingItems;
+import org.jahdoo.trial_nexus.utils.LocalLootBeamData;
+import org.jahdoo.trial_nexus.utils.Maths;
 import org.shaydee.loot_beams_neoforge.data_component.DataComponentsReg;
 import org.shaydee.loot_beams_neoforge.data_component.LootBeamComponent;
 
@@ -42,11 +43,11 @@ import static net.minecraft.world.level.storage.loot.parameters.LootContextParam
 import static net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN;
 import static net.minecraft.world.level.storage.loot.providers.number.ConstantValue.exactly;
 import static net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.between;
+import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.generateRandomTypAttribute;
 import static org.jahdoo.trial_nexus.trading_post.ShoppingItems.*;
 import static org.jahdoo.trial_nexus.utils.EnchantmentHelpers.enchant;
 import static org.jahdoo.trial_nexus.utils.EnchantmentHelpers.randomApplicableEnchantment;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.generateRandomTypAttribute;
 
 public class RewardLootTables {
 
@@ -287,15 +288,18 @@ public class RewardLootTables {
             .registryOrThrow(ENCHANTMENT)
             .getRandom(RandomSource.create())
             .ifPresent(
-                key -> {
-                    var value = key.getDelegate().value();
-                    var maxLevel = value.getMaxLevel();
-                    var minLevel = value.getMinLevel();
-
-                    enchant(itemStack, serverLevel.registryAccess(), key.getKey(), maxLevel > minLevel ? Random.nextInt(minLevel, maxLevel) : 1);
-                    attachLootBeam(itemStack, LocalLootBeamData.SPECIALLY_ENCHANTED_BOOK);
-                }
+                key -> bookGetter(serverLevel, itemStack, key, -1)
             );
+    }
+
+    public static void bookGetter(ServerLevel serverLevel, ItemStack itemStack, Holder.Reference<Enchantment> key, int enchantmentValue) {
+        var value = key.getDelegate().value();
+        var maxLevel = value.getMaxLevel();
+        var minLevel = value.getMinLevel();
+
+        var level = maxLevel > minLevel ? Random.nextInt(minLevel, maxLevel) : 1;
+        enchant(itemStack, serverLevel.registryAccess(), key.getKey(), enchantmentValue == -1 ? level : enchantmentValue);
+        attachLootBeam(itemStack, LocalLootBeamData.SPECIALLY_ENCHANTED_BOOK);
     }
 
     public static void attachItemData(

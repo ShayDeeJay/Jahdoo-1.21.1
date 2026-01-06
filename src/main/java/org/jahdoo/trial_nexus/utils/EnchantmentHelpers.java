@@ -3,6 +3,7 @@ package org.jahdoo.trial_nexus.utils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -53,6 +54,21 @@ public class EnchantmentHelpers {
 //            System.out.println(availableEnchantmentResult.enchantment.value());
         }
         return new ArrayList<>();
+    }
+
+    public static boolean applyBookEnchantsToItem(ItemStack enchantedBook, ItemStack enchantableItem, boolean checkOnly){
+        var lookUp = enchantedBook.getComponents().get(DataComponents.STORED_ENCHANTMENTS);
+        if(lookUp == null) return false;
+        var canApplyAnyEnchants = false;
+
+        for (var enchant : lookUp.entrySet()) {
+            if(enchant.getKey().value().canEnchant(enchantableItem)){
+                if(!checkOnly) enchantableItem.enchant(enchant.getKey(), enchant.getIntValue());
+                canApplyAnyEnchants = true;
+            }
+        }
+
+        return canApplyAnyEnchants;
     }
 
 }

@@ -10,7 +10,6 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.ability.abilities_utility.block_breaker.BlockBreakerAbility;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 
@@ -34,7 +33,7 @@ public class EnchantedFusion extends AbstractUtilityProjectile {
 
     @Override
     public String abilityId() {
-        return BlockBreakerAbility.abilityId.getPath().intern();
+        return EnchantedFusionAbility.abilityId.getPath().intern();
     }
 
     @Override
