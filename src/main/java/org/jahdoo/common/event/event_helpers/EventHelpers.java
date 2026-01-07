@@ -1,13 +1,16 @@
 package org.jahdoo.common.event.event_helpers;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
@@ -23,10 +26,13 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -94,6 +100,7 @@ import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 import static com.mojang.blaze3d.platform.InputConstants.*;
 import static net.minecraft.client.Minecraft.getInstance;
@@ -771,26 +778,15 @@ public class EventHelpers {
             }
         };
 
-//        if(keyDownV && keyDownCtrl) {
-//            if(player.hasData(MODULAR_CHAOS_CUBE)){
-//                var chaosCubeProperties = player.getData(MODULAR_CHAOS_CUBE);
-//                var action = chaosCubeProperties.getDirection(chaosCubeProperties.action());
-//                var input = chaosCubeProperties.getDirection(chaosCubeProperties.input());
-//                var output = chaosCubeProperties.getDirection(chaosCubeProperties.output());
-//
-//                var actionNew = getRelativePosition(action, modEntity.getBlockPos());
-//                var inputNew = getRelativePosition(input, modEntity.getBlockPos());
-//                var outputNew = getRelativePosition(output, modEntity.getBlockPos());
-//                var update = updateAll(actionNew, inputNew, outputNew, chaosCubeProperties.active(), chaosCubeProperties.speed(), modEntity.getBlockPos(), chaosCubeProperties.chained());
-//
-//                PacketDistributor.sendToServer(new ChaosCubeC2SP(modEntity.getBlockPos(), update));
-//                modEntity.getData = update;
-//                modEntity.setChanged();
-//                player.displayClientMessage(Component.literal("Pasted!"), true);
-//            } else {
-//                player.displayClientMessage(Component.literal("Nothing to paste!"), true);
-//            }
-//        };
+        if(keyDownV && keyDownCtrl) {
+            if(player.hasData(MODULAR_CHAOS_CUBE)){
+                modEntity.getData = player.getData(MODULAR_CHAOS_CUBE);
+                modEntity.setChanged();
+                player.displayClientMessage(Component.literal("Pasted!"), true);
+            } else {
+                player.displayClientMessage(Component.literal("Nothing to paste!"), true);
+            }
+        };
     }
 
     public static void questTracker(Level level, Player player) {
@@ -843,4 +839,29 @@ public class EventHelpers {
         }
     }
 
+    public static void isFoundOverEnchanted(ItemEnchantments enchants, FormattedText formattedText, ListIterator<Either<FormattedText, TooltipComponent>> iterator, String rawString, Level level) {
+        for (var entry : enchants.entrySet()) {
+            var enchantmentHolder = entry.getKey().value();
+
+            if(isOverEnchanted(entry.getKey(), entry.getIntValue())){
+                var name = enchantmentHolder.description().getString();
+                if (formattedText.toString().contains(name.toLowerCase())) {
+                    iterator.remove();
+                    var recoloured = Helpers.withStyleComponent(rawString, getOverEnchantColour(level));
+                    iterator.add(Either.left(recoloured));
+                }
+            }
+        }
+    }
+
+    public static int getOverEnchantColour(Level level){
+        return Helpers.getColorTransition(ColourStore.NETHERITE_BOX, ColourStore.UNIQUE_B, (int) level.getGameTime(), 50);
+    }
+
+    public static boolean isOverEnchanted(Holder<Enchantment> entry, int currentValue){
+        var enchantmentHolder = entry.value();
+        var maxLevel = enchantmentHolder.getMaxLevel();
+
+        return currentValue > maxLevel;
+    }
 }

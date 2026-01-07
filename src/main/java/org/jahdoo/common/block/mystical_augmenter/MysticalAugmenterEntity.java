@@ -6,7 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jahdoo.common.block.AbstractTankUser;
@@ -18,7 +18,6 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.attachments.ChaosCubeData;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
-import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -27,7 +26,7 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import static net.minecraft.core.Direction.byName;
+import static org.jahdoo.common.block.mystical_augmenter.MysticalAugmenterBlock.property;
 import static org.jahdoo.common.entities.EntityAnimations.*;
 
 
@@ -79,17 +78,36 @@ public class MysticalAugmenterEntity extends AbstractTankUser implements GeoBloc
         ticker++;
         if(this.ticker % 10 == 0) animateTicks(level);
 
-//        speedTicksAttached(level, pos, blockState);
+        if(!level.isClientSide){
+//            if(this.ticker % 10 == 0){
+//                var property = property(blockState);
+//                if (property != null) {
+//                    var relative = pos.relative(property);
+//                    var getNearby = level.getNearbyEntities(LivingEntity.class, DEFAULT, null, new AABB(pos).inflate(4));
+//                    var blockEntity = level.getBlockEntity(relative);
+//                    if (blockEntity instanceof SpawnerBlockEntity) {
+//                        for (var livingEntity : getNearby) {
+//                            livingEntity.teleportTo(-3.5, -60.5, -11.5);
+//                        }
+//                    }
+//                }
+//            }
+
+//            speedTicksAttached(level, pos, blockState);
+        }
     }
 
     private static void speedTicksAttached(Level level, BlockPos pos, BlockState blockState) {
-        for (int i = 0; i < 256; i++){
-            var relative = pos.relative(blockState.getValue(FACING));
+        var property = property(blockState);
+        if(property != null){
+            var relative = pos.relative(property);
             var blockEntity = level.getBlockEntity(relative);
-            if(blockEntity instanceof BlockEntity entity) {
-                BlockEntityTicker<BlockEntity> ticker = entity.getBlockState().getTicker(level, (BlockEntityType<BlockEntity>) entity.getType());
-                if(ticker != null){
-                    ticker.tick(level, relative, entity.getBlockState(), blockEntity);
+            if (blockEntity instanceof BlockEntity entity) {
+                for (int i = 0; i < 256; i++){
+                    var ticker = entity.getBlockState().getTicker(level, (BlockEntityType<BlockEntity>) entity.getType());
+                    if (ticker != null) {
+                        ticker.tick(level, relative, entity.getBlockState(), blockEntity);
+                    }
                 }
             }
         }
@@ -106,11 +124,6 @@ public class MysticalAugmenterEntity extends AbstractTankUser implements GeoBloc
                 ParticleHandlers.sendParticles(level, particle, poss, 0, directions.x, directions.y, directions.z, Helpers.Random.nextFloat(0.05F, 0.14F));
             }
         );
-    }
-
-    public @NotNull BlockPos getDirectionPos(String directionName) {
-        var direction = byName(directionName);
-        return this.getBlockPos().relative(direction == null ? Direction.UP : direction);
     }
 
     private PlayState getPlayState(AnimationState<MysticalAugmenterEntity> state) {

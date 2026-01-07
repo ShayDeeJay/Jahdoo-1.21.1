@@ -30,7 +30,7 @@ public class BaseWeapon extends SwordItem implements JahdooItem {
             brokenGearMessage(tooltipComponents, stack);
             return;
         }
-        enchantmentTooltip(stack, tooltipComponents, true);
+        enchantmentTooltip(stack, tooltipComponents, true, context.level());
         appendWeaponToolTip(stack, context, tooltipComponents);
     }
 

@@ -3,6 +3,7 @@ package org.jahdoo.common.event;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -32,8 +33,7 @@ import java.util.UUID;
 import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import static net.neoforged.neoforge.client.event.RenderLivingEvent.Pre;
 import static org.jahdoo.common.client.KeyBinding.*;
-import static org.jahdoo.common.event.event_helpers.EventHelpers.mysticEffectClient;
-import static org.jahdoo.common.event.event_helpers.EventHelpers.selectAbilitySlot;
+import static org.jahdoo.common.event.event_helpers.EventHelpers.*;
 import static org.jahdoo.common.event.event_helpers.KeyBindHelper.quickSelectBehaviour;
 import static org.jahdoo.common.event.event_helpers.KeyBindHelper.toggleLockAbility;
 import static org.jahdoo.common.event.event_helpers.OverlayEvent.crosshairManager;
@@ -107,11 +107,29 @@ public class ClientEvents {
                 }
             }
         }
+        var mc = Minecraft.getInstance();
+        var level = mc.level;
 
-//        if(itemStack.has(ComponentReg.JAHDOO_RARITY)){
-//            var runeSockets = new RarityTooltipRenderer.RarityTag(itemStack, current);
-//            current.addFirst(Either.right(runeSockets));
-//        }
+        if(level != null){
+            var iterator = current.listIterator();
+            while (iterator.hasNext()) {
+                var tooltipElement = iterator.next();
+                var left = tooltipElement.left();
+                if (left.isEmpty()) continue;
+
+                var formattedText = left.get();
+                var rawString = formattedText.getString();
+                var components = itemStack.getComponents();
+                var storedEnchants = components.get(DataComponents.STORED_ENCHANTMENTS);
+                var appliedEnchants = components.get(DataComponents.ENCHANTMENTS);
+
+                if(storedEnchants != null){
+                     isFoundOverEnchanted(storedEnchants, formattedText, iterator, rawString, level);
+                } else if (appliedEnchants != null) {
+                    isFoundOverEnchanted(appliedEnchants, formattedText, iterator, rawString, level);
+                }
+            }
+        }
 
         var allSlots = getAllSlots(itemStack);
         if(allSlots.isEmpty()) return;

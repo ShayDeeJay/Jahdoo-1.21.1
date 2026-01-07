@@ -42,7 +42,7 @@ public abstract class BaseItem extends Item implements JahdooItem {
         this.appendItemToolTips(stack, context, tooltipComponents, false);
         implicitModifiers(stack, tooltipComponents);
         bonusModifierTooltip(stack, tooltipComponents, context, true);
-        enchantmentTooltip(stack, tooltipComponents, true);
+        enchantmentTooltip(stack, tooltipComponents, true, context.level());
         runeSpacer(stack, tooltipComponents);
     }
 

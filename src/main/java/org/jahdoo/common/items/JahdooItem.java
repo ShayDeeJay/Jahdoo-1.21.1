@@ -5,6 +5,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import org.jahdoo.common.event.event_helpers.EventHelpers;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
@@ -14,6 +16,7 @@ import org.jahdoo.common.registers.ItemReg;
 
 import java.util.List;
 
+import static org.jahdoo.common.event.event_helpers.EventHelpers.getOverEnchantColour;
 import static org.jahdoo.trial_nexus.utils.ColourStore.CHAMPION_GOLD;
 import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
 import static org.jahdoo.trial_nexus.utils.Helpers.highlightTextComponent;
@@ -89,7 +92,7 @@ public interface JahdooItem {
         runeSpacer(stack, toolTips);
     }
 
-    default void enchantmentTooltip(ItemStack stack, List<Component> tooltipComponents, boolean addSpacer) {
+    default void enchantmentTooltip(ItemStack stack, List<Component> tooltipComponents, boolean addSpacer, Level level) {
         var itemEnchantments = stack.get(DataComponents.ENCHANTMENTS);
         if(itemEnchantments != null && !itemEnchantments.entrySet().isEmpty()){
             if(addSpacer) tooltipComponents.add(Component.literal(" "));
@@ -98,7 +101,12 @@ public interface JahdooItem {
                 var value = holderEntry.getKey().value();
                 var string = value.description().getString();
                 var s = JahdooRarity.romanNumeralConverter(holderEntry.getIntValue() - 1);
-                tooltipComponents.add(Helpers.withStyleComponent(string + " " + s, ColourStore.NETHERITE_BOX));
+                if(!EventHelpers.isOverEnchanted(holderEntry.getKey(), holderEntry.getIntValue())){
+                    tooltipComponents.add(Helpers.withStyleComponent(string + " " + s, ColourStore.NETHERITE_BOX));
+                } else {
+                    var recoloured = Helpers.withStyleComponent(string + " " + s, getOverEnchantColour(level));
+                    tooltipComponents.add(recoloured);
+                }
             }
         }
     }

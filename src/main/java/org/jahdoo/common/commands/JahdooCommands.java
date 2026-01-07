@@ -928,13 +928,17 @@ public class JahdooCommands {
 
 
             var itemStack = new ItemStack(Items.ENCHANTED_BOOK);
+            var itemStack1 = new ItemStack(Items.ENCHANTED_BOOK);
+            var itemStack2 = new ItemStack(Items.ENCHANTED_BOOK);
 
             RewardLootTables.bookGetter(serverLevel, itemStack, sharpness, 10);
             throwOrAddItem(player, itemStack);
-            RewardLootTables.bookGetter(serverLevel, itemStack, efficiency, 10);
-            throwOrAddItem(player, itemStack);
-            RewardLootTables.bookGetter(serverLevel, itemStack, unbreaking, 10);
-            throwOrAddItem(player, itemStack);
+
+            RewardLootTables.bookGetter(serverLevel, itemStack1, efficiency, 6);
+            throwOrAddItem(player, itemStack1);
+
+            RewardLootTables.bookGetter(serverLevel, itemStack2, unbreaking, 5);
+            throwOrAddItem(player, itemStack2);
         }
 
         return 1;

@@ -78,7 +78,7 @@ public abstract class BaseArmor extends ArmorItem implements JahdooItem {
             brokenGearMessage(tooltipComponents, stack);
             return;
         }
-        enchantmentTooltip(stack, tooltipComponents, true);
+        enchantmentTooltip(stack, tooltipComponents, true, context.level());
         tooltipComponents.add(Component.literal(" "));
         baseArmorTooltip(stack, tooltipComponents);
         bonusModifierTooltip(stack, tooltipComponents, context, true);
