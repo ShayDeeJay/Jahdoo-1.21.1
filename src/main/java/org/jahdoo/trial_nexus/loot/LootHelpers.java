@@ -65,7 +65,6 @@ public class LootHelpers {
             if (item.is(ItemReg.LOOT_KEY) && keyData != null && KeyItem.isValidKey(item, player.level())) {
                 var value = keyData.value();
                 var isValid = value == lootChestEntity.getRarity;
-                System.out.println(value);
                 RunData.incrementChestOpenedExp(serverLevel, player, value);
                 var getInstance = serverLevel.getData(INSTANCE_DATA);
                 if (isValid) {

@@ -8,21 +8,21 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.client.screens.AbstractPanableScreen;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
 import static org.jahdoo.common.client.Icons.SELECTED_GUI_BUTTON_OVERLAY;
 import static org.jahdoo.common.client.SharedUI.boxMaker;
+import static org.jahdoo.trial_nexus.utils.ColourStore.HEADER_COLOUR;
+import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
 
 public class AbilitySlotButton extends ImageButton {
 
@@ -92,15 +92,17 @@ public class AbilitySlotButton extends ImageButton {
         var easedValue = (int) (easedTick * (totalSize - defaultSize)) + defaultSize;
         var offset = (easedValue - defaultSize) / 2;
         var mc = Minecraft.getInstance();
-        var slots = mc.player.getData(AttachmentReg.CASTER_DATA.get());
+        var player = mc.player;
+
+        if(player == null) return;
+        var slots = player.getData(AttachmentReg.CASTER_DATA.get());
         var validSlot = slotIndex < slots.getAllowedSlots();
         var colourFaded = FastColor.ARGB32.color(190, AbstractPanableScreen.uiColour());
 
         if(isSelected) sizes = totalSize;
         this.setSize((int) sizes-4, (int) sizes-4);
 
-
-        graphics.drawCenteredString(mc.font, label, this.getX() + 15, this.getY() + 32, isSelected ? colourFaded : ColourStore.SUB_HEADER_COLOUR);
+        graphics.drawCenteredString(mc.font, label, this.getX() + this.totalSize/2 +1, this.getY() + totalSize + 2, isSelected ? colourFaded : ColourStore.SUB_HEADER_COLOUR);
         graphics.blit(this.sprites.enabled(), this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
 
         if(isSelected) {

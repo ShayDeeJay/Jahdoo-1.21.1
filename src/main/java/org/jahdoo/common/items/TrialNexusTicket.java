@@ -201,10 +201,9 @@ public class TrialNexusTicket extends Item implements JahdooItem {
 
                 serverPlayer.teleportTo(dimTrans.newLevel(), nPos.x, nPos.y, nPos.z, 90, 0);
                 serverPlayer.stopUsingItem();
-                var i = serverStack.get(STORE_INTEGER);
+                var i = serverStack.get(STORE_INTEGER).intValue();
                 serverStack.set(STORE_INTEGER, i - 1);
 
-                System.out.println(i);
                 if(i-1 == 0) serverStack.shrink(1);
                 serverPlayer.playNotifySound(SoundReg.START_TRIAL.get(), SoundSource.AMBIENT, 1, 1);
             }

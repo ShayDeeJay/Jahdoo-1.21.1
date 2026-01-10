@@ -12,7 +12,7 @@ import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.abilities_combat.ancient_golem.SummonAncientGolem;
 import org.jahdoo.trial_nexus.ability.abilities_combat.armageddon.Armageddon;
 import org.jahdoo.trial_nexus.ability.abilities_utility.block_bomb.BlockBomb;
-import org.jahdoo.trial_nexus.ability.abilities_utility.block_breaker.BlockBreaker;
+import org.jahdoo.trial_nexus.ability.abilities_utility.excavator.BlockBreaker;
 import org.jahdoo.trial_nexus.ability.abilities_utility.block_placer.BlockPlacer;
 import org.jahdoo.trial_nexus.ability.abilities_combat.boltz.Boltz;
 import org.jahdoo.trial_nexus.ability.abilities_combat.elemental_missile.ElementalMissile;

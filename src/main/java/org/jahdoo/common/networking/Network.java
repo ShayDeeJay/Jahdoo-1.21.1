@@ -76,6 +76,12 @@ public class Network {
         );
 
         payloadRegistrar.playToServer(
+            RegretAbilitiesC2SP.TYPE,
+            RegretAbilitiesC2SP.STREAM_CODEC,
+            RegretAbilitiesC2SP::handle
+        );
+
+        payloadRegistrar.playToServer(
             AddAbilityC2SP.TYPE,
             AddAbilityC2SP.STREAM_CODEC,
             AddAbilityC2SP::handle

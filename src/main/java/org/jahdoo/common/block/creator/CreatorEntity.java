@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.jahdoo.common.components.AbilityHolder.DEFAULT;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleHandlers.genericParticle;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
@@ -106,32 +105,36 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         return progress;
     }
 
-    private Optional<CreatorRecipes> getRecipe() {
+    public Optional<CreatorRecipes> getRecipe() {
         return CreatorRecipeReg.getSpellsByTypeId(getAllCraftables(), this);
     }
 
     public void tick(Level level, BlockPos blockPos, BlockState pState) {
-        if(this.canCraft()){
 
+        if(this.canCraft()){
             var creatorRecipes = this.getRecipe();
             if(creatorRecipes.isPresent()){
                 var getRecipe = creatorRecipes.get();
                 if(this.getResult == null) this.getResult = getRecipe.result(this);
-                if(getRecipe.secondaryCheck(this)){
-                    this.progress++;
-                    this.tableProcessingParticle(level);
-                    this.setAnimTickIncrement(Math.min(this.animTickIncrement + 0.1, 2.5));
-                    if (this.animIncrement < 2.5) this.animIncrement += 0.05;
-                    this.onCompleteCraft(level, blockPos);
-                }
+                this.progress++;
+                this.tableProcessingParticle(level);
+                this.setAnimTickIncrement(Math.min(this.animTickIncrement + 0.1, 2.5));
+                if (this.animIncrement < 2.5) this.animIncrement += 0.05;
+                this.onCompleteCraft(level, blockPos);
+//                if(getRecipe.secondaryCheck(this)){
+//                    this.progress++;
+//                    this.tableProcessingParticle(level);
+//                    this.setAnimTickIncrement(Math.min(this.animTickIncrement + 0.1, 2.5));
+//                    if (this.animIncrement < 2.5) this.animIncrement += 0.05;
+//                    this.onCompleteCraft(level, blockPos);
+//                }
             }
 
         } else {
-
+            if(this.holder != null) this.setHolder(null);
             this.setAnimTickIncrement(Math.max(this.animTickIncrement - 0.1, 0.5));
             if(this.getResult != null) this.getResult = null;
             if(this.animIncrement > 0.5) this.animIncrement = 0.5;
-
         }
 
         animParticle(level, blockPos);
@@ -178,7 +181,8 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
         var b = getRecipe().isPresent();
         var c = this.hasTankAndFuel();
         var d = this.outputItemHandler.getStackInSlot(0).isEmpty();
-        return a && b && c && d;
+        var e = b && getRecipe().get().secondaryCheck(this);
+        return a && b && c && d & e;
     }
 
     public List<ItemStack> getAllCraftables(){
@@ -199,7 +203,7 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
         super.loadAdditional(tag, pRegistries);
         this.progress = tag.getInt("progress");
-        AbilityHolder.writeTag(holder == null ? DEFAULT : holder, tag);
+        if(this.holder != null) AbilityHolder.writeTag(holder, tag);
         if(tankPosition != null){
             int[] array = {tankPosition.getX(), tankPosition.getY(), tankPosition.getZ()};
             tag.putIntArray("blockPos", array);
@@ -211,7 +215,9 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
         super.saveAdditional(tag, pRegistries);
         tag.putInt("progress", this.progress);
-        this.holder = AbilityHolder.readTag(tag);
+        if(tag.contains("abilities")){
+            this.holder = AbilityHolder.readTag(tag);
+        }
         var array = tag.getIntArray("blockPos");
         if(!Arrays.stream(array).boxed().toList().isEmpty()){
             this.tankPosition = new BlockPos(array[0], array[1], array[2]);

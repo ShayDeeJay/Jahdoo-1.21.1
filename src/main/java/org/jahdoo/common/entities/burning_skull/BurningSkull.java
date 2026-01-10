@@ -12,18 +12,17 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import org.jahdoo.common.components.AbilityHolder;
+import org.jahdoo.common.registers.EntityReg;
+import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.ProjectileProperties;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.DamageUtils;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.components.AbilityHolder;
-import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.common.registers.mod.ElementReg;
-import org.jahdoo.common.registers.EntityReg;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimationController;
@@ -34,16 +33,16 @@ import static java.util.Comparator.comparingDouble;
 import static net.minecraft.network.syncher.EntityDataSerializers.INT;
 import static net.minecraft.network.syncher.SynchedEntityData.Builder;
 import static net.minecraft.network.syncher.SynchedEntityData.defineId;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour.canDamageEntity;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.trial_nexus.utils.Helpers.hasLineOfSight;
 import static org.jahdoo.common.entities.EntityAnimations.IDLE_SKULL;
 import static org.jahdoo.common.entities.EntityMovers.entityMover;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.registers.AttributeReg.INFERNO_MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.AttributeReg.MAGIC_DAMAGE_MULTIPLIER;
 import static org.jahdoo.common.registers.EffectReg.INFERNO_EFFECT;
+import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
+import static org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour.canDamageEntity;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.Helpers.hasLineOfSight;
 import static software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
 import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
 
@@ -57,6 +56,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
     private double effectDuration;
     private double effectStrength;
     private double effectChance;
+    private static final int PATHING_DELAY = 10;
 
     public BurningSkull(EntityType<? extends Projectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -65,11 +65,9 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
 
     public BurningSkull(
         LivingEntity owner,
-        double spacing,
-        @Nullable LivingEntity target
+        double spacing
     ) {
         super(EntityReg.FLAMING_SKULL.get(), owner.level());
-        if(target != null && hasLineOfSight(this, target)) this.target = target;
         setProjectileWithOffsets(this, owner, spacing, 1);
         this.reapplyPosition();
         this.setOwner(owner);
@@ -103,7 +101,11 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
     }
 
     private void setTargetDelay(){
-        if(this.tickCount > 5) this.setTarget();
+        if(delayTargetMet()) this.setTarget();
+    }
+
+    private boolean delayTargetMet() {
+        return this.tickCount > PATHING_DELAY;
     }
 
     @Override
@@ -169,9 +171,9 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
 
     private void entityMovement() {
         this.setLifetimes(getLifetime());
-        var canPathFind = target != null && target.isAlive() && !level().isClientSide;
-        if (canPathFind) entityMover(target, this, 0.5);
-        flamingSkull(this, tickCount, 0.35f, this.getElementType());
+        var canPathFind = target != null && target.isAlive() && !level().isClientSide && this.target.hasLineOfSight(this);
+        if (canPathFind && delayTargetMet()) entityMover(target, this, 0.5);
+        burningSkull(this, tickCount, 0.35f, this.getElementType());
     }
 
     @Override
@@ -222,6 +224,7 @@ public class BurningSkull extends ProjectileProperties implements GeoEntity {
             .stream()
             .filter(livingEntity -> !(livingEntity instanceof Player))
             .filter(livingEntity -> canDamageEntity(livingEntity, owner))
+            .filter(livingEntity -> hasLineOfSight(entity, livingEntity))
             .sorted(comparingDouble(livingEntity -> livingEntity.distanceToSqr(entity)))
             .toList();
     }

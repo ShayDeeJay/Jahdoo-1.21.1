@@ -1,14 +1,19 @@
 package org.jahdoo.trial_nexus.attachments;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.casual.arcade.dimensions.level.CustomLevel;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityHolder;
@@ -21,7 +26,8 @@ import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
+import org.jahdoo.common.registers.mod.SkillReg;
+import org.jahdoo.trial_nexus.ability.abilities_utility.hammer.HammerAbility;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +39,7 @@ import java.util.*;
 
 import static java.lang.String.valueOf;
 import static net.minecraft.util.FastColor.ARGB32.color;
+import static net.minecraft.world.entity.ai.attributes.Attributes.STEP_HEIGHT;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
@@ -58,7 +65,9 @@ public class CasterData implements IAttachment {
     private Map<String, Integer> abilityCooldownsStatic = new Object2IntOpenHashMap<>();
 
     private String selectedAbility = "";
-    private List<AbilityHolder> unlockedAbilities = new ArrayList<>();
+    private List<AbilityHolder> unlockedAbilities = new ArrayList<>(
+        Collections.singleton(new HammerAbility().setModifiers())
+    );
     public List<String> abilitySlots = new ArrayList<>();
     private List<String> unlockedSkills = new ArrayList<>();
     private List<String> activeSkills = new ArrayList<>();
@@ -415,6 +424,25 @@ public class CasterData implements IAttachment {
         return player.getData(CASTER_DATA).getLevel();
     }
 
+    public static void addStep(Player player){
+        var attributes = player.getAttributes();
+        var stepSkill = Helpers.res("step_skill");
+        if (hasSkill(player, SkillReg.CLIMBER.get().id())) {
+            if(!attributes.hasModifier(STEP_HEIGHT, stepSkill)){
+                var modifier = new AttributeModifier(stepSkill, 1, AttributeModifier.Operation.ADD_VALUE);
+                Multimap<Holder<Attribute>, AttributeModifier> multiMap = HashMultimap.create();
+                multiMap.put(STEP_HEIGHT, modifier);
+                attributes.addTransientAttributeModifiers(multiMap);
+                Helpers.addTransientAttribute(player, 1, "step_skill", STEP_HEIGHT);
+            }
+        } else if (attributes.hasModifier(STEP_HEIGHT, stepSkill)) {
+            Objects.requireNonNull(player.getAttribute(STEP_HEIGHT)).removeModifiers();
+        }
+    }
+
+    public static void removeStep(Player player){
+    }
+
     public static void addExperience(Player player, int exp){
         var data = player.getData(CASTER_DATA);
         data.calculateAbilityPoints(player, exp);
@@ -422,6 +450,8 @@ public class CasterData implements IAttachment {
     }
 
     public static void cooldownTickEvent(ServerPlayer serverPlayer){
+        CasterData.addStep(serverPlayer);
+
         var casterData = serverPlayer.getData(CASTER_DATA);
         if(!casterData.abilityCooldowns.isEmpty()){
             try{
@@ -487,7 +517,7 @@ public class CasterData implements IAttachment {
         livingEntity.getData(CASTER_DATA).decrementAbilityPoints(abilityPoints);
     }
 
-    public static void regretAbilities(LivingEntity livingEntity){
+    public static void regretAbilities(LivingEntity livingEntity, boolean playAudio){
         if(livingEntity instanceof ServerPlayer serverPlayer){
             var data = livingEntity.getData(CASTER_DATA);
             data.abilitySlots = new ArrayList<>(EMPTY);
@@ -497,13 +527,11 @@ public class CasterData implements IAttachment {
             data.abilityPoints = data.refundableSkillPoints;
 
             sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
-            sendToPlayer(serverPlayer, new ClientSoundS2CP(SoundReg.REJECT.get(), 1, 1, false));
-            sendToPlayer(serverPlayer, new ClientSoundS2CP(SoundReg.ORB_CREATE.get(), 0.4F, 2, false));
-            for (var activeEffect : livingEntity.getActiveEffects()) {
-                if(activeEffect instanceof JahdooMobEffect jahdooMobEffect && jahdooMobEffect.isSkill()){
-                    livingEntity.removeEffect(activeEffect.getEffect());
-                }
+            if(playAudio){
+                sendToPlayer(serverPlayer, new ClientSoundS2CP(SoundReg.REJECT.get(), 1, 1, false));
+                sendToPlayer(serverPlayer, new ClientSoundS2CP(SoundReg.ORB_CREATE.get(), 0.4F, 2, false));
             }
+            data.activeSkills = new ArrayList<>();
         }
     }
 

@@ -50,7 +50,6 @@ public class AugmentCrystal extends BaseItem implements ICurioItem {
         var bouncyFoot = AttributeReg.CHAINED_SEMTEX;
 //        System.out.println(player.level());
         replaceOrAddAttribute(itemStack, bouncyFoot.getRegisteredName(), bouncyFoot, 1, EquipmentSlot.BODY, true, "bonus");
-        System.out.println(itemStack.getAttributeModifiers());
         return super.use(level, player, usedHand);
     }
 }

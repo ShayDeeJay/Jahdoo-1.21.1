@@ -157,8 +157,6 @@ public class ChaosCubeScreen extends AbstractContainerScreen<ChaosCubeMenu> {
             accessor -> {
                 var isInsert = Objects.equals(label, "Insert");
                 if(isInsert ? accessor.isInputUser() : accessor.isOutputUser()){
-                    System.out.println("im here");
-
                     var sharedY = posY + 4;
                     var sharedX = posX + 4;
                     if(isInput) buildDirectionWidgets(sharedX + 94, sharedY - 68, label, entity().direction(), buttons, blockPos);

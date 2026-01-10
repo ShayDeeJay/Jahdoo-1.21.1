@@ -1,7 +1,7 @@
 package org.jahdoo.common.block.light_block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -16,7 +16,6 @@ import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.element.AbstractElement;
 
-import static net.minecraft.world.level.block.CrafterBlock.TRIGGERED;
 import static org.jahdoo.common.particle.ParticleHandlers.bakedParticle;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
 
@@ -32,17 +31,22 @@ public class LightBlock extends Block {
                 .instabreak()
                 .lightLevel((blockState) -> 15)
         );
-        this.registerDefaultState(this.stateDefinition.any().setValue(TRIGGERED, false));
+//        this.registerDefaultState(this.stateDefinition.any().setValue(TRIGGERED, false));s
 
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(TRIGGERED);
+//        builder.add(TRIGGERED);
+    }
+
+    @Override
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+//        level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
     }
 
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
-
+//        level.scheduleTick(pos, state.getBlock(), 10);
     }
 
     @Override
@@ -50,15 +54,15 @@ public class LightBlock extends Block {
 
     }
 
-    @Override
-    protected boolean isSignalSource(BlockState state) {
-        return true;
-    }
+//    @Override
+//    protected boolean isSignalSource(BlockState state) {
+//        return true;
+//    }
 
-    @Override
-    protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-        return 15;
-    }
+//    @Override
+//    protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+//        return 15;
+//    }
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {

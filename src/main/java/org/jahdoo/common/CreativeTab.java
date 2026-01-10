@@ -12,6 +12,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.items.magnet.MagnetData;
 import org.jahdoo.common.items.runes.rune_data.RuneHelpers;
+import org.jahdoo.common.registers.ComponentReg;
 
 import static net.minecraft.world.item.CreativeModeTabs.SPAWN_EGGS;
 import static org.jahdoo.common.registers.BlockReg.*;
@@ -47,6 +48,7 @@ public class CreativeTab {
                 outPut.accept(MODULAR_CHAOS_CUBE_ITEM.get());
                 outPut.accept(MYSTICAL_AUGMENTER_ITEM.get());
                 outPut.accept(TANK.get());
+                creativeTank(outPut);
 //                outPut.accept(WAND_MANAGER_TABLE.get());
                 outPut.accept(TICKET_BUREAU.get());
                 outPut.accept(RUNE_TABLE.get());
@@ -59,6 +61,7 @@ public class CreativeTab {
 
                 registerRecoveryReceipts(outPut);
                 registerCarePackages(outPut);
+                keys(outPut);
 
                 registerElementalSwords(outPut);
                 outPut.accept(ANCIENT_GLAIVE.get());
@@ -115,6 +118,22 @@ public class CreativeTab {
        ).withTabsBefore(SPAWN_EGGS)
         .build()
     );
+
+    private static void keys(CreativeModeTab.Output pOutput) {
+        for(int i = 5; i < 10; i++){
+            var elementalSword = new ItemStack(LOOT_KEY);
+            elementalSword.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(i));
+            pOutput.accept(elementalSword);
+
+        }
+    }
+
+    private static void creativeTank(CreativeModeTab.Output pOutput) {
+
+        var elementalSword = new ItemStack(TANK.get());
+        elementalSword.set(ComponentReg.STORE_INTEGER, 1);
+        pOutput.accept(elementalSword);
+    }
 
     private static void registerElementalSwords(CreativeModeTab.Output pOutput) {
         pOutput.accept(ELEMENTAL_SWORD.get());

@@ -1,4 +1,4 @@
-package org.jahdoo.trial_nexus.ability.abilities_utility.block_breaker;
+package org.jahdoo.trial_nexus.ability.abilities_utility.excavator;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.resources.ResourceLocation;

@@ -1,34 +1,27 @@
 package org.jahdoo.trial_nexus.ability.abilities_utility.block_bomb;
 
-import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
+import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
+import org.jahdoo.common.particle.ParticleHandlers;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
 import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
 import org.jahdoo.trial_nexus.ability.UtilityHelpers;
-import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
-import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
-import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.AUTO_COLLECT;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.REINFORCED;
-import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SMELTER;
-import static org.jahdoo.trial_nexus.ability.UtilityHelpers.*;
-import static org.jahdoo.trial_nexus.ability.abilities_utility.block_bomb.BlockBombAbility.BLOCK_DROP_CHANCE;
-import static org.jahdoo.trial_nexus.ability.abilities_utility.block_bomb.BlockBombAbility.EXPLOSION_RANGE;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.GENERIC_PARTICLE;
-import static org.jahdoo.trial_nexus.ability.abilities_utility.hammer.Hammer.valueToBool;
+import static org.jahdoo.trial_nexus.ability.UtilityHelpers.destroySpeed;
+import static org.jahdoo.trial_nexus.ability.abilities_utility.block_bomb.BlockBombAbility.EXPLOSION_RANGE;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
 
 public class BlockBomb extends AbstractUtilityProjectile {
@@ -41,24 +34,12 @@ public class BlockBomb extends AbstractUtilityProjectile {
     private int explosionTimer;
     private int totalRadiusMax;
     private int blockDropChance;
-    private double voidBlocks;
-    private double fortune;
-    private double silkTouch;
-    private double smelter;
-    private double collector;
-    private double reinforced;
 
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
         this.totalRadiusMax = (int) this.getTag(EXPLOSION_RANGE);
-        this.blockDropChance = (int) this.getTag(BLOCK_DROP_CHANCE);
-        this.voidBlocks = this.getTag(VOID_BLOCKS);
-        this.fortune = this.getTag(FORTUNE);
-        this.silkTouch = this.getTag(SILK_TOUCH);
-        this.smelter = this.getTag(SMELTER);
-        this.collector = this.getTag(AUTO_COLLECT);
-        this.reinforced = this.getTag(REINFORCED);
+//        this.blockDropChance = (int) this.getTag(BLOCK_DROP_CHANCE);
     }
 
     private Level level(){
@@ -167,31 +148,21 @@ public class BlockBomb extends AbstractUtilityProjectile {
     private void handleItemsAndExplosion(Level level) {
         PositionFinders.getSphericalBlockPositions(generic, totalRadius,
             radiusPosition -> {
-                BlockState blockstate = generic.level().getBlockState(radiusPosition);
+                var blockstate = level.getBlockState(radiusPosition);
                 if (blockstate.isAir()) return;
-                var range = destroySpeed(radiusPosition, generic.level());
-                if (!UtilityHelpers.range.contains(range)) return;
 
-                if (Random.nextInt(0, this.blockDropChance) == 0) {
-                    var breakSpeed = reinforced == 2 ? 50 : 0;
-                    dropItemsOrBlock(
-                        generic,
-                        radiusPosition,
-                        breakSpeed,
-                        (int) fortune,
-                        valueToBool(silkTouch),
-                        valueToBool(voidBlocks),
-                        valueToBool(smelter),
-                        valueToBool(collector)
-                    );
+                var fluidState = level.getFluidState(radiusPosition);
+                if(!fluidState.isEmpty()){
+                    level.setBlockAndUpdate(radiusPosition, Blocks.AIR.defaultBlockState());
+                    return;
                 }
 
-                var blockPart = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
-                ParticleHandlers.sendParticles(
-                    level, blockPart, radiusPosition.getCenter(), 1, 0, 0, 0, 0.1
-                );
+                var range = destroySpeed(radiusPosition, level);
+                if (!UtilityHelpers.range.contains(range)) return;
 
-                generic.level().removeBlock(radiusPosition, false);
+                if(!(blockstate.getBlock() instanceof DropExperienceBlock)){
+                    level.removeBlock(radiusPosition, false);
+                }
             }
         );
     }

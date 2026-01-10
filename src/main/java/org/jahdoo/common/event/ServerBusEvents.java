@@ -49,6 +49,8 @@ public class ServerBusEvents {
 
         event.registerBlockEntity(BLOCK, MODULAR_CHAOS_CUBE_BE.get(), (blockEntity, side) -> blockEntity.inputItemHandler);
 
+        event.registerBlockEntity(BLOCK, CREATOR_BE.get(), (blockEntity, side) -> blockEntity.inputItemHandler);
+
         event.registerBlockEntity(
               BLOCK, INFUSER_BE.get(), (blockEntity, side) -> {
                   if (side == Direction.UP) return blockEntity.inputItemHandler;

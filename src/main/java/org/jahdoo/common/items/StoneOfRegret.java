@@ -34,7 +34,7 @@ public class StoneOfRegret extends Item implements JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         var item = player.getItemInHand(usedHand);
-        CasterData.regretAbilities(player);
+        CasterData.regretAbilities(player, true);
         item.shrink(1);
         return super.use(level, player, usedHand);
     }

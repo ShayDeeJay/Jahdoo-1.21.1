@@ -13,13 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.ability.AbstractEntityProperty;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.ability.ProjectileProperties;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.ColourStore;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.power_up_station.PowerUpStationEntity;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.CoreData;
@@ -28,12 +21,19 @@ import org.jahdoo.common.registers.EntityReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.EntityDataReg;
+import org.jahdoo.trial_nexus.ability.AbstractEntityProperty;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.ability.ProjectileProperties;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
-import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 import static org.jahdoo.common.particle.ParticleHandlers.*;
 import static org.jahdoo.common.particle.ParticleStore.SOFT_PARTICLE;
+import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.utils.PositionFinders.getOuterRingOfRadiusRandom;
 
 public class GenericProjectile extends ProjectileProperties implements IEntityProperties {
 

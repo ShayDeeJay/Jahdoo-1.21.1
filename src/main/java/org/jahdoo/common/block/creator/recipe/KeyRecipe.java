@@ -18,15 +18,18 @@ public abstract class KeyRecipe implements CreatorRecipes {
 
     @Override
     public boolean canCraft(List<ItemStack> inputItems, CreatorEntity creator) {
-        if(!inputItems.stream().map(ItemStack::getItem).toList().contains(specialItem().getItem())) return false;
+//        if(!inputItems.stream().map(ItemStack::getItem).toList().contains(specialItem().getItem())) return false;
         var count = 0;
+        var specialItem = 0;
         for (var inputItem : inputItems) {
             if(inputItem.is(ItemReg.LOOT_KEY)){
                 var cData = inputItem.get(CUSTOM_MODEL_DATA);
                 if(cData != null && cData.value() == KEY_PIECE) count++;
             }
+
+            if(inputItem.is(specialItem().getItem())) specialItem++;
         }
-        return count == 4;
+        return count == 3 && specialItem == 1;
     }
 
     @Override

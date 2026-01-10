@@ -1,10 +1,7 @@
 package org.jahdoo.trial_nexus.ability.skills;
 
-import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
 import org.jahdoo.common.client.Icons;
-import org.jahdoo.common.registers.EffectReg;
 
 public class MageFlightSkill extends AbstractSkill {
 
@@ -18,11 +15,6 @@ public class MageFlightSkill extends AbstractSkill {
     @Override
     public ResourceLocation icon() {
         return Icons.MAGE_FLIGHT;
-    }
-
-    @Override
-    public Holder<MobEffect> skillEffect() {
-        return EffectReg.MAGE_FLIGHT;
     }
 
     @Override

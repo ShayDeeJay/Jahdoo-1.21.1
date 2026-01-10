@@ -39,7 +39,7 @@ public record CoreData(int required, int filled) {
             var required = data.required();
             var newData = new CoreData(required, Math.min(data.filled()+fillAmount, required));
             itemStack.set(ComponentReg.CORE_DATA, newData);
-            if(data.filled+1 >= required){
+            if(data.filled + 1 >= required){
                 itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
             }
         }

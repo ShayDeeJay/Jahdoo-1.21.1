@@ -651,7 +651,7 @@ public class JahdooCommands {
         var player = source.getPlayer();
         if(player == null) return 0;
 
-        CasterData.regretAbilities(player);
+        CasterData.regretAbilities(player, false);
         return 1;
     }
 

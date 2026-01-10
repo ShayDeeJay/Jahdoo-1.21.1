@@ -41,6 +41,9 @@ public class Icons {
     public static final ResourceLocation HEALTH_BAR =
         res(PREFIX + "health/health_bar.png");
 
+    public static final ResourceLocation CENTER =
+        res(PREFIX + "center_view.png");
+
     public static final ResourceLocation NUMERIC =
         res(PREFIX + "numeric.png");
 
@@ -184,6 +187,9 @@ public class Icons {
 
     public static final ResourceLocation CLIMBER =
         res(SKILLS + "climber.png");
+
+    public static final ResourceLocation DRIP_WALK =
+        res(SKILLS + "drip_walk.png");
 
     public static final ResourceLocation REBOUND =
         res(SKILLS + "rebound.png");

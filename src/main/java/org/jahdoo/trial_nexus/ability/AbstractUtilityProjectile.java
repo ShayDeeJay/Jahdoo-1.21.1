@@ -27,8 +27,6 @@ public abstract class AbstractUtilityProjectile extends DefaultEntityBehaviour {
         discardParticleEffect(5);
     }
 
-
-
     @Override
     public ResourceLocation getAbilityResource() {
         return null;

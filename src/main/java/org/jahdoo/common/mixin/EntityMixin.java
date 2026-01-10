@@ -8,6 +8,8 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
+import org.jahdoo.common.registers.mod.SkillReg;
+import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -60,7 +62,10 @@ public abstract class EntityMixin {
             }
         }
 
-//        return highestFluid == null ? original : new Vec3(original.x, highestValue, original.z);
+        if(CasterData.hasSkill(entity, SkillReg.DRIP_WALK.get().id())){
+            return highestFluid == null ? original : new Vec3(original.x, highestValue, original.z);
+        }
+
         return original;
     }
 

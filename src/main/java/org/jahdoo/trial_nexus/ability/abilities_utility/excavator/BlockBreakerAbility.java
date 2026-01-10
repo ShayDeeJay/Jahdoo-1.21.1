@@ -1,4 +1,4 @@
-package org.jahdoo.trial_nexus.ability.abilities_utility.block_breaker;
+package org.jahdoo.trial_nexus.ability.abilities_utility.excavator;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -15,7 +15,7 @@ import org.jahdoo.common.registers.mod.EntityDataReg;
 
 public class BlockBreakerAbility extends AbstractBlockAbility {
 
-    public static final ResourceLocation abilityId = Helpers.res("block_breaker");
+    public static final ResourceLocation abilityId = Helpers.res("excavator");
 
     @Override
     public String projectileKey() {
@@ -56,7 +56,7 @@ public class BlockBreakerAbility extends AbstractBlockAbility {
     public AbilityHolder setModifiers() {
        return new AbilityBuilder(abilityId.getPath().intern())
            .setStaticMana(1)
-            .buildAndReturn();
+           .buildAndReturn();
     }
 
     @Override

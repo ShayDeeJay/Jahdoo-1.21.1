@@ -2,15 +2,15 @@ package org.jahdoo.trial_nexus.attachments.player_abilities;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.PacketDistributor;
-import org.jahdoo.common.networking.server2client.BouncyFootS2CP;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.SkillReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.IAttachment;
 
 import static org.jahdoo.common.registers.AttachmentReg.BOUNCY_FOOT;
+import static org.jahdoo.trial_nexus.utils.Maths.singleFormattedDouble;
 
 public class Rebound implements IAttachment {
 
@@ -43,10 +43,21 @@ public class Rebound implements IAttachment {
     }
 
     public void onTick(Player player){
-        if(/*effectTimer > 0*/ CasterData.hasSkill(player, SkillReg.REBOUND.get().id())){
-            if(player instanceof ServerPlayer serverPlayer){
-                var payload = new BouncyFootS2CP(effectTimer, previousDelta, currentDelta, setHighestFallPoint);
-                PacketDistributor.sendToPlayer(serverPlayer, payload);
+        if(CasterData.hasSkill(player, SkillReg.REBOUND.get().id())){
+//            if(player instanceof ServerPlayer serverPlayer){
+//                var payload = new BouncyFootS2CP(effectTimer, previousDelta, currentDelta, setHighestFallPoint);
+//                PacketDistributor.sendToPlayer(serverPlayer, payload);
+//            }
+
+            player.resetFallDistance();
+            if (player.verticalCollisionBelow && previousDelta != currentDelta) {
+                if(setHighestFallPoint > 0.5D){
+                    var reducedDelta = Math.abs(previousDelta / 1.5);
+                    var volume = (float) reducedDelta - 0.2f;
+                    player.playSound(SoundEvents.FROG_TONGUE, volume, 1.2f);
+                    player.playSound(SoundReg.SUSPEND.get(), volume, 2f);
+                    player.setDeltaMovement(player.getDeltaMovement().add(0, singleFormattedDouble(Math.min(reducedDelta, 1)), 0));
+                }
             }
 
             this.setHighestFallPoint = Math.max(this.setHighestFallPoint, player.fallDistance);

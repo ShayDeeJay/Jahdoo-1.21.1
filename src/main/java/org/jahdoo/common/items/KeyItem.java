@@ -28,8 +28,8 @@ public class KeyItem extends Item implements JahdooItem {
     public static final int EXIT_KEY = 5;
     public static final int BAZAAR_KEY = 6;
     public static final int CRYPT_KEY = 7;
-    public static final int KEY_PIECE = 8;
-    public static final int SANCTUARY_KEY = 9;
+    public static final int SANCTUARY_KEY = 8;
+    public static final int KEY_PIECE = 9;
 
 
     public enum KeyTypes {
@@ -133,12 +133,9 @@ public class KeyItem extends Item implements JahdooItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if(!stack.has(ComponentReg.ID)){
-        }
         if(level instanceof CustomLevel customLevel){
             stack.set(ComponentReg.ID, customLevel.getDescriptionKey());
         }
-
         super.inventoryTick(stack, level, entity, slotId, isSelected);
     }
 

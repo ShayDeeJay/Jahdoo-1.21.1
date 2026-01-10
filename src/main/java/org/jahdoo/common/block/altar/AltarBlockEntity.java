@@ -27,7 +27,6 @@ import org.jahdoo.common.registers.BlockEntityReg;
 import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.level_manager.BlockSetupManager;
-import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.mobs.MobManager;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
@@ -57,6 +56,7 @@ import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.RunData.incrementClearedRoomExp;
 import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.blockExitBarrier;
 import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setCoinLootChest;
+import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.*;
 import static org.jahdoo.trial_nexus.level_manager.StructureManager.placeLocksWithData;
 import static org.jahdoo.trial_nexus.mobs.MobManager.addAndPositionEntity;
 import static org.jahdoo.trial_nexus.mobs.MobManager.championSpawn;
@@ -228,7 +228,9 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         }
 
         var clearedRooms = data.getClearedRooms();
-        if(clearedRooms % 5 == 0){
+        var difficulty = data.getDifficulty();
+        var interval = difficulty.equals(NOVICE.getSerializedName()) ? 5 : difficulty.equals(EXPERT.getSerializedName()) ? 10 : 20;
+        if(clearedRooms % interval == 0){
             BlockSetupManager.setPerkTable(serverLevel, pos, 4);
         } else {
             setCoinLootChest(serverLevel, pos, direction, -1, true, clearedRooms-1);
@@ -351,7 +353,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
             }
 
             if(!this.spawnedSafe && Random.nextInt(200 - privateTicks) == 0){
-                var difficulty = InstanceDifficulty.getFromLevel(serverLevel);
+                var difficulty = getFromLevel(serverLevel);
                 var id = difficulty.getId();
                 var percentageChance = (2 + id) * 10;
                 if (Maths.percentageChance(percentageChance)) {

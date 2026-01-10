@@ -263,71 +263,85 @@ public class StructureManager {
             for (var blockPos : findBlock) {
                 var placerState = level.getBlockState(blockPos);
                 if(getValidRooms().contains(roomId)){
-                    if (placerState.is(Blocks.DIAMOND_BLOCK)) {
-                        level.setBlockAndUpdate(blockPos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
-                        if (level.getBlockEntity(blockPos) instanceof AltarBlockEntity e) {
-                            e.roomId = roomId;
-                            e.direction = direction;
-                        }
-                    }
-
-                    if (placerState.is(Blocks.MAGENTA_STAINED_GLASS)) {
-                        var spawnChance = percentageChance(20) && !alreadyPlaced;
-                        var station = BlockReg.POWER_UP_STATION.get().defaultBlockState();
-                        var air = Blocks.AIR.defaultBlockState();
-                        if (spawnChance) alreadyPlaced = true;
-                        level.setBlockAndUpdate(blockPos, spawnChance ? station : air);
-                    }
-
-                    if (placerState.is(Blocks.ORANGE_STAINED_GLASS)) {
-                        if(level instanceof ServerLevel sLevel){
-                            var bPos = blockPos;
-                            var spawnChance = percentageChance(20);
-                            placePot(level, sLevel, blockPos, percentageChance(20));
-
-                            if(percentageChance(20)){
-                                for (int i = 0; i < 0; i++) {
-                                    var poss = new ArrayList<BlockPos>();
-                                    for (var direction1 : NO_Y) {
-                                        var relativeA = bPos.relative(direction1);
-                                        if (level.getBlockState(relativeA).is(ModTags.Block.CAN_REPLACE_BLOCK) && !level.getBlockState(relativeA.below()).is(BlockReg.LOOT_POT)) {
-                                            placePot(level, sLevel, relativeA, spawnChance);
-                                            poss.add(relativeA);
-                                        }
-                                    }
-                                    if (!poss.isEmpty()) bPos = Helpers.listRandom(poss);
-                                }
-                            }
-                        }
-                    }
-
-                    if (placerState.is(Blocks.PINK_STAINED_GLASS)) {
-                        if(level instanceof ServerLevel sLevel){
-                            var state = Helpers.listRandom(List.of(BlockReg.ROSE_QUARTZ_ORE.get(), BlockReg.ENCHANTED_DIAMOND_ORE.get())).defaultBlockState();
-                            var spawnChance = percentageChance(10);
-                            placeOre(level, blockPos, sLevel, spawnChance, state);
-                            var bPos = blockPos;
-
-                            if(percentageChance(20)){
-                                for (int i = 0; i < 0; i++) {
-                                    var poss = new ArrayList<BlockPos>();
-                                    for (var direction1 : stream().toList()) {
-                                        var relativeA = bPos.relative(direction1);
-                                        if (level.getBlockState(relativeA).is(ModTags.Block.CAN_REPLACE_BLOCK)) {
-                                            placeOre(level, relativeA, sLevel, spawnChance, state);
-                                            poss.add(relativeA);
-                                        }
-                                    }
-                                    if (!poss.isEmpty()) bPos = Helpers.listRandom(poss);
-                                }
-                            }
-                        }
-                    }
+                    placeAltar(level, direction, roomId, blockPos, placerState);
+                    alreadyPlaced = placePowerUpStation(level, blockPos, placerState, alreadyPlaced);
+                    placeLootPots(level, blockPos, placerState);
+                    placeOres(level, blockPos, placerState);
                 }
 
                 if(placerState.is(Blocks.OBSERVER)) setLocks(serverLevel, blockPos, true);
 
                 if(placerState.is(NETHERITE_BLOCK)) level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
+            }
+        }
+    }
+
+    private static void placeOres(Level level, BlockPos blockPos, BlockState placerState) {
+        if (placerState.is(Blocks.PINK_STAINED_GLASS)) {
+            if(level instanceof ServerLevel sLevel){
+                var state = Helpers.listRandom(List.of(BlockReg.ROSE_QUARTZ_ORE.get(), BlockReg.ENCHANTED_DIAMOND_ORE.get())).defaultBlockState();
+                var spawnChance = percentageChance(10);
+                placeOre(level, blockPos, sLevel, spawnChance, state);
+                var bPos = blockPos;
+
+                if(percentageChance(20)){
+                    for (int i = 0; i < 0; i++) {
+                        var poss = new ArrayList<BlockPos>();
+                        for (var direction1 : stream().toList()) {
+                            var relativeA = bPos.relative(direction1);
+                            if (level.getBlockState(relativeA).is(ModTags.Block.CAN_REPLACE_BLOCK)) {
+                                placeOre(level, relativeA, sLevel, spawnChance, state);
+                                poss.add(relativeA);
+                            }
+                        }
+                        if (!poss.isEmpty()) bPos = Helpers.listRandom(poss);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void placeLootPots(Level level, BlockPos blockPos, BlockState placerState) {
+        if (placerState.is(Blocks.ORANGE_STAINED_GLASS)) {
+            if(level instanceof ServerLevel sLevel){
+                var bPos = blockPos;
+                var spawnChance = percentageChance(20);
+                placePot(level, sLevel, blockPos, percentageChance(20));
+
+                if(percentageChance(20)){
+                    for (int i = 0; i < 0; i++) {
+                        var poss = new ArrayList<BlockPos>();
+                        for (var direction1 : NO_Y) {
+                            var relativeA = bPos.relative(direction1);
+                            if (level.getBlockState(relativeA).is(ModTags.Block.CAN_REPLACE_BLOCK) && !level.getBlockState(relativeA.below()).is(BlockReg.LOOT_POT)) {
+                                placePot(level, sLevel, relativeA, spawnChance);
+                                poss.add(relativeA);
+                            }
+                        }
+                        if (!poss.isEmpty()) bPos = Helpers.listRandom(poss);
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean placePowerUpStation(Level level, BlockPos blockPos, BlockState placerState, boolean alreadyPlaced) {
+        if (placerState.is(Blocks.MAGENTA_STAINED_GLASS)) {
+            var spawnChance = percentageChance(20) && !alreadyPlaced;
+            var station = BlockReg.POWER_UP_STATION.get().defaultBlockState();
+            var air = Blocks.AIR.defaultBlockState();
+            if (spawnChance) alreadyPlaced = true;
+            level.setBlockAndUpdate(blockPos, spawnChance ? station : air);
+        }
+        return alreadyPlaced;
+    }
+
+    private static void placeAltar(Level level, Direction direction, String roomId, BlockPos blockPos, BlockState placerState) {
+        if (placerState.is(Blocks.DIAMOND_BLOCK)) {
+            level.setBlockAndUpdate(blockPos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
+            if (level.getBlockEntity(blockPos) instanceof AltarBlockEntity e) {
+                e.roomId = roomId;
+                e.direction = direction;
             }
         }
     }

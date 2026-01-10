@@ -10,15 +10,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.common.particle.particle_options.BakedParticleOptions;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
 import org.jahdoo.common.registers.mod.ElementReg;
+import org.jahdoo.trial_nexus.element.AbstractElement;
 import org.jahdoo.trial_nexus.utils.PositionFinders;
 
 import java.util.List;
 
-import static net.minecraft.util.RandomSource.*;
+import static net.minecraft.util.RandomSource.create;
 import static org.jahdoo.common.particle.ParticleStore.*;
 import static org.jahdoo.common.registers.AttachmentReg.CASTER_DATA;
 import static org.jahdoo.trial_nexus.utils.Helpers.Random;
@@ -329,7 +329,7 @@ public class ParticleHandlers {
         }
     }
 
-    public static void flamingSkull(
+    public static void burningSkull(
         Projectile projectile,
         int tickCount,
         float spread,

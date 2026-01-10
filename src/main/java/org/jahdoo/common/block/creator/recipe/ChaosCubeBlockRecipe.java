@@ -25,13 +25,14 @@ public class ChaosCubeBlockRecipe implements CreatorRecipes {
 
     @Override
     public boolean secondaryCheck(CreatorEntity creator) {
-        var stackInSlot = creator.getResult();
-        return !stackInSlot.isEmpty() && stackInSlot.has(ComponentReg.ABILITY_HOLDER);
+        return creator.getHolder() != null;
     }
 
     @Override
     public ItemStack result(CreatorEntity creator) {
-        return new ItemStack(BlockReg.MODULAR_CHAOS_CUBE.get().asItem());
+        var stack = new ItemStack(BlockReg.MODULAR_CHAOS_CUBE.get().asItem());
+        stack.set(ComponentReg.ABILITY_HOLDER, creator.getHolder());
+        return stack;
     }
 
     @Override

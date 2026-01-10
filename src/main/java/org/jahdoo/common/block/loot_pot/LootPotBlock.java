@@ -110,9 +110,7 @@ public class LootPotBlock extends BaseEntityBlock implements SimpleWaterloggedBl
 
     protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos pos, Player player, BlockHitResult result) {
         BlockEntity var7 = level.getBlockEntity(pos);
-        System.out.println(blockState);
         blockState.setValue(TEXTURE, 2);
-        System.out.println(blockState);
         if (var7 instanceof DecoratedPotBlockEntity decoratedpotblockentity) {
             level.playSound(null, pos, SoundEvents.DECORATED_POT_INSERT_FAIL, SoundSource.BLOCKS, 1.0F, 1.0F);
             decoratedpotblockentity.wobble(DecoratedPotBlockEntity.WobbleStyle.NEGATIVE);

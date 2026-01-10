@@ -3,20 +3,16 @@ package org.jahdoo.common.client.screens;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import org.jahdoo.trial_nexus.ability.Ability;
-import org.jahdoo.trial_nexus.ability.AbilityBuilder;
-import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
-import org.jahdoo.trial_nexus.ability.skills.AbstractSkill;
-import org.jahdoo.trial_nexus.attachments.CasterData;
-import org.jahdoo.trial_nexus.element.AbstractElement;
-import org.jahdoo.trial_nexus.utils.Helpers;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.client2server.*;
@@ -25,6 +21,13 @@ import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.SkillReg;
+import org.jahdoo.trial_nexus.ability.Ability;
+import org.jahdoo.trial_nexus.ability.AbilityBuilder;
+import org.jahdoo.trial_nexus.ability.AbilityComponentHelper;
+import org.jahdoo.trial_nexus.ability.skills.AbstractSkill;
+import org.jahdoo.trial_nexus.attachments.CasterData;
+import org.jahdoo.trial_nexus.element.AbstractElement;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -36,13 +39,14 @@ import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
 import static com.mojang.blaze3d.platform.InputConstants.isKeyDown;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
+import static org.jahdoo.common.client.Icons.*;
+import static org.jahdoo.common.client.SharedUI.*;
+import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
+import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSoundAbilities;
 import static org.jahdoo.trial_nexus.ability.AbilityComponentHelper.getAllAbilityModifiers;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
 import static org.jahdoo.trial_nexus.utils.Helpers.res;
 import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
-import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.button.ToggleComponent.menuButtonAbility;
-import static org.jahdoo.common.client.button.ToggleComponent.menuButtonSoundAbilities;
 
 public class AbilityUnlockScreen extends AbstractPanableScreen {
     List<Component> components = new ArrayList<>();
@@ -114,6 +118,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         );
 
         overlayAbilitySlots();
+        renderResetButton();
     }
 
     private void overlayAbilitySlots() {
@@ -126,10 +131,11 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
     private void overlaySkills() {
         var skillHeight = centerY + (scaledSpacing / 2) - (size * 25);
-        var startXS = centerX - (3.2 * scaledXOffset); // Center the first element
+        var allSkills = SkillReg.getAllSkills();
+        var startXS = centerX - (4.2 * scaledXOffset+1); // Center the first element
 
         var skillSpacer = 0;
-        for (var allSkill : SkillReg.getAllSkills()) {
+        for (var allSkill : allSkills) {
             skillButton(startXS + skillSpacer * scaledXOffset, skillHeight, size, allSkill);
             skillSpacer += 2;
         }
@@ -286,6 +292,53 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         }
     }
 
+    private void renderResetButton() {
+        var player = getMinecraft().player;
+        if(player == null) return;
+
+        var size = 25;
+        this.addRenderableWidget(
+            menuButtonAbility(
+                this.width - 50 - size / 2, 12, (Button) -> onResetSkillPress(player), TRIAL_EXPERIENCE, size, true, this::onResetSkillHover, 0, false, "Reset"
+            )
+        );
+
+        var isCenteredView = this.zoomX == 0 && this.panY == 0 && this.panX == 0;
+
+        if(!isCenteredView){
+            var i = 40;
+            this.addRenderableWidget(
+                menuButtonAbility(
+                    this.width - i, this.height - i, this::centerScreen, CENTER, 20, true, this::centerScreenHover, 0, false, ""
+                )
+            );
+        }
+    }
+
+    private void centerScreen(Button button){
+        this.zoomX = 0;
+        this.panY = 0;
+        this.panX = 0;
+    }
+
+    private void centerScreenHover(){
+
+    }
+
+    private void onResetSkillPress(Player player){
+        var reductionAmount = getResetCost(player);
+        var currentXp = player.experienceLevel;
+
+        if(currentXp >= reductionAmount){
+            PacketDistributor.sendToServer(new PlayerExpC2SP(currentXp - reductionAmount));
+            sendToServer(new RegretAbilitiesC2SP());
+        }
+    }
+
+    private void onResetSkillHover(){
+        this.originalScale = -1;
+    }
+
     private void onHover(Ability ability, boolean isDummy, AbilityHolder holder, int posX, int posY, boolean isLocked) {
         var elementType = ability.getElemenType();
         var player = getMinecraft().player;
@@ -322,7 +375,6 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var player = getMinecraft().player;
         if(player == null) return;
         if(unlocked) {
-            System.out.println("im here");
             sendToServer(new UnlockedSkillsC2SP(skill.id(), skill.unlockCost()));
         } else {
             if(!dependency && CasterData.checkAndConsume(player, skill.unlockCost())){
@@ -342,8 +394,9 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         if(unlocked) {
             if(isKeyDown(mc.getWindow().getWindow(), KEY_LSHIFT)){
                 var data = player.getData(AttachmentReg.CASTER_DATA);
-                var validSlots = data.getAbilitySlots().stream().filter(i -> !i.isEmpty()).toList();
-                if(validSlots.size() < data.getAllowedSlots()){
+                var abilitySlots = data.getAbilitySlots();
+                var validSlots = abilitySlots.stream().filter(i -> !i.isEmpty()).toList();
+                if(validSlots.size() < data.getAllowedSlots() && !abilitySlots.contains(ability.setAbilityId())){
                     sendToServer(new AddAbilityC2SP(ability.setAbilityId()));
                 }
             } else {
@@ -403,6 +456,10 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         this.components = new ArrayList<>();
         super.baseRender(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
         overlaySkillPoints(guiGraphics, player, 74);
+        if(this.originalScale == -1){
+            experienceCost(guiGraphics, mouseX, mouseY, 100, 1);
+            this.originalScale = 0;
+        }
     }
 
     private void overlaySkillPoints(GuiGraphics guiGraphics, LocalPlayer player, int spacer) {
@@ -428,4 +485,29 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         float centerY,
         Minecraft mc
     ){}
+
+    private int getResetCost(Player player){
+        return Math.min((CasterData.getLevel(player)/20) * 20, 120);
+    }
+
+    private void experienceCost(GuiGraphics guiGraphics, int mouseX, int mouseY, int i, int startY) {
+        var player = this.getMinecraft().player;
+        if(player == null) return;
+        var exp = player.experienceLevel;
+        var getMaxCost = getResetCost(player);
+        var expColour = exp >= getMaxCost ? 8453920 : -2070938;
+        var refinementPotential = Component.literal(String.valueOf(getResetCost(player)));
+        var expLvl = Component.literal(String.valueOf(exp));
+        var offsetX = 0;
+        var offsetY = -27;
+//        var potential = getPotential();
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0,40,100);
+        boxMaker(guiGraphics, mouseX - 26 + offsetX, mouseY + offsetY, 26, 13, BORDER_COLOUR, fadeBlack(0.6f));
+        drawStringWithBackground(guiGraphics, this.font, refinementPotential, mouseX + offsetX, mouseY + 15 + offsetY, 0, expColour, true);
+        guiGraphics.drawCenteredString(font, "Exp Cost", mouseX + offsetX, mouseY + 4 + offsetY, -1);
+        guiGraphics.pose().popPose();
+        renderMiniXPBar(guiGraphics, mouseX - 42, mouseY+45, this.getMinecraft());
+    }
 }

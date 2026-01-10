@@ -3,33 +3,33 @@ package org.jahdoo.trial_nexus.ability.skills;
 import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.client.Icons;
 
-public class ReboundSkill extends AbstractSkill {
+public class DripWalkSkill extends AbstractSkill {
 
-    public static final String REBOUND = "rebound";
+    public static final String DRIP_WALK = "drip_walk";
 
     @Override
     public String id() {
-        return REBOUND;
+        return DRIP_WALK;
     }
 
     @Override
     public ResourceLocation icon() {
-        return Icons.REBOUND;
+        return Icons.DRIP_WALK;
     }
 
     @Override
     public int unlockCost() {
-        return 8;
+        return 20;
     }
 
     @Override
     public int levelRequirement() {
-        return 25;
+        return 55;
     }
 
     @Override
     public String description() {
-        return "Removes all fall damage by imbuing your body with a spell that alters your form, giving it a rubber-like resilience that absorbs impact.";
+        return "Your legs can now extend further, letting you scale higher obstacles and climb multiple blocks at once.";
     }
 
 }

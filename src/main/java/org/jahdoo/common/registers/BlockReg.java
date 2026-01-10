@@ -1,9 +1,11 @@
 package org.jahdoo.common.registers;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.*;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -67,7 +69,7 @@ public class BlockReg {
         registerBlockWithItem("loot_pot", LootPotBlock::new);
 
     public static DeferredHolder<Block, Block> TANK =
-        registerBlockWithItem("tank", TankBlock::new);
+        registerCreativeBlockWithItem("tank", TankBlock::new);
 
     public static DeferredHolder<Block, Block> TICKET_BUREAU =
         registerBlockWithItem("ticket_bureau", TicketBureauBlock::new);
@@ -143,8 +145,25 @@ public class BlockReg {
         return toReturn;
     }
 
+    private static <T extends Block> DeferredHolder<Block, T> registerCreativeBlockWithItem(String name, Supplier<T> block) {
+        DeferredHolder<Block, T> toReturn = BLOCKS.register(name, block);
+        registerCreativeBlockItem(name, toReturn);
+        return toReturn;
+    }
+
     private static <T extends Block> void registerBlockItem(String name, DeferredHolder<Block, T> block) {
         ItemReg.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+    }
+
+    private static <T extends Block> void registerCreativeBlockItem(String name, DeferredHolder<Block, T> block) {
+        ItemReg.ITEMS.register(name, () ->
+            new BlockItem(block.get(), new Item.Properties()){
+                @Override
+                public Component getName(ItemStack stack) {
+                    return stack.has(ComponentReg.STORE_INTEGER) ? Component.literal("Creative " + super.getName(stack).getString()) : super.getName(stack);
+                }
+            }
+        );
     }
 
     public static void register(IEventBus eventBus) {

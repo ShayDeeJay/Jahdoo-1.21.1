@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -27,6 +28,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.BlockReg;
+import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.Nullable;
 
@@ -122,15 +124,38 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         super.onRemove(state, level, pos, newState, moveByPiston);
     }
 
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        if(stack.has(ComponentReg.STORE_INTEGER)){
+            var blockEntity = level.getBlockEntity(pos);
+            if(blockEntity instanceof TankBlockEntity tankBlock){
+                tankBlock.setData(AttachmentReg.BOOL, true);
+                tankBlock.inputItemHandler.setStackInSlot(0, new ItemStack(NEXITE_POWDER.get()).copyWithCount(64));
+            }
+        }
+    }
+
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         var blockpos = context.getClickedPos();
-        var blockstate = context.getLevel().getBlockState(blockpos);
+        var level = context.getLevel();
+        var blockstate = level.getBlockState(blockpos);
+
+//        if(context.getItemInHand().has(ComponentReg.STORE_INTEGER)){
+//            System.out.println("im ere");
+//            System.out.println(level);
+//            var blockEntity = level.getBlockEntity(blockpos);
+//            System.out.println(blockEntity);
+//            if(blockEntity instanceof TankBlockEntity tankBlock){
+//                tankBlock.setData(AttachmentReg.BOOL, true);
+//                tankBlock.increaseTankSize(64);
+//            }
+//        }
 
         if (blockstate.is(this)) {
             return blockstate.setValue(WATERLOGGED, false);
         } else {
-            var fluidstate = context.getLevel().getFluidState(blockpos);
+            var fluidstate = level.getFluidState(blockpos);
             return this.defaultBlockState().setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
         }
     }
@@ -142,11 +167,6 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
 
         if (entity instanceof TankBlockEntity tank) {
-//            getItemInteractionResult(handItem, tank, player, level);
-            if(handItem.is(AUGMENT_CORE)){
-                tank.setData(AttachmentReg.BOOL, true);
-            }
-
             var handler = tank.inputItemHandler;
             var itemStack = new ItemStack(AUGMENT_CORE);
             CoreData.setFilled(itemStack);
@@ -169,5 +189,7 @@ public class TankBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
         return ItemInteractionResult.SUCCESS;
     }
+
+
 }
 

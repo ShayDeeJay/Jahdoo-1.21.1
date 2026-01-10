@@ -42,6 +42,9 @@ public class SkillReg {
     public static final DeferredHolder<AbstractSkill, AbstractSkill> TRIPLE_JUMP =
         registerElement(TripleJumpSkill::new);
 
+    public static final DeferredHolder<AbstractSkill, AbstractSkill> DRIP_WALK =
+        registerElement(DripWalkSkill::new);
+
     public static final DeferredHolder<AbstractSkill, AbstractSkill> MAGE_FLIGHT =
         registerElement(MageFlightSkill::new);
 

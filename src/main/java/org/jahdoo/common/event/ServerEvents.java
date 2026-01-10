@@ -2,7 +2,6 @@ package org.jahdoo.common.event;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
@@ -81,7 +80,7 @@ public class ServerEvents {
         var level = event.getLevel();
         var blockState = level.getBlockState(pos);
 
-        setAbilityToItem(event, level, pos, item);
+//        setAbilityToItem(event, level, pos, item);
 //        setChaosCubeAbility(event, level, pos, item);
         saveBlockType(event, item, blockState, pos);
     }
@@ -170,15 +169,6 @@ public class ServerEvents {
         var pos = event.getPos();
         var level = event.getLevel();
         var getBlock = level.getBlockState(pos);
-
-        if(level instanceof CustomLevel cLevel && getBlock.is(Blocks.SOUL_CAMPFIRE)){
-            if(player instanceof ServerPlayer serverPlayer){
-//                StructureManager.generateCooldownRoom(cLevel);
-//                serverPlayer.teleportTo(23.5, 107, 27.5);
-            }
-        }
-
-        System.out.println(getBlock);
 
         //Used for speeding up ticks
 //        for (int i = 0; i < 10; i++){

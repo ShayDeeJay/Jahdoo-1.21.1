@@ -54,6 +54,7 @@ public class TankBlockEntity extends AbstractBEInventory {
         return 0;
     }
 
+
     @Override
     public int getMaxSlotSizeInput() {
         return INIT_TANK_CAPACITY;
@@ -180,6 +181,8 @@ public class TankBlockEntity extends AbstractBEInventory {
 
         if(tankSlotSize < this.getMaxSlotSizeInput()) counter++;
     }
+
+
 
 }
 

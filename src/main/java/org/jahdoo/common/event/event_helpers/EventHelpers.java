@@ -253,6 +253,11 @@ public class EventHelpers {
             if(player instanceof ServerPlayer serverPlayer){
                 var castingData = player.getData(CASTER_DATA.get());
                 serverPlayer.setData(RUN_DATA, EMPTY);
+                castingData.updateAbility(AbilityReg.FETCH.get().setModifiers());
+                castingData.updateAbility(AbilityReg.HAMMER.get().setModifiers());
+                castingData.updateAbility(AbilityReg.FARMERS_TOUCH.get().setModifiers());
+                castingData.updateAbility(AbilityReg.WALL_PLACER.get().setModifiers());
+                castingData.updateAbility(AbilityReg.LIGHT_PLACER.get().setModifiers());
                 castingData.playerInit();
                 sendToPlayer(serverPlayer, new CastingDataSyncS2CP(castingData));
             }
@@ -261,6 +266,21 @@ public class EventHelpers {
             }
             data.putBoolean("first_join", true);
             playerData.put(Player.PERSISTED_NBT_TAG, data);
+        } else {
+            if (!data.getBoolean("update_test_1")) {
+                if(player instanceof ServerPlayer serverPlayer){
+                    var castingData = player.getData(CASTER_DATA.get());
+                    CasterData.regretAbilities(serverPlayer, false);
+                    castingData.updateAbility(AbilityReg.FETCH.get().setModifiers());
+                    castingData.updateAbility(AbilityReg.HAMMER.get().setModifiers());
+                    castingData.updateAbility(AbilityReg.FARMERS_TOUCH.get().setModifiers());
+                    castingData.updateAbility(AbilityReg.WALL_PLACER.get().setModifiers());
+                    castingData.updateAbility(AbilityReg.LIGHT_PLACER.get().setModifiers());
+                    sendToPlayer(serverPlayer, new CastingDataSyncS2CP(castingData));
+                }
+                data.putBoolean("update_test_1", true);
+                playerData.put(Player.PERSISTED_NBT_TAG, data);
+            }
         }
     }
 
@@ -334,33 +354,34 @@ public class EventHelpers {
     }
 
     public static boolean setChaosCubeAbility(Player player, Level level, BlockPos pos, ItemStack item) {
-        if(level.getBlockEntity(pos) instanceof CreatorEntity entity && CastHelper.validCasterType(item.getItem())){
-            var casterData = player.getData(CASTER_DATA.get());
-            var ability = AbilityReg.getFirstSpellByTypeId(casterData.getSelectedAbility());
+        if(level.getBlockEntity(pos) instanceof CreatorEntity entity){
+            if(item.isEmpty() && entity.getRecipe().isPresent() && !entity.canCraft()){
+                var casterData = player.getData(CASTER_DATA.get());
+                var ability = AbilityReg.getFirstSpellByTypeId(casterData.getSelectedAbility());
 
-            if(ability.isPresent()) {
-                var element = ElementReg.utility();
-                if (ability.get().getElemenType() == element) {
-                    var holder = CasterData.entityHolderWithSelected(player);
-                    if (holder != AbilityHolder.DEFAULT) {
-                        var stackInSlot = entity.getResult();
-
-                        if(stackInSlot != null) stackInSlot.set(ComponentReg.ABILITY_HOLDER, holder);
-
-                        for (int i = 0; i < 10; i++) {
-                            var part = ParticleHandlers.getAllParticleTypes(element, 6, 2);
-                            ParticleHandlers.particleBurst(level, pos.getCenter().add(0,0.5,0), 1, part);
+                if(ability.isPresent()) {
+                    var element = ElementReg.utility();
+                    if (ability.get().getElemenType() == element) {
+                        var holder = CasterData.entityHolderWithSelected(player);
+                        if (holder != AbilityHolder.DEFAULT) {
+                            entity.setHolder(holder);
+                            for (int i = 0; i < 10; i++) {
+                                var part = ParticleHandlers.getAllParticleTypes(element, 6, 2);
+                                ParticleHandlers.particleBurst(level, pos.getCenter().add(0,0.5,0), 1, part);
+                            }
+                            getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), 1, 0.5F);
+                            return true;
+                        } else {
+                            var message = "You don't have this ability";
+                            var messageComponent = withStyleComponent(message, element.textColourA());
+                            player.sendSystemMessage(messageComponent);
                         }
-                        getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), 1, 0.5F);
-                        return true;
-                    } else {
-                        var message = "You don't have this ability";
-                        var messageComponent = withStyleComponent(message, element.textColourA());
-                        player.sendSystemMessage(messageComponent);
                     }
                 }
             }
+
         }
+
         return false;
     }
 

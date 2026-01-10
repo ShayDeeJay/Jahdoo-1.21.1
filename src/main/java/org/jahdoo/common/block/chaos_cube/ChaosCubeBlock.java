@@ -113,30 +113,6 @@ public class ChaosCubeBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         var blockEntity = level.getBlockEntity(pos);
-//        if(EventHelpers.setChaosCubeAbility(player, level, pos, stack)) return ItemInteractionResult.SUCCESS;
-//        if (blockEntity instanceof ChaosCubeEntity entity) {
-//            System.out.println(entity.getHolder());
-//            var ability = stack.get(ComponentReg.ABILITY_HOLDER);
-//            var element = ElementReg.utility();
-//            if(ability != null){
-//                if (ability != AbilityHolder.DEFAULT) {
-//                    entity.setHolder(ability);
-//                    stack.shrink(1);
-//                    for (int i = 0; i < 10; i++) {
-//                        var part = ParticleHandlers.getAllParticleTypes(element, 20, 2);
-//                        ParticleHandlers.particleBurst(level, pos.getCenter(), 1, part);
-//                    }
-//
-//                    getSoundWithPosition(level, pos, SoundReg.SUSPEND.get(), 1, 0.5F);
-//                    entity.updateBlock();
-//                    return ItemInteractionResult.SUCCESS;
-//                } else {
-//                    var message = "You don't have this ability";
-//                    var messageComponent = withStyleComponent(message, element.textColourA());
-//                    player.sendSystemMessage(messageComponent);
-//                }
-//            }
-//        }
         openWandGUI(player, pos, level);
         return ItemInteractionResult.SUCCESS;
     }

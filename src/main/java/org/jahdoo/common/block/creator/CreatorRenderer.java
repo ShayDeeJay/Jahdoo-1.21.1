@@ -39,8 +39,8 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         int pPackedLight,
         int pPackedOverlay
     ){
-        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-        AtomicInteger atomicInteger = new AtomicInteger();
+        var itemRenderer = Minecraft.getInstance().getItemRenderer();
+        var atomicInteger = new AtomicInteger();
         top(pPoseStack, creatorEntity, itemRenderer, pBuffer, pPartialTick, pPackedLight);
         focusedItem(pPoseStack, creatorEntity, itemRenderer, pBuffer, pPartialTick, pPackedLight);
 
@@ -60,27 +60,27 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
 
         if (pBlockEntity.canCraft()) {
             var angleOffset = 360.0f / totalItems;
-            var itemAngle = angleOffset * index;
+            var itemAngle = (angleOffset * index);
             pPoseStack.translate(0.5, -0.1, 0.5);
 
             var frameTime = Minecraft.getInstance().level.getGameTime();
-            pPoseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + (-frameTime - partialTicks)));
+            pPoseStack.mulPose(Axis.YP.rotationDegrees(itemAngle + ((-frameTime) - partialTicks)));
         } else {
             float[][] positions = {
                 {0.5f, 0.04f},
-                {0.16f, 0.40f},
+                {0.14f, 0.40f},
                 {0.86f, 0.40f},
                 {0.5f, 0.76f},
-                {0.18f, 0.06f},
-                {0.84f, 0.06f},
-                {0.16f, 0.74f},
-                {0.84f, 0.74f}
+                {0.23f, 0.13f},
+                {0.77f, 0.13f},
+                {0.23f, 0.67f},
+                {0.77f, 0.68f}
             };
 
             if (index < positions.length) {
                 var dir = getPlayerRelativeDirection(pBlockEntity).getOpposite();
                 var rotated = rotateAroundCenter(positions[index][0], positions[index][1], dir);
-                pPoseStack.translate(rotated[0], -0.1, rotated[1]);
+                pPoseStack.translate(rotated[0], index < 4 ? -0.11 : -0.17, rotated[1]);
             }
         }
 
@@ -89,6 +89,7 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
     }
 
     private Direction getPlayerRelativeDirection(CreatorEntity blockEntity) {
+
         var player = Minecraft.getInstance().player;
         var blockPos = blockEntity.getBlockPos();
 
@@ -151,13 +152,13 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         var getCurrentTime = level.getGameTime() + partialTicks;
         var outputSlot = pBlockEntity.getResult();
         var itemStack = outputSlot == null ? pBlockEntity.outputItemHandler.getStackInSlot(0) : outputSlot;
-        var scaleItem = 0.5F;
+        var scaleItem = 0.3F;
         var maxLightLevel = getLightLevel(Objects.requireNonNull(pBlockEntity.getLevel()), pBlockEntity.getBlockPos());
 
         var scale = Math.sin(((level.getGameTime() + partialTicks) / 14.0F)) * 0.02F;
         pPoseStack.translate(0.5f, 1.32f + scale, 0.5f);
         pPoseStack.scale(scaleItem, scaleItem, scaleItem);
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(getCurrentTime));
+        pPoseStack.mulPose(Axis.YP.rotationDegrees(-getCurrentTime));
 
         itemRenderer.renderStatic(
             itemStack,
@@ -173,13 +174,21 @@ public class CreatorRenderer implements BlockEntityRenderer<org.jahdoo.common.bl
         pPoseStack.popPose();
     }
 
-    private void rotateItem(PoseStack pPoseStack, CreatorEntity pBlockEntity, ItemRenderer itemRenderer, ItemStack itemStack, MultiBufferSource pBuffer, float partialTicks){
+    private void rotateItem(
+        PoseStack pPoseStack,
+        CreatorEntity pBlockEntity,
+        ItemRenderer itemRenderer,
+        ItemStack itemStack,
+        MultiBufferSource pBuffer,
+        float partialTicks
+    ){
         pPoseStack.pushPose();
+
         var level = Minecraft.getInstance().level;
         if(level == null) return;
 
-        float getCurrentTime = level.getGameTime() + partialTicks;
-        float scaleItem = 0.2f;
+        var getCurrentTime = level.getGameTime() + partialTicks;
+        var scaleItem = 0.15f;
 
         var inc = pBlockEntity.animIncrement;
         pPoseStack.translate(0, 1.25f, (Math.min(0.9, inc))-0.4);
