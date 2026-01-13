@@ -93,6 +93,7 @@ public class StructureManager {
         newList.addAll(THE_CHAMBERS);
         newList.addAll(THE_OASIS);
         newList.addAll(THE_BASTION);
+        newList.add(BOSS_CRUCIBLE);
         return newList;
     }
 
@@ -222,39 +223,39 @@ public class StructureManager {
     public static int FLAGS = Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS;
     public static List<Direction> NO_Y = List.of(NORTH, SOUTH, EAST, WEST);
 
-    public static void placeNewSide(Level level, Direction direction, BlockPos pos, String roomId) {
+    public static void placeNewSide(Level level, Direction direction, BlockPos pos, String roomId, boolean usedKey) {
         if (level instanceof ServerLevel serverLevel) {
 
             var settings = new StructurePlaceSettings();
             var newPos = new BlockPos(0, 0, 0);
 
-            var globalY1 = GLOBAL_Y + (REST_ROOMS.contains(roomId) ? 44 : 0);
+            var globalY1 = GLOBAL_Y + (REST_ROOMS.contains(roomId) && !usedKey ? 44 : 0);
             final var globalY = roomId.equals(LOOT_CRYPT) ? globalY1 - 6 : globalY1 + (roomId.equals(BRIDGE) ? 104 : 0);
-            var spaceBy = 25;
+            var distance = 25;
             switch (direction) {
-                case SOUTH -> newPos = new BlockPos(pos.getX() - spaceBy, globalY, pos.getZ());
+                case SOUTH -> newPos = new BlockPos(pos.getX() - distance, globalY, pos.getZ());
                 case NORTH -> {
                     settings.setRotation(Rotation.CLOCKWISE_180);
-                    newPos = new BlockPos(pos.getX() + spaceBy, globalY, pos.getZ());
+                    newPos = new BlockPos(pos.getX() + distance, globalY, pos.getZ());
                 }
                 case EAST -> {
                     settings.setRotation(Rotation.COUNTERCLOCKWISE_90);
-                    newPos = new BlockPos(pos.getX(), globalY, pos.getZ() + spaceBy);
+                    newPos = new BlockPos(pos.getX(), globalY, pos.getZ() + distance);
                 }
                 case WEST -> {
                     settings.setRotation(Rotation.CLOCKWISE_90);
-                    newPos = new BlockPos(pos.getX(), globalY, pos.getZ() - spaceBy);
+                    newPos = new BlockPos(pos.getX(), globalY, pos.getZ() - distance);
                 }
             }
 
             placeStructure(serverLevel, newPos, settings, roomId);
 
-            var relative = newPos.relative(direction, 25).above(19);
+            var relative = newPos.relative(direction, distance).above(19);
             var findBlock = switch (direction){
-                case NORTH -> withinManhattan(relative.west(25), 25, 19, 25);
-                case SOUTH -> withinManhattan(relative.east(25), 25, 19, 25);
-                case EAST -> withinManhattan(relative.north(25), 25, 19, 25);
-                default -> withinManhattan(relative.south(25), 25, 19, 25);
+                case NORTH -> withinManhattan(relative.west(distance), distance, 19, distance);
+                case SOUTH -> withinManhattan(relative.east(distance), distance, 19, distance);
+                case EAST -> withinManhattan(relative.north(distance), distance, 19, distance);
+                default -> withinManhattan(relative.south(distance), distance, 19, distance);
             };
 
             setBlockGenerator(serverLevel, findBlock, direction, roomId);

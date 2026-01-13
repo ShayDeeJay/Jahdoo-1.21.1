@@ -172,45 +172,77 @@ public class DisassemblerBlockEntity extends AbstractTankUser implements GeoBloc
         this.progress = 0;
     }
 
-    private static ItemStack getRecycleWithChance(JahdooItem jahdooItem, ItemStack originalItem) {
-        // Tries to get the rarity level from the item (likely an int or enum stored in a component).
-        var getRarity = originalItem.get(ComponentReg.JAHDOO_RARITY);
+    private static int clampChance(double v) {
+        return (int) Math.max(0, Math.min(100, Math.round(v)));
+    }
 
-        // If the item doesn't have a rarity set, always return the default recycle item.
-        if(getRarity == null || jahdooItem.customRecycleChance(originalItem) >= 0) {
-            var v = jahdooItem.customRecycleChance(originalItem);
-            return Maths.percentageChance(v) ? jahdooItem.getRecycleItem() : ItemStack.EMPTY;
+    private static ItemStack getRecycleWithChance(JahdooItem jahdooItem, ItemStack originalItem) {
+
+        var rarity = originalItem.get(ComponentReg.JAHDOO_RARITY);
+        int custom = (int) jahdooItem.customRecycleChance(originalItem);
+
+        // If no rarity OR custom chance is provided
+        if (rarity == null || custom != -1) {
+            int safe = clampChance(custom);
+            return Maths.percentageChance(safe) ? jahdooItem.getRecycleItem() : ItemStack.EMPTY;
         }
 
-        // Gets the durability percent. We're using just the percent here.
-        var getPercent = CustomHudOverlay.getDurabilityWithColor(originalItem);
-
-        // Checks if the item has a durability component (can be damaged).
+        var durabilityInfo = CustomHudOverlay.getDurabilityWithColor(originalItem);
         var hasDurability = originalItem.has(DataComponents.MAX_DAMAGE);
 
-        // Base percentage chance: each rarity level increases the chance by 10%
-        var percentageChance = ((getRarity + 1) * 10);
+        int baseChance = (rarity + 1) * 10;
 
-        // i is a decimal representation of the chance (e.g., 0.6 for 60%)
-        var i = (double) percentageChance / 100;
+        double missing = 100 - durabilityInfo.getFirst();
+        double reduction = hasDurability ? (baseChance / 100.0) * missing : 0;
 
-        // i1 is how much durability is missing (e.g., 100 - 80% durability = 20% missing)
-        var i1 = 100 - getPercent.getFirst();
+        double actualChance = baseChance - reduction;
 
-        // If the item has durability, we reduce the chance based on missing durability
-        // The more it's damaged, the lower the recycle chance.
-        var durabilityAdjustment = hasDurability ? (i * i1) : 0;
+        int safeChance = clampChance(actualChance);
 
-        // Final adjusted chance, ensuring it's not negative.
-        var actualChance = Math.max(percentageChance - durabilityAdjustment, 0);
+        boolean success = Maths.percentageChance(safeChance);
 
-        // Performs the random roll. Returns true with `actualChance` percent chance.
-        var v = jahdooItem.customRecycleChance(originalItem);
-        var recycleChance = Maths.percentageChance(v == -1 ? actualChance : v);
-
-        // If the roll succeeded, return the recycled item. Otherwise, return nothing.
-        return recycleChance ? jahdooItem.getRecycleItem() : ItemStack.EMPTY;
+        return success ? jahdooItem.getRecycleItem() : ItemStack.EMPTY;
     }
+
+//    private static ItemStack getRecycleWithChance(JahdooItem jahdooItem, ItemStack originalItem) {
+//        // Tries to get the rarity level from the item (likely an int or enum stored in a component).
+//        var getRarity = originalItem.get(ComponentReg.JAHDOO_RARITY);
+//
+//        // If the item doesn't have a rarity set, always return the default recycle item.
+//        if(getRarity == null || jahdooItem.customRecycleChance(originalItem) >= 0) {
+//            var v = jahdooItem.customRecycleChance(originalItem);
+//            return Maths.percentageChance(v) ? jahdooItem.getRecycleItem() : ItemStack.EMPTY;
+//        }
+//
+//        // Gets the durability percent. We're using just the percent here.
+//        var getPercent = CustomHudOverlay.getDurabilityWithColor(originalItem);
+//
+//        // Checks if the item has a durability component (can be damaged).
+//        var hasDurability = originalItem.has(DataComponents.MAX_DAMAGE);
+//
+//        // Base percentage chance: each rarity level increases the chance by 10%
+//        var percentageChance = ((getRarity + 1) * 10);
+//
+//        // i is a decimal representation of the chance (e.g., 0.6 for 60%)
+//        var i = (double) percentageChance / 100;
+//
+//        // i1 is how much durability is missing (e.g., 100 - 80% durability = 20% missing)
+//        var i1 = 100 - getPercent.getFirst();
+//
+//        // If the item has durability, we reduce the chance based on missing durability
+//        // The more it's damaged, the lower the recycle chance.
+//        var durabilityAdjustment = hasDurability ? (i * i1) : 0;
+//
+//        // Final adjusted chance, ensuring it's not negative.
+//        var actualChance = Math.max(percentageChance - durabilityAdjustment, 0);
+//
+//        // Performs the random roll. Returns true with `actualChance` percent chance.
+//        var v = jahdooItem.customRecycleChance(originalItem);
+//        var recycleChance = Maths.percentageChance(v == -1 ? actualChance : v);
+//
+//        // If the roll succeeded, return the recycled item. Otherwise, return nothing.
+//        return recycleChance ? jahdooItem.getRecycleItem() : ItemStack.EMPTY;
+//    }
 
     private void tableProcessingParticle(Level level, ServerLevel serverLevel, BlockPos pPos){
         PositionFinders.getOuterRingOfRadiusRandom(pPos.getCenter(), 0.2, 150,

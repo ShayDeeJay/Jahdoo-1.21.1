@@ -6,14 +6,14 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import org.jahdoo.common.items.ability_augment.AugmentCrystalRenderer;
-import org.jahdoo.trial_nexus.utils.Configuration;
 import org.jahdoo.common.datagen.loot.ModLootModifiers;
+import org.jahdoo.common.items.ability_augment.AugmentCrystalRenderer;
 import org.jahdoo.common.items.gauntlet.GloveRenderer;
 import org.jahdoo.common.items.shields.ShieldRenderer;
 import org.jahdoo.common.items.tome.TomeRenderer;
 import org.jahdoo.common.registers.*;
 import org.jahdoo.common.registers.mod.*;
+import org.jahdoo.trial_nexus.utils.Configuration;
 import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
 public class CommonSetup {

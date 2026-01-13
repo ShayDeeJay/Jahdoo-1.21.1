@@ -175,7 +175,8 @@ public class ModItemModelProvider extends ItemModelProvider {
             ItemReg.NEXITE_POWDER, ItemReg.ESSENCE_FRAGMENT, ItemReg.INFERNO_AUGMENT,
             ItemReg.FROST_AUGMENT, ItemReg.MYSTIC_AUGMENT, ItemReg.VITALITY_AUGMENT,
             ItemReg.SKILL_POINT, ItemReg.COIN_SACK, ItemReg.STONE_OF_REGRET,
-            ItemReg.ROSE_QUARTZ, ItemReg.ENCHANTED_DIAMOND, ItemReg.DICE
+            ItemReg.ROSE_QUARTZ, ItemReg.ENCHANTED_DIAMOND, ItemReg.DICE, ItemReg.NETHERITE_NUGGET,
+            ItemReg.DIAMOND_NUGGET
         );
 
         simpleItems.forEach(this::createSimpleItemModel);

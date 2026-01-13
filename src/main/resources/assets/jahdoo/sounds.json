@@ -238,5 +238,23 @@
     "sounds": [
       "jahdoo:reroll"
     ]
+  },
+  "loop": {
+    "subtitles": "sounds.jahdoo.loop",
+    "sounds": [
+      "jahdoo:loop"
+    ]
+  },
+  "rest": {
+    "subtitles": "sounds.jahdoo.rest",
+    "sounds": [
+      "jahdoo:rest"
+    ]
+  },
+  "boss": {
+    "subtitles": "sounds.jahdoo.boss",
+    "sounds": [
+      "jahdoo:boss"
+    ]
   }
 }

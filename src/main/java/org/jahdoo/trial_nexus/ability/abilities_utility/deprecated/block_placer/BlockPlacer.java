@@ -1,4 +1,4 @@
-package org.jahdoo.trial_nexus.ability.abilities_utility.block_placer;
+package org.jahdoo.trial_nexus.ability.abilities_utility.deprecated.block_placer;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

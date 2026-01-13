@@ -4,11 +4,15 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,7 +22,6 @@ import net.minecraft.world.entity.player.Player;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.networking.server2client.CastingDataSyncS2CP;
-import org.jahdoo.common.networking.server2client.ClientSoundS2CP;
 import org.jahdoo.common.networking.server2client.CooldownsSyncS2CP;
 import org.jahdoo.common.networking.server2client.ManaSyncS2CP;
 import org.jahdoo.common.particle.ParticleHandlers;
@@ -26,8 +29,8 @@ import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.EffectReg;
 import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
+import org.jahdoo.common.registers.mod.AbilityReg;
 import org.jahdoo.common.registers.mod.SkillReg;
-import org.jahdoo.trial_nexus.ability.abilities_utility.hammer.HammerAbility;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
@@ -63,11 +66,10 @@ public class CasterData implements IAttachment {
 
     private Map<String, Integer> abilityCooldowns = new Object2IntOpenHashMap<>();
     private Map<String, Integer> abilityCooldownsStatic = new Object2IntOpenHashMap<>();
+    private Map<Integer, LoadoutObj> loadouts = new Int2ObjectLinkedOpenHashMap<>();
 
     private String selectedAbility = "";
-    private List<AbilityHolder> unlockedAbilities = new ArrayList<>(
-        Collections.singleton(new HammerAbility().setModifiers())
-    );
+    private List<AbilityHolder> unlockedAbilities = new ArrayList<>();
     public List<String> abilitySlots = new ArrayList<>();
     private List<String> unlockedSkills = new ArrayList<>();
     private List<String> activeSkills = new ArrayList<>();
@@ -85,7 +87,8 @@ public class CasterData implements IAttachment {
         List<AbilityHolder> unlockedAbilities,
         List<String> abilitySlots,
         List<String> unlockedSkills,
-        List<String> activeSkills
+        List<String> activeSkills,
+        Map<Integer, LoadoutObj> savedLoadouts
     ) {
         this.xp = xp;
         this.allowedSlots = allowedSlots;
@@ -100,6 +103,83 @@ public class CasterData implements IAttachment {
         this.abilitySlots = abilitySlots;
         this.unlockedSkills = unlockedSkills;
         this.activeSkills = activeSkills;
+        this.loadouts = savedLoadouts;
+    }
+
+    public record LoadoutObj(
+        List<AbilityHolder> holders,
+        List<String> skills,
+        int skillPoints
+    ){
+        public static final Codec<LoadoutObj> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                Codec.list(AbilityHolder.CODEC).fieldOf("unlocked_abilities").forGetter(LoadoutObj::holders),
+                Codec.list(Codec.STRING).fieldOf("ability_slots").forGetter(LoadoutObj::skills),
+                Codec.INT.fieldOf("xp").forGetter(LoadoutObj::skillPoints)
+            ).apply(instance, LoadoutObj::new)
+        );
+
+        public static CompoundTag saveNBT(LoadoutObj loadout) {
+            CompoundTag tag = new CompoundTag();
+
+            // Save abilities
+            AbilityHolder.saveListHolders(loadout.holders, tag);
+
+            // Save skills
+            ListTag skillsTag = new ListTag();
+            for (String skill : loadout.skills) {
+                skillsTag.add(StringTag.valueOf(skill));
+            }
+            tag.put("ability_slots", skillsTag);
+
+            // Save skill points
+            tag.putInt("xp", loadout.skillPoints);
+
+            return tag;
+        }
+
+        public static LoadoutObj loadNBT(CompoundTag tag) {
+            // Load abilities
+            List<AbilityHolder> holders = AbilityHolder.readListHolders(tag);
+
+            // Load skills
+            List<String> skills = new ArrayList<>();
+            ListTag skillsTag = tag.getList("ability_slots", Tag.TAG_STRING);
+            for (int i = 0; i < skillsTag.size(); i++) {
+                skills.add(skillsTag.getString(i));
+            }
+
+            // Load skill points
+            int skillPoints = tag.getInt("xp");
+
+            return new LoadoutObj(holders, skills, skillPoints);
+        }
+
+    }
+
+    public void addLoadout(int index){
+        var temp = new Int2ObjectLinkedOpenHashMap<>(loadouts);
+        var charged = refundableSkillPoints - abilityPoints;
+        var createLoadout = new LoadoutObj(this.unlockedAbilities, this.unlockedSkills, charged);
+
+        temp.put(index, createLoadout);
+        loadouts = temp;
+    }
+
+    public void initLoadout(int index){
+        var unlockedAbilities1 = loadouts.get(index);
+        if(unlockedAbilities1 != null){
+            this.unlockedAbilities = unlockedAbilities1.holders();
+            this.unlockedSkills = unlockedAbilities1.skills();
+            var points = unlockedAbilities1.skillPoints();
+            System.out.println(points);
+            this.abilityPoints = this.refundableSkillPoints - points;
+            this.decrementAbilityPoints(points);
+        }
+    }
+
+    public Map<Integer, LoadoutObj> getLoadouts() {
+        return loadouts;
     }
 
     public CasterData(){
@@ -520,19 +600,30 @@ public class CasterData implements IAttachment {
     public static void regretAbilities(LivingEntity livingEntity, boolean playAudio){
         if(livingEntity instanceof ServerPlayer serverPlayer){
             var data = livingEntity.getData(CASTER_DATA);
+
             data.abilitySlots = new ArrayList<>(EMPTY);
-            data.unlockedSkills.clear();
-            data.unlockedAbilities.clear();
+            data.unlockedSkills = new ArrayList<>();
+            data.unlockedAbilities = new ArrayList<>();
+            data.activeSkills = new ArrayList<>();
             data.selectedAbility = "";
             data.abilityPoints = data.refundableSkillPoints;
+//            addFreeAbilities(data);
+//            System.out.println(data.loadouts);
 
             sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
-            if(playAudio){
-                sendToPlayer(serverPlayer, new ClientSoundS2CP(SoundReg.REJECT.get(), 1, 1, false));
-                sendToPlayer(serverPlayer, new ClientSoundS2CP(SoundReg.ORB_CREATE.get(), 0.4F, 2, false));
+            if(playAudio) {
+                Helpers.sendClientSound(serverPlayer, SoundReg.REJECT.get(), 1, 1, false);
+                Helpers.sendClientSound(serverPlayer, SoundReg.ORB_CREATE.get(), 0.4F, 2, false);
             }
-            data.activeSkills = new ArrayList<>();
         }
+    }
+
+    public static void addFreeAbilities(CasterData castingData){
+        castingData.updateAbility(AbilityReg.FETCH.get().setModifiers());
+        castingData.updateAbility(AbilityReg.HAMMER.get().setModifiers());
+        castingData.updateAbility(AbilityReg.FARMERS_TOUCH.get().setModifiers());
+        castingData.updateAbility(AbilityReg.WALL_PLACER.get().setModifiers());
+        castingData.updateAbility(AbilityReg.LIGHT_PLACER.get().setModifiers());
     }
 
     public static void clearData(Player player){
@@ -645,8 +736,14 @@ public class CasterData implements IAttachment {
             Codec.list(AbilityHolder.CODEC).fieldOf("unlocked_abilities").forGetter(CasterData::getUnlockedAbilities),
             Codec.list(Codec.STRING).fieldOf("ability_slots").forGetter(CasterData::getAbilitySlots),
             Codec.list(Codec.STRING).fieldOf("unlocked_skills").forGetter(CasterData::getUnlockedSkills),
-            Codec.list(Codec.STRING).fieldOf("active_skills").forGetter(CasterData::getActiveSkills)
-        ).apply(instance, CasterData::new)
+            Codec.list(Codec.STRING).fieldOf("active_skills").forGetter(CasterData::getActiveSkills),
+            Codec.unboundedMap(
+                    Codec.STRING.xmap(Integer::parseInt, String::valueOf),
+                    LoadoutObj.CODEC
+                )
+                .fieldOf("loadouts")
+                .forGetter(CasterData::getLoadouts)
+            ).apply(instance, CasterData::new)
     );
 
     @Override
@@ -687,7 +784,23 @@ public class CasterData implements IAttachment {
         nbt.putInt("ability_points", this.abilityPoints);
         nbt.putInt("refundable_skill_points", this.refundableSkillPoints);
         nbt.putString("selected_ability", this.selectedAbility);
-        AbilityHolder.saveListHolders(this.unlockedAbilities, nbt);
+        if(unlockedAbilities == null){
+            this.unlockedAbilities = new ArrayList<>();
+        } else {
+            AbilityHolder.saveListHolders(this.unlockedAbilities, nbt);
+        }
+
+        var loadoutsTag = new CompoundTag();
+
+        for (var entry : this.loadouts.entrySet()) {
+            var loadoutId = entry.getKey();
+            var abilities = entry.getValue();
+            var x = LoadoutObj.saveNBT(abilities);
+
+            loadoutsTag.put(String.valueOf(loadoutId), x);
+        }
+
+        nbt.put("loadouts", loadoutsTag);
     }
 
     @Override
@@ -724,6 +837,20 @@ public class CasterData implements IAttachment {
         this.abilityPoints = nbt.getInt("ability_points");
         this.refundableSkillPoints = nbt.getInt("refundable_skill_points");
         this.unlockedAbilities = AbilityHolder.readListHolders(nbt);
+
+        Map<Integer, LoadoutObj> loadout = new Int2ObjectLinkedOpenHashMap<>();
+
+        CompoundTag loadoutsTag = nbt.getCompound("loadouts");
+
+        for (String key : loadoutsTag.getAllKeys()) {
+            int loadoutId = Integer.parseInt(key);
+            CompoundTag loadoutTag = loadoutsTag.getCompound(key);
+
+            LoadoutObj abilities = LoadoutObj.loadNBT(loadoutTag);
+            loadout.put(loadoutId, abilities);
+        }
+
+        this.loadouts = loadout;
 
     }
 }

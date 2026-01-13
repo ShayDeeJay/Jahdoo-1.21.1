@@ -61,6 +61,7 @@ import org.jahdoo.common.block.creator.CreatorEntity;
 import org.jahdoo.common.block.perk_table.PerkTableEntity;
 import org.jahdoo.common.components.AbilityHolder;
 import org.jahdoo.common.components.LootCrateData;
+import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.entities.SharedEntityBehaviours;
 import org.jahdoo.common.entities.custom_entities.CustomSkeleton;
@@ -83,7 +84,7 @@ import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.common.registers.mod.RuneReg;
 import org.jahdoo.trial_nexus.ability.abilities_combat.vital_rejuvenation.VitalRejuvenation;
-import org.jahdoo.trial_nexus.ability.abilities_utility.block_placer.BlockPlacerAbility;
+import org.jahdoo.trial_nexus.ability.abilities_utility.deprecated.block_placer.BlockPlacerAbility;
 import org.jahdoo.trial_nexus.ability.abilities_utility.wall_placer.WallPlacerAbility;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.attachments.CasterData;
@@ -253,11 +254,7 @@ public class EventHelpers {
             if(player instanceof ServerPlayer serverPlayer){
                 var castingData = player.getData(CASTER_DATA.get());
                 serverPlayer.setData(RUN_DATA, EMPTY);
-                castingData.updateAbility(AbilityReg.FETCH.get().setModifiers());
-                castingData.updateAbility(AbilityReg.HAMMER.get().setModifiers());
-                castingData.updateAbility(AbilityReg.FARMERS_TOUCH.get().setModifiers());
-                castingData.updateAbility(AbilityReg.WALL_PLACER.get().setModifiers());
-                castingData.updateAbility(AbilityReg.LIGHT_PLACER.get().setModifiers());
+                CasterData.addFreeAbilities(castingData);
                 castingData.playerInit();
                 sendToPlayer(serverPlayer, new CastingDataSyncS2CP(castingData));
             }
@@ -271,11 +268,6 @@ public class EventHelpers {
                 if(player instanceof ServerPlayer serverPlayer){
                     var castingData = player.getData(CASTER_DATA.get());
                     CasterData.regretAbilities(serverPlayer, false);
-                    castingData.updateAbility(AbilityReg.FETCH.get().setModifiers());
-                    castingData.updateAbility(AbilityReg.HAMMER.get().setModifiers());
-                    castingData.updateAbility(AbilityReg.FARMERS_TOUCH.get().setModifiers());
-                    castingData.updateAbility(AbilityReg.WALL_PLACER.get().setModifiers());
-                    castingData.updateAbility(AbilityReg.LIGHT_PLACER.get().setModifiers());
                     sendToPlayer(serverPlayer, new CastingDataSyncS2CP(castingData));
                 }
                 data.putBoolean("update_test_1", true);
@@ -417,9 +409,11 @@ public class EventHelpers {
 
         for (int i = 0; i < 3; i++) freeItems.add(ItemStack.EMPTY);
 
-        freeItems.add(new ItemStack(ItemReg.TRIAL_TICKET));
+        var e = new ItemStack(ItemReg.TRIAL_TICKET);
+        TicketData.initTicket(e, 1);
+        freeItems.add(e);
         freeItems.add(new ItemStack(ItemReg.CARE_PACKAGE));
-        freeItems.add(new ItemStack(ItemReg.TRIAL_TICKET));
+        freeItems.add(e);
 
         var shulkerBox = new ItemStack(Items.LIGHT_GRAY_SHULKER_BOX);
 

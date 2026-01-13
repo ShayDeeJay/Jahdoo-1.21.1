@@ -1,4 +1,4 @@
-package org.jahdoo.trial_nexus.ability.abilities_utility.excavator;
+package org.jahdoo.trial_nexus.ability.abilities_utility.deprecated.excavator;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.resources.ResourceLocation;

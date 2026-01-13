@@ -79,7 +79,7 @@ public class FarmersTouchAbility extends AbstractBlockAbility {
     public AbilityHolder setModifiers() {
         return new AbilityBuilder(abilityId.getPath().intern())
             .setStaticMana(15)
-            .setRange(10, 2, 2, 1)
+            .setRange(10, 4, 2, 2)
             .setAbilityTagModifiersRandom(GROWTH_CHANCE, 20, 5, false, 5, 1)
             .setAbilityTagModifiersRandom(HARVEST_CHANCE, 20, 5, false, 5, 1)
             .buildAndReturn();

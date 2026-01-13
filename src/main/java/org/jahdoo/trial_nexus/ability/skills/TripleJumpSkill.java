@@ -18,7 +18,7 @@ public class TripleJumpSkill extends AbstractSkill {
 
     @Override
     public int unlockCost() {
-        return 10;
+        return 14;
     }
 
     @Override

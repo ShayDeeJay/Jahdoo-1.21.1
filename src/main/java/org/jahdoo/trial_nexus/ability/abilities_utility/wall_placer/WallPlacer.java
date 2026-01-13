@@ -1,5 +1,6 @@
 package org.jahdoo.trial_nexus.ability.abilities_utility.wall_placer;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +19,7 @@ import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.OFFSET;
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.SIZE;
-import static org.jahdoo.trial_nexus.ability.abilities_utility.block_placer.BlockPlacer.removeItemsFromInv;
+import static org.jahdoo.trial_nexus.ability.abilities_utility.deprecated.block_placer.BlockPlacer.removeItemsFromInv;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.getStoredBlock;
 
 public class WallPlacer extends AbstractUtilityProjectile {
@@ -55,6 +56,8 @@ public class WallPlacer extends AbstractUtilityProjectile {
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
+        if(level instanceof CustomLevel) return;
+
         if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         var owner = (LivingEntity) generic.getOwner();
         if(owner == null && generic.blockEntityPos == null) return;

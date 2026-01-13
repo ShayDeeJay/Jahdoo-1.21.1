@@ -1,5 +1,6 @@
 package org.jahdoo.trial_nexus.ability.abilities_utility.farmers_touch;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -76,12 +77,15 @@ public class FarmersTouch extends AbstractUtilityProjectile {
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
-        if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
+        var level = this.generic.level();
+        if(level instanceof CustomLevel) return;
+
+        if(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         this.hasHitBlock = true;
         this.generic.setInvisible(true);
         this.generic.setDeltaMovement(0,0,0);
         PositionFinders.getOuterSquareOfRadius(this.generic.position(), counter + 0.5, this.range * 20,
-            positions -> this.setParticleNova(positions, this.generic.level())
+            positions -> this.setParticleNova(positions, level)
         );
     }
 

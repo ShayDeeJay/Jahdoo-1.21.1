@@ -56,7 +56,8 @@ public abstract class AbstractPanableScreen extends Screen {
             new ScreenType(AbilityUnlockScreen::new, "Abilities", ABILITY),
             new ScreenType(StatScreen::new, "Statistics", STAT),
             new ScreenType(RunScreen::new, "History", DATA),
-            new ScreenType(QuestLogScreen::new, "Quests", QUEST_CRATE)
+            new ScreenType(QuestLogScreen::new, "Quests", QUEST_CRATE),
+            new ScreenType(CraftingHelperScreen::new, "Items", GUI_AUGMENT_SLOT)
         );
 
         var numButtons = types.size();

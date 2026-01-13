@@ -1,6 +1,5 @@
 package org.jahdoo.common.items.caster_item;
 
-import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,7 +13,6 @@ import net.minecraft.world.phys.HitResult;
 import org.jahdoo.common.items.caster_item.elemental_wand.ElementalWand;
 import org.jahdoo.common.registers.AttributeReg;
 import org.jahdoo.common.registers.mod.AbilityReg;
-import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.ability.Ability;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.element.AbstractElement;
@@ -158,15 +156,15 @@ public class CastHelper {
         var itemStack = Helpers.getUsedItem(player);
         var canUse = getCanApplyDistanceAbility(player, itemStack);
 
-        var typeId = CasterData.selectedAbility(player);
-        var getAbility = AbilityReg.getFirstSpellByTypeId(typeId);
-        var cantUseInDim = player.level() instanceof CustomLevel && getAbility.isPresent() && getAbility.get().getElemenType().equals(ElementReg.utility());
-        var fail = InteractionResultHolder.fail(itemStack);
-        if(cantUseInDim) {
-            player.displayClientMessage(Component.literal("You cant use that here"), true);
-            failedCastNotification(player);
-            return fail;
-        }
+//        var typeId = CasterData.selectedAbility(player);
+//        var getAbility = AbilityReg.getFirstSpellByTypeId(typeId);
+//        var cantUseInDim = player.level() instanceof CustomLevel && getAbility.isPresent() && getAbility.get().getElemenType().equals(ElementReg.utility());
+//        var fail = InteractionResultHolder.fail(itemStack);
+//        if(cantUseInDim) {
+//            player.displayClientMessage(Component.literal("You cant use that here"), true);
+//            failedCastNotification(player);
+//            return fail;
+//        }
 
         if(canUse) executeAndCharge(player); else failedCastNotification(player);
 

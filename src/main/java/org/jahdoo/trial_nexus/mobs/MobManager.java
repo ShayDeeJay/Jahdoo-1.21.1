@@ -1,9 +1,10 @@
 package org.jahdoo.trial_nexus.mobs;
 
+import com.github.L_Ender.cataclysm.entity.InternalAnimationMonster.IABossMonsters.Maledictus.Maledictus_Entity;
+import com.github.L_Ender.cataclysm.entity.InternalAnimationMonster.IABossMonsters.Scylla.Scylla_Entity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffect;
@@ -27,7 +28,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.entities.custom_entities.CustomSkeleton;
 import org.jahdoo.common.entities.custom_entities.CustomZombie;
-import org.jahdoo.common.entities.ancient_golem.AncientGolem;
 import org.jahdoo.common.entities.eternal_wizard.EternalWizard;
 import org.jahdoo.common.entities.inferno_creeper.InfernoCreeper;
 import org.jahdoo.common.entities.void_spider.VoidSpider;
@@ -47,6 +47,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import static com.github.L_Ender.cataclysm.init.ModEntities.MALEDICTUS;
+import static com.github.L_Ender.cataclysm.init.ModEntities.SCYLLA;
 import static net.minecraft.core.component.DataComponents.TRIM;
 import static net.minecraft.core.registries.Registries.TRIM_MATERIAL;
 import static net.minecraft.core.registries.Registries.TRIM_PATTERN;
@@ -90,9 +92,10 @@ public class MobManager {
 
     private static LivingEntity getAncienGolem(ServerLevel serverLevel, int round) {
         var damage = Maths.getPercentageTotal(round, 12);
-        var ancientGolem = new AncientGolem(serverLevel, null, damage, 100, 1, INFINITE_LIFE, 20);
+//        var ancientGolem = new AncientGolem(serverLevel, null, damage, 100, 1, INFINITE_LIFE, 20);
+        var ancientGolem = new Scylla_Entity(SCYLLA.get(), serverLevel);
         addBaseAttribute(MAX_HEALTH, ancientGolem, 300);
-        addBaseAttribute(SCALE, ancientGolem, 50);
+//        addBaseAttribute(SCALE, ancientGolem, 50);
         return ancientGolem;
     }
 
@@ -257,20 +260,22 @@ public class MobManager {
     }
 
     public static LivingEntity getEliteSkeleton(ServerLevel serverLevel, int level){
-        var skeleton = new CustomSkeleton(serverLevel, null, new ItemStack(ARROW));
-        var getEliteArmor = getEliteArmor(serverLevel, 100);
+//        var skeleton = new CustomSkeleton(serverLevel, null, new ItemStack(ARROW));
+//        var getEliteArmor = getEliteArmor(serverLevel, 100);
+        var skeleton = new Maledictus_Entity(MALEDICTUS.get(), serverLevel);
+
         addBaseAttribute(MAX_HEALTH, skeleton, 300);
-        addBaseAttribute(SCALE, skeleton, 50);
-        skeleton.setElite();
-
-        effectWithChance(skeleton, MobEffects.MOVEMENT_SPEED, 0, 100);
-
-        skeleton.setCustomName(Component.literal("Master Archer"));
-        skeleton.setItemSlot(HEAD, getEliteArmor.getFirst());
-        skeleton.setItemSlot(CHEST, getEliteArmor.get(1));
-        skeleton.setItemSlot(LEGS, getEliteArmor.get(2));
-        skeleton.setItemSlot(FEET, getEliteArmor.get(3));
-        skeleton.setItemSlot(MAINHAND, getEliteArmor.get(4));
+//        addBaseAttribute(SCALE, skeleton, 50);
+//        skeleton.setElite();
+//
+//        effectWithChance(skeleton, MobEffects.MOVEMENT_SPEED, 0, 100);
+//
+//        skeleton.setCustomName(Component.literal("Master Archer"));
+//        skeleton.setItemSlot(HEAD, getEliteArmor.getFirst());
+//        skeleton.setItemSlot(CHEST, getEliteArmor.get(1));
+//        skeleton.setItemSlot(LEGS, getEliteArmor.get(2));
+//        skeleton.setItemSlot(FEET, getEliteArmor.get(3));
+//        skeleton.setItemSlot(MAINHAND, getEliteArmor.get(4));
         return skeleton;
     }
 

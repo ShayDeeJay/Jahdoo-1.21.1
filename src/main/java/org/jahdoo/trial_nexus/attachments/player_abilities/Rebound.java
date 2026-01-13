@@ -44,36 +44,28 @@ public class Rebound implements IAttachment {
 
     public void onTick(Player player){
         if(CasterData.hasSkill(player, SkillReg.REBOUND.get().id())){
-//            if(player instanceof ServerPlayer serverPlayer){
-//                var payload = new BouncyFootS2CP(effectTimer, previousDelta, currentDelta, setHighestFallPoint);
-//                PacketDistributor.sendToPlayer(serverPlayer, payload);
-//            }
 
-            player.resetFallDistance();
             if (player.verticalCollisionBelow && previousDelta != currentDelta) {
                 if(setHighestFallPoint > 0.5D){
-                    var reducedDelta = Math.abs(previousDelta / 1.5);
+                    var reducedDelta = Math.abs(previousDelta / 2.5);
                     var volume = (float) reducedDelta - 0.2f;
                     player.playSound(SoundEvents.FROG_TONGUE, volume, 1.2f);
                     player.playSound(SoundReg.SUSPEND.get(), volume, 2f);
                     player.setDeltaMovement(player.getDeltaMovement().add(0, singleFormattedDouble(Math.min(reducedDelta, 1)), 0));
                 }
             }
-
+            
             this.setHighestFallPoint = Math.max(this.setHighestFallPoint, player.fallDistance);
             this.previousDelta = this.currentDelta;
             this.currentDelta = player.getDeltaMovement().y;
 
             var isJumping = this.currentDelta != this.previousDelta;
+
             if(!isJumping || player.verticalCollisionBelow) {
+
                 this.setEffectTimer(0);
-                var playerResetDelta = -0.0784000015258789;
-                if(this.currentDelta > playerResetDelta) {
-                    bounceCount++;
-                }
-                if(bounceCount >= 3) {
-                    this.currentDelta = 0;
-                }
+                if(this.currentDelta > 0) bounceCount++;
+                if(bounceCount >= 3) this.currentDelta = 0;
 
             }
 

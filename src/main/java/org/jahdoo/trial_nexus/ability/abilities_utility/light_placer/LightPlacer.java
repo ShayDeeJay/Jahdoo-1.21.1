@@ -1,5 +1,6 @@
 package org.jahdoo.trial_nexus.ability.abilities_utility.light_placer;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
@@ -40,6 +41,8 @@ public class LightPlacer extends AbstractUtilityProjectile {
     @Override
     public void onBlockBlockHit(BlockHitResult blockHitResult) {
         super.onBlockBlockHit(blockHitResult);
+        if(getLevel() instanceof CustomLevel) return;
+
         if(this.generic.level().getBlockEntity(blockHitResult.getBlockPos()) instanceof ChaosCubeEntity) return;
         var level = this.generic.level();
         var replaceBlock = BlockReg.LIGHTING.get().defaultBlockState();

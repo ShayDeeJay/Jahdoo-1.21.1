@@ -34,10 +34,10 @@ public class EnchantmentHelpers {
     }
 
     @Nullable
-    private static Holder<Enchantment> enchantmentFromKey(RegistryAccess registryAccess, ResourceKey<Enchantment> enchantmentkey) {
+    private static Holder<Enchantment> enchantmentFromKey(RegistryAccess registryAccess, ResourceKey<Enchantment> enchantmentKey) {
         var reg = registryAccess.registry(Registries.ENCHANTMENT).orElse(null);
         if (reg != null) {
-            var enchantment = reg.get(enchantmentkey);
+            var enchantment = reg.get(enchantmentKey);
             if (enchantment != null) {
                 return reg.wrapAsHolder(enchantment);
             }

@@ -132,35 +132,35 @@ public class AbilityBuilder {
         return this;
     }
 
-    public AbilityBuilder toggleVoid(double baseCost){
-        this.setAbilityTagModifiersRandom(VOID_BLOCKS, 2, 1, true, 1, baseCost);
+    public AbilityBuilder toggleVoid(){
+        this.setAbilityTagModifiersRandom(VOID_BLOCKS, 2, 1, true, 1, 1);
         return this;
     }
 
-    public AbilityBuilder toggleSilk(double baseCost){
-        this.setAbilityTagModifiersRandom(SILK_TOUCH, 2, 1, true, 1, baseCost);
-        return this;
-    }
-
-
-    public AbilityBuilder toggleSmelt(double baseCost){
-        this.setAbilityTagModifiersRandom(SMELTER, 2, 1, true, 1, baseCost);
+    public AbilityBuilder toggleSilk(){
+        this.setAbilityTagModifiersRandom(SILK_TOUCH, 2, 1, true, 1, 2);
         return this;
     }
 
 
-    public AbilityBuilder toggleCollect(double baseCost){
-        this.setAbilityTagModifiersRandom(AUTO_COLLECT, 2, 1, true, 1, baseCost);
+    public AbilityBuilder toggleSmelt(){
+        this.setAbilityTagModifiersRandom(SMELTER, 2, 1, true, 1, 3);
         return this;
     }
 
-    public AbilityBuilder toggleReinforced(double baseCost){
-        this.setAbilityTagModifiersRandom(REINFORCED, 2, 1, true, 1, baseCost);
+
+    public AbilityBuilder toggleCollect(){
+        this.setAbilityTagModifiersRandom(AUTO_COLLECT, 2, 1, true, 1, 3);
         return this;
     }
 
-    public AbilityBuilder setFortune(double baseCost){
-        this.setAbilityTagModifiersRandom(FORTUNE, 5, 0, true, 1, baseCost);
+    public AbilityBuilder toggleReinforced(){
+        this.setAbilityTagModifiersRandom(REINFORCED, 2, 1, true, 1, 3);
+        return this;
+    }
+
+    public AbilityBuilder setFortune(){
+        this.setAbilityTagModifiersRandom(FORTUNE, 5, 0, true, 1, 1);
         return this;
     }
 

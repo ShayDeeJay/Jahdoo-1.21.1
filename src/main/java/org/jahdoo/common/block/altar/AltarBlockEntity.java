@@ -335,7 +335,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
                 )
                 .toList();
 
-            var x = Helpers.listRandom(randomPoses);
+            var x = randomPoses.isEmpty() ? pos.getCenter() : Helpers.listRandom(randomPoses);
 
             if(privateTicks % 2 == 0){
                 if(!this.spawnableMobs.isEmpty() && onField.size() < getMaxAllowedMobsOnField(serverLevel)){

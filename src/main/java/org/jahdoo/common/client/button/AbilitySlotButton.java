@@ -132,7 +132,7 @@ public class AbilitySlotButton extends ImageButton {
         if(buttonOverlay != null){
             graphics.blit(buttonOverlay, this.getX() - offset + i/2, this.getY() - offset + i/2, 1, 0, 0, size, size, size, size);
         } else {
-            graphics.drawCenteredString(mc.font, validSlot ? slotIndex + 1 + "" : "⧈", this.getX() - offset + 15, this.getY() - offset + 11, validSlot ? SUB_HEADER_COLOUR : HEADER_COLOUR);
+            graphics.drawCenteredString(mc.font, validSlot ? slotIndex + 1 + "" : "⧈", this.getX() - offset + (this.totalSize/2), this.getY() - offset + (this.totalSize/2) - 4, validSlot ? SUB_HEADER_COLOUR : HEADER_COLOUR);
         }
     }
 

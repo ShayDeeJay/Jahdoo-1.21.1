@@ -19,7 +19,7 @@ public class ReboundSkill extends AbstractSkill {
 
     @Override
     public int unlockCost() {
-        return 8;
+        return 5;
     }
 
     @Override

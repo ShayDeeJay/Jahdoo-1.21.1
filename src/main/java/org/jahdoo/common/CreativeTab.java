@@ -58,7 +58,6 @@ public class CreativeTab {
                 outPut.accept(STONE_OF_REGRET.get());
                 outPut.accept(DICE.get());
 
-
                 registerRecoveryReceipts(outPut);
                 registerCarePackages(outPut);
                 keys(outPut);

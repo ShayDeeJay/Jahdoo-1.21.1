@@ -2,7 +2,9 @@ package org.jahdoo.trial_nexus.utils;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -236,11 +238,11 @@ public class Helpers {
     }
 
     public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch){
-        sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, true));
+        sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, false));
     }
 
-    public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch, boolean isBatched){
-        sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, isBatched));
+    public static void sendClientSound(ServerPlayer serverPlayer, SoundEvent soundEvent, float volume, float pitch, boolean isLooping){
+        sendToPlayer(serverPlayer, new ClientSoundS2CP(soundEvent, volume, pitch, isLooping));
     }
 
     public static Map<String, AbilityData.AbilityModifiers> getModifierValue(AbilityHolder abilityHolder, String tagName) {
@@ -685,5 +687,10 @@ public class Helpers {
     public static BlockPos loadBlockPosNBT(CompoundTag tag) {
         var returnLocation = tag.getCompound("block_pos");
         return new BlockPos(returnLocation.getInt("x"), returnLocation.getInt("y"), returnLocation.getInt("z"));
+    }
+
+    public static boolean isKeyDown(int key){
+        var mc = Minecraft.getInstance().getWindow().getWindow();
+        return InputConstants.isKeyDown(mc, key);
     }
 }

@@ -7,17 +7,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
-import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.chaos_cube.ChaosCubeEntity;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.common.particle.ParticleStore;
 import org.jahdoo.common.particle.particle_options.GenericParticleOptions;
+import org.jahdoo.trial_nexus.ability.AbstractUtilityProjectile;
+import org.jahdoo.trial_nexus.ability.DefaultEntityBehaviour;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static org.jahdoo.trial_nexus.ability.AbilityBuilder.*;
-import static org.jahdoo.trial_nexus.ability.UtilityHelpers.*;
+import static org.jahdoo.trial_nexus.ability.UtilityHelpers.canBreakInDim;
+import static org.jahdoo.trial_nexus.ability.UtilityHelpers.dropItemsOrBlock;
 
 public class Hammer extends AbstractUtilityProjectile {
 
@@ -95,17 +96,19 @@ public class Hammer extends AbstractUtilityProjectile {
                         z * (isLookingUpOrDown || axisX ? 1 : 0)
                     );
 
-                    var breakSpeed = reinforced == 2 ? 50 : 0;
-                    dropItemsOrBlock(
-                        projectile,
-                        offsetPos,
-                        breakSpeed,
-                        (int) fortune,
-                        valueToBool(silkTouch),
-                        valueToBool(voidBlocks),
-                        valueToBool(smelter),
-                        valueToBool(collector)
-                    );
+
+                    if(canBreakInDim(serverLevel, pos)){
+                        dropItemsOrBlock(
+                            projectile,
+                            offsetPos,
+                            reinforced == 2 ? 50 : 0,
+                            (int) fortune,
+                            valueToBool(silkTouch),
+                            valueToBool(voidBlocks),
+                            valueToBool(smelter),
+                            valueToBool(collector)
+                        );
+                    }
 
                     var particle = new GenericParticleOptions(
                         ParticleStore.SOFT_PARTICLE,

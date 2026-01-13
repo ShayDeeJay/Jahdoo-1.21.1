@@ -1,4 +1,4 @@
-package org.jahdoo.trial_nexus.ability.abilities_utility.block_placer;
+package org.jahdoo.trial_nexus.ability.abilities_utility.deprecated.excavator;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -13,13 +13,18 @@ import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.common.registers.mod.EntityDataReg;
 
-public class BlockPlacerAbility extends AbstractBlockAbility {
+public class BlockBreakerAbility extends AbstractBlockAbility {
 
-    public static final ResourceLocation abilityId = Helpers.res("block_placer");
+    public static final ResourceLocation abilityId = Helpers.res("excavator");
+
+    @Override
+    public String projectileKey() {
+        return EntityDataReg.BLOCK_BREAKER.get().setAbilityId();
+    }
 
     @Override
     public JahdooRarity rarity() {
-        return JahdooRarity.RARE;
+        return JahdooRarity.COMMON;
     }
 
     @Override
@@ -48,28 +53,16 @@ public class BlockPlacerAbility extends AbstractBlockAbility {
     }
 
     @Override
-    public boolean isInputUser() {
-        return true;
-    }
-
-    @Override
-    public String projectileKey() {
-        return EntityDataReg.BLOCK_PLACER.get().setAbilityId();
-    }
-
-    @Override
     public AbilityHolder setModifiers() {
-        return new AbilityBuilder(abilityId.getPath().intern())
-            .setStaticMana(1)
-            .buildAndReturn();
+       return new AbilityBuilder(abilityId.getPath().intern())
+           .setStaticMana(1)
+           .buildAndReturn();
     }
 
     @Override
     public void invokeAbility(Player player) {
         GenericProjectile genericProjectile = new GenericProjectile(
-            player, 0,
-            projectileKey(),
-            abilityId.getPath().intern()
+            player, 0, projectileKey(), abilityId.getPath().intern()
         );
         fireUtilityProjectile(genericProjectile, player);
     }

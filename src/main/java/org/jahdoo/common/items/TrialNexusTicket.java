@@ -83,8 +83,12 @@ public class TrialNexusTicket extends Item implements JahdooItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        if(CoreData.isFull(player.getItemInHand(usedHand)))
+        var itemInHand = player.getItemInHand(usedHand);
+        if(CoreData.isFull(itemInHand))
             player.startUsingItem(usedHand);
+
+        TicketData.initTicket(itemInHand, 1);
+
 
         return super.use(level, player, usedHand);
     }

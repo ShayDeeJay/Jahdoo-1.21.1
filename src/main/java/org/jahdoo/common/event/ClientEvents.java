@@ -3,8 +3,11 @@ package org.jahdoo.common.event;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -14,6 +17,7 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import org.jahdoo.JahdooMod;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.OverlayBlockTooltip;
@@ -23,6 +27,7 @@ import org.jahdoo.common.client.screens.StatScreen;
 import org.jahdoo.common.client.tooltip_renderer.RuneTooltipRenderer;
 import org.jahdoo.common.entities.ITamableEntity;
 import org.jahdoo.common.items.JahdooItem;
+import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
 import java.util.HashMap;
@@ -50,6 +55,10 @@ public class ClientEvents {
         var poseStack = event.getPoseStack();
         var entity = event.getEntity();
         var instance = Minecraft.getInstance();
+
+//        instance.getSoundManager().
+
+
         if(!entity.isAlive()) return;
         renderHealthBar(event, entity, instance, poseStack);
         mysticEffectClient(event);
@@ -65,6 +74,45 @@ public class ClientEvents {
         }
         return Icons.HEALTH_HOLDER;
     }
+
+    @SubscribeEvent
+    public static void levelEvent(LevelTickEvent.Pre event) {
+        var level = event.getLevel();
+        var sManager = Minecraft.getInstance().getSoundManager();
+//        if(sManager.getSoundEvent(SoundReg.RE_ROLL.get().getLocation()).)
+//        sManager.stop(SoundReg.RE_ROLL.get().getLocation(), SoundSource.MUSIC);
+
+        var sound = new SimpleSoundInstance(
+            SoundReg.SPELL_SOUND.get().getLocation(),
+            SoundSource.MUSIC,
+            1.0F, 1.0F,
+            SoundInstance.createUnseededRandom(),
+            true,
+            0,
+            SoundInstance.Attenuation.NONE,
+            0.0F, 0.0F, 0.0F,
+            true
+        );
+
+//        var active = sManager.isActive(sound);
+
+//        sManager.st();
+
+//        sManager.stop();
+//        sManager.getSoundEvent(SoundReg.RE_ROLL.get().getLocation()).
+//        if(level.getGameTime()%20 == 0){
+//            if(!active){
+//                System.out.println(sound.isLooping());
+//                sManager.play(
+//                sound
+//            );
+//            }
+//
+//        }
+
+
+    }
+
 
     @SubscribeEvent
     public static void overlayEventPre(RenderGuiLayerEvent.Pre event) {
@@ -85,6 +133,15 @@ public class ClientEvents {
         var current = e.getTooltipElements();
         var itemStack = e.getItemStack();
         var item = itemStack.getItem();
+        var instance = Minecraft.getInstance();
+//        var soundManager = instance.getSoundManager();;
+//        Minecraft.getInstance().getSoundManager().play(
+//            SimpleSoundInstance.forMusic(
+//                SoundReg.RE_ROLL.get()
+//            )
+//        );
+
+//        if(item.asItem() instanceof JahdooItem && Helpers.isKeyDown(KEY_LSHIFT)) Minecraft.getInstance().setScreen(new QuestLogScreen());
 
         if(item instanceof JahdooItem){
             var iterator = current.iterator();

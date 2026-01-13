@@ -378,7 +378,9 @@ public class CustomHudOverlay implements LayeredDraw.Layer {
             var xA = -(size * (num / 2)) + spread;
             var yA = graphics.guiHeight() - 50;
             alignedGui.displayGuiLayer(xA, yA, 0, 0, iconSize, GUI_BUTTON_SKILL);
-            alignedGui.displayGuiLayer(xA, yA, 0, 0, iconSize, get.orElseThrow().icon());
+            var deScale = 8;
+            var i = deScale / 2;
+            alignedGui.displayGuiLayer(xA + i, yA - i, 0, 0, iconSize - deScale, get.orElseThrow().icon());
             spread += num;
         }
 

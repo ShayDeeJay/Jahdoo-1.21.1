@@ -887,7 +887,6 @@ public class JahdooCommands {
         if(source.getLevel() instanceof ServerLevel){
             var makeTicket = new ItemStack(ItemReg.TRIAL_TICKET);
             TicketData.initTicket(makeTicket, 1);
-            CoreData.setFilled(makeTicket);
             throwOrAddItem(player, makeTicket);
         }
 

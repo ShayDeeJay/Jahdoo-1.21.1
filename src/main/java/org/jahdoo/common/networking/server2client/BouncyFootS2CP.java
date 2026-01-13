@@ -53,7 +53,6 @@ public class BouncyFootS2CP implements CustomPacketPayload {
                 @Override
                 public void run() {
                     if(ctx.player() instanceof LocalPlayer localPlayer) {
-                        localPlayer.resetFallDistance();
                         if (localPlayer.verticalCollisionBelow && previousDelta != currentDelta) {
                             if(maxFall > 0.5D){
                                 var reducedDelta = Math.abs(previousDelta / 2.5);

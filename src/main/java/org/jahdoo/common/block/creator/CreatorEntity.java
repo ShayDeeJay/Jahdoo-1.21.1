@@ -121,13 +121,6 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
                 this.setAnimTickIncrement(Math.min(this.animTickIncrement + 0.1, 2.5));
                 if (this.animIncrement < 2.5) this.animIncrement += 0.05;
                 this.onCompleteCraft(level, blockPos);
-//                if(getRecipe.secondaryCheck(this)){
-//                    this.progress++;
-//                    this.tableProcessingParticle(level);
-//                    this.setAnimTickIncrement(Math.min(this.animTickIncrement + 0.1, 2.5));
-//                    if (this.animIncrement < 2.5) this.animIncrement += 0.05;
-//                    this.onCompleteCraft(level, blockPos);
-//                }
             }
 
         } else {
@@ -208,7 +201,6 @@ public class CreatorEntity extends AbstractTankUser implements RecipeInput {
             int[] array = {tankPosition.getX(), tankPosition.getY(), tankPosition.getZ()};
             tag.putIntArray("blockPos", array);
         }
-//        this.updateBlock();
     }
 
     @Override

@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -172,6 +173,9 @@ public class PerkTableEntity extends SyncedBlockEntity {
             }
             case 4 ->{
                 if(level instanceof ServerLevel cLevel){
+                    if(player instanceof ServerPlayer serverPlayer){
+                        Helpers.sendClientSound(serverPlayer, SoundReg.REST.get(), 0.1F, 1, true);
+                    }
                     StructureManager.generateCooldownRoom(cLevel);
                     var findBlock = cLevel.getBlockState(restPos);
 
@@ -189,6 +193,9 @@ public class PerkTableEntity extends SyncedBlockEntity {
                 if(level instanceof ServerLevel){
                     var rLoc = this.returnLocation;
                     if(rLoc != null){
+                        if(player instanceof ServerPlayer serverPlayer){
+                            Helpers.sendClientSound(serverPlayer, SoundReg.LOOP.get(), 0.4F, 1, true);
+                        }
                         player.teleportTo(rLoc.getX() + 0.5, rLoc.getY(), rLoc.getZ() + 0.5);
                     }
                 }

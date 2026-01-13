@@ -2,18 +2,21 @@ package org.jahdoo.common.datagen;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.Tags;
 import org.jahdoo.trial_nexus.utils.ModTags;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static net.minecraft.data.recipes.RecipeCategory.BUILDING_BLOCKS;
+import static net.minecraft.data.recipes.RecipeCategory.MISC;
+import static net.minecraft.world.item.Items.*;
 import static org.jahdoo.common.registers.BlockReg.*;
 import static org.jahdoo.common.registers.ItemReg.*;
 
@@ -33,50 +36,52 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         tankRecipe(recipeOutput, TANK.get().asItem());
         dissembler(recipeOutput, DISSEMBLER.get().asItem());
         nexite(recipeOutput, NEXITE_BLOCK.get().asItem());
+        diamond(recipeOutput, DIAMOND_NUGGET.get());
+        netheriteIngot(recipeOutput, NETHERITE_NUGGET.get());
         chaosCube(recipeOutput, MODULAR_CHAOS_CUBE.get().asItem());
         runeManager(recipeOutput, RUNE_TABLE.get().asItem());
-        oreSmelting(recipeOutput, List.of(Items.ROTTEN_FLESH), RecipeCategory.MISC, Items.LEATHER, 2.0F, 200, "leather");
+        oreSmelting(recipeOutput, List.of(ROTTEN_FLESH), MISC, LEATHER, 2.0F, 200, "leather");
         packedMudClayBlock(recipeOutput, PACKED_MUD_CLAY.get().asItem());
         ticketBureau(recipeOutput, TICKET_BUREAU.get().asItem());
         creator(recipeOutput, CREATOR_BLOCK.get().asItem());
     }
 
     protected void packedMudClayBlock(RecipeOutput output, Item result) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result, 4)
-            .define('M', Items.DIRT)
-            .define('X', Items.CLAY)
+        ShapedRecipeBuilder.shaped(MISC, result, 4)
+            .define('M', DIRT)
+            .define('X', CLAY)
             .pattern(" M ")
             .pattern("MXM")
             .pattern(" M ")
-            .unlockedBy("packed_mud_clay", has(Items.PACKED_MUD))
+            .unlockedBy("packed_mud_clay", has(PACKED_MUD))
             .save(output);
     }
 
     protected void dissembler(RecipeOutput output, Item result) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+        ShapedRecipeBuilder.shaped(MISC, result)
             .define('M', PACKED_MUD_CLAY.get())
             .define('X', AUGMENT_CORE.get())
             .pattern(" M ")
             .pattern("MXM")
             .pattern(" M ")
-            .unlockedBy("mud_bricks", has(Items.MUD_BRICKS))
+            .unlockedBy("mud_bricks", has(MUD_BRICKS))
             .save(output);
     }
 
     protected void tankRecipe(RecipeOutput output, Item result) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
-            .define('M', Items.GLASS)
-            .define('X', Items.DEEPSLATE)
+        ShapedRecipeBuilder.shaped(MISC, result)
+            .define('M', GLASS)
+            .define('X', DEEPSLATE)
             .define('Z', PACKED_MUD_CLAY.get())
             .pattern("XZX")
             .pattern("MMM")
             .pattern("XZX")
-            .unlockedBy("glass", has(Items.GLASS))
+            .unlockedBy("glass", has(GLASS))
             .save(output);
     }
 
     protected void chaosCube(RecipeOutput output, Item result) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+        ShapedRecipeBuilder.shaped(MISC, result)
             .define('X', ModTags.Items.WAND_TAGS)
             .define('M', PACKED_MUD_CLAY.get())
             .pattern("MMM")
@@ -87,7 +92,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     }
 
     protected void runeManager(RecipeOutput output, Item result) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+        ShapedRecipeBuilder.shaped(MISC, result)
             .define('X', AUGMENT_CORE.get())
             .define('M', PACKED_MUD_CLAY.get())
             .pattern("MMM")
@@ -98,7 +103,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     }
 
     protected void ticketBureau(RecipeOutput output, Item result) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+        ShapedRecipeBuilder.shaped(MISC, result)
             .define('X', TRIAL_TICKET.get())
             .define('M', Tags.Items.STRIPPED_LOGS)
             .pattern("MMM")
@@ -109,20 +114,34 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     }
 
     protected void creator(RecipeOutput output, Item result) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result)
+        ShapedRecipeBuilder.shaped(MISC, result)
             .define('M', PACKED_MUD_CLAY.get())
             .define('X', NEXITE_BLOCK.get())
             .pattern("MMM")
             .pattern(" X ")
             .pattern(" M ")
-            .unlockedBy("mud_bricks", has(Items.MUD_BRICKS))
+            .unlockedBy("mud_bricks", has(MUD_BRICKS))
             .save(output);
     }
 
     protected void nexite(RecipeOutput output, Item result) {
-        nineBlockStorageRecipes(output, RecipeCategory.MISC, NEXITE_POWDER.get(), RecipeCategory.BUILDING_BLOCKS, NEXITE_BLOCK.get());
-        oreSmelting(output, List.of(RAW_NEXITE_BLOCK.get()),RecipeCategory.BUILDING_BLOCKS, result, 2.0F, 200, "nexite");
+        nineBlockStorageRecipes(output, MISC, NEXITE_POWDER.get(), BUILDING_BLOCKS, NEXITE_BLOCK.get());
+        oreSmelting(output, List.of(RAW_NEXITE_BLOCK.get()), BUILDING_BLOCKS, result, 2.0F, 200, "nexite");
     }
 
+    protected void diamond(RecipeOutput output, Item result) {
+        nineBlockStorageRecipes(output, MISC, DIAMOND_NUGGET.get(), MISC, Items.DIAMOND);
+
+        List<ItemLike> ingredients = List.of(DIAMOND_SWORD, DIAMOND_AXE, DIAMOND_HOE, DIAMOND_PICKAXE, DIAMOND_SHOVEL, DIAMOND_HELMET, DIAMOND_CHESTPLATE, DIAMOND_LEGGINGS, DIAMOND_BOOTS);
+        oreSmelting(output, ingredients, MISC, result, 2.0F, 200, "diamond");
+    }
+
+
+    protected void netheriteIngot(RecipeOutput output, Item result) {
+        nineBlockStorageRecipes(output, MISC, NETHERITE_NUGGET.get(), MISC, NETHERITE_INGOT);
+
+        List<ItemLike> ingredients = List.of(NETHERITE_SWORD, NETHERITE_AXE, NETHERITE_HOE, NETHERITE_PICKAXE, NETHERITE_SHOVEL, NETHERITE_HELMET, NETHERITE_CHESTPLATE, NETHERITE_LEGGINGS, NETHERITE_BOOTS);
+        oreSmelting(output, ingredients, MISC, result, 2.0F, 200, "netherite");
+    }
 
 }

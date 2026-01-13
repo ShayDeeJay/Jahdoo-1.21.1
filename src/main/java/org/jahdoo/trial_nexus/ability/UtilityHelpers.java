@@ -1,5 +1,6 @@
 package org.jahdoo.trial_nexus.ability;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -40,6 +41,7 @@ import java.util.Optional;
 
 import static net.minecraft.world.level.block.Blocks.AIR;
 import static org.jahdoo.trial_nexus.ability.abilities_utility.fetch.Fetch.handlePlayerPickup;
+import static org.jahdoo.trial_nexus.utils.ModTags.Block.MINEABLE_NEXUS;
 
 public class UtilityHelpers {
 
@@ -102,6 +104,13 @@ public class UtilityHelpers {
         level.removeBlock(pos, false);
     }
 
+    public static boolean canBreakInDim(ServerLevel serverLevel, BlockPos pos){
+        var a = serverLevel instanceof CustomLevel;
+        var b = serverLevel instanceof CustomLevel && serverLevel.getBlockState(pos).is(MINEABLE_NEXUS);
+
+        return !a || b;
+    }
+
     public static void dropItemsOrBlock(
         GenericProjectile newProjectile,
         BlockPos pos,
@@ -112,12 +121,13 @@ public class UtilityHelpers {
         boolean smelt,
         boolean autoCollect
     ){
-        var fluidState = newProjectile.level().getFluidState(pos);
-        if(Range.of(0.0f, 10 + breakSpeed).contains(UtilityHelpers.destroySpeed(pos, newProjectile.level())) || !fluidState.isEmpty()){
-            var blockstate = newProjectile.level().getBlockState(pos);
+        var level = newProjectile.level();
+        var fluidState = level.getFluidState(pos);
+
+        if(Range.of(0.0f, 10 + breakSpeed).contains(UtilityHelpers.destroySpeed(pos, level)) || !fluidState.isEmpty()){
+            var blockstate = level.getBlockState(pos);
             if(!blockstate.isAir()){
-                var level = newProjectile.level();
-                newProjectile.level().setBlock(pos, AIR.defaultBlockState(), 3);
+                level.setBlock(pos, AIR.defaultBlockState(), 3);
                 if (!voidBlocks) {
                     var centre = pos.getCenter();
                     if (!(level instanceof ServerLevel serverLevel)) return;

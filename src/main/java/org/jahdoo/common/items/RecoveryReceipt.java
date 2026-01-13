@@ -36,13 +36,13 @@ public class RecoveryReceipt extends BaseItem {
     public RecoveryReceipt() { super(new Properties()); }
 
     public static final Pair<CoinProperties, CurrencyConverter> SILVER_CHARGE =
-        Pair.of(SILVER, setSilverCost(20));
+        Pair.of(BRONZE, setBronzeCost(20));
 
     public static final Pair<CoinProperties, CurrencyConverter> GOLD_CHARGE =
-        Pair.of(GOLD, setGoldCost(20));
+        Pair.of(SILVER, setSilverCost(20));
 
     public static final Pair<CoinProperties, CurrencyConverter> PLATINUM_CHARGE =
-        Pair.of(PLATINUM, setPlatinumCost(20));
+        Pair.of(GOLD, setGoldCost(20));
 
     @Override
     public ItemStack getRecycleItem() {

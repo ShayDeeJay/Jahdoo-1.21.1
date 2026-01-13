@@ -14,7 +14,9 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.items.KeyItem;
+import org.jahdoo.common.items.TrialNexusTicket;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
 import org.jahdoo.common.items.magnet.Magnet;
@@ -319,7 +321,8 @@ public class RewardLootTables {
             case Magnet ignored -> magnetItem(itemStack, raritiesByChestRarity);
             case JahdooShieldItem ignored -> basicShieldWithRarity(itemStack, raritiesByChestRarity);
             case BattlemageGauntlet ignore -> getGauntletWithRarity(itemStack, raritiesByChestRarity);
-            case KeyItem ignore ->keyPiece(itemStack, raritiesByChestRarity);
+            case KeyItem ignore -> keyPiece(itemStack, raritiesByChestRarity);
+            case TrialNexusTicket ignore -> TicketData.initTicket(itemStack, 1);
             default -> { /*IGNORE*/ }
         }
     }
@@ -379,9 +382,9 @@ public class RewardLootTables {
                 builder.add(AUGMENT_CORE_BUILDER.setWeight((int) calculateChance(1, difficulty, newRarity)));
             }
 
-            if(Maths.percentageChance(calculateChance(20, difficulty, newRarity))){
-                builder.add(RUNE.setWeight((int) calculateChance(15, difficulty, newRarity)));
-                builder.add(MAGNET.setWeight((int) calculateChance(10, difficulty, newRarity)));
+            if(Maths.percentageChance(calculateChance(30, difficulty, newRarity))){
+                builder.add(RUNE.setWeight((int) calculateChance(35, difficulty, newRarity)));
+                builder.add(MAGNET.setWeight((int) calculateChance(15, difficulty, newRarity)));
                 builder.add(getRandomWand().setWeight((int) calculateChance(5, difficulty, newRarity)));
             }
         }

@@ -22,6 +22,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jahdoo.common.components.TicketData;
 import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.LocalLootBeamData;
@@ -169,7 +170,9 @@ public class LootCrateBlock extends BaseEntityBlock implements SimpleWaterlogged
         coinSack.set(ComponentReg.STORE_INTEGER, coinCalc);
         LocalLootBeamData.attachCoinSackLootBeam(coinSack);
         individualAddons.add(coinSack);
-        individualAddons.add(new ItemStack(ItemReg.TRIAL_TICKET));
+        var itemInHand = new ItemStack(ItemReg.TRIAL_TICKET);
+        TicketData.initTicket(itemInHand, 1);
+        individualAddons.add(itemInHand);
         lootsplosian(pos.getCenter(), serverLevel, Helpers.getRgb(), individualAddons, true, 50, chestRarity);
     }
 }

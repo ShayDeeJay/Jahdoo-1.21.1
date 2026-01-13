@@ -19,7 +19,7 @@ public class ClimberSkill extends AbstractSkill {
 
     @Override
     public int unlockCost() {
-        return 3;
+        return 2;
     }
 
     @Override

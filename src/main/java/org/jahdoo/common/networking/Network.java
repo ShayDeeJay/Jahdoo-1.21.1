@@ -153,7 +153,20 @@ public class Network {
             GivePlayerItemsC2SP::handle
         );
 
+        payloadRegistrar.playToServer(
+            SaveLoadoutC2SP.TYPE,
+            SaveLoadoutC2SP.STREAM_CODEC,
+            SaveLoadoutC2SP::handle
+        );
+
         //S2C
+
+        payloadRegistrar.playToClient(
+            SaveLoadoutS2CP.TYPE,
+            SaveLoadoutS2CP.STREAM_CODEC,
+            SaveLoadoutS2CP::handle
+        );
+
         payloadRegistrar.playToClient(
             PlayerTrialDataS2CP.TYPE,
             PlayerTrialDataS2CP.STREAM_CODEC,

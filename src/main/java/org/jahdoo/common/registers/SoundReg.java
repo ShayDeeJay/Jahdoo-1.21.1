@@ -27,6 +27,15 @@ public class SoundReg {
     public static final DeferredHolder<SoundEvent, SoundEvent> ORB_FIRE =
         registerSoundEvent("orb_fire");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> LOOP =
+        registerSoundEvent("loop");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> REST =
+        registerSoundEvent("rest");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> BOSS =
+        registerSoundEvent("boss");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> ICE_EXPLOSION =
         registerSoundEvent("ice_explosion");
 

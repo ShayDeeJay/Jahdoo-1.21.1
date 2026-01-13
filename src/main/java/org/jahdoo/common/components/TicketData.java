@@ -19,6 +19,7 @@ public record TicketData(
     public static void initTicket(ItemStack itemStack, int setType){
         itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(setType));
         itemStack.set(ComponentReg.STORE_INTEGER, setType);
+        CoreData.setFilled(itemStack);
     }
 
     public static void addNewEntry(ItemStack itemStack, String tag, double value){

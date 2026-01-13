@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -142,9 +143,11 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
             return SUCCESS;
         }
 
+        var keyUsed = false;
         if(!KeyItem.isLockKey(stack).equals(KeyItem.KeyTypes.KEY_PIECE)) {
             if(KeyItem.isValidKey(stack, level)){
                 entity.setRoomData(KeyItem.isLockKey(stack).getRoomId());
+                keyUsed = true;
                 stack.shrink(1);
             } else {
                 return FAIL;
@@ -153,7 +156,12 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
         var getState = state.getValue(FACING);
         var noDifficultySelected = serverLevel.getData(INSTANCE_DATA).getDifficulty().isEmpty();
-        if (noDifficultySelected) entity.setDifficulty();
+        if (noDifficultySelected) {
+            entity.setDifficulty();
+            if(player instanceof ServerPlayer serverPlayer){
+                Helpers.sendClientSound(serverPlayer, SoundReg.LOOP.get(), 0.4F, 1, true);
+            }
+        }
 
         if ((!entity.getDifficulty.isEmpty() && !noDifficultySelected)) {
             var message = "Difficulty already selected";
@@ -171,7 +179,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
         getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, 1, 1.4F);
         getSoundWithPosition(serverLevel, pos, VAULT_ACTIVATE, 1, 0.6F);
-        placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()));
+        placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()), keyUsed);
         onUnlock(entity, serverLevel);
 
         if (entity.isStartingRoom()) destroyDoors(serverLevel, pos.relative(getState, 12));
@@ -186,7 +194,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         var noDifficultySelected = serverLevel.getData(INSTANCE_DATA).getDifficulty().isEmpty();
         if (noDifficultySelected) entity.setDifficulty();
 
-        placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()));
+        placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()), false);
         destroyDoors(serverLevel, pos);
         entity.clicked = true;
     }

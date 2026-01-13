@@ -119,6 +119,8 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
         overlayAbilitySlots();
         renderResetButton();
+        centerViewButton();
+//        loadoutSelection();
     }
 
     private void overlayAbilitySlots() {
@@ -302,7 +304,9 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 this.width - 50 - size / 2, 12, (Button) -> onResetSkillPress(player), TRIAL_EXPERIENCE, size, true, this::onResetSkillHover, 0, false, "Reset"
             )
         );
+    }
 
+    private void centerViewButton() {
         var isCenteredView = this.zoomX == 0 && this.panY == 0 && this.panX == 0;
 
         if(!isCenteredView){
@@ -315,6 +319,51 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         }
     }
 
+    private void loadoutSelection() {
+        var i = 40;
+
+//        this.addRenderableWidget(
+//            menuButtonAbility(
+//                (int) this.width - i - size / 2, 54,
+//                (Button) -> setLoadout(1, Button),
+//                getA, size, true, () -> {}, index, false, ""
+//            )
+//        );
+//
+        var mc = minecraft;
+        if(mc == null) return;
+
+        var player = mc.player;
+        var data = player.getData(AttachmentReg.CASTER_DATA);
+
+        var size1 = 20;
+        this.addRenderableWidget(
+            menuButtonAbility(
+                this.width - i, this.height - i - 40, (button) -> setLoadout(1, button), data.getLoadouts().get(1) != null ? SAFE : null, size1, true, this::centerScreenHover, 0, false, ""
+            )
+        );
+        this.addRenderableWidget(
+            menuButtonAbility(
+                this.width - i, this.height - i - 20, (button) -> setLoadout(2, button), data.getLoadouts().get(2) != null ? SAFE : null, size1, true, this::centerScreenHover, 1, false, ""
+            )
+        );
+        this.addRenderableWidget(
+            menuButtonAbility(
+                this.width - i, this.height - i, (button) -> setLoadout(3, button), data.getLoadouts().get(3) != null ? SAFE : null, size1, true, this::centerScreenHover, 2, false, ""
+            )
+        );
+    }
+
+     private void setLoadout(int index, Button button){
+         var mc = minecraft;
+         if(mc == null) return;
+
+         var player = mc.player;
+         var shiftDown = isKeyDown(mc.getWindow().getWindow(), KEY_LSHIFT);
+         if(shiftDown) onResetSkillPress(player);
+         sendToServer(new SaveLoadoutC2SP(index, shiftDown));
+     }
+
     private void centerScreen(Button button){
         this.zoomX = 0;
         this.panY = 0;
@@ -322,7 +371,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
     }
 
     private void centerScreenHover(){
-
+        originalScale = -1;
     }
 
     private void onResetSkillPress(Player player){

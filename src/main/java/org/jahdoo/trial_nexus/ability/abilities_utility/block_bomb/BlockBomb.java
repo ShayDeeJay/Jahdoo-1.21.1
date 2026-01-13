@@ -1,5 +1,6 @@
 package org.jahdoo.trial_nexus.ability.abilities_utility.block_bomb;
 
+import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -140,7 +141,9 @@ public class BlockBomb extends AbstractUtilityProjectile {
             );
 
             Helpers.getSoundWithPosition(generic.level(), generic.blockPosition(), SoundReg.EXPLOSION.get(), 2f);
-            handleItemsAndExplosion(level);
+            if(!(level instanceof CustomLevel)){
+                handleItemsAndExplosion(level);
+            }
             if (totalRadius <= totalRadiusMax) totalRadius++;
         }
     }

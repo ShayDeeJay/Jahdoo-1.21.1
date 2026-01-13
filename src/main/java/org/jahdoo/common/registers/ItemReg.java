@@ -65,6 +65,12 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> DICE =
         basicItem("dice");
 
+    public static final DeferredHolder<Item, Item> NETHERITE_NUGGET =
+        basicItem("netherite_nugget");
+
+    public static final DeferredHolder<Item, Item> DIAMOND_NUGGET =
+        basicItem("diamond_nugget");
+
     //Complex Items
     public static final DeferredHolder<Item, Item> PERKA_SODA =
         complexItem("perka_soda", PerkaSoda::new);

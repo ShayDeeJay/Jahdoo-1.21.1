@@ -8,6 +8,7 @@ import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -194,6 +195,12 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
+    public static void teleportEvent(EntityTeleportEvent event){
+        //Method to stop player teleporting out of dim unless using the portal
+//        if(event.)
+    }
+
+    @SubscribeEvent
     public static void leaveEvent(EntityLeaveLevelEvent event){
         removeInstanceBuffs(event);
     }
@@ -216,7 +223,9 @@ public class ServerEvents {
         var bonus = entity.tickCount / 10;
         var killer = event.getSource().getEntity();
 
-        CasterData.incrementMultiKillStatic(killer);
+        if(entity.level() instanceof CustomLevel){
+            CasterData.incrementMultiKillStatic(killer);
+        }
         triggerKillEvent(killer, entity.level());
         coinDropCalc(entity, bonus);
         onDeathGreaterFrostEffect(entity);
