@@ -139,7 +139,12 @@ public class BlockSetupManager {
             if(ignoreCheck && level.getBlockEntity(blockPos) instanceof LockBlockEntity lockBlockEntity){
                 if(!lockBlockEntity.canPlace()){
                     level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
-                    level.setBlockAndUpdate(blockPos.relative(blockState.getValue(FACING), 1), LOCK_SUPPORT.get().defaultBlockState());
+                    var relative = blockPos.relative(blockState.getValue(FACING), 1);
+                    if(level.getBlockEntity(relative) instanceof LockBlockEntity lockBlockEntity1) {
+                        if(!lockBlockEntity1.clicked){
+                            level.setBlockAndUpdate(relative, LOCK_SUPPORT.get().defaultBlockState());
+                        }
+                    }
                 }
             }
         }

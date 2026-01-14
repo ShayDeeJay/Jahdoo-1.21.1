@@ -607,7 +607,7 @@ public class CasterData implements IAttachment {
             data.activeSkills = new ArrayList<>();
             data.selectedAbility = "";
             data.abilityPoints = data.refundableSkillPoints;
-//            addFreeAbilities(data);
+            addFreeAbilities(data);
 //            System.out.println(data.loadouts);
 
             sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
@@ -737,12 +737,7 @@ public class CasterData implements IAttachment {
             Codec.list(Codec.STRING).fieldOf("ability_slots").forGetter(CasterData::getAbilitySlots),
             Codec.list(Codec.STRING).fieldOf("unlocked_skills").forGetter(CasterData::getUnlockedSkills),
             Codec.list(Codec.STRING).fieldOf("active_skills").forGetter(CasterData::getActiveSkills),
-            Codec.unboundedMap(
-                    Codec.STRING.xmap(Integer::parseInt, String::valueOf),
-                    LoadoutObj.CODEC
-                )
-                .fieldOf("loadouts")
-                .forGetter(CasterData::getLoadouts)
+            Codec.unboundedMap(Codec.STRING.xmap(Integer::parseInt, String::valueOf), LoadoutObj.CODEC).fieldOf("loadouts").forGetter(CasterData::getLoadouts)
             ).apply(instance, CasterData::new)
     );
 

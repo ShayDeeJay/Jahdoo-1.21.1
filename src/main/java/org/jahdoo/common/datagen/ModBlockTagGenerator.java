@@ -40,6 +40,7 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(SHOPPING_TABLE.value())
             .add(LOOT_CHEST.value())
             .add(LOCK.value())
+            .add(LOCK_SUPPORT.value())
             .add(POWER_UP_STATION.value());
 
         this.tag(POWER_UP_SUPPORT)

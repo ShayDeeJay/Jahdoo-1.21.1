@@ -171,11 +171,11 @@ public class MobManager {
 //        };
 
         Monster entity;
-        if(THE_HALL.contains(id)){
+        if(EASY_ROOMS.contains(id)){
             entity = new CustomZombie(serverLevel, null);
-        } else if (THE_CHAMBERS.contains(id)) {
+        } else if (HARD_ROOMS.contains(id)) {
             entity = new ZombieVillager(EntityType.ZOMBIE_VILLAGER, serverLevel);
-        } else if (THE_OASIS.contains(id)) {
+        } else if (MEDIUM_ROOMS.contains(id)) {
             entity = new Husk(EntityType.HUSK, serverLevel);
         } else {
             entity = new ZombifiedPiglin(EntityType.ZOMBIFIED_PIGLIN, serverLevel);

@@ -52,7 +52,7 @@ public class FrostBolts  extends DefaultEntityBehaviour {
     @Override
     public void getGenericProjectile(GenericProjectile genericProjectile) {
         super.getGenericProjectile(genericProjectile);
-        this.projectileMultiplier = this.getTag(NUMBER_OF_PROJECTILES);
+        this.projectileMultiplier = this.getTag(SHOT_MULTIPLIER);
         if(this.generic.getOwner() != null) {
             var player = this.generic.getOwner();
             this.damage = Helpers.attributeModifierCalculator(

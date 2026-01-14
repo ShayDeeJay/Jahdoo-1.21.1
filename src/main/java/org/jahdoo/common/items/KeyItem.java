@@ -33,11 +33,11 @@ public class KeyItem extends Item implements JahdooItem {
 
 
     public enum KeyTypes {
-        EXIT_KEY(KeyItem.EXIT_KEY, "Exit", ABSORPTION_YELLOW, StructureManager.BOSS_COMPONENT),
+        EXIT_KEY(KeyItem.EXIT_KEY, "Exit", ABSORPTION_YELLOW, StructureManager.EXIT_ROOM_COMPONENT),
         BAZAAR_KEY(KeyItem.BAZAAR_KEY, "Bazaar", AETHER_BLUE, StructureManager.BAZAAR_COMPONENT),
         CRYPT_KEY(KeyItem.CRYPT_KEY, "Crypt", UNIQUE_B, StructureManager.LOOT_CRYPT_COMPONENT),
         KEY_PIECE(KeyItem.KEY_PIECE, "Key", SUB_HEADER_COLOUR, Component.empty()),
-        SANCTUARY_KEY(KeyItem.SANCTUARY_KEY, "Sanctuary", ElementReg.mystic().textColourA(), StructureManager.SANCTUARY_COMPONENT);
+        SANCTUARY_KEY(KeyItem.SANCTUARY_KEY, "Sanctuary", ElementReg.mystic().textColourA(), StructureManager.BOSS_COMPONENT);
 
         private final int id;
         private final String name;

@@ -1,10 +1,8 @@
 package org.jahdoo.common.items.caster_item;
 
-import com.github.L_Ender.cataclysm.entity.AnimationMonster.BossMonsters.Ender_Guardian_Entity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -18,14 +16,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.items.BaseItem;
-import org.jahdoo.common.registers.SoundReg;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.List;
 
-import static com.github.L_Ender.cataclysm.init.ModEntities.ENDER_GUARDIAN;
 import static net.minecraft.world.InteractionResultHolder.fail;
 import static net.minecraft.world.InteractionResultHolder.pass;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.canOffHand;
@@ -96,19 +91,7 @@ public class CasterItem extends BaseItem {
         var item = player.getItemInHand(interactionHand);
         var pic = player.pick(player.blockInteractionRange(), 1, false);
 
-//        addSlot(player, "relic", Helpers.res("new"), 1);
-//        removeSlot(player, "relic", Helpers.res("new"));
-
-
-
-        if(level instanceof ServerLevel serverLevel){
-            var entity1 = new Ender_Guardian_Entity(ENDER_GUARDIAN.get(), serverLevel);
-            serverLevel.addFreshEntity(entity1);
-            entity1.teleportTo(player.getX(), player. getY(), player.getZ());
-            if(player instanceof ServerPlayer serverPlayer){
-                Helpers.sendClientSound(serverPlayer, SoundReg.BOSS.get(), 0.5F, 1, true);
-            }
-
+        if(level instanceof ServerLevel){
             if(pic instanceof BlockHitResult result){
                 var bPos = result.getBlockPos();
                 var entity = level.getBlockEntity(bPos);

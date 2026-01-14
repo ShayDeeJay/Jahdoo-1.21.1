@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -33,8 +34,7 @@ import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static net.minecraft.core.BlockPos.betweenClosed;
 import static net.minecraft.sounds.SoundEvents.*;
-import static net.minecraft.world.ItemInteractionResult.FAIL;
-import static net.minecraft.world.ItemInteractionResult.SUCCESS;
+import static net.minecraft.world.ItemInteractionResult.*;
 import static net.minecraft.world.level.block.Blocks.OBSERVER;
 import static org.jahdoo.common.particle.ParticleHandlers.getNonBakedParticles;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
@@ -115,6 +115,12 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
     }
 
     @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        System.out.println("imim");
+        return super.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
+    @Override
     protected ItemInteractionResult useItemOn(
         ItemStack stack,
         BlockState state,
@@ -156,6 +162,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
 
         var getState = state.getValue(FACING);
         var noDifficultySelected = serverLevel.getData(INSTANCE_DATA).getDifficulty().isEmpty();
+
         if (noDifficultySelected) {
             entity.setDifficulty();
             if(player instanceof ServerPlayer serverPlayer){
@@ -177,16 +184,16 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
             return FAIL;
         }
 
+        onUnlock(entity, serverLevel);
+
+        entity.clicked = true;
         getSoundWithPosition(serverLevel, pos, LODESTONE_COMPASS_LOCK, 1, 1.4F);
         getSoundWithPosition(serverLevel, pos, VAULT_ACTIVATE, 1, 0.6F);
         placeNewSide(serverLevel, getState, pos.relative(getState, entity.isStartingRoom() ? 12 : 1), nameToId(entity.roomId.getString()), keyUsed);
-        onUnlock(entity, serverLevel);
 
         if (entity.isStartingRoom()) destroyDoors(serverLevel, pos.relative(getState, 12));
         destroyDoors(serverLevel, pos);
-        entity.clicked = true;
-        return SUCCESS;
-
+        return CONSUME;
     }
 
     public static void getItemInteractionResult(BlockState state, BlockPos pos, LockBlockEntity entity, ServerLevel serverLevel) {
@@ -219,7 +226,7 @@ public class LockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock
         for (var blockPos : range) {
             var netherite = serverLevel.getBlockState(blockPos).is(BlockReg.LOCK_SUPPORT);
             var observer = serverLevel.getBlockState(blockPos).is(OBSERVER);
-            if (observer || netherite) serverLevel.destroyBlock(blockPos, false);
+            if (observer || netherite) serverLevel.removeBlock(blockPos, false);
         }
     }
 

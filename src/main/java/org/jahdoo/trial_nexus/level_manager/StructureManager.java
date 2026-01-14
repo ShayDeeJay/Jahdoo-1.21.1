@@ -66,10 +66,10 @@ public class StructureManager {
     public static final Component EXIT_ROOM_COMPONENT = withStyleComponent(stringIdToName(EASY_EXIT), MAGNET_RANGE_GREEN);
 
 
-    public static final List<String> THE_HALL = List.of("serene_1", "serene_2", "serene_3", "serene_4");
-    public static final List<String> THE_CHAMBERS = List.of("camp_1", "camp_2", "camp_3", "camp_4");
-    public static final List<String> THE_OASIS = List.of("wasteland_1", "wasteland_2", "wasteland_3", "wasteland_4");
-    public static final List<String> THE_BASTION = List.of("hellscape_1", "hellscape_2", "hellscape_3", "hellscape_4");
+    public static final List<String> EASY_ROOMS = List.of("oakvale", "logyard", "rotgrove", "pasture");
+    public static final List<String> MEDIUM_ROOMS = List.of("sundown", "deadwood", "oasis", "dustcamp");
+    public static final List<String> HARD_ROOMS = List.of("blackstone", "frosthold", "mines", "ruins");
+    public static final List<String> EXTREME_ROOMS = List.of("hellgate", "pyrewalk", "ashhaven", "sporefire");
     public static final List<String> REST_ROOMS = List.of(BAZAAR, SANCTUARY, LOOT_CRYPT, EASY_EXIT);
     public static final String STARTING_ROOM = "starting_room";
     public static final String BRIDGE = "bridge";
@@ -89,10 +89,10 @@ public class StructureManager {
 
     public static List<String> getValidRooms(){
         var newList = new ArrayList<String>();
-        newList.addAll(THE_HALL);
-        newList.addAll(THE_CHAMBERS);
-        newList.addAll(THE_OASIS);
-        newList.addAll(THE_BASTION);
+        newList.addAll(EASY_ROOMS);
+        newList.addAll(HARD_ROOMS);
+        newList.addAll(MEDIUM_ROOMS);
+        newList.addAll(EXTREME_ROOMS);
         newList.add(BOSS_CRUCIBLE);
         return newList;
     }
@@ -270,8 +270,11 @@ public class StructureManager {
                     placeOres(level, blockPos, placerState);
                 }
 
+//                var value = level.getBlockState(pos).getValue(FACING);
+//                if(!(level.getBlockEntity(pos.relative(value)) instanceof LockBlockEntity)){
+//
+//                }
                 if(placerState.is(Blocks.OBSERVER)) setLocks(serverLevel, blockPos, true);
-
                 if(placerState.is(NETHERITE_BLOCK)) level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
             }
         }

@@ -9,7 +9,6 @@ import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jahdoo.common.block.SyncedBlockEntity;
 import org.jahdoo.common.registers.BlockEntityReg;
@@ -83,7 +82,7 @@ public class LockBlockEntity extends SyncedBlockEntity {
     public void tick(Level level, BlockPos pos, BlockState state) {
         if(!(level instanceof ServerLevel)) return;
         if (clicked) this.counter++;
-        if (counter > 1) level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+        if (counter > 1) level.removeBlock(pos, false);
     }
 
     public boolean isInitialized(){
@@ -102,7 +101,6 @@ public class LockBlockEntity extends SyncedBlockEntity {
         this.roomId = this.isStartingRoom() ? getBattleRoom() : roomId;
         setDataByDifficulty();
         this.updateBlock();
-
     }
 
     public void setDataByDifficulty() {
