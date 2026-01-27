@@ -1,0 +1,31 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "item": "jahdoo:key_piece"
+    },
+    {
+      "item": "jahdoo:key_piece"
+    },
+    {
+      "item": "jahdoo:key_piece"
+    },
+    {
+      "item": "jahdoo:key_piece"
+    },
+    {
+      "item": "jahdoo:lisite_shard"
+    },
+    {
+      "item": "jahdoo:lisite_shard"
+    },
+    {
+      "item": "jahdoo:augment_hyper_core"
+    }
+  ],
+  "results": [
+    {
+      "id": "jahdoo:sanctuary_key"
+    }
+  ]
+}

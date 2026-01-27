@@ -35,8 +35,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.mojang.blaze3d.platform.InputConstants.KEY_LSHIFT;
-import static com.mojang.blaze3d.platform.InputConstants.isKeyDown;
+import static com.mojang.blaze3d.platform.InputConstants.*;
 import static net.minecraft.util.FastColor.ARGB32.color;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToServer;
 import static org.jahdoo.common.client.Icons.*;
@@ -113,6 +112,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 public void render(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
                     guiGraphics.disableScissor();
                     SharedUI.boxMaker(guiGraphics, width / 2 - 159, 54, 158, 15, uiColour(), uiFade(), uiFade());
+                    SharedUI.boxMaker(guiGraphics, width - 25, 54, 11, 29, uiColour(), uiFade(), uiFade());
                 }
             }
         );
@@ -120,7 +120,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         overlayAbilitySlots();
         renderResetButton();
         centerViewButton();
-//        loadoutSelection();
+        loadoutSelection();
     }
 
     private void overlayAbilitySlots() {
@@ -223,10 +223,11 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
 
         renderAbilityButton(centerX - (size * 2), centerY - (size * 2), element.iconTexture(), size * 5, withElement.getFirst(), true, BLANK, 0);
 
-        for (Ability abilityRegistrar : withElement) {
+        //For future implementation of tree based rewards
+//        for (Ability abilityRegistrar : withElement) {
 //            renderAbilityButton(centerX - (size * 1.5), centerY + spacer + (scaledSpacing * 14), passive, size * 4, withElement.getFirst(), true, BLANK, 0);
-            spacer += (int) (scaledSpacing * 8);
-        }
+//            spacer += (int) (scaledSpacing * 8);
+//        }
 
         for (var ability : withElement) {
             var res = res(ABILITY_PREFIX + ability.setAbilityId() + ".png");
@@ -288,7 +289,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
                 menuButtonAbility(
                     (int) posX - size / 2, 54,
                     (Button) -> sendToServer(new RemoveAbilityC2SP(typeId)),
-                    getA, size, true, () -> {}, index, false, ""
+                    getA, size, true, () -> {}, index, false, "", index < data.getAllowedSlots()
                 )
             );
         }
@@ -301,7 +302,7 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var size = 25;
         this.addRenderableWidget(
             menuButtonAbility(
-                this.width - 50 - size / 2, 12, (Button) -> onResetSkillPress(player), TRIAL_EXPERIENCE, size, true, this::onResetSkillHover, 0, false, "Reset"
+                this.width - 50 - size / 2, 12, (Button) -> onResetSkillPress(player), TRIAL_EXPERIENCE, size, true, this::onResetSkillHover, 0, false, "Reset", true
             )
         );
     }
@@ -313,56 +314,72 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
             var i = 40;
             this.addRenderableWidget(
                 menuButtonAbility(
-                    this.width - i, this.height - i, this::centerScreen, CENTER, 20, true, this::centerScreenHover, 0, false, ""
+                    this.width - i, this.height - i, this::centerScreen, CENTER, 20, true, () -> {}, 0, false, "", true
                 )
             );
         }
     }
 
     private void loadoutSelection() {
-        var i = 40;
-
-//        this.addRenderableWidget(
-//            menuButtonAbility(
-//                (int) this.width - i - size / 2, 54,
-//                (Button) -> setLoadout(1, Button),
-//                getA, size, true, () -> {}, index, false, ""
-//            )
-//        );
-//
+        var size = 40;
         var mc = minecraft;
         if(mc == null) return;
 
         var player = mc.player;
+        if(player == null) return;
         var data = player.getData(AttachmentReg.CASTER_DATA);
 
         var size1 = 20;
-        this.addRenderableWidget(
-            menuButtonAbility(
-                this.width - i, this.height - i - 40, (button) -> setLoadout(1, button), data.getLoadouts().get(1) != null ? SAFE : null, size1, true, this::centerScreenHover, 0, false, ""
-            )
-        );
-        this.addRenderableWidget(
-            menuButtonAbility(
-                this.width - i, this.height - i - 20, (button) -> setLoadout(2, button), data.getLoadouts().get(2) != null ? SAFE : null, size1, true, this::centerScreenHover, 1, false, ""
-            )
-        );
-        this.addRenderableWidget(
-            menuButtonAbility(
-                this.width - i, this.height - i, (button) -> setLoadout(3, button), data.getLoadouts().get(3) != null ? SAFE : null, size1, true, this::centerScreenHover, 2, false, ""
-            )
-        );
+        var yLayout = 40;
+
+
+        for(int i = 1; i < 4; i++){
+            int finalI = i;
+            var b1 = data.getLoadoutIndex() == i;
+            var b = CasterData.hasLoadout(player, i);
+            this.addRenderableWidget(
+                menuButtonAbility(
+                    this.width - size + 16,
+                    51 + yLayout,
+                    (button) -> setLoadout(finalI, b),
+                    data.getLoadouts().get(finalI) != null ? DATA : null,
+                    size1,
+                    canAffordXPCost(player),
+                    () -> this.centerScreenHover(b && !b1),
+                    3 - finalI,
+                    b1 ,
+                    "",
+                    true
+                )
+            );
+            yLayout -= 18;
+        }
     }
 
-     private void setLoadout(int index, Button button){
-         var mc = minecraft;
-         if(mc == null) return;
+     private void setLoadout(int index, boolean canPress){
+        var mc = minecraft;
+        if(mc == null) return;
 
-         var player = mc.player;
-         var shiftDown = isKeyDown(mc.getWindow().getWindow(), KEY_LSHIFT);
-         if(shiftDown) onResetSkillPress(player);
-         sendToServer(new SaveLoadoutC2SP(index, shiftDown));
+        var player = mc.player;
+        if(player == null) return;
+
+        if(canAffordXPCost(player)){
+            var newLoadout = CasterData.isNewLoadout(player);
+            var shiftDown = isKeyDown(mc.getWindow().getWindow(), KEY_LSHIFT);
+            var leftClick = isKeyDown(mc.getWindow().getWindow(), KEY_LCONTROL);
+
+            var hasLoadout = CasterData.hasLoadout(player, index);
+            if (!shiftDown && hasLoadout) onResetSkillPress(player);
+            sendToServer(new SaveLoadoutC2SP(index, shiftDown, newLoadout, canPress, leftClick));
+        }
+
      }
+
+     private boolean canAffordXPCost(Player player){
+         var reductionAmount = getResetCost(player);
+         var currentXp = player.experienceLevel;
+         return currentXp >= reductionAmount;
+    }
 
     private void centerScreen(Button button){
         this.zoomX = 0;
@@ -370,15 +387,14 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         this.panX = 0;
     }
 
-    private void centerScreenHover(){
-        originalScale = -1;
+    private void centerScreenHover(boolean canShow){
+       if(canShow) originalScale = -1;
     }
 
     private void onResetSkillPress(Player player){
-        var reductionAmount = getResetCost(player);
-        var currentXp = player.experienceLevel;
-
-        if(currentXp >= reductionAmount){
+        if(canAffordXPCost(player)){
+            var reductionAmount = getResetCost(player);
+            var currentXp = player.experienceLevel;
             PacketDistributor.sendToServer(new PlayerExpC2SP(currentXp - reductionAmount));
             sendToServer(new RegretAbilitiesC2SP());
         }
@@ -506,7 +522,8 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         super.baseRender(guiGraphics, mouseX, mouseY, player, centerX, centerY, mc);
         overlaySkillPoints(guiGraphics, player, 74);
         if(this.originalScale == -1){
-            experienceCost(guiGraphics, mouseX, mouseY, 100, 1);
+            experienceCost(guiGraphics, mouseX - 30, mouseY - 24, 100, 1);
+
             this.originalScale = 0;
         }
     }
@@ -545,11 +562,9 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         var exp = player.experienceLevel;
         var getMaxCost = getResetCost(player);
         var expColour = exp >= getMaxCost ? 8453920 : -2070938;
-        var refinementPotential = Component.literal(String.valueOf(getResetCost(player)));
-        var expLvl = Component.literal(String.valueOf(exp));
+        var refinementPotential = Component.literal(getResetCost(player) + "/" + player.experienceLevel);
         var offsetX = 0;
         var offsetY = -27;
-//        var potential = getPotential();
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0,40,100);
@@ -557,6 +572,6 @@ public class AbilityUnlockScreen extends AbstractPanableScreen {
         drawStringWithBackground(guiGraphics, this.font, refinementPotential, mouseX + offsetX, mouseY + 15 + offsetY, 0, expColour, true);
         guiGraphics.drawCenteredString(font, "Exp Cost", mouseX + offsetX, mouseY + 4 + offsetY, -1);
         guiGraphics.pose().popPose();
-        renderMiniXPBar(guiGraphics, mouseX - 42, mouseY+45, this.getMinecraft());
+//        renderMiniXPBar(guiGraphics, mouseX - 42, mouseY+45, this.getMinecraft());
     }
 }

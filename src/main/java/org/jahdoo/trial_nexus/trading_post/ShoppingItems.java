@@ -321,13 +321,6 @@ public record ShoppingItems(ItemStack ShoppingItem, CurrencyConverter itemCosts)
         return newStack;
     }
 
-    public static ItemStack keyPiece(@Nullable ItemStack itemStack, @Nullable JahdooRarity getRarity){
-//        var rarity = getRarity == null ? getRarity() : getRarity;
-        var newStack = itemStack == null ? new ItemStack(ItemReg.LOOT_KEY) : itemStack;
-        newStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(8));
-        return newStack;
-    }
-
     public static void attachSharedProperties(
         ItemStack itemStack,
         int runeSlots,

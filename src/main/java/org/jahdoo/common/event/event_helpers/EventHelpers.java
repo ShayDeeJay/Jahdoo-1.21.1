@@ -104,11 +104,13 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 
 import static com.mojang.blaze3d.platform.InputConstants.*;
+import static com.mojang.blaze3d.platform.InputConstants.isKeyDown;
 import static net.minecraft.client.Minecraft.getInstance;
 import static net.minecraft.sounds.SoundSource.PLAYERS;
 import static net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 import static net.minecraft.world.entity.EquipmentSlotGroup.*;
 import static net.neoforged.neoforge.network.PacketDistributor.sendToPlayer;
+import static org.jahdoo.common.block.altar.AltarBlockEntity.roomBounding;
 import static org.jahdoo.common.items.caster_item.CasterItemHelper.storeBlockType;
 import static org.jahdoo.common.particle.ParticleHandlers.getAllParticleTypes;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
@@ -142,7 +144,7 @@ public class EventHelpers {
         Player player,
         UseItemOnBlockEvent event
     ){
-        if(getBlock.is(Blocks.BARRIER)){
+        if(getBlock.is(Blocks.BARRIER) && !level.isClientSide){
             if(level.getBlockEntity(pos.below(1)) instanceof PerkTableEntity entity){
                 entity.setUsed(entity.getBlockState(), player);
                 event.cancelWithResult(ItemInteractionResult.SUCCESS);
@@ -699,15 +701,18 @@ public class EventHelpers {
             var data = cLevel.getData(INSTANCE_DATA);
 
             var difficulty = data.getDifficulty();
+            var getWithBounding = roomBounding(new BlockPos(23,105,27));
+            var isPlayerResting = cLevel.getEntitiesOfClass(Player.class, getWithBounding);
 
-            if(!difficulty.isEmpty()){
+            if(!difficulty.isEmpty() && isPlayerResting.isEmpty()){
                 data.incrementTicks();
+                var remaining = data.getMaxTime() - data.getTicks();
+                var lessThan20Seconds = remaining <= 400;
+                var lessThan10Seconds = remaining <= 200;
+                var warning1Minute = remaining == 1200;
+
                 for (var player : cLevel.players()) {
                     sendToPlayer(player, new InstanceSyncS2CP(data));
-                    var remaining = data.getMaxTime() - data.getTicks();
-                    var lessThan20Seconds = remaining <= 400;
-                    var lessThan10Seconds = remaining <= 200;
-                    var warning1Minute = remaining == 1200;
 
                     if(warning1Minute){
                         player.connection.send(new ClientboundSetTitlesAnimationPacket(5, 30, 5));

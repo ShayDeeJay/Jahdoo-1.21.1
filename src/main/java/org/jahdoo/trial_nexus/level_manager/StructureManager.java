@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -20,14 +21,17 @@ import org.jahdoo.common.block.lock.LockBlock;
 import org.jahdoo.common.block.lock.LockBlockEntity;
 import org.jahdoo.common.block.loot_pot.LootPotBlockEntity;
 import org.jahdoo.common.particle.ParticleHandlers;
-import org.jahdoo.common.registers.BlockReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.loot.LootHelpers;
+import org.jahdoo.trial_nexus.loot.RewardLootTables;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.ModTags;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.mojang.datafixers.util.Pair.of;
 import static net.minecraft.core.BlockPos.betweenClosed;
@@ -38,7 +42,7 @@ import static net.minecraft.world.level.block.Blocks.TINTED_GLASS;
 import static org.jahdoo.common.block.perk_table.PerkTable.TEXTURE;
 import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
-import static org.jahdoo.common.registers.BlockReg.LOCK_SUPPORT;
+import static org.jahdoo.common.registers.BlockReg.*;
 import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setBlockGenerator;
 import static org.jahdoo.trial_nexus.level_manager.BlockSetupManager.setLocks;
 import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.*;
@@ -156,17 +160,15 @@ public class StructureManager {
     public static Map<Integer, Component> getRandomRoomId(InstanceData data, boolean isRestRoom){
         var roomGen = new HashMap<Integer, Component>();
 
-        if(isRestRoom) {
-            return getRestRooms;
-        } else {
-            var difficulty = data.getDifficulty();
-            var isNovice = NOVICE.getSerializedName().equals(difficulty);
-            var isExpert = EXPERT.getSerializedName().equals(difficulty);
-            var forBoss = isNovice ? 10 : isExpert ? 20 : 30 ;
-            roomGen.put(0, getBattleRoom());
+        if(isRestRoom) return getRestRooms;
 
-            if(percentageChance(forBoss)) roomGen.put(roomGen.size(), BOSS_COMPONENT);
-        }
+        var difficulty = data.getDifficulty();
+        var isNovice = NOVICE.getSerializedName().equals(difficulty);
+        var isExpert = EXPERT.getSerializedName().equals(difficulty);
+        var forBoss = isNovice ? 10 : isExpert ? 20 : 30 ;
+        roomGen.put(0, getBattleRoom());
+
+        if(percentageChance(forBoss) && data.getClearedRooms() > 1) roomGen.put(roomGen.size(), BOSS_COMPONENT);
 
         while (roomGen.size() < 4) roomGen.put(roomGen.size(), getBattleRoom());
         return roomGen;
@@ -280,21 +282,28 @@ public class StructureManager {
         }
     }
 
+
     private static void placeOres(Level level, BlockPos blockPos, BlockState placerState) {
         if (placerState.is(Blocks.PINK_STAINED_GLASS)) {
             if(level instanceof ServerLevel sLevel){
-                var state = Helpers.listRandom(List.of(BlockReg.ROSE_QUARTZ_ORE.get(), BlockReg.ENCHANTED_DIAMOND_ORE.get())).defaultBlockState();
+                var aStates = RewardLootTables.oreDistribution(sLevel, blockPos.getCenter());
+                var aItems = Helpers.listRandom(aStates);
+                var aBase = Block.byItem(aItems.getItem()).defaultBlockState();
+
                 var spawnChance = percentageChance(10);
-                placeOre(level, blockPos, sLevel, spawnChance, state);
+                placer(level, blockPos, sLevel, spawnChance, aBase);
                 var bPos = blockPos;
 
-                if(percentageChance(20)){
-                    for (int i = 0; i < 0; i++) {
+                for (int i = 0; i < 0; i++) {
+                    if(percentageChance(20)){
+                        var bStates = RewardLootTables.oreDistribution(sLevel, blockPos.getCenter());
+                        var bItems = Helpers.listRandom(bStates);
+                        var bBase = Block.byItem(bItems.getItem()).defaultBlockState();
                         var poss = new ArrayList<BlockPos>();
                         for (var direction1 : stream().toList()) {
                             var relativeA = bPos.relative(direction1);
                             if (level.getBlockState(relativeA).is(ModTags.Block.CAN_REPLACE_BLOCK)) {
-                                placeOre(level, relativeA, sLevel, spawnChance, state);
+                                placer(level, relativeA, sLevel, true, bBase);
                                 poss.add(relativeA);
                             }
                         }
@@ -310,14 +319,14 @@ public class StructureManager {
             if(level instanceof ServerLevel sLevel){
                 var bPos = blockPos;
                 var spawnChance = percentageChance(20);
-                placePot(level, sLevel, blockPos, percentageChance(20));
+                placePot(level, sLevel, blockPos, spawnChance);
 
-                if(percentageChance(20)){
-                    for (int i = 0; i < 0; i++) {
+                for (int i = 0; i < 0; i++) {
+                    if(percentageChance(20)){
                         var poss = new ArrayList<BlockPos>();
                         for (var direction1 : NO_Y) {
                             var relativeA = bPos.relative(direction1);
-                            if (level.getBlockState(relativeA).is(ModTags.Block.CAN_REPLACE_BLOCK) && !level.getBlockState(relativeA.below()).is(BlockReg.LOOT_POT)) {
+                            if (level.getBlockState(relativeA).is(ModTags.Block.CAN_REPLACE_BLOCK) && !level.getBlockState(relativeA.below()).is(LOOT_POT)) {
                                 placePot(level, sLevel, relativeA, spawnChance);
                                 poss.add(relativeA);
                             }
@@ -332,7 +341,7 @@ public class StructureManager {
     private static boolean placePowerUpStation(Level level, BlockPos blockPos, BlockState placerState, boolean alreadyPlaced) {
         if (placerState.is(Blocks.MAGENTA_STAINED_GLASS)) {
             var spawnChance = percentageChance(20) && !alreadyPlaced;
-            var station = BlockReg.POWER_UP_STATION.get().defaultBlockState();
+            var station = POWER_UP_STATION.get().defaultBlockState();
             var air = Blocks.AIR.defaultBlockState();
             if (spawnChance) alreadyPlaced = true;
             level.setBlockAndUpdate(blockPos, spawnChance ? station : air);
@@ -342,7 +351,7 @@ public class StructureManager {
 
     private static void placeAltar(Level level, Direction direction, String roomId, BlockPos blockPos, BlockState placerState) {
         if (placerState.is(Blocks.DIAMOND_BLOCK)) {
-            level.setBlockAndUpdate(blockPos, BlockReg.CHALLENGE_ALTAR.get().defaultBlockState());
+            level.setBlockAndUpdate(blockPos, CHALLENGE_ALTAR.get().defaultBlockState());
             if (level.getBlockEntity(blockPos) instanceof AltarBlockEntity e) {
                 e.roomId = roomId;
                 e.direction = direction;
@@ -352,25 +361,25 @@ public class StructureManager {
 
     private static void placePot(Level level, ServerLevel sLevel, BlockPos relativeA, boolean spawnChance) {
         var value1 = JahdooRarity.getRarity(potRarityGetter).getId();
-        var state1 = BlockReg.LOOT_POT.get().defaultBlockState().setValue(TEXTURE, value1);
+        var state1 = LOOT_POT.get().defaultBlockState().setValue(TEXTURE, value1);
         var getLoot1 = LootHelpers.potLoot(sLevel, relativeA.getCenter(), NOVICE.getSerializedName(), value1);
-        placeOre(level, relativeA, sLevel, spawnChance, state1);
+        placer(level, relativeA, sLevel, spawnChance, state1);
         if(level.getBlockEntity(relativeA) instanceof LootPotBlockEntity potBlockEntity){
             potBlockEntity.setTheItem(getLoot1);
         }
     }
 
-    private static void placeOre(Level level, BlockPos blockPos, ServerLevel sLevel, boolean spawnChance, BlockState state) {
-        if(spawnChance && sLevel.getBlockState(blockPos.below()).isSolid()){
-            level.setBlock(blockPos, state, FLAGS);
-        } else {
-            var air = Blocks.AIR.defaultBlockState();
-            if(level.getBlockState(blockPos.above()).is(state.getBlock())){
-                level.setBlock(blockPos.above(), air, FLAGS);
+    private static void placer(Level level, BlockPos blockPos, ServerLevel sLevel, boolean spawnChance, BlockState state) {
+        var blockState = sLevel.getBlockState(blockPos.below());
+        var air = Blocks.AIR.defaultBlockState();
+        if(spawnChance){
+            if (blockState.isSolidRender(EmptyBlockGetter.INSTANCE, blockPos)) {
                 level.setBlock(blockPos, state, FLAGS);
-            } else {
+            } else if (!sLevel.getBlockState(blockPos).isAir()) {
                 level.setBlock(blockPos, air, FLAGS);
             }
+        } else if (!sLevel.getBlockState(blockPos).isAir()) {
+            level.setBlock(blockPos, air, FLAGS);
         }
     }
 

@@ -42,8 +42,8 @@ public class UnlockedSkillsC2SP implements CustomPacketPayload {
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
                     var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
                     if(casterData.hasUnlockedSkill(skillId)){
-                        casterData.addNewSkill(skillId);
                         casterData.decrementAbilityPoints(skillCost);
+                        casterData.addNewSkill(skillId);
                     } else {
                         casterData.toggleSkill(skillId);
                     }

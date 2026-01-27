@@ -187,7 +187,7 @@ public class GenericProjectile extends ProjectileProperties implements IEntityPr
                     var item = entity.inputItemHandler.getStackInSlot(0);
                     if(item.isEmpty() || !CoreData.isFull(item)){
                         var powerUpValue = this.getPersistentData().getInt(POWER_UP_KEY);
-                        CoreData.increment(item, powerUpValue);
+                        entity.inputItemHandler.setStackInSlot(0, CoreData.incrementCore(item, powerUpValue));
                         var filled = CoreData.getFilled(item);
                         var needed = CoreData.getRequired(item);
 

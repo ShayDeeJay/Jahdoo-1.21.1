@@ -26,8 +26,19 @@ import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getNameWithSty
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.standAloneAttributes;
 
 public class RuneItem extends BaseItem {
+
     public RuneItem() {
         super(new Properties().component(ComponentReg.RUNE_DATA.get(), RuneData.DEFAULT));
+    }
+
+    @Override
+    public int customRecycleChance(ItemStack itemStack) {
+        return 100;
+    }
+
+    @Override
+    public ItemStack getRecycleItem() {
+        return super.getRecycleItem();
     }
 
     @Override

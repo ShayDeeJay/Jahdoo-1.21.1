@@ -2,13 +2,13 @@ package org.jahdoo.trial_nexus.boon.level_boons.positive;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import org.jahdoo.common.client.Icons;
+import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.boon.level_boons.AbstractLevelBoon;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
-import org.jahdoo.common.client.Icons;
 import org.jahdoo.trial_nexus.utils.ColourStore;
 
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_EXPERIENCE;
-import static org.jahdoo.trial_nexus.attachments.RunData.addExperienceToTotal;
 
 public class Experience extends AbstractLevelBoon {
 
@@ -20,7 +20,8 @@ public class Experience extends AbstractLevelBoon {
     @Override
     public void execute(ServerLevel level, double value) {
         for (var player : level.players()) {
-            addExperienceToTotal((int) value, player);
+            System.out.println(player.getName());
+            RunData.addExperienceToTotal((int) value, player);
         }
     }
 

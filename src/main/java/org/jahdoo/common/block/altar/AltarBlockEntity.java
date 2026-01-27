@@ -114,7 +114,7 @@ public class AltarBlockEntity extends SyncedBlockEntity implements GeoBlockEntit
         }
     }
 
-    private static @NotNull AABB roomBounding(BlockPos pos) {
+    public static @NotNull AABB roomBounding(BlockPos pos) {
         return new AABB(
             pos.getX() - 24, pos.getY() - 2, pos.getZ() - 24,
             pos.getX() + 24, pos.getY() + 10, pos.getZ() + 24

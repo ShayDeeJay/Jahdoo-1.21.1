@@ -113,9 +113,9 @@ public class SharedUI {
 
     public static List<Item> getCore(){
         return List.of(
-            ItemReg.AUGMENT_CORE.get(),
-            ItemReg.ADVANCED_AUGMENT_CORE.get(),
-            ItemReg.AUGMENT_HYPER_CORE.get()
+            ItemReg.CHARGED_AUGMENT_CORE.get(),
+            ItemReg.CHARGED_ADVANCED_AUGMENT_CORE.get(),
+            ItemReg.CHARGED_AUGMENT_HYPER_CORE.get()
         );
     }
 

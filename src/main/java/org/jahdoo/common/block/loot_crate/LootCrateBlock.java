@@ -142,18 +142,7 @@ public class LootCrateBlock extends BaseEntityBlock implements SimpleWaterlogged
             var crateData = handler.getStackInSlot(0).get(ComponentReg.LOOT_CRATE_DATA);
             if(crateData == null) return FAIL;
 
-            var multipliers = crateData.multiplier();
-            var difficulty = InstanceDifficulty.getFromName(crateData.difficulty());
-            var playerLevel = crateData.level();
-            var calculateMultiplier = (multipliers + (playerLevel/4)) * difficulty.getId();
-            var chestRarity = difficulty.getId();
-
-            for(int i = 0; i < calculateMultiplier; i++){
-                var rewards = getCompletionLoot(serverLevel, pos.getCenter(), difficulty.getSerializedName(), chestRarity);
-                lootsplosian(pos.getCenter(), serverLevel, Helpers.getRgb(), rewards, true, 50, chestRarity);
-            }
-
-            additionalRewards(pos, serverLevel, playerLevel, difficulty, crateData, chestRarity);
+            getLoot(pos, serverLevel, crateData);
             Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.CRATE_OPEN.get(), 1.6F, 1);
             handler.setStackInSlot(0, ItemStack.EMPTY);
             level.destroyBlock(pos, false);
@@ -161,6 +150,21 @@ public class LootCrateBlock extends BaseEntityBlock implements SimpleWaterlogged
         }
 
         return FAIL;
+    }
+
+    public static void getLoot(BlockPos pos, ServerLevel serverLevel, LootCrateData crateData) {
+        var multipliers = crateData.multiplier();
+        var difficulty = InstanceDifficulty.getFromName(crateData.difficulty());
+        var playerLevel = crateData.level();
+        var calculateMultiplier = (multipliers + (playerLevel/4)) * difficulty.getId();
+        var chestRarity = difficulty.getId();
+
+        for(int i = 0; i < calculateMultiplier; i++){
+            var rewards = getCompletionLoot(serverLevel, pos.getCenter(), difficulty.getSerializedName(), chestRarity);
+            lootsplosian(pos.getCenter(), serverLevel, Helpers.getRgb(), rewards, true, 50, chestRarity);
+        }
+
+        additionalRewards(pos, serverLevel, playerLevel, difficulty, crateData, chestRarity);
     }
 
     private static void additionalRewards(BlockPos pos, ServerLevel serverLevel, int playerLevel, InstanceDifficulty difficulty, LootCrateData crateData, int chestRarity) {

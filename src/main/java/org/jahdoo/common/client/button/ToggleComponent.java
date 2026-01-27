@@ -90,9 +90,10 @@ public class ToggleComponent  {
         Runnable hoverAction,
         int slot,
         boolean selected,
-        String label
+        String label,
+        boolean validSlot
     ) {
-        return new AbilitySlotButton(posX, posY, new WidgetSprites(ABILITY_BACKGROUND, ABILITY_BACKGROUND), size, action, selected, location, label, 0, showHover, slot) {
+        return new AbilitySlotButton(posX, posY, new WidgetSprites(ABILITY_BACKGROUND, ABILITY_BACKGROUND), size, action, selected, location, label, 0, showHover, slot, validSlot) {
 
             public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float pPartialTick) {
                 super.renderWidget(graphics, mouseX, mouseY, pPartialTick);

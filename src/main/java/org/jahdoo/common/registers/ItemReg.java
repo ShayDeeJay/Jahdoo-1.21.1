@@ -24,6 +24,7 @@ import org.jahdoo.common.items.caster_item.elemental_wand.VitalityWand;
 import org.jahdoo.common.items.caster_item.staff.ElementalStaff;
 import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
 import org.jahdoo.common.items.magnet.Magnet;
+import org.jahdoo.common.items.paxel.DivinityPaxel;
 import org.jahdoo.common.items.perk_soda.PerkaSoda;
 import org.jahdoo.common.items.runes.RuneItem;
 import org.jahdoo.common.items.shields.JahdooShieldItem;
@@ -36,7 +37,7 @@ import java.util.function.Supplier;
 
 import static net.minecraft.world.item.ArmorItem.Type.*;
 import static org.jahdoo.common.registers.BlockReg.*;
-import static org.jahdoo.common.registers.ComponentReg.*;
+import static org.jahdoo.common.registers.ComponentReg.CORE_DATA;
 
 public class ItemReg {
 
@@ -56,6 +57,12 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> ENCHANTED_DIAMOND =
         basicItem("enchanted_diamond");
 
+    public static final DeferredHolder<Item, Item> ASTRINIUM_INGOT =
+        basicItem("astrinium_ingot");
+
+    public static final DeferredHolder<Item, Item> LISITE_SHARD =
+        basicItem("lisite_shard");
+
     public static final DeferredHolder<Item, Item> CHAMPIONS_CROWN =
         basicItem("champions_crown");
 
@@ -71,9 +78,51 @@ public class ItemReg {
     public static final DeferredHolder<Item, Item> DIAMOND_NUGGET =
         basicItem("diamond_nugget");
 
+    public static final DeferredHolder<Item, Item> GEAR_SCRAP =
+        basicItem("gear_scrap");
+
+    //Core Items
+    public static final DeferredHolder<Item, Item> CHARGED_AUGMENT_CORE =
+        complexItem("augment_core_filled", () -> new CoreItem(new Item.Properties()));
+
+    public static final DeferredHolder<Item, Item> CHARGED_ADVANCED_AUGMENT_CORE =
+        complexItem("advanced_augment_core_filled", () -> new CoreItem(new Item.Properties()));
+
+    public static final DeferredHolder<Item, Item> CHARGED_AUGMENT_HYPER_CORE =
+        complexItem("augment_hyper_core_filled", () -> new CoreItem(new Item.Properties()));
+
+    public static final DeferredHolder<Item, Item> AUGMENT_CORE =
+        complexItem("augment_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(50, 0))));
+
+    public static final DeferredHolder<Item, Item> ADVANCED_AUGMENT_CORE =
+        complexItem("advanced_augment_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(150, 0))));
+
+    public static final DeferredHolder<Item, Item> AUGMENT_HYPER_CORE =
+        complexItem("augment_hyper_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(500, 0))));
+
+    //Keys
+    public static final DeferredHolder<Item, Item> KEY_FRAGMENT =
+        complexItem("key_piece", KeyItem::new);
+
+    public static final DeferredHolder<Item, Item> EXIT_KEY =
+        complexItem("exit_key", KeyItem::new);
+
+    public static final DeferredHolder<Item, Item> BAZAAR_KEY =
+        complexItem("bazaar_key", KeyItem::new);
+
+    public static final DeferredHolder<Item, Item> SANCTUARY_KEY =
+        complexItem("sanctuary_key", KeyItem::new);
+
+    public static final DeferredHolder<Item, Item> CRYPT_KEY =
+        complexItem("crypt_key", KeyItem::new);
+
+
     //Complex Items
     public static final DeferredHolder<Item, Item> PERKA_SODA =
         complexItem("perka_soda", PerkaSoda::new);
+
+    public static final DeferredHolder<Item, Item> DIVINITY_PAXEL =
+        complexItem("divinity_paxel", DivinityPaxel::new);
 
     public static final DeferredHolder<Item, Item> CARE_PACKAGE =
         complexItem("starter_pack", StarterPack::new);
@@ -92,15 +141,6 @@ public class ItemReg {
 
     public static final DeferredHolder<Item, Item> LOOT_KEY =
         complexItem("key", KeyItem::new);
-
-    public static final DeferredHolder<Item, Item> AUGMENT_CORE =
-        complexItem("augment_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(50, 0))));
-
-    public static final DeferredHolder<Item, Item> ADVANCED_AUGMENT_CORE =
-        complexItem("advanced_augment_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(150, 0))));
-
-    public static final DeferredHolder<Item, Item> AUGMENT_HYPER_CORE =
-        complexItem("augment_hyper_core", () -> new CoreItem(new Item.Properties().component(CORE_DATA, new CoreData(500, 0))));
 
     public static final DeferredHolder<Item, Item> TOME_OF_UNITY =
         complexItem("tome_of_unity", TomeOfUnity::new);
@@ -269,6 +309,8 @@ public class ItemReg {
 
     public static final DeferredHolder<Item, Item> SKILL_POINT =
         complexItem("skill_point", SkillPointItem::new);
+
+
 
     public static DeferredHolder<Item, Item> complexItem(String name, Supplier<? extends Item> sup){
         return ITEMS.register(name, sup);

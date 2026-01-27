@@ -38,13 +38,18 @@ public class CreativeTab {
                 outPut.accept(NEXITE_POWDER.get());
                 outPut.accept(NEXITE_ORE.get());
                 outPut.accept(ROSE_QUARTZ.get());
+                outPut.accept(ROSE_QUARTZ_BLOCK.get());
                 outPut.accept(ROSE_QUARTZ_ORE.get());
                 outPut.accept(ENCHANTED_DIAMOND.get());
+                outPut.accept(ENCHANTED_DIAMOND_BLOCK.get());
                 outPut.accept(ENCHANTED_DIAMOND_ORE.get());
+                outPut.accept(LISITE_SHARD.get());
+                outPut.accept(LISITE_ORE.get());
                 outPut.accept(NEXITE_DEEPSLATE_ORE.get());
                 outPut.accept(NEXITE_BLOCK.get());
                 outPut.accept(PACKED_MUD_CLAY.get());
                 outPut.accept(RAW_NEXITE_BLOCK.get());
+                outPut.accept(ASTRINIUM_INGOT.get());
                 outPut.accept(MODULAR_CHAOS_CUBE_ITEM.get());
                 outPut.accept(MYSTICAL_AUGMENTER_ITEM.get());
                 outPut.accept(TANK.get());
@@ -57,16 +62,24 @@ public class CreativeTab {
                 outPut.accept(TRIAL_TICKET.get());
                 outPut.accept(STONE_OF_REGRET.get());
                 outPut.accept(DICE.get());
+                outPut.accept(GEAR_SCRAP.get());
+
+                outPut.accept(KEY_FRAGMENT.get());
+                outPut.accept(EXIT_KEY.get());
+                outPut.accept(SANCTUARY_KEY.get());
+                outPut.accept(BAZAAR_KEY.get());
+                outPut.accept(CRYPT_KEY.get());
 
                 registerRecoveryReceipts(outPut);
                 registerCarePackages(outPut);
-                keys(outPut);
+//                keys(outPut);
 
                 registerElementalSwords(outPut);
                 outPut.accept(ANCIENT_GLAIVE.get());
                 outPut.accept(INGMAS_SWORD.get());
                 outPut.accept(BASIC_SHIELD.get());
                 outPut.accept(UNDEAD_PROTECTOR_SHIELD.get());
+                outPut.accept(DIVINITY_PAXEL.get());
 
                 registerXpOrbs(outPut);
                 registerMagnets(outPut);
@@ -75,9 +88,13 @@ public class CreativeTab {
 
                 outPut.accept(RuneHelpers.generateBlankRune());
                 outPut.accept(ESSENCE_FRAGMENT.get());
+
                 outPut.accept(AUGMENT_CORE.get());
+                outPut.accept(CHARGED_AUGMENT_CORE.get());
                 outPut.accept(ADVANCED_AUGMENT_CORE.get());
+                outPut.accept(CHARGED_ADVANCED_AUGMENT_CORE.get());
                 outPut.accept(AUGMENT_HYPER_CORE.get());
+                outPut.accept(CHARGED_AUGMENT_HYPER_CORE.get());
                 outPut.accept(TOME_OF_UNITY.get());
                 outPut.accept(BATTLEMAGE_GAUNTLET.get());
 
@@ -203,5 +220,6 @@ public class CreativeTab {
             pOutput.accept(magnet);
         }
     }
+
 
 }

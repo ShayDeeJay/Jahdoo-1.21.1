@@ -1,0 +1,34 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "item": "jahdoo:key_piece"
+    },
+    {
+      "item": "jahdoo:key_piece"
+    },
+    {
+      "item": "jahdoo:key_piece"
+    },
+    {
+      "item": "jahdoo:key_piece"
+    },
+    {
+      "item": "jahdoo:lisite_shard"
+    },
+    {
+      "item": "jahdoo:lisite_shard"
+    },
+    {
+      "item": "jahdoo:astrinium_ingot"
+    },
+    {
+      "item": "jahdoo:astrinium_ingot"
+    }
+  ],
+  "results": [
+    {
+      "id": "jahdoo:crypt_key"
+    }
+  ]
+}

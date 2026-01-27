@@ -10,6 +10,8 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.mod.LevelBoonReg;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.ColourStore;
+import org.jahdoo.trial_nexus.utils.Maths;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -50,14 +52,23 @@ public class Stamp extends Item implements JahdooItem{
         tooltipComponents.add(append);
     }
 
-    public static void addBoon(ItemStack itemStack, boolean addNegativeModifier){
+    public static void addBoon(ItemStack itemStack, @Nullable JahdooRarity rarity){
         var posBoon = LevelBoonReg.getStampBoons();
+        var newRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
 
-        addNewEntry(itemStack, posBoon.id(), posBoon.value(JahdooRarity.getRarity()));
+        addNewEntry(itemStack, posBoon.id(), posBoon.value(newRarity));
+
         itemStack.set(ComponentReg.ID, posBoon.id());
         itemStack.set(ComponentReg.STORE_INTEGER, Random.nextInt(10, 50));
 
-        if(addNegativeModifier){
+//        if(addNegativeModifier){
+//            var negBoon = LevelBoonReg.randomNegative();
+//            var negRarity = JahdooRarity.getRarity();
+//            addNewEntry(itemStack, negBoon.id(), negBoon.value(negRarity));
+//        }
+
+        var rarityPercent = (newRarity.getId() + 3) * 10;
+        if(Maths.percentageChance(100 - rarityPercent)){
             var negBoon = LevelBoonReg.randomNegative();
             var negRarity = JahdooRarity.getRarity();
             addNewEntry(itemStack, negBoon.id(), negBoon.value(negRarity));

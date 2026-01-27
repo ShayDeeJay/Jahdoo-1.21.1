@@ -22,6 +22,7 @@ public class ElementalWand extends CasterItem implements GeoItem, JahdooItem {
     public String location;
 
     public ElementalWand(String location) {
+        super(wandProperties());
         SingletonGeoAnimatable.registerSyncedAnimatable(this);
         this.location = location;
     }

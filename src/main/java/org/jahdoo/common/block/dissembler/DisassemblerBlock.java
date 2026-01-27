@@ -27,11 +27,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.block.BlockInteractionHandler;
 import org.jahdoo.common.items.JahdooItem;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.trial_nexus.utils.Helpers;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.common.block.wand_manager.WandManagerBlock.setOuterRingPulse;
@@ -90,8 +90,8 @@ public class DisassemblerBlock extends BaseEntityBlock {
         Player player,
         ItemStack slotItem
     ){
-        Helpers.throwOrAddItem(player, slotItem.copyWithCount(1));
-        slotItem.shrink(1);
+        Helpers.throwOrAddItem(player, slotItem);
+        slotItem.shrink(slotItem.getCount());
     }
 
     @Override
@@ -118,9 +118,12 @@ public class DisassemblerBlock extends BaseEntityBlock {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!(level.getBlockEntity(pos) instanceof DisassemblerBlockEntity tableEntity)) return ItemInteractionResult.FAIL;
         var hands = player.getItemInHand(hand);
-        var getOutputSlot = tableEntity.outputItemHandler.getStackInSlot(0);
-        if(!getOutputSlot.isEmpty()){
+        var outputItemHandler = tableEntity.outputItemHandler;
+        var getOutputSlot = outputItemHandler.getStackInSlot(0);
+        var getOutputSlot1 = outputItemHandler.getStackInSlot(1);
+        if(!getOutputSlot.isEmpty() || !getOutputSlot1.isEmpty()){
             this.addItemToHand(player, getOutputSlot);
+            this.addItemToHand(player, getOutputSlot1);
             return ItemInteractionResult.SUCCESS;
         } else {
             infuserBlockInteraction(level, pos, player, hand, tableEntity, hands, SoundEvents.VAULT_DEACTIVATE, 0.64, 8, 0.4, 0.3);

@@ -18,6 +18,7 @@ import org.jahdoo.common.block.AbstractBEInventory;
 import org.jahdoo.common.components.CoreData;
 import org.jahdoo.common.entities.generic_projectile.GenericProjectile;
 import org.jahdoo.common.registers.BlockEntityReg;
+import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
@@ -131,7 +132,7 @@ public class PowerUpStationEntity extends AbstractBEInventory {
 
     private void onFilledCore(Level level, BlockPos pos) {
         if (!(level instanceof ServerLevel serverLevel)) return;
-        if(CoreData.isFull(getItem())) {
+        if(!getItem().has(ComponentReg.CORE_DATA)) {
             var pos1 = pos.getCenter();
             Helpers.getSoundWithPositionV(serverLevel, pos1, SoundReg.QUEST_COMPLETE.get(), 4, 0.8F);
             var newItemEntity = new ItemEntity(serverLevel, pos1.x, pos1.y+0.5, pos1.z, getItem());

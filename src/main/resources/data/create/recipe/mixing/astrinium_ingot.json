@@ -1,0 +1,38 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "superheated",
+  "ingredients": [
+    {
+      "item": "minecraft:netherite_ingot"
+    },
+    {
+      "item": "jahdoo:enchanted_diamond_block"
+    },
+    {
+      "item": "jahdoo:rose_quartz_block"
+    },
+    {
+      "item": "jahdoo:lisite_shard"
+    },
+    {
+      "item": "jahdoo:lisite_shard"
+    },
+    {
+      "item": "jahdoo:gear_scrap"
+    },
+    {
+      "item": "jahdoo:gear_scrap"
+    },
+    {
+      "item": "jahdoo:gear_scrap"
+    },
+    {
+      "item": "jahdoo:gear_scrap"
+    }
+  ],
+  "results": [
+    {
+      "id": "jahdoo:astrinium_ingot"
+    }
+  ]
+}

@@ -68,8 +68,11 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(NEXITE_ORE.get())
             .add(ROSE_QUARTZ_ORE.get())
             .add(ENCHANTED_DIAMOND_ORE.get())
+            .add(LISITE_ORE.get())
             .add(NEXITE_DEEPSLATE_ORE.get())
             .add(NEXITE_BLOCK.get())
+            .add(ENCHANTED_DIAMOND_BLOCK.get())
+            .add(ROSE_QUARTZ_BLOCK.get())
             .add(PACKED_MUD_CLAY.get())
             .add(RAW_NEXITE_BLOCK.get());
 
@@ -85,7 +88,8 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
             .add(NEXITE_ORE.get())
             .add(ENCHANTED_DIAMOND_ORE.get())
             .add(ROSE_QUARTZ_ORE.get())
-            .add(LOOT_POT.get());
+            .add(LOOT_POT.get())
+            .add(LISITE_ORE.get());
 
         this.tag(OPULENT_BLOCKS)
             .add(BEACON)

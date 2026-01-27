@@ -159,6 +159,7 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
                 return SUCCESS;
             }
 
+
             if(handler.getStackInSlot(0).isEmpty()){
                 for (var item : player.getInventory().items) {
                     if (!CoreData.isFull(item) && CoreData.getFilled(item) > 0) {
@@ -185,7 +186,7 @@ public class PowerUpStation extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     private static @Nullable ItemInteractionResult sharedPlace(Level level, BlockPos pos, PowerUpStationEntity powerUpStation, ItemStack item) {
-        if (item.getItem() instanceof CoreItem) {
+        if (item.getItem() instanceof CoreItem && item.has(CORE_DATA)) {
             powerUpStation.inputItemHandler.insertItem(0, item.copyWithCount(1), false);
             Helpers.getSoundWithPositionV(level, pos.getCenter(), SoundReg.LEVEL_UP.get(), 1, 0.5F);
             item.shrink(1);

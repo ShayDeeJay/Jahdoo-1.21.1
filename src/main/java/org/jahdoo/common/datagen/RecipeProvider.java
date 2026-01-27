@@ -2,11 +2,11 @@ package org.jahdoo.common.datagen;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.Tags;
 import org.jahdoo.trial_nexus.utils.ModTags;
@@ -44,6 +44,21 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         packedMudClayBlock(recipeOutput, PACKED_MUD_CLAY.get().asItem());
         ticketBureau(recipeOutput, TICKET_BUREAU.get().asItem());
         creator(recipeOutput, CREATOR_BLOCK.get().asItem());
+        ticket(recipeOutput, TRIAL_TICKET.get());
+        enchantedDiamond(recipeOutput);
+        roseQuartz(recipeOutput);
+    }
+
+    protected void ticket(RecipeOutput output, Item result) {
+        ShapedRecipeBuilder.shaped(MISC, result, 1)
+            .define('M', NEXITE_POWDER.get())
+            .define('X', DIAMOND)
+            .define('Y', PAPER)
+            .pattern(" Y ")
+            .pattern("MXM")
+            .pattern(" Y ")
+            .unlockedBy("diamond", has(DIAMOND))
+            .save(output);
     }
 
     protected void packedMudClayBlock(RecipeOutput output, Item result) {
@@ -129,19 +144,34 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         oreSmelting(output, List.of(RAW_NEXITE_BLOCK.get()), BUILDING_BLOCKS, result, 2.0F, 200, "nexite");
     }
 
-    protected void diamond(RecipeOutput output, Item result) {
-        nineBlockStorageRecipes(output, MISC, DIAMOND_NUGGET.get(), MISC, Items.DIAMOND);
+    protected void enchantedDiamond(RecipeOutput output) {
+        nineBlockStorageRecipes(output, MISC, ENCHANTED_DIAMOND.get(), BUILDING_BLOCKS, ENCHANTED_DIAMOND_BLOCK.get());
+    }
 
+    protected void roseQuartz(RecipeOutput output) {
+        nineBlockStorageRecipes(output, MISC, ROSE_QUARTZ.get(), BUILDING_BLOCKS, ROSE_QUARTZ_BLOCK.get());
+    }
+
+    protected void diamond(RecipeOutput output, Item result) {
+        compressedBlocks(output, DIAMOND_NUGGET.get(), DIAMOND, DIAMOND_BLOCK, "diamond");
         List<ItemLike> ingredients = List.of(DIAMOND_SWORD, DIAMOND_AXE, DIAMOND_HOE, DIAMOND_PICKAXE, DIAMOND_SHOVEL, DIAMOND_HELMET, DIAMOND_CHESTPLATE, DIAMOND_LEGGINGS, DIAMOND_BOOTS);
         oreSmelting(output, ingredients, MISC, result, 2.0F, 200, "diamond");
     }
 
 
     protected void netheriteIngot(RecipeOutput output, Item result) {
-        nineBlockStorageRecipes(output, MISC, NETHERITE_NUGGET.get(), MISC, NETHERITE_INGOT);
-
+        compressedBlocks(output, NETHERITE_NUGGET.get(), NETHERITE_INGOT, NETHERITE_BLOCK, "netherite_ingot");
         List<ItemLike> ingredients = List.of(NETHERITE_SWORD, NETHERITE_AXE, NETHERITE_HOE, NETHERITE_PICKAXE, NETHERITE_SHOVEL, NETHERITE_HELMET, NETHERITE_CHESTPLATE, NETHERITE_LEGGINGS, NETHERITE_BOOTS);
         oreSmelting(output, ingredients, MISC, result, 2.0F, 200, "netherite");
+    }
+
+    private void compressedBlocks(RecipeOutput output, Item a, Item b, Item c, String item){
+        nineBlockStorageRecipesRecipesWithCustomUnpacking(
+            output, RecipeCategory.MISC, b, RecipeCategory.BUILDING_BLOCKS, c, item + "_from_diamond_block", item
+        );
+        nineBlockStorageRecipesWithCustomPacking(
+            output, RecipeCategory.MISC, a, RecipeCategory.MISC, b, item + "_from_nuggets", item
+        );
     }
 
 }

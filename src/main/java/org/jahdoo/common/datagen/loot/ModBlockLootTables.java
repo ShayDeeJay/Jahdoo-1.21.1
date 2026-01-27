@@ -64,8 +64,16 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropOther(LOCK.get(), Items.AIR);
         this.dropOther(LOCK_SUPPORT.get(), Items.AIR);
         this.dropSelf(NEXITE_BLOCK.get());
+        this.dropSelf(ENCHANTED_DIAMOND_BLOCK.get());
+        this.dropSelf(ROSE_QUARTZ_BLOCK.get());
         this.dropSelf(PACKED_MUD_CLAY.get());
         this.dropSelf(RAW_NEXITE_BLOCK.get());
+
+        this.add(
+            LISITE_ORE.get(),
+            block -> createCopperLikeOreDrops(LISITE_ORE.get(), LISITE_SHARD.get())
+                .withPool(LootPool.lootPool().setRolls(between(0f, 1.0F)))
+        );
 
         this.add(
             ENCHANTED_DIAMOND_ORE.get(),

@@ -28,6 +28,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import static org.jahdoo.common.block.mystical_augmenter.MysticalAugmenterBlock.property;
 import static org.jahdoo.common.entities.EntityAnimations.*;
+import static org.jahdoo.common.particle.ParticleHandlers.sendParticles;
 
 
 public class MysticalAugmenterEntity extends AbstractTankUser implements GeoBlockEntity {
@@ -79,21 +80,8 @@ public class MysticalAugmenterEntity extends AbstractTankUser implements GeoBloc
         if(this.ticker % 10 == 0) animateTicks(level);
 
         if(!level.isClientSide){
-//            if(this.ticker % 10 == 0){
-//                var property = property(blockState);
-//                if (property != null) {
-//                    var relative = pos.relative(property);
-//                    var getNearby = level.getNearbyEntities(LivingEntity.class, DEFAULT, null, new AABB(pos).inflate(4));
-//                    var blockEntity = level.getBlockEntity(relative);
-//                    if (blockEntity instanceof SpawnerBlockEntity) {
-//                        for (var livingEntity : getNearby) {
-//                            livingEntity.teleportTo(-3.5, -60.5, -11.5);
-//                        }
-//                    }
-//                }
-//            }
 
-//            speedTicksAttached(level, pos, blockState);
+            speedTicksAttached(level, pos, blockState);
         }
     }
 
@@ -121,7 +109,7 @@ public class MysticalAugmenterEntity extends AbstractTankUser implements GeoBloc
             poss -> {
                 var directions = this.getBlockPos().getCenter().subtract(poss).normalize();
                 var particle = ParticleHandlers.genericParticle(ParticleStore.MAGIC_PARTICLE, ElementReg.utility(), (int) (radius * 15), 0.8f);
-                ParticleHandlers.sendParticles(level, particle, poss, 0, directions.x, directions.y, directions.z, Helpers.Random.nextFloat(0.05F, 0.14F));
+                sendParticles(level, particle, poss, 0, directions.x, directions.y, directions.z, Helpers.Random.nextFloat(0.05F, 0.14F));
             }
         );
     }

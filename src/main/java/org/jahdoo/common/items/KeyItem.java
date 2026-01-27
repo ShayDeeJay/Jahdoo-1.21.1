@@ -2,10 +2,7 @@ package org.jahdoo.common.items;
 
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -15,6 +12,7 @@ import org.jahdoo.common.registers.ComponentReg;
 import org.jahdoo.common.registers.mod.ElementReg;
 import org.jahdoo.trial_nexus.level_manager.StructureManager;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
+import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -33,32 +31,29 @@ public class KeyItem extends Item implements JahdooItem {
 
 
     public enum KeyTypes {
-        EXIT_KEY(KeyItem.EXIT_KEY, "Exit", ABSORPTION_YELLOW, StructureManager.EXIT_ROOM_COMPONENT),
-        BAZAAR_KEY(KeyItem.BAZAAR_KEY, "Bazaar", AETHER_BLUE, StructureManager.BAZAAR_COMPONENT),
-        CRYPT_KEY(KeyItem.CRYPT_KEY, "Crypt", UNIQUE_B, StructureManager.LOOT_CRYPT_COMPONENT),
-        KEY_PIECE(KeyItem.KEY_PIECE, "Key", SUB_HEADER_COLOUR, Component.empty()),
-        SANCTUARY_KEY(KeyItem.SANCTUARY_KEY, "Sanctuary", ElementReg.mystic().textColourA(), StructureManager.BOSS_COMPONENT);
+        EXIT_KEY("exit_key", ABSORPTION_YELLOW, StructureManager.EXIT_ROOM_COMPONENT),
+        BAZAAR_KEY("bazaar_key", AETHER_BLUE, StructureManager.BAZAAR_COMPONENT),
+        CRYPT_KEY("crypt_key", UNIQUE_B, StructureManager.LOOT_CRYPT_COMPONENT),
+        KEY_PIECE("key_piece", SUB_HEADER_COLOUR, Component.empty()),
+        SANCTUARY_KEY("sanctuary_key", ElementReg.mystic().textColourA(), StructureManager.SANCTUARY_COMPONENT);
 
-        private final int id;
-        private final String name;
+        private final String id;
         private final int color;
         private final Component roomId;
 
         KeyTypes(
-            int id,
-            String name,
+            String id,
             int color,
             Component roomId
         ) {
             this.id = id;
-            this.name = name;
             this.color = color;
             this.roomId = roomId;
         }
 
-        public static KeyTypes getById(int id){
+        public static KeyTypes getById(String id){
             for (var value : KeyTypes.values()) {
-                if(value.id == id) return value;
+                if(id.contains(value.id)) return value;
             }
             return KEY_PIECE;
         }
@@ -73,27 +68,19 @@ public class KeyItem extends Item implements JahdooItem {
     }
 
     public static KeyTypes isLockKey(ItemStack stack){
-        var data = stack.get(CUSTOM_MODEL_DATA);
-        if(data != null){
-            for (var value : KeyTypes.values()) {
-                if (value.id == data.value()) return value;
-            }
+        for (var value : KeyTypes.values()) {
+            if (stack.getDescriptionId().contains(value.id)) return value;
         }
 
         return KeyTypes.KEY_PIECE;
     }
 
     @Override
-    public double customRecycleChance(ItemStack itemStack) {
+    public int customRecycleChance(ItemStack itemStack) {
         var getId = itemStack.get(CUSTOM_MODEL_DATA);
         if(getId == null) return -1;
 
         return (getId.value() + 1) * 20;
-    }
-
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        return super.use(level, player, usedHand);
     }
 
     @Override
@@ -112,23 +99,15 @@ public class KeyItem extends Item implements JahdooItem {
     }
 
     @Override
+    public Component getDescription() {
+        return Helpers.withStyleComponent("Once keys enter the nexus, they will be bound to that instance.", SUB_HEADER_COLOUR);
+    }
+
+    @Override
     public Component getName(ItemStack stack) {
-        if(!stack.has(CUSTOM_MODEL_DATA)) return super.getName(stack);
-        var getId = stack.get(CUSTOM_MODEL_DATA).value();
-        var name = "";
-        var colour = 0;
-
-        if(getId < 4) {
-            var getRarity = getLootRarity(getId);
-            name = getRarity.getSerializedName();
-            colour = getRarity.getColour();
-        } else {
-            var type = KeyTypes.getById(getId);
-            name = type.name;
-            colour = type.color;
-        }
-
-        return withStyleComponent(name + " " + (name.equals("Key") ? "Piece" : "Key"), colour);
+        var type = KeyTypes.getById(stack.getDescriptionId());
+        var colour = type.color;
+        return withStyleComponent(Helpers.stringIdToName(type.id), colour);
     }
 
     @Override

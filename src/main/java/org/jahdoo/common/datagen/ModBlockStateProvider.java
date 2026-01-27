@@ -24,8 +24,11 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(NEXITE_ORE);
         blockWithItem(ROSE_QUARTZ_ORE);
         blockWithItem(ENCHANTED_DIAMOND_ORE);
+        blockWithItem(LISITE_ORE);
         blockWithItem(NEXITE_DEEPSLATE_ORE);
         blockWithItem(NEXITE_BLOCK);
+        blockWithItem(ENCHANTED_DIAMOND_BLOCK);
+        blockWithItem(ROSE_QUARTZ_BLOCK);
         blockWithItem(PACKED_MUD_CLAY);
         blockWithItem(RAW_NEXITE_BLOCK);
         blockWithItem(ENCHANTED_BLOCK);
@@ -126,5 +129,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
     private void blockWithItem(DeferredHolder<Block, Block> blockRegistryObject) {
         simpleBlockWithItem(blockRegistryObject.get(), cubeAll(blockRegistryObject.get()));
     }
+
 
 }

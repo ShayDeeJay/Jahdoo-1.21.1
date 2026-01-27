@@ -21,6 +21,11 @@ public class StarterWand extends CasterItem implements GeoItem, JahdooItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public StarterWand() {
+        super(
+            new Properties()
+                .stacksTo(1)
+                .durability(150)
+        );
         SingletonGeoAnimatable.registerSyncedAnimatable(this);
     }
 

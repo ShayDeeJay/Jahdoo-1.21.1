@@ -12,7 +12,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
+import org.jahdoo.common.block.loot_crate.LootCrateBlock;
 import org.jahdoo.common.components.CoreData;
+import org.jahdoo.common.components.LootCrateData;
 import org.jahdoo.common.components.TicketData;
 import org.jahdoo.common.entities.safe.Safe;
 import org.jahdoo.common.items.Stamp;
@@ -26,6 +28,7 @@ import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.PlayerWallet;
 import org.jahdoo.trial_nexus.attachments.RunData;
+import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.loot.RewardLootTables;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
@@ -237,6 +240,7 @@ public class JahdooCommands {
                             )
 
                     )
+
                     .then(
                         literal("stamp")
                             .then(
@@ -604,6 +608,17 @@ public class JahdooCommands {
             .then(literal("random").executes(random::apply));
     }
 
+    private static LiteralArgumentBuilder<CommandSourceStack> difficulty(
+        Function<CommandContext<CommandSourceStack>, Integer> common,
+        Function<CommandContext<CommandSourceStack>, Integer> rare,
+        Function<CommandContext<CommandSourceStack>, Integer> epic
+    ) {
+        return literal("rarity")
+            .then(literal("common").executes(common::apply))
+            .then(literal("rare").executes(rare::apply))
+            .then(literal("epic").executes(epic::apply));
+    }
+
     private static int endRun(CommandSourceStack source, boolean died){
         var player = source.getPlayer();
         if(player == null) return 0;
@@ -906,9 +921,9 @@ public class JahdooCommands {
 
         for(int i = 0; i < count; i++){
             if (source.getLevel() instanceof ServerLevel) {
-                var stamp = new ItemStack(ItemReg.STAMP);
-                Stamp.addBoon(stamp, addNegative);
-                throwOrAddItem(player, stamp);
+                var stamps = new ItemStack(ItemReg.STAMP);
+                Stamp.addBoon(stamps, null);
+                throwOrAddItem(player, stamps);
             }
         }
 
@@ -939,6 +954,16 @@ public class JahdooCommands {
             RewardLootTables.bookGetter(serverLevel, itemStack2, unbreaking, 5);
             throwOrAddItem(player, itemStack2);
         }
+
+        return 1;
+    }
+
+    private static int getLootTable(CommandSourceStack source) {
+        var player = source.getPlayer();
+        if(player == null) return 0;
+        if(!(player.level() instanceof ServerLevel serverLevel)) return 0;
+
+        LootCrateBlock.getLoot(player.blockPosition(), serverLevel, new LootCrateData(65, 1, 20, InstanceDifficulty.EXPERT.getSerializedName()));
 
         return 1;
     }

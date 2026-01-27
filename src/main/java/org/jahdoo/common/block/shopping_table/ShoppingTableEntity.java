@@ -18,8 +18,9 @@ public class ShoppingTableEntity extends AbstractBEInventory {
 
     public CurrencyConverter itemCosts = EMPTY;
     public int ticks;
+    public
 
-    public ShoppingTableEntity(BlockPos pos, BlockState state) {
+    ShoppingTableEntity(BlockPos pos, BlockState state) {
         super(SHOPPING_TABLE_BE.get(), pos, state, 64);
     }
 

@@ -162,12 +162,6 @@ public class Network {
         //S2C
 
         payloadRegistrar.playToClient(
-            SaveLoadoutS2CP.TYPE,
-            SaveLoadoutS2CP.STREAM_CODEC,
-            SaveLoadoutS2CP::handle
-        );
-
-        payloadRegistrar.playToClient(
             PlayerTrialDataS2CP.TYPE,
             PlayerTrialDataS2CP.STREAM_CODEC,
             PlayerTrialDataS2CP::handle

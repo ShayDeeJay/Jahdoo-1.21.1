@@ -264,6 +264,7 @@ public class AbilityModificationScreen extends Screen {
         sendToServer(new AbilityPointC2SP(cost));
         sendToServer(new AbilityHolderC2SP(holders, 0));
         data.decrementAbilityPoints(cost);
+//        data.updateLoadout();
         return holders;
     }
 

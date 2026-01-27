@@ -63,7 +63,8 @@ public abstract class AbstractPanableScreen extends Screen {
         var numButtons = types.size();
         var totalWidth = numButtons * buttonWidth + (numButtons - 1) * gap;
         var startX = (width - totalWidth) / 2;
-
+//        var slots = player.getData(AttachmentReg.CASTER_DATA.get());
+//        var validSlot = slotIndex < slots.getAllowedSlots();
         for (int i = 0; i < numButtons; i++) {
             int x = startX + i * (buttonWidth + gap);
             var getType = types.get(i);
@@ -77,7 +78,8 @@ public abstract class AbstractPanableScreen extends Screen {
                 () -> {},
                 0,
                 getType.supplier.get().getClass().isInstance(getMinecraft().screen),
-                getType.label
+                getType.label,
+                true
             ));
         }
     }

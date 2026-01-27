@@ -203,9 +203,10 @@ public class RunData implements IAttachment {
         var runData = player.getData(AttachmentReg.RUN_DATA.get());
         var castData = PlayerTrialData.getData(player);
         setPlayerLevel(CasterData.getLevel(player), player);
+
         if (runData.dateAndTime != null) {
             runData.onEndRun(player, died);
-            if(player.level() instanceof CustomLevel customLevel){
+            if(player.level() instanceof CustomLevel customLevel) {
                 if(customLevel.players().isEmpty()){
                     LevelGenerator.removeLevel(customLevel);
                 }
@@ -220,9 +221,9 @@ public class RunData implements IAttachment {
     }
 
     public static void addExperienceToTotal(int value, ServerPlayer player) {
-        var data = player.getData(RUN_DATA.get());
-        data.addStat(RunData.EXPERIENCE, value);
-        sendToPlayer(player, new RunDataS2CP(data));
+        var runData = player.getData(RUN_DATA.get());
+        runData.addStat(EXPERIENCE, value);
+        sendToPlayer(player, new RunDataS2CP(runData));
     }
 
     public static void incrementClearedRoomExp(ServerPlayer player, String difficulty) {
@@ -231,6 +232,7 @@ public class RunData implements IAttachment {
         runData.setExperienceGained(difficulty, 5);
         sendToPlayer(player, new RunDataS2CP(runData));
     }
+
 
     public static void incrementKilledMobsExp(ServerLevel level, LivingEntity player, int amount) {
         var instanceData = level.getData(INSTANCE_DATA.get());

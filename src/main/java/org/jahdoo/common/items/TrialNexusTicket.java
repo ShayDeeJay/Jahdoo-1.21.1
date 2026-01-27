@@ -84,12 +84,9 @@ public class TrialNexusTicket extends Item implements JahdooItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         var itemInHand = player.getItemInHand(usedHand);
-        if(CoreData.isFull(itemInHand))
-            player.startUsingItem(usedHand);
+        if(CoreData.isFull(itemInHand)) player.startUsingItem(usedHand);
 
         TicketData.initTicket(itemInHand, 1);
-
-
         return super.use(level, player, usedHand);
     }
 
@@ -198,13 +195,22 @@ public class TrialNexusTicket extends Item implements JahdooItem {
     private static void onComplete(Level level, LivingEntity player, ServerPlayer serverPlayer, int ticksUsingItem, int getCastTime) {
         if(ticksUsingItem >= getCastTime){
             if (level instanceof ServerLevel serverLevel) {
-                var preData = player.getMainHandItem().get(ComponentReg.TICKET_DATA);
-                var dimTrans = createLevelAndStartingRoom(serverPlayer, serverLevel, preData != null ? preData.values() : new HashMap<>());
+                var dimTrans = createLevelAndStartingRoom(serverPlayer, serverLevel);
                 var nPos = dimTrans.pos();
-                var serverStack = serverPlayer.getItemInHand(player.getUsedItemHand());
 
                 serverPlayer.teleportTo(dimTrans.newLevel(), nPos.x, nPos.y, nPos.z, 90, 0);
                 serverPlayer.stopUsingItem();
+
+                var preData = player.getMainHandItem().get(ComponentReg.TICKET_DATA);
+                if(preData != null){
+                    var buffs = preData.values() ;
+                    for (var buff : buffs.entrySet()) {
+                        var getBoonNeg = LevelBoonReg.fromId(buff.getKey());
+                        getBoonNeg.ifPresent(b -> b.execute(dimTrans.newLevel(), buff.getValue()));
+                    }
+                }
+
+                var serverStack = serverPlayer.getItemInHand(player.getUsedItemHand());
                 var i = serverStack.get(STORE_INTEGER).intValue();
                 serverStack.set(STORE_INTEGER, i - 1);
 

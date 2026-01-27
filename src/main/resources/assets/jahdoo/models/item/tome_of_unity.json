@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "jahdoo:item/tome_of_unity",
-		"particle": "jahdoo:item/tome_of_unity"
+      "1": "jahdoo:item/tome_of_unity",
+      "particle": "jahdoo:item/tome_of_unity"
 	},
 	"elements": [
 		{

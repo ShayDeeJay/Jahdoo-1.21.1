@@ -172,7 +172,7 @@ public class FarmersTouch extends AbstractUtilityProjectile {
     }
 
     private void harvest(Level level, BlockPos pos, BlockState blockstate) {
-        UtilityHelpers.harvestBreaker(generic, pos, false);
+        UtilityHelpers.harvestBreaker(level, pos, false);
         utilityParticleBurst(level, pos.getCenter().add(0, 0.4, 0), 8, 1, 3, 0.1f);
         Helpers.getSoundWithPosition(generic.level(), pos, blockstate.getSoundType(level, pos, null).getBreakSound());
     }

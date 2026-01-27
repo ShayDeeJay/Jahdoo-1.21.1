@@ -30,6 +30,15 @@ public class EnchantedBookRecipe implements CreatorRecipes {
         var getBook = creator.getAllCraftables().get(0).copy();
         var secondaryItem = creator.getAllCraftables().get(1).copy();
 
+        for (var allCraftable : creator.getAllCraftables()) {
+            if(allCraftable.is(Items.ENCHANTED_BOOK)) {
+                getBook = allCraftable;
+            } else {
+                secondaryItem = allCraftable;
+            };
+
+        }
+
         EnchantmentHelpers.applyBookEnchantsToItem(getBook, secondaryItem, false);
         return secondaryItem;
     }

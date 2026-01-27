@@ -41,6 +41,21 @@ public class BlockReg {
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(BuiltInRegistries.BLOCK, JahdooMod.MOD_ID);
 
+    public static DeferredHolder<Block, Block> NEXITE_POWDER_BLOCK =
+        basicBlock("nexite_powder_block");
+
+    public static DeferredHolder<Block, Block> ENCHANTED_DIAMOND_BLOCK =
+        basicBlock("enchanted_diamond_block");
+
+    public static DeferredHolder<Block, Block> ROSE_QUARTZ_BLOCK =
+        basicBlock("rose_quartz_block");
+
+    public static DeferredHolder<Block, Block> NEXITE_BLOCK =
+        basicBlock("nexite_block");
+
+    public static DeferredHolder<Block, Block> RAW_NEXITE_BLOCK =
+        basicBlock("raw_nexite_block");
+
     public static DeferredHolder<Block, Block> LIGHTING =
         registerBlock("lighting", LightBlock::new);
 
@@ -109,6 +124,10 @@ public class BlockReg {
         () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DIAMOND_ORE))
     );
 
+    public static DeferredHolder<Block, Block> LISITE_ORE = registerBlockWithItem("lisite_ore",
+        () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DIAMOND_ORE))
+    );
+
     public static DeferredHolder<Block, Block> ROSE_QUARTZ_ORE = registerBlockWithItem("rose_quartz_ore",
         () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DIAMOND_ORE))
     );
@@ -117,20 +136,8 @@ public class BlockReg {
         () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DEEPSLATE_DIAMOND_ORE))
     );
 
-    public static DeferredHolder<Block, Block> NEXITE_BLOCK = registerBlockWithItem("nexite_block",
-        () -> new Block(of().strength(DIAMOND_BLOCK.defaultDestroyTime()).sound(SoundType.STONE).noOcclusion())
-    );
-
     public static DeferredHolder<Block, Block> PACKED_MUD_CLAY = registerBlockWithItem("packed_mud_clay",
-        () -> new Block(of().strength(DIAMOND_BLOCK.defaultDestroyTime()).sound(SoundType.STONE).noOcclusion())
-    );
-
-    public static DeferredHolder<Block, Block> RAW_NEXITE_BLOCK = registerBlockWithItem("raw_nexite_block",
-        () -> new Block(of().strength(RAW_GOLD_BLOCK.defaultDestroyTime()).noOcclusion())
-    );
-
-    public static DeferredHolder<Block, Block> NEXITE_POWDER_BLOCK = registerBlockWithItem("nexite_powder_block",
-        () -> new Block(of())
+        () -> new Block(of().strength(PACKED_MUD.defaultDestroyTime()).sound(SoundType.PACKED_MUD).noOcclusion())
     );
 
     public static Properties sharedBehaviour = of().strength(1f).sound(SoundType.DEEPSLATE_BRICKS).noOcclusion();
@@ -139,15 +146,19 @@ public class BlockReg {
         return BLOCKS.register(name, block);
     }
 
-    private static <T extends Block> DeferredHolder<Block, T> registerBlockWithItem(String name, Supplier<T> block) {
-        DeferredHolder<Block, T> toReturn = BLOCKS.register(name, block);
-        registerBlockItem(name, toReturn);
-        return toReturn;
+    public static DeferredHolder<Block, Block> basicBlock(String name) {
+        return registerBlockWithItem(name, () -> new Block(of().strength(DIAMOND_BLOCK.defaultDestroyTime()).sound(SoundType.STONE).noOcclusion()));
     }
 
     private static <T extends Block> DeferredHolder<Block, T> registerCreativeBlockWithItem(String name, Supplier<T> block) {
         DeferredHolder<Block, T> toReturn = BLOCKS.register(name, block);
         registerCreativeBlockItem(name, toReturn);
+        return toReturn;
+    }
+
+    private static <T extends Block> DeferredHolder<Block, T> registerBlockWithItem(String name, Supplier<T> block) {
+        DeferredHolder<Block, T> toReturn = BLOCKS.register(name, block);
+        registerBlockItem(name, toReturn);
         return toReturn;
     }
 

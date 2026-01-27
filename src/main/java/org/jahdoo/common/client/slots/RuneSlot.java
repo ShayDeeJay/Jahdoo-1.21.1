@@ -113,7 +113,7 @@ public class RuneSlot extends SlotItemHandler {
         var runeData = RuneHelpers.getRuneData(stack);
         var runeReg = RuneReg.getRuneFromId(runeData.name());
         var rarity = runeReg.runeRarity().getId();
-        return SharedUI.getCore().get(Math.min(rarity/2, 2));
+        return SharedUI.getCore().get(Math.min(rarity/4, 2));
     }
 
     public static int removeCurrencyCost(ItemStack stack) {

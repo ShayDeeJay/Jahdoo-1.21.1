@@ -1,15 +1,13 @@
 package org.jahdoo.common.event;
 
+import com.github.L_Ender.cataclysm.entity.InternalAnimationMonster.IABossMonsters.IABoss_monster;
 import net.casual.arcade.dimensions.level.CustomLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
-import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
-import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
+import net.neoforged.neoforge.event.entity.*;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -86,10 +84,27 @@ public class ServerEvents {
         saveBlockType(event, item, blockState, pos);
     }
 
+    @SubscribeEvent
+    public static void mobGriefEvent(EntityMobGriefingEvent event) {
+        if(event.getEntity() instanceof IABoss_monster){
+            event.setCanGrief(false);
+        }
+    }
 
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
         var player = rightClickItem.getEntity();
+
+//        if(player.level() instanceof ServerLevel serverLevel){
+//            var maledictusEntity = new Deepling_Warlock_Entity(DEEPLING_WARLOCK.get(), serverLevel);
+//            var maledictusEntity = new Ignis_Entity(IGNIS.get(), serverLevel);
+//            maledictusEntity.moveTo(player.position());
+//            serverLevel.addFreshEntity(maledictusEntity);-
+//        }
+
+        if(player instanceof ServerPlayer serverPlayer){
+//            RunData.addExperienceToTotal(10, serverPlayer);
+        }
 
         triggerUseEvent(player, player.level());
         removeShieldUse(rightClickItem);
@@ -159,7 +174,6 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void onBlockBreak(PlayerEvent.BreakSpeed event) {
-
         TrailNexusDimensionEvents.useItemBlockEvent(event);
     }
 
@@ -170,17 +184,6 @@ public class ServerEvents {
         var pos = event.getPos();
         var level = event.getLevel();
         var getBlock = level.getBlockState(pos);
-
-        //Used for speeding up ticks
-//        for (int i = 0; i < 10; i++){
-//            var blockEntity = level.getBlockEntity(pos);
-//            if(blockEntity instanceof BlockEntity entity) {
-//                BlockEntityTicker<BlockEntity> ticker = entity.getBlockState().getTicker(level, (BlockEntityType<BlockEntity>) entity.getType());
-//                if(ticker != null){
-//                    ticker.tick(level, pos, entity.getBlockState(), blockEntity);
-//                }
-//            }
-//        }
 
         TrailNexusDimensionEvents.useItemBlockEvent(event);
         perkTableInteraction(getBlock, level, pos, player, event);

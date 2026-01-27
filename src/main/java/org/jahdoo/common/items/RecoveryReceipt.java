@@ -15,7 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,11 +45,11 @@ public class RecoveryReceipt extends BaseItem {
 
     @Override
     public ItemStack getRecycleItem() {
-        return new ItemStack(ItemReg.AUGMENT_CORE);
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public double customRecycleChance(ItemStack itemStack) {
+    public int customRecycleChance(ItemStack itemStack) {
         return 100;
     }
 

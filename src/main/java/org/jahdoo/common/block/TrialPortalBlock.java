@@ -20,19 +20,17 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.portal.DimensionTransition;
+import org.jahdoo.common.particle.ParticleHandlers;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.utils.Helpers;
-import org.jahdoo.common.particle.ParticleHandlers;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-
 import static net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING;
+import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 import static org.jahdoo.trial_nexus.level_manager.LevelGenerator.createLevelAndStartingRoom;
 import static org.jahdoo.trial_nexus.utils.ColourStore.COSMIC_PURPLE;
 import static org.jahdoo.trial_nexus.utils.ColourStore.PERK_GREEN;
-import static org.jahdoo.common.particle.ParticleStore.MAGIC_PARTICLE;
 
 public class TrialPortalBlock extends NetherPortalBlock {
 
@@ -91,7 +89,7 @@ public class TrialPortalBlock extends NetherPortalBlock {
         if(level instanceof CustomLevel cLevel) LevelGenerator.removeLevel(cLevel);
         level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 
-        return createLevelAndStartingRoom(player, level, new HashMap<>());
+        return createLevelAndStartingRoom(player, level);
     }
 
     @Override

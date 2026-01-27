@@ -15,7 +15,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.phys.Vec3;
 import org.jahdoo.common.components.TicketData;
-import org.jahdoo.common.items.KeyItem;
+import org.jahdoo.common.items.Stamp;
 import org.jahdoo.common.items.TrialNexusTicket;
 import org.jahdoo.common.items.caster_item.CasterItem;
 import org.jahdoo.common.items.gauntlet.BattlemageGauntlet;
@@ -65,9 +65,6 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> IRON_BUILDER =
         lootTableItem(Items.IRON_INGOT);
 
-    public static final LootPoolSingletonContainer.Builder<?> SHULKER_SHELLS_BUILDER =
-        lootTableItem(Items.SHULKER_SHELL);
-
     public static final LootPoolSingletonContainer.Builder<?> GOLDEN_CARROT_BUILDER =
         lootTableItem(Items.GOLDEN_CARROT);
 
@@ -98,14 +95,17 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> DIAMOND_SWORD_BUILDER =
         lootTableItem(Items.DIAMOND_SWORD);
 
-    public static final LootPoolSingletonContainer.Builder<?> NEXITE_BLOCK_BUILDER =
-        lootTableItem(BlockReg.NEXITE_BLOCK.get());
+    public static final LootPoolSingletonContainer.Builder<?> RAW_NEXITE_BLOCK_BUILDER =
+        lootTableItem(BlockReg.RAW_NEXITE_BLOCK.get());
 
     public static final LootPoolSingletonContainer.Builder<?> AUGMENT_CORE_BUILDER =
         lootTableItem(ItemReg.AUGMENT_CORE.get());
 
     public static final LootPoolSingletonContainer.Builder<?> ESSENCE_FRAGMENT =
         lootTableItem(ItemReg.ESSENCE_FRAGMENT.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> GEAR_SCRAP =
+        lootTableItem(ItemReg.GEAR_SCRAP.get());
     
     public static final LootPoolSingletonContainer.Builder<?> NETHERITE_SWORD_BUILDER = 
         lootTableItem(Items.NETHERITE_SWORD);
@@ -119,6 +119,8 @@ public class RewardLootTables {
     public static final LootPoolSingletonContainer.Builder<?> AUGMENT_HYPER_CORE_BUILDER = 
         lootTableItem(ItemReg.AUGMENT_HYPER_CORE.get());
 
+    public static final LootPoolSingletonContainer.Builder<?> STAMP =
+        lootTableItem(ItemReg.STAMP.get());
 
     public static final LootPoolSingletonContainer.Builder<?> KNIGHT_KING_HELM_BUILDER =
         lootTableItem(ItemReg.KNIGHT_KING_HELMET.get());
@@ -206,13 +208,22 @@ public class RewardLootTables {
         lootTableItem(ItemReg.UNDEAD_PROTECTOR_SHIELD.get());
 
     public static final LootPoolSingletonContainer.Builder<?> KEY =
-        lootTableItem(ItemReg.LOOT_KEY.get());
+        lootTableItem(ItemReg.KEY_FRAGMENT.get());
 
     public static final LootPoolSingletonContainer.Builder<?> GAUNTLET =
         lootTableItem(ItemReg.BATTLEMAGE_GAUNTLET.get());
 
     public static final LootPoolSingletonContainer.Builder<?> ELEMENTAL_SWORD =
         lootTableItem(ItemReg.ELEMENTAL_SWORD.get());
+
+    public static final LootPoolSingletonContainer.Builder<?> ENCHANTED_DIAMOND_ORE =
+        lootTableItem(BlockReg.ENCHANTED_DIAMOND_ORE.get().asItem());
+
+    public static final LootPoolSingletonContainer.Builder<?> ROSE_QUARTZ_ORE =
+        lootTableItem(BlockReg.ROSE_QUARTZ_ORE.get().asItem());
+
+    public static final LootPoolSingletonContainer.Builder<?> LISITE_ORE =
+        lootTableItem(BlockReg.LISITE_ORE.get().asItem());
 
 
     public static List<ItemStack> getCoinItems(InstanceData data) {
@@ -284,6 +295,7 @@ public class RewardLootTables {
         return createLootParams(serverLevel, pos, loot);
     }
 
+
     private static void enchantedBook(ServerLevel serverLevel, ItemStack itemStack){
         serverLevel
             .registryAccess()
@@ -321,42 +333,57 @@ public class RewardLootTables {
             case Magnet ignored -> magnetItem(itemStack, raritiesByChestRarity);
             case JahdooShieldItem ignored -> basicShieldWithRarity(itemStack, raritiesByChestRarity);
             case BattlemageGauntlet ignore -> getGauntletWithRarity(itemStack, raritiesByChestRarity);
-            case KeyItem ignore -> keyPiece(itemStack, raritiesByChestRarity);
             case TrialNexusTicket ignore -> TicketData.initTicket(itemStack, 1);
+            case Stamp ignore -> Stamp.addBoon(itemStack, raritiesByChestRarity);
             default -> { /*IGNORE*/ }
         }
     }
 
+    public static List<ItemStack> oreDistribution(ServerLevel serverLevel, Vec3 pos) {
+        var builder = LootPool.lootPool().setRolls(exactly(1.0F));
+
+        builder.add(ENCHANTED_DIAMOND_ORE.setWeight(5));
+        builder.add(ROSE_QUARTZ_ORE.setWeight(10));
+        builder.add(LISITE_ORE.setWeight(40));
+
+        var loot = LootTable.lootTable();
+
+        loot.withPool(builder);
+
+        return createLootParams(serverLevel, pos, loot);
+    }
+
     private static LootPool.Builder multiPoolBuilder(InstanceDifficulty difficulty, int chestRarity) {
         var lootMultiplier = getLootMultiplier(difficulty, chestRarity);
-        var min = 3F;
+        var min = 6F;
         var builder = LootPool.lootPool().setRolls(between(min, min + lootMultiplier));
-        var newRarity = chestRarity+1;
+        var newRarity = chestRarity + 1;
 
         if(newRarity >= 1){
             //Common
-            builder.add(GOLDEN_CARROT_BUILDER.setWeight(50));
+            builder.add(GEAR_SCRAP.setWeight(40));
             builder.add(IRON_BUILDER.setWeight(35));
             builder.add(REDSTONE.setWeight(30));
             builder.add(LAPIS.setWeight(30));
             builder.add(GOLD_BUILDER.setWeight(25));
+            builder.add(GOLDEN_CARROT_BUILDER.setWeight(20));
             builder.add(ENDER_PEARL.setWeight(20));
             builder.add(EMERALD_BUILDER.setWeight(15));
             builder.add(DIAMOND_BUILDER.setWeight(10));
             builder.add(SLIME.setWeight(10));
             builder.add(QUARTZ.setWeight(10));
             builder.add(COIN.setWeight(10));
-            builder.add(XP.setWeight(8));
-            builder.add(NETHERITE_BUILDER.setWeight(5));
-            builder.add(SHULKER_SHELLS_BUILDER.setWeight(5));
+            builder.add(NETHERITE_BUILDER.setWeight(10));
             builder.add(NETHERITE_INGOT.setWeight(2));
         }
 
         if(newRarity >= 2){
             //Rare
-            builder.add(NEXITE_BLOCK_BUILDER.setWeight(20));
+            builder.add(RAW_NEXITE_BLOCK_BUILDER.setWeight(20));
             builder.add(BOOK_BUILDER.setWeight(15));
-            builder.add(KEY.setWeight(1));
+            builder.add(STAMP.setWeight(10));
+            builder.add(XP.setWeight(8));
+            builder.add(KEY.setWeight(2));
         }
 
         return builder;

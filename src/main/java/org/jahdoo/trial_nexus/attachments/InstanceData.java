@@ -39,7 +39,7 @@ public class InstanceData implements IAttachment {
     public static final String KEY_RARE_LOOT_MULTIPLIER = "rare_loot_multiplier";
     public static final String KEY_LEGENDARY_LOOT_MULTIPLIER = "legendary_loot_multiplier";
     public static final String KEY_MYTHIC_LOOT_MULTIPLIER = "mythic_loot_multiplier";
-    public static final String KEY_EXPERIENCE = "xp";
+    public static final String KEY_EXPERIENCE = "experience";
 
     private final Map<String, Double> values = new HashMap<>();
     private String difficulty;
@@ -220,6 +220,10 @@ public class InstanceData implements IAttachment {
 
     public void incrementAttackDamage(double amount) {
         increment(KEY_ATTACK_DAMAGE, amount);
+    }
+
+    public void incrementXP(double amount) {
+        increment(KEY_EXPERIENCE, amount);
     }
 
     public void incrementClearedRooms() {

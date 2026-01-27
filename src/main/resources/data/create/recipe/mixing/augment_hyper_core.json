@@ -1,0 +1,32 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "superheated",
+  "ingredients": [
+    {
+      "item": "jahdoo:advanced_augment_core"
+    },
+    {
+      "item": "jahdoo:advanced_augment_core"
+    },
+    {
+      "item": "jahdoo:advanced_augment_core"
+    },
+    {
+      "item": "jahdoo:advanced_augment_core"
+    },
+    {
+      "item": "jahdoo:astrinium_ingot"
+    },
+    {
+      "item": "jahdoo:rose_quartz"
+    },
+    {
+      "item": "jahdoo:rose_quartz"
+    }
+  ],
+  "results": [
+    {
+      "id": "jahdoo:augment_hyper_core"
+    }
+  ]
+}

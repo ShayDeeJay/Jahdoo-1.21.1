@@ -9,7 +9,6 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import org.jahdoo.common.client.screens.AbstractPanableScreen;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.attachments.CasterData;
 import org.jahdoo.trial_nexus.utils.ColourStore;
@@ -35,6 +34,7 @@ public class AbilitySlotButton extends ImageButton {
     private final ResourceLocation buttonOverlay;
     private final String label;
     private final int slotIndex;
+    private final boolean validSlot;
 
     public AbilitySlotButton(
         int pX,
@@ -47,7 +47,8 @@ public class AbilitySlotButton extends ImageButton {
         String label,
         int scale,
         boolean showHover,
-        int slotIndex
+        int slotIndex,
+        boolean validSlot
     ) {
         super(pX, pY, size, size, sprites, pOnPress);
         this.defaultSize = size;
@@ -59,6 +60,7 @@ public class AbilitySlotButton extends ImageButton {
         this.label = label;
         this.showHover = showHover;
         this.slotIndex = slotIndex;
+        this.validSlot = validSlot;
     }
 
     public float easeInOutCubic(float t) {
@@ -72,8 +74,6 @@ public class AbilitySlotButton extends ImageButton {
 
     @Override
     public void playDownSound(SoundManager handler) {
-        var slots = Minecraft.getInstance().player.getData(AttachmentReg.CASTER_DATA.get());
-        var validSlot = slotIndex < slots.getAllowedSlots();
         if(validSlot){
             handler.play(SimpleSoundInstance.forUI(SoundReg.SELECT, 1));
         }
@@ -95,18 +95,19 @@ public class AbilitySlotButton extends ImageButton {
         var player = mc.player;
 
         if(player == null) return;
-        var slots = player.getData(AttachmentReg.CASTER_DATA.get());
-        var validSlot = slotIndex < slots.getAllowedSlots();
+//        var slots = player.getData(AttachmentReg.CASTER_DATA.get());
+//        var validSlot = slotIndex < slots.getAllowedSlots();
         var colourFaded = FastColor.ARGB32.color(190, AbstractPanableScreen.uiColour());
 
         if(isSelected) sizes = totalSize;
         this.setSize((int) sizes-4, (int) sizes-4);
 
-        graphics.drawCenteredString(mc.font, label, this.getX() + this.totalSize/2 +1, this.getY() + totalSize + 2, isSelected ? colourFaded : ColourStore.SUB_HEADER_COLOUR);
+        var i1 = this.totalSize / 2 - 3;
+        graphics.drawCenteredString(mc.font, label, this.getX() + i1 + 3, this.getY() + totalSize + 3, isSelected ? colourFaded : ColourStore.SUB_HEADER_COLOUR);
         graphics.blit(this.sprites.enabled(), this.getX() - offset, this.getY() - offset, 0, 0, 0, easedValue, easedValue, easedValue, easedValue);
 
         if(isSelected) {
-            boxMaker(graphics, this.getX() + 3, this.getY() + 3, 12, 12, colourFaded, 0, 0);
+            boxMaker(graphics, this.getX() + 3, this.getY() + 3, i1, i1, colourFaded, 0, 0);
         }
 
         if (this.isMouseOver(mouseX, mouseY)) {
@@ -132,7 +133,7 @@ public class AbilitySlotButton extends ImageButton {
         if(buttonOverlay != null){
             graphics.blit(buttonOverlay, this.getX() - offset + i/2, this.getY() - offset + i/2, 1, 0, 0, size, size, size, size);
         } else {
-            graphics.drawCenteredString(mc.font, validSlot ? slotIndex + 1 + "" : "⧈", this.getX() - offset + (this.totalSize/2), this.getY() - offset + (this.totalSize/2) - 4, validSlot ? SUB_HEADER_COLOUR : HEADER_COLOUR);
+            graphics.drawCenteredString(mc.font, validSlot ? slotIndex + 1 + "" : "⧈", this.getX() - offset + i1 + 3, this.getY() - offset + i1 - 1, validSlot ? SUB_HEADER_COLOUR : HEADER_COLOUR);
         }
     }
 

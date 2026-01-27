@@ -11,7 +11,6 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -71,9 +70,8 @@ public class UtilityHelpers {
         }
     }
 
-    public static void harvestBreaker(Projectile newProjectile, BlockPos pos, boolean voidBlocks){
-        var blockstate = newProjectile.level().getBlockState(pos);
-        var level = newProjectile.level();
+    public static void harvestBreaker(Level level, BlockPos pos, boolean voidBlocks){
+        var blockstate = level.getBlockState(pos);
         if(!voidBlocks){
             var centre = pos.getCenter();
             if(!(level instanceof ServerLevel serverLevel)) return;
@@ -134,12 +132,14 @@ public class UtilityHelpers {
                     if (isSilkTouch) {
                         var getBlock = new ItemStack(blockstate.getBlock());
                         var itementity = new ItemEntity(level, centre.x, centre.y, centre.z, getBlock);
+
                         collectOrDrop(newProjectile, autoCollect, itementity, level);
                     } else {
-                        var drops = lootBuilder(pos, fortuneLevel, serverLevel, blockstate, level);
+                        var drops = lootBuilder(pos, serverLevel, blockstate, level, getDiamondPickaxe(fortuneLevel, serverLevel));
                         for (ItemStack itemStack : drops) {
                             var canBurn = smeltable(serverLevel, itemStack);
                             var item = new ItemEntity(level, centre.x, centre.y, centre.z, smelt ? canBurn : itemStack);
+
                             collectOrDrop(newProjectile, autoCollect, item, level);
                         }
                     }
@@ -151,7 +151,7 @@ public class UtilityHelpers {
         }
     }
 
-    private static void collectOrDrop(GenericProjectile newProjectile, boolean autoCollect, ItemEntity item, Level level) {
+    public static void collectOrDrop(GenericProjectile newProjectile, boolean autoCollect, ItemEntity item, Level level) {
         if(autoCollect){
             var owner = (Player) newProjectile.getOwner();
             if (owner != null) {
@@ -170,9 +170,13 @@ public class UtilityHelpers {
         }
     }
 
-    private static @NotNull List<ItemStack> lootBuilder(BlockPos pos, int fortuneLevel, ServerLevel serverLevel, BlockState blockstate, Level level) {
+    private static ItemStack getDiamondPickaxe(int fortuneLevel, ServerLevel serverLevel){
         var value = new ItemStack(Items.DIAMOND_PICKAXE);
         EnchantmentHelpers.enchant(value, serverLevel.registryAccess(), Enchantments.FORTUNE, fortuneLevel);
+        return value;
+    }
+
+    public static @NotNull List<ItemStack> lootBuilder(BlockPos pos, ServerLevel serverLevel, BlockState blockstate, Level level, ItemStack value) {
         var lootBuilder = new LootParams
             .Builder(serverLevel)
             .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
@@ -183,7 +187,7 @@ public class UtilityHelpers {
         return blockstate.getDrops(lootBuilder);
     }
 
-    private static ItemStack smeltable(Level level, ItemStack stack) {
+    public static ItemStack smeltable(Level level, ItemStack stack) {
         if (!stack.isEmpty()) {
             Optional<RecipeHolder<SmeltingRecipe>> optional = level
                 .getRecipeManager()

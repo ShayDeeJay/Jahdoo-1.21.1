@@ -10,9 +10,14 @@
   "item.jahdoo.gold_coin": "Gold Coin",
   "item.jahdoo.platinum_coin": "Platinum Coin",
   "item.jahdoo.nexite_powder": "Nexite Essence",
-  "item.jahdoo.augment_core": "Basic Core",
-  "item.jahdoo.advanced_augment_core": "Advance Core",
-  "item.jahdoo.augment_hyper_core": "Hyper Core",
+  "item.jahdoo.augment_core": "Hollow Basic Core",
+  "item.jahdoo.advanced_augment_core": "Hollow Advance Core",
+  "item.jahdoo.augment_hyper_core": "Hollow Hyper Core",
+
+  "item.jahdoo.augment_core_filled": "Charged Basic Core",
+  "item.jahdoo.advanced_augment_core_filled": "Charged Advance Core",
+  "item.jahdoo.augment_hyper_core_filled": "Charged Hyper Core",
+
   "item.jahdoo.tome_of_unity": "Tome Of Unity",
   "item.jahdoo.battlemage_gauntlet": "Battlemage Gauntlet",
   "item.jahdoo.wizard_helmet": "Grand Wizard Hat",
@@ -20,7 +25,6 @@
   "item.jahdoo.wizard_leggings": "Grand Wizard Leggings",
   "item.jahdoo.ingmas_sword": "Ingmas Sword",
   "item.jahdoo.wizard_boots": "Grand Wizard Boots",
-  "item.jahdoo.exit_key": "Trail Exit Key",
   "item.jahdoo.champions_crown": "Champions Crown",
   "item.jahdoo.basic_shield": "Soldiers Shield",
   "item.jahdoo.undead_protector": "The Undead Protector",
@@ -32,6 +36,11 @@
   "item.jahdoo.stamp": "Stamp",
   "item.jahdoo.diamond_nugget": "Diamond Nugget",
   "item.jahdoo.netherite_nugget": "Netherite Nugget",
+  "item.jahdoo.gear_scrap": "Gear Scrap",
+  "item.jahdoo.lisite_shard": "Lisite Shard",
+  "item.jahdoo.astrinium_ingot": "Astrinium Ingot",
+  "item.jahdoo.divinity_paxel": "Divinity Paxel",
+
 
   "item.jahdoo.mage_helmet": "Mage Hood",
   "item.jahdoo.mage_chestplate": "Mage Chest Piece",
@@ -72,6 +81,9 @@
   "block.jahdoo.packed_mud_clay": "Packed Mud Clay",
   "block.jahdoo.rose_quartz_ore": "Rose Quartz Ore",
   "block.jahdoo.enchanted_diamond_ore": "Enchanted Diamond Ore",
+  "block.jahdoo.lisite_ore": "Lisite Ore",
+  "block.jahdoo.enchanted_diamond_block": "Enchanted Diamond Block",
+  "block.jahdoo.rose_quartz_block": "Rose Quartz Block",
 
   "effect.jahdoo.step_boost": "Step Assist",
   "effect.jahdoo.amplify_block_reach": "Block Reach",

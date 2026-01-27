@@ -31,7 +31,7 @@ public interface JahdooItem {
         return new ItemStack(ItemReg.ESSENCE_FRAGMENT);
     };
 
-    default double customRecycleChance(ItemStack itemStack){
+    default int customRecycleChance(ItemStack itemStack){
         return -1;
     }
 

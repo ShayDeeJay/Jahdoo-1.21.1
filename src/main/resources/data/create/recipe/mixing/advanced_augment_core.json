@@ -1,0 +1,35 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "jahdoo:augment_core"
+    },
+    {
+      "item": "jahdoo:augment_core"
+    },
+    {
+      "item": "jahdoo:augment_core"
+    },
+    {
+      "item": "jahdoo:augment_core"
+    },
+    {
+      "item": "jahdoo:lisite_shard"
+    },
+    {
+      "item": "jahdoo:lisite_shard"
+    },
+    {
+      "item": "jahdoo:rose_quartz"
+    },
+    {
+      "item": "jahdoo:rose_quartz"
+    }
+  ],
+  "results": [
+    {
+      "id": "jahdoo:advanced_augment_core"
+    }
+  ]
+}

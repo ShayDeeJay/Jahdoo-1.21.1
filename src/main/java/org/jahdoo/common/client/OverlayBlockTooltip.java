@@ -37,6 +37,7 @@ public class  OverlayBlockTooltip {
 
         var partialTicks = event.getPartialTick().getGameTimeDeltaTicks();
         var pick = player.pick(player.blockInteractionRange(), partialTicks, false);
+
         if(pick instanceof BlockHitResult result){
             var pos = result.getBlockPos();
             var lookingAt = player.level().getBlockEntity(pos);
@@ -132,7 +133,7 @@ public class  OverlayBlockTooltip {
             if (canRender) {
                 var mouseY = height - (tooltip.size() * 5);
                 pose.pushPose();
-                pose.translate(0,0,1);
+                pose.translate(0, 0, 1);
                 graphics.renderTooltip(font, stackInSlot, width + 60, mouseY);
                 pose.popPose();
 

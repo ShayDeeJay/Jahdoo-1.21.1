@@ -1,0 +1,25 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "item": "jahdoo:astrinium_ingot"
+    },
+    {
+      "item": "jahdoo:astrinium_ingot"
+    },
+    {
+      "item": "minecraft:netherite_pickaxe"
+    },
+    {
+      "item": "minecraft:netherite_shovel"
+    },
+    {
+      "item": "minecraft:netherite_axe"
+    }
+  ],
+  "results": [
+    {
+      "id": "jahdoo:divinity_paxel"
+    }
+  ]
+}

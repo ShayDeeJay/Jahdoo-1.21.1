@@ -31,8 +31,8 @@ import static org.jahdoo.trial_nexus.utils.ModTags.Block.ALLOWED_BLOCK_INTERACTI
 
 public class CasterItem extends BaseItem {
 
-    public CasterItem() {
-        super(wandProperties());
+    public CasterItem(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -92,6 +92,7 @@ public class CasterItem extends BaseItem {
         var pic = player.pick(player.blockInteractionRange(), 1, false);
 
         if(level instanceof ServerLevel){
+
             if(pic instanceof BlockHitResult result){
                 var bPos = result.getBlockPos();
                 var entity = level.getBlockEntity(bPos);

@@ -62,6 +62,7 @@ public class CasterData implements IAttachment {
     private int abilityPoints;
     private int refundableSkillPoints;
     private int multiKill;
+    private int loadoutIndex = -1;
     private double manaPool;
 
     private Map<String, Integer> abilityCooldowns = new Object2IntOpenHashMap<>();
@@ -80,6 +81,7 @@ public class CasterData implements IAttachment {
         int abilityPoints,
         int refundableSkillPoints,
         int multiKill,
+        int loadoutIndex,
         double manaPool,
         String selectedAbility,
         Map<String, Integer> abilityCooldowns,
@@ -95,6 +97,7 @@ public class CasterData implements IAttachment {
         this.abilityPoints = abilityPoints;
         this.refundableSkillPoints = refundableSkillPoints;
         this.multiKill = multiKill;
+        this.loadoutIndex = loadoutIndex;
         this.manaPool = manaPool;
         this.selectedAbility = selectedAbility;
         this.abilityCooldowns = abilityCooldowns;
@@ -109,71 +112,111 @@ public class CasterData implements IAttachment {
     public record LoadoutObj(
         List<AbilityHolder> holders,
         List<String> skills,
-        int skillPoints
-    ){
+        List<String> activeSkills,
+        List<String> abilitySlots,
+        int skillPoints,
+        String selected
+    ) {
+
         public static final Codec<LoadoutObj> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
                 Codec.list(AbilityHolder.CODEC).fieldOf("unlocked_abilities").forGetter(LoadoutObj::holders),
-                Codec.list(Codec.STRING).fieldOf("ability_slots").forGetter(LoadoutObj::skills),
-                Codec.INT.fieldOf("xp").forGetter(LoadoutObj::skillPoints)
+                Codec.list(Codec.STRING).fieldOf("unlocked_skills").forGetter(LoadoutObj::skills),
+                Codec.list(Codec.STRING).fieldOf("active_skills").forGetter(LoadoutObj::activeSkills),
+                Codec.list(Codec.STRING).fieldOf("ability_slots").forGetter(LoadoutObj::abilitySlots),
+                Codec.INT.fieldOf("skill_points").forGetter(LoadoutObj::skillPoints),
+                Codec.STRING.fieldOf("selected").forGetter(LoadoutObj::selected)
             ).apply(instance, LoadoutObj::new)
         );
 
         public static CompoundTag saveNBT(LoadoutObj loadout) {
-            CompoundTag tag = new CompoundTag();
+            var tag = new CompoundTag();
 
-            // Save abilities
             AbilityHolder.saveListHolders(loadout.holders, tag);
 
-            // Save skills
-            ListTag skillsTag = new ListTag();
-            for (String skill : loadout.skills) {
+            var skillsTag = new ListTag();
+            for (var skill : loadout.skills) {
                 skillsTag.add(StringTag.valueOf(skill));
             }
-            tag.put("ability_slots", skillsTag);
+            tag.put("skills", skillsTag);
 
-            // Save skill points
-            tag.putInt("xp", loadout.skillPoints);
+            var activeSkillsTag = new ListTag();
+            for (var skill : loadout.activeSkills) {
+                activeSkillsTag.add(StringTag.valueOf(skill));
+            }
+            tag.put("active_skills", activeSkillsTag);
+
+            var slotsTag = new ListTag();
+            for (var slot : loadout.abilitySlots) {
+                slotsTag.add(StringTag.valueOf(slot));
+            }
+            tag.put("ability_slots", slotsTag);
+
+            tag.putInt("skill_points", loadout.skillPoints);
+            tag.putString("selected", loadout.selected);
 
             return tag;
         }
 
         public static LoadoutObj loadNBT(CompoundTag tag) {
-            // Load abilities
-            List<AbilityHolder> holders = AbilityHolder.readListHolders(tag);
+            var holders = AbilityHolder.readListHolders(tag);
 
-            // Load skills
-            List<String> skills = new ArrayList<>();
-            ListTag skillsTag = tag.getList("ability_slots", Tag.TAG_STRING);
-            for (int i = 0; i < skillsTag.size(); i++) {
+            var skills = new ArrayList<String>();
+            var skillsTag = tag.getList("skills", Tag.TAG_STRING);
+            for (var i = 0; i < skillsTag.size(); i++) {
                 skills.add(skillsTag.getString(i));
             }
 
-            // Load skill points
-            int skillPoints = tag.getInt("xp");
+            var activeSkills = new ArrayList<String>();
+            var activeSkillsTag = tag.getList("active_skills", Tag.TAG_STRING);
+            for (var i = 0; i < activeSkillsTag.size(); i++) {
+                activeSkills.add(activeSkillsTag.getString(i));
+            }
 
-            return new LoadoutObj(holders, skills, skillPoints);
+            var abilitySlots = new ArrayList<String>();
+            var slotsTag = tag.getList("ability_slots", Tag.TAG_STRING);
+            for (var i = 0; i < slotsTag.size(); i++) {
+                abilitySlots.add(slotsTag.getString(i));
+            }
+
+            var skillPoints = tag.getInt("skill_points");
+            var selected = tag.getString("selected");
+
+            return new LoadoutObj(holders, skills, activeSkills, abilitySlots, skillPoints, selected);
         }
-
     }
 
     public void addLoadout(int index){
         var temp = new Int2ObjectLinkedOpenHashMap<>(loadouts);
-        var charged = refundableSkillPoints - abilityPoints;
-        var createLoadout = new LoadoutObj(this.unlockedAbilities, this.unlockedSkills, charged);
-
-        temp.put(index, createLoadout);
+        temp.put(index, getLoadoutObj());
+        this.loadoutIndex = index;
         loadouts = temp;
     }
 
+    public void removeLoadout(int index){
+        var temp = new Int2ObjectLinkedOpenHashMap<>(loadouts);
+        temp.remove(index);
+        if(this.loadoutIndex == index) this.loadoutIndex = -1;
+        loadouts = temp;
+    }
+
+    private @NotNull LoadoutObj getLoadoutObj() {
+        var aPoints = abilityPoints;
+        var sPoints = refundableSkillPoints;
+        var charged = sPoints - aPoints;
+        return new LoadoutObj(this.unlockedAbilities, this.unlockedSkills, this.activeSkills, this.abilitySlots, charged, this.selectedAbility);
+    }
+
     public void initLoadout(int index){
-        var unlockedAbilities1 = loadouts.get(index);
-        if(unlockedAbilities1 != null){
-            this.unlockedAbilities = unlockedAbilities1.holders();
-            this.unlockedSkills = unlockedAbilities1.skills();
-            var points = unlockedAbilities1.skillPoints();
-            System.out.println(points);
-            this.abilityPoints = this.refundableSkillPoints - points;
+        var unlocked = loadouts.get(index);
+        this.loadoutIndex = index;
+        if(unlocked != null){
+            this.unlockedAbilities = unlocked.holders();
+            this.unlockedSkills = unlocked.skills();
+            this.activeSkills = unlocked.activeSkills();
+            this.abilitySlots = unlocked.abilitySlots();
+            var points = unlocked.skillPoints();
+            this.selectedAbility = unlocked.selected;
             this.decrementAbilityPoints(points);
         }
     }
@@ -234,6 +277,10 @@ public class CasterData implements IAttachment {
         return this.refundableSkillPoints;
     }
 
+    public int getLoadoutIndex(){
+        return this.loadoutIndex;
+    }
+
     public void incrementAbilityPoints(int points){
         this.abilityPoints += points;
         this.refundableSkillPoints += points;
@@ -281,12 +328,21 @@ public class CasterData implements IAttachment {
             if(unlockedAbility.abilityName().equals(holder.abilityName())){
                 var index = this.unlockedAbilities.indexOf(unlockedAbility);
                 this.unlockedAbilities.set(index, holder);
+                updateLoadout();
                 return;
             }
         }
 
         this.unlockedAbilities.add(holder);
+        updateLoadout();
     }
+
+    public void updateLoadout() {
+        if(this.loadoutIndex >= 0) {
+            this.loadouts.put(this.loadoutIndex, getLoadoutObj());
+        }
+    }
+
 
     public void checkMultiKill(Player player, int multiKillTarget){
         if(this.multiKill > 0){
@@ -345,15 +401,38 @@ public class CasterData implements IAttachment {
     }
 
     public void clearData(){
+        sharedReset();
+
+        this.loadouts = new Int2ObjectLinkedOpenHashMap<>();
+        this.abilityPoints = 0;
+        this.allowedSlots = 2;
+        this.xp = 0;
+        this.refundableSkillPoints = 0;
+    }
+
+    private void sharedReset() {
         this.unlockedAbilities = new ArrayList<>();
         this.abilitySlots = new ArrayList<>(EMPTY);
         this.unlockedSkills = new ArrayList<>();
         this.activeSkills = new ArrayList<>();
         this.selectedAbility = "";
-        this.abilityPoints = 0;
-        this.allowedSlots = 2;
-        this.xp = 0;
-        this.refundableSkillPoints = 0;
+        this.loadoutIndex = -1;
+        addFreeAbilities(this);
+    }
+
+    public static void regretAbilities(LivingEntity livingEntity, boolean playAudio){
+        if(livingEntity instanceof ServerPlayer serverPlayer){
+            var data = livingEntity.getData(CASTER_DATA);
+
+            data.sharedReset();
+            data.abilityPoints = data.refundableSkillPoints;
+
+            sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
+            if(playAudio) {
+                Helpers.sendClientSound(serverPlayer, SoundReg.REJECT.get(), 1, 1, false);
+                Helpers.sendClientSound(serverPlayer, SoundReg.ORB_CREATE.get(), 0.4F, 2, false);
+            }
+        }
     }
 
     public List<String> getAbilitySlots(){
@@ -370,11 +449,13 @@ public class CasterData implements IAttachment {
         } else {
             this.activeSkills.remove(skillId);
         }
+        updateLoadout();
     }
 
     public void addNewSkill(String skillId){
         if(hasUnlockedSkill(skillId)){
             this.unlockedSkills.add(skillId);
+            this.updateLoadout();
         }
     }
 
@@ -387,6 +468,7 @@ public class CasterData implements IAttachment {
             for (int i = 0; i < this.abilitySlots.size(); i++) {
                 if (this.abilitySlots.get(i).isEmpty()) {
                     this.abilitySlots.set(i, selectedAbility);
+                    this.updateLoadout();
                     return;
                 }
             }
@@ -555,8 +637,18 @@ public class CasterData implements IAttachment {
         return baseManaRegen;
     }
 
-    public static Boolean hasSkill(LivingEntity livingEntity,  String skill){
+    public static Boolean hasSkill(LivingEntity livingEntity, String skill){
         return livingEntity.getData(CASTER_DATA).getActiveSkills().contains(skill);
+    }
+
+    public static boolean isNewLoadout(LivingEntity livingEntity){
+        var data = livingEntity.getData(CASTER_DATA);
+        System.out.println(data.loadoutIndex);
+        return data.loadoutIndex == -1;
+    }
+
+    public static boolean hasLoadout(LivingEntity livingEntity, int index){
+        return livingEntity.getData(CASTER_DATA).getLoadouts().containsKey(index);
     }
 
     public static Boolean hasAbility(LivingEntity livingEntity,  String selectedAbility){
@@ -595,27 +687,6 @@ public class CasterData implements IAttachment {
 
     public static void decrementAbilityPoints(LivingEntity livingEntity, int abilityPoints){
         livingEntity.getData(CASTER_DATA).decrementAbilityPoints(abilityPoints);
-    }
-
-    public static void regretAbilities(LivingEntity livingEntity, boolean playAudio){
-        if(livingEntity instanceof ServerPlayer serverPlayer){
-            var data = livingEntity.getData(CASTER_DATA);
-
-            data.abilitySlots = new ArrayList<>(EMPTY);
-            data.unlockedSkills = new ArrayList<>();
-            data.unlockedAbilities = new ArrayList<>();
-            data.activeSkills = new ArrayList<>();
-            data.selectedAbility = "";
-            data.abilityPoints = data.refundableSkillPoints;
-            addFreeAbilities(data);
-//            System.out.println(data.loadouts);
-
-            sendToPlayer(serverPlayer, new CastingDataSyncS2CP(data));
-            if(playAudio) {
-                Helpers.sendClientSound(serverPlayer, SoundReg.REJECT.get(), 1, 1, false);
-                Helpers.sendClientSound(serverPlayer, SoundReg.ORB_CREATE.get(), 0.4F, 2, false);
-            }
-        }
     }
 
     public static void addFreeAbilities(CasterData castingData){
@@ -729,6 +800,7 @@ public class CasterData implements IAttachment {
             Codec.INT.fieldOf("ability_points").forGetter(CasterData::getAbilityPoints),
             Codec.INT.fieldOf("refundable_skill_points").forGetter(CasterData::getRefundableSkillPoints),
             Codec.INT.fieldOf("multi_kill").forGetter(CasterData::getRefundableSkillPoints),
+            Codec.INT.fieldOf("loadout_index").forGetter(CasterData::getLoadoutIndex),
             Codec.DOUBLE.fieldOf("mana_pool").forGetter(CasterData::getManaPool),
             Codec.STRING.fieldOf("selected_ability").forGetter(CasterData::getSelectedAbility),
             Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("ability_cooldowns").forGetter(CasterData::getAllCooldowns),
@@ -774,6 +846,7 @@ public class CasterData implements IAttachment {
         nbt.put("unlocked_skills", unlockedSkills);
         nbt.put("active_skills", activeSkills);
         nbt.putInt("multi_kill", multiKill);
+        nbt.putInt("loadout_index", loadoutIndex);
         nbt.putDouble(MANA, manaPool);
         nbt.putInt("level", this.xp);
         nbt.putInt("ability_points", this.abilityPoints);
@@ -829,6 +902,7 @@ public class CasterData implements IAttachment {
         this.allowedSlots = nbt.getInt("allowed_slots");
         this.xp = nbt.getInt("level");
         this.multiKill = nbt.getInt("multi_kill");
+        this.loadoutIndex = nbt.getInt("loadout_index");
         this.abilityPoints = nbt.getInt("ability_points");
         this.refundableSkillPoints = nbt.getInt("refundable_skill_points");
         this.unlockedAbilities = AbilityHolder.readListHolders(nbt);

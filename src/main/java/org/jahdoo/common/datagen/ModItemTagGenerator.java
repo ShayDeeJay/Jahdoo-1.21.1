@@ -67,7 +67,17 @@ public class ModItemTagGenerator extends ItemTagsProvider {
             .add(WIZARD_BOOTS.get())
             .add(ANCIENT_GOLEM_BOOTS.get());
 
+        this.tag(PICKAXES)
+            .add(DIVINITY_PAXEL.get());
+
+        this.tag(AXES)
+            .add(DIVINITY_PAXEL.get());
+
+        this.tag(SHOVELS)
+            .add(DIVINITY_PAXEL.get());
+
         this.tag(DURABILITY_ENCHANTABLE)
+            .add(DIVINITY_PAXEL.get())
             .add(BASIC_SHIELD.get())
             .add(UNDEAD_PROTECTOR_SHIELD.get())
             .add(TOME_OF_UNITY.get())

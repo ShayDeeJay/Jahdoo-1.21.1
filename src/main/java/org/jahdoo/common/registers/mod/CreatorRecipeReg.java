@@ -42,32 +42,8 @@ public class CreatorRecipeReg {
             .findFirst();
     }
 
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> EXIT_KEY_RECIPE =
-        registerSpell(new ExitKeyRecipe());
-
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> SANCTUARY_KEY_RECIPE =
-        registerSpell(new SanctuaryKeyRecipe());
-
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> BAZAAR_KEY_RECIPE =
-        registerSpell(new BazaarKeyRecipe());
-
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> CRYPT_KEY_RECIPE =
-        registerSpell(new CryptKeyRecipe());
-
     public static final DeferredHolder<CreatorRecipes, CreatorRecipes> ENCHANTED_BOOK_RECIPE =
         registerSpell(new EnchantedBookRecipe());
-
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> AUGMENT_CORE_RECIPE =
-        registerSpell(new AugmentCoreRecipe());
-
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> TICKET_RECIPE =
-        registerSpell(new TicketRecipe());
-
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> STONE_OF_REGRET_RECIPE =
-        registerSpell(new StoneOfRegretRecipe());
-
-    public static final DeferredHolder<CreatorRecipes, CreatorRecipes> MYSTICAL_AUGMENTER_RECIPE =
-        registerSpell(new MysticalAugmenterRecipe());
 
     public static final DeferredHolder<CreatorRecipes, CreatorRecipes> STARTER_WAND_RECIPE =
         registerSpell(new StarterWandRecipe());

@@ -9,7 +9,7 @@ import org.jahdoo.trial_nexus.utils.ColourStore;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
 import static org.jahdoo.trial_nexus.attachments.InstanceData.KEY_BRONZE_COIN;
 
-public class BronzeCoins extends Coins{
+public class BronzeCoins extends Coins {
     @Override
     public String id() {
         return KEY_BRONZE_COIN;

@@ -1,8 +1,11 @@
-// 1.21.1	2025-05-11T17:16:39.0483588	Tags for minecraft:item mod id jahdoo
+// 1.21.1	2026-01-25T15:56:39.6336608	Tags for minecraft:item mod id jahdoo
 7cb3c71a77405fec40f4779a50a23eedd8198c85 data/jahdoo/tags/item/wand_tag.json
+0445c71eabee98c1294ecf5666ebe62e39af2b55 data/minecraft/tags/item/axes.json
 d333cd49bf66eec21c1fd1f7b1b625612fec4fd3 data/minecraft/tags/item/chest_armor.json
-5cb33a28d0f7a6b866bbf6e9c700915c638704f8 data/minecraft/tags/item/enchantable/durability.json
+d057e5c5f78f47579d933f44aefc04eb2858695c data/minecraft/tags/item/enchantable/durability.json
 f248643142f57522d49888ad7de27c3c05864ec2 data/minecraft/tags/item/foot_armor.json
 a8df14a2cd61bb1c9bb36ec92eb2fd59b597cef1 data/minecraft/tags/item/head_armor.json
 129058ddee27b23195d8ece41fc2382c5fac76b9 data/minecraft/tags/item/leg_armor.json
+0445c71eabee98c1294ecf5666ebe62e39af2b55 data/minecraft/tags/item/pickaxes.json
+0445c71eabee98c1294ecf5666ebe62e39af2b55 data/minecraft/tags/item/shovels.json
 d6f6f1e2ae5e2c6a5a2c9125aea0658dec972867 data/minecraft/tags/item/swords.json

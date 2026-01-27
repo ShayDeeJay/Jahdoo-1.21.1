@@ -1,5 +1,6 @@
 package org.jahdoo.trial_nexus.mobs;
 
+import com.github.L_Ender.cataclysm.entity.AnimationMonster.BossMonsters.Ignis_Entity;
 import com.github.L_Ender.cataclysm.entity.InternalAnimationMonster.IABossMonsters.Maledictus.Maledictus_Entity;
 import com.github.L_Ender.cataclysm.entity.InternalAnimationMonster.IABossMonsters.Scylla.Scylla_Entity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -39,6 +40,7 @@ import org.jahdoo.common.registers.ItemReg;
 import org.jahdoo.common.registers.SoundReg;
 import org.jahdoo.trial_nexus.ability.effects.JahdooMobEffect;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
+import org.jahdoo.trial_nexus.level_manager.InstanceDifficulty;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.Maths;
 
@@ -47,8 +49,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static com.github.L_Ender.cataclysm.init.ModEntities.MALEDICTUS;
-import static com.github.L_Ender.cataclysm.init.ModEntities.SCYLLA;
+import static com.github.L_Ender.cataclysm.init.ModEntities.*;
 import static net.minecraft.core.component.DataComponents.TRIM;
 import static net.minecraft.core.registries.Registries.TRIM_MATERIAL;
 import static net.minecraft.core.registries.Registries.TRIM_PATTERN;
@@ -86,18 +87,32 @@ public class MobManager {
 
     private static void addProtection(ServerLevel serverLevel, ItemStack stack, int round) {
         var level = calculateEnchantmentLevel(round);
-
         enchant(stack, serverLevel.registryAccess(), PROTECTION, level);
     }
 
-    private static LivingEntity getAncienGolem(ServerLevel serverLevel, int round) {
-        var damage = Maths.getPercentageTotal(round, 12);
-//        var ancientGolem = new AncientGolem(serverLevel, null, damage, 100, 1, INFINITE_LIFE, 20);
-        var ancientGolem = new Scylla_Entity(SCYLLA.get(), serverLevel);
-        addBaseAttribute(MAX_HEALTH, ancientGolem, 300);
-//        addBaseAttribute(SCALE, ancientGolem, 50);
-        return ancientGolem;
+    private static LivingEntity getScylla(ServerLevel serverLevel, int round) {
+        var scyllaEntity = new Scylla_Entity(SCYLLA.get(), serverLevel);
+        addBaseAttribute(MAX_HEALTH, scyllaEntity, round);
+        return scyllaEntity;
     }
+
+    public static LivingEntity getMaledictus(ServerLevel serverLevel, int round){
+        var maledictusEntity = new Maledictus_Entity(MALEDICTUS.get(), serverLevel);
+        addBaseAttribute(MAX_HEALTH, maledictusEntity, round);
+        return maledictusEntity;
+    }
+
+    public static LivingEntity getIgnis(ServerLevel serverLevel, int round){
+        var maledictusEntity = new Ignis_Entity(IGNIS.get(), serverLevel);
+        addBaseAttribute(MAX_HEALTH, maledictusEntity, round);
+        return maledictusEntity;
+    }
+
+//    public static LivingEntity getIgnis(ServerLevel serverLevel, int round){
+//        var maledictusEntity = new Ignis_Entity(IGNIS.get(), serverLevel);
+//        addBaseAttribute(MAX_HEALTH, maledictusEntity, round);
+//        return maledictusEntity;
+//    }
 
     public static void effectWithChance(LivingEntity livingEntity, Holder<MobEffect> effect, int amplifier, int chance) {
         if(Maths.percentageChance(chance)){
@@ -163,14 +178,8 @@ public class MobManager {
     }
 
     public static LivingEntity getReadyZombie(ServerLevel serverLevel, String id, InstanceData data){
-//        var entity = switch (id){
-//            case THE_HALL::contains -> new CustomZombie(serverLevel, null);
-//            case THE_CHAMBERS -> new ZombieVillager(EntityType.ZOMBIE_VILLAGER, serverLevel)  ;
-//            case THE_OASIS -> new Husk(EntityType.HUSK, serverLevel);
-//            default -> new ZombifiedPiglin(EntityType.ZOMBIFIED_PIGLIN, serverLevel);
-//        };
-
         Monster entity;
+
         if(EASY_ROOMS.contains(id)){
             entity = new CustomZombie(serverLevel, null);
         } else if (HARD_ROOMS.contains(id)) {
@@ -259,26 +268,6 @@ public class MobManager {
         return false;
     }
 
-    public static LivingEntity getEliteSkeleton(ServerLevel serverLevel, int level){
-//        var skeleton = new CustomSkeleton(serverLevel, null, new ItemStack(ARROW));
-//        var getEliteArmor = getEliteArmor(serverLevel, 100);
-        var skeleton = new Maledictus_Entity(MALEDICTUS.get(), serverLevel);
-
-        addBaseAttribute(MAX_HEALTH, skeleton, 300);
-//        addBaseAttribute(SCALE, skeleton, 50);
-//        skeleton.setElite();
-//
-//        effectWithChance(skeleton, MobEffects.MOVEMENT_SPEED, 0, 100);
-//
-//        skeleton.setCustomName(Component.literal("Master Archer"));
-//        skeleton.setItemSlot(HEAD, getEliteArmor.getFirst());
-//        skeleton.setItemSlot(CHEST, getEliteArmor.get(1));
-//        skeleton.setItemSlot(LEGS, getEliteArmor.get(2));
-//        skeleton.setItemSlot(FEET, getEliteArmor.get(3));
-//        skeleton.setItemSlot(MAINHAND, getEliteArmor.get(4));
-        return skeleton;
-    }
-
     public static void summonEntities(AltarBlockEntity entity, String roomId){
         if(!(entity.getLevel() instanceof ServerLevel level)) return;
 
@@ -291,10 +280,12 @@ public class MobManager {
             entity.spawnableMobs.addAll(actualEntity);
 
         } else {
-            var round = entity.getData(INSTANCE_DATA).getClearedRooms();
-            var ancienGolem = getAncienGolem(level, round);
-            var eliteSkeleton = getEliteSkeleton(level, round);
-            var boss = Helpers.listRandom(List.of(ancienGolem, eliteSkeleton));
+            var data = entity.getData(INSTANCE_DATA);
+            var round1 = data.getClearedRooms() * InstanceDifficulty.getFromLevel(level).getId();
+            var scylla = getScylla(level, round1);
+            var maledictus = getMaledictus(level, round1);
+            var ignis = getIgnis(level, round1);
+            var boss = Helpers.listRandom(List.of(scylla, maledictus, ignis));
 
             //Heal as when adding more health still spawns with only the amount of health that is default
             boss.setHealth(boss.getMaxHealth());

@@ -43,8 +43,8 @@ public class AbilityHolderC2SP implements CustomPacketPayload {
                 if(ctx.player() instanceof ServerPlayer serverPlayer){
                     var casterData = serverPlayer.getData(AttachmentReg.CASTER_DATA);
                     if(abilityHolder != AbilityHolder.DEFAULT){
-                        casterData.updateAbility(abilityHolder);
                         casterData.decrementAbilityPoints(upgradeCost);
+                        casterData.updateAbility(abilityHolder);
                     }
                     PacketDistributor.sendToPlayer(serverPlayer, new AbilityHolderS2CP(casterData.getUnlockedAbilities()));
                 }

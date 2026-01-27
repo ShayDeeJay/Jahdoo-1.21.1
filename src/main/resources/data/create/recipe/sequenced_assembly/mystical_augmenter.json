@@ -1,0 +1,61 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "tag": "jahdoo:modular_chaos_cube"
+  },
+  "results": [
+    {
+      "id": "jahdoo:mystical_augmenter"
+    }
+  ],
+  "sequence": [
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "jahdoo:modular_chaos_cube"
+        },
+        {
+          "tag": "jahdoo:enchanted_diamond"
+        }
+      ],
+      "results": [
+        {
+          "id": "jahdoo:modular_chaos_cube"
+        }
+      ]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "jahdoo:modular_chaos_cube"
+        },
+        {
+          "tag": "jahdoo:augment_core_filled"
+        }
+      ],
+      "results": [
+        {
+          "id": "jahdoo:modular_chaos_cube"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "jahdoo:modular_chaos_cube"
+        }
+      ],
+      "results": [
+        {
+          "id": "jahdoo:modular_chaos_cube"
+        }
+      ]
+    }
+  ],
+  "transitional_item": {
+    "id": "jahdoo:modular_chaos_cube"
+  }
+}
