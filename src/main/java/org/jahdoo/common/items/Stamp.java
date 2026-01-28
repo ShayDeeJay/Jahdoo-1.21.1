@@ -1,6 +1,5 @@
 package org.jahdoo.common.items;
 
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -15,8 +14,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA;
 import static org.jahdoo.common.components.TicketData.addNewEntry;
-import static org.jahdoo.trial_nexus.utils.Helpers.Random;
+import static org.jahdoo.trial_nexus.rarity.JahdooRarity.getRarity;
+import static org.jahdoo.trial_nexus.rarity.JahdooRarity.getReverseRarity;
 import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
 
 public class Stamp extends Item implements JahdooItem{
@@ -53,28 +54,19 @@ public class Stamp extends Item implements JahdooItem{
     }
 
     public static void addBoon(ItemStack itemStack, @Nullable JahdooRarity rarity){
-        var posBoon = LevelBoonReg.getStampBoons();
-        var newRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
-
-        addNewEntry(itemStack, posBoon.id(), posBoon.value(newRarity));
-
+        var newRarity = rarity == null ? getRarity() : rarity;
+        var posBoon = LevelBoonReg.withRarityPositive(newRarity);
+        itemStack.set(CUSTOM_MODEL_DATA, new CustomModelData(posBoon.getStampIndex()+1));
+        itemStack.set(ComponentReg.STORE_INTEGER, (int) getReverseRarity().getAttributes().getRandomManaPool());
         itemStack.set(ComponentReg.ID, posBoon.id());
-        itemStack.set(ComponentReg.STORE_INTEGER, Random.nextInt(10, 50));
+        addNewEntry(itemStack, posBoon.id(), posBoon.value(getRarity()));
 
-//        if(addNegativeModifier){
-//            var negBoon = LevelBoonReg.randomNegative();
-//            var negRarity = JahdooRarity.getRarity();
-//            addNewEntry(itemStack, negBoon.id(), negBoon.value(negRarity));
-//        }
 
-        var rarityPercent = (newRarity.getId() + 3) * 10;
+        var rarityPercent = (newRarity.getId()) * 10;
         if(Maths.percentageChance(100 - rarityPercent)){
             var negBoon = LevelBoonReg.randomNegative();
-            var negRarity = JahdooRarity.getRarity();
-            addNewEntry(itemStack, negBoon.id(), negBoon.value(negRarity));
+            addNewEntry(itemStack, negBoon.id(), negBoon.value(newRarity));
         }
-
-        itemStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(posBoon.getStampIndex()+1));
     }
 
 }

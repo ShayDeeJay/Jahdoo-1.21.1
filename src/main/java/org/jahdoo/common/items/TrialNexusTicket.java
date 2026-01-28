@@ -180,6 +180,8 @@ public class TrialNexusTicket extends Item implements JahdooItem {
             comp(tooltips, getTicketMods, KEY_QUEST_CRATE_MULTIPLIER, false, stack);
             comp(tooltips, getTicketMods, KEY_SAFE_LOOT_MULTIPLIER, false, stack);
             comp(tooltips, getTicketMods, KEY_EXPERIENCE, false, stack);
+            comp(tooltips, getTicketMods, KEY_ORE_MULTIPLIER, false, stack);
+            comp(tooltips, getTicketMods, KEY_LOOT_POT_MULTIPLIER, false, stack);
 
             mobComp(tooltips, getTicketMods, KEY_HEALTH, true);
             mobComp(tooltips, getTicketMods, KEY_ARMOR, true);

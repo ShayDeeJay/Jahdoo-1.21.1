@@ -85,26 +85,33 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
+    public static void blockInteraction(UseItemOnBlockEvent event) {
+        var item = event.getItemStack().getItem();
+        var player = event.getPlayer();
+        var pos = event.getPos();
+        var level = event.getLevel();
+        var getBlock = level.getBlockState(pos);
+
+        TrailNexusDimensionEvents.useItemBlockEvent(event);
+        perkTableInteraction(getBlock, level, pos, player, event);
+        removeWandInteractionWithBlocks(event, player, item, getBlock);
+    }
+
+    @SubscribeEvent
     public static void mobGriefEvent(EntityMobGriefingEvent event) {
-        if(event.getEntity() instanceof IABoss_monster){
-            event.setCanGrief(false);
-        }
+        if(event.getEntity() instanceof IABoss_monster) event.setCanGrief(false);
     }
 
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.RightClickItem rightClickItem) {
         var player = rightClickItem.getEntity();
 
-//        if(player.level() instanceof ServerLevel serverLevel){
-//            var maledictusEntity = new Deepling_Warlock_Entity(DEEPLING_WARLOCK.get(), serverLevel);
-//            var maledictusEntity = new Ignis_Entity(IGNIS.get(), serverLevel);
-//            maledictusEntity.moveTo(player.position());
-//            serverLevel.addFreshEntity(maledictusEntity);-
-//        }
-
-        if(player instanceof ServerPlayer serverPlayer){
-//            RunData.addExperienceToTotal(10, serverPlayer);
-        }
+//      if(player.level() instanceof ServerLevel serverLevel) {
+//          var maledictusEntity = new Deepling_Warlock_Entity(DEEPLING_WARLOCK.get(), serverLevel);
+//          var maledictusEntity = new Ignis_Entity(IGNIS.get(), serverLevel);
+//          maledictusEntity.moveTo(player.position());
+//          serverLevel.addFreshEntity(maledictusEntity);
+//      }
 
         triggerUseEvent(player, player.level());
         removeShieldUse(rightClickItem);
@@ -175,19 +182,6 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onBlockBreak(PlayerEvent.BreakSpeed event) {
         TrailNexusDimensionEvents.useItemBlockEvent(event);
-    }
-
-    @SubscribeEvent
-    public static void blockInteraction(UseItemOnBlockEvent event) {
-        var item = event.getItemStack().getItem();
-        var player = event.getPlayer();
-        var pos = event.getPos();
-        var level = event.getLevel();
-        var getBlock = level.getBlockState(pos);
-
-        TrailNexusDimensionEvents.useItemBlockEvent(event);
-        perkTableInteraction(getBlock, level, pos, player, event);
-        removeWandInteractionWithBlocks(event, player, item, getBlock);
     }
 
     @SubscribeEvent

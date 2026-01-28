@@ -25,6 +25,8 @@ public class InstanceData implements IAttachment {
     public static final String KEY_INFERNO_CREEPER = "inferno_creeper";
     public static final String KEY_CLEARED_ROOMS = "cleared_rooms";
     public static final String KEY_MAX_TIME = "max_time";
+    public static final String KEY_ORE_MULTIPLIER = "ore_multiplier";
+    public static final String KEY_LOOT_POT_MULTIPLIER = "loot_pot_multiplier";
     public static final String KEY_BRONZE_COIN = "bronze_coin";
     public static final String KEY_SILVER_COIN = "silver_coin";
     public static final String KEY_GOLD_COIN = "gold_coin";
@@ -41,6 +43,7 @@ public class InstanceData implements IAttachment {
     public static final String KEY_MYTHIC_LOOT_MULTIPLIER = "mythic_loot_multiplier";
     public static final String KEY_EXPERIENCE = "experience";
 
+
     private final Map<String, Double> values = new HashMap<>();
     private String difficulty;
 
@@ -56,7 +59,7 @@ public class InstanceData implements IAttachment {
         return this.values;
     }
 
-    private double get(String key) {
+    public double get(String key) {
         return values.getOrDefault(key, 0.0);
     }
 
@@ -99,6 +102,14 @@ public class InstanceData implements IAttachment {
 
     public int getClearedRooms() {
         return (int) get(KEY_CLEARED_ROOMS);
+    }
+
+    public int getLootPotMultiplier() {
+        return (int) get(KEY_LOOT_POT_MULTIPLIER);
+    }
+
+    public int getOreMultiplier() {
+        return (int) get(KEY_ORE_MULTIPLIER);
     }
 
     public int getMaxTime() {
@@ -222,7 +233,7 @@ public class InstanceData implements IAttachment {
         increment(KEY_ATTACK_DAMAGE, amount);
     }
 
-    public void incrementXP(double amount) {
+    public void ince(double amount) {
         increment(KEY_EXPERIENCE, amount);
     }
 
@@ -232,6 +243,14 @@ public class InstanceData implements IAttachment {
 
     public void incrementTicks() {
         increment(KEY_TICKS, 1);
+    }
+
+    public void setOreMultiplier(int oreMultiplier) {
+        increment(KEY_ORE_MULTIPLIER, oreMultiplier);
+    }
+
+    public void setLootPotMultiplier(int lootPotMultiplier) {
+        increment(KEY_LOOT_POT_MULTIPLIER, lootPotMultiplier);
     }
 
     public void setMaxTime(int maxTime) {

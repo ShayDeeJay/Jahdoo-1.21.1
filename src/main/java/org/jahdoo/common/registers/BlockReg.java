@@ -2,11 +2,13 @@ package org.jahdoo.common.registers;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -116,25 +118,30 @@ public class BlockReg {
     public static DeferredHolder<Block, Block> LOCK_SUPPORT =
         registerBlockWithItem("lock_support", () -> new Block(of()));
 
-    public static DeferredHolder<Block, Block> NEXITE_ORE = registerBlockWithItem("nexite_ore",
-        () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DIAMOND_ORE))
-    );
+    //Ores
+    public static DeferredHolder<Block, Block> NEXITE_DEEPSLATE_ORE =
+        getExpBlock("nexite_deepslate_ore", DEEPSLATE_DIAMOND_ORE, UniformInt.of(3,6));
 
-    public static DeferredHolder<Block, Block> ENCHANTED_DIAMOND_ORE = registerBlockWithItem("enchanted_diamond_ore",
-        () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DIAMOND_ORE))
-    );
+    public static DeferredHolder<Block, Block> NEXITE_ORE =
+        getExpBlock("nexite_ore", DIAMOND_ORE, UniformInt.of(3,6));
 
-    public static DeferredHolder<Block, Block> LISITE_ORE = registerBlockWithItem("lisite_ore",
-        () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DIAMOND_ORE))
-    );
+    public static DeferredHolder<Block, Block> ENCHANTED_DIAMOND_ORE =
+        withoutExpBlock("enchanted_diamond_ore");
 
-    public static DeferredHolder<Block, Block> ROSE_QUARTZ_ORE = registerBlockWithItem("rose_quartz_ore",
-        () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DIAMOND_ORE))
-    );
+    public static DeferredHolder<Block, Block> LISITE_ORE =
+        withoutExpBlock("lisite_ore");
 
-    public static DeferredHolder<Block, Block> NEXITE_DEEPSLATE_ORE = registerBlockWithItem("nexite_deepslate_ore",
-        () -> new DropExperienceBlock(UniformInt.of(3, 6), ofFullCopy(DEEPSLATE_DIAMOND_ORE))
-    );
+    public static DeferredHolder<Block, Block> ROSE_QUARTZ_ORE =
+        withoutExpBlock("rose_quartz_ore");
+
+
+    public static DeferredHolder<Block, Block> withoutExpBlock(String name) {
+        return registerBlockWithItem(name, () -> new DropExperienceBlock(UniformInt.of(0,0), ofFullCopy(DIAMOND_ORE)));
+    }
+
+    public static DeferredHolder<Block, Block> getExpBlock(String name, BlockBehaviour behaviour, IntProvider xpRange) {
+        return registerBlockWithItem(name, () -> new DropExperienceBlock(xpRange, ofFullCopy(behaviour)));
+    }
 
     public static DeferredHolder<Block, Block> PACKED_MUD_CLAY = registerBlockWithItem("packed_mud_clay",
         () -> new Block(of().strength(PACKED_MUD.defaultDestroyTime()).sound(SoundType.PACKED_MUD).noOcclusion())

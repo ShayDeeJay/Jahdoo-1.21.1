@@ -10,22 +10,17 @@ import net.minecraft.world.level.Level;
 import net.neoforged.fml.common.asm.enumextension.IExtensibleEnum;
 import net.neoforged.fml.common.asm.enumextension.IndexedEnum;
 import org.jahdoo.common.client.Icons;
-import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.util.FastColor.ARGB32.color;
-import static org.jahdoo.trial_nexus.rarity.RarityAttributes.*;
-import static org.jahdoo.trial_nexus.utils.ColourStore.SUB_HEADER_COLOUR;
-import static org.jahdoo.trial_nexus.utils.ColourStore.UNIQUE_B;
-import static org.jahdoo.trial_nexus.utils.Helpers.*;
 import static org.jahdoo.common.items.runes.rune_data.RuneHelpers.getRuneData;
 import static org.jahdoo.common.registers.ComponentReg.JAHDOO_RARITY;
+import static org.jahdoo.trial_nexus.rarity.RarityAttributes.*;
+import static org.jahdoo.trial_nexus.utils.ColourStore.*;
+import static org.jahdoo.trial_nexus.utils.Helpers.*;
 
 @IndexedEnum
 public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
@@ -37,13 +32,14 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
     MYTHIC(4, "Mythic", color(225, 92, 112), MYTHIC_ATTRIBUTES, Icons.MYTHIC_TAG),
     UNIQUE(5, "Unique", UNIQUE_B, MYTHIC_ATTRIBUTES, Icons.UNIQUE_TAG);
 
-    public static final List<Pair<JahdooRarity, Integer>> BASE_RARITY_CHANCES = List.of(
-        Pair.of(COMMON, 1),
-        Pair.of(RARE, 1500),
-        Pair.of(EPIC, 4500),
-        Pair.of(LEGENDARY, 5500),
-        Pair.of(MYTHIC, 6000)
-    );
+    public static final List<Pair<JahdooRarity, Integer>> BASE_RARITY_CHANCES =
+        List.of(
+            Pair.of(COMMON, 1),
+            Pair.of(RARE, 1500),
+            Pair.of(EPIC, 4500),
+            Pair.of(LEGENDARY, 5500),
+            Pair.of(MYTHIC, 6000)
+        );
 
     private final int id;
     private final String name;
@@ -70,6 +66,10 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return this.name;
     }
 
+    private static int getRandom() {
+        return Random.nextInt(1, 6020);
+    }
+
     public int getId() {
         return this.id;
     }
@@ -94,11 +94,6 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return Arrays.stream(JahdooRarity.values()).toList().get(index);
     }
 
-    private static JahdooRarity getJahdooRarity(@Nullable JahdooRarity rarity) {
-        var correctRarity = rarity == null ? JahdooRarity.getRarity() : rarity;
-        return correctRarity == JahdooRarity.UNIQUE ? JahdooRarity.EPIC : correctRarity;
-    }
-
     public static Component attachRarityTooltip(ItemStack wandItem, Level level) {
         var getRarityId = wandItem.get(JAHDOO_RARITY);
         if(getRarityId != null && level != null) {
@@ -108,33 +103,35 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         return null;
     }
 
-    public static JahdooRarity getRarity() {
-        var getRandom = Random.nextInt(1, 6020);
-        var filteredList = new ArrayList<>(
-            BASE_RARITY_CHANCES
-                .stream()
-                .filter(rarity -> rarity.getSecond() <= getRandom)
-                .filter(rarity -> rarity.getFirst().id != 5)
-                .toList()
-        );
-        return getJahdooRarity(listRandom(filteredList).getFirst());
+    public static JahdooRarity getReverseRarity() {
+        var filteredList = BASE_RARITY_CHANCES
+            .stream()
+            .filter(rarity -> rarity.getSecond() >= getRandom())
+            .toList();
+        return listRandom(filteredList).getFirst();
     }
 
-    public static JahdooRarity getRarity(@Nullable List<Pair<JahdooRarity, Integer>> rarities) {
-        var getRandom = Random.nextInt(1, 6020);
-        var correctRarity = rarities == null ? BASE_RARITY_CHANCES : rarities;
-        var filteredList = correctRarity
+    public static JahdooRarity getRarity() {
+        var filteredList = BASE_RARITY_CHANCES
             .stream()
-            .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom)
-            .filter(jahdooRarity -> jahdooRarity.getFirst().id != 5)
+            .filter(rarity -> rarity.getSecond() <= getRandom())
+            .toList();
+        return listRandom(filteredList).getFirst();
+    }
+
+    public static JahdooRarity getRarity(List<Pair<JahdooRarity, Integer>> rarities) {
+        var filteredList = rarities
+            .stream()
+            .filter(jahdooRarity -> jahdooRarity.getSecond() <= getRandom())
             .toList();
         return listRandom(filteredList).getFirst();
     }
 
     public static Component addRarityTooltip(JahdooRarity rarity, Level level){
         if(level == null) return Component.empty();
+
         var id = "rarity.jahdoo.current_rarity";
-        var colour = getColorTransition(ColourStore.UNIQUE_A, ColourStore.UNIQUE_B, (int) level.getGameTime(), 50);
+        var colour = getColorTransition(UNIQUE_A, UNIQUE_B, (int) level.getGameTime(), 50);
         var getCorrectColour = rarity.id == 5 ? colour : rarity.getColour();
         var sibling = withStyleComponent(rarity.getSerializedName(), getCorrectColour);
 
@@ -145,7 +142,9 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
         var data = getRuneData(wandItem);
         var getRarity = JahdooRarity.getAllRarities().get(Math.clamp(data.tier(), 0, 5));
         var getTier = romanNumeralConverter(getRarity.id);
-        return withStyleComponent("Tier ", SUB_HEADER_COLOUR).copy().append(withStyleComponent(getTier, getRarity.getColour()));
+        return withStyleComponent("Tier ", SUB_HEADER_COLOUR)
+            .copy()
+            .append(withStyleComponent(getTier, getRarity.getColour()));
     }
 
     public static @NotNull String romanNumeralConverter(int number) {
@@ -165,34 +164,38 @@ public enum JahdooRarity implements StringRepresentable, IExtensibleEnum {
             playDebugMessage(player, "NEW ROLL");
             playDebugMessage(player, "---------------------------------");
 
-            var common = new AtomicInteger();
-            var uncommon = new AtomicInteger();
-            var epic = new AtomicInteger();
-            var legendary = new AtomicInteger();
-            var ethereal = new AtomicInteger();
+            var common = 0;
+            var uncommon = 0;
+            var epic = 0;
+            var legendary = 0;
+            var ethereal =  0;
 
             for (int i = 2000; i > 0; i--) {
-                var rarity = JahdooRarity.getRarity();
+                var rarity = JahdooRarity.getRarity(
+                    List.of(
+                        Pair.of(COMMON, 1),
+                        Pair.of(RARE, 1500),
+                        Pair.of(EPIC, 5000),
+                        Pair.of(LEGENDARY, 5800),
+                        Pair.of(MYTHIC, 6000)
+                    )
+                );
 
-                if (rarity == JahdooRarity.COMMON) {
-                    common.set(common.get() + 1);
-                } else if (rarity == JahdooRarity.RARE) {
-                    uncommon.set(uncommon.get() + 1);
-                } else if (rarity == JahdooRarity.EPIC) {
-                    epic.set(epic.get() + 1);
-                } else if (rarity == JahdooRarity.LEGENDARY) {
-                    legendary.set(legendary.get() + 1);
-                } else if (rarity == JahdooRarity.MYTHIC) {
-                    ethereal.set(ethereal.get() + 1);
+                switch (rarity){
+                    case COMMON -> common++;
+                    case RARE -> uncommon++;
+                    case EPIC -> epic++;
+                    case LEGENDARY -> legendary++;
+                    case MYTHIC -> ethereal++;
                 }
             }
 
-            playDebugMessage(player, "Common " + common.get());
-            playDebugMessage(player, "Un-Common " + uncommon.get());
-            playDebugMessage(player, "Epic " + epic.get());
-            playDebugMessage(player, "Legendary " + legendary.get());
-            playDebugMessage(player, "Eternal " + ethereal.get());
-            playDebugMessage(player, "  ");
+            playDebugMessage(player, "Common " + common);
+            playDebugMessage(player, "Un-Common " + uncommon);
+            playDebugMessage(player, "Epic " + epic);
+            playDebugMessage(player, "Legendary " + legendary);
+            playDebugMessage(player, "Eternal " + ethereal);
+            playDebugMessage(player, "---------------------------------");
         }
     }
 }

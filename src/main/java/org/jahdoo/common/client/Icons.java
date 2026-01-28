@@ -14,6 +14,12 @@ public class Icons {
     public static final String ABILITY_PREFIX = "textures/ability_icons/";
     private static final String SKILLS = "textures/skill/";
 
+    public static final ResourceLocation ORE_MULTIPLIER =
+        res(PREFIX + "ore_icon.png");
+
+    public static final ResourceLocation LOOT_POT_ICON =
+        res(PREFIX + "loot_pot_icon.png");
+
     public static final ResourceLocation COMMON_TAG =
         res(RARITY_TAG_PREFIX + "common.png");
 

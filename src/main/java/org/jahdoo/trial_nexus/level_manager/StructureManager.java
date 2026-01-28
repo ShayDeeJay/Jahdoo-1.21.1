@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.phys.Vec3;
+import org.jahdoo.JahdooMod;
 import org.jahdoo.common.block.altar.AltarBlockEntity;
 import org.jahdoo.common.block.lock.LockBlock;
 import org.jahdoo.common.block.lock.LockBlockEntity;
@@ -28,10 +29,7 @@ import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.Helpers;
 import org.jahdoo.trial_nexus.utils.ModTags;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.mojang.datafixers.util.Pair.of;
 import static net.minecraft.core.BlockPos.betweenClosed;
@@ -69,40 +67,35 @@ public class StructureManager {
     public static final String EASY_EXIT = "exit";
     public static final Component EXIT_ROOM_COMPONENT = withStyleComponent(stringIdToName(EASY_EXIT), MAGNET_RANGE_GREEN);
 
-
     public static final List<String> EASY_ROOMS = List.of("oakvale", "logyard", "rotgrove", "pasture");
     public static final List<String> MEDIUM_ROOMS = List.of("sundown", "deadwood", "oasis", "dustcamp");
     public static final List<String> HARD_ROOMS = List.of("blackstone", "frosthold", "mines", "ruins");
     public static final List<String> EXTREME_ROOMS = List.of("hellgate", "pyrewalk", "ashhaven", "sporefire");
-    public static final List<String> REST_ROOMS = List.of(BAZAAR, SANCTUARY, LOOT_CRYPT, EASY_EXIT);
+    public static final Map<Integer, Component> getRestRooms = Map.of(0, BAZAAR_COMPONENT, 1, LOOT_CRYPT_COMPONENT, 2, SANCTUARY_COMPONENT, 3, EXIT_ROOM_COMPONENT);
+
     public static final String STARTING_ROOM = "starting_room";
     public static final String BRIDGE = "bridge";
-
     public static final int GLOBAL_Y = 60;
     public static final Vec3 SPAWN_POSITION = new Vec3(33.5, GLOBAL_Y + 2, 27.5);
-//    public static final long SEED = /*Random.nextLong()*/ 874095743;
-    public static BlockState blocker = TINTED_GLASS.defaultBlockState();
+    public static final BlockState BLOCKER_BLOCK = TINTED_GLASS.defaultBlockState();
+
+    public static final List<String> REST_ROOMS = List.of(BAZAAR, SANCTUARY, LOOT_CRYPT, EASY_EXIT);
+    public static final List<String> VALID_ROOMS;
 
     public static void placeStructure(ServerLevel level, BlockPos pos, StructurePlaceSettings settings, String roomId) {
         var templates = level.getStructureManager().get(Helpers.res(roomId));
-        settings.setKnownShape(true).addProcessor(BlockIgnoreProcessor.AIR);
-        templates.ifPresent(
-            template -> template.placeInWorld(level, pos, new BlockPos(-22, 0, -22), settings, level.random, Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS)
-        );
-    }
+        var flag = Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS;
+        var pos1 = new BlockPos(-22, 0, -22);
 
-    public static List<String> getValidRooms(){
-        var newList = new ArrayList<String>();
-        newList.addAll(EASY_ROOMS);
-        newList.addAll(HARD_ROOMS);
-        newList.addAll(MEDIUM_ROOMS);
-        newList.addAll(EXTREME_ROOMS);
-        newList.add(BOSS_CRUCIBLE);
-        return newList;
+        settings.setKnownShape(true).addProcessor(BlockIgnoreProcessor.AIR);
+        templates.ifPresent(template -> template.placeInWorld(level, pos, pos1, settings, level.random, flag));
     }
 
     public static Component getBattleRoom(){
-        return withStyleComponent(stringIdToName(Helpers.listRandom(getValidRooms())), SYMPATHISER_ORANGE);
+        var randomValidRooms = listRandom(VALID_ROOMS);
+        var namedRoom = stringIdToName(randomValidRooms);
+
+        return withStyleComponent(namedRoom, SYMPATHISER_ORANGE);
     }
 
     public static Iterable<BlockPos> roomBoundingFromCenter(BlockPos pos) {
@@ -139,23 +132,14 @@ public class StructureManager {
 
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, true);
 
-//        var clearArea = betweenClosed(new BlockPos(-53, 156, -49), new BlockPos(97, 98, 103));
-//        for (var blockPos : clearArea) level.removeBlock(blockPos, false);
-
         for (var allEntity : level.getAllEntities()) if(allEntity instanceof Villager villager) villager.kill();
 
         placeStructure(level, pos, settings, BRIDGE);
         placeLocksWithData(level, new BlockPos(23, 105, 27), false, true);
 
-//        placeLocksWithData(level, BlockPos.containing(SPAWN_POSITION.subtract(0,0,0)), true);
-
         for (var chunkPos : getAllChunks) level.setChunkForced(chunkPos.x, chunkPos.z, false);
         //Here we can pass the data from the previous altar to set up the next challenge stack.
     }
-
-    public static final Map<Integer, Component> getRestRooms = Map.of(
-        0, BAZAAR_COMPONENT, 1, LOOT_CRYPT_COMPONENT, 2, SANCTUARY_COMPONENT, 3, EXIT_ROOM_COMPONENT
-    );
 
     public static Map<Integer, Component> getRandomRoomId(InstanceData data, boolean isRestRoom){
         var roomGen = new HashMap<Integer, Component>();
@@ -168,7 +152,10 @@ public class StructureManager {
         var forBoss = isNovice ? 10 : isExpert ? 20 : 30 ;
         roomGen.put(0, getBattleRoom());
 
-        if(percentageChance(forBoss) && data.getClearedRooms() > 1) roomGen.put(roomGen.size(), BOSS_COMPONENT);
+        if(!data.getDifficulty().isEmpty()){
+            JahdooMod.LOGGER.log(org.apache.logging.log4j.Level.INFO, "Error, boss room generated as starting room");
+            if(percentageChance(forBoss)) roomGen.put(roomGen.size(), BOSS_COMPONENT);
+        }
 
         while (roomGen.size() < 4) roomGen.put(roomGen.size(), getBattleRoom());
         return roomGen;
@@ -188,7 +175,8 @@ public class StructureManager {
 
             BlockSetupManager.generateExit(level, blockPos, EAST);
             setLocks(level, blockPos, false);
-            if(level.getBlockState(blockPos).equals(blocker)){
+
+            if(level.getBlockState(blockPos).equals(BLOCKER_BLOCK)){
                 level.destroyBlock(blockPos, false);
             }
 
@@ -197,9 +185,10 @@ public class StructureManager {
             if(getLock instanceof LockBlockEntity lock) {
                 lock.isStarting = isStarter;
 
-                if(lock.isStartingRoom()){
+                if(lock.isStartingRoom()) {
                     lock.getDifficulty = getDifficulties().reversed().get(counter).getSerializedName();
                 }
+
                 lock.setRoomData(getRooms.get(counter));
                 counter++;
                 var getPositions = innerRadiusRandom(blockPos.getCenter().subtract(0, 1, 0), 2.3, 350);
@@ -210,7 +199,7 @@ public class StructureManager {
                     sendParticles(level, particle, vec3, 0, 0, 0.5, 0, Random.nextDouble(0.3, 1.2));
                 }
 
-                if(isRestRoom){
+                if(isRestRoom) {
                     LockBlock.getItemInteractionResult(getLock.getBlockState(), blockPos, lock, level);
                 }
             }
@@ -262,20 +251,16 @@ public class StructureManager {
 
             setBlockGenerator(serverLevel, findBlock, direction, roomId);
             var alreadyPlaced = false;
-
+            var instanceData = serverLevel.getData(INSTANCE_DATA);
             for (var blockPos : findBlock) {
                 var placerState = level.getBlockState(blockPos);
-                if(getValidRooms().contains(roomId)){
+                if(VALID_ROOMS.contains(roomId)){
                     placeAltar(level, direction, roomId, blockPos, placerState);
                     alreadyPlaced = placePowerUpStation(level, blockPos, placerState, alreadyPlaced);
-                    placeLootPots(level, blockPos, placerState);
-                    placeOres(level, blockPos, placerState);
+                    placeLootPots(level, blockPos, placerState, instanceData);
+                    placeOres(level, blockPos, placerState, instanceData);
                 }
 
-//                var value = level.getBlockState(pos).getValue(FACING);
-//                if(!(level.getBlockEntity(pos.relative(value)) instanceof LockBlockEntity)){
-//
-//                }
                 if(placerState.is(Blocks.OBSERVER)) setLocks(serverLevel, blockPos, true);
                 if(placerState.is(NETHERITE_BLOCK)) level.setBlockAndUpdate(blockPos, LOCK_SUPPORT.get().defaultBlockState());
             }
@@ -283,18 +268,17 @@ public class StructureManager {
     }
 
 
-    private static void placeOres(Level level, BlockPos blockPos, BlockState placerState) {
+    private static void placeOres(Level level, BlockPos blockPos, BlockState placerState, InstanceData instanceData) {
         if (placerState.is(Blocks.PINK_STAINED_GLASS)) {
             if(level instanceof ServerLevel sLevel){
                 var aStates = RewardLootTables.oreDistribution(sLevel, blockPos.getCenter());
                 var aItems = Helpers.listRandom(aStates);
                 var aBase = Block.byItem(aItems.getItem()).defaultBlockState();
+                placer(blockPos, sLevel, percentageChance(10), aBase);
 
-                var spawnChance = percentageChance(10);
-                placer(level, blockPos, sLevel, spawnChance, aBase);
                 var bPos = blockPos;
-
-                for (int i = 0; i < 0; i++) {
+                var multiplier = instanceData.getOreMultiplier();
+                for (int i = 0; i < multiplier; i++) {
                     if(percentageChance(20)){
                         var bStates = RewardLootTables.oreDistribution(sLevel, blockPos.getCenter());
                         var bItems = Helpers.listRandom(bStates);
@@ -303,7 +287,7 @@ public class StructureManager {
                         for (var direction1 : stream().toList()) {
                             var relativeA = bPos.relative(direction1);
                             if (level.getBlockState(relativeA).is(ModTags.Block.CAN_REPLACE_BLOCK)) {
-                                placer(level, relativeA, sLevel, true, bBase);
+                                placer(relativeA, sLevel, true, bBase);
                                 poss.add(relativeA);
                             }
                         }
@@ -314,14 +298,15 @@ public class StructureManager {
         }
     }
 
-    private static void placeLootPots(Level level, BlockPos blockPos, BlockState placerState) {
+    private static void placeLootPots(Level level, BlockPos blockPos, BlockState placerState, InstanceData instanceData) {
         if (placerState.is(Blocks.ORANGE_STAINED_GLASS)) {
             if(level instanceof ServerLevel sLevel){
                 var bPos = blockPos;
                 var spawnChance = percentageChance(20);
                 placePot(level, sLevel, blockPos, spawnChance);
 
-                for (int i = 0; i < 0; i++) {
+                var multiplier = instanceData.getLootPotMultiplier();
+                for (int i = 0; i < multiplier; i++) {
                     if(percentageChance(20)){
                         var poss = new ArrayList<BlockPos>();
                         for (var direction1 : NO_Y) {
@@ -363,24 +348,34 @@ public class StructureManager {
         var value1 = JahdooRarity.getRarity(potRarityGetter).getId();
         var state1 = LOOT_POT.get().defaultBlockState().setValue(TEXTURE, value1);
         var getLoot1 = LootHelpers.potLoot(sLevel, relativeA.getCenter(), NOVICE.getSerializedName(), value1);
-        placer(level, relativeA, sLevel, spawnChance, state1);
+        placer(relativeA, sLevel, spawnChance, state1);
         if(level.getBlockEntity(relativeA) instanceof LootPotBlockEntity potBlockEntity){
             potBlockEntity.setTheItem(getLoot1);
         }
     }
 
-    private static void placer(Level level, BlockPos blockPos, ServerLevel sLevel, boolean spawnChance, BlockState state) {
+    public static void placer(BlockPos blockPos, ServerLevel sLevel, boolean spawnChance, BlockState state) {
         var blockState = sLevel.getBlockState(blockPos.below());
         var air = Blocks.AIR.defaultBlockState();
         if(spawnChance){
             if (blockState.isSolidRender(EmptyBlockGetter.INSTANCE, blockPos)) {
-                level.setBlock(blockPos, state, FLAGS);
+                sLevel.setBlock(blockPos, state, FLAGS);
             } else if (!sLevel.getBlockState(blockPos).isAir()) {
-                level.setBlock(blockPos, air, FLAGS);
+                sLevel.setBlock(blockPos, air, FLAGS);
             }
         } else if (!sLevel.getBlockState(blockPos).isAir()) {
-            level.setBlock(blockPos, air, FLAGS);
+            sLevel.setBlock(blockPos, air, FLAGS);
         }
+    }
+
+    static {
+        List<String> list = new ArrayList<>();
+        list.addAll(EASY_ROOMS);
+        list.addAll(HARD_ROOMS);
+        list.addAll(MEDIUM_ROOMS);
+        list.addAll(EXTREME_ROOMS);
+        list.add(BOSS_CRUCIBLE);
+        VALID_ROOMS = Collections.unmodifiableList(list);
     }
 
 }

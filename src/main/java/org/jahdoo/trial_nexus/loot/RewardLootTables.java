@@ -342,9 +342,9 @@ public class RewardLootTables {
     public static List<ItemStack> oreDistribution(ServerLevel serverLevel, Vec3 pos) {
         var builder = LootPool.lootPool().setRolls(exactly(1.0F));
 
-        builder.add(ENCHANTED_DIAMOND_ORE.setWeight(5));
-        builder.add(ROSE_QUARTZ_ORE.setWeight(10));
-        builder.add(LISITE_ORE.setWeight(40));
+        builder.add(ENCHANTED_DIAMOND_ORE.setWeight(1));
+        builder.add(ROSE_QUARTZ_ORE.setWeight(20));
+        builder.add(LISITE_ORE.setWeight(60));
 
         var loot = LootTable.lootTable();
 

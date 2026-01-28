@@ -3,23 +3,28 @@ package org.jahdoo.common.client.overlay;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.jahdoo.common.client.Icons;
 import org.jahdoo.common.client.SharedUI;
 import org.jahdoo.common.client.screens.RunScreen;
-import org.jahdoo.common.registers.AttachmentReg;
 import org.jahdoo.common.registers.mod.QuestReg;
 import org.jahdoo.trial_nexus.attachments.InstanceData;
 import org.jahdoo.trial_nexus.attachments.PlayerTrialData;
 import org.jahdoo.trial_nexus.attachments.RunData;
 import org.jahdoo.trial_nexus.level_manager.LevelGenerator;
 import org.jahdoo.trial_nexus.quests.AbstractQuest;
+import org.jahdoo.trial_nexus.utils.ColourStore;
 import org.jahdoo.trial_nexus.utils.Helpers;
+import org.jahdoo.trial_nexus.utils.Maths;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,24 +33,17 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.valueOf;
-import static net.minecraft.world.effect.MobEffects.*;
-import static org.jahdoo.common.client.Icons.*;
-import static org.jahdoo.common.client.Icons.SAFE;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiColour;
 import static org.jahdoo.common.client.screens.AbstractPanableScreen.uiFade;
-import static org.jahdoo.common.client.screens.RunScreen.addChestStats;
 import static org.jahdoo.common.client.screens.RunScreen.componentTemplate;
 import static org.jahdoo.common.registers.AttachmentReg.INSTANCE_DATA;
-import static org.jahdoo.trial_nexus.attachments.RunData.*;
-import static org.jahdoo.trial_nexus.boon.player_boons.BoonSelection.iconFromEffect;
-import static org.jahdoo.trial_nexus.rarity.JahdooRarity.*;
+import static org.jahdoo.common.registers.mod.LevelBoonReg.getAllNegative;
+import static org.jahdoo.common.registers.mod.LevelBoonReg.getAllPositive;
+import static org.jahdoo.trial_nexus.level_manager.InstanceDifficulty.getFromName;
 import static org.jahdoo.trial_nexus.utils.ColourStore.*;
-import static org.jahdoo.trial_nexus.utils.ColourStore.BRONZE_COIN;
-import static org.jahdoo.trial_nexus.utils.ColourStore.GOLD_COIN;
-import static org.jahdoo.trial_nexus.utils.ColourStore.PLATINUM_COIN;
-import static org.jahdoo.trial_nexus.utils.ColourStore.SILVER_COIN;
 import static org.jahdoo.trial_nexus.utils.Helpers.withStyleComponent;
-import static org.jahdoo.trial_nexus.utils.Maths.*;
+import static org.jahdoo.trial_nexus.utils.Maths.roundNonWholeString;
+import static org.jahdoo.trial_nexus.utils.Maths.ticksToTime;
 
 public class InstanceDataOverlay implements LayeredDraw.Layer {
 
@@ -55,8 +53,8 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
 
     private void slideGuiStats() {
         var maxFadeIn = 10.0F;
-        var minFadeIn = -130.0F;
-        var easeFactor = 0.1F;
+        var minFadeIn = -240.0F;
+        var easeFactor = 0.15F;
 
         if (timer > 0) {
             var distanceToMax = maxFadeIn - this.fade;
@@ -75,46 +73,136 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
         var level = mc.level;
         var player = mc.player;
         var screen = mc.screen;
+        var font = mc.font;
 
         if(player == null || mc.options.hideGui || level == null) return;
+        var runData = RunData.getRunData(player);
+        var getQuest =  overlayQuest(graphics, mc, runData, font);
 
         slideGuiStats();
         if(level.getDescription().getString().contains(LevelGenerator.LEVEL_PREFIX)){
-            levelData(graphics, level, mc, instanceData, screen);
+            overlayTimer(getQuest.isEmpty(), level, screen);
+            overlayInstanceModifiers(graphics, mc, player);
+            overlayAlwaysOnInfo(graphics, runData, font);
         }
     }
 
-    private void levelData(GuiGraphics graphics, ClientLevel level, Minecraft mc, InstanceData currentData, Screen screen) {
-        var getIData = level.getData(INSTANCE_DATA);
-        var getQuest = allInstanceOverlays(graphics, mc, getIData);
-
-        timer = Math.max(0, timer - 1);
-        instanceData = getIData;
-
-        if(getIData.getDifficulty().isEmpty() && getQuest.isEmpty()) timer = 0;
+    private void overlayTimer(boolean questIsEmpty, ClientLevel level, Screen screen) {
+        var currentData = level.getData(INSTANCE_DATA);
+        if(currentData.getDifficulty().isEmpty() && questIsEmpty) timer = 0;
         if(currentData != instanceData) timer = 400;
         if(screen instanceof InventoryScreen) timer = 30;
+
+        timer = Math.max(0, timer - 1);
+        instanceData = currentData;
     }
 
-    private @NotNull Optional<AbstractQuest> allInstanceOverlays(GuiGraphics graphics, Minecraft mc, InstanceData getInstanceData) {
-        var player = mc.player;
-        if(player == null) return Optional.empty();
-
-        var font = mc.font;
-        var getRunData = player.getData(AttachmentReg.RUN_DATA.get());
-        var questId = getRunData.getCurrentQuestId();
-        var getQuest = QuestReg.getQuestByName(questId);
-        var remainingTime = getInstanceData.getMaxTime() - getInstanceData.getTicks();
-        var roomsCleared = getInstanceData.getClearedRooms();
-        var clockX = 8;
+    private void overlayAlwaysOnInfo(GuiGraphics graphics, RunData runData, Font font) {
+        var x = 8;
         var size = 18;
+        var spacer = 20;
+        var time = HudEntry.getTime(instanceData);
+        alwaysOnEntry(graphics, time.icon(), x, 6, size, -1, font, time.value());
 
+        var listOfEntries = List.of(
+            HudEntry.roomsCleared(instanceData),
+            HudEntry.chestCommon(runData),
+            HudEntry.chestRare(runData),
+            HudEntry.chestLegendary(runData),
+            HudEntry.chestMystic(runData),
+            new HudEntry(Icons.SAFE, HudEntry.getComp(runData.getStat(RunData.SAFE))),
+            new HudEntry(Icons.CHAMPIONS_CROWN, HudEntry.getComp(runData.getStat(RunData.CHAMPIONS_KILLED))),
+            new HudEntry(Icons.TRIAL_EXPERIENCE, HudEntry.getComp(runData.getStat(RunData.EXPERIENCE))),
+            new HudEntry(Icons.HORDE, HudEntry.getComp(runData.getStat(RunData.MOBS_KILLED))),
+            HudEntry.bronze(runData),
+            HudEntry.silver(runData),
+            HudEntry.gold(runData),
+            HudEntry.platinum(runData)
+
+        );
+
+        for (var listOfEntry : listOfEntries) {
+            alwaysOnEntry(graphics, listOfEntry.icon(), x, (int) fade + spacer, size, -1, font, listOfEntry.value());
+            spacer += 16;
+        }
+
+    }
+
+    public record HudEntry(ResourceLocation icon, Component value) {
+
+        public static HudEntry getTime(InstanceData instanceData){
+            var remainingTime = instanceData.getMaxTime() - instanceData.getTicks();
+            var colour = remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED;
+            var time = appendStat("", ticksToTime(valueOf(remainingTime)), colour);
+            return new HudEntry(Icons.CLOCK, time);
+        }
+
+        public static HudEntry roomsCleared(InstanceData instanceData){
+            var roomsCleared = instanceData.getClearedRooms();
+            var info = withStyleComponent("" + roomsCleared, -1);
+            return new HudEntry(Icons.ROOMS_CLEARED, info);
+        }
+
+        public static Component getComp(Object info){
+            return Helpers.withStyleComponent(String.valueOf(info), -1);
+        }
+
+        public static HudEntry chestCommon(RunData runData){
+            return new HudEntry(Icons.CHEST_COMMON, getComp(runData.getCommonChests()));
+        }
+
+        public static HudEntry chestRare(RunData runData){
+            return new HudEntry(Icons.CHEST_RARE, getComp(runData.getRareChests()));
+        }
+
+        public static HudEntry chestLegendary(RunData runData){
+            return new HudEntry(Icons.CHEST_LEGENDARY, getComp(runData.getLegendaryChests()));
+        }
+
+        public static HudEntry chestMystic(RunData runData){
+            return new HudEntry(Icons.CHEST_MYTHIC, getComp(runData.getMythicChests()));
+        }
+
+        public static HudEntry bronze(RunData runData){
+            return new HudEntry(Icons.BRONZE_COIN, getComp(runData.getBronzeCoin()));
+        }
+
+        public static HudEntry silver(RunData runData){
+            return new HudEntry(Icons.SILVER_COIN, getComp(runData.getSilverCoin()));
+        }
+
+        public static HudEntry gold(RunData runData){
+            return new HudEntry(Icons.GOLD_COIN, getComp(runData.getGoldCoin()));
+        }
+
+        public static HudEntry platinum(RunData runData){
+            return new HudEntry(Icons.PLATINUM_COIN, getComp(runData.getPlatinumCoin()));
+        }
+    }
+
+    public static void alwaysOnEntry(
+        GuiGraphics graphics,
+        ResourceLocation icon,
+        int x,
+        int y,
+        int size,
+        int colour,
+        Font font,
+        Component info
+    ){
+        graphics.blit(icon, x, y, 0, 0, size, size, size, size);
+        graphics.drawString(font, info, x+18, y + 6, colour, false);
+    }
+
+    private @NotNull Optional<AbstractQuest> overlayQuest(GuiGraphics graphics, Minecraft mc, RunData runData, Font font) {
+        var questId = runData.getCurrentQuestId();
+        var getQuest = QuestReg.getQuestByName(questId);
         if(getQuest.isPresent()){
             var baseWidth = 60;
             var offsetX = graphics.guiWidth()/2 - baseWidth;
             var offsetY = (int) fade - 20;
             var quest = getQuest.get();
-            var current = getRunData.getStat(questId);
+            var current = runData.getStat(questId);
             var needed = quest.questQuantity(mc.player);
             var isComplete = current >= needed;
             var display = isComplete ? "Quest Complete" : current + "/" + needed;
@@ -128,114 +216,97 @@ public class InstanceDataOverlay implements LayeredDraw.Layer {
             graphics.drawCenteredString(font, appendStat("Quest: ", quest.getDisplayName(), quest.questColour()), offsetX + baseWidth, startY - 12, -1);
             graphics.drawCenteredString(font, withStyleComponent(display, colour), offsetX + baseWidth, startY + (height * 2) + 3, -1);
         }
-
-        graphics.blit(Icons.CLOCK, clockX - 3, (int) (fade), 0, 0, size, size, size, size);
-        graphics.drawString(font, appendStat("", ticksToTime(valueOf(remainingTime)), remainingTime > 400 ? MAGNET_RANGE_GREEN : NEGATIVE_RED), clockX + 16, (int) (6 + fade), -1, false);
-
-        var i = 65;
-        graphics.blit(Icons.ROOMS_CLEARED, clockX - 3 + i, (int) (fade), 0, 0, size, size, size, size);
-        graphics.drawString(font, "" + roomsCleared, clockX + 16 + i, (int) (6 + fade), -1, false);
-        var settings = mc.options;
-        var window = mc.getWindow().getWindow();
-
-        if(InputConstants.isKeyDown(window, InputConstants.KEY_TAB)){
-            var runData = RunData.getRunData(player);
-            var spacer = 0;
-            var spacer1 = 0;
-            var spacer2 = 0;
-            var getAllComponents = getComponents(instanceData, runData, PlayerTrialData.getData(player));
-            var getAllComponents1 = getComponents1(instanceData, runData, PlayerTrialData.getData(player));
-            var getAllComponents2 = getComponents2(instanceData, runData, PlayerTrialData.getData(player));
-            var startAllY = 30;
-            var startAllX = graphics.guiWidth()/2 - 60;
-            var size1 = 14;
-            var i1 = 150;
-            var i12 = -150;
-
-            SharedUI.boxMaker(graphics, startAllX-170, startAllY - 20, 216, 120, 0, SharedUI.fadeBlack(0.5F));
-            for (var component : getAllComponents) {
-                var hasIcon = component.icon() != null;
-                if (hasIcon) {
-                    graphics.blit(component.icon(), startAllX - 4, startAllY + spacer - 3, 0, 0, size1, size1, size1, size1);
-                }
-                graphics.drawString(mc.font, component.component(), startAllX + (hasIcon ? 10 : 0), startAllY + spacer, -1, true);
-                spacer += 14;
-            }
-
-            for (var component : getAllComponents1) {
-                var hasIcon = component.icon() != null;
-                if (hasIcon) {
-                    graphics.blit(component.icon(), startAllX - 4 + i1, startAllY + spacer1 - 3, 0, 0, size1, size1, size1, size1);
-                }
-                graphics.drawString(mc.font, component.component(), startAllX + (hasIcon ? 10 : 0) + i1, startAllY + spacer1, -1, true);
-                spacer1 += 14;
-            }
-
-            for (var component : getAllComponents2) {
-                var hasIcon = component.icon() != null;
-                if (hasIcon) {
-                    graphics.blit(component.icon(), startAllX - 4 + i12, startAllY + spacer2 - 3, 0, 0, size1, size1, size1, size1);
-                }
-                graphics.drawString(mc.font, component.component(), startAllX + (hasIcon ? 10 : 0) + i12, startAllY + spacer2, -1, true);
-                spacer2 += 14;
-            }
-        }
-
         return getQuest;
     }
 
-    public static List<RunScreen.StatEntry> getComponents(@Nullable InstanceData instanceData, RunData runData, PlayerTrialData trialData){
-        var allComponents = new ArrayList<RunScreen.StatEntry>();
-        if(trialData == null || instanceData == null) return allComponents;
+    private void overlayInstanceModifiers(GuiGraphics graphics, Minecraft mc, LocalPlayer player) {
+        var window = mc.getWindow().getWindow();
+        if (!InputConstants.isKeyDown(window, InputConstants.KEY_TAB)) {
+            timer = 0;
+            return;
+        };
 
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Difficulty", Helpers.stringIdToName(instanceData.getDifficulty()), uiColour()), null));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Total Exp", runData.getStat(EXPERIENCE) + "XP", COSMIC_PURPLE), TRIAL_EXPERIENCE));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Rooms Cleared", runData.getStat(RunData.ROOMS_CLEARED) + "", AETHER_BLUE), Icons.ROOMS_CLEARED));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Mobs Killed", runData.getStat(MOBS_KILLED) + "", MAGNET_STRENGTH_RED), Icons.HORDE));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Champions Killed", runData.getStat(CHAMPIONS_KILLED) + "", CHAMPION_GOLD), CHAMPIONS_CROWN));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Bronze Coins", runData.getStat(RunData.BRONZE_COIN) + "", BRONZE_COIN), Icons.BRONZE_COIN));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Silver Coins", runData.getStat(RunData.SILVER_COIN) + "", SILVER_COIN), Icons.SILVER_COIN));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Gold Coins", runData.getStat(RunData.GOLD_COIN) + "", GOLD_COIN), Icons.GOLD_COIN));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Platinum Coins", runData.getStat(RunData.PLATINUM_COIN) + "", PLATINUM_COIN), Icons.PLATINUM_COIN));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Quest Loot Multiplier", instanceData.getQuestCrateMultiplier() + "", WALLET_BROWN), QUEST_CRATE));
+        var trialData = PlayerTrialData.getData(player);
+        var positives = getBoons(true, instanceData, trialData);
+        var negatives = getBoons(false, instanceData, trialData);
+        var width = graphics.guiWidth();
+        var height = graphics.guiHeight();
 
-        return allComponents;
+        final int startY = (int) (fade * 5);
+        final var startX = width / 2 + 14;
+        final var iconSize = 14;
+        final var rowHeight = 14;
+        final var negativeOffsetX = -150;
+
+        var difficultyId = Helpers.stringIdToName(instanceData.getDifficulty());
+        var difficultyName = difficultyId.isEmpty() ? "Unselected" : difficultyId;
+        var difficultyColor = difficultyId.isEmpty() ? ColourStore.OFF_WHITE : getFromName(difficultyName).getColor();
+
+        var header = new RunScreen.StatEntry(componentTemplate("Difficulty", difficultyName, difficultyColor), null);
+
+        graphics.pose().pushPose();
+        graphics.pose().scale(2, 2, 2);
+        graphics.drawCenteredString(mc.font, header.component(), width / 4 - 8, (int) ( fade), -1);
+        graphics.pose().popPose();
+
+        SharedUI.boxMaker(graphics, 0, 0, width, height, 0, SharedUI.fadeBlack(0.5F));
+        drawBoonList(graphics, positives, startX, startY, 0, iconSize, rowHeight);
+        drawBoonList(graphics, negatives, startX + negativeOffsetX, startY, 0, iconSize, rowHeight);
     }
 
-    public static List<RunScreen.StatEntry> getComponents1(@Nullable InstanceData instanceData, RunData runData, PlayerTrialData trialData){
-        var allComponents = new ArrayList<RunScreen.StatEntry>();
-        if(trialData == null || instanceData == null) return allComponents;
+    private void drawBoonList(
+        GuiGraphics graphics,
+        List<RunScreen.StatEntry> components,
+        int startX,
+        int startY,
+        int startIndex,
+        int size,
+        int rowHeight
+    ) {
+        var yOffset = startIndex;
+        var iconX = startX - 4;
+        var font = Minecraft.getInstance().font;
+        for (var component : components) {
+            var hasIcon = component.icon() != null;
 
-        addChestStats(allComponents, "Common Chest", COMMON.getColour(), CHESTS_COMMON, instanceData.getCommonLootMultiplier(), CHEST_COMMON, runData);
-        addChestStats(allComponents, "Rare Chest", RARE.getColour(), CHESTS_RARE, instanceData.getRareLootMultiplier(), CHEST_RARE, runData);
-        addChestStats(allComponents, "Legendary Chest", LEGENDARY.getColour(), CHESTS_LEGENDARY, instanceData.getLegendaryLootMultiplier(), CHEST_LEGENDARY, runData);
-        addChestStats(allComponents, "Eternal Chest", MYTHIC.getColour(), CHESTS_MYTHIC, instanceData.getMythicLootMultiplier(), CHEST_MYTHIC, runData);
-
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Safe", "", GOLD_COIN, GOLD_COIN), SAFE));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Opened", runData.getStat(RunData.SAFE) + "", GOLD_COIN), BLANK));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Multiplier", instanceData.getSafeMultiplier() + "", GOLD_COIN), BLANK));
-        return allComponents;
+            if (hasIcon) {
+                graphics.blit(component.icon(), iconX, startY + yOffset - 3, 0, 0, size, size, size, size);
+            }
+            graphics.drawString(font, component.component(), startX + (hasIcon ? 10 : 0), startY + yOffset, -1, true);
+            yOffset += rowHeight;
+        }
     }
 
-    public static List<RunScreen.StatEntry> getComponents2(@Nullable InstanceData instanceData, RunData runData, PlayerTrialData trialData){
-        var allComponents = new ArrayList<RunScreen.StatEntry>();
-        if(trialData == null || instanceData == null) return allComponents;
+    public static List<RunScreen.StatEntry> getBoons(
+        boolean positive,
+        @Nullable InstanceData instanceData,
+        PlayerTrialData trialData
+    ) {
+        var components = new ArrayList<RunScreen.StatEntry>();
+        if (trialData == null || instanceData == null) return components;
 
-        // Mob multipliers
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Mob Health","+" + roundNonWholeString(doubleFormattedDouble(instanceData.getHealth())) + "%", uiColour()), iconFromEffect(HEAL)));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Mob Armor","+" + roundNonWholeString(doubleFormattedDouble(instanceData.getArmor())) + "%", uiColour()), iconFromEffect(DAMAGE_RESISTANCE)));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Mob Damage","+" + roundNonWholeString(doubleFormattedDouble(instanceData.getAttackDamage())) + "%", uiColour()), iconFromEffect(DAMAGE_BOOST)));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Mob Speed","+" + roundNonWholeString(doubleFormattedDouble(instanceData.getSpeed())) + "%", uiColour()), iconFromEffect(MOVEMENT_SPEED)));
+        var boons = positive ? getAllPositive() : getAllNegative();
+        for (var boon : boons) {
+            var rawValue = instanceData.get(boon.id());
+            String displayValue;
 
-        // Mob counts / composition
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Horde Mobs", instanceData.getHorde() + "", AETHER_BLUE), Icons.HORDE));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Skeletons", instanceData.getSkeleton() + "", OFF_WHITE), Icons.SKELETON));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Void Spiders", instanceData.getVoidSpider() + "", COSMIC_PURPLE), Icons.VOID_SPIDER));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Inferno Creepers", instanceData.getInfernoCreeper() + "", SYMPATHISER_ORANGE), Icons.INFERNO_CREEPER));
-        allComponents.add(new RunScreen.StatEntry(componentTemplate("Eternal Wizards", instanceData.getEternalWizard() + "", MAGNET_STRENGTH_RED), Icons.ETERNAL_WIZARD));
+            if (positive) {
+                displayValue = boon.id().equals(InstanceData.KEY_MAX_TIME) ? Maths.ticksToTime(String.valueOf(rawValue)) : Maths.roundNonWholeString(rawValue);
+            } else {
+                var v = roundNonWholeString(Maths.singleFormattedDouble(rawValue));
+                displayValue = v + (boon.isPercentageOf() ? "%" : "");
+            }
 
-        return allComponents;
+            var color = positive ? boon.getHeaderColour() : MAGNET_STRENGTH_RED;
+            var component = componentTemplate(
+                Helpers.stringIdToName(boon.id()), displayValue, color
+            );
+            components.add(new RunScreen.StatEntry(component, boon.getIcon()));
+        }
+
+        return components;
     }
+
 
     public static void progressBar(GuiGraphics graphics, int offsetX, int startY, int baseWidth, int height, int current, int needed, int offset, int barColour, int containerBorder) {
         SharedUI.boxMaker(graphics, offsetX, startY, baseWidth, height, containerBorder, uiFade(), uiFade());

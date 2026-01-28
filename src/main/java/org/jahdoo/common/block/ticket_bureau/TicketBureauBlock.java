@@ -135,8 +135,8 @@ public class TicketBureauBlock extends BaseEntityBlock implements SimpleWaterlog
                 addStampToTicket(stamp, ticket);
                 entity1.updateBlock();
                 entity1.privateTicks = 25;
-                var stampData = stamp.get(ComponentReg.STORE_INTEGER);
 
+                var stampData = stamp.get(ComponentReg.STORE_INTEGER);
                 if(stampData != null) ticket.set(ComponentReg.CORE_DATA, new CoreData(required + stampData, filled));
 
                 stamp.shrink(1);

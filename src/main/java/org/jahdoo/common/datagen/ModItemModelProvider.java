@@ -123,7 +123,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private void registerStamps() {
-        for (int i = 1; i < 12; i++) {
+        for (int i = 1; i < 14; i++) {
             createModel("stamp" + i, "item/stamps/stamp" + i);
             createOverride(i, ItemReg.STAMP, "item/stamp");
         }

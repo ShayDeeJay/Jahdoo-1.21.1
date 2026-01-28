@@ -313,13 +313,13 @@ public class BlockSetupManager {
                             var newPos = startPlace.below(i);
                             var relative = newPos.relative(direction);
 
-                            level.setBlockAndUpdate(newPos, blocker);
+                            level.setBlockAndUpdate(newPos, BLOCKER_BLOCK);
 
                             for (var direction1 : list) {
                                 var adjacentBlocks = relative.relative(direction1);
                                 var adjacentNotAir = level.getBlockState(adjacentBlocks).is(LOCK_SUPPORT);
                                 if(adjacentNotAir){
-                                    level.setBlockAndUpdate(relative, blocker);
+                                    level.setBlockAndUpdate(relative, BLOCKER_BLOCK);
                                 }
                             }
                         }
@@ -329,7 +329,7 @@ public class BlockSetupManager {
             }
         }
 
-        Helpers.getSoundWithPosition(level, startPlace, blocker.getSoundType().getPlaceSound());
+        Helpers.getSoundWithPosition(level, startPlace, BLOCKER_BLOCK.getSoundType().getPlaceSound());
         Helpers.getSoundWithPosition(level, startPlace, SoundReg.UNLOCK.get(), 1, 1.8F);
     }
 

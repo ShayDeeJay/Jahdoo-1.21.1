@@ -644,7 +644,6 @@ public class EventHelpers {
         }
     }
 
-
     public static void throwItem(LivingEntity livingEntity, ItemStack stack, Vec3 offset) {
         Vec3 vec3 = new Vec3(0.3F, 0.3F, 0.3F);
         throwItem(livingEntity, stack, offset, vec3, 0.3F);
@@ -660,6 +659,7 @@ public class EventHelpers {
         itementity.setDeltaMovement(vec3);
         entity.level().addFreshEntity(itementity);
     }
+
 
     public static void assignTarget(LevelTickEvent.Pre tickEvent) {
         if(!(tickEvent.getLevel() instanceof CustomLevel level)) return;

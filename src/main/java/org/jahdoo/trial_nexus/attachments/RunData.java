@@ -70,8 +70,20 @@ public class RunData implements IAttachment {
         this.died = died;
     }
 
-    public int getChampionsKilled(){
-        return getStat(CHAMPIONS_KILLED);
+    public int getBronzeCoin(){
+        return getStat(BRONZE_COIN);
+    }
+
+    public int getSilverCoin(){
+        return getStat(SILVER_COIN);
+    }
+
+    public int getGoldCoin(){
+        return getStat(GOLD_COIN);
+    }
+
+    public int getPlatinumCoin(){
+        return getStat(PLATINUM_COIN);
     }
 
     public int getRoomsCleared(){
@@ -97,6 +109,10 @@ public class RunData implements IAttachment {
 
     public int getMythicChests(){
         return getStat(CHESTS_MYTHIC);
+    }
+
+    public int getChampionsKilled(){
+        return getStat(CHAMPIONS_KILLED);
     }
 
     public int getStat(String key) {

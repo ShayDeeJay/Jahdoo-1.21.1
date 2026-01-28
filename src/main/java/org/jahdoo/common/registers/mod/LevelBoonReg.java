@@ -14,6 +14,7 @@ import org.jahdoo.trial_nexus.boon.level_boons.positive.*;
 import org.jahdoo.trial_nexus.rarity.JahdooRarity;
 import org.jahdoo.trial_nexus.utils.Helpers;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -34,25 +35,32 @@ public class LevelBoonReg {
     }
 
     public static AbstractLevelBoon randomPositive() {
-        var element = REGISTRY
-            .stream()
-            .filter(AbstractLevelBoon::isPositive)
-            .toList();
-        return Helpers.listRandom(element);
+        return Helpers.listRandom(getAllPositive());
     }
 
     public static AbstractLevelBoon randomNegative() {
-        var element = REGISTRY
+        return Helpers.listRandom(getAllNegative());
+    }
+
+    public static List<AbstractLevelBoon> getAllPositive() {
+        return REGISTRY
+            .stream()
+            .filter(AbstractLevelBoon::isPositive)
+            .toList();
+    }
+
+    public static List<AbstractLevelBoon> getAllNegative() {
+        return REGISTRY
             .stream()
             .filter(a -> !a.isPositive())
             .toList();
-        return Helpers.listRandom(element);
     }
 
-    public static AbstractLevelBoon getStampBoons() {
+    public static AbstractLevelBoon getStampBoons(JahdooRarity rarity) {
         var element = REGISTRY
             .stream()
             .filter(a -> a.getStampIndex() != -1)
+            .filter(a -> a.rarity() == rarity)
             .toList();
         return Helpers.listRandom(element);
     }
@@ -117,6 +125,12 @@ public class LevelBoonReg {
         registerElement(InfernoCreeper::new);
 
     //Positive
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> ORE_MULTIPLIER =
+        registerElement(OreMultiplier::new);
+
+    public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> LOOT_POT_MULTIPLIER =
+        registerElement(LootPotMultiplier::new);
+
     public static final DeferredHolder<AbstractLevelBoon, AbstractLevelBoon> TIME =
         registerElement(Time::new);
 
